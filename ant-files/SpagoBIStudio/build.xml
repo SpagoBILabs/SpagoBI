@@ -1,0 +1,29 @@
+<project name="SpagoBIStudio" default="package.src" basedir=".">
+
+  <property file="build.properties"/>
+
+ 
+  <target name="clean" >
+    <delete dir="../../dist/SpagoBIStudio-src-${project.version}_${project.date}.zip"/>
+    <delete dir="../../SpagoBIStudio/dist"/>  	
+    <mkdir dir="../../SpagoBIStudio/dist"/>
+
+  </target>
+ 
+  
+  <target name="svn.checkout" depends="clean">
+
+    <exec dir="../../SpagoBIStudio/src" executable="svn" >
+      <arg line="checkout ${svn.base.location}/SpagoBIStudio ."/>
+    </exec>	 
+  </target>
+
+ 
+ <target name="package.src" depends="svn.checkout">
+   <zip destfile="../../SpagoBIStudio/dist/SpagoBIStudio-src-${project.version}_${project.date}.zip"
+        excludes="**/*.svn"  basedir="../../SpagoBIStudio/src">
+
+  </zip> 
+  </target>
+     
+</project>

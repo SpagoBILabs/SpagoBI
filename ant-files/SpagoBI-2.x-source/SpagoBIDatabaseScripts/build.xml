@@ -1,0 +1,43 @@
+<project name="${project.name}" default="package" basedir=".">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <property file="build.properties"/>	
+
+
+  
+  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   SCARICO DEI SORGENTI AGGIORNATI DA SVN							                        -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="svn.checkout" 
+      description="Sincronizza l'applicazione con il repository">
+    <exec dir="${project.dir}/ingres" executable="svn" >
+      <arg line="checkout ${svn.base.location}/${project.name}/ingres ."/>
+    </exec>	
+    <exec dir="${project.dir}/mysql" executable="svn" >
+      <arg line="checkout ${svn.base.location}/${project.name}/mysql ."/>
+    </exec> 
+    <exec dir="${project.dir}/oracle" executable="svn" >
+      <arg line="checkout ${svn.base.location}/${project.name}/oracle ."/>
+    </exec> 
+    <exec dir="${project.dir}/postgres" executable="svn" >
+      <arg line="checkout ${svn.base.location}/${project.name}/postgres ."/>
+    </exec> 
+  </target>
+
+
+  <target name="package">    
+  <zip destfile="../../../dist/ingres-dbscript-${project.version}_${project.date}.zip"
+       basedir="${project.dir}/ingres"/> 
+  <zip destfile="../../../dist/oracle-dbscript-${project.version}_${project.date}.zip"
+       basedir="${project.dir}/oracle"/>
+  <zip destfile="../../../dist/mysql-dbscript-${project.version}_${project.date}.zip"
+       basedir="${project.dir}/mysql"/>    
+  <zip destfile="../../../dist/postgres-dbscript-${project.version}_${project.date}.zip"
+       basedir="${project.dir}/postgres"/>                      
+  </target>
+
+  
+
+</project>

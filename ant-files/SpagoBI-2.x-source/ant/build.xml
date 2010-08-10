@@ -1,0 +1,467 @@
+<project name="SpagoBI" default="create.all" basedir=".">
+
+  <property file="build.properties"/>
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   PATH PER ANT-SVN					                                                    -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <!--
+  <path id="svnant.classpath">
+    <fileset dir="antsvn-lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="svnant.classpath"/>
+  -->
+  
+  <path id="catalina.ant.classpath">
+    <fileset dir="catalina-ant">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  <taskdef name="install"   classname="org.apache.catalina.ant.InstallTask" classpathref="catalina.ant.classpath" />
+  <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask" classpathref="catalina.ant.classpath" />
+  <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask" classpathref="catalina.ant.classpath" />
+  <taskdef name="start"     classname="org.apache.catalina.ant.StartTask" classpathref="catalina.ant.classpath" />
+  <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask" classpathref="catalina.ant.classpath" /> 
+  <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask" classpathref="catalina.ant.classpath" />    
+  <taskdef name="remove"    classname="org.apache.catalina.ant.RemoveTask" classpathref="catalina.ant.classpath" />	
+  
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   SDK Management					                                              -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <target name="checkout.sdk" >
+    <ant dir="../SpagoBISDK/ant" target="svn.checkout"/>
+  </target>
+  <target name="clean.sdk">
+    <ant dir="../SpagoBISDK/ant" target="clean"/>
+  </target>
+  <target name="create.SpagoBISDK.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBISDK/ant" />
+  </target>
+  <target name="deploy.SpagoBISDK.war" depends="create.sbi.utils.jar,create.SpagoBISDK.war">
+    <delete dir="${tomcat.home}/webapps/SpagoBISDK" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBISDK" />
+    <unzip src="../../../SpagoBISDK/dist/SpagoBISDK.war" dest="${tomcat.home}/webapps/SpagoBISDK" />
+  </target>
+  <target name="package.sdk">
+    <ant dir="../SpagoBISDK/ant" target="package.sdk"/>
+  </target>
+  <target name="javadoc.sdk">
+	    <ant dir="../SpagoBISDK/ant" target="javadoc.sdk"/>
+  </target>
+  <target name="create.sdk.src">
+    <ant dir="../SpagoBISDK/ant" target="create.sdk.src"/>
+  </target>
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+
+  
+  <target name="create.SpagoBI.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIProject/ant" />
+  </target>
+  <target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
+    <delete dir="${tomcat.home}/webapps/SpagoBI" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBI" />
+    <unzip src="../../../SpagoBIProject/dist/SpagoBI.war" dest="${tomcat.home}/webapps/SpagoBI" />
+    <!--
+    <copy todir="${tomcat.home}/webapps/SpagoBI/WEB-INF/conf" filtering="true" overwrite="true">
+      <fileset dir="${tomcat.home}/webapps/SpagoBI/WEB-INF/conf" />
+    </copy>
+    -->
+    <!--
+    <stop url="${manager.url}" username="${username}" password="${password}" path="/SpagoBI"/>
+    <undeploy url="${manager.url}" username="${username}" password="${password}" path="/SpagoBI"/>
+    <deploy url="${manager.url}" username="${username}" password="${password}" path="/SpagoBI"
+               war="file:${dist}/SpagoBI/SpagoBI.war"/>  
+    <start url="${manager.url}" username="${username}" password="${password}" path="/SpagoBI"/>
+    -->
+
+
+     
+  </target>
+
+  <target name="create.sbi.utils.jar" >
+    <ant dir="../SpagoBIUtils/ant" />
+  </target>
+  
+  <target name="create.exo.security.jar" >
+    <ant dir="../SpagoBIExoSecurityProvider/ant" />
+  </target>
+  <target name="create.liferay.security.jar" >
+    <ant dir="../SpagoBILiferaySecurityProvider/ant" />
+  </target>  
+  <target name="create.xlm.security.jar" >
+    <ant dir="../SpagoBIXmlSecurityProvider/ant" />
+  </target>
+  <target name="create.ldap.security.jar" >
+    <ant dir="../SpagoBILdapSecurityProvider/ant" />
+  </target>  
+  
+  <target name="create.SpagoBIBirtReportEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIBirtReportEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIBirtReportEngine.war" depends="create.sbi.utils.jar,create.SpagoBIBirtReportEngine.war">
+    <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIBirtReportEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIBirtReportEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIBirtReportEngine" />
+    <unzip src="../../../SpagoBIBirtReportEngine/dist/SpagoBIBirtReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIBirtReportEngine" />
+  </target>
+  
+  <target name="create.SpagoBIGeoEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIGeoEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIGeoEngine.war" depends="create.sbi.utils.jar,create.SpagoBIGeoEngine.war">
+  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+    <unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
+  </target>
+	
+  <target name="create.SpagoBIGeoReportEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIGeoReportEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIGeoReportEngine.war" depends="create.sbi.utils.jar,create.SpagoBIGeoReportEngine.war">
+  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIGeoReportEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIGeoReportEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIGeoReportEngine" />
+    <unzip src="../../../SpagoBIGeoReportEngine/dist/SpagoBIGeoReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoReportEngine" />
+  </target>
+  
+  <target name="create.SpagoBIJasperReportEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIJasperReportEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIJasperReportEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJasperReportEngine.war">
+    <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJasperReportEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
+    <unzip src="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" dest="${tomcat.home}/webapps/SpagoBIJasperReportEngine" />
+  </target>
+  
+  <target name="create.SpagoBIJPaloEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIJPaloEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIJPaloEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJPaloEngine.war">
+    <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPaloEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIJPaloEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIJPaloEngine" />
+    <unzip src="../../../SpagoBIJPaloEngine/dist/SpagoBIJPaloEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPaloEngine" />
+  </target>
+  
+  <target name="create.SpagoBIJPivotEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIJPivotEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIJPivotEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJPivotEngine.war">
+  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPivotEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+    <unzip src="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
+  </target>
+
+  <target name="create.qbe.core.jar" depends="create.sbi.utils.jar">
+    <ant dir="../QbeCore/ant" />
+  </target>
+  <target name="create.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIQbeEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIQbeEngine.war" depends="create.sbi.utils.jar,create.qbe.core.jar,create.SpagoBIQbeEngine.war">
+    <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIQbeEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIQbeEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIQbeEngine" />
+    <unzip src="../../../SpagoBIQbeEngine/dist/SpagoBIQbeEngine.war" dest="${tomcat.home}/webapps/SpagoBIQbeEngine" />
+  </target>
+  
+  <target name="create.SpagoBITalendEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBITalendEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBITalendEngine.war" depends="create.sbi.utils.jar,create.SpagoBITalendEngine.war">
+  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBITalendEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBITalendEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBITalendEngine" />
+    <unzip src="../../../SpagoBITalendEngine/dist/SpagoBITalendEngine.war" dest="${tomcat.home}/webapps/SpagoBITalendEngine" />
+  </target>
+  
+  <target name="create.SpagoBIWekaEngine.war" depends="create.sbi.utils.jar">
+    <ant dir="../SpagoBIWekaEngine/ant" />
+  </target>
+  <target name="deploy.SpagoBIWekaEngine.war" depends="create.sbi.utils.jar,create.SpagoBIWekaEngine.war">
+  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIWekaEngine" />
+    <delete dir="${tomcat.home}/webapps/SpagoBIWekaEngine" />
+    <mkdir dir="${tomcat.home}/webapps/SpagoBIWekaEngine" />
+    <unzip src="../../../SpagoBIWekaEngine/dist/SpagoBIWekaEngine.war" dest="${tomcat.home}/webapps/SpagoBIWekaEngine" />
+  </target>
+	
+	<target name="create.SpagoBIJPXMLAEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBIJPXMLAEngine/ant" />
+	  </target>
+	  <target name="deploy.SpagoBIJPXMLAEngine.war" depends="create.sbi.utils.jar,create.SpagoBIJPXMLAEngine.war">
+	  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIJPXMLAEngine" />
+	    <delete dir="${tomcat.home}/webapps/SpagoBIJPXMLAEngine" />
+	    <mkdir dir="${tomcat.home}/webapps/SpagoBIJPXMLAEngine" />
+	    <unzip src="../../../SpagoBIJPXMLAEngine/dist/SpagoBIJPXMLAEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPXMLAEngine" />
+	</target>
+
+	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBIAccessibilityEngine/ant" />
+	  </target>
+	  <target name="deploy.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar,create.SpagoBIAccessibilityEngine.war">
+	  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIAccessibilityEngine" />
+	    <delete dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
+	    <mkdir dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
+	    <unzip src="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" dest="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
+	</target>
+	
+	<target name="create.SpagoBICommonJEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBICommonJEngine/ant" />
+	  </target>
+	  <target name="deploy.SpagoBICommonJEngine.war" depends="create.sbi.utils.jar,create.SpagoBICommonJEngine.war">
+	  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBICommonJEngine" />
+	    <delete dir="${tomcat.home}/webapps/SpagoBICommonJEngine" />
+	    <mkdir dir="${tomcat.home}/webapps/SpagoBICommonJEngine" />
+	    <unzip src="../../../SpagoBICommonJEngine/dist/SpagoBICommonJEngine.war" dest="${tomcat.home}/webapps/SpagoBICommonJEngine" />
+	</target>
+  
+	<target name="create.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar">
+	    <ant dir="../SpagoBIConsoleEngine/ant" />
+	  </target>
+	  <target name="deploy.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar,create.SpagoBIConsoleEngine.war">
+	  <delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIConsoleEngine" />
+	    <delete dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+	    <mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+	    <unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
+	</target>  	
+  
+  <target name="create.all" depends="clean.all">
+    <!--  
+    Dependencies between projects:
+    SpagoBI is the root, must be compiled first
+    sbi.utils depends on SpagoBI
+    exo.security depends on SpagoBI
+    engines (apart from SpagoBIQbeEngine) depends on sbi.utils
+    qbe.core depends on sbi.utils
+    SpagoBIQbeEngine depends on qbe.core and sbi.utils
+    -->
+    <antcall target="create.sbi.utils.jar" />
+    
+    <antcall target="create.exo.security.jar" /> 
+    <antcall target="create.liferay.security.jar" />
+    <antcall target="create.xlm.security.jar" />
+    <antcall target="create.ldap.security.jar" />
+       
+    <antcall target="create.SpagoBICommonJEngine.war" />
+    <copy file="../../../SpagoBICommonJEngine/dist/SpagoBICommonJEngine.war" 
+        todir="../../../dist" overwrite="true" />
+        
+    <antcall target="create.SpagoBIConsoleEngine.war" />
+    <copy file="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" 
+        todir="../../../dist" overwrite="true" />
+                    
+    <antcall target="create.SpagoBI.war" />
+    <copy file="../../../SpagoBIProject/dist/SpagoBI.war" 
+        todir="../../../dist" overwrite="true" />
+        
+
+    
+    <antcall target="create.SpagoBIBirtReportEngine.war" />
+    <copy file="../../../SpagoBIBirtReportEngine/dist/SpagoBIBirtReportEngine.war" 
+        todir="../../../dist" overwrite="true" />
+            
+    <antcall target="create.SpagoBIGeoEngine.war" />
+    <copy file="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" 
+        todir="../../../dist" overwrite="true" />
+  	
+  	<antcall target="create.SpagoBIGeoReportEngine.war" />
+  	    <copy file="../../../SpagoBIGeoReportEngine/dist/SpagoBIGeoReportEngine.war" 
+  	        todir="../../../dist" overwrite="true" /> 
+          
+    <antcall target="create.SpagoBIJPaloEngine.war" />
+    <copy file="../../../SpagoBIJPaloEngine/dist/SpagoBIJPaloEngine.war" 
+        todir="../../../dist" overwrite="true" /> 
+        
+    <antcall target="create.SpagoBITalendEngine.war" />
+    <copy file="../../../SpagoBITalendEngine/dist/SpagoBITalendEngine.war" 
+        todir="../../../dist" overwrite="true" /> 
+            
+    <antcall target="create.SpagoBIWekaEngine.war" />
+    <copy file="../../../SpagoBIWekaEngine/dist/SpagoBIWekaEngine.war" 
+        todir="../../../dist" overwrite="true" /> 
+            
+    <antcall target="create.SpagoBIJasperReportEngine.war" />
+    <copy file="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" 
+        todir="../../../dist" overwrite="true" />
+        
+    <antcall target="create.SpagoBIJPivotEngine.war" />
+    <copy file="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" 
+        todir="../../../dist" overwrite="true" />    
+        
+    <antcall target="create.qbe.core.jar" />
+    <antcall target="create.SpagoBIQbeEngine.war" />
+    <copy file="../../../SpagoBIQbeEngine/dist/SpagoBIQbeEngine.war" 
+        todir="../../../dist" overwrite="true" />        
+    
+  	<antcall target="create.SpagoBIJPXMLAEngine.war" />
+  	    <copy file="../../../SpagoBIJPXMLAEngine/dist/SpagoBIJPXMLAEngine.war" 
+  	        todir="../../../dist" overwrite="true" /> 
+  	
+    <antcall target="create.SpagoBIAccessibilityEngine.war" />
+    <copy file="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" 
+        todir="../../../dist" overwrite="true" />
+
+
+                        
+  </target>
+
+  <target name="deploy.all" >
+    <antcall target="deploy.SpagoBI.war" />
+    <antcall target="deploy.SpagoBIBirtReportEngine.war" />
+    <antcall target="deploy.SpagoBIGeoEngine.war" />
+  	<antcall target="deploy.SpagoBIGeoReportEngine.war" />
+    <antcall target="deploy.SpagoBIJasperReportEngine.war" />
+    <antcall target="deploy.SpagoBIJPaloEngine.war" />
+    <antcall target="deploy.SpagoBIJPivotEngine.war" />
+    <antcall target="deploy.SpagoBIQbeEngine.war" />
+    <antcall target="deploy.SpagoBITalendEngine.war" />
+    <antcall target="deploy.SpagoBIWekaEngine.war" />
+  	<antcall target="deploy.SpagoBIJPXMLAEngine.war" />
+  	<antcall target="deploy.SpagoBIAccessibilityEngine.war" />
+  	<antcall target="deploy.SpagoBICommonJEngine.war" />
+  	<antcall target="deploy.SpagoBIConsoleEngine.war" />      	
+  </target>
+
+   <target name="clean.all" >
+  <delete dir="../../../dist"/>
+  <delete dir="../../../QbeCore/ant-build"/>
+  <delete dir="../../../QbeCore/dist"/>  	
+  <delete dir="../../../SpagoBIBirtReportEngine/ant-build"/>
+  <delete dir="../../../SpagoBIBirtReportEngine/dist"/>  	
+  <delete dir="../../../SpagoBIExoSecurityProvider/ant-build"/>
+  <delete dir="../../../SpagoBIExoSecurityProvider/dist"/>  	
+  <delete dir="../../../SpagoBILiferaySecurityProvider/ant-build"/>
+  <delete dir="../../../SpagoBILiferaySecurityProvider/dist"/>  	
+  <delete dir="../../../SpagoBIXMLSecurityProvider/ant-build"/> 
+  <delete dir="../../../SpagoBIXMLSecurityProvider/dist"/>    	
+  <delete dir="../../../SpagoBILdapSecurityProvider/ant-build"/>    
+  <delete dir="../../../SpagoBILdapSecurityProvider/dist"/>    	  	
+  <delete dir="../../../SpagoBIGeoEngine/ant-build"/>
+  <delete dir="../../../SpagoBIGeoEngine/dist"/>  	
+  <delete dir="../../../SpagoBIGeoReportEngine/ant-build"/>
+  <delete dir="../../../SpagoBIGeoReportEngine/dist"/>
+  <delete dir="../../../SpagoBIJasperReportEngine/ant-build"/>
+  <delete dir="../../../SpagoBIJasperReportEngine/dist"/>    
+  <delete dir="../../../SpagoBIJPaloEngine/ant-build"/>
+  <delete dir="../../../SpagoBIJPaloEngine/dist"/>    
+  <delete dir="../../../SpagoBIJPivotEngine/ant-build"/>
+  <delete dir="../../../SpagoBIJPivotEngine/dist"/>    
+  <delete dir="../../../SpagoBIQbeEngine/ant-build"/>
+  <delete dir="../../../SpagoBIQbeEngine/dist"/>    
+  <delete dir="../../../SpagoBITalendEngine/ant-build"/>
+  <delete dir="../../../SpagoBITalendEngine/dist"/>    
+  <delete dir="../../../SpagoBIProject/ant-build"/>
+  <delete dir="../../../SpagoBIProject/dist"/>    
+  <delete dir="../../../SpagoBIUtils/ant-build"/>
+  <delete dir="../../../SpagoBIUtils/dist"/>    
+  <delete dir="../../../SpagoBIWekaEngine/ant-build"/>
+  <delete dir="../../../SpagoBIWekaEngine/dist"/>	
+  <delete dir="../../../SpagoBIJPXMLAEngine/ant-build"/>
+  <delete dir="../../../SpagoBIJPXMLAEngine/dist"/>	
+  <delete dir="../../../SpagoBIAccessibilityEngine/ant-build"/>
+  <delete dir="../../../SpagoBIAccessibilityEngine/dist"/>	
+  <delete dir="../../../SpagoBICommonJEngine/ant-build"/>
+  <delete dir="../../../SpagoBICommonJEngine/dist"/>	
+  <delete dir="../../../SpagoBIConsoleEngine/ant-build"/>
+  <delete dir="../../../SpagoBIConsoleEngine/dist"/>	  
+   </target>
+   
+  <target name="copy.ss" >
+    <copy todir="${apache.dir}/js" >
+      <fileset dir="${tomcat.home}/webapps/SpagoBI/js">
+      </fileset>
+    </copy>
+    <copy todir="${apache.dir}/themes/sbi_default/css" >
+      <fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/css">
+      </fileset>
+    </copy>
+    <copy todir="${apache.dir}/themes/sbi_default/img" >
+      <fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/img">
+      </fileset>
+    </copy>
+    <copy todir="${apache.dir}/themes/sbi_default/html" >
+      <fileset dir="${tomcat.home}/webapps/SpagoBI/themes/sbi_default/html">
+      </fileset>
+    </copy>    
+  </target>
+  
+  <target name="svn.checkout" >
+    <ant dir="../QbeCore/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIBirtReportEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIExoSecurityProvider/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIGeoEngine/ant" target="svn.checkout"/>
+  	<ant dir="../SpagoBIGeoReportEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIJasperReportEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIJPaloEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIJPivotEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIProject/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIQbeEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBITalendEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIWekaEngine/ant" target="svn.checkout"/>
+  	<ant dir="../SpagoBIJPXMLAEngine/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBIXmlSecurityProvider/ant" target="svn.checkout"/>
+    <ant dir="../SpagoBILiferaySecurityProvider/ant" target="svn.checkout"/>    
+    <ant dir="../SpagoBILdapSecurityProvider/ant" target="svn.checkout"/>  
+    <ant dir="../SpagoBIDatabaseScripts" target="svn.checkout"/> 
+  	<ant dir="../SpagoBIAccessibilityEngine/ant" target="svn.checkout"/>
+  	<ant dir="../SpagoBICommonJEngine/ant" target="svn.checkout"/>
+  	<ant dir="../SpagoBIConsoleEngine/ant" target="svn.checkout"/>      	
+  </target>
+  
+  <target name="javadoc" >
+    <ant dir="../QbeCore/ant" target="javadoc"/>
+    <ant dir="../SpagoBIBirtReportEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
+    <ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
+  	<ant dir="../SpagoBIGeoReportEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIJasperReportEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIJPaloEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIJPivotEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIProject/ant" target="javadoc"/>
+    <ant dir="../SpagoBIQbeEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBITalendEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIUtils/ant" target="javadoc"/>
+    <ant dir="../SpagoBIWekaEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
+    <ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>    
+    <ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>  
+    <ant dir="../SpagoBIJPXMLAEngine/ant" target="javadoc"/>
+  	<ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
+   <!-- <ant dir="../SpagoBICommonJEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/> -->
+  </target>
+
+  <target name="package.all" >
+        <ant dir="../SpagoBIProject/ant" target="package"/> 
+        <ant dir="../SpagoBIBirtReportEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIGeoEngine/ant" target="package"/> 
+  	    <ant dir="../SpagoBIGeoReportEngine/ant" target="package"/>
+        <ant dir="../SpagoBIJasperReportEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIJPaloEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIJPivotEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIQbeEngine/ant" target="package"/> 
+        <ant dir="../SpagoBITalendEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIWekaEngine/ant" target="package"/> 
+        <ant dir="../SpagoBIDatabaseScripts" target="package"/>  
+  		  <ant dir="../SpagoBIJPXMLAEngine/ant" target="package"/> 
+  	    <ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
+  	   <!-- <ant dir="../SpagoBICommonJEngine/ant" target="package"/>
+  	    <ant dir="../SpagoBIConsoleEngine/ant" target="package"/> -->                                                                                                              
+  </target>
+ 
+ <target name="package.all.src" depends="clean.all">
+   <mkdir dir="../../../dist" />
+   <zip destfile="../../../dist/SpagoBI-src-${project.version}_${project.date}.zip"
+        excludes="**/*.svn, SpagoBICommonJEngine/**, SpagoBIConsoleEngine/**, SpagoBIJPaloEngine/**"  basedir="../../../">
+
+  </zip> 
+  </target>
+     
+</project>
