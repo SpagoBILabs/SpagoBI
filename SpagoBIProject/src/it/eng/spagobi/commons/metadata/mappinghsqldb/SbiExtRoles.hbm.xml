@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.commons.metadata.SbiExtRoles" table="sbi_ext_roles">
+        <id name="extRoleId" type="integer">
+            <column name="ext_role_id" />
+            <generator class="native">
+            	<param name="sequence">sbi_ext_roles_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="roleType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="role_type_id" not-null="true" />
+        </many-to-one>
+        <property name="roleTypeCode" type="string">
+            <column name="role_type_cd" length="20" not-null="true" />
+        </property>
+        <property name="code" type="string">
+            <column name="code" length="20" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="100" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="160" />
+        </property>
+		<property name="isAbleToSaveSubobjects" type="boolean">
+            <column name="save_subobjects" />
+        </property>
+		<property name="isAbleToSeeSubobjects" type="boolean">
+            <column name="see_subobjects" />
+        </property>
+		<property name="isAbleToSeeViewpoints" type="boolean">
+            <column name="see_viewpoints" />
+        </property>
+        <property name="isAbleToSeeSnapshots" type="boolean">
+            <column name="see_snapshots" />
+        </property>
+        <property name="isAbleToSeeNotes" type="boolean">
+            <column name="see_notes" />
+        </property>
+        <property name="isAbleToSendMail" type="boolean">
+            <column name="send_mail" />
+        </property>
+        <property name="isAbleToSaveIntoPersonalFolder" type="boolean">
+            <column name="save_into_folder" />
+        </property>
+        <property name="isAbleToSaveRememberMe" type="boolean">
+            <column name="save_remember_me" />
+        </property>
+        <property name="isAbleToSeeMetadata" type="boolean">
+            <column name="see_metadata" />
+        </property>
+        <property name="isAbleToSaveMetadata" type="boolean">
+            <column name="save_metadata" />
+        </property>
+        <property name="isAbleToBuildQbeQuery" type="boolean">
+            <column name="build_qbe_query" />
+        </property>
+        <set name="sbiFuncRoles" inverse="true">
+            <key>
+                <column name="role_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" />
+        </set>
+        <set name="sbiParuseDets" inverse="true">
+            <key>
+                <column name="ext_role_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" />
+        </set>
+    </class>
+</hibernate-mapping>

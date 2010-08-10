@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PAGES>
+  <PAGE name="KpiPage" class="it.eng.spago.dispatching.module.ConfigurablePage"
+    scope="REQUEST">
+    <GRAPH id="kpi-2">
+      <MODULES>
+        <MODULE id="1" name="ListKpiModule" />
+        <MODULE id="2" name="DetailKpiModule" />
+      </MODULES>
+    </GRAPH>
+  </PAGE>
+</PAGES>

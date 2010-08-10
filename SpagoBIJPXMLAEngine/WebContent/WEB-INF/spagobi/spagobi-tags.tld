@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>spagobi-jpivot</short-name>
+	<uri>http://spagobi.eng.it</uri>
+	<display-name>spagobi-jpivot</display-name>
+	<description>
+	    SpagoBI JPivot Tag Library.
+	</description>
+	<tag>
+	<name>saveAnalysis</name>
+		<tag-class>it.eng.spagobi.jpivotaddins.analysis.SaveAnalysisTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>
+			Save analysis bean creation
+		</description>
+		<attribute>
+			<name>id</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Name of the Session Attribute that is created by this tag</description>
+		</attribute>
+	</tag>
+</taglib>

@@ -1,0 +1,292 @@
+<html>
+<head>
+  <script src="../../lib/OpenLayers.js"></script>
+  <script type="text/javascript">
+    function test_Handler_Feature_constructor(t) {
+        t.plan(4);
+        var control = new OpenLayers.Control();
+        control.id = Math.random();
+        var layer = "boo";
+        var callbacks = {foo: "bar"};
+        var options = {bar: "foo"};
+        
+        var oldInit = OpenLayers.Handler.prototype.initialize;
+        
+        OpenLayers.Handler.prototype.initialize = function(con, call, opt) {
+            t.eq(con.id, control.id,
+                 "constructor calls parent with the correct control");
+            t.eq(call, callbacks,
+                 "constructor calls parent with the correct callbacks");
+            t.eq(opt, options,
+                 "constructor calls parent with the correct options");
+        }
+        var handler = new OpenLayers.Handler.Feature(control, layer,
+                                                     callbacks, options);
+        
+        t.eq(handler.layer, "boo",
+             "layer property properly set");
+
+        OpenLayers.Handler.prototype.initialize = oldInit;
+    }
+
+    function test_Handler_Feature_activate(t) {
+        t.plan(3);
+        var map = new OpenLayers.Map('map');
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        map.addLayer(layer);
+        var handler = new OpenLayers.Handler.Feature(control, layer);
+        handler.active = true;
+        var activated = handler.activate();
+        t.ok(!activated,
+             "activate returns false if the handler was already active");
+        handler.active = false;
+        
+        var zIndex = layer.div.style.zIndex;
+        activated = handler.activate();
+        t.ok(activated,
+             "activate returns true if the handler was not already active");
+        t.eq(parseInt(layer.div.style.zIndex),
+             map.Z_INDEX_BASE['Feature'],
+             "layer z-index properly adjusted");
+        
+    }
+    function test_Handler_Feature_events(t) {
+        t.plan(25);
+        
+        var map = new OpenLayers.Map('map');
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        map.addLayer(layer);
+        var handler = new OpenLayers.Handler.Feature(control, layer);
+ 
+        // list below events that should be handled (events) and those
+        // that should not be handled (nonevents) by the handler
+        var events = ["mousedown", "mouseup", "mousemove", "click", "dblclick"];
+        var nonevents = ["mouseout", "resize", "focus", "blur"];
+        map.events.registerPriority = function(type, obj, func) {
+            var output = func();
+            // Don't listen for setEvent handlers (#902)
+            if (typeof output == "string") {
+                t.eq(OpenLayers.Util.indexOf(nonevents, type), -1,
+                     "registered method is not one of the events " +
+                     "that should not be handled");
+                t.ok(OpenLayers.Util.indexOf(events, type) > -1,
+                     "activate calls registerPriority with browser event: " + type);
+                t.eq(typeof func, "function",
+                     "activate calls registerPriority with a function");
+                t.eq(func(), type,
+                     "activate calls registerPriority with the correct method:"+type);
+                t.eq(obj["CLASS_NAME"], "OpenLayers.Handler.Feature",
+                     "activate calls registerPriority with the handler");
+            }     
+        }
+        
+        // set browser event like properties on the handler
+        for(var i=0; i<events.length; ++i) {
+            setMethod(events[i]);
+        }
+        function setMethod(key) {
+            handler[key] = function() {return key};
+        }
+ 
+        var activated = handler.activate();
+ 
+    }
+ 
+    function test_Handler_feature_geometrytype_limit(t) {
+        t.plan(1);
+        var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(0,0));
+        var map = new OpenLayers.Map('map');
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        layer.getFeatureFromEvent = function(evt) { return feature };
+        map.addLayer(layer);
+        var handler = new OpenLayers.Handler.Feature(control, layer, {}, {'geometryTypes':['OpenLayers.Geometry.Point']});
+        handler.activate();
+        handler.callback = function(type,featurelist) {
+            t.eq(featurelist[0].id, feature.id, "Correct feature called back on");
+        }
+        handler.handle({type: "click"});
+        handler.feature = null;
+        handler.lastFeature = null;
+        handler.callback = function(type,featurelist) {
+            t.fail("Shouldn't have called back on " + featurelist[0].geometry);
+        }    
+        feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(0,0));
+        handler.handle("click", {}); 
+    }
+
+    function test_Handler_Feature_callbacks(t) {
+        t.plan(9);
+        
+        var map = new OpenLayers.Map('map', {controls: []});
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        map.addLayer(layer);
+ 
+        var callbacks = {};
+        var newFeature, lastFeature;
+        var evtPx = {xy: new OpenLayers.Pixel(Math.random(), Math.random())};
+ 
+        // define a callback factory function
+        function getCallback(evt, feature) {
+            return function(f) {
+                t.ok(f == feature, evt + " callback called with proper feature");
+            };
+        }
+ 
+        // override the layer's getFeatureFromEvent func so that it always
+        // returns newFeature
+        layer.getFeatureFromEvent = function(evt) { return newFeature; };
+ 
+        var handler = new OpenLayers.Handler.Feature(control, layer, callbacks);
+        handler.activate();
+
+        // test click in new feature
+        // only 'click' callback should be called
+        handler.feature = null;
+        lastFeature = null;
+        newFeature = new OpenLayers.Feature.Vector();
+        callbacks['click'] = getCallback('click', newFeature);
+        callbacks['clickout'] = getCallback('clickout', lastFeature);
+        evtPx.type = "click";
+        map.events.triggerEvent('click', evtPx);
+
+        // test click in new feature and out of last feature
+        // both 'click' and 'clickout' callbacks should be called
+        lastFeature = newFeature;
+        newFeature = new OpenLayers.Feature.Vector();
+        callbacks['click'] = getCallback('click', newFeature);
+        callbacks['clickout'] = getCallback('clickout', lastFeature);
+        evtPx.type = "click";
+        map.events.triggerEvent('click', evtPx);
+
+        // test click out of last feature
+        // only 'clickout' callback should be called
+        lastFeature = newFeature;
+        newFeature = null;
+        callbacks['click'] = getCallback('click', newFeature);
+        callbacks['clickout'] = getCallback('clickout', lastFeature);
+        evtPx.type = "click";
+        map.events.triggerEvent('click', evtPx);
+
+        layer.getFeatureFromEvent = function(evt) { t.fail("mousemove called getFeatureFromEvent without any mousemove callbacks"); };
+        evtPx.type = "mousemove";
+        map.events.triggerEvent('mousemove', evtPx);
+        layer.getFeatureFromEvent = function(evt) { return newFeature; };
+        
+        // test over a new feature
+        // only 'over' callback should be called
+        handler.feature = null;
+        lastFeature = null;
+        newFeature = new OpenLayers.Feature.Vector();
+        callbacks['over'] = getCallback('over', newFeature);
+        callbacks['out'] = getCallback('out', lastFeature);
+        evtPx.type = "mousemove";
+        map.events.triggerEvent('mousemove', evtPx);
+
+        // test over a new feature and out of last feature
+        // both 'over' and 'out' callbacks should be called
+        lastFeature = newFeature;
+        newFeature = new OpenLayers.Feature.Vector();
+        callbacks['over'] = getCallback('over', newFeature);
+        callbacks['out'] = getCallback('out', lastFeature);
+        evtPx.type = "mousemove";
+        map.events.triggerEvent('mousemove', evtPx);
+
+        // test out of last feature
+        // only 'out' callback should be called
+        lastFeature = newFeature;
+        newFeature = null;
+        callbacks['over'] = getCallback('over', newFeature);
+        callbacks['out'] = getCallback('out', lastFeature);
+        evtPx.type = "mousemove";
+        map.events.triggerEvent('mousemove', evtPx);
+
+        // test dblclick on a feature
+        // 'dblclick' callback should be called
+        handler.feature = null;
+        lastFeature = null;
+        newFeature = new OpenLayers.Feature.Vector();
+        callbacks['dblclick'] = getCallback('dblclick', newFeature);
+        evtPx.type = "dblclick";
+        map.events.triggerEvent('dblclick', evtPx);
+    }
+
+    function test_Handler_Feature_deactivate(t) {
+        t.plan(3);
+        var map = new OpenLayers.Map('map');
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        map.addLayer(layer);
+        var layerIndex = parseInt(layer.div.style.zIndex);
+        
+        var handler = new OpenLayers.Handler.Feature(control, layer);
+        handler.active = false;
+        var deactivated = handler.deactivate();
+        t.ok(!deactivated,
+             "deactivate returns false if the handler was not already active");
+        
+        handler.active = true;
+
+        deactivated = handler.deactivate();
+        t.ok(deactivated,
+             "deactivate returns true if the handler was active already");
+        t.eq(parseInt(layer.div.style.zIndex),
+             layerIndex,
+             "deactivate sets the layer z-index back");
+    }
+
+    function test_Handler_Feature_stopHandled(t) {
+        t.plan(3);
+        var map = new OpenLayers.Map('map');
+        var control = new OpenLayers.Control();
+        map.addControl(control);
+        var layer = new OpenLayers.Layer();
+        map.addLayer(layer);
+        var handler = new OpenLayers.Handler.Feature(control, layer);
+        handler.activate();
+        handler.handle = function(evt) { return /* handled */ true; };
+        var  evtPx = {xy: new OpenLayers.Pixel(Math.random(), Math.random())};
+        map.events.register("click", map, function(e) {
+            t.ok(!handler.stopClick, "clicks propagate with stopClick set to false" );
+        });
+        map.events.register("mousedown", map, function(e) {
+            t.ok(!handler.stopDown, "mousedown propagate with stopDown set to false" );
+        });
+        map.events.register("mouseup", map, function(e) {
+            t.ok(!handler.stopUp, "mouseup propagate with stopUp set to false" );
+        });
+
+        // 0 test
+        map.events.triggerEvent('click', evtPx);
+        // 0 test
+        map.events.triggerEvent('mousedown', evtPx);
+        // 0 test
+        map.events.triggerEvent('mousedown', evtPx);
+
+        // 1 test
+        handler.stopClick = false;
+        map.events.triggerEvent('click', evtPx);
+        // 1 test
+        handler.stopDown = false;
+        map.events.triggerEvent('mousedown', evtPx);
+        // 1 test
+        handler.stopUp = false;
+        map.events.triggerEvent('mouseup', evtPx);
+        
+        // 3 tests total
+    }
+
+  </script>
+</head>
+<body>
+    <div id="map" style="width: 300px; height: 150px;"/>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+
+	<ACTION name="LIST_ENGINES_ACTION" 
+			class="it.eng.spagobi.chiron.ListEnginesAction"  
+			scope="REQUEST">	
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="LIST_DOMAINS_BY_TYPE_ACTION" 
+			class="it.eng.spagobi.chiron.ListDomainsByType"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SAVE_ENGINE_ACTION" 
+			class="it.eng.spagobi.chiron.SaveEngineAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+</ACTIONS>
+

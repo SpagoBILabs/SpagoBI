@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MODULES>
+
+	<!-- MODEL -->
+	<MODULE name="ListModelModule" class="it.eng.spagobi.kpi.model.service.ListModelModule">
+		<CONFIG pool="spagobi" rows="10" title="sbi.kpi.list.model.title">
+		<QUERIES>
+        <SELECT_QUERY>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+          <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" scope="" type="ABSOLUTE" value="true" />
+        </SELECT_QUERY>
+        </QUERIES>
+			<COLUMNS>
+				<COLUMN label="sbi.kpi.label.code" name="CODE" />
+				<COLUMN label="sbi.kpi.label.name" name="NAME" />
+			</COLUMNS>
+			<CAPTIONS>
+				<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif"
+					label="sbi.kpi.caption.select">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailModelModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_SELECT" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</SELECT_CAPTION>
+				<TREE_CAPTION confirm="FALSE" image="/img/kpi/treeView16.png"
+					label="sbi.kpi.caption.tree">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelTreePage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="ListModelTreeModule" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</TREE_CAPTION>
+				<DELETE_CAPTION confirm="TRUE" image="/img/erase.gif"
+					label="sbi.kpi.caption.delete">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE" value="ListModelModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="LIST_DELETE" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</DELETE_CAPTION>
+			</CAPTIONS>
+			<BUTTONS>
+				<INSERT_BUTTON confirm="TRUE" image="/img/new.png"
+					label="sbi.kpi.button.insert.title">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailModelModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_NEW" />
+				</INSERT_BUTTON>
+				<BACK_BUTTON confirm="FALSE" image="/img/back.png"
+					label="sbi.kpi.button.back.title" onlyPortletRunning="true">
+					<PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE"
+						value="LOGIN_ACTION_KPI_CONFIGURATION" />
+					<PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE"
+						value="true" />
+				</BACK_BUTTON>
+			</BUTTONS>
+		</CONFIG>
+	</MODULE>
+	
+	<MODULE name="DetailModelModule"
+		class="it.eng.spagobi.kpi.model.service.DetailModelModule">
+		<CONFIG pool="spagobi" title="sbi.kpi.detail.model.title">
+		</CONFIG>
+	</MODULE>
+
+	<MODULE name="ListModelTreeModule"
+		class="it.eng.spagobi.kpi.model.service.ListModelTreeModule">
+		<CONFIG pool="spagobi" rows="10000" title="sbi.kpi.list.model.tree.title">
+			<COLUMNS />
+			<CAPTIONS />
+			<BUTTONS />
+		</CONFIG>
+	</MODULE>
+
+	<MODULE name="DetailModelTreeModule"
+		class="it.eng.spagobi.kpi.model.service.DetailModelTreeModule">
+		<CONFIG pool="spagobi" rows="10000" title="sbi.kpi.detail.model.tree.title">
+			<COLUMNS />
+			<CAPTIONS />
+			<BUTTONS />
+		</CONFIG>
+	</MODULE>
+	
+	<!--/ MODEL -->
+	
+	<!--  MODEL INSTANCE -->
+	
+		<MODULE name="ListModelInstanceModule" class="it.eng.spagobi.kpi.model.service.ListModelInstanceModule">
+		<CONFIG pool="spagobi" rows="10" title="sbi.kpi.list.model.instance.title">
+		<QUERIES>
+        <SELECT_QUERY>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+          <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" scope="" type="ABSOLUTE" value="true" />
+        </SELECT_QUERY>
+        </QUERIES>
+			<COLUMNS>
+				<COLUMN label="sbi.kpi.label.name" name="NAME" />
+			</COLUMNS>
+			<CAPTIONS>
+				<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif"
+					label="sbi.kpi.caption.select">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelInstancePage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailModelInstanceModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_SELECT" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</SELECT_CAPTION>
+				<RESOURCES_CAPTION confirm="FALSE" image="/img/rememberMe22.png"
+					label="sbi.kpi.caption.resources">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelResourcesPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE" value="ListModelResourcesModule" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</RESOURCES_CAPTION>
+				<TREE_CAPTION confirm="FALSE" image="/img/kpi/treeView16.png"
+					label="sbi.kpi.caption.tree">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelInstanceTreePage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="ListModelInstanceTreeModule" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</TREE_CAPTION>
+				<DOCUMENT_CAPTION confirm="FALSE" image="/img/objecticon.gif"
+					label="sbi.kpi.model.detail.report">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ExecuteBIObjectPage" />
+					<PARAMETER name="OBJECT_LABEL" scope="" type="ABSOLUTE" value="ModelInstanceReport" />
+					<PARAMETER name="outputType" scope="" type="ABSOLUTE" value="PDF" />
+					<PARAMETER name="KPI_MODEL_INST" scope="LOCAL" type="RELATIVE" value="ID" />
+				</DOCUMENT_CAPTION>
+				
+				<DELETE_CAPTION confirm="TRUE" image="/img/erase.gif"
+					label="sbi.kpi.caption.delete">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelInstancePage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE" value="ListModelInstanceModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="LIST_DELETE" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</DELETE_CAPTION>
+			</CAPTIONS>
+			<BUTTONS>
+				<INSERT_BUTTON confirm="TRUE" image="/img/new.png"
+					label="sbi.kpi.button.insert.title">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelInstancePage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailModelInstanceModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_NEW" />
+				</INSERT_BUTTON>
+				<BACK_BUTTON confirm="FALSE" image="/img/back.png"
+					label="sbi.kpi.button.back.title" onlyPortletRunning="true">
+					<PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE"
+						value="LOGIN_ACTION_KPI_CONFIGURATION" />
+					<PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE"
+						value="true" />
+				</BACK_BUTTON>
+			</BUTTONS>
+		</CONFIG>
+	</MODULE>
+	
+	<MODULE name="DetailModelInstanceModule"
+		class="it.eng.spagobi.kpi.model.service.DetailModelInstanceModule">
+		<CONFIG pool="spagobi" title="sbi.kpi.detail.model.instance.title">
+		</CONFIG>
+	</MODULE>
+
+	<MODULE name="ListModelInstanceTreeModule"
+		class="it.eng.spagobi.kpi.model.service.ListModelInstanceTreeModule">
+		<CONFIG pool="spagobi" rows="10000" title="sbi.kpi.list.model.instance.tree.title">
+			<COLUMNS />
+			<CAPTIONS />
+			<BUTTONS />
+		</CONFIG>
+	</MODULE>
+
+	<MODULE name="DetailModelInstanceTreeModule"
+		class="it.eng.spagobi.kpi.model.service.DetailModelInstanceTreeModule">
+		<CONFIG pool="spagobi" rows="10000" title="sbi.kpi.detail.model.instance.tree.title">
+			<COLUMNS />
+			<CAPTIONS />
+			<BUTTONS />
+		</CONFIG>
+	</MODULE>
+	
+	<!--/  MODEL INSTANCE -->
+	
+	<!--  RESOURCES -->
+	
+	<MODULE name="ListResourcesModule" class="it.eng.spagobi.kpi.model.service.ListResourcesModule">
+		<CONFIG pool="spagobi" rows="10" title="sbi.kpi.list.resources.title">
+		<QUERIES>
+        <SELECT_QUERY>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+          <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" scope="" type="ABSOLUTE" value="true" />
+        </SELECT_QUERY>
+        </QUERIES>
+			<COLUMNS>
+				<COLUMN label="sbi.kpi.label.name" name="NAME" />
+			</COLUMNS>
+			<CAPTIONS>
+				<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif"
+					label="sbi.kpi.caption.select">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ResourcesPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailResourcesModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_SELECT" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</SELECT_CAPTION>
+				<DELETE_CAPTION confirm="TRUE" image="/img/erase.gif"
+					label="sbi.kpi.caption.delete">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ResourcesPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE" value="ListResourcesModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="LIST_DELETE" />
+					<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+				</DELETE_CAPTION>
+			</CAPTIONS>
+			<BUTTONS>
+				<INSERT_BUTTON confirm="TRUE" image="/img/new.png"
+					label="sbi.kpi.button.insert.title">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ResourcesPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE"
+						value="DetailResourcesModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_NEW" />
+				</INSERT_BUTTON>
+				<BACK_BUTTON confirm="FALSE" image="/img/back.png"
+					label="sbi.kpi.button.back.title" onlyPortletRunning="true">
+					<PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE"
+						value="LOGIN_ACTION_KPI_CONFIGURATION" />
+					<PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE"
+						value="true" />
+				</BACK_BUTTON>
+			</BUTTONS>
+		</CONFIG>
+	</MODULE>
+	
+	<MODULE name="DetailResourcesModule"
+		class="it.eng.spagobi.kpi.model.service.DetailResourcesModule">
+		<CONFIG pool="spagobi" title="sbi.kpi.detail.resources.title">
+		</CONFIG>
+	</MODULE>
+
+	<!--/  RESOURCES -->
+	<!-- SBI KPI MODEL  RESOURCES -->
+	
+	<MODULE name="ListModelResourcesModule" class="it.eng.spagobi.kpi.model.service.ListModelResourcesModule">
+		<CONFIG pool="spagobi" rows="10" title="sbi.kpi.list.modelResources.title">
+		<QUERIES>
+        <SELECT_QUERY>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+          <ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+          <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" scope="" type="ABSOLUTE" value="true" />
+        </SELECT_QUERY>
+        </QUERIES>
+			<COLUMNS>
+				<COLUMN label="sbi.kpi.label.name" name="NAME" />
+				<COLUMN label="sbi.kpi.label.selected" name="SELECTED" />
+			</COLUMNS>
+			<CAPTIONS>
+				<SELECT_CAPTION confirm="FALSE" image="/img/button_ok.gif" label="sbi.kpi.caption.select">	
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelResourcesPage" />
+					<PARAMETER name="MODULE" scope="" type="ABSOLUTE" value="ListModelResourcesModule" />
+					<PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_SELECT" />
+					<PARAMETER name="RESOURCEID" scope="LOCAL" type="RELATIVE" value="RESOURCEID" />
+          			<PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID" />
+          		</SELECT_CAPTION>
+			</CAPTIONS>
+			<BUTTONS>
+				<BACK_BUTTON confirm="FALSE" image="/img/back.png"
+					label="sbi.kpi.button.back.title" onlyPortletRunning="false">
+					<PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ModelInstancePage" />
+				</BACK_BUTTON>
+			</BUTTONS>
+		</CONFIG>
+	</MODULE>
+
+	<!--/  SBI KPI MODEL  RESOURCES -->
+	
+</MODULES>

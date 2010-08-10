@@ -1,0 +1,8 @@
+com.allen_sauer.gwt.log.client.ClientStackTraceElement, true
+[Lcom.allen_sauer.gwt.log.client.ClientStackTraceElement;, true
+com.allen_sauer.gwt.log.client.WrappedClientThrowable, true
+com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException, true
+java.lang.Exception, false
+java.lang.RuntimeException, false
+java.lang.String, true
+java.lang.Throwable, false

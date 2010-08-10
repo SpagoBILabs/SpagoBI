@@ -1,0 +1,82 @@
+version: 1
+dn: dc=spagobi,dc=com
+objectClass: dcObject
+objectClass: organization
+dc: spagobi
+o: SpagoBI
+
+dn: ou=People,dc=spagobi,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: cn=biadmin,ou=People,dc=spagobi,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: biadmin
+description: descrizione
+ou: ou=/spagobi/admin,ou=Group,dc=spagobi,dc=com
+sn: biadmin
+telephoneNumber: 051/6563707
+title: Dot.
+userPassword:: e1NIQX1lekhuT0ZDTVlTRmRIMWkzNnNiYVlTbXFDSzg9
+
+dn: cn=bidev,ou=People,dc=spagobi,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: bidev
+description: bidev
+ou: ou=/spagobi/dev,ou=Group,dc=spagobi,dc=com
+sn: bidev
+userPassword:: e1NIQX1uRWJHazcyREZLWWIzcTB2UXNncXgxeitXdkU9
+
+dn: cn=biuser,ou=People,dc=spagobi,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: biuser
+description: biuser
+ou: ou=/spagobi/user,ou=Group,dc=spagobi,dc=com
+sn: biuser
+userPassword:: e1NIQX1GMVBGQXVQQjZNUXBNeS9wRHBGZ0pTQUcvZlk9
+
+dn: cn=bitest,ou=People,dc=spagobi,dc=com
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: bitest
+description: bitest
+ou: ou=/spagobi/test,ou=Group,dc=spagobi,dc=com
+sn: bitest
+
+dn: ou=Group,dc=spagobi,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: Group
+
+dn: ou=/spagobi/admin,ou=Group,dc=spagobi,dc=com
+objectClass: organizationalUnit
+objectClass: top
+description: biadmin
+ou: /spagobi/admin
+
+dn: ou=/spagobi/dev,ou=Group,dc=spagobi,dc=com
+objectClass: organizationalUnit
+objectClass: top
+description: bidev
+ou: /spagobi/dev
+
+dn: ou=/spagobi/test,ou=Group,dc=spagobi,dc=com
+objectClass: organizationalUnit
+objectClass: top
+description: bitest
+ou: /spagobi/test
+
+dn: ou=/spagobi/user,ou=Group,dc=spagobi,dc=com
+objectClass: organizationalUnit
+objectClass: top
+description: biuser
+ou: /spagobi/user
+

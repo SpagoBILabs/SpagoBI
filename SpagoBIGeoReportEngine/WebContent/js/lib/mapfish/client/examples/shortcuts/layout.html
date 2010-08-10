@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shortcuts example in a Complex Layout</title>
+    <link rel="stylesheet" type="text/css" href="../../mfbase/ext/resources/css/ext-all.css" />
+
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/Firebug/firebug.js"></script>
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+
+    <script type="text/javascript" src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+
+    <script type="text/javascript">
+      // Because of a bug in Firefox 2 we need to specify the MapFish base path.
+      // See https://bugzilla.mozilla.org/show_bug.cgi?id=351282
+      var gMfLocation = "../../mfbase/mapfish/";
+    </script>
+    <script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+    <script type="text/javascript" src="../examples.js"></script>
+    
+	<style type="text/css">
+	html, body {
+        font:normal 12px verdana;
+        margin:0;
+        padding:0;
+        border:0 none;
+        overflow:hidden;
+        height:100%;
+    }
+    </style>
+	<script type="text/javascript">
+  
+    // reference local blank image
+    Ext.BLANK_IMAGE_URL = '../../mfbase/ext/resources/images/default/s.gif';
+  
+    Ext.onReady(function(){
+        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+        
+        
+        var map = new OpenLayers.Map($('olmap'));
+
+        var wms = new OpenLayers.Layer.WMS("OpenLayers WMS", 
+            "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'}, {buffer: 0});
+
+        map.addLayers([wms]);
+        map.addControl(new OpenLayers.Control.LayerSwitcher());
+        map.setCenter(new OpenLayers.LonLat(17, 2), 2);
+        
+        var store = new Ext.data.SimpleStore({
+            fields: ['value', 'text', 'bbox'],
+            data : [['OC', 'Oceana', new OpenLayers.Bounds(56.0234375, -72.53125, 214.2265625, 32.9375)],
+                    ['NA', 'North America', new OpenLayers.Bounds(-186.37890625, -2.21875, -28.17578125, 103.25)],
+                    ['SA', 'South America', new OpenLayers.Bounds(-146.828125, -71.828125, 11.375, 33.640625)],
+                    ['AF', 'Africa', new OpenLayers.Bounds(-58.9375, -51.7890625, 99.265625, 53.6796875)],
+                    ['EU', 'Europe', new OpenLayers.Bounds(-23.078125, 26.2578125, 56.0234375, 78.9921875)],
+                    ['AS', 'Asia', new OpenLayers.Bounds(15.59375, -21.90625, 173.796875, 83.5625)]]
+        });
+        
+        var shortcuts = new mapfish.widgets.Shortcuts({
+            map: map,
+            store: store,
+            templates: {
+                header: new Ext.Template("Choose a continent in the list"),
+                footer: new Ext.Template("The map will automatically center to this location")
+            }
+        });
+       
+        var viewport = new Ext.Viewport({
+            layout:'border',
+            items:[
+                new Ext.BoxComponent({ // raw
+                    region:'north',
+                    el: 'north',
+                    height:32
+                }),{
+                    region:'south',
+                    contentEl: 'south',
+                    split:true,
+                    height: 100,
+                    minSize: 100,
+                    maxSize: 200,
+                    collapsible: true,
+                    title:'South',
+                    margins:'0 0 0 0'
+                },{
+                    region:'west',
+                    id:'west-panel',
+                    title:'West',
+                    split:true,
+                    width: 200,
+                    minSize: 175,
+                    maxSize: 400,
+                    collapsible: true,
+                    margins:'0 0 0 5',
+                    layout:'anchor',
+                    layoutConfig:{
+                        animate:true
+                    },
+                    items: [{
+                        contentEl: 'west',
+                        title:'Navigation',
+                        border:false,
+                        iconCls:'nav'
+                    },{
+                        title:'Settings',
+                        html:'<p>Some settings in here.</p>',
+                        border:false,
+                        iconCls:'settings'
+                    },{
+                        title:'Shortcuts',
+                        items: shortcuts,
+                        border:false
+                    }]
+                },{
+                    region:'center',
+                    title: 'Map',
+                    layout: 'fit',
+                    xtype: 'mapcomponent',
+                    map: map
+                }
+             ]
+        });
+    });
+	</script>
+</head>
+<body>
+  <div id="west">
+    <p>Hi. I'm the west panel.</p>
+  </div>
+  <div id="north">
+    <p>MapFish</p>
+  </div>
+  <div id="olmap">
+  </div>
+  <div id="south">
+    <p>south - generally for informational stuff, also could be for status bar</p>
+  </div>
+
+ </body>
+</html>

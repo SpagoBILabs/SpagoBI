@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PAGES>
+
+    
+	<PAGE name="ExoProfileAttributeManagerPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ExoProfileAttributeManagerPage" target="ExoProfileAttributeManagerModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ExoProfileAttributeManagerModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="ExoProfileAttributeManagerListUserPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ExoProfileAttributeManagerListUserPage" target="ExoProfileAttributeManagerListUserModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ExoProfileAttributeManagerListUserModule"/>
+    	</MODULES>
+  	</PAGE>
+
+
+</PAGES>
+

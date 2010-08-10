@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PRESENTATION>
+	<MAPPING business_type="ACTION" 
+			 business_name="GEO_ACTION" 
+			 publisher_name="GEO_PUBLISHER"/>	
+</PRESENTATION>

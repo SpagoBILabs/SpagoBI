@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: SpagoBIGeoEngine.war
+Implementation-Title: SpagoBIGeoEngine
+Implementation-Version: 2.6.0 
+

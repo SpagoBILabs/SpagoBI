@@ -1,0 +1,12 @@
+/*******************************************************************************************************
+ * Model Structure
+ ********************************************************************************************************/
+  
+.has-kpi {
+	 background-image:url(../../img/kpi/kpiico16.png) !important;
+}
+.no-error {
+	 font-weight: normal;
+	 font-style: normal;
+	 text-decoration: none;
+}

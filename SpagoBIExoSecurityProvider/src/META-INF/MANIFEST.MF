@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: sbi.security.exo-2.6.0.jar
+Implementation-Title: SpagoBIExoSecurityProvider
+Implementation-Version: 2.6.0 
+

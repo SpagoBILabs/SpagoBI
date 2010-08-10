@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<Schema name="SbiMonitor">
+  <!-- == $Id: FoodMart.xml,v 1.1 2005/12/13 12:03:52 avix Exp $ == This software is subject to the terms of the Common Public License == Agreement, available at the following URL: == http://www.opensource.org/licenses/cpl.html. == (C) Copyright 2000-2005 Kana Software, Inc. and others. == All Rights Reserved. == You must accept the terms of that agreement to use this software. -->
+  <!-- Shared dimensions -->
+  
+                  <Dimension name="Documents">
+                    <Hierarchy hasAll="true" allMemberName="All Documents" primaryKey="ID">
+                        <Table name="SBI_AUDIT"/>
+                        <Level name="Type" column="DOC_TYPE" uniqueMembers="true"/>
+                        <Level name="Engine" column="ENGINE_NAME" uniqueMembers="false"/>
+                        <Level name="Document" column="DOC_NAME" uniqueMembers="false"/>
+                        <Level name="Modality" column="EXECUTION_MODALITY" uniqueMembers="false"/>
+                    </Hierarchy>
+                  </Dimension>
+                    
+                  <Dimension name="Users">
+                     <Hierarchy hasAll="true" allMemberName="All Users" primaryKey="ID">
+                        <Table name="SBI_AUDIT"/>
+                        <Level name="Group" column="USERGROUP" uniqueMembers="false"/>
+                        <Level name="User" column="USERNAME" uniqueMembers="false"/>
+                    </Hierarchy>
+                  </Dimension>
+                  
+                  <!-- Cubes -->
+                  <Cube name="DocumentMonitor">
+                    <Table name="SBI_AUDIT"/>
+                    <DimensionUsage name="Documents" source="Documents" foreignKey="ID"/>
+                    <DimensionUsage name="Users" source="Users" foreignKey="ID"/>
+                    <Measure name="Requests" column="DOC_ID" aggregator="count" formatString="#,###"/>
+                    <Measure name="Errors" column="ERROR" aggregator="sum" formatString="#,###"/>
+                    <Measure name="Execution time (avg)" column="EXECUTION_TIME" aggregator="avg" formatString="#,###"/>
+                  </Cube>
+</Schema>

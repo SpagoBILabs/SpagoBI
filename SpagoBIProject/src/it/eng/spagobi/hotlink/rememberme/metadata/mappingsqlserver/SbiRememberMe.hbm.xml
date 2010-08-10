@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="it.eng.spagobi.hotlink.rememberme.metadata.SbiRememberMe" table="SBI_REMEMBER_ME">
+        <id name="id" type="integer">
+            <column name="ID" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="50" not-null="true" />
+        </property>
+        <property name="description" type="text">
+            <column name="DESCRIPTION" not-null="false" />
+        </property>
+        <property name="userName" type="string">
+            <column name="USERNAME" length="40" not-null="true" />
+        </property>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="BIOBJ_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiSubObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects">
+            <column name="SUBOBJ_ID" not-null="false" />
+        </many-to-one>
+        <property name="parameters" type="string">
+            <column name="PARAMETERS" not-null="false" />
+        </property>
+     </class>
+</hibernate-mapping>

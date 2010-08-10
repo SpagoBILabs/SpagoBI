@@ -1,0 +1,19 @@
+.contextMenu {
+	background-color: white;
+	position:absolute;
+	left:0;
+	top:0;
+	display:none;
+	border-style:solid;
+	border-color:gray;
+	border-width:1px;
+	padding:2px;
+}
+
+.contextMenuLink {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	text-decoration:none;
+	color:#264899;
+	padding-left:10px;
+}

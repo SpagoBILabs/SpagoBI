@@ -1,0 +1,8 @@
+    mysql -u spagobi-training -p  training250
+    
+    enter pwd: kcidf765fffbvfbv14
+    
+    
+    /*dopo aver portato il file sql sul server*/
+    
+    source /home/spagobi/uppercase-spagobi.sql

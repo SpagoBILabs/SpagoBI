@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SECURITY-CONFIGURATION>
+	<KEYS>
+		<SPAGOBI_PUBLIC_KEY_DSA keyname="spagobi_publickey" />
+	</KEYS>
+</SECURITY-CONFIGURATION>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory name="HibernateSessionFactoryMySQL">
+    	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi_nw</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
+
+        <mapping resource="it/eng/spagobi/events/metadata/mappingmysql/SbiEvents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/events/metadata/mappingmysql/SbiEventsLog.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiDomains.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiEventRole.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiExtRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiUserFunctionality.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappingmysql/SbiParameters.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappingmysql/SbiParuseDet.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappingmysql/SbiParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappingmysql/SbiParuseCk.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappingmysql/SbiObjParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mappingmysql/SbiLov.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/check/metadata/mappingmysql/SbiChecks.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjPar.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjects.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjectsRating.hbm.xml" />          
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjFunc.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjState.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiSubreports.hbm.xml"/>
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiViewpoints.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mappingmysql/SbiFunctions.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mappingmysql/SbiFuncRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/monitoring/metadata/mappingmysql/SbiAudit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mappingmysql/SbiEngines.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mappingmysql/SbiExporters.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/datasource/metadata/mappingmysql/SbiDataSource.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingmysql/SbiDistributionList.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingmysql/SbiDistributionListsObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingmysql/SbiDistributionListUser.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/commons/metadata/mappingmysql/SbiBinContents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjTemplates.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiObjNotes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiSubObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappingmysql/SbiSnapshots.hbm.xml" />
+        
+
+        <!-- map catalogue -->
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappingmysql/SbiGeoMapFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappingmysql/SbiGeoFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappingmysql/SbiGeoMaps.hbm.xml" />
+        
+        <!-- dossier -->
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappingmysql/SbiDossierBinaryContentsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappingmysql/SbiDossierPartsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappingmysql/SbiDossierPresentations.hbm.xml" />
+        
+        <!-- rememberMe -->
+        <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mappingmysql/SbiRememberMe.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappingmysql/SbiDataSetConfig.hbm.xml" />
+        
+         <!-- KPI Engine -->
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstance.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstPeriod.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstanceHistory.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelAttr.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelAttrVal.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelInst.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiPeriodicity.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiMeasureUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappingmysql/SbiThreshold.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappingmysql/SbiThresholdValue.hbm.xml" />
+        
+         <!-- Menu -->
+        <mapping resource="it/eng/spagobi/wapp/metadata/mappingmysql/SbiMenu.hbm.xml" />
+        <mapping resource="it/eng/spagobi/wapp/metadata/mappingmysql/SbiMenuRole.hbm.xml" />
+        
+        <!-- Kpi.alarm -->
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappingmysql/SbiAlarm.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappingmysql/SbiAlarmEvent.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappingmysql/SbiAlarmContact.hbm.xml" />
+        
+         <!-- Obj Metadata -->
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mappingmysql/SbiObjMetadata.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mappingmysql/SbiObjMetacontents.hbm.xml" />
+        <!-- PROFILING -->
+
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiAttribute.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" /> 
+        <!-- end mapping -->
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiUserFunctionality" usage="read-only"/>
+        <class-cache class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" usage="nonstrict-read-write"/>
+        <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
+        <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
+        <!-- 
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/>
+	 	-->
+		<!--   class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions" usage="nonstrict-read-write"/ -->
+		<!--  collection-cache collection="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions.sbiFuncRoles" usage="nonstrict-read-write"/ -->   
+		        
+    </session-factory>
+</hibernate-configuration>

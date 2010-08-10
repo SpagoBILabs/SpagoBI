@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PUBLISHERS>
+	 
+  	<PUBLISHER name="listRolesJsp">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/roles/listRoles.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/roles/listRoles.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>    	
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DetailRolesPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.tools.role.presentation.DetailRolesPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.tools.role.presentation.DetailRolesPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>   	 	
+  	</PUBLISHER>
+
+</PUBLISHERS>

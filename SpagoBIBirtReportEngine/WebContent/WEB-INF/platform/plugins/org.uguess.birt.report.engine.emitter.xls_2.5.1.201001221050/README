@@ -1,0 +1,74 @@
+Xls emitter for BIRT (Tribix) 
+[Version 2.5.1]
+===============================
+
+Features
+-------------
+1. Basic XLS output support for BIRT.
+2. Support specific page ranges for ouput, e.g. "1-3", "odd", "1,3,5-7".
+3. Support output fixed-column-width sheet(aka. neat mode)(experimental).
+4. Support specify show/hide grid lines in output.
+5. Support specify remove/keep blank rows in output.
+6. Support export page body only(e.g. not include page header/footer)
+7. Support export all pages as one single sheet.
+8. Support customizable sheet name based on report content.
+
+Change Log
+-------------
+1. Update POI dependency to 3.5 final.
+2. Fixed totol page support(BIRT 2.5.1 or above).
+3. Added customizable sheet name support.
+
+Compatibility
+-------------
+This version is only compatible with BIRT 2.5 series, NOT compatible with any earlier version. 
+Later BIRT version may work, but not guaranteed.
+
+(Note for user who works with earlier version of BIRT before 2.5, please also use the earlier version of Tribix)
+
+Known Issues
+-------------
+1. Neat mode is experimental and may result wrong in some cases. Please switch back to normal mode if you encounter problems.
+
+Installation
+-------------
+1. Ensure BIRT is installed and can be run correctly first.
+
+2. Extract the downloaded plugin file into the eclipse plugins directory.
+
+3*. Download Apahce POI and JEXL library from apache site, put it in the /lib directory under the extracted plugin folder.
+
+4. Ok, now create a report as usual and choose preview as XLS, enjoy:)
+
+(Note you may need remove built-in BIRT XLS emitter to enable the Tribix version and restart eclipse with "-clean" option once,
+ the built-in emitter normally is named as org.eclipse.birt.report.engine.emitter.prototype.excel_*.)
+
+POI Related
+-------------
+*  Current tested and recommended version is poi-3.5-FINAL-20090928.jar.
+*  Any earlier version of POI is not supported as there are some essential api change in later version.
+
+JEXL Related
+-------------
+*  Current tested and recommended version is commons-jexl-1.1.jar.
+*  JEXL requires Apache Commons Logging support. The recommended version is commons-logging-1.1.1.jar.
+
+Support
+-------------
+Please visit https://sourceforge.net/projects/tribix for more detail.
+
+Dependencies
+-------------
+To build the source or run, you need the Jakata POI and JEXL library to be under your plugin lib directory.
+
+Jakarta POI - great library to manipulate Microsoft Format Files from pure Java
+
+    http://jakarta.apache.org/poi/ 
+    
+JEXL - Java Expression Language (JEXL)
+
+    http://commons.apache.org/jexl/
+
+Legal
+------------
+This software is distributed under the terms of the FSF Lesser GNU Public License (see LICENSE).

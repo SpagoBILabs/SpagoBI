@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MODULES>
+    
+	<MODULE class="it.eng.spagobi.tools.dataset.service.ListDataSetModule" name="ListDataSetModule">
+	    <CONFIG pool="spagobi" rows="30" title="SBISet.ListDataSet.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_DATASET">
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="SBISet.ListDataSet.columnLabel" name="LABEL" />	        
+	        <COLUMN label="SBISet.ListDataSet.columnName" name="NAME" />	        
+	        <COLUMN label="SBISet.ListDataSet.columnDescr" name="DESCR" />
+	        <COLUMN label="SBISet.ListDataSet.columnType" name="TYPE" />
+	        <COLUMN label="SBISet.ListDataSet.columnNum" name="NUM_BIOBJECTS"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+	      	<SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBISet.ListDataSet.detailButton">
+	          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSetPage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+		          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+		          <!-- PARAMETER name="NAME" scope="LOCAL" type="RELATIVE" value="NAME"/>
+		          <PARAMETER name="DESCR" scope="LOCAL" type="RELATIVE" value="DESCR"/-->
+		     </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBISet.ListDataSet.deleteButton">
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSetPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="SBISet.ListDataSet.InsertButton">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailDataSetPage"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBISet.ListDataSet.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIResourcesPublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+
+
+    
+    <MODULE class="it.eng.spagobi.tools.dataset.service.DetailDataSetModule" name="DetailDataSetModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    	<MODULE class="it.eng.spagobi.tools.dataset.service.ListTestDataSetModule" name="ListTestDataSetModule">
+	</MODULE> 
+</MODULES>
+

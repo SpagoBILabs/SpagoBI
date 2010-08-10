@@ -1,0 +1,137 @@
+        <div class="body-wrap">
+        <div class="top-tools">
+            <a class="inner-link" href="#Ext.air.SystemTray-props"><img src="../resources/images/default/s.gif" class="item-icon icon-prop">Properties</a>
+            <a class="inner-link" href="#Ext.air.SystemTray-methods"><img src="../resources/images/default/s.gif" class="item-icon icon-method">Methods</a>
+            <a class="inner-link" href="#Ext.air.SystemTray-events"><img src="../resources/images/default/s.gif" class="item-icon icon-event">Events</a>
+                        <a class="bookmark" href="../docs/?class=Ext.air.SystemTray"><img src="../resources/images/default/s.gif" class="item-icon icon-fav">Direct Link</a>
+        </div>
+                <h1>Class Ext.air.SystemTray</h1>
+        <table cellspacing="0">
+            <tr><td class="label">Package:</td><td class="hd-info">Ext.air</td></tr>
+            <tr><td class="label">Defined In:</td><td class="hd-info"><a href="../src/SystemTray.js" target="_blank">SystemTray.js</a></td></tr>
+            <tr><td class="label">Class:</td><td class="hd-info">SystemTray</td></tr>
+                                    <tr><td class="label">Extends:</td><td class="hd-info">Object</td></tr>
+                    </table>
+        <div class="description">
+            *<br><br><i>This class is a singleton and cannot be created directly.</i>        </div>
+        
+        <div class="hr"></div>
+                <a id="Ext.air.SystemTray-props"></a>
+        <h2>Public Properties</h2>
+        <div class="no-members">This class has no public properties.</div>        <a id="Ext.air.SystemTray-methods"></a>
+        <h2>Public Methods</h2>
+                <table cellspacing="0" class="member-table">
+            <tr>
+                <th class="sig-header" colspan="2">Method</th>
+                <th class="msource-header">Defined By</th>
+            </tr>
+                <tr class="method-row expandable">
+        <td class="micon"><a class="exi" href="#expand">&nbsp;</a></td>
+        <td class="sig">
+        <a id="Ext.air.SystemTray-bounce"></a>
+            <b>bounce</b>(&nbsp;<code>priority {air.NotificationType}</code>&nbsp;) : void            <div class="mdesc">
+                        <div class="short">Bounce the OS X dock icon. Accepts a priority to notify the user
+whether the event which has just occurred is informa...</div>
+            <div class="long">
+                Bounce the OS X dock icon. Accepts a priority to notify the user
+whether the event which has just occurred is informational (single bounce)
+or critcal (continual bounce).    <div class="mdetail-params">
+        <strong>Parameters:</strong>
+        <ul><li><code>{air.NotificationType}</code> : priority<div class="sub-desc">The priorities are air.NotificationType.INFORMATIONAL and air.NotificationType.CRITICAL.</div></li>        </ul>
+        <strong>Returns:</strong>
+        <ul>
+            <li><code>void</code></li>
+        </ul>
+    </div>
+                </div>
+                        </div>
+        </td>
+        <td class="msource">SystemTray</td>
+    </tr>
+        <tr class="method-row alt expandable">
+        <td class="micon"><a class="exi" href="#expand">&nbsp;</a></td>
+        <td class="sig">
+        <a id="Ext.air.SystemTray-hideIcon"></a>
+            <b>hideIcon</b>() : void            <div class="mdesc">
+                        <div class="short">Hide the custom icon</div>
+            <div class="long">
+                Hide the custom icon    <div class="mdetail-params">
+        <strong>Parameters:</strong>
+        <ul><li>None.</li>        </ul>
+        <strong>Returns:</strong>
+        <ul>
+            <li><code>void</code></li>
+        </ul>
+    </div>
+                </div>
+                        </div>
+        </td>
+        <td class="msource">SystemTray</td>
+    </tr>
+        <tr class="method-row expandable">
+        <td class="micon"><a class="exi" href="#expand">&nbsp;</a></td>
+        <td class="sig">
+        <a id="Ext.air.SystemTray-setIcon"></a>
+            <b>setIcon</b>(&nbsp;<code>String icon</code>, <code>String tooltip</code>, <code>Boolean initWithIcon</code>&nbsp;) : void            <div class="mdesc">
+                        <div class="short">Sets the Icon and tooltip for the currently running application in the
+SystemTray or Dock depending on the operating ...</div>
+            <div class="long">
+                Sets the Icon and tooltip for the currently running application in the
+SystemTray or Dock depending on the operating system.    <div class="mdetail-params">
+        <strong>Parameters:</strong>
+        <ul><li><code>icon</code> : String<div class="sub-desc">Icon to load with a URLRequest</div></li><li><code>tooltip</code> : String<div class="sub-desc">Tooltip to use when mousing over the icon</div></li><li><code>initWithIcon</code> : Boolean<div class="sub-desc">Boolean to initialize with icon immediately</div></li>        </ul>
+        <strong>Returns:</strong>
+        <ul>
+            <li><code>void</code></li>
+        </ul>
+    </div>
+                </div>
+                        </div>
+        </td>
+        <td class="msource">SystemTray</td>
+    </tr>
+        <tr class="method-row alt expandable">
+        <td class="micon"><a class="exi" href="#expand">&nbsp;</a></td>
+        <td class="sig">
+        <a id="Ext.air.SystemTray-setMenu"></a>
+            <b>setMenu</b>(&nbsp;<code>Array actions</code>&nbsp;) : void            <div class="mdesc">
+                        <div class="short">Sets a menu for the icon</div>
+            <div class="long">
+                Sets a menu for the icon    <div class="mdetail-params">
+        <strong>Parameters:</strong>
+        <ul><li><code>actions</code> : Array<div class="sub-desc">Configurations for Ext.air.MenuItem's</div></li>        </ul>
+        <strong>Returns:</strong>
+        <ul>
+            <li><code>void</code></li>
+        </ul>
+    </div>
+                </div>
+                        </div>
+        </td>
+        <td class="msource">SystemTray</td>
+    </tr>
+        <tr class="method-row expandable">
+        <td class="micon"><a class="exi" href="#expand">&nbsp;</a></td>
+        <td class="sig">
+        <a id="Ext.air.SystemTray-showIcon"></a>
+            <b>showIcon</b>() : void            <div class="mdesc">
+                        <div class="short">Show the custom icon</div>
+            <div class="long">
+                Show the custom icon    <div class="mdetail-params">
+        <strong>Parameters:</strong>
+        <ul><li>None.</li>        </ul>
+        <strong>Returns:</strong>
+        <ul>
+            <li><code>void</code></li>
+        </ul>
+    </div>
+                </div>
+                        </div>
+        </td>
+        <td class="msource">SystemTray</td>
+    </tr>
+            </table>
+                <a id="Ext.air.SystemTray-events"></a>
+        <h2>Public Events</h2>
+        <div class="no-members">This class has no public events.</div>
+        </div>

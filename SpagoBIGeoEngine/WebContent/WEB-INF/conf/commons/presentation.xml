@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- ================================================================================= -->
+<!-- GEO BASE PRESENTATIONS															   -->
+<!-- ================================================================================= -->
+
+<PRESENTATION>
+				 
+	<MAPPING business_type="ACTION" 
+			 business_name="DRAW_MAP_SERVICE_EXCEPTION_TRAP_ACTION" 
+			 publisher_name="DRAW_MAP_SERVICE_EXCEPTION_TRAP_ACTION_PUBLISHER"/>
+			 
+	<MAPPING business_type="ACTION" 
+			 business_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			 publisher_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION_PUBLISHER"/>	
+	
+</PRESENTATION>

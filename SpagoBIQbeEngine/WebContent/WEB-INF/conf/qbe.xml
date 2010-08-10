@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<QBE>
+
+	<!--
+	QUERY-VALIDATION configuration is applied when saving a query as a subobject:
+	 - if enabled=true, query is validated before saving
+	 - if isBlocking=true (and enabled=true), incorrect queries cannot be saved
+	-->
+	<QUERY-VALIDATION enabled="true" isBlocking="false" />
+	
+	<!-- 
+	Timeout (in ms) for external services invocation: 
+	this should be minor to Ajax request timeout (see includeExtJS.jspf, Ext.Ajax.timeout parameter) 
+	since service invocation is performed into a synchronous action invoked by an Ajax call
+	-->
+	<EXTERNAL_SERVICES timeout="10000" />
+	
+	<QBE-ENABLE-SCRIPT enablescript="true" calculateFieldPosition="BEFORE_COLUMNS" /> 
+	
+	<QBE-CHECK-SPACE-BEFORE-CREATEVIEW 
+		check="false" 
+		checkerClass="it.eng.qbe.utility.SimpleSpaceChecker" 
+		failIfSpaceLess="25"/>
+	
+	
+	<!-- QBE-SQL-RESULT-LIMIT value="none" isBlocking="false"/ -->
+	<!-- QBE-SQL-RESULT-LIMIT value="10000" isBlocking="true"/ -->
+	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/> 
+	
+	
+	<QBE_TEMPORARY_TABLE prefix="ZZZ_SBIQBETMP_" suffix="" />
+	
+		
+	<TEMPLATE-BUILDER>
+		
+		<!--  
+		<BASE-TEMPLATE>...</BASE-TEMPLATE>
+		-->
+		
+		<PARAMETERS>
+		
+			<PARAMETER name="bandWidth" value="530"/>
+			<PARAMETER name="columnHeaderHeight" value="40"/>
+			
+			<PARAMETER name="pixelPerChar" value="9"/>
+			<PARAMETER name="pixelPerRow" value="16"/>	
+			
+			<PARAMETER name="maxLinesPerRow" value="4"/>				
+			
+			<PARAMETER name="columnHeaderFont" value="Helvetica-Bold"/>
+			<PARAMETER name="columnHeaderFontSize" value="12"/>
+   		    <PARAMETER name="columnHeaderFontBold" value="true"/>			
+			<PARAMETER name="columnHeaderFontItalic" value="false"/>						
+			<PARAMETER name="columnHeaderForegroundColor" value="#074B88"/>
+			<PARAMETER name="columnHeaderBackgroundColor" value="#E4ECF2"/>
+			
+			<PARAMETER name="rowFont" value="Times-Roman"/>
+			<PARAMETER name="rowFontSize" value="10"/>
+			
+			<PARAMETER name="evenRowsForegroundColor" value="#000000"/>
+			<PARAMETER name="evenRowsBackgroundColor" value="#EEEEEE"/>
+			
+			<PARAMETER name="oddRowsForegroundColor" value="#000000"/>
+			<PARAMETER name="oddRowsBackgroundColor" value="#FFFFFF"/>
+		</PARAMETERS>
+	</TEMPLATE-BUILDER>
+	
+</QBE>

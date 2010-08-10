@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<CONFIGS>
+<CONFIG label="changepwdmodule.len_min" name="Len Min" description="Minimum length" isActive="false" valueCheck="8" valueType="NUM"/>
+<CONFIG label="changepwdmodule.special_char" name="Special char" description="Special chars" isActive="false" valueCheck="_|-#$" valueType="STRING"/>
+<CONFIG label="changepwdmodule.upper_char" name="Upper char" description="Minimum a char must be in upper case" isActive="false" valueCheck="ABCDEFGJKLMNOPQRSTUVWXYZ" valueType="STRING"/>
+<CONFIG label="changepwdmodule.lower_char" name="Lower char" description="Minimum a char must be in lower case" isActive="false" valueCheck="abcdefghjklmnopqrstuwxyz" valueType="STRING"/>
+<CONFIG label="changepwdmodule.number" name="Number" description="Minimum a char must be a number" isActive="false" valueCheck="0123456789" valueType="STRING"/>
+<CONFIG label="changepwdmodule.alphabetical" name="Alaphabetical" description="Minimum a char must be a letter" isActive="false" valueCheck="abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" valueType="STRING"/>
+<CONFIG label="changepwdmodule.change" name="Change from last" description="The new pwd must be different from the lastest" isActive="false" valueCheck="" valueType=""/>
+<CONFIG label="changepwd.change_first" name="Change at first login " description="The pwd must be changed at first login" isActive="false" valueCheck="" valueType=""/>
+<CONFIG label="changepwd.disactivation_time" name="Disactivation time" description="Number of months before disactivation" isActive="false" valueCheck="6" valueType="NUM"/>
+<CONFIG label="changepwd.expired_time" name="Expired time" description="Number of days fo the expiration" isActive="false" valueCheck="90" valueType="NUM"/>
+</CONFIGS>

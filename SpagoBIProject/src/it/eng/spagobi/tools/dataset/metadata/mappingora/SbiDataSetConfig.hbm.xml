@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" table="SBI_DATA_SET" lazy="false">
+        <id name="dsId" type="int">
+            <column name="DS_ID" />     
+            <generator class="native">
+           		<param name="sequence">sbi_data_set_seq</param>
+            </generator>     
+        </id>
+		<discriminator column="OBJECT_TYPE" type="string"/>        
+        <property name="name" type="string">
+            <column name="NAME" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCR" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" />
+        </property>
+        <property name="parameters" type="string">
+            <column name="PARAMS" />
+        </property>
+        <property name="dsMetadata" type="string">
+            <column name="ds_metadata" />
+        </property>           
+         <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="TRANSFORMER_ID" not-null="false"/>
+        </many-to-one>
+         <property name="pivotColumnName" type="string">
+            <column name="PIVOT_COLUMN" />
+        </property>
+        <property name="pivotRowName" type="string">
+            <column name="PIVOT_ROW" />
+        </property>
+        <property name="pivotColumnValue" type="string">
+            <column name="PIVOT_VALUE" />
+        </property>
+        <property name="numRows" type="boolean">
+            <column name="NUM_ROWS" />
+        </property>
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet" discriminator-value="SbiFileDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+	        <property name="fileName" type="string">
+	            <column name="FILE_NAME" />
+	        </property>
+		</subclass>   
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet" discriminator-value="SbiQueryDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+	        <property name="query" type="text">
+	            <column name="QUERY" />
+	        </property>
+	        <many-to-one name="dataSource" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
+	            <column name="DATA_SOURCE_ID" not-null="false" />
+	        </many-to-one>	        
+		</subclass> 
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet" discriminator-value="SbiWSDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+	        <property name="adress" type="string">
+	            <column name="ADRESS" />
+	        </property>
+	        <property name="operation" type="string">
+	            <column name="OPERATION" />
+	        </property>	        
+	        <property name="executorClass" type="string">
+	            <column name="EXECUTOR_CLASS" />
+	        </property>	        
+		</subclass> 	
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet" discriminator-value="SbiScriptDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+	        <property name="script" type="string">
+	            <column name="SCRIPT" />
+	        </property>
+	        <property name="languageScript" type="string">
+	            <column name="LANGUAGE_SCRIPT" />
+	        </property>	  
+		</subclass>   
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet" discriminator-value="SbiJClassDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
+	        <property name="javaClassName" type="string">
+	            <column name="JCLASS_NAME" />
+	        </property>
+		</subclass>   				         
+    </class>
+</hibernate-mapping>

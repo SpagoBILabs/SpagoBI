@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+
+ <ACTION name="MODIFY_ROLES_ACTION" class="it.eng.spagobi.tools.role.services.ModifyRolesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

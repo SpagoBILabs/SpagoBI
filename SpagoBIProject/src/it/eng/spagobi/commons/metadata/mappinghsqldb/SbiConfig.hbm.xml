@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 15-gen-2010 17.03.17 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.commons.metadata.SbiConfig" table="SBI_CONFIG" >
+        <id name="id" type="integer">
+            <column name="ID" />
+           <generator class="native">
+            	<param name="sequence">sbi_config_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" fetch="select">
+            <column name="VALUE_TYPE_ID" />
+        </many-to-one>
+        <property name="label" type="string">
+            <column name="LABEL" length="100" not-null="true" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="100" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="500" />
+        </property>
+        <property name="isActive" type="boolean">
+            <column name="IS_ACTIVE" />
+        </property>
+        <property name="valueCheck" type="string">
+            <column name="VALUE_CHECK" length="1000" />
+        </property>
+    </class>
+</hibernate-mapping>

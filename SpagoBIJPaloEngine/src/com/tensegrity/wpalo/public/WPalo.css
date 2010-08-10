@@ -1,0 +1,78 @@
+/** Add css rules here for your application. */
+* {
+  font-family: sans-serif !important;
+  font-size: 8pt !important;
+}
+
+.main-font {
+  font-family: sans-serif !important;
+  font-size: 8pt !important;
+}
+
+
+/** Example rules used by the template application (remove for your app) */
+#.pc-template-btn {
+  display: block;
+  font-size: 16pt
+}
+
+#pc-template-img {
+  margin-top: 20px;
+}
+
+.my-tree-over .my-tree-left {
+  background: url(img/selgreyleft.png) no-repeat left -57px;
+}
+
+.my-tree-over .my-tree-right {
+  background: url(img/selgreyright.png) no-repeat right -76px;
+}
+
+.my-tree-over .my-tree-check,.my-tree-over .my-tree-icon,.my-tree-over .my-tree-item-text {
+  background: url(img/selgrey.png) left -95px;
+}
+
+.my-tree-sel .my-tree-left {
+  background: url(img/selblueleft.png) no-repeat left 0px;
+}
+
+.my-tree-sel .my-tree-right {
+  background: url(img/selblueright.png) no-repeat right -19px;
+}
+
+.my-tree-sel .my-tree-check,.my-tree-sel .my-tree-icon,.my-tree-sel .my-tree-item-text {
+  background: url(img/selblue.png) left -38px;
+}
+
+.my-tree-drop .my-tree-left {
+  background: url(img/selgreenleft.png) no-repeat left -115px;
+}
+
+.my-tree-drop .my-tree-right {
+  background: url(img/selgreenright.png) no-repeat right -133px;
+}
+
+.my-tree-drop .my-tree-check,.my-tree-drop .my-tree-icon,.my-tree-drop .my-tree-item-text {
+  background: url(img/selgreen.png) left -152px;
+}
+
+.waitCursor {
+  cursor: wait !important;
+}
+
+.margin10 {
+  margin: 10px !important;
+}
+
+.x-btn-text-icon .x-btn-center .x-btn-text-ff{background-position:0 2px;background-repeat:no-repeat;padding-left:10px;padding-top:3px;padding-bottom:2px;padding-right:0;}
+
+.wpalo-overview {background-image:url(img/vertText.png); background-repeat: no-repeat;}
+# .x-layout-collapsed .wpalo-overview {position:absolute;left:-10000px;top:-10000px;visibility:hidden;background-image:url(img/vertText.png); background-repeat: no-repeat; width:20px;height:20px;overflow:hidden;border:1px solid #98c0f4;z-index:20;}
+.italic {
+  font-style: italic;
+}
+
+.align-right {
+	text-align: right;
+	align: right;
+}

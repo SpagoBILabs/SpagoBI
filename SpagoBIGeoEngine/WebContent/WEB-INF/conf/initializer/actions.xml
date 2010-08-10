@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	<ACTION   name="GEO_ACTION" 
+			  class="it.eng.spagobi.engines.geo.service.initializer.GeoEngineStartAction"    
+			  scope="REQUEST">
+    	<CONFIG/>
+  	</ACTION>  
+	<ACTION   name="EXECUTION_PROXY_GEO_ACTION" 
+			  class="it.eng.spagobi.engines.geo.service.initializer.ExecutionProxyGeoEngineStartAction"    
+			  scope="REQUEST">
+    	<CONFIG/>
+  	</ACTION>    	  
+</ACTIONS>

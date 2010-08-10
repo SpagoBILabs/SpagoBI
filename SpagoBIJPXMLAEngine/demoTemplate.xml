@@ -1,0 +1,16 @@
+<olap>
+
+<cube
+    reference="FoodMart"
+    name="Sales"
+/>
+
+<MDXquery>
+select
+  {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} on columns,
+  {([Promotion Media].[All Media], [Product].[All Products])} ON rows
+from Sales
+where ([Time].[1997])
+</MDXquery>
+
+</olap>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22-dic-2009 14.20.04 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.profiling.bean.SbiExtUserRoles" table="SBI_EXT_USER_ROLES">
+        <composite-id name="id" class="it.eng.spagobi.profiling.bean.SbiExtUserRolesId">
+            <key-property name="id" type="int">
+                <column name="ID" />
+            </key-property>
+            <key-property name="extRoleId" type="integer">
+                <column name="EXT_ROLE_ID" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="sbiUser" class="it.eng.spagobi.profiling.bean.SbiUser" update="false" insert="false" >
+            <column name="ID" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

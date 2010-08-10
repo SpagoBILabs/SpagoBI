@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PUBLISHERS>
+  <PUBLISHER name="KPIConfigurationPublisher">
+    <RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      <RESOURCES>
+        <ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/startSBIKpi.jsp" />
+      </RESOURCES>
+    </RENDERING>
+  </PUBLISHER>
+</PUBLISHERS>

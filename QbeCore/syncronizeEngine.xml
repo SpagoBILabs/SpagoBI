@@ -1,0 +1,40 @@
+<project name="GenerateServiceClientJAR" default="copy.jar" basedir=".">
+      	<description>GenerateServiceClientJAR</description>
+
+        
+               
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	  <!--   PULIZIA AMBIENTE						            -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--> 
+	  <target name="clean" >
+	    <delete dir="./dist"/>
+	  </target>	   
+	
+	  <target name="init" depends="clean">
+	    <!-- Create the time stamp -->
+	    <tstamp/>
+	    <mkdir dir="./dist"/>    
+	  </target>
+ 
+	<target name="create.jar" depends="init" >
+	
+		<jar destfile="./dist/qbe.core-2.0.jar">
+			<fileset dir="./bin">
+			  <include name="**/*.class"/>	
+			</fileset>
+			<fileset dir=".">
+				<include name="**/*.jar"/>	
+			</fileset>
+		</jar>
+	    	         	           
+	</target>
+	
+	<target name="copy.jar" depends="create.jar" >
+	    <copy todir="../SpagoBIQbeEngine/WebContent/WEB-INF/lib" overwrite="true">
+	    	<fileset dir="./dist">
+	    		<include name="**/*.jar"/>
+	    	</fileset>
+	    </copy>			
+	</target>
+</project>
+

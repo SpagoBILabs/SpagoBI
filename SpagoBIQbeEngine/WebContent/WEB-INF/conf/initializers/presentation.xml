@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" 
+			 business_name="QBE_ENGINE_START_ACTION" 
+			 publisher_name="QBE_ENGINE_START_ACTION_PUBLISHER"/>
+			 
+	<MAPPING business_type="ACTION" 
+			 business_name="FORM_ENGINE_START_ACTION" 
+			 publisher_name="FORM_ENGINE_START_ACTION_PUBLISHER"/>
+			 
+	<MAPPING business_type="ACTION" 
+			 business_name="FORM_ENGINE_TEMPLATE_BUILD_ACTION" 
+			 publisher_name="FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER"/>
+			 
+</PRESENTATION>
+

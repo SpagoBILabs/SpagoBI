@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EXPORTERS>
+<EXPORTER domain="PDF" engine="KpiEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="JasperReportEngine" defaultValue="true"/>
+<EXPORTER domain="XLS" engine="JasperReportEngine" defaultValue="false"/>
+<EXPORTER domain="RTF" engine="JasperReportEngine" defaultValue="false"/>
+<EXPORTER domain="JPG" engine="JasperReportEngine" defaultValue="false"/>
+<EXPORTER domain="PDF" engine="BirtEngine" defaultValue="true"/>
+<EXPORTER domain="XLS" engine="BirtEngine" defaultValue="false"/>
+<EXPORTER domain="RTF" engine="BirtEngine" defaultValue="false"/>
+<EXPORTER domain="JPG" engine="BirtEngine" defaultValue="false"/>
+<EXPORTER domain="CSV" engine="BirtEngine" defaultValue="false"/>
+<EXPORTER domain="PDF" engine="JPivotEngine" defaultValue="false"/>
+<EXPORTER domain="XLS" engine="JPivotEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="ChartEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="QbeEngine" defaultValue="true"/>
+<EXPORTER domain="XLS" engine="QbeEngine" defaultValue="false"/>
+<EXPORTER domain="CSV" engine="QbeEngine" defaultValue="false"/>
+<EXPORTER domain="RTF" engine="QbeEngine" defaultValue="false"/>
+<EXPORTER domain="JRXML" engine="QbeEngine" defaultValue="false"/>
+<EXPORTER domain="PDF" engine="GeoEngine" defaultValue="true"/>
+<EXPORTER domain="JPG" engine="GeoEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="SmartFilterEngine" defaultValue="true"/>
+<EXPORTER domain="XLS" engine="SmartFilterEngine" defaultValue="false"/>
+<EXPORTER domain="CSV" engine="SmartFilterEngine" defaultValue="false"/>
+<EXPORTER domain="RTF" engine="SmartFilterEngine" defaultValue="false"/>
+</EXPORTERS>

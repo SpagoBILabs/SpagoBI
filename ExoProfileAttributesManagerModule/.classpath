@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIProject"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="EXO_HOME/common/lib/exo-platform.commons-2.0.3.jar"/>
+	<classpathentry kind="var" path="EXO_HOME/common/lib/exo-platform.services.organization.api-2.0.3.jar"/>
+	<classpathentry kind="var" path="EXO_HOME/common/lib/picocontainer-1.1.jar"/>
+	<classpathentry kind="var" path="EXO_HOME/common/lib/exo-platform.container-2.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/spago-core-2.1.2.jar"/>
+	<classpathentry kind="var" path="LIB_TOMCAT/log4j-1.2.8.jar"/>
+	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,1 @@
+java -Xms256M -Xmx1024M -cp ../lib/mysql-connector-java-5.1.0-bin.jar;../lib/systemRoutines.jar;../lib/userRoutines.jar;.;clean_audit_0_1.jar;../lib; provacorso.clean_audit_0_1.Clean_Audit --context=Default %* 

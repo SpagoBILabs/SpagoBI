@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+  	
+  	<ACTION name="DRAW_MAP_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.DrawMapAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+  	
+  	<ACTION name="GET_HIERARCHIES_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.GetHierarchiesAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+  	
+  	<ACTION name="X_GET_MAPS_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.GetMapsAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+  	
+  	<ACTION name="SET_ANALYSIS_STATE_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.SetAnalysisStateAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+  	
+  	<ACTION name="GET_ANALYSIS_STATE_ACTION" 
+			class="it.eng.spagobi.engines.geo.service.GetAnalysisStateAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+  	
+  	<ACTION name="SAVE_ANALYSIS_STATE_ACTION" 
+  			class="it.eng.spagobi.engines.geo.service.SaveAnalysisStateAction" 
+  			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+  	
+  	<ACTION name="SHOW_DATA_DETAILS_ACTION" 
+    		class="it.eng.spagobi.engines.geo.service.ShowDataDetailsAction" 
+    		scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+	
+	<ACTION name="GET_ENGINE_INFO_ACTION" 
+    		class="it.eng.spagobi.engines.geo.service.GetGeoEngineInfosAction" 
+    		scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_ANALYSIS_META_ACTION" 
+  			class="it.eng.spagobi.engines.geo.service.GetAnalysisMetaAction" 
+  			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+	
+    
+</ACTIONS>

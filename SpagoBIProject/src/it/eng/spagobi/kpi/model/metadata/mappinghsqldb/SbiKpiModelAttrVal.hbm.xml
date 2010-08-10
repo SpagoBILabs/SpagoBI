@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal" table="SBI_KPI_MODEL_ATTR_VAL" >
+        <id name="kpiModelAttrValId" type="integer">
+            <column name="KPI_MODEL_ATTR_VAL_ID" />
+            <generator class="native">
+            	<param name="sequence">sbi_kpi_model_attr_val_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="sbiKpiModelAttr" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttr" >
+            <column name="KPI_MODEL_ATTR_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiKpiModel" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" >
+            <column name="KPI_MODEL_ID" not-null="true" />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="VALUE" length="2048" />
+        </property>
+    </class>
+</hibernate-mapping>

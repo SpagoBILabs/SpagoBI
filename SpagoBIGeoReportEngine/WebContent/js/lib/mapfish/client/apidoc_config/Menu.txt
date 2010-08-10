@@ -1,0 +1,128 @@
+Format: 1.4
+
+
+Title: MapFish
+SubTitle: JavaScript Mapping Library
+
+# You can add a footer to your documentation like this:
+# Footer: [text]
+# If you want to add a copyright notice, this would be the place to do it.
+
+# You can add a timestamp to your documentation like one of these:
+# Timestamp: Generated on month day, year
+# Timestamp: Updated mm/dd/yyyy
+# Timestamp: Last updated mon day
+#
+#   m     - One or two digit month.  January is "1"
+#   mm    - Always two digit month.  January is "01"
+#   mon   - Short month word.  January is "Jan"
+#   month - Long month word.  January is "January"
+#   d     - One or two digit day.  1 is "1"
+#   dd    - Always two digit day.  1 is "01"
+#   day   - Day with letter extension.  1 is "1st"
+#   yy    - Two digit year.  2006 is "06"
+#   yyyy  - Four digit year.  2006 is "2006"
+#   year  - Four digit year.  2006 is "2006"
+
+
+# --------------------------------------------------------------------------
+# 
+# Cut and paste the lines below to change the order in which your files
+# appear on the menu.  Don't worry about adding or removing files, Natural
+# Docs will take care of that.
+# 
+# You can further organize the menu by grouping the entries.  Add a
+# "Group: [name] {" line to start a group, and add a "}" to end it.
+# 
+# You can add text and web links to the menu by adding "Text: [text]" and
+# "Link: [name] ([URL])" lines, respectively.
+# 
+# The formatting and comments are auto-generated, so don't worry about
+# neatness when editing the file.  Natural Docs will clean it up the next
+# time it is run.  When working with groups, just deal with the braces and
+# forget about the indentation and comments.
+# 
+# --------------------------------------------------------------------------
+
+
+File: MapFish  (no auto-title, MapFish.js)
+
+Group: MapFish  {
+
+   Group: Core  {
+
+      Group: GeoStat  {
+
+         File: GeoStat  (no auto-title, core/GeoStat.js)
+         File: Choropleth  (no auto-title, core/GeoStat/Choropleth.js)
+         File: ProportionalSymbol  (no auto-title, core/GeoStat/ProportionalSymbol.js)
+         }  # Group: GeoStat
+
+      Group: Searcher  {
+
+         File: Searcher  (no auto-title, core/Searcher.js)
+         File: Map (no auto-title, core/Searcher/Map.js)
+         File: Form  (no auto-title, core/Searcher/Form.js)
+         }  # Group: Searcher
+
+      Group: Protocol {
+         File: Protocol  (no auto-title, core/Protocol.js)
+         File: MapFish  (no auto-title, core/Protocol/MapFish.js)
+         File: TriggerEventDecorator (no auto-title, core/Protocol/TriggerEventDecorator.js)
+         File: MergeFilterDecorator (no auto-title, core/Protocol/MergeFilterDecorator.js)
+         } # Group: Protocol
+
+      File: PrintProtocol  (no auto-title, core/PrintProtocol.js)
+      File: Offline  (no auto-title, core/Offline.js)
+      File: Color  (no auto-title, core/Color.js)
+      File: Util  (no auto-title, core/Util.js)
+      }  # Group: Core
+
+   Group: Widgets  {
+
+      File: MapComponent  (no auto-title, widgets/MapComponent.js)
+      File: Shortcuts  (no auto-title, widgets/Shortcuts.js)
+
+      Group: Data  {
+
+         File: FeatureReader  (no auto-title, widgets/data/FeatureReader.js)
+         File: FeatureStoreMediator  (no auto-title, widgets/data/FeatureStoreMediator.js)
+         File: SearchStoreMediator (no auto-title, widgets/data/SearchStoreMediator.js)
+         File: LayerStoreMediator (no auto-title, widgets/data/LayerStoreMediator.js)
+         }  # Group: Data
+
+      Group: Edition  {
+
+         File: FeatureList  (no auto-title, widgets/editing/FeatureList.js)
+         }  # Group: Edition
+
+      Group: Geostat  {
+
+         File: Choropleth  (no auto-title, widgets/geostat/Choropleth.js)
+         File: ProportionalSymbol  (no auto-title, widgets/geostat/ProportionalSymbol.js)
+         }  # Group: Geostat
+
+      Group: Print  {
+
+         File: Base  (no auto-title, widgets/print/Base.js)
+         File: MultiPage  (no auto-title, widgets/print/MultiPage.js)
+         File: SimpleForm  (no auto-title, widgets/print/SimpleForm.js)
+         }  # Group: Print
+
+      Group: LayerTree  {
+
+         File: LayerTree  (no auto-title, widgets/tree/LayerTree.js)
+         }  # Group: LayerTree
+
+      Group: Toolbar  {
+
+         File: CheckItem  (no auto-title, widgets/toolbar/CheckItem.js)
+         File: Toolbar  (no auto-title, widgets/toolbar/Toolbar.js)
+         }  # Group: Toolbar
+
+      }  # Group: Widgets
+
+   }  # Group: MapFish
+
+# No index (uses openlayer index block)
+

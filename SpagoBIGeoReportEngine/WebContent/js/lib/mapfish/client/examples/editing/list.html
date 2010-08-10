@@ -1,0 +1,355 @@
+<html>
+<head>
+  <title>Grid for editing features</title>
+  <link rel="stylesheet" type="text/css" href="../../mfbase/ext/resources/css/ext-all.css"/>
+
+  <style type="text/css">
+    html, body {
+      font: normal 12px verdana;
+      margin: 0;
+      padding: 0;
+      border: 0 none;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+
+    ul.list {
+      list-style-type: disc;
+      font-size: 11px;
+      padding: 0 0 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="title">
+    <h1 style="font-size:20px">MapFish, FeatureList example</h1>
+  </div>
+  <div id="olmap">
+  </div>
+  <div id="help">
+    <!-- if somebody can tell me why the squares are not shown, I'll be happy! -->
+    <ul class="list">
+      <li class="list">If you want to change the features' order, you can drag&drop them in the list.</li>
+      <li>In manual mode, to edit a geometry, click on the yellow icon in the "Geo" column.</li>
+      <li>In automatic mode, to edit a geometry, just click on it.</li>
+      <li>The currently edited geometry (if any), is marked with a blue icon in the "Geo" column.</li>
+      <li>The columns "Enabled", "Name" and "+" are just examples of editable attributes.</li>
+      <li>To add a feature, click on the "Add ..." button (click the arrow besides the button to create another type).</li>
+      <li>To delete a feature, select it and click the "Delete" button.</li>
+    </ul>
+  </div>
+</body>
+
+<script type="text/javascript" src="../../mfbase/openlayers/lib/Firebug/firebug.js"></script>
+<script type="text/javascript" src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+
+<script type="text/javascript" src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+
+<script type="text/javascript">
+  // Because of a bug in Firefox 2 we need to specify the MapFish base path.
+  // See https://bugzilla.mozilla.org/show_bug.cgi?id=351282
+  var gMfLocation = "../../mfbase/mapfish/";
+</script>
+<script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+<script type="text/javascript" src="../examples.js"></script>
+
+<script type="text/javascript">
+
+// Reference local blank image
+Ext.BLANK_IMAGE_URL = '../../mfbase/ext/resources/images/default/s.gif';
+
+/*
+ * Define a renderer for boolean cells
+ */
+Ext.grid.CheckColumn = function(config) {
+    Ext.apply(this, config);
+    if (!this.id) {
+        this.id = Ext.id();
+    }
+    this.renderer = this.renderer.createDelegate(this);
+};
+Ext.grid.CheckColumn.prototype = {
+    id: null,
+
+    renderer: null,
+
+    grid: null,
+  
+    init : function(grid) {
+        this.grid = grid;
+        this.grid.on('render', function() {
+            var view = this.grid.getView();
+            view.mainBody.on('mousedown', this.onMouseDown, this);
+        }, this);
+    },
+
+    onMouseDown : function(e, t) {
+        if (t.className &&
+            t.className.indexOf('x-grid3-cc-' + this.id) != -1) {
+            e.stopEvent();
+            var index = this.grid.getView().findRowIndex(t);
+            var record = this.grid.store.getAt(index);
+            record.set(this.dataIndex, !record.data[this.dataIndex]);
+        }
+    },
+
+    renderer : function(v, p, record) {
+        p.css += ' x-grid3-check-col-td';
+        return '<div class="x-grid3-check-col'
+               + (v ? '-on' : '')
+               + ' x-grid3-cc-'
+               + this.id
+               + '">&#160;</div>';
+    }
+};
+
+
+Ext.onReady(function() {
+
+    /*
+     * Define OpenLayers map.
+     */
+    var map = new OpenLayers.Map($('olmap'));
+
+    var wms = new OpenLayers.Layer.WMS("OpenLayers WMS",
+        "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'}, {buffer: 0});
+
+    map.addLayers([wms]);
+    map.addControl(new OpenLayers.Control.LayerSwitcher());
+    map.setCenter(new OpenLayers.LonLat(17, 2), 2);
+
+    /*
+     * Define record type.
+     */
+    var FeatureType = mapfish.widgets.editing.FeatureList.createRecord([
+        {name: 'name', type: 'string'},
+        {name: 'enabled', type: 'bool'},
+        {name: 'positive', type: 'bool'},
+        {name: 'geometry', type: 'geo'}  // represents the feature geometry
+    ]);
+
+    /*
+     * Define data store.
+     */
+    var ds = new Ext.data.Store({
+        reader: new Ext.data.JsonReader({root: 'features'}, FeatureType)
+    });
+    
+    /*
+     * Define factory functions to create features.
+     */
+    function addFeature(data, name, factory) {
+        ds.loadData({features: [data]}, true);
+        featureList.editFirstGeometry(ds.getAt(ds.getCount() - 1));
+        featureList.getView().focusCell(ds.getCount() - 1, 0);
+        featureList.getSelectionModel().selectLastRow(false);
+        addButton.setHandler(factory);
+        addButton.setText("Add " + name);
+    }
+    function addPolyline() {
+        var extent = map.getExtent();
+        var marginW = extent.getWidth() / 5;
+        var marginH = extent.getHeight() / 5;
+        addFeature({
+            name: 'polyline',
+            enabled: true,
+            positive: true,
+            geometry: new OpenLayers.Geometry.LineString([
+                new OpenLayers.Geometry.Point(
+                    extent.left + marginW, extent.bottom + marginH),
+                new OpenLayers.Geometry.Point(
+                    extent.right - marginW, extent.top - marginH),
+            ])
+        }, "Polyline", addPolyline);
+    }
+    function addPolygon() {
+        var extent = map.getExtent();
+        var marginW = extent.getWidth() / 5;
+        var marginH = extent.getHeight() / 5;
+        addFeature({
+            name: 'polygon',
+            enabled: true,
+            positive: true,
+            geometry: new OpenLayers.Geometry.Polygon([
+                new OpenLayers.Geometry.LinearRing([
+                    new OpenLayers.Geometry.Point(
+                        extent.left+marginW, extent.bottom + marginH),
+                    new OpenLayers.Geometry.Point(
+                        extent.right - marginW, extent.bottom + marginH),
+                    new OpenLayers.Geometry.Point(
+                        extent.right - marginW, extent.top - marginH)
+                ])
+            ])
+        }, "Polygon", addPolygon);
+    }
+
+    /*
+     * Define add button.
+     */
+    var addButton = new Ext.Toolbar.SplitButton({
+        text: 'Add Polygon',
+        handler: addPolygon,
+        menu: {items: [
+            {text: 'Polygon', handler: addPolygon },
+            {text: 'Polyline', handler: addPolyline}
+        ]}
+    });
+
+    /*
+     * Define handler for the delete button.
+     */
+    function deleteSelectedFeature() {
+        var selected = featureList.getSelectionModel().getSelected();
+        if (selected) {
+            ds.remove(selected);
+        }
+    }
+
+    /*
+     * Define "Special" boolean columns
+     */ 
+    var enabledColumn = new Ext.grid.CheckColumn({
+        header: 'Enabled',
+        dataIndex: 'enabled',
+        width: 25
+    });
+    var positiveColumn = new Ext.grid.CheckColumn({
+        header: '+',
+        dataIndex: 'positive',
+        width: 25
+    });
+
+    /*
+     * Feature list.
+     */
+    var featureList = new mapfish.widgets.editing.FeatureList({
+        title:'Feature List',
+        region: 'center',
+        featureType: FeatureType,
+        map: map,
+        ds: ds,
+        editGeometryVisual: function(geometry, record, edited) {  //how to render geometries
+            return geometry ?
+                '<img width="15" height="15" style="cursor: pointer;" src="geometry' + (edited ? 'On' : 'Off') + '.png" />' : '';
+        },
+        viewConfig: {
+            //autoFill: true,
+            forceFit: true,
+            scrollOffset: 20
+        },
+        columns: [ // definition of the columns
+            {header: 'Geo', dataIndex: 'geometry', width: 25},
+            enabledColumn,
+            {header: 'Name', dataIndex: 'name', width: 100, editor: new Ext.form.TextField()},
+            positiveColumn
+        ],
+        plugins: [enabledColumn, positiveColumn],  // trick for the boolean columns
+        tbar: [
+            addButton,
+            {
+                text: 'Delete',
+                handler: deleteSelectedFeature
+            }
+        ]
+    });
+
+    /*
+     * Define the buttons in the Settings panel.
+     */
+    var automaticMode = new Ext.Button({
+        text: 'Mode: manual',
+        name: 'editMode',
+        enableToggle: true
+    });
+    automaticMode.on('toggle', function(button, checked) {
+        featureList.setAutomaticMode(checked);
+        automaticMode.setText(checked ? "Mode: automatic" : "Mode: manual");
+    });
+    var focusMode = new Ext.Button({
+        text: 'Focus: expand',
+        name: 'focusMode'
+    });
+    focusMode.on('click', function(button) {
+        var mode = (featureList.autoFocusMode + 1) % 3;
+        featureList.autoFocusMode = mode;
+        focusMode.setText(mode == 0 ? "Focus: none" :
+                                      (mode == 1 ? "Focus: feature" :
+                                                   "Focus: expand"));
+    });
+    var displayMode = new Ext.Button({
+        text: 'Display: all',
+        name: 'displayMode',
+        enableToggle: true,
+        pressed: true
+    });
+    displayMode.on('toggle', function(button, checked) {
+        featureList.setDisplayNotEdited(checked);
+        displayMode.setText(checked ? "Display: all" : "Display: edited");
+        automaticMode.setDisabled(!checked);
+        automaticMode.toggle(false);
+    });
+
+    /*
+     * Define viewport.
+     */
+    var viewport = new Ext.Viewport({
+        layout: 'border',
+        items: [{
+                xtype: 'panel',
+                frame: true,
+                border: true,
+                region: 'north',
+                contentEl: 'title'
+            }, {
+                region: 'east',
+                title: 'Feature editing',
+                split: true,
+                collapsible: true,
+                frame: true,
+                width: 250,
+                minSize: 175,
+                maxSize: 500,
+                margins: '0 0 0 5',
+                layout: 'border',
+                autoScroll: false,
+                defaults: {
+                    border: true,
+                    frame: true
+                },
+                items: [{
+                        xtype: 'panel',
+                        title: 'Settings',
+                        region: 'north',
+                        height: 100,
+                        collapsible: true,
+                        margins: {bottom: 5},
+                        items: [
+                            automaticMode,
+                            focusMode,
+                            displayMode
+                        ]
+                    },
+                    featureList, {
+                        title: 'Help',
+                        height: 250,
+                        minSize: 100,
+                        maxSize: 500,
+                        split:true,
+                        collapsible: true,
+                        autoScroll: true,
+                        region: 'south',
+                        contentEl: 'help'
+                }]
+            }, {
+                region:'center',
+                title: 'Map',
+                xtype: 'mapcomponent',
+                map: map
+        }]
+    });
+    viewport.render();
+});
+</script>
+</html>

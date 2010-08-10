@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<MODULES>
+     
+	<MODULE class="it.eng.spagobi.exoaddins.modules.ExoProfileAttributeManagerModule" name="ExoProfileAttributeManagerModule">
+	</MODULE>
+   
+   <MODULE class="it.eng.spagobi.exoaddins.modules.ExoProfileAttributeManagerListUserModule" name="ExoProfileAttributeManagerListUserModule">
+		<CONFIG pool="spagobi" rows="10" title="profileattr.users" >
+	      <QUERIES/>
+	      <COLUMNS>
+	      	<COLUMN label="profileattr.username" name="UserName" />
+	      	<COLUMN label="profileattr.firstname" name="FirstName" />
+	      	<COLUMN label="profileattr.lastname" name="LastName" />
+	      	<COLUMN label="profileattr.email" name="Email" />
+	      </COLUMNS>
+	      <CAPTIONS>
+	      	<ACCEPT_ACTIVITY_CAPTION confirm="FALSE" image="/img/detail.gif" label="Detail">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ExoProfileAttributeManagerPage"/>
+	          <PARAMETER name="MESSAGE" scope="" type="ABSOLUTE" value="DETAIL_PROFILE_USER"/>
+	          <PARAMETER name="UserName" scope="LOCAL" type="RELATIVE" value="UserName"/>
+	        </ACCEPT_ACTIVITY_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBISet.ListEngine.backButton">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ExoProfileAttributeManagerPage"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+	</MODULE>
+
+   
+</MODULES>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+<!--START Kpi new interface actions -->
+ <ACTION name="MANAGE_KPIS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageKpisAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_THRESHOLDS_ACTION" class="it.eng.spagobi.kpi.threshold.service.ManageThresholdsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_MODELS_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_MODEL_INSTANCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelInstancesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END Kpi new interface actions -->
+
+    <ACTION name="LOGIN_ACTION_KPI_CONFIGURATION" class="it.eng.spagobi.commons.services.PortletLoginAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>
+  <ACTION name="EXPORT_PDF" class="it.eng.spagobi.kpi.service.KpiExporterAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+  <ACTION name="EXPORT_XML" class="it.eng.spagobi.kpi.service.KpiXmlExporterAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+</ACTIONS>

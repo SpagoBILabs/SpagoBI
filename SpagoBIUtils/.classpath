@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar" sourcepath="/SpagoCore"/>
+	<classpathentry kind="lib" path="lib/spago-web-2.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/json.jar"/>
+	<classpathentry kind="lib" path="lib/commonj-twm.jar"/>
+	<classpathentry kind="lib" path="lib/foo-commonj.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
+	<classpathentry kind="lib" path="lib/axis.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/groovy-all-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/groovy.engine.jar"/>
+	<classpathentry kind="lib" path="lib/javascript.engine.jar"/>
+	<classpathentry kind="lib" path="lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/jsr223.jar"/>
+	<classpathentry kind="lib" path="lib/wss4j-1.5.7.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/axis-ant.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/cas-client-core-3.1.6.jar"/>
+	<classpathentry kind="lib" path="lib/casclient.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

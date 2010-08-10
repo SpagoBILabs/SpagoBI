@@ -1,0 +1,13 @@
+<!-- Include MapFish and app-specific scripts: -->
+
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/lib/OpenLayers.js'/></script>
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/mapfish/MapFish.js'/></script>
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/ext-community-extensions/color-field.js'/></script>
+<!-- 
+<script type="text/javascript" src='./js/lib/mapfish/mapnew.js'/></script>
+-->
+
+<!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="./js/lib/mapfish/client/mfbase/ext-community-extensions/color-field.css" type="text/css" />
+<link id="theme" rel="styleSheet" href ="./js/lib/mapfish/client/mfbase/openlayers/theme/default/framedCloud.css" type="text/css" />
+

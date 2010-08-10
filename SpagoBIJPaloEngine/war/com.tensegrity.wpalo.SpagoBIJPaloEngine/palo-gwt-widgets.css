@@ -1,0 +1,20 @@
+/* SOME GXT COLOR VALUES:
+	shades of blue:
+		#c3daf9		//true blue ;) 
+		#DFE8F6		//bright
+		#d9e8fb
+		#D9E1ED
+		#d2e0f2		//dark
+		#233D6D		//real darkest blue
+		
+	#EDEDED		//gray
+	#929090		//dark gray
+		
+*/
+
+
+.palo-gwt-container {
+}
+
+/* TODO: can we inherit text properties? */
+/* global IDs because these widgets are used for d'n'd and therefore not always within a container! */

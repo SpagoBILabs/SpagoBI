@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttr" table="SBI_KPI_MODEL_ATTR" >
+        <id name="kpiModelAttrId" type="integer">
+            <column name="KPI_MODEL_ATTR_ID" />
+            <generator class="native">
+            	<param name="sequence">SBI_KPI_MODEL_ATTR_SEQ</param>
+            </generator>        
+            </id>
+        <many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="KPI_MODEL_ATTR_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="kpiModelAttrCd" type="string">
+            <column name="KPI_MODEL_ATTR_CD" length="40" />
+        </property>
+        <property name="kpiModelAttrNm" type="string">
+            <column name="KPI_MODEL_ATTR_NM" length="400" />
+        </property>
+        <property name="kpiModelAttrDescr" type="string">
+            <column name="KPI_MODEL_ATTR_DESCR" length="1000" />
+        </property>
+        <set name="sbiKpiModelAttrVals" inverse="true">
+            <key>
+                <column name="KPI_MODEL_ATTR_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal" />
+        </set>
+    </class>
+</hibernate-mapping>

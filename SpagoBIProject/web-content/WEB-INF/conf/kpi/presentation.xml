@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PRESENTATION>
+  <MAPPING business_type="ACTION" business_name="LOGIN_ACTION_KPI_CONFIGURATION"
+    publisher_name="KPIConfigurationPublisher" />
+</PRESENTATION>

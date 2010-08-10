@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="ModelPage" moduleName="ListModelModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelPage" moduleName="DetailModelModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelTreePage" moduleName="ListModelTreeModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelTreePage" moduleName="DetailModelTreeModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelInstancePage" moduleName="ListModelInstanceModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelInstancePage" moduleName="DetailModelInstanceModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelInstanceTreePage" moduleName="ListModelInstanceTreeModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelInstanceTreePage" moduleName="DetailModelInstanceTreeModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ResourcesPage" moduleName="ListResourcesModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ResourcesPage" moduleName="DetailResourcesModule" businessProcess="KpiManagement" />
+		<MAP_PAGE_MODULE pageName="ModelResourcesPage" moduleName="ListModelResourcesModule" businessProcess="KpiManagement" />		
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>
