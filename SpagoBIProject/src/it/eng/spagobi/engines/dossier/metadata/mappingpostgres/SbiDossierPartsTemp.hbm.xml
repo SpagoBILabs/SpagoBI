@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14-feb-2008 10.44.53 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.engines.dossier.metadata.SbiDossierPartsTemp" table="SBI_DOSSIER_TEMP">
+        <id name="partId" type="integer">
+            <column name="PART_ID" />
+            <generator class="sequence">
+            	<param name="sequence">SBI_DOSSIER_TEMP_SEQ</param>  
+            </generator>
+        </id>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="BIOBJ_ID" />
+        </many-to-one>
+        <property name="pageId" type="integer">
+            <column name="PAGE_ID" />
+        </property>
+        <property name="workflowProcessId" type="long">
+            <column name="WORKFLOW_PROCESS_ID" />
+        </property>
+        <set name="sbiDossierBinaryContentsTemps" inverse="true">
+            <key>
+                <column name="PART_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.engines.dossier.metadata.SbiDossierBinaryContentsTemp" />
+        </set>
+    </class>
+</hibernate-mapping>

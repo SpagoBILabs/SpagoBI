@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PAGES>
+  <PAGE name="ThresholdPage" class="it.eng.spago.dispatching.module.ConfigurablePage"
+    scope="REQUEST">
+    <GRAPH id="kpi-2">
+      <MODULES>
+        <MODULE id="1" name="ListThresholdsModule" />
+        <MODULE id="2" name="DetailThresholdModule" />
+      </MODULES>
+    </GRAPH>
+  </PAGE>
+  <PAGE name="ThresholdValuePage" class="it.eng.spago.dispatching.module.ConfigurablePage"
+    scope="REQUEST">
+    <GRAPH id="kpi-2">
+      <MODULES>
+        <MODULE id="1" name="ListThresholdValuesModule" />
+        <MODULE id="2" name="DetailThresholdValueModule" />
+      </MODULES>
+    </GRAPH>
+  </PAGE>
+</PAGES>

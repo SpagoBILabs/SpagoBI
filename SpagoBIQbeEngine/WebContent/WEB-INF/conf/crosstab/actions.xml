@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<ACTION name="LOAD_CROSSTAB_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

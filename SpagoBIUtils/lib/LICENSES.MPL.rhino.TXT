@@ -1,0 +1,1 @@
+Rhino is licensed under MPL. Please visit http://www.mozilla.org/MPL/

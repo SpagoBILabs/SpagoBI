@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<UPLOAD>
+	<UPLOAD_METHODS>
+		<UPLOAD_METHOD name="DATAMART_UPLOAD" class="it.eng.qbe.utility.DataMartUploadManager"/>
+	</UPLOAD_METHODS>
+	<UPLOAD-MANAGER name="DATAMART_UPLOAD"/>
+</UPLOAD>

@@ -1,0 +1,13 @@
+<!-- Include Ext and app-specific scripts: -->
+
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/ext/adapter/ext/ext-base.js'/></script>
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/ext/ext-all.js'/></script>
+    
+<!-- Include Ext stylesheets here: -->
+<link rel="styleSheet" href ="./js/lib/mapfish/client/mfbase/ext/resources/css/ext-all.css" type="text/css" />
+<link id="theme" rel="styleSheet" href ="./js/lib/mapfish/client/mfbase/ext/resources/css/xtheme-gray.css" type="text/css" />
+
+<script type="text/javascript">
+	Ext.Ajax.timeout = 300000;
+	Ext.BLANK_IMAGE_URL = './js/lib/mapfish/client/mfbase/ext/resources/images/default/s.gif';
+</script>

@@ -1,0 +1,192 @@
+<%
+
+Iterator blocksIt = null;
+KpiLineVisibilityOptions options = null;
+String currTheme = null;
+CoreContextManager contextManager = null;
+String metadata_publisher_Name = null;
+String trend_publisher_Name = null;
+String userId = null;
+%>
+
+<%@page import="it.eng.spagobi.container.CoreContextManager"%>
+<%@page import="it.eng.spagobi.engines.kpi.bo.KpiResourceBlock"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLine"%>
+<%@page import="it.eng.spagobi.kpi.model.bo.Resource"%>
+<%@page import="java.util.Date"%>
+<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
+<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
+<%@page import="java.util.Iterator"%>	
+<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions"%>
+
+
+<%--
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+--%>
+<% 
+//START CONSTRUCTING TREE FOR EACH RESOURCE
+	//PERCENTAGE WIDTH OF EVERY COLUMN (SUM MUST BE 100%)
+final String MODEL_COL_W = "53";
+final String META_COL_W = "4";
+final String VAL_COL_W = "9";
+final String WEIGHT_COL_W = "5";
+final String CHART_OR_IMAGE_COL_W = "22";
+final String TREND_COL_W = "3";
+final String DOC_COL_W = "2";
+final String ALARM_COL_W = "2";
+//in case both Chart and image are visible
+final String CHART_COL_W = "15";
+final String IMG_COL_W = "7";
+//css classes
+final String table_css_class = "kpi_table";
+final String res_css_class = "kpi_resource_section";
+final String tr_odd_css_class = "kpi_first_line_section_odd";
+final String td_first_line_css_class = "kpi_first_line_td";
+
+		KpiResourceBlock block = (KpiResourceBlock) blocksIt.next();
+		options = block.getOptions();
+		HashMap parMap = block.getParMap() ;
+		KpiLine root = block.getRoot();
+		Resource r = null;
+		Date d = block.getD();
+		if(block.getR()!=null){
+			r = block.getR();
+		}
+
+		String id = "";
+    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();
+		if (r!=null){
+			
+			String resourceName = r.getName();
+			Integer resourceId = r.getId();
+			%>
+			<!-- START DIV containing each resource tree -->
+			<div id='<%=resourceName%>' >
+			
+			<!-- START Table containing a specific resource -->		
+			<table class='<%=table_css_class%>' id='KPI_TABLE<%=resourceId%>' >
+			<TBODY>
+			<% if (options.getDisplay_bullet_chart().booleanValue() && options.getDisplay_threshold_image().booleanValue() ){%>
+				 <tr class='<%=res_css_class%>' >
+				 	<td colspan='10' id='ext-gen58' >
+				 		<spagobi:message key="sbi.kpi.RESOURCE" /><%=resourceName%>
+				 	</td>
+				 </tr>
+			<%}else{%>
+				 <tr class='<%=res_css_class%>' >
+				 	<td colspan='9' id='ext-gen58' >
+				 		<spagobi:message key="sbi.kpi.RESOURCE" /><%=resourceName%>
+				 	</td>
+				 </tr>
+			<%}
+			id = "node"+resourceId;
+			
+		}else{%>
+			
+			<!-- START Table in case there are no resources -->	
+			<table class='<%=table_css_class%>' id='KPI_TABLE' >
+			<TBODY>
+			<% 
+			id = "node1";
+		}%>
+			
+			<!-- START TITLE ROW -->
+		 		 <tr class='<%=tr_odd_css_class%>' >
+		 		 
+		 		 	<!-- START MODEL TITLE COLUMN -->
+					<td width='<%=MODEL_COL_W%>%'  class='<%=td_first_line_css_class%>' style='text-align:left;' >
+						<%=options.getModel_title()%>
+					</td>
+					<td width='<%=META_COL_W%>%' >
+						<div></div>
+					</td>
+					<!-- END MODEL TITLE COLUMN -->
+					
+					<!-- START KPI TITLE COLUMN -->
+				<% if(options.getKpi_title()!=null){%>
+					<td  width='<%=VAL_COL_W%>%' class='<%=td_first_line_css_class%>' >
+						<%=options.getKpi_title()%>
+					</td>
+				<% }else{ %>
+					<td  width='<%=VAL_COL_W%>%' class='<%=td_first_line_css_class%>' >
+						<div></div>
+					</td>
+					<!-- END KPI TITLE COLUMN -->
+					
+					<!-- START KPI WEIGHT COLUMN -->
+				<% } 
+				
+				if (options.getDisplay_weight().booleanValue() && options.getWeight_title()!=null){ %>
+					<td width='<%=WEIGHT_COL_W%>%' class='<%=td_first_line_css_class%>' >
+						<%=options.getWeight_title()%>
+					</td>
+				<% }else{%>
+					<td width='<%=WEIGHT_COL_W%>%' class='<%=td_first_line_css_class%>' >
+						<div></div>
+					</td>
+					<!-- END KPI WEIGHT COLUMN -->
+					
+					<!-- START BULLET CHART AND THRESHOLD IMAGE COLUMN -->
+				<% } 
+				
+				if (options.getDisplay_bullet_chart().booleanValue() && options.getDisplay_threshold_image().booleanValue() && options.getBullet_chart_title()!=null && options.getBullet_chart_title()!=null){ %>
+					<td width='<%=CHART_COL_W%>%' class='<%=td_first_line_css_class%>' style='text-align:center;' >
+						<%=options.getBullet_chart_title()%>
+					</td>
+					<td width='<%=IMG_COL_W%>%' class='<%=td_first_line_css_class%>' >
+						<%=(options.getThreshold_image_title()!=null?options.getThreshold_image_title():"")%>
+					</td>
+				<% }else if(options.getDisplay_bullet_chart().booleanValue()  && options.getBullet_chart_title()!=null){%>
+					<td width='<%=CHART_OR_IMAGE_COL_W%>%' class='<%=td_first_line_css_class%>' style='text-align:center;' >
+						<%=options.getBullet_chart_title()%>
+					</td>
+				<% }else if(options.getDisplay_threshold_image().booleanValue()  && options.getThreshold_image_title()!=null){%>
+					<td width='<%=CHART_OR_IMAGE_COL_W%>%' class='<%=td_first_line_css_class%>' style='text-align:center;' >
+						<%=options.getThreshold_image_title()%>
+					</td>
+				<% }else{%>
+					<td width='<%=CHART_OR_IMAGE_COL_W%>%' class='<%=td_first_line_css_class%>' style='text-align:center;' >
+						<div></div>
+					</td>
+				<% }%>
+					<!-- END BULLET CHART AND THRESHOLD IMAGE COLUMN -->
+					
+				<td width='<%=TREND_COL_W%>%' ><div></div></td>
+				<td width='<%=DOC_COL_W%>%' ><div></div></td>
+				<td width='<%=ALARM_COL_W%>%' ><div></div></td>
+		 </tr>
+		 <!-- END TITLE ROW -->
+		
+		<% StringBuffer _htmlStream = new StringBuffer();
+		   ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
+		   //KpiUtils k = new KpiUtils();
+		   _htmlStream = addItemForTree(id ,instance,userId,0,Boolean.FALSE,request, root,_htmlStream,options,currTheme,parMap,r,d,metadata_publisher_Name,trend_publisher_Name);%>
+		   
+		<%= _htmlStream%>
+			</TBODY>
+			</TABLE>
+			<!-- END Table containing a specific resource -->	
+		<%if (r!=null){	%>
+			</div>
+			<!-- END DIV containing each resource tree -->
+		<%}
+//END CONSTRUCTING TREE FOR EACH RESOURCE
+			
+%>			

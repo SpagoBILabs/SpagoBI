@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 19-feb-2008 18.15.46 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionListsObjects" table="SBI_DIST_LIST_OBJECTS">
+        <id name="relId" type="integer">
+            <column name="REL_ID" />
+            <generator class="native">
+            	<param name="sequence">SBI_DIST_LIST_OBJECTS_SEQ</param>
+            </generator>
+        </id>
+        <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="DOC_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiDistributionList" class="it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionList">
+            <column name="DL_ID" not-null="true" />
+        </many-to-one>
+        <property name="xml" type="string">
+            <column name="XML" length="5000" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<LDAP_AUTHORIZATIONS default="FALSE">
+	<CONFIG>
+		<USER_DN>cn=*,ou=People,dc=spagobi,dc=com</USER_DN>
+		<ADMIN_USER>cn=Manager,dc=spagobi,dc=com</ADMIN_USER>
+		<ADMIN_PSW>6ddbcdd70d086e75bdc121b16bd23f03</ADMIN_PSW>
+		<ATTRIBUTES_ID name="nome">description</ATTRIBUTES_ID>
+		<ATTRIBUTES_ID name="cognome">sn</ATTRIBUTES_ID>
+		<ATTRIBUTES_ID name="userId">cn</ATTRIBUTES_ID>										
+		<HOST>10.10.11.65</HOST>
+		<PORT>389</PORT>	
+		<OBJECTCLASS>person</OBJECTCLASS>
+		<SEARCH_ROOT>ou=People,dc=spagobi,dc=com</SEARCH_ROOT>
+		<OU_ATTRIBUTE>memberOf</OU_ATTRIBUTE>
+		<SEARCH_ROOT_GROUP>CN=Group,dc=spagobi,dc=com</SEARCH_ROOT_GROUP>
+		<OBJECTCLASS_GROUP>organizationalUnit</OBJECTCLASS_GROUP>
+		<ATTRIBUTES_ID_GROUP>description</ATTRIBUTES_ID_GROUP>
+		<ATTRIBUTES_ID_GROUP>CN</ATTRIBUTES_ID_GROUP>			
+	</CONFIG>
+
+	
+</LDAP_AUTHORIZATIONS>

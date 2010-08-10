@@ -1,0 +1,194 @@
+.grid-button {
+	cursor: pointer
+}
+
+.icon-back {
+	background-image: url('../../../img/analiticalmodel/execution/ico_back.png') !important;
+}
+
+.icon-save {
+	background-image: url('../../../img/save_generic16.png') !important;
+}
+
+.icon-clear {
+	background-image: url('../../../img/clear16.gif') !important;
+}
+
+.icon-insert {
+	background-image: url('../../../img/attach.png') !important;
+}
+
+.icon-add {
+    background-image:url('../../../img/commons/add.gif') !important;
+}
+
+.icon-remove {
+	background-image: url('../../../img/erase.png') !important;
+}
+
+.icon-execute {
+	background-image: url('../../../img/exec16.png') !important;
+}
+
+
+.icon-execute-viewpoint {
+	background-image: url('../../../img/exec16.png') !important;
+}
+
+.icon-apply-viewpoint {
+	background-image: url('../../../img/analiticalmodel/execution/apply-viewpoint16.jpg') !important;
+}
+
+.icon-filter {
+	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
+}
+
+.icon-filter-funnel {
+	background-image:url(../../../img/filter-funnel.gif) !important;
+}
+
+.icon-unfilter {
+	background:transparent url('../../../img/analiticalmodel/execution/tool-sprites.gif') no-repeat 0 -45px;
+}
+
+.icon-refresh {
+	background-image: url('../../../img/analiticalmodel/execution/ico_refresh.png') !important;
+}
+
+.icon-sendMail {
+	background-image: url('../../../img/mail_generic16.png') !important;
+}
+
+.icon-saveIntoPersonalFolder {
+	background-image: url('../../../img/saveIntoPersonalFolder16.png') !important;
+}
+
+.icon-saveRememberMe {
+	background-image: url('../../../img/saveRememberMe16.png') !important;
+}
+
+.icon-notes {
+	background-image: url('../../../img/analiticalmodel/execution/ico_note.png') !important;
+}
+
+.icon-no-notes {
+	background-image: url('../../../img/analiticalmodel/execution/ico_no_note.png') !important;
+}
+
+
+.icon-metadata {
+	background-image: url('../../../img/info16.png') !important;
+}
+
+.icon-rating {
+	background-image: url('../../../img/rating16.png') !important;
+}
+
+.icon-expand {
+	background-image: url('../../../img/expand16x17bis.png') !important;
+}
+
+.icon-print {
+	background-image: url('../../../img/analiticalmodel/execution/ico_print.png') !important;
+}
+
+.icon-pdf {
+	background-image: url('../../../img/kpi/pdf16.png') !important;
+}
+
+.icon-xls {
+	background-image: url('../../../img/xls16.png') !important;
+}
+
+.icon-txt {
+	background-image: url('../../../img/txt16.png') !important;
+}
+
+.icon-csv {
+	background-image: url('../../../img/csv16.png') !important;
+}
+
+.icon-ppt {
+	background-image: url('../../../img/ppt16.png') !important;
+}
+
+.icon-xml {
+	background-image: url('../../../img/xml16.png') !important;
+}
+
+.icon-jpg {
+	background-image: url('../../../img/jpg16.png') !important;
+}
+
+.icon-rtf {
+     background-image:url('../../../img/rtf.gif') !important;
+}
+
+.icon-jrxml {
+     background-image:url('../../../img/jrxml.gif') !important;
+}
+
+.icon-json {
+     background-image:url('../../../img/json18.png') !important;
+}
+
+.icon-export {
+	background-image: url('../../../img/analiticalmodel/execution/ico_exporter.png') !important;
+}
+
+.x-form-dependent-field {
+    padding:1px 3px;
+    background:#DFE8F6;
+    border:1px solid #B5B8C8;
+}
+
+.icon-it {
+	background-image: url('../../../img/it_IT.gif') !important;
+}
+
+.icon-en {
+	background-image: url('../../../img/en_US.gif') !important;
+}
+
+.icon-fr {
+	background-image: url('../../../img/fr_FR.gif') !important;
+}
+
+.icon-es {
+	background-image: url('../../../img/es_ES.gif') !important;
+}
+
+.icon-exit {
+	background-image: url('../../../img/wapp/exit16.png') !important;
+}
+
+.icon-role {
+	background-image: url('../../../img/wapp/roles.png') !important;
+}
+
+.icon-info {
+	background-image: url('../../../img/question.gif') !important;
+}
+
+.action-detail-note {
+	width:16px;
+    height:16px;
+    margin:2 2 2 2;
+    float:right;
+    background-image: url('../../../img/detail.png');
+    background-position:center center;
+    background-repeat:no-repeat; 
+}
+
+.action-delete-note {
+	width:16px;
+    height:16px;
+    margin:2 2 2 2;
+    float:right;
+    background-image: url('../../../img/error16.gif') !important;
+    background-position:center center;
+    background-repeat:no-repeat; 
+}
+.x-tool-plusprofile {
+	background-image: url('../../../img/commons/add.gif') !important;
+}

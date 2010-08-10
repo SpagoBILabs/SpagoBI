@@ -1,0 +1,69 @@
+<project name="${project.name}" default="javadoc" basedir=".">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE FILE DI PROPERTY						                          -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <property file="build.properties"/>	
+ 
+	
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE CLASSPATH						                                    -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<path id="web.classpath">
+    		<pathelement path="${classpath}"/>
+    		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+    		<fileset dir="${web.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		   		
+ 	</path>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   JAVADOC				    					                                  -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<target name="javadoc">    
+	    <javadoc packagenames="*"
+	      sourcepath="${src}"
+	      defaultexcludes="yes"
+	      destdir="${dist}"
+	      author="true"
+	      version="true">
+	      <classpath refid="web.classpath"/>
+	    </javadoc>    
+	  </target>
+	
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   JS MIMIFICATION		    					                                  -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<target name="delete-debug">
+		<delete file="${js.src.dir}/georeport-all.js"/>
+		<delete file="${js.src.dir}/georeport-all-debug.js"/>
+	</target>
+	
+	<target name="create-debug" depends="delete-debug">
+		<concat destfile="${js.src.dir}/georeport-all-debug.js" append="true">
+		    <filelist  dir=".">
+		    	 <file name="${js.src.dir}/commons/Settings.js"/>
+		    	 <file name="${js.src.dir}/overrides/overrides.js"/>
+		    	 <file name="${js.src.dir}/exception/ExceptionHandler.js"/>
+		    	 <file name="${js.src.dir}/commons/Format.js"/>
+		    	 <file name="${js.src.dir}/locale/LocaleUtils.js"/>
+				 <file name="${js.src.dir}/service/ServiceRegistry.js"/>
+	
+				 <file name="${js.src.dir}/georeport/GeoReportUtils.js"/>
+			     <file name="${js.src.dir}/georeport/ControlFactory.js"/>
+			     <file name="${js.src.dir}/georeport/LayerFactory.js"/>
+				 <file name="${js.src.dir}/georeport/GeoReportPanel.js"/>		    	   	
+		    </filelist>
+
+		</concat>
+	</target>
+	
+	<target name="create-production" depends="create-debug">
+			<java jar="./yuicompressor-2.4.2.jar" fork="true">
+				<arg line="-o ${js.src.dir}/georeport-all.js ${js.src.dir}/georeport-all-debug.js"/>		   
+			</java>
+	</target>
+	 
+
+</project>

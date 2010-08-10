@@ -1,0 +1,322 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 12 (filtered)">
+<title>Palo Pivot Info 21</title>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p.msochpdefault, li.msochpdefault, div.msochpdefault
+	{mso-style-name:msochpdefault;
+	margin-right:0cm;
+	margin-left:0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+.MsoChpDefault
+	{font-size:10.0pt;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+<meta http-equiv=cache-control content=no-cache>
+<meta http-equiv=pragma content=no-cache>
+<link rel=icon type="image/png" href="Palo_Pivot_Info.png">
+<link rel="SHORTCUT ICON" href="Palo_Pivot_Info.ico">
+</head>
+
+<body lang=DE link=blue vlink=purple>
+
+<div class=Section1>
+
+<p class=MsoNormal><b><u><span lang=EN-GB style='font-family:"Courier New";
+color:#3366FF'>How to maximize performance of the application</span></u></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;</span></b></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; Overview:</span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+I.&nbsp;&nbsp; <a href="#design_of_olap_databases">Design of OLAP Databases and
+views in the web client</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+II.&nbsp; <a href="#client_browser">Client Browser</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+III. <a href="#client_hardware">Client Hardware</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+IV.&nbsp; <a href="#tomcat_configuration">Tomcat Configuration</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+V.&nbsp;&nbsp; <a href="#server_hardware">Server Hardware</a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; I. <a name="design_of_olap_databases">Design of
+OLAP Databases</a> and views in the web client</span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+The application can internally handle very large dimensions, databases </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+and cubes but browsers need some time to show a huge number of elements </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+in a combo box or in a table. Especially the dimensions dropped to fill </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+the horizontal or vertical axis in the 2-dimensional table of a view </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+should be designed or structured in a way so that not too many dimension </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+elements are shown at one time.</span><span lang=EN-GB> </span><span
+lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>This can be done
+by structuring the </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+original OLAP dimension with enough consolidated elements.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+You can use subsets and local filters for a dimension in the web client</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+to avoid having too many root elements or child elements directly </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+under a parent.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; II. <a name="client_browser">Client Browser</a></span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+The speed of different browsers concerning script execution varies a lot.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- IE7, IE6 and IE5 are slow and are not recommended if possible for you.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Internet Explorer 8 is about 3 times faster than IE7.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Firefox 3.x is about 10 times faster than IE7.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Safari is about 15 times faster than IE7.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- Iron and Chrome are about 30 times faster than IE7.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+- We recommend using IE8, Firefox 3.x, Safari, Chrome and Iron.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a name="client_browser_script_msg">Still</a>, for views with a large number of
+displayed table cells the time </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+for the script execution may appear to be too long for the used browser.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+In this case the browser shows requests asking if you want to continue </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+executing the script or stop it. If you stop it, only this specific view </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+remains in an undefined state and you need to reopen it. </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+You can confirm these dialogs every time they appear or you can modify </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+the default value of the script timeout for your browser:</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a name="client_browser_firefox"><u>Firefox</u></a></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Firefox allows you to deactivate the appearance of the info dialog </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+directly in the dialog shown in case of scripts that run a long time.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+You can also modify the time how long it takes before a warning appears:</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+a. Type ‘about:config’ in Firefox's address bar</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+b. Filter down to the value for ‘dom.max_script_run_time’</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+c. Change the value (in seconds) to something higher than the default </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(which is 10 seconds) </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+d. Filter down to the value for ‘dom.max_chrome_script_run_time’ helps </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+to set the same value for applications with chrome rights</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Internet Explorer</u></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Please find the information to modify the script timeout for IE here:</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+(based on the total number of executed script statements)</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a href="http://support.microsoft.com/kb/175500" target="_blank">http://support.microsoft.com/kb/175500</a>&nbsp;
+(in your browser’s language)</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<a href="http://support.microsoft.com/kb/175500/en-us/" target="_blank">http://support.microsoft.com/kb/175500/en-us/</a>&nbsp;
+(in English)</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Safari</u></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Please find information on how to deactivate &quot;Runaway JavaScript
+Timer&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+in Safari by using the search function for exactly this term in the </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+safari help (key F1).</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+<u>Iron and Chrome</u></span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+These very similar browsers actually don’t need an option to deactivate </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+the script timeout or set the timer to a customized value, because - in </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+contrast to all browsers mentioned above - they have a nifty feature:</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+Although they also show a warning, the script execution is not paused, </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+so that the user does not have to interact with the dialog in order to </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+let the script continue its execution.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; III. <a name="client_hardware">Client Hardware</a></span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+As the performance of the script engine of a browser also depends on </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+the CPU speed of the client machine a faster processor is helpful.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; IV. <a name="tomcat_configuration">Tomcat
+Configuration</a></span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+The default value for &quot;Maximum memory pool&quot; of the tomcat is low </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+after installation. Set it to a higher value suitable for the system.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+We recommend 1024MB. You can do this on a windows system within the </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+&quot;Apache Tomcat Properties&quot; or on a linux system within the file: </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+/tomcat/bin/catalina.sh </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+with a line like:</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+CATALINA_OPTS=&quot;$CATALINA_OPTS -Xmx1024m&quot;</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+<p class=MsoNormal><b><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New";
+color:#3366FF'>&nbsp;&nbsp; V. <a name="server_hardware">Server Hardware</a></span></b></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+The tomcat server can be run on a workstation for testing purpose,</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+but for better performance it should be run on a server machine.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+For example, Tensegrity runs the online demo on a linux machine with </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+only one single core processor. For a production system we recommend </span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
+dual core and/or multi processors. We also recommend 2GB RAM or more.</span></p>
+
+<p class=MsoNormal><span lang=EN-GB style='font-size:9.0pt;font-family:"Courier New"'>&nbsp;</span></p>
+
+</div>
+
+</body>
+
+</html>

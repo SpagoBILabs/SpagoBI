@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory name="HibernateSessionFactoryHsqldb">
+        <property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
+        <!-- 
+        <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost/spagobi</property>
+        <property name="hibernate.cglib.use_reflection_optimizer">false</property>
+        <property name="hibernate.connection.password"></property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        -->
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.generate_statistics">true</property>
+        
+        <mapping resource="it/eng/spagobi/events/metadata/mappinghsqldb/SbiEvents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/events/metadata/mappinghsqldb/SbiEventsLog.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiDomains.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiEventRole.hbm.xml" />  
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiExtRoles.hbm.xml" />   
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiUserFunctionality.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappinghsqldb/SbiParameters.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappinghsqldb/SbiParuseDet.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappinghsqldb/SbiParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappinghsqldb/SbiParuseCk.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mappinghsqldb/SbiObjParuse.hbm.xml" />        
+        <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mappinghsqldb/SbiLov.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/check/metadata/mappinghsqldb/SbiChecks.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjPar.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjectsRating.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjFunc.hbm.xml" />        
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjState.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiSubreports.hbm.xml"/>
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiViewpoints.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mappinghsqldb/SbiFunctions.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mappinghsqldb/SbiFuncRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/monitoring/metadata/mappinghsqldb/SbiAudit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mappinghsqldb/SbiEngines.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mappinghsqldb/SbiExporters.hbm.xml" />        
+        <mapping resource="it/eng/spagobi/tools/datasource/metadata/mappinghsqldb/SbiDataSource.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappinghsqldb/SbiDistributionList.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappinghsqldb/SbiDistributionListsObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappinghsqldb/SbiDistributionListUser.hbm.xml" />
+       
+        <mapping resource="it/eng/spagobi/commons/metadata/mappinghsqldb/SbiBinContents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjTemplates.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiObjNotes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiSubObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mappinghsqldb/SbiSnapshots.hbm.xml" />
+        
+        <!-- map catalogue -->
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappinghsqldb/SbiGeoMapFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappinghsqldb/SbiGeoFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappinghsqldb/SbiGeoMaps.hbm.xml" />
+        
+        <!-- dossier -->
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappinghsqldb/SbiDossierBinaryContentsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappinghsqldb/SbiDossierPartsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mappinghsqldb/SbiDossierPresentations.hbm.xml" />
+
+
+        <!-- rememberMe -->
+        <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mappinghsqldb/SbiRememberMe.hbm.xml" />
+         <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappinghsqldb/SbiDataSetConfig.hbm.xml" />
+         
+         <!-- Menu -->
+        <mapping resource="it/eng/spagobi/wapp/metadata/mappinghsqldb/SbiMenu.hbm.xml" />
+        <mapping resource="it/eng/spagobi/wapp/metadata/mappinghsqldb/SbiMenuRole.hbm.xml" />
+        
+         <!-- KPI Engine -->
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstance.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstPeriod.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstanceHistory.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelAttr.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelAttrVal.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelInst.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiPeriodicity.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiMeasureUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappinghsqldb/SbiThreshold.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappinghsqldb/SbiThresholdValue.hbm.xml" />
+        
+        <!-- Kpi.alarm -->
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappinghsqldb/SbiAlarm.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappinghsqldb/SbiAlarmEvent.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappinghsqldb/SbiAlarmContact.hbm.xml" />
+        
+         <!-- Obj Metadata -->
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mappinghsqldb/SbiObjMetadata.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mappinghsqldb/SbiObjMetacontents.hbm.xml" />
+        <!-- PROFILING -->
+
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiAttribute.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" /> 
+
+    </session-factory>
+</hibernate-configuration>

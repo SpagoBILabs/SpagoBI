@@ -1,0 +1,26 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include GEO stylesheets -->
+<link rel="styleSheet" href ="./../css/geo.css" type="text/css" />
+
+<!-- START-DEBUG -->
+
+<script type="text/javascript" src='../js/spagobi/commons/commons.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ComponentBuddy.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ServiceSequence.js'/></script>
+<script type="text/javascript" src='../js/spagobi/geo/overrides/overrides.js'/></script>
+<script type="text/javascript" src='../js/spagobi/geo/Geo.js'/></script>	
+<script type="text/javascript" src='../js/spagobi/geo/SaveAnalysisWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/geo/DrillControlPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/geo/GeoApp.js'/></script>
+		
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='../js/spagobi/geo-all.js'></script>
+ END-PRODUCTION -->

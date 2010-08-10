@@ -1,0 +1,59 @@
+<style>
+	#content {
+		line-height: 1em;
+	}
+    
+    .zoomin {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomin.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+    
+    .zoomout {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomout.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+     
+    .zoomfull {
+     	  background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomfull.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .pan {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_pan.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+      
+    .drawpoint {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_point_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .drawline {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_line_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .drawpolygon {
+    	  background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_polygon_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .next {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/resultset_next.png) !important;
+            height:20px !important;
+            width:20px !important;
+    }
+       
+    .back {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/resultset_previous.png) !important;
+            height:20px !important;
+            width:20px !important;
+    }
+ </style>

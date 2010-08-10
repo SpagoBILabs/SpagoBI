@@ -1,0 +1,8 @@
+How to compile
+
+1 ) Before compile ExoProfileAttributesManagerModule you need to compile SpagoBI. 
+2 ) ExoProfileAttributesManagerModule folder must be a child of the SpagoBI root folder 
+    (at the same level of all other spagobi projects like SpagoBIJasperReportEngine, QbeCore, ...)
+3 ) go the the "ExoProfileAttributesManagerModule" folder and launch the Maven 2 command: mvn compile
+4 ) The command will produce the directory "ExoProfileAttributesManagerModule/build" containing  the file "spagobi.zip", which is the component to install over SpagoBI. 
+5 ) Follow the instructions contained into spagobi.zip file to install it.

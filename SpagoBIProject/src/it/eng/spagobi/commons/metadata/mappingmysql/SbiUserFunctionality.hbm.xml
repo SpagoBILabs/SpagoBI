@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="it.eng.spagobi.commons.metadata.SbiUserFunctionality" table="SBI_USER_FUNC">
+        <id name="id" type="integer">
+            <column name="USER_FUNCT_ID" />
+            <generator class="native">
+           		<param name="sequence">sbi_user_func_seq</param>
+            </generator>
+        </id>
+        
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="100" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="50" />
+        </property>      
+        
+		<set name="roleType" table="SBI_ROLE_TYPE_USER_FUNC">
+			<key column="USER_FUNCT_ID"/>
+			<many-to-many column="ROLE_TYPE_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
+		</set>       
+      
+        
+     </class>
+</hibernate-mapping>

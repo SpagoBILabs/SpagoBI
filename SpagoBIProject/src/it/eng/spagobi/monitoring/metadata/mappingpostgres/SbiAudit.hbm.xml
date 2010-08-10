@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.monitoring.metadata.SbiAudit" table="sbi_audit" >
+        <id name="id" type="integer">
+            <column name="id" />
+            <generator class="sequence">
+            	<param name="sequence">sbi_audit_seq</param> 
+            </generator>
+        </id>
+        <property name="userName" type="string">
+            <column name="username" length="40" not-null="true" />
+        </property>
+        <property name="userGroup" type="string">
+            <column name="usergroup" length="100" not-null="false" />
+        </property>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="doc_ref" not-null="false" />
+        </many-to-one>
+        <property name="documentId" type="integer">
+            <column name="doc_id" not-null="true" />
+        </property>
+        <property name="documentLabel" type="string">
+            <column name="doc_label" length="20" not-null="true" />
+        </property>
+        <property name="documentName" type="string">
+            <column name="doc_name" length="40" not-null="true" />
+        </property>
+        <property name="documentType" type="string">
+            <column name="doc_type" length="20" not-null="true" />
+        </property>
+        <property name="documentState" type="string">
+            <column name="doc_state" length="20" not-null="true" />
+        </property>
+        <property name="documentParameters" type="string">
+            <column name="doc_parameters" not-null="false" />
+        </property>
+        <many-to-one name="sbiSubObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects">
+            <column name="subobj_ref" not-null="false" />
+        </many-to-one>
+        <property name="subObjId" type="integer">
+            <column name="subobj_id" not-null="false" />
+        </property>
+        <property name="subObjName" type="string">
+            <column name="subobj_name" length="50" not-null="false" />
+        </property>
+        <property name="subObjOwner" type="string">
+            <column name="subobj_owner" length="50" not-null="false" />
+        </property>
+        <property name="subObjIsPublic" type="short">
+            <column name="subobj_ispublic" not-null="false" />
+        </property>
+        <many-to-one name="sbiEngine" class="it.eng.spagobi.engines.config.metadata.SbiEngines">
+            <column name="engine_ref" not-null="false" />
+        </many-to-one>
+        <property name="engineId" type="integer">
+            <column name="engine_id" not-null="true" />
+        </property>
+        <property name="engineLabel" type="string">
+            <column name="engine_label" length="40" not-null="true" />
+        </property>
+        <property name="engineName" type="string">
+            <column name="engine_name" length="40" not-null="true" />
+        </property>
+        <property name="engineType" type="string">
+            <column name="engine_type" length="20" not-null="true" />
+        </property>
+        <property name="engineUrl" type="string">
+            <column name="engine_url" length="400" not-null="false" />
+        </property>
+        <property name="engineDriver" type="string">
+            <column name="engine_driver" length="400" not-null="false" />
+        </property>
+        <property name="engineClass" type="string">
+            <column name="engine_class" length="400" not-null="false" />
+        </property>
+        <property name="requestTime" type="timestamp">
+            <column name="request_time" not-null="true"/>
+        </property>
+        <property name="executionStartTime" type="timestamp">
+            <column name="execution_start" not-null="false"/>
+        </property>
+        <property name="executionEndTime" type="timestamp">
+            <column name="execution_end" not-null="false"/>
+        </property>
+        <property name="executionTime" type="integer">
+            <column name="execution_time" not-null="false"/>
+        </property>
+        <property name="executionState" type="string">
+            <column name="execution_state" length="20" not-null="false" />
+        </property>
+        <property name="error" type="short">
+            <column name="error" not-null="false" />
+        </property>
+        <property name="errorMessage" type="string">
+            <column name="error_message" length="400" not-null="false" />
+        </property>
+        <property name="errorCode" type="string">
+            <column name="error_code" length="20" not-null="false" />
+        </property>
+        <property name="executionModality" type="string">
+            <column name="execution_modality" length="40" not-null="false" />
+        </property>
+    </class>
+</hibernate-mapping>

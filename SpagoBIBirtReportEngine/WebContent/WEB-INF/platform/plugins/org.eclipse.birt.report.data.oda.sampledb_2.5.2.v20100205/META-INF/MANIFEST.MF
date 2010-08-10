@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-Activator: org.eclipse.birt.report.data.oda.sampledb.SampledbPl
+ ugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.birt.report.data.oda.sampledb
+Bundle-Version: 2.5.2.v20100205
+Bundle-Name: BIRT Sample Database
+Bundle-ClassPath: sampledb.jar
+Bundle-ManifestVersion: 2
+Bundle-Vendor: Eclipse.org
+Bundle-SymbolicName: org.eclipse.birt.report.data.oda.sampledb;singlet
+ on:=true
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)
+ ",org.eclipse.datatools.connectivity.oda;bundle-version="[3.1.0,4.0.0
+ )",org.eclipse.birt.report.data.oda.jdbc;bundle-version="[2.2.0,3.0.0
+ )",org.eclipse.birt.core;bundle-version="[2.1.0,3.0.0)",org.apache.de
+ rby.core;bundle-version="[10.1.2,11.0.0)",org.eclipse.datatools.conne
+ ctivity.oda.profile;bundle-version="[3.0.4,4.0.0)";resolution:=option
+ al
+

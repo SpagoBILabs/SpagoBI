@@ -1,0 +1,370 @@
+/*
+
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+*/
+
+/*******************************************************************************************************
+ * Actions
+ ********************************************************************************************************/
+        
+.add {
+    background-image:url(../img/actions/add.gif) !important;
+}
+
+
+.x-item-disabled .add{
+	background-image:url(../img/actions/add_gray.gif) !important;
+}
+
+.edit {
+    background-image:url(../img/actions/edit.png) !important;
+}
+
+.x-item-disabled .edit{
+	 background-image:url(../img/actions/edit_gray.png) !important;
+}
+
+.editremove {
+	background-image:url(../img/actions/editdelete.png) !important;
+}
+
+.x-item-disabled .editremove {
+	background-image:url(../img/actions/editdelete_gray.png) !important;
+}
+
+.remove {
+	background-image:url(../img/actions/delete.gif) !important;
+}
+
+.x-item-disabled .remove {
+	background-image:url(../img/actions/delete_gray.gif) !important;
+}
+
+.option {
+	background-image:url(../img/actions/option.gif) !important;
+}
+
+.add-calculated-filed  {
+	background-image:url(../img/actions/qbe-tb-btn-sprite.png)  no-repeat 0 -0px;
+}
+
+.hide-nonvisible-filed  {
+	background-image:url(../img/actions/qbe-tb-btn-sprite.png)  no-repeat 0 -11px;
+}
+
+
+/*******************************************************************************************************
+ * Datamart Structure
+ ********************************************************************************************************/
+  
+.calculation {
+	 background-image:url(../img/datamartstructure/calculation.gif) !important;
+}
+
+.measure {
+	 background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.attribute {
+	 background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.cube {
+	 background-image:url(../img/datamartstructure/cube.gif) !important;
+}
+
+.database {
+	 background-image:url(../img/datamartstructure/database.png) !important;
+}
+
+.dimension {
+	 background-image:url(../img/datamartstructure/dimension.gif) !important;
+}
+
+.view {
+	 background-image:url(../img/datamartstructure/view.png) !important;
+}
+
+
+/*******************************************************************************************************
+ * Filter expression wizard
+ ********************************************************************************************************/
+  
+.operand {
+	 background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.operator {
+	 background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.trigger-up {
+	 background-image:url(../img/triggerup.gif) !important;
+}
+
+
+/*******************************************************************************************************
+ * Mime types
+ ********************************************************************************************************/
+  
+
+.pdf {
+     background-image:url(../img/mimetypes/pdf.gif) !important;
+}
+
+.rtf {
+     background-image:url(../img/mimetypes/rtf.gif) !important;
+}
+.xls {
+     background-image:url(../img/mimetypes/xls.gif) !important;
+}
+
+.csv {
+     background-image:url(../img/mimetypes/csv.gif) !important;
+}
+
+.jrxml {
+     background-image:url(../img/mimetypes/jrxml.gif) !important;
+}
+
+
+.icon-remove {
+	background-image:url(../img/delete.gif) !important;
+}
+
+
+.icon-execute {
+	background-image:url(../img/filter.gif) !important;
+}
+
+
+.icon-grid {
+	background-image:url(../img/grid.png) !important;
+}
+
+.x-node-ctx {
+    background:#eee !important;
+    /* border:1px solid #ccc !important */;
+}
+
+
+.row-over {
+     border:1px solid #dddddd;
+     background: #efefef url(../js/ext/resources/images/default/grid/row-over.gif) repeat-x left top;
+}
+
+
+/*******************************************************************************************************
+ * Form viewer
+ ********************************************************************************************************/
+.icon-clear {
+	background-image: url('../img/formviewer/clear16.gif') !important;
+}
+
+
+
+/*******************************************************************************************************
+ * Form builder
+ ********************************************************************************************************/
+.filter {	
+    border:1px solid #eee !important;
+}
+
+.filter-select {	
+    background:#eef !important;
+    border:1px dotted #ccc !important;
+}
+
+.x-table-layout td {
+     vertical-align:top;
+}
+
+/* remove the default left,center and right images from the button border*/
+.image-button .x-btn-left, .image-button .x-btn-right, .image-button .x-btn-center{
+    background: 0;
+    padding:0px;	
+}
+
+.image-button .x-btn-center .x-btn-text  {
+	 background-repeat: no-repeat;
+	 width: 20px;
+
+}
+
+/* see Sbi.crosstab.CrosstabDetailsWizard.js, alternate group style.
+See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
+.x-check-group-alt {
+    background: #E8E8E8;
+    border-top:1px dotted #D0D0D0;
+    border-bottom:1px dotted #D0D0D0;
+}
+
+/*******************************************************************************************************
+ * Cross Tab
+ ********************************************************************************************************/
+.crosstab-table-headers{
+	font:15px arial,tahoma,helvetica,sans-serif;
+	cursor: pointer !important;
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	background-image:url("../img/crosstab/headerbackground.gif");
+	font:12px arial,tahoma,helvetica,sans-serif;
+	color : #3783E8;
+}
+				
+.crosstab-table-cells{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font:12px arial,tahoma,helvetica,sans-serif;
+	background-color: transparent;
+}
+				
+.crosstab-tablebackground{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-top-style: none;
+	border-left-style: none;
+}
+
+.crosstab-column-header-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-bottom-style: none;
+	border-left-style: none;
+}
+
+.crosstab-row-header-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-top-style: none;
+}
+				
+.crosstab-table-empty-top-left-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+}
+
+.crosstab-table-empty-top-right-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-top-style: none;
+}
+
+.crosstab-table-empty-bottom-left-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-empty-bottom-right-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-data-panel{
+	border:1px solid !important;
+	border-color: #99BBE8 !important;
+	border-top-style: none !important;
+	border-left-style: none !important;
+}
+
+.crosstab-row-sum-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+}
+
+.crosstab-column-sum-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-top-style: none;
+	border-left-style: none;
+}
+
+.crosstab-borderd{
+	border:1px solid;
+	border-color: #8F8F8F;	
+}
+
+.crosstab-no-border{
+	border-style: none !important;	
+}
+
+.crosstab-none-bottom-border-panel{
+	border-bottom-style: none !important;
+}
+
+.crosstab-none-right-border-panel{
+	border-right-style: none !important;
+}
+
+.crosstab-none-top-border-panel{
+	border-top-style: none !important;
+}
+
+.crosstab-none-left-border-panel{
+	border-left-style: none !important;
+}
+
+#loading-mask {
+  position: absolute;
+  left:     0;
+  top:      0;
+  width:    100%;
+  height:   100%;
+  z-index:  20000;
+  background-color: white;
+}
+ 
+#loading {
+  position: absolute;
+  left:     50%;
+  top:      50%;
+  padding:  2px;
+  z-index:  20001;
+  height:   auto;
+  margin:   -35px 0 0 -30px;
+}
+ 
+#loading .loading-indicator {
+  background: url(../img/crosstab/loading.gif) no-repeat middle;
+  color:      #555;
+  font:       bold 13px tahoma,arial,helvetica;
+  margin:     0;
+  text-align: center;
+  height:     auto;
+}

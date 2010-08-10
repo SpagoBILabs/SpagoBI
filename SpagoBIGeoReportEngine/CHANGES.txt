@@ -1,0 +1,21 @@
+SpagoBIGeoEngine's Change Log
+
+
+======================= Release 2.4.0 2009-12-18 =======================
+
+NEW FEATURES
+
+1. execute geo analysis with [proportional symbols] or [choropleth]
+
+
+BUG FIXES
+
+1. no known bug
+
+
+CHANGES IN TEMPLATE STRUCTURE
+
+1. no change in template structure
+
+
+

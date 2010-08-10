@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.commons.metadata.SbiDomains" table="SBI_DOMAINS">
+        <id name="valueId" type="integer">
+            <column name="VALUE_ID" />
+            <generator class="native">
+           		<param name="sequence">sbi_domains_seq</param>
+            </generator>
+        </id>
+        <property name="domainCd" type="string">
+            <column name="DOMAIN_CD" length="20" />
+        </property>
+        <property name="domainNm" type="string">
+            <column name="DOMAIN_NM" length="40" />
+        </property>
+        <property name="valueCd" type="string">
+            <column name="VALUE_CD" length="20" />
+        </property>
+        <property name="valueNm" type="string">
+            <column name="VALUE_NM" length="40" />
+        </property>
+        <property name="valueDs" type="string">
+            <column name="VALUE_DS" length="160" />
+        </property>
+        <set name="sbiExporterses" inverse="true">
+            <key>
+                <column name="DOMAIN_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiExporters" />
+        </set>
+    </class>
+</hibernate-mapping>

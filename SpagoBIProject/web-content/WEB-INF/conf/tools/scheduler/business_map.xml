@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="JobManagementPage" moduleName="JobManagementModule" businessProcess="SchedulerManagement" />	
+		<MAP_PAGE_MODULE pageName="TriggerManagementPage" moduleName="TriggerManagementModule" businessProcess="SchedulerManagement" />
+		<MAP_PAGE_MODULE pageName="SchedulerPage" moduleName="SchedulerModule" businessProcess="SchedulerManagement" />
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

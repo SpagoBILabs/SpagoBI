@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SPAGOBI>
+
+    <!-- ********************* START MODE CONFIGURATION ************************ -->
+<!-- START-WEB  -->
+<SPAGOBI-MODE mode="WEB"/>
+<!-- END-WEB  -->
+
+	<HOME>
+		<BANNER view="true" /> 
+		<FOOTER view="true" /> 
+	</HOME>
+
+<!-- START-PORTLET 
+	<SPAGOBI-MODE mode="PORTLET"/>
+  END-PORTLET  -->	
+
+    <!-- ********************* END MODE CONFIGURATION ************************** -->
+     
+	<!-- defines the max dimension (in bytes) of a document template when uploading it into document detail page -->
+	<TEMPLATE_MAX_SIZE>5242880</TEMPLATE_MAX_SIZE>
+     
+    <!-- ********************* START MENU CONFIGURATION ************************ -->
+	<!-- Property 'mode' defines the style of menu: 
+			- 'ALL_TOP': all the menu voices are on the top of page
+			- 'ALL_LEFT': all the menu voices are on the left of the page
+			- 'TOP_LEFT': the first level is on the top, while others levels are on the left of the page
+			AT THE TIME BEING, ONLY ALL_TOP WORKS PROPERLY
+	 -->
+	 <MENU mode="ALL_TOP" viewExtra="YES" pathTracked="false"/> 
+	 
+
+    <!-- ********************* END MENU CONFIGURATION ************************** -->
+     
+     
+    <!-- ********************* START SECURITY CONFIGURATION ************************ -->
+     
+   
+     
+<!-- START-XML -->
+	 
+	 <SECURITY>
+  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.InternalSecurityInitializer</PORTAL-SECURITY-INIT-CLASS>
+		<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.InternalSecurityInfoProviderImpl">
+			<CONFIG />
+		</PORTAL-SECURITY-CLASS>
+		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl" />
+    	<ROLE-NAME-PATTERN-FILTER>.*</ROLE-NAME-PATTERN-FILTER>
+    	<ROLE-TYPE-PATTERNS>
+	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
+	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
+	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
+	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
+    	</ROLE-TYPE-PATTERNS>
+	 </SECURITY>
+
+<!-- STOP-XML -->
+
+
+   <!-- Web security Provider  (LDAP) -->
+<!-- 
+	<SECURITY>
+  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.LdapSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
+			<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.LdapSecurityProviderImpl">
+				<CONFIG />
+			</PORTAL-SECURITY-CLASS>
+		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.LdapUserProfileFactoryImpl" />
+		<ROLE-NAME-PATTERN-FILTER>.*</ROLE-NAME-PATTERN-FILTER>
+    	<ROLE-TYPE-PATTERNS>
+	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
+	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
+	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
+	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
+    	</ROLE-TYPE-PATTERNS>
+	</SECURITY>
+ -->
+     
+<!-- Exo security Provider  -->
+<!--
+     <SECURITY>
+  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.ExoPortalSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
+		<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.ExoSecurityProviderImpl">
+			<CONFIG>
+				<NAME_PORTAL_APPLICATION>@portal.context@</NAME_PORTAL_APPLICATION>
+			</CONFIG>
+		</PORTAL-SECURITY-CLASS>
+		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.ExoUserProfileImpl">
+		</USER-PROFILE-FACTORY-CLASS>
+    	<ROLE-NAME-PATTERN-FILTER>/spagobi/.*</ROLE-NAME-PATTERN-FILTER>
+    	<ROLE-TYPE-PATTERNS>
+	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
+	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
+	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
+	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
+    	</ROLE-TYPE-PATTERNS>
+	 </SECURITY>
+ -->
+
+<!-- START-LIFERAY
+
+     <SECURITY>
+        <PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.LiferayPortalSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
+        <PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.LiferaySecurityInfoProviderImpl">
+	      <CONFIG />
+		</PORTAL-SECURITY-CLASS>
+        <USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.LiferaySecurityServiceSupplierImpl">
+        </USER-PROFILE-FACTORY-CLASS>
+        <WS_SERVICE url="localhost:58080/tunnel-web/secure/axis/"  username="bruno" password="bruno"/>
+        <ROLE-NAME-PATTERN-FILTER>/spagobi/.*</ROLE-NAME-PATTERN-FILTER>
+		<ROLE-TYPE-PATTERNS>
+                	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
+                	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
+                	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
+                	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
+        </ROLE-TYPE-PATTERNS>
+	    <PROFILE_ATTRIBUTES>
+		    <ATTRIBUTE name="NAME" default="" source="NAME" />
+		    <ATTRIBUTE name="SURNAME" default="" source="SURNAME" />
+		    <ATTRIBUTE name="USER_ID" default="" source="USER_ID" />
+		    <ATTRIBUTE name="E_MAIL" default="" source="E_MAIL" />
+	    </PROFILE_ATTRIBUTES>
+	    <ROLES>
+	    	<ROLE name="/spagobi/admin" desc="/spagobi/admin" />
+	    	<ROLE name="/spagobi/dev" desc="/spagobi/dev" />
+	    	<ROLE name="/spagobi/test" desc="/spagobi/test" />
+	    	<ROLE name="/spagobi/modeladmin" desc="/spagobi/modeladmin" />
+	    	<ROLE name="/spagobi/user" desc="/spagobi/user" />
+	    </ROLES>
+      </SECURITY>
+END-LIFERAY -->
+         
+    <!-- ********************* END SECURITY CONFIGURATION ************************** --> 
+
+     
+     <!-- ********************* START DATABASE CONFIGURATION ************************ -->
+     
+     <!-- SPAGOBI HIBERNATE PERSISTENCE CONFIGURATTION -->
+	 <!--  PostgresSQL -->
+	 <!--  hibernate.cfg.postgres.xml -->
+	 <!--  MySQL: Uncomment the row below and edit the file  to provide connection info -->
+	 <!--  hibernate.cfg.mysql.xml -->
+	 <!--  Oracle: Uncomment the row below and edit the file to provide connection info -->
+	 <!--  hibernate.cfg.ora.xml-->
+     <!--  Hsqldb: Uncomment the row below and edit the file to provide connection info -->
+     <!--   hibernate.cfg.hsql.xml -->
+     <!--  SqlServer: Uncomment the row below and edit the file to provide connection info -->
+     <!--   hibernate.cfg.sqlserver.xml -->
+     <!--  Ingres: Uncomment the row below and edit the file to provide connection info -->
+     <!--   hibernate.cfg.ingres.xml -->
+     
+	 <HIBERNATE-CFGFILE>hibernate.cfg.mysql.xml</HIBERNATE-CFGFILE>
+	
+     <!-- ********************* END DATABASE CONFIGURATION ************************ -->
+     
+
+     <!-- ********************* START GENERAL CONFIGURATION ************************ -->
+     
+   
+    <!--  
+    Date format for communications with the server (both on sending and receiving); format attribute is for server side services, see java.text.SimpleDateFormat for details,
+    while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/.
+    IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY.
+    -->
+     <DATE-FORMAT-SERVER format="dd/MM/yyyy" extJsFormat="d/m/Y" />
+
+    <!--  
+    Date format used while displaying dates according to user current locale.
+    Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details,
+    while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/.
+    IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY.
+    -->    
+     <DATE-FORMAT-IT_IT format="dd/MM/yyyy" extJsFormat="d/m/Y"/>
+     <DATE-FORMAT-EN_US format="MM/dd/yyyy" extJsFormat="m/d/Y"/>
+     <DATE-FORMAT-FR_FR format="dd/MM/yyyy" extJsFormat="d/m/Y"/>      
+     <DATE-FORMAT-ES_ES format="dd/MM/yyyy" extJsFormat="d/m/Y"/>   
+  	 <TIMESTAMP-FORMAT format="dd/MM/yyyy hh:mm:ss" extJsFormat="d/m/Y H:i:s"/>
+  	 
+    <!--  Date visual format if language is not found-->      	 
+  	<DATE-FORMAT format="dd/MM/yyyy" extJsFormat="d/m/Y"/>
+
+
+	<!--  True If you want to log user actions in DB table sbi_activity_monitoring-->      
+	<DB_LOG value="false" />
+    <!--  TimeStamp Format of SpagoBI DB-->          
+    <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
+    <!--  yyyy-MM-dd HH:mm:ss -->
+    <!--  MySQL: (Default) -->
+    <!--  yyyy-MM-dd HH:mm:ss -->
+    <!--  Oracle: Uncomment the row below and edit the file to provide Db timestamp  info -->
+    <!--  dd-MMM-yy HH:mm:ss-->
+    <!--  Hsqldb: Uncomment the row below and edit the file to provide Db timestamp  info -->
+    <!--  yyyy-MM-dd HH:mm:ss -->          
+    <DB-TIMESTAMP-FORMAT format="yyyy-MM-dd HH:mm:ss" /> 
+
+
+
+     <THEMES>
+		<THEME name="sbi_default" default="true" view_name="default" ext_theme="xtheme-gray.css" /> 
+	<!-- <THEME name="other_theme" default="false" view_name="other" />  -->	
+	 </THEMES>
+
+	 <SESSION_PARAMETERS_MANAGER enabled="false" />
+     
+     <LOOKUP numberRows = "20" />
+
+
+     <SPAGOBI_CONTEXT>/SpagoBI</SPAGOBI_CONTEXT>
+    
+     <SPAGOBI_HOST_JNDI>java://comp/env/spagobi_host_url</SPAGOBI_HOST_JNDI>
+     
+     <RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
+     
+	<!-- The URL to FORWARD to when session has expired -->
+	<SESSION_EXPIRED_URL>/WEB-INF/jsp/commons/sessionExpired.jsp</SESSION_EXPIRED_URL>	
+ 	 
+ 	 <SPAGO_ADAPTERHTTP_URL>/servlet/AdapterHTTP</SPAGO_ADAPTERHTTP_URL>
+	
+	 <PORTLET_EDIT_MODE_ROLES>
+		<ROLE name="/spagobi/admin" />
+	 </PORTLET_EDIT_MODE_ROLES>
+
+	 <LANGUAGE_SUPPORTED>
+		<LANGUAGE default="true" language="it" country="IT" />
+		<LANGUAGE default="false" language="en" country="US" />
+		<LANGUAGE default="false" language="fr" country="FR" />
+		<LANGUAGE default="false" language="es" country="ES" />		
+	 </LANGUAGE_SUPPORTED>	
+	
+	
+	 <SCRIPT_LANGUAGE_SUPPORTED>
+		<SCRIPT_LANGUAGE default="true" 
+						name="groovy" 
+						engineclass="org.codehaus.groovy.bsf.GroovyEngine"
+						identifier="groovy"
+						shortidentifier="gy" 
+						predefinedScriptFile="predefinedGroovyScript.groovy"/>
+		<SCRIPT_LANGUAGE default="false" 
+						name="javascript" 
+						identifier="javascript"
+						shortidentifier="js" 
+						predefinedScriptFile="predefinedJavascriptScript.js"/>						
+	 </SCRIPT_LANGUAGE_SUPPORTED>	
+	
+	
+	 <TREE_INITIALIZATION>
+		<TREE_INITIAL_STRUCTURE>
+			<NODE code="Functionalities" name="Functionalities" 
+					description="Functionalities" parentPath="" codeType="LOW_FUNCT" />
+			<!-- 
+			<NODE code="SystemFunctionalities" name="System Functionalities" 
+					description="System Functionalities" parentPath="/Functionalities" codeType="LOW_FUNCT" />
+			-->
+		</TREE_INITIAL_STRUCTURE>
+	 </TREE_INITIALIZATION>
+     <INDEX_INITIALIZATION>
+		<INDEX jndiResourcePath="java://comp/env/spagobi_resource_path" name="//idx" />
+	 </INDEX_INITIALIZATION>
+     <INTERNAL_PROFILING_INITIALIZER passwordAbilitated="false">
+		<DEFAULT_USERS>
+			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator">
+				<ATTRIBUTE name="email" value="admin@eng.it" />
+				<ATTRIBUTE name="name" value="SpagoBI Administrator" />
+				<ROLE name="/spagobi/admin"/>
+			</USER>
+			<USER userId="biuser" password="biuser" fullName="SpagoBI User">
+				<ATTRIBUTE name="name" value="SpagoBI User" />
+				<ROLE name="/spagobi/user"/>
+			</USER>
+			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User">
+				<ATTRIBUTE name="name" value="SpagoBI TestUser" />
+				<ROLE name="/spagobi/test"/>
+			</USER>
+			<USER userId="bidev" password="bidev" fullName="SpagoBI Developer">
+				<ATTRIBUTE name="name" value="SpagoBI Developer" />
+				<ROLE name="/spagobi/dev"/>
+			</USER>
+			<USER userId="bam" password="bam" fullName="Bam User">
+				<ATTRIBUTE name="name" value="Bam User" />
+				<ROLE name="/spagobi/bam"/>
+			</USER>
+		</DEFAULT_USERS>
+		<DEFAULT_ATTRIBUTES>
+			<ATTRIBUTE name="name" description="name" />
+			<ATTRIBUTE name="surname" description="surname" />
+			<ATTRIBUTE name="address" description="address" />
+			<ATTRIBUTE name="birth_date" description="birth date" />
+			<ATTRIBUTE name="email" description="email" />
+		</DEFAULT_ATTRIBUTES>
+		<DEFAULT_ROLES>
+			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" roleTypeCD="DEV_ROLE"/>
+			<ROLE roleName="/spagobi/test" description="/spagobi/test" roleTypeCD="TEST_ROLE"/>
+			<ROLE roleName="/spagobi/user" description="/spagobi/user" roleTypeCD="USER"/>
+			<ROLE roleName="/spagobi/userb" description="/spagobi/userb" roleTypeCD="USER" />
+			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" roleTypeCD="ADMIN" />
+			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" />
+			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" />
+			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" />	
+			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />		
+		</DEFAULT_ROLES>
+	 </INTERNAL_PROFILING_INITIALIZER>  
+	
+</SPAGOBI>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<PRESENTATION>	
+ 
+  <MAPPING business_type="PAGE" business_name="ModelPage" publisher_name="ModelPublisher"/>   
+  <MAPPING business_type="PAGE" business_name="ModelTreePage" publisher_name="ModelTreePublisher"/>
+  
+  <MAPPING business_type="PAGE" business_name="ModelInstancePage" publisher_name="ModelInstancePublisher"/>
+  <MAPPING business_type="PAGE" business_name="ModelInstanceTreePage" publisher_name="ModelInstanceTreePublisher"/>
+  
+  <MAPPING business_type="PAGE" business_name="ResourcesPage" publisher_name="ResourcesPublisher"/>
+  <MAPPING business_type="PAGE" business_name="ModelResourcesPage" publisher_name="ModelResourcesPublisher"/>
+  
+  <MAPPING business_type="ACTION" business_name="MANAGE_RESOURCES_ACTION" publisher_name="ManageResourcesPublisher"/>
+  <MAPPING business_type="ACTION" business_name="MANAGE_MODELS_ACTION" publisher_name="ManageModelsPublisher"/>
+  <MAPPING business_type="ACTION" business_name="MANAGE_MODEL_INSTANCES_ACTION" publisher_name="ManageModelInstancesPublisher"/>
+
+</PRESENTATION>

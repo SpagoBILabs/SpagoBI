@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<Schema name="TestCorso">
+  <!-- == $Id: FoodMart.xml,v 1.1 2005/12/13 12:03:52 avix Exp $ == This software is subject to the terms of the Common Public License == Agreement, available at the following URL: == http://www.opensource.org/licenses/cpl.html. == (C) Copyright 2000-2005 Kana Software, Inc. and others. == All Rights Reserved. == You must accept the terms of that agreement to use this software. -->
+  <!-- Shared dimensions -->
+  
+                  <Dimension name="Gender">
+                    <Hierarchy hasAll="true" allMemberName="All Genders" primaryKey="customer_id">
+                        <Table name="customer"/>
+                        <Level name="Gender" column="gender" uniqueMembers="true"/>
+                    </Hierarchy>
+                  </Dimension>
+                    
+                  <Dimension name="Time">
+                    <Hierarchy hasAll="true" allMemberName="All Times" primaryKey="time_id">
+                        <Table name="time_by_day"/>
+                        <Level name="Year" column="the_year" type="Numeric" uniqueMembers="true"/>
+                        <Level name="Quarter" column="quarter" uniqueMembers="false"/>
+                        <Level name="Month" column="month_of_year" type="Numeric" uniqueMembers="false"/>
+                    </Hierarchy>
+                  </Dimension>
+                  
+
+                  
+                  <Cube name="Sales_1997">
+                    <Table name="sales_fact_1997"/>
+                              <DimensionUsage name="Gender" source="Gender" foreignKey="customer_id"/>
+                              <DimensionUsage name="Time" source="Time" foreignKey="time_id"/>
+
+                            <Measure name="Unit Sales" column="unit_sales" aggregator="sum"       formatString="Standard"/>
+                            <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>
+                            <Measure name="Store Sales" column="store_sales" aggregator="sum"       formatString="#,###.00"/>
+                           <CalculatedMember       name="Profit"       dimension="Measures">
+                              <Formula>
+                                [Measures].[Store Sales] - [Measures].[Store Cost]
+                              </Formula>
+                              <CalculatedMemberProperty name="FORMAT_STRING" value="$#,##0.00"/>
+                           </CalculatedMember>
+                  </Cube>
+                  
+
+</Schema>

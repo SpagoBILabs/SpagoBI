@@ -1,0 +1,420 @@
+/**
+Copyright (c) 2005-2010, Engineering Ingegneria Informatica s.p.a.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this list of 
+      conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice, this list of 
+      conditions and the following disclaimer in the documentation and/or other materials 
+      provided with the distribution.
+
+ * Neither the name of the Engineering Ingegneria Informatica s.p.a. nor the names of its contributors may
+      be used to endorse or promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+ **/
+
+package it.eng.spagobi.engines.commonj.services;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import sun.misc.BASE64Decoder;
+import sun.nio.cs.ext.MS932DB.Decoder;
+
+import commonj.work.Work;
+import commonj.work.WorkEvent;
+import commonj.work.WorkItem;
+
+import de.myfoo.commonj.work.FooRemoteWorkItem;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.commonj.CommonjEngine;
+import it.eng.spagobi.engines.commonj.runtime.CommonjWork;
+import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
+import it.eng.spagobi.engines.commonj.runtime.CommonjWorkListener;
+import it.eng.spagobi.engines.commonj.runtime.WorkConfiguration;
+import it.eng.spagobi.engines.commonj.runtime.WorksRepository;
+import it.eng.spagobi.engines.commonj.utils.GeneralUtils;
+import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.engines.AbstractEngineAction;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
+import it.eng.spagobi.utilities.service.JSONFailure;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+
+public class StartWorkAction extends AbstractEngineAction {
+
+	private static transient Logger logger = Logger.getLogger(StartWorkAction.class);
+
+	private Content template;
+	private ContentServiceProxy contentProxy;
+	String documentId;
+	String documentLabel;
+	private String userUniqueIdentifier;
+	private static final BASE64Decoder DECODER = new BASE64Decoder();
+	String userId=null;
+	HttpSession session = null;
+	HttpServletRequest httpRequest = null;
+	/** Reads document Id and user Id, get the template, configure the work, create process Id, start work
+	 */
+
+
+
+
+	public void service(SourceBean request, SourceBean response) {
+		logger.debug("IN");
+		super.service(request, response);
+		HttpSession session=getHttpSession();
+		HttpServletRequest httpRequest = getHttpRequest();
+
+
+		//		USER_ID
+		Object userIdO=request.getAttribute("USER_ID");
+		if(userIdO!=null)userId=userIdO.toString();
+		else{
+			// userId
+			userIdO=request.getAttribute("userId");
+			if(userIdO!=null){
+				userId=userIdO.toString();
+			}
+			else{
+				// userId from session
+				userIdO=session.getAttribute("userId");
+
+				if(userIdO!=null){
+					userId=userIdO.toString();
+				}
+				else{
+
+
+					logger.error("could not retrieve user id");
+					return;
+				}
+			}
+		}
+
+		// get DOcument ID
+		Object document_idO=null;
+		document_idO=request.getAttribute("DOCUMENT_ID");
+		documentId = null;
+		documentLabel = null;
+		if(document_idO!=null){
+			documentId=document_idO.toString();
+		}
+		else{
+			logger.warn("could not retrieve document id, check for label");
+
+			Object document_label=null;
+			Object document_labelO=request.getAttribute("DOCUMENT_LABEL");
+			documentLabel=null;
+			if(document_labelO!=null){
+				documentLabel=document_labelO.toString();
+			}
+			else{
+				logger.error("could not retrieve neither document id nor document label, exception!");
+				return;
+			}
+
+		}			
+
+
+		// get Parameters
+		Map parameters=new HashMap();
+
+		List attributes=request.getContainedAttributes();
+		for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
+			SourceBeanAttribute object = (SourceBeanAttribute) iterator.next();
+			String key=object.getKey();
+			Object value=object.getValue();
+			parameters.put(key, value);
+		}
+
+
+		serviceStart(userId, documentId, parameters, session, httpRequest, true);
+
+		logger.debug("OUT");
+
+	}	
+
+
+
+
+	public void serviceStart(String userId, String documentId, Map parameters, HttpSession _session, HttpServletRequest _httpRequest, boolean actionMode) {
+		logger.debug("IN");
+
+		this.session = _session;
+		this.httpRequest = _httpRequest;
+		this.documentId = documentId;
+		this.userId = userId;
+
+
+		try{
+			JSONObject info=null;
+			// work to build
+			WorksRepository worksRepository=null;
+			CommonjWork work=null;
+
+			// can take the document id or the document label
+
+
+			boolean isLabel = false;
+			String documentUnique = null;
+			if(documentLabel != null){
+				isLabel = true;
+				documentUnique = documentLabel;
+			}
+			else if(documentId != null){
+				isLabel = false;
+				documentUnique = documentId;
+			}
+
+
+			// Build work from template
+			try {
+				work = new CommonjWork( getTemplateAsSourceBean());
+			} catch (SpagoBIEngineException e) {
+				logger.error("Error in reading work template",e);
+				return;				
+			} 
+
+
+			// calculate process Id
+			String pId = null;
+
+			pId = work.calculatePId();					
+
+
+
+			logger.debug("process Id is "+pId);
+			work.setSbiParametersMap(parameters);
+
+			CommonjEngine cm=new CommonjEngine();
+			try {
+				worksRepository = CommonjEngine.getWorksRepository();
+			} catch (SpagoBIEngineException e) {
+				logger.error("Error in reatriving works repository",e);
+				return;				
+
+			}
+
+
+			// call Work configurqations's configure method
+			try{
+				WorkConfiguration workConfiguration=new WorkConfiguration(worksRepository);
+				if(workConfiguration != null) {
+
+					workConfiguration.configure(session,work,parameters,documentUnique, isLabel);
+
+				}
+			}
+			catch (Exception e) {
+				logger.error("Error in configuring work",e);
+				return;				
+			}
+
+
+
+			// Get the container object from session: it MUST be present if start button is enabled
+			//Object o=session.getAttribute("SBI_PROCESS_"+document_id);
+			ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
+			Object o=processesStatusContainer.getPidContainerMap().get(pId);
+			CommonjWorkContainer container=(CommonjWorkContainer)o;
+
+			WorkManager wm=container.getWm();
+			Work workToDo=container.getWork();
+			CommonjWorkListener listener=container.getListener();
+			FooRemoteWorkItem fooRemoteWorkItem=wm.buildFooRemoteWorkItem(workToDo, listener);
+
+			int statusWI;
+
+			// Check if work was accepted
+			if(fooRemoteWorkItem.getStatus()==WorkEvent.WORK_ACCEPTED){
+				container.setFooRemoteWorkItem(fooRemoteWorkItem);
+				// run work!
+				WorkItem workItem=(WorkItem)wm.runWithReturnWI(workToDo, listener);
+				container.setWorkItem(workItem);
+				statusWI=workItem.getStatus();
+				// put new Object in singleton!!!
+
+				processesStatusContainer.getPidContainerMap().put(pId, container);
+				//session.setAttribute("SBI_PROCESS_"+document_id, container);
+
+				// if not in action mode don't send the response
+				if(actionMode){
+					try {
+						info=GeneralUtils.buildJSONObject(pId,statusWI);
+						writeBackToClient( new JSONSuccess(info));
+
+					} catch (IOException e) {
+						String message = "Impossible to write back the responce to the client";
+						throw new SpagoBIEngineServiceException(getActionName(), message, e);
+					}
+				}
+			}
+			else{ // WORK is rejected
+				if(actionMode){
+					try {
+						statusWI=fooRemoteWorkItem.getStatus();
+						info=GeneralUtils.buildJSONObject(pId,statusWI);
+						writeBackToClient( new JSONSuccess(info));
+					} catch (IOException e) {
+						String message = "Impossible to write back the responce to the client";
+						throw new SpagoBIEngineServiceException(getActionName(), message, e);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+
+			logger.error("Error in starting the work");
+			if(actionMode){
+				try {
+					writeBackToClient( new JSONFailure( e) );
+				} catch (IOException e1) {
+					logger.error("Error in starting the work and in writing back to client",e);
+					throw new SpagoBIEngineServiceException(getActionName(), "Error in starting the work and in writing back to client", e1);
+				} catch (JSONException e1) {
+					logger.error("Error in starting the work and in writing back to client",e);
+					throw new SpagoBIEngineServiceException(getActionName(), "Error in starting the work and in writing back to client", e1);
+				}
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+
+
+
+
+
+
+
+
+
+	/*
+FUNCTIONS FROM ACTION ENGINE
+
+	 */
+
+	public SourceBean getTemplateAsSourceBean() {
+		SourceBean templateSB = null;
+		try {
+			templateSB = SourceBean.fromXMLString(getTemplateAsString());
+		} catch (SourceBeanException e) {
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException("CommonJ", "Impossible to parse template's content", e);
+			engineException.setDescription("Impossible to parse template's content:  " + e.getMessage());
+			engineException.addHint("Check if the document's template is a well formed xml file");
+			throw engineException;
+		}		
+
+		return templateSB;
+	}
+
+	public String getTemplateAsString() {
+		return new String(getTemplate());
+	}
+
+	private byte[] getTemplate() {
+		byte[] templateContent = null;
+		HashMap requestParameters;
+
+		if(template == null) {
+			contentProxy = getContentServiceProxy();
+			if(contentProxy == null) {
+				throw new SpagoBIEngineStartupException("SpagoBIQbeEngine", 
+						"Impossible to instatiate proxy class [" + ContentServiceProxy.class.getName() + "] " +
+						"in order to retrive the template of document [" + documentId + "]");
+			}
+
+			requestParameters = ParametersDecoder.getDecodedRequestParameters(httpRequest);
+			if(documentId != null){
+				template = contentProxy.readTemplate(documentId, requestParameters);
+			}
+			else if(documentLabel != null){
+				template = contentProxy.readTemplateByLabel(documentLabel, requestParameters);
+			}	
+			try {
+				if(template == null)throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
+				templateContent = DECODER.decodeBuffer(template.getContent());
+			} catch (Throwable e) {
+				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException("COmmonj", "Impossible to get template's content", e);
+				engineException.setDescription("Impossible to get template's content:  " + e.getMessage());
+				engineException.addHint("Check the document's template");
+				throw engineException;
+			}
+		}
+		return templateContent;
+	}
+
+
+	private ContentServiceProxy getContentServiceProxy() {
+		if(contentProxy == null) {
+			contentProxy = new ContentServiceProxy(userId, session);
+		}	   
+
+		return contentProxy;
+	}
+
+	public ContentServiceProxy getContentProxy() {
+		return contentProxy;
+	}
+
+	public void setContentProxy(ContentServiceProxy contentProxy) {
+		this.contentProxy = contentProxy;
+	}
+
+
+
+	public String getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
+	}
+
+
+
+}

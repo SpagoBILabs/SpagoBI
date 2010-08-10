@@ -1,0 +1,16 @@
+Due to security restrictions in JavaScript, it is not possible to do
+cross-domain XMLHttpRequest's.
+
+Some examples, like geostat and search, use XMLHttpRequest's. If those
+XMLHttpRequest's target a different domain that the serving the page, some
+proxy is required.
+
+You case use proxy.cgi (provided in this directory). proxy.cgi must be copied
+under your web server CGI directory (/usr/lib/cgi-bin for a standard Apache
+configuration). proxy.cgi must also be edited and the variable allowedHosts
+must be adapted.
+
+In the JavaScript code, the OpenLayers.ProxyHost variable must be set
+appropriately. Edit the examples.js file to set it for all the examples.
+
+See also <http://trac.openlayers.org/wiki/FrequentlyAskedQuestions#ProxyHost>

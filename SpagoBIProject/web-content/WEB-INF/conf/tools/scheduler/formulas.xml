@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<FORMULAS>
+	<FORMULA name="getCurrentDayOfTheMonth" description="#scheduler.formulas.getCurrentDayOfTheMonth">
+	<![CDATA[
+	Date now = new Date();
+	int day = now.getDate();
+	String dayStr = day.toString();
+	return dayStr;
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentMonthOfTheYear" description="#scheduler.formulas.getCurrentMonthOfTheYear">
+	<![CDATA[
+	Date now = new Date();
+	int month = now.getMonth() + 1;
+	String monthStr = month.toString();
+	return monthStr;
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentYear" description="#scheduler.formulas.getCurrentYear">
+	<![CDATA[
+	Date now = new Date();
+	int year = now.getYear() + 1900;
+	String yearStr = year.toString();
+	return yearStr;
+	]]>
+	</FORMULA>
+</FORMULAS>

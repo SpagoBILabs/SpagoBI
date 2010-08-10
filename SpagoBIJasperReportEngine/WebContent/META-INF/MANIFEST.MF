@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+
+Name: SpagoBIJasperReportEngine.war
+Implementation-Title: SpagoBIJasperReportEngine
+Implementation-Version: 2.6.0 (Included Jasper 3.6.0)

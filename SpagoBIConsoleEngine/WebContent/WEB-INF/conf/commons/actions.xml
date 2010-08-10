@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- ================================================================================= -->
+<!-- CONSOLE BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>
+
+	<ACTION name="TEST_DATASET_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteDataSetAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_CONSOLE_DATA_ACTION" 
+			class="it.eng.spagobi.engines.console.services.GetConsoleDataAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+<!-- 	only client operation:
+	<ACTION name="REFRESH_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+-->
+	<ACTION name="ERRORS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteUpdateAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="ALARMS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="VIEWS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="START_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="NOTIFY_START_ACTION" 
+			class="it.eng.spagobi.engines.console.services.NotifyStartAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="STOP_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="DOWNLOAD_LOGS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.DownloadLogsAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="CROSS_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteButtonAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="UPDATE_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ExecuteUpdateAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+	
+	<ACTION name="GET_ERROR_LIST_ACTION" 
+			class="it.eng.spagobi.engines.console.services.GetErrorListAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_WARNING_LIST_ACTION" 
+			class="it.eng.spagobi.engines.console.services.GetWarningListAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+	<ACTION name="EXPORT_ACTION" 
+			class="it.eng.spagobi.engines.console.exporter.ExportAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+	<ACTION name="SERVICE_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.engines.console.services.ServiceExceptionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+</ACTIONS>

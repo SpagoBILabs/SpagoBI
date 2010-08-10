@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<!-- QBE_ENGINE Initializations -->
+	<ACTION name="QBE_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- FORM_ENGINE Initializations -->
+	<ACTION name="FORM_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- FORM_ENGINE Template Wizard -->
+	<ACTION name="FORM_ENGINE_TEMPLATE_BUILD_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineTemplateBuilder" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

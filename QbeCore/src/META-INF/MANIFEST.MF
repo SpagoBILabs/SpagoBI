@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: QbeCore.jar
+Implementation-Title: QbeCore
+Implementation-Version: 2.6.0 
+

@@ -1,0 +1,109 @@
+<html>
+<head>
+  <title>Map in a Complex Layout</title>
+    <link rel="stylesheet" type="text/css" href="../../mfbase/ext/resources/css/ext-all.css" />
+
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/Firebug/firebug.js"></script>
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+
+    <script type="text/javascript" src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+
+    <script type="text/javascript">
+      // Because of a bug in Firefox 2 we need to specify the MapFish base path.
+      // See https://bugzilla.mozilla.org/show_bug.cgi?id=351282
+      var gMfLocation = "../../mfbase/mapfish/";
+    </script>
+    <script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+    <script type="text/javascript" src="../examples.js"></script>
+    
+	<style type="text/css">
+	html, body {
+        font: normal 12px verdana;
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+        overflow: hidden;
+        height: 100%;
+    }
+    </style>
+	<script type="text/javascript">
+  
+    // reference local blank image
+    Ext.BLANK_IMAGE_URL = '../../mfbase/ext/resources/images/default/s.gif';
+  
+    Ext.onReady(function(){
+        
+        var map = new OpenLayers.Map($('olmap'));
+
+        var wms = new OpenLayers.Layer.WMS("OpenLayers WMS", 
+            "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'}, {buffer: 0});
+
+        map.addLayers([wms]);
+        map.addControl(new OpenLayers.Control.LayerSwitcher());
+        map.setCenter(new OpenLayers.LonLat(17, 2), 2);
+            
+        var window = new Ext.Window({
+            title: 'Map',
+            width: 500,
+            height: 300,
+            minWidth: 300,
+            minHeight: 200,
+            layout: 'fit',
+            plain: true,
+            bodyStyle: 'padding:5px;',
+            items: [{
+                xtype: 'mapcomponent',
+                map: map
+            }]
+        });
+        window.show();
+        
+        
+        var store = new Ext.data.SimpleStore({
+            fields: ['value', 'text', 'bbox'],
+            data : [['OC', 'Oceana', new OpenLayers.Bounds(56.0234375, -72.53125, 214.2265625, 32.9375)],
+                    ['NA', 'North America', new OpenLayers.Bounds(-186.37890625, -2.21875, -28.17578125, 103.25)],
+                    ['SA', 'South America', new OpenLayers.Bounds(-146.828125, -71.828125, 11.375, 33.640625)],
+                    ['AF', 'Africa', new OpenLayers.Bounds(-58.9375, -51.7890625, 99.265625, 53.6796875)],
+                    ['EU', 'Europe', new OpenLayers.Bounds(-23.078125, 26.2578125, 56.0234375, 78.9921875)],
+                    ['AS', 'Asia', new OpenLayers.Bounds(15.59375, -21.90625, 173.796875, 83.5625)]]
+        });
+        
+        var window = new Ext.Window({
+            title: 'Shortcuts',
+            width: 200,
+            height: 100,
+            minWidth: 200,
+            minHeight: 100,
+            layout: 'fit',
+            plain: true,
+            bodyStyle: 'padding: 5px;',
+            items: [{
+                xtype: 'shortcuts',
+                map: map,
+                store: store,
+                templates: {
+                    header: new Ext.Template("Choose a continent in the list"),
+                    footer: new Ext.Template("The map will automatically center to this location")
+                }
+            }]
+        });
+        window.setPagePosition(20, 40);
+
+        window.show();
+    });
+	</script>
+</head>
+<body>
+  <!--
+      body element must not start with text to prevent IE bug
+      http://extjs.com/forum/showthread.php?t=7912&highlight=createRange
+  -->
+  <h1>MapFish example</h1>
+  This example shows how to use the MapComponent class to integrate a OL map into a window layout.
+  <div id="olmap">
+  </div>
+
+ </body>
+</html>

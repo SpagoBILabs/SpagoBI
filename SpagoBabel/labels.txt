@@ -1,0 +1,1288 @@
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe-all-debug.js
+// labels: 277
+//===============================================================================================================
+
+sbi.formbuilder.formbuilderpage.templatesaved.msg
+sbi.qbe.filtergridpanel.headers.delete
+sbi.formbuilder.staticclosefilterwizard.fields.filtertitle.label
+sbi.qbe.freeconditionswindow.title
+sbi.qbe.savewindow.scope
+sbi.qbe.filtergridpanel.foperators.desc.notcontains
+sbi.qbe.queryeditor.westregion.tools.expand
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.tooltip.rotype
+sbi.formbuilder.staticopenfilterwizard.fields.orderbyfield.label
+sbi.qbe.filtergridpanel.foperators.desc.eqgt
+sbi.qbe.savewindow.privatedesc
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.label
+sbi.qbe.expreditor.filterdesc
+sbi.qbe.freeconditionswindow.buttons.text.apply
+sbi.qbe.filtergridpanel.foperators.desc.notends
+sbi.formbuilder.editorpanel.clearall
+sbi.formbuilder.formpreviewpage.title
+sbi.formbuilder.staticopenfilterwizard.buttons.cancel
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.promptvalues
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.label
+sbi.formbuilder.queryfieldspanel.fieldname
+sbi.formbuilder.dynamicfiltereditorpanel.emptymsg
+sbi.qbe.queryeditor.eastregion.tools.delete
+sbi.qbe.selectgridpanel.sortfunc.desc.none
+sbi.formbuilder.staticclosefiltergroupwizard.buttons.apply
+sbi.formbuilder.staticclosefiltergroupwizard.fields.noselectionoptionlabel.label
+sbi.formbuilder.staticclosefiltergroupwizard.fields.options
+sbi.formbuilder.dynamicfiltergroupwizard.title
+sbi.qbe.expreditor.title
+sbi.qbe.expreditor.refresh
+sbi.qbe.savewindow.saveas
+sbi.formbuilder.staticclosefiltergroupwizard.fields.noselectiontext
+sbi.formbuilder.dynamicfiltergroupeditor.remove
+sbi.formbuilder.staticopenfiltergroupeditor.edit
+sbi.lookup.asA
+sbi.qbe.selectgridpanel.aggfunc.desc.min
+sbi.qbe.havinggridpanel.title
+sbi.qbe.datastorepanel.grid.displaymsg
+sbi.qbe.filtergridpanel.headers.lodesc
+sbi.qbe.filtergridpanel.boperators.desc.and
+sbi.qbe.filtergridpanel.headers.boperator
+sbi.formbuilder.staticclosefilterwizard.fields.leftoperand.label
+sbi.qbe.queryeditor.centerregion.tools.view
+sbi.qbe.freeconditionswindow.buttons.text.restoredefaults
+sbi.formbuilder.staticclosefilterwizard.buttons.cancel
+sbi.formbuilder.staticclosefilterwizard.fields.operator.label
+sbi.qbe.filtergridpanel.headers.rodesc
+sbi.qbe.filtergridpanel.tooltip.roval
+sbi.formbuilder.inlineeditor.remove
+sbi.qbe.selectgridpanel.sortfunc.name.desc
+sbi.qbe.filtergridpanel.foperators.name.none
+sbi.qbe.expreditor.operands
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.name.gt
+sbi.qbe.filtergridpanel.foperators.name.ends
+sbi.qbe.filtergridpanel.headers.lolast
+sbi.qbe.filtergridpanel.tooltip.name
+sbi.qbe.savewindow.public
+sbi.formbuilder.staticopenfilterwizard.fields.ordertype.label
+sbi.qbe.selectgridpanel.aggfunc.name.avg
+sbi.qbe.filtergridpanel.tooltip.loval
+sbi.qbe.queryeditor.centerregion.title
+sbi.qbe.filtergridpanel.foperators.name.notnull
+sbi.qbe.datastorepanel.grid.afteroverflow
+sbi.qbe.queryeditor.title
+sbi.qbe.filtergridpanel.foperators.name.in
+sbi.formbuilder.dynamicfiltergroupeditor.edit
+sbi.qbe.selectgridpanel.headers.delete
+sbi.qbe.expreditor.clearttp
+sbi.qbe.selectgridpanel.aggfunc.name.min
+sbi.formbuilder.dynamicfiltergroupwizard.fields.operatorfield.label
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.donotqueryrootentity
+sbi.lookup.Annulla
+sbi.qbe.expreditor.expression
+sbi.qbe.selectgridpanel.sortfunc.desc.desc
+sbi.qbe.filtergridpanel.buttons.tt.add
+sbi.lookup.Confirm
+sbi.qbe.selectgridpanel.buttons.text.deleteall
+sbi.qbe.filtergridpanel.foperators.name.eqgt
+sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg
+sbi.lookup.ValueOfColumn
+sbi.qbe.selectgridpanel.buttons.text.hide
+sbi.qbe.queryeditor.westregion.title
+sbi.formbuilder.staticopenfilterwizard.fields.filtername.label
+sbi.formbuilder.staticclosefilterwizard.title
+sbi.qbe.filtergridpanel.foperators.desc.starts
+sbi.qbe.datastorepanel.grid.beforeoverflow
+sbi.qbe.selectgridpanel.aggfunc.desc.sum
+sbi.qbe.filtergridpanel.tooltip.rodesc
+sbi.qbe.filtergridpanel.headers.rolast
+sbi.formtemplate.documenttemplatebuilder.documentfield.label
+sbi.qbe.documentparametersgridpanel.parameterreference
+sbi.qbe.filtergridpanel.foperators.desc.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notbetween
+sbi.qbe.filtergridpanel.headers.desc
+sbi.qbe.filtergridpanel.foperators.name.notstarts
+sbi.qbe.selectgridpanel.headers.visible
+sbi.qbe.datastorepanel.button.tt.exportto
+sbi.qbe.datastorepanel.grid.emptymsg
+sbi.qbe.filtergridpanel.boperators.name.or
+sbi.qbe.documentparametersgridpanel.title
+sbi.qbe.filtergridpanel.title
+sbi.qbe.filtergridpanel.foperators.desc.isnull
+sbi.qbe.filtergridpanel.boperators.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.name.lt
+sbi.qbe.filtergridpanel.headers.operator
+sbi.formbuilder.staticclosefiltergroupwizard.fields.grouptitle.label
+sbi.qbe.operandchooserwindow.title
+sbi.qbe.selectgridpanel.headers.alias
+sbi.formbuilder.templateeditorpanel.title
+sbi.qbe.filtergridpanel.tooltip.notdef
+sbi.qbe.messagewin.info.title
+sbi.qbe.selectgridpanel.buttons.tt.add
+sbi.qbe.filtergridpanel.buttons.text.add
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.edit
+sbi.qbe.expreditor.items
+sbi.qbe.savewindow.cancel
+sbi.qbe.selectgridpanel.sortfunc.name.none
+sbi.qbe.filtergridpanel.foperators.desc.notin
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.label
+sbi.qbe.queryeditor.msgwarning
+sbi.qbe.filtergridpanel.headers.isfree
+sbi.formbuilder.formbuilderpage.toolbar.save
+sbi.qbe.filtergridpanel.headers.loval
+sbi.qbe.queryeditor.saveqasview
+sbi.qbe.savewindow.selectscope
+sbi.qbe.selectgridpanel.title
+sbi.qbe.selectgridpanel.aggfunc.name.count
+sbi.qbe.filtergridpanel.foperators.desc.eq
+sbi.qbe.documentparametersgridpanel.emptytext
+sbi.qbe.filtergridpanel.headers.lotype
+sbi.qbe.messagewin.error.title
+sbi.qbe.selectgridpanel.sortfunc.name.asc
+sbi.qbe.datastorepanel.grid.prevtext
+sbi.formbuilder.staticopenfiltergroupeditor.remove
+sbi.formbuilder.inlineeditor.edit
+sbi.formbuilder.dynamicfiltergroupwizard.fields.filtername.label
+sbi.formbuilder.staticclosefilterwizard.buttons.apply
+sbi.qbe.selectgridpanel.headers.filter
+sbi.formbuilder.staticopenfilterwizard.buttons.apply
+sbi.qbe.expreditor.log
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.and
+sbi.formbuilder.dynamicfiltergroupwizard.buttons.cancel
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.desc.in
+sbi.qbe.freeconditionswindow.buttons.text.cancel
+sbi.qbe.filtergridpanel.foperators.name.notends
+sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields
+sbi.qbe.selectgridpanel.headers.field
+sbi.qbe.filtergridpanel.foperators.name.notin
+sbi.qbe.filtergridpanel.buttons.tt.delete
+sbi.qbe.filtergridpanel.boperators.desc.or
+sbi.qbe.selectgridpanel.buttons.text.add
+sbi.qbe.filtergridpanel.foperators.name.starts
+sbi.formbuilder.staticclosefiltereditorpanel.title
+sbi.formbuilder.staticopenfilterwizard.fields.filterentity.label
+sbi.formbuilder.editorpanel.add
+sbi.formbuilder.variableeditorpanel.grouptitle
+sbi.qbe.filtergridpanel.foperators.name.contains
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.yes
+sbi.qbe.selectgridpanel.buttons.tt.deleteall
+sbi.formbuilder.dynamicfiltergroupeditor.groupTitle
+sbi.qbe.selectgridpanel.sortfunc.desc.asc
+sbi.formbuilder.formbuilderpage.title
+sbi.qbe.queryeditor.centerregion.tools.save
+sbi.qbe.savewindow.desc
+sbi.qbe.selectgridpanel.aggfunc.desc.count
+sbi.formbuilder.queryfieldspanel.tools.refresh
+sbi.qbe.savewindow.save
+sbi.qbe.queryeditor.westregion.tools.collapse
+sbi.lookup.Select
+sbi.qbe.selectgridpanel.aggfunc.name.none
+sbi.qbe.selectgridpanel.aggfunc.name.sum
+sbi.formbuilder.staticopenfiltereditorpanel.title
+sbi.qbe.selectgridpanel.aggfunc.name.max
+sbi.qbe.queryeditor.querysavedsucc
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.add
+sbi.qbe.filtergridpanel.foperators.desc.gt
+sbi.qbe.queryeditor.centerregion.tools.execute
+sbi.formbuilder.dynamicfiltergroupwizard.buttons.apply
+sbi.qbe.selectgridpanel.aggfunc.desc.none
+sbi.qbe.datastorepanel.grid.beforepagetext
+sbi.qbe.filtergridpanel.foperators.name.notcontains
+sbi.qbe.savewindow.name
+sbi.qbe.selectgridpanel.headers.having
+sbi.qbe.filtergridpanel.buttons.tt.wizard
+sbi.qbe.savewindow.publicdesc
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.or
+sbi.formbuilder.staticopenfilterwizard.fields.filteroperator.label
+sbi.qbe.filtergridpanel.headers.rodef
+sbi.formbuilder.formbuilderpage.validationerrors.title
+sbi.qbe.savewindow.private
+sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext
+sbi.qbe.freeconditionswindow.buttons.text.saveasdefaults
+sbi.qbe.filtergridpanel.tooltip.lodesc
+sbi.qbe.selectgridpanel.buttons.tt.hide
+sbi.qbe.filtergridpanel.buttons.text.delete
+sbi.qbe.filtergridpanel.boperators.name.and
+sbi.qbe.filtergridpanel.tooltip.desc
+sbi.qbe.filtergridpanel.foperators.desc.noteq
+sbi.qbe.selectgridpanel.headers.order
+sbi.qbe.expreditor.operators
+sbi.qbe.filtergridpanel.foperators.desc.eqlt
+sbi.qbe.filtergridpanel.headers.rotype
+sbi.qbe.datastorepanel.grid.emptywarningmsg
+sbi.qbe.datastorepanel.grid.lasttext
+sbi.qbe.selectgridpanel.sortfunc.editor.emptymsg
+sbi.qbe.filtergridpanel.headers.roval
+sbi.qbe.selectgridpanel.aggfunc.desc.max
+sbi.qbe.filtergridpanel.foperators.name.eqlt
+sbi.formbuilder.dynamicfiltereditorpanel.grouptitle
+sbi.qbe.expreditor.structure
+sbi.qbe.filtergridpanel.tooltip.lolast
+sbi.qbe.filtergridpanel.tooltip.rolast
+sbi.qbe.filtergridpanel.tooltip.rodef
+sbi.qbe.queryeditor.savequery
+sbi.qbe.documentparametersgridpanel.headers.label
+save
+sbi.qbe.filtergridpanel.foperators.desc.notstarts
+sbi.qbe.datastorepanel.grid.nexttext
+sbi.qbe.queryeditor.querysaved
+sbi.qbe.selectgridpanel.headers.include
+sbi.qbe.freeconditionswindow.buttons.text.restorelast
+sbi.formbuilder.variableeditorpanel.emptymsg
+sbi.qbe.queryeditor.centerregion.tools.validate
+sbi.qbe.filtergridpanel.foperators.name.noteq
+sbi.qbe.filtergridpanel.foperators.desc.ends
+sbi.formbuilder.variablegroupeditor.emptymsg
+sbi.qbe.filtergridpanel.buttons.text.wizard
+sbi.formbuilder.staticclosefilterwizard.fields.rightoperand.label
+sbi.qbe.expreditor.operatordesc
+sbi.qbe.filtergridpanel.tooltip.lotype
+sbi.qbe.expreditor.clear
+sbi.qbe.filtergridpanel.tooltip.lodef
+sbi.qbe.filtergridpanel.foperators.desc.lt
+sbi.qbe.filtergridpanel.foperators.name.isnull
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.yes
+sbi.qbe.datastorepanel.grid.refreshtext
+sbi.formbuilder.variableeditorpanel.title
+sbi.formbuilder.formbuilderpage.templatesaved.title
+sbi.qbe.selectgridpanel.buttons.text.distinct
+sbi.formbuilder.staticopenfilterwizard.fields.maxselectionnumber.label
+sbi.qbe.filtergridpanel.foperators.desc.contains
+sbi.qbe.filtergridpanel.foperators.name.eq
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.no
+sbi.qbe.filtergridpanel.headers.lodef
+sbi.formbuilder.dynamicfiltergroupeditor.emptymsg
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity
+sbi.qbe.filtergridpanel.headers.name
+sbi.formtemplate.documenttemplatebuilder.startediting
+sbi.formbuilder.dynamicfiltereditorpanel.filteritemname
+sbi.qbe.selectgridpanel.headers.entity
+sbi.formbuilder.staticclosefiltereditorpanel.emptymsg
+sbi.qbe.datastorepanel.grid.firsttext
+sbi.formbuilder.queryfieldspanel.title
+sbi.formbuilder.staticclosefiltereditorpanel.filteritemname
+sbi.formbuilder.staticclosefiltergroupwizard.buttons.cancel
+sbi.formbuilder.staticopenfiltereditorpanel.emptymsg
+sbi.qbe.selectgridpanel.aggfunc.desc.avg
+sbi.qbe.queryeditor.eastregion.tools.add
+sbi.qbe.queryeditor.eastregion.tools.insert
+sbi.qbe.selectgridpanel.headers.group
+sbi.qbe.sessionexpired.msg
+sbi.qbe.datastorepanel.title
+sbi.formbuilder.dynamicfiltereditorpanel.title
+sbi.formbuilder.staticclosefiltergroupwizard.title
+sbi.formbuilder.formpanel.title
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.title
+sbi.formbuilder.staticopenfilterwizard.title
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.no
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.remove
+sbi.qbe.datastorepanel.grid.afterpagetext
+sbi.qbe.filtergridpanel.foperators.desc.notnull
+sbi.qbe.selectgridpanel.headers.function
+sbi.formbuilder.variablegroupeditor.grouptitle
+sbi.qbe.queryeditor.eastregion.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe-all-2.5.0.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formtemplate/DocumentTemplateBuilder.js
+// labels: 3
+//===============================================================================================================
+
+sbi.formtemplate.documenttemplatebuilder.documentfield.label
+sbi.formtemplate.documenttemplatebuilder.startediting
+sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/DocumentParametersStore.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.documentparametersgridpanel.parameterreference
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/SelectGridPanel.js
+// labels: 39
+//===============================================================================================================
+
+sbi.qbe.selectgridpanel.aggfunc.desc.none
+sbi.qbe.selectgridpanel.headers.filter
+sbi.qbe.selectgridpanel.headers.having
+sbi.qbe.selectgridpanel.headers.include
+sbi.qbe.selectgridpanel.buttons.text.deleteall
+sbi.qbe.selectgridpanel.headers.alias
+sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg
+sbi.qbe.selectgridpanel.aggfunc.desc.min
+sbi.qbe.selectgridpanel.buttons.text.hide
+sbi.qbe.selectgridpanel.sortfunc.name.desc
+sbi.qbe.selectgridpanel.aggfunc.desc.avg
+sbi.qbe.selectgridpanel.headers.field
+sbi.qbe.selectgridpanel.buttons.tt.add
+sbi.qbe.selectgridpanel.buttons.tt.hide
+sbi.qbe.selectgridpanel.aggfunc.desc.sum
+sbi.qbe.selectgridpanel.headers.order
+sbi.qbe.selectgridpanel.headers.group
+sbi.qbe.selectgridpanel.buttons.text.add
+sbi.qbe.selectgridpanel.sortfunc.name.none
+sbi.qbe.selectgridpanel.aggfunc.name.avg
+sbi.qbe.selectgridpanel.buttons.text.distinct
+sbi.qbe.selectgridpanel.headers.visible
+sbi.qbe.selectgridpanel.buttons.tt.deleteall
+sbi.qbe.selectgridpanel.sortfunc.editor.emptymsg
+sbi.qbe.selectgridpanel.sortfunc.desc.none
+sbi.qbe.selectgridpanel.sortfunc.desc.asc
+sbi.qbe.selectgridpanel.title
+sbi.qbe.selectgridpanel.aggfunc.name.count
+sbi.qbe.selectgridpanel.aggfunc.desc.max
+sbi.qbe.selectgridpanel.headers.delete
+sbi.qbe.selectgridpanel.aggfunc.name.min
+sbi.qbe.selectgridpanel.aggfunc.desc.count
+sbi.qbe.selectgridpanel.aggfunc.name.none
+sbi.qbe.selectgridpanel.headers.function
+sbi.qbe.selectgridpanel.aggfunc.name.sum
+sbi.qbe.selectgridpanel.aggfunc.name.max
+sbi.qbe.selectgridpanel.sortfunc.desc.desc
+sbi.qbe.selectgridpanel.headers.entity
+sbi.qbe.selectgridpanel.sortfunc.name.asc
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/FreeConditionsWindow.js
+// labels: 6
+//===============================================================================================================
+
+sbi.qbe.freeconditionswindow.buttons.text.restorelast
+sbi.qbe.freeconditionswindow.title
+sbi.qbe.freeconditionswindow.buttons.text.cancel
+sbi.qbe.freeconditionswindow.buttons.text.apply
+sbi.qbe.freeconditionswindow.buttons.text.restoredefaults
+sbi.qbe.freeconditionswindow.buttons.text.saveasdefaults
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/FilterGridPanel.js
+// labels: 66
+//===============================================================================================================
+
+sbi.qbe.filtergridpanel.foperators.desc.notstarts
+sbi.qbe.filtergridpanel.headers.delete
+sbi.qbe.filtergridpanel.foperators.name.eqgt
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.desc.in
+sbi.qbe.filtergridpanel.foperators.name.notends
+sbi.qbe.filtergridpanel.foperators.desc.notcontains
+sbi.qbe.filtergridpanel.foperators.name.noteq
+sbi.qbe.filtergridpanel.tooltip.rotype
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.foperators.desc.starts
+sbi.qbe.filtergridpanel.foperators.desc.ends
+sbi.qbe.filtergridpanel.foperators.desc.eqgt
+sbi.qbe.filtergridpanel.tooltip.rodesc
+sbi.qbe.filtergridpanel.foperators.name.notin
+sbi.qbe.filtergridpanel.buttons.tt.delete
+sbi.qbe.filtergridpanel.buttons.text.wizard
+sbi.qbe.filtergridpanel.tooltip.lotype
+sbi.qbe.filtergridpanel.boperators.desc.or
+sbi.qbe.filtergridpanel.foperators.desc.notends
+sbi.qbe.filtergridpanel.foperators.name.starts
+sbi.qbe.filtergridpanel.foperators.desc.lt
+sbi.qbe.filtergridpanel.foperators.name.isnull
+sbi.qbe.filtergridpanel.foperators.desc.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notbetween
+sbi.qbe.filtergridpanel.headers.desc
+sbi.qbe.filtergridpanel.foperators.name.notstarts
+sbi.qbe.filtergridpanel.foperators.name.contains
+sbi.qbe.filtergridpanel.foperators.desc.contains
+sbi.qbe.filtergridpanel.foperators.name.eq
+sbi.qbe.filtergridpanel.headers.name
+sbi.qbe.filtergridpanel.boperators.name.or
+sbi.qbe.filtergridpanel.foperators.desc.gt
+sbi.qbe.filtergridpanel.foperators.desc.isnull
+sbi.qbe.filtergridpanel.boperators.editor.emptymsg
+sbi.qbe.filtergridpanel.headers.operator
+sbi.qbe.filtergridpanel.foperators.name.lt
+sbi.qbe.filtergridpanel.foperators.name.notcontains
+sbi.qbe.filtergridpanel.buttons.tt.wizard
+sbi.qbe.filtergridpanel.headers.lodesc
+sbi.qbe.filtergridpanel.headers.boperator
+sbi.qbe.filtergridpanel.boperators.desc.and
+sbi.qbe.filtergridpanel.tooltip.notdef
+sbi.qbe.filtergridpanel.headers.rodesc
+sbi.qbe.filtergridpanel.tooltip.lodesc
+sbi.qbe.filtergridpanel.foperators.name.none
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.qbe.filtergridpanel.buttons.text.delete
+sbi.qbe.filtergridpanel.buttons.text.add
+sbi.qbe.filtergridpanel.foperators.name.gt
+sbi.qbe.filtergridpanel.tooltip.desc
+sbi.qbe.filtergridpanel.foperators.name.ends
+sbi.qbe.filtergridpanel.boperators.name.and
+sbi.qbe.filtergridpanel.tooltip.name
+sbi.qbe.filtergridpanel.foperators.desc.noteq
+sbi.qbe.filtergridpanel.foperators.desc.notin
+sbi.qbe.filtergridpanel.headers.rotype
+sbi.qbe.filtergridpanel.foperators.desc.eqlt
+sbi.qbe.filtergridpanel.foperators.name.notnull
+sbi.qbe.filtergridpanel.headers.isfree
+sbi.qbe.filtergridpanel.foperators.name.in
+sbi.qbe.filtergridpanel.foperators.name.eqlt
+sbi.qbe.filtergridpanel.foperators.desc.notnull
+sbi.qbe.filtergridpanel.foperators.desc.eq
+sbi.qbe.filtergridpanel.headers.lotype
+sbi.qbe.filtergridpanel.buttons.tt.add
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/QbePanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/HavingGridDropTarget.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.documentparametersgridpanel.parameterreference
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/QueryCataloguePanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/DataMartStructurePanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/SelectGridDropTarget.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/FilterGridDropTarget.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.documentparametersgridpanel.parameterreference
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/HavingGridPanel.js
+// labels: 91
+//===============================================================================================================
+
+sbi.qbe.filtergridpanel.tooltip.rodef
+sbi.qbe.filtergridpanel.headers.delete
+sbi.qbe.filtergridpanel.foperators.desc.notstarts
+sbi.qbe.filtergridpanel.foperators.name.eqgt
+sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.desc.in
+sbi.qbe.filtergridpanel.foperators.name.notends
+sbi.qbe.filtergridpanel.foperators.desc.notcontains
+sbi.qbe.filtergridpanel.foperators.name.noteq
+sbi.qbe.filtergridpanel.tooltip.rotype
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.foperators.desc.starts
+sbi.qbe.filtergridpanel.foperators.desc.ends
+sbi.qbe.filtergridpanel.foperators.desc.eqgt
+sbi.qbe.filtergridpanel.tooltip.rodesc
+sbi.qbe.selectgridpanel.aggfunc.desc.sum
+sbi.qbe.filtergridpanel.foperators.name.notin
+sbi.qbe.filtergridpanel.buttons.tt.delete
+sbi.qbe.filtergridpanel.tooltip.lotype
+sbi.qbe.filtergridpanel.boperators.desc.or
+sbi.qbe.filtergridpanel.foperators.name.starts
+sbi.qbe.filtergridpanel.foperators.desc.notends
+sbi.qbe.filtergridpanel.headers.rolast
+sbi.qbe.filtergridpanel.tooltip.lodef
+sbi.qbe.filtergridpanel.foperators.name.isnull
+sbi.qbe.filtergridpanel.foperators.desc.lt
+sbi.qbe.filtergridpanel.headers.desc
+sbi.qbe.filtergridpanel.foperators.desc.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notstarts
+sbi.qbe.filtergridpanel.foperators.name.contains
+sbi.qbe.filtergridpanel.foperators.desc.contains
+sbi.qbe.filtergridpanel.foperators.name.eq
+sbi.qbe.filtergridpanel.headers.lodef
+sbi.qbe.selectgridpanel.aggfunc.desc.count
+sbi.qbe.filtergridpanel.headers.name
+sbi.qbe.selectgridpanel.aggfunc.name.none
+sbi.qbe.selectgridpanel.aggfunc.name.sum
+sbi.qbe.selectgridpanel.aggfunc.name.max
+sbi.qbe.filtergridpanel.boperators.name.or
+sbi.qbe.filtergridpanel.foperators.desc.gt
+sbi.qbe.filtergridpanel.boperators.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.desc.isnull
+sbi.qbe.selectgridpanel.aggfunc.desc.none
+sbi.qbe.filtergridpanel.headers.operator
+sbi.qbe.filtergridpanel.foperators.name.lt
+sbi.qbe.filtergridpanel.foperators.name.notcontains
+sbi.qbe.filtergridpanel.headers.rodef
+sbi.qbe.havinggridpanel.title
+sbi.qbe.selectgridpanel.aggfunc.desc.min
+sbi.qbe.filtergridpanel.headers.lodesc
+sbi.qbe.filtergridpanel.headers.boperator
+sbi.qbe.filtergridpanel.boperators.desc.and
+sbi.qbe.filtergridpanel.tooltip.notdef
+sbi.qbe.filtergridpanel.headers.rodesc
+sbi.qbe.filtergridpanel.tooltip.roval
+sbi.qbe.filtergridpanel.tooltip.lodesc
+sbi.qbe.filtergridpanel.foperators.name.none
+sbi.qbe.selectgridpanel.aggfunc.desc.avg
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.qbe.filtergridpanel.buttons.text.delete
+sbi.qbe.filtergridpanel.buttons.text.add
+sbi.qbe.filtergridpanel.foperators.name.gt
+sbi.qbe.filtergridpanel.headers.lolast
+sbi.qbe.filtergridpanel.tooltip.desc
+sbi.qbe.filtergridpanel.boperators.name.and
+sbi.qbe.filtergridpanel.foperators.name.ends
+sbi.qbe.filtergridpanel.tooltip.name
+sbi.qbe.filtergridpanel.foperators.desc.noteq
+sbi.qbe.filtergridpanel.foperators.desc.notin
+sbi.qbe.selectgridpanel.aggfunc.name.avg
+sbi.qbe.filtergridpanel.tooltip.loval
+sbi.qbe.filtergridpanel.headers.rotype
+sbi.qbe.filtergridpanel.foperators.desc.eqlt
+sbi.qbe.filtergridpanel.headers.isfree
+sbi.qbe.filtergridpanel.foperators.name.notnull
+sbi.qbe.filtergridpanel.headers.loval
+sbi.qbe.filtergridpanel.foperators.name.in
+sbi.qbe.filtergridpanel.headers.roval
+sbi.qbe.selectgridpanel.aggfunc.desc.max
+sbi.qbe.selectgridpanel.aggfunc.name.count
+sbi.qbe.filtergridpanel.foperators.desc.notnull
+sbi.qbe.selectgridpanel.aggfunc.name.min
+sbi.qbe.filtergridpanel.foperators.name.eqlt
+sbi.qbe.filtergridpanel.foperators.desc.eq
+sbi.qbe.filtergridpanel.headers.lotype
+sbi.qbe.selectgridpanel.headers.function
+sbi.qbe.filtergridpanel.tooltip.lolast
+sbi.qbe.filtergridpanel.buttons.tt.add
+sbi.qbe.filtergridpanel.tooltip.rolast
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/FilterComboBox.js
+// labels: 38
+//===============================================================================================================
+
+sbi.qbe.filtergridpanel.foperators.desc.gt
+sbi.qbe.filtergridpanel.foperators.desc.isnull
+sbi.qbe.filtergridpanel.foperators.name.lt
+sbi.qbe.filtergridpanel.foperators.name.notcontains
+sbi.qbe.filtergridpanel.foperators.desc.notstarts
+sbi.qbe.filtergridpanel.foperators.name.eqgt
+sbi.qbe.filtergridpanel.foperators.desc.in
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.name.notends
+sbi.qbe.filtergridpanel.foperators.desc.notcontains
+sbi.qbe.filtergridpanel.foperators.name.noteq
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.foperators.name.none
+sbi.qbe.filtergridpanel.foperators.desc.starts
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.desc.ends
+sbi.qbe.filtergridpanel.foperators.desc.eqgt
+sbi.qbe.filtergridpanel.foperators.name.notin
+sbi.qbe.filtergridpanel.foperators.name.gt
+sbi.qbe.filtergridpanel.foperators.name.ends
+sbi.qbe.filtergridpanel.foperators.desc.noteq
+sbi.qbe.filtergridpanel.foperators.desc.notin
+sbi.qbe.filtergridpanel.foperators.name.starts
+sbi.qbe.filtergridpanel.foperators.desc.notends
+sbi.qbe.filtergridpanel.foperators.name.isnull
+sbi.qbe.filtergridpanel.foperators.desc.lt
+sbi.qbe.filtergridpanel.foperators.desc.eqlt
+sbi.qbe.filtergridpanel.foperators.name.notnull
+sbi.qbe.filtergridpanel.foperators.name.notbetween
+sbi.qbe.filtergridpanel.foperators.desc.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notstarts
+sbi.qbe.filtergridpanel.foperators.name.contains
+sbi.qbe.filtergridpanel.foperators.name.in
+sbi.qbe.filtergridpanel.foperators.desc.contains
+sbi.qbe.filtergridpanel.foperators.name.eq
+sbi.qbe.filtergridpanel.foperators.desc.notnull
+sbi.qbe.filtergridpanel.foperators.name.eqlt
+sbi.qbe.filtergridpanel.foperators.desc.eq
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/DocumentParametersGridPanel.js
+// labels: 3
+//===============================================================================================================
+
+sbi.qbe.documentparametersgridpanel.headers.label
+sbi.qbe.documentparametersgridpanel.emptytext
+sbi.qbe.documentparametersgridpanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/CalculatedFieldWizard.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/DataStorePanel.js
+// labels: 16
+//===============================================================================================================
+
+sbi.qbe.datastorepanel.grid.beforepagetext
+sbi.qbe.datastorepanel.title
+sbi.qbe.datastorepanel.grid.firsttext
+sbi.qbe.datastorepanel.grid.refreshtext
+sbi.qbe.datastorepanel.grid.nexttext
+sbi.qbe.datastorepanel.grid.emptywarningmsg
+sbi.qbe.datastorepanel.grid.afteroverflow
+sbi.qbe.datastorepanel.grid.lasttext
+sbi.qbe.datastorepanel.grid.displaymsg
+sbi.qbe.datastorepanel.button.tt.exportto
+sbi.qbe.datastorepanel.grid.afterpagetext
+sbi.qbe.messagewin.info.title
+sbi.qbe.datastorepanel.grid.emptymsg
+sbi.qbe.datastorepanel.grid.beforeoverflow
+sbi.qbe.messagewin.error.title
+sbi.qbe.datastorepanel.grid.prevtext
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/SaveWindow.js
+// labels: 11
+//===============================================================================================================
+
+sbi.qbe.savewindow.desc
+sbi.qbe.savewindow.name
+sbi.qbe.savewindow.save
+sbi.qbe.savewindow.privatedesc
+sbi.qbe.savewindow.publicdesc
+sbi.qbe.savewindow.cancel
+sbi.qbe.savewindow.selectscope
+sbi.qbe.savewindow.scope
+sbi.qbe.savewindow.private
+sbi.qbe.savewindow.public
+sbi.qbe.savewindow.saveas
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/QueryBuilderPanel.js
+// labels: 20
+//===============================================================================================================
+
+sbi.qbe.queryeditor.centerregion.tools.execute
+sbi.qbe.queryeditor.savequery
+sbi.qbe.filtergridpanel.title
+sbi.qbe.queryeditor.centerregion.title
+save
+sbi.qbe.queryeditor.querysaved
+sbi.qbe.queryeditor.msgwarning
+sbi.qbe.queryeditor.saveqasview
+sbi.qbe.queryeditor.title
+sbi.qbe.queryeditor.eastregion.tools.delete
+sbi.qbe.queryeditor.centerregion.tools.view
+sbi.qbe.queryeditor.westregion.tools.expand
+sbi.qbe.queryeditor.centerregion.tools.validate
+sbi.qbe.queryeditor.centerregion.tools.save
+sbi.qbe.queryeditor.westregion.title
+sbi.qbe.queryeditor.westregion.tools.collapse
+sbi.qbe.queryeditor.eastregion.tools.add
+sbi.qbe.queryeditor.querysavedsucc
+sbi.qbe.queryeditor.eastregion.tools.insert
+sbi.qbe.queryeditor.eastregion.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/exception/ExceptionHandler.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.sessionexpired.msg
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/LocaleUtils.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/service/ServiceRegistry.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/commons/Utils.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/commons/Settings.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/commons/extObjectTemplate.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.queryeditor.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/commons/Format.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/commons/JSON.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/widgets/TriggerFieldMultiButton.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/widgets/FilteringToolbar.js
+// labels: 2
+//===============================================================================================================
+
+sbi.lookup.asA
+sbi.lookup.ValueOfColumn
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/widgets/LookupField.js
+// labels: 3
+//===============================================================================================================
+
+sbi.lookup.Select
+sbi.lookup.Annulla
+sbi.lookup.Confirm
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/widgets/FilterLookupField.js
+// labels: 3
+//===============================================================================================================
+
+sbi.lookup.Select
+sbi.lookup.Annulla
+sbi.lookup.Confirm
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/widgets/PagingToolbar.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/TestTemplate.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/FormPreviewPage.js
+// labels: 1
+//===============================================================================================================
+
+sbi.formbuilder.formpreviewpage.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/FormBuilderPage.js
+// labels: 5
+//===============================================================================================================
+
+sbi.formbuilder.formbuilderpage.templatesaved.msg
+sbi.formbuilder.formbuilderpage.title
+sbi.formbuilder.formbuilderpage.toolbar.save
+sbi.formbuilder.formbuilderpage.templatesaved.title
+sbi.formbuilder.formbuilderpage.validationerrors.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/QueryFieldsPanel.js
+// labels: 3
+//===============================================================================================================
+
+sbi.formbuilder.queryfieldspanel.tools.refresh
+sbi.formbuilder.queryfieldspanel.title
+sbi.formbuilder.queryfieldspanel.fieldname
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/TemplateEditorPanel.js
+// labels: 1
+//===============================================================================================================
+
+sbi.formbuilder.templateeditorpanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/FormPanel.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.formpanel.title
+sbi.formbuilder.formbuilderpage.validationerrors.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/DynamicFilter.js
+// labels: 6
+//===============================================================================================================
+
+sbi.formviewer.dynamicfilterspanel.fromvalue
+sbi.formviewer.dynamicfilterspanel.clear.tt
+sbi.formviewer.dynamicfilterspanel.variable
+sbi.formviewer.dynamicfilter.validation.missingvalue
+sbi.formviewer.dynamicfilterspanel.value
+sbi.formviewer.dynamicfilterspanel.tovalue
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/GroupingVariablesPanel.js
+// labels: 1
+//===============================================================================================================
+
+sbi.formviewer.groupingvariablespanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/StaticClosedXORFiltersPanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/FormViewerPage.js
+// labels: 3
+//===============================================================================================================
+
+sbi.formviewer.formviewerpage.title
+sbi.formviewer.formviewerpage.execute
+sbi.formviewer.formviewerpage.validation.error
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/StaticClosedFiltersPanel.js
+// labels: 1
+//===============================================================================================================
+
+sbi.formviewer.staticclosedfilterspanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/StaticOpenFiltersPanel.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formviewer.staticopenfilterspanel.title
+sbi.formviewer.staticopenfilterspanel.validation.maxselectiontext
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/StaticClosedOnOffFiltersPanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/FormEnginePanel.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.queryeditor.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/ResultsPage.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formviewer.resultspage.backtoform
+sbi.qbe.queryeditor.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/DynamicFiltersPanel.js
+// labels: 1
+//===============================================================================================================
+
+sbi.formviewer.dynamicfilterspanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/OperandChooserWindow.js
+// labels: 1
+//===============================================================================================================
+
+sbi.qbe.operandchooserwindow.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formviewer/DataStorePanel.js
+// labels: 15
+//===============================================================================================================
+
+sbi.qbe.datastorepanel.grid.beforepagetext
+sbi.qbe.datastorepanel.grid.firsttext
+sbi.qbe.datastorepanel.grid.refreshtext
+sbi.qbe.datastorepanel.grid.nexttext
+sbi.qbe.datastorepanel.grid.emptywarningmsg
+sbi.qbe.datastorepanel.grid.afteroverflow
+sbi.qbe.datastorepanel.grid.lasttext
+sbi.qbe.datastorepanel.grid.displaymsg
+sbi.qbe.datastorepanel.button.tt.exportto
+sbi.qbe.datastorepanel.grid.afterpagetext
+sbi.qbe.messagewin.info.title
+sbi.qbe.datastorepanel.grid.emptymsg
+sbi.qbe.datastorepanel.grid.beforeoverflow
+sbi.qbe.messagewin.error.title
+sbi.qbe.datastorepanel.grid.prevtext
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/overrides/overrides.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/overrides/overrides.css
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/filterwizard/buttonColumn.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/filterwizard/parser.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/qbe/filterwizard/filterWizard.js
+// labels: 12
+//===============================================================================================================
+
+sbi.qbe.expreditor.clearttp
+sbi.qbe.expreditor.operators
+sbi.qbe.expreditor.operands
+sbi.qbe.expreditor.log
+sbi.qbe.expreditor.title
+sbi.qbe.expreditor.expression
+sbi.qbe.expreditor.structure
+sbi.qbe.expreditor.filterdesc
+sbi.qbe.expreditor.refresh
+sbi.qbe.expreditor.operatordesc
+sbi.qbe.expreditor.items
+sbi.qbe.expreditor.clear
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/qbe/it.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/qbe/en.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/qbe/fr.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/commons/it.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/commons/en.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/formbuilder/it.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/formbuilder/en.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/formviewer/it.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/formviewer/en.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/InlineEditor.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.inlineeditor.remove
+sbi.formbuilder.inlineeditor.edit
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/EditorPanel.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.editorpanel.clearall
+sbi.formbuilder.editorpanel.add
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/EditorDropTarget.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/widgets/lookupfield/it.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/locale/widgets/lookupfield/en.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/dynamic/DynamicFilterGroupWizard.js
+// labels: 10
+//===============================================================================================================
+
+sbi.formbuilder.dynamicfiltergroupwizard.buttons.apply
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.foperators.desc.eq
+sbi.formbuilder.dynamicfiltergroupwizard.fields.filtername.label
+sbi.formbuilder.dynamicfiltergroupwizard.fields.operatorfield.label
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.formbuilder.dynamicfiltergroupwizard.title
+sbi.formbuilder.dynamicfiltergroupwizard.buttons.cancel
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.name.eq
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/dynamic/DynamicFilterGroupEditor.js
+// labels: 5
+//===============================================================================================================
+
+sbi.formbuilder.dynamicfiltergroupeditor.emptymsg
+sbi.formbuilder.dynamicfiltergroupeditor.remove
+sbi.formbuilder.dynamicfiltereditorpanel.grouptitle
+sbi.formbuilder.dynamicfiltergroupeditor.edit
+sbi.formbuilder.dynamicfiltergroupeditor.groupTitle
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/dynamic/DynamicFilterEditorPanel.js
+// labels: 4
+//===============================================================================================================
+
+sbi.formbuilder.dynamicfiltereditorpanel.title
+sbi.formbuilder.dynamicfiltereditorpanel.grouptitle
+sbi.formbuilder.dynamicfiltereditorpanel.emptymsg
+sbi.formbuilder.dynamicfiltereditorpanel.filteritemname
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/dynamic/DynamicFilterEditor.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/grouping/VariableGroupEditor.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.variablegroupeditor.emptymsg
+sbi.formbuilder.variablegroupeditor.grouptitle
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/grouping/VariableEditorPanel.js
+// labels: 4
+//===============================================================================================================
+
+sbi.formbuilder.variableeditorpanel.emptymsg
+sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields
+sbi.formbuilder.variableeditorpanel.grouptitle
+sbi.formbuilder.variableeditorpanel.title
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/grouping/VariableEditor.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterGroupEditor.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.staticopenfiltergroupeditor.remove
+sbi.formbuilder.staticopenfiltergroupeditor.edit
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditor.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterWizard.js
+// labels: 58
+//===============================================================================================================
+
+sbi.formbuilder.staticopenfilterwizard.buttons.apply
+sbi.qbe.filtergridpanel.foperators.desc.notstarts
+sbi.qbe.filtergridpanel.foperators.name.eqgt
+sbi.qbe.filtergridpanel.foperators.desc.between
+sbi.qbe.filtergridpanel.foperators.desc.in
+sbi.qbe.filtergridpanel.foperators.name.notends
+sbi.qbe.filtergridpanel.foperators.desc.notcontains
+sbi.qbe.filtergridpanel.foperators.name.noteq
+sbi.qbe.filtergridpanel.foperators.name.between
+sbi.qbe.filtergridpanel.foperators.desc.starts
+sbi.formbuilder.staticopenfilterwizard.fields.filtername.label
+sbi.qbe.filtergridpanel.foperators.desc.ends
+sbi.formbuilder.staticopenfilterwizard.fields.orderbyfield.label
+sbi.qbe.filtergridpanel.foperators.desc.eqgt
+sbi.qbe.filtergridpanel.foperators.name.notin
+sbi.qbe.filtergridpanel.foperators.desc.notends
+sbi.qbe.filtergridpanel.foperators.name.starts
+sbi.formbuilder.staticopenfilterwizard.fields.filterentity.label
+sbi.qbe.filtergridpanel.foperators.desc.lt
+sbi.qbe.filtergridpanel.foperators.name.isnull
+sbi.formbuilder.staticopenfilterwizard.buttons.cancel
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.promptvalues
+sbi.qbe.filtergridpanel.foperators.desc.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notbetween
+sbi.qbe.filtergridpanel.foperators.name.notstarts
+sbi.formbuilder.staticopenfilterwizard.fields.maxselectionnumber.label
+sbi.qbe.filtergridpanel.foperators.name.contains
+sbi.qbe.filtergridpanel.foperators.desc.contains
+sbi.qbe.filtergridpanel.foperators.name.eq
+sbi.qbe.selectgridpanel.sortfunc.desc.none
+sbi.qbe.selectgridpanel.sortfunc.desc.asc
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity
+sbi.qbe.filtergridpanel.foperators.desc.gt
+sbi.qbe.filtergridpanel.foperators.desc.isnull
+sbi.qbe.filtergridpanel.foperators.name.lt
+sbi.qbe.filtergridpanel.foperators.name.notcontains
+sbi.formbuilder.staticopenfilterwizard.fields.filteroperator.label
+sbi.qbe.selectgridpanel.sortfunc.name.desc
+sbi.qbe.filtergridpanel.foperators.name.none
+sbi.qbe.filtergridpanel.foperators.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.name.gt
+sbi.qbe.filtergridpanel.foperators.name.ends
+sbi.qbe.filtergridpanel.foperators.desc.noteq
+sbi.qbe.filtergridpanel.foperators.desc.notin
+sbi.qbe.selectgridpanel.sortfunc.name.none
+sbi.formbuilder.staticopenfilterwizard.fields.ordertype.label
+sbi.qbe.filtergridpanel.foperators.desc.eqlt
+sbi.qbe.filtergridpanel.foperators.name.notnull
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.title
+sbi.formbuilder.staticopenfilterwizard.title
+sbi.qbe.filtergridpanel.foperators.name.in
+sbi.qbe.selectgridpanel.sortfunc.editor.emptymsg
+sbi.qbe.filtergridpanel.foperators.name.eqlt
+sbi.qbe.filtergridpanel.foperators.desc.notnull
+sbi.qbe.filtergridpanel.foperators.desc.eq
+sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.donotqueryrootentity
+sbi.qbe.selectgridpanel.sortfunc.desc.desc
+sbi.qbe.selectgridpanel.sortfunc.name.asc
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/Copy of StaticOpenFilterEditorPanel.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditorPanel.js
+// labels: 2
+//===============================================================================================================
+
+sbi.formbuilder.staticopenfiltereditorpanel.title
+sbi.formbuilder.staticopenfiltereditorpanel.emptymsg
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticopen/Copy of StaticOpenFilterEditor.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupWizard.js
+// labels: 16
+//===============================================================================================================
+
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.label
+sbi.formbuilder.staticclosefiltergroupwizard.fields.noselectiontext
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.yes
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.label
+sbi.formbuilder.staticclosefiltergroupwizard.fields.grouptitle.label
+sbi.formbuilder.staticclosefiltergroupwizard.title
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.and
+sbi.formbuilder.staticclosefiltergroupwizard.fields.booleanconnector.or
+sbi.formbuilder.staticclosefiltergroupwizard.buttons.cancel
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.yes
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.no
+sbi.formbuilder.staticclosefiltergroupwizard.buttons.apply
+sbi.formbuilder.staticclosefiltergroupwizard.fields.enablesingleselection.no
+sbi.formbuilder.staticclosefiltergroupwizard.fields.noselectionoptionlabel.label
+sbi.formbuilder.staticclosefiltergroupwizard.fields.options
+sbi.formbuilder.staticclosefiltergroupwizard.fields.allownoselection.label
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterWizard.js
+// labels: 7
+//===============================================================================================================
+
+sbi.formbuilder.staticclosefilterwizard.buttons.cancel
+sbi.formbuilder.staticclosefilterwizard.fields.operator.label
+sbi.formbuilder.staticclosefilterwizard.title
+sbi.formbuilder.staticclosefilterwizard.buttons.apply
+sbi.formbuilder.staticclosefilterwizard.fields.filtertitle.label
+sbi.formbuilder.staticclosefilterwizard.fields.rightoperand.label
+sbi.formbuilder.staticclosefilterwizard.fields.leftoperand.label
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupEditor.js
+// labels: 3
+//===============================================================================================================
+
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.edit
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.add
+sbi.formbuilder.staticclosefiltergroupeditor.toolbar.remove
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditor.js
+// labels: 0
+//===============================================================================================================
+
+
+//===============================================================================================================
+// file: /home/spinelli/Scrivania/SpagoBI-2.5.0/apache-tomcat-6.0.18/webapps/SpagoBIQbeEngine/js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditorPanel.js
+// labels: 3
+//===============================================================================================================
+
+sbi.formbuilder.staticclosefiltereditorpanel.title
+sbi.formbuilder.staticclosefiltereditorpanel.filteritemname
+sbi.formbuilder.staticclosefiltereditorpanel.emptymsg

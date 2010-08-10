@@ -1,0 +1,42 @@
+<html>
+<head>
+  <script src="../lib/OpenLayers.js"></script>
+  <script type="text/javascript">
+    var icon; 
+    
+    function test_Icon_constructor (t) {
+        t.plan( 4 );
+        var size = new OpenLayers.Size(5,6);
+        icon = new OpenLayers.Icon("", size);
+        t.ok( icon instanceof OpenLayers.Icon, "new OpenLayers.Icon returns Icon object" );
+        t.ok( icon.size instanceof OpenLayers.Size, "icon.size returns Size object" );
+        t.ok( icon.size.equals(size), "icon.size returns correct value" );
+        t.eq( icon.url, "", "icon.url returns str object" );
+    }
+    function test_Icon_clone (t) {
+        t.plan( 4 );
+        icon = new OpenLayers.Icon("a",new OpenLayers.Size(5,6));
+        t.ok( icon instanceof OpenLayers.Icon, "new OpenLayers.Icon returns Icon object" );
+        var cloned = icon.clone();
+        t.ok( cloned instanceof OpenLayers.Icon, "clone is an OpenLayers.Icon" );
+        cloned.url = "b"
+        t.eq( icon.url, "a", "icon.url doesn't change with clone's url" );
+        t.eq( cloned.url, "b", "cloned.url does change when edited" );
+    }
+
+    function test_Marker_setOpacity(t) {
+        t.plan( 2 );
+        
+        icon = new OpenLayers.Icon("a",new OpenLayers.Size(5,6));
+        t.ok(!icon.imageDiv.style.opacity, "default icon has no opacity");
+        
+        icon.setOpacity(0.5);
+        t.eq(parseFloat(icon.imageDiv.style.opacity), 0.5, "icon.setOpacity() works");
+    }
+
+
+  </script>
+</head>
+<body>
+</body>
+</html>

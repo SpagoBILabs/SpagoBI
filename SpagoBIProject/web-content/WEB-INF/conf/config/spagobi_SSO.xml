@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SPAGOBI_SSO> 
+    <INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
+<!-- START-CAS 
+	<ACTIVE>true</ACTIVE>
+END-CAS -->
+<!-- START-NO-CAS -->
+<ACTIVE>false</ACTIVE>
+<!-- END-NO-CAS -->
+	<PASS>PASS</PASS>  
+    <SECURITY_LOGOUT_URL>https://athos.engilab.ewebpd.eng.it:1447/cas/logout</SECURITY_LOGOUT_URL>
+</SPAGOBI_SSO>

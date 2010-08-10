@@ -1,0 +1,126 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include QBE stylesheets -->
+<link rel="styleSheet" href ="../css/qbe.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='../js/spagobi/locale/commons/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/qbe/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/formbuilder/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='../js/spagobi/qbe/filterwizard/parser.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/filterwizard/buttonColumn.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/JSON.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/qbe/filterwizard/filterWizard.js'/></script>
+
+
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTab.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabCalculatedFields.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabCFWizard.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabShowHide.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/HeaderEntry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabCalculatedFieldsValidator.js'/></script>
+
+		
+<script type="text/javascript" src='../js/spagobi/qbe/DataStorePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/DataMartStructurePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/QueryCataloguePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/SelectGridDropTarget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/SelectGridPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/OperandChooserWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/FilterGridDropTarget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/FilterGridPanel.js'/></script>
+		
+<script type="text/javascript" src='../js/spagobi/qbe/HavingGridPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/HavingGridDropTarget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/SaveWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/QueryBuilderPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/QbePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/FreeConditionsWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/CalculatedFieldWizard.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/InLineCalculatedFieldValidator.js'/></script>
+		
+<script type="text/javascript" src='../js/spagobi/qbe/DocumentParametersGridPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/DocumentParametersStore.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/HavingGridPanel.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/widgets/LookupField.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/FilterLookupField.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/FilteringToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/PagingToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/TriggerFieldMultiButton.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/FilteringToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/PagingToolbar.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/LookupField.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/FormBuilderPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/FormPreviewPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/FormPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/QueryFieldsPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/TemplateEditorPanel.js'/></script>
+
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/EditorDropTarget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/InlineEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/EditorPanel.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditorPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupWizard.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticclose/StaticCloseFilterWizard.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditorPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterGroupEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/staticopen/StaticOpenFilterWizard.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/dynamic/DynamicFilterEditorPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/dynamic/DynamicFilterGroupEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/dynamic/DynamicFilterEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/dynamic/DynamicFilterGroupWizard.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableGroupEditor.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableEditorPanel.js'/></script>
+
+
+<script type="text/javascript" src='../js/spagobi/formbuilder/TestTemplate.js'/></script>
+
+
+<script type="text/javascript" src='../js/spagobi/formtemplate/DocumentTemplateBuilder.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/crosstab/test/crosstabDefinitionExample.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/widgets/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/ChooseAggregationFunctionWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDetailsWizard.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/AttributesContainerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/MeasuresContainerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDefinitionPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/CrosstabPreviewPanel.js'/></script>
+
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='../js/spagobi/qbe-all-2.6.0.js'></script>
+ END-PRODUCTION -->

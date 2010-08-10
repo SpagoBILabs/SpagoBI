@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+
+ <ACTION name="MANAGE_ALARMS_ACTION" class="it.eng.spagobi.kpi.alarm.service.ManageAlarmsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_CONTACTS_ACTION" class="it.eng.spagobi.kpi.alarm.service.ManageContactsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+
+ 
+</ACTIONS>
+

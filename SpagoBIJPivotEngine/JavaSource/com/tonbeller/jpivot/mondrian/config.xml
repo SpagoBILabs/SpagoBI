@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<model class="com.tonbeller.jpivot.mondrian.MondrianModel">
+  <extension id="drillExpandMember" class="com.tonbeller.jpivot.olap.query.DrillExpandMemberExt"/>
+  <extension id="drillExpandPosition" class="com.tonbeller.jpivot.olap.query.DrillExpandPositionExt"/>
+  <extension id="drillReplace" class="com.tonbeller.jpivot.olap.query.DrillReplaceExt"/>
+  <extension id="swapAxes" class="com.tonbeller.jpivot.mondrian.MondrianSwapAxes"/>
+  <extension id="memberTree" class="com.tonbeller.jpivot.mondrian.MondrianMemberTree"/>
+  <extension id="sortRank" class="com.tonbeller.jpivot.mondrian.MondrianSortRank"/>
+  <extension id="nonEmpty" class="com.tonbeller.jpivot.mondrian.MondrianNonEmpty"/>
+  <extension id="mdxQuery" class="com.tonbeller.jpivot.mondrian.MondrianMdxQuery"/>
+  <extension id="changeSlicer" class="com.tonbeller.jpivot.mondrian.MondrianChangeSlicer"/>
+  <extension id="hierarchiesOnAxes" class="com.tonbeller.jpivot.mondrian.MondrianPlaceHierarchies"/>
+  <extension id="membersOnAxes" class="com.tonbeller.jpivot.mondrian.MondrianPlaceMembers"/>
+  <extension id="cache1" class="com.tonbeller.jpivot.olap.model.CachingOlapModel"/>
+  <extension id="drillThrough" class="com.tonbeller.jpivot.mondrian.ScriptableMondrianDrillThrough"/>
+  <extension id="memberProperties" class="com.tonbeller.jpivot.mondrian.MondrianMemberProperties"/>
+  <extension id="setParameter" class="com.tonbeller.jpivot.mondrian.MondrianSetParameter"/>
+  <extension id="expressionParser" class="com.tonbeller.jpivot.mondrian.MondrianExpressionParser"/>
+  <extension id="sqlAccess" class="com.tonbeller.jpivot.mondrian.MondrianSqlAccess"/>
+  <extension id="crossNavigation" class="com.tonbeller.jpivot.mondrian.SpagoBICrossNavigation"/>
+</model>

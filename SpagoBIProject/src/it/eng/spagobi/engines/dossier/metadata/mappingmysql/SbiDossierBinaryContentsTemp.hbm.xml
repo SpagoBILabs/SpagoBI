@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 14-feb-2008 10.44.54 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.engines.dossier.metadata.SbiDossierBinaryContentsTemp" table="SBI_DOSSIER_BIN_TEMP">
+        <id name="binId" type="integer">
+            <column name="BIN_ID" />
+            <generator class="native">
+           		<param name="sequence">SBI_DOSSIER_BIN_TEMP_SEQ</param>
+            </generator>
+        </id>
+        <many-to-one name="sbiDossierPartsTemp" class="it.eng.spagobi.engines.dossier.metadata.SbiDossierPartsTemp">
+            <column name="PART_ID" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="NAME" />
+        </property>
+        <property name="binContent" type="binary">
+            <column name="BIN_CONTENT" sql-type="longvarbinary"/>
+        </property>
+        <property name="type" type="string">
+            <column name="TYPE" />
+        </property>
+        <property name="creationDate" type="timestamp">
+            <column name="CREATION_DATE" />
+        </property>
+    </class>
+</hibernate-mapping>

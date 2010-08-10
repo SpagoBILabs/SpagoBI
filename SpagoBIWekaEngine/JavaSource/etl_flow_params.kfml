@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE object
+[
+   <!ELEMENT object (#PCDATA | object)*>
+   <!ATTLIST object name      CDATA #REQUIRED>
+   <!ATTLIST object class     CDATA #REQUIRED>
+   <!ATTLIST object primitive CDATA "no">
+   <!ATTLIST object array     CDATA "no">   <!-- the dimensions of the array; no=0, yes=1 -->
+   <!ATTLIST object null      CDATA "no">
+   <!ATTLIST object version   CDATA "3.4.7">
+]
+>
+
+<object class="java.util.Vector" name="__root__" version="3.4.7">
+   <object class="java.util.Vector" name="0">
+      <object class="weka.gui.beans.BeanInstance" name="0">
+         <object class="int" name="id" primitive="yes">0</object>
+         <object class="int" name="x" primitive="yes">160</object>
+         <object class="int" name="y" primitive="yes">105</object>
+         <object class="weka.gui.beans.Loader" name="bean">
+            <object class="weka.core.converters.DatabaseLoader" name="loader">
+               <object array="yes" class="java.lang.String" name="options">
+                  <object class="java.lang.String" name="0">-Q</object>
+                  <object class="java.lang.String" name="1">SELECT customer_id, cluster FROM cust_to_dept_clustered WHERE version=&apos;$P{targetVersion}&apos;</object>
+                  <object class="java.lang.String" name="2">-P</object>
+                  <object class="java.lang.String" name="3"/>
+               </object>
+            </object>
+            <object class="java.beans.beancontext.BeanContextSupport" name="beanContext">
+               <object class="boolean" name="designTime" primitive="yes">true</object>
+               <object class="null" name="beanContext" null="yes"/>
+            </object>
+         </object>
+      </object>
+      <object class="weka.gui.beans.BeanInstance" name="1">
+         <object class="int" name="id" primitive="yes">1</object>
+         <object class="int" name="x" primitive="yes">394</object>
+         <object class="int" name="y" primitive="yes">111</object>
+         <object class="weka.gui.beans.Saver" name="bean">
+            <object class="weka.core.converters.DatabaseSaver" name="saver">
+               <object array="yes" class="java.lang.String" name="options">
+                  <object class="java.lang.String" name="0">-T</object>
+                  <object class="java.lang.String" name="1">cust_to_dept</object>
+               </object>
+            </object>
+         </object>
+      </object>
+   </object>
+   <object class="java.util.Vector" name="1">
+      <object class="weka.gui.beans.BeanConnection" name="0">
+         <object class="int" name="source_id" primitive="yes">0</object>
+         <object class="int" name="target_id" primitive="yes">1</object>
+         <object class="java.lang.String" name="eventname">dataSet</object>
+         <object class="boolean" name="hidden" primitive="yes">false</object>
+      </object>
+   </object>
+</object>

@@ -1,0 +1,30 @@
+<project name="${project.name}" default="javadoc" basedir=".">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <property file="build.properties"/>	
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE CLASSPATH						                                            -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<path id="web.classpath">
+    		<pathelement path="${classpath}"/>
+    		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+    		<fileset dir="${web.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		   		
+ 	</path>
+
+	<target name="javadoc">    
+	    <javadoc packagenames="*"
+	      sourcepath="${src}"
+	      defaultexcludes="yes"
+	      destdir="${dist}"
+	      author="true"
+	      version="true"
+	      use="true">
+	      <classpath refid="web.classpath"/>
+	    </javadoc>    
+	  </target>
+
+</project>

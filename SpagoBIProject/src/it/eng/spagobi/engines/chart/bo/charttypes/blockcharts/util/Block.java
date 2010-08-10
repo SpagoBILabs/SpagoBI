@@ -1,0 +1,36 @@
+package it.eng.spagobi.engines.chart.bo.charttypes.blockcharts.util;
+
+import java.util.ArrayList;
+
+public class Block {
+
+	String code;
+	ArrayList<Activity> activities;
+
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public ArrayList<Activity> getActivities() {
+		return activities;
+	}
+	public void setActivities(ArrayList<Activity> activities) {
+		this.activities = activities;
+	}
+
+	public void addActivities(Activity activity) {
+		this.activities.add(activity);
+	}
+
+	public Block(String code) {
+		super();
+		this.code = code;
+		activities=new ArrayList<Activity>();
+	}
+
+
+
+
+}

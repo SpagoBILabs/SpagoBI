@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: sbi.security.xml-2.6.0.war
+Implementation-Title: SpagoBIXMLSecurityProvider
+Implementation-Version: 2.6.0
+

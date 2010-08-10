@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Toolbar</title>
+    <link rel="stylesheet" type="text/css" href="../../mfbase/ext/resources/css/ext-all.css" />
+
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/Firebug/firebug.js"></script>
+    <script type="text/javascript" src="../../mfbase/openlayers/lib/OpenLayers.js"></script>
+
+    <script type="text/javascript" src="../../mfbase/ext/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="../../mfbase/ext/ext-all-debug.js"></script>
+                    
+
+    <script type="text/javascript">
+      // Because of a bug in Firefox 2 we need to specify the MapFish base path.
+      // See https://bugzilla.mozilla.org/show_bug.cgi?id=351282
+      var gMfLocation = "../../mfbase/mapfish/";
+    </script>
+    <script type="text/javascript" src="../../mfbase/mapfish/MapFish.js"></script>
+    <script type="text/javascript" src="../examples.js"></script>
+
+    <script type="text/javascript">
+        // ugly globals
+        var map, toolbar, vectorLayer;
+        
+        function addSeparator(toolbar){
+            toolbar.add(new Ext.Toolbar.Spacer());
+            toolbar.add(new Ext.Toolbar.Separator());
+            toolbar.add(new Ext.Toolbar.Spacer());
+        } 
+
+        function initToolbarContent() {
+        
+            toolbar.addControl(
+                new OpenLayers.Control.ZoomToMaxExtent({
+                    map: map,
+                    title: 'Zoom to maximum map extent'
+                }), {
+                    iconCls: 'zoomfull', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            addSeparator(toolbar);
+        
+            toolbar.addControl(
+                new OpenLayers.Control.ZoomBox({
+                    title: 'Zoom in: click in the map or use the left mouse button and drag to create a rectangle'
+                }), {
+                    iconCls: 'zoomin', 
+                    toggleGroup: 'map'
+                }
+            );
+        
+            toolbar.addControl(
+                new OpenLayers.Control.ZoomBox({
+                    out: true,
+                    title: 'Zoom out: click in the map or use the left mouse button and drag to create a rectangle'
+                }), {
+                    iconCls: 'zoomout', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            toolbar.addControl(
+                new OpenLayers.Control.DragPan({
+                    isDefault: true,
+                    title: 'Pan map: keep the left mouse button pressed and drag the map'
+                }), {
+                    iconCls: 'pan', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            addSeparator(toolbar);
+            
+            toolbar.addControl(
+                new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point, {
+                    title: 'Draw a point on the map'
+                }), {
+                    iconCls: 'drawpoint', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            toolbar.addControl(
+                new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Path, {
+                    title: 'Draw a linestring on the map'
+                }), {
+                    iconCls: 'drawline', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            toolbar.addControl(
+                new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Polygon, {
+                    title: 'Draw a polygon on the map'
+                }), {
+                    iconCls: 'drawpolygon', 
+                    toggleGroup: 'map'
+                }
+            );
+            
+            addSeparator(toolbar);
+        
+            var nav = new OpenLayers.Control.NavigationHistory();
+            map.addControl(nav);
+            nav.activate();
+            
+            toolbar.add(
+                new Ext.Toolbar.Button({
+                    iconCls: 'back',
+                    tooltip: 'Previous view', 
+                    handler: nav.previous.trigger
+                })
+            );
+            
+            toolbar.add(
+                new Ext.Toolbar.Button({
+                    iconCls: 'next',
+                    tooltip: 'Next view', 
+                    handler: nav.next.trigger
+                })
+            );
+            
+            addSeparator(toolbar);
+            
+            toolbar.activate();
+        }
+
+        Ext.onReady(function() {
+            
+            map = new OpenLayers.Map('map', {
+                projection: "EPSG:4326",
+                controls: [], 
+                maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
+                scales: [
+                    442943842.5, 221471921.25, 110735960.625, 55367980.3125, 27683990.15625,
+                    13841995.078125, 6920997.5390625, 3460498.76953125, 1730249.384765625,
+                    865124.6923828125, 432562.34619140625, 216281.17309570312, 108140.58654785156,
+                    54070.29327392578
+                ]
+            });
+            
+            map.addLayer(
+                new OpenLayers.Layer.WMS(
+                    "OpenLayers WMS", 
+                    "http://labs.metacarta.com/wms/vmap0",
+                    {layers: 'basic'}, 
+                    {isBaseLayer: true}
+                )
+            );
+
+            map.addLayer(
+                new OpenLayers.Layer.WMS("Summits",
+                    "http://demo.mapfish.org/mapfishsample/1.0/wms?", {
+                        layers: ['summits'], 
+                        format: 'image/png', 
+                        transparent: true,
+                        singleTile: true
+                    }
+                )
+            );  
+
+            vectorLayer = new OpenLayers.Layer.Vector("vector", { 
+                displayInLayerSwitcher: false
+            });
+            map.addLayer(vectorLayer);
+
+            map.setCenter(new OpenLayers.LonLat(5,45), 6);
+            
+            toolbar = new mapfish.widgets.toolbar.Toolbar({
+                map: map, 
+                configurable: false
+            });
+            
+            var viewport = new Ext.Viewport({
+                layout:'border',
+                items:[{
+                    region: 'west',
+                    title: 'LayerTree',
+                    border: true,
+                    xtype: 'layertree',
+                    map: map,
+                    width: 150,
+                    split:true,
+                    minSize: 120,
+                    maxSize: 300,
+                    margins: '0 0 0 0'
+                },{
+                    region: 'center',
+                    title: 'Map',
+                    layout: 'fit',
+                    xtype: 'mapcomponent',
+                    map: map,
+                    tbar: toolbar
+                }]
+            });
+
+            viewport.doLayout();
+            
+            initToolbarContent();
+            
+        });
+     </script>
+     <style type="text/css">
+        .float-left {
+          float: left;
+        }
+        .clear-left {
+          clear: left;
+        }
+        .zoomin {
+          background-image:url(../../mfbase/mapfish/img/icon_zoomin.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .zoomout {
+          background-image:url(../../mfbase/mapfish/img/icon_zoomout.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .zoomfull {
+          background-image:url(../../mfbase/mapfish/img/icon_zoomfull.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .pan {
+          background-image:url(../../mfbase/mapfish/img/icon_pan.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .drawpoint {
+          background-image:url(../../mfbase/mapfish/img/draw_point_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .drawline {
+          background-image:url(../../mfbase/mapfish/img/draw_line_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .drawpolygon {
+          background-image:url(../../mfbase/mapfish/img/draw_polygon_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+        }
+        .next {
+            background-image:url(../../mfbase/mapfish/img/resultset_next.png) !important;
+            height:20px !important;
+            width:20px !important;
+        }
+        .back {
+            background-image:url(../../mfbase/mapfish/img/resultset_previous.png) !important;
+            height:20px !important;
+            width:20px !important;
+        }
+     </style>
+  </head>
+
+  <body>
+    <div id="buttonbar"></div>
+    <div id="map"></div>
+  </body>
+</html>

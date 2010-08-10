@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	    <MAP_ACTION actionName="MANAGE_KPIS_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_THRESHOLDS_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_MODELS_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_MODEL_INSTANCES_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_RESOURCES_ACTION" businessProcess="KpiManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

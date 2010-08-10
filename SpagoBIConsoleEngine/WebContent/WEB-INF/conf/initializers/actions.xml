@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<!-- CONSOLE_ENGINE Initializations -->
+	<ACTION name="CONSOLE_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.console.services.initializers.ConsoleEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+</ACTIONS>
+

@@ -1,0 +1,343 @@
+/**
+
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+**/
+package it.eng.spagobi.tools.datasource.service;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dispatching.module.AbstractModule;
+import it.eng.spago.error.EMFErrorHandler;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.commons.constants.AdmintoolsConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
+/**
+ * This class implements a module which  handles data source management. 
+ */
+public class DetailDataSourceModule extends AbstractModule {
+	static private Logger logger = Logger.getLogger(DetailDataSourceModule.class);
+	public static final String MOD_SAVE = "SAVE";
+	public static final String MOD_SAVEBACK = "SAVEBACK";
+	public final static String NAME_ATTR_LIST_DIALECTS = "dialects";
+
+	private String modalita = "";
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
+	 */
+	public void init(SourceBean config) {
+	}
+
+	/**
+	 * Reads the operation asked by the user and calls the insertion, updation or deletion methods.
+	 * 
+	 * @param request The Source Bean containing all request parameters
+	 * @param response The Source Bean containing all response parameters
+	 * 
+	 * @throws exception If an exception occurs
+	 * @throws Exception the exception
+	 */
+	public void service(SourceBean request, SourceBean response) throws Exception {
+		String message = (String) request.getAttribute("MESSAGEDET");
+		logger.debug("begin of detail Data Source service with message =" +message);
+		EMFErrorHandler errorHandler = getErrorHandler();
+		try {
+			if (message == null) {
+				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
+				logger.debug("The message parameter is null");
+				throw userError;
+			}
+			logger.debug("The message parameter is: " + message.trim());
+			if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_SELECT)) {
+				getDataSource(request, response);
+			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_MOD)) {
+				modifyDataSource(request, SpagoBIConstants.DETAIL_MOD, response);
+			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_NEW)) {
+				newDataSource(response);
+			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {
+				modifyDataSource(request, SpagoBIConstants.DETAIL_INS, response);
+			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.DETAIL_DEL)) {
+				deleteDataSource(request, SpagoBIConstants.DETAIL_DEL, response);
+			}
+		} catch (EMFUserError eex) {
+			errorHandler.addError(eex);
+			return;
+		} catch (Exception ex) {
+			EMFInternalError internalError = new EMFInternalError(EMFErrorSeverity.ERROR, ex);
+			errorHandler.addError(internalError);
+			return;
+		}
+	}
+	
+	 
+	
+	/**
+	 * Gets the detail of a data source choosed by the user from the 
+	 * data sources list. It reaches the key from the request and asks to the DB all detail
+	 * data source information, by calling the method <code>loadDataSourceByID</code>.
+	 *   
+	 * @param key The choosed data source id key
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
+	 */   
+	private void getDataSource(SourceBean request, SourceBean response) throws EMFUserError {		
+		try {		 									
+			DataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer((String)request.getAttribute("ID")));		
+			this.modalita = SpagoBIConstants.DETAIL_MOD;
+			if (request.getAttribute("SUBMESSAGEDET") != null &&
+				((String)request.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK))
+			{
+				response.setAttribute("loopback", "true");
+				return;
+			}
+			IDomainDAO domaindao = DAOFactory.getDomainDAO();
+			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
+			response.setAttribute(NAME_ATTR_LIST_DIALECTS, dialects);
+			response.setAttribute("modality", modalita);
+			response.setAttribute("dsObj", ds);
+		} catch (Exception ex) {
+			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+			HashMap params = new HashMap();
+			params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 8003, new Vector(), params);
+		}
+		
+	}
+	 /**
+	 * Inserts/Modifies the detail of a data source according to the user request. 
+	 * When a data source is modified, the <code>modifyDataSource</code> method is called; when a new
+	 * data source is added, the <code>insertDataSource</code>method is called. These two cases are 
+	 * differentiated by the <code>mod</code> String input value .
+	 * 
+	 * @param request The request information contained in a SourceBean Object
+	 * @param mod A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean 
+	 * @throws EMFUserError If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
+	 */
+	private void modifyDataSource(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
+		throws EMFUserError, SourceBeanException {
+		
+		try {
+			
+			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
+			
+			EMFErrorHandler errorHandler = getErrorHandler();
+			 
+			// if there are some validation errors into the errorHandler does not write into DB
+			Collection errors = errorHandler.getErrors();
+			if (errors != null && errors.size() > 0) {
+				Iterator iterator = errors.iterator();
+				while (iterator.hasNext()) {
+					Object error = iterator.next();
+					if (error instanceof EMFValidationError) {
+						serviceResponse.setAttribute("dsObj", dsNew);
+						serviceResponse.setAttribute("modality", mod);
+						return;
+					}
+				}
+			}
+			
+			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {			
+				//if a ds with the same label not exists on db ok else error
+				if (DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel()) != null){
+					HashMap params = new HashMap();
+					params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8004, new Vector(), params );
+					getErrorHandler().addError(error);
+					return;
+				}	 		
+				 
+				DAOFactory.getDataSourceDAO().insertDataSource(dsNew);
+				
+				IDataSource tmpDS = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel());
+				dsNew.setDsId(tmpDS.getDsId());
+				mod = SpagoBIConstants.DETAIL_MOD; 
+			} else {				
+				//update ds
+				DAOFactory.getDataSourceDAO().modifyDataSource(dsNew);			
+			}  
+			IDomainDAO domaindao = DAOFactory.getDomainDAO();
+			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
+			serviceResponse.setAttribute(NAME_ATTR_LIST_DIALECTS, dialects);
+			
+			if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
+				((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVE)) {	
+				serviceResponse.setAttribute("modality", mod);
+				serviceResponse.setAttribute("dsObj", dsNew);				
+				return;
+			}
+			else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
+					((String)serviceRequest.getAttribute("SUBMESSAGEDET")).equalsIgnoreCase(MOD_SAVEBACK)){
+					serviceResponse.setAttribute("loopback", "true");
+				    return;
+			}					     
+		} catch (EMFUserError e){
+			logger.error("Cannot fill response container" + e.getLocalizedMessage());
+			HashMap params = new HashMap();
+			params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 8005, new Vector(), params);
+			
+		}
+		
+		catch (Exception ex) {		
+			logger.error("Cannot fill response container" , ex);		
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}			
+	}
+
+	/**
+	 * Deletes a data source choosed by user from the data sources list.
+	 * 
+	 * @param request	The request SourceBean
+	 * @param mod	A request string used to differentiate delete operation
+	 * @param response	The response SourceBean
+	 * @throws EMFUserError	If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
+	 */
+	private void deleteDataSource(SourceBean request, String mod, SourceBean response)
+		throws EMFUserError, SourceBeanException {
+		
+		try {
+			String id = (String) request.getAttribute("ID");
+//			if the ds is associated with any BIEngine or BIObjects, creates an error
+			boolean bObjects =  DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
+			boolean bEngines =  DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
+			if (bObjects || bEngines){
+				HashMap params = new HashMap();
+				params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8007, new Vector(), params );
+				getErrorHandler().addError(error);
+				return;
+			}
+			
+			//delete the ds
+			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
+			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
+		}
+		catch (EMFUserError e){
+			  logger.error("Cannot fill response container" + e.getLocalizedMessage());
+			  HashMap params = new HashMap();		  
+			  params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
+			  throw new EMFUserError(EMFErrorSeverity.ERROR, 8006, new Vector(), params);
+				
+		}
+	    catch (Exception ex) {		
+		    ex.printStackTrace();
+			logger.error("Cannot fill response container" ,ex);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+	    }
+	    response.setAttribute("loopback", "true");			
+	}
+
+
+
+	/**
+	 * Instantiates a new <code>datasource<code> object when a new data source insertion is required, in order
+	 * to prepare the page for the insertion.
+	 * 
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
+	 */
+
+	private void newDataSource(SourceBean response) throws EMFUserError {
+		
+		try {
+			
+			DataSource ds = null;
+			this.modalita = SpagoBIConstants.DETAIL_INS;
+			response.setAttribute("modality", modalita);
+			ds = new DataSource();
+			ds.setDsId(-1);
+			ds.setDescr("");
+			ds.setDialectId(new Integer("-1"));
+			ds.setLabel("");
+			ds.setJndi("");
+			ds.setUrlConnection("");
+			ds.setUser("");
+			ds.setPwd("");
+			ds.setDriver("");
+			ds.setMultiSchema(false);
+			ds.setSchemaAttribute("");
+			response.setAttribute("dsObj", ds);
+			IDomainDAO domaindao = DAOFactory.getDomainDAO();
+			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
+			response.setAttribute(NAME_ATTR_LIST_DIALECTS, dialects);
+		} catch (Exception ex) {
+			logger.error("Cannot prepare page for the insertion" , ex);		
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}
+		
+	}
+
+
+	private DataSource recoverDataSourceDetails (SourceBean serviceRequest) throws EMFUserError, SourceBeanException, IOException  {
+		DataSource ds  = new DataSource();
+		
+		String idStr = (String)serviceRequest.getAttribute("ID");
+		Integer id = new Integer(idStr);
+		Integer dialectId = Integer.valueOf((String)serviceRequest.getAttribute("DIALECT"));	
+		String description = (String)serviceRequest.getAttribute("DESCR");	
+		String label = (String)serviceRequest.getAttribute("LABEL");
+		String jndi = (String)serviceRequest.getAttribute("JNDI");
+		String url = (String)serviceRequest.getAttribute("URL_CONNECTION");
+		String user = (String)serviceRequest.getAttribute("USER");
+		String pwd = (String)serviceRequest.getAttribute("PWD");
+		String driver = (String)serviceRequest.getAttribute("DRIVER");
+		String schemaAttr = (String)serviceRequest.getAttribute("ATTRSCHEMA");
+		String multiSchema = (String)serviceRequest.getAttribute("MULTISCHEMA");
+		Boolean isMultiSchema = false;
+		if(multiSchema!=null && multiSchema.equals("YES")){
+			isMultiSchema = true;
+		}
+		
+		ds.setDsId(id.intValue());
+		ds.setDialectId(dialectId);
+		ds.setLabel(label);
+		ds.setDescr(description);
+		ds.setJndi(jndi);
+		ds.setUrlConnection(url);
+		ds.setUser(user);
+		ds.setPwd(pwd);
+		ds.setDriver(driver);
+		ds.setSchemaAttribute(schemaAttr);
+		ds.setMultiSchema(isMultiSchema);
+				
+		return ds;
+	}
+
+}

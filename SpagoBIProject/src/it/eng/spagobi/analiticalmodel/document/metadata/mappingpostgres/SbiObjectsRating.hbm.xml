@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 23-apr-2008 15.08.53 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjectsRating" table="SBI_OBJECTS_RATING" >
+        <composite-id name="id" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjectsRatingId">
+            <key-property name="objId" type="integer">
+                <column name="OBJ_ID" />
+            </key-property>
+            <key-property name="userId" type="string">
+                <column name="USER_ID" length="127" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" insert="false" update="false" >
+            <column name="OBJ_ID" not-null="true" />
+        </many-to-one>
+        <property name="rating" type="integer">
+            <column name="RATING" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

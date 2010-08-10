@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DOMAINS>
+<DOMAIN valueCd="QUERY" valueNm="sbidomains.nm.query" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.query"/>
+<DOMAIN valueCd="SCRIPT" valueNm="sbidomains.nm.script" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.script"/>
+<DOMAIN valueCd="FIX_LOV" valueNm="sbidomains.nm.fix_lov" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.fix_lov"/>
+<DOMAIN valueCd="JAVA_CLASS" valueNm="sbidomains.nm.java_class" domainCd="INPUT_TYPE" domainNm="Input mode and values" valueDs="sbidomains.ds.java_class"/>
+<DOMAIN valueCd="REPORT" valueNm="sbidomains.nm.report" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.report"/>
+<DOMAIN valueCd="OLAP" valueNm="sbidomains.nm.olap" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.olap"/>
+<DOMAIN valueCd="DATA_MINING" valueNm="sbidomains.nm.data_mining" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.data_mining"/>
+<DOMAIN valueCd="DASH" valueNm="sbidomains.nm.dash" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dash"/>
+<DOMAIN valueCd="DATAMART" valueNm="sbidomains.nm.datamart" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.datamart"/>
+<DOMAIN valueCd="MAP" valueNm="sbidomains.nm.map" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.map"/>
+<DOMAIN valueCd="DOSSIER" valueNm="sbidomains.nm.dossier" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.dossier"/>
+<DOMAIN valueCd="OFFICE_DOC" valueNm="sbidomains.nm.office_doc" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.office_doc"/>
+<DOMAIN valueCd="ETL" valueNm="sbidomains.nm.etl" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.etl"/>
+<DOMAIN valueCd="DOCUMENT_COMPOSITE" valueNm="sbidomains.nm.document_composite" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.document_composite"/>
+<DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Kpi business indicator"/>
+<DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.smart_filter"/>
+<DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.console"/>
+<DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.bool"/>
+<DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
+<DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
+<DOMAIN valueCd="DATE" valueNm="sbidomains.nm.date" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.date"/>
+<DOMAIN valueCd="NUM" valueNm="sbidomains.nm.num" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.num"/>
+<DOMAIN valueCd="STRING" valueNm="sbidomains.nm.string" domainCd="PAR_TYPE" domainNm="Parameter type" valueDs="sbidomains.ds.string"/>
+<DOMAIN valueCd="USER" valueNm="sbidomains.nm.user" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.user"/>
+<DOMAIN valueCd="ADMIN" valueNm="sbidomains.nm.admin" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.admin"/>
+<DOMAIN valueCd="DEV_ROLE" valueNm="sbidomains.nm.dev_role" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.dev_role"/>
+<DOMAIN valueCd="TEST_ROLE" valueNm="sbidomains.nm.test_role" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.test_role"/>
+<DOMAIN valueCd="MODEL_ADMIN" valueNm="sbidomains.nm.model_admin" domainCd="ROLE_TYPE" domainNm="Role type" valueDs="sbidomains.ds.model_admin"/>
+<DOMAIN valueCd="SUSP" valueNm="sbidomains.nm.susp" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.susp"/>
+<DOMAIN valueCd="LOW_FUNCT" valueNm="sbidomains.nm.low_funct" domainCd="FUNCT_TYPE" domainNm="Functionality" valueDs="sbidomains.ds.low_funct"/>
+<DOMAIN valueCd="USER_FUNCT" valueNm="sbidomains.nm.user_funct" domainCd="FUNCT_TYPE" domainNm="Functionality" valueDs="sbidomains.ds.user_funct"/>
+<DOMAIN valueCd="DEV" valueNm="sbidomains.nm.dev" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.dev"/>
+<DOMAIN valueCd="TEST" valueNm="sbidomains.nm.test" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.test"/>
+<DOMAIN valueCd="REL" valueNm="sbidomains.nm.rel" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.rel"/>
+<DOMAIN valueCd="DATE" valueNm="sbidomains.nm.date" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.date"/>
+<DOMAIN valueCd="REGEXP" valueNm="sbidomains.nm.regexp" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.regexp"/>
+<DOMAIN valueCd="MAXLENGTH" valueNm="sbidomains.nm.maxlength" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.maxlength"/>
+<DOMAIN valueCd="RANGE" valueNm="sbidomains.nm.range" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.range"/>
+<DOMAIN valueCd="DECIMALS" valueNm="sbidomains.nm.decimals" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.decimals"/>
+<DOMAIN valueCd="MINLENGTH" valueNm="sbidomains.nm.minlength" domainCd="CHECK" domainNm="Check" valueDs="sbidomains.ds.minlength"/>
+<DOMAIN valueCd="INTERNET ADDRESS" valueNm="sbidomains.nm.internet_address" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.internet_address"/>
+<DOMAIN valueCd="NUMERIC" valueNm="sbidomains.nm.numeric" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.numeric"/>
+<DOMAIN valueCd="ALFANUMERIC" valueNm="sbidomains.nm.alfanumeric" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.alfanumeric"/>
+<DOMAIN valueCd="LETTERSTRING" valueNm="sbidomains.nm.letterstring" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.letterstring"/>
+<DOMAIN valueCd="MANDATORY" valueNm="sbidomains.nm.mandatory" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.mandatory"/>
+<DOMAIN valueCd="FISCALCODE" valueNm="sbidomains.nm.fiscalcode" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.fiscalcode"/>
+<DOMAIN valueCd="EMAIL" valueNm="sbidomains.nm.email" domainCd="PRED_CHECK" domainNm="Pred Check" valueDs="sbidomains.ds.email"/>
+<DOMAIN valueCd="EXT" valueNm="sbidomains.nm.ext" domainCd="ENGINE_TYPE" domainNm="Engine types" valueDs="sbidomains.ds.ext"/>
+<DOMAIN valueCd="INT" valueNm="sbidomains.nm.int" domainCd="ENGINE_TYPE" domainNm="Engine types" valueDs="sbidomains.ds.int"/>
+<DOMAIN valueCd="LIST" valueNm="sbidomains.nm.list" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.list"/>
+<DOMAIN valueCd="CHECK_LIST" valueNm="sbidomains.nm.check_list" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.check_list"/>
+<DOMAIN valueCd="COMBOBOX" valueNm="sbidomains.nm.combobox" domainCd="SELECTION_TYPE" domainNm="Selection modality of parameter values" valueDs="sbidomains.ds.combobox"/>
+<DOMAIN valueCd="-1" valueNm="sbidomains.nm.default" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.default"/>
+<DOMAIN valueCd="org.hibernate.dialect.OracleDialect" valueNm="sbidomains.nm.oracle" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.oracle"/>
+<DOMAIN valueCd="org.hibernate.dialect.Oracle9Dialect" valueNm="sbidomains.nm.oracle_9i10g" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.oracle_9i10g"/>
+<DOMAIN valueCd="org.hibernate.dialect.SQLServerDialect" valueNm="sbidomains.nm.sqlserver" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.sqlserver"/>
+<DOMAIN valueCd="org.hibernate.dialect.HSQLDialect" valueNm="sbidomains.nm.hsql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.hsql"/>
+<DOMAIN valueCd="org.hibernate.dialect.MySQLInnoDBDialect" valueNm="sbidomains.nm.mysql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.mysql"/>
+<DOMAIN valueCd="org.hibernate.dialect.PostgreSQLDialect" valueNm="sbidomains.nm.postgresql" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.postgresql"/>
+<DOMAIN valueCd="org.hibernate.dialect.IngresDialect" valueNm="sbidomains.nm.ingres" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.ingres"/>
+<DOMAIN valueCd="RANGE" valueNm="sbidomains.nm.range" domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.range"/>
+<DOMAIN valueCd="MINIMUM" valueNm="sbidomains.nm.minimum" domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.minimum"/>
+<DOMAIN valueCd="MAXIMUM" valueNm="sbidomains.nm.maximum" domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.maximum"/>
+<DOMAIN valueCd="URGENT" valueNm="sbidomains.nm.Urgent" domainCd="SEVERITY" domainNm="Severity Level" valueDs="sbidomains.ds.Urgent"/>
+<DOMAIN valueCd="HIGH" valueNm="sbidomains.nm.High" domainCd="SEVERITY" domainNm="Severity Level" valueDs="sbidomains.ds.High"/>
+<DOMAIN valueCd="MEDIUM" valueNm="sbidomains.nm.Medium" domainCd="SEVERITY" domainNm="Severity Level" valueDs="sbidomains.ds.Medium"/>
+<DOMAIN valueCd="LOW" valueNm="sbidomains.nm.Low" domainCd="SEVERITY" domainNm="Severity Level" valueDs="sbidomains.ds.Low"/>
+<DOMAIN valueCd="CSP" valueNm="sbidomains.nm.CSP" domainCd="RESOURCE" domainNm="Resource type" valueDs="sbidomains.ds.CSP"/>
+<DOMAIN valueCd="PROCESS" valueNm="sbidomains.nm.Process" domainCd="RESOURCE" domainNm="Resource type" valueDs="sbidomains.ds.Process"/>
+<DOMAIN valueCd="PROJECT" valueNm="sbidomains.nm.Project" domainCd="RESOURCE" domainNm="Resource type" valueDs="sbidomains.ds.Project"/>
+<DOMAIN valueCd="SERVICE" valueNm="sbidomains.nm.Service" domainCd="RESOURCE" domainNm="Resource type" valueDs="sbidomains.ds.Service"/>
+<DOMAIN valueCd="Meter" valueNm="sbidomains.nm.Meter" domainCd="KPI_CHART" domainNm="Kpi Chart type" valueDs="sbidomains.ds.Meter"/>
+<DOMAIN valueCd="SimpleDial" valueNm="sbidomains.nm.SimpleDial" domainCd="KPI_CHART" domainNm="Kpi Chart type" valueDs="sbidomains.ds.SimpleDial"/>
+<DOMAIN valueCd="Speedometer" valueNm="sbidomains.nm.Speedometer" domainCd="KPI_CHART" domainNm="Kpi Chart type" valueDs="sbidomains.ds.Speedometer"/>
+<DOMAIN valueCd="Thermometer" valueNm="sbidomains.nm.Thermometer" domainCd="KPI_CHART" domainNm="Kpi Chart type" valueDs="sbidomains.ds.Thermometer"/>
+<DOMAIN valueCd="BulletGraph" valueNm="sbidomains.nm.BulletGraph" domainCd="KPI_CHART" domainNm="Kpi Chart type" valueDs="sbidomains.ds.BulletGraph"/>
+<DOMAIN valueCd="MAIL" valueNm="sbidomains.nm.Mail" domainCd="ALARM_MODALITY" domainNm="Alarm Modality" valueDs="sbidomains.ds.Mail"/>
+<DOMAIN valueCd="SMS" valueNm="sbidomains.nm.SMS" domainCd="ALARM_MODALITY" domainNm="Alarm Modality" valueDs="sbidomains.ds.SMS"/>
+<DOMAIN valueCd="GENERIC_ROOT" valueNm="sbidomains.nm.Generic_root" domainCd="MODEL_ROOT" domainNm="Model root type" valueDs="sbidomains.ds.Generic_root"/>
+<DOMAIN valueCd="GENERIC_NODE" valueNm="sbidomains.nm.Generic_Node" domainCd="MODEL_NODE" domainNm="Model node type" valueDs="sbidomains.ds.Generic_Node"/>
+<DOMAIN valueCd="PIVOT_TRANSFOMER" valueNm="sbidomains.nm.pivot_transformer" domainCd="TRANSFORMER_TYPE" domainNm="Transformer types" valueDs="sbidomains.ds.pivot_transformer"/>
+<DOMAIN valueCd="PDF" valueNm="PDF" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="XLS" valueNm="XLS" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="CSV" valueNm="CSV" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="XML" valueNm="XML" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="TXT" valueNm="TXT" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="JPG" valueNm="JPG" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="PPT" valueNm="PPT" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="RTF" valueNm="RTF" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="JRXML" valueNm="JRXML" domainCd="EXPORT_TYPE" domainNm="Exporters type" valueDs="Export type"/>
+<DOMAIN valueCd="Basic" valueNm="Basic" domainCd="KPI_TYPE" domainNm="Kpi Type" valueDs=""/>
+<DOMAIN valueCd="Derived" valueNm="Derived" domainCd="KPI_TYPE" domainNm="Kpi Type" valueDs=""/>
+<DOMAIN valueCd="Nominal scale" valueNm="Nominal scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="Ordinal scale" valueNm="Ordinal scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="Intervals scale" valueNm="Intervals scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="Ratio scale" valueNm="Ratio scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="Absolute scale" valueNm="Absolute scale" domainCd="METRIC_SCALE_TYPE" domainNm="Metric Scale Type" valueDs=""/>
+<DOMAIN valueCd="COUNT" valueNm="Count" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
+<DOMAIN valueCd="TIME" valueNm="Time" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
+<DOMAIN valueCd="SIZE" valueNm="Size" domainCd="MEASURE_TYPE" domainNm="Measure Type" valueDs=""/>
+<DOMAIN valueCd="org.hibernate.dialect.DB2400Dialect" valueNm="sbidomains.nm.db2" domainCd="DIALECT_HIB" domainNm="Predefined hibernate dialect" valueDs="sbidomains.ds.db2"/>
+<DOMAIN valueCd="LONG_TEXT" valueNm="LONG_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type LONG TEXT for metadata"/>
+<DOMAIN valueCd="SHORT_TEXT" valueNm="SHORT_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type SHORT TEXT for metadata"/>
+<DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible HTML"/>
+
+</DOMAINS>

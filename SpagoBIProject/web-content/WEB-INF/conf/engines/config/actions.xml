@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+
+ <ACTION name="TEST_ENGINE" class="it.eng.spagobi.engines.config.service.TestInternalEngineAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

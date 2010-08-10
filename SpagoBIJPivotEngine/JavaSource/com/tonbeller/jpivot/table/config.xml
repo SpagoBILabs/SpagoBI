@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<table class="com.tonbeller.jpivot.table.TableComponent">
+  <cellBuilder class="com.tonbeller.jpivot.table.CellBuilderImpl"/>
+  <cornerBuilder class="com.tonbeller.jpivot.table.CornerBuilderImpl"/>
+  <slicerBuilder class="com.tonbeller.jpivot.table.SlicerBuilderImpl"/>
+  <rowAxisBuilder class="com.tonbeller.jpivot.table.RowAxisBuilderImpl"/>
+  <columnAxisBuilder class="com.tonbeller.jpivot.table.ColumnAxisBuilderImpl"/>
+  
+  <extension enabled="false" class="com.tonbeller.jpivot.table.navi.DrillExpandMemberUI"/>
+  <extension enabled="true" class="com.tonbeller.jpivot.table.navi.DrillExpandPositionUI"/>
+  <extension enabled="false" class="com.tonbeller.jpivot.table.navi.DrillReplaceUI"/>
+  <extension class="com.tonbeller.jpivot.table.navi.SwapAxesUI"/>
+  <extension class="com.tonbeller.jpivot.table.navi.SortRankUI"/>
+  <extension class="com.tonbeller.jpivot.table.navi.NonEmptyUI"/>
+  <extension class="com.tonbeller.jpivot.table.navi.AxisStyleUI"/>
+  <extension class="com.tonbeller.jpivot.table.navi.MdxQueryUI"/>
+  <extension enabled="false" class="com.tonbeller.jpivot.table.navi.DrillThroughUI"/>
+  <extension enabled="false" class="com.tonbeller.jpivot.table.navi.SpagoBICrossNavigationUI"/>
+  <extension class="com.tonbeller.jpivot.excel.ExcelTableExtension"/>
+</table>
