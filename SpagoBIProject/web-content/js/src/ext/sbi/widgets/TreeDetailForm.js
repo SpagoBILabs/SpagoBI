@@ -138,7 +138,10 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 			height : 230,
 			userArrows : true,
 			animate : true,
-			autoScroll : true,			
+			autoScroll : true,		
+            style: {
+                "background-color": "white"
+            },
 			loader: new Ext.tree.TreeLoader({
 				dataUrl: this.services['manageTreeService'],
 		        createNode: function(attr) {
@@ -224,6 +227,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 							   // create node from record data
 							   e.dropNode.push(newNode);
 							   
+
 						   }
 					    
 						   // we want Ext to complete the drop, thus return true
