@@ -111,9 +111,51 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	lastRecSelected: null
 
 	,initPanels : function() {
-		
-		alert("ciao");
-
+		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
 	}
 
+	,sendSelectedItem: function(grid, rowIndex, e){
+		var rec = grid.getSelectionModel().getSelected();
+	
+		//if unsaved changes
+		if(this.manageModelInstances.nodesToSave.length > 0){
+			//if there are modification on current selection
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.generic.confirmChangeNode'),            
+		            function(btn, text) {
+	
+		                if (btn=='yes') {
+	
+		                	this.manageModelInstances.cleanAllUnsavedNodes();	        			
+		        			this.displayTree(rec);
+			        		if(rec != this.lastRecSelected){
+			        			this.lastRecSelected = rec;
+			        		}
+	
+		                }else{
+		                	grid.getSelectionModel().selectRecords([this.lastRecSelected]);
+		                	
+		                }
+	
+		            },
+		            this
+				);
+		}else{
+			this.displayTree(rec);
+			if(rec != this.lastRecSelected){
+				this.lastRecSelected = rec;
+			}
+		}
+	
+	}
+	, displayTree: function(rec){
+		this.manageModelInstances.rootNodeText = rec.get('name');
+		this.manageModelInstances.rootNodeId = rec.get('modelInstId');
+		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+		this.manageModelInstances.mainTree.setRootNode(newroot);
+		
+		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
+		this.manageModelInstances.mainTree.doLayout();
+	}
 });

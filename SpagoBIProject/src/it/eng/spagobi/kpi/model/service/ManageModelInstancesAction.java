@@ -27,7 +27,9 @@ import it.eng.spagobi.analiticalmodel.document.x.SaveMetadataAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
+import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
+import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -58,11 +60,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private static Logger logger = Logger.getLogger(ManageModelInstancesAction.class);
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
-	private final String MODELS_LIST = "MODELS_LIST";
-	private final String MODEL_NODES_LIST = "MODEL_NODES_LIST";
-	private final String MODEL_NODES_SAVE = "MODEL_NODES_SAVE";
-	private final String MODEL_NODE_DELETE = "MODEL_NODE_DELETE";
-	//private final String MODEL_DELETE = "MODEL_DELETE";
+	private final String MODELINSTS_LIST = "MODELINSTS_LIST";
+	private final String MODELINSTS_NODES_LIST = "MODELINSTS_NODES_LIST";
+	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
+	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
 
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
@@ -77,9 +78,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IModelDAO modelDao;
+		IModelInstanceDAO modelDao;
 		try {
-			modelDao = DAOFactory.getModelDAO();
+			modelDao = DAOFactory.getModelInstanceDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -89,10 +90,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 		
-		if (serviceType != null && serviceType.equalsIgnoreCase(MODELS_LIST)) {
+		if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_LIST)) {
 			
 			try {				
-				List modelRootsList = modelDao.loadModelsRoot();
+				List modelRootsList = modelDao.loadModelsInstanceRoot();
 				
 				logger.debug("Loaded models list");
 				JSONArray modelsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelRootsList,locale);
@@ -105,7 +106,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model tree", e);
 			}
-		  }else if (serviceType != null && serviceType.equalsIgnoreCase(MODEL_NODES_LIST)) {
+		  }else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_NODES_LIST)) {
 			
 			try {	
 				
@@ -114,7 +115,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					writeBackToClient(new JSONSuccess("OK"));
 					return;
 				}
-				Model aModel = modelDao.loadModelWithChildrenById(Integer.parseInt(parentId));
+				ModelInstance aModel = modelDao.loadModelInstanceWithChildrenById(Integer.parseInt(parentId));
 				
 				logger.debug("Loaded model tree");
 				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getChildrenNodes(),	locale);
@@ -125,7 +126,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model tree", e);
 			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_NODES_SAVE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODES_SAVE)) {
 			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
 			List<Model> modelNodes = null;
 			if(nodesToSaveJSON != null){
@@ -144,7 +145,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				}
 			}
 			
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_NODE_DELETE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODE_DELETE)) {
 			
 			Integer modelId = getAttributeAsInteger("modelId");
 			try {
@@ -204,7 +205,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			model.setGuiId(guiId);
 
 			try{
-				model.setId(obj.getInt("modelId"));
+				model.setId(obj.getInt("modelInstId"));
 			}catch(Throwable t){
 				//nothing
 				model.setId(null);
