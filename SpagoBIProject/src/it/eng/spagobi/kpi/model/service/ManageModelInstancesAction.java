@@ -110,7 +110,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			
 			try {	
 				
-				String parentId = (String)getAttributeAsString("modelId");
+				String parentId = (String)getAttributeAsString("modelInstId");
 				if(parentId == null || parentId.startsWith("xnode")){
 					writeBackToClient(new JSONSuccess("OK"));
 					return;
