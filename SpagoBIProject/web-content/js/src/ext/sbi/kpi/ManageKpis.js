@@ -95,6 +95,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, mainElementsStore:null
 	, thrWin:null
 	, dsWin:null
+	, detailFieldThreshold: null
 
 	,initConfigObject:function(){
 	   this.configurationObject.fields = ['id'
@@ -230,12 +231,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 }));  
 
  	  
- 	 var detailFieldThreshold = new Ext.form.TriggerField({
+ 	 this.detailFieldThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
  		     fieldLabel: 'Threshold',
- 		     name: 'threshold'
+ 		     name: 'threshold',
+ 		     id: 'detailFieldThreshold'
  		    });
- 	detailFieldThreshold.onTriggerClick = this.launchThrWindow;
+ 	this.detailFieldThreshold.onTriggerClick = this.launchThrWindow;
  	
  	var docs = new Ext.data.JsonStore({
 		root: 'rows'
@@ -423,7 +425,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             },
 		             items: [detailFieldId, detailFieldName, detailFieldCode, 
 		                     detailFieldDescr, detailFieldWeight, detailFieldDataset,
-		                     detailFieldThreshold, detailFieldDocuments]
+		                     this.detailFieldThreshold, detailFieldDocuments]
 		    	}
 		    },{
 		    	title: 'Advanced'
@@ -457,6 +459,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var conf = {};
 		conf.nodeTypesCd = config.thrTypes;
 		conf.drawSelectColumn = true;
+
 		
 		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
 	
@@ -467,18 +470,15 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             height      : 400,
             closeAction :'close',
             plain       : true,
+            scope		: this,
             items       : [manageThresholds]
 		});
-		//manageThresholds.addEvents('select');	
-		manageThresholds.on('select2', this.selectThrItem, this);
+		manageThresholds.on('select3', function(itemId,index){this.thrWin.close();Ext.getCmp('detailFieldThreshold').setValue(itemId);}, this);
 		this.thrWin.show();
-		//manageThresholds.on('select2', this.selectThrItem, this);
 	}
 	
-	,selectThrItem: function(itemId, index){
+	,selectThrItem: function(){
 		alert('entrato');
-		alert(itemId);
-		alert(index);
 		this.thrWin.close();		
 	}
     //OVERRIDING save method

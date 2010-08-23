@@ -193,13 +193,7 @@ Sbi.widgets.ListDetailForm = function(config) {
  	              items: this.mainGrid
  	              }, this.tabs
  	            	  		
- 	          ]/*,
- 	         listeners: {
-			    	'select': {
-			     		fn: this.sendSelectedItem,
-			      		scope: this
-			    	}
-             }*/
+ 	          ]
  	          
  	      };
  	   
@@ -384,10 +378,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	}
 
 	,sendSelectedItem: function(itemId, index){
-		alert('selected: '+itemId);
-		alert(this);
-		this.addEvents('select2');
-		this.fireEvent('select2');
+		this.fireEvent('select2',itemId,index);
 	}	
 
 	, addNewItem : function(){
