@@ -197,6 +197,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	                  title: this.listTitle,
 		              bbar: pagingBar,
 	                  tbar: this.tb,
+	                  stripeRows: false,
 	                  enableDragDrop: true,
 	                  ddGroup: this.ddGroup,
 	                  listeners: {

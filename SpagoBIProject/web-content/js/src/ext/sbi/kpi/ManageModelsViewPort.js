@@ -78,7 +78,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 		       split: true,
 		       collapseMode:'mini',
 		       autoScroll: true,
-		       layout: 'fit',		       
+		       layout: 'fit',
 		       items: [this.manageModels]
 		    }, {
 		        region: 'east',
