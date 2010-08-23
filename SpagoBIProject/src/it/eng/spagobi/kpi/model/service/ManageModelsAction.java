@@ -55,7 +55,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	 */
 	private static final long serialVersionUID = -8920524215721282986L;
 	// logger component
-	private static Logger logger = Logger.getLogger(SaveMetadataAction.class);
+	private static Logger logger = Logger.getLogger(ManageModelsAction.class);
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	private final String MODELS_LIST = "MODELS_LIST";
