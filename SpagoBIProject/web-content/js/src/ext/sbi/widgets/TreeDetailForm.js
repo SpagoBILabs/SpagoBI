@@ -211,12 +211,14 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 							   var newNode = this.mainTree.getLoader().createNode({
 								   kpi: r.get('name')
 								   , kpiId: r.get('id')
-								   , text: r.get('name')
+								   , text: '... - ...'
 								   , parentId: e.target.attributes.modelId
 								   , type: recDomain.get('typeCd')
 								   , typeId: recDomain.get('typeId')
 								   , typeDescr: recDomain.get('typeDs')
 								   , leaf: false
+								   , code: '...'
+								   , name: '...'
 							   });
 							   
 							   // create node from record data
