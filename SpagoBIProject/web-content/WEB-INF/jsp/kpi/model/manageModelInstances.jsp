@@ -21,33 +21,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <%@ page import="it.eng.spagobi.commons.bo.Domain,
 				 java.util.ArrayList,
-				 java.util.List" %>
+				 java.util.List,
+				 org.json.JSONArray, 
+				 org.json.JSONObject" %>
 <%
 
-	List<Domain> roleTypesCd = (List<Domain>) aSessionContainer.getAttribute("roleTypes");
+	List nodeTypesCd = (List) aSessionContainer.getAttribute("nodeTypesList");
 
 %>
 
+<LINK rel='StyleSheet' 
+      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
+      type='text/css' />
+      
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
-<script type="text/javascript">
-
-	<%
-	String types ="{}";
-	if(roleTypesCd != null){
-		types="[";
-		for(int i=0; i< roleTypesCd.size(); i++){
-			Domain domain = roleTypesCd.get(i);
-			//types+="{typeCd: '"+domain.getValueCd()+"'}";
-			types+="['"+domain.getValueCd()+"']";
-			if(i != (roleTypesCd.size()-1)){
-				types+=",";
-			}
+<script type="text/javascript"><!--
+	<%	
+	JSONArray nodeTypesArray = new JSONArray();
+	if(nodeTypesCd != null){
+		
+		for(int i=0; i< nodeTypesCd.size(); i++){
+			Domain domain = (Domain)nodeTypesCd.get(i);	
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueId());
+			temp.put(domain.getValueCd());
+			temp.put(domain.getValueDescription());
+			temp.put(domain.getDomainCode());
+			nodeTypesArray.put(temp);
 		}
-		types+="]";
-	}
+	}	
+	String nodeTypes = nodeTypesArray.toString();
+	nodeTypes = nodeTypes.replaceAll("\"","'");
+
 	%>
-	var config=<%= types%>;
+
 	var url = {
     	host: '<%= request.getServerName()%>'
     	, port: '<%= request.getServerPort()%>'
@@ -60,26 +68,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
     	baseUrl: url
     });
-
+    
+    var config = {};
+    config.nodeTypesCd = <%= nodeTypes%>;
+    
 Ext.onReady(function(){
 	Ext.QuickTips.init();
-	var manageRoles = new Sbi.profiling.ManageRoles(config);
-	var viewport = new Ext.Viewport({
-		layout: 'border'
-		, items: [
-		    {
-		       region: 'center',
-		       layout: 'accordion',
-		       items: [manageRoles]
-		    }
-		]
-
-	});
+	var manageModelInstancesViewPort = new Sbi.kpi.ManageModelInstancesViewPort(config);
    	
 });
 
 
-</script>
+--></script>
 
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>

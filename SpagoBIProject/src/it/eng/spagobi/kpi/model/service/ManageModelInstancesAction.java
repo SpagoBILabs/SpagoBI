@@ -26,12 +26,8 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.analiticalmodel.document.x.SaveMetadataAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bo.UserBO;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.kpi.model.bo.Model;
+import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -39,10 +35,14 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -55,29 +55,31 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	 */
 	private static final long serialVersionUID = -8920524215721282986L;
 	// logger component
-	private static Logger logger = Logger.getLogger(SaveMetadataAction.class);
+	private static Logger logger = Logger.getLogger(ManageModelInstancesAction.class);
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
-	private final String USERS_LIST = "USERS_LIST";
-	private final String USER_INSERT = "USER_INSERT";
-	private final String USER_DELETE = "USER_DELETE";
+	private final String MODELS_LIST = "MODELS_LIST";
+	private final String MODEL_NODES_LIST = "MODEL_NODES_LIST";
+	private final String MODEL_NODES_SAVE = "MODEL_NODES_SAVE";
+	private final String MODEL_NODE_DELETE = "MODEL_NODE_DELETE";
+	//private final String MODEL_DELETE = "MODEL_DELETE";
 
-	// USER detail
-	private final String ID = "id";
-	private final String USER_ID = "userId";
-	private final String FULL_NAME = "fullName";
-	private final String PASSWORD = "pwd";
 	
-	private final String ROLES = "userRoles";
-	private final String ATTRIBUTES = "userAttributes";
+	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
+	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
+	
+
+	
+	private final String NODES_TO_SAVE = "nodes";
+
 
 
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		ISbiUserDAO userDao;
+		IModelDAO modelDao;
 		try {
-			userDao = DAOFactory.getSbiUserDAO();
+			modelDao = DAOFactory.getModelDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -86,103 +88,89 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
-		if (serviceType != null && serviceType.equalsIgnoreCase(USERS_LIST)) {
+		
+		if (serviceType != null && serviceType.equalsIgnoreCase(MODELS_LIST)) {
 			
 			try {				
-				ArrayList<UserBO> users = userDao.loadUsers();
-				logger.debug("Loaded users list");
-				JSONArray usersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(users,	locale);
-				JSONObject usersResponseJSON = createJSONResponseUsers(usersJSON);
-
-				writeBackToClient(new JSONSuccess(usersResponseJSON));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving users", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving users", e);
-			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_INSERT)) {
-			Integer id = getAttributeAsInteger(ID);
-			String userId = getAttributeAsString(USER_ID);
-			String fullName = getAttributeAsString(FULL_NAME);
-			String password = getAttributeAsString(PASSWORD);
-			JSONArray rolesJSON = getAttributeAsJSONArray(ROLES);
-			JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
-			if (userId != null) {
-				SbiUser user = new SbiUser();
-				user.setUserId(userId);
-				user.setFullName(fullName);
-				if(password != null){
-					user.setPassword(password);
-				}				
+				List modelRootsList = modelDao.loadModelsRoot();
 				
-				if(id!=null){
-					user.setId(id);
-				}
-				try {
-					HashMap<Integer, String> attrList = null;
-					if(attributesJSON != null){
-						attrList = deserializeAttributesJSONArray(attributesJSON);
-					}
-					
-					List rolesList = null;
-					if(rolesJSON != null){
-						rolesList = deserializeRolesJSONArray(rolesJSON);
-					}
-					
-					id = userDao.fullSaveOrUpdateSbiUser(user, rolesList, attrList);
-					logger.debug("User udated or Inserted");
-					
-					//Integer id = userDao.saveSbiUser(user);
-					logger.debug("New user inserted");
-					JSONObject attributesResponseSuccessJSON = new JSONObject();
-					attributesResponseSuccessJSON.put("success", true);
-					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-					attributesResponseSuccessJSON.put("id", id);
-					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+				logger.debug("Loaded models list");
+				JSONArray modelsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelRootsList,locale);
+				JSONObject modelsResponseJSON = createJSONResponseModelsList(modelsListJSON, new Integer(6));
 
-				} catch (EMFUserError e) {
-					logger.error("Exception occurred while saving new user", e);
-					writeErrorsBackToClient();
-					throw new SpagoBIServiceException(SERVICE_NAME,	"Exception occurred while saving new user",	e);
-				} catch (IOException e) {
-					logger.error("Exception occurred while writing response to client", e);
-					throw new SpagoBIServiceException(SERVICE_NAME,
-							"Exception occurred while writing response to client",
-							e);
-				} catch (JSONException e) {
-					logger.error("JSON Exception", e);
-					e.printStackTrace();
-				}
-			}else{
-				logger.error("User name missing");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please enter user name");
-			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(USER_DELETE)) {
-			Integer id = getAttributeAsInteger(ID);
-			try {
-				userDao.deleteSbiUserById(id);
-				logger.debug("User deleted");
-				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+				writeBackToClient(new JSONSuccess(modelsResponseJSON));
 
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving user to delete", e);
+				logger.error("Exception occurred while retrieving model tree", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving user to delete",
-						e);
+						"Exception occurred while retrieving model tree", e);
 			}
+		  }else if (serviceType != null && serviceType.equalsIgnoreCase(MODEL_NODES_LIST)) {
+			
+			try {	
+				
+				String parentId = (String)getAttributeAsString("modelId");
+				if(parentId == null || parentId.startsWith("xnode")){
+					writeBackToClient(new JSONSuccess("OK"));
+					return;
+				}
+				Model aModel = modelDao.loadModelWithChildrenById(Integer.parseInt(parentId));
+				
+				logger.debug("Loaded model tree");
+				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getChildrenNodes(),	locale);
+				writeBackToClient(new JSONSuccess(modelChildrenJSON));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model tree", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model tree", e);
+			}
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_NODES_SAVE)) {
+			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
+			List<Model> modelNodes = null;
+			if(nodesToSaveJSON != null){
+				try {
+					modelNodes = deserializeNodesJSONArray(nodesToSaveJSON);
+					
+					//save them
+					JSONObject response = saveModelNodes(modelNodes);
+					writeBackToClient(new JSONSuccess(response));
+					
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+					writeErrorsBackToClient();
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Exception saving model nodes", e);
+				}
+			}
+			
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_NODE_DELETE)) {
+			
+			Integer modelId = getAttributeAsInteger("modelId");
+			try {
+				boolean result = DAOFactory.getModelDAO().deleteModel(modelId);
+				logger.debug("Model deleted");
+				writeBackToClient( new JSONSuccess("Operation succeded") );
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model to delete", e);
+			}
+			
+			
 		}else if(serviceType == null){
 			try {
-				List<SbiAttribute> attributes = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-				List<SbiExtRoles> roles = DAOFactory.getRoleDAO().loadAllRoles();
-				getSessionContainer().setAttribute("attributesList", attributes);
-				getSessionContainer().setAttribute("rolesList", roles);
+				List nodeTypesNodes = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_NODE);
+				List nodeTypesRoot = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_ROOT);
+				List nodeTypes = new ArrayList();
+				nodeTypes.addAll(nodeTypesNodes);
+				nodeTypes.addAll(nodeTypesRoot);
+				getSessionContainer().setAttribute("nodeTypesList", nodeTypes);
 				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception retrieving role types",
-						e);
+						"Exception retrieving model types", e);
 			}
 		}
 		logger.debug("OUT");
@@ -196,38 +184,145 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseUsers(JSONArray rows)
-			throws JSONException {
+	private JSONObject createJSONResponseModelsList(JSONArray rows, Integer totalModelsNumber)throws JSONException {
 		JSONObject results;
-
 		results = new JSONObject();
-		results.put("title", "Users");
-		results.put("samples", rows);
+		results.put("total", totalModelsNumber);
+		results.put("title", "ModelsList");
+		results.put("rows", rows);
 		return results;
 	}
-	
-	private List deserializeRolesJSONArray(JSONArray rows) throws JSONException{
-		List toReturn = new ArrayList();
-		//HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
+	private List<Model> deserializeNodesJSONArray(JSONArray rows) throws JSONException{
+		List<Model> toReturn = new ArrayList<Model>();
 		for(int i=0; i< rows.length(); i++){
+			
 			JSONObject obj = (JSONObject)rows.get(i);
-			Integer id = obj.getInt("id");
-			//String name = obj.getString("name");
-			//String description = obj.getString("description");
-			toReturn.add(id);
-		}	
-		return toReturn;
-	}
-	
-	private HashMap<Integer, String> deserializeAttributesJSONArray(JSONArray rows) throws JSONException{
-		HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
-		for(int i=0; i< rows.length(); i++){
-			JSONObject obj = (JSONObject)rows.get(i);
-			Integer key = obj.getInt("id");
-			String value = obj.getString("value");
-			toReturn.put(key, value);
-		}	
-		return toReturn;
-	}
 
+			Model model = new Model();
+			//always present guiId
+			String guiId = obj.getString("id");
+			model.setGuiId(guiId);
+
+			try{
+				model.setId(obj.getInt("modelId"));
+			}catch(Throwable t){
+				//nothing
+				model.setId(null);
+			}
+			
+			try{
+				model.setParentId(obj.getInt("parentId"));
+			}catch(Throwable t){
+				//nothing
+				model.setParentId(null);
+			}
+			try{
+				model.setCode(obj.getString("code"));
+				model.setDescription(obj.getString("description"));
+				model.setLabel(obj.getString("label"));
+				model.setName(obj.getString("name"));
+				model.setTypeCd(obj.getString("type"));
+				model.setTypeId(obj.getInt("typeId"));
+				try{
+					model.setTypeDescription(obj.getString("typeDescr"));
+				}catch(Throwable t){
+					//nothing
+					model.setTypeDescription(null);
+				}
+				try{
+					model.setKpiId(obj.getInt("kpiId"));
+				}catch(Throwable t){
+					//nothing
+					model.setKpiId(null);
+				}
+				String value = obj.getString("toSave");
+			}catch(Throwable t){
+				logger.debug("Deserialization error on node: "+guiId);
+			}
+			toReturn.add(model);
+		}	
+		return toReturn;
+	}
+	
+	private JSONObject saveModelNodes(List<Model> nodesToSave) throws JSONException{
+		JSONArray errorNodes = new JSONArray();
+		
+		JSONObject respObj = new JSONObject();
+		
+		//loop over nodes and order them ascending
+		TreeMap<Integer, Model> treeMap = new TreeMap<Integer, Model>();
+		for(int i= 0; i<nodesToSave.size(); i++){
+			
+			Model model = (Model)nodesToSave.get(i);
+			//loads all nodes guiid with type error
+			
+			respObj.put(model.getGuiId(), "OK");
+			
+			if(model.getParentId() != null){
+				//look up for its id: if null --> newly created node
+				Integer id = model.getId();
+				if(id == null){
+					treeMap.put(Integer.valueOf("-"+i+1), model);
+				}else{
+				//else to modify node
+					treeMap.put(model.getId(), model);
+				}
+				
+			}else{
+				//root node --> save first
+				try {
+					if(model.getId()  != null){
+						DAOFactory.getModelDAO().modifyModel(model);
+						respObj.put(model.getGuiId(), model.getId());
+					}else{
+						Integer index = DAOFactory.getModelDAO().insertModel(model);
+						respObj.put(model.getGuiId(), index);
+					}
+				} catch (Exception e) {
+					//send error!!!		
+					respObj.put(model.getGuiId(), "KO");
+					
+				}
+			}
+		}
+		
+		Set set = treeMap.entrySet();
+		// Get an iterator
+		Iterator it = set.iterator(); 
+		//loop again over treemap
+		while(it.hasNext()) {
+			Map.Entry orderedEntry = (Map.Entry)it.next();
+			//check that parent exists
+			Model orderedNode = (Model)orderedEntry.getValue();
+			
+			//GET JSON OBJECT VALUE
+			Integer parentId = orderedNode.getParentId();
+			try {
+				Model parent = DAOFactory.getModelDAO().loadModelWithoutChildrenById(parentId);
+				if(parent != null){						
+					//if parent exists--> save					
+					//if node id is negative --> insert
+					if(orderedNode.getId() == null){
+						Integer newId = DAOFactory.getModelDAO().insertModel(orderedNode);
+						if (newId != null){
+							orderedNode.setId(newId);
+							respObj.put(orderedNode.getGuiId(), newId);
+						}else{						
+							respObj.put(orderedNode.getGuiId(), "KO");
+						}
+					}else{
+					//else update
+						DAOFactory.getModelDAO().modifyModel(orderedNode);
+						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
+					}
+					
+				}
+			} catch (Exception e) {
+				//if parentId != null but no parent node stored on db --> exception
+				respObj.put(orderedNode.getGuiId(), "KO");
+			}
+
+		} 
+		return respObj;
+	}
 }
