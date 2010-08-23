@@ -44,9 +44,10 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			result.put(NAME, res.getName() );
 			result.put(LABEL, res.getLabel());			
 			result.put(DESCRIPTION, res.getDescription() );
-			//result.put(STARTDATE, res.getStartDate());
-			//result.put(ENDDATE, res.getEndDate());
+			result.put(STARTDATE, res.getStartDate());
+			result.put(ENDDATE, res.getEndDate());
 			result.put(MODELUUID, res.getModelUUID() );
+		
 	
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);

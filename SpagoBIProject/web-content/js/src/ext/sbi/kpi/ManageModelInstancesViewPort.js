@@ -54,52 +54,19 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
     this.modelInstancesGrid = new Sbi.kpi.ManageModelInstancesGrid(conf, this.manageModelInstances);
    //DRAW east element
     this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf);
+    this.resourcesTab = new Ext.Panel({
+        title: 'Resources'
+	        , id : 'resourcesTab'
+	        , layout: 'fit'
+	        , autoScroll: true
+	        , items: []
+	        , itemId: 'resourcesTab'
+	        , scope: this
+	});
+    this.initPanels();
+    
+	var c = Ext.apply({}, config || {}, this.viewport);
 	
-	var viewport = {
-		layout: 'border'
-		, id: 'model-viewport'
-		, height:560
-		, autoScroll: true
-		, items: [
-	         {
-	           region: 'west',
-	           width: 275,
-	           height:560,
-	           collapseMode:'mini',
-	           autoScroll: true,
-	           split: true,
-	           layout: 'fit',
-	           items:[this.modelInstancesGrid]
-	          },
-		    {
-		       region: 'center',
-		       width: 300,
-		       height:560,
-		       split: true,
-		       collapseMode:'mini',
-		       autoScroll: true,
-		       layout: 'fit',
-		       items: [this.manageModelInstances]
-		    }, {
-		        region: 'east',
-		        split: true,
-		        width: 400,
-		        height:560,
-		        collapsed:true,
-		        collapseMode:'mini',
-		        autoScroll: true,
-		        items:[this.manageModelsTree]
-		    }
-		]
-		
-
-	};
-	
-	
-	var c = Ext.apply({}, config || {}, viewport);
-	
-	this.initPanels();
-
 	Sbi.kpi.ManageModelInstancesViewPort.superclass.constructor.call(this, c);	 		
 
 };
@@ -108,10 +75,76 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	manageModelInstances: null,
 	modelInstancesGrid: null,
 	manageModelsTree: null,
+	resourcesTab : null,
+	centerTabbedPanel: null,
+	viewport: null,
 	lastRecSelected: null
 
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
+
+		this.modelInstancesTreeTab = new Ext.Panel({
+	        title: LN('sbi.modelinstances.treeTitle')
+		        , id : 'modeinstTab'
+		        , layout: 'fit'
+		        , autoScroll: true
+		        , items: [this.manageModelInstances]
+		        , itemId: 'modInstTab'
+		        , scope: this
+		});
+		this.tabs = new Ext.TabPanel({
+	           enableTabScroll : true
+	           , renderTo: Ext.getBody()
+	           , activeTab : 0
+	           , autoScroll : true
+	           //NB: Important trick: to render all content tabs on page load
+	           , deferredRender: false
+	           , width: 450
+	           , height: 450
+	           , itemId: 'tabs'
+	           , tbar: this.tbSave            
+			   , items: [this.modelInstancesTreeTab, this.resourcesTab]
+
+			});
+		this.viewport = {
+				layout: 'border'
+				, id: 'model-viewport'
+				, height:560
+				, autoScroll: true
+				, items: [
+			         {
+			           region: 'west',
+			           width: 275,
+			           height:560,
+			           collapseMode:'mini',
+			           autoScroll: true,
+			           split: true,
+			           layout: 'fit',
+			           items:[this.modelInstancesGrid]
+			          },
+				    {
+				       region: 'center',
+				       width: 300,
+				       height:560,
+				       split: true,
+				       collapseMode:'mini',
+				       autoScroll: true,
+				       layout: 'fit',
+				       items: [this.tabs]
+				    }, {
+				        region: 'east',
+				        split: true,
+				        width: 400,
+				        height:560,
+				        collapsed:false,
+				        collapseMode:'mini',
+				        autoScroll: true,
+				        items:[this.manageModelsTree]
+				    }
+				]
+				
+
+			};
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
@@ -158,4 +191,5 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 		this.manageModelInstances.mainTree.doLayout();
 	}
+
 });

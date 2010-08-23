@@ -71,7 +71,7 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 
 	Sbi.kpi.ManageModelInstances.superclass.constructor.call(this, c);	 	
 	
-}
+};
 
 Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	
@@ -81,13 +81,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, root:null
 	, referencedCmp : null
 
+
 	,initConfigObject: function(){
 
-		this.configurationObject.treeTitle = LN('sbi.modelinstances.treeTitle');;
+		//this.configurationObject.treeTitle = LN('sbi.modelinstances.treeTitle');;
 	
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
-		
+
 		this.initTabItems();
     }
 
@@ -134,7 +135,25 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	         });
 
 	 	   /*END*/
-	 	  
+	 	  this.kpiInstItems = new Ext.Panel({
+		        title: 'Kpi Instance'
+			        , id : 'kpiInstItemsTab'
+			        , layout: 'fit'
+			        , autoScroll: true
+			        , items: []
+			        , itemId: 'kpiInstItemsTab'
+			        , scope: this
+			});
+	 	  this.sourceTab = new Ext.Panel({
+		        title: 'Source node'
+			        , id : 'srcNodeTab'
+			        , layout: 'fit'
+			        , autoScroll: true
+			        , items: []
+			        , itemId: 'srcNodeTab'
+			        , scope: this
+			});
+
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -156,14 +175,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr]
-		    	},{
-		    		
-		    		
-	 	  		}]
-		    }];
+		    	}]
+		    },this.sourceTab, this.kpiInstItems];
 
 	}
-	
+
 
     //OVERRIDING save method
 	,save : function() {
@@ -443,5 +459,45 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 					
 		});
 		this.nodesToSave = new Array();
+	}    
+	, initResourcesGridPanel : function() {
+    	
+        this.resourcesStore = new Ext.data.SimpleStore({
+        	id: 'id',
+            fields : [ 'id', 'name', 'description', 'checked' ]
+        });
+        
+    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'id'} );
+		
+        this.cmRoles = new Ext.grid.ColumnModel([
+	         //{id:'id',header: "id", dataIndex: 'id'},
+	         {header: LN('sbi.roles.headerName'), width: 45, sortable: true, dataIndex: 'name'},
+	         {header: LN('sbi.roles.headerDescr'), width: 65, sortable: true, dataIndex: 'description'}
+	         ,this.smRoles 
+	    ]);
+
+		this.resourcesGrid = new Ext.grid.GridPanel({
+			  store: this.resourcesStore
+			, id: 'resources-grid-checks'
+			//NB: Important trick!!!to render the grid with activeTab=0	
+			//, renderTo: Ext.get('ext-gen97')
+   	     	, cm: this.cmRoles
+   	     	, sm: this.smRoles
+   	     	, frame: false
+   	     	, border:false  
+   	     	, collapsible:false
+   	     	, loadMask: true
+   	     	, viewConfig: {
+   	        	forceFit:true
+   	        	, enableRowBody:true
+   	        	, showPreview:true
+   	     	}
+			, scope: this
+		});
+		this.resourcesGrid.superclass.constructor.call(this);
+		
+		Ext.getCmp("resources-grid-checks").on('recToSelect', function(id, index){		
+			Ext.getCmp("resources-grid-checks").selModel.selectRow(index,true);
+		});
 	}
 });
