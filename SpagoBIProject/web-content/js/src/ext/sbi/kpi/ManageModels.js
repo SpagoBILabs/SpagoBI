@@ -83,7 +83,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 	,initConfigObject: function(){
 
-		this.configurationObject.treeTitle = LN('sbi.models.listTitle');;
+		this.configurationObject.treeTitle = LN('sbi.models.treeTitle');;
 	
 		this.configurationObject.panelTitle = LN('sbi.models.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.models.listTitle');

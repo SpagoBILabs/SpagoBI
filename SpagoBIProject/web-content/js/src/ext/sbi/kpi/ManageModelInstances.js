@@ -44,9 +44,9 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstances = function(config, ref) { 
-	var paramsList = {MESSAGE_DET: "MODEL_NODES_LIST"};
-	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODES_SAVE"};
-	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODE_DELETE"};
+	var paramsList = {MESSAGE_DET: "MODELINST_NODES_LIST"};
+	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINST_NODES_SAVE"};
+	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MMODELINST_NODE_DELETE"};
 	
 	this.configurationObject = {};
 	
@@ -83,10 +83,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	,initConfigObject: function(){
 
-		this.configurationObject.treeTitle = LN('sbi.models.listTitle');;
+		this.configurationObject.treeTitle = LN('sbi.modelinstances.treeTitle');;
 	
-		this.configurationObject.panelTitle = LN('sbi.models.panelTitle');
-		this.configurationObject.listTitle = LN('sbi.models.listTitle');
+		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
+		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
 		
 		this.initTabItems();
     }
@@ -99,7 +99,17 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	        autoLoad: false
  	    });
 		/*DETAIL FIELDS*/
-
+		   
+	 	   this.detailFieldLabel = new Ext.form.TextField({
+	        	 minLength:1,
+	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
+	        	 regexText : LN('sbi.roles.alfanumericString2'),
+	             fieldLabel:LN('sbi.generic.label'),
+	             allowBlank: false,
+	             //validationEvent:true,
+	             name: 'label'
+	         });	  
+	 	   
 	 	   this.detailFieldName = new Ext.form.TextField({
 	          	 maxLength:100,
 	        	 minLength:1,
@@ -110,17 +120,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             //validationEvent:true,
 	             name: 'name'
 	         });
-	 			  
-	 	   this.detailFieldCode = new Ext.form.TextField({
-	          	 maxLength:45,
-	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
-	             fieldLabel:LN('sbi.generic.code'),
-	             allowBlank: false,
-	             //validationEvent:true,
-	             name: 'code'
-	         });  
+  
 	 		   
 	 	   this.detailFieldDescr = new Ext.form.TextArea({
 	          	 maxLength:400,
@@ -132,61 +132,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             //validationEvent:true,
 	             name: 'description'
 	         });
-	 	 		   
-	 	   this.detailFieldLabel = new Ext.form.TextField({
-	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
-	             fieldLabel:LN('sbi.generic.label'),
-	             allowBlank: false,
-	             //validationEvent:true,
-	             name: 'label'
-	         });	  
-	 	 	 			  
-	 	   this.detailFieldKpi = new Ext.form.TextField({
-	 		   	 itemId: 'model-detailFieldKpi',
-	 		   	 id: 'model-detailFieldKpi',
-	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
-	             fieldLabel: LN('sbi.generic.kpi'),
-	             allowBlank: false,
-	             readOnly: true,
-	             name: 'kpi'
-	         });	 
-	 		   
-	 	   this.detailFieldNodeType =  new Ext.form.ComboBox({
-	        	  name: 'typeCd',
-	              store: this.typesStore,
-	              fieldLabel: LN('sbi.generic.nodetype'),
-	              displayField: 'typeCd',   // what the user sees in the popup
-	              valueField: 'typeId',        // what is passed to the 'change' event
-	              typeAhead: true,
-	              forceSelection: true,
-	              mode: 'local',
-	              triggerAction: 'all',
-	              selectOnFocus: true,
-	              editable: false,
-	              allowBlank: false
-	              //,validationEvent:true
-	          });
-	 	  this.detailFieldTypeDescr = new Ext.form.DisplayField({
-	          	 maxLength:400,
-	       	     width : 250,
-	             height : 80,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
-	             //validationEvent:true,
-	             readOnly: true,
-	             name: 'typeDescr'
-	         });
+
 	 	   /*END*/
 	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
 		        , width: 430
-		        , items: {
+		        , items: [{
 			   		 id: 'items-detail-models',   	
 		 		   	 itemId: 'items-detail1',   	              
 		 		   	 columnWidth: 0.4,
@@ -199,13 +152,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 		             border: false,
 		             style: {
-		                 //"margin-left": "10px", 
-		                 "background-color": "#f1f1f1",
+		                 //"background-color": "#f1f1f1",
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
-		             items: [this.detailFieldLabel, this.detailFieldCode, this.detailFieldName,  this.detailFieldDescr,
-		                      this.detailFieldKpi, this.detailFieldNodeType, this.detailFieldTypeDescr]
-		    	}
+		             items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr]
+		    	},{
+		    		
+		    		
+	 	  		}]
 		    }];
 
 	}
@@ -247,7 +201,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      						  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 1px solid red; font-weight: bold; font-style: italic; color: #cd2020; text-decoration: underline; }');
 		      				  }else{
 		      					  nodeSel.attributes.error = false; 
-		      					  nodeSel.attributes.modelId = value; 
+		      					  nodeSel.attributes.modelInstId = value; 
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  this.fireEvent('parentsave-complete', nodeSel);
 		      				  }
@@ -323,7 +277,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			  	        		  this.selectedNodeToEdit = child;
 				        		  //this.mainTree.getSelectionModel().select(child);
 
-			  	        		  child.attributes.parentId = parent.attributes.modelId;
+			  	        		  child.attributes.parentId = parent.attributes.modelInstId;
 			        			  var size = this.nodesToSave.length;
 			        			  this.nodesToSave[size] = child;
 	      				      }
@@ -409,43 +363,23 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
-	, setDomainType: function(field, rec, index) {
-		var node = this.selectedNodeToEdit;		
-		if (node !== undefined && node !== null) {
-			node.attributes.toSave = true;
-			node.attributes.typeId = rec.data.typeId;
-			node.attributes.type = rec.data.typeCd;//unused server side		
 
-			this.detailFieldTypeDescr.setValue(rec.data.typeDs);			
-		}
-	}
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
-			var val = node.text;
+			var val = node.text;//name value
 			if (val != null && val !== undefined) {
-				var aPosition = val.indexOf(" - ");
-	
+
 				var name = node.attributes.name;
-				var code = node.attributes.code;
-				if (aPosition !== undefined && aPosition != -1) {
-					name = val.substr(aPosition + 3);
-					code = val.substr(0, aPosition)
-				}
 	
 				this.detailFieldDescr.setValue(node.attributes.description);			
 				this.detailFieldLabel.setValue(node.attributes.label);
-				this.detailFieldKpi.setValue(node.attributes.kpi);
-				this.detailFieldNodeType.setValue(node.attributes.type);
-	
 				this.detailFieldName.setValue(name);
-				this.detailFieldCode.setValue(code);
-				
-				this.detailFieldTypeDescr.setValue(node.attributes.typeDescr);
+
 			}
 		}
 	}
 	,renderTree : function(tree) {
-		tree.getLoader().nodeParameter = 'modelId';
+		tree.getLoader().nodeParameter = 'modelInstId';
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
 	,selectNode : function(field) {
@@ -467,24 +401,19 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.detailFieldName.addListener('focus', this.selectNode, this);
 			this.detailFieldName.addListener('change', this.editNode, this);
 
-			this.detailFieldCode.addListener('focus', this.selectNode, this);
-			this.detailFieldCode.addListener('change', this.editNode, this);
-
 			this.detailFieldDescr.addListener('focus', this.selectNode, this);
 			this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
 
 			this.detailFieldLabel.addListener('focus', this.selectNode, this);
 			this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
-			
-			this.detailFieldNodeType.addListener('focus', this.selectNode, this);
-			this.detailFieldNodeType.addListener('select', this.setDomainType, this);
+
 
 	},	
 	createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';
-			if (rec.get('kpi') !== undefined && rec.get('kpi') != null
-					&& rec.get('kpi') != '') {
+			if (rec.get('kpiInstId') !== undefined && rec.get('kpiInstId') != null
+					&& rec.get('kpiInstId') != '') {
 				iconClass = 'has-kpi';
 			}
 			if (rec.get('error') !== undefined && rec.get('error') != false) {
@@ -494,21 +423,17 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        text		: this.rootNodeText,
 		        expanded	: true,
 		        leaf		: false,
-				modelId 	: this.rootNodeId,
+				modelInstId 	: this.rootNodeId,
 				id			: this.rootNodeId,
 				label		: rec.get('label'),
-				type		: rec.get('type'),
-				typeId		: rec.get('typeId'),
 				description	: rec.get('description'),
-				typeDescr	: rec.get('typeDescr'),
-				kpi			: rec.get('kpi'),
-				kpiId		: rec.get('kpiId'),
-				code		: rec.get('code'),
+				kpiInst		: rec.get('kpiInstId'),
 				name		: rec.get('name'),
 				iconCls		: iconClass,
 				cls			: cssClass,
 		        draggable	: false
 		    });
+
 			return node;
 	}
 	, cleanAllUnsavedNodes: function() {

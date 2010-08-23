@@ -51,8 +51,10 @@ Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Gestione Kpi';
 Sbi.locale.ln['sbi.kpis.listTitle'] = 'Lista Kpi';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Gestione Modelli';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Lista Modelli';
+Sbi.locale.ln['sbi.models.treeTitle'] = 'Modelli';
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Gestione Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Lista Istanze di Modello';
+Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Istanze di Modello';
 //END List Detail messages
 
 Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalità';

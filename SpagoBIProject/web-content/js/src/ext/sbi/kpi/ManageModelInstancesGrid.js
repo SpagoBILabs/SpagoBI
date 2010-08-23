@@ -84,6 +84,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		//this.configurationObject.dragndropGroup = 'grid2kpi';
 	    this.configurationObject.fields = ['modelInstId'
 		                     	          , 'name'
+		                     	          , 'label'
+		                     	          , 'description'
+		                     	          , 'kpiInstId'
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [

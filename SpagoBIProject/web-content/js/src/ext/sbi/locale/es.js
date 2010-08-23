@@ -50,8 +50,10 @@ Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Kpis Management';
 Sbi.locale.ln['sbi.kpis.listTitle'] = 'Kpis List';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Models Management';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Models List';
+Sbi.locale.ln['sbi.models.treeTitle'] = 'Models';
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Model Instances Management';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Model Instances List';
+Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Model Instances';
 //END List Detail messages
 
 Sbi.locale.ln['sbi.browser.filtrpanel.title']  = 'Sort, group and filter';
