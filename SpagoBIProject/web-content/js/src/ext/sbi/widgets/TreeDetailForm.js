@@ -203,20 +203,20 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 							   var parent = e.target;
 							   if(e.target.attributes.modelId == null || e.target.attributes.modelId === undefined){
 								   //drop forbidden!
-								   alert("Save parent first: drop forbidden");
+								   alert("Parent undefined: drop forbidden");
 								   return false;
 							   }
 							   var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
 							   var recDomain = this.typesStore.getAt(idxNodeType);	
-							   var newNode = this.loader.createNode({
+							   var newNode = this.mainTree.getLoader().createNode({
 								   kpi: r.get('name')
-								   ,kpiId: r.get('id')
+								   , kpiId: r.get('id')
 								   , text: r.get('name')
 								   , parentId: e.target.attributes.modelId
-								   ,	type: recDomain.get('typeCd')
-								   ,	typeId: recDomain.get('typeId')
-								   ,	typeDescr: recDomain.get('typeDs')
-								   ,leaf:false
+								   , type: recDomain.get('typeCd')
+								   , typeId: recDomain.get('typeId')
+								   , typeDescr: recDomain.get('typeDs')
+								   , leaf: false
 							   });
 							   
 							   // create node from record data
