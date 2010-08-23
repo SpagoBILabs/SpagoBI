@@ -78,6 +78,8 @@ Sbi.kpi.ManageThresholds = function(config) {
 	this.detailThrColor.focus(false,60);
 	
 	this.rowselModel.addListener('rowselect',this.fillThrValues,this);
+	this.addListener('select2',this.prova,this);
+	this.addEvents('select3');
 };
 
 Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
@@ -91,7 +93,9 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	, drawSelectColumn: null
 	, detailThrColor: null
 	
-	
+	,prova:function(itemId,index){
+		this.fireEvent('select3',itemId,index);
+	}
 	,activateThrValuesForm:function(combo,record,index){
 
 		var thrTypeSelected = record.get('typeCd');
