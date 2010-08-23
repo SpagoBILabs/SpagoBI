@@ -54,6 +54,7 @@ Sbi.locale.ln['sbi.models.treeTitle'] = 'Models';
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Model Instances Management';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Model Instances List';
 Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Model Instances';
+Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Resources';
 //END List Detail messages
 
 Sbi.locale.ln['sbi.browser.filtrpanel.title']  = 'Sort, group and filter';

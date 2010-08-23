@@ -84,8 +84,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	,initConfigObject: function(){
 
-		//this.configurationObject.treeTitle = LN('sbi.modelinstances.treeTitle');;
-	
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
 
@@ -460,44 +458,5 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		this.nodesToSave = new Array();
 	}    
-	, initResourcesGridPanel : function() {
-    	
-        this.resourcesStore = new Ext.data.SimpleStore({
-        	id: 'id',
-            fields : [ 'id', 'name', 'description', 'checked' ]
-        });
-        
-    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'id'} );
-		
-        this.cmRoles = new Ext.grid.ColumnModel([
-	         //{id:'id',header: "id", dataIndex: 'id'},
-	         {header: LN('sbi.roles.headerName'), width: 45, sortable: true, dataIndex: 'name'},
-	         {header: LN('sbi.roles.headerDescr'), width: 65, sortable: true, dataIndex: 'description'}
-	         ,this.smRoles 
-	    ]);
 
-		this.resourcesGrid = new Ext.grid.GridPanel({
-			  store: this.resourcesStore
-			, id: 'resources-grid-checks'
-			//NB: Important trick!!!to render the grid with activeTab=0	
-			//, renderTo: Ext.get('ext-gen97')
-   	     	, cm: this.cmRoles
-   	     	, sm: this.smRoles
-   	     	, frame: false
-   	     	, border:false  
-   	     	, collapsible:false
-   	     	, loadMask: true
-   	     	, viewConfig: {
-   	        	forceFit:true
-   	        	, enableRowBody:true
-   	        	, showPreview:true
-   	     	}
-			, scope: this
-		});
-		this.resourcesGrid.superclass.constructor.call(this);
-		
-		Ext.getCmp("resources-grid-checks").on('recToSelect', function(id, index){		
-			Ext.getCmp("resources-grid-checks").selModel.selectRow(index,true);
-		});
-	}
 });

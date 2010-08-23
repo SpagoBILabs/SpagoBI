@@ -54,8 +54,9 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
     this.modelInstancesGrid = new Sbi.kpi.ManageModelInstancesGrid(conf, this.manageModelInstances);
    //DRAW east element
     this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf);
+    
     this.resourcesTab = new Ext.Panel({
-        title: 'Resources'
+        title: LN('sbi.modelinstances.resourcesTab')
 	        , id : 'resourcesTab'
 	        , layout: 'fit'
 	        , autoScroll: true
@@ -63,7 +64,9 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	        , itemId: 'resourcesTab'
 	        , scope: this
 	});
+    this.initResourcesGridPanel();
     this.initPanels();
+    
     
 	var c = Ext.apply({}, config || {}, this.viewport);
 	
@@ -94,7 +97,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		});
 		this.tabs = new Ext.TabPanel({
 	           enableTabScroll : true
-	           , renderTo: Ext.getBody()
 	           , activeTab : 0
 	           , autoScroll : true
 	           //NB: Important trick: to render all content tabs on page load
@@ -102,7 +104,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	           , width: 450
 	           , height: 450
 	           , itemId: 'tabs'
-	           , tbar: this.tbSave            
 			   , items: [this.modelInstancesTreeTab, this.resourcesTab]
 
 			});
@@ -145,6 +146,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				
 
 			};
+		
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
@@ -191,5 +193,46 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 		this.manageModelInstances.mainTree.doLayout();
 	}
+	, initResourcesGridPanel : function() {
 
+        this.resourcesStore = new Ext.data.SimpleStore({
+        	id: 'id',
+            fields : [ 'id', 'name', 'description', 'checked' ]
+        });
+        
+    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'id'} );
+		
+        this.cmRoles = new Ext.grid.ColumnModel([
+	         //{id:'id',header: "id", dataIndex: 'id'},
+	         {header: LN('sbi.roles.headerName'), width: 45, sortable: true, dataIndex: 'name'},
+	         {header: LN('sbi.roles.headerDescr'), width: 65, sortable: true, dataIndex: 'description'}
+	         ,this.smRoles 
+	    ]);
+
+		this.resourcesGrid = new Ext.grid.GridPanel({
+			  store: this.resourcesStore
+			, id: 'resources-grid-checks'
+			//NB: Important trick!!!to render the grid with activeTab=0	
+			//, renderTo: Ext.get('ext-gen97')
+   	     	, cm: this.cmRoles
+   	     	, sm: this.smRoles
+   	     	, frame: false
+   	     	, border:false  
+   	     	, collapsible:false
+   	     	, loadMask: true
+   	     	, viewConfig: {
+   	        	forceFit:true
+   	        	, enableRowBody:true
+   	        	, showPreview:true
+   	     	}
+			, scope: this
+		});
+		this.resourcesGrid.superclass.constructor.call(this);
+		
+		Ext.getCmp("resources-grid-checks").on('recToSelect', function(id, index){		
+			Ext.getCmp("resources-grid-checks").selModel.selectRow(index,true);
+		});
+		this.resourcesTab.add(this.resourcesGrid);
+		this.resourcesGrid.doLayout();
+	}
 });
