@@ -36,8 +36,7 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
-import it.eng.spagobi.kpi.model.bo.ModelNode;
+import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
@@ -100,9 +99,8 @@ public class JSONSerializer implements Serializer {
 		//TODO da aggiungere mano a mano le classi esistono già
 		
 		mappings.put( Model.class, new ModelNodeJSONSerializer());	
-		/*
-		mappings.put( ModelInstanceNode.class, new ModelInstanceNodeJSONSerializer());
-		*/
+		mappings.put( ModelInstance.class, new ModelInstanceNodeJSONSerializer());
+
 		
 		mappings.put( GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
 	}

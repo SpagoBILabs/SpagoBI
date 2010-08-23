@@ -190,6 +190,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
+	                  layout: 'fit',
 	                 // autoExpandColumn: 'name',
 	                  height: 550,
 	                  width: 270,

@@ -44,8 +44,8 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstancesGrid = function(config, ref) { 
-	var paramsList = {MESSAGE_DET: "MODELS_LIST"};
-	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODE_DELETE"};
+	var paramsList = {MESSAGE_DET: "MODELINSTS_LIST"};
+	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINST_NODE_DELETE"};
 	
 	this.configurationObject = {};
 	
@@ -79,29 +79,15 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 
 	,initConfigObject:function(){
 		
-		this.configurationObject.idKey = 'modelId';
+		this.configurationObject.idKey = 'modelInstId';
 		this.configurationObject.referencedCmp = this.referencedCmp;
-		this.configurationObject.dragndropGroup = 'grid2kpi';
-	    this.configurationObject.fields = ['modelId'
+		//this.configurationObject.dragndropGroup = 'grid2kpi';
+	    this.configurationObject.fields = ['modelInstId'
 		                     	          , 'name'
-		                    	          , 'code'
-		                    	          , 'parentId'
-		                    	          , 'label'
-		                    	          , 'type'
-		                    	          , 'typeId'
-		                    	          , 'typeDescr'
-		                    	          , 'kpi'
-		                    	          , 'kpiId'
-		                    	          , 'leaf'
-		                    	          , 'text'
-		                    	          , 'id'
-		                    	          , 'error'
-		                    	          , 'description'
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'modelId',header: LN('sbi.generic.name'), width: 120, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 120, sortable: true, dataIndex: 'code'}
+		                                         {id:'modelInstId',	header: LN('sbi.generic.name'), width: 240, sortable: true, locked:false, dataIndex: 'name'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
@@ -158,7 +144,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 			);
 	}
 	, addNewItem : function(){
-		//SELECTS first domainCd = 'MODEL_ROOT' from combo detail
+		alert("to do: popup per selezione modello");
+/*		//SELECTS first domainCd = 'MODEL_ROOT' from combo detail
 		var idxRootType = this.referencedCmp.typesStore.find('domainCd', 'MODEL_ROOT');
 		
 		var recDomain = this.referencedCmp.typesStore.getAt(idxRootType);		
@@ -176,10 +163,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 			 
 		//new empty record in the grid
 		this.emptyRecord =  new Ext.data.Record({id: 0,
-			 name:'...', 
-			 code:'...'});
+			 name:'...'});
 		this.mainElementsStore.add(this.emptyRecord);
-		this.emptyRecord.markDirty() 
+		this.emptyRecord.markDirty() */
 
 	}
 
