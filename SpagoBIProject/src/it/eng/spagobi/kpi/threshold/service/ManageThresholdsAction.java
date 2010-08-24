@@ -65,7 +65,7 @@ import org.json.JSONObject;
 	private final String NODE_TYPE_CODE = "typeCd";	
 	private static final String THRESHOLD_VALUES = "thrValues";
 	
-	private static final String THR_VAL_ID = "itThrVal";
+	private static final String THR_VAL_ID = "idThrVal";
 	private static final String THR_VAL_LABEL = "label";
 	private static final String THR_VAL_POSITION = "position";
 	private static final String THR_VAL_MIN = "min";
@@ -129,32 +129,61 @@ import org.json.JSONObject;
 			String code = getAttributeAsString(CODE);
 			String name = getAttributeAsString(NAME);
 			String description = getAttributeAsString(DESCRIPTION);
-			String typeCD = getAttributeAsString(NODE_TYPE_CODE);		
-			JSONArray thrValuesJSON = getAttributeAsJSONArray(THRESHOLD_VALUES);
+			String typeCD = getAttributeAsString(NODE_TYPE_CODE);	
 			
-			String thrValId = getAttributeAsString(THR_VAL_ID);
-			String label = getAttributeAsString(THR_VAL_LABEL);
-			Integer position = getAttributeAsInteger(THR_VAL_POSITION);
-			String colourString = getAttributeAsString(THR_VAL_COLOR);
-			String valueS = getAttributeAsString(THR_VAL_VALUE);
+			JSONArray thrValuesJSON = null;
+			Integer position = null;
+			String thrValId = null;
+			String label = null;			
+			String colourString = null;
 			Double value = null;
-			if(valueS!=null && valueS != ""){
-				value = new Double(valueS);
-			}
-			String severityCd = getAttributeAsString(THR_VAL_SEVERITY_CD);
-			Boolean minClosed = getAttributeAsBoolean(THR_VAL_MIN_INCLUDED);
-			String minValueS = getAttributeAsString(THR_VAL_MIN);
+			String severityCd = null;
+			Boolean minClosed = null;
 			Double minValue = null;
-			if(minValueS!=null && minValueS!=""){
-				minValue = new Double(minValueS);
-			}
-			Boolean maxClosed = getAttributeAsBoolean(THR_VAL_MAX_INCLUDED);
-			String maxValueS = getAttributeAsString(THR_VAL_MAX);
+			Boolean maxClosed = null;
 			Double maxValue = null;
-			if(maxValueS!=null && maxValueS!=""){
-				maxValue = new Double(maxValueS);
-			}
 			
+			if(typeCD!=null && typeCD.equals("RANGE")){
+				
+				thrValuesJSON = getAttributeAsJSONArray(THRESHOLD_VALUES);
+				
+			}else if(typeCD!=null && (typeCD.equals("MINIMUM") || typeCD.equals("MAXIMUM")) ){
+				
+				String pos = getAttributeAsString(THR_VAL_POSITION);	
+				if(pos!=null && !pos.equals("")){
+					position = new Integer(pos);
+				}				
+				thrValId = getAttributeAsString(THR_VAL_ID);
+				label = getAttributeAsString(THR_VAL_LABEL);
+				colourString = getAttributeAsString(THR_VAL_COLOR);
+				String valueS = getAttributeAsString(THR_VAL_VALUE);				
+				if(valueS!=null && !valueS.equals("")){
+					value = new Double(valueS);
+				}
+				severityCd = getAttributeAsString(THR_VAL_SEVERITY_CD);
+				String minC = getAttributeAsString(THR_VAL_MIN_INCLUDED);	
+				if(minC!=null && !minC.equals("")){
+					minClosed = new Boolean(minC);
+				}else{
+					minClosed = new Boolean("false");
+				}
+				String minValueS = getAttributeAsString(THR_VAL_MIN);
+				if(minValueS!=null && !minValueS.equals("")){
+					minValue = new Double(minValueS);
+				}
+				
+				String maxValueS = getAttributeAsString(THR_VAL_MAX);				
+				if(maxValueS!=null && !maxValueS.equals("")){
+					maxValue = new Double(maxValueS);
+				}
+				String maxC = getAttributeAsString(THR_VAL_MAX_INCLUDED);	
+				if(maxC!=null && !maxC.equals("")){
+					maxClosed = new Boolean(maxC);
+				}else{
+					maxClosed = new Boolean("false");
+				}
+			}
+
 			List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("nodeTypesList");
 			List<Domain> domainsthrValues = (List<Domain>)getSessionContainer().getAttribute("thrSeverityTypes");
 			domains.addAll(domainsthrValues);
@@ -178,14 +207,13 @@ import org.json.JSONObject;
 				thr.setThresholdTypeCode(typeCD);
 				thr.setThresholdTypeId(typeID);
 				thr.setCode(code);
-				
-				
+	
 				if(description != null){
 					thr.setDescription(description);
 				}	
 				
-				List thrValuesList = new ArrayList();;
-				if(typeCD !=null){
+				List thrValuesList = new ArrayList();
+				if(typeCD != null){
 					if(typeCD.equals("MINIMUM") || typeCD.equals("MAXIMUM")){
 						ThresholdValue tVal = new ThresholdValue();
 						if(thrValId!= null && !thrValId.equals("") && !thrValId.equals("0")){
@@ -196,9 +224,11 @@ import org.json.JSONObject;
 						tVal.setColourString(colourString);
 						tVal.setValue(value);
 						tVal.setSeverityCd(severityCd);
-						Integer severityId = domainIds.get(severityCd);				   
-						tVal.setSeverityId(severityId);		
-						
+						if(severityCd!=null && !severityCd.equals("")){
+							Integer severityId = domainIds.get(severityCd);		
+							tVal.setSeverityId(severityId);		
+						}
+
 						if(typeCD.equals("MINIMUM")){
 							tVal.setMinClosed(minClosed);
 							tVal.setMinValue(minValue);
@@ -207,19 +237,22 @@ import org.json.JSONObject;
 							tVal.setMaxValue(maxValue);
 						}	
 						thrValuesList.add(tVal);
-						thr.setThresholdValues(thrValuesList);
-						
+												
 					}else if(typeCD.equals("RANGE")){
-						
+						if(thrValuesJSON!=null){
+							try {
+								thrValuesList = deserializeThresholdValuesJSONArray(thrValuesJSON, domainIds);
+							} catch (JSONException e) {
+								logger.error("JSON Exception");
+								e.printStackTrace();
+							}
+						}
 					}
+					thr.setThresholdValues(thrValuesList);
 				}
-					
-				
+			
 				try {
-					
-					/*if(thrValuesJSON != null){
-						//thrValuesList = deserializeThrValuesJSONArray(thrValuesJSON);
-					}*/
+
 					Integer idToReturnToClient = null;
 					
 					if(id != null && !id.equals("") && !id.equals("0")){	
@@ -311,5 +344,75 @@ import org.json.JSONObject;
 		results.put("title", "Thresholds");
 		results.put("rows", rows);
 		return results;
+	}
+	
+	private List deserializeThresholdValuesJSONArray(JSONArray rows, HashMap<String, Integer> domainIds) throws JSONException{
+		List toReturn = new ArrayList();
+		
+		for(int i=0; i< rows.length(); i++){
+			JSONObject obj = (JSONObject)rows.get(i);
+					
+			String thVId = obj.getString(THR_VAL_ID);			
+			Integer position = null;
+			String pos = obj.getString(THR_VAL_POSITION);
+			if(pos!=null && !pos.equals("")){
+				position = new Integer(pos);			
+			}
+			
+			Double value = null;
+			String val = obj.getString(THR_VAL_VALUE);
+			if(val!=null && !val.equals("")){
+				value = new Double(val);			
+			}
+			
+			String label = obj.getString(THR_VAL_LABEL);
+			String colourString = obj.getString(THR_VAL_COLOR);
+			String severityCd = obj.getString(THR_VAL_SEVERITY_CD);
+			
+			Integer severityId = null;
+			if(severityCd!=null && !severityCd.equals("")){
+				severityId = domainIds.get(severityCd);	
+			}
+			 
+			Boolean minClosed = null;
+			Double minValue = null;
+			Boolean maxClosed = null;
+			Double maxValue = null;
+			String minC = obj.getString(THR_VAL_MIN_INCLUDED);
+			String min = obj.getString(THR_VAL_MIN);
+			String maxC = obj.getString(THR_VAL_MAX_INCLUDED);
+			String max = obj.getString(THR_VAL_MAX);
+			if(minC!=null && (minC.equalsIgnoreCase("true") || minC.equalsIgnoreCase("false"))){
+				minClosed = new Boolean(minC);
+			}
+			if(maxC!=null && (maxC.equalsIgnoreCase("true") || maxC.equalsIgnoreCase("false"))){
+				maxClosed = new Boolean(maxC);
+			}
+			if(min!=null && !min.equals("")){
+				minValue = new Double(min);
+			}
+			if(max!=null && !max.equals("")){
+				maxValue = new Double(max);
+			}
+	
+			ThresholdValue tVal = new ThresholdValue();
+			if(thVId!= null && !thVId.equals("") && !thVId.equals("0")){
+				Integer thrValId = new Integer(thVId);
+				tVal.setId(thrValId);
+			}
+			tVal.setLabel(label);						
+			tVal.setPosition(position);
+			tVal.setColourString(colourString);
+			tVal.setValue(value);
+			tVal.setSeverityCd(severityCd);						   
+			tVal.setSeverityId(severityId);					
+			tVal.setMinClosed(minClosed);
+			tVal.setMinValue(minValue);
+			tVal.setMaxClosed(maxClosed);
+			tVal.setMaxValue(maxValue);
+
+			toReturn.add(tVal);			
+		}	
+		return toReturn;
 	}
 }

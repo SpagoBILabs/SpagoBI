@@ -570,8 +570,12 @@ IThresholdValueDAO {
 		Integer thresholdId=t.getSbiThreshold().getThresholdId();
 		String label = t.getLabel();
 		SbiDomains d = t.getSeverity();
-		Integer severityId = d.getValueId();
-		String severityCd = d.getValueCd();
+		Integer severityId = null;
+		String severityCd = null;
+		if(d!=null){
+			severityId = d.getValueId();
+			severityCd = d.getValueCd();
+		}
 		Integer position = t.getPosition();
 		Double maxValue = t.getMaxValue();
 		Double minValue = t.getMinValue();
