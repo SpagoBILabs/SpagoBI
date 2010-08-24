@@ -28,7 +28,7 @@ public class ThresholdJSONSerializer implements Serializer {
 	private static final String THRESHOLD_TYPE_CD = "typeCd";
 	private static final String THRESHOLD_VALUES = "thrValues";
 	
-	private static final String THR_VAL_ID = "itThrVal";
+	private static final String THR_VAL_ID = "idThrVal";
 	private static final String THR_VAL_LABEL = "label";
 	private static final String THR_VAL_POSITION = "position";
 	private static final String THR_VAL_MIN = "min";
@@ -91,8 +91,8 @@ public class ThresholdJSONSerializer implements Serializer {
 							 temp.put(THR_VAL_MAX_INCLUDED,  thrVal.getMaxClosed());
 							 temp.put(THR_VAL_VALUE,  thrVal.getValue());
 							 temp.put(THR_VAL_COLOR,  thrVal.getColourString());
-							 result.put(THR_VAL_SEVERITY_ID,  thrVal.getSeverityId());
-							 result.put(THR_VAL_SEVERITY_CD,  thrVal.getSeverityCd());
+							 temp.put(THR_VAL_SEVERITY_ID,  thrVal.getSeverityId());
+							 temp.put(THR_VAL_SEVERITY_CD,  thrVal.getSeverityCd());
 							 thValues.put(temp);
 	
 						}
