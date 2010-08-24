@@ -85,6 +85,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
+		this.manageModelsTree.addListener('render', this.configureDD, this);
 
 		this.modelInstancesTreeTab = new Ext.Panel({
 	        title: LN('sbi.modelinstances.treeTitle')
@@ -225,8 +226,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.resourcesGrid = new Ext.grid.GridPanel({
 			  store: this.resourcesStore
 			, id: 'resources-grid-checks'
-			//NB: Important trick!!!to render the grid with activeTab=0	
-			//, renderTo: Ext.get('ext-gen97')
    	     	, cm: this.cmRoles
    	     	, sm: this.smRoles
    	     	, frame: false
@@ -248,5 +247,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.resourcesTab.add(this.resourcesGrid);
 		this.resourcesGrid.doLayout();
 	}
+	, configureDD: function() {
+		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(Ext.getCmp('model-maintree'), {
+		    ddGroup  : 'tree2tree',
+		    dropAllowed : true,
+		    overClass: 'over',
+		    scope: this,
+		    initialConfig: this.manageModelInstances
+		  });
 
+	}
 });

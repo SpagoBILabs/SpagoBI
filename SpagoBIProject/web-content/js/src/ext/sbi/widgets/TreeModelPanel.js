@@ -119,6 +119,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
             enableDrop: false,
             enableDrag: true,
             ddAppendOnly: false ,
+            ddGroup  : 'tree2tree',
 			scope : this,
 			shadow : true,
 			root : {
