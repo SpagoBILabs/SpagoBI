@@ -252,8 +252,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		    ddGroup  : 'tree2tree',
 		    dropAllowed : true,
 		    overClass: 'over',
+		    copy: true,
 		    scope: this,
-		    initialConfig: this.manageModelInstances
+		    initialConfig: this.manageModelsTree
 		  });
 
 	}
