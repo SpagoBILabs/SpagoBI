@@ -142,16 +142,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			        , itemId: 'kpiInstItemsTab'
 			        , scope: this
 			});
-	 	  this.sourceTab = new Ext.Panel({
-		        title: 'Source node'
-			        , id : 'srcNodeTab'
-			        , layout: 'fit'
-			        , autoScroll: true
-			        , items: []
-			        , itemId: 'srcNodeTab'
-			        , scope: this
-			});
+	 	  
+	 	  this.initSourcePanel();
 
+	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -174,10 +168,70 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		             },
 		             items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr]
 		    	}]
-		    },this.sourceTab, this.kpiInstItems];
+		    },{
+		        title: 'Source node'
+		        , itemId: 'src_model'
+		        , width: 430
+		        , items: [{
+			   		 id: 'src-model-det',   	
+		 		   	 itemId: 'src-detail',   	              
+		 		   	 columnWidth: 0.4,
+		             xtype: 'fieldset',
+		             labelWidth: 90,
+		             defaults: {width: 140, border:false},    
+		             defaultType: 'textfield',
+		             autoHeight: true,
+		             autoScroll  : true,
+		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             border: false,
+		             style: {
+		                 //"background-color": "#f1f1f1",
+		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+		             },
+		             items: [this.srcModelName,
+					         this.srcModelCode,
+					         this.srcModelDescr,
+					         this.srcModelType,
+					         this.srcModelTypeDescr ]
+		    	}]
+		    }, this.kpiInstItems ];
+	 	  
+	}
+	, initSourcePanel: function() {
+	 	   this.srcModelName = new Ext.form.TextField({
+	             fieldLabel:LN('sbi.generic.name'),
+	             readOnly:true,
+	             name: 'name'
+	         });	  
+
+	 	   this.srcModelCode = new Ext.form.TextField({
+	             readOnly: true,
+	             fieldLabel: LN('sbi.generic.code'),
+	             name: 'code'
+	         });
+
+	 	   this.srcModelDescr = new Ext.form.TextArea({
+	 		   	 readOnly: true,
+	          	 maxLength:400,
+	       	     width : 250,
+	             height : 80,
+	             fieldLabel: LN('sbi.generic.descr'),
+	             name: 'description'
+	         });
+
+	 	     this.srcModelType = new Ext.form.TextField({
+	 		   	 readOnly: true,
+	             fieldLabel: LN('sbi.generic.nodetype'),
+	             name: 'type'
+	         });
+
+		 	 this.srcModelTypeDescr = new Ext.form.TextField({
+	             readOnly: true,
+	             fieldLabel: LN('sbi.generic.nodedescr'),
+	             name: 'typeDescr'
+	         });
 
 	}
-
 
     //OVERRIDING save method
 	,save : function() {
@@ -382,13 +436,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		if(node !== undefined && node != null){
 			var val = node.text;//name value
 			if (val != null && val !== undefined) {
-
-				var name = node.attributes.name;
-	
+				var name = node.attributes.name;	
 				this.detailFieldDescr.setValue(node.attributes.description);			
 				this.detailFieldLabel.setValue(node.attributes.label);
 				this.detailFieldName.setValue(name);
-
 			}
 		}
 	}
