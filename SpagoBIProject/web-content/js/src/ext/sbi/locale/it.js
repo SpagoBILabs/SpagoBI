@@ -56,6 +56,7 @@ Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Gestione Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Lista Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Risorse';
+Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Import sub-tree also';
 //END List Detail messages
 
 Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalità';

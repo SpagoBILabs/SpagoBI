@@ -84,7 +84,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			id:'model-tree-readonly',
 			title : this.treeTitle,
 			width : 250,
-			//height : 230,
+			height : 300,
 			layout: 'fit',
 			userArrows : true,
 			animate : true,
@@ -129,22 +129,27 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			}
 		  // ,listeners:{  }
 		});
-
+		this.importCheck = new Ext.form.Checkbox({
+             fieldLabel: LN('sbi.modelinstances.importCheck'),
+             allowBlank: false,
+         	 inputValue  :'true',
+             name: 'importChildrenFlag'
+         });
 		this.modelPanel = new Ext.FormPanel( {
 			id : 'modelPan',
 			frame : true,
+			labelWidth: 150,  
 			autoScroll : true,
 			labelAlign : 'left',
-			width : 600,
-			height : 550,
-			layout : 'fit',
+			width : 390,
+			height : 510,
 			layoutConfig : {
 				animate : true,
 				activeOnTop : false
-
 			},
 			trackResetOnLoad : true,
-			items: [this.modelsTree]
+			//, this.importCheck
+			items: [this.modelsTree, this.importCheck]
 		});
 		
 		this.setListeners();

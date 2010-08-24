@@ -90,6 +90,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		                     	          , 'description'
 		                     	          , 'kpiInstId'
 		                     	          , 'modelId'
+		                     	          , 'modelText'
+			                     	      , 'modelCode'
+			                     	      , 'modelName'
+			                     	      , 'modelDescr'
+			                     	      , 'modelType'
+			                     	      , 'modelTypeDescr'
+		                     	     
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [

@@ -196,7 +196,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.mainTree.doLayout();
 
 		//model tree - left modelId
-		this.manageModelsTree.rootNodeText = rec.get('name');
+		this.manageModelsTree.rootNodeText = rec.get('modelText');
 		this.manageModelsTree.rootNodeId = rec.get('modelId');
 
 		var newroot2 = this.manageModelsTree.createRootNodeByRec(rec);

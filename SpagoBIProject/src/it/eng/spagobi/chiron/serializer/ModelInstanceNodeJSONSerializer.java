@@ -1,7 +1,8 @@
 package it.eng.spagobi.chiron.serializer;
 
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
-import it.eng.spagobi.kpi.model.bo.Resource;
 
 import java.util.Locale;
 
@@ -19,7 +20,13 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String STARTDATE = "startdate";
 	private static final String ENDDATE = "enddate";
 	private static final String MODELUUID = "modelUuid";
-
+	private static final String MODEL_NAME = "modelName";
+	private static final String MODEL_CODE = "modelCode";
+	private static final String MODEL_DESCR = "modelDescr";
+	private static final String MODEL_TYPE = "modelType";
+	private static final String MODEL_TYPEDESCR = "modelTypeDescr";
+	private static final String MODEL_TEXT = "modelText";
+	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
@@ -36,10 +43,19 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			
 			if(res.getModel() != null){
 				result.put(MODEL_ID, res.getModel().getId() );
+				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(res.getModel().getId() );
+				result.put(MODEL_TEXT, model.getCode() +" - "+model.getName() );
+				result.put(MODEL_CODE, model.getCode());
+				result.put(MODEL_NAME, model.getName() );
+				result.put(MODEL_DESCR, model.getDescription() );
+				result.put(MODEL_TYPE, model.getTypeName() );
+				result.put(MODEL_TYPEDESCR, model.getTypeDescription() );				
+
 			}
 			
 			if(res.getKpiInstance() != null){
 				result.put(KPI_INST_ID, res.getKpiInstance().getKpiInstanceId() );
+
 			}
 			result.put(NAME, res.getName() );
 			result.put(LABEL, res.getLabel());			
