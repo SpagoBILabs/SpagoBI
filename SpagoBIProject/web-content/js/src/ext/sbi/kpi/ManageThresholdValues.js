@@ -45,10 +45,18 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageThresholdValues = function(config) { 
 	
+	this.severityStore = config.severityStore;
+	
+	var cField = new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true});
+	cField.on('select', function(f,val){
+		this.store.getAt(this.currentRowRecordEdited).set('color',val);
+		this.getView().refresh();		
+		},this);
+	
 	// Let's pretend we rendered our grid-columns with meta-data from our ORM framework.
 	this.userColumns =  [
 	    {
-	        name: 'itThrVal',
+	        name: 'idThrVal',
 	        hidden: true
 	    },{
 	    	header: 'Position', 
@@ -99,15 +107,34 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 			width: 70, 
 			id:'severityCd',
 			sortable: true, 
-			dataIndex: 'severityCd',  
-			editor: new Ext.form.ComboBox({})
+			dataIndex: 'severityCd',  		
+			editor: new Ext.form.ComboBox({
+	        	  name: 'severityCd',
+	              store: this.severityStore,
+	              displayField: 'severityCd',   // what the user sees in the popup
+	              valueField: 'severityCd',        // what is passed to the 'change' event
+	              typeAhead: true,
+	              forceSelection: true,
+	              mode: 'local',
+	              triggerAction: 'all',
+	              selectOnFocus: true,
+	              editable: false,
+	              allowBlank: false,
+	              validationEvent:true
+	          })
 		},{	
 			header: 'Color', 
 			width: 60, 
 			id:'color',
 			sortable: true, 
 			dataIndex: 'color',  
-			editor: new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true})
+			editor: cField,
+			renderer : function(v, metadata, record){
+				if(metadata!=null){
+				   metadata.attr = ' style="background:'+v+';"';
+				}
+			   return v;  
+	       }
 		},{	
 			header: 'Value', 
 			width: 40, 
@@ -118,7 +145,6 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 		}					
 	];
     
-  ///PROVA
 	 var cm = new Ext.grid.ColumnModel({
 	        // specify any defaults for each column
 	        defaults: {
@@ -128,8 +154,8 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	    });
 	 
 	 this.store = new Ext.data.JsonStore({
-		    id : 'itThrVal',
-		    fields: ['itThrVal'
+		    id : 'idThrVal',
+		    fields: ['idThrVal'
      	          , 'label'
       	          , 'position'
       	          , 'min'
@@ -174,25 +200,40 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	        clicksToEdit: 2,
 	        tbar: tb
 	    };
-	    
-	
-    
+
     var c = Ext.apply( {}, config, grid);
 
     // constructor
     Sbi.kpi.ManageThresholdValues.superclass.constructor.call(this, c);
+    
+    this.on('beforeedit', function(e) {
+    	var t = Ext.apply({}, e);
+		var col = t.column;
+		this.currentRowRecordEdited = t.row;	
+    	
+    }, this);
+    
+    this.on('afteredit', function(e) {
+    	
+		var col = e.column;
+		var row = e.row;	
+    	
+    }, this);
 
 }
 
 Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
   
+	
   	reader:null
+  	,currentRowRecordEdited:null
   	,services:null
   	,writer:null
   	,store:null
   	,userColumns:null
   	,editor:null
   	,userGrid:null
+  	,severityStore:null
 	
   	,loadItems: function(thrValues){
 		this.store.loadData(thrValues);
@@ -200,16 +241,16 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
 
     ,onAdd: function (btn, ev) {
         var emptyRecToAdd = new Ext.data.Record({
-			  itThrVal: 0,
+			  idThrVal: 0,
 			  label: '',
               position: '',
               min: '',
-              minIncluded: '',
+              minIncluded: false,
               max: '',
-              maxIncluded: '',
+              maxIncluded: false,
               val: '',
-              color: '',
-              severityCd: ''     
+              color: '#FFFFFF',
+              severityCd: 'LOW'     
 			 });   
         this.store.insert(0,emptyRecToAdd);
     }

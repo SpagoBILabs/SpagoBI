@@ -210,7 +210,7 @@ Sbi.widgets.ListDetailForm = function(config) {
    	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
    	
    	//to be addedd at the end!
-   	this.addEvents('select2');	
+   	this.addEvents('selected');	
 };
 
 Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
@@ -339,10 +339,12 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
        });
  	  
  	  this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
+ 		 //alert('recorddata:'+rec.data.toSource());
  		 this.getForm().loadRecord(rec);     
       }, this);
  	  
  	 this.rowselModel.addListener('select',function(sm, row, rec) { 
+ 		 alert('recorddata2:'+rec.data);
  		 this.getForm().loadRecord(rec);     
       }, this);
  	   
@@ -378,7 +380,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	}
 
 	,sendSelectedItem: function(itemId, index){
-		this.fireEvent('select2',itemId,index);
+		this.fireEvent('selected',itemId,index);
 	}	
 
 	, addNewItem : function(){
@@ -390,7 +392,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 		    {		
 		    	item.doLayout();
 		    });   
-	    //this.doLayout();	
 	}
 	
 	, deleteSelectedItem: function(itemId, index) {
