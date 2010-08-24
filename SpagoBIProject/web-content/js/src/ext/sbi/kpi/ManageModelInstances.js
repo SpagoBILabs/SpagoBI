@@ -458,5 +458,61 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		this.nodesToSave = new Array();
 	}    
+	,dropNodeBehavoiur: function(e) {
+			alert("eccomi!");
+		   // e.data.selections is the array of selected records
+		   if(Ext.isArray(e.data.selections)) {					    
+			   // reset cancel flag
+			   e.cancel = false;						    
+			   // setup dropNode (it can be array of nodes)
+			   e.dropNode = [];
+			   var r;
+			   for(var i = 0; i < e.data.selections.length; i++) {
+			    
+				   // get record from selectons
+				   r = e.data.selections[i];
+				  /*    * tree - The TreePanel
+					    * target - The node being targeted for the drop
+					    * data - The drag data from the drag source
+					    * point - The point of the drop - append, above or below
+					    * source - The drag source
+					    * rawEvent - Raw mouse event
+					    * dropNode - Drop node(s) provided by the source OR you can supply node(s) to be inserted by setting them on this object.
+					    * cancel - Set this to true to cancel the drop.
+					    * dropStatus - If the default drop action is cancelled but the drop is valid, setting this to true will prevent the animated 'repair' from appearing.
+					*/  
+				   e.target.allowChildren = true;
+				   var parent = e.target;
+				   if(e.target.attributes.modelId == null || e.target.attributes.modelId === undefined){
+					   //drop forbidden!
+					   alert("Parent undefined: drop forbidden");
+					   return false;
+				   }
+				   var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
+				   var recDomain = this.typesStore.getAt(idxNodeType);	
+				   var newNode = this.mainTree.getLoader().createNode({
+					   kpi: r.get('name')
+					   , kpiId: r.get('id')
+					   , text: '... - ...'
+					   , parentId: e.target.attributes.modelId
+					   , type: recDomain.get('typeCd')
+					   , typeId: recDomain.get('typeId')
+					   , typeDescr: recDomain.get('typeDs')
+					   , leaf: false
+					   , code: '...'
+					   , name: '...'
+				   });
+				   
+				   // create node from record data
+				   e.dropNode.push(newNode);
+				   
 
+			   }
+		    
+			   // we want Ext to complete the drop, thus return true
+			   return true;
+		   }
+
+	   // if we get here the drop is automatically cancelled by Ext
+	   }
 });
