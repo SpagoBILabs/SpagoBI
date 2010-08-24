@@ -51,9 +51,9 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
 
 	//DRAW west element
-    this.modelInstancesGrid = new Sbi.kpi.ManageModelInstancesGrid(conf, this.manageModelInstances);
+    this.modelInstancesGrid = new Sbi.kpi.ManageModelInstancesGrid(conf, this);
    //DRAW east element
-    this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf);
+    this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf, this.modelInstancesGrid);
     
     this.resourcesTab = new Ext.Panel({
         title: LN('sbi.modelinstances.resourcesTab')
@@ -187,11 +187,24 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	, displayTree: function(rec){
 		this.manageModelInstances.rootNodeText = rec.get('name');
 		this.manageModelInstances.rootNodeId = rec.get('modelInstId');
+		
+		//main instances tree - center
 		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 		this.manageModelInstances.mainTree.setRootNode(newroot);
 		
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 		this.manageModelInstances.mainTree.doLayout();
+
+		//model tree - left modelId
+		this.manageModelsTree.rootNodeText = rec.get('name');
+		this.manageModelsTree.rootNodeId = rec.get('modelId');
+
+		var newroot2 = this.manageModelsTree.createRootNodeByRec(rec);
+		this.manageModelsTree.modelsTree.setRootNode(newroot2);
+		
+		this.manageModelsTree.modelsTree.getSelectionModel().select(newroot2);
+		this.manageModelsTree.modelsTree.doLayout();
+
 	}
 	, initResourcesGridPanel : function() {
 
@@ -235,4 +248,5 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.resourcesTab.add(this.resourcesGrid);
 		this.resourcesGrid.doLayout();
 	}
+
 });

@@ -48,16 +48,15 @@ Sbi.widgets.TreeModelPanel = function(config) {
 
 	var conf = config.configurationObject;
 	this.services = new Array();
-	this.services['manageTreeService'] = conf.manageTreeService;
+	this.services['listModelService'] = conf.manageTreeService;
 	
 	this.tabItems = conf.tabItems;
 
 	this.treeTitle = conf.treeTitle;
 
-	this.initWidget();
-	
+	this.initWidget();	
 
-	var c = Ext.apply( {}, config, this.gridForm);
+	var c = Ext.apply( {}, config, this.modelPanel);
 
 	Sbi.widgets.TreeModelPanel.superclass.constructor.call(this, c);
 };
@@ -81,19 +80,21 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 
 	initWidget : function() {
 
-		this.mainTree = new Ext.tree.TreePanel( {
-			id:'model-maintree',
+		this.modelsTree = new Ext.tree.TreePanel( {
+			id:'model-tree-readonly',
 			title : this.treeTitle,
 			width : 250,
-			height : 230,
+			//height : 230,
+			layout: 'fit',
 			userArrows : true,
 			animate : true,
 			autoScroll : true,		
             style: {
-                "background-color": "#f1f1f1"
+                "background-color": "#f1f1f1",
+                "border":"none"
             },
 			loader: new Ext.tree.TreeLoader({
-				dataUrl: this.services['manageTreeService'],
+				dataUrl: this.services['listModelService'],
 		        createNode: function(attr) {
 					//alert(Ext.util.JSON.encode(attr));
 
@@ -116,7 +117,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			preloadTree : this.preloadTree,
 			enableDD : true,
             enableDrop: false,
-            enableDrag: false,
+            enableDrag: true,
             ddAppendOnly: false ,
 			scope : this,
 			shadow : true,
@@ -126,10 +127,27 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 				modelId : this.rootNodeId,
 				id:  this.rootNodeId
 			}
-		   ,listeners:{  }
+		  // ,listeners:{  }
 		});
 
+		this.modelPanel = new Ext.FormPanel( {
+			id : 'modelPan',
+			frame : true,
+			autoScroll : true,
+			labelAlign : 'left',
+			width : 600,
+			height : 550,
+			layout : 'fit',
+			layoutConfig : {
+				animate : true,
+				activeOnTop : false
 
+			},
+			trackResetOnLoad : true,
+			items: [this.modelsTree]
+		});
+		
+		this.setListeners();
 	}
 
 });
