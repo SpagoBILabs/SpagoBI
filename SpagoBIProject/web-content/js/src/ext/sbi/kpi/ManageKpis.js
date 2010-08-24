@@ -473,7 +473,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             scope		: this,
             items       : [manageThresholds]
 		});
-		manageThresholds.on('select3', function(itemId,index){this.thrWin.close();Ext.getCmp('detailFieldThreshold').setValue(itemId);}, this);
+		manageThresholds.on('selectEvent', function(itemId,index){this.thrWin.close();Ext.getCmp('detailFieldThreshold').setValue(itemId);}, this);
 		this.thrWin.show();
 	}
 	
