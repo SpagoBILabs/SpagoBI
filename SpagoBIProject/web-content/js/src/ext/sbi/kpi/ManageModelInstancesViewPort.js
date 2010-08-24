@@ -179,6 +179,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				);
 		}else{
 			this.displayTree(rec);
+			this.displaySourceModelDetail(rec);
 			if(rec != this.lastRecSelected){
 				this.lastRecSelected = rec;
 			}
@@ -206,6 +207,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelsTree.modelsTree.getSelectionModel().select(newroot2);
 		this.manageModelsTree.modelsTree.doLayout();
 
+	}
+	, displaySourceModelDetail: function(rec) {
+		this.manageModelInstances.srcModelName.setValue(rec.get('modelName'));
+		this.manageModelInstances.srcModelCode.setValue(rec.get('modelCode'));
+		this.manageModelInstances.srcModelDescr.setValue(rec.get('modelDescr'));
+		this.manageModelInstances.srcModelType.setValue(rec.get('modelType'));
+		this.manageModelInstances.srcModelTypeDescr.setValue(rec.get('modelTypeDescr'));
 	}
 	, initResourcesGridPanel : function() {
 
