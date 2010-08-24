@@ -46,11 +46,15 @@ public class CrosstabDefinition {
 	public static String ID = "id";
 	public static String ALIAS = "alias";
 	public static String FUNCTION = "funct";
-	
+	public static String CONFIG = "config";
+	public static String MEASURESON = "measureson";
+
 	
 	private List<Row> rows = null;
 	private List<Column> columns = null;
 	private List<Measure> measures = null;
+	private JSONObject config = null;
+	
 	
 	public CrosstabDefinition(JSONObject crosstabDefinition) {
 		try {
@@ -58,6 +62,7 @@ public class CrosstabDefinition {
 			rows = parseRows(crosstabDefinition);
 			columns = parseColumns(crosstabDefinition);
 			measures = parseMeasures(crosstabDefinition);
+			config = crosstabDefinition.getJSONObject(CONFIG);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Wrong input JSON crosstab definition", e);
 		}
@@ -108,6 +113,30 @@ public class CrosstabDefinition {
 	public List<Measure> getMeasures() {
 		return measures;
 	}
+		
+	public JSONObject getConfig() {
+		return config;
+	}
+
+	public boolean isMeasuresOnRows(){
+		try{
+			String value = config.getString(MEASURESON);
+			if(value!=null){
+				return value.equalsIgnoreCase("rows");
+			}
+		}catch (Exception e) {}
+		return false;
+	}
+	
+	public boolean isMeasuresOnColumns(){
+		try{
+			String value = config.getString(MEASURESON);
+			if(value!=null){
+				return value.equalsIgnoreCase("columns");
+			}
+		}catch (Exception e) {}
+		return true;
+	}
 	
 	public class CrosstabElement {
 		String entityId = null;
@@ -146,5 +175,4 @@ public class CrosstabDefinition {
 			return function;
 		}
 	}
-	
 }

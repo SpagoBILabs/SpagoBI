@@ -76,10 +76,10 @@
 //         -----------------------------------------
 
 CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum) {
-	  
+
     this.entries =entries;
-    this.withRowsSum = true;
-    this.withColumnsSum = true;
+    this.withRowsSum = withRowsSum;
+    this.withColumnsSum = withColumnsSum;
     
     this.rowHeader = new Array();
     this.build(rowHeadersDefinition, 0, this.rowHeader, false);
@@ -831,7 +831,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     	var dataPanelStyle = "crosstab-table-data-panel";
     	var classEmptyBottomRight = 'crosstab-table-empty-bottom-right-panel';
     	
-    	alert("1");
+    	//alert("1");
     	
     	if(this.table!=null && this.datapanel!=null){
     		this.datapanel.destroy();
@@ -847,7 +847,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     	
 		if(this.withRowsSum){
 			tableColumns = 3;
-			dataPanelStyle = " crosstab-none-right-border-panel";
+			dataPanelStyle = dataPanelStyle+ " crosstab-none-right-border-panel";
 		}else{
 			classEmptyBottomRight = classEmptyBottomRight+' crosstab-none-top-border-panel';
 		}
@@ -920,7 +920,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     	             'divId'
     	    ]
     	});
-    	alert("2");
+    	//alert("2");
     	store.loadData(this.entriesPanel);
     	var columnsForView = this.getColumnsForView();
     	
@@ -960,22 +960,22 @@ Ext.extend(CrossTab, Ext.Panel, {
     		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
 	   		this.table.add(this.emptypanelBottomLeft);
 	   		this.table.add(this.datapanelColumnSum);
-    	}
-    	if(this.withRowsSum||this.withColumnsSum){
+//    	}
+//    	if(this.withRowsSum||this.withColumnsSum){
     		this.table.add(this.emptypanelBottomRight);
     	}
-    	alert("3");
+    	//alert("3");
    		this.add(this.table);
    		
    		this.doLayout();
-   		alert("4");
+   		//alert("4");
    		if(Ext.get('loading')!=null){
 	   		setTimeout(function(){
 	   			Ext.get('loading').remove();
 	   			Ext.get('loading-mask').fadeOut({remove:true});
 	   			}, 250);
    		}
-   		alert("5");
+   		//alert("5");
     }
     
     , reloadHeadersAndTable: function(horizontal){

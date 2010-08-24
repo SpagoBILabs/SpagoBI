@@ -109,7 +109,8 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var rows = this.fromNodeToArray(crosstabDefinition.rows);
 		var columns = this.fromNodeToArray(crosstabDefinition.columns);
 		var data = crosstabDefinition.data;
-		var ct =  new CrossTab( rows,columns, data, true, true);
+		var config = crosstabDefinition.config;
+		var ct =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on");
 		ct.reloadHeadersAndTable();
 		
 		this.add(ct);

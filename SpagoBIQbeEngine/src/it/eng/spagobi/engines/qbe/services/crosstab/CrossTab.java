@@ -53,11 +53,13 @@ public class CrossTab {
 	public static final String CROSSTAB_JSON_ROWS_HEADERS = "rows";
 	public static final String CROSSTAB_JSON_COLUMNS_HEADERS = "columns";
 	public static final String CROSSTAB_JSON_DATA = "data";
-	
+	public static final String CROSSTAB_JSON_CONFIG = "config";
+
 
 	private Node columnsRoot;
 	private Node rowsRoot;
 	private String[][] dataMatrix;
+	private JSONObject config;
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -68,8 +70,10 @@ public class CrossTab {
 		IRecord record;
 		String rowPath;
 		String columnPath;
+		this.config = crosstabDefinition.getConfig();
 		
-		boolean measuresOnColumns = true;
+		
+		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		
 		int rowsCount = crosstabDefinition.getRows().size();
 		int columnsCount = crosstabDefinition.getColumns().size();
@@ -131,6 +135,7 @@ public class CrossTab {
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS, rowsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
+		crossTabDefinition.put(CROSSTAB_JSON_CONFIG,  config);
 		return crossTabDefinition;
 	}
 	
