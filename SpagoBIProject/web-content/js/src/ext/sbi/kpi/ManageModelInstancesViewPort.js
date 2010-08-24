@@ -44,9 +44,20 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstancesViewPort = function(config) { 
+	var paramsResList = {MESSAGE_DET: "MODELINST_RESOURCE_LIST"};
 	
-	var conf = config;
 
+	var conf = config;
+	this.resListService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
+		, baseParams: paramsResList
+	});	
+    
+	this.resourcesStore = new Ext.data.JsonStore({
+    	autoLoad: false    	  
+    	, root: 'rows'
+		, url: this.resListService	
+	});
 	//DRAW center element
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
 
@@ -64,7 +75,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	        , itemId: 'resourcesTab'
 	        , scope: this
 	});
-    this.initResourcesGridPanel();
+    this.dispalyResourcesGridPanel();
     this.initPanels();
     
     
@@ -180,6 +191,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		}else{
 			this.displayTree(rec);
 			this.displaySourceModelDetail(rec);
+			this.dispalyResourcesGridPanel(rec);
 			if(rec != this.lastRecSelected){
 				this.lastRecSelected = rec;
 			}
@@ -215,24 +227,22 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.srcModelType.setValue(rec.get('modelType'));
 		this.manageModelInstances.srcModelTypeDescr.setValue(rec.get('modelTypeDescr'));
 	}
-	, initResourcesGridPanel : function() {
+	, dispalyResourcesGridPanel : function(rec) {
 
-        this.resourcesStore = new Ext.data.SimpleStore({
-        	id: 'id',
-            fields : [ 'id', 'name', 'description', 'checked' ]
-        });
-        
-    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'id'} );
+
+		   
+		this.resourcesStore.load();	
+    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'resourceId'} );
 		
         this.cmRoles = new Ext.grid.ColumnModel([
-	         //{id:'id',header: "id", dataIndex: 'id'},
-	         {header: LN('sbi.roles.headerName'), width: 45, sortable: true, dataIndex: 'name'},
-	         {header: LN('sbi.roles.headerDescr'), width: 65, sortable: true, dataIndex: 'description'}
+	         {header: LN('sbi.generic.name'), width: 45, sortable: true, dataIndex: 'resourceName'},
+	         {header: LN('sbi.generic.code'), width: 65, sortable: true, dataIndex: 'resourceCode'}
+	         ,{header: LN('sbi.generic.type'), width: 65, sortable: true, dataIndex: 'resourceType'}
 	         ,this.smRoles 
 	    ]);
 
 		this.resourcesGrid = new Ext.grid.GridPanel({
-			  store: this.resourcesStore
+			ds: this.resourcesStore 
 			, id: 'resources-grid-checks'
    	     	, cm: this.cmRoles
    	     	, sm: this.smRoles
