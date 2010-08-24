@@ -422,8 +422,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
 
 
-	},	
-	createRootNodeByRec: function(rec) {
+	}
+	,createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';
 			if (rec.get('kpiInstId') !== undefined && rec.get('kpiInstId') != null

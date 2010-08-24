@@ -57,14 +57,16 @@ Sbi.kpi.ManageModelInstancesGrid = function(config, ref) {
 		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsDel
 	});
-	this.referencedCmp = ref;
+	this.refTree = ref;
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
-	
+
 
 	var c = Ext.apply({}, config || {}, {});
 
-	Sbi.kpi.ManageModelInstancesGrid.superclass.constructor.call(this, c);	 	
+	Sbi.kpi.ManageModelInstancesGrid.superclass.constructor.call(this, c);	
+	
+	
 }
 
 Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
@@ -87,6 +89,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		                     	          , 'label'
 		                     	          , 'description'
 		                     	          , 'kpiInstId'
+		                     	          , 'modelId'
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [
@@ -95,13 +98,15 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
-		
+
     }
 	
     //OVERRIDING save method
 	,save : function() {
 		alert('Save');
     }
+
+
 	, deleteSelectedItem: function(itemId, index) {
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm'),

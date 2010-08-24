@@ -71,12 +71,47 @@ Ext.extend(Sbi.kpi.ManageModelsTree, Sbi.widgets.TreeModelPanel, {
 
 	,initConfigObject: function(){
 
-		this.configurationObject.treeTitle = LN('sbi.models.listTitle');;
-	
-		this.configurationObject.panelTitle = LN('sbi.models.panelTitle');
-		this.configurationObject.listTitle = LN('sbi.models.listTitle');
-
+		this.configurationObject.treeTitle = LN('sbi.models.treeTitle');
+		
     }
+	,renderTree : function(tree) {
+		tree.getLoader().nodeParameter = 'modelId';
+		tree.getRootNode().expand(false, /*no anim*/false);
+	}
 
-
+	,setListeners : function() {
+		this.modelsTree.addListener('render', this.renderTree, this);
+	
+	}
+	,createRootNodeByRec: function(rec) {
+		var iconClass = '';
+		var cssClass = '';
+		if (rec.get('kpi') !== undefined && rec.get('kpi') != null
+				&& rec.get('kpi') != '') {
+			iconClass = 'has-kpi';
+		}
+		if (rec.get('error') !== undefined && rec.get('error') != false) {
+			cssClass = 'has-error';
+		}
+		var node = new Ext.tree.AsyncTreeNode({
+	        text		: this.rootNodeText,
+	        expanded	: true,
+	        leaf		: false,
+			modelId 	: this.rootNodeId,
+			id			: this.rootNodeId,
+			label		: rec.get('label'),
+			type		: rec.get('type'),
+			typeId		: rec.get('typeId'),
+			description	: rec.get('description'),
+			typeDescr	: rec.get('typeDescr'),
+			kpi			: rec.get('kpi'),
+			kpiId		: rec.get('kpiId'),
+			code		: rec.get('code'),
+			name		: rec.get('name'),
+			iconCls		: iconClass,
+			cls			: cssClass,
+	        draggable	: false
+	    });
+		return node;
+	}
 });
