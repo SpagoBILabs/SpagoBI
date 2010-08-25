@@ -177,10 +177,10 @@ Sbi.widgets.ListDetailForm = function(config) {
  	          frame: true,
  	          autoScroll: true,
  	          labelAlign: 'left',
- 	          //autoWidth: true,
+ 	          autoWidth: true,
  	         // title: this.panelTitle,
  	          //bodyStyle:'padding:7px',
- 	          width: 1000,
+ 	         // width: 1000,
  	          height: 550,
  	          layout: 'column',
  	          scope:this,
@@ -188,7 +188,6 @@ Sbi.widgets.ListDetailForm = function(config) {
  	          items: [
  	              {
  	              scope:this,
- 	             // columnWidth: 0.37,
  	              layout: 'fit',
  	              items: this.mainGrid
  	              }, this.tabs
@@ -288,16 +287,11 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	   this.tabs = new Ext.TabPanel({
            enableTabScroll : true
            , activeTab : 0
-           //, columnWidth: 0.63
            , autoScroll : true
            , deferredRender: false
-           , width: 500          
+           , width: 430          
            , height: 490
            , itemId: 'tabs' 
-        	   /* ,  split: true,
-		   ,  collapseMode:'mini'
-          , collapseMode:'mini'
-           , collapsible: true*/
            , tbar: this.tbSave
            , scope: this
 		   , items: this.tabItems
@@ -356,7 +350,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  selModel: this.rowselModel,
 	                  //autoExpandColumn: 'name',
 	                  height: 490,
-	                  width: 450,
+	                  width: 410,
 	                  scope: this,
 	                  title: this.listTitle,
 		              bbar: pagingBar,
