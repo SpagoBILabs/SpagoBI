@@ -161,29 +161,31 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 	            this
 			);
 	}
+	, launchAddModelInstWindow : function() {
+		
+		var conf = {};
+		conf.notDraggable = true;
+		conf.drawSelectColumn = true;
+		
+		var manageModels = new Sbi.kpi.ManageAddModelViewPort(conf);
+	
+		this.modelsWin = new Ext.Window({
+			title: LN('sbi.lookup.Select') ,   
+            layout      : 'fit',
+            width       : 1000,
+            height      : 400,
+            closeAction :'close',
+            plain       : true,
+            scope		: this,
+            items       : [manageModels]
+		});
+		
+		this.modelsWin.show();
+	}
 	, addNewItem : function(){
-		alert("to do: popup per selezione modello");
-/*		//SELECTS first domainCd = 'MODEL_ROOT' from combo detail
-		var idxRootType = this.referencedCmp.typesStore.find('domainCd', 'MODEL_ROOT');
-		
-		var recDomain = this.referencedCmp.typesStore.getAt(idxRootType);		
-		
-		///new tree root node
-		var newroot = this.referencedCmp.createNewRootNode();
-		newroot.attributes.type = recDomain.data.typeCd;
-		newroot.attributes.typeId = recDomain.data.typeId;
-		newroot.attributes.typeDescr = recDomain.data.typeDs;
+		//alert("to do: popup per selezione modello");
+		this.launchAddModelInstWindow();
 
-		this.referencedCmp.mainTree.setRootNode(newroot);
-		
-		this.referencedCmp.mainTree.getSelectionModel().select(newroot);
-		this.referencedCmp.mainTree.doLayout();
-			 
-		//new empty record in the grid
-		this.emptyRecord =  new Ext.data.Record({id: 0,
-			 name:'...'});
-		this.mainElementsStore.add(this.emptyRecord);
-		this.emptyRecord.markDirty() */
 
 	}
 
