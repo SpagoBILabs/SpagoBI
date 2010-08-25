@@ -343,7 +343,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  
  	  this.thrMinOrMaxDetail = new Ext.form.FieldSet({  	
              labelWidth: 90,
-             defaults: {width: 140, border:false},    
+             defaults: {width: 200, border:false},    
              defaultType: 'textfield',
              autoHeight: true,
              autoScroll  : true,
@@ -365,7 +365,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
 	             labelWidth: 90,
-	             defaults: {width: 140, border:false},    
+	             defaults: {width: 200, border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,

@@ -17,6 +17,8 @@ public interface IThresholdDAO {
 	 */
 	public Threshold loadThresholdById(Integer id) throws EMFUserError ;
 	
+	public Threshold loadThresholdByCode(String code) throws EMFUserError ;
+	
 	/**
 	 * Returns the list of Thresholds.
 	 * @param typeOrder DESC or ASC.

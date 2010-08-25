@@ -2,6 +2,7 @@ package it.eng.spagobi.kpi.threshold.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
@@ -21,6 +22,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -42,10 +45,6 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			toReturn = THRESHOLD_CODE;
 		return toReturn;
 	}
-
-	
-
-	
 	
 	
 	public Threshold loadThresholdById(Integer id) throws EMFUserError {
@@ -60,11 +59,6 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 					SbiThreshold.class, id);
 			toReturn = new Threshold();
 			toReturn = toThreshold(hibThreshold);
-			/*toReturn.setName(hibThreshold.getName());
-			toReturn.setDescription(hibThreshold.getDescription());
-			toReturn.setCode(hibThreshold.getCode());
-			toReturn.setId(hibThreshold.getThresholdId());
-			toReturn.setThresholdTypeId(hibThreshold.getThresholdType().getValueId());*/
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the Threshold with id "
@@ -85,7 +79,40 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 		return toReturn;
 	}
 
-	
+	public Threshold loadThresholdByCode(String thrCode) throws EMFUserError {
+		logger.debug("IN");
+		Threshold toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("code", thrCode);
+			Criteria criteria = aSession.createCriteria(SbiThreshold.class);
+			criteria.add(labelCriterrion);			
+			SbiThreshold hibThreshold = (SbiThreshold)criteria.uniqueResult();
+			if (hibThreshold == null) return null;
+			toReturn = new Threshold();
+			toReturn = toThreshold(hibThreshold);
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the Threshold with code "
+					+ ((thrCode == null) ? "" : thrCode), he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
+	}
 
 	
 	public List loadThresholdList(String fieldOrder, String typeOrder)

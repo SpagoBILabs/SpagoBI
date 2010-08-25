@@ -413,7 +413,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
+		             defaults: {width: 200, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
@@ -437,7 +437,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
+		             defaults: {width: 200, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
@@ -477,23 +477,29 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.thrWin.show();
 	}
 	
-	,selectThrItem: function(){
-		alert('entrato');
-		this.thrWin.close();		
-	}
     //OVERRIDING save method
 	,save : function() {
-		alert('Dentro a save');
-		/*
 		var values = this.getForm().getFieldValues();
 		var idRec = values['id'];
 		var newRec;
 	
-		if(idRec ==0 || idRec == null || idRec === ''){
-			newRec =new Ext.data.Record({
+		if(idRec == 0 || idRec == null || idRec === ''){
+			newRec = new Ext.data.Record({
 					name: values['name'],
 					code: values['code'],
-			        description: values['description']
+			        description: values['description'],		
+			        weight: values['weight'],	
+			        dataset: values['dataset'],	
+			        threshold: values['threshold'],
+			        documents: values['documents'],
+			        interpretation: values['interpretation'],			        
+			        algdesc: values['algdesc'],	
+			        inputAttr: values['inputAttr'],	
+			        modelReference: values['modelReference'],
+			        targetAudience: values['targetAudience'],		        
+			        kpiTypeCd: values['kpiTypeCd'],	
+			        metricScaleCd: values['metricScaleCd'],
+			        measureTypeCd: values['measureTypeCd']
 			});	  
 			
 		}else{
@@ -507,19 +513,41 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	   	    }	
 			record.set('name',values['name']);
 			record.set('code',values['code']);
-			record.set('description',values['description']);			
-			
-			newRec = this.fillRecord(record);			
+			record.set('description',values['description']);
+			record.set('weight',values['weight']);
+			record.set('dataset',values['dataset']);
+			record.set('threshold',values['threshold']);
+			record.set('documents',values['documents']);
+			record.set('interpretation',values['interpretation']);
+			record.set('algdesc',values['algdesc']);
+			record.set('inputAttr',values['inputAttr']);
+			record.set('modelReference',values['modelReference']);
+			record.set('targetAudience',values['targetAudience']);	
+			record.set('kpiTypeCd',values['kpiTypeCd']);
+			record.set('metricScaleCd',values['metricScaleCd']);
+			record.set('measureTypeCd',values['measureTypeCd']);	
 		}
 
         var params = {
-        	name : newRec.data.name,
-        	code : newRec.data.code,
-        	description : newRec.data.description
+        	name :  values['name'],
+        	code : values['code'],
+        	description : values['description'],
+        	weight : values['weight'],
+        	dataset : values['dataset'],
+        	threshold : values['threshold'],
+        	documents : values['documents'],
+        	interpretation : values['interpretation'],
+        	algdesc : values['algdesc'],
+        	inputAttr : values['inputAttr'],
+        	modelReference : values['modelReference'],
+        	targetAudience : values['targetAudience'],
+        	kpiTypeCd : values['kpiTypeCd'],
+        	metricScaleCd : values['metricScaleCd'],
+        	measureTypeCd : values['measureTypeCd']	
         };
         
         if(idRec){
-        	params.id = newRec.data.id;
+        	params.id = idRec;
         }
         
         Ext.Ajax.request({
@@ -539,8 +567,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			                        buttons: Ext.MessageBox.OK
 			                   });
 			      		}else{
-			      			var itemId = content.id;
-			      			if(itemId != null && itemId !==''){
+			      			var itemId = content.id;			      			
+			      			
+			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 			      				newRec.set('id', itemId);
 			      				this.mainElementsStore.add(newRec);  
 			      			}
@@ -596,7 +625,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	      		}
             }
             ,scope: this
-        }); */
+        });
     }
 
 });

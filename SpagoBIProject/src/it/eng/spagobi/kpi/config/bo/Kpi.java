@@ -3,13 +3,12 @@ package it.eng.spagobi.kpi.config.bo;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Kpi implements Serializable{
 	
 	Integer kpiId = null;
 	Integer kpiDsId =null;
+
 	String dsLabel = null;
 	String kpiName = null;
 	String documentLabel = null; // document related to this KPI
