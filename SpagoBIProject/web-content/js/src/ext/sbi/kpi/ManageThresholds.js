@@ -94,7 +94,9 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	, detailThrColor: null
 	
 	,selectThr:function(itemId,index){
-		this.fireEvent('selectEvent',itemId,index);
+		var record = this.mainElementsStore.getAt(index);
+		var code = record.get('code');
+		this.fireEvent('selectEvent',itemId,index,code);
 	}
 
 	,activateThrValuesForm:function(combo,record,index){

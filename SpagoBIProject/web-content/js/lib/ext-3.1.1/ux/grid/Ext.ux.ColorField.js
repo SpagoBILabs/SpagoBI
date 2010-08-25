@@ -56,6 +56,7 @@ Ext.destroy(this.menu);
         }
         this.onFocus();
         this.menu.picker.setValue(this.getValue() || '#FFFFFF');
+        //alert('ontrigger click');
         this.menu.show(this.el, "tl-bl?");
         this.menuEvents('on');
     },
@@ -93,6 +94,10 @@ Ext.destroy(this.menu);
             var value = this.menu.picker.rawValue;
         var avg = (value[0] + value[1] + value[2]) / 3;
         this.el.setStyle('color', (avg > 128) ? '#000' : '#FFF');
+    },
+    
+    setColorBackG: function(d){
+    	this.el.setStyle('background', d);
     },
     
     onMenuHide: function(){
@@ -182,8 +187,10 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
     width: 200,
     // private
     onRender : function(container, position){
-        if(!this.value)
+		//alert('onRender:'+this.value);
+        if(!this.value){
             this.value = this.defaultValue;
+        }
         var el = document.createElement("div");
         el.className = this.itemCls;
         container.dom.insertBefore(el, position);
@@ -211,6 +218,7 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
         Ext.get(this.wheel).on('click', this.select, this);
         
         this.el = Ext.get(el);
+        
     },
     
     // private

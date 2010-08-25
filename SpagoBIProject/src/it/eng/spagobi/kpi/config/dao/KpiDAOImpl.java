@@ -124,8 +124,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		SbiDataSetConfig dsC = kpi.getSbiDataSet();
 		Integer dsId = null;
+		String dsLabel = null;
 		if (dsC != null) {
 			dsId = dsC.getDsId();
+			dsLabel = dsC.getLabel();
 		}
 
 		Double standardWeight = kpi.getWeight();
@@ -175,7 +177,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		toReturn.setKpiId(kpiId);
 		logger.debug("Kpi Id setted");
-
+		toReturn.setDsLabel(dsLabel);
 		toReturn.setKpiDsId(dsId);
 		logger.debug("Kpi dataset setted");
 
@@ -743,12 +745,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					+ " in between beginDate and EndDate");
 			SbiThreshold t = kpiInst.getSbiThreshold();
 			if(t!=null){
-				// TODO
+				
 				Set ts = t.getSbiThresholdValues();
 				Iterator i = ts.iterator();
 				while (i.hasNext()) {
 					SbiThresholdValue tls = (SbiThresholdValue) i.next();
-					// TODO DA METTERE A POSTO
+			
 					IThresholdValueDAO thDao=(IThresholdValueDAO)DAOFactory.getThresholdValueDAO();
 					ThresholdValue tr = thDao.toThresholdValue(tls);
 					thresholdValues.add(tr);
@@ -791,7 +793,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						Iterator it = ts.iterator();
 						while (it.hasNext()) {
 							SbiThresholdValue tls = (SbiThresholdValue) it.next();
-							// TODO METTERE A POSTO
+						
 							IThresholdValueDAO thDao=(IThresholdValueDAO)DAOFactory.getThresholdValueDAO();
 							ThresholdValue tr = thDao.toThresholdValue(tls);
 							thresholdValues.add(tr);
@@ -857,8 +859,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		String kpiName = kpi.getName();
 		SbiDataSetConfig dsC = kpi.getSbiDataSet();
 		Integer dsId = null;
+		String dsLabel = null;
 		if (dsC != null) {
 			dsId = dsC.getDsId();
+			dsLabel = dsC.getLabel();
 		}
 
 		IThresholdDAO thresholdDAO=DAOFactory.getThresholdDAO();
@@ -897,6 +901,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		toReturn.setIsRoot(isRoot);
 		logger.debug("Kpi isRoot setted");
 		toReturn.setKpiDsId(dsId);
+		toReturn.setDsLabel(dsLabel);
 		logger.debug("Kpi dataset setted");
 		toReturn.setKpiId(kpiId);
 		logger.debug("Kpi Id setted");
@@ -1322,17 +1327,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
 				SbiKpi hibKpi = (SbiKpi) iterator.next();
-				Kpi kpi = new Kpi();
-				kpi.setCode(hibKpi.getCode());
-				kpi.setDescription(hibKpi.getDescription());
-				kpi.setKpiName(hibKpi.getName());
-				kpi.setKpiId(hibKpi.getKpiId());
-				if(hibKpi.getSbiThreshold() != null){
-					Threshold threshold = new Threshold();
-					threshold.setId(hibKpi.getSbiThreshold().getThresholdId());
-					threshold.setName(hibKpi.getSbiThreshold().getName());
-					kpi.setThreshold(threshold);
-				}
+				Kpi kpi = toKpi(hibKpi);
 				toReturn.add(kpi);
 			}
 
