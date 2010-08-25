@@ -187,6 +187,10 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	        }), '-'
 	    	]
 	    });
+	 
+		 var sm = new Ext.grid.RowSelectionModel({
+	         singleSelect: true
+	     });
 
 	    // create the editor grid
 	    var grid = {
@@ -194,6 +198,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	        store: this.store,
 	        layout: 'fit',
 	        cm: cm,
+	        sm: sm,
 	        width: 400,
 	        height: 250,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
