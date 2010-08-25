@@ -40,6 +40,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManageModels.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManageModelsGrid.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManageModelsViewPort.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManagePeriodicities.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManageModelInstances.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/kpi/ManageModelInstancesGrid.js")%>'></script>
