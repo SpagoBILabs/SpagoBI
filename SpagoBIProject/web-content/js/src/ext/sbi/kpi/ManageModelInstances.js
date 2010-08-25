@@ -265,6 +265,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             width       : 400,
             height      : 300,
             closeAction :'close',
+            modal		: true,
             plain       : true,
             scope		: this,
             items       : [managePeriodicities]
