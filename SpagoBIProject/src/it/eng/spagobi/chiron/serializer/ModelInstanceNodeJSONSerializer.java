@@ -3,7 +3,10 @@ package it.eng.spagobi.chiron.serializer;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
+import it.eng.spagobi.kpi.model.bo.ModelResources;
+import it.eng.spagobi.kpi.model.bo.Resource;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -26,12 +29,12 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String MODEL_TYPE = "modelType";
 	private static final String MODEL_TYPEDESCR = "modelTypeDescr";
 	private static final String MODEL_TEXT = "modelText";
-	
+
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
 		if( !(o instanceof ModelInstance) ) {
-			throw new SerializationException("ResourceJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException("ModelInstanceNodeJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		
 		try {
@@ -63,8 +66,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			result.put(STARTDATE, res.getStartDate());
 			result.put(ENDDATE, res.getEndDate());
 			result.put(MODELUUID, res.getModelUUID() );
-		
-	
+
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

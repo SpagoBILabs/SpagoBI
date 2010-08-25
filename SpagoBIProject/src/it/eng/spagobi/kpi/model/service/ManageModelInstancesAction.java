@@ -28,6 +28,9 @@ import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
+import it.eng.spagobi.kpi.model.bo.ModelResources;
+import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
+import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -51,6 +54,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.org.apache.regexp.internal.RESyntaxException;
+
 public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	/**
 	 * 
@@ -61,6 +66,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	private final String MODELINSTS_LIST = "MODELINSTS_LIST";
+	private final String MODELINST_RESOURCE_LIST = "MODELINST_RESOURCE_LIST";
 	private final String MODELINSTS_NODES_LIST = "MODELINSTS_NODES_LIST";
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
 	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
@@ -69,7 +75,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
 	
-
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
 	
 	private final String NODES_TO_SAVE = "nodes";
 
@@ -97,7 +106,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				
 				logger.debug("Loaded models list");
 				JSONArray modelsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelRootsList,locale);
-				JSONObject modelsResponseJSON = createJSONResponseModelsList(modelsListJSON, new Integer(6));
+				JSONObject modelsResponseJSON = createJSONResponseModelsList(modelsListJSON,modelRootsList.size());
 
 				writeBackToClient(new JSONSuccess(modelsResponseJSON));
 
@@ -159,6 +168,55 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			}
 			
 			
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_LIST)) {
+			
+			Integer modelInstId = getAttributeAsInteger("modelInstId");
+			try {
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+				List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
+				//extract resources
+				List<ModelResources> modelResources = DAOFactory.getModelResourcesDAO().loadModelResourceByModelId(modelInstId);
+				
+				HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
+				
+				for(int i =0;i<modelResources.size(); i++){
+					ModelResources mr = modelResources.get(i);
+					modResourcesIds.put(mr.getResourceId(), mr);
+				}
+
+				//extract all resources
+				Vector resourcesIds = new Vector<Integer>();
+				List<Resource> allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
+				for(int i =0;i<allResources.size(); i++){
+					Resource res = allResources.get(i);
+					if(!modResourcesIds.keySet().contains(res.getId())){
+						ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, new ModelResources());
+						modelResourcesExtenList.add(extendedRes);
+					}else{
+						ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, modResourcesIds.get(res.getId()));
+						modelResourcesExtenList.add(extendedRes);
+					}
+				}
+				logger.debug("Loaded model resources");
+				JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
+				JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
+
+				writeBackToClient(new JSONSuccess(modelsResourcesResponseJSON));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model tree", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model tree", e);
+			}
+			
 		}else if(serviceType == null){
 			try {
 				List nodeTypesNodes = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_NODE);
@@ -179,7 +237,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	}
 
 	/**
-	 * Creates a json array with children users informations
+	 * Creates a json array with children models informations
 	 * 
 	 * @param rows
 	 * @return
@@ -190,6 +248,22 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results = new JSONObject();
 		results.put("total", totalModelsNumber);
 		results.put("title", "ModelsList");
+		results.put("rows", rows);
+		return results;
+	}
+	
+	/**
+	 * Creates a json array with children resources
+	 * 
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	private JSONObject createJSONResponsemodelsResourcesList(JSONArray rows, Integer totalModelsNumber)throws JSONException {
+		JSONObject results;
+		results = new JSONObject();
+		results.put("total", totalModelsNumber);
+		results.put("title", "ResourcesList");
 		results.put("rows", rows);
 		return results;
 	}

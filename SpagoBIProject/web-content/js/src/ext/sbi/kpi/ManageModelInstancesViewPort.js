@@ -57,6 +57,8 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
     	autoLoad: false    	  
     	, root: 'rows'
 		, url: this.resListService	
+		, fields: ['resourceId', 'resourceName', 'resourceCode', 'resourceType']
+
 	});
 	//DRAW center element
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
@@ -228,24 +230,41 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.srcModelTypeDescr.setValue(rec.get('modelTypeDescr'));
 	}
 	, dispalyResourcesGridPanel : function(rec) {
+		if(rec !== undefined && rec != null){
+			var params = {
+	        	modelInstId : rec.data.modelInstId
+	        }
+	        
+	        Ext.Ajax.request({
+	            url: this.resListService,
+	            params: params,
+	            method: 'GET',
+	            success: function(response, options) {
+					if (response !== undefined) {			
+			      		if(response.responseText !== undefined) {
 
-
-		   
-		this.resourcesStore.load();	
-    	this.smRoles = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'resourceId'} );
+			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			this.resourcesStore.load();
+			      		}
+					}
+	            }
+	            ,scope: this
+	        });	
+		}
+    	this.smResources = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'resourceId'} );
 		
-        this.cmRoles = new Ext.grid.ColumnModel([
+        this.cmResources = new Ext.grid.ColumnModel([
 	         {header: LN('sbi.generic.name'), width: 45, sortable: true, dataIndex: 'resourceName'},
 	         {header: LN('sbi.generic.code'), width: 65, sortable: true, dataIndex: 'resourceCode'}
 	         ,{header: LN('sbi.generic.type'), width: 65, sortable: true, dataIndex: 'resourceType'}
-	         ,this.smRoles 
+	         ,this.smResources
 	    ]);
 
 		this.resourcesGrid = new Ext.grid.GridPanel({
-			ds: this.resourcesStore 
+			store: this.resourcesStore 
 			, id: 'resources-grid-checks'
-   	     	, cm: this.cmRoles
-   	     	, sm: this.smRoles
+   	     	, cm: this.cmResources
+   	     	, sm: this.smResources
    	     	, frame: false
    	     	, border:false  
    	     	, collapsible:false
