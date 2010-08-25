@@ -10,6 +10,7 @@ public class Kpi implements Serializable{
 	
 	Integer kpiId = null;
 	Integer kpiDsId =null;
+	String dsLabel = null;
 	String kpiName = null;
 	String documentLabel = null; // document related to this KPI
 	Boolean isRoot = null;
@@ -33,6 +34,14 @@ public class Kpi implements Serializable{
 	String metricScaleCd = null;
 	String measureTypeCd = null;
 
+
+	public String getDsLabel() {
+		return dsLabel;
+	}
+
+	public void setDsLabel(String dsLabel) {
+		this.dsLabel = dsLabel;
+	}
 
 	public String getKpiTypeCd() {
 		return kpiTypeCd;
