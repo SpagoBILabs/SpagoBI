@@ -162,32 +162,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		             },
 		             items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr]
 		    	}]
-		    },{
-		        title: 'Source node'
-		        , itemId: 'src_model'
-		        , width: 430
-		        , items: [{
-			   		 id: 'src-model-det',   	
-		 		   	 itemId: 'src-detail',   	              
-		 		   	 columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
-		             defaultType: 'textfield',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-		             border: false,
-		             style: {
-		                 //"background-color": "#f1f1f1",
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [this.srcModelName,
-					         this.srcModelCode,
-					         this.srcModelDescr,
-					         this.srcModelType,
-					         this.srcModelTypeDescr ]
-		    	}]
 		    }, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
@@ -215,7 +189,33 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 						         this.kpiPeriodicity,
 						         this.kpiPeriodicityButton]
 			    	}]
-			    } ];
+			    },{
+			        title: 'Source node'
+				        , itemId: 'src_model'
+				        , width: 430
+				        , items: [{
+					   		 id: 'src-model-det',   	
+				 		   	 itemId: 'src-detail',   	              
+				 		   	 columnWidth: 0.4,
+				             xtype: 'fieldset',
+				             labelWidth: 90,
+				             defaults: {width: 140, border:false},    
+				             defaultType: 'textfield',
+				             autoHeight: true,
+				             autoScroll  : true,
+				             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+				             border: false,
+				             style: {
+				                 //"background-color": "#f1f1f1",
+				                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+				             },
+				             items: [this.srcModelName,
+							         this.srcModelCode,
+							         this.srcModelDescr,
+							         this.srcModelType,
+							         this.srcModelTypeDescr ]
+				    	}]
+				    } ];
 	 	  
 	}
 	, initSourcePanel: function() {
