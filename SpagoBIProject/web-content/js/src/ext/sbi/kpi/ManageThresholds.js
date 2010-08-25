@@ -77,9 +77,15 @@ Sbi.kpi.ManageThresholds = function(config) {
 	Sbi.kpi.ManageThresholds.superclass.constructor.call(this, c);	 	
 	this.detailThrColor.focus(false,60);
 	
-	this.rowselModel.addListener('rowselect',this.fillThrValues,this);
+	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
+		this.activateThrValuesForm(null, rec, row); 
+		this.getForm().loadRecord(rec);  
+     }, this);
+	
 	this.addListener('selected',this.selectThr,this);
 	this.addEvents('selectEvent');
+	
+	this.tabs.setSize(500,490);
 };
 
 Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
@@ -100,7 +106,6 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	}
 
 	,activateThrValuesForm:function(combo,record,index){
-		//alert('activateThrValuesForm');
 		var thrTypeSelected = record.get('typeCd');
 		if(thrTypeSelected != null && thrTypeSelected=='MINIMUM'){
 			this.tempThrV.setVisible(false);
@@ -129,11 +134,6 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			this.tempThrV.loadItems(myData);
 		}
 	}
-
-	, fillThrValues : function(sm, row, rec) {	 
-          	//alert('fillThrValues');
-         	this.activateThrValuesForm(null, rec, row);  	
-    }
 
 	,initConfigObject:function(){
 	    this.configurationObject.fields = ['id'
