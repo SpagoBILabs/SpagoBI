@@ -10,6 +10,9 @@
   <ACTION name="MANAGE_MODELS_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
+ <ACTION name="MANAGE_PERIODICITIES_ACTION" class="it.eng.spagobi.kpi.model.service.ManagePeriodicitiesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
   <ACTION name="MANAGE_MODEL_INSTANCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelInstancesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 

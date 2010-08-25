@@ -87,7 +87,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
           	          , 'severityCd'
           	          ]
     	, root: 'rows'
-		, url: this.services['pp']		
+		, url: this.services['managePrListService']		
 	});
 	
 	this.severityStore = config.severityStore;
@@ -211,6 +211,8 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 
     // constructor
     Sbi.kpi.ManagePeriodicities.superclass.constructor.call(this, c);
+    
+    this.store.load();
     
     this.on('beforeedit', function(e) {
     	var t = Ext.apply({}, e);
