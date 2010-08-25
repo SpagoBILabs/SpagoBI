@@ -66,7 +66,8 @@ Sbi.kpi.ManageModelInstancesGrid = function(config, ref) {
 
 	Sbi.kpi.ManageModelInstancesGrid.superclass.constructor.call(this, c);	
 	
-	
+	this.addEvents('selected');
+
 }
 
 Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
@@ -78,7 +79,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 	, referencedCmp : null
 	, emptyRecord: null
 	
-
 	,initConfigObject:function(){
 		
 		this.configurationObject.idKey = 'modelInstId';
@@ -180,10 +180,22 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
             scope		: this,
             items       : [manageModels]
 		});
+		
+		manageModels.modelsGrid.on('selected', function(rec){
+							this.modelsWin.close();
+							this.addModelInstanceRecord(rec);
+							}, this);
 
 		this.modelsWin.show();
 		this.modelsWin.doLayout();
 
+	}
+	, addModelInstanceRecord: function(rec){
+		this.mainElementsStore.add(rec);
+		this.mainElementsStore.commitChanges();
+		this.rowselModel.selectRecords([rec]);
+		//fills node detail and tabs by rowclick
+		this.fireEvent('rowclick', this);
 	}
 	, addNewItem : function(){
 

@@ -116,7 +116,9 @@ Sbi.widgets.ListGridPanel = function(config) {
    	
 	var c = Ext.apply({}, config, this.mainGrid);
    	
-   	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
+   	Sbi.widgets.ListGridPanel.superclass.constructor.call(this,c);	
+  //to be addedd at the end!
+   	this.mainGrid.addEvents('selected');	
 };
 
 Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
@@ -142,8 +144,8 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 		       ,clickHandler: function(e, t) {
 		          var index = this.grid.getView().findRowIndex(t);	          
 		          var selectedRecord = this.grid.store.getAt(index);
-		          var itemId = selectedRecord.get('id');
-		          this.grid.fireEvent('select', itemId, index);
+		          var itemId = selectedRecord.get('modelId');
+		          this.grid.fireEvent('selected', selectedRecord);
 		       }
 		       ,width: 25
 		       ,renderer : function(v, p, record){
@@ -211,8 +213,8 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
            singleSelect: true
        });
- 	   
- 	   this.mainGrid = new Ext.grid.GridPanel({
+  	 
+ 	  this.mainGrid = new Ext.grid.GridPanel({
 	                  ds: this.mainElementsStore,   	                  
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,

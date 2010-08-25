@@ -98,6 +98,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
+		
 		this.manageModelsTree.addListener('render', this.configureDD, this);
 
 		this.modelInstancesTreeTab = new Ext.Panel({
