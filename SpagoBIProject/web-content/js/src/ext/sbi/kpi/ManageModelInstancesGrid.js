@@ -162,28 +162,31 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 			);
 	}
 	, launchAddModelInstWindow : function() {
-		
+
 		var conf = {};
 		conf.notDraggable = true;
-		conf.drawSelectColumn = true;
+		conf.readonly = true;
 		
-		var manageModels = new Sbi.kpi.ManageAddModelViewPort(conf);
-	
+		var manageModels = new Sbi.kpi.ManageAddModelPanel(conf);
+
 		this.modelsWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 1000,
-            height      : 400,
+            width       : 800,
+            y:			20,
             closeAction :'close',
+            modal 		: true,
             plain       : true,
             scope		: this,
             items       : [manageModels]
 		});
-		
+
 		this.modelsWin.show();
+		this.modelsWin.doLayout();
+
 	}
 	, addNewItem : function(){
-		//alert("to do: popup per selezione modello");
+
 		this.launchAddModelInstWindow();
 
 

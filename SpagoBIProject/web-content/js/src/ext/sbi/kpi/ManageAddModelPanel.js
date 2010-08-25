@@ -43,7 +43,7 @@
  */
 Ext.ns("Sbi.kpi");
 
-Sbi.kpi.ManageAddModelViewPort = function(config) { 
+Sbi.kpi.ManageAddModelPanel = function(config) { 
 	
 	var conf = config;
 
@@ -51,17 +51,17 @@ Sbi.kpi.ManageAddModelViewPort = function(config) {
     this.modelsGrid = new Sbi.kpi.ManageModelsGrid(conf, this);
 	//DRAW center element
 	this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf, this.modelsGrid);
+
 	
-	var viewport = {
-		layout: 'border'
-		, id: 'model-viewport'
-		, height:560
+	var windowPanel = {
+		layout: 'column'
+		, height      : 400
 		, autoScroll: true
+		, scope: this
 		, items: [
 	         {
-	           region: 'west',
-	           width: 275,
-	           height:560,
+	           columnWidth: 0.4,
+	           height:400,
 	           collapseMode:'mini',
 	           autoScroll: true,
 	           split: true,
@@ -69,9 +69,8 @@ Sbi.kpi.ManageAddModelViewPort = function(config) {
 	           items:[this.modelsGrid]
 	          },
 		    {
-		       region: 'center',
-		       width: 300,
-		       height:560,
+	           columnWidth: 0.6,
+		       height:400,
 		       split: true,
 		       collapseMode:'mini',
 		       autoScroll: true,
@@ -83,18 +82,17 @@ Sbi.kpi.ManageAddModelViewPort = function(config) {
 	};
 	
 	
-	var c = Ext.apply({}, config || {}, viewport);
+	var c = Ext.apply({}, config || {}, windowPanel);
 	
 	this.initPanels();
 
-	Sbi.kpi.ManageaddModelViewPort.superclass.constructor.call(this, c);	 		
+	Sbi.kpi.ManageAddModelPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.kpi.ManageaddModelViewPort, Ext.Viewport, {
+Ext.extend(Sbi.kpi.ManageAddModelPanel, Ext.Panel, {
 	modelsGrid: null,
-	manageModels: null,
-	lastRecSelected: null
+	manageModelsTree: null
 	
 	,initPanels : function() {
 
@@ -105,10 +103,10 @@ Ext.extend(Sbi.kpi.ManageaddModelViewPort, Ext.Viewport, {
 		this.manageModelsTree.rootNodeText = rec.get('code')+ " - "+rec.get('name');
 		this.manageModelsTree.rootNodeId = rec.get('modelId');
 		var newroot = this.manageModelsTree.createRootNodeByRec(rec);
-		this.manageModelsTree.mainTree.setRootNode(newroot);
+		this.manageModelsTree.modelsTree.setRootNode(newroot);
 		
-		this.manageModelsTree.mainTree.getSelectionModel().select(newroot);
-		this.manageModelsTree.mainTree.doLayout();
+		this.manageModelsTree.modelsTree.getSelectionModel().select(newroot);
+		this.manageModelsTree.modelsTree.doLayout();
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
