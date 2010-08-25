@@ -104,7 +104,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 			editor:new Ext.form.Checkbox({})
 		},{
 			header: 'Severity', 
-			width: 70, 
+			width: 60, 
 			id:'severityCd',
 			sortable: true, 
 			dataIndex: 'severityCd',  		
@@ -192,9 +192,10 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	    var grid = {
 	    	xtype: 'grid',
 	        store: this.store,
+	        layout: 'fit',
 	        cm: cm,
-	        width: 600,
-	        height: 300,
+	        width: 400,
+	        height: 250,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
 	        clicksToEdit: 2,

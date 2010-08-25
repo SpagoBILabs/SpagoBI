@@ -383,7 +383,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		        title: 'Values'
 			        , id : 'thr-values'
 			        , layout: 'fit'
-			        , autoScroll: true
+			        , autoScroll: false
 			        , items: [this.tempThrV,this.thrMinOrMaxDetail]
 			        , itemId: 'thrValues'
 			        , scope: this
