@@ -260,7 +260,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		var managePeriodicities = new Sbi.kpi.ManagePeriodicities(conf);
 	
 		this.thrWin = new Ext.Window({
-			title: LN('sbi.lookup.Select') ,   
+			title: 'Lista delle Periodicità' ,   
             layout      : 'fit',
             width       : 400,
             height      : 300,
