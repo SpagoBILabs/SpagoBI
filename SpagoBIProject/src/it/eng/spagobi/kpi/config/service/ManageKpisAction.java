@@ -38,6 +38,8 @@ import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -101,8 +103,12 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		IKpiDAO kpiDao;
+		IDataSetDAO dsDao;
+		IThresholdDAO thrDao;
 		try {
 			kpiDao = DAOFactory.getKpiDAO();
+			dsDao = DAOFactory.getDataSetDAO();
+			thrDao = DAOFactory.getThresholdDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -139,14 +145,15 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 						"Exception occurred while retrieving thresholds", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_INSERT)) {
+			
 			String id = getAttributeAsString(ID);
 			String code = getAttributeAsString(CODE);
 			String name = getAttributeAsString(NAME);
 			String description = getAttributeAsString(DESCRIPTION);
 			String weight = getAttributeAsString(WEIGHT);
-			String dataset = getAttributeAsString(DATASET);
-			String threshold = getAttributeAsString(THR);
-			String documents = getAttributeAsString(DOCS);
+			String dsLabel = getAttributeAsString(DATASET);
+			String thresholdCode = getAttributeAsString(THR);
+			String documentLabels = getAttributeAsString(DOCS);
 			String interpretation = getAttributeAsString(INTERPRETATION);
 			String algdesc = getAttributeAsString(ALGDESC);
 			String inputAttr = getAttributeAsString(INPUT_ATTR);
@@ -177,20 +184,32 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			if (name != null && code != null) {
 				Kpi k = new Kpi();
 				
+				try {
+					
 				k.setKpiName(name);
 				k.setCode(code);
 				
+				if(description != null){
+					k.setDescription(description);
+				}
 				if(weight != null){
 					k.setStandardWeight(Double.valueOf(weight));
 				}	
-				if(dataset != null){
-					k.setKpiDsId(Integer.valueOf(dataset));
+				if(dsLabel != null){
+					k.setDsLabel(dsLabel);
+					IDataSet ds = dsDao.loadDataSetByLabel(dsLabel);
+					
+					if(ds!=null){
+						int dsId = ds.getId();
+						k.setKpiDsId(new Integer(dsId));
+					}				
 				}
-				if(threshold != null){
-					//k.setThreshold(threshold);
+				if(thresholdCode != null){
+					Threshold t = thrDao.loadThresholdByCode(thresholdCode);
+					k.setThreshold(t);
 				}
-				if(documents != null){
-					k.setDocumentLabel(documents);
+				if(documentLabels != null){
+					k.setDocumentLabel(documentLabels);
 				}
 				if(interpretation != null){
 					k.setInterpretation(interpretation);
@@ -209,15 +228,17 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				}
 				if(kpiTypeCd != null){
 					k.setKpiTypeCd(kpiTypeCd);
+					k.setKpiTypeId(kpiTypeId);
 				}
 				if(metricScaleCd != null){
 					k.setMetricScaleCd(metricScaleCd);
+					k.setMetricScaleId(metricScaleId);
 				}
 				if(measureTypeCd != null){
 					k.setMeasureTypeCd(measureTypeCd);
+					k.setMeasureTypeId(measureTypeId);
 				}			
-				
-				try {
+
 					if(id != null && !id.equals("") && !id.equals("0")){							
 						k.setKpiId(Integer.valueOf(id));
 						kpiDao.modifyKpi(k);
@@ -228,19 +249,24 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("id", id);
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
-						Integer resourceID = kpiDao.insertKpi(k);
+						Integer kpiID = kpiDao.insertKpi(k);
 						logger.debug("New threshold inserted");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-						attributesResponseSuccessJSON.put("id", resourceID);
+						attributesResponseSuccessJSON.put("id", kpiID);
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}
 	
-				} catch (Throwable e) {
-					logger.error(e.getMessage(), e);
-					throw new SpagoBIServiceException(SERVICE_NAME,
-							"Exception occurred while saving new threshold", e);
+				} catch(EMFUserError e){
+					logger.error("EMFUserError");
+					e.printStackTrace();
+				} catch (JSONException e) {
+					logger.error("JSONException");
+					e.printStackTrace();
+				} catch (IOException e) {
+					logger.error("IOException");
+					e.printStackTrace();
 				}
 								
 			}else{
