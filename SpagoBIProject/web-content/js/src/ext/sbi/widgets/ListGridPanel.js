@@ -99,6 +99,7 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.idKeyForGrid = conf.idKey;
 	this.ddGroup = conf.dragndropGroup;
 	this.reference = conf.referencedCmp;
+	this.drawSelectColumn = conf.drawSelectColumn;  
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -128,9 +129,25 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, idKeyForGrid : 'id'
 	, ddGroup : null
 	, reference : null
+	, drawSelectColumn: null
 	
 	,initWidget: function(){
-       
+	
+	    this.selectColumn = new Ext.grid.ButtonColumn({
+		       header:  ' '
+		       ,iconCls: 'icon-execute'
+		       ,scope: this
+		       ,clickHandler: function(e, t) {
+		          var index = this.grid.getView().findRowIndex(t);	          
+		          var selectedRecord = this.grid.store.getAt(index);
+		          var itemId = selectedRecord.get('id');
+		          this.grid.fireEvent('select', itemId, index);
+		       }
+		       ,width: 25
+		       ,renderer : function(v, p, record){
+		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+		       }
+	     }); 
         
         this.deleteColumn = new Ext.grid.ButtonColumn({
  	       header:  ' '
@@ -151,7 +168,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
          });
        
         this.gridColItems.push(this.deleteColumn);  
-
+        
+        if(this.drawSelectColumn){
+        	this.gridColItems.push(this.selectColumn); 
+        }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
  	    this.tb = new Ext.Toolbar({
@@ -178,8 +198,12 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	    }); 	   
  	  
  	   var pluginsToAdd;
-       pluginsToAdd = this.deleteColumn; 
-       
+ 	   if(this.drawSelectColumn){
+  		  //pluginsToAdd = [this.deleteColumn, this.selectColumn]; 
+ 		   pluginsToAdd = [this.selectColumn];
+        }else{
+     	  pluginsToAdd = this.deleteColumn; 
+        }
  	   
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
            singleSelect: true

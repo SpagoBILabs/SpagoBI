@@ -101,8 +101,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		   
 	 	   this.detailFieldLabel = new Ext.form.TextField({
 	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
 	             fieldLabel:LN('sbi.generic.label'),
 	             allowBlank: false,
 	             //validationEvent:true,
@@ -112,8 +110,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 	   this.detailFieldName = new Ext.form.TextField({
 	          	 maxLength:100,
 	        	 minLength:1,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.generic.name'),
 	             allowBlank: false,
 	             //validationEvent:true,
@@ -125,8 +121,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.generic.descr'),
 	             //validationEvent:true,
 	             name: 'description'
@@ -144,7 +138,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			});
 	 	  
 	 	  this.initSourcePanel();
-
+	 	  this.initKpiPanel();
 	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
@@ -194,7 +188,34 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 					         this.srcModelType,
 					         this.srcModelTypeDescr ]
 		    	}]
-		    }, this.kpiInstItems ];
+		    }, {
+		        title: 'Kpi Instance'
+			        , itemId: 'kpi_model'
+			        , width: 430
+			        , items: [{
+				   		 id: 'kpiinst-model-det',   	
+			 		   	 itemId: 'kpi-detail',   	              
+			 		   	 columnWidth: 0.4,
+			             xtype: 'fieldset',
+			             labelWidth: 90,
+			             defaults: {width: 140, border:false},    
+			             defaultType: 'textfield',
+			             autoHeight: true,
+			             autoScroll  : true,
+			             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+			             border: false,
+			             style: {
+			                 //"background-color": "#f1f1f1",
+			                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+			             },
+			             items: [this.kpiModelType,
+						         this.kpiLabel,
+						         this.kpiName,
+						         this.kpiThreshold,
+						         this.kpiPeriodicity,
+						         this.kpiPeriodicityButton]
+			    	}]
+			    } ];
 	 	  
 	}
 	, initSourcePanel: function() {
@@ -232,7 +253,113 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	         });
 
 	}
+	, launchPeriodicityWindow : function() {
+		
+		var conf = {};
+		
+		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
+	
+		this.thrWin = new Ext.Window({
+			title: LN('sbi.lookup.Select') ,   
+            layout      : 'fit',
+            width       : 1000,
+            height      : 400,
+            closeAction :'close',
+            plain       : true,
+            scope		: this,
+            items       : [manageThresholds]
+		});
+		
+		this.thrWin.show();
+	}
+	,launchThrWindow : function() {
+		
+		var conf = {};
+		conf.nodeTypesCd = config.thrTypes;
+		conf.drawSelectColumn = true;
 
+		
+		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
+	
+		this.thrWin = new Ext.Window({
+			title: LN('sbi.lookup.Select') ,   
+            layout      : 'fit',
+            width       : 1000,
+            height      : 400,
+            closeAction :'close',
+            plain       : true,
+            scope		: this,
+            items       : [manageThresholds]
+		});
+		manageThresholds.on('selectEvent', function(itemId,index, code){this.thrWin.close();Ext.getCmp('kpiFiledThreshold').setValue(code);}, this);
+		this.thrWin.show();
+	}
+	, initKpiPanel: function() {
+		
+		this.kpiModelType = new Ext.form.RadioGroup({
+            fieldLabel: LN('sbi.generic.type'),	             
+    	    id:'kpiModelType',
+    	    xtype: 'checkboxgroup',
+    	    itemCls: 'x-check-group-alt',
+    	    // Put all controls in a single column with width 100%
+    	    columns: 1,
+    	    items: [
+    	        {boxLabel: 'UUID', name: 'kpitype-1'},
+    	        {boxLabel: 'Kpi Instance', name: 'kpitype-2'}
+    	    ]
+    	});
+ 	    this.kpiName = new Ext.form.TextField({
+             fieldLabel:LN('sbi.generic.kpi'),
+             name: 'kpiname'
+         });	  
+
+
+ 	 	 this.kpiThreshold = new Ext.form.TriggerField({
+ 		     triggerClass: 'x-form-search-trigger',
+ 		     fieldLabel: 'Threshold',
+ 		     name: 'threshold',
+ 		     id: 'kpiFiledThreshold'
+ 		    });
+ 	 	 this.kpiThreshold.onTriggerClick = this.launchThrWindow;
+
+
+		this.kpiLabel = new Ext.form.TextField({
+             readOnly: false,
+             fieldLabel: LN('sbi.generic.label'),
+             name: 'kpiLabel'
+         });
+		
+		this.kpiPeriodicity = new Ext.form.TextField({
+            readOnly: false,
+            fieldLabel: 'Periodicity',
+            name: 'kpiPeriodicty'
+        });
+		
+		this.kpiPeriodicityButton = new Ext.Button({
+			text:'Add Periodicity',
+			handler: this.launchPeriodicityWindow	
+		});
+
+	}
+	, fillKpiPanel: function(sel, node) {
+		
+		var hasKpiInst = node.attributes.kpiInst;
+		
+		if(hasKpiInst !== undefined && hasKpiInst != null){
+			this.kpiModelType.setValue({
+				    'kpitype-1': false,
+				    'kpitype-2': true
+			});
+
+
+		}else{
+			this.kpiModelType.setValue({
+			    'kpitype-1': false,
+			    'kpitype-2': true
+			});
+
+		}
+	}
     //OVERRIDING save method
 	,save : function() {
     	var jsonStr = '[';
@@ -460,6 +587,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	,setListeners : function() {
 			this.mainTree.getSelectionModel().addListener('selectionchange',
 					this.fillDetail, this);
+			
+			this.mainTree.getSelectionModel().addListener('selectionchange',
+					this.fillKpiPanel, this);
+			
 			this.mainTree.addListener('render', this.renderTree, this);
 
 			/* form fields editing */

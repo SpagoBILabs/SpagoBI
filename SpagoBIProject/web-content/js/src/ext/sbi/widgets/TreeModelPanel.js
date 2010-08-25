@@ -51,6 +51,7 @@ Sbi.widgets.TreeModelPanel = function(config) {
 	this.services['listModelService'] = conf.manageTreeService;
 	
 	this.tabItems = conf.tabItems;
+	this.notDraggable =conf.notDraggable;
 
 	this.treeTitle = conf.treeTitle;
 
@@ -150,6 +151,10 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			items: [this.modelsTree, this.importCheck]
 		});
 		
+		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
+			this.importCheck.hide();
+			this.modelsTree.enableDD = false;
+		}
 		this.setListeners();
 	}
 

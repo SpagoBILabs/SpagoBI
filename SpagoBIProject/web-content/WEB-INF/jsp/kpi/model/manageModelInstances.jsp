@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 org.json.JSONObject" %>
 <%
 
-	List nodeTypesCd = (List) aSessionContainer.getAttribute("nodeTypesList");
+	List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
 
 %>
 
@@ -38,21 +38,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <script type="text/javascript"><!--
 	<%	
-	JSONArray nodeTypesArray = new JSONArray();
-	if(nodeTypesCd != null){
-		
-		for(int i=0; i< nodeTypesCd.size(); i++){
-			Domain domain = (Domain)nodeTypesCd.get(i);	
+	JSONArray thrTypesArray = new JSONArray();
+	if(thrTypesCd != null){
+		for(int i=0; i< thrTypesCd.size(); i++){
+			Domain domain = (Domain)thrTypesCd.get(i);
 			JSONArray temp = new JSONArray();
-			temp.put(domain.getValueId());
 			temp.put(domain.getValueCd());
-			temp.put(domain.getValueDescription());
-			temp.put(domain.getDomainCode());
-			nodeTypesArray.put(temp);
+			thrTypesArray.put(temp);
 		}
 	}	
-	String nodeTypes = nodeTypesArray.toString();
-	nodeTypes = nodeTypes.replaceAll("\"","'");
+	String thrTypes = thrTypesArray.toString();
+	thrTypes = thrTypes.replaceAll("\"","'");
 
 	%>
 
@@ -69,8 +65,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     	baseUrl: url
     });
     
-    var config = {};
-    config.nodeTypesCd = <%= nodeTypes%>;
+	var config = {};  
+	config.thrTypes = <%= thrTypes%>;
     
 Ext.onReady(function(){
 	Ext.QuickTips.init();

@@ -75,6 +75,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
 	
+	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
+	
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
@@ -219,17 +221,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			
 		}else if(serviceType == null){
 			try {
-				List nodeTypesNodes = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_NODE);
-				List nodeTypesRoot = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_ROOT);
-				List nodeTypes = new ArrayList();
-				nodeTypes.addAll(nodeTypesNodes);
-				nodeTypes.addAll(nodeTypesRoot);
-				getSessionContainer().setAttribute("nodeTypesList", nodeTypes);
+
+				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
+				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
 				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception retrieving model types", e);
+						"Exception retrieving resources types", e);
 			}
 		}
 		logger.debug("OUT");
