@@ -257,17 +257,17 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		var conf = {};
 		
-		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
+		var managePeriodicities = new Sbi.kpi.ManagePeriodicities(conf);
 	
 		this.thrWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 1000,
-            height      : 400,
+            width       : 400,
+            height      : 300,
             closeAction :'close',
             plain       : true,
             scope		: this,
-            items       : [manageThresholds]
+            items       : [managePeriodicities]
 		});
 		
 		this.thrWin.show();
