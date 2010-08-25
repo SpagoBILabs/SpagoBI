@@ -192,16 +192,43 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		            this
 				);
 		}else{
-			this.displayTree(rec);
-			this.displaySourceModelDetail(rec);
-			this.dispalyResourcesGridPanel(rec);
-			if(rec != this.lastRecSelected){
-				this.lastRecSelected = rec;
+			var analyzedRec = this.recordAnalyze(rec);
+			
+			this.displayTree(analyzedRec);
+			this.displaySourceModelDetail(analyzedRec);
+			this.dispalyResourcesGridPanel(analyzedRec);
+			
+			if(analyzedRec != this.lastRecSelected){
+				this.lastRecSelected = analyzedRec;
 			}
 		}
 	
 	}
+	, recordAnalyze: function(rec){
+
+		//checks if model instance id is defined
+		var modelInstID = rec.get('modelInstId');
+		if(modelInstID === undefined){
+			//new model instance --> data coming from model
+			var analyzedRec = new Ext.data.Record ({
+				 modelInstId : '',
+				 modelId : rec.get('modelId') ,
+				 kpiInstId : '',
+				 name : '...',
+				 description : '...',
+				 modelName : rec.get('name'),
+				 modelCode : rec.get('code'),
+				 modelDescr : rec.get('description'),
+				 modelType : rec.get('type'),
+				 modelTypeDescr : rec.get('typeDescr'),
+				 modelText : rec.get('text')	
+			});
+			return analyzedRec;
+		}
+		return rec;
+	}
 	, displayTree: function(rec){
+
 		this.manageModelInstances.rootNodeText = rec.get('name');
 		this.manageModelInstances.rootNodeId = rec.get('modelInstId');
 		
