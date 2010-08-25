@@ -831,8 +831,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     	var dataPanelStyle = "crosstab-table-data-panel";
     	var classEmptyBottomRight = 'crosstab-table-empty-bottom-right-panel';
     	
-    	//alert("1");
-    	
     	if(this.table!=null && this.datapanel!=null){
     		this.datapanel.destroy();
     		if(this.withRowsSum && this.datapanelRowSum!=null){
@@ -843,7 +841,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     		}
     		this.remove(this.table, false);
     	}
-    	
     	
 		if(this.withRowsSum){
 			tableColumns = 3;
@@ -920,18 +917,27 @@ Ext.extend(CrossTab, Ext.Panel, {
     	             'divId'
     	    ]
     	});
-    	//alert("2");
+
     	store.loadData(this.entriesPanel);
     	var columnsForView = this.getColumnsForView();
     	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">',
-    	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px; height: '+(this.rowHeight-2)+'px;  ">',
+    	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px; height: '+(this.rowHeight-2)+'px;  ">',
     	    '{name}',
     	    '</div> </div> </div>',
     	    '</tpl>'
     	);
-
+    	
+    	var tplsum = new Ext.XTemplate(
+        	    '<tpl for=".">',
+        	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px; height: '+(this.rowHeight-2)+'px;  ">',
+        	    '{name}',
+        	    '</div> </div> </div>',
+        	    '</tpl>'
+        	);
+    	
+    	
     	this.datapanel = new Ext.Panel({
             width: (columnsForView)*(this.columnWidth),
             height: (rowForView)*(this.rowHeight)+1,
@@ -943,7 +949,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     	        tpl: tpl
     	    })
     	});
-    	
+
    		this.table.add(this.emptypanelTopLeft);
    		this.table.add(this.columnHeaderPanelContainer);
 		if(this.withRowsSum){
@@ -953,29 +959,25 @@ Ext.extend(CrossTab, Ext.Panel, {
    		this.table.add(this.rowHeaderPanelContainer);
    		this.table.add(this.datapanel);
 		if(this.withRowsSum){
-			this.datapanelRowSum = this.getRowsSumPanel(tpl, rowForView, this.withColumnsSum);
+			this.datapanelRowSum = this.getRowsSumPanel(tplsum, rowForView, this.withColumnsSum);
 			this.table.add(this.datapanelRowSum);
 		}
     	if(this.withColumnsSum){
-    		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
+    		this.datapanelColumnSum = this.getColumnsSumPanel(tplsum, columnsForView, this.withRowsSum);
 	   		this.table.add(this.emptypanelBottomLeft);
 	   		this.table.add(this.datapanelColumnSum);
-//    	}
-//    	if(this.withRowsSum||this.withColumnsSum){
     		this.table.add(this.emptypanelBottomRight);
     	}
-    	//alert("3");
+
    		this.add(this.table);
-   		
    		this.doLayout();
-   		//alert("4");
+
    		if(Ext.get('loading')!=null){
 	   		setTimeout(function(){
 	   			Ext.get('loading').remove();
 	   			Ext.get('loading-mask').fadeOut({remove:true});
 	   			}, 250);
    		}
-   		//alert("5");
     }
     
     , reloadHeadersAndTable: function(horizontal){
@@ -1319,3 +1321,35 @@ Ext.extend(CrossTab, Ext.Panel, {
     }
     
 });
+
+function cruxBackground(id,rowsNumber,columnsNumber){
+
+   	var row = id[0];
+   	var column = id[1];
+   	
+   	var cel;
+   	for(var i=0; i<rowsNumber; i++){
+   		cel = document.getElementById("["+i+","+column+"]");
+   		cel.style.backgroundColor = '#EFEFEF';
+   	}
+   	for(var i=0; i<columnsNumber; i++){
+   		cel = document.getElementById("["+row+","+i+"]");
+   		cel.style.backgroundColor = '#EFEFEF';
+   	}
+}
+
+function clearBackground(id,rowsNumber,columnsNumber){
+
+   	var row = id[0];
+   	var column = id[1];
+
+   	var cel;
+   	for(var i=0; i<rowsNumber; i++){
+   		cel = document.getElementById("["+i+","+column+"]");
+   		cel.style.backgroundColor = '#FFFFFF';
+   	}
+   	for(var i=0; i<columnsNumber; i++){
+   		cel = document.getElementById("["+row+","+i+"]");
+   		cel.style.backgroundColor = '#FFFFFF';
+   	}
+}
