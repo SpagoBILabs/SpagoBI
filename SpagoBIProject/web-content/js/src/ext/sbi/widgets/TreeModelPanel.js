@@ -51,8 +51,8 @@ Sbi.widgets.TreeModelPanel = function(config) {
 	this.services['listModelService'] = conf.manageTreeService;
 	
 	this.tabItems = conf.tabItems;
-	this.notDraggable =conf.notDraggable;
-
+	this.notDraggable =config.notDraggable;
+	//alert(this.notDraggable);
 	this.treeTitle = conf.treeTitle;
 
 	this.initWidget();	
@@ -79,7 +79,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 	initWidget : function() {
 
 		this.modelsTree = new Ext.tree.TreePanel( {
-			id:'model-tree-readonly',
+			//id:'model-tree-readonly',
 			title : this.treeTitle,
 			width : 250,
 			height : 300,
@@ -128,14 +128,18 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			}
 		  // ,listeners:{  }
 		});
+		var label = LN('sbi.modelinstances.importCheck');
+		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
+			label ='';
+		}
 		this.importCheck = new Ext.form.Checkbox({
-             fieldLabel: LN('sbi.modelinstances.importCheck'),
+             fieldLabel: label,
              allowBlank: false,
          	 inputValue  :'true',
              name: 'importChildrenFlag'
          });
 		this.modelPanel = new Ext.form.FormPanel( {
-			id : 'modelPan',
+			//id : 'modelPan',
 			frame : true,
 			labelWidth: 150,  
 			autoScroll : true,

@@ -44,6 +44,8 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelsTree = function(config, ref) { 
+	
+	//alert("ManageModelsTree:"+config.notDraggable);
 	var paramsList = {MESSAGE_DET: "MODEL_NODES_LIST"};
 	this.configurationObject = {};
 	
@@ -55,8 +57,11 @@ Sbi.kpi.ManageModelsTree = function(config, ref) {
 	//reference to viewport container
 	this.referencedCmp = ref;
 	this.initConfigObject();
+	
+	var isDraggable = config.notDraggable;
 	config.configurationObject = this.configurationObject;
-
+	config.notDraggable = isDraggable;
+	
 	var c = Ext.apply({}, config || {}, {});
 	Sbi.kpi.ManageModelsTree.superclass.constructor.call(this, c);	 	
 }

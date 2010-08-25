@@ -87,8 +87,10 @@
 Ext.ns("Sbi.widgets");
 
 Sbi.widgets.ListGridPanel = function(config) {
+	this.readonly = config.readonly;
 	
 	var conf = config.configurationObject;
+	
 	this.services = new Array();
 	this.services['manageListService'] = conf.manageListService;
 	this.services['deleteItemService'] = conf.deleteItemService;
@@ -129,7 +131,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, idKeyForGrid : 'id'
 	, ddGroup : null
 	, reference : null
-	, drawSelectColumn: null
+	, readonly: null
 	
 	,initWidget: function(){
 	
@@ -166,11 +168,13 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
  	       }
          });
-       
-        this.gridColItems.push(this.deleteColumn);  
-        
-        if(this.drawSelectColumn){
+
+        	
+
+        if(this.readonly){
         	this.gridColItems.push(this.selectColumn); 
+        }else{
+        	this.gridColItems.push(this.deleteColumn);  
         }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
@@ -198,11 +202,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	    }); 	   
  	  
  	   var pluginsToAdd;
- 	   if(this.drawSelectColumn){
-  		  //pluginsToAdd = [this.deleteColumn, this.selectColumn]; 
- 		   pluginsToAdd = [this.selectColumn];
+ 	   if(this.readonly){
+ 		   	pluginsToAdd = [this.selectColumn];
         }else{
-     	  pluginsToAdd = this.deleteColumn; 
+        	pluginsToAdd = this.deleteColumn; 
         }
  	   
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
@@ -239,6 +242,9 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 					    	} 
                          }
 	                  });
+ 	   if(this.readonly){
+ 		  this.tb.setVisible(false);
+       }
 
 	}
 

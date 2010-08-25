@@ -44,6 +44,9 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelsGrid = function(config, ref) { 
+	
+	var readonly = config.readonly;
+	
 	var paramsList = {MESSAGE_DET: "MODELS_LIST"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODE_DELETE"};
 	
@@ -61,7 +64,7 @@ Sbi.kpi.ManageModelsGrid = function(config, ref) {
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
 	
-
+	config.readonly = readonly;
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageModelsGrid.superclass.constructor.call(this, c);	 	
