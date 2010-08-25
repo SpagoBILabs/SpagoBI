@@ -99,9 +99,9 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
 										 });
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 150, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 150, sortable: true, dataIndex: 'code'},
-		                                         {header: LN('sbi.generic.type'), width: 100, sortable: true, dataIndex: 'typeCd'}
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 140, sortable: true, dataIndex: 'code'},
+		                                         {header: LN('sbi.generic.type'), width: 80, sortable: true, dataIndex: 'typeCd'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.resources.panelTitle');

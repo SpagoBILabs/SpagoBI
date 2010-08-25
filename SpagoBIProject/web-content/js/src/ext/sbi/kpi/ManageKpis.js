@@ -136,8 +136,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 										 });
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 130, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 130, sortable: true, dataIndex: 'code'},
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'},
 		                                         {header: 'Threshold', width: 110, sortable: true, dataIndex: 'threshold'}
 		                                        ];
 		
@@ -406,11 +406,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
-		        , width: 430
+		        , width: 350
 		        , items: {
 			   		 id: 'items-detail',   	
 		 		   	 itemId: 'items-detail',   	              
-		 		   	 columnWidth: 0.4,
+		 		   	 //columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
 		             defaults: {width: 200, border:false},    
@@ -430,11 +430,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		    },{
 		    	title: 'Advanced'
 		        , itemId: 'advanced'
-		        , width: 430
+		        , width: 350
 		        , items: {
 			   		 id: 'advanced-detail',   	
 		 		   	 itemId: 'advanced-detail',   	              
-		 		   	 columnWidth: 0.4,
+		 		   	// columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
 		             defaults: {width: 200, border:false},    
@@ -466,11 +466,12 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.thrWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 1000,
-            height      : 400,
+            width       : 870,
+            height      : 540,
             closeAction :'close',
             plain       : true,
             scope		: this,
+            modal		: true,
             items       : [manageThresholds]
 		});
 		manageThresholds.on('selectEvent', function(itemId,index,code){this.thrWin.close();Ext.getCmp('detailFieldThreshold').setValue(code);}, this);

@@ -176,7 +176,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.gridColItems = [
 		                                         {id:'name',header: LN('sbi.generic.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
 		                                         {header: LN('sbi.generic.code'), width: 140, sortable: true, dataIndex: 'code'},
-		                                         {header: LN('sbi.generic.type'), width: 90, sortable: true, dataIndex: 'typeCd'}
+		                                         {header: LN('sbi.generic.type'), width: 70, sortable: true, dataIndex: 'typeCd'}
 		                                        ];
 		
 		if(this.drawSelectColumn){
@@ -362,7 +362,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  this.detailItem = new Ext.form.FieldSet({ 
 		   		 id: 'items-detail',   	
 	 		   	 itemId: 'items-detail',   	              
-	 		   	 columnWidth: 0.4,
+	 		   	// columnWidth: 0.4,
 	             xtype: 'fieldset',
 	             labelWidth: 90,
 	             defaults: {width: 200, border:false},    
@@ -392,7 +392,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
-		        , width: 430
+		       // , width: 430
 		        , items: [this.detailItem]
 		    },this.thrValuesItem];
  	   
