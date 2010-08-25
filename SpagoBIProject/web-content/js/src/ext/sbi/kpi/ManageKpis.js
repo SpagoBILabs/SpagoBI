@@ -85,7 +85,11 @@ Sbi.kpi.ManageKpis = function(config) {
 	
 	var c = Ext.apply({}, config || {}, {});
 
-	Sbi.kpi.ManageKpis.superclass.constructor.call(this, c);	 	
+	Sbi.kpi.ManageKpis.superclass.constructor.call(this, c);	
+	
+	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
+		this.getForm().loadRecord(rec);  
+     }, this);
 };
 
 Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
@@ -466,8 +470,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.thrWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 870,
-            height      : 540,
+            width       : 955,
+            height      : 550,
+            y			: 15,
             closeAction :'close',
             plain       : true,
             scope		: this,

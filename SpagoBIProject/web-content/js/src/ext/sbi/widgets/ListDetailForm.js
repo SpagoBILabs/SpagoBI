@@ -186,11 +186,12 @@ Sbi.widgets.ListDetailForm = function(config) {
  	          scope:this,
  	          trackResetOnLoad: true,
  	          items: [
- 	              {
- 	              scope:this,
+ 	              
+ 	            	 this.mainGrid
+ 	             /* scope:this,
  	              layout: 'fit',
- 	              items: this.mainGrid
- 	              }, this.tabs
+ 	              items: this.mainGrid*/
+ 	              , this.tabs
  	            	  		
  	          ]
  	          
@@ -331,16 +332,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
            singleSelect: true
        });
- 	  
- 	  this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
- 		 //alert('recorddata:'+rec.data.toSource());
- 		 this.getForm().loadRecord(rec);     
-      }, this);
- 	  
- 	 this.rowselModel.addListener('select',function(sm, row, rec) { 
- 		 alert('recorddata2:'+rec.data);
- 		 this.getForm().loadRecord(rec);     
-      }, this);
  	   
  	   this.mainGrid = {
 	                  xtype: 'grid',
@@ -369,8 +360,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                      			viewready: function(g) {g.getSelectionModel().selectRow(0); } 
 	                             }
 	                  };
-   	 
-   	   // this.addListener('select',this.sendSelectedItem, this);
 	}
 
 	,sendSelectedItem: function(itemId, index){
