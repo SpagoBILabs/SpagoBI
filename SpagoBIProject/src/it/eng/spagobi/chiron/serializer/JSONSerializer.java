@@ -37,6 +37,8 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
+import it.eng.spagobi.kpi.model.bo.ModelResources;
+import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
@@ -100,6 +102,7 @@ public class JSONSerializer implements Serializer {
 		
 		mappings.put( Model.class, new ModelNodeJSONSerializer());	
 		mappings.put( ModelInstance.class, new ModelInstanceNodeJSONSerializer());
+		mappings.put( ModelResourcesExtended.class, new ModelResourcesExtendedJSONSerializer());
 
 		
 		mappings.put( GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
