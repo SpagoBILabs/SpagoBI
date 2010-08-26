@@ -48,13 +48,13 @@ CrossTabCFWizard = function(level, horizontal) {
 	this.initMainPanel();
 
 	var c = {
-			title: 'CF',
+			title: LN('sbi.crosstab.calculatefieldwizard.title'),
 			layout: 'fit',
 			width: 350,
 			height: 250,
 			items:[this.mainPanel],
 		    buttons: [{
-				text: 'OK',
+				text: LN('sbi.crosstab.calculatefieldwizard.ok'),
 			    handler: function(){
 		    		var expression= this.getExpression();
 		    		var cfName= this.cfNameField.getValue()
@@ -64,8 +64,23 @@ CrossTabCFWizard = function(level, horizontal) {
 		    		}
 	        	}
 	        	, scope: this
+		    }], 
+		    tools: [{
+	          id: 'help',
+	          handler: function(event, toolEl, panel) {
+	        	  var aWindow = new Ext.Window({
+	        		  width: 300,
+	        		  style: 'padding: 5px;',
+	        		  items: [{
+	        			  xtype: 'panel',
+	        			  html: LN('sbi.crosstab.calculatefieldwizard.info')
+	        		  }]
+	        	  });
+	        	  aWindow.show();
+	          },
+	          scope: this
 		    }]
-		};
+	};
 	
 	
 	// constructor
@@ -141,7 +156,7 @@ Ext.extend(CrossTabCFWizard, Ext.Window, {
 	,initTextField: function(){
 
 		var buttonclear = new Ext.Button({
-		    text:'Clear',
+		    text: LN('sbi.crosstab.calculatefieldwizard.clear'),
 		    icon: 'null',
 		    iconCls:'remove'
 		});
@@ -149,7 +164,7 @@ Ext.extend(CrossTabCFWizard, Ext.Window, {
 
 		
 		var buttonvalidate = new Ext.Button({
-		    text:'Validate',
+		    text: LN('sbi.crosstab.calculatefieldwizard.validate'),
 		    icon: 'null',
 		    iconCls:'option'
 		});
