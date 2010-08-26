@@ -1,16 +1,8 @@
 package it.eng.spagobi.chiron.serializer;
 
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.bo.Exporters;
-import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
