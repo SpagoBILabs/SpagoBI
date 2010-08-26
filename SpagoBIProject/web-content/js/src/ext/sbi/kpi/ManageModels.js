@@ -576,4 +576,132 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
  
 	   // if we get here the drop is automatically cancelled by Ext
 	   }
+	, addNewItem : function(parent) {
+			var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
+			var recDomain = this.typesStore.getAt(idxNodeType);	
+			
+			if (parent === undefined || parent == null) {
+				alert("Select parent node");
+				return;
+			} else {
+				parent.leaf = false;
+			}
+			var parentId = parent.attributes.modelId;
+
+			//if parent is newly created --> confirm
+			if(parentId == null || parentId == undefined){
+				Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					'Per inserire il nodo bisogna prima salvare il nodo padre. Effettuare salvataggio?',            
+		            function(btn, text) {
+		                if (btn=='yes') {
+		                	//save parent
+		                	
+		                	this.mainTree.getLoader().load(parent);
+		                	var newparentId = parent.attributes.modelId;
+
+		        	    	//then create child node
+		        			var node = new Ext.tree.TreeNode( {
+		        				text : '... - ...',
+		        				leaf : false,
+		        				parentId: newparentId,
+		        				type: recDomain.get('typeCd'),
+		        				typeId: recDomain.get('typeId'),
+		        				typeDescr: recDomain.get('typeDs'),
+		        				toSave :false,
+		        				allowDrag : false
+		        			});
+		        			//save parent
+		                	this.saveParentNode(parent, node);
+		                	
+		        			this.mainTree.render();
+		        			if (!parent.isExpanded()) {
+		        				parent.expand(false, /*no anim*/false);
+		        			}
+		        			this.mainTree.render();
+		        			parent.appendChild(node);
+		        	
+		        			this.mainTree.getSelectionModel().select(node);
+		        			
+		                }else{
+		                	//exit
+		                	return;
+		                }
+		            },
+		            this
+				);
+				return null;
+			}else{
+
+		    	//then create child node
+				var node = new Ext.tree.TreeNode( {
+					text : '... - ...',
+					leaf : false,
+					parentId: parentId,
+					toSave :false,
+					type: recDomain.get('typeCd'),
+					typeId: recDomain.get('typeId'),
+					typeDescr: recDomain.get('typeDs'),
+					allowDrag : false
+				});
+				this.mainTree.render();
+				if (!parent.isExpanded()) {
+					parent.expand(false, /*no anim*/false);
+				}
+				this.mainTree.render();
+				parent.appendChild(node);
+		
+				this.selectedNodeToEdit = node;
+				this.mainTree.getSelectionModel().select(node);
+				return node;
+			}
+
+		},
+		deleteItem : function(node) {
+			
+			if (node === undefined || node == null) {
+				alert("Select node to delete");
+				return;
+			}
+			
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.generic.confirmDelete'),            
+		            function(btn, text) {
+		                if (btn=='yes') {
+		                	if (node != null) {	
+								Ext.Ajax.request({
+						            url: this.services['deleteTreeService'],
+						            params: {'modelId': node.attributes.modelId},
+						            method: 'GET',
+						            success: function(response, options) {
+										if (response !== undefined) {
+											this.mainTree.getSelectionModel().clearSelections(false);
+											node.remove();
+											//this.mainTree.doLayout();
+										} else {
+											Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+										}
+						            },
+						            failure: function() {
+						                Ext.MessageBox.show({
+						                    title: LN('sbi.generic.error'),
+						                    msg: LN('sbi.generic.deletingItemError'),
+						                    width: 150,
+						                    buttons: Ext.MessageBox.OK
+						               });
+						            }
+						            ,scope: this
+					
+								});
+							} else {
+								Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+							}
+		                }
+		            },
+		            this
+				);
+
+			
+		}
 });
