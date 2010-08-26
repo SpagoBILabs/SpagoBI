@@ -148,6 +148,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 		crosstabDef.columns = this.columnsContainerPanel.getContainedAttributes();
 		crosstabDef.measures = this.measuresContainerPanel.getContainedMeasures();
 		crosstabDef.config = this.measuresContainerPanel.getCrosstabConfig();
+		alert(crosstabDef.toSource());
 		return crosstabDef;
 	}
 	

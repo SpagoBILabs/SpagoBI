@@ -46,6 +46,8 @@ public class CrosstabDefinition {
 	public static String MEASURES = "measures";
 	public static String ID = "id";
 	public static String ALIAS = "alias";
+	public static String ICON_CLS = "iconCls";
+	public static String NATURE = "nature";
 	public static String FUNCTION = "funct";
 	public static String CONFIG = "config";
 	public static String MEASURESON = "measureson";
@@ -77,7 +79,7 @@ public class CrosstabDefinition {
 		if (rows != null) {
 			for (int i = 0; i < rows.length(); i++) {
 				JSONObject obj = (JSONObject) rows.get(i);
-				toReturn.add(new Row(obj.getString(ID), obj.getString(ALIAS)));
+				toReturn.add(new Row(obj.getString(ID), obj.getString(ALIAS), obj.getString(ICON_CLS), obj.getString(NATURE)));
 			}
 		}
 		return toReturn;
@@ -90,7 +92,7 @@ public class CrosstabDefinition {
 		if (rows != null) {
 			for (int i = 0; i < rows.length(); i++) {
 				JSONObject obj = (JSONObject) rows.get(i);
-				toReturn.add(new Measure(obj.getString(ID), obj.getString(ALIAS), obj.getString(FUNCTION)));
+				toReturn.add(new Measure(obj.getString(ID), obj.getString(ALIAS), obj.getString(ICON_CLS), obj.getString(NATURE), obj.getString(FUNCTION)));
 			}
 		}
 		return toReturn;
@@ -103,7 +105,7 @@ public class CrosstabDefinition {
 		if (rows != null) {
 			for (int i = 0; i < rows.length(); i++) {
 				JSONObject obj = (JSONObject) rows.get(i);
-				toReturn.add(new Column(obj.getString(ID), obj.getString(ALIAS)));
+				toReturn.add(new Column(obj.getString(ID), obj.getString(ALIAS), obj.getString(ICON_CLS), obj.getString(NATURE)));
 			}
 		}
 		return toReturn;
@@ -148,9 +150,13 @@ public class CrosstabDefinition {
 	public class CrosstabElement {
 		String entityId = null;
 		String alias = null;
-		public CrosstabElement(String entityId, String alias) {
+		String iconCls = null;
+		String nature = null;
+		public CrosstabElement(String entityId, String alias, String iconCls, String nature) {
 			this.entityId = entityId;
 			this.alias = alias;
+			this.iconCls = iconCls;
+			this.nature = nature;
 		}
 		public String getEntityId() {
 			return entityId;
@@ -158,24 +164,30 @@ public class CrosstabDefinition {
 		public String getAlias() {
 			return alias;
 		}
+		public String getIconCls() {
+			return iconCls;
+		}
+		public String getNature() {
+			return nature;
+		}
 	}
 	
 	public class Row extends CrosstabElement {
-		public Row(String entityId, String alias) {
-			super(entityId, alias);
+		public Row(String entityId, String alias, String iconCls, String nature) {
+			super(entityId, alias, iconCls, nature);
 		}
 	}
 	
 	public class Column extends CrosstabElement {
-		public Column(String entityId, String alias) {
-			super(entityId, alias);
+		public Column(String entityId, String alias, String iconCls, String nature) {
+			super(entityId, alias, iconCls, nature);
 		}
 	}
 	
 	public class Measure extends CrosstabElement {
 		IAggregationFunction function = null;
-		public Measure(String entityId, String alias, String function) {
-			super(entityId, alias);
+		public Measure(String entityId, String alias, String iconCls, String nature, String function) {
+			super(entityId, alias, iconCls, nature);
 			this.function = AggregationFunctions.get(function);
 		}
 		public IAggregationFunction getAggregationFunction() {
@@ -196,6 +208,8 @@ public class CrosstabDefinition {
 			JSONObject obj = new JSONObject();
 			obj.put(ID, row.getEntityId());
 			obj.put(ALIAS, row.getAlias());
+			obj.put(ICON_CLS, row.getIconCls());
+			obj.put(NATURE, row.getNature());
 			rows.put(obj);
 		}
 		toReturn.put(ROWS, rows);
@@ -208,6 +222,8 @@ public class CrosstabDefinition {
 			JSONObject obj = new JSONObject();
 			obj.put(ID, column.getEntityId());
 			obj.put(ALIAS, column.getAlias());
+			obj.put(ICON_CLS, column.getIconCls());
+			obj.put(NATURE, column.getNature());
 			columns.put(obj);
 		}
 		toReturn.put(COLUMNS, columns);
@@ -220,6 +236,8 @@ public class CrosstabDefinition {
 			JSONObject obj = new JSONObject();
 			obj.put(ID, measure.getEntityId());
 			obj.put(ALIAS, measure.getAlias());
+			obj.put(ICON_CLS, measure.getIconCls());
+			obj.put(NATURE, measure.getNature());
 			obj.put(FUNCTION, measure.getAggregationFunction().getName());
 			measures.put(obj);
 		}
