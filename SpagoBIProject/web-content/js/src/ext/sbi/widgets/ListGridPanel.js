@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it)
+ * Authors - Monica Franceschini
  */
 
 /*
@@ -56,10 +56,7 @@
 		serviceName: 'MANAGE_RESOURCES_ACTION'
 		, baseParams: paramsList
 	});
-	config.deleteItemService = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_RESOURCES_ACTION'
-		, baseParams: paramsDel
-	});
+
 
  *	config.fields: array of fields that are returned by the manageListService
  *  Example: ['id', 'name', 'code', 'description', 'typeCd']
@@ -82,12 +79,16 @@
  *  Example:
     config.panelTitle = LN('sbi.generic.panelTitle');
     config.listTitle =  LN('sbi.generic.listTitle');  				 
- * 
+ *  config.readonlyStrict : no buttons
+ *  config.readonly : only inline select button
+ *  config.idKey : identifier string for the row
+ *  config.dragndropGroup : drag and drop group to apply
+ *  config.referencedCmp : referenced componenet 
  */
 Ext.ns("Sbi.widgets");
 
 Sbi.widgets.ListGridPanel = function(config) {
-	this.readonly = config.readonly;
+	
 	
 	var conf = config.configurationObject;
 	
@@ -101,7 +102,9 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.idKeyForGrid = conf.idKey;
 	this.ddGroup = conf.dragndropGroup;
 	this.reference = conf.referencedCmp;
-	this.drawSelectColumn = conf.drawSelectColumn;  
+	this.drawSelectColumn = conf.drawSelectColumn; 
+	this.readonly = config.readonly;
+	this.readonlyStrict = config.readonlyStrict;
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -134,6 +137,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, ddGroup : null
 	, reference : null
 	, readonly: null
+	, readonlyStrict: null
 	
 	,initWidget: function(){
 	
@@ -176,7 +180,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
         if(this.readonly){
         	this.gridColItems.push(this.selectColumn); 
         }else{
-        	this.gridColItems.push(this.deleteColumn);  
+        	if(!this.readonlyStrict){
+        		this.gridColItems.push(this.deleteColumn); 
+        	}
+        	 
         }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
@@ -207,7 +214,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	   if(this.readonly){
  		   	pluginsToAdd = [this.selectColumn];
         }else{
-        	pluginsToAdd = this.deleteColumn; 
+        	if(!this.readonlyStrict){
+        		pluginsToAdd = this.deleteColumn; 
+        	}
+        	
         }
  	   
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
@@ -244,7 +254,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 					    	} 
                          }
 	                  });
- 	   if(this.readonly){
+ 	   if(this.readonly || this.readonlyStrict){
  		  this.tb.setVisible(false);
        }
 
