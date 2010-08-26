@@ -87,6 +87,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 	    this.configurationObject.fields = ['modelInstId'
 		                     	          , 'name'
 		                     	          , 'label'
+		                     	          , 'text'
 		                     	          , 'description'
 		                     	          , 'kpiInstId'
 		                     	          , 'modelId'
