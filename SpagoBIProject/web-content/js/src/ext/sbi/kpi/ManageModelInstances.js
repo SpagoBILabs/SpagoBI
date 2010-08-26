@@ -313,10 +313,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     	    ]
     	});
  	    this.kpiName = new Ext.form.TextField({
+ 	    	 id: 'kpinameField',
              fieldLabel:LN('sbi.generic.kpi'),
+             readonly: true,
+             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
+             value: 'drop kpi here...',
              name: 'kpiname'
          });	  
-
+ 	    this.kpiName.addListener('render', this.configureDD2, this);
 
  	 	 this.kpiThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
@@ -343,6 +347,39 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			text:'Add Periodicity',
 			handler: this.launchPeriodicityWindow	
 		});
+
+	}
+	, configureDD2: function() {
+		  var fieldDropTargetEl =  this.kpiName.getEl().dom; 
+		  var formPanelDropTarget = new Ext.dd.DropTarget(fieldDropTargetEl, {
+			    ddGroup  : 'kpiGrid2kpiForm',
+			    overClass: 'over',
+			    scope: this,
+			    initialConfig: this,
+			    notifyEnter : function(ddSource, e, data) {
+			  		this.initialConfig.kpiName.getEl().frame("00AE00");
+
+			    },
+			    notifyDrop  : function(ddSource, e, data){
+			      var selectedRecord = ddSource.dragData.selections[0];
+			      this.initialConfig.kpiName.setValue(selectedRecord.get('name')); 
+			      var node = this.initialConfig.mainTree.getSelectionModel().getSelectedNode() ;
+			      if(node !== undefined && node != null){
+			    	  var nodesList = this.initialConfig.nodesToSave;
+			    	  var exists = nodesList.indexOf(node);
+			    	  if(exists == -1){
+						  var size = nodesList.length;
+						  this.initialConfig.nodesToSave[size] = node;
+						  node.attributes.toSave = true;
+			    	  }
+			    	  
+				      node.attributes.kpiInstId = selectedRecord.get('id');
+			      }
+			      Ext.fly(this.getEl()).frame("ff0000");
+			      return(true);
+			    }
+		}, this);
+		  
 
 	}
 	, fillKpiPanel: function(sel, node) {
