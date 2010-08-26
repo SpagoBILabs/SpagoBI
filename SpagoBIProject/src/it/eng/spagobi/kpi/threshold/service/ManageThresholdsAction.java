@@ -53,6 +53,7 @@ import org.json.JSONObject;
 	private final String THRESHOLDS_LIST = "THRESHOLDS_LIST";
 	private final String THRESHOLD_INSERT = "THRESHOLD_INSERT";
 	private final String THRESHOLD_DELETE = "THRESHOLD_DELETE";
+	private final String THR_VAL_DELETE = "THR_VAL_DELETE";
 	
 	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
@@ -63,7 +64,8 @@ import org.json.JSONObject;
 	private final String CODE = "code";
 	private final String DESCRIPTION = "description";
 	private final String NODE_TYPE_CODE = "typeCd";	
-	private static final String THRESHOLD_VALUES = "thrValues";
+	private final String THRESHOLD_VALUES = "thrValues";
+	private final String THR_VAL_ID_TO_DELETE = "thrValIid";
 	
 	private static final String THR_VAL_ID = "idThrVal";
 	private static final String THR_VAL_LABEL = "label";
@@ -305,12 +307,24 @@ import org.json.JSONObject;
 			Integer id = getAttributeAsInteger(ID);
 			try {
 				thrDao.deleteThreshold(id);
-				logger.debug("Resource deleted");
+				logger.debug("Threshold deleted");
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving resource to delete", e);
+				logger.error("Exception occurred while retrieving Threshold to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving resource to delete", e);
+						"Exception occurred while retrieving Threshold to delete", e);
+			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(THR_VAL_DELETE)) {
+			Integer id = getAttributeAsInteger(THR_VAL_ID_TO_DELETE);
+			try {
+				tDao.deleteThresholdValue(id);
+				
+				logger.debug("Threshold value deleted deleted");
+				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving Threshold value  to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving Threshold value  to delete", e);
 			}
 		}else if(serviceType == null){
 			try {

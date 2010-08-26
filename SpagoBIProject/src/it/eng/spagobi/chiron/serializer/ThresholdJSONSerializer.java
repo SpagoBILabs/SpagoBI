@@ -39,6 +39,7 @@ public class ThresholdJSONSerializer implements Serializer {
 	private static final String THR_VAL_COLOR = "color";
 	private static final String THR_VAL_SEVERITY_CD = "severityCd";
 	private static final String THR_VAL_SEVERITY_ID = "severityId";
+	private static final String OLD_TO_DELETE = "oldToDelete";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -57,12 +58,13 @@ public class ThresholdJSONSerializer implements Serializer {
 			result.put(THRESHOLD_CODE, thr.getCode() );
 			result.put(THRESHOLD_TYPE_ID, thr.getThresholdTypeId() );
 			result.put(THRESHOLD_TYPE_CD, thr.getThresholdTypeCode());		
+			result.put(OLD_TO_DELETE, new Boolean(false));	
 			
 			List thrValues = thr.getThresholdValues();
 			JSONArray thValues = new JSONArray();
 			if(thrValues!=null){		
 				if(!thrValues.isEmpty()){
-					if(thrValues.size()==1){
+					if(thrValues.size()==1 && !thr.getThresholdTypeCode().equalsIgnoreCase("RANGE")){
 						ThresholdValue thrVal = (ThresholdValue) thrValues.get(0);
 						if(thrVal != null){
 						 result.put(THR_VAL_ID,  thrVal.getId());
