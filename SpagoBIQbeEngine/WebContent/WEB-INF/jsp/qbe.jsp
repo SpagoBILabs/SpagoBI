@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
+<%@page import="it.eng.spagobi.engines.qbe.bo.CrosstabDefinition"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -176,7 +177,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
 
 	      	qbeConfig.crosstab = {};
-	      	qbeConfig.crosstab.crosstabTemplate = <%= qbeEngineInstance.getCrosstabDefinition().toJSONObject() %>;
+	      	<%
+	      	CrosstabDefinition crosstabDefinition = qbeEngineInstance.getCrosstabDefinition();
+	      	JSONObject crosstabDefinitionJSON = crosstabDefinition != null ? crosstabDefinition.toJSONObject() : new JSONObject();
+	      	%>
+	      	qbeConfig.crosstab.crosstabTemplate = <%= crosstabDefinitionJSON %>;
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");
