@@ -195,6 +195,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	  var detailFieldWeight = {
            	 maxLength:160,
          	 minLength:1,
+         	 width : 120,
          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
          	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: 'Weight',
@@ -358,6 +359,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	    var detailFieldKpiType =  {
       	    name: 'kpiTypeCd',
             store: this.kpisStore,
+            width : 120,
             fieldLabel: 'Kpi Type',
             displayField: 'kpiTypeCd',   // what the user sees in the popup
             valueField: 'kpiTypeCd',        // what is passed to the 'change' event
@@ -375,6 +377,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	     var detailFieldMeasureType =  {
  	      	    name: 'metricScaleCd',
  	            store: this.measuresStore,
+ 	            width : 120,
  	            fieldLabel: 'Metric Scale',
  	            displayField: 'metricScaleCd',   // what the user sees in the popup
  	            valueField: 'metricScaleCd',        // what is passed to the 'change' event
@@ -392,6 +395,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	      var detailFieldMetricScaleType =  {
  	      	    name: 'measureTypeCd',
  	            store: this.metricScalesStore,
+ 	            width : 120,
  	            fieldLabel: 'Measure Type',
  	            displayField: 'measureTypeCd',   // what the user sees in the popup
  	            valueField: 'measureTypeCd',        // what is passed to the 'change' event
@@ -428,8 +432,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [detailFieldId, detailFieldName, detailFieldCode, 
-		                     detailFieldDescr, detailFieldWeight, detailFieldDataset,
-		                     this.detailFieldThreshold, detailFieldDocuments]
+		                     detailFieldDescr, detailFieldDataset,
+		                     this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight]
 		    	}
 		    },{
 		    	title: 'Advanced'
