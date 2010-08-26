@@ -20,7 +20,7 @@
 	<!-- ================================================================================= -->
 	
 	<ACTION name="SERVICE_EXCEPTION_TRAP_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.ServiceExceptionAction" 
+			class="it.eng.spagobi.engines.qbe.services.core.ServiceExceptionAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
