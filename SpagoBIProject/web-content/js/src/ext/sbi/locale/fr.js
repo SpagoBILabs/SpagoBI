@@ -10,12 +10,15 @@ Sbi.locale.ln['sbi.generic.add'] = 'Ajouter';
 Sbi.locale.ln['sbi.generic.delete'] = 'Effacer';
 Sbi.locale.ln['sbi.generic.update'] = 'Enregistrer';
 Sbi.locale.ln['sbi.generic.details'] = 'Detail';
+Sbi.locale.ln['sbi.generic.advanced'] = 'Avancé';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nom';
 Sbi.locale.ln['sbi.generic.descr'] = 'Description';
 Sbi.locale.ln['sbi.generic.code'] = 'Code';
 Sbi.locale.ln['sbi.generic.type'] = 'Type';
 Sbi.locale.ln['sbi.generic.label'] = 'Libell\u00E9';
+Sbi.locale.ln['sbi.generic.engine'] = 'Moteur';
+Sbi.locale.ln['sbi.generic.state'] = 'Etat';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';
@@ -54,6 +57,39 @@ Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Model Instances';
 Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Resources';
 Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Import sub-tree also';
 //END List Detail messages
+
+//START kpi interface messages
+Sbi.locale.ln['sbi.resources.tablename'] = 'Nom de la Table';
+Sbi.locale.ln['sbi.resources.columnname'] = 'Nom de la Colonne';
+
+Sbi.locale.ln['sbi.kpis.threshold'] = 'Seuil';
+Sbi.locale.ln['sbi.kpis.weight'] = 'Poid';
+Sbi.locale.ln['sbi.kpis.dataset'] = 'Dataset';
+Sbi.locale.ln['sbi.kpis.documents'] = 'Documents';
+Sbi.locale.ln['sbi.kpis.interpretation'] = 'Interpretation';
+Sbi.locale.ln['sbi.kpis.algDescr'] = 'Algorithm Description';
+Sbi.locale.ln['sbi.kpis.inputAttr'] = 'Input Attribute';
+Sbi.locale.ln['sbi.kpis.modelRef'] = 'Modele Reference';
+Sbi.locale.ln['sbi.kpis.targAud'] = 'Target Audience';
+Sbi.locale.ln['sbi.kpis.kpiType'] = 'Type de Kpi';
+Sbi.locale.ln['sbi.kpis.metricScale'] = 'Metric Scale';
+Sbi.locale.ln['sbi.kpis.measType'] = 'Measure Type';
+Sbi.locale.ln['sbi.kpis.months'] = 'Mois';
+Sbi.locale.ln['sbi.kpis.days'] = 'Jours';
+Sbi.locale.ln['sbi.kpis.hours'] = 'Heures';
+Sbi.locale.ln['sbi.kpis.mins'] = 'Minutes';
+
+Sbi.locale.ln['sbi.thresholds.position'] = 'Position';
+Sbi.locale.ln['sbi.thresholds.include'] = 'Inclure?';
+Sbi.locale.ln['sbi.thresholds.min'] = 'Min';
+Sbi.locale.ln['sbi.thresholds.max'] = 'Max';
+Sbi.locale.ln['sbi.thresholds.minVal'] = 'Min Value';
+Sbi.locale.ln['sbi.thresholds.maxVal'] = 'Max Value';
+Sbi.locale.ln['sbi.thresholds.severity'] = 'Severité';
+Sbi.locale.ln['sbi.thresholds.color'] = 'Coleur';
+Sbi.locale.ln['sbi.thresholds.value'] = 'Valeur';
+Sbi.locale.ln['sbi.thresholds.values'] = 'Valeurs';
+//END kpi interface messages
 
 Sbi.locale.ln['sbi.browser.document.creationDate']                                                        = 'date de cr\u00E9ation';
 Sbi.locale.ln['sbi.browser.document.creationUser']                                                        = 'utilisateur';

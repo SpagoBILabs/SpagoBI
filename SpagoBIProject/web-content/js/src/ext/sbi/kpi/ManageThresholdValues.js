@@ -68,51 +68,51 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	        name: 'idThrVal',
 	        hidden: true
 	    },{
-	    	header: 'Position', 
+	    	header: LN('sbi.thresholds.position'), 
 	    	id:'position',
-	    	width: 50, 
+	    	width: 60, 
 	    	sortable: true, 
 	    	xtype: 'numbercolumn',
 	    	dataIndex: 'position', 
 	    	editor: new Ext.form.NumberField({})	
 	    },{
-	    	header: 'Label', 
+	    	header: LN('sbi.generic.label'), 
 	    	width: 60, 
 			id:'label',
 			sortable: true, 
 			dataIndex: 'label',  
 			editor: new Ext.form.TextField({})
 	    },{
-	    	header: 'Min', 
-	    	width: 50, 
+	    	header: LN('sbi.thresholds.min'), 
+	    	width: 45, 
 			id:'min',
 			sortable: true, 
 			xtype: 'numbercolumn',
 			dataIndex: 'min',  
 			editor: new Ext.form.NumberField({})				
 		},{
-			header: 'Include?', 
+			header: LN('sbi.thresholds.include'), 
 			width: 50, 
 			xtype: 'booleancolumn',
 			sortable: true, 
 			dataIndex: 'minIncluded',
 			editor:new Ext.form.Checkbox({})
 		},{
-			header: 'Max', 
-			width: 50, 
+			header: LN('sbi.thresholds.max'), 
+			width: 45, 
 			xtype: 'numbercolumn',
 			sortable: true, 
 			dataIndex: 'max',
 			editor: new Ext.form.NumberField({})	
 		},{
-			header: 'Include?', 
+			header: LN('sbi.thresholds.include'), 
 			width: 50, 
 			xtype: 'booleancolumn',
 			sortable: true, 
 			dataIndex: 'maxIncluded',
 			editor:new Ext.form.Checkbox({})
 		},{
-			header: 'Severity', 
+			header: LN('sbi.thresholds.severity'), 
 			width: 60, 
 			id:'severityCd',
 			sortable: true, 
@@ -132,7 +132,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	              validationEvent:true
 	          })
 		},{	
-			header: 'Color', 
+			header: LN('sbi.thresholds.color'), 
 			width: 60, 
 			id:'color',
 			sortable: true, 
@@ -145,7 +145,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 			   return v;  
 	       }
 		},{	
-			header: 'Value', 
+			header: LN('sbi.thresholds.value'), 
 			width: 40, 
 			id:'val',
 			sortable: true, 
@@ -269,21 +269,6 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
 			 });   
         this.store.insert(0,emptyRecToAdd);
     }
-
-   /* ,onDelete: function() {
-        var rec = this.getSelectionModel().getSelected();
-
-        var remove = true;
-
-        this.store.remove(rec);
-        this.store.commitChanges();
-
-        if(!remove){
-        	//readd record
-            this.store.add(rec);
-            this.store.commitChanges();
-        }
-     }*/
     
     ,onDelete: function() {
     	

@@ -280,7 +280,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
          };
  	  
  	  var detailThrPosition = new Ext.form.NumberField({		
-             fieldLabel: 'Position',
+             fieldLabel: LN('sbi.thresholds.position'),
              width : 120,
              validationEvent:true,
              name: 'position'
@@ -290,27 +290,27 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  			 maxLength:20,
  			 minLength:1,
  			 width : 200,
-             fieldLabel: 'Label',
+             fieldLabel: LN('sbi.generic.label'),
              validationEvent:true,
              allowBlank: false,
              name: 'label'
          });	
  	  
  	 this.detailThrMin = new Ext.form.NumberField({
-             fieldLabel: 'Min Value',
+             fieldLabel: LN('sbi.thresholds.minVal'),
              width : 120,
              validationEvent:true,
              name: 'min'
          });
  	 
  	this.detailThrMinClosed = new Ext.form.Checkbox({
-            fieldLabel: 'Included?',
+            fieldLabel: LN('sbi.thresholds.include'),
             validationEvent:true,
             name: 'minIncluded'
         });
  	
  	 this.detailThrMax = new Ext.form.NumberField({
-             fieldLabel: 'Max Value',
+             fieldLabel: LN('sbi.thresholds.maxVal'),
              width : 120,
              validationEvent:true,
              name: 'max'
@@ -318,21 +318,21 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	 
  	this.detailThrMaxClosed = new Ext.form.Checkbox({
 			 xtype: 'checkbox',
-             fieldLabel: 'Included?',
+             fieldLabel: LN('sbi.thresholds.include'),
              validationEvent:true,
              //margins: {top:20, right:0, bottom:0, left:0},
              name: 'maxIncluded'
  		});
  	
  	var detailThrValue = new Ext.form.NumberField({
-             fieldLabel: 'Value',
+             fieldLabel: LN('sbi.thresholds.value'),
              width : 120,
              validationEvent:true,
              name: 'val'
         });
  	
  	this.detailThrColor = new Ext.ux.ColorField({
- 			fieldLabel: 'Color', 
+ 			fieldLabel: LN('sbi.thresholds.color'), 
  			width : 120,
  			value: '#FFFFFF', 
  			msgTarget: 'qtip', 
@@ -345,7 +345,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
       	  name: 'severityCd',
           store: this.severityStore,
           width : 120,
-          fieldLabel: 'Severity',
+          fieldLabel: LN('sbi.thresholds.severity'),
           displayField: 'severityCd',   // what the user sees in the popup
           valueField: 'severityCd',        // what is passed to the 'change' event
           typeAhead: true,
@@ -398,7 +398,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	    	});
  	   
  	   this.thrValuesItem = new Ext.Panel({
-		        title: 'Values'
+		        title: LN('sbi.thresholds.values')
 			        , id : 'thr-values'
 			        , layout: 'fit'
 			        , autoScroll: false

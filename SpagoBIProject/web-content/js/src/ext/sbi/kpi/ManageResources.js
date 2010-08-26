@@ -167,7 +167,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
           	 maxLength:40,
         	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
-             fieldLabel: 'Table Name',
+             fieldLabel: LN('sbi.resources.tablename'),
              validationEvent:true,
              name: 'tablename'
          };
@@ -176,7 +176,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
           	 maxLength:40,
         	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
-             fieldLabel: 'Column Name',
+             fieldLabel: LN('sbi.resources.columnname'),
              validationEvent:true,
              name: 'columnname'
          }; 
