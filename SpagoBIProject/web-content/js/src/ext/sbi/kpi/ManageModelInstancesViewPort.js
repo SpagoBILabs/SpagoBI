@@ -287,7 +287,17 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	         ,{header: LN('sbi.generic.type'), width: 65, sortable: true, dataIndex: 'resourceType'}
 	         ,this.smResources
 	    ]);
-
+ 	    this.tb = new Ext.Toolbar({
+ 	    	buttonAlign : 'right',
+ 	    	items:[new Ext.Toolbar.Button({
+ 	            text: LN('sbi.generic.update'),
+ 	            //iconCls: 'icon-add',
+ 	            handler: this.saveResources,
+ 	            width: 30,
+ 	            scope: this
+ 	            })
+ 	    	]
+ 	    });
 		this.resourcesGrid = new Ext.grid.GridPanel({
 			store: this.resourcesStore 
 			, id: 'resources-grid-checks'
@@ -297,6 +307,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
    	     	, border:false  
    	     	, collapsible:false
    	     	, loadMask: true
+   	     	, tbar: this.tb
    	     	, viewConfig: {
    	        	forceFit:true
    	        	, enableRowBody:true
@@ -322,5 +333,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		    initialConfig: this.manageModelsTree
 		  });
 
+	}
+	, saveResources: function() {
+		alert('save');
 	}
 });

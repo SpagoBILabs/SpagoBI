@@ -188,25 +188,23 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				List<ModelResources> modelResources = DAOFactory.getModelResourcesDAO().loadModelResourceByModelId(modelInstId);
 				
 				HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
-				
-				for(int i =0;i<modelResources.size(); i++){
-					ModelResources mr = modelResources.get(i);
-					modResourcesIds.put(mr.getResourceId(), mr);
-				}
-
-				//extract all resources
-				Vector resourcesIds = new Vector<Integer>();
-				List<Resource> allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
-				for(int i =0;i<allResources.size(); i++){
-					Resource res = allResources.get(i);
-					if(!modResourcesIds.keySet().contains(res.getId())){
-						ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, new ModelResources());
-						modelResourcesExtenList.add(extendedRes);
-					}else{
-						ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, modResourcesIds.get(res.getId()));
-						modelResourcesExtenList.add(extendedRes);
+				if(modelResources != null){
+					for(int i =0;i<modelResources.size(); i++){
+						ModelResources mr = modelResources.get(i);
+						modResourcesIds.put(mr.getResourceId(), mr);
 					}
 				}
+				//extract all resources
+				Vector resourcesIds = new Vector<Integer>();
+
+				List<Resource> allResources = (List<Resource>)getSessionContainer().getAttribute("ALL_RESOURCES_LIST");
+				
+				//if null than extract
+				if(allResources == null){
+					allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
+				}
+				modelResourcesExtendedListCreate(modelResourcesExtenList, allResources, modResourcesIds);
+				
 				logger.debug("Loaded model resources");
 				JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
 				JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
@@ -224,7 +222,18 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
 				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+				List<Resource> allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
+				getSessionContainer().setAttribute("ALL_RESOURCES_LIST", allResources);
+								
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -233,6 +242,23 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 		logger.debug("OUT");
 
+	}
+	
+	private void modelResourcesExtendedListCreate(List<ModelResourcesExtended> modelResourcesExtenList,
+													List<Resource> allResources,
+													HashMap<Integer, ModelResources> modResourcesIds ){
+		if(allResources != null){
+			for(int i =0;i<allResources.size(); i++){
+				Resource res = allResources.get(i);
+				if(!modResourcesIds.keySet().contains(res.getId())){
+					ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, new ModelResources());
+					modelResourcesExtenList.add(extendedRes);
+				}else{
+					ModelResourcesExtended extendedRes = new ModelResourcesExtended(res, modResourcesIds.get(res.getId()));
+					modelResourcesExtenList.add(extendedRes);
+				}
+			}
+		}
 	}
 
 	/**
