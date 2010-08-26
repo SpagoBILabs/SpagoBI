@@ -153,8 +153,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
 
-			dataSetWriter = new JSONDataWriter();
-			gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+//			dataSetWriter = new JSONDataWriter();
+//			gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			//logger.debug("Response object: " + gridDataFeed.toString(3));
 			
 			try {

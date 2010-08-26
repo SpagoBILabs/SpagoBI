@@ -61,6 +61,10 @@ Sbi.qbe.QbePanel = function(config) {
 		serviceName: 'GET_FIRST_QUERY_ACTION'
 		, baseParams: params
 	});
+	this.services['saveAnalysisState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SAVE_ANALYSIS_STATE_ACTION'
+		, baseParams: params
+	});
 	
 	this.addEvents();
 	
@@ -105,6 +109,9 @@ Sbi.qbe.QbePanel = function(config) {
 	if (this.queryEditorPanel != null) {
 		this.queryEditorPanel.on('execute', function(editorPanel, query){
 			this.checkPromptableFilters(query);
+		}, this);
+		this.queryEditorPanel.on('save', function(meta){
+			this.saveQuery(meta);
 		}, this);
 		this.tabs.on('tabchange', function () {
 			var anActiveTab = this.tabs.getActiveTab();
@@ -166,6 +173,8 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
     services: null
     , queryResultPanel: null
     , queryEditorPanel: null
+    , crosstabDesignerPanel: null
+    , crosstabPreviewPanel: null
     , tabs: null
     , query: null
    
@@ -256,5 +265,63 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
   		this.tabs.activate(this.crosstabPreviewPanel);
   		this.crosstabPreviewPanel.load(crosstabDefinition);
   	}
+  	
+  	, saveQuery: function(meta) {
+    	this.save(meta, function(response, options) {
+    		// for old gui
+    		try {
+				var content = Ext.util.JSON.decode( response.responseText );
+				content.text = content.text || "";
+				parent.loadSubObject(window.name, content.text);
+			} catch (ex) {}
+			// for new gui
+			// build a JSON object containing message and ID of the saved  object
+			
+			try {
+				// get the id of the subobject just inserted, decode string, need to call metadata window
+				var responseJSON = Ext.util.JSON.decode( response.responseText )
+				var id = responseJSON.text;
+				var msgToSend = 'Sub Object Saved!!';
+				
+				//sendMessage({'id': id, 'meta' : meta.metadata, 'msg': msgToSend},'subobjectsaved');
+				//alert('id '+id+' message '+msgToSend);
+				sendMessage({'id': id, 'msg': msgToSend},'subobjectsaved');
+			} catch (ex) {}
+			// show only if not showing metadata windows
+			/*if( meta.metadata == false ){
+			Ext.Msg.show({
+				   title:LN('sbi.qbe.queryeditor.querysaved'),
+				   msg: LN('sbi.qbe.queryeditor.querysavedsucc'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.INFO
+			});
+		}*/
+		}, this);
+  	}
+  	
+	, save: function(meta, callback, scope) {
+		var params = Ext.apply({
+			crosstabDefinition: Ext.util.JSON.encode(this.crosstabDesignerPanel.getCrosstabDefinition())
+		}, meta);
+		
+		var doSave = function() {
+			Ext.Ajax.request({
+			    url: this.services['saveAnalysisState'],
+			    success: callback,
+			    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			    scope: scope,
+			    params: params
+			});  
+		};
+		
+		this.queryEditorPanel.queryCataloguePanel.commit(function() {
+			if(Sbi.config.queryValidation.isEnabled) {
+				this.queryEditorPanel.queryCataloguePanel.validate(doSave, this);
+			} else {
+				doSave();
+			}
+			
+		}, this);		
+	}
   	
 });

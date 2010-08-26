@@ -25,11 +25,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
@@ -41,19 +43,20 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 /**
  * This action is responsible to persist the queries contained into the catalogue
  */
-public class SaveCatalogueAction extends AbstractQbeEngineAction {
+public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 	
-	public static final String SERVICE_NAME = "SAVE_CATALOGUE_ACTION";
+	public static final String SERVICE_NAME = "SAVE_ANALYSIS_STATE_ACTION";
 	public String getActionName(){return SERVICE_NAME;}
 	
 	// INPUT PARAMETERS
 	public static final String CATALOGUE_NAME = "name";	
 	public static final String CATALOGUE_DESCRIPTION = "description";
 	public static final String CATALOGUE_SCOPE = "scope";
+	public static final String CROSSTAB_DEFINITION = "crosstabDefinition";
 	
 
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(SaveCatalogueAction.class);
+    public static transient Logger logger = Logger.getLogger(SaveAnalysisStateAction.class);
     
 	
 	public void service(SourceBean request, SourceBean response) {
@@ -79,6 +82,11 @@ public class SaveCatalogueAction extends AbstractQbeEngineAction {
 			logger.debug(CATALOGUE_DESCRIPTION + ": " + queryDescritpion);
 			queryScope  = getAttributeAsString(CATALOGUE_SCOPE);
 			logger.debug(CATALOGUE_SCOPE + ": " + queryScope);
+			
+			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
+			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
+			CrosstabDefinition crosstabDefinition = new CrosstabDefinition(crosstabDefinitionJSON);
+			getEngineInstance().setCrosstabDefinition(crosstabDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();
 			analysisMetadata.setName( queryName );
