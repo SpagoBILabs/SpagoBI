@@ -62,8 +62,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.configurationObject.deleteItemService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_KPIS_ACTION'
 		, baseParams: paramsDel
-	});
-	
+	});	
 	
 	this.services = new Array();
 	
@@ -142,7 +141,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.gridColItems = [
 		                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
 		                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'},
-		                                         {header: 'Threshold', width: 110, sortable: true, dataIndex: 'threshold'}
+		                                         {header: LN('sbi.kpis.threshold'), width: 110, sortable: true, dataIndex: 'threshold'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');
@@ -198,7 +197,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
          	 width : 120,
          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
          	 regexText : LN('sbi.roles.alfanumericString'),
-             fieldLabel: 'Weight',
+             fieldLabel: LN('sbi.kpis.weight'),
              validationEvent:true,
              name: 'weight'
           };	
@@ -215,20 +214,20 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	  var detailFieldDataset = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
 			  store: datasets
 			  , name: 'dataset'
-			  ,	fieldLabel: 'Dataset'
+			  ,	fieldLabel: LN('sbi.kpis.dataset')
 			  , singleSelect: true
 			  ,	valueField: 'label'
 			  , displayField: 'label'
 			  , descriptionField: 'label'
 			  , cm: new Ext.grid.ColumnModel([
             		new Ext.grid.RowNumberer(),
-            		{   header: 'Label',
+            		{   header: LN('sbi.generic.label'),
             		    dataIndex: 'label',
             		    width: 75
-            		},{   header: 'Name',
+            		},{   header: LN('sbi.generic.name'),
             		    dataIndex: 'name',
             		    width: 75
-            		},{   header: 'Description',
+            		},{   header: LN('sbi.generic.descr'),
             		    dataIndex: 'description',
             		    width: 75
             		}
@@ -238,7 +237,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	  
  	 this.detailFieldThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
- 		     fieldLabel: 'Threshold',
+ 		     fieldLabel: LN('sbi.kpis.threshold'),
  		     name: 'threshold',
  		     id: 'detailFieldThreshold'
  		    });
@@ -253,23 +252,23 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	 var detailFieldDocuments = new Sbi.widgets.LookupField(Ext.apply(baseConfig, {
 		  store: docs
 		  , name: 'documents'
-		  ,	fieldLabel: 'Documents'
+		  ,	fieldLabel: LN('sbi.kpis.documents')
 		  , singleSelect: true
 		  ,	valueField: 'label'
 		  , displayField: 'label'
 		  , descriptionField: 'label'
 		  , cm: new Ext.grid.ColumnModel([
         		new Ext.grid.RowNumberer(),
-        		{   header: 'Label',
+        		{   header: LN('sbi.generic.label'),
         		    dataIndex: 'label',
         		    width: 75
-        		},{   header: 'Name',
+        		},{   header: LN('sbi.generic.name'),
         		    dataIndex: 'name',
         		    width: 75
-        		},{   header: 'Engine',
+        		},{   header: LN('sbi.generic.engine'),
         		    dataIndex: 'engine',
         		    width: 75
-        		},{   header: 'State',
+        		},{   header: LN('sbi.generic.state'),
         		    dataIndex: 'stateCode',
         		    width: 75
         		}
@@ -307,7 +306,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	             height : 80,
 	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
-	             fieldLabel: 'Interpretation',
+	             fieldLabel: LN('sbi.kpis.interpretation'),
 	             validationEvent:true,
 	             name: 'interpretation'
 	           };
@@ -319,7 +318,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	             height : 80,
 	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
-	             fieldLabel: 'Algorithm Description',
+	             fieldLabel: LN('sbi.kpis.algDescr'),
 	             validationEvent:true,
 	             name: 'algdesc'
 	           };
@@ -329,7 +328,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	          	 minLength:1,
 	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
-	             fieldLabel: 'Input Attribute',
+	             fieldLabel: LN('sbi.kpis.inputAttr'),
 	             validationEvent:true,
 	             name: 'inputAttr'
 	           };
@@ -339,7 +338,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	          	 minLength:1,
 	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
-	             fieldLabel: 'Model Reference',
+	             fieldLabel: LN('sbi.kpis.modelRef'),
 	             validationEvent:true,
 	             name: 'modelReference'
 	           };
@@ -351,7 +350,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	             height : 80,
 	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
-	             fieldLabel: 'Target Audience',
+	             fieldLabel: LN('sbi.kpis.targAud'),
 	             validationEvent:true,
 	             name: 'targetAudience'
 	           };
@@ -360,7 +359,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
       	    name: 'kpiTypeCd',
             store: this.kpisStore,
             width : 120,
-            fieldLabel: 'Kpi Type',
+            fieldLabel: LN('sbi.kpis.kpiType'),
             displayField: 'kpiTypeCd',   // what the user sees in the popup
             valueField: 'kpiTypeCd',        // what is passed to the 'change' event
             typeAhead: true,
@@ -378,7 +377,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	      	    name: 'metricScaleCd',
  	            store: this.measuresStore,
  	            width : 120,
- 	            fieldLabel: 'Metric Scale',
+ 	            fieldLabel: LN('sbi.kpis.metricScale'),
  	            displayField: 'metricScaleCd',   // what the user sees in the popup
  	            valueField: 'metricScaleCd',        // what is passed to the 'change' event
  	            typeAhead: true,
@@ -396,7 +395,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	      	    name: 'measureTypeCd',
  	            store: this.metricScalesStore,
  	            width : 120,
- 	            fieldLabel: 'Measure Type',
+ 	            fieldLabel: LN('sbi.kpis.measType'),
  	            displayField: 'measureTypeCd',   // what the user sees in the popup
  	            valueField: 'measureTypeCd',        // what is passed to the 'change' event
  	            typeAhead: true,
@@ -436,7 +435,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                     this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight]
 		    	}
 		    },{
-		    	title: 'Advanced'
+		    	title: LN('sbi.generic.advanced')
 		        , itemId: 'advanced'
 		        , width: 350
 		        , items: {
