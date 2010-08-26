@@ -44,3 +44,23 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'A
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Cancella';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Anteprima Crosstab';
+
+
+//===================================================================
+//CROSSTAB 
+//===================================================================
+
+Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Aggiungi campo calcolato';
+Sbi.locale.ln['sbi.crosstab.menu.hideheader'] = 'Nascondi questo header';
+Sbi.locale.ln['sbi.crosstab.menu.hideheadertype'] = 'Nascondi tutti gli headers di questo tipo';
+Sbi.locale.ln['sbi.crosstab.menu.hidemeasure'] = 'Misure Visibili';
+Sbi.locale.ln['sbi.crosstab.menu.hiddenheader'] = 'Headers nascosti';
+
+//===================================================================
+//CROSSTAB CALCULATED FIELDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.title'] = 'Calculated Field';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.validate'] = 'Valida';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.clear'] = 'Pulisci';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.ok'] = 'OK';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.info'] = 'Un campo calcolato è composto da operatori matematici, costanti e variabili. Le variabili sono gli identificatori delle colonne. Per inserire una colonna nell\'espressione cliccare sull\'header corrispondente. Si noti che si possono inserire solo le colonne, o i gruppi di colonne, presenti nel livello in cui si vuole definire il campo calcolato.';

@@ -38,3 +38,22 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agrégation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Annuler';
+
+
+//===================================================================
+//CROSSTAB 
+//===================================================================
+
+Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Add calculated field';
+Sbi.locale.ln['sbi.crosstab.menu.hideheader'] = 'Hide this header';
+Sbi.locale.ln['sbi.crosstab.menu.hideheadertype'] = 'Hide all the headers of this type';
+Sbi.locale.ln['sbi.crosstab.menu.hidemeasure'] = 'Measures';
+Sbi.locale.ln['sbi.crosstab.menu.hiddenheader'] = 'Hidden headers';
+
+//===================================================================
+//CROSSTAB CALCULATED FIELDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.title'] = 'Calculated Field';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.validate'] = 'Validate';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.clear'] = 'Clear';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.ok'] = 'OK';

@@ -39,6 +39,25 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Cancel';
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choose the aggregation function for measure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Apply';
-Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Cancel';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Crosstab preview';
+
+//===================================================================
+//CROSSTAB 
+//===================================================================
+
+Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Add calculated field';
+Sbi.locale.ln['sbi.crosstab.menu.hideheader'] = 'Hide this header';
+Sbi.locale.ln['sbi.crosstab.menu.hideheadertype'] = 'Hide all the headers of this type';
+Sbi.locale.ln['sbi.crosstab.menu.hidemeasure'] = 'Measures';
+Sbi.locale.ln['sbi.crosstab.menu.hiddenheader'] = 'Hidden headers';
+
+//===================================================================
+//CROSSTAB CALCULATED FIELDS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.title'] = 'Calculated Field';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.validate'] = 'Validate';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.clear'] = 'Clear';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.ok'] = 'OK';
+Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.info'] = 'A calculate field is an expression composed by mathematical operators, constants and variables. The variables are the ids of the columns or rows. In order to insert a column/row you should click over the corresponding header. You can click over the headers of the level in witch the calculated fields will be added.';
+	

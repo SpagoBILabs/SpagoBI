@@ -58,7 +58,7 @@ CrossTabClickMenu = function(node, crossTab) {
 			items: [
 			        '-',
 			        {
-				       	text:'Add Calculated Field',
+				       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
 				       	iconCls:'add',
 				       	handler:function(){
 			        		crossTab.crossTabCFWizard = new CrossTabCFWizard(node.level, node.horizontal); 
@@ -71,27 +71,31 @@ CrossTabClickMenu = function(node, crossTab) {
 			        },
 			        '-', 
 			        {
-			        	text:'Nascondi questo header',
+			        	text: LN('sbi.crosstab.menu.hideheader'),
+			        	iconCls:'hide',
 			        	handler:function(){
 			        		this.showHideNode(node, true) ; 	
 			        	},
 			        	scope: this
 			        },
 			        {
-			        	text:'Nascondi tutti header di questo tipo',
+			        	text: LN('sbi.crosstab.menu.hideheadertype'),
+			        	iconCls:'hide',
 			        	handler:function(){
 			        		this.showHideAllNodes(node, true);
 			        	},
 			        	scope: this
 			        },
 			        {
-			        	text:'Header Nascosti',
+			        	text: LN('sbi.crosstab.menu.hiddenheader'),
+			        	iconCls:'show',
 			        	menu:  new Ext.menu.Menu({
 			        		items: this.getHiddenCheckboxes(node)
 			        	})
 			        },
 			        {
-			        	text: 'Misure Visibili',
+			        	text: LN('sbi.crosstab.menu.hidemeasure'),
+			        	iconCls:'show',
 			        	menu:  new Ext.menu.Menu({
 			        		items: this.getCheckboxesForMeasures(node.horizontal)
 			        	})
