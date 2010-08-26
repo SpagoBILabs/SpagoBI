@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 org.json.JSONArray" %>
 <%
 
-	List nodeTypesCd = (List) aSessionContainer.getAttribute("nodeTypesList");
+	List nodeTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
     List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
 
 %>

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 org.json.JSONArray" %>
 <%
     List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
+    List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
 	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
 	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
 	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
@@ -47,6 +48,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String thrTypes = thrTypesArray.toString();
 	thrTypes = thrTypes.replaceAll("\"","'");
+	
+	JSONArray severityTypesArray = new JSONArray();
+	if(thrSeverityTypesCd != null){
+		for(int i=0; i< thrSeverityTypesCd.size(); i++){
+			Domain domain = (Domain)thrSeverityTypesCd.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueCd());
+			severityTypesArray.put(temp);
+		}
+	}	
+	String severityTypes = severityTypesArray.toString();
+	severityTypes = severityTypes.replaceAll("\"","'");	
 	
 	JSONArray kpiTypesArray = new JSONArray();
 	if(kpiTypesCd != null){
@@ -87,6 +100,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     var config = {};  
 	config.kpiTypesCd = <%= kpiTypes%>;
+	config.thrSeverityTypesCd = <%= severityTypes%>;
 	config.measureTypesCd = <%= measureTypes%>;
 	config.metricScaleTypesCd = <%= metricScalesTypes%>;
 	config.thrTypes = <%= thrTypes%>;

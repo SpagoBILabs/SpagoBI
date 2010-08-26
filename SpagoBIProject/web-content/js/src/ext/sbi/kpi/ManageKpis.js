@@ -462,8 +462,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
 		var conf = {};
 		conf.nodeTypesCd = config.thrTypes;
+		conf.thrSeverityTypesCd = config.thrSeverityTypesCd;
 		conf.drawSelectColumn = true;
-
 		
 		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
 	
