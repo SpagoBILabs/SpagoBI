@@ -181,8 +181,8 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 										 });   
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 140, sortable: true, dataIndex: 'code'},
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 135, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 135, sortable: true, dataIndex: 'code'},
 		                                         {header: LN('sbi.generic.type'), width: 70, sortable: true, dataIndex: 'typeCd'}
 		                                        ];
 		

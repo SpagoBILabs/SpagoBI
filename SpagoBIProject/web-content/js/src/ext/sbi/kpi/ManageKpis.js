@@ -580,7 +580,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			      				this.mainElementsStore.add(newRec);  
 			      			}
 			      			this.mainElementsStore.commitChanges();
-			      			if(itemId != null && itemId !=='' && itemId != 0){
+			      			
+			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 								this.rowselModel.selectLastRow(true);
 				            }
 			      			
