@@ -119,14 +119,14 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	        name: 'idPr',
 	        hidden: true
 	    },{
-	    	header: 'Name', 
+	    	header:  LN('sbi.generic.name'), 
 	    	id:'name',
 	    	width: 80, 
 	    	sortable: true, 
 	    	dataIndex: 'name', 
 	    	editor: new Ext.form.TextField({})	
 	    },{
-	    	header: 'Months', 
+	    	header: LN('sbi.kpis.months'), 
 	    	width: 60, 
 			id:'months',
 			sortable: true, 
@@ -146,7 +146,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	              validationEvent:true
 	          })
 	    },{
-	    	header: 'Days', 
+	    	header: LN('sbi.kpis.days'), 
 	    	width: 60, 
 			id:'days',
 			sortable: true, 
@@ -166,7 +166,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	              validationEvent:true
 	          })				
 		},{
-			header: 'Hours', 
+			header: LN('sbi.kpis.hours'), 
 			width: 60, 
 			sortable: true, 
 			dataIndex: 'hours',
@@ -185,7 +185,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	              validationEvent:true
 	          })
 		},{
-			header: 'Minutes', 
+			header: LN('sbi.kpis.mins'), 
 			width: 60, 
 			id:'mins',
 			sortable: true, 
@@ -230,7 +230,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	            width: 30,
 	            scope: this
 	        }), '-', new Ext.Toolbar.Button({
-	            text: 'Save',
+	            text: Sbi.locale.ln['sbi.generic.update'],
 	            iconCls: 'icon-save',
 	            handler: this.onSave,
 	            width: 30,
