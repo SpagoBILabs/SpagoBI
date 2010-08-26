@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -62,7 +63,7 @@ public class CrosstabDefinition {
 			rows = parseRows(crosstabDefinition);
 			columns = parseColumns(crosstabDefinition);
 			measures = parseMeasures(crosstabDefinition);
-			config = crosstabDefinition.getJSONObject(CONFIG);
+			config = crosstabDefinition.optJSONObject(CONFIG);
 		} catch (Exception e) {
 			throw new SpagoBIEngineRuntimeException("Wrong input JSON crosstab definition", e);
 		}
@@ -72,10 +73,12 @@ public class CrosstabDefinition {
 	private List<Row> parseRows(JSONObject crosstabDefinition) throws Exception {
 		List<Row> toReturn = new ArrayList<Row>();
 		JSONArray rows = crosstabDefinition.optJSONArray(ROWS);
-		Assert.assertTrue(rows != null && rows.length() > 0, "No rows specified!");
-		for (int i = 0; i < rows.length(); i++) {
-			JSONObject obj = (JSONObject) rows.get(i);
-			toReturn.add(new Row(obj.getString(ID), obj.getString(ALIAS)));
+		//Assert.assertTrue(rows != null && rows.length() > 0, "No rows specified!");
+		if (rows != null) {
+			for (int i = 0; i < rows.length(); i++) {
+				JSONObject obj = (JSONObject) rows.get(i);
+				toReturn.add(new Row(obj.getString(ID), obj.getString(ALIAS)));
+			}
 		}
 		return toReturn;
 	}
@@ -83,10 +86,12 @@ public class CrosstabDefinition {
 	private List<Measure> parseMeasures(JSONObject crosstabDefinition) throws Exception {
 		List<Measure> toReturn = new ArrayList<Measure>();
 		JSONArray rows = crosstabDefinition.optJSONArray(MEASURES);
-		Assert.assertTrue(rows != null && rows.length() > 0, "No measures specified!");
-		for (int i = 0; i < rows.length(); i++) {
-			JSONObject obj = (JSONObject) rows.get(i);
-			toReturn.add(new Measure(obj.getString(ID), obj.getString(ALIAS), obj.getString(FUNCTION)));
+		//Assert.assertTrue(rows != null && rows.length() > 0, "No measures specified!");
+		if (rows != null) {
+			for (int i = 0; i < rows.length(); i++) {
+				JSONObject obj = (JSONObject) rows.get(i);
+				toReturn.add(new Measure(obj.getString(ID), obj.getString(ALIAS), obj.getString(FUNCTION)));
+			}
 		}
 		return toReturn;
 	}
@@ -94,10 +99,12 @@ public class CrosstabDefinition {
 	private List<Column> parseColumns(JSONObject crosstabDefinition) throws Exception {
 		List<Column> toReturn = new ArrayList<Column>();
 		JSONArray rows = crosstabDefinition.optJSONArray(COLUMNS);
-		Assert.assertTrue(rows != null && rows.length() > 0, "No columns specified!");
-		for (int i = 0; i < rows.length(); i++) {
-			JSONObject obj = (JSONObject) rows.get(i);
-			toReturn.add(new Column(obj.getString(ID), obj.getString(ALIAS)));
+		//Assert.assertTrue(rows != null && rows.length() > 0, "No columns specified!");
+		if (rows != null) {
+			for (int i = 0; i < rows.length(); i++) {
+				JSONObject obj = (JSONObject) rows.get(i);
+				toReturn.add(new Column(obj.getString(ID), obj.getString(ALIAS)));
+			}
 		}
 		return toReturn;
 	}
@@ -174,5 +181,50 @@ public class CrosstabDefinition {
 		public IAggregationFunction getAggregationFunction() {
 			return function;
 		}
+	}
+
+	public JSONObject toJSONObject() throws JSONException {
+		JSONObject toReturn = new JSONObject();
+		
+		// config 
+		toReturn.put(CONFIG, getConfig());
+		
+		// rows 
+		JSONArray rows = new JSONArray();
+		for (int i = 0; i < this.rows.size(); i++) {
+			Row row = this.rows.get(i);
+			JSONObject obj = new JSONObject();
+			obj.put(ID, row.getEntityId());
+			obj.put(ALIAS, row.getAlias());
+			rows.put(obj);
+		}
+		toReturn.put(ROWS, rows);
+		
+		
+		// columns
+		JSONArray columns = new JSONArray();
+		for (int i = 0; i < this.columns.size(); i++) {
+			Column column = this.columns.get(i);
+			JSONObject obj = new JSONObject();
+			obj.put(ID, column.getEntityId());
+			obj.put(ALIAS, column.getAlias());
+			columns.put(obj);
+		}
+		toReturn.put(COLUMNS, columns);
+		
+		
+		// measures
+		JSONArray measures = new JSONArray();
+		for (int i = 0; i < this.measures.size(); i++) {
+			Measure measure = this.measures.get(i);
+			JSONObject obj = new JSONObject();
+			obj.put(ID, measure.getEntityId());
+			obj.put(ALIAS, measure.getAlias());
+			obj.put(FUNCTION, measure.getAggregationFunction().getName());
+			measures.put(obj);
+		}
+		toReturn.put(MEASURES, measures);
+		
+		return toReturn;
 	}
 }

@@ -33,6 +33,7 @@ import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
@@ -53,6 +54,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	String activeQueryId;
 	QbeTemplate template;
 	FormState formState;
+	CrosstabDefinition crosstabDefinition;
 
 	// executable version of the query. cached here for performance reasons (i.e. avoid query re-compilation 
 	// over result-set paging)
@@ -178,6 +180,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		QbeEngineAnalysisState analysisState = null;
 		analysisState= new QbeEngineAnalysisState( datamartModel );
 		analysisState.setCatalogue( this.getQueryCatalogue() );
+		analysisState.setCrosstabDefinition( this.getCrosstabDefinition() );
 		return analysisState;
 	}
 	
@@ -186,6 +189,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		
 		qbeEngineAnalysisState = (QbeEngineAnalysisState)analysisState;
 		setQueryCatalogue( qbeEngineAnalysisState.getCatalogue(  ) );
+		setCrosstabDefinition( qbeEngineAnalysisState.getCrosstabDefinition( ) );
 	}
 	
 
@@ -249,4 +253,13 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	public void setStatment(IStatement statment) {
 		this.statment = statment;
 	}
+	
+	public CrosstabDefinition getCrosstabDefinition() {
+		return crosstabDefinition;
+	}
+
+	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {
+		this.crosstabDefinition = crosstabDefinition;
+	}
+	
 }

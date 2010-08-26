@@ -45,6 +45,11 @@ Sbi.locale.formats = {
     		nullValue: ''
 		},
 		
+		timestamp: {
+			dateFormat: 'm/Y/d H:i:s',
+    		nullValue: ''
+		},
+		
 		boolean: {
 			trueSymbol: 'true',
     		falseSymbol: 'false',

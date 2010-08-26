@@ -96,7 +96,7 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		, baseParams: params
 	});
 		
-	this.addEvents('execute');
+	this.addEvents('execute', 'save');
 		
 	this.initWestRegionPanel(c.westConfig || {});
 	this.initCenterRegionPanel(c.centerConfig || {});
@@ -270,38 +270,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     
     , saveQuery: function(meta) {
     	this.applyChanges();
-    	this.queryCataloguePanel.save(meta, function(response, options) {
-    		// for old gui
-    		try {
-				var content = Ext.util.JSON.decode( response.responseText );
-				content.text = content.text || "";
-				parent.loadSubObject(window.name, content.text);
-			} catch (ex) {}
-			// for new gui
-			// build a JSON object containing message and ID of the saved  object
-			
-			try {
-			// get the id of the subobject just inserted, decode string, need to call metadata window
-			var responseJSON = Ext.util.JSON.decode( response.responseText )
-			var id = responseJSON.text;
-			var msgToSend = 'Sub Object Saved!!';
-			
-			//sendMessage({'id': id, 'meta' : meta.metadata, 'msg': msgToSend},'subobjectsaved');
-			//alert('id '+id+' message '+msgToSend);
-			sendMessage({'id': id, 'msg': msgToSend},'subobjectsaved');
-			} catch (ex) {}
-			// show only if not showing metadata windows
-			/*if( meta.metadata == false ){
-			Ext.Msg.show({
-				   title:LN('sbi.qbe.queryeditor.querysaved'),
-				   msg: LN('sbi.qbe.queryeditor.querysavedsucc'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.INFO
-			});
-		}*/
-		}, this);
+    	this.fireEvent('save', meta);
     }
-    
    	
 	, saveView: function(meta) {
 		var url = this.services['saveView'];			

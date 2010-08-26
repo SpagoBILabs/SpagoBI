@@ -176,7 +176,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
 
 	      	qbeConfig.crosstab = {};
-	      	qbeConfig.crosstab.crosstabTemplate = crosstabDefinition;
+	      	qbeConfig.crosstab.crosstabTemplate = <%= qbeEngineInstance.getCrosstabDefinition().toJSONObject() %>;
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");

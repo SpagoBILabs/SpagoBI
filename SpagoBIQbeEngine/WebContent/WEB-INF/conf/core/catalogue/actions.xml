@@ -23,8 +23,8 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="SAVE_CATALOGUE_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.core.catalogue.SaveCatalogueAction"  
+	<ACTION name="SAVE_ANALYSIS_STATE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.catalogue.SaveAnalysisStateAction"  
 			scope="REQUEST">
 			
 		<CONFIG></CONFIG>

@@ -35,6 +35,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
+import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -47,9 +48,10 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	
 	// property name
 	public static final String CATALOGUE = "CATALOGUE";
+	public static final String CROSSTAB_DEFINITION = "CROSSTAB_DEFINITION";
 	public static final String DATAMART_MODEL = "DATAMART_MODEL";
 	
-	public static final String CURRENT_VERSION = "6";
+	public static final String CURRENT_VERSION = "7";
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(QbeEngineAnalysisState.class);
@@ -63,7 +65,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 
 	public void load(byte[] rowData) throws SpagoBIEngineException {
 		String str = null;
-		JSONObject catalogueJSON = null;
+		JSONObject abalysisStateJSON = null;
 		JSONObject rowDataJSON = null;
 		String encodingFormatVersion;
 		
@@ -85,7 +87,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			
 			
 			if(encodingFormatVersion.equalsIgnoreCase(CURRENT_VERSION)) {				
-				catalogueJSON = rowDataJSON;
+				abalysisStateJSON = rowDataJSON;
 			} else {
 				logger.warn("Row data encoding version [" + encodingFormatVersion + "] does not match with the current version used by the engine [" + CURRENT_VERSION + "] ");
 				logger.debug("Converting from encoding version [" + encodingFormatVersion + "] to encoding version [" + CURRENT_VERSION + "]....");
@@ -94,12 +96,14 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 				if(analysisStateLoader == null) {
 					throw new SpagoBIEngineException("Unable to load data stored in format [" + encodingFormatVersion + "] ");
 				}
-				catalogueJSON = (JSONObject)analysisStateLoader.load(str);
+				abalysisStateJSON = (JSONObject)analysisStateLoader.load(str);
 				logger.debug("Encoding conversion has been executed succesfully");
 			}
 			
-			catalogueJSON = catalogueJSON.getJSONObject("catalogue");
+			JSONObject catalogueJSON = abalysisStateJSON.getJSONObject("catalogue");
+			JSONObject crosstabDefinitionJSON = abalysisStateJSON.getJSONObject("crosstabdefinition");
 			setProperty( CATALOGUE,  catalogueJSON);
+			setProperty( CROSSTAB_DEFINITION,  crosstabDefinitionJSON);
 			logger.debug("analysis state loaded succsfully from row data");
 		} catch (JSONException e) {
 			throw new SpagoBIEngineException("Impossible to load analysis state from raw data", e);
@@ -110,15 +114,18 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 
 	public byte[] store() throws SpagoBIEngineException {
 		JSONObject catalogueJSON = null;
+		JSONObject crosstabDefinitionJSON = null;
 		JSONObject rowDataJSON = null;
 		String rowData = null;	
 		
 		catalogueJSON = (JSONObject)getProperty( CATALOGUE );
-				
+		crosstabDefinitionJSON = (JSONObject)getProperty( CROSSTAB_DEFINITION );
+		
 		try {
 			rowDataJSON = new JSONObject();
 			rowDataJSON.put("version", CURRENT_VERSION);
 			rowDataJSON.put("catalogue", catalogueJSON);
+			rowDataJSON.put("crosstabdefinition", crosstabDefinitionJSON);
 			
 			rowData = rowDataJSON.toString();
 		} catch (Throwable e) {
@@ -147,7 +154,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
-			throw new SpagoBIEngineRuntimeException("Impossible to deserialize analysis state", e);
+			throw new SpagoBIEngineRuntimeException("Impossible to deserialize catalogue", e);
 		}
 		
 		return catalogue;
@@ -174,7 +181,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			
 			catalogueJSON.put("queries", queriesJSON);
 		} catch (Throwable e) {
-			throw new SpagoBIEngineRuntimeException("Impossible to deserialize analyziz state", e);
+			throw new SpagoBIEngineRuntimeException("Impossible to serialize catalogue", e);
 		}
 		
 		setProperty( CATALOGUE, catalogueJSON );
@@ -187,6 +194,31 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	public void setDatamartModel(DataMartModel datamartModel) {
 		setProperty( DATAMART_MODEL, datamartModel );
 	}
+
+	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {
+		JSONObject crosstabDefinitionJSON = null;
+		try {
+			crosstabDefinitionJSON = crosstabDefinition.toJSONObject();
+		} catch (Throwable e) {
+			throw new SpagoBIEngineRuntimeException("Impossible to serialize crosstab definition", e);
+		}
+		setProperty( CROSSTAB_DEFINITION, crosstabDefinitionJSON );
+	}
 	
+
+	public CrosstabDefinition getCrosstabDefinition() {
+		CrosstabDefinition crosstabDefinition;
+		JSONObject crosstabDefinitionJSON;
+		
+		crosstabDefinitionJSON = (JSONObject)getProperty( CROSSTAB_DEFINITION );
+		try {
+			crosstabDefinition = new CrosstabDefinition(crosstabDefinitionJSON);
+		} catch (Throwable e) {
+			throw new SpagoBIEngineRuntimeException("Impossible to deserialize crosstab definition", e);
+		}
+		
+		return crosstabDefinition;
+		
+	}
 	
 }

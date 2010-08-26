@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.datawriter;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -46,7 +47,8 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String ROOT = "rows";
 	
 	
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy hh:mm:ss" );
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
+	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
 	
 	/** Logger component. */
@@ -143,10 +145,14 @@ public class JSONDataWriter implements IDataWriter {
 				} else if( String.class.isAssignableFrom(clazz) ) {
 					logger.debug("Column [" + (i+1) + "] type is equal to [" + "STRING" + "]");
 					fieldMetaDataJSON.put("type", "string");
+				} else if( Timestamp.class.isAssignableFrom(clazz) ) {
+					logger.debug("Column [" + (i+1) + "] type is equal to [" + "TIMESTAMP" + "]");
+					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s");
 				} else if( Date.class.isAssignableFrom(clazz) ) {
 					logger.debug("Column [" + (i+1) + "] type is equal to [" + "DATE" + "]");
 					fieldMetaDataJSON.put("type", "date");
-					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s");
+					fieldMetaDataJSON.put("dateFormat", "d/m/Y");
 				} else if( Boolean.class.isAssignableFrom(clazz) ) {
 					logger.debug("Column [" + (i+1) + "] type is equal to [" + "BOOLEAN" + "]");
 					fieldMetaDataJSON.put("type", "boolean");
@@ -200,7 +206,9 @@ public class JSONDataWriter implements IDataWriter {
 					
 					String fieldValue = "";
 					if(field.getValue() != null) {
-						if(Date.class.isAssignableFrom(fieldMetaData.getType())) {
+						if(Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
+							fieldValue =  TIMESTAMP_FORMATTER.format(  field.getValue() );
+						} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
 							fieldValue =  DATE_FORMATTER.format(  field.getValue() );
 						} else {
 							fieldValue =  field.getValue().toString();
