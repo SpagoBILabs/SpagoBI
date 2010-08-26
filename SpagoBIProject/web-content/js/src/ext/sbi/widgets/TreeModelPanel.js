@@ -87,7 +87,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			animate : true,
 			autoScroll : true,		
             style: {
-                "background-color": "#f1f1f1",
+                //"background-color": "#f1f1f1",
                 "border":"none"
             },
 			loader: new Ext.tree.TreeLoader({

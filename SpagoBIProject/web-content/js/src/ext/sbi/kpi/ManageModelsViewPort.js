@@ -57,7 +57,6 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 	
 	var viewport = {
 		layout: 'border'
-		, id: 'model-viewport'
 		, height:560
 		, autoScroll: true
 		, items: [

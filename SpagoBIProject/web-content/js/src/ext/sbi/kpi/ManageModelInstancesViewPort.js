@@ -68,8 +68,8 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
     this.modelInstancesGrid = new Sbi.kpi.ManageModelInstancesGrid(conf, this);
    //DRAW east element
     this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf, this.modelInstancesGrid);
-    
-    this.mamageKpis = new Sbi.kpi.ManageKpis(conf);
+    conf.readonlyStrict = true;
+    this.manageKpis = new Sbi.kpi.ManageKpisGrid(conf, this.manageModelInstances);
     
     this.resourcesTab = new Ext.Panel({
         title: LN('sbi.modelinstances.resourcesTab')
@@ -130,11 +130,11 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
            
 		this.viewport = {
 				layout: 'border'
-				, id: 'model-viewport'
 				, height:560
 				, autoScroll: true
 				, items: [
 			         {
+			           id: 'modelInstancesList00',
 			           region: 'west',
 			           width: 275,
 			           height:560,
@@ -145,6 +145,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			           items:[this.modelInstancesGrid]
 			          },
 				    {
+			           id: 'main00',	  
 				       region: 'center',
 				       width: 300,
 				       height:560,
@@ -156,8 +157,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				    }, {
 				        region: 'east',
 				        split: true,
-				        width: 400,
+				        width: 500,
 				        height:560,
+				        id: 'modelsTree00',
 				        collapsed:false,
 				        collapseMode:'mini',
 				        autoScroll: true,
@@ -176,9 +178,24 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				                	collapsed: true,
 				                	collapseMode:'mini',
 				                    width: 300,
+				                    height: 500,
 				                    minSize: 100,
+				                    layout: 'fit',
 				                    autoScroll: true,
-				                    items:[this.mamageKpis]
+				                    items:[this.manageKpis],
+				                    listeners : {
+				                        beforeCollapse: function(cmp){
+				                            //expand model instances list
+				                            var toCollapse = Ext.getCmp('modelInstancesList00');
+				                            toCollapse.expand();
+				                        },
+				                        beforeExpand: function(cmp){
+				                            //collapse model instances list
+				                            var toCollapse = Ext.getCmp('modelInstancesList00');
+				                            toCollapse.collapse();
+				                            //cmp.set
+				                        }
+				                    }
 				                }    
 				        ]
 				    }
