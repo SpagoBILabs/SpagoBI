@@ -56,8 +56,17 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 	}
 	var c = Ext.apply(defaultSettings, config || {});
 	
-	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content, 
-						// and crosstabConfig content, that is the crosstab configuration
+	this.initialData = c.initialData;		// initial grid's content
+	this.crosstabConfig = c.crosstabConfig;	// initial crosstab configuration
+	delete c.initialData;
+	delete c.crosstabConfig; // deleting those properties is necessary, because otherwise default values are lost, most likely 
+							 // when the super constructor is called: may be it invokes Ext.apply(this, c) and a undefined property
+							 // overrides a non-undefined property with the same name
+	
+	// default value for crosstabConfig
+	if (this.crosstabConfig === undefined) {
+		this.crosstabConfig = {measureson: "columns"};
+	}
 	
 	this.init(c);
 			
@@ -124,7 +133,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	initialData: undefined
 	, targetRow: null
 	, detailsWizard: undefined
-	, crosstabConfig: {measureson: "columns"} // initial value
+	, crosstabConfig: undefined
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
