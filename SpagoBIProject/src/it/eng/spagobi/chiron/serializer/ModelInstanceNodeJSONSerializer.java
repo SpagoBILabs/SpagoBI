@@ -19,6 +19,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String KPI_INST_ID = "kpiInstId";
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
+	private static final String TEXT = "text";
 	private static final String DESCRIPTION = "description";
 	private static final String STARTDATE = "startdate";
 	private static final String ENDDATE = "enddate";
@@ -61,6 +62,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 
 			}
 			result.put(NAME, res.getName() );
+			result.put(TEXT, res.getName() );
 			result.put(LABEL, res.getLabel());			
 			result.put(DESCRIPTION, res.getDescription() );
 			result.put(STARTDATE, res.getStartDate());
