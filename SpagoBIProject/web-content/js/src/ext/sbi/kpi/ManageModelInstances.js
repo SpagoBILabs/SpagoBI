@@ -169,29 +169,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
 			        , width: 430
-			        , items: [{
-
-			 		   	 itemId: 'kpi-detail',   	              
-			 		   	 columnWidth: 0.4,
-			             xtype: 'fieldset',
-			             labelWidth: 90,
-			             defaults: {width: 140, border:false},    
-			             defaultType: 'textfield',
-			             autoHeight: true,
-			             autoScroll  : true,
-			             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-			             border: false,
-			             style: {
-			                 //"background-color": "#f1f1f1",
-			                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-			             },
-			             items: [this.kpiModelType,
-						         this.kpiLabel,
-						         this.kpiName,
-						         this.kpiThreshold,
-						         this.kpiPeriodicity,
-						         this.kpiPeriodicityButton]
-			    	}]
+			        , items: [
+			                  this.kpiInstFieldset, 
+			                  this.kpiInstFieldset2]
 			    },{
 			        title: 'Source node'
 				        , itemId: 'src_model'
@@ -295,7 +275,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             scope		: this,
             items       : [manageThresholds]
 		});
-		manageThresholds.on('selectEvent', function(itemId,index, code){this.thrWin.close();Ext.getCmp('kpiFiledThreshold').setValue(code);}, this);
+		manageThresholds.on('selectEvent', function(itemId,index, code){this.thrWin.close();Ext.getCmp('kpiThresholdF').setValue(code);}, this);
 		this.thrWin.show();
 	}
 	, initKpiPanel: function() {
@@ -303,15 +283,18 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiModelType = new Ext.form.RadioGroup({
             fieldLabel: LN('sbi.generic.type'),	             
     	    id:'kpiModelType',
-    	    xtype: 'checkboxgroup',
+    	    xtype: 'radiogroup',
+    	    readonly: true,
     	    itemCls: 'x-check-group-alt',
     	    // Put all controls in a single column with width 100%
     	    columns: 1,
     	    items: [
-    	        {boxLabel: 'UUID', name: 'kpitype-1'},
-    	        {boxLabel: 'Kpi Instance', name: 'kpitype-2'}
+    	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
+    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
     	    ]
     	});
+		
+
  	    this.kpiName = new Ext.form.TextField({
  	    	 id: 'kpinameField',
              fieldLabel:LN('sbi.generic.kpi'),
@@ -326,17 +309,22 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  		     triggerClass: 'x-form-search-trigger',
  		     fieldLabel: 'Threshold',
  		     name: 'threshold',
- 		     id: 'kpiFiledThreshold'
+ 		     id: 'kpiThresholdF'
  		    });
  	 	 this.kpiThreshold.onTriggerClick = this.launchThrWindow;
 
-
-		this.kpiLabel = new Ext.form.TextField({
-             readOnly: false,
-             fieldLabel: LN('sbi.generic.label'),
-             name: 'kpiLabel'
-         });
+		this.kpiWeight = new Ext.form.TextField({
+            readOnly: false,
+            fieldLabel: 'Weight',
+            name: 'kpiWeight'
+        });
 		
+		this.kpiTarget = new Ext.form.TextField({
+            readOnly: false,
+            fieldLabel: 'Target',
+            name: 'kpiTarget'
+        });
+		//fieldset periodicity----------------
 		this.kpiPeriodicity = new Ext.form.TextField({
             readOnly: false,
             fieldLabel: 'Periodicity',
@@ -347,7 +335,55 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			text:'Add Periodicity',
 			handler: this.launchPeriodicityWindow	
 		});
+		//---------------------------------------------
+		//alternate if uuid
+		this.kpiLabel = new Ext.form.TextField({
+             readOnly: false,
+             fieldLabel: LN('sbi.generic.label'),
+             name: 'kpiLabel'
+         });
+		
 
+		this.kpiInstFieldset = new Ext.form.FieldSet({
+	 		   	 columnWidth: 0.4,
+	             labelWidth: 90,
+	             defaults: {width: 140, border:false},    
+	             autoHeight: true,
+	             autoScroll  : true,
+	             //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	             border: false,
+	             style: {
+	                 "background-color": "#D3DAED",
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [this.kpiModelType,
+	                     this.kpiName,
+	                     this.kpiThreshold,
+	                     this.kpiWeight,
+	                     this.kpiTarget,
+	                     this.kpiPeriodicity,
+	                     this.kpiPeriodicityButton
+	                     ]
+	    	});
+		
+			this.kpiInstFieldset2 = new Ext.form.FieldSet({
+			   	 columnWidth: 0.4,
+	            labelWidth: 90,
+	            defaults: {width: 140, border:false},    
+	            autoHeight: true,
+	            autoScroll  : true,
+	            //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	            border: false,
+	            style: {
+	                "background-color": "#D3DAED",
+	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	            },
+	            items: [this.kpiModelType,
+	                    this.kpiLabel]
+			});
+			
+			this.kpiInstFieldset.setVisible(false);
+			this.kpiInstFieldset2.setVisible(false);
 	}
 	, configureDD2: function() {
 		  var fieldDropTargetEl =  this.kpiName.getEl().dom; 
@@ -385,21 +421,21 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, fillKpiPanel: function(sel, node) {
 		
 		var hasKpiInst = node.attributes.kpiInst;
-		
+
 		if(hasKpiInst !== undefined && hasKpiInst != null){
-			this.kpiModelType.setValue({
-				    'kpitype-1': false,
-				    'kpitype-2': true
-			});
-
-
+			this.kpiInstFieldset.setVisible(true);
+			this.kpiInstFieldset2.setVisible(false);
+			
+			this.kpiModelType.onSetValue( 'kpiinst', true);
+			this.kpiInstFieldset.doLayout();
 		}else{
-			this.kpiModelType.setValue({
-			    'kpitype-1': false,
-			    'kpitype-2': true
-			});
-
+			this.kpiInstFieldset.setVisible(false);
+			this.kpiInstFieldset2.setVisible(true);
+			this.kpiModelType.onSetValue( 'uuid', true);
+			this.kpiInstFieldset2.doLayout();
 		}
+
+		
 	}
     //OVERRIDING save method
 	,save : function() {
