@@ -44,9 +44,9 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstances = function(config, ref) { 
-	var paramsList = {MESSAGE_DET: "MODELINST_NODES_LIST"};
-	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINST_NODES_SAVE"};
-	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MMODELINST_NODE_DELETE"};
+	var paramsList = {MESSAGE_DET: "MODELINSTS_NODES_LIST"};
+	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
+	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MMODELINSTS_NODE_DELETE"};
 	
 	this.configurationObject = {};
 	
@@ -620,7 +620,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        text		: this.rootNodeText,
 		        expanded	: true,
 		        leaf		: false,
-				modelInstId 	: this.rootNodeId,
+				modelInstId : this.rootNodeId,
 				id			: this.rootNodeId,
 				label		: rec.get('label'),
 				description	: rec.get('description'),
