@@ -83,6 +83,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	
 	, load: function(crosstabDefinition) {
 			this.addLoadingToPage();
+			alert(crosstabDefinition.toSource());
 			Ext.Ajax.request({
 		        url: this.services['loadCrosstab'],
 		        params: {
