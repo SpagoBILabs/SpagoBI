@@ -184,6 +184,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	   var detailFieldNodeType =  {
         	  name: 'typeCd',
               store: this.typesStore,
+              width : 120,
               fieldLabel: LN('sbi.generic.type'),
               displayField: 'typeCd',   // what the user sees in the popup
               valueField: 'typeCd',        // what is passed to the 'change' event
