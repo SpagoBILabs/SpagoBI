@@ -46,6 +46,15 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageThresholdValues = function(config) { 
 	
 	this.severityStore = config.severityStore;
+
+	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "THR_VAL_DELETE"};
+	
+	this.services = new Array();
+	
+	this.services['deleteThrValService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_THRESHOLDS_ACTION'
+		, baseParams: paramsDel
+	});
 	
 	var cField = new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true});
 	cField.on('select', function(f,val){
@@ -261,7 +270,7 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
         this.store.insert(0,emptyRecToAdd);
     }
 
-    ,onDelete: function() {
+   /* ,onDelete: function() {
         var rec = this.getSelectionModel().getSelected();
 
         var remove = true;
@@ -274,6 +283,58 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
             this.store.add(rec);
             this.store.commitChanges();
         }
+     }*/
+    
+    ,onDelete: function() {
+    	
+        var rec = this.getSelectionModel().getSelected();
+        var itemId = rec.get('idThrVal');
+        
+        if (itemId != null && itemId!=undefined && itemId!=0){
+        	
+        Ext.MessageBox.confirm(
+    			LN('sbi.generic.pleaseConfirm'),
+    			LN('sbi.generic.confirmDelete'),            
+                function(btn, text) {
+                    if (btn=='yes') {
+                    	if (itemId != null) {	
+
+    						Ext.Ajax.request({
+    				            url: this.services['deleteThrValService'],
+    				            params: {'thrValIid': itemId},
+    				            method: 'GET',
+    				            success: function(response, options) {
+    								if (response !== undefined) {
+    									var deleteRow = this.getSelectionModel().getSelected();
+    									this.store.remove(deleteRow);
+    									this.store.commitChanges();
+    								} else {
+    									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+    								}
+    				            },
+    				            failure: function() {
+    				                Ext.MessageBox.show({
+    				                    title: LN('sbi.generic.error'),
+    				                    msg: LN('sbi.generic.deletingItemError'),
+    				                    width: 150,
+    				                    buttons: Ext.MessageBox.OK
+    				               });
+    				            }
+    				            ,scope: this
+    			
+    						});
+    					} else {
+    						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+    					}
+                    }
+                },
+                this
+    		);
+        }else{
+        	this.store.remove(rec);
+            this.store.commitChanges();
+        }
+
      }
 
 

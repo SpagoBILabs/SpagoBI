@@ -185,16 +185,26 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			SbiThreshold sbiThreshold = (SbiThreshold) aSession.load(
 					SbiThreshold.class, threshold.getId());
 
-			SbiDomains thresholdType = null;
+			SbiDomains newThresholdType = null;
 			if (thresholdTypeId != null) {
-				thresholdType = (SbiDomains) aSession.load(SbiDomains.class,
+				newThresholdType = (SbiDomains) aSession.load(SbiDomains.class,
 						thresholdTypeId);
+			}
+			SbiDomains oldThrType = sbiThreshold.getThresholdType();
+			if(!oldThrType.getValueCd().equalsIgnoreCase(newThresholdType.getValueCd())){
+				//If the type of threshold is changed all old threshold need to be deleted
+				Set set = sbiThreshold.getSbiThresholdValues();
+				ArrayList thValues=new ArrayList();
+				for (Iterator iterator = set.iterator(); iterator.hasNext();) {
+					SbiThresholdValue sbiThValue = (SbiThresholdValue) iterator.next();
+					aSession.delete(sbiThValue);
+				}
 			}
 
 			sbiThreshold.setName(name);
 			sbiThreshold.setDescription(description);
 			sbiThreshold.setCode(code);
-			sbiThreshold.setThresholdType(thresholdType);
+			sbiThreshold.setThresholdType(newThresholdType);
 
 			aSession.saveOrUpdate(sbiThreshold);
 			

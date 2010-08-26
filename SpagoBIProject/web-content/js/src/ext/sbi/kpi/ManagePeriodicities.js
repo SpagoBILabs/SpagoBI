@@ -340,16 +340,6 @@ Ext.extend(Sbi.kpi.ManagePeriodicities, Ext.grid.EditorGridPanel, {
             this.store.commitChanges();
         }
 
-        /*var remove = true;
-
-        this.store.remove(rec);
-        this.store.commitChanges();
-
-        if(!remove){
-        	//readd record
-            this.store.add(rec);
-            this.store.commitChanges();
-        }*/
      }
     
     , saveElement: function(rec,params){

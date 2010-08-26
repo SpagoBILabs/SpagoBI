@@ -370,6 +370,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	
 		var emptyRecToAdd = this.emptyRecord;
 		this.getForm().loadRecord(emptyRecToAdd);
+		//this.mainElementsStore.add(emptyRecToAdd); 
 	
 	    this.tabs.items.each(function(item)
 		    {		
