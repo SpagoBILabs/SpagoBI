@@ -88,7 +88,6 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 	initContextMenu : function() {
 
 		this.menu = new Ext.menu.Menu( {
-			id : 'actions',
 			items : [
 			// ACID operations on nodes
 					'-', {
@@ -118,14 +117,12 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 				iconCls : 'icon-save',
 				handler : this.save,
 				width : 30,
-				id : 'save-btn',
 				scope : this
 			}) ]
 		});
 
 		this.tabs = new Ext.TabPanel( {
 			enableTabScroll : true,
-			id : 'tab-panel1',
 			activeTab : 0,
 			columnWidth : 0.6,
 			autoScroll : true,
@@ -136,7 +133,6 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 		});
 
 		this.mainTree = new Ext.tree.TreePanel( {
-			id:'model-maintree',
 			title : this.treeTitle,
 			width : 250,
 			height : 230,
@@ -191,7 +187,6 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 		 * Here is where we create the Form
 		 */
 		this.gridForm = new Ext.FormPanel( {
-			id : 'model-detail-formpan',
 			frame : true,
 			autoScroll : true,
 			labelAlign : 'left',

@@ -169,7 +169,7 @@ Ext.extend(Sbi.kpi.ManageModelsViewPort, Ext.Viewport, {
 		  * Setup Drop Targets
 		  ***/
 
-		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(Ext.getCmp('model-maintree'), {
+		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(this.manageModels.mainTree, {
 		    ddGroup  : 'grid2treeAndDetail',
 		    dropAllowed : true,
 		    overClass: 'over',
@@ -196,7 +196,8 @@ Ext.extend(Sbi.kpi.ManageModelsViewPort, Ext.Viewport, {
 
 			      // Load the record into the form field
 			      Ext.getCmp('model-detailFieldKpi').setValue(selectedRecord.get('name')); 
-			      var node = Ext.getCmp('model-maintree').getSelectionModel().getSelectedNode() ;
+
+			      var node = this.initialConfig.mainTree.getSelectionModel().getSelectedNode() ;
 
 			      if(node !== undefined && node != null){
 			    	  var nodesList = this.initialConfig.nodesToSave;

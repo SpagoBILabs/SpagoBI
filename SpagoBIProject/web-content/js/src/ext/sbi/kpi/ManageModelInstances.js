@@ -132,7 +132,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 	   /*END*/
 	 	  this.kpiInstItems = new Ext.Panel({
 		        title: 'Kpi Instance'
-			        , id : 'kpiInstItemsTab'
+
 			        , layout: 'fit'
 			        , autoScroll: true
 			        , items: []
@@ -148,7 +148,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        , itemId: 'detail'
 		        , width: 430
 		        , items: [{
-			   		 id: 'items-detail-models',   	
+
 		 		   	 itemId: 'items-detail1',   	              
 		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
@@ -170,7 +170,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			        , itemId: 'kpi_model'
 			        , width: 430
 			        , items: [{
-				   		 id: 'kpiinst-model-det',   	
+
 			 		   	 itemId: 'kpi-detail',   	              
 			 		   	 columnWidth: 0.4,
 			             xtype: 'fieldset',
@@ -197,7 +197,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				        , itemId: 'src_model'
 				        , width: 430
 				        , items: [{
-					   		 id: 'src-model-det',   	
+	
 				 		   	 itemId: 'src-detail',   	              
 				 		   	 columnWidth: 0.4,
 				             xtype: 'fieldset',
@@ -391,7 +391,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      				var hasErrors = false;
 	      				for (var key in content) {
 		      				  var value = content[key];
-		      				  var nodeSel = Ext.getCmp('model-maintree').getNodeById(key);
+		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
@@ -460,7 +460,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      				var hasErrors = false;
 	      				for (var key in content) {
 		      				  var value = content[key];
-		      				  var nodeSel = Ext.getCmp('model-maintree').getNodeById(key);
+		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;

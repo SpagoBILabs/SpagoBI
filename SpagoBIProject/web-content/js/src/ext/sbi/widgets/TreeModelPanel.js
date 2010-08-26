@@ -79,7 +79,6 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 	initWidget : function() {
 
 		this.modelsTree = new Ext.tree.TreePanel( {
-			//id:'model-tree-readonly',
 			title : this.treeTitle,
 			width : 250,
 			height : 300,
@@ -139,7 +138,6 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
              name: 'importChildrenFlag'
          });
 		this.modelPanel = new Ext.form.FormPanel( {
-			//id : 'modelPan',
 			frame : true,
 			labelWidth: 150,  
 			autoScroll : true,
