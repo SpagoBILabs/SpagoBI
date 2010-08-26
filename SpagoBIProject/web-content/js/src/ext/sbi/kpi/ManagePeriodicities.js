@@ -48,14 +48,8 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	var paramsList = {MESSAGE_DET: "PERIODICTIES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "PERIODICITY_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "PERIODICITY_DELETE"};
-	var ppL = {MESSAGE_DET: "THRESHOLDS_LIST"};
 	
 	this.services = new Array();
-	
-	this.services['pp'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_THRESHOLDS_ACTION'
-		, baseParams: ppL
-	});
 	
 	this.services['managePrListService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_PERIODICITIES_ACTION'
@@ -75,75 +69,132 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	this.store = new Ext.data.JsonStore({
     	autoLoad: false    	  
     	, id : 'id'		
-        , fields: ['idThrVal'
-         	          , 'label'
-          	          , 'position'
-          	          , 'min'
-          	          , 'minIncluded'
-          	          , 'max'
-          	          , 'maxIncluded'
-          	          , 'val'
-          	          , 'color'
-          	          , 'severityCd'
+        , fields: ['idPr'
+         	          , 'name'
+          	          , 'months'
+          	          , 'days'
+          	          , 'hours'
+          	          , 'mins'
           	          ]
     	, root: 'rows'
 		, url: this.services['managePrListService']		
 	});
 	
-	this.severityStore = config.severityStore;
+	var monthsStore = new Ext.data.SimpleStore({
+	    fields: ['months'],
+  	    autoLoad: false,
+	    data:[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12]]
+	});
 	
-	var cField = new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true});
-	cField.on('select', function(f,val){
-		this.store.getAt(this.currentRowRecordEdited).set('color',val);
-		this.getView().refresh();		
-		},this);
+	var daysStore = new Ext.data.SimpleStore({
+	    fields: ['days'],
+  	    autoLoad: false,
+  	    data:[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],
+  	          [11],[12],[13],[14],[15],[16],[17],[18],[19],[20],
+  	          [21],[22],[23],[24],[25],[26],[27],[28],[29],[30],[31]]
+	});
+	
+	var hoursStore = new Ext.data.SimpleStore({
+	    fields: ['hours'],
+  	    autoLoad: false,
+  	    data:[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],
+  	          [11],[12],[13],[14],[15],[16],[17],[18],[19],[20],
+  	          [21],[22],[23],[24]]
+	});
+	
+	var minsStore = new Ext.data.SimpleStore({
+	    fields: ['mins'],
+  	    autoLoad: false,
+  	    data:[[0],[1],[2],[3],[4],[5],[6],[7],[8],[9],[10],
+  	          [11],[12],[13],[14],[15],[16],[17],[18],[19],[20],
+  	          [21],[22],[23],[24],[25],[26],[27],[28],[29],[30],
+  	          [31],[32],[33],[34],[35],[36],[37],[38],[39],[40],
+  	          [41],[42],[43],[44],[45],[46],[47],[48],[49],[50],
+  	          [51],[52],[53],[54],[55],[56],[57],[58],[59],[60]]
+	});
 	
 	// Let's pretend we rendered our grid-columns with meta-data from our ORM framework.
 	this.userColumns =  [
 	    {
-	        name: 'idThrVal',
+	        name: 'idPr',
 	        hidden: true
 	    },{
 	    	header: 'Name', 
-	    	id:'position',
+	    	id:'name',
 	    	width: 80, 
 	    	sortable: true, 
-	    	xtype: 'numbercolumn',
-	    	dataIndex: 'position', 
-	    	editor: new Ext.form.NumberField({})	
+	    	dataIndex: 'name', 
+	    	editor: new Ext.form.TextField({})	
 	    },{
 	    	header: 'Months', 
 	    	width: 60, 
-			id:'label',
+			id:'months',
 			sortable: true, 
-			dataIndex: 'label',  
-			editor: new Ext.form.TextField({})
+			dataIndex: 'months',  
+			editor: new Ext.form.ComboBox({
+	        	  name: 'months',
+	              store: monthsStore,
+	              displayField: 'months',   // what the user sees in the popup
+	              valueField: 'months',        // what is passed to the 'change' event
+	              typeAhead: true,
+	              forceSelection: true,
+	              mode: 'local',
+	              triggerAction: 'all',
+	              selectOnFocus: true,
+	              editable: false,
+	              allowBlank: false,
+	              validationEvent:true
+	          })
 	    },{
 	    	header: 'Days', 
 	    	width: 60, 
-			id:'min',
+			id:'days',
 			sortable: true, 
-			xtype: 'numbercolumn',
-			dataIndex: 'min',  
-			editor: new Ext.form.NumberField({})				
+			dataIndex: 'days',  
+			editor: new Ext.form.ComboBox({
+	        	  name: 'days',
+	              store: daysStore,
+	              displayField: 'days',   // what the user sees in the popup
+	              valueField: 'days',        // what is passed to the 'change' event
+	              typeAhead: true,
+	              forceSelection: true,
+	              mode: 'local',
+	              triggerAction: 'all',
+	              selectOnFocus: true,
+	              editable: false,
+	              allowBlank: false,
+	              validationEvent:true
+	          })				
 		},{
 			header: 'Hours', 
 			width: 60, 
-			xtype: 'booleancolumn',
 			sortable: true, 
-			dataIndex: 'minIncluded',
-			editor:new Ext.form.Checkbox({})
+			dataIndex: 'hours',
+			editor: new Ext.form.ComboBox({
+	        	  name: 'hours',
+	              store: hoursStore,
+	              displayField: 'hours',   // what the user sees in the popup
+	              valueField: 'hours',        // what is passed to the 'change' event
+	              typeAhead: true,
+	              forceSelection: true,
+	              mode: 'local',
+	              triggerAction: 'all',
+	              selectOnFocus: true,
+	              editable: false,
+	              allowBlank: false,
+	              validationEvent:true
+	          })
 		},{
 			header: 'Minutes', 
 			width: 60, 
-			id:'severityCd',
+			id:'mins',
 			sortable: true, 
-			dataIndex: 'severityCd',  		
+			dataIndex: 'mins',  		
 			editor: new Ext.form.ComboBox({
-	        	  name: 'severityCd',
-	              store: this.severityStore,
-	              displayField: 'severityCd',   // what the user sees in the popup
-	              valueField: 'severityCd',        // what is passed to the 'change' event
+	        	  name: 'mins',
+	              store: minsStore,
+	              displayField: 'mins',   // what the user sees in the popup
+	              valueField: 'mins',        // what is passed to the 'change' event
 	              typeAhead: true,
 	              forceSelection: true,
 	              mode: 'local',
@@ -211,22 +262,8 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 
     // constructor
     Sbi.kpi.ManagePeriodicities.superclass.constructor.call(this, c);
-    
+	
     this.store.load();
-    
-    this.on('beforeedit', function(e) {
-    	var t = Ext.apply({}, e);
-		var col = t.column;
-		this.currentRowRecordEdited = t.row;	
-    	
-    }, this);
-    
-    this.on('afteredit', function(e) {
-    	
-		var col = e.column;
-		var row = e.row;	
-    	
-    }, this);
 
 }
 
@@ -242,23 +279,16 @@ Ext.extend(Sbi.kpi.ManagePeriodicities, Ext.grid.EditorGridPanel, {
   	,editor:null
   	,userGrid:null
   	,severityStore:null
-	
-  	,loadItems: function(thrValues){
-		this.store.loadData(thrValues);
-	}
 
     ,onAdd: function (btn, ev) {
+
         var emptyRecToAdd = new Ext.data.Record({
-			  idThrVal: 0,
-			  label: '',
-              position: '',
-              min: '',
-              minIncluded: false,
-              max: '',
-              maxIncluded: false,
-              val: '',
-              color: '#FFFFFF',
-              severityCd: 'LOW'     
+        	  idPr: 0,
+        	  name: '',
+        	  months: 0,
+        	  days: 0,
+        	  hours: 0,
+        	  mins: 0 
 			 });   
         this.store.insert(0,emptyRecToAdd);
     }
