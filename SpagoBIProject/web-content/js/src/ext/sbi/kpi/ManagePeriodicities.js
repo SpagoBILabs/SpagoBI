@@ -295,8 +295,52 @@ Ext.extend(Sbi.kpi.ManagePeriodicities, Ext.grid.EditorGridPanel, {
 
     ,onDelete: function() {
         var rec = this.getSelectionModel().getSelected();
+        var itemId = rec.get('idPr');
+        if (itemId != null && itemId!=undefined && itemId!=0){
+        Ext.MessageBox.confirm(
+    			LN('sbi.generic.pleaseConfirm'),
+    			LN('sbi.generic.confirmDelete'),            
+                function(btn, text) {
+                    if (btn=='yes') {
+                    	if (itemId != null) {	
 
-        var remove = true;
+    						Ext.Ajax.request({
+    				            url: this.services['deletePrService'],
+    				            params: {'idPr': itemId},
+    				            method: 'GET',
+    				            success: function(response, options) {
+    								if (response !== undefined) {
+    									var deleteRow = this.getSelectionModel().getSelected();
+    									this.store.remove(deleteRow);
+    									this.store.commitChanges();
+    								} else {
+    									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+    								}
+    				            },
+    				            failure: function() {
+    				                Ext.MessageBox.show({
+    				                    title: LN('sbi.generic.error'),
+    				                    msg: LN('sbi.generic.deletingItemError'),
+    				                    width: 150,
+    				                    buttons: Ext.MessageBox.OK
+    				               });
+    				            }
+    				            ,scope: this
+    			
+    						});
+    					} else {
+    						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+    					}
+                    }
+                },
+                this
+    		);
+        }else{
+        	this.store.remove(rec);
+            this.store.commitChanges();
+        }
+
+        /*var remove = true;
 
         this.store.remove(rec);
         this.store.commitChanges();
@@ -305,12 +349,102 @@ Ext.extend(Sbi.kpi.ManagePeriodicities, Ext.grid.EditorGridPanel, {
         	//readd record
             this.store.add(rec);
             this.store.commitChanges();
-        }
+        }*/
      }
+    
+    , saveElement: function(rec,params){
+    	Ext.Ajax.request({
+            url: this.services['savePrService'],
+            params: params,
+            method: 'GET',
+            success: function(response, options) {
+				if (response !== undefined) {			
+		      		if(response.responseText !== undefined) {
 
-    ,onSave: function() {
-        alert('Save');
-     }
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content.responseText !== 'Operation succeded') {
+			                    Ext.MessageBox.show({
+			                        title: LN('sbi.generic.error'),
+			                        msg: content,
+			                        width: 150,
+			                        buttons: Ext.MessageBox.OK
+			                   });
+			      		}else{
+			      			var itemId = content.id;			      			
+			      			
+			      			if(itemId != null && itemId !==''){
+			      				rec.set('idPr', itemId); 
+			      			}
+			      			rec.commit();
+
+			      		}      				 
+
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
+		      		}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				}
+            },
+            failure: function(response) {
+	      		if(response.responseText !== undefined) {
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			var errMessage ='';
+					for (var count = 0; count < content.errors.length; count++) {
+						var anError = content.errors[count];
+	        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+	        				errMessage += anError.localizedMessage;
+	        			} else if (anError.message !== undefined && anError.message !== '') {
+	        				errMessage += anError.message;
+	        			}
+	        			if (count < content.errors.length - 1) {
+	        				errMessage += '<br/>';
+	        			}
+					}
+
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.generic.validationError'),
+	                    msg: errMessage,
+	                    width: 400,
+	                    buttons: Ext.MessageBox.OK
+	               });
+	      		}else{
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.generic.error'),
+	                    msg: LN('sbi.generic.savingItemError'),
+	                    width: 150,
+	                    buttons: Ext.MessageBox.OK
+	               });
+	      		}
+            }
+            ,scope: this
+        });
+    }
+    
+    ,onSave : function() {
+    	var modifRecs = this.store.getModifiedRecords();
+    	var length = modifRecs.length;
+    	
+		for(var i=0;i<length;i++){
+			
+   	        var rec = modifRecs[i];	
+	    	var idRec = rec.get('idPr');
+	
+	        var params = {
+	        	name :  rec.get('name'),
+	        	months : rec.get('months'),
+	        	days : rec.get('days'),
+	        	hours : rec.get('hours'),
+	        	mins : rec.get('mins')
+	        };
+	        
+	        if(idRec){
+	        	params.idPr = idRec;
+	        }
+	        this.saveElement(rec, params);
+	        
+		}
+	}
     
 });
 
