@@ -46,6 +46,8 @@ Ext.ns("Sbi.widgets");
 
 Sbi.widgets.TreeDetailForm = function(config) {
 
+	this.hideContextMenu = config.hideContextMenu;
+
 	var conf = config.configurationObject;
 	this.services = new Array();
 	this.services['manageTreeService'] = conf.manageTreeService;
@@ -57,8 +59,9 @@ Sbi.widgets.TreeDetailForm = function(config) {
 	this.treeTitle = conf.treeTitle;
 
 	this.initWidget();
-	this.initContextMenu();
-	
+	if(this.hideContextMenu === undefined || this.hideContextMenu == null || this.hideContextMenu != true ){
+		this.initContextMenu();
+	}
 
 	var c = Ext.apply( {}, config, this.gridForm);
 
@@ -77,6 +80,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 	rootNodeText : null,
 	treeTitle : null,
 	menu : null,
+	hideContextMenu: null,
 	
 	nodesToSave : new Array(),
 	selectedNodeToEdit : null,
@@ -255,7 +259,11 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 	},
 	onContextMenu : function(node, e) {
 		if (this.menu == null) { // create context menu on first right click
+			if(this.hideContextMenu === undefined || this.hideContextMenu == null || this.hideContextMenu != true ){
 				this.initContextMenu();
+			}else
+				return;
+
 		}
 		
 		if (this.ctxNode && this.ctxNode.ui) {
