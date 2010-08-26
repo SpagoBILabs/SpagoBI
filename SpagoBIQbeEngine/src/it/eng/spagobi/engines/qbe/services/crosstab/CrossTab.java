@@ -27,8 +27,9 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -109,7 +110,7 @@ public class CrossTab {
 			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
 				columnCordinates.add(columnPath);
 				rowCordinates.add(rowPath);
-				data.add(""+((BigDecimal)fields.get(i).getValue()).intValue());
+				data.add(""+getStringValue(fields.get(i).getValue()));
 			}
 		}
 		
@@ -124,7 +125,7 @@ public class CrossTab {
 		
 		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount);
 	}
-	
+		
 	/**
 	 * Get the JSON representation of the cross tab  
 	 * @return JSON representation of the cross tab  
@@ -298,6 +299,36 @@ public class CrossTab {
 		}
 	}
 
+	
+	private static String getStringValue(Object obj){
+		
+		Class clazz = obj.getClass();
+		if (clazz == null) {
+			clazz = String.class;
+		} 
+		if( Number.class.isAssignableFrom(clazz) ) {
+			
+			//BigInteger, Integer, Long, Short, Byte
+			if(Integer.class.isAssignableFrom(clazz) 
+		       || BigInteger.class.isAssignableFrom(clazz) 
+			   || Long.class.isAssignableFrom(clazz) 
+			   || Short.class.isAssignableFrom(clazz)
+			   || Byte.class.isAssignableFrom(clazz)) {
+				return ""+((Number)obj).intValue();
+			} else {
+				return ""+((Number)obj).floatValue();
+			}
+			
+		} else if( String.class.isAssignableFrom(clazz) ) {
+			return (String)obj;
+		} else if( Date.class.isAssignableFrom(clazz) ) {
+			return ((Date)obj).toString();
+		} else if( Boolean.class.isAssignableFrom(clazz) ) {
+			return obj.toString();
+		} else {
+			return obj.toString();
+		}
+	}
 
 	private class Node{
 		private String value;
@@ -392,6 +423,5 @@ public class CrossTab {
 		private CrossTab getOuterType() {
 			return CrossTab.this;
 		}
-
 	}
 }
