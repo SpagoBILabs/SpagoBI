@@ -186,7 +186,7 @@ import org.json.JSONObject;
 				}
 			}
 
-			List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("nodeTypesList");
+			List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("thrTypesList");
 			List<Domain> domainsthrValues = (List<Domain>)getSessionContainer().getAttribute("thrSeverityTypes");
 			domains.addAll(domainsthrValues);
 			
@@ -329,7 +329,7 @@ import org.json.JSONObject;
 		}else if(serviceType == null){
 			try {
 				List nodeTypes = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
-				getSessionContainer().setAttribute("nodeTypesList", nodeTypes);
+				getSessionContainer().setAttribute("thrTypesList", nodeTypes);
 				List thrSeverityTypes = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_SEVERITY_TYPE);
 				getSessionContainer().setAttribute("thrSeverityTypes", thrSeverityTypes);
 				

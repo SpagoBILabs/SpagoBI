@@ -67,6 +67,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String KPI_DELETE = "KPI_DELETE";
 	
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
+	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
 	private final String METRIC_SCALE_DOMAIN_TYPE = "METRIC_SCALE_TYPE";
 	private final String MEASURE_DOMAIN_TYPE = "MEASURE_TYPE";
 	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
@@ -288,6 +289,8 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			try {
 				List kpiTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("kpiTypesList", kpiTypesList);
+				List thrSeverityTypes = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_SEVERITY_TYPE);
+				getSessionContainer().setAttribute("thrSeverityTypes", thrSeverityTypes);
 				List measureTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(MEASURE_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("measureTypesList", measureTypesList);
 				List metricScaleTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(METRIC_SCALE_DOMAIN_TYPE);
