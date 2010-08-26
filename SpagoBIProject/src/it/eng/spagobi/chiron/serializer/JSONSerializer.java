@@ -35,6 +35,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.Periodicity;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResources;
@@ -97,8 +98,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( Resource.class, new ResourceJSONSerializer());
 		mappings.put( Threshold.class, new ThresholdJSONSerializer());
 		mappings.put( Kpi.class, new KpiJSONSerializer());
-		
-		//TODO da aggiungere mano a mano le classi esistono già
+		mappings.put( Periodicity.class, new PeriodicityJSONSerializer());
 		
 		mappings.put( Model.class, new ModelNodeJSONSerializer());	
 		mappings.put( ModelInstance.class, new ModelInstanceNodeJSONSerializer());

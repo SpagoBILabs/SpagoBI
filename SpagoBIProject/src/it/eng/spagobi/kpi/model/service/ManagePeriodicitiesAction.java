@@ -26,6 +26,8 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.config.bo.Periodicity;
+import it.eng.spagobi.kpi.config.dao.IPeriodicityDAO;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -47,32 +49,24 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 	private static Logger logger = Logger.getLogger(ManagePeriodicitiesAction.class);
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
-	private final String RESOURCES_LIST = "RESOURCES_LIST";
-	private final String RESOURCE_INSERT = "RESOURCE_INSERT";
-	private final String RESOURCE_DELETE = "RESOURCE_DELETE";
-	
-	private final String RESOURCE_DOMAIN_TYPE = "RESOURCE";
+	private final String PERIODICTIES_LIST = "PERIODICTIES_LIST";
+	private final String PERIODICITY_INSERT = "PERIODICITY_INSERT";
+	private final String PERIODICITY_DELETE = "PERIODICITY_DELETE";
 
 	// RES detail
-	private final String ID = "id";
+	private final String ID = "idPr";
 	private final String NAME = "name";
-	private final String CODE = "code";
-	private final String DESCRIPTION = "description";
-	private final String TABLE_NAME = "tablename";
-	private final String COLUMN_NAME = "columnname";
-	private final String NODE_TYPE_CODE = "typeCd";
-	
-	public static String START = "start";
-	public static String LIMIT = "limit";
-	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 16;
+	private final String MONTHS = "months";
+	private final String DAYS = "days";
+	private final String HOURS = "hours";
+	private final String MINUTES = "mins";
 
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IResourceDAO resDao;
+		IPeriodicityDAO perDao;
 		try {
-			resDao = DAOFactory.getResourceDAO();
+			perDao = DAOFactory.getPeriodicityDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -81,78 +75,59 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
-		if (serviceType != null && serviceType.equalsIgnoreCase(RESOURCES_LIST)) {
+		if (serviceType != null && serviceType.equalsIgnoreCase(PERIODICTIES_LIST)) {
 			
-			try {		
-				
-				Integer start = getAttributeAsInteger( START );
-				Integer limit = getAttributeAsInteger( LIMIT );
-				
-				if(start==null){
-					start = START_DEFAULT;
-				}
-				if(limit==null){
-					limit = LIMIT_DEFAULT;
-				}
+			try {	
+				List periodicities = perDao.loadPeriodicityList();
+				logger.debug("Loaded periodicities list");
+				JSONArray periodicitiesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(periodicities, locale);
+				JSONObject periodicitiesResponseJSON = createJSONResponsePeriodicities(periodicitiesJSON);
 
-				Integer totalResNum = resDao.countResources();
-				List resources = resDao.loadPagedResourcesList(start,limit);
-				logger.debug("Loaded resources list");
-				JSONArray resourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(resources, locale);
-				JSONObject resourcesResponseJSON = createJSONResponseResources(resourcesJSON, totalResNum);
-
-				writeBackToClient(new JSONSuccess(resourcesResponseJSON));
+				writeBackToClient(new JSONSuccess(periodicitiesResponseJSON));
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving users", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving users", e);
 			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(RESOURCE_INSERT)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(PERIODICITY_INSERT)) {
+			
 			String id = getAttributeAsString(ID);
-			String code = getAttributeAsString(CODE);
 			String name = getAttributeAsString(NAME);
-			String description = getAttributeAsString(DESCRIPTION);
-			String tablename = getAttributeAsString(TABLE_NAME);
-			String columnname = getAttributeAsString(COLUMN_NAME);
-			String resourceTypeCD = getAttributeAsString(NODE_TYPE_CODE);		
-			
-			List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("nodeTypesList");
-			
-		    HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
-		    if(domains != null){
-			    for(int i=0; i< domains.size(); i++){
-			    	domainIds.put(domains.get(i).getValueCd(), domains.get(i).getValueId());
-			    }
-		    }
-		    
-		    Integer resourceTypeID = domainIds.get(resourceTypeCD);
-		    if(resourceTypeID == null){
-		    	logger.error("Resource type CD does not exist");
-		    	throw new SpagoBIServiceException(SERVICE_NAME,	"Resource Type ID is undefined");
-		    }
+			String months = getAttributeAsString(MONTHS);
+			String days = getAttributeAsString(DAYS);
+			String hours = getAttributeAsString(HOURS);
+			String minutes = getAttributeAsString(MINUTES);		
 
-			if (name != null && resourceTypeID != null && code != null) {
-				Resource res = new Resource();
-				res.setName(name);
-				res.setType(resourceTypeCD);
-				res.setTypeId(resourceTypeID);
-				res.setCode(code);
+			if (name != null) {
+				Periodicity per = new Periodicity();
+				per.setName(name);
 				
-				if(description != null){
-					res.setDescr(description);
-				}	
-				if(tablename != null){
-					res.setTable_name(tablename);
+				if(months!=null && !months.equals("")){
+					per.setMonths(new Integer(months));
+				}else{
+					per.setMonths(new Integer("0"));
 				}
-				if(columnname != null){
-					res.setColumn_name(columnname);
-				}				
+				if(days!=null && !days.equals("")){
+					per.setDays(new Integer(days));
+				}else{
+					per.setDays(new Integer("0"));
+				}
+				if(hours!=null && !hours.equals("")){
+					per.setHours(new Integer(hours));
+				}else{
+					per.setHours(new Integer("0"));
+				}
+				if(minutes!=null && !minutes.equals("")){
+					per.setMinutes(new Integer(minutes));
+				}else{
+					per.setMinutes(new Integer("0"));
+				}			
 				
 				try {
 					if(id != null && !id.equals("") && !id.equals("0")){							
-						res.setId(Integer.valueOf(id));
-						resDao.modifyResource(res);
+						per.setIdKpiPeriodicity(Integer.valueOf(id));
+						perDao.modifyPeriodicity(per);
 						logger.debug("Resource "+id+" updated");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
@@ -160,12 +135,12 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("id", id);
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
-						Integer resourceID = resDao.insertResource(res);
+						Integer perID = perDao.insertPeriodicity(per);
 						logger.debug("New Resource inserted");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-						attributesResponseSuccessJSON.put("id", resourceID);
+						attributesResponseSuccessJSON.put("id", perID);
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}
 
@@ -179,26 +154,16 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 				logger.error("Resource name, code or type are missing");
 				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill resource name, code and type");
 			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(RESOURCE_DELETE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(PERIODICITY_DELETE)) {
 			Integer id = getAttributeAsInteger(ID);
 			try {
-				resDao.deleteResource(id);
+				perDao.deletePeriodicity(id);
 				logger.debug("Resource deleted");
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving resource to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving resource to delete", e);
-			}
-		}else if(serviceType == null){
-			try {
-				List nodeTypes = DAOFactory.getDomainDAO().loadListDomainsByType(RESOURCE_DOMAIN_TYPE);
-				getSessionContainer().setAttribute("nodeTypesList", nodeTypes);
-				
-			} catch (EMFUserError e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception retrieving resources types", e);
 			}
 		}
 		logger.debug("OUT");
@@ -211,13 +176,12 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseResources(JSONArray rows, Integer totalResNumber)
+	private JSONObject createJSONResponsePeriodicities(JSONArray rows)
 			throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
-		results.put("total", totalResNumber);
-		results.put("title", "Resources");
+		results.put("title", "Periodicities");
 		results.put("rows", rows);
 		return results;
 	}

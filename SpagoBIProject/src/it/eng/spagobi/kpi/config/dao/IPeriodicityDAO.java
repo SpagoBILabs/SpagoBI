@@ -23,7 +23,12 @@ public interface IPeriodicityDAO {
 	 * @throws EMFUserError if an Exception occurs
 	 */
 	public List loadPeriodicityList() throws EMFUserError;
-
+	
+	public void deletePeriodicity(Integer perId) throws EMFUserError;
+	
+	public void modifyPeriodicity(Periodicity per) throws EMFUserError;
+	
+	public Integer insertPeriodicity(Periodicity per) throws EMFUserError;
 	
 	public Integer getPeriodicitySeconds(Integer periodicityId)
 	throws EMFUserError;

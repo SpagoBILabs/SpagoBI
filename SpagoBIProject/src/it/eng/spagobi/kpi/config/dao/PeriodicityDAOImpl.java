@@ -14,11 +14,113 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 public class PeriodicityDAOImpl extends AbstractHibernateDAO implements
 		IPeriodicityDAO {
 
 	static private Logger logger = Logger.getLogger(PeriodicityDAOImpl.class);
+	
+	public void modifyPeriodicity(Periodicity per) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Integer perId = per.getIdKpiPeriodicity();
+			String name = per.getName();
+			Integer months = per.getMonths();
+			Integer days = per.getDays();
+			Integer hours = per.getHours();
+			Integer mins = per.getMinutes();
+
+			SbiKpiPeriodicity sbiPer = (SbiKpiPeriodicity) aSession.load(
+					SbiKpiPeriodicity.class, perId);
+
+			sbiPer.setName(name);
+			sbiPer.setDays(days);
+			sbiPer.setHours(hours);
+			sbiPer.setMinutes(mins);
+			sbiPer.setMonths(months);		
+
+			aSession.update(sbiPer);
+			tx.commit();
+
+		} catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.info("Impossible to modify the periodicity", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10118);
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	public Integer insertPeriodicity(Periodicity per) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer idToReturn;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiKpiPeriodicity sbiPer = new SbiKpiPeriodicity();
+			
+			String name = per.getName();
+			Integer months = per.getMonths();
+			Integer days = per.getDays();
+			Integer hours = per.getHours();
+			Integer mins = per.getMinutes();
+			
+			sbiPer.setName(name);
+			sbiPer.setDays(days);
+			sbiPer.setHours(hours);
+			sbiPer.setMinutes(mins);
+			sbiPer.setMonths(months);	
+
+			idToReturn = (Integer) aSession.save(sbiPer);
+			tx.commit();
+
+		} catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.info("Impossible to insert the periodicity", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10118);
+
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the periodicity ", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10117);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return idToReturn;
+	}
 
 	public Periodicity loadPeriodicityById(Integer id) throws EMFUserError {
 		logger.debug("IN");
@@ -158,6 +260,38 @@ public class PeriodicityDAOImpl extends AbstractHibernateDAO implements
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	public void deletePeriodicity(Integer perId) throws EMFUserError {
+		Session aSession = getSession();
+		Transaction tx = null;
+		try {
+			tx = aSession.beginTransaction();
+			
+			SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) aSession.load(
+					SbiKpiPeriodicity.class, perId);
+			aSession.delete(sbiKpiPeriodicity);
+
+			tx.commit();
+
+		} catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Impossible to delete a Periodicity", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10014);
+
+		} catch (HibernateException e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Error while delete a Periodicity ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			aSession.close();
+		}
+		
 	}
 	
 }

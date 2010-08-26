@@ -23,6 +23,10 @@ public class Periodicity implements Serializable{
 		this.minutes = minutes;
 		this.cronString = period;
 	}
+	
+	public Periodicity(){
+		
+	}
 
 	public Integer getIdKpiPeriodicity() {
 		return idKpiPeriodicity;
