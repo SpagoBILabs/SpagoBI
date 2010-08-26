@@ -69,6 +69,8 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
    //DRAW east element
     this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf, this.modelInstancesGrid);
     
+    this.mamageKpis = new Sbi.kpi.ManageKpis(conf);
+    
     this.resourcesTab = new Ext.Panel({
         title: LN('sbi.modelinstances.resourcesTab')
 	        , id : 'resourcesTab'
@@ -92,6 +94,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	manageModelInstances: null,
 	modelInstancesGrid: null,
 	manageModelsTree: null,
+	mamageKpis: null,
 	resourcesTab : null,
 	centerTabbedPanel: null,
 	viewport: null,
@@ -123,6 +126,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			   , items: [this.modelInstancesTreeTab, this.resourcesTab]
 
 			});
+		
+           
 		this.viewport = {
 				layout: 'border'
 				, id: 'model-viewport'
@@ -156,7 +161,26 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				        collapsed:false,
 				        collapseMode:'mini',
 				        autoScroll: true,
-				        items:[this.manageModelsTree]
+				        layout:'border',
+				        defaults: {
+				            split: true
+				        },
+
+				        items:[
+								{
+									region:'center',
+									collapseMode:'mini',
+				                    items:[this.manageModelsTree]
+				                },{
+				                	region:'east', 
+				                	collapsed: true,
+				                	collapseMode:'mini',
+				                    width: 300,
+				                    minSize: 100,
+				                    autoScroll: true,
+				                    items:[this.mamageKpis]
+				                }    
+				        ]
 				    }
 				]
 				
@@ -325,7 +349,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.resourcesGrid.doLayout();
 	}
 	, configureDD: function() {
-		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(Ext.getCmp('model-maintree'), {
+		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(this.manageModelInstances.mainTree, {
 		    ddGroup  : 'tree2tree',
 		    dropAllowed : true,
 		    overClass: 'over',

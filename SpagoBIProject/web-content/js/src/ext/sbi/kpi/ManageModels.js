@@ -238,7 +238,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	      				var hasErrors = false;
 	      				for (var key in content) {
 		      				  var value = content[key];
-		      				  var nodeSel = Ext.getCmp('model-maintree').getNodeById(key);
+		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
@@ -307,7 +307,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	      				var hasErrors = false;
 	      				for (var key in content) {
 		      				  var value = content[key];
-		      				  var nodeSel = Ext.getCmp('model-maintree').getNodeById(key);
+		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
