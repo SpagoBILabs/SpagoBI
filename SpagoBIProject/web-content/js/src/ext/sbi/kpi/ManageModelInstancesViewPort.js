@@ -69,6 +69,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
    //DRAW east element
     this.manageModelsTree = new Sbi.kpi.ManageModelsTree(conf, this.modelInstancesGrid);
     conf.readonlyStrict = true;
+    conf.dropToItem = 'kpinameField';
     this.manageKpis = new Sbi.kpi.ManageKpisGrid(conf, this.manageModelInstances);
     
     this.resourcesTab = new Ext.Panel({
@@ -94,7 +95,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	manageModelInstances: null,
 	modelInstancesGrid: null,
 	manageModelsTree: null,
-	mamageKpis: null,
+	manageKpis: null,
 	resourcesTab : null,
 	centerTabbedPanel: null,
 	viewport: null,
@@ -104,6 +105,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
 		
 		this.manageModelsTree.addListener('render', this.configureDD, this);
+
 
 		this.modelInstancesTreeTab = new Ext.Panel({
 	        title: LN('sbi.modelinstances.treeTitle')
@@ -203,7 +205,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				
 
 			};
-		
+
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
@@ -376,6 +378,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		  });
 
 	}
+
 	, saveResources: function() {
 		alert('save');
 	}

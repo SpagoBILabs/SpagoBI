@@ -46,6 +46,7 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageKpisGrid = function(config, ref) {
 	
 	var readonlyStrict = config.readonlyStrict; 
+	var dropToItem = config.dropToItem; 
 	var paramsList = {MESSAGE_DET: "KPIS_LIST"};
 
 	this.configurationObject = {};
@@ -61,6 +62,7 @@ Sbi.kpi.ManageKpisGrid = function(config, ref) {
 	config.configurationObject = this.configurationObject;
 
 	config.readonlyStrict = readonlyStrict;
+	config.dropToItem = dropToItem;
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageKpisGrid.superclass.constructor.call(this, c);	
@@ -107,7 +109,7 @@ Ext.extend(Sbi.kpi.ManageKpisGrid, Sbi.widgets.ListGridPanel, {
 		
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.kpis.listTitle');
-		this.configurationObject.dragndropGroup ='grid2treeAndDetail';
+		this.configurationObject.dragndropGroup ='kpiGrid2kpiForm';
 
     }
 
