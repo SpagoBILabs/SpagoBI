@@ -44,6 +44,7 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstances = function(config, ref) { 
+	var hideContextMenu = config.hideContextMenu;
 	var paramsList = {MESSAGE_DET: "MODELINSTS_NODES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MMODELINSTS_NODE_DELETE"};
@@ -66,7 +67,9 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 	this.referencedCmp = ref;
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
-
+	
+	config.hideContextMenu = hideContextMenu;
+	
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageModelInstances.superclass.constructor.call(this, c);	 	
