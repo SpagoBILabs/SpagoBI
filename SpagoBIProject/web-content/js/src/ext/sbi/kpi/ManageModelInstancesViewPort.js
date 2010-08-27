@@ -259,14 +259,15 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				 modelInstId : '',
 				 modelId : rec.get('modelId') ,
 				 kpiInstId : '',
-				 name : '...',
-				 description : '...',
+				 name : rec.get('name'),
+				 description : rec.get('description'),
 				 modelName : rec.get('name'),
 				 modelCode : rec.get('code'),
 				 modelDescr : rec.get('description'),
 				 modelType : rec.get('type'),
 				 modelTypeDescr : rec.get('typeDescr'),
-				 modelText : rec.get('text')	
+				 text : rec.get('text')	,
+				 modelText : rec.get('text')
 			});
 			return analyzedRec;
 		}
