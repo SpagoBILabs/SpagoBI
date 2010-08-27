@@ -85,7 +85,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 	nodesToSave : new Array(),
 	selectedNodeToEdit : null,
 	
-	initContextMenu : function() {
+/*	initContextMenu : function() {
 
 		this.menu = new Ext.menu.Menu( {
 			items : [
@@ -107,7 +107,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 					} ]
 		});
 
-	},
+	},*/
 	initWidget : function() {
 
 		this.tbSave = new Ext.Toolbar( {

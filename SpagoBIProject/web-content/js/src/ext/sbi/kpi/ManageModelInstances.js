@@ -414,7 +414,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
-	                 //"background-color": "#f1f1f1",
 	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	             },
 	             items: [
@@ -423,7 +422,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	                     this.kpiWeight,
 	                     this.kpiTarget,
 	                     this.kpiPeriodicity,
-	                     //this.kpiPeriodicityButton,
 	                     this.kpiChartType
 	                     ]
 	    	});
@@ -833,4 +831,68 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	   // if we get here the drop is automatically cancelled by Ext
 	   }
+		, initContextMenu : function() {
+
+			this.menu = new Ext.menu.Menu( {
+				items : [{
+							text : 'Remove Model Node',
+							iconCls : 'icon-remove',
+							handler : function() {
+								this.deleteItem(this.ctxNode);
+							},
+							scope : this
+						} ]
+			});
+
+		}
+		, deleteItem : function(node) {
+			
+			if (node === undefined || node == null) {
+				alert("Select node to delete");
+				return;
+			}
+			//if model instance already exists
+			if(node.attributes.modelInstId){
+				Ext.MessageBox.confirm(
+						LN('sbi.generic.pleaseConfirm'),
+						LN('sbi.generic.confirmDelete'),            
+			            function(btn, text) {
+			                if (btn=='yes') {
+			                	if (node != null) {	
+									Ext.Ajax.request({
+							            url: this.services['deleteTreeService'],
+							            params: {'modelInstId': node.attributes.modelInstId},
+							            method: 'GET',
+							            success: function(response, options) {
+											if (response !== undefined) {
+												this.mainTree.getSelectionModel().clearSelections(false);
+												node.remove();
+											} else {
+												Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+											}
+							            },
+							            failure: function() {
+							                Ext.MessageBox.show({
+							                    title: LN('sbi.generic.error'),
+							                    msg: LN('sbi.generic.deletingItemError'),
+							                    width: 150,
+							                    buttons: Ext.MessageBox.OK
+							               });
+							            }
+							            ,scope: this
+						
+									});
+								} else {
+									Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+								}
+			                }
+			            },
+			            this
+					);
+			}else{
+				this.mainTree.getSelectionModel().clearSelections(false);
+				node.remove();
+			}
+			
+		}
 });
