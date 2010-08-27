@@ -76,6 +76,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
 	
 	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
+	private final String KPI_CHART_TYPE = "KPI_CHART";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -233,6 +234,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				}
 				List<Resource> allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
 				getSessionContainer().setAttribute("ALL_RESOURCES_LIST", allResources);
+				//Chart Types
+				List kpiChartTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_CHART_TYPE);
+				getSessionContainer().setAttribute("kpiChartTypesList", kpiChartTypesList);
+				
+				//Periodicity
+				List kpiPeriodicityList = DAOFactory.getPeriodicityDAO().loadPeriodicityList();
+				getSessionContainer().setAttribute("kpiPeriodicityList", kpiPeriodicityList);
 								
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
