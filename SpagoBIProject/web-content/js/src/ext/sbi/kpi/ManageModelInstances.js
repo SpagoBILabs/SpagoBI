@@ -297,6 +297,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
     	    ]
     	});
+		this.kpiModelType.addListener('change', this.changeKpiPanel , this);
 		
 		this.kpiInstTypeFieldset = new Ext.form.FieldSet({
 		   	columnWidth: 1,
@@ -489,11 +490,48 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		  
 
 	}
+	, fillSourceModelPanel: function(sel, node) {
+
+		this.srcModelName.setValue(node.attributes.modelName);
+		this.srcModelCode.setValue(node.attributes.modelCode);
+		this.srcModelDescr.setValue(node.attributes.modelDescr);
+		this.srcModelType.setValue(node.attributes.modelType);
+		this.srcModelTypeDescr.setValue(node.attributes.modelTypeDescr);
+	}
+	, changeKpiPanel: function(radioGroup, radio){
+		if(radio.getItemId() == 'kpiinst'){
+			
+			this.kpiInstFieldset.setVisible(true);
+			this.kpiInstFieldset2.setVisible(false);			
+
+			this.kpiPeriodicityButton.enable();
+			this.kpiInstFieldset.doLayout();
+
+		}else if(radio.getItemId() == 'uuid'){
+
+			this.kpiInstFieldset.setVisible(false);
+			this.kpiInstFieldset2.setVisible(true);
+
+			this.kpiPeriodicityButton.disable();
+			this.kpiInstFieldset2.doLayout();
+
+		}
+		this.kpiInstTypeFieldset.setVisible(true);
+		this.kpiInstTypeFieldset.doLayout();
+		
+	}
 	, fillKpiPanel: function(sel, node) {
 		
 		var hasKpiInst = node.attributes.kpiInst;
 		if(hasKpiInst !== undefined && hasKpiInst != null){
 
+			this.kpiName.setValue(node.attributes.kpiName);
+			this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
+			this.kpiTarget.setValue(node.attributes.kpiInstTarget);
+			this.kpiWeight.setValue(node.attributes.kpiInstWeight);
+			this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
+			this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
+			
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
@@ -511,6 +549,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		}
 		this.kpiInstTypeFieldset.setVisible(true);
 		this.kpiInstTypeFieldset.doLayout();
+		
 	}
     //OVERRIDING save method
 	,save : function() {
@@ -737,23 +776,24 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		}//else skip because already taken
 	}
 	,setListeners : function() {
-			this.mainTree.getSelectionModel().addListener('selectionchange',
-					this.fillDetail, this);
-			
-			this.mainTree.getSelectionModel().addListener('selectionchange',
-					this.fillKpiPanel, this);
-			
-			this.mainTree.addListener('render', this.renderTree, this);
+		this.mainTree.getSelectionModel().addListener('selectionchange',
+				this.fillDetail, this);		
+		this.mainTree.getSelectionModel().addListener('selectionchange',
+				this.fillKpiPanel, this);
+		this.mainTree.getSelectionModel().addListener('selectionchange',
+				this.fillSourceModelPanel, this);
+		
+		this.mainTree.addListener('render', this.renderTree, this);
 
-			/* form fields editing */
-			this.detailFieldName.addListener('focus', this.selectNode, this);
-			this.detailFieldName.addListener('change', this.editNode, this);
+		/* form fields editing */
+		this.detailFieldName.addListener('focus', this.selectNode, this);
+		this.detailFieldName.addListener('change', this.editNode, this);
 
-			this.detailFieldDescr.addListener('focus', this.selectNode, this);
-			this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
+		this.detailFieldDescr.addListener('focus', this.selectNode, this);
+		this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
 
-			this.detailFieldLabel.addListener('focus', this.selectNode, this);
-			this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
+		this.detailFieldLabel.addListener('focus', this.selectNode, this);
+		this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
 
 
 	}
@@ -777,9 +817,23 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				description	: rec.get('description'),
 				kpiInst		: rec.get('kpiInstId'),
 				name		: rec.get('name'),
+				modelName   : rec.get('modelName'),
+				modelCode   : rec.get('modelCode'),
+				modelDescr  : rec.get('modelDescr'),
+				modelType   : rec.get('modelType'),
+				modelTypeDescr: rec.get('modelTypeDescr'),
+				kpiName		: rec.get( 'kpiName'),
+				kpiId		: rec.get( 'kpiId'),
+				kpiInstThrId: rec.get( 'kpiInstThrId'),
+				kpiInstThrName: rec.get( 'kpiInstThrName'),
+				kpiInstTarget: rec.get( 'kpiInstTarget'),
+				kpiInstWeight: rec.get( 'kpiInstWeight'),
+				kpiInstChartTypeId: rec.get( 'kpiInstChartTypeId'),			      
+				kpiInstPeriodicity: rec.get( 'kpiInstPeriodicity'),
 				iconCls		: iconClass,
 				cls			: cssClass,
-		        draggable	: false
+		        draggable	: false,
+		        toSave: true
 		    });
 
 			return node;
@@ -804,44 +858,43 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		    * dropNode - Drop node(s) provided by the source OR you can supply node(s) to be inserted by setting them on this object.
 		    * cancel - Set this to true to cancel the drop.
 		    */
-	
-			   
-				   // e.data.selections is the array of selected records
-				   if(!Ext.isArray(e.data.selections)) {	
+	 
+		   // e.data.selections is the array of selected records
+		if(!Ext.isArray(e.data.selections)) {	
  
-					   var srcNodeDepth = e.dropNode.parentNode.getDepth();
+			   var srcNodeDepth = e.dropNode.parentNode.getDepth();
 
-					   var targetNodeDepth = e.target.getDepth();
-					   //alert("targer parent depth:"+targetNodeDepth +" srr parent depth:"+srcNodeDepth);
+			   var targetNodeDepth = e.target.getDepth();
+				//alert("targer parent depth:"+targetNodeDepth +" srr parent depth:"+srcNodeDepth);
 
-					   //simulates drag&drop but copies the node
-		
-					   var importSub = this.referencedCmp.manageModelsTree.importCheck;
-		
-					   var copiedNode ;
-					   var parentNode = e.target;
-					   
-					   if(this.referencedCmp.manageModelsTree.importCheck.checked){
-						   importSub = true;
-						   //imports children
-						   copiedNode = new Ext.tree.AsyncTreeNode(e.dropNode.attributes); 
-		
-					   }else{
-						   importSub = false;
-						   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
-					   }
-					   copiedNode.setText(e.dropNode.attributes.name)
-		
-					   e.cancel = true;
-					   //if parents have same depth --> enable kind of drop else forbid
-					   if(srcNodeDepth == targetNodeDepth){
-						   parentNode.appendChild(copiedNode);			
-					   }else{
-						   alert("Nodes hierarchy must be respected!");
-					   }		   
-				   }else{
-					   alert("eee");
-				   }
+			   //simulates drag&drop but copies the node
+
+			   var importSub = this.referencedCmp.manageModelsTree.importCheck;
+
+			   var copiedNode ;
+			   var parentNode = e.target;
+			   
+			   if(this.referencedCmp.manageModelsTree.importCheck.checked){
+				   importSub = true;
+				   //imports children
+				   copiedNode = new Ext.tree.AsyncTreeNode(e.dropNode.attributes); 
+
+			   }else{
+				   importSub = false;
+				   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
+			   }
+			   copiedNode.setText(e.dropNode.attributes.name)
+
+			   e.cancel = true;
+			   //if parents have same depth --> enable kind of drop else forbid
+			   if(srcNodeDepth == targetNodeDepth){
+				   parentNode.appendChild(copiedNode);			
+			   }else{
+				   alert("Nodes hierarchy must be respected!");
+			   }		   
+		   }else{
+			   alert("eee");
+		   }
 
 
 	   // if we get here the drop is automatically cancelled by Ext
