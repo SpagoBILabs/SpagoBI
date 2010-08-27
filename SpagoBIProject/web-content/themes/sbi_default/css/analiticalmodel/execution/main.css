@@ -6,6 +6,10 @@
 	background-image: url('../../../img/analiticalmodel/execution/ico_back.png') !important;
 }
 
+.icon-select {
+	background-image: url('../../../img/select16.png') !important;
+}
+
 .icon-save {
 	background-image: url('../../../img/save_generic16.png') !important;
 }

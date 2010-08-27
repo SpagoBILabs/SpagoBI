@@ -235,7 +235,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 
         this.selectColumn = new Ext.grid.ButtonColumn({
 		       header:  ' '
-		       ,iconCls: 'icon-execute'
+		       ,iconCls: 'icon-select'
 		       ,scope: this
 		       ,clickHandler: function(e, t) {
 		          var index = this.grid.getView().findRowIndex(t);	          
