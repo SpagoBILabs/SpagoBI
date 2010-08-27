@@ -196,7 +196,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				                            //collapse model instances list
 				                            var toCollapse = Ext.getCmp('modelInstancesList00');
 				                            toCollapse.collapse();
-				                            //cmp.set
 				                        }
 				                    }
 				                }    

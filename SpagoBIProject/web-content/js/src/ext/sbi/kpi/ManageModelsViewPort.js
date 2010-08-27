@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Chiara Chiarelli
+ * Authors - Monica Franceschini
  */
 Ext.ns("Sbi.kpi");
 
@@ -61,6 +61,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 		, autoScroll: true
 		, items: [
 	         {
+	           id: 'modelsgrid00',	 
 	           region: 'west',
 	           width: 275,
 	           height:560,
@@ -82,17 +83,28 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 		    }, {
 		        region: 'east',
 		        split: true,
-		        width: 900,
+		        width: 800,
 		        height:540,
 		        collapsed:true,
 		        collapseMode:'mini',
 		        autoScroll: true,
 		        layout: 'fit',
-		        items:[this.manageKpis]
+		        items:[this.manageKpis],
+	            listeners : {
+                    beforeCollapse: function(cmp){
+                        //expand model instances list
+                        var toCollapse = Ext.getCmp('modelsgrid00');
+                        toCollapse.expand();
+                    },
+                    beforeExpand: function(cmp){
+                        //collapse model instances list
+                        var toCollapse = Ext.getCmp('modelsgrid00');
+                        toCollapse.collapse();
+                    }
+                }
 		    }
 		]
 		
-
 	};
 	
 	
