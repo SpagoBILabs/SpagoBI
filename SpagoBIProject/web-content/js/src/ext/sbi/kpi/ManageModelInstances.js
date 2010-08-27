@@ -169,6 +169,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
 			        , width: 430
+			        , buttons: [this.kpiPeriodicityButton]
 			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
@@ -363,10 +364,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiPeriodicityButton = new Ext.Button({
 			iconCls :'icon-add',
 			text: 'Add Periodicity',
-            style: {
-                //"background-color": "#f1f1f1",
-                "margin": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-            },
 			handler: this.launchPeriodicityWindow	
 		});
 		
@@ -419,7 +416,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	                     this.kpiWeight,
 	                     this.kpiTarget,
 	                     this.kpiPeriodicity,
-	                     this.kpiPeriodicityButton,
+	                     //this.kpiPeriodicityButton,
 	                     this.kpiChartType
 	                     ]
 	    	});
@@ -439,7 +436,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	            items: [
 	                    this.kpiLabel]
 			});
-			//this.kpiInstTypeFieldset.setVisible(false);
+			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
 	}
@@ -484,6 +481,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
+			this.kpiPeriodicityButton.enable();
 			this.kpiInstFieldset.doLayout();
 
 		}else{
@@ -491,6 +489,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(true);
 			this.kpiModelType.onSetValue( 'uuid', true);
+			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset2.doLayout();
 
 		}
