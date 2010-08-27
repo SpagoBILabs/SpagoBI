@@ -160,15 +160,15 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODE_DELETE)) {
 			
-			Integer modelId = getAttributeAsInteger("modelId");
+			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
-				boolean result = DAOFactory.getModelDAO().deleteModel(modelId);
-				logger.debug("Model deleted");
+				boolean result = DAOFactory.getModelInstanceDAO().deleteModelInstance(modelInstId);
+				logger.debug("Model instance node deleted");
 				writeBackToClient( new JSONSuccess("Operation succeded") );
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving model to delete", e);
+				logger.error("Exception occurred while retrieving model instance to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving model to delete", e);
+						"Exception occurred while retrieving model instance to delete", e);
 			}
 			
 			

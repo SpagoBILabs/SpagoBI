@@ -61,7 +61,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 
 	});
 	//DRAW center element
-	conf.hideContextMenu = true;
+	conf.hideContextMenu = false;
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
 
 	//DRAW west element
@@ -77,6 +77,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	        , id : 'resourcesTab'
 	        , layout: 'fit'
 	        , autoScroll: true
+	        , width: 300
 	        , items: []
 	        , itemId: 'resourcesTab'
 	        , scope: this

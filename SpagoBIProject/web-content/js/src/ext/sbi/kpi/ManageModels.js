@@ -80,7 +80,30 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	, mainElementsStore:null
 	, root:null
 	, referencedCmp : null
+	
+	,initContextMenu : function() {
 
+		this.menu = new Ext.menu.Menu( {
+			items : [
+			// ACID operations on nodes
+					'-', {
+						text : 'Add Model Node',
+						iconCls : 'icon-add',
+						handler : function() {
+							this.addNewItem(this.ctxNode);
+						},
+						scope : this
+					}, {
+						text : 'Remove Model Node',
+						iconCls : 'icon-remove',
+						handler : function() {
+							this.deleteItem(this.ctxNode);
+						},
+						scope : this
+					} ]
+		});
+
+	}
 	,initConfigObject: function(){
 
 		this.configurationObject.treeTitle = LN('sbi.models.treeTitle');;
