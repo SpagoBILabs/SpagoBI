@@ -267,8 +267,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				 modelType : rec.get('type'),
 				 modelTypeDescr : rec.get('typeDescr'),
 				 text : rec.get('text')	,
-				 modelText : rec.get('text')
+				 modelText : rec.get('text'),
+				 toSave : true
 			});
+			
 			return analyzedRec;
 		}
 		return rec;

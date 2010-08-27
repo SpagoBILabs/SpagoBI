@@ -727,7 +727,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
 	,selectNode : function(field) {
-		
+		alert(selected);
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		
@@ -804,30 +804,45 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		    * dropNode - Drop node(s) provided by the source OR you can supply node(s) to be inserted by setting them on this object.
 		    * cancel - Set this to true to cancel the drop.
 		    */
-		   // e.data.selections is the array of selected records
-		   if(!Ext.isArray(e.data.selections)) {					    
-			   //simulates drag&drop but copies the node
-
-			   var importSub = this.referencedCmp.manageModelsTree.importCheck;
-
-			   var copiedNode ;
-			   var parentNode = e.target;
+	
 			   
-			   if(this.referencedCmp.manageModelsTree.importCheck.checked){
-				   importSub = true;
-				   //imports children
-				   copiedNode = new Ext.tree.AsyncTreeNode(e.dropNode.attributes); 
+				   // e.data.selections is the array of selected records
+				   if(!Ext.isArray(e.data.selections)) {	
+ 
+					   var srcNodeDepth = e.dropNode.parentNode.getDepth();
 
-			   }else{
-				   importSub = false;
-				   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
-			   }
-			   copiedNode.setText(e.dropNode.attributes.name)
+					   var targetNodeDepth = e.target.getDepth();
+					   //alert("targer parent depth:"+targetNodeDepth +" srr parent depth:"+srcNodeDepth);
 
-			   e.cancel = true;
-			   parentNode.appendChild(copiedNode);
+					   //simulates drag&drop but copies the node
+		
+					   var importSub = this.referencedCmp.manageModelsTree.importCheck;
+		
+					   var copiedNode ;
+					   var parentNode = e.target;
+					   
+					   if(this.referencedCmp.manageModelsTree.importCheck.checked){
+						   importSub = true;
+						   //imports children
+						   copiedNode = new Ext.tree.AsyncTreeNode(e.dropNode.attributes); 
+		
+					   }else{
+						   importSub = false;
+						   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
+					   }
+					   copiedNode.setText(e.dropNode.attributes.name)
+		
+					   e.cancel = true;
+					   //if parents have same depth --> enable kind of drop else forbid
+					   if(srcNodeDepth == targetNodeDepth){
+						   parentNode.appendChild(copiedNode);			
+					   }else{
+						   alert("Nodes hierarchy must be respected!");
+					   }		   
+				   }else{
+					   alert("eee");
+				   }
 
-		   }
 
 	   // if we get here the drop is automatically cancelled by Ext
 	   }
