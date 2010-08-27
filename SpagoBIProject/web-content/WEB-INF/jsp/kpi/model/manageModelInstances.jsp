@@ -23,11 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 java.util.ArrayList,
 				 java.util.List,
 				 org.json.JSONArray, 
-				 org.json.JSONObject" %>
+				 org.json.JSONObject,
+				 it.eng.spagobi.kpi.config.bo.Periodicity" %>
 <%
 
 	List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
-
+	List kpiChartTypesCd = (List) aSessionContainer.getAttribute("kpiChartTypesList");	
+	List kpiPeriodicities = (List) aSessionContainer.getAttribute("kpiPeriodicityList");	
 %>
 
 <LINK rel='StyleSheet' 
@@ -43,13 +45,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		for(int i=0; i< thrTypesCd.size(); i++){
 			Domain domain = (Domain)thrTypesCd.get(i);
 			JSONArray temp = new JSONArray();
-			temp.put(domain.getValueCd());
+			//temp.put(domain.getValueId());
+			temp.put(domain.getValueCd());			
 			thrTypesArray.put(temp);
 		}
 	}	
 	String thrTypes = thrTypesArray.toString();
 	thrTypes = thrTypes.replaceAll("\"","'");
+	
+	//chart types
+	JSONArray kpiChartTypesArray = new JSONArray();
+	if(kpiChartTypesCd != null){
+		for(int i=0; i< kpiChartTypesCd.size(); i++){
+			Domain domain = (Domain)kpiChartTypesCd.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueId());
+			temp.put(domain.getValueCd());			
+			kpiChartTypesArray.put(temp);
+		}
+	}	
+	String chartTypes = kpiChartTypesArray.toString();
+	chartTypes = chartTypes.replaceAll("\"","'");
 
+	//Periodicities
+	JSONArray kpiPeriodicitiesArray = new JSONArray();
+	if(kpiPeriodicities != null){
+		for(int i=0; i< kpiPeriodicities.size(); i++){
+			Periodicity period = (Periodicity)kpiPeriodicities.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(period.getIdKpiPeriodicity());
+			temp.put(period.getName());
+			kpiPeriodicitiesArray.put(temp);
+		}
+	}	
+	String periodicities = kpiPeriodicitiesArray.toString();
+	periodicities = periodicities.replaceAll("\"","'");
 	%>
 
 	var url = {
@@ -67,6 +97,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     
 	var config = {};  
 	config.thrTypes = <%= thrTypes%>;
+	config.kpiChartTypes = <%= chartTypes%>;
+	config.kpiPeriodicities = <%= periodicities%>;
     
 Ext.onReady(function(){
 	Ext.QuickTips.init();

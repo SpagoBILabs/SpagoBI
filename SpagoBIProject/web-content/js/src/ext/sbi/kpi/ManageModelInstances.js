@@ -337,18 +337,62 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             fieldLabel: 'Target',
             name: 'kpiTarget'
         });
-		//fieldset periodicity----------------
-		this.kpiPeriodicity = new Ext.form.TextField({
-            readOnly: false,
+		// periodicity----------------
+	    this.periodicityStore = new Ext.data.SimpleStore({
+	        fields: ['kpiPeriodicityId', 'kpiPeriodicityName'],
+	        data: config.kpiPeriodicities,
+	        autoLoad: false
+	    });
+		this.kpiPeriodicity = new Ext.form.ComboBox({
+      	    name: 'kpiPeriodicity',
+            store: this.periodicityStore,
+            //width : 120,
             fieldLabel: 'Periodicity',
-            name: 'kpiPeriodicty'
-        });
-		
+            displayField: 'kpiPeriodicityName',   // what the user sees in the popup
+            valueField: 'kpiPeriodicityId',        // what is passed to the 'change' event
+            typeAhead: true,
+            forceSelection: true,
+            mode: 'local',
+            triggerAction: 'all',
+            selectOnFocus: true,
+            editable: false,
+            allowBlank: false,
+            validationEvent:true
+        }); 
+
 		this.kpiPeriodicityButton = new Ext.Button({
-			text:'Add Periodicity',
+			iconCls :'icon-add',
+			text: 'Add Periodicity',
+            style: {
+                //"background-color": "#f1f1f1",
+                "margin": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+            },
 			handler: this.launchPeriodicityWindow	
 		});
-		//---------------------------------------------
+		
+		//---------------chart type------------------------------
+ 	    //Store of the kpi chart types combobox
+	    this.chartTypeStore = new Ext.data.SimpleStore({
+	        fields: ['kpiChartTypeId', 'kpiChartTypeCd'],
+	        data: config.kpiChartTypes,
+	        autoLoad: false
+	    });
+		this.kpiChartType =  new Ext.form.ComboBox({
+	      	    name: 'kpiChartType',
+	            store: this.chartTypeStore,
+	            //width : 120,
+	            fieldLabel: 'Chart type',
+	            displayField: 'kpiChartTypeCd',   // what the user sees in the popup
+	            valueField: 'kpiChartTypeId',        // what is passed to the 'change' event
+	            typeAhead: true,
+	            forceSelection: true,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            selectOnFocus: true,
+	            editable: false,
+	            allowBlank: false,
+	            validationEvent:true
+	        }); 
 		//alternate if uuid
 		this.kpiLabel = new Ext.form.TextField({
              readOnly: false,
@@ -375,7 +419,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	                     this.kpiWeight,
 	                     this.kpiTarget,
 	                     this.kpiPeriodicity,
-	                     this.kpiPeriodicityButton
+	                     this.kpiPeriodicityButton,
+	                     this.kpiChartType
 	                     ]
 	    	});
 		
@@ -435,21 +480,20 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		var hasKpiInst = node.attributes.kpiInst;
 		if(hasKpiInst !== undefined && hasKpiInst != null){
-			this.kpiInstTypeFieldset.doLayout();
+
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
 			this.kpiInstFieldset.doLayout();
 
 		}else{
-			this.kpiInstTypeFieldset2.doLayout();
+
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(true);
 			this.kpiModelType.onSetValue( 'uuid', true);
 			this.kpiInstFieldset2.doLayout();
 
 		}
-		alert(this.kpiModelType.getValue());
 		this.kpiInstTypeFieldset.setVisible(true);
 		this.kpiInstTypeFieldset.doLayout();
 	}
