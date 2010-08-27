@@ -306,7 +306,11 @@ Ext.extend(Sbi.widgets.DataStorePanel, Ext.Panel, {
 			   
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
-			   }			   		   
+			   }
+			   
+			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
+				   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
+			   }
 		   }
 
 		   for(var i = 0, l = fields.length, f; i < l; i++) {
