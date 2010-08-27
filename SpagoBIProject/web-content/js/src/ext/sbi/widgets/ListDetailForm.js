@@ -199,7 +199,11 @@ Sbi.widgets.ListDetailForm = function(config) {
  	   
  	  this.mainElementsStore.on('load', 
  				function(){
- 			 		this.rowselModel.selectRow(0);
+ 		  			if(config.toBeSelected!=null && config.toBeSelected!=undefined){
+ 		  				this.rowselModel.selectRow(toBeSelected);
+ 		  			}else{
+ 		  				this.rowselModel.selectRow(0);
+ 		  			}
  			 	}, 
  			 	this);  	
  		
@@ -334,6 +338,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
        });
  	   
  	   this.mainGrid = {
+ 			   		  id: 'maingrid',
 	                  xtype: 'grid',
 	                  ds: this.mainElementsStore,   	                  
 	                  colModel: this.colModel,

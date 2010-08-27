@@ -235,8 +235,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  		     triggerClass: 'x-form-search-trigger',
  		     fieldLabel: LN('sbi.kpis.threshold'),
  		     name: 'threshold',
- 		     id: 'detailFieldThreshold'
+ 		     id: 'detailFieldThreshold',
+ 		     scope: this
+ 		    	 
  		    });
+ 
  	this.detailFieldThreshold.onTriggerClick = this.launchThrWindow;
  	
  	var docs = new Ext.data.JsonStore({
@@ -408,7 +411,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
 		        , width: 350
+		        , scope: this
 		        , items: {
+ 		   			 scope: this,
 			   		 id: 'items-detail',   	
 		 		   	 itemId: 'items-detail',   	              
 		 		   	 //columnWidth: 0.4,
@@ -437,6 +442,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 		   	 itemId: 'advanced-detail',   	              
 		 		   	// columnWidth: 0.4,
 		             xtype: 'fieldset',
+		             scope: this,
 		             labelWidth: 90,
 		             defaults: {width: 200, border:false},    
 		             defaultType: 'textfield',
@@ -457,10 +463,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
 	,launchThrWindow : function() {
 		
+		/*var r = Ext.getCmp('maingrid').getSelectionModel().getSelected();
+		var tSelected = r.get('threshold');*/
 		var conf = {};
 		conf.nodeTypesCd = config.thrTypes;
 		conf.thrSeverityTypesCd = config.thrSeverityTypesCd;
 		conf.drawSelectColumn = true;
+		//conf.toBeSelected = tSelected;
 		
 		var manageThresholds = new Sbi.kpi.ManageThresholds(conf);
 	
