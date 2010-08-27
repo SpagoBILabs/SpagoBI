@@ -262,10 +262,10 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	
 	, executeCrossNavInline: function(config) {
 		
-		alert(config.preferences.parameters);
+		//alert(config.preferences.parameters);
 		var formState = Ext.urlDecode(config.preferences.parameters);
 		for(p in formState) {
-			alert(p + ' = ' + formState[p]);			
+			//alert(p + ' = ' + formState[p]);			
 		}
 		
 		this.activeDocument = new Sbi.execution.ExecutionWizard( {preferences: config.preferences, isFromCross: true}, config.document );
