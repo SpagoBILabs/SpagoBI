@@ -159,6 +159,9 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
 			   }
+			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
+				   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
+			   }
 			   
 			   if(this.sortable === false) {
 				   meta.fields[i].sortable = false;

@@ -147,7 +147,8 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("type", "string");
 				} else if( Timestamp.class.isAssignableFrom(clazz) ) {
 					logger.debug("Column [" + (i+1) + "] type is equal to [" + "TIMESTAMP" + "]");
-					fieldMetaDataJSON.put("type", "timestamp");
+					fieldMetaDataJSON.put("type", "date");
+					fieldMetaDataJSON.put("subtype", "timestamp");
 					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s");
 				} else if( Date.class.isAssignableFrom(clazz) ) {
 					logger.debug("Column [" + (i+1) + "] type is equal to [" + "DATE" + "]");
