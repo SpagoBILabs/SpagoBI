@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.qbe.query.serializer.SerializationConstants;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -98,7 +98,7 @@ public class Version3QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 			
 			// adding having clause filters (empty)
 			havingsJSON = new JSONArray();
-			queryJSON.put(SerializationConstants.HAVINGS, havingsJSON);
+			queryJSON.put(QuerySerializationConstants.HAVINGS, havingsJSON);
 			logger.debug( "Empty having clause filters array added");
 			
 			// convert subqueries

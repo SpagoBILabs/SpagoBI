@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.qbe.query.serializer.SerializationConstants;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -108,7 +108,7 @@ public class Version2QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 				logger.debug( "Converting field [" + (j+1) + "] ...");
 				fieldJSON = fieldsJSON.getJSONObject(j);
 				
-				fieldJSON.put(SerializationConstants.FIELD_INCLUDE, true);
+				fieldJSON.put(QuerySerializationConstants.FIELD_INCLUDE, true);
 				
 				logger.debug( "Field [" + (j+1) + "] converted succesfully to [" + fieldJSON.toString() + "]");
 			}
@@ -120,24 +120,24 @@ public class Version2QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 				logger.debug( "Converting filter [" + (j+1) + "] ...");
 				filterJSON = filtersJSON.getJSONObject(j);
 				
-				filterJSON.put(SerializationConstants.FILTER_ID, filterJSON.get("fname"));
-				filterJSON.put(SerializationConstants.FILTER_DESCRIPTION, filterJSON.get("fname"));
-				filterJSON.put(SerializationConstants.FILTER_PROMPTABLE, filterJSON.get("isfree"));
+				filterJSON.put(QuerySerializationConstants.FILTER_ID, filterJSON.get("fname"));
+				filterJSON.put(QuerySerializationConstants.FILTER_DESCRIPTION, filterJSON.get("fname"));
+				filterJSON.put(QuerySerializationConstants.FILTER_PROMPTABLE, filterJSON.get("isfree"));
 				
-				filterJSON.put(SerializationConstants.FILTER_LO_VALUE, filterJSON.get("id"));
-				filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, filterJSON.get("entity") + " : " + filterJSON.get("field"));
-				filterJSON.put(SerializationConstants.FILTER_LO_TYPE, "Field Content");
-				filterJSON.put(SerializationConstants.FILTER_LO_DEFAULT_VALUE, "");
-				filterJSON.put(SerializationConstants.FILTER_LO_LAST_VALUE, "");
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_VALUE, filterJSON.get("id"));
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, filterJSON.get("entity") + " : " + filterJSON.get("field"));
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_TYPE, "Field Content");
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, "");
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, "");
 				
 	
-				filterJSON.put(SerializationConstants.FILTER_RO_VALUE, filterJSON.get("operand"));
-				filterJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, filterJSON.get("odesc"));
-				filterJSON.put(SerializationConstants.FILTER_RO_TYPE, filterJSON.get("otype"));
-				filterJSON.put(SerializationConstants.FILTER_RO_DEFAULT_VALUE, filterJSON.get("defaultvalue"));
-				filterJSON.put(SerializationConstants.FILTER_RO_LAST_VALUE, filterJSON.get("lastvalue"));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, filterJSON.get("operand"));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, filterJSON.get("odesc"));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_TYPE, filterJSON.get("otype"));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE, filterJSON.get("defaultvalue"));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_LAST_VALUE, filterJSON.get("lastvalue"));
 				
-				filterJSON.put(SerializationConstants.FILTER_BOOLEAN_CONNETOR, filterJSON.get("boperator"));
+				filterJSON.put(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR, filterJSON.get("boperator"));
 				
 				logger.debug( "Filter [" + (j+1) + "] converted succesfully to [" + filterJSON.toString() + "]");
 			}

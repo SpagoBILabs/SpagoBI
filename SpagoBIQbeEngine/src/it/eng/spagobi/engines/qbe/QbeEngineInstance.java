@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.catalogue.QueryCatalogue;
+import it.eng.qbe.crosstab.bo.CrosstabDefinition;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.DBConnection;
 import it.eng.qbe.model.DataMartModel;
@@ -33,7 +34,6 @@ import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;

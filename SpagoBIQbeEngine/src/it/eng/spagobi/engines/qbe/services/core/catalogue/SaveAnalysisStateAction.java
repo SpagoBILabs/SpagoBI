@@ -27,11 +27,12 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.crosstab.serializer.CrosstabSerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
@@ -85,7 +86,7 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			CrosstabDefinition crosstabDefinition = new CrosstabDefinition(crosstabDefinitionJSON);
+			CrosstabDefinition crosstabDefinition = CrosstabSerializerFactory.getDeserializer("application/json").deserialize(crosstabDefinitionJSON);;
 			getEngineInstance().setCrosstabDefinition(crosstabDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();

@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.query.serializer.SerializationConstants;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -110,12 +110,12 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		
 		
 		try {
-			alias = fieldJSON.getString(SerializationConstants.FIELD_ALIAS);
-			fieldType = fieldJSON.getString(SerializationConstants.FIELD_TYPE);
+			alias = fieldJSON.getString(QuerySerializationConstants.FIELD_ALIAS);
+			fieldType = fieldJSON.getString(QuerySerializationConstants.FIELD_TYPE);
 						
 			fieldClaculationDescriptor = fieldJSON.getJSONObject("calculationDescriptor");
-			type = fieldClaculationDescriptor.getString(SerializationConstants.FIELD_TYPE);
-			expression = fieldClaculationDescriptor.getString(SerializationConstants.FIELD_EXPRESSION);
+			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
+			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
 			
 			
 			String ft = fieldJSON.getString("filedType");

@@ -19,10 +19,9 @@
  * 
  **/
 
-package it.eng.spagobi.engines.qbe.services.crosstab;
+package it.eng.qbe.crosstab.bo;
 
-import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
-import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition.Measure;
+import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;

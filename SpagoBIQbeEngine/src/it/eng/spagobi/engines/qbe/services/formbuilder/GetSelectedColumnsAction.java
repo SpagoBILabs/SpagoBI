@@ -27,10 +27,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.QuerySerializerFactory;
-import it.eng.qbe.query.serializer.SerializationConstants;
-import it.eng.qbe.query.serializer.SerializationException;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -93,7 +93,7 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 			}
 			
 			
-			fieldsJSON = queryJSON.getJSONArray(SerializationConstants.FIELDS);			
+			fieldsJSON = queryJSON.getJSONArray(QuerySerializationConstants.FIELDS);			
 			resultsJSON = new JSONObject();
 			resultsJSON.put("results", fieldsJSON);
 			
