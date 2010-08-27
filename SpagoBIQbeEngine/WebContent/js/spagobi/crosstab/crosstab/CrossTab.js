@@ -946,7 +946,8 @@ Ext.extend(CrossTab, Ext.Panel, {
     	    layout:'fit',
     	    items: new Ext.DataView({
     	        store: store,
-    	        tpl: tpl
+    	        tpl: tpl,
+    	        itemSelector: 'div.crosstab-table-cells'
     	    })
     	});
 
@@ -1275,7 +1276,8 @@ Ext.extend(CrossTab, Ext.Panel, {
     	    layout:'fit',
     	    items: new Ext.DataView({
     	        store: storeColumns,
-    	        tpl: tpl
+    	        tpl: tpl,
+    	        itemSelector: 'div.crosstab-table-cells'
     	    })
     	});
     	return datapanelColumnSum;
@@ -1314,7 +1316,8 @@ Ext.extend(CrossTab, Ext.Panel, {
     	    layout:'fit',
     	    items: new Ext.DataView({
     	        store: storeRows,
-    	        tpl: tpl
+    	        tpl: tpl,
+    	        itemSelector: 'div.crosstab-table-cells'
     	    })
     	});
     	return datapanelRowSum;
