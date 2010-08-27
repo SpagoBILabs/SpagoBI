@@ -206,12 +206,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 	   this.srcModelName = new Ext.form.TextField({
 	             fieldLabel:LN('sbi.generic.name'),
 	             readOnly:true,
+	             style: '{ color: #ffffff; border: 1px solid white; font-style: italic;}',
 	             name: 'name'
 	         });	  
 
 	 	   this.srcModelCode = new Ext.form.TextField({
 	             readOnly: true,
 	             fieldLabel: LN('sbi.generic.code'),
+	             style: '{  color: #ffffff; border: 1px solid white; font-style: italic;}',
 	             name: 'code'
 	         });
 
@@ -220,18 +222,21 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
+	             style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.descr'),
 	             name: 'description'
 	         });
 
 	 	     this.srcModelType = new Ext.form.TextField({
 	 		   	 readOnly: true,
+	 		   	style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodetype'),
 	             name: 'type'
 	         });
 
 		 	 this.srcModelTypeDescr = new Ext.form.TextField({
 	             readOnly: true,
+	             style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodedescr'),
 	             name: 'typeDescr'
 	         });
@@ -312,12 +317,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	    this.kpiName = new Ext.form.TextField({
  	    	 id: 'kpinameField',
              fieldLabel:LN('sbi.generic.kpi'),
-             readonly: true,
+             readOnly: true,
              style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
              value: 'drop kpi here...',
              name: 'kpiname'
          });	  
  	    this.kpiName.addListener('render', this.configureDD2, this);
+ 	    this.kpiName.addListener('focus', this.kpiFiledNotify, this);
+
 
  	 	 this.kpiThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
@@ -439,6 +446,17 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
+	}
+	, kpiFiledNotify : function() {
+		this.kpiName.getEl().highlight('#E27119');
+		this.kpiName.setValue('');
+		var tooltip = new Ext.ToolTip({
+	        target: 'kpinameField',
+	        anchor: 'right',
+	        trackMouse: true,
+	        html: 'Drag and drop a kpi from Kpi List here'
+	    });
+
 	}
 	, configureDD2: function() {
 		  var fieldDropTargetEl =  this.kpiName.getEl().dom; 

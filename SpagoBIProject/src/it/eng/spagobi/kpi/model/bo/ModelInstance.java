@@ -20,7 +20,8 @@ public class ModelInstance implements Serializable{
 	private Date startDate;
 	private Date endDate;
 	private String modelUUID;
-
+	private String guiId = null;
+	
 	public String getLabel() {
 		return label;
 	}
@@ -93,4 +94,12 @@ public class ModelInstance implements Serializable{
 	public String getModelUUID() {
 		return modelUUID;
 	}
+	public String getGuiId() {
+		return guiId;
+	}
+	public void setGuiId(String guiId) {
+		this.guiId = guiId;
+	}
+
+	
 }
