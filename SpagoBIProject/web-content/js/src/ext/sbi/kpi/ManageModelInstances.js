@@ -169,7 +169,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
 			        , width: 430
-			        , items: [
+			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
 			    },{
@@ -285,15 +285,28 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     	    id:'kpiModelType',
     	    xtype: 'radiogroup',
     	    readonly: true,
-    	    itemCls: 'x-check-group-alt',
-    	    // Put all controls in a single column with width 100%
-    	    columns: 1,
+    	    columns: 2,
     	    items: [
     	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
     	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
     	    ]
     	});
 		
+		this.kpiInstTypeFieldset = new Ext.form.FieldSet({
+		   	columnWidth: 1,
+            labelWidth: 90,
+   
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding: 5px;',
+            border: false,
+            style: {
+            	//"border":"1px solid blue",
+            	"background-color": "#f1f1f1",
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+            },
+            items: [ this.kpiModelType]
+		});
 
  	    this.kpiName = new Ext.form.TextField({
  	    	 id: 'kpinameField',
@@ -353,10 +366,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
-	                 "background-color": "#D3DAED",
+	                 //"background-color": "#f1f1f1",
 	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	             },
-	             items: [this.kpiModelType,
+	             items: [
 	                     this.kpiName,
 	                     this.kpiThreshold,
 	                     this.kpiWeight,
@@ -375,13 +388,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	            //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	            border: false,
 	            style: {
-	                "background-color": "#D3DAED",
+	                //"background-color": "#D3DAED",
 	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	            },
-	            items: [this.kpiModelType,
+	            items: [
 	                    this.kpiLabel]
 			});
-			
+			//this.kpiInstTypeFieldset.setVisible(false);
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
 	}
@@ -421,21 +434,24 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, fillKpiPanel: function(sel, node) {
 		
 		var hasKpiInst = node.attributes.kpiInst;
-
 		if(hasKpiInst !== undefined && hasKpiInst != null){
+			this.kpiInstTypeFieldset.doLayout();
 			this.kpiInstFieldset.setVisible(true);
-			this.kpiInstFieldset2.setVisible(false);
-			
+			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
 			this.kpiInstFieldset.doLayout();
+
 		}else{
+			this.kpiInstTypeFieldset2.doLayout();
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(true);
 			this.kpiModelType.onSetValue( 'uuid', true);
 			this.kpiInstFieldset2.doLayout();
-		}
 
-		
+		}
+		alert(this.kpiModelType.getValue());
+		this.kpiInstTypeFieldset.setVisible(true);
+		this.kpiInstTypeFieldset.doLayout();
 	}
     //OVERRIDING save method
 	,save : function() {
