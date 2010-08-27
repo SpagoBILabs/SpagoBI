@@ -1,12 +1,12 @@
 package it.eng.spagobi.chiron.serializer;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
-import it.eng.spagobi.kpi.model.bo.ModelResources;
-import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.threshold.bo.Threshold;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -30,6 +30,15 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String MODEL_TYPE = "modelType";
 	private static final String MODEL_TYPEDESCR = "modelTypeDescr";
 	private static final String MODEL_TEXT = "modelText";
+
+	private static final String KPI_NAME =  "kpiName";
+	private static final String KPI_ID = "kpiId";
+	private static final String KPI_INST_THR_ID =  "kpiInstThrId";
+	private static final String KPI_INST_THR_NAME =  "kpiInstThrName";
+	private static final String KPI_INST_TARGET =  "kpiInstTarget";
+	private static final String KPI_INST_WEIGHT =  "kpiInstWeight";
+	private static final String KPI_INST_CHART =  "kpiInstChartTypeId";    
+	private static final String KPI_INST_PERIODICITY =  "kpiInstPeriodicity";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -55,11 +64,28 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 				result.put(MODEL_TYPE, model.getTypeName() );
 				result.put(MODEL_TYPEDESCR, model.getTypeDescription() );				
 
-			}
-			
+			}			
 			if(res.getKpiInstance() != null){
 				result.put(KPI_INST_ID, res.getKpiInstance().getKpiInstanceId() );
+				KpiInstance kpiInst = DAOFactory.getKpiInstanceDAO().loadKpiInstanceById(res.getKpiInstance().getKpiInstanceId());
+				
+				if(kpiInst != null){
+					result.put(KPI_ID, kpiInst.getKpi());
+					if(kpiInst.getKpi() != null){
+						Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
+						result.put(KPI_ID, kpi.getKpiName());
+					}
+					result.put(KPI_INST_CHART, kpiInst.getChartTypeId());
+					result.put(KPI_INST_PERIODICITY, kpiInst.getPeriodicityId());
+					result.put(KPI_INST_TARGET, kpiInst.getTarget());
+					result.put(KPI_INST_THR_ID, kpiInst.getThresholdId());
+					if(kpiInst.getThresholdId() != null){
+						Threshold thr = DAOFactory.getThresholdDAO().loadThresholdById(kpiInst.getThresholdId());
+						result.put(KPI_INST_THR_NAME, thr.getName());
+					}
+					result.put(KPI_INST_WEIGHT, kpiInst.getWeight());
 
+				}
 			}
 			result.put(NAME, res.getName() );
 			result.put(TEXT, res.getName() );

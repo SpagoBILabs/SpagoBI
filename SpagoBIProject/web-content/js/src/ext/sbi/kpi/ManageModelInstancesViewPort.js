@@ -240,7 +240,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			var analyzedRec = this.recordAnalyze(rec);
 			
 			this.displayTree(analyzedRec);
-			this.displaySourceModelDetail(analyzedRec);
 			this.dispalyResourcesGridPanel(analyzedRec);
 			
 			if(analyzedRec != this.lastRecSelected){
@@ -298,13 +297,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelsTree.modelsTree.doLayout();
 
 	}
-	, displaySourceModelDetail: function(rec) {
-		this.manageModelInstances.srcModelName.setValue(rec.get('modelName'));
-		this.manageModelInstances.srcModelCode.setValue(rec.get('modelCode'));
-		this.manageModelInstances.srcModelDescr.setValue(rec.get('modelDescr'));
-		this.manageModelInstances.srcModelType.setValue(rec.get('modelType'));
-		this.manageModelInstances.srcModelTypeDescr.setValue(rec.get('modelTypeDescr'));
-	}
+
 	, dispalyResourcesGridPanel : function(rec) {
 		if(rec !== undefined && rec != null){
 			var params = {
