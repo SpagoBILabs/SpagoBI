@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.utils.crosstab;
 
+import it.eng.qbe.crosstab.bo.CrosstabDefinition;
 import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.IAggregationFunction;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
-import it.eng.spagobi.engines.qbe.bo.CrosstabDefinition;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.Iterator;

@@ -38,7 +38,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.SerializationConstants;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.qbe.statment.BasicStatement;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -646,43 +646,43 @@ public class HQLStatement extends BasicStatement {
 		String toReturn = "";
 		
 		if(dialect!=null){
-			if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_MYSQL)){
+			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE("+date+",'%d/%m/%Y %h:%i:%s') ";
 				}else{
 					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y %h:%i:%s') ";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_HSQL)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = date;
 				}else{
 					toReturn = "'"+date+"'";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_INGRES)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE("+date+",'%d/%m/%Y') ";
 				}else{
 					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y') ";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_ORACLE)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
 					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_ORACLE9i10g)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
 					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_POSTGRES)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
 					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
-			}else if( dialect.equalsIgnoreCase(SerializationConstants.DIALECT_SQLSERVER)){
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = date;
 				}else{

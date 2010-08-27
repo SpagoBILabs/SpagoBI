@@ -24,7 +24,7 @@ package it.eng.qbe.query.serializer;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class SerializationConstants {
+public class QuerySerializationConstants {
 	
 	public static final String ID = "id";
 	public static final String NAME = "name";

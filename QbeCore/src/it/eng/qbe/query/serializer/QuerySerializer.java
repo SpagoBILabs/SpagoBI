@@ -23,6 +23,7 @@ package it.eng.qbe.query.serializer;
 
 import java.util.Locale;
 
+import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.query.Query;
 

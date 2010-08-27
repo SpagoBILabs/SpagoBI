@@ -26,9 +26,9 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.QuerySerializerFactory;
-import it.eng.qbe.query.serializer.SerializationException;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;

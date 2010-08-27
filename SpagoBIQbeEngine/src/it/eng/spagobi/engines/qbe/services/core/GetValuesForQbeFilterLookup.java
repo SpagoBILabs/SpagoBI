@@ -5,7 +5,7 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.query.serializer.SerializationConstants;
+import it.eng.qbe.query.serializer.QuerySerializationConstants;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;

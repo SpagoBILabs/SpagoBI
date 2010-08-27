@@ -19,16 +19,22 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.query.serializer;
-
-import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.query.Query;
-
+package it.eng.qbe.crosstab.serializer;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public interface QueryDeserializer {
-	public Query deserialize(Object o, DataMartModel m) throws SerializationException;
+public class CrosstabSerializationConstants {
+	
+	public static final String ROWS = "rows";
+	public static final String COLUMNS = "columns";
+	public static final String MEASURES = "measures";
+	public static final String ID = "id";
+	public static final String ALIAS = "alias";
+	public static final String ICON_CLS = "iconCls";
+	public static final String NATURE = "nature";
+	public static final String FUNCTION = "funct";
+	public static final String CONFIG = "config";
+	public static final String MEASURESON = "measureson";
+	
 }

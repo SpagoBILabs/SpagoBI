@@ -19,20 +19,15 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.query.serializer;
+package it.eng.qbe.crosstab.serializer;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class SerializationException extends SpagoBIException {
-
-	public SerializationException(String message) {
-		super(message);
-	}
-	
-	public SerializationException(String message, Throwable e) {
-		super(message, e);
-	}
+public interface CrosstabDeserializer {
+	public CrosstabDefinition deserialize(Object o) throws SerializationException;
 }

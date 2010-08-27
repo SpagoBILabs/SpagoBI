@@ -24,6 +24,7 @@ package it.eng.qbe.query.serializer;
 import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.cache.QbeCacheManager;
+import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
@@ -94,20 +95,20 @@ public class QueryJSONSerializer implements QuerySerializer {
 			
 			
 			result = new JSONObject();
-			result.put(SerializationConstants.ID, query.getId());
-			result.put(SerializationConstants.NAME, query.getName());
-			result.put(SerializationConstants.DESCRIPTION, query.getDescription());
-			result.put(SerializationConstants.DISTINCT, query.isDistinctClauseEnabled());
-			result.put(SerializationConstants.IS_NESTED_EXPRESSION, query.isNestedExpression());
+			result.put(QuerySerializationConstants.ID, query.getId());
+			result.put(QuerySerializationConstants.NAME, query.getName());
+			result.put(QuerySerializationConstants.DESCRIPTION, query.getDescription());
+			result.put(QuerySerializationConstants.DISTINCT, query.isDistinctClauseEnabled());
+			result.put(QuerySerializationConstants.IS_NESTED_EXPRESSION, query.isNestedExpression());
 			
-			result.put(SerializationConstants.FIELDS, recordsJOSN);
+			result.put(QuerySerializationConstants.FIELDS, recordsJOSN);
 			
-			result.put(SerializationConstants.FILTERS, filtersJSON);
-			result.put(SerializationConstants.EXPRESSION, filterExpJOSN);
+			result.put(QuerySerializationConstants.FILTERS, filtersJSON);
+			result.put(QuerySerializationConstants.EXPRESSION, filterExpJOSN);
 			
-			result.put(SerializationConstants.HAVINGS, havingsJSON);
+			result.put(QuerySerializationConstants.HAVINGS, havingsJSON);
 			
-			result.put(SerializationConstants.SUBQUERIES, subqueriesJSON);
+			result.put(QuerySerializationConstants.SUBQUERIES, subqueriesJSON);
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + query, t);
 		} finally {
@@ -162,10 +163,10 @@ public class QueryJSONSerializer implements QuerySerializer {
 				try {
 					fieldJSON = new JSONObject();
 					
-					fieldJSON.put(SerializationConstants.FIELD_ALIAS, field.getAlias());
+					fieldJSON.put(QuerySerializationConstants.FIELD_ALIAS, field.getAlias());
 					
-					fieldJSON.put(SerializationConstants.FIELD_VISIBLE, field.isVisible());
-					fieldJSON.put(SerializationConstants.FIELD_INCLUDE, field.isIncluded());					
+					fieldJSON.put(QuerySerializationConstants.FIELD_VISIBLE, field.isVisible());
+					fieldJSON.put(QuerySerializationConstants.FIELD_INCLUDE, field.isIncluded());					
 					
 					// field nature can me "measure" or "attribute"
 					String nature = null;
@@ -173,13 +174,13 @@ public class QueryJSONSerializer implements QuerySerializer {
 					if (field.isDataMartField()) {
 						DataMartSelectField dataMartSelectField = (DataMartSelectField)field;
 						
-						fieldJSON.put(SerializationConstants.FIELD_TYPE, field.DATAMART_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.DATAMART_FIELD);
 						
 						fieldUniqueName = dataMartSelectField.getUniqueName();
 						datamartField = datamartModel.getDataMartModelStructure().getField( fieldUniqueName );
 						Assert.assertNotNull(datamartField, "A filed named [" + fieldUniqueName + "] does not exist in the datamart model");
 						
-						fieldJSON.put(SerializationConstants.FIELD_ID, datamartField.getUniqueName());
+						fieldJSON.put(QuerySerializationConstants.FIELD_ID, datamartField.getUniqueName());
 												
 						// localize entity name
 						label = null;
@@ -187,7 +188,7 @@ public class QueryJSONSerializer implements QuerySerializer {
 							label = datamartLabels.getLabel( datamartField.getParent() );
 						}
 						label = StringUtilities.isEmpty(label)? datamartField.getParent().getName(): label;
-						fieldJSON.put(SerializationConstants.FIELD_ENTITY, label);
+						fieldJSON.put(QuerySerializationConstants.FIELD_ENTITY, label);
 						
 						// localize field name
 						label = null;
@@ -195,21 +196,21 @@ public class QueryJSONSerializer implements QuerySerializer {
 							label = datamartLabels.getLabel( datamartField );
 						}
 						label = StringUtilities.isEmpty(label)? datamartField.getName(): label;
-						fieldJSON.put(SerializationConstants.FIELD_NAME, label);
+						fieldJSON.put(QuerySerializationConstants.FIELD_NAME, label);
 						longDescription = getFieldLongDescription(datamartField, datamartLabels);
-						fieldJSON.put(SerializationConstants.FIELD_LONG_DESCRIPTION, longDescription);
+						fieldJSON.put(QuerySerializationConstants.FIELD_LONG_DESCRIPTION, longDescription);
 						
 						if( dataMartSelectField.isGroupByField() ) {
-							fieldJSON.put(SerializationConstants.FIELD_GROUP, "true");
+							fieldJSON.put(QuerySerializationConstants.FIELD_GROUP, "true");
 						} else {
-							fieldJSON.put(SerializationConstants.FIELD_GROUP, "");
+							fieldJSON.put(QuerySerializationConstants.FIELD_GROUP, "");
 						}
-						fieldJSON.put(SerializationConstants.FIELD_ORDER, dataMartSelectField.getOrderType());
-						fieldJSON.put(SerializationConstants.FIELD_AGGREGATION_FUNCTION, dataMartSelectField.getFunction().getName());
+						fieldJSON.put(QuerySerializationConstants.FIELD_ORDER, dataMartSelectField.getOrderType());
+						fieldJSON.put(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION, dataMartSelectField.getFunction().getName());
 						
 						DatamartProperties datamartProperties = datamartModel.getDataSource().getProperties();
 						String iconCls = datamartProperties.getFieldIconClass( datamartField );	
-						fieldJSON.put(SerializationConstants.FIELD_ICON_CLS, iconCls);
+						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, iconCls);
 						
 						// if an aggregation function is defined or if the field is declared as "measure" into property file,
 						// then it is a measure, elsewhere it is an attribute
@@ -217,51 +218,51 @@ public class QueryJSONSerializer implements QuerySerializer {
 								(dataMartSelectField.getFunction() != null 
 								&& !dataMartSelectField.getFunction().equals(AggregationFunctions.NONE_FUNCTION))
 								|| iconCls.equals("measure")) {
-							nature = SerializationConstants.FIELD_NATURE_MEASURE;
+							nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
 						} else {
-							nature = SerializationConstants.FIELD_NATURE_ATTRIBUTE;
+							nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 						}
 						
 					} else if (field.isCalculatedField()){
 						CalculatedSelectField calculatedSelectField = (CalculatedSelectField)field;
 						
-						fieldJSON.put(SerializationConstants.FIELD_TYPE, field.CALCULATED_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.CALCULATED_FIELD);
 						
 						JSONObject fieldClaculationDescriptor = new JSONObject();
-						fieldClaculationDescriptor.put(SerializationConstants.FIELD_TYPE, calculatedSelectField.getType());
-						fieldClaculationDescriptor.put(SerializationConstants.FIELD_EXPRESSION, calculatedSelectField.getExpression());
-						fieldJSON.put(SerializationConstants.FIELD_ID, fieldClaculationDescriptor);
+						fieldClaculationDescriptor.put(QuerySerializationConstants.FIELD_TYPE, calculatedSelectField.getType());
+						fieldClaculationDescriptor.put(QuerySerializationConstants.FIELD_EXPRESSION, calculatedSelectField.getExpression());
+						fieldJSON.put(QuerySerializationConstants.FIELD_ID, fieldClaculationDescriptor);
 						
-						fieldJSON.put(SerializationConstants.FIELD_ICON_CLS, "calculation");
+						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, "calculation");
 						
-						nature = SerializationConstants.FIELD_NATURE_POST_LINE_CALCULATED;
+						nature = QuerySerializationConstants.FIELD_NATURE_POST_LINE_CALCULATED;
 						
 					} else if (field.isInLineCalculatedField()) {
 						InLineCalculatedSelectField calculatedSelectField = (InLineCalculatedSelectField)field;
 						
-						fieldJSON.put(SerializationConstants.FIELD_TYPE, field.IN_LINE_CALCULATED_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.IN_LINE_CALCULATED_FIELD);
 						
 						JSONObject fieldClaculationDescriptor = new JSONObject();
-						fieldClaculationDescriptor.put(SerializationConstants.FIELD_ALIAS, calculatedSelectField.getAlias());
-						fieldClaculationDescriptor.put(SerializationConstants.FIELD_TYPE, calculatedSelectField.getType());
-						fieldClaculationDescriptor.put(SerializationConstants.FIELD_EXPRESSION, calculatedSelectField.getExpression());
-						fieldJSON.put(SerializationConstants.FIELD_ID, fieldClaculationDescriptor);
-						fieldJSON.put(SerializationConstants.FIELD_LONG_DESCRIPTION, calculatedSelectField.getExpression());
+						fieldClaculationDescriptor.put(QuerySerializationConstants.FIELD_ALIAS, calculatedSelectField.getAlias());
+						fieldClaculationDescriptor.put(QuerySerializationConstants.FIELD_TYPE, calculatedSelectField.getType());
+						fieldClaculationDescriptor.put(QuerySerializationConstants.FIELD_EXPRESSION, calculatedSelectField.getExpression());
+						fieldJSON.put(QuerySerializationConstants.FIELD_ID, fieldClaculationDescriptor);
+						fieldJSON.put(QuerySerializationConstants.FIELD_LONG_DESCRIPTION, calculatedSelectField.getExpression());
 
 						if ( calculatedSelectField.isGroupByField() ) {
-							fieldJSON.put(SerializationConstants.FIELD_GROUP, "true");
+							fieldJSON.put(QuerySerializationConstants.FIELD_GROUP, "true");
 						} else {
-							fieldJSON.put(SerializationConstants.FIELD_GROUP, "");
+							fieldJSON.put(QuerySerializationConstants.FIELD_GROUP, "");
 						}
 						
-						fieldJSON.put(SerializationConstants.FIELD_AGGREGATION_FUNCTION, calculatedSelectField.getFunction().getName());
-						fieldJSON.put(SerializationConstants.FIELD_ORDER, calculatedSelectField.getOrderType());
+						fieldJSON.put(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION, calculatedSelectField.getFunction().getName());
+						fieldJSON.put(QuerySerializationConstants.FIELD_ORDER, calculatedSelectField.getOrderType());
 						
 						//fieldJSON.put(SerializationConstants.FIELD_GROUP, "");
-						fieldJSON.put(SerializationConstants.FIELD_ORDER, "");
+						fieldJSON.put(QuerySerializationConstants.FIELD_ORDER, "");
 						//fieldJSON.put(SerializationConstants.FIELD_AGGREGATION_FUNCTION, "");
 						
-						fieldJSON.put(SerializationConstants.FIELD_ICON_CLS, "calculation");
+						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, "calculation");
 						
 						/*
 						 * We should understand if the calculated field is an attribute (i.e. a composition of attributes)
@@ -272,14 +273,14 @@ public class QueryJSONSerializer implements QuerySerializer {
 						 * make aggregation.
 						 */
 						if ( calculatedSelectField.isGroupByField() ) {
-							nature = SerializationConstants.FIELD_NATURE_ATTRIBUTE;
+							nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 						} else {
-							nature = SerializationConstants.FIELD_NATURE_MEASURE;
+							nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
 						}
 						
 					}
 					
-					fieldJSON.put(SerializationConstants.FIELD_NATURE, nature);	
+					fieldJSON.put(QuerySerializationConstants.FIELD_NATURE, nature);	
 					
 				} catch(Throwable t) {
 					throw new SerializationException("An error occurred while serializing field: " + field.getAlias(), t);
@@ -369,18 +370,18 @@ public class QueryJSONSerializer implements QuerySerializer {
 			
 			filterJSON = new JSONObject();
 			try {
-				filterJSON.put(SerializationConstants.FILTER_ID, filter.getName());
-				filterJSON.put(SerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
-				filterJSON.put(SerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
+				filterJSON.put(QuerySerializationConstants.FILTER_ID, filter.getName());
+				filterJSON.put(QuerySerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
+				filterJSON.put(QuerySerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
 				
 				operand = filter.getLeftOperand();
-				filterJSON.put(SerializationConstants.FILTER_LO_VALUE, operand.values[0]);
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_VALUE, operand.values[0]);
 				if(operand.type.equalsIgnoreCase("Field Content")) {
 					if(operand.values[0].contains("\"expression\":\"")){
-						filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
+						filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
 						String description = operand.values[0].substring(operand.values[0].indexOf("\"expression\":\"")+14);
 						description.substring(0, description.indexOf("\""));
-						filterJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
+						filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
 					}else{
 						datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
 						
@@ -398,16 +399,16 @@ public class QueryJSONSerializer implements QuerySerializer {
 						}
 						labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 						
-						filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
+						filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
 						
 						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
-						filterJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+						filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 					}
 				} else if(operand.type.equalsIgnoreCase("Subquery")) {
 					String loLongDescription = "Subquery " + operand.description;
-					filterJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+					filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 					
-					filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
@@ -415,23 +416,23 @@ public class QueryJSONSerializer implements QuerySerializer {
 					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
-					filterJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+					filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 					
-					filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				} else {
-					filterJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				}
 				
 				
 				
-				filterJSON.put(SerializationConstants.FILTER_LO_TYPE, operand.type);
-				filterJSON.put(SerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
-				filterJSON.put(SerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_TYPE, operand.type);
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
 				
-				filterJSON.put(SerializationConstants.FILTER_OPERATOR, filter.getOperator());
+				filterJSON.put(QuerySerializationConstants.FILTER_OPERATOR, filter.getOperator());
 				
 				operand = filter.getRightOperand();
-				filterJSON.put(SerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
 				if(operand.type.equalsIgnoreCase("Field Content")) {
 					datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
 					
@@ -449,15 +450,15 @@ public class QueryJSONSerializer implements QuerySerializer {
 					}
 					labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 					
-					filterJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
 					
 					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels);
-					filterJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 				} else if(operand.type.equalsIgnoreCase("Subquery")) {
 					String roLongDescription = "Subquery " + operand.description;
-					filterJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 					
-					filterJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
@@ -465,17 +466,17 @@ public class QueryJSONSerializer implements QuerySerializer {
 					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
-					filterJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
 					
-					filterJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				} else {
-					filterJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				}
-				filterJSON.put(SerializationConstants.FILTER_RO_TYPE, operand.type);
-				filterJSON.put(SerializationConstants.FILTER_RO_DEFAULT_VALUE, JSONUtils.asJSONArray(operand.defaulttValues));
-				filterJSON.put(SerializationConstants.FILTER_RO_LAST_VALUE, JSONUtils.asJSONArray(operand.lastValues));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_TYPE, operand.type);
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE, JSONUtils.asJSONArray(operand.defaulttValues));
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_LAST_VALUE, JSONUtils.asJSONArray(operand.lastValues));
 				
-				filterJSON.put(SerializationConstants.FILTER_BOOLEAN_CONNETOR, filter.getBooleanConnector());
+				filterJSON.put(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR, filter.getBooleanConnector());
 				
 			} catch(JSONException e) {
 				throw new SerializationException("An error occurred while serializing filter: " + filter.getName(), e);
@@ -513,19 +514,19 @@ public class QueryJSONSerializer implements QuerySerializer {
 			
 			havingJSON = new JSONObject();
 			try {
-				havingJSON.put(SerializationConstants.FILTER_ID, filter.getName());
-				havingJSON.put(SerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
-				havingJSON.put(SerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
+				havingJSON.put(QuerySerializationConstants.FILTER_ID, filter.getName());
+				havingJSON.put(QuerySerializationConstants.FILTER_DESCRIPTION, filter.getDescription());
+				havingJSON.put(QuerySerializationConstants.FILTER_PROMPTABLE, filter.isPromptable());
 				
 				operand = filter.getLeftOperand();
-				havingJSON.put(SerializationConstants.FILTER_LO_VALUE, operand.values[0]);
+				havingJSON.put(QuerySerializationConstants.FILTER_LO_VALUE, operand.values[0]);
 				if(operand.type.equalsIgnoreCase("Field Content")) {
 					
 					if(operand.values[0].contains("\"expression\":\"")){
-						havingJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
+						havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description );
 						String description = operand.values[0].substring(operand.values[0].indexOf("\"expression\":\"")+14);
 						description.substring(0, description.indexOf("\""));
-						havingJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
+						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
 					}else{
 					
 						datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
@@ -544,18 +545,18 @@ public class QueryJSONSerializer implements QuerySerializer {
 						}
 						labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 						
-						havingJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
+						havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
 						
 						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
-						havingJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 	
 					}	
 					
 				} else if(operand.type.equalsIgnoreCase("Subquery")) {
 					String loLongDescription = "Subquery " + operand.description;
-					havingJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 					
-					havingJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
@@ -563,24 +564,24 @@ public class QueryJSONSerializer implements QuerySerializer {
 					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
-					havingJSON.put(SerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 					
-					havingJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				} else {
-					havingJSON.put(SerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, operand.description);
 				}
 				
 				
 				
-				havingJSON.put(SerializationConstants.FILTER_LO_TYPE, operand.type);
-				havingJSON.put(SerializationConstants.FILTER_LO_FUNCTION, operand.function.getName());
-				havingJSON.put(SerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
-				havingJSON.put(SerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
+				havingJSON.put(QuerySerializationConstants.FILTER_LO_TYPE, operand.type);
+				havingJSON.put(QuerySerializationConstants.FILTER_LO_FUNCTION, operand.function.getName());
+				havingJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
+				havingJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
 				
-				havingJSON.put(SerializationConstants.FILTER_OPERATOR, filter.getOperator());
+				havingJSON.put(QuerySerializationConstants.FILTER_OPERATOR, filter.getOperator());
 				
 				operand = filter.getRightOperand();
-				havingJSON.put(SerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
+				havingJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
 				if(operand.type.equalsIgnoreCase("Field Content")) {
 					datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
 					
@@ -598,15 +599,15 @@ public class QueryJSONSerializer implements QuerySerializer {
 					}
 					labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 					
-					havingJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
 					
 					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels);
-					havingJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 				} else if(operand.type.equalsIgnoreCase("Subquery")) {
 					String roLongDescription = "Subquery " + operand.description;
-					havingJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 					
-					havingJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				} else if(operand.type.equalsIgnoreCase("Parent Field Content")) {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
@@ -614,18 +615,18 @@ public class QueryJSONSerializer implements QuerySerializer {
 					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
-					havingJSON.put(SerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
 					
-					havingJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				} else {
-					havingJSON.put(SerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
+					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, operand.description);
 				}
-				havingJSON.put(SerializationConstants.FILTER_RO_TYPE, operand.type);
-				havingJSON.put(SerializationConstants.FILTER_RO_FUNCTION, operand.function.getName());
-				havingJSON.put(SerializationConstants.FILTER_RO_DEFAULT_VALUE, JSONUtils.asJSONArray(operand.defaulttValues));
-				havingJSON.put(SerializationConstants.FILTER_RO_LAST_VALUE, JSONUtils.asJSONArray(operand.lastValues));
+				havingJSON.put(QuerySerializationConstants.FILTER_RO_TYPE, operand.type);
+				havingJSON.put(QuerySerializationConstants.FILTER_RO_FUNCTION, operand.function.getName());
+				havingJSON.put(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE, JSONUtils.asJSONArray(operand.defaulttValues));
+				havingJSON.put(QuerySerializationConstants.FILTER_RO_LAST_VALUE, JSONUtils.asJSONArray(operand.lastValues));
 				
-				havingJSON.put(SerializationConstants.FILTER_BOOLEAN_CONNETOR, filter.getBooleanConnector());
+				havingJSON.put(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR, filter.getBooleanConnector());
 				
 			} catch(JSONException e) {
 				throw new SerializationException("An error occurred while serializing filter: " + filter.getName(), e);
@@ -643,8 +644,8 @@ public class QueryJSONSerializer implements QuerySerializer {
 		if(filterExp == null) return exp;
 		
 		try {
-			exp.put(SerializationConstants.EXPRESSION_TYPE, filterExp.getType()) ;
-			exp.put(SerializationConstants.EXPRESSION_VALUE, filterExp.getValue());
+			exp.put(QuerySerializationConstants.EXPRESSION_TYPE, filterExp.getType()) ;
+			exp.put(QuerySerializationConstants.EXPRESSION_VALUE, filterExp.getValue());
 			
 			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
 				ExpressionNode child = (ExpressionNode)filterExp.getChildNodes().get(i);
@@ -652,7 +653,7 @@ public class QueryJSONSerializer implements QuerySerializer {
 				childsJSON.put(childJSON);
 			}		
 			
-			exp.put(SerializationConstants.EXPRESSION_CHILDREN, childsJSON);
+			exp.put(QuerySerializationConstants.EXPRESSION_CHILDREN, childsJSON);
 		} catch(JSONException e) {
 			throw new SerializationException("An error occurred while serializing filter expression", e);
 		}		
