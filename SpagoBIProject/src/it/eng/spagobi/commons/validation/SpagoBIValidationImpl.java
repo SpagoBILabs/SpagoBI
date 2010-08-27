@@ -87,7 +87,7 @@ public class SpagoBIValidationImpl implements ValidationEngineIFace {
 	// Costanti per le espressioni regolari 
 	private static final String LETTER_STRING_REGEXP= "^([a-zA-ZÈËÎÔ‚ÍÙ˚ÓÁ‡˘ÏÚ¿…Œ’‹])*$";
 	private static final String FISCAL_CODE_REGEXP="^([A-Z]{6}[A-Z\\d]{2}[A-Z][A-Z\\d]{2}[A-Z][A-Z\\d]{3}[A-Z])*$";
-	private static final String ALPHANUMERIC_EXTENDED_STRING_REGEXP="^([\\w\\s\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\{\\,\\}\\.\\x2F\\x5F])*$";
+	private static final String ALPHANUMERIC_EXTENDED_STRING_REGEXP="^([\\w\\s\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\{\\,\\}\\.\\'\\\"\\x2F\\x5F])*$";
 	private static final String ALPHANUMERIC_EXTENDED_STRING_REGEXP_NOSPACE="^([\\w\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\{\\,\\}\\.\\x2F\\x5F])*$";
 	private static final String ALPHANUMERIC_STRING_REGEXP="^([a-zA-Z0-9\\s\\-\\_])*$";
 	private static final String ALPHANUMERIC_STRING_REGEXP_NOSPACE="^([a-zA-Z0-9\\-\\_])*$";

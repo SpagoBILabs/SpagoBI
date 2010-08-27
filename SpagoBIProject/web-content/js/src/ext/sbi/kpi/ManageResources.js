@@ -132,7 +132,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	   var detailFieldName = {
           	 maxLength:40,
         	 minLength:1,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
              allowBlank: false,
@@ -143,7 +143,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	   var detailFieldCode = {
           	 maxLength:45,
         	 minLength:1,
-        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
+        	//regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.code'),
              allowBlank: false,
@@ -156,7 +156,6 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
           	 xtype: 'textarea',
        	     width : 250,
              height : 80,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
              validationEvent:true,
@@ -165,7 +164,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	 		   
  	   var detailFieldTabName = {
           	 maxLength:40,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.resources.tablename'),
              validationEvent:true,
@@ -174,7 +173,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	 	 			  
  	   var detailFieldColName = {
           	 maxLength:40,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.resources.columnname'),
              validationEvent:true,

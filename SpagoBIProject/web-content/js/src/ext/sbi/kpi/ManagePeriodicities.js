@@ -124,7 +124,12 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	    	width: 80, 
 	    	sortable: true, 
 	    	dataIndex: 'name', 
-	    	editor: new Ext.form.TextField({})	
+	    	editor: new Ext.form.TextField({
+	    		  allowBlank: false,
+	    		  maxLength:400,
+	         	  minLength:1,
+	         	  validationEvent:true
+	    	})	
 	    },{
 	    	header: LN('sbi.kpis.months'), 
 	    	width: 60, 

@@ -220,7 +220,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	   var detailFieldName = new Ext.form.TextField({
           	 maxLength:400,
           	 width : 200,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
              validationEvent:true,
@@ -231,7 +231,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
           	 maxLength:45,
         	 minLength:1,
         	 width : 200,
-        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
+        	 //regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.code'),
              allowBlank: false,
@@ -243,7 +243,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
           	 maxLength:1000,
         	 width : 250,
              height : 80,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
              validationEvent:true,
@@ -282,6 +282,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  var detailThrPosition = new Ext.form.NumberField({		
              fieldLabel: LN('sbi.thresholds.position'),
              width : 120,
+             xtype: 'numeric',
              validationEvent:true,
              name: 'position'
          });	 
@@ -299,6 +300,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	 this.detailThrMin = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.minVal'),
              width : 120,
+             xtype: 'numeric',
              validationEvent:true,
              name: 'min'
          });
@@ -312,6 +314,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	 this.detailThrMax = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.maxVal'),
              width : 120,
+             xtype: 'numeric',
              validationEvent:true,
              name: 'max'
          });
@@ -327,6 +330,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	var detailThrValue = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.value'),
              width : 120,
+             xtype: 'numeric',
              validationEvent:true,
              name: 'val'
         });

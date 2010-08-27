@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <PRESENTATION>
-  <MAPPING business_type="ACTION" business_name="LOGIN_ACTION_KPI_CONFIGURATION"
-    publisher_name="KPIConfigurationPublisher" />
+  <MAPPING business_type="ACTION" business_name="LOGIN_ACTION_KPI_CONFIGURATION" publisher_name="KPIConfigurationPublisher" />
+  <MAPPING business_type="ACTION" business_name="MANAGE_KPIS_ACTION" publisher_name="ManageKpisPublisher"/>
+  
+  <MAPPING business_type="ACTION" business_name="MANAGE_RESOURCES_ACTION" publisher_name="ManageResourcesPublisher"/>
+  <MAPPING business_type="ACTION" business_name="MANAGE_MODELS_ACTION" publisher_name="ManageModelsPublisher"/>
+  <MAPPING business_type="ACTION" business_name="MANAGE_MODEL_INSTANCES_ACTION" publisher_name="ManageModelInstancesPublisher"/>
+  
+  <MAPPING business_type="ACTION" business_name="MANAGE_THRESHOLDS_ACTION" publisher_name="ManageThresholdsPublisher"/>
 </PRESENTATION>
