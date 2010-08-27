@@ -159,9 +159,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
            };
  		   
  	   var detailFieldName = {
-          	 maxLength:100,
+          	 maxLength:400,
         	 minLength:1,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+        	// regex : new RegExp("^([a-zA-Z0-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
              allowBlank: false,
@@ -170,9 +170,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
          };
  			  
  	   var detailFieldCode = {
-          	 maxLength:20,
-        	 minLength:0,
-        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
+          	 maxLength:40,
+        	// regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.code'),
              validationEvent:true,
@@ -180,11 +179,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
          };	  
  		   
  	   var detailFieldDescr = {
-          	 maxLength:160,
+          	 maxLength:1000,
           	 xtype: 'textarea',
        	     width : 250,
              height : 80,
-        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
              validationEvent:true,
@@ -192,10 +190,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
          };	 	
  	   
  	  var detailFieldWeight = {
-           	 maxLength:160,
-         	 minLength:1,
          	 width : 120,
-         	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+         	// regex : new RegExp("^([0-9/])+$", "g"),
          	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.kpis.weight'),
              validationEvent:true,
@@ -300,11 +296,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    
  	   //START list of Advanced fields
 	    var detailFieldInterpretation = {
-	             maxLength:160,
+	             maxLength:1000,
 	             xtype: 'textarea',
 	        	 width : 250,
 	             height : 80,
-	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.kpis.interpretation'),
 	             validationEvent:true,
@@ -312,11 +308,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	           };
 	    
 	    var detailFieldAlgDesc = {
-	             maxLength:160,
+	             maxLength:1000,
 	             xtype: 'textarea',
 	        	 width : 250,
 	             height : 80,
-	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.kpis.algDescr'),
 	             validationEvent:true,
@@ -324,9 +320,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	           };
 	    
 	    var detailFieldInputAttr = {
-	             maxLength:160,
-	          	 minLength:1,
-	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+	             maxLength:1000,
+	          	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.kpis.inputAttr'),
 	             validationEvent:true,
@@ -334,9 +329,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	           };
 	    
 	    var detailFieldModelReference = {
-	             maxLength:160,
-	          	 minLength:1,
-	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+	             maxLength:255,
+	          	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.kpis.modelRef'),
 	             validationEvent:true,
@@ -344,11 +338,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	           };
 	    
 	    var detailFieldTargetAud = {
-	             maxLength:160,
+	             maxLength:1000,
 	             xtype: 'textarea',
 	        	 width : 250,
 	             height : 80,
-	          	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.kpis.targAud'),
 	             validationEvent:true,

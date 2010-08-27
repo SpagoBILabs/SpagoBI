@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <PUBLISHERS>
-  <PUBLISHER name="ManageKpisPublisher">
-    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
-      		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/config/manageKpis.jsp"/>
-      		</RESOURCES>
-    	</RENDERING>
-    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
-      		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/kpi/config/manageKpis.jsp"/>
-      		</RESOURCES>
-    	</RENDERING>
-  	</PUBLISHER>
 
 	<PUBLISHER name="KpiPublisher">
 		<RENDERING channel="PORTLET" type="JAVA" mode="">

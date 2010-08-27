@@ -81,7 +81,11 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 			id:'label',
 			sortable: true, 
 			dataIndex: 'label',  
-			editor: new Ext.form.TextField({})
+			editor: new Ext.form.TextField({
+				 maxLength:20,
+				 allowBlank: false,
+	             validationEvent:true
+			})
 	    },{
 	    	header: LN('sbi.thresholds.min'), 
 	    	width: 45, 
