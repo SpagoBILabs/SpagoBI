@@ -215,7 +215,7 @@ private StringBuffer addModelNameColumn( StringBuffer _htmlStream, KpiValue kpiV
 		Color semaphorColor = null;
 		ThresholdValue t = kpiVal.getThresholdOfValue();
 		if(t!=null){
-			semaphorColor = t.getColour();
+			semaphorColor = t.getColor();
 			semaphorColorHex ="rgb("+semaphorColor.getRed()+", "+semaphorColor.getGreen()+", "+semaphorColor.getBlue()+")" ;	
 		}
 	}

@@ -1,26 +1,3 @@
-<%
-
-Iterator blocksIt = null;
-KpiLineVisibilityOptions options = null;
-String currTheme = null;
-CoreContextManager contextManager = null;
-String metadata_publisher_Name = null;
-String trend_publisher_Name = null;
-String userId = null;
-%>
-
-<%@page import="it.eng.spagobi.container.CoreContextManager"%>
-<%@page import="it.eng.spagobi.engines.kpi.bo.KpiResourceBlock"%>
-<%@page import="java.util.HashMap"%>
-<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLine"%>
-<%@page import="it.eng.spagobi.kpi.model.bo.Resource"%>
-<%@page import="java.util.Date"%>
-<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
-<%@page import="java.util.Iterator"%>	
-<%@page import="it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions"%>
-
-
 <%--
 SpagoBI - The Business Intelligence Free Platform
 
