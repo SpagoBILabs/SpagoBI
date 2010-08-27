@@ -47,7 +47,7 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 	var hideContextMenu = config.hideContextMenu;
 	var paramsList = {MESSAGE_DET: "MODELINSTS_NODES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
-	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MMODELINSTS_NODE_DELETE"};
+	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
 	
 	this.configurationObject = {};
 	
@@ -867,6 +867,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 											if (response !== undefined) {
 												this.mainTree.getSelectionModel().clearSelections(false);
 												node.remove();
+												this.mainTree.doLayout();
 											} else {
 												Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 											}
@@ -892,6 +893,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			}else{
 				this.mainTree.getSelectionModel().clearSelections(false);
 				node.remove();
+				this.mainTree.doLayout();
 			}
 			
 		}
