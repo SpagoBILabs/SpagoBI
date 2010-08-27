@@ -62,8 +62,13 @@ Sbi.widgets.LookupField = function(config) {
 	this.store.on('load', function( store, records, options  ) {
 		this.applySelection();		
 	}, this);
-	
-
+		
+	if(config.drawFilterToolbar!=null && config.drawFilterToolbar!=undefined && config.drawFilterToolbar==false){
+		this.drawFilterToolbar = false;
+	}else{
+		this.drawFilterToolbar = true;
+	}
+	this.drawFilterToolbar = config.drawFilterToolbar;
 	this.store.baseParams  = config.params;
 	this.params = config.params;
 	this.initWin();
@@ -103,6 +108,8 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	  valueField: null
     , displayField: null
     , descriptionField: null
+    
+    , drawFilterToolbar: null
     
     // oggetto (value: description, *)
     , xvalue: null
@@ -224,29 +231,48 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	        ]
 	    });
 		
-		var filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
+		if(this.drawFilterToolbar){
+			this.filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
+		}
 		
 		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
 		this.sm.on('rowselect', this.onSelect, this);
 		this.sm.on('rowdeselect', this.onDeselect, this);
 		
-		this.grid = new Ext.grid.GridPanel({
-			store: this.store
-   	     	, cm: this.cm
-   	     	, sm: this.sm
-   	     	, frame: false
-   	     	, border:false  
-   	     	, collapsible:false
-   	     	, loadMask: true
-   	     	, viewConfig: {
-   	        	forceFit:true
-   	        	, enableRowBody:true
-   	        	, showPreview:true
-   	     	}
-			
-			, tbar: filteringToolbar
-	        , bbar: pagingBar
-		});
+		if(this.drawFilterToolbar){
+			this.grid = new Ext.grid.GridPanel({
+				store: this.store
+	   	     	, cm: this.cm
+	   	     	, sm: this.sm
+	   	     	, frame: false
+	   	     	, border:false  
+	   	     	, collapsible:false
+	   	     	, loadMask: true
+	   	     	, viewConfig: {
+	   	        	forceFit:true
+	   	        	, enableRowBody:true
+	   	        	, showPreview:true
+	   	     	}	
+				, tbar: this.filteringToolbar
+		        , bbar: pagingBar
+			});
+		}else{
+			this.grid = new Ext.grid.GridPanel({
+				store: this.store
+	   	     	, cm: this.cm
+	   	     	, sm: this.sm
+	   	     	, frame: false
+	   	     	, border:false  
+	   	     	, collapsible:false
+	   	     	, loadMask: true
+	   	     	, viewConfig: {
+	   	        	forceFit:true
+	   	        	, enableRowBody:true
+	   	        	, showPreview:true
+	   	     	}	
+		        , bbar: pagingBar
+			});
+		}
 		
 		this.win = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   

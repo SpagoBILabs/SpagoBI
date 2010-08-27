@@ -199,7 +199,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
           };	
  	  
  	 
-  	 var baseConfig = {};
+  	 var baseConfig = {drawFilterToolbar:false};
      
       var datasets = new Ext.data.JsonStore({
  		root: 'rows'
