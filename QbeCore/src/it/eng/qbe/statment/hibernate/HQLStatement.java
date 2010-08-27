@@ -794,6 +794,7 @@ public class HQLStatement extends BasicStatement {
 		String rootEntityAlias;
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		List<String> aliasEntityMapping = new  ArrayList<String>();
+		List<String> aliases = new  ArrayList<String>();
 		
 		StringTokenizer stk = new StringTokenizer(expr, "+-|*/");
 		while(stk.hasMoreTokens()){
@@ -809,6 +810,7 @@ public class HQLStatement extends BasicStatement {
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
 					queryName = ((DataMartSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
 					aliasEntityMapping.add(queryName);
+					aliases.add(alias);
 					break;
 				}
 			}
@@ -821,9 +823,14 @@ public class HQLStatement extends BasicStatement {
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			pos = freshExpr.indexOf(alias, pos);
-			freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
-			pos = pos+ aliasEntityMapping.get(ind).length();
-			ind++;
+			if(ind<aliases.size() && aliases.get(ind).equals(alias)){
+				freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
+				pos = pos+ aliasEntityMapping.get(ind).length();
+				ind++;
+			}else{
+				//freshExpr = freshExpr.substring(0, pos)+ alias+freshExpr.substring(pos+alias.length());
+				pos = pos+ alias.length();
+			}
 		}
 		return freshExpr;
 	}
