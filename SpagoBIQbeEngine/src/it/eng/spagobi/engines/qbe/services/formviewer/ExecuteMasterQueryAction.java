@@ -171,7 +171,7 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 			for(int i = 0; i < groupFields.length(); i++) {
 				String groupByField = groupFields.getString(i);
 				int fieldIndex = query.getSelectFieldIndex(groupByField);		
-				Assert.assertTrue(fieldIndex >= 0 && fieldIndex <groupFields.length(), "Impossible to group on field [" + groupByField + "]");
+				Assert.assertTrue(fieldIndex >= 0 && fieldIndex <selectFields.size(), "Impossible to group on field [" + groupByField + "]");
 				String[] f = (String[])selectFields.get(fieldIndex);				
 				transformer.addGrouByColumn(f[1]!=null? f[1]:f[0], query.getSelectFieldByIndex(fieldIndex).getAlias());
 			}
