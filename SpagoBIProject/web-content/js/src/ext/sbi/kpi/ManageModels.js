@@ -126,8 +126,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 	   this.detailFieldName = new Ext.form.TextField({
 	          	 maxLength:100,
 	        	 minLength:1,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.generic.name'),
 	             allowBlank: false,
 	             //validationEvent:true,
@@ -137,8 +135,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 	   this.detailFieldCode = new Ext.form.TextField({
 	          	 maxLength:45,
 	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
 	             fieldLabel:LN('sbi.generic.code'),
 	             allowBlank: false,
 	             //validationEvent:true,
@@ -149,8 +145,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.generic.descr'),
 	             //validationEvent:true,
 	             name: 'description'
@@ -158,8 +152,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 	 		   
 	 	   this.detailFieldLabel = new Ext.form.TextField({
 	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
 	             fieldLabel:LN('sbi.generic.label'),
 	             allowBlank: false,
 	             //validationEvent:true,
@@ -170,14 +162,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 		   	 itemId: 'model-detailFieldKpi',
 	 		   	 id: 'model-detailFieldKpi',
 	        	 minLength:1,
-	        	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString2'),
 	             fieldLabel: LN('sbi.generic.kpi'),
 	             allowBlank: false,
 	             readOnly: true,
+	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
+	             value: 'drop kpi here...',
 	             name: 'kpi'
 	         });	 
-	 		   
+	 	   this.detailFieldKpi.addListener('focus', this.kpiFiledNotify, this);   
 	 	   this.detailFieldNodeType =  new Ext.form.ComboBox({
 	        	  name: 'typeCd',
 	              store: this.typesStore,
@@ -197,8 +189,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
-	        	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
-	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             //validationEvent:true,
 	             readOnly: true,
 	             name: 'typeDescr'
@@ -233,7 +223,17 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 	}
 	
+	, kpiFiledNotify : function() {
+		this.detailFieldKpi.getEl().highlight('#E27119');
+		this.detailFieldKpi.setValue('');
+		var tooltip = new Ext.ToolTip({
+	        target: 'model-detailFieldKpi',
+	        anchor: 'right',
+	        trackMouse: true,
+	        html: 'Drag and drop a kpi from Kpi List here'
+	    });
 
+	}
     //OVERRIDING save method
 	,save : function() {
     	var jsonStr = '[';
