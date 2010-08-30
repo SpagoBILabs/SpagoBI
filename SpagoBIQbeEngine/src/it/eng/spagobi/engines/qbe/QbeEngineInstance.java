@@ -180,7 +180,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		QbeEngineAnalysisState analysisState = null;
 		analysisState= new QbeEngineAnalysisState( datamartModel );
 		analysisState.setCatalogue( this.getQueryCatalogue() );
-		analysisState.setCrosstabDefinition( this.getCrosstabDefinition() );
+		if (this.getCrosstabDefinition() != null) {
+			analysisState.setCrosstabDefinition( this.getCrosstabDefinition() );
+		} else {
+			analysisState.setCrosstabDefinition( CrosstabDefinition.EMPTY_CROSSTAB );
+		}
 		return analysisState;
 	}
 	

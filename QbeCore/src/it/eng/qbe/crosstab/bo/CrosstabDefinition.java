@@ -24,6 +24,7 @@ import it.eng.qbe.crosstab.serializer.CrosstabSerializationConstants;
 import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.IAggregationFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -35,6 +36,16 @@ import org.json.JSONObject;
  *
  */
 public class CrosstabDefinition {
+	
+	public static CrosstabDefinition EMPTY_CROSSTAB;
+	
+	static {
+		EMPTY_CROSSTAB = new CrosstabDefinition();
+		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
+		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
+		EMPTY_CROSSTAB.setMeasures(new ArrayList<CrosstabDefinition.Measure>());
+		EMPTY_CROSSTAB.setConfig(new JSONObject());
+	}
 	
 	private List<Row> rows = null;
 	private List<Column> columns = null;
