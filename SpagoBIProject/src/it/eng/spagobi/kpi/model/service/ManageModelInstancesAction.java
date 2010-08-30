@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.x.SaveMetadataAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResources;
@@ -352,6 +353,23 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	}
 	private List<ModelInstance> deserializeNodesJSONArray(JSONArray rows) throws JSONException{
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
+
+/*, 
+kpiId, 
+kpiInstThrId, 
+kpiInstTarget, 
+toSave, 
+kpiInstPeriodicity, 
+id, 
+modelType, 
+modelName, 
+name, 
+modelTypeDescr, 
+kpiName, 
+kpiInstWeight
+, kpiInstThrName, 
+modelCode, 
+kpiInst*/
 		for(int i=0; i< rows.length(); i++){
 			
 			JSONObject obj = (JSONObject)rows.get(i);
@@ -389,8 +407,32 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					modelInst.setModel(null);
 				}
 				try{
-					KpiInstance kpiInst = DAOFactory.getKpiInstanceDAO().loadKpiInstanceById(obj.getInt("kpiInstId"));
-					modelInst.setKpiInstance(kpiInst);
+					IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
+					String kpiIdStr = obj.getString("kpiId");
+					String kpiIIDStr = obj.getString("kpiInstId");
+					if(kpiIIDStr != null){
+						//existing kpi instance
+						KpiInstance kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
+						modelInst.setKpiInstance(kpiInstance);
+					}else{
+						//new kpi instance 
+						if(kpiIdStr != null){
+							KpiInstance kpiInstance = new KpiInstance();
+							kpiInstance.setPeriodicityId(obj.getInt("kpiInstPeriodicity"));
+							kpiInstance.setChartTypeId(obj.getInt("kpiInstChartTypeId"));
+							if(obj.getString("kpiInstTarget") != null)
+								kpiInstance.setTarget(Double.valueOf(obj.getString("kpiInstTarget")));
+							kpiInstance.setThresholdId(obj.getInt("kpiInstThrId"));
+							if(obj.getString("kpiInstWeight") != null)
+								kpiInstance.setWeight(Double.valueOf(obj.getString("kpiInstWeight")));
+							kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
+						}
+						
+						//or defined model uuid
+						
+						//or noone
+						
+					}
 				}catch(Throwable t){
 					//nothing
 					modelInst.setKpiInstance(null);

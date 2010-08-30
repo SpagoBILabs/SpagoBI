@@ -98,6 +98,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		                     	          , 'kpiInstTarget'
 		                     	          , 'kpiInstWeight'
 		                     	          , 'kpiInstChartTypeId'
+		                     	          , 'modelUuid'
 		                     	          
 		                     	          , 'kpiInstPeriodicity'
 		                     	          
