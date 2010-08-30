@@ -796,7 +796,7 @@ public class HQLStatement extends BasicStatement {
 		List<String> aliasEntityMapping = new  ArrayList<String>();
 		List<String> aliases = new  ArrayList<String>();
 		
-		StringTokenizer stk = new StringTokenizer(expr, "+-|*/");
+		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			String uniqueName;
@@ -819,7 +819,7 @@ public class HQLStatement extends BasicStatement {
 		String freshExpr = expr;
 		int ind =0;
 		int pos =0;
-		stk = new StringTokenizer(expr.replace("\'", ""), "+-|*/");
+		stk = new StringTokenizer(expr.replace("\'", ""), "+-|*/()");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
 			pos = freshExpr.indexOf(alias, pos);
