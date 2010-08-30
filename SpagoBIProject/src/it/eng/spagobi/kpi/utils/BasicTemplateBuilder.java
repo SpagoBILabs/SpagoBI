@@ -1077,7 +1077,7 @@ public class BasicTemplateBuilder  {
 					}
 					String code=t.getThresholdCode() != null ? t.getThresholdCode() : "";
 					String codeTh = "Code: "+code;
-					if(codeTh.length()>22)codeTh = codeTh.substring(0, 21);
+					if(codeTh.length()>20)codeTh = codeTh.substring(0, 19);
 					
 					threshCode.setAttribute("reportElement.y",  new Integer(yValue.intValue()-2).toString());
 					SourceBean threshCode2=(SourceBean)threshCode.getAttribute("text");
@@ -1085,9 +1085,22 @@ public class BasicTemplateBuilder  {
 				
 				
 					String labelTh=t.getLabel() != null ? t.getLabel() : "";
-					String min = t.getMinValue()!= null ? t.getMinValue().toString() : "";
-					String max = t.getMaxValue()!= null ?  t.getMaxValue().toString() : "";
-					String valueTh = "Value: "+min+"-"+max+" "+labelTh;
+					String min = t.getMinValue()!= null ? t.getMinValue().toString() : null;
+					String max = t.getMaxValue()!= null ?  t.getMaxValue().toString() : null;
+					String valueTh = "Value: ";
+					if(t.getThresholdType().equalsIgnoreCase("RANGE")){
+						if (min!=null && max !=null){
+							  valueTh = valueTh + min+"-"+max+" "+labelTh;
+						}else if (min!=null && max==null){
+							valueTh = valueTh + "> "+min+" "+labelTh;
+						}else if (min==null && max!=null){
+							 valueTh = valueTh + "< "+max+" "+labelTh;
+						}
+					}else if(t.getThresholdType().equalsIgnoreCase("MINIMUM")){
+						valueTh = valueTh + "< "+min+" "+labelTh;
+					}else if(t.getThresholdType().equalsIgnoreCase("MAXIMUM")){
+						valueTh = valueTh + "> "+max+" "+labelTh;
+					}
 					if(valueTh.length()>25)valueTh = valueTh.substring(0, 24);
 					
 					threshValue.setAttribute("reportElement.y", new Integer(yValue.intValue()+7).toString());
@@ -1268,7 +1281,7 @@ public class BasicTemplateBuilder  {
 			
 			String code=t.getCode() != null ? t.getCode() : "";
 			String codeTh = "Code: "+code;
-			if(codeTh.length()>22)codeTh = codeTh.substring(0, 21);
+			if(codeTh.length()>20)codeTh = codeTh.substring(0, 19);
 
 			thresholdTextCode1.setAttribute("reportElement.y", yValue.toString());
 			SourceBean threshCode2=(SourceBean)thresholdTextCode1.getAttribute("text");
@@ -1341,7 +1354,7 @@ public class BasicTemplateBuilder  {
 								}else if (min!=null && max==null){
 									valueTh = valueTh + "> "+min+" "+labelTh;
 								}else if (min==null && max!=null){
-									 valueTh = valueTh + "> "+max+" "+labelTh;
+									 valueTh = valueTh + "< "+max+" "+labelTh;
 								}
 							}else if(val.getThresholdType().equalsIgnoreCase("MINIMUM")){
 								valueTh = valueTh + "< "+min+" "+labelTh;
