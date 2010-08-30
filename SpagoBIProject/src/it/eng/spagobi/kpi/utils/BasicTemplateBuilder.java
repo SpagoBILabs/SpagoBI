@@ -34,7 +34,6 @@ import it.eng.spagobi.engines.kpi.bo.ChartImpl;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
 import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
-import it.eng.spagobi.engines.kpi.bo.charttypes.dialcharts.BulletGraph;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
@@ -1333,9 +1332,22 @@ public class BasicTemplateBuilder  {
 												
 							//Threshold Value Creation	
 							String labelTh=val.getLabel() != null ? val.getLabel() : "";
-							String min = val.getMinValue()!= null ? val.getMinValue().toString() : "";
-							String max = val.getMaxValue()!= null ?  val.getMaxValue().toString() : "";
-							String valueTh = "Value: "+min+"-"+max+" "+labelTh;
+							String min = val.getMinValue()!= null ? val.getMinValue().toString() : null;
+							String max = val.getMaxValue()!= null ?  val.getMaxValue().toString() : null;
+							String valueTh = "Value: ";
+							if(val.getThresholdType().equalsIgnoreCase("RANGE")){
+								if (min!=null && max !=null){
+									  valueTh = valueTh + min+"-"+max+" "+labelTh;
+								}else if (min!=null && max==null){
+									valueTh = valueTh + "> "+min+" "+labelTh;
+								}else if (min==null && max!=null){
+									 valueTh = valueTh + "> "+max+" "+labelTh;
+								}
+							}else if(val.getThresholdType().equalsIgnoreCase("MINIMUM")){
+								valueTh = valueTh + "< "+min+" "+labelTh;
+							}else if(val.getThresholdType().equalsIgnoreCase("MAXIMUM")){
+								valueTh = valueTh + "> "+max+" "+labelTh;
+							}
 							if(valueTh.length()>25)valueTh = valueTh.substring(0, 24);
 	
 							thresholdTextValue1.setAttribute("reportElement.x", xValue.toString());

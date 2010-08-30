@@ -47,7 +47,9 @@ public class KpiJSONSerializer implements Serializer {
 			result.put(KPI_CODE, kpi.getCode() );
 			result.put(KPI_WEIGHT, kpi.getStandardWeight() );
 			result.put(KPI_DATASET, kpi.getDsLabel());
-			result.put(KPI_THR, kpi.getThreshold().getCode() );
+			if(kpi.getThreshold()!=null){
+				result.put(KPI_THR, kpi.getThreshold().getCode() );
+			}
 			result.put(KPI_DOCS, kpi.getDocumentLabel() );
 			result.put(KPI_INTERPRETATION, kpi.getInterpretation() );
 			result.put(KPI_ALGDESC, kpi.getMetric() );

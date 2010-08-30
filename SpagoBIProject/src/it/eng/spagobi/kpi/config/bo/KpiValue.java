@@ -76,25 +76,49 @@ public class KpiValue implements Cloneable{
 				if (type.equals("RANGE")) {
 					logger.debug("Threshold type RANGE");
 					if(min_closed && max_closed){
-						if (min.doubleValue()<= val.doubleValue()&& val.doubleValue() <= max.doubleValue()) {
+						if (min != null && min.doubleValue()<= val.doubleValue()&& max!=null && val.doubleValue() <= max.doubleValue()) {
+							toReturn = t;
+							break;
+						}else if(min==null && max!=null && val.doubleValue() <= max.doubleValue()){
+							toReturn = t;
+							break;
+						}else if(max == null && min != null && min.doubleValue()<= val.doubleValue()){
 							toReturn = t;
 							break;
 						}
 					}else if(min_closed && !max_closed){
-						if (min.doubleValue()<= val.doubleValue()&& val.doubleValue() < max.doubleValue()) {
+						if (min != null && min.doubleValue()<= val.doubleValue()&& max!=null && val.doubleValue() < max.doubleValue()) {
+							toReturn = t;
+							break;
+						}else if(min==null && max!=null && val.doubleValue() < max.doubleValue()){
+							toReturn = t;
+							break;
+						}else if(max == null && min != null && min.doubleValue()<= val.doubleValue()){
 							toReturn = t;
 							break;
 						}					
 					}else if(!min_closed && max_closed){
-						if (min.doubleValue()< val.doubleValue()&& val.doubleValue() <= max.doubleValue()) {
+						if (min != null && min.doubleValue()< val.doubleValue()&& max!=null && val.doubleValue() <= max.doubleValue()) {
+							toReturn = t;
+							break;
+						}else if(min==null && max!=null && val.doubleValue() <= max.doubleValue()){
+							toReturn = t;
+							break;
+						}else if(max == null && min != null && min.doubleValue()< val.doubleValue()){
 							toReturn = t;
 							break;
 						}						
 					}else{
-						if (min.doubleValue()< val.doubleValue()&& val.doubleValue() < max.doubleValue()) {
+						if (min != null && min.doubleValue()< val.doubleValue()&& max!=null && val.doubleValue() < max.doubleValue()) {
 							toReturn = t;
 							break;
-						}
+						}else if(min==null && max!=null && val.doubleValue() < max.doubleValue()){
+							toReturn = t;
+							break;
+						}else if(max == null && min != null && min.doubleValue()< val.doubleValue()){
+							toReturn = t;
+							break;
+						}	
 					}
 		
 				} else if (type.equals("MINIMUM")) {

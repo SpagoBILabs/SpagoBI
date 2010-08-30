@@ -613,7 +613,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 					            this.rowselModel.selectLastRow(true);
-				            }else if(record.get('typeCd')=='RANGE'){
+				            }else if(record != null && record != undefined && record.get('typeCd')=='RANGE'){
 			      				this.mainElementsStore.load();
 			      			}
 			      			
