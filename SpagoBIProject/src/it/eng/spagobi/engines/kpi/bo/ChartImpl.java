@@ -205,13 +205,30 @@ public class ChartImpl implements Serializable{
 				Color c = t.getColor();
 				
 				if (type.equals("RANGE")){
-					if (min.doubleValue()<lower){
+					if (min!= null && min.doubleValue()<lower){
 						lower = min.doubleValue();
+					}else if(min==null && max!=null)	{
+						if(max.doubleValue()==0){
+							lower = -10;
+						}else if(max.doubleValue()>0){
+							lower = 0;
+						}else if(max.doubleValue()<0){
+							lower = max.doubleValue()*2;
+						}
 					}
-					if (max.doubleValue()>upper){
-						upper = max.doubleValue();
-					}			
 					
+					if (max!=null && max.doubleValue()>upper){
+						upper = max.doubleValue();
+					}else if(max==null && min!=null)	{
+						if(min.doubleValue()==0){
+							upper = 10;
+						}else if(min.doubleValue()>0){
+							upper = min.doubleValue()*2;
+						}else if(min.doubleValue()<0){
+							upper = 0;
+						}					
+					}
+				
 					KpiInterval interval = new KpiInterval();
 					
 					if(c!=null)	{
@@ -227,7 +244,7 @@ public class ChartImpl implements Serializable{
 					
 					if(max!=null)	{
 						interval.setMax(max);
-					}else{
+					}else{						
 						interval.setMax(upper);
 					}
 					

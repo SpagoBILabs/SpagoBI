@@ -290,19 +290,28 @@ Ext.onReady(function(){
 			while(it.hasNext()){
 				ThresholdValue t =(ThresholdValue)it.next();
 				
-				Color c =t.getColour();
+				Color c =t.getColor();
 				String color = "rgb("+c.getRed()+", "+c.getGreen()+", "+c.getBlue()+")" ;
 				Double min = t.getMinValue();
 				Double max = t.getMaxValue();
+				String type = t.getThresholdType();
 				String minMax = "";
+				
 				if (min!=null && max !=null){
 				  minMax = min.toString()+"-"+max.toString();
 				}else if (min!=null && max==null){
-					minMax = min.toString();
+					if(type.equals("RANGE")){
+						minMax = "> "+min.toString();
+					}else{
+						minMax = min.toString();
+					}
 				}else if (min==null && max!=null){
-					minMax = max.toString();
+					if(type.equals("RANGE")){
+						minMax = "< "+max.toString();
+					}else{
+						minMax = max.toString();
+					}
 				}
-				String type = t.getThresholdType();
 				String label = "Threshold " + type+ " "+ t.getLabel();
 				%>
 		<!-- THRESHOLDS -->

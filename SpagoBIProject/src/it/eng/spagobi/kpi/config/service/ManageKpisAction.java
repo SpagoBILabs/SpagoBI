@@ -183,7 +183,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				if(description != null){
 					k.setDescription(description);
 				}
-				if(weight != null){
+				if(weight != null && !weight.equalsIgnoreCase("")){
 					k.setStandardWeight(Double.valueOf(weight));
 				}	
 				if(dsLabel != null){
