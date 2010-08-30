@@ -34,6 +34,7 @@ import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
+import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -68,6 +69,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	// type of service
 	private final String MODELINSTS_LIST = "MODELINSTS_LIST";
 	private final String MODELINST_RESOURCE_LIST = "MODELINST_RESOURCE_LIST";
+	private final String MODELINST_RESOURCE_SAVE = "MODELINST_RESOURCE_SAVE";
 	private final String MODELINSTS_NODES_LIST = "MODELINSTS_NODES_LIST";
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
 	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
@@ -92,8 +94,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		IModelInstanceDAO modelDao;
+		IModelResourceDAO modelResourcesDao ;
 		try {
 			modelDao = DAOFactory.getModelInstanceDAO();
+			modelResourcesDao = DAOFactory.getModelResourcesDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -187,7 +191,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				}
 				List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
 				//extract resources
-				List<ModelResources> modelResources = DAOFactory.getModelResourcesDAO().loadModelResourceByModelId(modelInstId);
+				List<ModelResources> modelResources = modelResourcesDao.loadModelResourceByModelId(modelInstId);
 				
 				HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
 				if(modelResources != null){
@@ -217,6 +221,51 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				logger.error("Exception occurred while retrieving model tree", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model tree", e);
+			}
+			
+		}else if(serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_SAVE)){
+			JSONArray resToSaveJSON = getAttributeAsJSONArray("ids");
+			Integer modelId = getAttributeAsInteger("modelInstId");
+			
+			try {
+				
+				List ids = deserializeResourceJSONArray(resToSaveJSON);
+				List toAddIds = ids;
+				//loops over all model resources
+				List<ModelResources> mrs = modelResourcesDao.loadModelResourceByModelId(modelId);
+				for(int i=0; i< mrs.size(); i++){
+					ModelResources modelres = mrs.get(i);
+					if(!ids.contains(modelres.getResourceId())){
+						//to remove
+						modelResourcesDao.removeModelResource(modelId, modelres.getResourceId());
+					}else {
+						//already present so remove it from the list
+						toAddIds.remove(modelres.getResourceId());
+					}
+
+					
+				}
+				//now adds new ones					
+				for(int i=0; i< toAddIds.size(); i++){
+					Integer resourceId = (Integer)toAddIds.get(i);
+					modelResourcesDao.addModelResource(modelId, resourceId);						
+				}
+
+				writeBackToClient(new JSONSuccess("Operation succeded"));
+
+								
+			} catch (EMFUserError e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception saving resources", e);
+			} catch (JSONException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception deserializing resources", e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception in response", e);
 			}
 			
 		}else if(serviceType == null){
@@ -354,7 +403,17 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}	
 		return toReturn;
 	}
-	
+	private List<Integer> deserializeResourceJSONArray(JSONArray rows) throws JSONException{
+		List<Integer> toReturn = new ArrayList<Integer>();
+		if(rows != null){
+			for(int i=0; i< rows.length(); i++){
+				
+				JSONObject obj = (JSONObject)rows.get(i);
+				toReturn.add(obj.getInt("id"));
+			}
+		}
+		return toReturn;
+	}
 	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws JSONException{
 		JSONArray errorNodes = new JSONArray();
 		

@@ -45,19 +45,22 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstancesViewPort = function(config) { 
 	var paramsResList = {MESSAGE_DET: "MODELINST_RESOURCE_LIST"};
-	
+	var paramsResSave = {MESSAGE_DET: "MODELINST_RESOURCE_SAVE"};
 
 	var conf = config;
 	this.resListService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsResList
 	});	
-    
+	this.resSaveService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
+		, baseParams: paramsResSave
+	});	
 	this.resourcesStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
     	, root: 'rows'
 		, url: this.resListService	
-		, fields: ['resourceId', 'resourceName', 'resourceCode', 'resourceType']
+		, fields: ['resourceId', 'resourceName', 'resourceCode', 'resourceType', 'modelInstId']
 
 	});
 	//DRAW center element
@@ -82,7 +85,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	        , itemId: 'resourcesTab'
 	        , scope: this
 	});
-    this.dispalyResourcesGridPanel();
+    this.initResourcesGridPanel();
     this.initPanels();
     
     
@@ -296,35 +299,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelsTree.modelsTree.doLayout();
 
 	}
+	, initResourcesGridPanel : function() {
 
-	, dispalyResourcesGridPanel : function(rec) {
-		if(rec !== undefined && rec != null){
-			var params = {
-	        	modelInstId : rec.data.modelInstId
-	        }
-	        
-	        Ext.Ajax.request({
-	            url: this.resListService,
-	            params: params,
-	            method: 'GET',
-	            success: function(response, options) {
-					if (response !== undefined) {			
-			      		if(response.responseText !== undefined) {
-
-			      			var content = Ext.util.JSON.decode( response.responseText );
-			      			this.resourcesStore.load();
-			      		}
-					}
-	            }
-	            ,scope: this
-	        });	
-		}
     	this.smResources = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'resourceId'} );
 		
         this.cmResources = new Ext.grid.ColumnModel([
-	         {header: LN('sbi.generic.name'), width: 45, sortable: true, dataIndex: 'resourceName'},
-	         {header: LN('sbi.generic.code'), width: 65, sortable: true, dataIndex: 'resourceCode'}
-	         ,{header: LN('sbi.generic.type'), width: 65, sortable: true, dataIndex: 'resourceType'}
+	         {header: LN('sbi.generic.name'), width: 40, sortable: true, dataIndex: 'resourceName'},
+	         {header: LN('sbi.generic.code'), width: 60, sortable: true, dataIndex: 'resourceCode'}
+	         ,{header: LN('sbi.generic.type'), width: 60, sortable: true, dataIndex: 'resourceType'}
 	         ,this.smResources
 	    ]);
  	    this.tb = new Ext.Toolbar({
@@ -338,6 +320,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
  	            })
  	    	]
  	    });
+
 		this.resourcesGrid = new Ext.grid.GridPanel({
 			store: this.resourcesStore 
 			, id: 'resources-grid-checks'
@@ -345,7 +328,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
    	     	, sm: this.smResources
    	     	, frame: false
    	     	, border:false  
+   	     	, layout: 'fit'
    	     	, collapsible:false
+   	     	, deferRowRender:false
    	     	, loadMask: true
    	     	, tbar: this.tb
    	     	, viewConfig: {
@@ -357,11 +342,63 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		});
 		this.resourcesGrid.superclass.constructor.call(this);
 		
-		Ext.getCmp("resources-grid-checks").on('recToSelect', function(id, index){		
-			Ext.getCmp("resources-grid-checks").selModel.selectRow(index,true);
-		});
+		this.resourcesStore.on('load',function(){
+			Ext.getCmp("resources-grid-checks").selModel.clearSelections();
+
+		    var arRec = Ext.getCmp("resources-grid-checks").store.queryBy(function(record,id){
+		    	//alert(Ext.util.JSON.encode( record.data ));	
+		    	if(record.data.modelInstId !== undefined && record.data.modelInstId != ''){
+		    		return true;
+		    	}
+	            return false;
+		    }).items;
+		    
+		    arRecLen = arRec.length;
+		    for(i=0;i<arRecLen;i++){
+		        var arRow= Ext.getCmp("resources-grid-checks").store.indexOf(arRec[i]);
+		        Ext.getCmp("resources-grid-checks").selModel.selectRow(arRow);
+		    }
+		});  
+		this.resourcesStore.load();
 		this.resourcesTab.add(this.resourcesGrid);
 		this.resourcesGrid.doLayout();
+
+	}
+	, dispalyResourcesGridPanel : function(rec) {
+
+		if(rec !== undefined && rec != null){
+			var params = {
+	        	modelInstId : rec.data.modelInstId
+	        }
+	        
+	        Ext.Ajax.request({
+	            url: this.resListService,
+	            params: params,
+	            method: 'GET',
+	            success: function(response, options) {
+					if (response !== undefined) {			
+			      		if(response.responseText !== undefined) {
+			      			Ext.getCmp("resources-grid-checks").selModel.clearSelections();
+			      			var content = Ext.util.JSON.decode( response.responseText );	
+			      			Ext.each(content.rows, function(row, index) {
+			    				var modelInstId = row.modelInstId;
+
+			    				if(modelInstId != undefined && modelInstId == params.modelInstId){
+
+			    					Ext.getCmp("resources-grid-checks").selModel.selectRow(index);
+			    				}
+
+			    			});
+
+			      		}
+					}
+	            }
+	            ,scope: this
+	        });	
+			
+			
+		}
+
 	}
 	, configureDD: function() {
 		  var nodeTreePanelDropTarget = new Ext.tree.TreeDropZone(this.manageModelInstances.mainTree, {
@@ -376,6 +413,53 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	}
 
 	, saveResources: function() {
-		alert('save');
+		this.modelInstance = this.modelInstancesGrid.getSelectionModel().getSelected();
+		if(this.modelInstance !== undefined && this.modelInstance != null){
+			//alert(this.modelInstance.data.modelInstId);
+			if(this.modelInstance.data.modelInstId === undefined){
+				alert('Save Model Instance first');
+				return;
+			}
+		}
+		//loads selected resources
+		var sm = this.resourcesGrid.getSelectionModel();
+		var rows = sm.getSelections();
+
+		
+		var jsonStr = '[';
+		if(rows != undefined && rows != null && rows.length >0){
+			Ext.each(rows, function(row, index) {
+
+				this.resId = row.data.resourceId;
+				jsonStr += '{id: '+row.data.resourceId+'}';
+				jsonStr +=',';		
+
+			});
+		}
+		jsonStr += ']';
+			
+		var params = {
+				ids : jsonStr,
+				modelInstId: this.modelInstance.data.modelInstId
+		};
+		Ext.Ajax.request({
+	          url: this.resSaveService,
+	          params: params,
+	          method: 'GET',
+	          success: function(response, options) {
+	          	
+				if (response !== undefined) {		
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			alert(LN('sbi.generic.resultMsg'));
+				 } 	
+	          }
+	          ,failure : function(response) {
+					if(response.responseText !== undefined) {
+						alert(LN('sbi.generic.savingItemError'));
+					}
+				}
+	          ,scope: this
+	    });
+		
 	}
 });
