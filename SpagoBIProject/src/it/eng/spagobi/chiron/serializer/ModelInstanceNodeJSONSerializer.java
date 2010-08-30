@@ -64,16 +64,18 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 				result.put(MODEL_TYPE, model.getTypeName() );
 				result.put(MODEL_TYPEDESCR, model.getTypeDescription() );				
 
-			}			
+			}	
+			//if no kpi instance --> fill data with kpi properties						
+			//else with kpi instance properties
 			if(res.getKpiInstance() != null){
 				result.put(KPI_INST_ID, res.getKpiInstance().getKpiInstanceId() );
 				KpiInstance kpiInst = DAOFactory.getKpiInstanceDAO().loadKpiInstanceById(res.getKpiInstance().getKpiInstanceId());
-				
+
 				if(kpiInst != null){
 					result.put(KPI_ID, kpiInst.getKpi());
 					if(kpiInst.getKpi() != null){
 						Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
-						result.put(KPI_ID, kpi.getKpiName());
+						result.put(KPI_NAME, kpi.getKpiName());
 					}
 					result.put(KPI_INST_CHART, kpiInst.getChartTypeId());
 					result.put(KPI_INST_PERIODICITY, kpiInst.getPeriodicityId());
@@ -84,7 +86,6 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 						result.put(KPI_INST_THR_NAME, thr.getName());
 					}
 					result.put(KPI_INST_WEIGHT, kpiInst.getWeight());
-
 				}
 			}
 			result.put(NAME, res.getName() );

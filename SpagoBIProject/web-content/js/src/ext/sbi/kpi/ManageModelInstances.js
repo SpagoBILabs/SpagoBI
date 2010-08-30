@@ -294,7 +294,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     	    columns: 2,
     	    items: [
     	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
-    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
+    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2, checked: true}
     	    ]
     	});
 		this.kpiModelType.addListener('change', this.changeKpiPanel , this);
@@ -521,8 +521,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 	}
 	, fillKpiPanel: function(sel, node) {
-		
+
 		var hasKpiInst = node.attributes.kpiInst;
+		var hasKpiModelUuid = node.attributes.modelUuid;
 		if(hasKpiInst !== undefined && hasKpiInst != null){
 
 			this.kpiName.setValue(node.attributes.kpiName);
@@ -538,18 +539,32 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiPeriodicityButton.enable();
 			this.kpiInstFieldset.doLayout();
 
-		}else{
-
+		}else if(hasKpiModelUuid !== undefined && hasKpiModelUuid != null){
+			this.kpiLabel.setValue(node.attributes.modelUuid);
+			
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(true);
 			this.kpiModelType.onSetValue( 'uuid', true);
 			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset2.doLayout();
 
+		}else{
+			//alert("nothing associated");
+			this.clearKpiInstanceTabForm();
 		}
 		this.kpiInstTypeFieldset.setVisible(true);
 		this.kpiInstTypeFieldset.doLayout();
 		
+	}
+	, clearKpiInstanceTabForm: function(){
+		this.kpiName.setValue(null);
+		this.kpiThreshold.setValue(null);
+		this.kpiTarget.setValue(null);
+		this.kpiWeight.setValue(null);
+		this.kpiChartType.setValue(null);
+		this.kpiPeriodicity.setValue(null);
+		
+		this.kpiLabel.setValue(null);
 	}
     //OVERRIDING save method
 	,save : function() {
@@ -705,38 +720,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		
     }
-	,editNode : function(field, newVal, oldVal) {
-		var node = this.selectedNodeToEdit;
-		if (node !== undefined) {
-			var val = node.text;
-			var aPosition = val.indexOf(" - ");
-			var name = "";
-			var code = "";
-			if (aPosition !== undefined && aPosition != -1) {
-				name = val.substr(aPosition + 3);
-				code = val.substr(0, aPosition);
-				if (field.getName() == 'name') {
-					name = newVal;
-				} else if (field.getName() == 'code') {
-					code = newVal;
-				}
-			}
-			var text = code + " - " + name;
-			node.setText(text);
-			node.attributes.toSave = true;
 
-			node.attributes.name = name;
-			node.attributes.code = code;
-
-			if(this.referencedCmp.modelsGrid.emptyRecord != null){
-				this.referencedCmp.modelsGrid.emptyRecord.set('name', name);
-				this.referencedCmp.modelsGrid.emptyRecord.set('code', code);
-				
-				this.referencedCmp.modelsGrid.getView().refresh();
-				this.referencedCmp.modelsGrid.doLayout();
-			}
-		}
-	}
 	, editNodeAttribute: function(field, newVal, oldVal) {
 		var node = this.selectedNodeToEdit;
 		if (node !== undefined && node !== null) {
@@ -766,7 +750,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
 	,selectNode : function(field) {
-		alert(selected);
+		//alert("selectNode");
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		
@@ -787,7 +771,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		/* form fields editing */
 		this.detailFieldName.addListener('focus', this.selectNode, this);
-		this.detailFieldName.addListener('change', this.editNode, this);
+		this.detailFieldName.addListener('change', this.editNodeAttribute, this);
 
 		this.detailFieldDescr.addListener('focus', this.selectNode, this);
 		this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
@@ -821,6 +805,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				modelCode   : rec.get('modelCode'),
 				modelDescr  : rec.get('modelDescr'),
 				modelType   : rec.get('modelType'),
+				modelId     : rec.get('modelId'),
 				modelTypeDescr: rec.get('modelTypeDescr'),
 				kpiName		: rec.get( 'kpiName'),
 				kpiId		: rec.get( 'kpiId'),
@@ -828,6 +813,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				kpiInstThrName: rec.get( 'kpiInstThrName'),
 				kpiInstTarget: rec.get( 'kpiInstTarget'),
 				kpiInstWeight: rec.get( 'kpiInstWeight'),
+				modelUuid	: rec.get( 'modelUuid'),
 				kpiInstChartTypeId: rec.get( 'kpiInstChartTypeId'),			      
 				kpiInstPeriodicity: rec.get( 'kpiInstPeriodicity'),
 				iconCls		: iconClass,
