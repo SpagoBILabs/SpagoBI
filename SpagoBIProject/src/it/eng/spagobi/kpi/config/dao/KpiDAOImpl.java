@@ -167,15 +167,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		Set kpiDocs = kpi.getSbiKpiDocumentses();
 		List kpiDocsList = new ArrayList();
-		Iterator i = kpiDocs.iterator();
-		while (i.hasNext()) {
-			SbiKpiDocument doc = (SbiKpiDocument) i.next();
-			KpiDocuments temp = new KpiDocuments();
-			temp.setBiObjId(doc.getSbiObjects().getBiobjId());
-			temp.setBiObjLabel(doc.getSbiObjects().getLabel());
-			temp.setKpiDocId(doc.getIdKpiDoc());
-			temp.setKpiId(doc.getSbiKpi().getKpiId());
-			kpiDocsList.add(temp);
+		if(kpiDocs!=null && !kpiDocs.isEmpty()){
+			Iterator i = kpiDocs.iterator();
+			while (i.hasNext()) {
+				SbiKpiDocument doc = (SbiKpiDocument) i.next();
+				if(doc!=null){				
+					KpiDocuments temp = new KpiDocuments();
+					temp.setBiObjId(doc.getSbiObjects().getBiobjId());
+					temp.setBiObjLabel(doc.getSbiObjects().getLabel());
+					temp.setKpiDocId(doc.getIdKpiDoc());
+					temp.setKpiId(doc.getSbiKpi().getKpiId());
+					kpiDocsList.add(temp);
+				}
+			}
 		}
 
 		toReturn.setKpiName(kpiName);
@@ -910,15 +914,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		Set kpiDocs = kpi.getSbiKpiDocumentses();
 		List kpiDocsList = new ArrayList();
-		Iterator i = kpiDocs.iterator();
-		while (i.hasNext()) {
-			SbiKpiDocument doc = (SbiKpiDocument) i.next();
-			KpiDocuments temp = new KpiDocuments();
-			temp.setBiObjId(doc.getSbiObjects().getBiobjId());
-			temp.setBiObjLabel(doc.getSbiObjects().getLabel());
-			temp.setKpiDocId(doc.getIdKpiDoc());
-			temp.setKpiId(doc.getSbiKpi().getKpiId());
-			kpiDocsList.add(temp);
+		if(kpiDocs!=null && !kpiDocs.isEmpty()){
+			Iterator i = kpiDocs.iterator();
+			while (i.hasNext()) {
+				SbiKpiDocument doc = (SbiKpiDocument) i.next();
+				if(doc!=null){
+					KpiDocuments temp = new KpiDocuments();
+					temp.setBiObjId(doc.getSbiObjects().getBiobjId());
+					temp.setBiObjLabel(doc.getSbiObjects().getLabel());
+					temp.setKpiDocId(doc.getIdKpiDoc());
+					temp.setKpiId(doc.getSbiKpi().getKpiId());
+					kpiDocsList.add(temp);
+				}
+			}
 		}
 
 		toReturn.setDescription(description);

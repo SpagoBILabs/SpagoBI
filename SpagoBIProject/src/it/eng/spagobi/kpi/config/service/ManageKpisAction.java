@@ -29,7 +29,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
-import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
 import it.eng.spagobi.kpi.threshold.service.ManageThresholdsAction;
@@ -147,11 +146,10 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			String weight = getAttributeAsString(WEIGHT);
 			String dsLabel = getAttributeAsString(DATASET);
 			String thresholdCode = getAttributeAsString(THR);
-			//String documentLabels = getAttributeAsString(DOCS);
 			JSONArray docLabelsJSON = null;
 			String docs = getAttributeAsString(DOCS);
 			if(docs!=null && !docs.contains(",")){
-				
+				//Don't do anything
 			}else{
 				docLabelsJSON = getAttributeAsJSONArray(DOCS);
 			}
@@ -338,16 +336,11 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	
 	private List deserializeDocLabelsJSONArray(JSONArray rows) throws JSONException{
 		List toReturn = new ArrayList();
-		//HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
 		for(int i=0; i< rows.length(); i++){			
 			if(!rows.isNull(i)){
 				String label = (String)rows.get(i);
 				KpiDocuments d = new KpiDocuments();
 				d.setBiObjLabel(label);
-				//obj.getString("label");
-				//Integer id = obj.getInt("id");
-				//String name = obj.getString("name");
-				//String description = obj.getString("description");
 				toReturn.add(d);
 			}
 		}	
