@@ -124,12 +124,19 @@
 	</servlet>
 	
 	<servlet>
+      <servlet-name>GetLayersFromWMS</servlet-name>
+      <servlet-class>
+			it.eng.spagobi.engines.georeport.services.GetLayersFormWMSAction
+		</servlet-class>
+	</servlet>
+	  
+	<servlet>
       <servlet-name>MapOl</servlet-name>
       <servlet-class>
 			it.eng.spagobi.engines.georeport.services.MapOlAction
-	  </servlet-class>
+		</servlet-class>
+	</servlet>
 	  
-    </servlet>
       <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -146,7 +153,12 @@
 	      <param-value>config.yaml</param-value>
 		</init-param>
 	</servlet>
-  
+	
+	<servlet>
+      <servlet-name>LayerWms</servlet-name>
+      <jsp-file>/WEB-INF/LayerWms.jsp</jsp-file>
+    </servlet>
+ 
     
 
 	<!--  ============================================================================ -->
@@ -165,10 +177,15 @@
 	</servlet-mapping>
 	
 	<servlet-mapping>
+    	<servlet-name>GetLayersFromWMS</servlet-name>
+    	<url-pattern>/GetLayersFromWMS</url-pattern>
+  	</servlet-mapping>
+  	 	    
+  	<servlet-mapping>
     	<servlet-name>MapOl</servlet-name>
     	<url-pattern>/MapOl</url-pattern>
   	</servlet-mapping>
-  	 	    
+  	
     <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/GeoReportEngineStartActionTest</url-pattern>
@@ -177,6 +194,12 @@
 	<servlet-mapping>
 	    <servlet-name>mapfish.print</servlet-name>
 	    <url-pattern>/pdf/*</url-pattern>
+  	</servlet-mapping>
+
+
+	<servlet-mapping>
+    	<servlet-name>LayerWms</servlet-name>
+    	<url-pattern>/LayerWms</url-pattern>
   	</servlet-mapping>
   	
 	<!--  ============================================================================ -->
