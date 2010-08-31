@@ -255,6 +255,8 @@ Alter table `SBI_KPI` add Foreign Key (`id_measure_unit`) references `SBI_MEASUR
 Alter table `SBI_KPI` add Foreign Key (`THRESHOLD_ID`) references `SBI_THRESHOLD` (`THRESHOLD_ID`) on delete no action on update no action;
 Alter table `SBI_KPI` add Foreign Key (`DS_ID`) references `SBI_DATA_SET` (`DS_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI` add Foreign Key (`id_kpi_parent`) references `SBI_KPI` (`KPI_ID`) on delete  restrict on update  restrict;
+Alter table `SBI_KPI_DOCUMENTS` add Foreign Key (`BIOBJ_ID`) references `SBI_OBJECTS` (`BIOBJ_ID`) on delete  restrict on update  restrict;
+Alter table `SBI_KPI_DOCUMENTS` add Foreign Key (`KPI_ID`) references `SBI_KPI` (`KPI_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_PARENT_MODEL_ID`) references `SBI_KPI_MODEL` (`KPI_MODEL_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_MODEL_TYPE_ID`) references `SBI_DOMAINS` (`VALUE_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_ID`) references `SBI_KPI` (`KPI_ID`) on delete  restrict on update  restrict;

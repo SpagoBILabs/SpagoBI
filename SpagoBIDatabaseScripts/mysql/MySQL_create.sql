@@ -689,7 +689,6 @@ Create table `SBI_KPI` (
 	`THRESHOLD_ID` Int,
 	`id_kpi_parent` Int,
 	`name` Varchar(400) NOT NULL,
-	`document_label` Varchar(40),
 	`code` Varchar(40),
 	`metric` Varchar(1000),
 	`description` Varchar(1000),
@@ -705,7 +704,11 @@ Create table `SBI_KPI` (
 	UNIQUE (`code`),
  Primary Key (`KPI_ID`)) ENGINE = InnoDB;
  
- 
+Create table `SBI_KPI_DOCUMENTS` (
+	`ID_KPI_DOC` Int NOT NULL AUTO_INCREMENT,
+	`BIOBJ_ID` Int NOT NULL,
+	`KPI_ID` Int NOT NULL,
+ Primary Key (`ID_KPI_DOC`)) ENGINE = InnoDB;
 
 Create table `SBI_MEASURE_UNIT` (
 	`id_measure_unit` Int NOT NULL AUTO_INCREMENT,

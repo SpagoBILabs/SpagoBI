@@ -613,7 +613,6 @@ Create table SBI_KPI (
 	THRESHOLD_ID Integer,
 	ID_KPI_PARENT Integer,
 	NAME Varchar(400) NOT NULL,
-	DOCUMENT_LABEL Varchar(40),
 	CODE Varchar(40) NOT NULL,
 	METRIC Varchar(1000),
 	DESCRIPTION Varchar(1000),
@@ -629,6 +628,14 @@ Create table SBI_KPI (
 UNIQUE(CODE),	
 Primary Key (KPI_ID)
 ) ;\p\g
+
+CREATE SEQUENCE SBI_KPI_DOCUMENTS_SEQ;\p\g
+Create table SBI_KPI_DOCUMENTS (
+	ID_KPI_DOC INTEGER  NOT NULL with default next value for SBI_KPI_DOCUMENTS_SEQ,
+	BIOBJ_ID INTEGER NOT NULL,
+	KPI_ID INTEGER NOT NULL,
+ Primary Key (ID_KPI_DOC)
+);\p\g
 
 CREATE SEQUENCE SBI_MEASURE_UNIT_SEQ;\p\g
 Create table SBI_MEASURE_UNIT (
