@@ -75,6 +75,7 @@
         
          <!-- KPI Engine -->
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiDocuments.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstanceHistory.hbm.xml" />

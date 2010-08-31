@@ -3,6 +3,8 @@ package it.eng.spagobi.kpi.config.bo;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Kpi implements Serializable{
 	
@@ -10,8 +12,7 @@ public class Kpi implements Serializable{
 	Integer kpiDsId =null;
 
 	String dsLabel = null;
-	String kpiName = null;
-	String documentLabel = null; // document related to this KPI
+	String kpiName = null; 
 	Boolean isRoot = null;
 	Double standardWeight = null;
 	String metric = null;
@@ -32,7 +33,17 @@ public class Kpi implements Serializable{
 	String kpiTypeCd = null;
 	String metricScaleCd = null;
 	String measureTypeCd = null;
+	
+	List sbiKpiDocuments = new ArrayList(); // documents related to this KPI
 
+
+	public List getSbiKpiDocuments() {
+		return sbiKpiDocuments;
+	}
+
+	public void setSbiKpiDocuments(List sbiKpiDocuments) {
+		this.sbiKpiDocuments = sbiKpiDocuments;
+	}
 
 	public String getDsLabel() {
 		return dsLabel;
@@ -85,14 +96,6 @@ public class Kpi implements Serializable{
 
 	public void setKpiName(String kpiName) {
 		this.kpiName = kpiName;
-	}
-
-	public String getDocumentLabel() {
-		return documentLabel;
-	}
-
-	public void setDocumentLabel(String documentLabel) {
-		this.documentLabel = documentLabel;
 	}
 
 	public Boolean getIsParent() {

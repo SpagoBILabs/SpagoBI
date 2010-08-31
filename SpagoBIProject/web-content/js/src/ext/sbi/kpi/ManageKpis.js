@@ -252,7 +252,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		  store: docs
 		  , name: 'documents'
 		  ,	fieldLabel: LN('sbi.kpis.documents')
-		  , singleSelect: true
+		  , singleSelect: false
 		  ,	valueField: 'label'
 		  , displayField: 'label'
 		  , descriptionField: 'label'

@@ -34,9 +34,6 @@
         <property name="name" type="string">
             <column name="name" length="400" not-null="true" />
         </property>
-        <property name="documentLabel" type="string">
-            <column name="document_label" length="40" />
-        </property>
         <property name="code" type="string">
             <column name="code" length="40" />
         </property>
@@ -87,6 +84,12 @@
                 <column name="KPI_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiRole" />
+        </set>
+        <set name="sbiKpiDocumentses" inverse="true">
+            <key>
+                <column name="KPI_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument" />
         </set>
     </class>
 </hibernate-mapping>
