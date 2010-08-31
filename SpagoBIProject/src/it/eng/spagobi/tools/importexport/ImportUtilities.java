@@ -1448,7 +1448,7 @@ public class ImportUtilities {
 			newKpi.setDescription(kpi.getDescription());
 			newKpi.setCode(kpi.getCode());
 			newKpi.setName(kpi.getName());
-			newKpi.setDocumentLabel(kpi.getDocumentLabel());
+			newKpi.setSbiKpiDocumentses(kpi.getSbiKpiDocumentses());
 			newKpi.setFlgIsFather(kpi.getFlgIsFather());
 			newKpi.setMetric(kpi.getMetric());
 			newKpi.setWeight(kpi.getWeight());
@@ -1492,7 +1492,7 @@ public class ImportUtilities {
 			existingKpi = (SbiKpi) sessionCurrDB.load(SbiKpi.class, existingId);
 			existingKpi.setCode(exportedKpi.getCode());
 			existingKpi.setDescription(exportedKpi.getDescription());
-			existingKpi.setDocumentLabel(exportedKpi.getDocumentLabel());
+			existingKpi.setSbiKpiDocumentses(exportedKpi.getSbiKpiDocumentses());
 			existingKpi.setFlgIsFather(exportedKpi.getFlgIsFather());
 			existingKpi.setInputAttributes(exportedKpi.getInputAttributes());
 			existingKpi.setInterpretation(exportedKpi.getInterpretation());

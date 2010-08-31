@@ -47,6 +47,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiDocuments.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiInstPeriod.hbm.xml" />

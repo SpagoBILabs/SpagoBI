@@ -82,6 +82,55 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 		return xmlToReturn;
 	}
+	
+	private KpiDocuments toKpiDoc(SbiKpiDocument kpiDoc) throws EMFUserError {
+		logger.debug("IN");
+		KpiDocuments toReturn = new KpiDocuments();
+
+		toReturn.setBiObjId(kpiDoc.getSbiObjects().getBiobjId());
+		toReturn.setBiObjLabel(kpiDoc.getSbiObjects().getLabel());
+		toReturn.setKpiDocId(kpiDoc.getIdKpiDoc());
+		toReturn.setKpiId(kpiDoc.getSbiKpi().getKpiId());
+		return toReturn;
+	}
+	
+	public KpiDocuments loadKpiDocByKpiIdAndDocId(Integer kpiId,Integer docId) throws EMFUserError {
+		logger.debug("IN");
+		KpiDocuments toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiKpi hibKpi = (SbiKpi) aSession.load(SbiKpi.class, kpiId);
+			SbiObjects hibObject = (SbiObjects) aSession.load(SbiObjects.class, docId);
+			Criterion kpiCriterrion = Expression.eq("sbiKpi",hibKpi);
+			Criterion sbiObjCriterrion = Expression.eq("sbiObjects",hibObject);
+			Criteria crit = aSession.createCriteria(SbiKpiDocument.class);
+			crit.add(kpiCriterrion);
+			crit.add(sbiObjCriterrion);
+			SbiKpiDocument kpiDoc = (SbiKpiDocument) crit.uniqueResult();
+			toReturn = toKpiDoc(kpiDoc);
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the KpiDoc ", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10112);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 
 
 	public Kpi loadKpiDefinitionById(Integer id) throws EMFUserError {
