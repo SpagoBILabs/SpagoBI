@@ -46,7 +46,7 @@
 
 Ext.ns("Sbi.georeport");
 
-Sbi.georeport.GeoReportPanel = function(config) {
+Sbi.georeport.MainPanel = function(config) {
 	
 	var defaultSettings = {
 		mapName: 'sbi.georeport.mappanel.title'
@@ -114,7 +114,7 @@ Sbi.georeport.GeoReportPanel = function(config) {
 	});
 
 	// constructor
-	Sbi.georeport.GeoReportPanel.superclass.constructor.call(this, c);
+	Sbi.georeport.MainPanel.superclass.constructor.call(this, c);
 	
 	this.on('render', function() {
 		this.setCenter();
@@ -130,7 +130,7 @@ Sbi.georeport.GeoReportPanel = function(config) {
 	
 };
 
-Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
+Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
     
     services: null
     
@@ -174,6 +174,7 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
     , model: null
     
     // --- modifica fabio
+    
     
     // -- public methods ------------------------------------------------------------------------
     
@@ -537,144 +538,10 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 		});
 	}
 	
-	, initControlPanel: function() {
-		
-		
-		var controlPanelItems = [];
-		
-		if(this.controlPanelConf.earthPanelEnabled === true) {
-			controlPanelItems.push({
-				title: LN('sbi.georeport.earthpanel.title'),
-                html: '<center id="map3dContainer"></center>',
-                split: true,
-                height: 300,
-                minSize: 300,
-                maxSize: 500,
-                collapsible: false                
-	        });
-		}
-		
-		if(this.controlPanelConf.layerPanelEnabled === true) {
-			
-			controlPanelItems.push({
-	        	title: LN('sbi.georeport.layerpanel.title'),
-	            collapsible: true,
-	            autoHeight: true,
-	            xtype: 'layertree',
-	            map: this.map
-	        });
-			
-			// -- modifica Fabio
-			
-			/*
-			this.model = [{ 
-				text: "Layer",
-				leaf: false,
-                expanded: true,
-                //children: this.layers
-                children: [{
-                      layerName: "Google Mappe",
-                      text: "Google Mappe",
-                      leaf: true,
-                      checked: true
-                }, {
-                      layerName: "Google Satellite",
-                      text: "Google Satellite",
-                      leaf: true,
-                      checked: true
-                }, {
-                      layerName: this.targetLayerConf.text,
-                      text: this.targetLayerConf.text,
-                      leaf: true,
-                      checked: true
-                }]
-            }];
-			
-			controlPanelItems.push({
-	            title: LN('sbi.georeport.layerpanel.title'),
-	            collapsible: true,
-	            autoHeight: true,
-	              
-	            xtype: 'layertree',
-	            model: this.model,
-	            id:'laytr',
-	            map: this.map
-	        });
-			*/
-			// -- modifica Fabio
-		}
-		
-		if(this.controlPanelConf.analysisPanelEnabled === true) {
-			controlPanelItems.push({
-	        	title: LN('sbi.georeport.analysispanel.title'),
-	            collapsible: true,
-	            items: [this.geostatistic]
-	        });
-		}
-		
-		if(this.controlPanelConf.measurePanelEnabled === true) {
-		    controlPanelItems.push({
-		             title: 'Misurazione',
-		             collapsible: true,
-		             height: 85,
-		             html: '<center></center>',
-		               id: 'mapOutput'
-		      });
-		  }
-		
-		
-		if(this.controlPanelConf.legendPanelEnabled === true) {
-			controlPanelItems.push({
-		           title: LN('sbi.georeport.legendpanel.title'),
-		           collapsible: true,
-		           height: 150,
-		           html: '<center id="myChoroplethLegendDiv"></center>'
-		     });
-		}
-		
-		if(this.controlPanelConf.logoPanelEnabled === true) {
-			controlPanelItems.push({
-		           title: 'Logo',
-		           collapsible: true,
-		           height: 85,
-		           html: '<center><img src="/SpagoBIGeoReportEngine/img/georeport.jpg" alt="GeoReport"/></center>'
-		    });
-		}
-		
-		if(this.controlPanelConf.logoPanelEnabled === false) {
-			controlPanelItems.push({
-		           title: 'Debug',
-		           collapsible: true,
-		           height: 85,
-		           items: [new Ext.Button({
-				    	text: 'Debug',
-				        width: 30,
-				        handler: function() {
-		        	   		this.init3D();
-		        	   		/*
-		        	   		var size = this.controlPanel.getSize();
-		        	   		size.width += 1;
-		        	   		this.controlPanel.refreshSize(size);
-		        	   		*/
-		           		},
-		           		scope: this
-				    })]
-		    });
-		}
-		
-		this.controlPanel = new Ext.Panel({
-			 title       : LN('sbi.georeport.controlpanel.title'),
-		     region      : 'west',
-		     split       : true,
-		     width       : 300,
-		     collapsible : true,
-		     margins     : '3 0 3 3',
-		     cmargins    : '3 3 3 3',
-		     autoScroll	 : true,
-		     items		 : controlPanelItems 
-		}); 
-		 
-		 	
+	, initControlPanel: function() {		
+		this.controlPanelConf.map = this.map;
+		this.controlPanelConf.geostatistic = this.geostatistic;
+		this.controlPanel = new Sbi.georeport.ControlPanel(this.controlPanelConf);
 	}
 	
 
