@@ -269,7 +269,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Ext.FormPanel, {
 		             },{
 		            	 maxLength:100,
 		            	 minLength:1,
-		            	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+		            	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 		            	 regexText : LN('sbi.roles.alfanumericString'),
 		                 fieldLabel: LN('sbi.roles.headerName'),
 		                 allowBlank: false,
@@ -279,7 +279,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Ext.FormPanel, {
 		             },{
 		            	 maxLength:160,
 		            	 minLength:1,
-		            	 regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
+		            	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 		            	 regexText : LN('sbi.roles.alfanumericString'),
 		                 fieldLabel: LN('sbi.roles.headerDescr'),
 		                 validationEvent:true,
@@ -287,7 +287,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Ext.FormPanel, {
 		             },{
 		            	 maxLength:20,
 		            	 minLength:0,
-		            	 regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
+		            	 //regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
 		            	 regexText : LN('sbi.roles.alfanumericString2'),
 		                 fieldLabel:LN('sbi.roles.headerCode'),
 		                 validationEvent:true,

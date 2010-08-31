@@ -189,7 +189,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
 			                 validationEvent:true,
 	  		            	 maxLength:50,
 	  		            	 minLength:1,
-	  		            	 regex : new RegExp("^([a-zA-Z1-9_\x2D])+$", "g"),
+	  		            	 //regex : new RegExp("^([a-zA-Z1-9_\x2D])+$", "g"),
 	  		            	 regexText : LN('sbi.users.wrongFormat')
 			             },{
 			                 fieldLabel:  LN('sbi.alarms.alarmName'),
@@ -199,7 +199,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
 			                 validationEvent:true,
 	  		            	 maxLength:50,
 	  		            	 minLength:1,
-	  		            	 regex : new RegExp("^([a-zA-Z0-9_\x2D\s\x2F])+$", "g"),
+	  		            	 //regex : new RegExp("^([a-zA-Z0-9_\x2D\s\x2F])+$", "g"),
 	  		            	 regexText : LN('sbi.users.wrongFormat')
 			             },{
 			                 fieldLabel: LN('sbi.alarms.alarmDescr'),

@@ -234,7 +234,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Ext.FormPanel, {
 		                 validationEvent:true,
 		            	 maxLength:100,
 		            	 minLength:1,
-		            	 regex : new RegExp("^([a-zA-Z1-9_\x2D])+$", "g"),
+		            	// regex : new RegExp("^([a-zA-Z1-9_\x2D])+$", "g"),
 		            	 regexText : LN('sbi.users.wrongFormat')
 		             },{
 		                 fieldLabel:  LN('sbi.users.fullName'),
@@ -243,7 +243,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Ext.FormPanel, {
 		                 validationEvent:true,
 		            	 maxLength:255,
 		            	 minLength:1,
-		            	 regex : new RegExp("^([a-zA-Z0-9_\x2D\s\x2F])+$", "g"),
+		            	 //regex : new RegExp("^([a-zA-Z0-9_\x2D\s\x2F])+$", "g"),
 		            	 regexText : LN('sbi.users.wrongFormat')
 		             },{
 		                 fieldLabel: LN('sbi.users.pwd'),
