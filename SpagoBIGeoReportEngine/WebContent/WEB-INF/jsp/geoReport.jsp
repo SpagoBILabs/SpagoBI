@@ -147,7 +147,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Ext.onReady(function(){
 			
 				Ext.QuickTips.init();   
-				var geoReportPanel = new Sbi.georeport.GeoReportPanel(Sbi.template);	    
+				var geoReportPanel = new Sbi.georeport.MainPanel(Sbi.template);	    
 	      		var viewport = new Ext.Viewport({
 	      			id:    'view',
 		      		layout: 'fit',
