@@ -175,7 +175,7 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 		             },{
 		            	 maxLength:100,
 		            	 minLength:1,
-		            	 regex : new RegExp("^([a-zA-Z1-9_\x2F\s])+$", "g"),
+		            	 //regex : new RegExp("^([a-zA-Z1-9_\x2F\s])+$", "g"),
 		            	 regexText : LN('sbi.alarmcontact.validString'),
 		                 fieldLabel: LN('sbi.alarmcontact.name'),
 		                 allowBlank: false,
@@ -184,7 +184,7 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 		             },{
 		            	 maxLength:100,
 		            	 minLength:1,
-		            	 regex : new RegExp("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", "g"),
+		            	 //regex : new RegExp("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", "g"),
 		            	 regexText : LN('sbi.alarmcontact.validEmailString'),
 		                 fieldLabel: LN('sbi.alarmcontact.email'),
 		                 validationEvent:true,
@@ -192,7 +192,7 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 		             },{
 		            	 maxLength:50,
 		            	 minLength:0,
-		            	 regex : new RegExp("^([0-9/])+$", "g"),
+		            	 //regex : new RegExp("^([0-9/])+$", "g"),
 		            	 regexText : LN('sbi.alarmcontact.validMobileString'),
 		                 fieldLabel:LN('sbi.alarmcontact.mobile'),
 		                 validationEvent:true,
