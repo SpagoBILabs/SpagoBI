@@ -56,4 +56,29 @@
             height:20px !important;
             width:20px !important;
     }
+    
+    .meaLinee {
+			background-image: url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/ruler.png) !important;
+			height:20px !important;
+        	width:20px !important;
+	}
+
+	.meaArea {
+			background-image: url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/ruler_square.png) !important;
+			height:20px !important;
+        	width:20px !important;
+	}		
+	.wmsAdd {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/wms.png) !important;
+            height:22px !important;
+            width:22px !important;
+        }
+	.addWms {
+			background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/add.gif) !important;
+			height:22px !important;
+			width:22px !important;
+	}
+	.delWms {
+			background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/ext/examples/shared/icons/fam/delete.gif) !important;
+	}
  </style>

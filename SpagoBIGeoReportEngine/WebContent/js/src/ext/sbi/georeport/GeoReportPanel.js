@@ -53,14 +53,17 @@ Sbi.georeport.GeoReportPanel = function(config) {
 		, controlPanelConf: {
 			layerPanelEnabled: true
 			, analysisPanelEnabled: true
+			, measurePanelEnabled: true
 			, legendPanelEnabled: true
 			, logoPanelEnabled: true
 			, earthPanelEnabled: true
-		}	
+		} 
 		, toolbarConf: {
 			enabled: true,
 			zoomToMaxButtonEnabled: true,
 			mouseButtonGroupEnabled: true,
+			measureButtonGroupEnabled: true,
+			wmsGroupEnabled: true,
 			drawButtonGroupEnabled: true,
 			historyButtonGroupEnabled: true
 		}
@@ -151,6 +154,26 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
     
     , targetLayer: null
     , geostatistic: null
+    
+    // --- modifica fabio
+    
+    , controlPanel2: null
+    
+    , nWLayer: null
+    
+    , wmsLayerUrl: null
+ 
+    , btnAddWms: null
+ 
+    , winWmsForm: null
+    
+    , Form: null
+    
+    , wmsLayerGrid: null
+    
+    , model: null
+    
+    // --- modifica fabio
     
     // -- public methods ------------------------------------------------------------------------
     
@@ -532,6 +555,7 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 		}
 		
 		if(this.controlPanelConf.layerPanelEnabled === true) {
+			
 			controlPanelItems.push({
 	        	title: LN('sbi.georeport.layerpanel.title'),
 	            collapsible: true,
@@ -539,6 +563,45 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 	            xtype: 'layertree',
 	            map: this.map
 	        });
+			
+			// -- modifica Fabio
+			
+			/*
+			this.model = [{ 
+				text: "Layer",
+				leaf: false,
+                expanded: true,
+                //children: this.layers
+                children: [{
+                      layerName: "Google Mappe",
+                      text: "Google Mappe",
+                      leaf: true,
+                      checked: true
+                }, {
+                      layerName: "Google Satellite",
+                      text: "Google Satellite",
+                      leaf: true,
+                      checked: true
+                }, {
+                      layerName: this.targetLayerConf.text,
+                      text: this.targetLayerConf.text,
+                      leaf: true,
+                      checked: true
+                }]
+            }];
+			
+			controlPanelItems.push({
+	            title: LN('sbi.georeport.layerpanel.title'),
+	            collapsible: true,
+	            autoHeight: true,
+	              
+	            xtype: 'layertree',
+	            model: this.model,
+	            id:'laytr',
+	            map: this.map
+	        });
+			*/
+			// -- modifica Fabio
 		}
 		
 		if(this.controlPanelConf.analysisPanelEnabled === true) {
@@ -549,6 +612,15 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 	        });
 		}
 		
+		if(this.controlPanelConf.measurePanelEnabled === true) {
+		    controlPanelItems.push({
+		             title: 'Misurazione',
+		             collapsible: true,
+		             height: 85,
+		             html: '<center></center>',
+		               id: 'mapOutput'
+		      });
+		  }
 		
 		
 		if(this.controlPanelConf.legendPanelEnabled === true) {
@@ -727,6 +799,136 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 	         this.addSeparator();
 	    }
 	    
+	    
+	    // -- Modifica Fabio 
+	    if(this.toolbarConf.wmsGroupEnabled === true) {
+		   this.toolbar.addControl(
+				   new OpenLayers.Control.Button({
+					   isDefault: false,
+					   title: 'Add WMS Layer'
+				   })
+				   , {
+					   iconCls: 'wmsAdd', 
+					   toggleGroup: 'map',
+					   handler: this.wmsAddLayer,
+					   scope: this
+				   }
+		   );   
+		   
+		   this.toolbar.addControl(
+				   new OpenLayers.Control.Button({
+					   isDefault: false,
+					   title: 'Add WMS Layer (REFACTORED)'
+				   })
+				   , {
+					   iconCls: 'wmsAdd', 
+					   toggleGroup: 'map',
+					   handler: this.wmsAddLayerRefactored,
+					   scope: this
+				   }
+		   );   
+	    }
+	    
+	    this.addSeparator(toolbar);
+
+	    if(this.toolbarConf.measureButtonGroupEnabled === true) {
+	    	// SPECIFICHE GRAFICISMI PER MISURAZIONI
+	    	var style = new OpenLayers.Style();
+
+	    	var styleMap = new OpenLayers.StyleMap({"default": style});
+	    	function handleMeasurements(event) {
+	            var geometry = event.geometry;
+	            var units = event.units;
+	            var order = event.order;
+	            var measure = event.measure;
+	            var element = Ext.getCmp('mapOutput'); 
+	            var out = "";
+	            if(order == 1) {
+	                out += "Distanza: " + measure.toFixed(3) + " " + units;
+	                if (this.map.getProjection() == "EPSG:4326") {
+	                    out += ", Great Circle Distance: " + 
+	                        calcVincenty(geometry).toFixed(3) + " km"; 
+	                }        
+	            } else {
+	                out += "<span class='mapAreaOutput'>Area: " + measure.toFixed(3) + " " + units + "<sup style='font-size:6px'>2</" + "sup></span>";
+	            }
+	            element.body.dom.innerHTML = out;
+	        };
+	        
+	        function calcVincenty(geometry) {
+	        	/*Note: this function assumes geographic coordinates and  will fail otherwise.  OpenLayers.Util.distVincenty takes two objects representing points with geographic coordinates
+		  		and returns the geodesic distance between them (shortest  distance between the two points on an ellipsoid) in *kilometers*.It is important to realize that the segments drawn on the map
+		  		are *not* geodesics (or "great circle" segments).  This means that in general, the measure returned by this function  will not represent the length of segments drawn on the map. */
+		        var dist = 0;
+	            for (var i = 1; i < geometry.components.length; i++) {
+	                var first = geometry.components[i-1];
+	                var second = geometry.components[i];
+	                dist += OpenLayers.Util.distVincenty(
+	                    {lon: first.x, lat: first.y},
+	                    {lon: second.x, lat: second.y}
+	                );
+	            }
+	            return dist;
+	        };  
+	        
+	        var optionsLine = {
+	        	handlerOptions: {
+	        		style: "default", // this forces default render intent
+	        		layerOptions: {styleMap: styleMap},
+	        		persist: true
+	        	},
+	        	displayClass: "olControlMeasureDistance"          
+	        };
+
+	        var optionsPolygon = {
+	        	handlerOptions: {
+	        		style: "default", // this forces default render intent
+	        		layerOptions: {styleMap: styleMap},
+	        		persist: true
+	        	},
+	        	displayClass: "olControlMeasureArea"     
+	        };
+
+	        measureControls = {
+	        	line: new OpenLayers.Control.Measure(
+	        		OpenLayers.Handler.Path, 
+	        		optionsLine
+	        	),
+	        	polygon: new OpenLayers.Control.Measure(
+	        		OpenLayers.Handler.Polygon, 
+	        		optionsPolygon
+	        	)
+	        };
+	                
+	        for(var key in measureControls) {
+	        	control = measureControls[key];
+	        	control.events.on({
+	        		"measure": handleMeasurements,
+	        		"measurepartial": handleMeasurements
+	        	});
+	        }  
+	   
+	        this.toolbar.addControl(            
+	        	measureControls.line,{
+	        	tooltip: 'Misura Distanze',
+	        	iconCls: 'meaLinee', 
+	        	toggleGroup: 'map'    
+	        }
+	        );
+	  
+	        this.toolbar.addControl(            
+	        	measureControls.polygon,{                
+	        	tooltip: 'Misura Area',
+	        	iconCls: 'meaArea', 
+	        	toggleGroup: 'map'}
+	        );
+	   
+	        this.addSeparator(toolbar);  
+	    }
+
+	    // -- Modifica Fabio 
+	    
+	    
 	    /*
 	    var printConfigUrl = mapfish.SERVER_BASE_URL + 'pdf/info.json';
 	    this.toolbar.add(
@@ -742,4 +944,280 @@ Ext.extend(Sbi.georeport.GeoReportPanel, Ext.Panel, {
 	    this.toolbar.activate();
 	    
       }
+	
+	  , wmsAddLayerRefactored: function() {
+		  var winWmsForm = new Ext.Window({
+				title: 'Aggiunge un layer WMS (REFACTORED)',
+			    layout:'fit',
+			    autoScroll: true,
+			  
+			    width:612,
+			    
+			    closable: false,
+			    closeAction: "hide",
+			    constrainHeader:true,
+			  
+			    plain: true,
+			    border: false,
+			    items: [new Sbi.georeport.ImportWMSLayerForm()],
+			    scope: this
+		});
+		winWmsForm.show();
+	  }
+	  
+	  , wmsAddLayer: function(){   
+		  
+		   var controlPanel = this.controlPanel;
+		   var wmsData= Array();  
+		   var reader= new Ext.data.JsonReader({}, [
+		        {name: 'id'},
+		        {name: 'layername'},
+		        {name: 'srs'},
+		   ]);
+		      
+		   var store= new Ext.data.Store({
+		        reader: reader,
+		        data: wmsData
+		   }); 
+		   
+		   var sm= new Ext.grid.CheckboxSelectionModel({}); 
+		   var map = this.map;
+		   var winWmsForm = this.winWmsForm;
+		   var model = this.model;
+		   var addWmsLayer= function(nWLayer, urlWLayer){
+		  
+		   this.nWLayer = nWLayer;
+			   var generaLayer = new OpenLayers.Layer.WMS(nWLayer, urlWLayer, {
+			   		layers: nWLayer,                    
+			   		srs: 'EPSG:4326',
+			   		format: 'image/png',
+			   		transparent: true
+			   }, {
+			   		singleTile: true, 
+			   		ratio: 1,
+			   		visibility: true, 
+			   		'isBaseLayer': false, 
+			   		opacity: 0.5
+			   } 
+			   );
+			  
+			   map.addLayer(generaLayer);
+			   /*
+			    var newLay = {
+			                              layerName: nWLayer,
+			                              text: nWLayer,
+			                              leaf: true,
+			                              checked: true
+			                             }
+			    
+			    model.push(newLay);
+			    //alert(model.length);
+			   */
+			   /*
+			    addGr = -1;
+			  gruppo = 'WMS';
+			  alias = nWLayer;
+			  for(ii=0;ii<model.length;ii++){
+			  if (model[ii].text == gruppo){
+			   addGr = ii;
+			   }
+			  }
+			 
+			  if  (addGr == -1){
+			  //crea gruppo e aggiungi il layer
+			   var l =  model.length;
+			      //alert(h);
+			   var gruppoLayer = {
+			        text: gruppo,
+			        leaf: false,
+			        expanded: false,
+			        children: [{
+			         layerName:  alias,
+			          text:  alias,
+			          leaf: true,
+			         checked: false
+			         }]};
+			   model[l] =  gruppoLayer;    
+			   
+			  }else{
+			   var l = model[addGr].children.length; 
+			   var gruppoLayer = {
+			        layerName:  alias,
+			                text:  alias,
+			        leaf: true,
+			        checked: false
+			         };
+			   model[addGr].children[l] =  gruppoLayer;
+			  //aggiungi il layer al grupppo  
+	
+			  }
+			   */
+	
+			  //Ext.getCmp('view').items.items[0].remove(Ext.getCmp('laytr'));
+			   
+			  /*
+			  var layertree = {
+			       title: 'Layer',
+			       xtype: "layertree",
+			       region: "center",
+			       map: map,
+			       border:false,
+			       enableDD: true,
+			              id:'laytr',
+			       model: model
+			       
+			  };
+				*/
+		   
+		    //Ext.getCmp('view').items.items[0].add(layertree);
+		    //Ext.getCmp('view').items.items[0].doLayout();
+		    
+		  };
+
+		  var wmsLayerUrl= new Ext.form.TextField({
+			  fieldLabel:'WMS Url', 
+			  name:'urlWms', 
+			  width:540, 
+			  value: 'http://localhost:8080/geoserver/wms'
+		  });
+		    
+		    // simple array store
+		    /*var storeCombo = Ext.data.SimpleStore({
+
+		        fields: ['urlWms'],
+		        data : dataSel
+		    });
+		    var wmsLayerUrl = new Ext.form.ComboBox({
+		        store: storeCombo,
+		        width:540,
+		        displayField:'urlWms',
+		        typeAhead: true,
+		        mode: 'local',
+		        forceSelection: true,
+		        triggerAction: 'all',
+		        emptyText:'Select a wms service...',
+		        selectOnFocus:true,
+		        applyTo: 'local-states'
+		    });
+
+		    var dataSel = [
+		        ['http://localhost:8080/geoserver/wms']
+		    ];
+		    */
+		    
+		  var btnAddWms= new Ext.form.Hidden({name: 'btnAddWms', value: 'AddWms'});
+		  this.wmsLayerGrid= new Ext.grid.GridPanel({
+		        id:'button-grid',
+		        store: store,
+		        cm: new Ext.grid.ColumnModel([
+		            sm,
+		            //expander,
+		            {id:'id',header: 'id', width: 10, sortable: true, dataIndex: 'id'},
+		            {header: 'layername', width: 20, sortable: true, dataIndex: 'layername'},
+		            {header: 'srs', width: 20, sortable: true, dataIndex: 'srs'}
+		            //{header: 'imglegend', width: 20, sortable: true, dataIndex: 'imglegend'}
+		        ]),
+		        sm: sm,
+
+		        viewConfig: {
+		            forceFit:true
+		        },
+		        columnLines: true,
+		        
+		        tbar:[
+		              wmsLayerUrl
+		              , '-', 
+		              {
+		            	  tooltip:'Add a new wms layer',
+		            	  iconCls:'addWms',
+		            	  wmsLayerUrl: wmsLayerUrl,
+		            	  btnAddWms: btnAddWms,
+		            	  handler: function() {
+		  		                Ext.Ajax.request({
+		  		                	url :  'LayerWms', 
+		  		                	params : {urlWms:this.wmsLayerUrl.getValue(), btnAddWms:this.btnAddWms.getValue()},
+		  		                	method: 'POST',
+		  		                	timeout: '300000', 
+		  		                	waitMsg:'Loading',
+		  		                	//scope: wmsAddLayer.wmsLayerGrid, 
+		  		                	success: function (result,request) {
+		  		                		if(result.status == 200){
+		  		                			//alert(result.responseText);
+		  		                			var stringData = result.responseText;
+		  		                			var jsonData = Ext.util.JSON.decode(stringData);
+		  		                			wmsData = jsonData;
+		  		                			store.loadData(wmsData);
+		  		                		}
+		  		                	},
+		  		                	failure: function (result,request) { 
+		  		                		Ext.MessageBox.alert('Failed', 'Error '); 
+		  		                	} 
+		  		                });
+		              	  }
+		    
+		              }
+		        ],
+		        width:600,
+		        height:300,
+		        //plugins: expander,
+		        iconCls:'icon-grid',
+		        scope: this
+		  });
+		 
+		  this.Form = new Ext.FormPanel({
+		    width:'auto',
+		    height:'auto',
+		  autoHeight: true,
+		  autoWidth: true,
+		  border: false,
+		        
+		  items: [btnAddWms,this.wmsLayerGrid], 
+		      buttons: [{
+		    	 text: 'Add to map' ,
+		    	 formBind: true,
+		    	 handler: function(){
+		    	  	//alert("Add to map");
+		    	  	for(i = 0; i < sm.selections.getCount(); i++){
+		    	  		a = sm.selections.items[i].get('id');
+		    	  		//a = sm.selections.items[0].get('id');
+		    	  		//alert(a);
+		    	  		name = wmsData[a-1].layername;
+		    	  		//alert(name);
+		    	  		//alert(wmsLayerUrl.getValue());
+		    	  		addWmsLayer(name,wmsLayerUrl.getValue());
+		    	  	}
+		    	  	winWmsForm.destroy();
+		    	  	winWmsForm.close();
+		      	}
+		      },{
+		  
+		    	text: 'Close',
+		    	handler: function(){
+		    	  //statusForm = 0;
+		    	  winWmsForm.destroy();
+		    	  winWmsForm.close();
+		      	},
+		      	scope: this
+		  }]
+		});
+
+		winWmsForm = new Ext.Window({
+			title: 'Aggiunge un layer WMS',
+		    layout:'fit',
+		    autoScroll: true,
+		  
+		    width:612,
+		    
+		    closable: false,
+		    closeAction: "hide",
+		    constrainHeader:true,
+		  
+		    plain: true,
+		    border: false,
+		    items: [this.Form],
+		    scope: this
+		 });
+		 winWmsForm.show();
+	  }
+	
 });

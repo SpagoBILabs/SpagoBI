@@ -4,6 +4,7 @@ Sbi.settings.georeport = {
 	
 	georeportPanel: {
 	
+		/*
 		controlPanelConf: {
 			layerPanelEnabled: true
 			, analysisPanelEnabled: true
@@ -19,7 +20,26 @@ Sbi.settings.georeport = {
 			, drawButtonGroupEnabled: false
 			, historyButtonGroupEnabled: true
 		}
+		*/
 	
+	  	controlPanelConf: {
+	   		layerPanelEnabled: true
+	   		, analysisPanelEnabled: true
+	   		, measurePanelEnabled: true
+	   		, legendPanelEnabled: true
+	   		, logoPanelEnabled: true
+	   		, earthPanelEnabled: false
+	  	} 
+	 
+	  	, toolbarConf: {
+	  		enabled: true
+	  		, zoomToMaxButtonEnabled: true
+	  		, mouseButtonGroupEnabled: true
+	  		, measureButtonGroupEnabled: true
+	  		, wmsGroupEnabled: true
+	  		, drawButtonGroupEnabled: false
+	  		, historyButtonGroupEnabled: true
+	  	}
 	
 			
 		/**
