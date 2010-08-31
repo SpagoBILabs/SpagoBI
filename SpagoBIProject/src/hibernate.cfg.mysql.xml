@@ -70,6 +70,7 @@
         
          <!-- KPI Engine -->
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiDocuments.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstanceHistory.hbm.xml" />

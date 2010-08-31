@@ -70,6 +70,7 @@
         
          <!-- KPI Engine -->
          <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiDocuments.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiInstanceHistory.hbm.xml" />

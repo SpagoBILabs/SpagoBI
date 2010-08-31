@@ -23,7 +23,6 @@ public class SbiKpi implements java.io.Serializable {
 	private SbiMeasureUnit sbiMeasureUnit;
 	private SbiDomains sbiDomainsByMetricScaleType;
 	private String name;
-	private String documentLabel;
 	private String code;
 	private String metric;
 	private String description;
@@ -37,6 +36,7 @@ public class SbiKpi implements java.io.Serializable {
 	private Set sbiKpiInstances = new HashSet(0);
 	private Set sbiKpiRoles = new HashSet(0);
 	private Set sbiKpiModels = new HashSet(0);
+	private Set sbiKpiDocumentses = new HashSet(0);
 
 	public SbiKpi() {
 	}
@@ -53,7 +53,7 @@ public class SbiKpi implements java.io.Serializable {
 			SbiDomains sbiDomainsByMeasureType, SbiDomains sbiDomainsByKpiType,
 			SbiThreshold sbiThreshold, SbiMeasureUnit sbiMeasureUnit,
 			SbiDomains sbiDomainsByMetricScaleType, String name,
-			String documentLabel, String code, String metric,
+			Set sbiKpiDocumentses, String code, String metric,
 			String description, Double weight, Character flgIsFather,
 			String interpretation, String inputAttributes,
 			String modelReference, String targetAudience, Set sbiKpis,
@@ -66,7 +66,6 @@ public class SbiKpi implements java.io.Serializable {
 		this.sbiMeasureUnit = sbiMeasureUnit;
 		this.sbiDomainsByMetricScaleType = sbiDomainsByMetricScaleType;
 		this.name = name;
-		this.documentLabel = documentLabel;
 		this.code = code;
 		this.metric = metric;
 		this.description = description;
@@ -80,7 +79,16 @@ public class SbiKpi implements java.io.Serializable {
 		this.sbiKpiInstances = sbiKpiInstances;
 		this.sbiKpiRoles = sbiKpiRoles;
 		this.sbiKpiModels = sbiKpiModels;
-	}
+		this.sbiKpiDocumentses = sbiKpiDocumentses;
+	}	
+
+    public Set getSbiKpiDocumentses() {
+        return this.sbiKpiDocumentses;
+    }
+    
+    public void setSbiKpiDocumentses(Set sbiKpiDocumentses) {
+        this.sbiKpiDocumentses = sbiKpiDocumentses;
+    }
 
 	public Integer getKpiId() {
 		return this.kpiId;
@@ -153,14 +161,6 @@ public class SbiKpi implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getDocumentLabel() {
-		return this.documentLabel;
-	}
-
-	public void setDocumentLabel(String documentLabel) {
-		this.documentLabel = documentLabel;
 	}
 
 	public String getCode() {

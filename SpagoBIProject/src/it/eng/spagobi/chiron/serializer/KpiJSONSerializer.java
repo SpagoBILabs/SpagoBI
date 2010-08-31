@@ -1,10 +1,17 @@
 package it.eng.spagobi.chiron.serializer;
 
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class KpiJSONSerializer implements Serializer {
@@ -50,7 +57,21 @@ public class KpiJSONSerializer implements Serializer {
 			if(kpi.getThreshold()!=null){
 				result.put(KPI_THR, kpi.getThreshold().getCode() );
 			}
-			result.put(KPI_DOCS, kpi.getDocumentLabel() );
+			//roles
+			List userDocs = kpi.getSbiKpiDocuments();
+			Iterator itDocs = userDocs.iterator();
+			JSONArray documentsJSON = new JSONArray();
+			//documentsJSON.put("documents");
+
+			while(itDocs.hasNext()){
+				//JSONObject jsonDoc = new JSONObject();
+				KpiDocuments kpiDoc = (KpiDocuments)itDocs.next();
+				//jsonDoc.put("label", kpiDoc.getBiObjLabel());
+				documentsJSON.put(kpiDoc.getBiObjLabel());
+			}	
+			result.put(KPI_DOCS, documentsJSON);
+			
+			//result.put(KPI_DOCS, kpi.getDocumentLabel() );
 			result.put(KPI_INTERPRETATION, kpi.getInterpretation() );
 			result.put(KPI_ALGDESC, kpi.getMetric() );
 			result.put(KPI_INPUT_ATTR, kpi.getInputAttribute() );

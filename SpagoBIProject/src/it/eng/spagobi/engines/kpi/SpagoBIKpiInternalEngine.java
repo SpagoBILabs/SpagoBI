@@ -49,8 +49,10 @@ import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
 import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
 import it.eng.spagobi.engines.kpi.utils.StyleLabel;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -667,13 +669,19 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
 
 			if (k != null) {
-				String docLabel = k.getDocumentLabel();
-				if (docLabel != null && !docLabel.equals("")) {
-					List documents = new ArrayList();
-					logger.debug("Retrieved documents associated to the KPI");
-					documents.add(docLabel);
-					line.setDocuments(documents);
+				List docs = k.getSbiKpiDocuments();
+				Iterator it = docs.iterator();
+				List documents = new ArrayList();
+				while(it.hasNext()){
+					KpiDocuments doc = (KpiDocuments)it.next();
+					String docLabel = doc.getBiObjLabel();
+					if (docLabel != null && !docLabel.equals("")) {						
+						logger.debug("Retrieved documents associated to the KPI");
+						documents.add(docLabel);						
+					}
 				}
+				line.setDocuments(documents);
+				
 			}
 			if (display_alarm && value!=null && value.getValue()!= null) {
 				Boolean alarm = DAOFactory.getKpiInstanceDAO().isKpiInstUnderAlramControl(kpiInstID);

@@ -4,12 +4,15 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
@@ -27,6 +30,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +41,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
@@ -117,7 +122,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		String code = kpi.getCode();
 		String description = kpi.getDescription();
-		String documentLabel = kpi.getDocumentLabel();
 
 		Integer kpiId = kpi.getKpiId();
 		String kpiName = kpi.getName();
@@ -161,11 +165,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			metricScaleCd = kpi.getSbiDomainsByMetricScaleType().getValueCd();
 		}
 
+		Set kpiDocs = kpi.getSbiKpiDocumentses();
+		List kpiDocsList = new ArrayList();
+		Iterator i = kpiDocs.iterator();
+		while (i.hasNext()) {
+			SbiKpiDocument doc = (SbiKpiDocument) i.next();
+			KpiDocuments temp = new KpiDocuments();
+			temp.setBiObjId(doc.getSbiObjects().getBiobjId());
+			temp.setBiObjLabel(doc.getSbiObjects().getLabel());
+			temp.setKpiDocId(doc.getIdKpiDoc());
+			temp.setKpiId(doc.getSbiKpi().getKpiId());
+			kpiDocsList.add(temp);
+		}
 
 		toReturn.setKpiName(kpiName);
 		logger.debug("Kpi name setted");
-		toReturn.setDocumentLabel(documentLabel);
-		logger.debug("Kpi Documentlabel setted");
+		toReturn.setSbiKpiDocuments(kpiDocsList);
+		logger.debug("Kpi DocumentIds setted");
 		toReturn.setCode(code);
 		logger.debug("Kpi code setted");
 		toReturn.setMetric(metric);
@@ -841,7 +857,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		String code = kpi.getCode();
 		String description = kpi.getDescription();
-		String documentLabel = kpi.getDocumentLabel();
 		String metric = kpi.getMetric();
 		String interpretation = kpi.getInterpretation();
 
@@ -891,11 +906,25 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			scaleCode = kpi.getSbiMeasureUnit().getScaleCd();
 			scaleName = kpi.getSbiMeasureUnit().getScaleNm();
 		}
+		
+
+		Set kpiDocs = kpi.getSbiKpiDocumentses();
+		List kpiDocsList = new ArrayList();
+		Iterator i = kpiDocs.iterator();
+		while (i.hasNext()) {
+			SbiKpiDocument doc = (SbiKpiDocument) i.next();
+			KpiDocuments temp = new KpiDocuments();
+			temp.setBiObjId(doc.getSbiObjects().getBiobjId());
+			temp.setBiObjLabel(doc.getSbiObjects().getLabel());
+			temp.setKpiDocId(doc.getIdKpiDoc());
+			temp.setKpiId(doc.getSbiKpi().getKpiId());
+			kpiDocsList.add(temp);
+		}
 
 		toReturn.setDescription(description);
 		logger.debug("Kpi description setted");
-		toReturn.setDocumentLabel(documentLabel);
-		logger.debug("Kpi Documentlabel setted");
+		toReturn.setSbiKpiDocuments(kpiDocsList);
+		logger.debug("Kpi Documentlabels setted");
 		toReturn.setIsParent(isParent);
 		logger.debug("Kpi isParent setted");
 		toReturn.setIsRoot(isRoot);
@@ -1035,7 +1064,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String code = kpi.getCode();
 			String metric = kpi.getMetric();
 			Double weight = kpi.getStandardWeight();
-			String documentLabel = kpi.getDocumentLabel();
 			SbiDataSetConfig ds = null;
 			String interpretation = kpi.getInterpretation(); 
 			String inputAttribute = kpi.getInputAttribute();
@@ -1073,6 +1101,56 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Integer measureTypeId = kpi.getMeasureTypeId();
 				measureType = (SbiDomains) aSession.load(SbiDomains.class, measureTypeId);
 			}
+			
+			//Loading all old sbiObjects
+			Criterion kpiCriter = Expression.eq("sbiKpi",sbiKpi);
+			Criteria crite = aSession.createCriteria(SbiKpiDocument.class);
+			crite.add(kpiCriter);
+			List existingDocs = crite.list();
+			
+			List kpiDocsList = kpi.getSbiKpiDocuments();
+			Set sbiKpiDocuments = new HashSet(0);
+			Iterator i = kpiDocsList.iterator();
+			while (i.hasNext()) {
+				
+				KpiDocuments doc = (KpiDocuments) i.next();
+				
+				String label = doc.getBiObjLabel();
+				Criterion labelCriterrion = Expression.eq("label",label);
+				Criteria criteria = aSession.createCriteria(SbiObjects.class);
+				criteria.add(labelCriterrion);
+				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+				
+				
+				
+				Integer kpiId = kpi.getKpiId();
+				Criterion kpiCriterrion = Expression.eq("sbiKpi",sbiKpi);
+				Criterion sbiObjCriterrion = Expression.eq("sbiObjects",hibObject);
+				Criteria crit = aSession.createCriteria(SbiKpiDocument.class);
+				crit.add(kpiCriterrion);
+				crit.add(sbiObjCriterrion);
+				SbiKpiDocument kpiDoc = (SbiKpiDocument) crit.uniqueResult();
+				
+				if(existingDocs!=null && !existingDocs.isEmpty() && kpiDoc!=null){
+					if(existingDocs.contains(kpiDoc)){
+						existingDocs.remove(kpiDoc);
+					}
+				}
+				if(kpiDoc==null){
+					SbiKpiDocument temp = new SbiKpiDocument();
+					temp.setSbiKpi(sbiKpi);
+					temp.setSbiObjects(hibObject);
+					aSession.saveOrUpdate(temp);
+				}
+			}
+			
+			if(existingDocs!=null && !existingDocs.isEmpty() ){
+				Iterator it2 = existingDocs.iterator();
+				while(it2.hasNext()){
+					SbiKpiDocument kpiDoc = (SbiKpiDocument) it2.next();
+					aSession.delete(kpiDoc);
+				}
+			}
 
 			sbiKpi.setInterpretation(interpretation);
 			sbiKpi.setInputAttributes(inputAttribute);
@@ -1086,7 +1164,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setCode(code);
 			sbiKpi.setMetric(metric);
 			sbiKpi.setWeight(weight);
-			sbiKpi.setDocumentLabel(documentLabel);
+			//sbiKpi.setSbiKpiDocumentses(sbiKpiDocuments);
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
 
@@ -1125,7 +1203,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String code = kpi.getCode();
 			String metric = kpi.getMetric();
 			Double weight = kpi.getStandardWeight();
-			String documentLabel = kpi.getDocumentLabel();
+			
 			SbiDataSetConfig ds = null;
 			if (kpi.getKpiDsId()  != null) {
 				Integer ds_id = kpi.getKpiDsId();
@@ -1177,11 +1255,27 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setCode(code);
 			sbiKpi.setMetric(metric);
 			sbiKpi.setWeight(weight);
-			sbiKpi.setDocumentLabel(documentLabel);
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
 
 			idToReturn = (Integer) aSession.save(sbiKpi);
+			
+			List kpiDocsList = kpi.getSbiKpiDocuments();
+			Set sbiKpiDocuments = new HashSet(0);
+			Iterator i = kpiDocsList.iterator();
+			while (i.hasNext()) {
+				KpiDocuments doc = (KpiDocuments) i.next();
+				String label = doc.getBiObjLabel();
+				Criterion labelCriterrion = Expression.eq("label",label);
+				Criteria criteria = aSession.createCriteria(SbiObjects.class);
+				criteria.add(labelCriterrion);
+				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+				
+				SbiKpiDocument temp = new SbiKpiDocument();
+				temp.setSbiKpi(sbiKpi);
+				temp.setSbiObjects(hibObject);
+				aSession.save(temp);
+			}
 
 			tx.commit();
 

@@ -27,7 +27,9 @@ import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
 import it.eng.spagobi.kpi.threshold.service.ManageThresholdsAction;
@@ -38,6 +40,7 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -144,7 +147,15 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			String weight = getAttributeAsString(WEIGHT);
 			String dsLabel = getAttributeAsString(DATASET);
 			String thresholdCode = getAttributeAsString(THR);
-			String documentLabels = getAttributeAsString(DOCS);
+			//String documentLabels = getAttributeAsString(DOCS);
+			JSONArray docLabelsJSON = null;
+			String docs = getAttributeAsString(DOCS);
+			if(docs!=null && !docs.contains(",")){
+				
+			}else{
+				docLabelsJSON = getAttributeAsJSONArray(DOCS);
+			}
+			
 			String interpretation = getAttributeAsString(INTERPRETATION);
 			String algdesc = getAttributeAsString(ALGDESC);
 			String inputAttr = getAttributeAsString(INPUT_ATTR);
@@ -199,9 +210,19 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 					Threshold t = thrDao.loadThresholdByCode(thresholdCode);
 					k.setThreshold(t);
 				}
-				if(documentLabels != null){
-					k.setDocumentLabel(documentLabels);
+				
+				List docsList = null;
+				if(docLabelsJSON != null){
+					docsList = deserializeDocLabelsJSONArray(docLabelsJSON);
+					k.setSbiKpiDocuments(docsList);
+				}else if(docs!=null && !docs.equalsIgnoreCase("")){
+					KpiDocuments d = new KpiDocuments();
+					d.setBiObjLabel(docs);
+					docsList = new ArrayList();
+					docsList.add(d);
+					k.setSbiKpiDocuments(docsList);
 				}
+				
 				if(interpretation != null){
 					k.setInterpretation(interpretation);
 				}
@@ -313,6 +334,24 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 		results.put("title", "Kpis");
 		results.put("rows", rows);
 		return results;
+	}
+	
+	private List deserializeDocLabelsJSONArray(JSONArray rows) throws JSONException{
+		List toReturn = new ArrayList();
+		//HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
+		for(int i=0; i< rows.length(); i++){			
+			if(!rows.isNull(i)){
+				String label = (String)rows.get(i);
+				KpiDocuments d = new KpiDocuments();
+				d.setBiObjLabel(label);
+				//obj.getString("label");
+				//Integer id = obj.getInt("id");
+				//String name = obj.getString("name");
+				//String description = obj.getString("description");
+				toReturn.add(d);
+			}
+		}	
+		return toReturn;
 	}
 
 }

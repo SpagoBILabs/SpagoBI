@@ -317,7 +317,7 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
     }
     
     , applySelection: function() {
-    	//this.resetSelection();
+    	this.resetSelection();
     	
     	if(this.grid) {    		    		
 			var selectedRecs = [];
@@ -332,8 +332,11 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	
     , clean: function() {
     	if(this.xdirty) {
+    		
 	    	var text = Sbi.widgets.LookupField.superclass.getValue.call(this);
+	    	alert(text);
 	    	var values = text.split(';');
+	    	alert(values);
 	    	this.xvalue = {};
 	    	if(text.trim() === '') return;
 	    	var ub = (this.singleSelect === true)? 1: values.length;

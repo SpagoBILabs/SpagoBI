@@ -61,6 +61,7 @@
         
          <!-- KPI Engine 
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingsqlserver/SbiKpiDocuments.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModel.hbm.xml" />

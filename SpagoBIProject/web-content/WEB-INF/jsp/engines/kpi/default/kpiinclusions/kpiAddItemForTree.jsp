@@ -338,7 +338,7 @@ private StringBuffer addDocumentDetailColumn(StringBuffer _htmlStream, Execution
 			String docLabel =(String)it.next();
 			String parameters = createParStringForCrossNavigation(execInstance, timeRangeFrom, timeRangeTo, r, kpiVal, d);		
 			String docHref="javascript:parent.execCrossNavigation(this.name,'"+docLabel+"','"+parameters+"');";
-			_htmlStream.append("<a  title='"+docTitle+"' href=\""+docHref+"\"> <img  src=\""+docImgSrc+"\" alt=\"Attached Document\" /></a>\n");				
+			_htmlStream.append("<a  title='"+docLabel+"' href=\""+docHref+"\"> <img  src=\""+docImgSrc+"\" alt=\""+docLabel+"\" /></a>\n");				
 		}
 		_htmlStream.append("</div></td>\n");
 	}else{

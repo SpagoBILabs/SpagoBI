@@ -23,10 +23,12 @@ package it.eng.spagobi.analiticalmodel.document.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -67,6 +69,7 @@ public class SbiObjects  implements java.io.Serializable {
 	private String creationUser=null;
 	private Integer refreshSeconds=null;     
 	private SbiDataSetConfig dataSet=null;
+	private Set sbiKpiDocumentses = new HashSet(0);
 
 	// Constructors
 
@@ -123,11 +126,20 @@ public class SbiObjects  implements java.io.Serializable {
 	 }
 
 
+	
 
 
 	 // Property accessors
 
-	 /**
+	 public Set getSbiKpiDocumentses() {
+		return sbiKpiDocumentses;
+	}
+
+	public void setSbiKpiDocumentses(Set sbiKpiDocumentses) {
+		this.sbiKpiDocumentses = sbiKpiDocumentses;
+	}
+
+	/**
 	  * Gets the uuid.
 	  * 
 	  * @return the uuid

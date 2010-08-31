@@ -32,8 +32,8 @@ public class DetailKpiUtil {
 		String code = (String) serviceRequest.getAttribute("code");
 		String metric = (String) serviceRequest.getAttribute("metric");
 		String sWeight = (String) serviceRequest.getAttribute("weight");
-		String documentLabel = (String) serviceRequest
-				.getAttribute("document_label");
+		/*String documentLabel = (String) serviceRequest
+				.getAttribute("document_label");*/
 		String sDs_id = (String) serviceRequest.getAttribute("ds_id");
 
 		String sThresold_id = (String) serviceRequest
@@ -95,8 +95,8 @@ public class DetailKpiUtil {
 			// }
 		}
 
-		if (documentLabel != null && documentLabel.trim().equals(""))
-			documentLabel = null;
+		/*if (documentLabel != null && documentLabel.trim().equals(""))
+			documentLabel = null;*/
 
 		Kpi toReturn = new Kpi();
 
@@ -105,7 +105,7 @@ public class DetailKpiUtil {
 		toReturn.setCode(code);
 		toReturn.setMetric(metric);
 		toReturn.setStandardWeight(weight);
-		toReturn.setDocumentLabel(documentLabel);
+		//toReturn.setDocumentLabel(documentLabel);
 		toReturn.setKpiDsId(ds_id);
 		toReturn.setThreshold(threshold);
 
