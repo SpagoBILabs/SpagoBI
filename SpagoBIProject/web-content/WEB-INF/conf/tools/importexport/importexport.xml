@@ -12,6 +12,7 @@
 		<TRANSFORM from="2.3.0" to="2.4.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_3_0To2_4_0" />	
 		<TRANSFORM from="2.4.0" to="2.5.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_4_0To2_5_0" />	
 		<TRANSFORM from="2.5.0" to="2.6.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_5_0To2_6_0" />	
+		<TRANSFORM from="2.6.0" to="2.7.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_6_0To2_7_0" />
 		<!--
 		put transformers here using the syntax:
 		<TRANSFORM from="{from version}" to="{to version}" class="{transformer class complete name}" />

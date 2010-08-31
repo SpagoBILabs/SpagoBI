@@ -63,7 +63,6 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
@@ -77,6 +76,7 @@ import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiInstPeriod;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.MeasureUnit;
@@ -87,6 +87,7 @@ import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.dao.IMeasureUnitDAO;
 import it.eng.spagobi.kpi.config.dao.IPeriodicityDAO;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
@@ -619,6 +620,20 @@ public class ExporterMetadata {
 			logger.debug("OUT");
 		}
 	}	
+	
+	/*public void insertKpiDocuments(KpiDocuments docs, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Transaction tx = session.beginTransaction();
+			session.save(hibBIObj);
+			tx.commit();
+		}catch (Exception e) {
+			logger.error("Error while inserting biobject into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}*/
 
 	/**
 	 * Insert a biobject into the exported database.
@@ -1835,20 +1850,26 @@ public class ExporterMetadata {
 			}
 
 			// Load BI Object
-			if(kpi.getDocumentLabel()!=null){
-				IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
-				BIObject biobj = biobjDAO.loadBIObjectByLabel(kpi.getDocumentLabel());
-				if(biobj!=null){
-					//insertBIObject(biobj, session);
-					biObjectToInsert.add(biobj.getId());
-					hibKpi.setDocumentLabel(kpi.getDocumentLabel());
-				}
-				else{
-					logger.warn("the biObject with label "+kpi.getDocumentLabel() +"was not found");
+			//TODO lista documenti
+			if(kpi.getSbiKpiDocuments()!=null && !kpi.getSbiKpiDocuments().isEmpty() ){
+				List kpiDocsList = kpi.getSbiKpiDocuments();
+				Set sbiKpiDocumentses = new HashSet(0);
+				Iterator i = kpiDocsList.iterator();
+				while (i.hasNext()) {
+					
+					KpiDocuments doc = (KpiDocuments) i.next();					
+					String label = doc.getBiObjLabel();					
+					
+					IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
+					BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
+					if(biobj!=null){
+						insertBIObject(biobj, session);
+						doc.setBiObjId(biobj.getId());
+						//biObjectToInsert.add(biobj.getId());					
+					}						
 				}
 			}
-
-
+			
 			// Measure Unit   ???
 			if(kpi.getScaleCode()!=null && !kpi.getScaleCode().equalsIgnoreCase("")){
 				IMeasureUnitDAO muDao=DAOFactory.getMeasureUnitDAO();
@@ -1859,8 +1880,34 @@ public class ExporterMetadata {
 			}
 
 			Transaction tx = session.beginTransaction();
-			session.save(hibKpi);
+			Integer kpiIdReturned = (Integer)session.save(hibKpi);
 			tx.commit();
+			
+			List kpiDocsList = kpi.getSbiKpiDocuments();
+			Iterator i = kpiDocsList.iterator();
+			while (i.hasNext()) {
+				KpiDocuments doc = (KpiDocuments) i.next();
+				String label = doc.getBiObjLabel();
+				Integer origDocId = doc.getBiObjId();
+				Criterion labelCriterrion = Expression.eq("label",label);
+				Criteria criteria = session.createCriteria(SbiObjects.class);
+				criteria.add(labelCriterrion);
+				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+				
+				if(hibObject!=null){
+					SbiKpiDocument temp = new SbiKpiDocument();
+					temp.setSbiKpi(hibKpi);
+					temp.setSbiObjects(hibObject);
+					KpiDocuments docK = kpiDao.loadKpiDocByKpiIdAndDocId(kpiId, origDocId);
+					if(docK!=null && docK.getKpiDocId()!=null){
+						temp.setIdKpiDoc(docK.getKpiDocId());
+						Transaction tx2 = session.beginTransaction();
+						session.save(temp);
+						tx2.commit();
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");

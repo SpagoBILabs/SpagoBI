@@ -3,9 +3,8 @@ package it.eng.spagobi.kpi.config.dao;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
-import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
@@ -23,6 +22,8 @@ public interface IKpiDAO {
 	 * @throws EMFUserError If an Exception occurred
 	 */	
 	public Integer insertKpiValue(KpiValue value) throws EMFUserError;
+	
+	public KpiDocuments loadKpiDocByKpiIdAndDocId(Integer kpiId,Integer docId) throws EMFUserError ;
 
 	/**
 	 * Returns the ModelInstance of the referred label
