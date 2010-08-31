@@ -70,6 +70,8 @@ alter table SBI_KPI_ROLE ADD CONSTRAINT FK_SBI_KPI_ROLE_2 foreign key (EXT_ROLE_
 alter table SBI_KPI ADD CONSTRAINT FK_SBI_KPI_1 foreign key (id_measure_unit) references SBI_MEASURE_UNIT (id_measure_unit);\p\g
 alter table SBI_KPI ADD CONSTRAINT FK_SBI_KPI_2 foreign key (id_kpi_parent) references SBI_KPI (KPI_ID);\p\g
 alter table SBI_KPI ADD CONSTRAINT FK_SBI_KPI_3 foreign key (DS_ID) references SBI_DATA_SET (DS_ID);\p\g
+alter table SBI_KPI_DOCUMENTS ADD CONSTRAINT FK_SBI_KPI_DOC_1 foreign key (BIOBJ_ID) references SBI_OBJECTS (BIOBJ_ID) ;\p\g
+alter table SBI_KPI_DOCUMENTS ADD CONSTRAINT FK_SBI_KPI_DOC_2 foreign key (KPI_ID) references SBI_KPI (KPI_ID);\p\g
 alter table SBI_MEASURE_UNIT ADD CONSTRAINT FK_SBI_MEASURE_UNIT_1 foreign key (SCALE_TYPE_ID) references SBI_DOMAINS (VALUE_ID);\p\g
 alter table SBI_THRESHOLD ADD CONSTRAINT FK_SBI_THRESHOLD_1 foreign key (THRESHOLD_TYPE_ID) references SBI_DOMAINS (VALUE_ID);\p\g
 alter table SBI_THRESHOLD_VALUE ADD CONSTRAINT FK_SBI_THRESHOLD_VALUE_1 foreign key (SEVERITY_ID) references SBI_DOMAINS (VALUE_ID);\p\g
