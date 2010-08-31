@@ -122,7 +122,8 @@ Sbi.georeport.MainPanel = function(config) {
 			this.init3D.defer(500, this);
 		}
 		if(this.toolbarConf.enabled) {
-			this.initToolbarContent.defer(500, this);	
+			this.toolbar.initButtons.defer(500, this.toolbar);
+			//this.initToolbarContent.defer(500, this);	
 		}
 	}, this);
 	
@@ -502,6 +503,9 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	    };
 		
 		if(this.toolbarConf.enabled) {
+			this.toolbarConf.map = this.map;
+			this.toolbar = new Sbi.georeport.Toolbar(this.toolbarConf);
+			/*
 			this.loadingButton = new Ext.Toolbar.Button({
 	            tooltip: 'Please wait',
 	            iconCls: "x-tbar-loading"
@@ -514,7 +518,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			});
 			
 			this.loadingButton.disable();
-			
+			*/
 			mapPanelConf.tbar = this.toolbar;
 		}
 	 
