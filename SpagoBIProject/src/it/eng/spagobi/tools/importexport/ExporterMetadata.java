@@ -1848,27 +1848,6 @@ public class ExporterMetadata {
 				SbiThreshold sbiTh= (SbiThreshold) session.load(SbiThreshold.class, th.getId());
 				hibKpi.setSbiThreshold(sbiTh);
 			}
-
-			// Load BI Object
-			//TODO lista documenti
-			if(kpi.getSbiKpiDocuments()!=null && !kpi.getSbiKpiDocuments().isEmpty() ){
-				List kpiDocsList = kpi.getSbiKpiDocuments();
-				Set sbiKpiDocumentses = new HashSet(0);
-				Iterator i = kpiDocsList.iterator();
-				while (i.hasNext()) {
-					
-					KpiDocuments doc = (KpiDocuments) i.next();					
-					String label = doc.getBiObjLabel();					
-					
-					IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
-					BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
-					if(biobj!=null){
-						insertBIObject(biobj, session);
-						doc.setBiObjId(biobj.getId());
-						//biObjectToInsert.add(biobj.getId());					
-					}						
-				}
-			}
 			
 			// Measure Unit   ???
 			if(kpi.getScaleCode()!=null && !kpi.getScaleCode().equalsIgnoreCase("")){
@@ -1888,6 +1867,14 @@ public class ExporterMetadata {
 			while (i.hasNext()) {
 				KpiDocuments doc = (KpiDocuments) i.next();
 				String label = doc.getBiObjLabel();
+				
+				IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
+				BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
+				if(biobj!=null){
+					insertBIObject(biobj, session);
+					doc.setBiObjId(biobj.getId());				
+				}
+				
 				Integer origDocId = doc.getBiObjId();
 				Criterion labelCriterrion = Expression.eq("label",label);
 				Criteria criteria = session.createCriteria(SbiObjects.class);

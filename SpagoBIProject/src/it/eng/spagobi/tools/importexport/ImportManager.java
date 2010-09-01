@@ -25,6 +25,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -36,10 +38,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId;
@@ -64,6 +63,7 @@ import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
@@ -86,7 +86,6 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.importexport.bo.AssociationFile;
 import it.eng.spagobi.tools.importexport.transformers.TransformersUtilities;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 
@@ -98,6 +97,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -106,11 +106,14 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
 
 /**
  * Implements the interface which defines methods for managing the import
@@ -3153,26 +3156,51 @@ public class ImportManager implements IImportManager, Serializable {
 				} else {
 					existingKpiId = (Integer) kpiIdAss.get(oldId);
 				}
+				SbiKpi referenceKpi = null;
 				if (existingKpiId != null) {
 					logger.info("The kpi with id:[" + exportedKpi.getKpiId() + "] is just present. It will be updated.");
 					metaLog.log("The kpi with code = [" + exportedKpi.getCode() + "] will be updated.");
 					SbiKpi existingKpi = ImportUtilities.modifyExistingSbiKpi(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
+					existingKpi.setSbiKpiDocumentses(new HashSet(0));
 					// TODO manca da associare il kpi alle nuove realtà
 					//ImportUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.update(existingKpi);
+					referenceKpi = existingKpi;
 				} else {
 					SbiKpi newKpi = ImportUtilities.makeNewSbiKpi(exportedKpi, sessionCurrDB, metaAss);
+					newKpi.setSbiKpiDocumentses(new HashSet(0));
 					// TODO manca da associare il kpi con le entita
 					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newKpi);
 					metaLog.log("Inserted new kpi " + newKpi.getName());
 					Integer newId = newKpi.getKpiId();
 					metaAss.insertCoupleKpi(oldId, newId);
+					referenceKpi = newKpi;
+				}
+				
+				Set kpiDocsList = exportedKpi.getSbiKpiDocumentses();
+				Iterator i = kpiDocsList.iterator();
+				while (i.hasNext()) {
+					SbiKpiDocument doc = (SbiKpiDocument) i.next();
+					if(doc!=null){
+						String label = doc.getSbiObjects().getLabel();
+						
+						if(label!=null && referenceKpi!=null){		
+							Criterion labelCriterrion = Expression.eq("label",label);
+							Criteria criteria = sessionCurrDB.createCriteria(SbiObjects.class);
+							criteria.add(labelCriterrion);
+							SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+							SbiKpiDocument docToBeSaved = new SbiKpiDocument();
+							docToBeSaved.setSbiKpi(referenceKpi);
+							docToBeSaved.setSbiObjects(hibObject);
+							sessionCurrDB.save(docToBeSaved);
+						}
+					}
 				}
 			}
 		} catch (Exception e) {
 			if (exportedKpi != null) {
-				logger.error("Error while importing exported kpi with coe [" + exportedKpi.getCode() + "].", e);
+				logger.error("Error while importing exported kpi with code [" + exportedKpi.getCode() + "].", e);
 			}
 			else{
 				logger.error("Error while inserting kpi ", e);
