@@ -282,8 +282,8 @@ Ext.extend(CrossTab, Ext.Panel, {
 	//    |y1|y2|x1|x2|x3|
 	//    ----------------
     //Recursive function that builds the header panels (i.e. columnHeader and rowHeader)  
-    //line: the definition of the line (a line is a level of headers) with the headers (for example [["x",[["x1"],["x2"],["x3"]]],["y",[["y1"],["y2"]]]])
-    //level: the header level. For example the level of x is 1
+    //line: the definition of a subtree (for example ["x",[["x1"],["x2"],["x3"]] or ["y",[["y1"],["y2"]]])
+    //level: the header level. For example the level of x is 1, for x1 is 2
     //headers: Or columnHeader or rowHeader
     //horizontal: true for columnHeader and false for rowHeader 
      , build : function(line, level, headers, horizontal){
