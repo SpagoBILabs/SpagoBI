@@ -86,8 +86,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String NODES_TO_SAVE = "nodes";
 	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
 
-	private Stack <ModelInstance> stackForRec ;
-
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -154,8 +152,12 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 					
 					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
-						modelNodesDD.add(modelNodes.get(0));
-						stackForRec = new Stack <ModelInstance>();	
+						if(modelNodes != null && !modelNodes.isEmpty()){
+							//new root node added
+							modelNodesDD.add(modelNodes.get(0));
+						}else{
+							//root existing
+						}
 						recursiveStart(modelNodesDD, null);
 					}else{
 						//save existing nodes 
