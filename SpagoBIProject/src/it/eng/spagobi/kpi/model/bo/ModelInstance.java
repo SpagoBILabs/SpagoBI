@@ -21,7 +21,7 @@ public class ModelInstance implements Serializable{
 	private Date endDate;
 	private String modelUUID;
 	private String guiId = null;
-	
+
 	public String getLabel() {
 		return label;
 	}

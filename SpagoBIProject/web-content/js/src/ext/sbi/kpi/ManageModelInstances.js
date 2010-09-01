@@ -83,6 +83,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, mainElementsStore:null
 	, root:null
 	, referencedCmp : null
+	, droppedSubtreeToSave: new Array()
 
 
 	,initConfigObject: function(){
@@ -207,14 +208,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             fieldLabel:LN('sbi.generic.name'),
 	             readOnly:true,
 	             style: '{ color: #ffffff; border: 1px solid white; font-style: italic;}',
-	             name: 'name'
+	             name: 'srcname'
 	         });	  
 
 	 	   this.srcModelCode = new Ext.form.TextField({
 	             readOnly: true,
 	             fieldLabel: LN('sbi.generic.code'),
 	             style: '{  color: #ffffff; border: 1px solid white; font-style: italic;}',
-	             name: 'code'
+	             name: 'srccode'
 	         });
 
 	 	   this.srcModelDescr = new Ext.form.TextArea({
@@ -224,21 +225,21 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	             height : 80,
 	             style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.descr'),
-	             name: 'description'
+	             name: 'srcdescription'
 	         });
 
 	 	     this.srcModelType = new Ext.form.TextField({
 	 		   	 readOnly: true,
 	 		   	style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodetype'),
-	             name: 'type'
+	             name: 'srctype'
 	         });
 
 		 	 this.srcModelTypeDescr = new Ext.form.TextField({
 	             readOnly: true,
 	             style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodedescr'),
-	             name: 'typeDescr'
+	             name: 'srctypeDescr'
 	         });
 
 	}
@@ -281,10 +282,35 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             scope		: this,
             items       : [manageThresholds]
 		});
-		manageThresholds.on('selectEvent', function(itemId,index, code){this.thrWin.close();Ext.getCmp('kpiThresholdF').setValue(code);}, this);
+		manageThresholds.on('selectEvent', function(itemId ,index, code){
+												this.thrWin.close();
+												Ext.getCmp('kpiThresholdF').setValue(code);
+											}, this);
 		this.thrWin.show();
 	}
+	, editNodeAttribute: function(field, newVal, oldVal) {
+		var node = this.selectedNodeToEdit;
+		if (node !== undefined && node !== null) {
+			node.attributes.toSave = true;
+			var fName = field.name;
+			node.attributes[fName] = newVal;
+			
+		}
+	}
+
+	,selectNode : function(field) {
+		
+		/*utility to store node that has been edited*/
+		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
+		
+		if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
+			var size = this.nodesToSave.length;
+			this.nodesToSave[size] = this.selectedNodeToEdit;
+		}//else skip because already taken
+		
+	}
 	, initKpiPanel: function() {
+
 		
 		this.kpiModelType = new Ext.form.RadioGroup({
             fieldLabel: LN('sbi.generic.type'),	             
@@ -321,7 +347,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
              readOnly: true,
              style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
              value: 'drop kpi here...',
-             name: 'kpiname'
+             name: 'kpiName'
          });	  
  	    this.kpiName.addListener('render', this.configureDD2, this);
  	    this.kpiName.addListener('focus', this.kpiFiledNotify, this);
@@ -330,7 +356,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	 	 this.kpiThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
  		     fieldLabel: 'Threshold',
- 		     name: 'threshold',
+ 		     name: 'kpiInstThrName',
  		     id: 'kpiThresholdF'
  		    });
  	 	 this.kpiThreshold.onTriggerClick = this.launchThrWindow;
@@ -338,13 +364,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiWeight = new Ext.form.TextField({
             readOnly: false,
             fieldLabel: 'Weight',
-            name: 'kpiWeight'
+            name: 'kpiInstWeight'
         });
 		
 		this.kpiTarget = new Ext.form.TextField({
             readOnly: false,
             fieldLabel: 'Target',
-            name: 'kpiTarget'
+            name: 'kpiInstTarget'
         });
 		// periodicity----------------
 	    this.periodicityStore = new Ext.data.SimpleStore({
@@ -353,7 +379,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	        autoLoad: false
 	    });
 		this.kpiPeriodicity = new Ext.form.ComboBox({
-      	    name: 'kpiPeriodicity',
+      	    name: 'kpiInstPeriodicity',
             store: this.periodicityStore,
             //width : 120,
             fieldLabel: 'Periodicity',
@@ -383,7 +409,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	        autoLoad: false
 	    });
 		this.kpiChartType =  new Ext.form.ComboBox({
-	      	    name: 'kpiChartType',
+	      	    name: 'kpiInstChartTypeId',
 	            store: this.chartTypeStore,
 	            //width : 120,
 	            fieldLabel: 'Chart type',
@@ -402,7 +428,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiLabel = new Ext.form.TextField({
              readOnly: false,
              fieldLabel: LN('sbi.generic.label'),
-             name: 'kpiLabel'
+             name: 'modelUuid'
          });
 		
 
@@ -445,6 +471,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
+
 	}
 	, kpiFiledNotify : function() {
 		this.kpiName.getEl().highlight('#E27119');
@@ -481,7 +508,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 						  node.attributes.toSave = true;
 			    	  }
 			    	  
-				      node.attributes.kpiInstId = selectedRecord.get('id');
+				      node.attributes.kpiId = selectedRecord.get('id');
 			      }
 			      Ext.fly(this.getEl()).frame("ff0000");
 			      return(true);
@@ -524,6 +551,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		var hasKpiInst = node.attributes.kpiInst;
 		var hasKpiModelUuid = node.attributes.modelUuid;
+		var hasKpi = node.attributes.kpiId;
 		if(hasKpiInst !== undefined && hasKpiInst != null){
 
 			this.kpiName.setValue(node.attributes.kpiName);
@@ -548,13 +576,36 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset2.doLayout();
 
+		}else if(hasKpi !== undefined && hasKpi != null){
+			if(node.attributes.kpi){
+				//dropped node from model tree
+				this.kpiName.setValue(node.attributes.kpi);
+			}else{
+				//new node
+				this.kpiName.setValue(node.attributes.kpiName);
+			}
+/*			
+			this.kpiName.setValue(node.attributes.kpiName);
+			this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
+			this.kpiTarget.setValue(node.attributes.kpiInstTarget);
+			this.kpiWeight.setValue(node.attributes.kpiInstWeight);
+			this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
+			this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
+			*/
+			this.kpiInstFieldset.setVisible(true);
+			this.kpiInstFieldset2.setVisible(false);			
+			this.kpiModelType.onSetValue( 'kpiinst', true);
+			this.kpiPeriodicityButton.enable();
+			this.kpiInstFieldset.doLayout();
+
 		}else{
 			//alert("nothing associated");
 			this.clearKpiInstanceTabForm();
 		}
 		this.kpiInstTypeFieldset.setVisible(true);
 		this.kpiInstTypeFieldset.doLayout();
-		
+
+
 	}
 	, clearKpiInstanceTabForm: function(){
 		this.kpiName.setValue(null);
@@ -566,13 +617,37 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiLabel.setValue(null);
 	}
+/*	, completeDroppedNode: function(node, id, parent){
+		alert("id:"+id+" parent:"+parent);
+		var counter = 0;
+		var resultNode = node;
+		if(id == null){
+			resultNode.attributes.id = 'generatedId_'+counter;
+		}else{
+			resultNode.attributes.id = id;
+		}	
+		if(parent != null){
+			resultNode.attributes.parentId = parent;
+		}	
+		//Add child nodes if any
+		var children = node.childNodes;
+		var clen = children.length;
+		if(clen != 0){
+		    for(var i = 0; i < clen; i++){
+		        this.completeDroppedNode(children[i], counter, id);
+		        counter++;
+		    }
+
+		}
+		return resultNode;
+	}*/
     //OVERRIDING save method
 	,save : function() {
+
     	var jsonStr = '[';
 
 		Ext.each(this.nodesToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){
-				//alert(node.attributes.name);
 				jsonStr += Ext.util.JSON.encode(node.attributes);
 				jsonStr +=',';
 			}
@@ -580,8 +655,22 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		jsonStr += ']';
 		
+		var jsonDroppedStr = '[';
+		//extracts dropped nodes
+		var JsonSer = new Sbi.widgets.JsonTreeSerializer(this.mainTree);
+
+		Ext.each(this.droppedSubtreeToSave, function(node, index) {
+			if(node instanceof Ext.tree.TreeNode){
+				alert(JsonSer.nodeToString(node));
+				jsonDroppedStr += JsonSer.nodeToString(node);
+				jsonDroppedStr +=',';
+			}
+		}, this);
+		jsonDroppedStr += ']';
+		
 		var params = {
-			nodes : jsonStr
+			nodes : jsonStr,
+			droppedNodes : jsonDroppedStr
 		};
 
 		Ext.Ajax.request( {
@@ -594,7 +683,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      				for (var key in content) {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
-		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
+		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelInstId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
 		 		      			  ///contains error gui ids      						  
@@ -616,7 +705,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      					///success no errors!
 	      					this.cleanAllUnsavedNodes();
 	      					alert(LN('sbi.generic.resultMsg'));
-		      				this.referencedCmp.modelsGrid.mainElementsStore.load();
+		      				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
 	      				}
 	      			}else{
 	      				alert(LN('sbi.generic.savingItemError'));
@@ -624,11 +713,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				}else{
       				this.cleanAllUnsavedNodes();
       				alert(LN('sbi.generic.resultMsg'));
-      				this.referencedCmp.modelsGrid.mainElementsStore.load();
+      				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
 				}
       			this.mainTree.doLayout();
-      			this.referencedCmp.modelsGrid.getView().refresh();
-				this.referencedCmp.modelsGrid.doLayout();
+      			this.referencedCmp.modelInstancesGrid.getView().refresh();
+				this.referencedCmp.modelInstancesGrid.doLayout();
 				
 				
 				
@@ -644,7 +733,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		
     }
-	,saveParentNode : function(parent, child) {
+
+/*	,saveParentNode : function(parent, child) {
 		var jsonStr = '[';
     	jsonStr +=  Ext.util.JSON.encode(parent.attributes)
     	jsonStr += ']';
@@ -663,7 +753,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      				for (var key in content) {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
-		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
+		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelInstId if operation succeded
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
 		 		      			  ///contains error gui ids      						  
@@ -671,7 +761,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      						  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 1px solid red; font-weight: bold; font-style: italic; color: #cd2020; text-decoration: underline; }');
 		      				  }else{
 		      					  nodeSel.attributes.error = false; 
-		      					  nodeSel.attributes.modelId = value; 
+		      					  nodeSel.attributes.modelInstId = value; 
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  
 		      					  //completes child node instanciation
@@ -719,20 +809,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			params : params
 		});
 		
-    }
-
-	, editNodeAttribute: function(field, newVal, oldVal) {
-		var node = this.selectedNodeToEdit;
-		if (node !== undefined && node !== null) {
-			node.attributes.toSave = true;
-			var fName = field.name;
-			if(fName == 'description'){
-				node.attributes.description = newVal;
-			}else if(fName == 'label'){
-				node.attributes.label = newVal;
-			}
-		}
-	}
+    }*/
 
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
@@ -749,16 +826,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		tree.getLoader().nodeParameter = 'modelInstId';
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
-	,selectNode : function(field) {
-		//alert("selectNode");
-		/*utility to store node that has been edited*/
-		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
-		
-		if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
-			var size = this.nodesToSave.length;
-			this.nodesToSave[size] = this.selectedNodeToEdit;
-		}//else skip because already taken
-	}
+
 	,setListeners : function() {
 		this.mainTree.getSelectionModel().addListener('selectionchange',
 				this.fillDetail, this);		
@@ -778,7 +846,27 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		this.detailFieldLabel.addListener('focus', this.selectNode, this);
 		this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
-
+		
+		this.kpiThreshold.addListener('focus', this.selectNode, this);
+		this.kpiThreshold.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiTarget.addListener('focus', this.selectNode, this);
+		this.kpiTarget.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiWeight.addListener('focus', this.selectNode, this);
+		this.kpiWeight.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiChartType.addListener('focus', this.selectNode, this);
+		this.kpiChartType.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiPeriodicity.addListener('focus', this.selectNode, this);
+		this.kpiPeriodicity.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiName.addListener('focus', this.selectNode, this);
+		this.kpiName.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiLabel.addListener('focus', this.selectNode, this);
+		this.kpiLabel.addListener('change', this.editNodeAttribute, this);
 
 	}
 	,createRootNodeByRec: function(rec) {
@@ -874,12 +962,25 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			   e.cancel = true;
 			   //if parents have same depth --> enable kind of drop else forbid
 			   if(srcNodeDepth == targetNodeDepth){
-				   parentNode.appendChild(copiedNode);			
+				   
+				   copiedNode.attributes.toSave = true;
+				   copiedNode.attributes.parentId = parentNode.attributes.modelInstId;
+				   
+				   if(importSub){
+					   copiedNode.expand(true);
+					   copiedNode.attributes.saveChildren = true;
+				   }else{
+					   copiedNode.attributes.saveChildren = false;
+				   }
+				   parentNode.appendChild(copiedNode);	
+
+			       
+			       var ddLength = this.droppedSubtreeToSave.length;
+
+			       this.droppedSubtreeToSave[ddLength] = copiedNode;
 			   }else{
 				   alert("Nodes hierarchy must be respected!");
 			   }		   
-		   }else{
-			   alert("eee");
 		   }
 
 

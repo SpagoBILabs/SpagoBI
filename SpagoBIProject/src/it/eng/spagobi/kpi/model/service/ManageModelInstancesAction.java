@@ -23,7 +23,6 @@ package it.eng.spagobi.kpi.model.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.analiticalmodel.document.x.SaveMetadataAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
@@ -33,11 +32,10 @@ import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResources;
 import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
 import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
+import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -48,7 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -56,8 +54,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.sun.org.apache.regexp.internal.RESyntaxException;
 
 public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	/**
@@ -88,8 +84,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	public static Integer LIMIT_DEFAULT = 16;
 	
 	private final String NODES_TO_SAVE = "nodes";
+	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
 
-
+	private Stack <ModelInstance> stackForRec ;
 
 	@Override
 	public void doService() {
@@ -146,14 +143,27 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODES_SAVE)) {
 			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
+			JSONArray droppedNodesToSaveJSON = getAttributeAsJSONArray(DROPPED_NODES_TO_SAVE);
+			
 			List<ModelInstance> modelNodes = null;
+			List<ModelInstance> modelNodesDD = null;
 			if(nodesToSaveJSON != null){
 				try {
-					modelNodes = deserializeNodesJSONArray(nodesToSaveJSON);
+					modelNodes = deserializeJSONArray(nodesToSaveJSON);
+					modelNodesDD = deserializeNodesJSONArrayDD(droppedNodesToSaveJSON);
+
 					
-					//save them
-					JSONObject response = saveModelNodeInstances(modelNodes);
-					writeBackToClient(new JSONSuccess(response));
+					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
+						modelNodesDD.add(modelNodes.get(0));
+						stackForRec = new Stack <ModelInstance>();	
+						recursiveStart(modelNodesDD, null);
+					}else{
+						//save existing nodes 
+						JSONObject response = saveModelNodeInstances(modelNodes);
+						writeBackToClient(new JSONSuccess(response));
+					}
+
+					writeBackToClient(new JSONSuccess("OK"));
 					
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -351,35 +361,271 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	private List<ModelInstance> deserializeNodesJSONArray(JSONArray rows) throws JSONException{
+
+	private void recursiveStart(List<ModelInstance> modelInstList, Integer idToSearch){
+		//first time--> searches for root
+		boolean findRoot = false;
+		if(idToSearch == null){
+			findRoot = true;
+		}
+		List<ModelInstance> nodes = findNextNodes(modelInstList, idToSearch, findRoot);
+	
+		while(nodes.iterator().hasNext()){
+			ModelInstance modInst = nodes.iterator().next();
+			stackForRec.add(modInst);
+			recurseOverTree(modelInstList, modInst, idToSearch);
+
+		}
+
+		
+	}
+	private void recurseOverTree(List<ModelInstance> modelInstList,ModelInstance modelInstance, Integer parentId){
+		while(stackForRec.iterator().hasNext()){
+			ModelInstance modInstToSave = stackForRec.iterator().next();
+			//found  root child
+			Integer oldId = modInstToSave.getId();//incorrect
+			modInstToSave.setParentId(parentId);				
+			//save it 
+			try {
+				Integer genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
+				modInstToSave.setId(genId);
+
+				recursiveStart(modelInstList, oldId);
+			} catch (EMFUserError e) {
+				stackForRec.remove(modelInstance);
+			}
+		}
+		stackForRec.remove(modelInstance);
+	}
+	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer idToSearch, boolean isRoot){
+		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
+		for(int i=0; i< modelInstList.size(); i++){			
+			ModelInstance modInstToSave = (ModelInstance)modelInstList.get(i);
+			if(isRoot){
+				if(modInstToSave.getParentId() == idToSearch 
+						&& !modInstToSave.getGuiId().matches("^\\d+$")){
+					nodes.add(modInstToSave);
+				}
+			}else{
+				if(modInstToSave.getParentId() == idToSearch 
+						&& modInstToSave.getGuiId().matches("^\\d+$")){
+					nodes.add(modInstToSave);
+				}
+			}
+
+		}
+		return nodes;
+	}
+	private List<ModelInstance> deserializeNodesJSONArrayDD(JSONArray rows) throws JSONException{
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
 
-/*, 
-kpiId, 
-kpiInstThrId, 
-kpiInstTarget, 
-toSave, 
-kpiInstPeriodicity, 
-id, 
-modelType, 
-modelName, 
-name, 
-modelTypeDescr, 
-kpiName, 
-kpiInstWeight
-, kpiInstThrName, 
-modelCode, 
-kpiInst*/
+		for(int i=0; i< rows.length(); i++){
+			
+			JSONObject obj = (JSONObject)rows.get(i);
+			ModelInstance modelInst = deserializeJSONObjectDD(obj);
+
+			toReturn.add(modelInst);
+		}	
+		return toReturn;
+	}
+	private ModelInstance deserializeJSONObjectDD (JSONObject obj)throws JSONException{
+		
+		ModelInstance modelInst = new ModelInstance();
+
+		String guiId = "";
+		try{
+			guiId = obj.getString("id");
+			modelInst.setGuiId(guiId);
+		}catch(Throwable t){
+			//nothing--> new node dropped!
+			modelInst.setGuiId(null);
+		}
+		
+		try{
+			
+			modelInst.setId(obj.getInt("modelInstId"));
+		}catch(Throwable t){
+			//nothing
+			modelInst.setId(null);
+		}
+		
+		try{
+			modelInst.setParentId(obj.getInt("parentId"));
+		}catch(Throwable t){
+			modelInst.setParentId(null);
+		}
+
+		try{
+			String descr ;
+			try{
+				descr = obj.getString("description");
+			}catch(Throwable t){
+				descr = null;
+			}
+			modelInst.setDescription(descr);
+			String label ;
+			try{
+				label = obj.getString("label");
+			}catch(Throwable t){
+				label = null;
+			}
+			modelInst.setLabel(label);
+			String name ;
+			try{
+				name = obj.getString("name");
+			}catch(Throwable t){
+				name = null;
+			}
+			modelInst.setName(name);
+
+			Integer modelId = obj.getInt("modelId");
+			try{
+				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
+				modelInst.setModel(model);
+			}catch(Throwable t){
+				//nothing
+				modelInst.setModel(null);
+			}
+			
+			//children
+			JSONArray children ;
+			try{
+				children = obj.getJSONArray("children");
+				List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
+				for(int k=0; k<children.length(); k++){
+					JSONObject jsonchild = (JSONObject)children.get(k);
+					childrenMI.add(deserializeJSONObjectDD(jsonchild));
+				}
+				modelInst.setChildrenNodes(childrenMI);
+			}catch(Throwable t){
+				//nothing
+				modelInst.setChildrenNodes(null);
+			}
+			
+			try{
+				IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
+				String kpiIdStr ;
+				try{
+				    kpiIdStr = obj.getString("kpiId");
+				}catch(Throwable t){
+					kpiIdStr = null;
+				}
+				String kpiInIDStr;
+				try{
+					kpiInIDStr = obj.getString("kpiInstId");
+				}catch(Throwable t){
+					kpiInIDStr = null;
+				
+				}
+				KpiInstance kpiInstance = null;
+				if(kpiInIDStr != null){
+					//existing kpi instance means model instance exists
+					kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
+					modelInst.setKpiInstance(kpiInstance);
+				}else{
+					//or defined model uuid
+					String modelUuid;
+					try{
+						modelUuid = obj.getString("modelUuid");
+					}catch(Throwable t){
+						modelUuid = null;
+					
+					}
+					//new kpi instance 
+					if(kpiIdStr != null){
+						kpiInstance = new KpiInstance();
+						String kpiInstPeriodicity;
+						try{
+							kpiInstPeriodicity = obj.getString("kpiInstPeriodicity");
+							kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
+						}catch(Throwable t){
+							kpiInstPeriodicity = null;
+						
+						}
+						
+						
+						String kpiInstChartTypeId;
+						try{
+							kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
+							kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
+						}catch(Throwable t){
+							kpiInstChartTypeId = null;
+						
+						}
+						
+						String kpiInstTarget;
+						try{
+							kpiInstTarget = obj.getString("kpiInstTarget");
+							kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
+						}catch(Throwable t){
+							kpiInstTarget = null;
+						
+						}
+						
+						
+						String kpiInstThrCode;
+						try{
+							kpiInstThrCode = obj.getString("kpiInstThrName");
+							Threshold thr = DAOFactory.getThresholdDAO().loadThresholdByCode(kpiInstThrCode);
+							if(thr != null){
+								kpiInstance.setThresholdId(thr.getId());
+							}
+						}catch(Throwable t){
+							kpiInstThrCode = null;
+						
+						}
+						
+						String kpiInstWeight;
+						try{
+							kpiInstWeight = obj.getString("kpiInstWeight");
+							kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
+						}catch(Throwable t){
+							kpiInstWeight = null;
+						
+						}
+						
+						
+						kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
+						modelInst.setKpiInstance(kpiInstance);
+					}						
+
+					else if(modelUuid != null){
+						modelInst.setModelUUID(modelUuid);
+					}
+					//or noone
+					
+				}
+				
+			}catch(Throwable t){
+				//nothing
+				modelInst.setKpiInstance(null);
+			}
+			String value = obj.getString("toSave");
+		}catch(Throwable t){
+			logger.debug("Deserialization error on node: "+guiId);
+		}
+		return null;
+	}
+	private List<ModelInstance> deserializeJSONArray(JSONArray rows) throws JSONException{
+		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
+
 		for(int i=0; i< rows.length(); i++){
 			
 			JSONObject obj = (JSONObject)rows.get(i);
 
 			ModelInstance modelInst = new ModelInstance();
-			//always present guiId
-			String guiId = obj.getString("id");
-			modelInst.setGuiId(guiId);
+
+			String guiId = "";
+			try{
+				guiId = obj.getString("id");
+				modelInst.setGuiId(guiId);
+			}catch(Throwable t){
+				//nothing--> new node dropped!
+				modelInst.setGuiId(null);
+			}
 
 			try{
+				
 				modelInst.setId(obj.getInt("modelInstId"));
 			}catch(Throwable t){
 				//nothing
@@ -392,11 +638,43 @@ kpiInst*/
 				//nothing
 				modelInst.setParentId(null);
 			}
+
 			try{
-				
-				modelInst.setDescription(obj.getString("description"));
-				modelInst.setLabel(obj.getString("label"));
-				modelInst.setName(obj.getString("name"));
+				String descr ;
+				try{
+					descr = obj.getString("description");
+				}catch(Throwable t){
+					descr = null;
+				}
+				modelInst.setDescription(descr);
+				String label ;
+				try{
+					label = obj.getString("label");
+				}catch(Throwable t){
+					label = null;
+				}
+				modelInst.setLabel(label);
+				String name ;
+				try{
+					name = obj.getString("name");
+				}catch(Throwable t){
+					name = null;
+				}
+				modelInst.setName(name);
+				//children
+				JSONArray children ;
+				try{
+					children = obj.getJSONArray("children");
+					List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
+					for(int k=0; k<children.length(); k++){
+						JSONObject jsonchild = (JSONObject)children.get(k);
+						childrenMI.add(deserializeJSONObjectDD(jsonchild));
+					}
+					modelInst.setChildrenNodes(childrenMI);
+				}catch(Throwable t){
+					//nothing
+					modelInst.setChildrenNodes(null);
+				}
 				Integer modelId = obj.getInt("modelId");
 				try{
 					Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
@@ -408,31 +686,98 @@ kpiInst*/
 				}
 				try{
 					IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
-					String kpiIdStr = obj.getString("kpiId");
-					String kpiIIDStr = obj.getString("kpiInstId");
-					if(kpiIIDStr != null){
-						//existing kpi instance
-						KpiInstance kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
+					String kpiIdStr ;
+					try{
+					    kpiIdStr = obj.getString("kpiId");
+					}catch(Throwable t){
+						kpiIdStr = null;
+					}
+					String kpiInIDStr;
+					try{
+						kpiInIDStr = obj.getString("kpiInstId");
+					}catch(Throwable t){
+						kpiInIDStr = null;
+					
+					}
+					KpiInstance kpiInstance = null;
+					if(kpiInIDStr != null){
+						//existing kpi instance means model instance exists
+						kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
 						modelInst.setKpiInstance(kpiInstance);
 					}else{
+						//or defined model uuid
+						String modelUuid;
+						try{
+							modelUuid = obj.getString("modelUuid");
+						}catch(Throwable t){
+							modelUuid = null;
+						
+						}
 						//new kpi instance 
 						if(kpiIdStr != null){
-							KpiInstance kpiInstance = new KpiInstance();
-							kpiInstance.setPeriodicityId(obj.getInt("kpiInstPeriodicity"));
-							kpiInstance.setChartTypeId(obj.getInt("kpiInstChartTypeId"));
-							if(obj.getString("kpiInstTarget") != null)
-								kpiInstance.setTarget(Double.valueOf(obj.getString("kpiInstTarget")));
-							kpiInstance.setThresholdId(obj.getInt("kpiInstThrId"));
-							if(obj.getString("kpiInstWeight") != null)
-								kpiInstance.setWeight(Double.valueOf(obj.getString("kpiInstWeight")));
+							kpiInstance = new KpiInstance();
+							String kpiInstPeriodicity;
+							try{
+								kpiInstPeriodicity = obj.getString("kpiInstPeriodicity");
+								kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
+							}catch(Throwable t){
+								kpiInstPeriodicity = null;
+							
+							}
+							
+							
+							String kpiInstChartTypeId;
+							try{
+								kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
+								kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
+							}catch(Throwable t){
+								kpiInstChartTypeId = null;
+							
+							}
+							
+							String kpiInstTarget;
+							try{
+								kpiInstTarget = obj.getString("kpiInstTarget");
+								kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
+							}catch(Throwable t){
+								kpiInstTarget = null;
+							
+							}
+							
+							
+							String kpiInstThrCode;
+							try{
+								kpiInstThrCode = obj.getString("kpiInstThrName");
+								Threshold thr = DAOFactory.getThresholdDAO().loadThresholdByCode(kpiInstThrCode);
+								if(thr != null){
+									kpiInstance.setThresholdId(thr.getId());
+								}
+							}catch(Throwable t){
+								kpiInstThrCode = null;
+							
+							}
+							
+							String kpiInstWeight;
+							try{
+								kpiInstWeight = obj.getString("kpiInstWeight");
+								kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
+							}catch(Throwable t){
+								kpiInstWeight = null;
+							
+							}
+							
+							
 							kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
+							modelInst.setKpiInstance(kpiInstance);
+						}						
+
+						else if(modelUuid != null){
+							modelInst.setModelUUID(modelUuid);
 						}
-						
-						//or defined model uuid
-						
 						//or noone
 						
 					}
+					
 				}catch(Throwable t){
 					//nothing
 					modelInst.setKpiInstance(null);
@@ -456,6 +801,106 @@ kpiInst*/
 		}
 		return toReturn;
 	}
+	private String isAlreadyInserted(TreeMap<String, ModelInstance> treeMap, Integer parentId){
+		String ret = "";
+		while(treeMap.keySet().iterator().hasNext()){
+			String key = treeMap.keySet().iterator().next();
+			if(!key.startsWith(parentId+"_")){
+				ret = parentId+"_0";
+			}else{
+				int pos = key.indexOf("_");
+				String progr = key.substring(pos+1);
+				ret = parentId+"_"+(Integer.valueOf(progr)+1);
+			}
+		}
+		return ret;
+	}
+	private JSONObject saveNewModelNodeInstances(List<ModelInstance> nodesToSaveDD, JSONObject respObj, ModelInstance root) throws JSONException{
+		JSONArray errorNodes = new JSONArray();		
+		
+		//loop over nodes and order them by parentId ascending
+		TreeMap<String, ModelInstance> treeMap = new TreeMap<String, ModelInstance>();
+		
+		for(int i= 0; i<nodesToSaveDD.size(); i++){
+			
+			ModelInstance modelInstance = (ModelInstance)nodesToSaveDD.get(i);
+			//loads all nodes guiid with type error
+			
+			respObj.put(modelInstance.getGuiId(), "OK");
+			
+			//added with DD
+			if(modelInstance.getId() == null){
+				if(modelInstance.getParentId() == null){
+					//added under newly created root
+					modelInstance.setParentId(root.getId());
+				}//wrong parent id but keep it
+
+				//already inserted with same parentId?
+				treeMap.put(isAlreadyInserted(treeMap, modelInstance.getParentId()), modelInstance);			
+			}//else skipelse
+			{
+				respObj.put(modelInstance.getGuiId(), "KO");
+			}
+		}
+		
+		Set set = treeMap.entrySet();
+		// Get an iterator
+		Iterator it = set.iterator(); 
+		//loop again over treemap
+		while(it.hasNext()) {
+			Map.Entry orderedEntry = (Map.Entry)it.next();
+			ModelInstance orderedNode = (ModelInstance)orderedEntry.getValue();
+			
+			//GET JSON OBJECT VALUE
+			Integer parentId = orderedNode.getParentId();
+			try {
+
+				Integer newId = DAOFactory.getModelInstanceDAO().insertModelInstance(orderedNode);
+				if (newId != null){
+					orderedNode.setId(newId);
+					respObj.put(orderedNode.getGuiId(), newId);
+				}else{						
+					respObj.put(orderedNode.getGuiId(), "KO");
+				}
+					
+			} catch (Exception e) {
+				//if parentId != null but no parent node stored on db --> exception
+				respObj.put(orderedNode.getGuiId(), "KO");
+			}
+
+		} 
+		return respObj;
+	}
+	private ModelInstance saveNewModelInstanceRoot(List<ModelInstance> nodesToSave) throws JSONException{
+
+		for(int i= 0; i<nodesToSave.size(); i++){
+			ModelInstance modelInstance = (ModelInstance)nodesToSave.get(i);
+			if(modelInstance.getId() == null &&
+					modelInstance.getParentId() == null &&
+					modelInstance.getGuiId() == null){
+				//new model instance root --> insert it first
+				logger.debug("new model instance root");
+				Integer index = null;
+				try {
+					index = DAOFactory.getModelInstanceDAO().insertModelInstance(modelInstance);
+					modelInstance.setGuiId(index+"");
+					modelInstance.setId(index);
+					modelInstance.setParentId(null);
+					nodesToSave.remove(i);
+					
+				} catch (EMFUserError e) {
+					modelInstance.setGuiId(null);
+					modelInstance.setId(null);
+					modelInstance.setParentId(null);
+					nodesToSave.remove(i);
+				}
+				
+				return modelInstance;
+			}
+			
+		}
+		return null;
+	}
 	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws JSONException{
 		JSONArray errorNodes = new JSONArray();
 		
@@ -466,6 +911,7 @@ kpiInst*/
 		for(int i= 0; i<nodesToSave.size(); i++){
 			
 			ModelInstance modelInstance = (ModelInstance)nodesToSave.get(i);
+
 			//loads all nodes guiid with type error
 			
 			respObj.put(modelInstance.getGuiId(), "OK");
@@ -487,6 +933,12 @@ kpiInst*/
 						DAOFactory.getModelInstanceDAO().modifyModelInstance(modelInstance);
 						respObj.put(modelInstance.getGuiId(), modelInstance.getId());
 					}else{
+						if(modelInstance.getId() == null &&
+								modelInstance.getParentId() == null &&
+								modelInstance.getGuiId() == null){
+							//new model instance root --> insert it first
+							logger.debug("new model instance root");
+						}
 						Integer index = DAOFactory.getModelInstanceDAO().insertModelInstance(modelInstance);
 						respObj.put(modelInstance.getGuiId(), index);
 					}
@@ -505,17 +957,17 @@ kpiInst*/
 		while(it.hasNext()) {
 			Map.Entry orderedEntry = (Map.Entry)it.next();
 			//check that parent exists
-			Model orderedNode = (Model)orderedEntry.getValue();
+			ModelInstance orderedNode = (ModelInstance)orderedEntry.getValue();
 			
 			//GET JSON OBJECT VALUE
 			Integer parentId = orderedNode.getParentId();
 			try {
-				Model parent = DAOFactory.getModelDAO().loadModelWithoutChildrenById(parentId);
+				ModelInstance parent = DAOFactory.getModelInstanceDAO().loadModelInstanceWithoutChildrenById(parentId);
 				if(parent != null){						
 					//if parent exists--> save					
 					//if node id is negative --> insert
 					if(orderedNode.getId() == null){
-						Integer newId = DAOFactory.getModelDAO().insertModel(orderedNode);
+						Integer newId = DAOFactory.getModelInstanceDAO().insertModelInstance(orderedNode);
 						if (newId != null){
 							orderedNode.setId(newId);
 							respObj.put(orderedNode.getGuiId(), newId);
@@ -524,7 +976,7 @@ kpiInst*/
 						}
 					}else{
 					//else update
-						DAOFactory.getModelDAO().modifyModel(orderedNode);
+						DAOFactory.getModelInstanceDAO().modifyModelInstance(orderedNode);
 						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
 					}
 					
