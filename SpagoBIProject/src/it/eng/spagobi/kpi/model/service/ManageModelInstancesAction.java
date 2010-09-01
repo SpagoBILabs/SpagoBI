@@ -385,12 +385,18 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Integer genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
 			modInstToSave.setId(genId);
 			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId, false);
-			if(nodes != null){
+			if(nodes == null || nodes.isEmpty()){
+				//try another way
+				nodes = modInstToSave.getChildrenNodes();
+
+			}
+			if(nodes != null && !nodes.isEmpty()){
 				for (int i=0; i< nodes.size(); i++){
 					ModelInstance modInst = (ModelInstance)nodes.get(i);
 					recurseOverTree(modelInstList, modInst, genId);
 				}
 			}
+
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());
 		}
