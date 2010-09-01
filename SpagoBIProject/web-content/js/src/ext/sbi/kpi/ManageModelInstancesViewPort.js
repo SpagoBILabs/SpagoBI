@@ -269,9 +269,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				 modelTypeDescr : rec.get('typeDescr'),
 				 text : rec.get('text')	,
 				 modelText : rec.get('text'),
+				 error: false,
 				 toSave : true
 			});
-			
 			return analyzedRec;
 		}
 		return rec;
@@ -284,6 +284,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		//main instances tree - center
 		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 		this.manageModelInstances.mainTree.setRootNode(newroot);
+		//if new model instance
+		if(rec.get('modelInstId') == ''){
+			this.manageModelInstances.nodesToSave[this.manageModelInstances.nodesToSave.length]= newroot;
+		}
 		
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 		this.manageModelInstances.mainTree.doLayout();
