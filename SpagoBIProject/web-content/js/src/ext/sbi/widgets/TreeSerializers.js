@@ -55,7 +55,7 @@ Sbi.widgets.TreeSerializer.prototype = {
 	 * Array of node attributes to ignore.
 	 */
     standardAttributes: ["expanded", "allowDrag", "allowDrop", "disabled", "icon",
-    "cls", "iconCls", "href", "hrefTarget", "qtip", "singleClickExpand", "uiProvider", "allowChildren", "expandable", "loader"],
+    "cls", "iconCls", "href", "hrefTarget", "qtip", "singleClickExpand", "uiProvider", "allowChildren", "expandable", "loader", "label"],
     
 
 	/** @private
@@ -197,4 +197,5 @@ Ext.extend(Sbi.widgets.JsonTreeSerializer, Sbi.widgets.TreeSerializer, {
 	    }
 	    return result + "}";
 	}
+	 
 });

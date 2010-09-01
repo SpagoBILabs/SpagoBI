@@ -80,8 +80,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	, mainElementsStore:null
 	, root:null
 	, referencedCmp : null
-	
-	,initContextMenu : function() {
+	, treeLoader : null
+	, initContextMenu : function() {
 
 		this.menu = new Ext.menu.Menu( {
 			items : [
@@ -104,6 +104,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		});
 
 	}
+
 	,initConfigObject: function(){
 
 		this.configurationObject.treeTitle = LN('sbi.models.treeTitle');;
@@ -115,6 +116,27 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
     }
 
 	,initTabItems: function(){
+		
+		this.kpitreeLoader =new Ext.tree.TreeLoader({
+			dataUrl: this.configurationObject.manageTreeService,
+	        createNode: function(attr) {
+
+	            if (attr.modelId) {
+	                attr.id = attr.modelId;
+	            }
+
+	    		if (attr.kpi !== undefined && attr.kpi != null
+	    				&& attr.kpi != '') {
+	    			attr.iconCls = 'has-kpi';
+	    		}
+	    		if (attr.error !== undefined && attr.error != false) {
+	    			attr.cls = 'has-error';
+	    		}
+	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	        }
+
+		});
+		
 		//Store of the combobox
  	    this.typesStore = new Ext.data.SimpleStore({
  	        fields: ['typeId', 'typeCd', 'typeDs', 'domainCd'],
@@ -220,7 +242,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		                      this.detailFieldKpi, this.detailFieldNodeType, this.detailFieldTypeDescr]
 		    	}
 		    }];
-
+	 	  
 	}
 	
 	, kpiFiledNotify : function() {
@@ -727,4 +749,5 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 			
 		}
+		
 });
