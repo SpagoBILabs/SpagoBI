@@ -84,7 +84,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, root:null
 	, referencedCmp : null
 	, droppedSubtreeToSave: new Array()
-
+	, kpitreeLoader : null
 
 	,initConfigObject: function(){
 
@@ -95,6 +95,25 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     }
 
 	,initTabItems: function(){
+		this.kpitreeLoader =new Ext.tree.TreeLoader({
+			dataUrl: this.configurationObject.manageTreeService,
+	        createNode: function(attr) {
+
+	            if (attr.modelInstId) {
+	                attr.id = attr.modelInstId;
+	            }
+
+	    		if (attr.kpiInstId !== undefined && attr.kpiInstId != null
+	    				&& attr.kpiInstId != '') {
+	    			attr.iconCls = 'has-kpi';
+	    		}
+	    		if (attr.error !== undefined && attr.error != false) {
+	    			attr.cls = 'has-error';
+	    		}
+	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	        }
+
+		});
 		//Store of the combobox
  	    this.typesStore = new Ext.data.SimpleStore({
  	        fields: ['typeId', 'typeCd', 'typeDs', 'domainCd'],
@@ -973,7 +992,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 					   copiedNode.attributes.saveChildren = false;
 				   }
 				   parentNode.appendChild(copiedNode);	
-
 			       
 			       var ddLength = this.droppedSubtreeToSave.length;
 

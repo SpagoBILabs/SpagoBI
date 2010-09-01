@@ -142,26 +142,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
             style: {
                 "background-color": "white"
             },
-			loader: new Ext.tree.TreeLoader({
-				dataUrl: this.services['manageTreeService'],
-		        createNode: function(attr) {
-					//alert(Ext.util.JSON.encode(attr));
-
-		            if (attr.modelId) {
-		                attr.id = attr.modelId;
-		            }
-
-		    		if (attr.kpi !== undefined && attr.kpi != null
-		    				&& attr.kpi != '') {
-		    			attr.iconCls = 'has-kpi';
-		    		}
-		    		if (attr.error !== undefined && attr.error != false) {
-		    			attr.cls = 'has-error';
-		    		}
-		            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-		        }
-
-			}),
+			loader: this.kpitreeLoader,
 
 			preloadTree : this.preloadTree,
 			enableDD : true,

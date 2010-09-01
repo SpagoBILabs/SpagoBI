@@ -369,33 +369,32 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			findRoot = true;
 		}
 		List<ModelInstance> nodes = findNextNodes(modelInstList, idToSearch, findRoot);
-	
-		while(nodes.iterator().hasNext()){
-			ModelInstance modInst = nodes.iterator().next();
-			stackForRec.add(modInst);
+		if(nodes != null && !nodes.isEmpty()){
+			ModelInstance modInst = nodes.get(0);//root
 			recurseOverTree(modelInstList, modInst, idToSearch);
-
 		}
-
-		
 	}
-	private void recurseOverTree(List<ModelInstance> modelInstList,ModelInstance modelInstance, Integer parentId){
-		while(stackForRec.iterator().hasNext()){
-			ModelInstance modInstToSave = stackForRec.iterator().next();
-			//found  root child
-			Integer oldId = modInstToSave.getId();//incorrect
-			modInstToSave.setParentId(parentId);				
-			//save it 
-			try {
-				Integer genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
-				modInstToSave.setId(genId);
+	private void recurseOverTree(List<ModelInstance> modelInstList, ModelInstance modelInstance, Integer parentId){
 
-				recursiveStart(modelInstList, oldId);
-			} catch (EMFUserError e) {
-				stackForRec.remove(modelInstance);
+		ModelInstance modInstToSave = modelInstance;
+		//found  root child
+		Integer oldId = modInstToSave.getId();//incorrect
+		modInstToSave.setParentId(parentId);				
+		//save it 
+		try {
+			Integer genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
+			modInstToSave.setId(genId);
+			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId, false);
+			if(nodes != null){
+				for (int i=0; i< nodes.size(); i++){
+					ModelInstance modInst = (ModelInstance)nodes.get(i);
+					recurseOverTree(modelInstList, modInst, genId);
+				}
 			}
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage());
 		}
-		stackForRec.remove(modelInstance);
+
 	}
 	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer idToSearch, boolean isRoot){
 		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
@@ -422,13 +421,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		for(int i=0; i< rows.length(); i++){
 			
 			JSONObject obj = (JSONObject)rows.get(i);
-			ModelInstance modelInst = deserializeJSONObjectDD(obj);
+			ModelInstance modelInst = deserializeJSONObjectDD(obj, toReturn);
 
-			toReturn.add(modelInst);
+			
 		}	
 		return toReturn;
 	}
-	private ModelInstance deserializeJSONObjectDD (JSONObject obj)throws JSONException{
+	private ModelInstance deserializeJSONObjectDD (JSONObject obj, List<ModelInstance> nodeslist)throws JSONException{
 		
 		ModelInstance modelInst = new ModelInstance();
 
@@ -467,7 +466,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			try{
 				label = obj.getString("label");
 			}catch(Throwable t){
-				label = null;
+				label = java.util.UUID.randomUUID().toString();
 			}
 			modelInst.setLabel(label);
 			String name ;
@@ -487,20 +486,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modelInst.setModel(null);
 			}
 			
-			//children
-			JSONArray children ;
-			try{
-				children = obj.getJSONArray("children");
-				List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
-				for(int k=0; k<children.length(); k++){
-					JSONObject jsonchild = (JSONObject)children.get(k);
-					childrenMI.add(deserializeJSONObjectDD(jsonchild));
-				}
-				modelInst.setChildrenNodes(childrenMI);
-			}catch(Throwable t){
-				//nothing
-				modelInst.setChildrenNodes(null);
-			}
+
 			
 			try{
 				IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
@@ -593,18 +579,32 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						modelInst.setModelUUID(modelUuid);
 					}
 					//or noone
-					
+
 				}
 				
 			}catch(Throwable t){
 				//nothing
 				modelInst.setKpiInstance(null);
 			}
-			String value = obj.getString("toSave");
+			//children
+			JSONArray children ;
+			try{
+				children = obj.getJSONArray("children");
+				List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
+				for(int k=0; k<children.length(); k++){
+					JSONObject jsonchild = (JSONObject)children.get(k);
+					childrenMI.add(deserializeJSONObjectDD(jsonchild, nodeslist));
+				}
+				modelInst.setChildrenNodes(childrenMI);
+			}catch(Throwable t){
+				//nothing
+				modelInst.setChildrenNodes(null);
+			}
 		}catch(Throwable t){
 			logger.debug("Deserialization error on node: "+guiId);
 		}
-		return null;
+		nodeslist.add(modelInst);
+		return modelInst;
 	}
 	private List<ModelInstance> deserializeJSONArray(JSONArray rows) throws JSONException{
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
@@ -651,7 +651,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				try{
 					label = obj.getString("label");
 				}catch(Throwable t){
-					label = null;
+					label = java.util.UUID.randomUUID().toString();
 				}
 				modelInst.setLabel(label);
 				String name ;
@@ -661,20 +661,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					name = null;
 				}
 				modelInst.setName(name);
-				//children
-				JSONArray children ;
-				try{
-					children = obj.getJSONArray("children");
-					List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
-					for(int k=0; k<children.length(); k++){
-						JSONObject jsonchild = (JSONObject)children.get(k);
-						childrenMI.add(deserializeJSONObjectDD(jsonchild));
-					}
-					modelInst.setChildrenNodes(childrenMI);
-				}catch(Throwable t){
-					//nothing
-					modelInst.setChildrenNodes(null);
-				}
+
 				Integer modelId = obj.getInt("modelId");
 				try{
 					Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
