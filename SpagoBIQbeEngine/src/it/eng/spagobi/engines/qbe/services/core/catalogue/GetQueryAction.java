@@ -30,8 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.qbe.catalogue.QueryCatalogue;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
@@ -107,7 +107,7 @@ public class GetQueryAction extends AbstractQbeEngineAction {
 			Iterator<Query> it = queries.iterator();
 			while(it.hasNext()) {
 				Query query = it.next();
-				queryJSON = (JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+				queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
 				resultsJSON.put(queryJSON);
 			}
 			

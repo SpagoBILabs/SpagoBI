@@ -20,6 +20,19 @@
  **/
 package it.eng.spagobi.engines.qbe.tree;
 
+import it.eng.qbe.bo.DatamartLabels;
+import it.eng.qbe.bo.DatamartProperties;
+import it.eng.qbe.cache.QbeCacheManager;
+import it.eng.qbe.commons.serializer.json.JSONSerializer;
+import it.eng.qbe.model.IDataMartModel;
+import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeFilter;
+
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -32,19 +45,6 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.cache.QbeCacheManager;
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.query.serializer.QueryJSONSerializer;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeFilter;
-import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 
 /**
  * The Class ExtJsQbeTreeBuilder.

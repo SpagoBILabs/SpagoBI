@@ -35,7 +35,7 @@ import it.eng.qbe.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartModelStructure;
-import it.eng.qbe.query.serializer.QuerySerializationConstants;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;

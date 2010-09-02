@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.query.serializer;
+package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
@@ -53,7 +53,7 @@ import org.json.JSONObject;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QueryJSONSerializer implements QuerySerializer {
+public class QueryJSONSerializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONSerializer.class);

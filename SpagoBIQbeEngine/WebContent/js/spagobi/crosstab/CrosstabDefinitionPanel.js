@@ -65,19 +65,6 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
       	items: [this.crosstabDefinitionPanel]
       	, autoScroll: true
       	, tools: [{
-        	  id: 'help'
-        	, handler: function(event, toolEl, panel) {
-        	  	var aWindow = new Ext.Window({
-        	  		width: 400
-        	  		, items: [{
-        	  			xtype: 'panel'
-        	  			, html: this.getCrosstabDefinition().toSource()
-        	  		}]
-        	  	});
-        	  	aWindow.show();
-          	}
-          	, scope: this
-      	}, {
 		    id: 'gear'
 		    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
 		    , handler: function() {

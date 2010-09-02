@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.query.serializer.QuerySerializationConstants;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;

@@ -26,8 +26,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.qbe.catalogue.QueryCatalogue;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
@@ -63,7 +63,7 @@ public class GetFirstQueryAction extends AbstractQbeEngineAction {
 			QueryCatalogue queryCatalogue = engineInstance.getQueryCatalogue();
 			Query query = queryCatalogue.getFirstQuery();
 			// serialize query
-			JSONObject queryJSON = (JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+			JSONObject queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
 			
 			try {
 				writeBackToClient( new JSONSuccess(queryJSON) );

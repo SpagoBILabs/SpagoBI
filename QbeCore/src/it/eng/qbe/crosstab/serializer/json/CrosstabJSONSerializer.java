@@ -19,9 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.crosstab.serializer;
-
-import java.util.List;
+package it.eng.qbe.crosstab.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
@@ -29,6 +27,8 @@ import it.eng.qbe.crosstab.bo.CrosstabDefinition.Column;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition.Row;
 import it.eng.spagobi.utilities.assertion.Assert;
+
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabJSONSerializer implements CrosstabSerializer {
+public class CrosstabJSONSerializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabJSONSerializer.class);

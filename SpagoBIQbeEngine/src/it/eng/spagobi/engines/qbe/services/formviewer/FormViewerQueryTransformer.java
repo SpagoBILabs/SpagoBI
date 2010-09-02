@@ -21,14 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.DataMartSelectField;
@@ -36,11 +28,19 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.QueryJSONDeserializer;
+import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
 import it.eng.qbe.query.transformers.AbstractQbeQueryTransformer;
 import it.eng.spagobi.engines.qbe.bo.FormViewerState;
 import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
 import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Transforms the input query starting from document template and form viewer state 

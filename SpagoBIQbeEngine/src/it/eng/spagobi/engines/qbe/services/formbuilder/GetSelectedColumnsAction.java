@@ -28,9 +28,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
-import it.eng.qbe.query.serializer.QuerySerializationConstants;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -87,7 +87,7 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 			
 			// serialize query
 			try {
-				queryJSON = (JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+				queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
 			} catch (SerializationException e) {
 				throw new SpagoBIEngineServiceException(getActionName(), "Cannot serialize query [" + query.getId() + "]", e);
 			}

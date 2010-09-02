@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.crosstab.bo.CrossTab;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.crosstab.serializer.CrosstabSerializerFactory;
 import it.eng.qbe.datasource.hibernate.DBConnection;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.Query;
@@ -90,7 +90,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
 			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			crosstabDefinition = CrosstabSerializerFactory.getDeserializer("application/json").deserialize(crosstabDefinitionJSON);;
+			crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
 			
 			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");

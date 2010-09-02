@@ -38,7 +38,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.QuerySerializationConstants;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.BasicStatement;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;

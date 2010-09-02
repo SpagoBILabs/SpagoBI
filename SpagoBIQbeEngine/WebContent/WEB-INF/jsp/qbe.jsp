@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -45,7 +46,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
 <%@page import="it.eng.qbe.crosstab.bo.CrosstabDefinition"%>
-<%@page import="it.eng.qbe.crosstab.serializer.CrosstabSerializerFactory"%>
+<%@page import="it.eng.qbe.commons.serializer.SerializerFactory"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -181,7 +182,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	<%
 	      	CrosstabDefinition crosstabDefinition = qbeEngineInstance.getCrosstabDefinition();
 	      	JSONObject crosstabDefinitionJSON = crosstabDefinition != null ? 
-	      			(JSONObject) CrosstabSerializerFactory.getSerializer("application/json").serialize(crosstabDefinition) : 
+	      			(JSONObject) SerializerFactory.getSerializer("application/json").serialize(crosstabDefinition) : 
 	      				new JSONObject();
 	      	%>
 	      	qbeConfig.crosstab.crosstabTemplate = <%= crosstabDefinitionJSON %>;

@@ -28,9 +28,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.QueryMeta;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -121,7 +121,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
 		//queryJSON.put("expression", queryJSON.get("filterExpression"));
-		return QuerySerializerFactory.getDeserializer("application/json").deserialize(queryJSON.toString(), getEngineInstance().getDatamartModel());
+		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDatamartModel());
 	}
 
 }
