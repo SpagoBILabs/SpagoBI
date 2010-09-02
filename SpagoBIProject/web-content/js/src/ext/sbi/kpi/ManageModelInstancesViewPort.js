@@ -286,7 +286,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.manageModelInstances.mainTree.setRootNode(newroot);
 		//if new model instance
 		if(rec.get('modelInstId') == ''){
-			this.manageModelInstances.nodesToSave[this.manageModelInstances.nodesToSave.length]= newroot;
+			this.manageModelInstances.newRootNode = newroot;
+		}else{
+			this.manageModelInstances.existingRootNode = newroot;
 		}
 		
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);

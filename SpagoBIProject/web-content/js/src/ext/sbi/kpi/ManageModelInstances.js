@@ -85,6 +85,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, referencedCmp : null
 	, droppedSubtreeToSave: new Array()
 	, kpitreeLoader : null
+	, newRootNode: null
+	, existingRootNode: null
 
 	,initConfigObject: function(){
 
@@ -537,12 +539,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	}
 	, fillSourceModelPanel: function(sel, node) {
-
-		this.srcModelName.setValue(node.attributes.modelName);
-		this.srcModelCode.setValue(node.attributes.modelCode);
-		this.srcModelDescr.setValue(node.attributes.modelDescr);
-		this.srcModelType.setValue(node.attributes.modelType);
-		this.srcModelTypeDescr.setValue(node.attributes.modelTypeDescr);
+		if(node !== undefined && node != null){
+			this.srcModelName.setValue(node.attributes.modelName);
+			this.srcModelCode.setValue(node.attributes.modelCode);
+			this.srcModelDescr.setValue(node.attributes.modelDescr);
+			this.srcModelType.setValue(node.attributes.modelType);
+			this.srcModelTypeDescr.setValue(node.attributes.modelTypeDescr);
+		}
 	}
 	, changeKpiPanel: function(radioGroup, radio){
 		if(radio.getItemId() == 'kpiinst'){
@@ -567,63 +570,63 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 	}
 	, fillKpiPanel: function(sel, node) {
-
-		var hasKpiInst = node.attributes.kpiInst;
-		var hasKpiModelUuid = node.attributes.modelUuid;
-		var hasKpi = node.attributes.kpiId;
-		if(hasKpiInst !== undefined && hasKpiInst != null){
-
-			this.kpiName.setValue(node.attributes.kpiName);
-			this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
-			this.kpiTarget.setValue(node.attributes.kpiInstTarget);
-			this.kpiWeight.setValue(node.attributes.kpiInstWeight);
-			this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
-			this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
-			
-			this.kpiInstFieldset.setVisible(true);
-			this.kpiInstFieldset2.setVisible(false);			
-			this.kpiModelType.onSetValue( 'kpiinst', true);
-			this.kpiPeriodicityButton.enable();
-			this.kpiInstFieldset.doLayout();
-
-		}else if(hasKpiModelUuid !== undefined && hasKpiModelUuid != null){
-			this.kpiLabel.setValue(node.attributes.modelUuid);
-			
-			this.kpiInstFieldset.setVisible(false);
-			this.kpiInstFieldset2.setVisible(true);
-			this.kpiModelType.onSetValue( 'uuid', true);
-			this.kpiPeriodicityButton.disable();
-			this.kpiInstFieldset2.doLayout();
-
-		}else if(hasKpi !== undefined && hasKpi != null){
-			if(node.attributes.kpi){
-				//dropped node from model tree
-				this.kpiName.setValue(node.attributes.kpi);
-			}else{
-				//new node
+		if(node !== undefined && node != null){
+			var hasKpiInst = node.attributes.kpiInst;
+			var hasKpiModelUuid = node.attributes.modelUuid;
+			var hasKpi = node.attributes.kpiId;
+			if(hasKpiInst !== undefined && hasKpiInst != null){
+	
 				this.kpiName.setValue(node.attributes.kpiName);
+				this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
+				this.kpiTarget.setValue(node.attributes.kpiInstTarget);
+				this.kpiWeight.setValue(node.attributes.kpiInstWeight);
+				this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
+				this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
+				
+				this.kpiInstFieldset.setVisible(true);
+				this.kpiInstFieldset2.setVisible(false);			
+				this.kpiModelType.onSetValue( 'kpiinst', true);
+				this.kpiPeriodicityButton.enable();
+				this.kpiInstFieldset.doLayout();
+	
+			}else if(hasKpiModelUuid !== undefined && hasKpiModelUuid != null){
+				this.kpiLabel.setValue(node.attributes.modelUuid);
+				
+				this.kpiInstFieldset.setVisible(false);
+				this.kpiInstFieldset2.setVisible(true);
+				this.kpiModelType.onSetValue( 'uuid', true);
+				this.kpiPeriodicityButton.disable();
+				this.kpiInstFieldset2.doLayout();
+	
+			}else if(hasKpi !== undefined && hasKpi != null){
+				if(node.attributes.kpi){
+					//dropped node from model tree
+					this.kpiName.setValue(node.attributes.kpi);
+				}else{
+					//new node
+					this.kpiName.setValue(node.attributes.kpiName);
+				}
+	/*			
+				this.kpiName.setValue(node.attributes.kpiName);
+				this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
+				this.kpiTarget.setValue(node.attributes.kpiInstTarget);
+				this.kpiWeight.setValue(node.attributes.kpiInstWeight);
+				this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
+				this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
+				*/
+				this.kpiInstFieldset.setVisible(true);
+				this.kpiInstFieldset2.setVisible(false);			
+				this.kpiModelType.onSetValue( 'kpiinst', true);
+				this.kpiPeriodicityButton.enable();
+				this.kpiInstFieldset.doLayout();
+	
+			}else{
+				//alert("nothing associated");
+				this.clearKpiInstanceTabForm();
 			}
-/*			
-			this.kpiName.setValue(node.attributes.kpiName);
-			this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
-			this.kpiTarget.setValue(node.attributes.kpiInstTarget);
-			this.kpiWeight.setValue(node.attributes.kpiInstWeight);
-			this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
-			this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
-			*/
-			this.kpiInstFieldset.setVisible(true);
-			this.kpiInstFieldset2.setVisible(false);			
-			this.kpiModelType.onSetValue( 'kpiinst', true);
-			this.kpiPeriodicityButton.enable();
-			this.kpiInstFieldset.doLayout();
-
-		}else{
-			//alert("nothing associated");
-			this.clearKpiInstanceTabForm();
+			this.kpiInstTypeFieldset.setVisible(true);
+			this.kpiInstTypeFieldset.doLayout();
 		}
-		this.kpiInstTypeFieldset.setVisible(true);
-		this.kpiInstTypeFieldset.doLayout();
-
 
 	}
 	, clearKpiInstanceTabForm: function(){
@@ -679,17 +682,26 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		var JsonSer = new Sbi.widgets.JsonTreeSerializer(this.mainTree);
 
 		Ext.each(this.droppedSubtreeToSave, function(node, index) {
-			if(node instanceof Ext.tree.TreeNode){
-				alert(JsonSer.nodeToString(node));
+			if(node instanceof Ext.tree.TreeNode){	
+				alert(Ext.util.JSON.encode(node););
 				jsonDroppedStr += JsonSer.nodeToString(node);
 				jsonDroppedStr +=',';
 			}
 		}, this);
+		
 		jsonDroppedStr += ']';
 		
+		var jsonRoot = '';
+		if(this.newRootNode !== undefined && this.newRootNode != null){
+			jsonRoot = Ext.util.JSON.encode(this.newRootNode.attributes);
+		}
+		if(this.existingRootNode !== undefined && this.existingRootNode != null){
+			jsonRoot = Ext.util.JSON.encode(this.existingRootNode.attributes);
+		}
 		var params = {
 			nodes : jsonStr,
-			droppedNodes : jsonDroppedStr
+			droppedNodes : jsonDroppedStr,
+			rootNode : jsonRoot
 		};
 
 		Ext.Ajax.request( {
@@ -700,21 +712,23 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	      			if(content !== undefined && content !== null){
 	      				var hasErrors = false;
 	      				for (var key in content) {
+
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelInstId if operation succeded
-		      				  if(value  == 'KO'){
-		      					  hasErrors= true;
-		 		      			  ///contains error gui ids      						  
-	      						  nodeSel.attributes.error = true;
-	      						  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 1px solid red; font-weight: bold; font-style: italic; color: #cd2020; text-decoration: underline; }');
-		      				  }else{
-		      					  nodeSel.attributes.error = false; 
-		      					  nodeSel.attributes.modelInstId = value; 
-		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
-		      					  this.fireEvent('parentsave-complete', nodeSel);
+		      				  if(nodeSel !== undefined && nodeSel != null){
+			      				  if(value  == 'KO'){
+			      					  hasErrors= true;
+			 		      			  ///contains error gui ids      						  
+		      						  nodeSel.attributes.error = true;
+		      						  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 1px solid red; font-weight: bold; font-style: italic; color: #cd2020; text-decoration: underline; }');
+			      				  }else{
+			      					  nodeSel.attributes.error = false; 
+			      					  nodeSel.attributes.modelInstId = value; 
+			      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
+			      					  this.fireEvent('parentsave-complete', nodeSel);
+			      				  }
 		      				  }
-		      				
 		      		    }
 	      				
 	      				if(hasErrors){
@@ -738,7 +752,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
       			this.referencedCmp.modelInstancesGrid.getView().refresh();
 				this.referencedCmp.modelInstancesGrid.doLayout();
 				
-				
+				this.newRootNode = null;
+				this.existingRootNode = null;
 				
       			return;
 			},
@@ -984,12 +999,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				   
 				   copiedNode.attributes.toSave = true;
 				   copiedNode.attributes.parentId = parentNode.attributes.modelInstId;
-				   
+
 				   if(importSub){
 					   copiedNode.expand(true);
-					   copiedNode.attributes.saveChildren = true;
-				   }else{
-					   copiedNode.attributes.saveChildren = false;
 				   }
 				   parentNode.appendChild(copiedNode);	
 			       
