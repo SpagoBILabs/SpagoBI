@@ -203,42 +203,46 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			
 			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
-				Integer start = getAttributeAsInteger( START );
-				Integer limit = getAttributeAsInteger( LIMIT );
 				
-				if(start==null){
-					start = START_DEFAULT;
-				}
-				if(limit==null){
-					limit = LIMIT_DEFAULT;
-				}
-				List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
-				//extract resources
-				List<ModelResources> modelResources = modelResourcesDao.loadModelResourceByModelId(modelInstId);
-				
-				HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
-				if(modelResources != null){
-					for(int i =0;i<modelResources.size(); i++){
-						ModelResources mr = modelResources.get(i);
-						modResourcesIds.put(mr.getResourceId(), mr);
+					Integer start = getAttributeAsInteger( START );
+					Integer limit = getAttributeAsInteger( LIMIT );
+					
+					if(start==null){
+						start = START_DEFAULT;
 					}
-				}
-				//extract all resources
-				Vector resourcesIds = new Vector<Integer>();
-
-				List<Resource> allResources = (List<Resource>)getSessionContainer().getAttribute("ALL_RESOURCES_LIST");
+					if(limit==null){
+						limit = LIMIT_DEFAULT;
+					}
+					List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
+					//extract resources
+					List<ModelResources> modelResources = new ArrayList<ModelResources>();
+					if(modelInstId != null){
+						modelResources = modelResourcesDao.loadModelResourceByModelId(modelInstId);
+					}
+					HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
+					if(modelResources != null){
+						for(int i =0;i<modelResources.size(); i++){
+							ModelResources mr = modelResources.get(i);
+							modResourcesIds.put(mr.getResourceId(), mr);
+						}
+					}
+					//extract all resources
+					Vector resourcesIds = new Vector<Integer>();
+	
+					List<Resource> allResources = (List<Resource>)getSessionContainer().getAttribute("ALL_RESOURCES_LIST");
+					
+					//if null than extract
+					if(allResources == null){
+						allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
+					}
+					modelResourcesExtendedListCreate(modelResourcesExtenList, allResources, modResourcesIds);
+					
+					logger.debug("Loaded model resources");
+					JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
+					JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
+	
+					writeBackToClient(new JSONSuccess(modelsResourcesResponseJSON));
 				
-				//if null than extract
-				if(allResources == null){
-					allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
-				}
-				modelResourcesExtendedListCreate(modelResourcesExtenList, allResources, modResourcesIds);
-				
-				logger.debug("Loaded model resources");
-				JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
-				JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
-
-				writeBackToClient(new JSONSuccess(modelsResourcesResponseJSON));
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving model tree", e);

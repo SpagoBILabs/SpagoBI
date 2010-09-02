@@ -683,7 +683,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		Ext.each(this.droppedSubtreeToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){	
-				alert(node.attributes.name);
+				//alert(node.attributes.name);
 				jsonDroppedStr += JsonSer.nodeToString(node);
 				jsonDroppedStr +=',';
 			}
@@ -767,83 +767,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		
     }
-
-/*	,saveParentNode : function(parent, child) {
-		var jsonStr = '[';
-    	jsonStr +=  Ext.util.JSON.encode(parent.attributes)
-    	jsonStr += ']';
-
-		var params = {
-			nodes : jsonStr
-		};
-
-		Ext.Ajax.request( {
-			url : this.services['saveTreeService'],
-			success : function(response, options) {
-				if(response.responseText !== undefined) {
-	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			if(content !== undefined && content !== null){
-	      				var hasErrors = false;
-	      				for (var key in content) {
-		      				  var value = content[key];
-		      				  var nodeSel = this.mainTree.getNodeById(key);
-		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelInstId if operation succeded
-		      				  if(value  == 'KO'){
-		      					  hasErrors= true;
-		 		      			  ///contains error gui ids      						  
-	      						  nodeSel.attributes.error = true;
-	      						  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 1px solid red; font-weight: bold; font-style: italic; color: #cd2020; text-decoration: underline; }');
-		      				  }else{
-		      					  nodeSel.attributes.error = false; 
-		      					  nodeSel.attributes.modelInstId = value; 
-		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
-		      					  
-		      					  //completes child node instanciation
-			  	        		  this.selectedNodeToEdit = child;
-				        		  //this.mainTree.getSelectionModel().select(child);
-
-			  	        		  child.attributes.parentId = parent.attributes.modelInstId;
-			        			  var size = this.nodesToSave.length;
-			        			  this.nodesToSave[size] = child;
-	      				      }
-		      				
-		      		    }
-	      				
-	      				if(hasErrors){
-	      					alert(LN('sbi.generic.savingItemError'));
-	      					
-	      				}else{
-	      					///success no errors!
-	      					this.cleanAllUnsavedNodes();
-	      					alert(LN('sbi.generic.resultMsg'));
-		      				this.referencedCmp.modelsGrid.mainElementsStore.load();
-	      				}
-	      			}else{
-	      				alert(LN('sbi.generic.savingItemError'));
-	      			}
-				}else{
-      				this.cleanAllUnsavedNodes();
-      				alert(LN('sbi.generic.resultMsg'));
-      				this.referencedCmp.modelsGrid.mainElementsStore.load();
-				}
-      			this.mainTree.doLayout();
-      			this.referencedCmp.modelsGrid.getView().refresh();
-				this.referencedCmp.modelsGrid.doLayout();
-				
-				
-				
-      			return;
-			},
-			scope : this,
-			failure : function(response) {
-				if(response.responseText !== undefined) {
-					alert("Error");
-				}
-			},
-			params : params
-		});
-		
-    }*/
 
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
