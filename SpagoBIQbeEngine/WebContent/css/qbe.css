@@ -250,7 +250,7 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	border-top-color:#EEEEEE;	
 	border-bottom-color:#D0D0D0;	
 	text-align: center;
-	font:12px arial,tahoma,helvetica,sans-serif;
+	font: normal 11px tahoma,arial,helvetica,sans-serif;
 	background-color: transparent;
 }
 				

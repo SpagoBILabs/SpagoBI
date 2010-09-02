@@ -73,14 +73,9 @@ CrossTabCalculatedFields = function(){
     		    headerEntry.show();
     		    var father = headerEntry.father;
     		    while(father!=null && father!=undefined){
-    		    	father.updateHeight(father.thisDimension+1);
+    		    	father.thisDimension = father.thisDimension+1;
     		       	if(father.thisDimension == 1){
     		       		father.show();
-    		       	}
-    		       	if(horizontal){
-    		           	father.setWidth(father.thisDimension*crossTab.columnWidth);
-    		           }else{
-    		           	father.setHeight(father.thisDimension*crossTab.rowHeight);
     		       	}
     		    	father = father.father;
     		    }
@@ -131,17 +126,17 @@ CrossTabCalculatedFields = function(){
 	    	var entries = this.executeOp(operation,horizontal,linesValueForHeader,expIds,crossTab);
 	    	var panel1 = headers[level][operationExpsIds[j][0]];
 	    	
+	    	if(CFName==null){
+	    		CFName = "CF";
+	    	}
 	    	//build the structure of the subtree
-	    	var cfNode = this.buildHeadersStructure(panel1, crossTab);
+	    	var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
 
 	    	cfNode.father = panel1.father;
 	    	for(var y=0; y<cfNode.childs.length; y++){
 	    		cfNode.childs[y].father = cfNode;
 	    	}
-	    	if(CFName==null){
-	    		CFName = "CF";
-	    	}
-	    	cfNode.name=CFName;
+
 	    	attributes.push([cfNode, entries]);   
     	}
     	
@@ -159,24 +154,24 @@ CrossTabCalculatedFields = function(){
     		headerEntry.hide();
 	    	var father = headerEntry.father;
 	    	while(father!=null && father!=undefined){
-	    		father.updateHeight(father.thisDimension-1);
+	    		father.thisDimension = (father.thisDimension-1);
 	        	if(father.thisDimension == 0){
 	        		father.hide();
-	        	}
-	        	if(horizontal){
-	            	father.setWidth(father.thisDimension*crossTab.columnWidth);
-	            }else{
-	            	father.setHeight(father.thisDimension*crossTab.rowHeight);
 	        	}
 	    		father = father.father;
 	    	}
     	}
-    	
+
     	for(var x=0; x<headers.length;x++){
     		for(var y=0; y<headers[x].length;y++){
-    			headers[x][y].update();
+    			if(headers[x][y].horizontal){
+    				headers[x][y].updateStaticDimension(headers[x][y].height);
+    			}else{
+    				headers[x][y].update();
+    			}
     		}
     	}
+    	
     	crossTab.reloadHeadersAndTable();
     	
     }
@@ -404,8 +399,12 @@ CrossTabCalculatedFields = function(){
     }
     
     //build the structure of the subtree to add
-    ,buildHeadersStructure: function(node, crossTab){
-    	var clonedNode = new HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level);
+    ,buildHeadersStructure: function(name, node, crossTab){
+    	if(name!=null){
+    		var clonedNode = new HeaderEntry(name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
+    	}else{
+    		var clonedNode = new HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
+    	}
     	crossTab.setHeaderListener(clonedNode,node.horizontal); 
     	var childs =node.childs;
     	var newDimension=0;
@@ -415,7 +414,7 @@ CrossTabCalculatedFields = function(){
     	}
     	if(node.childs[0].childs.length>0){
     		for(var i=0; i<childs.length; i++){
-    			clonedNode.childs.push(this.buildHeadersStructure(childs[i], crossTab));
+    			clonedNode.childs.push(this.buildHeadersStructure(childs[i].name, childs[i], crossTab));
     			clonedNode.childs[i].father = clonedNode;
     			newDimension = newDimension+clonedNode.childs[i].thisDimension;
     		}
@@ -425,7 +424,7 @@ CrossTabCalculatedFields = function(){
         	//So when the node is the father of a leaf it sets as childs the set of all possible leafs
     		clonedNode.childs = new Array();
     		for(var t=0; t<this.leafs.length; t++){
-            	var clonedNodeF = new HeaderEntry(this.leafs[t], 1, clonedNode.horizontal, clonedNode.level+1);
+            	var clonedNodeF = new HeaderEntry(this.leafs[t], 1, clonedNode.horizontal, clonedNode.level+1,node.childs[0].width, node.childs[0].height);
             	crossTab.setHeaderListener(clonedNodeF,clonedNode.horizontal); 
             	clonedNodeF.father = clonedNode;
             	clonedNode.childs.push(clonedNodeF);

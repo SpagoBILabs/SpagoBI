@@ -76,11 +76,10 @@
 //         -----------------------------------------
 
 CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum) {
-
+	this.fontSize = 12;
     this.entries =entries;
     this.withRowsSum = withRowsSum;
     this.withColumnsSum = withColumnsSum;
-    
     this.rowHeader = new Array();
     this.build(rowHeadersDefinition, 0, this.rowHeader, false);
     this.setFathers(this.rowHeader);
@@ -203,18 +202,17 @@ Ext.extend(CrossTab, Ext.Panel, {
 
     //add the columns starting from the i-th position
     , addColumns : function(columnId, columns){
-
+    
     	var rows = this.entries.length;
     	for(var k=0; k<rows; k++){
         	for(var i=this.entries[k].length-1; i>=columnId; i--){
         		this.entries[k][columns.length+i] = this.entries[k][i];
         	}
-        	
+    
         	for(var i=0; i<columns.length; i++){
         		this.entries[k][i+columnId] = columns[i][k];
         	}
     	}
-    	
     }
     
     //add the rows starting from the i-th position
@@ -227,14 +225,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     		this.entries[i+rowId] = rows[i];
     	}
     }
-    
-    
-    ,colorCellBackground: function(i, j, columnForView){
-    	this.colorRowBackground(i,columnForView, '#EFEFEF');
-    	this.colorColumnBackground(j,columnForView, '#EFEFEF');
-     }
-
-    
     
     //color the background of a row of the tabel
     //i: the number of the row (visible)
@@ -253,7 +243,9 @@ Ext.extend(CrossTab, Ext.Panel, {
     //color: the background color
      ,colorColumnBackground: function(j, rowForView, color){
 		for(var y = 0; y<rowForView; y++){
-			Ext.get('['+y+','+j+']').setStyle('background-color', color);
+			if(Ext.get('['+y+','+j+']')!=null){
+				Ext.get('['+y+','+j+']').setStyle('background-color', color);
+			}
 		}
      }
      
@@ -314,7 +306,7 @@ Ext.extend(CrossTab, Ext.Panel, {
      
     	header.addListener({render: function(c) {
 			// open the show/hide dialog
-			c.el.on('click', function() {
+			c.el.on('click', function(event,element,object) {
 							if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible()){
 								this.crossTabCFWizard.addField("field["+c.name+"]", c.level, c.horizontal);
 							}else{
@@ -322,7 +314,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 									this.clickMenu.destroy();
 								}
 								this.clickMenu = new CrossTabClickMenu(c, this);
-								this.clickMenu.showAt([c.el.getLeft(false), c.el.getTop(false)]);
+								this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
 							}
 						}
 					,this);
@@ -346,21 +338,23 @@ Ext.extend(CrossTab, Ext.Panel, {
 								headers = this.rowHeader
 							}
 							
-							while(!this.isTheSameHeader(headers[c.level][i],c)){
+							while(!this.isTheSameHeader(headers[c.level][i],c) && i<headers[c.level].length){
 								if(!headers[c.level][i].hidden){
 									start = start + headers[c.level][i].thisDimension;
 								}
 								i++;
 							}
-							var end = start+headers[c.level][i].thisDimension-1;
-
-							if(horizontal){
-								for(i=start; i<=end; i++){
-									this.colorColumnBackground(i, rowForView, '#EFEFEF');
-								}
-							}else{
-								for(i=start; i<=end; i++){
-									this.colorRowBackground(i, columnForView, '#EFEFEF');
+							if( i<headers[c.level].length){
+								var end = start+headers[c.level][i].thisDimension-1;
+	
+								if(horizontal){
+									for(i=start; i<=end; i++){
+										this.colorColumnBackground(i, rowForView, '#EFEFEF');
+									}
+								}else{
+									for(i=start; i<=end; i++){
+										this.colorRowBackground(i, columnForView, '#EFEFEF');
+									}
 								}
 							}
 							}
@@ -708,9 +702,25 @@ Ext.extend(CrossTab, Ext.Panel, {
     
     // Build the columnHeaderPanel or the rowHeaderPanel
 	, buildHeaderGroup : function(headers, horizontal) {
+	
 		var headerGroup = new Array();
 		this.headersPanelHidden = new Array();
-		for(var y=0; y<headers.length; y++){
+		var resizeHeandles = 'e';
+		if (horizontal){
+			resizeHeandles = 's';
+		}
+		var c;
+		if(horizontal){
+			c = {
+					boxMinHeight: this.rowHeight
+				};
+		}else{
+			c = {
+					boxMinWidth: this.columnWidth
+				};	
+		}
+		
+		for(var y=1; y<headers.length; y++){
 			var layoutConfig;
 			if(horizontal){
 				layoutConfig= {rows: 1};
@@ -730,14 +740,18 @@ Ext.extend(CrossTab, Ext.Panel, {
 				}
 			}
 			headersPanel = headersPanel.concat(headersPanelHidden);
-		    var p = new Ext.Panel({
+			c = Ext.apply(c,{
 		    	cellCls: 'crosstab-header-panel-cell',
 		    	layout:'table',
 		    	border: false,
 	            layoutConfig: layoutConfig,
 				items:  headersPanel
-		    });  
+		    });
+		    var p = new Ext.Panel(c);  
+		   	    
+		    this.createResizable(p,resizeHeandles,headersPanel, horizontal);
 		    headerGroup.push(p);
+
 		}
 		return headerGroup;
 	}
@@ -826,6 +840,8 @@ Ext.extend(CrossTab, Ext.Panel, {
     //reload the container table
     , reloadTable : function(horizontal){
     	
+    	//var d1 = new Date();
+    	
     	var tableRows = 2;
     	var tableColumns = 2;
     	var dataPanelStyle = "crosstab-table-data-panel";
@@ -871,8 +887,8 @@ Ext.extend(CrossTab, Ext.Panel, {
    		
    		if(this.emptypanelTopLeft==null){
 	   		this.emptypanelTopLeft = new Ext.Panel({
-	   			height: (this.columnHeader.length-1)*this.rowHeight,
-	   	        width: (this.rowHeader.length-1)*this.columnWidth,
+	   			//height: (this.columnHeader.length-1)*this.rowHeight,
+	   	        //width: (this.rowHeader.length-1)*this.columnWidth,
 	   	        cellCls: 'crosstab-table-empty-top-left-panel',
 	   	        border: false,
 	   	        html: ""
@@ -881,8 +897,8 @@ Ext.extend(CrossTab, Ext.Panel, {
    		
    		if(this.withRowsSum && this.emptypanelTopRight==null){
 	   		this.emptypanelTopRight = new Ext.Panel({
-	   			height: (this.columnHeader.length-1)*this.rowHeight,
-	   	        width: this.columnWidth,
+	   			//height: (this.columnHeader.length-1)*this.rowHeight,
+	   	        //width: this.columnWidth,
 	   	        cellCls: 'crosstab-table-empty-top-right-panel',
 	   	        border: false,
 	   	        html: ""
@@ -891,8 +907,8 @@ Ext.extend(CrossTab, Ext.Panel, {
    		
    		if(this.withColumnsSum && this.emptypanelBottomLeft==null){
 	   		this.emptypanelBottomLeft = new Ext.Panel({
-	   			height: this.rowHeight,
-	   	        width: this.columnWidth,
+	   			//height: this.rowHeight,
+	   	        //width: this.columnWidth,
 	   	        cellCls: 'crosstab-table-empty-bottom-left-panel',
 	   	        border: false,
 	   	        html: ""
@@ -901,8 +917,8 @@ Ext.extend(CrossTab, Ext.Panel, {
    		
    		if((this.withColumnsSum || this.withRowsSum) && this.emptypanelBottomRight==null){
 	   		this.emptypanelBottomRight = new Ext.Panel({
-	   			height: this.rowHeight,
-	   	        width: this.columnWidth,
+	   			//height: this.rowHeight,
+	   	        //width: this.columnWidth,
 	   	        cellCls: classEmptyBottomRight,
 	   	        border: false,
 	   	        html: ""
@@ -921,9 +937,14 @@ Ext.extend(CrossTab, Ext.Panel, {
     	store.loadData(this.entriesPanel);
     	var columnsForView = this.getColumnsForView();
     	
+    	var ieOffset =0;
+    	if(Ext.isIE){
+    		ieOffset = 2;
+    	}
+    	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">',
-    	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px; height: '+(this.rowHeight-2)+'px;  ">',
+    	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
     	    '{name}',
     	    '</div> </div> </div>',
     	    '</tpl>'
@@ -931,12 +952,11 @@ Ext.extend(CrossTab, Ext.Panel, {
     	
     	var tplsum = new Ext.XTemplate(
         	    '<tpl for=".">',
-        	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px; height: '+(this.rowHeight-2)+'px;  ">',
+        	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader"  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
         	    '{name}',
         	    '</div> </div> </div>',
         	    '</tpl>'
         	);
-    	
     	
     	this.datapanel = new Ext.Panel({
             width: (columnsForView)*(this.columnWidth),
@@ -970,9 +990,16 @@ Ext.extend(CrossTab, Ext.Panel, {
     		this.table.add(this.emptypanelBottomRight);
     	}
 
+//    	var d2 = new Date();
+    	
    		this.add(this.table);
    		this.doLayout();
 
+//   		var d3 = new Date();
+   		
+//   		alert("A: "+(d2-d1));
+//   		alert("B: "+(d3-d2));
+   		
    		if(Ext.get('loading')!=null){
 	   		setTimeout(function(){
 	   			Ext.get('loading').remove();
@@ -1014,7 +1041,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 	   			style: 'margin: 0px; padding: 0px; ',
 	   			cellCls: 'crosstab-row-header-panel-container',
 	   			height: 'auto',
-	   			width: (this.rowHeader.length-1)*this.columnWidth,//-1 because of the fake root header
+	   	        width: 'auto',
 	   	        layout:'table',
 	   	        border: false,
 	   	        layoutConfig: {
@@ -1025,8 +1052,33 @@ Ext.extend(CrossTab, Ext.Panel, {
 	   	        colspan: 1
 	   	    });
  //   	}
-		this.reloadTable(horizontal);
+		this.reloadTable();
     }
+    
+	, createResizable: function(aPanel, heandles, items, horizontal) {
+		
+    	var iePinned = false;
+    	if(Ext.isIE){
+    		iePinned = true;
+    	}
+		
+		aPanel.on('render', function() {
+			var resizer = new Ext.Resizable(this.id, {
+			    handles: heandles,
+			    pinned: iePinned
+			});
+			resizer.on('resize', function(resizable, width, height, event) {
+				
+				for(var i=0; i<items.length; i++){
+					if(horizontal){
+						items[i].updateStaticDimension(height);
+					}else{
+						items[i].updateStaticDimension(width);
+					}
+				}
+			}, this);
+		}, aPanel);
+	}
  
     
     //Add a new block in the table (a subtree with the headhers and a set of columns or rows)
@@ -1039,7 +1091,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     //      it's usefull if we call this method more than one time: we call it with lazy=true far all the iteration and with lazy=false in the last one +
     //       (take a look at the method calculateCF)
     , addNewEntries: function(level,node,headers,entries, horizontal, lazy){
-   	
     	var father = node.father;
     	var dimensionToAdd= node.thisDimension;
     	//update the father
@@ -1115,32 +1166,15 @@ Ext.extend(CrossTab, Ext.Panel, {
     	if(!lazy){
 	    	this.setFathers(headers);
 			this.setDragAndDrop(headers, horizontal, this);
+		
 			
-			var headerGroupp = new Array();
-			for(var y=0; y<headers.length; y++){
-				var layoutConfig;
-				if(horizontal){
-					layoutConfig= {rows: 1};
-				}else{
-					layoutConfig= {columns: 1};
-				}
-			    var p = new Ext.Panel({
-			    	layout:'table',
-			    	border: false,
-		            layoutConfig: layoutConfig,
-					items:  headers[y]
-			    });  
-			    headerGroupp.push(p);
-			}
-	
 	    	if(horizontal){
-	    		this.columnHeaderPanel = headerGroupp;
-	    		this.rowHeaderPanel  =this.buildHeaderGroup(this.rowHeader, false);
+	    		this.columnHeader = headers;
 	    	}else{
-	    		this.rowHeaderPanel = headerGroupp;
-	    		this.columnHeaderPanel = this.buildHeaderGroup(this.columnHeader, true);
+	    		this.rowHeader = headers;
 	    	}
-	    	this.reloadTable();
+	  
+//	    	this.reloadTable();
     	}
     }  
 
@@ -1157,15 +1191,11 @@ Ext.extend(CrossTab, Ext.Panel, {
     		
 	    	var father = headerEntry.father;
 	    	while(father!=null && father!=undefined){
-	    		father.updateHeight(father.thisDimension-1);
+	    		father.thisDimension = father.thisDimension-1;
 	        	if(father.thisDimension == 0){
 	        		father.hide();
 	        	}
-	        	if(horizontal){
-	            	father.setWidth(father.thisDimension*this.columnWidth);
-	            }else{
-	            	father.setHeight(father.thisDimension*this.rowHeight);
-	        	}
+	        	father.update();
 	    		father = father.father;
 	    	}
     	}
@@ -1186,15 +1216,11 @@ Ext.extend(CrossTab, Ext.Panel, {
 	    	headerEntry.show();
 	    	var father = headerEntry.father;
 	    	while(father!=null && father!=undefined){
-	    		father.updateHeight(father.thisDimension+1);
+	    		father.thisDimension = father.thisDimension+1;
 	        	if(father.thisDimension == 1){
 	        		father.show();
 	        	}
-	        	if(horizontal){
-	            	father.setWidth(father.thisDimension*this.columnWidth);
-	            }else{
-	            	father.setHeight(father.thisDimension*this.rowHeight);
-	        	}
+	        	father.update();
 	    		father = father.father;
 	    	}
     	}
