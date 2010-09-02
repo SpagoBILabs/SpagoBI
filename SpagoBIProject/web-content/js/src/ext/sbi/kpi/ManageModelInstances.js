@@ -748,7 +748,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			},
 			params : params
 		});
-		alert("eccoci");
+
 		this.referencedCmp.manageModelsTree.importCheck.setValue(false);
     }
 
@@ -915,6 +915,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			       var ddLength = this.droppedSubtreeToSave.length;
 
 			       this.droppedSubtreeToSave[ddLength] = copiedNode;
+			       this.referencedCmp.manageModelsTree.importCheck.setValue(false);
 			   }else{
 				   alert("Nodes hierarchy must be respected!");
 			   }		   

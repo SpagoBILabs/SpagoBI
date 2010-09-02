@@ -403,7 +403,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 		ModelInstance modInstToSave = modelInstance;
 		//found  root child
-		Integer oldId = modInstToSave.getId();//incorrect
+		Integer oldId = null;
+		if(modInstToSave.getGuiId() != null){
+			try{
+				oldId =Integer.valueOf(modInstToSave.getGuiId());//incorrect
+			}catch(Throwable t){
+				oldId = null;
+			}
+		}
 		modInstToSave.setParentId(parentId);				
 		//save it 
 		try {
@@ -413,9 +420,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modInstToSave.setId(genId);
 				
 			}
-			System.out.println("SAVED NODE: GEN_ID =" +genId+" PARENT_ID ="+parentId+" name= "+modInstToSave.getName());
+			System.out.println("SAVED NODE: GEN_ID =" +genId+" PARENT_ID ="+parentId+" name= "+modInstToSave.getName()+" oldid="+oldId);
 			response.append(modInstToSave.getGuiId(), "OK");
-			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);
+			
+			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);//scazza qui!!!!invece di doughter estrae nonno
+			
 			if(nodes == null || nodes.isEmpty()){
 				//try another way
 				nodes = modInstToSave.getChildrenNodes();
