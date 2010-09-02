@@ -52,33 +52,50 @@
 // dimension is the sum of the dimensions of it's childs.
 // horizontal is a boolean. if it's true than the with of the HeaderEntry is thisDimension*(cell width)
 // level is the position inside the columnHeader/rowHeader
-HeaderEntry = function(name, thisDimension, horizontal, level) {
+HeaderEntry = function(name, thisDimension, horizontal, level, width, height) {
 	this.backgroundImg = "../img/crosstab/headerbackground.gif";
-	var c;
+	var c ={};
 	this.level = level;
 	this.horizontal = horizontal;
 	this.thisDimension = thisDimension;
-	var paddingTop = this.thisDimension*this.rowHeight/2;
-	if(horizontal){
+	var h;
+	var w;
+	if(width!=null){
+		w=width;
+	}else{
+		w=this.columnWidth;
+	}
+	
+	if(height!=null){
+		h=height;
+	}else{
+		h = this.rowHeight;
+	}
+		
+	this.name = name;
+	
+	if(horizontal){	
 		c = {
 				width: this.thisDimension*this.columnWidth,
-				height: this.rowHeight,
+				height: h,
 				hideMode: 'offsets',
-				html: name,
+				html: this.getBackground(h+'px',(this.fontSize+(h/2))+'px'),
 				bodyCssClass: 'x-grid3-header crosstab-table-headers' 
-			};
+		};
 	}else{
 		c = {
-				width: this.columnWidth,
+				width: w,
 				height: this.thisDimension*this.rowHeight,
 				hideMode: 'offsets',
-				html: '<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"105%\" style=\"z-index:0\"><div style= \"top: -'+paddingTop+'px; position:relative; z-index:6; \ margin-top: -10px"><span>'+name+'</span><div>',
+				html: this.getBackground('105%',((this.thisDimension*h+this.fontSize)/2)+'px'),
 				bodyCssClass: 'x-grid3-header crosstab-table-headers'
 			};	
 	}
 	
+
+	
 	this.childs = new Array();
-	this.name = name;
+
 
 	// constructor
 	HeaderEntry.superclass.constructor.call(this, c);
@@ -93,37 +110,61 @@ Ext.extend(HeaderEntry, Ext.Panel, {
 	name: null, // name of the node (displayed in the table)
 	thisDimension: null, //see the component description
 	columnWidth: 100,
-	rowHeight: 25
+	rowHeight: 25,
+	fontSize: 12
 	
-	//update the height and the visualization of the panel
-	,updateHeight : function(newThisHeight){
-		this.thisDimension=newThisHeight;
-		if(!this.horizontal){
-			this.on('afterlayout', function(f) {
-				var paddingTop = this.thisDimension*this.rowHeight/2;
-				this.body.update('<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"105%\" style=\"z-index:0\"><div style= \"top: -'+paddingTop+'px; position:relative; z-index:6; \ margin-top: -10px"><span>'+this.name+'</span><div>');
-			});
-		}else{
-			this.setHeight(this.rowHeight);
-			this.setWidth(this.columnWidth);
-		}
-	}
-
 	//update the fields and the visualization of the panel
 	,update : function(){
 		if(this.horizontal){
-			this.setWidth(this.thisDimension*this.columnWidth);
-			this.on('afterlayout', function(f) {this.body.update(this.name); this.setHeight(this.rowHeight);} , this);
-
+			this.updateStaticDimension(this.height);
 		}else{
-			var paddingTop = this.thisDimension*this.rowHeight/2;
-			this.setHeight(this.thisDimension*this.rowHeight);
-			this.on('afterlayout', function(f) {
-				this.body.update('<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"105%\" style=\"z-index:0\"><div style= \"top: -'+paddingTop+'px; position:relative; z-index:6; \ margin-top: -10px"><span>'+this.name+'</span><div>');
-				this.setWidth(this.columnWidth);
-			});
+			this.updateStaticDimension(this.width);
 		}
 	}
+	
+	//update the static dimension: if horizontal the static dimension is height else the width 
+	,updateStaticDimension : function(dimension){
+		if(this.horizontal){
+			this.height = dimension;
+			this.width = this.thisDimension*this.columnWidth;
+			if(this.body!=null){
+				this.body.update(this.getBackground(dimension+'px', (this.fontSize+(dimension/2))+'px'));
+				this.setSize(this.thisDimension*this.columnWidth, dimension);
+			}else{
+				this.on('render',	function(f){	//if the component has not been rendered yet
+					this.body.update(this.getBackground(dimension+'px', ((this.fontSize+dimension)/2)+'px'));
+					this.setSize(this.thisDimension*this.columnWidth, dimension);
+				}, this);
+			}
+		}else{
+			this.height = this.thisDimension*this.rowHeight;
+			this.width = dimension;
+			if(this.body!=null){
+				var paddingTop = (this.thisDimension*this.rowHeight/2+this.fontSize);
+				this.body.update(this.getBackground('105%', paddingTop+'px'));
+				this.setSize(dimension, this.thisDimension*this.rowHeight);
+			}else{
+				
+				this.on('afterlayout',	this.updateAfterLayout, this);
+//				this.on('render',	function(f){	
+//					var paddingTop = (this.thisDimension*this.rowHeight+this.fontSize)/2;
+//					this.body.update(this.getBackground('105%', paddingTop+'px'));
+//					this.setSize(dimension, this.thisDimension*this.rowHeight);
+//				}, this);
+			}
+		}
+	}
+	
+	,updateAfterLayout : function(f){
+		var paddingTop = (this.thisDimension*this.rowHeight/2+this.fontSize);
+		this.body.update(this.getBackground('105%', paddingTop+'px'));
+		this.setSize(this.width, this.thisDimension*this.rowHeight);
+	}
+
+	,getBackground : function(height, padding){
+		return '<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; margin-top: -'+padding+';\"\">'+this.name+'<div>';
+	}
+
 	
 	//Return the previous brother. If it doesn't exist
 	//the method returns this
@@ -148,6 +189,9 @@ Ext.extend(HeaderEntry, Ext.Panel, {
 		}
 		return this;
 	}
+	
+	
+	
 	
 	//Return the next brother. If it doesn't exist
 	//the method returns this
@@ -189,4 +233,4 @@ Ext.extend(HeaderEntry, Ext.Panel, {
 		return childs;
 	}
 	
-});
+});			
