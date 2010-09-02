@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -85,6 +84,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	
 	private final String NODES_TO_SAVE = "nodes";
 	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
+	private final String ROOT_TO_SAVE = "rootNode";
 
 	@Override
 	public void doService() {
@@ -142,30 +142,40 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODES_SAVE)) {
 			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
 			JSONArray droppedNodesToSaveJSON = getAttributeAsJSONArray(DROPPED_NODES_TO_SAVE);
+			JSONObject rootObj = getAttributeAsJSONObject(ROOT_TO_SAVE);
 			
 			List<ModelInstance> modelNodes = null;
 			List<ModelInstance> modelNodesDD = null;
-			if(nodesToSaveJSON != null){
+			ModelInstance root = null;
+			Vector idsToRemove = new Vector();
+			if(nodesToSaveJSON != null || droppedNodesToSaveJSON != null){
 				try {
-					modelNodes = deserializeJSONArray(nodesToSaveJSON);
 					modelNodesDD = deserializeNodesJSONArrayDD(droppedNodesToSaveJSON);
-
 					
-					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
-						if(modelNodes != null && !modelNodes.isEmpty()){
-							//new root node added
-							modelNodesDD.add(modelNodes.get(0));
-						}else{
-							//root existing
-						}
-						recursiveStart(modelNodesDD, null);
-					}else{
-						//save existing nodes 
-						JSONObject response = saveModelNodeInstances(modelNodes);
-						writeBackToClient(new JSONSuccess(response));
+					//clean nodes modified from DD ones
+					for(int i=0; i<modelNodesDD.size(); i++){
+						ModelInstance mi = modelNodesDD.get(i);
+						String guidToSkip = mi.getGuiId();
+						idsToRemove.add(guidToSkip);
 					}
-
-					writeBackToClient(new JSONSuccess("OK"));
+					modelNodes = deserializeJSONArray(nodesToSaveJSON, idsToRemove);
+					
+					JSONObject response = new JSONObject();
+					//save DD nodes
+					if(rootObj != null){						
+						root = deserializeJSONObjectDD(rootObj, new ArrayList<ModelInstance>());	
+						if(root.getId() == null){
+							//adds no nodes to save/search
+							modelNodesDD.add(root);
+						}
+					}
+					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
+						response = recursiveStart(modelNodesDD, root, response);
+					}
+					
+					response = saveModelNodeInstances(modelNodes);
+					//System.out.println(response);
+					writeBackToClient(new JSONSuccess(response));
 					
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -364,19 +374,29 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		return results;
 	}
 
-	private void recursiveStart(List<ModelInstance> modelInstList, Integer idToSearch){
+	private JSONObject recursiveStart(List<ModelInstance> modelInstList, ModelInstance root, JSONObject response) throws JSONException{
 		//first time--> searches for root
-		boolean findRoot = false;
-		if(idToSearch == null){
-			findRoot = true;
+		Integer parentIdToSearch = null;
+		boolean isRoot = true;
+		if(root != null){
+			Integer id = root.getId();
+			if(id != null){
+				//isRoot = false;
+				parentIdToSearch = id;
+				recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
+				
+			}else{
+				//if new root
+				List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
+				if(nodes != null && !nodes.isEmpty()){
+					ModelInstance modInst = nodes.get(0);//root
+					recurseOverTree(modelInstList, modInst, parentIdToSearch, response, true);
+				}
+			}
 		}
-		List<ModelInstance> nodes = findNextNodes(modelInstList, idToSearch, findRoot);
-		if(nodes != null && !nodes.isEmpty()){
-			ModelInstance modInst = nodes.get(0);//root
-			recurseOverTree(modelInstList, modInst, idToSearch);
-		}
+		return response;
 	}
-	private void recurseOverTree(List<ModelInstance> modelInstList, ModelInstance modelInstance, Integer parentId){
+	private JSONObject recurseOverTree(List<ModelInstance> modelInstList, ModelInstance modelInstance, Integer parentId, JSONObject response, boolean isToSave) throws JSONException{
 
 		ModelInstance modInstToSave = modelInstance;
 		//found  root child
@@ -384,9 +404,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		modInstToSave.setParentId(parentId);				
 		//save it 
 		try {
-			Integer genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
-			modInstToSave.setId(genId);
-			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId, false);
+			Integer genId = modInstToSave.getId();
+			if(isToSave){
+				genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
+				modInstToSave.setId(genId);
+				
+			}
+			response.append(modInstToSave.getGuiId(), "OK");
+			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);
 			if(nodes == null || nodes.isEmpty()){
 				//try another way
 				nodes = modInstToSave.getChildrenNodes();
@@ -395,31 +420,55 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			if(nodes != null && !nodes.isEmpty()){
 				for (int i=0; i< nodes.size(); i++){
 					ModelInstance modInst = (ModelInstance)nodes.get(i);
-					recurseOverTree(modelInstList, modInst, genId);
+					recurseOverTree(modelInstList, modInst, genId, response, true);
 				}
 			}
 
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());
+			response.append(modInstToSave.getGuiId(), "KO");
 		}
-
+		return response;
 	}
-	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer idToSearch, boolean isRoot){
+	private List<ModelInstance> findRootNode(List<ModelInstance> modelInstList, Integer parentIDToSearch){
+		//System.out.println(parentIDToSearch);
 		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
 		for(int i=0; i< modelInstList.size(); i++){			
 			ModelInstance modInstToSave = (ModelInstance)modelInstList.get(i);
-			if(isRoot){
-				if(modInstToSave.getParentId() == idToSearch 
+
+			if(parentIDToSearch == null){//parent is newly added
+				if(modInstToSave.getParentId() == null    
 						&& !modInstToSave.getGuiId().matches("^\\d+$")){
+					
 					nodes.add(modInstToSave);
 				}
-			}else{
-				if(modInstToSave.getParentId() == idToSearch 
-						&& modInstToSave.getGuiId().matches("^\\d+$")){
+			}else{//parent is existing
+				if(modInstToSave.getParentId() != null 
+						&&( modInstToSave.getParentId().intValue() == parentIDToSearch.intValue())
+						&& !modInstToSave.getGuiId().matches("^\\d+$")){
 					nodes.add(modInstToSave);
 				}
 			}
 
+		}
+		return nodes;
+	}
+	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer parentIDToSearch){
+		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
+		for(int i=0; i< modelInstList.size(); i++){			
+			ModelInstance modInstToSave = (ModelInstance)modelInstList.get(i);
+
+			if(parentIDToSearch == null ){
+				if(modInstToSave.getParentId() == parentIDToSearch 
+						&& modInstToSave.getGuiId().matches("^\\d+$")){
+					nodes.add(modInstToSave);
+				}
+			}else{
+				if(modInstToSave.getParentId() != null &&(modInstToSave.getParentId().intValue() == parentIDToSearch.intValue())
+						&& modInstToSave.getGuiId().matches("^\\d+$")){
+					nodes.add(modInstToSave);
+				}
+			}
 		}
 		return nodes;
 	}
@@ -430,15 +479,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			
 			JSONObject obj = (JSONObject)rows.get(i);
 			ModelInstance modelInst = deserializeJSONObjectDD(obj, toReturn);
-
 			
 		}	
 		return toReturn;
 	}
-	private ModelInstance deserializeJSONObjectDD (JSONObject obj, List<ModelInstance> nodeslist)throws JSONException{
-		
-		ModelInstance modelInst = new ModelInstance();
 
+	
+	private ModelInstance fillModelInstance(JSONObject obj, ModelInstance modelInst){
+		
 		String guiId = "";
 		try{
 			guiId = obj.getString("id");
@@ -447,7 +495,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			//nothing--> new node dropped!
 			modelInst.setGuiId(null);
 		}
-		
+
 		try{
 			
 			modelInst.setId(obj.getInt("modelInstId"));
@@ -459,6 +507,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		try{
 			modelInst.setParentId(obj.getInt("parentId"));
 		}catch(Throwable t){
+			//nothing
 			modelInst.setParentId(null);
 		}
 
@@ -491,11 +540,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modelInst.setModel(model);
 			}catch(Throwable t){
 				//nothing
+				logger.error("no model!");
 				modelInst.setModel(null);
 			}
-			
-
-			
 			try{
 				IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
 				String kpiIdStr ;
@@ -587,34 +634,41 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						modelInst.setModelUUID(modelUuid);
 					}
 					//or noone
-
+					
 				}
 				
 			}catch(Throwable t){
 				//nothing
 				modelInst.setKpiInstance(null);
 			}
-			//children
-			JSONArray children ;
-			try{
-				children = obj.getJSONArray("children");
-				List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
-				for(int k=0; k<children.length(); k++){
-					JSONObject jsonchild = (JSONObject)children.get(k);
-					childrenMI.add(deserializeJSONObjectDD(jsonchild, nodeslist));
-				}
-				modelInst.setChildrenNodes(childrenMI);
-			}catch(Throwable t){
-				//nothing
-				modelInst.setChildrenNodes(null);
-			}
 		}catch(Throwable t){
 			logger.debug("Deserialization error on node: "+guiId);
+		}
+		return modelInst;
+	}
+	private ModelInstance deserializeJSONObjectDD (JSONObject obj, List<ModelInstance> nodeslist)throws JSONException{
+		
+		ModelInstance modelInst = new ModelInstance();
+
+		fillModelInstance(obj, modelInst);
+		//children
+		JSONArray children ;
+		try{
+			children = obj.getJSONArray("children");
+			List <ModelInstance> childrenMI = new ArrayList<ModelInstance>();
+			for(int k=0; k<children.length(); k++){
+				JSONObject jsonchild = (JSONObject)children.get(k);
+				childrenMI.add(deserializeJSONObjectDD(jsonchild, nodeslist));
+			}
+			modelInst.setChildrenNodes(childrenMI);
+		}catch(Throwable t){
+			//nothing
+			modelInst.setChildrenNodes(null);
 		}
 		nodeslist.add(modelInst);
 		return modelInst;
 	}
-	private List<ModelInstance> deserializeJSONArray(JSONArray rows) throws JSONException{
+	private List<ModelInstance> deserializeJSONArray(JSONArray rows, Vector idsToRemove) throws JSONException{
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
 
 		for(int i=0; i< rows.length(); i++){
@@ -622,166 +676,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			JSONObject obj = (JSONObject)rows.get(i);
 
 			ModelInstance modelInst = new ModelInstance();
-
-			String guiId = "";
-			try{
-				guiId = obj.getString("id");
-				modelInst.setGuiId(guiId);
-			}catch(Throwable t){
-				//nothing--> new node dropped!
-				modelInst.setGuiId(null);
-			}
-
-			try{
-				
-				modelInst.setId(obj.getInt("modelInstId"));
-			}catch(Throwable t){
-				//nothing
-				modelInst.setId(null);
-			}
 			
-			try{
-				modelInst.setParentId(obj.getInt("parentId"));
-			}catch(Throwable t){
-				//nothing
-				modelInst.setParentId(null);
+			fillModelInstance(obj, modelInst);
+			//skip root node if new one:
+			if(!(modelInst.getParentId() == null && modelInst.getId() == null) &&
+					(!idsToRemove.contains(modelInst.getGuiId()))){
+				toReturn.add(modelInst);
 			}
 
-			try{
-				String descr ;
-				try{
-					descr = obj.getString("description");
-				}catch(Throwable t){
-					descr = null;
-				}
-				modelInst.setDescription(descr);
-				String label ;
-				try{
-					label = obj.getString("label");
-				}catch(Throwable t){
-					label = java.util.UUID.randomUUID().toString();
-				}
-				modelInst.setLabel(label);
-				String name ;
-				try{
-					name = obj.getString("name");
-				}catch(Throwable t){
-					name = null;
-				}
-				modelInst.setName(name);
-
-				Integer modelId = obj.getInt("modelId");
-				try{
-					Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
-					modelInst.setModel(model);
-				}catch(Throwable t){
-					//nothing
-					logger.error("no model!");
-					modelInst.setModel(null);
-				}
-				try{
-					IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
-					String kpiIdStr ;
-					try{
-					    kpiIdStr = obj.getString("kpiId");
-					}catch(Throwable t){
-						kpiIdStr = null;
-					}
-					String kpiInIDStr;
-					try{
-						kpiInIDStr = obj.getString("kpiInstId");
-					}catch(Throwable t){
-						kpiInIDStr = null;
-					
-					}
-					KpiInstance kpiInstance = null;
-					if(kpiInIDStr != null){
-						//existing kpi instance means model instance exists
-						kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
-						modelInst.setKpiInstance(kpiInstance);
-					}else{
-						//or defined model uuid
-						String modelUuid;
-						try{
-							modelUuid = obj.getString("modelUuid");
-						}catch(Throwable t){
-							modelUuid = null;
-						
-						}
-						//new kpi instance 
-						if(kpiIdStr != null){
-							kpiInstance = new KpiInstance();
-							String kpiInstPeriodicity;
-							try{
-								kpiInstPeriodicity = obj.getString("kpiInstPeriodicity");
-								kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
-							}catch(Throwable t){
-								kpiInstPeriodicity = null;
-							
-							}
-							
-							
-							String kpiInstChartTypeId;
-							try{
-								kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
-								kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
-							}catch(Throwable t){
-								kpiInstChartTypeId = null;
-							
-							}
-							
-							String kpiInstTarget;
-							try{
-								kpiInstTarget = obj.getString("kpiInstTarget");
-								kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
-							}catch(Throwable t){
-								kpiInstTarget = null;
-							
-							}
-							
-							
-							String kpiInstThrCode;
-							try{
-								kpiInstThrCode = obj.getString("kpiInstThrName");
-								Threshold thr = DAOFactory.getThresholdDAO().loadThresholdByCode(kpiInstThrCode);
-								if(thr != null){
-									kpiInstance.setThresholdId(thr.getId());
-								}
-							}catch(Throwable t){
-								kpiInstThrCode = null;
-							
-							}
-							
-							String kpiInstWeight;
-							try{
-								kpiInstWeight = obj.getString("kpiInstWeight");
-								kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
-							}catch(Throwable t){
-								kpiInstWeight = null;
-							
-							}
-							
-							
-							kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
-							modelInst.setKpiInstance(kpiInstance);
-						}						
-
-						else if(modelUuid != null){
-							modelInst.setModelUUID(modelUuid);
-						}
-						//or noone
-						
-					}
-					
-				}catch(Throwable t){
-					//nothing
-					modelInst.setKpiInstance(null);
-				}
-				String value = obj.getString("toSave");
-			}catch(Throwable t){
-				logger.debug("Deserialization error on node: "+guiId);
-			}
-			toReturn.add(modelInst);
 		}	
 		return toReturn;
 	}
@@ -796,106 +698,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 		return toReturn;
 	}
-	private String isAlreadyInserted(TreeMap<String, ModelInstance> treeMap, Integer parentId){
-		String ret = "";
-		while(treeMap.keySet().iterator().hasNext()){
-			String key = treeMap.keySet().iterator().next();
-			if(!key.startsWith(parentId+"_")){
-				ret = parentId+"_0";
-			}else{
-				int pos = key.indexOf("_");
-				String progr = key.substring(pos+1);
-				ret = parentId+"_"+(Integer.valueOf(progr)+1);
-			}
-		}
-		return ret;
-	}
-	private JSONObject saveNewModelNodeInstances(List<ModelInstance> nodesToSaveDD, JSONObject respObj, ModelInstance root) throws JSONException{
-		JSONArray errorNodes = new JSONArray();		
-		
-		//loop over nodes and order them by parentId ascending
-		TreeMap<String, ModelInstance> treeMap = new TreeMap<String, ModelInstance>();
-		
-		for(int i= 0; i<nodesToSaveDD.size(); i++){
-			
-			ModelInstance modelInstance = (ModelInstance)nodesToSaveDD.get(i);
-			//loads all nodes guiid with type error
-			
-			respObj.put(modelInstance.getGuiId(), "OK");
-			
-			//added with DD
-			if(modelInstance.getId() == null){
-				if(modelInstance.getParentId() == null){
-					//added under newly created root
-					modelInstance.setParentId(root.getId());
-				}//wrong parent id but keep it
 
-				//already inserted with same parentId?
-				treeMap.put(isAlreadyInserted(treeMap, modelInstance.getParentId()), modelInstance);			
-			}//else skipelse
-			{
-				respObj.put(modelInstance.getGuiId(), "KO");
-			}
-		}
-		
-		Set set = treeMap.entrySet();
-		// Get an iterator
-		Iterator it = set.iterator(); 
-		//loop again over treemap
-		while(it.hasNext()) {
-			Map.Entry orderedEntry = (Map.Entry)it.next();
-			ModelInstance orderedNode = (ModelInstance)orderedEntry.getValue();
-			
-			//GET JSON OBJECT VALUE
-			Integer parentId = orderedNode.getParentId();
-			try {
-
-				Integer newId = DAOFactory.getModelInstanceDAO().insertModelInstance(orderedNode);
-				if (newId != null){
-					orderedNode.setId(newId);
-					respObj.put(orderedNode.getGuiId(), newId);
-				}else{						
-					respObj.put(orderedNode.getGuiId(), "KO");
-				}
-					
-			} catch (Exception e) {
-				//if parentId != null but no parent node stored on db --> exception
-				respObj.put(orderedNode.getGuiId(), "KO");
-			}
-
-		} 
-		return respObj;
-	}
-	private ModelInstance saveNewModelInstanceRoot(List<ModelInstance> nodesToSave) throws JSONException{
-
-		for(int i= 0; i<nodesToSave.size(); i++){
-			ModelInstance modelInstance = (ModelInstance)nodesToSave.get(i);
-			if(modelInstance.getId() == null &&
-					modelInstance.getParentId() == null &&
-					modelInstance.getGuiId() == null){
-				//new model instance root --> insert it first
-				logger.debug("new model instance root");
-				Integer index = null;
-				try {
-					index = DAOFactory.getModelInstanceDAO().insertModelInstance(modelInstance);
-					modelInstance.setGuiId(index+"");
-					modelInstance.setId(index);
-					modelInstance.setParentId(null);
-					nodesToSave.remove(i);
-					
-				} catch (EMFUserError e) {
-					modelInstance.setGuiId(null);
-					modelInstance.setId(null);
-					modelInstance.setParentId(null);
-					nodesToSave.remove(i);
-				}
-				
-				return modelInstance;
-			}
-			
-		}
-		return null;
-	}
 	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws JSONException{
 		JSONArray errorNodes = new JSONArray();
 		
@@ -984,4 +787,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		} 
 		return respObj;
 	}
+
+
 }

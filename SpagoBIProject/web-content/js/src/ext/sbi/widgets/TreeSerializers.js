@@ -163,6 +163,7 @@ Ext.extend(Sbi.widgets.JsonTreeSerializer, Sbi.widgets.TreeSerializer, {
 	 * @param {Object} node The node to serialize
 	 */
 	nodeToString: function(node){
+
 //		Exclude nodes based on caller-supplied filtering function
 	    if (!this.nodeFilter(node)) {
 	        return '';
