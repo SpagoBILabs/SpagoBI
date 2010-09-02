@@ -232,7 +232,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					
 					Workbook wb = exp.exportInExcel();
 					
-					File file = new File("workbook.xls");
+					File file = File.createTempFile("workbook", ".xls");
 					FileOutputStream stream = new FileOutputStream(file);
 					wb.write(stream);
 					stream.flush();
