@@ -21,6 +21,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
+import it.eng.qbe.catalogue.QueryCatalogue;
+import it.eng.qbe.commons.serializer.SerializerFactory;
+import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.query.Query;
+import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
+import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
+import it.eng.spagobi.utilities.engines.EngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,18 +39,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.qbe.catalogue.QueryCatalogue;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.crosstab.serializer.CrosstabSerializerFactory;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
-import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
-import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
-import it.eng.spagobi.utilities.engines.EngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -150,7 +149,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
-				query = QuerySerializerFactory.getDeserializer("application/json").deserialize(queryJSON, getDatamartModel());
+				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDatamartModel());
 								
 				catalogue.addQuery(query);
 			}
@@ -176,7 +175,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			Iterator it = queries.iterator();
 			while(it.hasNext()) {
 				query = (Query)it.next();
-				queryJSON =  (JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getDatamartModel(), null);
+				queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDatamartModel(), null);
 				queriesJSON.put( queryJSON );
 			}
 			
@@ -199,7 +198,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {
 		JSONObject crosstabDefinitionJSON = null;
 		try {
-			crosstabDefinitionJSON = (JSONObject) CrosstabSerializerFactory.getSerializer("application/json").serialize(crosstabDefinition);
+			crosstabDefinitionJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(crosstabDefinition);
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to serialize crosstab definition", e);
 		}
@@ -213,7 +212,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		
 		crosstabDefinitionJSON = (JSONObject)getProperty( CROSSTAB_DEFINITION );
 		try {
-			crosstabDefinition = CrosstabSerializerFactory.getDeserializer("application/json").deserialize(crosstabDefinitionJSON);
+			crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to deserialize crosstab definition", e);
 		}

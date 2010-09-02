@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.crosstab.bo;
 
-import it.eng.qbe.crosstab.serializer.CrosstabSerializationConstants;
+import it.eng.qbe.crosstab.serializer.json.CrosstabSerializationConstants;
 import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.IAggregationFunction;
 

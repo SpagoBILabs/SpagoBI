@@ -19,15 +19,19 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.crosstab.serializer;
+package it.eng.qbe.commons.serializer;
 
-import it.eng.qbe.commons.serializer.SerializationException;
+import java.util.Locale;
+
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.query.Query;
 
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public interface CrosstabDeserializer {
-	public CrosstabDefinition deserialize(Object o) throws SerializationException;
+public interface Serializer {
+	public Object serialize(Query q, DataMartModel m, Locale locale) throws SerializationException;
+	public Object serialize(CrosstabDefinition cd) throws SerializationException;
 }

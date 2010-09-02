@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.datasource.hibernate.DBConnection;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.AggregationFunctions;
@@ -39,7 +40,6 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.IAggregationFunction;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
@@ -133,8 +133,8 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 			
 			// ... query transformation goes here	
 			logger.debug("Making a deep copy of the original query...");
-			String store = ((JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale())).toString();
-			Query copy = QuerySerializerFactory.getDeserializer("application/json").deserialize(store, getEngineInstance().getDatamartModel());
+			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale())).toString();
+			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDatamartModel());
 			logger.debug("Deep copy of the original query produced");
 			
 			String jsonEncodedFormState = getAttributeAsString( FORM_STATE );

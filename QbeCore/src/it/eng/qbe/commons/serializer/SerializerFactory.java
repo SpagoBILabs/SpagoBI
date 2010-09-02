@@ -18,32 +18,35 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.crosstab.serializer;
+package it.eng.qbe.commons.serializer;
+
+import it.eng.qbe.commons.serializer.json.JSONDeserializer;
+import it.eng.qbe.commons.serializer.json.JSONSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class CrosstabSerializerFactory {
+public class SerializerFactory {
 	
-	static Map<String, CrosstabSerializer> serializerMappings;
-	static Map<String, CrosstabDeserializer> deserializerMappings;
+	static Map<String, Serializer> serializerMappings;
+	static Map<String, Deserializer> deserializerMappings;
 	
 	static {
 		serializerMappings = new HashMap();
-		serializerMappings.put( "application/json", new CrosstabJSONSerializer() );
+		serializerMappings.put( "application/json", new JSONSerializer() );
 		
 		deserializerMappings = new HashMap();
-		deserializerMappings.put( "application/json", new CrosstabJSONDeserializer() );
+		deserializerMappings.put( "application/json", new JSONDeserializer() );
 	}
 	
-	public static CrosstabSerializer getSerializer(String mimeType) {
+	public static Serializer getSerializer(String mimeType) {
 		return serializerMappings.get( mimeType );
 	}
 	
-	public static CrosstabDeserializer getDeserializer(String mimeType) {
+	public static Deserializer getDeserializer(String mimeType) {
 		return deserializerMappings.get( mimeType );
 	}
 }

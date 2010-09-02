@@ -27,9 +27,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.QueryMeta;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -96,7 +96,7 @@ public class AddQueryAction extends AbstractQbeEngineAction {
 	
 	// @TODO create a general purpose serializer not dependant on the datamartModel
 	private JSONObject serializeQuery(Query query) throws SerializationException {
-		return (JSONObject)QuerySerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), null);
+		return (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), null);
 	}
 
 	private JSONObject serializeMeta(QueryMeta meta) throws JSONException {

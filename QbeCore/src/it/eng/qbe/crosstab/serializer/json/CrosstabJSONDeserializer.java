@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.crosstab.serializer;
+package it.eng.qbe.crosstab.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabJSONDeserializer implements CrosstabDeserializer {
+public class CrosstabJSONDeserializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabJSONDeserializer.class);

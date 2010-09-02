@@ -20,15 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.crosstab.serializer.CrosstabSerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
@@ -38,8 +31,14 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * This action is responsible to persist the queries contained into the catalogue
@@ -86,7 +85,7 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			CrosstabDefinition crosstabDefinition = CrosstabSerializerFactory.getDeserializer("application/json").deserialize(crosstabDefinitionJSON);;
+			CrosstabDefinition crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
 			getEngineInstance().setCrosstabDefinition(crosstabDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();

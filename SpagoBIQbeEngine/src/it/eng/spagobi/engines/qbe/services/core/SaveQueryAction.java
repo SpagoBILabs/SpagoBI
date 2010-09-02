@@ -27,8 +27,8 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.QuerySerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
@@ -105,7 +105,7 @@ public class SaveQueryAction extends AbstractQbeEngineAction {
 			
 			Query query = null;
 			try {
-				query = QuerySerializerFactory.getDeserializer("application/json").deserialize(jsonEncodedQuery, getEngineInstance().getDatamartModel());
+				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(jsonEncodedQuery, getEngineInstance().getDatamartModel());
 				//query = QueryEncoder.decode(queryRecords, queryFilters, queryFilterExp, getDatamartModel());
 			} catch (SerializationException e) {
 				String message = "Impossible to decode query string comming from client";
