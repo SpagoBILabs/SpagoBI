@@ -186,15 +186,17 @@ Ext.extend(Sbi.widgets.JsonTreeSerializer, Sbi.widgets.TreeSerializer, {
 	    
 //		Add child nodes if any
 	    var children = node.childNodes;
-	    var clen = children.length;
-	    if(clen != 0){
-	        if (c) {result += ',';}
-	        result += '"children":[';
-	        for(var i = 0; i < clen; i++){
-	            if (i > 0) {result += ',';}
-	            result += this.nodeToString(children[i]);
-	        }
-	        result += ']';
+	    if(children !== undefined && children!= null){
+		    var clen = children.length;
+		    if(clen != 0){
+		        if (c) {result += ',';}
+		        result += '"children":[';
+		        for(var i = 0; i < clen; i++){
+		            if (i > 0) {result += ',';}
+		            result += this.nodeToString(children[i]);
+		        }
+		        result += ']';
+		    }
 	    }
 	    return result + "}";
 	}
