@@ -20,6 +20,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
 	private static final String TEXT = "text";
+	private static final String LEAF = "leaf";
 	private static final String DESCRIPTION = "description";
 	private static final String STARTDATE = "startdate";
 	private static final String ENDDATE = "enddate";
@@ -30,6 +31,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String MODEL_TYPE = "modelType";
 	private static final String MODEL_TYPEDESCR = "modelTypeDescr";
 	private static final String MODEL_TEXT = "modelText";
+	
 
 	private static final String KPI_NAME =  "kpiName";
 	private static final String KPI_ID = "kpiId";
@@ -95,6 +97,11 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			result.put(STARTDATE, res.getStartDate());
 			result.put(ENDDATE, res.getEndDate());
 			result.put(MODELUUID, res.getModelUUID() );
+			if(res.getChildrenNodes() != null && !res.getChildrenNodes().isEmpty()){
+				result.put(LEAF, false );
+			}else{
+				result.put(LEAF, true );
+			}
 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
