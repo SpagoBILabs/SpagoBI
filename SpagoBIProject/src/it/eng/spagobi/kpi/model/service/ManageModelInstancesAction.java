@@ -381,23 +381,22 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private JSONObject recursiveStart(List<ModelInstance> modelInstList, ModelInstance root, JSONObject response) throws JSONException{
 		//first time--> searches for root
 		Integer parentIdToSearch = null;
-		boolean isRoot = true;
-		if(root != null){
-			Integer id = root.getId();
-			if(id != null){
-				//isRoot = false;
-				parentIdToSearch = id;
-				recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
-				
-			}else{
-				//if new root
-				List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
-				if(nodes != null && !nodes.isEmpty()){
-					ModelInstance modInst = nodes.get(0);//root
-					recurseOverTree(modelInstList, modInst, parentIdToSearch, response, true);
-				}
+		
+		Integer id = root.getId();
+		if(id != null){
+			//isRoot = false;
+			parentIdToSearch = id;
+			recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
+			
+		}else{
+			//if new root
+			List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
+			if(nodes != null && !nodes.isEmpty()){
+				ModelInstance modInst = nodes.get(0);//root
+				recurseOverTree(modelInstList, modInst, parentIdToSearch, response, true);
 			}
 		}
+
 		return response;
 	}
 	private JSONObject recurseOverTree(List<ModelInstance> modelInstList, ModelInstance modelInstance, Integer parentId, JSONObject response, boolean isToSave) throws JSONException{
@@ -414,6 +413,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modInstToSave.setId(genId);
 				
 			}
+			System.out.println("SAVED NODE: GEN_ID =" +genId+" PARENT_ID ="+parentId+" name= "+modInstToSave.getName());
 			response.append(modInstToSave.getGuiId(), "OK");
 			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);
 			if(nodes == null || nodes.isEmpty()){

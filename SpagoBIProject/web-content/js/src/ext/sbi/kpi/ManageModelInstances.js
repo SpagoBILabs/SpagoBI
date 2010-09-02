@@ -100,7 +100,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpitreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: this.configurationObject.manageTreeService,
 	        createNode: function(attr) {
-				
+			
 	            if (attr.modelInstId) {
 	                attr.id = attr.modelInstId;
 	            }
@@ -315,7 +315,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			node.attributes.toSave = true;
 			var fName = field.name;
 			node.attributes[fName] = newVal;
-			
+			if(fName == 'name'){
+				//alert("ciao");
+				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
+				rec.data.name = newVal;
+				this.referencedCmp.modelInstancesGrid.mainElementsStore.commitChanges();
+				this.referencedCmp.modelInstancesGrid.getView().refresh();
+			}
 		}
 	}
 
@@ -742,7 +748,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			},
 			params : params
 		});
-		
+		alert("eccoci");
+		this.referencedCmp.manageModelsTree.importCheck.setValue(false);
     }
 
 	,fillDetail : function(sel, node) {
