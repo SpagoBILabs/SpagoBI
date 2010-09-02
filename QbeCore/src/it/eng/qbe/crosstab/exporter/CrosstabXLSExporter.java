@@ -44,8 +44,38 @@ import org.json.JSONObject;
 public class CrosstabXLSExporter {
 	
 	static CreationHelper createHelper = null;
-	static boolean s = true;
 	public static final String CROSSTAB_JSON_DESCENDANTS_NUMBER = "descendants_no";
+	
+	public static Workbook export(JSONObject json) {
+		
+		Workbook wb = new HSSFWorkbook();
+	    createHelper = wb.getCreationHelper();
+	    Sheet sheet = wb.createSheet("new sheet");
+
+	    try {
+	    	calculateDescendants(json);
+	    	System.out.println(json);
+	    	initSheet(sheet, json);
+	    	JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
+	    	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
+	    	int columnsDepth = getDepth(columnsRoot);
+			JSONObject rowsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
+			int rowsDepth = getDepth(rowsRoot);
+			JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
+			
+			JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
+			
+			buildColumnsHeader(sheet, columnsRootChilds, 0, rowsDepth);
+		    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth, 0);
+		    buildDataMatrix(sheet, data, columnsDepth, rowsDepth);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return wb;
+	}
+	
 	
 	public static void main(String[] args) {
 		
