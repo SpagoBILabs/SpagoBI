@@ -245,13 +245,24 @@
             <file name='./spagobi/crosstab/test/crosstabDefinitionExample.js'/>
             
             <file name='./spagobi/widgets/GenericDropTarget.js'/>
-            <file name='./spagobi/crosstab/ChooseAggregationFunctionWindow.js'/>
-            <file name='./spagobi/crosstab/CrosstabDetailsWizard.js'/>
-            <file name='./spagobi/crosstab/AttributesContainerPanel.js'/>
-            <file name='./spagobi/crosstab/MeasuresContainerPanel.js'/>
-            <file name='./spagobi/crosstab/CrosstabDefinitionPanel.js'/>
-            <file name='./spagobi/crosstab/CrosstabDesignerPanel.js'/>
-		    <file name='./spagobi/crosstab/CrosstabPreviewPanel.js'/>
+
+<file name='./spagobi/crosstab/AttributesContainerPanel.js'/>
+<file name='./spagobi/crosstab/ChooseAggregationFunctionWindow.js'/>
+<file name='./spagobi/crosstab/CrosstabDefinitionPanel.js'/>
+<file name='./spagobi/crosstab/CrosstabDesignerPanel.js'/>
+<file name='./spagobi/crosstab/CrosstabDetailsWizard.js'/>
+<file name='./spagobi/crosstab/CrosstabPreviewPanel.js'/>           
+<file name='./spagobi/crosstab/MeasuresContainerPanel.js'/>
+<file name='./spagobi/crosstab/crosstab/CrossTab.js'/>
+<file name='./spagobi/crosstab/crosstab/CrossTabCalculatedFields.js'/>
+<file name='./spagobi/crosstab/crosstab/CrossTabCalculatedFieldsValidator.js'/>
+<file name='./spagobi/crosstab/crosstab/CrossTabCFWizard.js'/>
+<file name='./spagobi/crosstab/crosstab/CrossTabShowHide.js'/>
+<file name='./spagobi/crosstab/crosstab/HeaderEntry.js'/>
+<file name='./spagobi/crosstab/test/crosstabDefinitionExample.js'/>
+
+
+
 		    	
 		    </filelist>
 
