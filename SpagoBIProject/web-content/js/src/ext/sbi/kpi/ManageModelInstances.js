@@ -683,7 +683,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		Ext.each(this.droppedSubtreeToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){	
-				alert(Ext.util.JSON.encode(node););
+				alert(Ext.util.JSON.encode(node));
 				jsonDroppedStr += JsonSer.nodeToString(node);
 				jsonDroppedStr +=',';
 			}
