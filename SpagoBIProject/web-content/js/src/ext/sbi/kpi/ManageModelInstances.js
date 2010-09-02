@@ -100,7 +100,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpitreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: this.configurationObject.manageTreeService,
 	        createNode: function(attr) {
-
+				
 	            if (attr.modelInstId) {
 	                attr.id = attr.modelInstId;
 	            }
@@ -639,30 +639,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiLabel.setValue(null);
 	}
-/*	, completeDroppedNode: function(node, id, parent){
-		alert("id:"+id+" parent:"+parent);
-		var counter = 0;
-		var resultNode = node;
-		if(id == null){
-			resultNode.attributes.id = 'generatedId_'+counter;
-		}else{
-			resultNode.attributes.id = id;
-		}	
-		if(parent != null){
-			resultNode.attributes.parentId = parent;
-		}	
-		//Add child nodes if any
-		var children = node.childNodes;
-		var clen = children.length;
-		if(clen != 0){
-		    for(var i = 0; i < clen; i++){
-		        this.completeDroppedNode(children[i], counter, id);
-		        counter++;
-		    }
 
-		}
-		return resultNode;
-	}*/
     //OVERRIDING save method
 	,save : function() {
 
