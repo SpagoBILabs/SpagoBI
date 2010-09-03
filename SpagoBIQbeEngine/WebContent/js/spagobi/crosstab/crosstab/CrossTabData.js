@@ -102,28 +102,17 @@ Ext.extend(CrossTabData , Object, {
 
 	 //serialize the data (it ads also the sums)
  	, serializeEntries: function(rowsum, columnsum ){
-		
- 		var serializedEntries ='[';
-		for(var i=0; i<this.entries.length; i++){
-			serializedEntries = serializedEntries + '['
-			for(var j=0; j<this.entries[i].length-1; j++){
-				serializedEntries = serializedEntries+'\"'+this.entries[i][j]+'\", ';
-			}
-			serializedEntries = serializedEntries+'\"'+this.entries[i][this.entries[i].length-1]+'\"';
-			if(rowsum!=null){
-				serializedEntries = serializedEntries+',\"'+rowsum[i]+'\" ';
-			}
-			serializedEntries = serializedEntries+'], ';
-		}
+
+ 		var serializedEntries = this.getEntries();
+ 		
+ 		if(rowsum!=null){
+ 			for(var i=0; i<serializedEntries.length; i++){
+ 				serializedEntries.push(rowsum[i]);
+ 			}	
+ 		}
     	if(columnsum!=null){
-    		serializedEntries = serializedEntries + '['
-			for(var j=0; j<columnsum.length-1; j++){
-				serializedEntries = serializedEntries+'\"'+columnsum[j]+'\", ';
-			}
-			serializedEntries = serializedEntries+'\"'+columnsum[columnsum.length-1]+'\"], ';
+    		serializedEntries.push(columnsum);
     	}
-    		
-		serializedEntries = serializedEntries.substr(0,serializedEntries.length-2)+']';
 		return serializedEntries;
 	}
   
