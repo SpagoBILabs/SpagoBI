@@ -113,7 +113,7 @@ CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, with
     		}
     	}, this);
     }
-    alert(this.serializeCrossTab().toSource());
+
     CrossTab.superclass.constructor.call(this, c);
 };
 	
@@ -1186,6 +1186,10 @@ Ext.extend(CrossTab, Ext.Panel, {
     	this.calculatedFields.push(calculatedField);
     }
 
+    , getCalculatedFields: function() {
+    	return calculatedFields;
+    }
+    
     //Hide a line
     , hideLine : function(lineNumber, horizontal, lazy){
     	var headerEntry;

@@ -300,8 +300,14 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
   	}
   	
 	, save: function(meta, callback, scope) {
+		
+		var crosstabDefinition =  this.crosstabDesignerPanel.getCrosstabDefinition();
+		var crosstabCalculatedFields =  this.crosstabPreviewPanel.getCalculatedFields();
+		
+		crosstabDefinition.calculatedFields = calculatedFields;
+		
 		var params = Ext.apply({
-			crosstabDefinition: Ext.util.JSON.encode(this.crosstabDesignerPanel.getCrosstabDefinition())
+			crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
 		}, meta);
 		
 		var doSave = function() {

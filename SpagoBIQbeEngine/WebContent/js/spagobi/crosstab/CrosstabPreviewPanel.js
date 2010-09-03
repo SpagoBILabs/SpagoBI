@@ -165,5 +165,9 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
     , serializeCrossTab: function () {
     	return this.crosstab.serializeCrossTab();
     }
+    
+    , getCalculatedFields: function () {
+    	return this.crosstab.getCalculatedFields();
+    }
 
 });
