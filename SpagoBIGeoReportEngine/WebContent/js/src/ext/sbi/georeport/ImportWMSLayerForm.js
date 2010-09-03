@@ -49,10 +49,6 @@ Ext.ns("Sbi.georeport");
 Sbi.georeport.ImportWMSLayerForm = function(config) {
 	
 	var defaultSettings = {
-		width:'auto',
-		height:'auto',
-		autoHeight: true,
-		autoWidth: true,
 		border: false
 	};
 		
@@ -71,13 +67,11 @@ Sbi.georeport.ImportWMSLayerForm = function(config) {
 		, baseParams: new Object()
 	});
 	
-	
-	//this.addEvents('customEvents');
-	
 	this.initGrid(c.layerGridConfig || {});
 	this.initButtons(c.buttonsConfig || {});
 	
 	c = Ext.apply(c, {
+		layout: 'fit',
 	   	items: [this.layerGrid]
 	});
 	if(this.buttons != null) {
@@ -122,14 +116,6 @@ Ext.extend(Sbi.georeport.ImportWMSLayerForm, Ext.FormPanel, {
   		     }
   		     , scope: this
 		});
-		
-		/*
-		var requestParameters = {
-			urlWms: this.wmsLayerUrl.getValue()
-			, btnAddWms: this.btnAddWms.getValue()
-		};
-		this.store.load({params: requestParameters});
-		 */ 
 	}
     
     , initStore: function() {
@@ -144,20 +130,6 @@ Ext.extend(Sbi.georeport.ImportWMSLayerForm, Ext.FormPanel, {
 			reader: reader,
 	        data: wmsData
 		}); 
-		
-		/*
-		 this.proxy = new Ext.data.HttpProxy({
-	        url: this.services['loadLayersFromWms']
-	        , timeout : 300000
-			, failure: this.onDataStoreLoadException
-		});
-			
-		this.store = new Ext.data.Store({
-		     proxy: this.proxy,
-		     reader: new Ext.data.JsonReader(),
-		     remoteSort: true
-		 });
-		 */
 	}
 
 	,initSelectionModel: function() {
@@ -210,17 +182,14 @@ Ext.extend(Sbi.georeport.ImportWMSLayerForm, Ext.FormPanel, {
 	        iconCls:'icon-grid',
 	        store: this.store,
 	        cm: this.columnModel,
-	        sm: this.slectionModel,
-
+	        sm: this.selectionModel,
+	        layout: 'fit',
 	        viewConfig: {
-	            forceFit:true
-	        },
-	        columnLines: true,
-	        
-	        tbar: this.toolbarConfig,
-	        width:600,
-	        height:300
-	        //plugins: expander,
+   	        	forceFit:true
+   	        	, enableRowBody:true
+   	        	, showPreview:true
+   	     	},
+	        tbar: this.toolbarConfig
 	     });
 	}
 
