@@ -36,6 +36,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/crosstab/crosstab/HeaderEntry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabCalculatedFieldsValidator.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabData.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/crosstab/CrossTabCalculatedField.js'/></script>
 
 		
 <script type="text/javascript" src='../js/spagobi/qbe/DataStorePanel.js'/></script>
