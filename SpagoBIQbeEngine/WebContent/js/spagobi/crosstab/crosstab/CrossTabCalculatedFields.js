@@ -188,9 +188,9 @@ CrossTabCalculatedFields = function(){
     	var listOfExp  = new Array();
 
     	if(horizontal){
-    		lineLength = crossTab.entries.length;
+    		lineLength = crossTab.entries.getEntries().length;
     	}else{
-    		lineLength = crossTab.entries[0].length;
+    		lineLength = crossTab.entries.getEntries()[0].length;
     	}
 
   	   	for(var j=0; j<linesValueForHeader.length; j++){
@@ -204,9 +204,9 @@ CrossTabCalculatedFields = function(){
   				    	break;
   	   				}else{
   	   					if(horizontal){
-  	   						exps.push(crossTab.getColumn(linesValueForHeader[j][expIds[y]]));
+  	   						exps.push(crossTab.entries.getColumn(linesValueForHeader[j][expIds[y]]));
   	   					}else{
-  	   						exps.push(crossTab.getRow(linesValueForHeader[j][expIds[y]]));	
+  	   						exps.push(crossTab.entries.getRow(linesValueForHeader[j][expIds[y]]));	
   	   					}
   	   				}
   	   			}

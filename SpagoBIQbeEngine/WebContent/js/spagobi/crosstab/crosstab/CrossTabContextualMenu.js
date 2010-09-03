@@ -43,7 +43,7 @@
   * 
   * - Alberto Ghedin (alberto.ghedin@eng.it)
   */
-CrossTabClickMenu = function(node, crossTab) {
+CrossTabContextualMenu = function(node, crossTab) {
 	
 	this.crossTab = crossTab;
 	
@@ -102,10 +102,10 @@ CrossTabClickMenu = function(node, crossTab) {
 			        }
 			     ]
         }; 
-		CrossTabClickMenu.superclass.constructor.call(this, c);
+		CrossTabContextualMenu.superclass.constructor.call(this, c);
 };
 		
-Ext.extend(CrossTabClickMenu, Ext.menu.Menu, {
+Ext.extend(CrossTabContextualMenu, Ext.menu.Menu, {
 	crossTab: null,
 	headers: null
     
