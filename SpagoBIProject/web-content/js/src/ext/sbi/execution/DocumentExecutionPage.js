@@ -669,11 +669,50 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	                        ); 
 						}
 						
-				    }   
-					var menu0 = new Ext.menu.Menu({
-					id: 'basicMenu_0',
-					items: menuItems    
-					});	
+				    }
+					
+					var menu0 = null;
+					if (executionInstance.document.typeCode == 'DATAMART') {
+						var resultItem = new Ext.menu.Item({
+							id:  Ext.id()
+							, text: LN('sbi.execution.export.qbe.results')
+							, menu: {
+								listeners: {'mouseexit': function(item) {item.hide();}},
+			        			items: menuItems
+			        		}
+						});
+						
+						var crosstabExportItem = new Ext.menu.Item({
+                            id:  Ext.id()
+                            , text: LN('sbi.execution.XlsExport')
+                            , iconCls: 'icon-xls' 
+					     	, scope: this
+							, width: 15
+					    	, handler : function() { this.exportQbECrosstab('application/vnd.ms-excel'); }
+							, href: ''   
+                        });
+						
+						var crosstabMenuItem = new Ext.menu.Item({
+							id:  Ext.id()
+							, text: LN('sbi.execution.export.qbe.crosstab')
+							, menu: {
+								listeners: {'mouseexit': function(item) {item.hide();}},
+				        		items: [crosstabExportItem]
+				        	}
+						});
+						
+						menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							listeners: {'mouseexit': function(item) {item.hide();}},
+							items: [resultItem, crosstabMenuItem]    
+						});
+						
+					} else {
+						menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							items: menuItems    
+						});	
+					}
 					
 					if(executionInstance.document.exporters.length > 0){
 						this.toolbar.add(
@@ -1011,6 +1050,56 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	    }
 	}
 	
+	, exportQbECrosstab: function (exportType) {
+	    var mf = this.miframe;
+		var frame = mf.getFrame();
+	    var docurl = frame.getDocumentURI();
+	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
+	    if (baseUrl=="") baseUrl = docurl;
+	 
+	    var docurlPar = "ACTION_NAME=EXPORT_CROSSTAB_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
+	    var endUrl = baseUrl + docurlPar;
+	    
+		var crosstabDataEncoded = this.retrieveQbeCrosstabData(frame);    // retieving crosstab data (already encoded) from Qbe window
+	    
+	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
+	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
+	    							 // See source of DomHelper.append and DomHelper.overwrite methods
+	    							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+	    var dh = Ext.DomHelper;
+	    
+	    var form = document.getElementById('export-crosstab-form');
+	    if (!form) {
+			form = dh.append(Ext.getBody(), { // creating the hidden form
+			    id: 'export-crosstab-form'
+			    , tag: 'form'
+			    , method: 'post'
+			    , cls: 'export-form'
+			});
+			dh.append(form, {					// creating CROSSTAB hidden input in form
+			    tag: 'input'
+			    , type: 'hidden'
+			    , name: 'CROSSTAB'
+			    //, value: crosstabJSONencoded  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
+			});
+	    }
+	    form.CROSSTAB.value = crosstabDataEncoded;	// putting the crosstab data into CROSSTAB hidden input
+		form.action = endUrl;
+		form.target = '_blank';				// result into a new browser tab
+		form.submit();
+	}
+	
+	, retrieveQbeCrosstabData: function (frame) {
+		try {
+			var window = frame.getWindow();
+			var crosstabData = window.qbe.getCrosstabDataEncoded();
+			return crosstabData;
+		} catch (err) {
+			alert('Sorry, cannot perform operation.');
+			throw err;
+		}
+	}
+	
 	, exportGeoExecution: function (exportType) {	
 	    var mf = this.miframe;
 		var frame = mf.getFrame();
@@ -1093,10 +1182,10 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	        		fn: function(srcFrame, message) {
 			        	// call metadata open window
 						//this.shortcutsPanel.synchronizeSubobjectsAndOpenMetadata(message.data.id, message.data.meta, this.executionInstance);
-				if(message.data.id != null && message.data.id){
-						this.shortcutsPanel.synchronizeSubobjectsAndOpenMetadata(message.data.id, this.executionInstance);
-					}    
-				}
+	        			if(message.data.id != null && message.data.id){
+	        				this.shortcutsPanel.synchronizeSubobjectsAndOpenMetadata(message.data.id, this.executionInstance);
+	        			}    
+	        		}
 	        		, scope: this
 	        	}
 	        
