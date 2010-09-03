@@ -577,7 +577,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	}
 	, fillKpiPanel: function(sel, node) {
 		if(node !== undefined && node != null){
-			var hasKpiInst = node.attributes.kpiInst;
+			var hasKpiInst = node.attributes.kpiName;
 			var hasKpiModelUuid = node.attributes.modelUuid;
 			var hasKpi = node.attributes.kpiId;
 			if(hasKpiInst !== undefined && hasKpiInst != null){

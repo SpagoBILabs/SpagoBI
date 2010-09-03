@@ -74,6 +74,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 	rootNodeText : null,
 	treeTitle : null,
 	importCheck: null,
+	treeLoader: null,
 	
 
 	initWidget : function() {
@@ -90,26 +91,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
                 //"background-color": "#f1f1f1",
                 "border":"none"
             },
-			loader: new Ext.tree.TreeLoader({
-				dataUrl: this.services['listModelService'],
-		        createNode: function(attr) {
-					//alert(Ext.util.JSON.encode(attr));
-
-		            if (attr.modelId) {
-		                attr.id = attr.modelId;
-		            }
-
-		    		if (attr.kpi !== undefined && attr.kpi != null
-		    				&& attr.kpi != '') {
-		    			attr.iconCls = 'has-kpi';
-		    		}
-		    		if (attr.error !== undefined && attr.error != false) {
-		    			attr.cls = 'has-error';
-		    		}
-		            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-		        }
-
-			}),
+			loader: this.treeLoader,
 
 			preloadTree : this.preloadTree,
 			enableDD : true,
