@@ -175,8 +175,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					}
 					
 					response = saveModelNodeInstances(modelNodes);
-					System.out.println(response);
-					
+					//System.out.println(response);
+					writeBackToClient(new JSONSuccess(response));
 					
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
@@ -552,7 +552,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				name = null;
 			}
 			modelInst.setName(name);
-
+			//or defined model uuid
+			String modelUuid;
+			try{
+				modelUuid = obj.getString("modelUuid");
+			}catch(Throwable t){
+				modelUuid = null;
+			
+			}
 			Integer modelId = obj.getInt("modelId");
 			try{
 				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
@@ -583,14 +590,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
 					modelInst.setKpiInstance(kpiInstance);
 				}else{
-					//or defined model uuid
-					String modelUuid;
-					try{
-						modelUuid = obj.getString("modelUuid");
-					}catch(Throwable t){
-						modelUuid = null;
-					
-					}
+
 					//new kpi instance 
 					if(kpiIdStr != null){
 						kpiInstance = new KpiInstance();
@@ -647,11 +647,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						
 						kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
 						modelInst.setKpiInstance(kpiInstance);
+					}else{
+						//remove kpiinstance
+						modelInst.setKpiInstance(null);
 					}						
 
-					else if(modelUuid != null){
-						modelInst.setModelUUID(modelUuid);
-					}
 					//or noone
 					
 				}
@@ -718,7 +718,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 
-	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws JSONException{
+	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws Exception{
 		JSONArray errorNodes = new JSONArray();
 		
 		JSONObject respObj = new JSONObject();

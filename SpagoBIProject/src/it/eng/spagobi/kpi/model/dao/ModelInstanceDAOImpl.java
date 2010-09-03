@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -544,6 +545,8 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 
 			SbiKpiInstance kpiInstanceToCreate = null;
 
+			
+			
 			if (value.getKpiInstance() != null) {
 				if (newKpiInstanceHistory || dontSaveKpiHistory) {
 					kpiInstanceToCreate = setSbiKpiInstanceFromModelInstance(
@@ -562,6 +565,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 				sbiKpiModelInst.setSbiKpiInstance(null);
 			}
 			aSession.update(sbiKpiModelInst);
+			
+			//adds or updates periodicity
+			setSbiKpiPeriodicity(aSession, value, kpiInstanceToCreate);
 
 			if (deleteOldHistory && oldSbiKpiInstance != null) {
 				deleteKpiInstance(aSession, oldSbiKpiInstance
@@ -629,50 +635,56 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		} else {
 			sbiKpiInstance.setChartType(null);
 		}
-		if (value.getKpiInstance().getPeriodicityId() != null) {
-			// AGGIUNTA O AGGIORNAMENTO RIGA
-			// TODO
 
-			SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) aSession
-					.load(SbiKpiPeriodicity.class, value.getKpiInstance()
-							.getPeriodicityId());
-			Criteria critt = aSession.createCriteria(SbiKpiInstPeriod.class);
-			critt.add(Expression.eq("sbiKpiInstance", sbiKpiInstance));
-			List instPeriodsList = critt.list();
-
-			if (instPeriodsList == null || instPeriodsList.isEmpty()) {
-				SbiKpiInstPeriod toInsert = new SbiKpiInstPeriod();
-				toInsert.setSbiKpiInstance(sbiKpiInstance);
-				toInsert.setSbiKpiPeriodicity(sbiKpiPeriodicity);
-				toInsert.setDefault_(true);
-
-				aSession.save(toInsert);
-
-			} else {
-				((SbiKpiInstPeriod) instPeriodsList.get(0))
-						.setSbiKpiPeriodicity(sbiKpiPeriodicity);
-				aSession.update(instPeriodsList.get(0));
-			}
-
-			// sbiKpiInstance.setSbiKpiPeriodicity((SbiKpiPeriodicity) aSession
-			// .load(SbiKpiPeriodicity.class, value.getKpiInstance()
-			// .getPeriodicityId()));
-		} else {
-			// RIMOZIONE DELLA RIGA DAL DB
-			Set InstPeriods = sbiKpiInstance.getSbiKpiInstPeriods();
-			for (Iterator iterator = InstPeriods.iterator(); iterator.hasNext();) {
-				SbiKpiInstPeriod sbiKpiInstPeriod = (SbiKpiInstPeriod) iterator
-						.next();
-				aSession.delete(sbiKpiInstPeriod);
-			}
-			//
-		}
 
 		sbiKpiInstance.setWeight(value.getKpiInstance().getWeight());
 		sbiKpiInstance.setTarget((value.getKpiInstance().getTarget()));
 		return sbiKpiInstance;
 	}
+	private SbiKpiInstance setSbiKpiPeriodicity(Session aSession,
+			ModelInstance value, SbiKpiInstance sbiKpiInstance) {
+		if (sbiKpiInstance != null) {
 
+			if (value.getKpiInstance().getPeriodicityId() != null) {
+				// AGGIUNTA O AGGIORNAMENTO RIGA
+				// TODO
+	
+				SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) aSession
+						.load(SbiKpiPeriodicity.class, value.getKpiInstance()
+								.getPeriodicityId());
+	
+				Criteria critt = aSession.createCriteria(SbiKpiInstPeriod.class);
+				critt.add(Expression.eq("sbiKpiInstance", sbiKpiInstance));
+				List instPeriodsList = critt.list();
+				
+	
+				if (instPeriodsList == null || instPeriodsList.isEmpty()) {
+					SbiKpiInstPeriod toInsert = new SbiKpiInstPeriod();
+					toInsert.setSbiKpiInstance(sbiKpiInstance);
+					toInsert.setSbiKpiPeriodicity(sbiKpiPeriodicity);
+					toInsert.setDefault_(true);
+	
+					aSession.save(toInsert);
+	
+				} else {
+					((SbiKpiInstPeriod) instPeriodsList.get(0))
+							.setSbiKpiPeriodicity(sbiKpiPeriodicity);
+					aSession.update(instPeriodsList.get(0));
+				}
+	
+			} else {
+				// RIMOZIONE DELLA RIGA DAL DB
+				Set InstPeriods = sbiKpiInstance.getSbiKpiInstPeriods();
+				for (Iterator iterator = InstPeriods.iterator(); iterator.hasNext();) {
+					SbiKpiInstPeriod sbiKpiInstPeriod = (SbiKpiInstPeriod) iterator
+							.next();
+					aSession.delete(sbiKpiInstPeriod);
+				}
+				//
+			}
+		}	
+		return sbiKpiInstance;
+	}
 	private boolean areBothNull(Object a, Object b) {
 		boolean toReturn = false;
 		if (a == null && b == null)
@@ -739,9 +751,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 						//if periodicity exists then set it
 						if(kpiInst.getPeriodicityId() != null){
 							Set periods = new HashSet<SbiKpiInstPeriod>();
-							SbiKpiInstPeriod sbiPeriod =  (SbiKpiInstPeriod) aSession.load(SbiKpiInstPeriod.class, kpiInst.getPeriodicityId());	
-							if(sbiPeriod != null){
-								periods.add(sbiPeriod);
+							SbiKpiPeriodicity sbiPeriodicity =  (SbiKpiPeriodicity) aSession.load(SbiKpiPeriodicity.class, kpiInst.getPeriodicityId());	
+							if(sbiPeriodicity != null){
+								periods.add(sbiPeriodicity);
 								sbiKpiInstance.setSbiKpiInstPeriods(periods);
 							}
 						}
@@ -752,19 +764,6 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 						Calendar now = Calendar.getInstance();
 						sbiKpiInstance.setBeginDt(now.getTime());
 						
-						aSession.save(sbiKpiInstance);
-						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
-					}
-				}else{				
-				//else take it from the model
-					SbiKpi sbiKpi = sbiKpiModel.getSbiKpi();
-					if (sbiKpi != null) {
-						SbiKpiInstance sbiKpiInstance = new SbiKpiInstance();
-						sbiKpiInstance.setSbiKpi(sbiKpi);
-						sbiKpiInstance.setSbiThreshold(sbiKpi.getSbiThreshold());
-						sbiKpiInstance.setWeight(sbiKpi.getWeight());
-						Calendar now = Calendar.getInstance();
-						sbiKpiInstance.setBeginDt(now.getTime());
 						aSession.save(sbiKpiInstance);
 						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
 					}

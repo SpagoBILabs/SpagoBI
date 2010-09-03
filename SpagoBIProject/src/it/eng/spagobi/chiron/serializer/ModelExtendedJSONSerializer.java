@@ -32,9 +32,7 @@ public class ModelExtendedJSONSerializer implements Serializer {
 	private static final String KPI_THRESHOLD = "kpiInstThrName";
 	private static final String KPI_WEIGHT = "kpiInstWeight";
 	private static final String KPI_TARGET = "kpiInstTarget";
-	//unused 
-	private static final String KPI_PERIODICITY = "kpiInstPeriodicity";
-	private static final String KPI_CHART_TYPE = "kpiInstChartTypeId";
+
 	
 	private static final String MODEL_ERROR = "error";
 

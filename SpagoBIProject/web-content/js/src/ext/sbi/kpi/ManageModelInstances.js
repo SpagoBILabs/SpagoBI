@@ -305,16 +305,19 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 		manageThresholds.on('selectEvent', function(itemId ,index, code){
 												this.thrWin.close();
-												Ext.getCmp('kpiThresholdF').setValue(code);
+												Ext.getCmp('kpiThresholdF').setValue(code);	
+												Ext.getCmp('kpiThresholdF').fireEvent('changeThr', code);
 											}, this);
 		this.thrWin.show();
 	}
 	, editNodeAttribute: function(field, newVal, oldVal) {
+
 		var node = this.selectedNodeToEdit;
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			var fName = field.name;
 			node.attributes[fName] = newVal;
+
 /*			if(fName == 'name'){
 				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
 				rec.data.name = newVal;
@@ -322,6 +325,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.referencedCmp.modelInstancesGrid.getView().refresh();
 			}*/
 		}
+	}
+	, editThreshold: function(code){
+		var node = this.selectedNodeToEdit;
+		node.attributes.kpiInstThrName = code;
+		
 	}
 
 	,selectNode : function(field) {
@@ -502,6 +510,15 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, kpiFiledNotify : function() {
 		this.kpiName.getEl().highlight('#E27119');
 		this.kpiName.setValue('');
+		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
+		if(node !== undefined && node != null){
+			node.attributes.kpiName = '';
+			node.attributes.kpiId = '';
+			node.attributes.kpiInstId = '';
+			node.attributes.iconCls = '';
+			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
+
+		}
 		var tooltip = new Ext.ToolTip({
 	        target: 'kpinameField',
 	        anchor: 'right',
@@ -535,6 +552,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			    	  }
 			    	  
 				      node.attributes.kpiId = selectedRecord.get('id');
+				      node.attributes.kpiName = selectedRecord.get('name');
+				      node.attributes.iconCls = 'has-kpi';
+				      Ext.fly(node.getUI().getIconEl() ).replaceClass('', 'has-kpi');
+
 			      }
 			      Ext.fly(this.getEl()).frame("ff0000");
 			      return(true);
@@ -576,6 +597,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	}
 	, fillKpiPanel: function(sel, node) {
 		if(node !== undefined && node != null){
+
 			var hasKpiInst = node.attributes.kpiName;
 			var hasKpiModelUuid = node.attributes.modelUuid;
 			var hasKpi = node.attributes.kpiId;
@@ -611,14 +633,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 					//new node
 					this.kpiName.setValue(node.attributes.kpiName);
 				}
-	/*			
-				this.kpiName.setValue(node.attributes.kpiName);
-				this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
-				this.kpiTarget.setValue(node.attributes.kpiInstTarget);
-				this.kpiWeight.setValue(node.attributes.kpiInstWeight);
-				this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
-				this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
-				*/
+
 				this.kpiInstFieldset.setVisible(true);
 				this.kpiInstFieldset2.setVisible(false);			
 				this.kpiModelType.onSetValue( 'kpiinst', true);
@@ -794,6 +809,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiThreshold.addListener('focus', this.selectNode, this);
 		this.kpiThreshold.addListener('change', this.editNodeAttribute, this);
+		this.kpiThreshold.addListener('changeThr', this.editThreshold, this);
 		
 		this.kpiTarget.addListener('focus', this.selectNode, this);
 		this.kpiTarget.addListener('change', this.editNodeAttribute, this);
