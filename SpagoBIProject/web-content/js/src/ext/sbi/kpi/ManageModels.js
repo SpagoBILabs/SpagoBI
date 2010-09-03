@@ -248,6 +248,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	, kpiFiledNotify : function() {
 		this.detailFieldKpi.getEl().highlight('#E27119');
 		this.detailFieldKpi.setValue('');
+		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
+		if(node !== undefined && node != null){
+			node.attributes.kpi = '';
+			node.attributes.kpiId = '';
+			node.attributes.iconCls = '';
+			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
+
+		}
 		var tooltip = new Ext.ToolTip({
 	        target: 'model-detailFieldKpi',
 	        anchor: 'right',

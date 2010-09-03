@@ -223,6 +223,7 @@ Ext.extend(Sbi.kpi.ManageModelsViewPort, Ext.Viewport, {
 			    	  
 				      node.attributes.kpi = selectedRecord.get('name');
 				      node.attributes.kpiId = selectedRecord.get('id');
+				      Ext.fly(node.getUI().getIconEl() ).replaceClass('', 'has-kpi');
 			      }
 			      Ext.fly(this.getEl()).frame("ff0000");
 			      return(true);
