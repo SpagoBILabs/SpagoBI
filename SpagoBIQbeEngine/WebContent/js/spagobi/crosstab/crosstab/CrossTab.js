@@ -77,7 +77,7 @@
 
 CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum) {
 	this.fontSize = 12;
-    this.entries =entries;
+	this.entries = new CrossTabData(entries);
     this.withRowsSum = withRowsSum;
     this.withColumnsSum = withColumnsSum;
     this.rowHeader = new Array();
@@ -135,18 +135,18 @@ Ext.extend(CrossTab, Ext.Panel, {
     // (in position 0 there is the cell at position (0,0) in the table, 
     // in positin 1 the cell (0,1) ecc..) 
     ,getEntries : function(){
-
+    	var entries = this.entries.getEntries();
     	var toReturn = new Array();
     	var visiblei=0;//the visible row index. If i=2 and row[0].hidden=true, row[1].hidden=false  then  visiblei=i-1 = 1
     	
-    	for(var i=0; i<this.entries.length; i++){
+    	for(var i=0; i<entries.length; i++){
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
     			var visiblej=0;
     			partialSum =0;
-    			for(var j=0; j<this.entries[i].length; j++){
+    			for(var j=0; j<entries[i].length; j++){
     				if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
     					var a = new Array();
-    					a.push(this.entries[i][j]);
+    					a.push(entries[i][j]);
     					a.push('['+visiblei+','+visiblej+']');
 	    				toReturn.push(a);
 	    				visiblej++;
@@ -159,9 +159,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     	return toReturn;
     }
 
-	,setEntries: function(entries){
-		this.entries =entries;
-	}
 	    	
 	//returns the number of the visible (not hidden) rows		
     ,getRowsForView : function(){
@@ -183,47 +180,6 @@ Ext.extend(CrossTab, Ext.Panel, {
     		}
     	}
     	return count;
-    }
-    
-    //returns the i-th column
-    , getColumn : function(columnId){
-    	var column = new Array();
-    	var rows = this.entries.length;
-    	for(var i=0; i<rows; i++){
-    		column.push(this.entries[i][columnId]);
-    	}
-    	return column;
-    }
-    
-    //returns the i-th row
-    , getRow : function(rowId){
-    	return this.entries[rowId];
-    }
-
-    //add the columns starting from the i-th position
-    , addColumns : function(columnId, columns){
-    
-    	var rows = this.entries.length;
-    	for(var k=0; k<rows; k++){
-        	for(var i=this.entries[k].length-1; i>=columnId; i--){
-        		this.entries[k][columns.length+i] = this.entries[k][i];
-        	}
-    
-        	for(var i=0; i<columns.length; i++){
-        		this.entries[k][i+columnId] = columns[i][k];
-        	}
-    	}
-    }
-    
-    //add the rows starting from the i-th position
-    , addRows : function(rowId, rows){
-    	for(var i=this.entries.length-1; i>=rowId; i--){
-    		this.entries[rows.length+i] = this.entries[i];
-    		this.entries[i]=null;
-    	}
-    	for(var i=0; i<rows.length; i++){
-    		this.entries[i+rowId] = rows[i];
-    	}
     }
     
     //color the background of a row of the tabel
@@ -251,8 +207,9 @@ Ext.extend(CrossTab, Ext.Panel, {
      
      //set transparent the backgound of all the cell of the tabel
      ,clearTableBackground: function(){
-		for(var i = 0; i<this.entries.length; i++){
-			for(var y = 0; y<this.entries[0].length; y++){
+    	var entries = this.entries.getEntries();
+		for(var i = 0; i<entries.length; i++){
+			for(var y = 0; y<entries[0].length; y++){
 				var el = Ext.get('['+i+','+y+']');
 				if(el == null){
 					break;
@@ -265,7 +222,15 @@ Ext.extend(CrossTab, Ext.Panel, {
      //serialize the crossTab: 
      //Create a JSONObject with the properties: data, columns, rows
      ,serializeCrossTab: function(){
-    	 var serializedCrossTab = '{data:' + this.serializeEntries();
+    	 var columnsum = null;
+    	 var rowsum = null;
+    	 if(this.withColumnsSum){
+    		 columnsum = this.columnsSum();
+    	 }
+    	 if(this.withRowsSum){
+    		 rowsum = this.rowSum();
+    	 }
+    	 var serializedCrossTab = '{data:' + this.entries.serializeEntries(rowsum, columnsum);
     	 serializedCrossTab = serializedCrossTab + ', \n columns:' +  this.serializeHeader(this.columnHeader[0][0]);
     	 serializedCrossTab = serializedCrossTab + ', \n rows:' +  this.serializeHeader(this.rowHeader[0][0])+'}';
     	 return serializedCrossTab;
@@ -284,39 +249,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 			return node;
 		}
 	}
- 	
- 	 //serialize the data (it ads also the sums)
- 	, serializeEntries: function(){
-		var rowsum;
- 		if(this.withRowsSum){
- 			rowsum = this.rowsSum();
-		}
-		
- 		var serializedEntries ='[';
-		for(var i=0; i<this.entries.length; i++){
-			serializedEntries = serializedEntries + '['
-			for(var j=0; j<this.entries[i].length-1; j++){
-				serializedEntries = serializedEntries+'\"'+this.entries[i][j]+'\", ';
-			}
-			serializedEntries = serializedEntries+'\"'+this.entries[i][this.entries[i].length-1]+'\"';
-			if(this.withRowsSum){
-				serializedEntries = serializedEntries+',\"'+rowsum[i]+'\" ';
-			}
-			serializedEntries = serializedEntries+'], ';
-		}
-    	if(this.withColumnsSum){
-    		var columnsum = this.columnsSum();
-    		serializedEntries = serializedEntries + '['
-			for(var j=0; j<columnsum.length-1; j++){
-				serializedEntries = serializedEntries+'\"'+columnsum[j]+'\", ';
-			}
-			serializedEntries = serializedEntries+'\"'+columnsum[columnsum.length-1]+'\"], ';
-    	}
-    		
-		serializedEntries = serializedEntries.substr(0,serializedEntries.length-2)+']';
-		return serializedEntries;
-	}
-    
+ 	    
     
     //================================================================
     // Build the headers
@@ -867,29 +800,30 @@ Ext.extend(CrossTab, Ext.Panel, {
     
     //Update the order of the cells after a change in the column headers (Dd or hide/show)
     , updateTableY : function(newPositions){
-    	var newEntryes = new Array();
-    	
-    	for(var i=0; i<this.entries.length; i++){
+    	var newEntries = new Array();
+    	var entries = this.entries.getEntries();
+    	for(var i=0; i<entries.length; i++){
     		var templine = new Array();
-    		for(var y=0; y<this.entries[i].length; y++){
+    		for(var y=0; y<entries[i].length; y++){
     		//	if(newPositions[y]!=null){
-	        		templine.push(this.entries[i][newPositions[y]]);
+	        		templine.push(entries[i][newPositions[y]]);
 	       // 	}
     		}
-        	newEntryes.push(templine);
+    		newEntries.push(templine);
     	}
-    	this.entries=newEntryes;
+    	this.entries.setEntries(newEntries);
     }
 
     //Update the order of the cells after a change in the row headers (Dd or hide/show)
     , updateTableX : function(newPositions){
-    	var newEntryes = new Array();
-    	for(var i=0; i<this.entries.length; i++){
+    	var entries = this.entries.getEntries();
+    	var newEntries = new Array();
+    	for(var i=0; i<entries.length; i++){
     		//if(newPositions[i]!=null){
-    			newEntryes.push(this.entries[newPositions[i]]);
+    		newEntries.push(entries[newPositions[i]]);
     		//}
     	}
-    	this.entries=newEntryes;
+    	this.entries.setEntries(newEntries);
     }
     
     //reload the container table
@@ -1291,14 +1225,15 @@ Ext.extend(CrossTab, Ext.Panel, {
     
     //Calculate the partial sum of the rows
     , rowsSum : function(){
+    	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
-    	for(var i=0; i<this.entries.length; i++){
+    	for(var i=0; i<entries.length; i++){
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
 	    		partialSum =0;
-	        	for(var j=0; j<this.entries[0].length; j++){
+	        	for(var j=0; j<entries[0].length; j++){
 	        		if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
-	        			partialSum = partialSum + parseInt(this.entries[i][j]);
+	        			partialSum = partialSum + parseInt(entries[i][j]);
 	        		}
 	        	}
 	        	sum.push(partialSum);
@@ -1309,14 +1244,15 @@ Ext.extend(CrossTab, Ext.Panel, {
     
     //Calculate the partial sum of the columns
     , columnsSum : function(){
+    	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
-       	for(var j=0; j<this.entries[0].length; j++){
+       	for(var j=0; j<entries[0].length; j++){
        		if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
 	       		partialSum =0;
-	        	for(var i=0; i<this.entries.length; i++){
+	        	for(var i=0; i<entries.length; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
-	        			partialSum = partialSum + parseInt(this.entries[i][j]);
+	        			partialSum = partialSum + parseInt(entries[i][j]);
 	        		}
 	        	}
 	        	sum.push(partialSum);
