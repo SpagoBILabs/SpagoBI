@@ -315,13 +315,12 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			node.attributes.toSave = true;
 			var fName = field.name;
 			node.attributes[fName] = newVal;
-			if(fName == 'name'){
-				//alert("ciao");
+/*			if(fName == 'name'){
 				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
 				rec.data.name = newVal;
 				this.referencedCmp.modelInstancesGrid.mainElementsStore.commitChanges();
 				this.referencedCmp.modelInstancesGrid.getView().refresh();
-			}
+			}*/
 		}
 	}
 
@@ -757,9 +756,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			var val = node.text;//name value
 			if (val != null && val !== undefined) {
 				var name = node.attributes.name;	
-				this.detailFieldDescr.setValue(node.attributes.description);			
-				this.detailFieldLabel.setValue(node.attributes.label);
+				this.detailFieldDescr.setValue(node.attributes.description);
 				this.detailFieldName.setValue(name);
+				if(node.attributes.code !== undefined && node.attributes.modelId !== undefined){
+					this.detailFieldLabel.disable();
+				}else{
+					this.detailFieldLabel.enable();
+					this.detailFieldLabel.setValue(node.attributes.label);
+				}
 			}
 		}
 	}

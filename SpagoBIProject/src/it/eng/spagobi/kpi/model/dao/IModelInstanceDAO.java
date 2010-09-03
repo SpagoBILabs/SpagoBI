@@ -47,5 +47,7 @@ public interface IModelInstanceDAO {
 	public List loadModelsInstanceRoot(String fieldOrder, String typeOrder)throws EMFUserError;
 
 	public ModelInstance loadModelInstanceRoot(ModelInstance mi)throws EMFUserError;
+	
+	public Integer insertModelInstanceWithKpi(ModelInstance toCreate) throws EMFUserError;
 
 }

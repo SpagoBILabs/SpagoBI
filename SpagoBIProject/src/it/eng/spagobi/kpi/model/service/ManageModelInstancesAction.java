@@ -149,6 +149,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			ModelInstance root = null;
 			Vector idsToRemove = new Vector();
 			if(nodesToSaveJSON != null || droppedNodesToSaveJSON != null){
+				JSONObject response = new JSONObject();
 				try {
 					modelNodesDD = deserializeNodesJSONArrayDD(droppedNodesToSaveJSON);
 					
@@ -160,7 +161,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					}
 					modelNodes = deserializeJSONArray(nodesToSaveJSON, idsToRemove);
 					
-					JSONObject response = new JSONObject();
+					
 					//save DD nodes
 					if(rootObj != null){						
 						root = deserializeJSONObjectDD(rootObj, new ArrayList<ModelInstance>());	
@@ -174,12 +175,18 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					}
 					
 					response = saveModelNodeInstances(modelNodes);
-					//System.out.println(response);
-					writeBackToClient(new JSONSuccess(response));
+					System.out.println(response);
+					
 					
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
-					writeErrorsBackToClient();
+					try {
+						writeBackToClient(new JSONSuccess(response));
+					} catch (IOException e1) {
+						logger.error("Exception occurred while sending response", e);
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Exception occurred while sending response", e);
+					}
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception saving model instance nodes", e);
 				}
@@ -416,11 +423,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		try {
 			Integer genId = modInstToSave.getId();
 			if(isToSave){
-				genId = DAOFactory.getModelInstanceDAO().insertModelInstance(modInstToSave);
+				genId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modInstToSave);
 				modInstToSave.setId(genId);
-				
 			}
-			System.out.println("SAVED NODE: GEN_ID =" +genId+" PARENT_ID ="+parentId+" name= "+modInstToSave.getName()+" oldid="+oldId);
+
 			response.append(modInstToSave.getGuiId(), "OK");
 			
 			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);//scazza qui!!!!invece di doughter estrae nonno
