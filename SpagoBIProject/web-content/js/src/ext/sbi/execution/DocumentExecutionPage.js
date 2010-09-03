@@ -1061,7 +1061,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	    var endUrl = baseUrl + docurlPar;
 	    
 		var crosstabDataEncoded = this.retrieveQbeCrosstabData(frame);    // retieving crosstab data (already encoded) from Qbe window
-	    
+		
 	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
 	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
 	    							 // See source of DomHelper.append and DomHelper.overwrite methods
@@ -1080,10 +1080,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			    tag: 'input'
 			    , type: 'hidden'
 			    , name: 'CROSSTAB'
-			    //, value: crosstabJSONencoded  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
+			    , value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
 			});
 	    }
-	    form.CROSSTAB.value = crosstabDataEncoded;	// putting the crosstab data into CROSSTAB hidden input
+	    // putting the crosstab data into CROSSTAB hidden input
+	    //form.CROSSTAB.value = crosstabDataEncoded; // this does not work on IE, don't know why....
+	    form.elements[0].value = crosstabDataEncoded;
 		form.action = endUrl;
 		form.target = '_blank';				// result into a new browser tab
 		form.submit();
