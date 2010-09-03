@@ -80,8 +80,6 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	services: null
 	, crosstab: null
 	
-	
-	
 	, load: function(crosstabDefinition) {
 			this.showMask();
 			Ext.Ajax.request({
@@ -111,7 +109,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var columns = this.fromNodeToArray(crosstabDefinition.columns);
 		var data = crosstabDefinition.data;
 		var config = crosstabDefinition.config;
-		this.crosstab =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on");
+		this.crosstab =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", crosstabDefinition.calculatedFields);
 		this.crosstab.reloadHeadersAndTable();
 		
 		this.add(this.crosstab);
