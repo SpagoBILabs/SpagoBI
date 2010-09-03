@@ -176,8 +176,14 @@ public class CrosstabXLSExporter {
 				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
 				Cell cell = row.createCell(columnNum);
-				cell.setCellValue(createHelper.createRichTextString(text));
-			    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				if (text.trim() == "" || text.trim() == "NA") {
+					cell.setCellValue(createHelper.createRichTextString(text));
+				    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				} else {
+					double value = Double.parseDouble(text);
+					cell.setCellValue(value);
+					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+				}
 			}
 		}
 		
