@@ -25,6 +25,7 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -143,8 +144,8 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		toReturn.setModelCode(modelCode);
 		logger.debug("KpiModelInstanceNode childrenIds setted");
 
-		
-		toReturn.setModelInstaceReferenceLabel(hibSbiKpiModelInst.getModelUUID());
+		toReturn.setModelInstaceReferenceLabel(hibSbiKpiModelInst
+				.getModelUUID());
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -689,6 +690,111 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		if (!toReturn && a != null && b != null && a.equals(b))
 			toReturn = true;
 		return toReturn;
+	}
+
+	public Integer insertModelInstanceWithKpi(ModelInstance toCreate)
+			throws EMFUserError {
+		logger.debug("IN");
+		Integer idToReturn;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Integer parentId = toCreate.getParentId();
+			// set the sbiKpiModel
+			SbiKpiModelInst sbiKpiModelInst = new SbiKpiModelInst();
+			sbiKpiModelInst.setName(toCreate.getName());
+			sbiKpiModelInst.setDescription(toCreate.getDescription());
+			sbiKpiModelInst.setLabel(toCreate.getLabel());
+			sbiKpiModelInst.setStartDate(toCreate.getStartDate());
+			sbiKpiModelInst.setEndDate(toCreate.getEndDate());
+			sbiKpiModelInst.setModelUUID(toCreate.getModelUUID());
+
+			Model aModel = toCreate.getModel();
+			if (aModel != null && aModel.getId() != null) {
+				SbiKpiModel sbiKpiModel = (SbiKpiModel) aSession.load(
+						SbiKpiModel.class, aModel.getId());
+				sbiKpiModelInst.setSbiKpiModel(sbiKpiModel);
+
+				// set the sbiKpiInstance
+				KpiInstance kpiInst = toCreate.getKpiInstance();
+				
+				//if already present
+				if(kpiInst != null){
+					SbiKpiInstance sbiKpiInstance = new SbiKpiInstance();
+					if(kpiInst.getKpi() != null){
+						
+						SbiKpi sbiKpi =  (SbiKpi) aSession.load(SbiKpi.class, kpiInst.getKpi());						
+						sbiKpiInstance.setSbiKpi(sbiKpi);
+						if(kpiInst.getThresholdId() != null){
+							SbiThreshold sbiThr =  (SbiThreshold) aSession.load(SbiThreshold.class, kpiInst.getThresholdId());						
+							sbiKpiInstance.setSbiThreshold(sbiThr);
+						}
+						sbiKpiInstance.setWeight(kpiInst.getWeight());
+						
+						sbiKpiInstance.setTarget(kpiInst.getTarget());						
+						
+						//if periodicity exists then set it
+						if(kpiInst.getPeriodicityId() != null){
+							Set periods = new HashSet<SbiKpiInstPeriod>();
+							SbiKpiInstPeriod sbiPeriod =  (SbiKpiInstPeriod) aSession.load(SbiKpiInstPeriod.class, kpiInst.getPeriodicityId());	
+							if(sbiPeriod != null){
+								periods.add(sbiPeriod);
+								sbiKpiInstance.setSbiKpiInstPeriods(periods);
+							}
+						}
+						if(kpiInst.getChartTypeId() != null){
+							SbiDomains chartType =  (SbiDomains) aSession.load(SbiDomains.class, kpiInst.getChartTypeId());	
+							sbiKpiInstance.setChartType(chartType);
+						}
+						Calendar now = Calendar.getInstance();
+						sbiKpiInstance.setBeginDt(now.getTime());
+						
+						aSession.save(sbiKpiInstance);
+						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
+					}
+				}else{				
+				//else take it from the model
+					SbiKpi sbiKpi = sbiKpiModel.getSbiKpi();
+					if (sbiKpi != null) {
+						SbiKpiInstance sbiKpiInstance = new SbiKpiInstance();
+						sbiKpiInstance.setSbiKpi(sbiKpi);
+						sbiKpiInstance.setSbiThreshold(sbiKpi.getSbiThreshold());
+						sbiKpiInstance.setWeight(sbiKpi.getWeight());
+						Calendar now = Calendar.getInstance();
+						sbiKpiInstance.setBeginDt(now.getTime());
+						aSession.save(sbiKpiInstance);
+						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
+					}
+				}
+			}
+			if (parentId != null) {
+				SbiKpiModelInst sbiKpiModelInstParent = (SbiKpiModelInst) aSession
+						.load(SbiKpiModelInst.class, parentId);
+				sbiKpiModelInst.setSbiKpiModelInst(sbiKpiModelInstParent);
+			}
+
+			idToReturn = (Integer) aSession.save(sbiKpiModelInst);
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return idToReturn;
+
 	}
 
 	public Integer insertModelInstance(ModelInstance toCreate)
