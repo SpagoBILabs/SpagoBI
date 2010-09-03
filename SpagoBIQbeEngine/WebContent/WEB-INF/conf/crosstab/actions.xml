@@ -8,5 +8,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="EXPORT_CROSSTAB_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.crosstab.ExportCrosstabAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
 </ACTIONS>
 
