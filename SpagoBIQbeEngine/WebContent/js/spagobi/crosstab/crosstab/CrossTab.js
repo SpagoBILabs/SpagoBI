@@ -301,7 +301,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 								if(this.clickMenu!=null){
 									this.clickMenu.destroy();
 								}
-								this.clickMenu = new CrossTabClickMenu(c, this);
+								this.clickMenu = new CrossTabContextualMenu(c, this);
 								this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
 							}
 						}
@@ -1147,9 +1147,9 @@ Ext.extend(CrossTab, Ext.Panel, {
 
     	//add the columns or the rows
     	if(horizontal){
-    		this.addColumns(nodePosition,entries);
+    		this.entries.addColumns(nodePosition,entries);
     	}else{
-    		this.addRows(nodePosition,entries);
+    		this.entries.addRows(nodePosition,entries);
     	}
 
     	if(!lazy){
