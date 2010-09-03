@@ -46,7 +46,7 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageModelsTree = function(config, ref) { 
 	
 	//alert("ManageModelsTree:"+config.notDraggable);
-	var paramsList = {MESSAGE_DET: "MODEL_NODES_LIST"};
+	var paramsList = {MESSAGE_DET: "MODEL_NODES_LIST_WITH_KPI"};
 	this.configurationObject = {};
 	
 	this.configurationObject.manageTreeService = Sbi.config.serviceRegistry.getServiceUrl({
@@ -78,6 +78,25 @@ Ext.extend(Sbi.kpi.ManageModelsTree, Sbi.widgets.TreeModelPanel, {
 
 		this.configurationObject.treeTitle = LN('sbi.models.treeTitle');
 		
+		this.treeLoader = new Ext.tree.TreeLoader({
+			dataUrl: this.configurationObject.manageTreeService,
+	        createNode: function(attr) {
+
+
+	            if (attr.modelId) {
+	                attr.id = attr.modelId;
+	            }
+
+	    		if (attr.kpi !== undefined && attr.kpi != null
+	    				&& attr.kpi != '') {
+	    			attr.iconCls = 'has-kpi';
+	    		}
+	    		if (attr.error !== undefined && attr.error != false) {
+	    			attr.cls = 'has-error';
+	    		}
+	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	        }
+		});
     }
 	,renderTree : function(tree) {
 		tree.getLoader().nodeParameter = 'modelId';

@@ -26,6 +26,7 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
+import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -56,6 +57,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	private final String MODEL_NODES_LIST = "MODEL_NODES_LIST";
 	private final String MODEL_NODES_SAVE = "MODEL_NODES_SAVE";
 	private final String MODEL_NODE_DELETE = "MODEL_NODE_DELETE";
+	private final String MODEL_NODES_LIST_WITH_KPI = "MODEL_NODES_LIST_WITH_KPI";
 
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String METRIC_SCALE_DOMAIN_TYPE = "METRIC_SCALE_TYPE";
@@ -116,6 +118,30 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				
 				logger.debug("Loaded model tree");
 				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getChildrenNodes(),	locale);
+				writeBackToClient(new JSONSuccess(modelChildrenJSON));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model tree", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model tree", e);
+			}
+		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODEL_NODES_LIST_WITH_KPI)) {
+			
+			try {	
+				
+				String parentId = (String)getAttributeAsString("modelId");
+				if(parentId == null || parentId.startsWith("xnode")){
+					writeBackToClient(new JSONSuccess("OK"));
+					return;
+				}
+				Model dbModel = modelDao.loadModelWithChildrenById(Integer.parseInt(parentId));
+				
+				ModelExtended aModel = new ModelExtended(dbModel);
+				
+				aModel.setExtendedChildrenNodes(dbModel.getChildrenNodes());
+				
+				logger.debug("Loaded model tree");
+				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getExtendedChildrenNodes(),	locale);
 				writeBackToClient(new JSONSuccess(modelChildrenJSON));
 
 			} catch (Throwable e) {
