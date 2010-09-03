@@ -79,7 +79,8 @@ public class ExportCrosstabAction extends AbstractQbeEngineAction {
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 			
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
-				Workbook wb = CrosstabXLSExporter.export(crosstabJSON);
+				CrosstabXLSExporter exporter = new CrosstabXLSExporter();
+				Workbook wb = exporter.export(crosstabJSON);
 				
 				exportFile = File.createTempFile("crosstab", ".xls");
 				FileOutputStream stream = new FileOutputStream(exportFile);

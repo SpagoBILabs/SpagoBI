@@ -191,6 +191,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	        Ext.ns("Sbi.user");
 	        Sbi.user.isPowerUser = <%= isPowerUser %>;
 	
+	        var qbe = null;
+	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
 	
@@ -204,7 +206,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
 	       		qbeConfig.displayFormBuilderPanel = false;
 	       		
-	           	var qbe = new Sbi.qbe.QbePanel(qbeConfig);
+	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
 	           	var viewport = new Ext.Viewport(qbe);  
 	           	<%if (isPowerUser && isFromCross.equalsIgnoreCase("false")) {%>
 	           		qbe.queryEditorPanel.selectGridPanel.dropTarget = new Sbi.qbe.SelectGridDropTarget(qbe.queryEditorPanel.selectGridPanel); 
