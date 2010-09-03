@@ -78,7 +78,8 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	
 	services: null
-	, crossTabJSON: null
+	, crosstab: null
+	
 	
 	
 	, load: function(crosstabDefinition) {
@@ -110,10 +111,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var columns = this.fromNodeToArray(crosstabDefinition.columns);
 		var data = crosstabDefinition.data;
 		var config = crosstabDefinition.config;
-		var ct =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on");
-		ct.reloadHeadersAndTable();
+		this.crosstab =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on");
+		this.crosstab.reloadHeadersAndTable();
 		
-		this.add(ct);
+		this.add(this.crosstab);
 		this.doLayout();
 	}
 
@@ -159,6 +160,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var loadingmaskDOM = dh.append(bodyElement[0].id, loadingmask);
 		var loadingDOM = dh.append(loadingmaskDOM, loading);
 		dh.append(loadingDOM, loadingindicator);
+    }
+    
+    , serializeCrossTab: function () {
+    	return this.crosstab.serializeCrossTab();
     }
 
 });
