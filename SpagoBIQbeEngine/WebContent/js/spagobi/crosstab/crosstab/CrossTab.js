@@ -75,7 +75,7 @@
 //         |rowHeaderPanel   |    datapanel        | 
 //         -----------------------------------------
 
-CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum) {
+CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields) {
 	this.fontSize = 12;
 	this.entries = new CrossTabData(entries);
     this.withRowsSum = withRowsSum;
@@ -102,7 +102,18 @@ CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, with
   		defaults: {autoScroll: true},
 		padding : 10
 	};
+    this.calculatedFields = new Array();
     
+    if(calculatedFields!=null){
+    	this.addEvents();
+    	this.calculatedFields = calculatedFields;
+    	this.on('afterrender', function(){
+    		for(var i=0; i<this.calculatedFields.length; i++){
+    			CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this);
+    		}
+    	}, this);
+    }
+    alert(this.serializeCrossTab().toSource());
     CrossTab.superclass.constructor.call(this, c);
 };
 	
@@ -125,6 +136,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 	,clickMenu: null
 	,withRowsSum: null
 	,withColumnsSum: null
+	,calculatedFields: null
 
     
     //================================================================
@@ -230,25 +242,26 @@ Ext.extend(CrossTab, Ext.Panel, {
     	 if(this.withRowsSum){
     		 rowsum = this.rowSum();
     	 }
-    	 var serializedCrossTab = '{data:' + this.entries.serializeEntries(rowsum, columnsum);
-    	 serializedCrossTab = serializedCrossTab + ', \n columns:' +  this.serializeHeader(this.columnHeader[0][0]);
-    	 serializedCrossTab = serializedCrossTab + ', \n rows:' +  this.serializeHeader(this.rowHeader[0][0])+'}';
+    	 var serializedCrossTab = {}; 
+    	 serializedCrossTab.data= this.entries.serializeEntries(rowsum, columnsum);
+    	 serializedCrossTab.columns=  this.serializeHeader(this.columnHeader[0][0]);
+    	 serializedCrossTab.rows=  this.serializeHeader(this.rowHeader[0][0]);
     	 return serializedCrossTab;
      }
      
-     //serialize a header and all his the subtree
+   //serialize a header and all his the subtree
  	 ,serializeHeader: function(header){
-		if(header.childs.length==0){
-			return '{node_key: \"'+header.name+'\"}';
-		}else{
-			var node = '{node_key: \"'+header.name+'\", node_childs:[';
-			for(var i=0; i<header.childs.length; i++){
-				node = node+this.serializeHeader(header.childs[i])+', ';
-			}
-			node = node.substr(0,node.length-2)+']}';
-			return node;
-		}
-	}
+  		var node = {};
+  		node.node_key =  header.name;
+ 		if(header.childs.length>0){
+ 			var nodeChilds = new Array();
+ 			for(var i=0; i<header.childs.length; i++){
+ 				nodeChilds.push(this.serializeHeader(header.childs[i]));
+ 			}
+ 			node.node_childs = nodeChilds;
+ 		}
+ 		return node;
+ 	}
  	    
     
     //================================================================
@@ -1166,6 +1179,12 @@ Ext.extend(CrossTab, Ext.Panel, {
 //	    	this.reloadTable();
     	}
     }  
+    
+    
+    , addCalculatedField: function(level, horizontal, op, CFName){
+    	var calculatedField = new CrossTabCalculatedField(CFName, level, horizontal, op); 
+    	this.calculatedFields.push(calculatedField);
+    }
 
     //Hide a line
     , hideLine : function(lineNumber, horizontal, lazy){
