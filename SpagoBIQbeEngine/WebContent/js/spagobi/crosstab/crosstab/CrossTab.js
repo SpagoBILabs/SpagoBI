@@ -102,7 +102,7 @@ CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, with
   		defaults: {autoScroll: true},
 		padding : 10
 	};
-
+    
     CrossTab.superclass.constructor.call(this, c);
 };
 	
@@ -261,6 +261,61 @@ Ext.extend(CrossTab, Ext.Panel, {
 			}
 		}
      }
+     
+     //serialize the crossTab: 
+     //Create a JSONObject with the properties: data, columns, rows
+     ,serializeCrossTab: function(){
+    	 var serializedCrossTab = '{data:' + this.serializeEntries();
+    	 serializedCrossTab = serializedCrossTab + ', \n columns:' +  this.serializeHeader(this.columnHeader[0][0]);
+    	 serializedCrossTab = serializedCrossTab + ', \n rows:' +  this.serializeHeader(this.rowHeader[0][0])+'}';
+    	 return serializedCrossTab;
+     }
+     
+     //serialize a header and all his the subtree
+ 	 ,serializeHeader: function(header){
+		if(header.childs.length==0){
+			return '{node_key: \"'+header.name+'\"}';
+		}else{
+			var node = '{node_key: \"'+header.name+'\", node_childs:[';
+			for(var i=0; i<header.childs.length; i++){
+				node = node+this.serializeHeader(header.childs[i])+', ';
+			}
+			node = node.substr(0,node.length-2)+']}';
+			return node;
+		}
+	}
+ 	
+ 	 //serialize the data (it ads also the sums)
+ 	, serializeEntries: function(){
+		var rowsum;
+ 		if(this.withRowsSum){
+ 			rowsum = this.rowsSum();
+		}
+		
+ 		var serializedEntries ='[';
+		for(var i=0; i<this.entries.length; i++){
+			serializedEntries = serializedEntries + '['
+			for(var j=0; j<this.entries[i].length-1; j++){
+				serializedEntries = serializedEntries+'\"'+this.entries[i][j]+'\", ';
+			}
+			serializedEntries = serializedEntries+'\"'+this.entries[i][this.entries[i].length-1]+'\"';
+			if(this.withRowsSum){
+				serializedEntries = serializedEntries+',\"'+rowsum[i]+'\" ';
+			}
+			serializedEntries = serializedEntries+'], ';
+		}
+    	if(this.withColumnsSum){
+    		var columnsum = this.columnsSum();
+    		serializedEntries = serializedEntries + '['
+			for(var j=0; j<columnsum.length-1; j++){
+				serializedEntries = serializedEntries+'\"'+columnsum[j]+'\", ';
+			}
+			serializedEntries = serializedEntries+'\"'+columnsum[columnsum.length-1]+'\"], ';
+    	}
+    		
+		serializedEntries = serializedEntries.substr(0,serializedEntries.length-2)+']';
+		return serializedEntries;
+	}
     
     
     //================================================================
