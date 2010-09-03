@@ -240,7 +240,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     		 columnsum = this.columnsSum();
     	 }
     	 if(this.withRowsSum){
-    		 rowsum = this.rowSum();
+    		 rowsum = this.rowsSum();
     	 }
     	 var serializedCrossTab = {}; 
     	 serializedCrossTab.data= this.entries.serializeEntries(rowsum, columnsum);

@@ -338,7 +338,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		
 		var crosstabData = this.crosstabPreviewPanel.serializeCrossTab();
 		var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
-		return crosstabData;
+		return crosstabDataEncoded;
 		
 	}
   	
