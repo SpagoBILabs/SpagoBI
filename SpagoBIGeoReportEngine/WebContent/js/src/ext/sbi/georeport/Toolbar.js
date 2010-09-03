@@ -79,6 +79,7 @@ Sbi.georeport.Toolbar = function(config) {
 Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
     
     tbButtons: null
+    , importWMSLayerWin: null
    
    
     // public methods
@@ -93,14 +94,40 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 		this.loadingButton.disable();
 	}
 
-
 	, addSeparator: function(){
 	    this.add(new Ext.Toolbar.Spacer());
 	    this.add(new Ext.Toolbar.Separator());
 	    this.add(new Ext.Toolbar.Spacer());
 	} 
 	
-	
+	, initButtons: function() {
+		this.items.each( function(item) {
+			this.items.remove(item);
+            item.destroy();           
+        }, this); 
+		
+		
+		this.initZoomButtonGroup();
+		this.initHistoryButtonGroup();
+		this.initDrawButtonGroup();
+		this.initMeasureButtonGroup();
+		this.initImportButtonGroup();
+				
+	    // test stampa
+	  
+		/*
+	    var printConfigUrl = mapfish.SERVER_BASE_URL + 'pdf/info.json';
+	    this.add(
+	    	new mapfish.widgets.print.PrintAction({
+	            map: this.map,
+	            overrides: this.layers,
+	            configUrl: printConfigUrl	            
+	    	})
+		);
+		*/
+	          
+	    this.activate();
+	}
 	
 	, initZoomButtonGroup: function() {
 		if(this.zoomToMaxButtonEnabled === true) {
@@ -226,21 +253,8 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 				, {
 					iconCls: 'wmsAdd', 
 					toggleGroup: 'map',
-					handler: this.wmsAddLayerRefactored,
+					handler: this.showImportWMSLayerWin,
 					scope: this
-				}
-			);   
-			   
-			this.addControl(
-				new OpenLayers.Control.Button({
-				   isDefault: false,
-				   title: 'Add WMS Layer (REFACTORED)'
-				})
-				, {
-				   iconCls: 'wmsAdd', 
-				   toggleGroup: 'map',
-				   handler: this.wmsAddLayerRefactored,
-				   scope: this
 				}
 			);   
 		
@@ -347,67 +361,96 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 		   
 		    this.addSeparator();  
 		}
-
-		// -- Modifica Fabio 
-	}
-	
-	, initButtons: function() {
-		this.items.each( function(item) {
-			this.items.remove(item);
-            item.destroy();           
-        }, this); 
-		
-		
-		this.initZoomButtonGroup();
-		this.initDrawButtonGroup();
-		this.initHistoryButtonGroup();
-		this.initImportButtonGroup();
-		this.initMeasureButtonGroup();
-		
-		
-	      
-	 
-	    
-
-	   
-	    
-	    // test stampa
-	    /*
-	    var printConfigUrl = mapfish.SERVER_BASE_URL + 'pdf/info.json';
-	    this.toolbar.add(
-	    	new mapfish.widgets.print.PrintAction({
-	            map: this.map,
-	            overrides: this.layers,
-	            configUrl: printConfigUrl
-	            
-	    	})
-		);
-		*/
-	          
-	    this.activate();
 	}
 	
 	
-	
-	, wmsAddLayerRefactored: function() {
-		  var winWmsForm = new Ext.Window({
-				title: 'Aggiunge un layer WMS (REFACTORED)',
-			    layout:'fit',
-			    autoScroll: true,
-			  
-			    width:612,
+	, showImportWMSLayerWin: function() {
+		if(this.importWMSLayerWin === null) {
+			var importWMSLayerForm = new Sbi.georeport.ImportWMSLayerForm();
+			this.importWMSLayerWin = new Ext.Window({
+			 	title		: 'Aggiunge un layer WMS (REFACTORED)',
+			  	layout      : 'fit',
+	            width       : 610,
+	            height      : 300,
+	            closeAction : 'hide',
+	            plain       : true,
+	            buttons		: [
+	            {
+	            	
+	            	text: 'Add to map' ,
+			    	handler: function(){
+	            		var f = this.importWMSLayerWin.innerForm;
+	            		var layers = f.selectionModel.getSelections(); 
+	            		for(i = 0; i < layers.length; i++){
+	            			var layer = layers[i];
+	            			var layerName = layer.get('layername');
+			    	  		var layerUrl = f.wmsLayerUrl.getValue();
+			    	  		this.addWMSLayer(layerName, layerUrl);
+	            		}
+	            		
+	            		this.importWMSLayerWin.hide();
+			      	},
+			      	scope: this
 			    
-			    closable: false,
-			    closeAction: "hide",
-			    constrainHeader:true,
-			  
-			    plain: true,
-			    border: false,
-			    items: [new Sbi.georeport.ImportWMSLayerForm()],
-			    scope: this
-		});
-		winWmsForm.show();
-	  }
+	            },{      		   
+	            	
+	            	text: 'Close',
+			    	handler: function(){
+	            		this.importWMSLayerWin.hide();
+			      	},
+			      	scope: this
+			    
+			    }],
+			    items		: [importWMSLayerForm]
+			});
+			this.importWMSLayerWin.innerForm = importWMSLayerForm;
+			
+			
+		}
+		this.importWMSLayerWin.show();
+	}
+	
+	, addWMSLayer: function(layerName, layerUrl) {
 
+		var newLayer = new OpenLayers.Layer.WMS(
+				layerName, 
+				layerUrl, 
+				{
+					layers: layerName,                    
+			   		srs: 'EPSG:4326',
+			   		format: 'image/png',
+			   		transparent: true
+				}, {
+			   		singleTile: true, 
+			   		ratio: 1,
+			   		visibility: true, 
+			   		'isBaseLayer': false, 
+			   		opacity: 0.5
+				} 
+		);
+			  
+		this.map.addLayer(newLayer);
+		
+		if(this.map.layerTree) {
+			
+			var layerNode = {
+				layerName: layerName,
+	            text: layerName,
+	            leaf: true,
+	            checked: true,
+	            layerNames: [layerName]
+	        };
+			this.map.layerTree.model.push(layerNode);
+			this.map.layerTree._updateCachedObjects();
+			
+			var rootNode = this.map.layerTree.getRootNode();
+			rootNode.appendChild( layerNode );
+			//rootNode.attributes.layerNames.push(layerName);
+			
+		} else {
+			alert('no model in map');
+		}
+		
+	}
 	 
 });

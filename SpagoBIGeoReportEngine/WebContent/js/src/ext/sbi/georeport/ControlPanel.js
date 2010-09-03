@@ -89,116 +89,131 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, legendPanelEnabled: false
 	, debugPanelEnabled: false
    
+	, layersControlPanel: null
+	, analysisControlPanel: null
+	, measureControlPanel: null
+	, legendControlPanel: null
+	, logoControlPanel: null
+	, debugControlPanel: null
    
     // public methods
     
     // private methods
-    
-    , initControls: function() {
+	
+	, initControls: function() {
 		
 		this.controlPanelItemsConfig = [];
 	
+		this.initEarthControlPanel();
+		this.initLayersControlPanel();
+		this.initMeasureControlPanel();
+		this.initAnalysisControlPanel();
+		this.initLegendControlPanel();
+		this.initLogoControlPanel();
+		this.initDebugControlPanel();
+
+	}
+	
+	, initEarthControlPanel: function() {
 		if(this.earthPanelEnabled === true) {
 			this.controlPanelItemsConfig.push({
 				title: LN('sbi.georeport.earthpanel.title'),
-				html: '<center id="map3dContainer"></center>',
+				collapsible: false,
 				split: true,
 				height: 300,
 				minSize: 300,
 				maxSize: 500,
-				collapsible: false                
+				html: '<center id="map3dContainer"></center>'
 			});
 		}
-	
-		if(this.layerPanelEnabled === true) {
+	}
+
+	, initLayersControlPanel: function() {
 		
-			this.controlPanelItemsConfig.push({
+		if(this.layerPanelEnabled === true) {			
+			
+			this.layersControlPanel = new mapfish.widgets.LayerTree({
 	        	title: LN('sbi.georeport.layerpanel.title'),
 	            collapsible: true,
 	            autoHeight: true,
-	            xtype: 'layertree',
-	            map: this.map
+	            rootVisible: false,
+	            separator: '!',
+	            model: this.extractModel(),
+	            map: this.map,
+	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF'
 	        });
-		
-			// -- modifica Fabio
 			
-			/*
-			this.model = [{ 
-				text: "Layer",
-				leaf: false,
-	            expanded: true,
-	            //children: this.layers
-	            children: [{
-	                  layerName: "Google Mappe",
-	                  text: "Google Mappe",
-	                  leaf: true,
-	                  checked: true
-	            }, {
-	                  layerName: "Google Satellite",
-	                  text: "Google Satellite",
-	                  leaf: true,
-	                  checked: true
-	            }, {
-	                  layerName: this.targetLayerConf.text,
-	                  text: this.targetLayerConf.text,
-	                  leaf: true,
-	                  checked: true
-	            }]
-	        }];
+			this.map.layerTree = this.layersControlPanel;
 			
-			controlPanelItems.push({
-	            title: LN('sbi.georeport.layerpanel.title'),
-	            collapsible: true,
-	            autoHeight: true,
-	              
-	            xtype: 'layertree',
-	            model: this.model,
-	            id:'laytr',
-	            map: this.map
-	        });
-			*/
-			// -- modifica Fabio
+			this.controlPanelItemsConfig.push(this.layersControlPanel);
 		}
+	}
 	
+	, initAnalysisControlPanel: function() {
 		if(this.analysisPanelEnabled === true) {
-			this.controlPanelItemsConfig.push({
+			
+			this.analysisControlPanel = new Ext.Panel({
 	        	title: LN('sbi.georeport.analysispanel.title'),
 	            collapsible: true,
+	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 	            items: [this.geostatistic]
 	        });
+			
+			this.controlPanelItemsConfig.push(this.analysisControlPanel);
 		}
+	}
 	
+	, initMeasureControlPanel: function() {
+		
+		
 		if(this.measurePanelEnabled === true) {
-			this.controlPanelItemsConfig.push({
+			
+			this.measureControlPanel = new Ext.Panel({
+				 id: 'mapOutput',
 	             title: 'Misurazione',
 	             collapsible: true,
-	             height: 85,
-	             html: '<center></center>',
-	             id: 'mapOutput'
+	             height: 50,
+	             html: '<center></center>'
 			});
+				
+			this.controlPanelItemsConfig.push(this.measureControlPanel);
 		}
+	}
 	
-	
+	, initLegendControlPanel: function() {
 		if(this.legendPanelEnabled === true) {
-			this.controlPanelItemsConfig.push({
+			
+			this.legendControlPanel = new Ext.Panel({
 		           title: LN('sbi.georeport.legendpanel.title'),
 		           collapsible: true,
+		           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 		           height: 150,
+		           autoScroll: true,
 		           html: '<center id="myChoroplethLegendDiv"></center>'
 		     });
+					
+			this.controlPanelItemsConfig.push(this.legendControlPanel);
 		}
-		
+	}
+	
+	, initLogoControlPanel: function() {
 		if(this.logoPanelEnabled === true) {
-			this.controlPanelItemsConfig.push({
+			
+			this.logoControlPanel = new Ext.Panel({
 		           title: 'Logo',
 		           collapsible: true,
 		           height: 85,
 		           html: '<center><img src="/SpagoBIGeoReportEngine/img/georeport.jpg" alt="GeoReport"/></center>'
 		    });
+				
+			this.controlPanelItemsConfig.push(this.logoControlPanel);
 		}
+	}
 	
+	, initDebugControlPanel: function() {
 		if(this.debugPanelEnabled === true) {
-			this.controlPanelItemsConfig.push({
+			
+			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
 		           height: 85,
@@ -216,6 +231,62 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		           		scope: this
 				    })]
 		    });
+			
+			
+			this.controlPanelItemsConfig.push(this.debugControlPanel);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	, extractModel: function() {
+		
+		var model = null;
+		
+		var bLayers = new Array();
+		var oLayers = new Array();
+	
+		var mapLayers = this.map.layers.slice();
+		
+		for (var i = 0; i < mapLayers.length; i++) {
+			 var layer = mapLayers[i];
+			 
+			 var className = '';
+	         if (!layer.displayInLayerSwitcher) {
+	        	 className = 'x-hidden';
+	         }
+	         
+	         var layerNode = {
+	        	 text: layer.name, // TODO: i18n
+                 checked: layer.getVisibility(),
+                 cls: className,
+                 layerName: layer.name
+             };
+	         
+	         if(layer.isBaseLayer) {
+	        	 bLayers.push(layerNode);
+	         } else {
+	        	 oLayers.push(layerNode);
+	         }
+		}
+		
+		model = [
+		{
+			text: 'Background layers',
+		    expanded: true,
+		    children: bLayers
+		}, {
+		    text: 'Overlays',
+		    expanded: true,
+		    children: oLayers
+		}
+		];
+		
+		return model;
+	}
+    
+   
 });
