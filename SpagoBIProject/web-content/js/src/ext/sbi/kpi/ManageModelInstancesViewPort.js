@@ -307,7 +307,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	}
 	, initResourcesGridPanel : function() {
 
-    	this.smResources = new Ext.grid.CheckboxSelectionModel( {header: ' ',singleSelect: false, scope:this, dataIndex: 'resourceId'} );
+    	this.smResources = new Ext.grid.CheckboxSelectionModel( {header: ' ',
+    															singleSelect: false, 
+    															scope:this, 
+    															dataIndex: 'resourceId'} );
 		
         this.cmResources = new Ext.grid.ColumnModel([
 	         {header: LN('sbi.generic.name'), width: 40, sortable: true, dataIndex: 'resourceName'},
@@ -387,11 +390,12 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			      			Ext.getCmp("resources-grid-checks").selModel.clearSelections();
 			      			var content = Ext.util.JSON.decode( response.responseText );	
 			      			Ext.each(content.rows, function(row, index) {
+			      				
 			    				var modelInstId = row.modelInstId;
 
 			    				if(modelInstId != undefined && modelInstId == params.modelInstId){
 
-			    					Ext.getCmp("resources-grid-checks").selModel.selectRow(index);
+			    					Ext.getCmp("resources-grid-checks").selModel.selectRow(index, true);
 			    				}
 
 			    			});
