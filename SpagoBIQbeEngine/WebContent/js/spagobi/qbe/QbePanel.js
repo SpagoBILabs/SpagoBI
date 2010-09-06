@@ -85,8 +85,15 @@ Sbi.qbe.QbePanel = function(config) {
 		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(c.crosstab);
 		items.push(this.crosstabDesignerPanel);
 		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
-		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
-		items.push(this.crosstabPreviewPanel);
+	}
+
+	this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
+	items.push(this.crosstabPreviewPanel);
+	// if user is not a power user, show crosstab on first tab render event
+	if (!c.displayCrosstabDesignerPanel) {
+		this.crosstabPreviewPanel.on('render', function() {
+			this.showCrosstabPreview(null, c.crosstab.crosstabTemplate);
+		}, this);
 	}
 	
 	if (c.displayFormBuilderPanel && c.formbuilder !== undefined && c.formbuilder.template !== undefined) {
