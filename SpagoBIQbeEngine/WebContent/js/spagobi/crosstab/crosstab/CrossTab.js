@@ -1275,7 +1275,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 	        			partialSum = partialSum + parseInt(entries[i][j]);
 	        		}
 	        	}
-	        	sum.push(partialSum);
+	        	sum.push(''+partialSum);
     		}
     	}
     	return sum;
@@ -1294,7 +1294,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 	        			partialSum = partialSum + parseInt(entries[i][j]);
 	        		}
 	        	}
-	        	sum.push(partialSum);
+	        	sum.push(''+partialSum);
        		}
     	}
     	return sum;
