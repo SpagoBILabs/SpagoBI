@@ -56,6 +56,10 @@ public class CrosstabJSONSerializer {
 			JSONObject config = crosstabDefinition.getConfig();
 			toReturn.put(CrosstabSerializationConstants.CONFIG, config);
 			
+			// calculated fields definition
+			JSONArray calculatedFields = crosstabDefinition.getCalculatedFields();
+			toReturn.put(CrosstabSerializationConstants.CALCULATED_FIELDS, calculatedFields);
+			
 			// rows 
 			JSONArray rows = this.serializeRows(crosstabDefinition);
 			toReturn.put(CrosstabSerializationConstants.ROWS, rows);

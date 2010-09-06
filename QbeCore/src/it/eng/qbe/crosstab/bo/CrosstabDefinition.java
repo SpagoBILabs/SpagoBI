@@ -27,6 +27,7 @@ import it.eng.qbe.query.IAggregationFunction;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -45,12 +46,14 @@ public class CrosstabDefinition {
 		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
 		EMPTY_CROSSTAB.setMeasures(new ArrayList<CrosstabDefinition.Measure>());
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
+		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
 	
 	private List<Row> rows = null;
 	private List<Column> columns = null;
 	private List<Measure> measures = null;
 	private JSONObject config = null;
+	private JSONArray calculatedFields = null;
 	
 	public CrosstabDefinition() {}
 	
@@ -84,6 +87,14 @@ public class CrosstabDefinition {
 
 	public void setConfig(JSONObject config) {
 		this.config = config;
+	}
+
+	public JSONArray getCalculatedFields() {
+		return calculatedFields;
+	}
+
+	public void setCalculatedFields(JSONArray calculatedFields) {
+		this.calculatedFields = calculatedFields;
 	}
 
 	public boolean isMeasuresOnRows() {
