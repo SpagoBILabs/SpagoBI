@@ -588,74 +588,64 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				if(kpiInIDStr != null){
 					//existing kpi instance means model instance exists
 					kpiInstance = kpiInstDao.loadKpiInstanceById(obj.getInt("kpiInstId"));
-					modelInst.setKpiInstance(kpiInstance);
-				}else{
 
+				}else{
 					//new kpi instance 
 					if(kpiIdStr != null){
 						kpiInstance = new KpiInstance();
-						String kpiInstPeriodicity;
-						try{
-							kpiInstPeriodicity = obj.getString("kpiInstPeriodicity");
-							kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
-						}catch(Throwable t){
-							kpiInstPeriodicity = null;
-						
-						}
-						
-						
-						String kpiInstChartTypeId;
-						try{
-							kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
-							kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
-						}catch(Throwable t){
-							kpiInstChartTypeId = null;
-						
-						}
-						
-						String kpiInstTarget;
-						try{
-							kpiInstTarget = obj.getString("kpiInstTarget");
-							kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
-						}catch(Throwable t){
-							kpiInstTarget = null;
-						
-						}
-						
-						
-						String kpiInstThrCode;
-						try{
-							kpiInstThrCode = obj.getString("kpiInstThrName");
-							Threshold thr = DAOFactory.getThresholdDAO().loadThresholdByCode(kpiInstThrCode);
-							if(thr != null){
-								kpiInstance.setThresholdId(thr.getId());
-							}
-						}catch(Throwable t){
-							kpiInstThrCode = null;
-						
-						}
-						
-						String kpiInstWeight;
-						try{
-							kpiInstWeight = obj.getString("kpiInstWeight");
-							kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
-						}catch(Throwable t){
-							kpiInstWeight = null;
-						
-						}
-						
-						
 						kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
-						modelInst.setKpiInstance(kpiInstance);
-					}else{
-						//remove kpiinstance
-						modelInst.setKpiInstance(null);
-					}						
-
-					//or noone
-					
+					}	
+				}
+				String kpiInstPeriodicity;
+				try{
+					kpiInstPeriodicity = obj.getString("kpiInstPeriodicity");
+					kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
+				}catch(Throwable t){
+					kpiInstPeriodicity = null;
+				
 				}
 				
+				
+				String kpiInstChartTypeId;
+				try{
+					kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
+					kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
+				}catch(Throwable t){
+					kpiInstChartTypeId = null;
+				
+				}
+				
+				String kpiInstTarget;
+				try{
+					kpiInstTarget = obj.getString("kpiInstTarget");
+					kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
+				}catch(Throwable t){
+					kpiInstTarget = null;
+				
+				}
+				
+				
+				String kpiInstThrCode;
+				try{
+					kpiInstThrCode = obj.getString("kpiInstThrName");
+					Threshold thr = DAOFactory.getThresholdDAO().loadThresholdByCode(kpiInstThrCode);
+					if(thr != null){
+						kpiInstance.setThresholdId(thr.getId());
+					}
+				}catch(Throwable t){
+					kpiInstThrCode = null;
+				
+				}
+				
+				String kpiInstWeight;
+				try{
+					kpiInstWeight = obj.getString("kpiInstWeight");
+					kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
+				}catch(Throwable t){
+					kpiInstWeight = null;
+				
+				}
+				modelInst.setKpiInstance(kpiInstance);
 			}catch(Throwable t){
 				//nothing
 				modelInst.setKpiInstance(null);

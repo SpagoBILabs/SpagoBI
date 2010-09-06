@@ -146,20 +146,12 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		/*DETAIL FIELDS*/
 
 	 	   this.detailFieldName = new Ext.form.TextField({
-	          	 maxLength:100,
-	        	 minLength:1,
 	             fieldLabel: LN('sbi.generic.name'),
-	             allowBlank: false,
-	             //validationEvent:true,
 	             name: 'name'
 	         });
 	 			  
 	 	   this.detailFieldCode = new Ext.form.TextField({
-	          	 maxLength:45,
-	        	 minLength:1,
 	             fieldLabel:LN('sbi.generic.code'),
-	             allowBlank: false,
-	             //validationEvent:true,
 	             name: 'code'
 	         });  
 	 		   
@@ -168,24 +160,18 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	       	     width : 250,
 	             height : 80,
 	             fieldLabel: LN('sbi.generic.descr'),
-	             //validationEvent:true,
 	             name: 'description'
 	         });
 	 	 		   
 	 	   this.detailFieldLabel = new Ext.form.TextField({
-	        	 minLength:1,
 	             fieldLabel:LN('sbi.generic.label'),
-	             allowBlank: false,
-	             //validationEvent:true,
 	             name: 'label'
 	         });	  
 	 	 	 			  
 	 	   this.detailFieldKpi = new Ext.form.TextField({
 	 		   	 itemId: 'model-detailFieldKpi',
 	 		   	 id: 'model-detailFieldKpi',
-	        	 minLength:1,
 	             fieldLabel: LN('sbi.generic.kpi'),
-	             allowBlank: false,
 	             readOnly: true,
 	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
 	             value: 'drop kpi here...',

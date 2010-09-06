@@ -48,6 +48,7 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 	var paramsList = {MESSAGE_DET: "MODELINSTS_NODES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
+	var periodsList = {MESSAGE_DET: "PERIODICTIES_LIST"};
 	
 	this.configurationObject = {};
 	
@@ -62,6 +63,11 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 	this.configurationObject.deleteTreeService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsDel
+	});
+	
+	this.configurationObject.periodicitiesList = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_PERIODICITIES_ACTION'
+		, baseParams: periodsList
 	});
 	//reference to viewport container
 	this.referencedCmp = ref;
@@ -270,7 +276,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		var managePeriodicities = new Sbi.kpi.ManagePeriodicities(conf);
 	
-		this.thrWin = new Ext.Window({
+		this.perWin = new Ext.Window({
 			title: 'Lista delle Periodicità' ,   
             layout      : 'fit',
             width       : 400,
@@ -282,7 +288,12 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             items       : [managePeriodicities]
 		});
 		
-		this.thrWin.show();
+		this.perWin.show();
+		this.perWin.on('close', function(panel){
+			var st = Ext.StoreMgr.lookup('kpiperiodicitystore');
+			st.load();
+		}, this);
+		
 	}
 	,launchThrWindow : function() {
 		
@@ -318,12 +329,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			var fName = field.name;
 			node.attributes[fName] = newVal;
 
-/*			if(fName == 'name'){
-				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
-				rec.data.name = newVal;
-				this.referencedCmp.modelInstancesGrid.mainElementsStore.commitChanges();
-				this.referencedCmp.modelInstancesGrid.getView().refresh();
-			}*/
 		}
 	}
 	, editThreshold: function(code){
@@ -361,8 +366,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiInstTypeFieldset = new Ext.form.FieldSet({
 		   	columnWidth: 1,
-            labelWidth: 90,
-   
+            labelWidth: 90,   
             autoHeight: true,
             autoScroll  : true,
             bodyStyle: Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding: 5px;',
@@ -407,18 +411,43 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             name: 'kpiInstTarget'
         });
 		// periodicity----------------
-	    this.periodicityStore = new Ext.data.SimpleStore({
+/*	    this.periodicityStore = new Ext.data.SimpleStore({
 	        fields: ['kpiPeriodicityId', 'kpiPeriodicityName'],
 	        data: config.kpiPeriodicities,
+	        storeId: 'kpiperiodicitystore',	       
 	        autoLoad: false
-	    });
+	    });*/
+		this.perReader = new Ext.data.JsonReader({
+			    totalProperty: 'total',
+			    successProperty: 'success',
+			    idProperty: 'idPr',
+			    root: 'rows',
+			    messageProperty: 'message'  // <-- New "messageProperty" meta-data
+			}, [
+			    {name: 'idPr'},
+			    {name: 'name'}
+		]);
+	    
+		this.periodicityStore = new Ext.data.Store({
+			proxy: new Ext.data.HttpProxy({
+					url: this.configurationObject.periodicitiesList
+					
+			})
+			, root: 'rows'
+		   	, reader: this.perReader 
+	        , fields: ['idPr', 'name']        
+	        , storeId: 'kpiperiodicitystore'	       
+	        , autoLoad: false
+	    });  
+		this.periodicityStore.load();
+		Ext.StoreMgr.register (this.periodicityStore);
+
 		this.kpiPeriodicity = new Ext.form.ComboBox({
       	    name: 'kpiInstPeriodicity',
             store: this.periodicityStore,
-            //width : 120,
             fieldLabel: 'Periodicity',
-            displayField: 'kpiPeriodicityName',   // what the user sees in the popup
-            valueField: 'kpiPeriodicityId',        // what is passed to the 'change' event
+            displayField: 'name',   // what the user sees in the popup
+            valueField: 'idPr',        // what is passed to the 'change' event
             typeAhead: true,
             forceSelection: true,
             mode: 'local',
