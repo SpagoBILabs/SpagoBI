@@ -23,6 +23,7 @@ package it.eng.qbe.crosstab.exporter;
 
 import it.eng.qbe.crosstab.bo.CrossTab;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,6 +46,8 @@ import org.json.JSONObject;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class CrosstabXLSExporter {
+	
+	public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
 	
 	public static final String CROSSTAB_JSON_DESCENDANTS_NUMBER = "descendants_no";
 
@@ -176,14 +179,17 @@ public class CrosstabXLSExporter {
 				int columnNum = columnOffset + j;
 				Row row = sheet.getRow(rowNum);
 				Cell cell = row.createCell(columnNum);
-				if (text.trim() == "" || text.trim() == "NA") {
-					cell.setCellValue(createHelper.createRichTextString(text));
-				    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-				} else {
+				
+				try {
 					double value = Double.parseDouble(text);
 					cell.setCellValue(value);
 					cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+				} catch (NumberFormatException e) {
+					logger.debug("Text " + text + " is not recognized as a number");
+					cell.setCellValue(createHelper.createRichTextString(text));
+				    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				}
+				
 			}
 		}
 		
