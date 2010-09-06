@@ -75,8 +75,9 @@
 //         |rowHeaderPanel   |    datapanel        | 
 //         -----------------------------------------
 
-CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields) {
+CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields, misuresOnRow) {
 	this.fontSize = 12;
+	this.misuresOnRow = misuresOnRow;
 	this.entries = new CrossTabData(entries);
     this.withRowsSum = withRowsSum;
     this.withColumnsSum = withColumnsSum;
@@ -137,6 +138,7 @@ Ext.extend(CrossTab, Ext.Panel, {
 	,withRowsSum: null
 	,withColumnsSum: null
 	,calculatedFields: null
+	,misuresOnRow: null
 
     
     //================================================================
@@ -842,7 +844,7 @@ Ext.extend(CrossTab, Ext.Panel, {
     //reload the container table
     , reloadTable : function(horizontal){
     	
-    	//var d1 = new Date();
+    	var d1 = new Date();
     	
     	var tableRows = 2;
     	var tableColumns = 2;
@@ -992,22 +994,37 @@ Ext.extend(CrossTab, Ext.Panel, {
     		this.table.add(this.emptypanelBottomRight);
     	}
 
-//    	var d2 = new Date();
+    	
     	
    		this.add(this.table);
-   		this.doLayout();
+   		var d22 = new Date();
+   		this.rowHeaderPanelContainer.doLayout();
+   		var d3 = new Date();
+   		this.columnHeaderPanelContainer.doLayout();
+   		var d4 = new Date();
+   		this.datapanel.doLayout();
+   		var d5 = new Date();
+   		this.emptypanelTopLeft.doLayout();
+   		var d6 = new Date();
 
-//   		var d3 = new Date();
+   		this.table.doLayout(false);
+   		this.doLayout(false);
    		
-//   		alert("A: "+(d2-d1));
-//   		alert("B: "+(d3-d2));
-   		
+   		var d7 = new Date();
+
+//   		alert("B: "+(d3-d22));
+//   		alert("C: "+(d4-d3));
+//   		alert("D: "+(d5-d4));
+//   		alert("E: "+(d6-d5));
+//   		alert("F: "+(d7-d6));
    		if(Ext.get('loading')!=null){
 	   		setTimeout(function(){
 	   			Ext.get('loading').remove();
 	   			Ext.get('loading-mask').fadeOut({remove:true});
 	   			}, 250);
    		}
+   		
+   		
     }
     
     , reloadHeadersAndTable: function(horizontal){

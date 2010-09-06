@@ -233,6 +233,11 @@ Ext.extend(CrossTabContextualMenu, Ext.menu.Menu, {
     
     //load the checkboxes for the measures
     , getCheckboxesForMeasures : function(horizontal){
+    	
+    	if(this.crossTab.misuresOnRow == horizontal){//if the measures live in the other axe
+    		return new Array();
+    	}
+    	
     	var text;
     	var father;
     	var checkBoxes = new Array();
