@@ -31,6 +31,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,23 +70,13 @@ public class TemporaryTableManager {
 		
 		// drop table if not suitable according to tables map variable
 		if (tables.containsKey(tableName) && !baseQuery.equals(tables.get(tableName))) {
-			if (checkTableExistence(tableName, dataSource)) {
-				logger.debug("Table [" + tableName + "] must be dropped");
-				dropTable(tableName, dataSource);
-				logger.debug("Table [" + tableName + "] dropped successfully");
-			} else {
-				logger.debug("Table [" + tableName + "] does not exist");
-			}
+			dropTableIfExists(tableName, dataSource);
 			tables.remove(tableName);
 		}
 		
 		// create table if it does not exist in tables map variable
 		if (!tables.containsKey(tableName)) {
-			if (checkTableExistence(tableName, dataSource)) {
-				logger.debug("Table [" + tableName + "] must be dropped");
-				dropTable(tableName, dataSource);
-				logger.debug("Table [" + tableName + "] dropped successfully");
-			}
+			dropTableIfExists(tableName, dataSource);
 			logger.debug("Table [" + tableName + "] must be created");
 			createTable(baseQuery, tableName, dataSource);
 			logger.debug("Table [" + tableName + "] created successfully");
@@ -109,30 +100,44 @@ public class TemporaryTableManager {
 	
 	private static boolean checkTableExistence(String tableName,
 			DataSource dataSource) throws Exception {
-		logger.debug("IN");
+		logger.debug("IN: tableName = " + tableName);
+		boolean toReturn = false;
+		try {
+			executeStatement("select * from " + tableName + " where 1 = 0", dataSource);
+			toReturn = true;
+		} catch (Exception e) {
+			// this should happen when table does not exist, but it's better to log the exception anyway
+			logger.debug("Error while checking table [" + tableName + "] existence",  e); 
+			toReturn = false;
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+		
+		
+		/*
+		 * The following code does not work as expected: when creating a tables such as:
+		 * CREATE TABLE test ...
+		 * the actual name can be "test" or "TEST" depending on database server, but 
+		 * DROP TABLE test
+		 * will work anyway (it is case insensitive), instead DatabaseMetaData.getTables(null, null, tableName, null) is case sensitive!!!
+		 * Therefore, if the actual table name is TEST,  DatabaseMetaData.getTables(null, null, "test", null) will no find it!!!
+		 */
+		/*
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
 			connection.setAutoCommit(false);
 			DatabaseMetaData mtdt = connection.getMetaData();
 			ResultSet rs = mtdt.getTables(null, null, tableName, null);  // TODO need to transform the table name into a pattern?
-			return rs.first();
+			toReturn = rs.first();
 		} finally {
 			if (connection != null && !connection.isClosed()) {
 				connection.close();
 			}
 			logger.debug("OUT");
 		}
-		/*
-		try {
-			executeStatement("select * from " + tableName + " where 1 = 0", dataSource);
-			return true;
-		} catch (Exception e) {
-			// this should happen when table does not exist, but it's better to log the exception anyway
-			logger.debug("Error while checking table [" + tableName + "] existence",  e); 
-			return false;
-		}
 		*/
+
 	}
 
 	private static DataStore queryTemporaryTable(String sqlStatement, String tableName,
@@ -174,9 +179,22 @@ public class TemporaryTableManager {
 		logger.debug("OUT");
 	}
 
-	private static void dropTable(String tableName, DataSource dataSource) throws Exception {
-		logger.debug("IN");
-		executeStatement("DROP TABLE " + tableName, dataSource);
+	private static void dropTableIfExists(String tableName, DataSource dataSource) throws Exception {
+		logger.debug("IN: dropping table " + tableName + " if exists");
+		String dialect = dataSource.getHibDialectName();
+		if (dialect.contains("Oracle")) { // ORACLE does not support DROP TABLE IF EXISTS command
+			try {
+				executeStatement("DROP TABLE " + tableName, dataSource);
+			} catch (SQLException e) {
+				if (e.getMessage() != null && e.getMessage().startsWith("ORA-00942")) { // ORA-00942: table or view does not exist
+					logger.debug("Table " + tableName + "does not exists.");
+				} else {
+					throw e;
+				}
+			}
+		} else {
+			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
+		}
 		logger.debug("OUT");
 	}
 	
