@@ -1179,15 +1179,14 @@ Ext.extend(CrossTab, Ext.Panel, {
 //	    	this.reloadTable();
     	}
     }  
-    
-    
+
     , addCalculatedField: function(level, horizontal, op, CFName){
     	var calculatedField = new CrossTabCalculatedField(CFName, level, horizontal, op); 
     	this.calculatedFields.push(calculatedField);
     }
 
     , getCalculatedFields: function() {
-    	return calculatedFields;
+    	return this.calculatedFields;
     }
     
     //Hide a line

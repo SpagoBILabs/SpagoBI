@@ -65,6 +65,7 @@ CrossTabContextualMenu = function(node, crossTab) {
 			        		crossTab.crossTabCFWizard.show(crossTab);  
 			        		crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
 				       		CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, crossTab);
+				       		crossTab.addCalculatedField(level, horizontal, op, CFName);
 				       		}, crossTab);    	 	
 				       	},
 				       	scope: this

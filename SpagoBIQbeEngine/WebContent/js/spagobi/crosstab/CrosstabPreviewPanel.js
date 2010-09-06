@@ -69,6 +69,7 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
       		layout:'fit',
       		border: false     		
     	});
+	this.calculatedFields = config.crosstabTemplate.calculatedFields;
 	
 	// constructor
     Sbi.crosstab.CrosstabPreviewPanel.superclass.constructor.call(this, c);
@@ -79,13 +80,15 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	
 	services: null
 	, crosstab: null
+	, calculatedFields: null
 	
 	, load: function(crosstabDefinition) {
 			this.showMask();
+			var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);
 			Ext.Ajax.request({
 		        url: this.services['loadCrosstab'],
 		        params: {
-						crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
+						crosstabDefinition: crosstabDefinitionEncoded
 				},
 		        success : function(response, opts) {
 //	  	  			try {
@@ -102,16 +105,20 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 			});
 	}
 
-	, refreshCrossTab: function(crosstabDefinition){
+	, refreshCrossTab: function(crosstab){
+		
+		if(this.crosstab!=null){
+			this.calculatedFields = this.crosstab.getCalculatedFields();
+		}
+		
 		this.removeAll(true);
 	
-		var rows = this.fromNodeToArray(crosstabDefinition.rows);
-		var columns = this.fromNodeToArray(crosstabDefinition.columns);
-		var data = crosstabDefinition.data;
-		var config = crosstabDefinition.config;
-		this.crosstab =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", crosstabDefinition.calculatedFields);
+		var rows = this.fromNodeToArray(crosstab.rows);
+		var columns = this.fromNodeToArray(crosstab.columns);
+		var data = crosstab.data;
+		var config = crosstab.config;
+		this.crosstab =  new CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", this.calculatedFields);
 		this.crosstab.reloadHeadersAndTable();
-		
 		this.add(this.crosstab);
 		this.doLayout();
 	}

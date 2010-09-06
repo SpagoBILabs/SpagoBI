@@ -85,7 +85,7 @@ Sbi.qbe.QbePanel = function(config) {
 		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(c.crosstab);
 		items.push(this.crosstabDesignerPanel);
 		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
-		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel();
+		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
 		items.push(this.crosstabPreviewPanel);
 	}
 	
@@ -304,7 +304,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		var crosstabDefinition =  this.crosstabDesignerPanel.getCrosstabDefinition();
 		var crosstabCalculatedFields =  this.crosstabPreviewPanel.getCalculatedFields();
 		
-		crosstabDefinition.calculatedFields = calculatedFields;
+		crosstabDefinition.calculatedFields = crosstabCalculatedFields;
 		
 		var params = Ext.apply({
 			crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
