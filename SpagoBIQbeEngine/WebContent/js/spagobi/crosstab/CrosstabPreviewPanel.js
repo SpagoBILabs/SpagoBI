@@ -168,11 +168,19 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
     }
     
     , serializeCrossTab: function () {
-    	return this.crosstab.serializeCrossTab();
+    	if (this.crosstab != null) {
+    		return this.crosstab.serializeCrossTab();
+    	} else {
+    		throw "Crosstab not defined";
+    	}
     }
     
     , getCalculatedFields: function () {
-    	return this.crosstab.getCalculatedFields();
+    	if (this.crosstab != null) {
+    		return this.crosstab.getCalculatedFields();
+    	} else {
+    		return new Array();
+    	}
     }
 
 });
