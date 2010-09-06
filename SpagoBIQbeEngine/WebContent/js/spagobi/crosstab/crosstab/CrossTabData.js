@@ -107,7 +107,7 @@ Ext.extend(CrossTabData , Object, {
  		
  		if(rowsum!=null){
  			for(var i=0; i<serializedEntries.length; i++){
- 				serializedEntries.push(rowsum[i]);
+ 				serializedEntries[i].push(rowsum[i]);
  			}	
  		}
     	if(columnsum!=null){
