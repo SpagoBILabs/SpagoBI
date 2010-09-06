@@ -77,6 +77,9 @@ public class CrosstabJSONDeserializer {
 				JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 				crosstabDefinition.setConfig(config);
 				
+				JSONArray calculatedFields = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.CALCULATED_FIELDS);
+				crosstabDefinition.setCalculatedFields(calculatedFields);
+				
 			} catch (Exception e) {
 				throw new SerializationException("An error occurred while deserializing query: " + crosstabDefinitionJSON.toString(), e);
 			}
