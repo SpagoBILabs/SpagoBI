@@ -78,7 +78,7 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 			        	text: LN('sbi.crosstab.menu.hideheader'),
 			        	iconCls:'hide',
 			        	handler:function(){
-			        		this.showHideNode(node, true) ; 	
+			        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(node, true, false, this.crossTab) ; 	
 			        	},
 			        	scope: this
 			        },
@@ -86,7 +86,7 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 			        	text: LN('sbi.crosstab.menu.hideheadertype'),
 			        	iconCls:'hide',
 			        	handler:function(){
-			        		this.showHideAllNodes(node, true);
+			        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, false, this.crossTab);
 			        	},
 			        	scope: this
 			        },
@@ -112,63 +112,7 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 	crossTab: null,
 	headers: null
-    
-    //hide a measure
-    , showHideMeasure: function(measure, hide, horizontal){
-    	for(var i=0; i<this.headers[this.headers.length-1].length; i++){
-    		if(this.headers[this.headers.length-1][i].name == measure){
-        		if(hide){
-        			this.crossTab.hideLine(i, horizontal, true);
-        		}else{
-        			this.crossTab.showLine(i, horizontal, true);
-        		}
-    		}
-    	}
-    	this.crossTab.reloadHeadersAndTable();
-    }
-
-    //show/hide a node and all its childs
-    //node: the node to hide
-    //hide: true for hide, false for show
-    //lazy: if true the table is not updated
-    , showHideNode: function(node, hide, lazy){
-    	var i=0;
-    	var startHeight, endHeight;
-    	
-    	var leafs = node.getLeafs();
-    	if(leafs.length==0){//if the node is already a leaf
-    		leafs.push(node);
-    	}
-    	
-    	startHeight=this.headers[this.headers.length-1].indexOf(leafs[0]);
-    	endHeight=leafs.length+startHeight;
-
-    	for(var y=startHeight; y<endHeight; y++){
-    		if(hide){
-    			this.crossTab.hideLine(y, node.horizontal, true);
-    		}else{
-    			this.crossTab.showLine(y, node.horizontal, true);
-    		}
-    	}
-
-    	if(!lazy){
-    		this.crossTab.reloadHeadersAndTable();
-    	}
-    }
-
-    //show/hide the node and all its brothers with the same name
-    //node: the node to hide
-    //hide: true for hide, false for show  
-    , showHideAllNodes: function(node, hide){
-    	var header=this.headers[node.level];
-    	for(var y=0; y<header.length; y++){
-    		if(node.name == header[y].name){
-   				this.showHideNode(header[y], hide, true);
-    		}
-    	}
-    	this.crossTab.reloadHeadersAndTable();
-    }
-    
+        
     // For every hidden brother of the node, this method creates
     // a checkbox. If the user checks the checkbox the linked
     // header will be shown.
@@ -190,7 +134,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 					id : (i+1)//with 0 it doesn't work
 				});
 	    		freshCheck.on('checkchange', function(checkBox, checked){
-	 				this.showHideNode(header[checkBox.id-1], false);
+	    			Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(header[checkBox.id-1], false, false, this.crossTab);
 	    		}, this);
 	    		checkBoxes.push(freshCheck);
 	    		if(i<header.length-1 && (header[i].father.name != header[i+1].father.name)){
@@ -201,37 +145,37 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     	return checkBoxes;
     }
 
-    //load the checkboxes for the show/hide menu
-    , getCheckboxes : function(horizontal){
-   	
-    	var checkBoxes = new Array();
-    	for(var i=0; i<this.headers[this.headers.length-1].length; i++){
-    		var text= this.headers[this.headers.length-1][i].name;
-    		var father = this.headers[this.headers.length-1][i].father;
-    		while(father.father!=null){//the node is not the root
-    			text = father.name+" / "+ text;
-    			father = father.father;
-    		}
-    		
-    		var freshCheck = new Ext.menu.CheckItem({
-				checked: !(this.headers[this.headers.length-1][i].hidden),
-				text: text,
-				id : (i+1)//with 0 it doesn't work
-			});
-    		freshCheck.on('checkchange', function(checkBox, checked){
-    									if(checked){
-    										this.crossTab.showLine(checkBox.id-1, horizontal);
-    									}else{
-    										this.crossTab.hideLine(checkBox.id-1, horizontal);
-    									}	
-    					}, this);
-    		checkBoxes.push(freshCheck);
-    		if(i<this.headers[this.headers.length-1].length-1 && (this.headers[this.headers.length-1][i].father.name != this.headers[this.headers.length-1][i+1].father.name)){
-    			checkBoxes.push('-');
-    		}
-    	}
-    	return checkBoxes;
-	}     
+    //load the checkboxes for the show/hide menu (IT WORKS BUT IS NOT USED)
+//    , getCheckboxes : function(horizontal){
+//   	
+//    	var checkBoxes = new Array();
+//    	for(var i=0; i<this.headers[this.headers.length-1].length; i++){
+//    		var text= this.headers[this.headers.length-1][i].name;
+//    		var father = this.headers[this.headers.length-1][i].father;
+//    		while(father.father!=null){//the node is not the root
+//    			text = father.name+" / "+ text;
+//    			father = father.father;
+//    		}
+//    		
+//    		var freshCheck = new Ext.menu.CheckItem({
+//				checked: !(this.headers[this.headers.length-1][i].hidden),
+//				text: text,
+//				id : (i+1)//with 0 it doesn't work
+//			});
+//    		freshCheck.on('checkchange', function(checkBox, checked){
+//    									if(checked){
+//    										Sbi.crosstab.core.CrossTabShowHideUtility.showLine(checkBox.id-1, horizontal, this.crossTab, false);
+//    									}else{
+//    										Sbi.crosstab.core.CrossTabShowHideUtility.hideLine(checkBox.id-1, horizontal, this.crossTab, false);
+//    									}	
+//    					}, this);
+//    		checkBoxes.push(freshCheck);
+//    		if(i<this.headers[this.headers.length-1].length-1 && (this.headers[this.headers.length-1][i].father.name != this.headers[this.headers.length-1][i+1].father.name)){
+//    			checkBoxes.push('-');
+//    		}
+//    	}
+//    	return checkBoxes;
+//	}     
     
     
     //load the checkboxes for the measures
@@ -271,7 +215,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 				id : text
 			});
     		freshCheck.on('checkchange', function(checkBox, checked){
-    			this.showHideMeasure(checkBox.id, !checked, horizontal);
+    			Sbi.crosstab.core.CrossTabShowHideUtility.showHideMeasure(checkBox.id, !checked, horizontal, this.crossTab);
     		}, this);
     		checkBoxes.push(freshCheck);
     	}

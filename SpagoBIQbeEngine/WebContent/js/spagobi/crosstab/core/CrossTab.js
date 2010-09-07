@@ -1207,58 +1207,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     , getCalculatedFields: function() {
     	return this.calculatedFields;
     }
-    
-    //Hide a line
-    , hideLine : function(lineNumber, horizontal, lazy){
-    	var headerEntry;
-    	if(horizontal){
-    		headerEntry = this.columnHeader[this.columnHeader.length-1][lineNumber];
-    	}else{
-    		headerEntry = this.rowHeader[this.rowHeader.length-1][lineNumber];
-    	}
-    	if(!headerEntry.hidden){
-    		headerEntry.hide();
-    		
-	    	var father = headerEntry.father;
-	    	while(father!=null && father!=undefined){
-	    		father.thisDimension = father.thisDimension-1;
-	        	if(father.thisDimension == 0){
-	        		father.hide();
-	        	}
-	        	father.update();
-	    		father = father.father;
-	    	}
-    	}
-    	if(!lazy){
-    		this.reloadHeadersAndTable();
-    	}
-    }
-    
-    //Show a line
-    , showLine : function(lineNumber, horizontal, lazy){
-    	var headerEntry;
-    	if(horizontal){
-    		headerEntry = this.columnHeader[this.columnHeader.length-1][lineNumber];
-    	}else{
-    		headerEntry = this.rowHeader[this.rowHeader.length-1][lineNumber];
-    	}
-    	if(headerEntry.hidden){
-	    	headerEntry.show();
-	    	var father = headerEntry.father;
-	    	while(father!=null && father!=undefined){
-	    		father.thisDimension = father.thisDimension+1;
-	        	if(father.thisDimension == 1){
-	        		father.show();
-	        	}
-	        	father.update();
-	    		father = father.father;
-	    	}
-    	}
-    	if(!lazy){
-    		this.reloadHeadersAndTable();
-    	}
-    }
-    
+       
     
   //============================
   //Partial Sum
