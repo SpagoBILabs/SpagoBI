@@ -67,7 +67,7 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	
 	c = Ext.apply(c, {
       		layout:'fit',
-      		border: false     		
+      		border: false
     	});
 	this.calculatedFields = config.crosstabTemplate.calculatedFields;
 	
@@ -81,6 +81,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	services: null
 	, crosstab: null
 	, calculatedFields: null
+	, loadMask: null
 	
 	, load: function(crosstabDefinition) {
 			this.showMask();
@@ -91,17 +92,14 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 						crosstabDefinition: crosstabDefinitionEncoded
 				},
 		        success : function(response, opts) {
-//	  	  			try {
-	  	  				
-	  	  				//this.crossTabJSON = Ext.util.JSON.decode( response.responseText );
-	  	  				this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
-//	  	  			} catch (err) {
-//	  	  				alert(err);
-//	  	  				alert(err.description);
-//	  	  			}
+	        		this.hideMask();
+  	  				this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
 		        },
 		        scope: this,
-				failure: Sbi.exception.ExceptionHandler.handleFailure      
+				failure: function() {
+					this.hideMask();
+					Sbi.exception.ExceptionHandler.handleFailure(response, options);
+				}      
 			});
 	}
 
@@ -137,7 +135,20 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		return array;
 	}
 	
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
+	}
+	
     , showMask : function(){
+    	
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask(this.bwrap, {msg: "Loading.."});
+    	}
+    	this.loadMask.show();
+    	
+    	/*
 		var dh = Ext.DomHelper; 
 	
 		
@@ -165,6 +176,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var loadingmaskDOM = dh.append(bodyElement[0].id, loadingmask);
 		var loadingDOM = dh.append(loadingmaskDOM, loading);
 		dh.append(loadingDOM, loadingindicator);
+		*/
     }
     
     , serializeCrossTab: function () {
