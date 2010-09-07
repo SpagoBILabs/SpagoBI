@@ -96,7 +96,11 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 				}
 			}
 			result.put(NAME, res.getName() );
-			result.put(TEXT, res.getName() );
+			String text = res.getName() ;
+			if(text.length()>= 20){
+				text = text.substring(0, 19)+"...";
+			}
+			result.put(TEXT, text );
 			result.put(LABEL, res.getLabel());			
 			result.put(DESCRIPTION, res.getDescription() );
 			result.put(STARTDATE, res.getStartDate());
