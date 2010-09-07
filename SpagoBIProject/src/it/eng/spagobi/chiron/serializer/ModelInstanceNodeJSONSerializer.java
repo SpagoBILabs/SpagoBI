@@ -100,6 +100,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			if(text.length()>= 20){
 				text = text.substring(0, 19)+"...";
 			}
+			text = res.getModel().getCode()+" - "+ text;
 			result.put(TEXT, text );
 			result.put(LABEL, res.getLabel());			
 			result.put(DESCRIPTION, res.getDescription() );
