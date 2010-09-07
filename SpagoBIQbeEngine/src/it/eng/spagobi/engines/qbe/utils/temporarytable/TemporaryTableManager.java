@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.utils.temporarytable;
 
+import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
@@ -186,12 +187,18 @@ public class TemporaryTableManager {
 			try {
 				executeStatement("DROP TABLE " + tableName, dataSource);
 			} catch (SQLException e) {
-				if (e.getMessage() != null && e.getMessage().startsWith("ORA-00942")) { // ORA-00942: table or view does not exist
+				if (e.getErrorCode() == 942) { // ORA-00942: table or view does not exist
 					logger.debug("Table " + tableName + "does not exists.");
 				} else {
 					throw e;
 				}
 			}
+		} else if (dialect.contains("SQLServer")) { // SQLServer has a different command 
+			// see http://www.webdevblog.info/database/drop-table-if-exists-in-oracle-nd-sql-server/
+			// TODO test it!!!
+			executeStatement("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
+					" WHERE TABLE_NAME = '" + tableName + "') " +
+					" DROP TABLE " + tableName, dataSource);
 		} else {
 			executeStatement("DROP TABLE IF EXISTS " + tableName, dataSource);
 		}
@@ -237,10 +244,23 @@ public class TemporaryTableManager {
 			tableNameSuffix = "";
 		}
 		String userId = userProfile.getUserId().toString();
-		// removes accented letters and replace them by their regular ASCII equivalent.
-		//String cleanUserId = Normalizer.normalize(userId, Normalizer, 0);
+		String cleanUserId = StringUtils.convertNonAscii(userId);
+		// removing non letters
+	    StringBuilder sb = new StringBuilder();
+	    int n = cleanUserId.length();
+	    for (int i = 0; i < n; i++) {
+	        char c = cleanUserId.charAt(i);
+	        if (Character.isLetter(c)) {
+	        	sb.append(c);
+	        }
+	    }
+	    cleanUserId = sb.toString();
+		
+		/*
 		// removing non-ASCII characters
 		String cleanUserId = userId.replaceAll("[^\\p{ASCII}]","");
+		*/
+		
 		logger.debug("Cleaned user id : " + cleanUserId);
 		String tableName = tableNamePrefix + cleanUserId + tableNameSuffix;
 		// in most cases, table name length is lower than 30 characters
