@@ -49,6 +49,7 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
 	var periodsList = {MESSAGE_DET: "PERIODICTIES_LIST"};
+	var paramsKpiRestore = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_KPI_RESTORE"};
 	
 	this.configurationObject = {};
 	
@@ -64,7 +65,10 @@ Sbi.kpi.ManageModelInstances = function(config, ref) {
 		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsDel
 	});
-	
+	this.configurationObject.kpiRestore = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
+		, baseParams: paramsKpiRestore
+	});
 	this.configurationObject.periodicitiesList = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_PERIODICITIES_ACTION'
 		, baseParams: periodsList
@@ -874,12 +878,75 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
 		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
 		
+		this.kpiRestoreDefault.addListener('focus', this.selectNode, this);
 		this.kpiRestoreDefault.addListener('check', this.restoreDefaults, this);
 
 	}
 	, restoreDefaults: function(checkbox, checked) {
-		alert("restore defaults!!!");
+	
+		if(checked){
+			//re-fills kpi instance form with kpi values
+			var node = this.mainTree.getSelectionModel().getSelectedNode();
+			
+			//gets new node values by ajax request
+			var params = {
+					kpiId: node.attributes.kpiId
+				};
+
+			Ext.Ajax.request( {
+				url : this.configurationObject.kpiRestore,
+				success : function(response, options) {
+					if(response.responseText !== undefined) {
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content !== undefined && content !== null){
+
+		      				this.fillKpiForRestore(content, node);
+		      			}
+					}
+	      			return;
+				},
+				scope : this,
+				params : params
+			});
+		}
 	}	
+	, fillKpiForRestore: function(content, node) {
+		//sets node attribute
+		if(node !== undefined && node != null){
+			this.kpiName.setValue(content.name);
+			node.attributes.kpiName=content.name;
+			node.attributes.kpiId=content.id;
+			
+			this.kpiThreshold.setValue(content.threshold);
+			node.attributes.kpiInstThrName=content.threshold;
+			
+			this.kpiTarget.setValue(content.targetAudience);
+			node.attributes.kpiInstTarget=content.targetAudience;
+			
+			this.kpiWeight.setValue(content.weight);
+			node.attributes.kpiInstWeight=content.weight;
+			
+			this.kpiChartType.setValue('');
+			node.attributes.kpiInstChartTypeId = '';
+			
+			this.kpiPeriodicity.setValue('');
+			node.attributes.kpiInstPeriodicity='';
+			
+			this.kpiSaveHistory.setValue(false);
+
+			this.kpiRestoreDefault.setValue(true);
+			
+			this.kpiInstFieldset.setVisible(true);
+			this.kpiInstFieldset2.setVisible(false);			
+			this.kpiModelType.onSetValue( 'kpiinst', true);
+			this.kpiPeriodicityButton.enable();
+			this.kpiInstFieldset.doLayout();
+
+		
+
+			node.attributes.toSave = true;
+		}
+	}
 	,createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';
