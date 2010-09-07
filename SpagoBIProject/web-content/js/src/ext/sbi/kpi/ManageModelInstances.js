@@ -359,7 +359,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     	    columns: 2,
     	    items: [
     	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
-    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2, checked: true}
+    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
     	    ]
     	});
 		this.kpiModelType.addListener('change', this.changeKpiPanel , this);
@@ -449,13 +449,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             displayField: 'name',   // what the user sees in the popup
             valueField: 'idPr',        // what is passed to the 'change' event
             typeAhead: true,
-            forceSelection: true,
+            forceSelection: false,
             mode: 'local',
             triggerAction: 'all',
             selectOnFocus: true,
-            editable: false,
-            allowBlank: false,
-            validationEvent:true
+            editable: false
         }); 
 
 		this.kpiPeriodicityButton = new Ext.Button({
@@ -479,13 +477,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	            displayField: 'kpiChartTypeCd',   // what the user sees in the popup
 	            valueField: 'kpiChartTypeId',        // what is passed to the 'change' event
 	            typeAhead: true,
-	            forceSelection: true,
 	            mode: 'local',
 	            triggerAction: 'all',
 	            selectOnFocus: true,
-	            editable: false,
-	            allowBlank: false,
-	            validationEvent:true
+	            editable: false
 	        }); 
 		//alternate if uuid
 		this.kpiLabel = new Ext.form.TextField({
@@ -494,7 +489,18 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
              name: 'modelUuid'
          });
 		
-
+        this.kpiSaveHistory = new Ext.form.Checkbox({
+            fieldLabel     : "Save History",
+            labelSeparator : ' ',
+            boxLabel       : ' ',
+            inputValue     : true
+        });
+        this.kpiRestoreDefault = new Ext.form.Checkbox({
+            fieldLabel     : "Restore Default",
+            labelSeparator : ' ',
+            boxLabel       : ' ',
+            inputValue     : true
+        });
 		this.kpiInstFieldset = new Ext.form.FieldSet({
 	 		   	 columnWidth: 0.4,
 	             labelWidth: 90,
@@ -512,7 +518,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	                     this.kpiWeight,
 	                     this.kpiTarget,
 	                     this.kpiPeriodicity,
-	                     this.kpiChartType
+	                     this.kpiChartType,
+	                     this.kpiSaveHistory ,
+	                     this.kpiRestoreDefault
+	                     
 	                     ]
 	    	});
 		
@@ -638,6 +647,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiWeight.setValue(node.attributes.kpiInstWeight);
 				this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
 				this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
+				this.kpiSaveHistory.setValue(node.attributes.kpiInstSaveHistory);
+				this.kpiRestoreDefault.setValue(false);
 				
 				this.kpiInstFieldset.setVisible(true);
 				this.kpiInstFieldset2.setVisible(false);			
@@ -685,6 +696,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiWeight.setValue(null);
 		this.kpiChartType.setValue(null);
 		this.kpiPeriodicity.setValue(null);
+		this.kpiSaveHistory.setValue(false);
+		this.kpiRestoreDefault.setValue(false);
 		
 		this.kpiLabel.setValue(null);
 	}
@@ -857,8 +870,16 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiLabel.addListener('focus', this.selectNode, this);
 		this.kpiLabel.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
+		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
+		
+		this.kpiRestoreDefault.addListener('check', this.restoreDefaults, this);
 
 	}
+	, restoreDefaults: function(checkbox, checked) {
+		alert("restore defaults!!!");
+	}	
 	,createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';

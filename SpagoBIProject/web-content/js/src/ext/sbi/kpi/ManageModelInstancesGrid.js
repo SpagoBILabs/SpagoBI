@@ -101,6 +101,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		                     	          , 'modelUuid'
 		                     	          
 		                     	          , 'kpiInstPeriodicity'
+		                     	          , 'kpiInstSaveHistory'
 		                     	          
 		                     	          , 'modelId'
 		                     	          , 'modelText'
