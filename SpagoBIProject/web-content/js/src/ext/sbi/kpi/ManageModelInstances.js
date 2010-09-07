@@ -1047,7 +1047,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				   importSub = false;
 				   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
 			   }
-			   copiedNode.setText(e.dropNode.attributes.name)
+			   //copiedNode.setText(e.dropNode.attributes.name)
 
 			   e.cancel = true;
 			   //if parents have same depth --> enable kind of drop else forbid

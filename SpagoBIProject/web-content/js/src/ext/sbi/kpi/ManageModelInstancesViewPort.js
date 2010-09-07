@@ -267,7 +267,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				 modelDescr : rec.get('description'),
 				 modelType : rec.get('type'),
 				 modelTypeDescr : rec.get('typeDescr'),
-				 text : rec.get('text')	,
+				 text : rec.get('text'),
 				 modelText : rec.get('text'),
 				 error: false,
 				 toSave : true
@@ -278,7 +278,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	}
 	, displayTree: function(rec){
 
-		this.manageModelInstances.rootNodeText = rec.get('name');
+		this.manageModelInstances.rootNodeText = rec.get('text');
 		this.manageModelInstances.rootNodeId = rec.get('modelInstId');
 
 		//main instances tree - center
