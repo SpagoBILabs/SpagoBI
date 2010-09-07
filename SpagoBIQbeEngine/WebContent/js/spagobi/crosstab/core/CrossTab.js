@@ -1019,12 +1019,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 //   		alert("D: "+(d5-d4));
 //   		alert("E: "+(d6-d5));
 //   		alert("F: "+(d7-d6));
-   		if(Ext.get('loading')!=null){
-	   		setTimeout(function(){
-	   			Ext.get('loading').remove();
-	   			Ext.get('loading-mask').fadeOut({remove:true});
-	   			}, 250);
-   		}
    		
    		
     }
