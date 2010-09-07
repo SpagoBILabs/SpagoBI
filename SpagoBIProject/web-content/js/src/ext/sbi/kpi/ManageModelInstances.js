@@ -107,6 +107,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     }
 
 	,initTabItems: function(){
+		
 		this.kpitreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: this.configurationObject.manageTreeService,
 	        createNode: function(attr) {
@@ -122,6 +123,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	    		if (attr.error !== undefined && attr.error != false) {
 	    			attr.cls = 'has-error';
 	    		}
+	    		var attrKpiCode = '';
+	    		if(attr.kpiCode !== undefined){
+	    			attrKpiCode = ' - '+attr.kpiCode;
+	    		}
+	    		attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
 	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
 	        }
 
@@ -551,16 +557,15 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	}
 	, kpiFiledNotify : function() {
 		this.kpiName.getEl().highlight('#E27119');
-		this.kpiName.setValue('');
+		///this.kpiName.setValue('');
 		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
-		if(node !== undefined && node != null){
+/*		if(node !== undefined && node != null){
 			node.attributes.kpiName = '';
 			node.attributes.kpiId = '';
 			node.attributes.kpiInstId = '';
 			node.attributes.iconCls = '';
 			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
-
-		}
+		}*/
 		var tooltip = new Ext.ToolTip({
 	        target: 'kpinameField',
 	        anchor: 'right',
@@ -957,6 +962,12 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			if (rec.get('error') !== undefined && rec.get('error') != false) {
 				cssClass = 'has-error';
 			}
+    		var attrKpiCode = '';
+    		if(rec.get('kpiCode') !== undefined){
+    			attrKpiCode = ' - '+rec.get('kpiCode');
+    		}
+    		var tip = rec.get('modelCode')+' - '+rec.get('name')+ attrKpiCode;
+    		
 			var node = new Ext.tree.AsyncTreeNode({
 		        text		: this.rootNodeText,
 		        expanded	: true,
@@ -985,6 +996,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				iconCls		: iconClass,
 				cls			: cssClass,
 		        draggable	: false,
+		        qtip		: tip,
 		        toSave: true
 		    });
 

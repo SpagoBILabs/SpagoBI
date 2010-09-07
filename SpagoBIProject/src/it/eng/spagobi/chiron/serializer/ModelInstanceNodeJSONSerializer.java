@@ -34,6 +34,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	
 
 	private static final String KPI_NAME =  "kpiName";
+	private static final String KPI_CODE =  "kpiCode";
 	private static final String KPI_ID = "kpiId";
 	private static final String KPI_INST_THR_ID =  "kpiInstThrId";
 	private static final String KPI_INST_THR_NAME =  "kpiInstThrName";
@@ -79,6 +80,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 					if(kpiInst.getKpi() != null){
 						Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
 						result.put(KPI_NAME, kpi.getKpiName());
+						result.put(KPI_CODE, kpi.getCode());
 					}
 					result.put(KPI_INST_CHART, kpiInst.getChartTypeId());
 					result.put(KPI_INST_PERIODICITY, kpiInst.getPeriodicityId());
