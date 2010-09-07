@@ -141,7 +141,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabCFWizard, Ext.Window, {
 	}
 
 	,validate: function(showSuccess){
-		var error = ArithmeticExpressionParser.module.validateCrossTabCalculatedField(this.getExpression());
+		var error = Sbi.crosstab.core.ArithmeticExpressionParser.module.validateCrossTabCalculatedField(this.getExpression());
 		if(error==""){
 			if(showSuccess){
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.qbe.calculatedFields.validationwindow.success.text'), LN('sbi.qbe.calculatedFields.validationwindow.success.title'));
