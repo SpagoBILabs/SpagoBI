@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.model.bo.Model;
@@ -69,6 +70,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODELINSTS_NODES_LIST = "MODELINSTS_NODES_LIST";
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
 	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
+	private final String MODELINSTS_KPI_RESTORE = "MODELINSTS_KPI_RESTORE";
 
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
@@ -203,6 +205,22 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				logger.error("Exception occurred while retrieving model instance to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model instance to delete", e);
+			}
+			
+			
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_KPI_RESTORE)) {
+			
+			Integer kpiId = getAttributeAsInteger("kpiId");
+			try {
+				Kpi kpiToRestore = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+				
+				logger.debug("Found kpi to restore");
+				JSONObject kpiJson = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(kpiToRestore,	locale);
+				writeBackToClient(new JSONSuccess(kpiJson));
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving kpi to restore", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving kpi to restore", e);
 			}
 			
 			
@@ -602,7 +620,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
 				}catch(Throwable t){
 					kpiInstPeriodicity = null;
-				
+					kpiInstance.setPeriodicityId(null);
 				}
 				
 				
@@ -612,7 +630,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
 				}catch(Throwable t){
 					kpiInstChartTypeId = null;
-				
+					kpiInstance.setChartTypeId(null);
 				}
 				
 				String kpiInstTarget;
@@ -621,7 +639,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
 				}catch(Throwable t){
 					kpiInstTarget = null;
-				
+					kpiInstance.setTarget(null);
 				}
 				
 				
@@ -634,7 +652,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					}
 				}catch(Throwable t){
 					kpiInstThrCode = null;
-				
+					kpiInstance.setThresholdId(null);
 				}
 				
 				String kpiInstWeight;
@@ -643,7 +661,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
 				}catch(Throwable t){
 					kpiInstWeight = null;
-				
+					kpiInstance.setWeight(null);
 				}
 				String saveHistory;
 				try{
