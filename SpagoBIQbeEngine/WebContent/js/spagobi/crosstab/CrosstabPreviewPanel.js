@@ -67,7 +67,8 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	
 	c = Ext.apply(c, {
       		layout:'fit',
-      		border: false
+      		border: false,
+      		id: 'CrosstabPreviewPanel'
     	});
 	this.calculatedFields = config.crosstabTemplate.calculatedFields;
 	
@@ -83,9 +84,14 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, calculatedFields: null
 	, loadMask: null
 	
-	, load: function(crosstabDefinition) {
+		, load: function(crosstabDefinition) {
 			this.showMask();
 			var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);
+			this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);
+
+		}
+
+		, loadCrosstabAjaxRequest: function(crosstabDefinitionEncoded){
 			Ext.Ajax.request({
 		        url: this.services['loadCrosstab'],
 		        params: {
@@ -93,16 +99,16 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				},
 		        success : function(response, opts) {
 	        		this.hideMask();
-  	  				this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
+		  				this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
 		        },
 		        scope: this,
-				failure: function() {
+				failure: function(response, options) {
 					this.hideMask();
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
 				}      
-			});
-	}
-
+			})
+		}
+			
 	, refreshCrossTab: function(crosstab){
 		
 		if(this.crosstab!=null){
@@ -144,39 +150,9 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
     , showMask : function(){
     	
     	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.bwrap, {msg: "Loading.."});
+    		this.loadMask = new Ext.LoadMask('CrosstabPreviewPanel', {msg: "Loading.."});
     	}
     	this.loadMask.show();
-    	
-    	/*
-		var dh = Ext.DomHelper; 
-	
-		
-		var bodyElement = document.getElementsByTagName('body');
-		
-		var loadingmask = {
-				id: 'loading-mask',
-				tag: 'div',
-				html: '&nbsp;'
-			};
-		
-		var loading = {
-				id: 'loading',
-				tag: 'div',
-				html: '&nbsp;'
-			};
-		
-		var loadingindicator = {
-				id: 'loading-indicator',
-				tag: 'div',
-				cls: 'loading-indicator',
-				html: 'Loading...'
-			};
-
-		var loadingmaskDOM = dh.append(bodyElement[0].id, loadingmask);
-		var loadingDOM = dh.append(loadingmaskDOM, loading);
-		dh.append(loadingDOM, loadingindicator);
-		*/
     }
     
     , serializeCrossTab: function () {
