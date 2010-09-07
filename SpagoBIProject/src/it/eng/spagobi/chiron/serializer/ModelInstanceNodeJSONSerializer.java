@@ -41,6 +41,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String KPI_INST_WEIGHT =  "kpiInstWeight";
 	private static final String KPI_INST_CHART =  "kpiInstChartTypeId";    
 	private static final String KPI_INST_PERIODICITY =  "kpiInstPeriodicity";
+	private static final String KPI_INST_SAVE_HISTORY =  "kpiInstSaveHistory";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -88,6 +89,8 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 						result.put(KPI_INST_THR_NAME, thr.getName());
 					}
 					result.put(KPI_INST_WEIGHT, kpiInst.getWeight());
+					result.put(KPI_INST_SAVE_HISTORY, kpiInst.isSaveKpiHistory());
+
 				}
 			}
 			result.put(NAME, res.getName() );

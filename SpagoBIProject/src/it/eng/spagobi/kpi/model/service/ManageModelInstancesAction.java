@@ -645,6 +645,15 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstWeight = null;
 				
 				}
+				String saveHistory;
+				try{
+					saveHistory = obj.getString("kpiInstSaveHistory");
+					kpiInstance.setSaveKpiHistory(true);
+				}catch(Throwable t){
+					kpiInstance.setSaveKpiHistory(false);
+				
+				}
+
 				modelInst.setKpiInstance(kpiInstance);
 			}catch(Throwable t){
 				//nothing

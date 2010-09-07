@@ -17,7 +17,6 @@ public class KpiInstance implements Serializable{
 	Double target = null;
 	boolean saveKpiHistory = false; // if is true the value of kpiInstance
                                     //will store in the kpiInstance History table
-
 	public Integer getPeriodicityId() {
 		return periodicityId;
 	}

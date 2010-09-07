@@ -470,10 +470,15 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 
 			SbiKpiInstance oldSbiKpiInstance = sbiKpiModelInst
 					.getSbiKpiInstance();
+			
+			//default behaviour
 			boolean newKpiInstanceHistory = true;
 			boolean deleteOldHistory = false;
 			boolean dontSaveKpiHistory = false;
-
+			if(value.getKpiInstance() != null && !value.getKpiInstance().isSaveKpiHistory()){
+				dontSaveKpiHistory = true;
+			}
+			
 			// new kpiInstance is null
 			if (value.getKpiInstance() == null) {
 				newKpiInstanceHistory = false;
