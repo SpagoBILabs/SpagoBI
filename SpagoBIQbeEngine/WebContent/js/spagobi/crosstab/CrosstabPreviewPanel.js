@@ -124,8 +124,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		this.crosstab =  new Sbi.crosstab.core.CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", this.calculatedFields, config.measureson=='rows');
 		this.crosstab.reloadHeadersAndTable();
 		this.add(this.crosstab);
-		//this.doLayout();
-		//alert(config.columnsOverflow);
+		this.doLayout();
 		if(config.columnsOverflow){		
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.crosstab.crosstabpreviewpanel.overflow.warning'), 'Warning');
 		}
