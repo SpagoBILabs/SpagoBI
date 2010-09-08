@@ -47,7 +47,7 @@ Sbi.kpi.ManageKpisGrid = function(config, ref) {
 	
 	var readonlyStrict = config.readonlyStrict; 
 	var dropToItem = config.dropToItem; 
-	var paramsList = {MESSAGE_DET: "KPIS_LIST"};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPIS_LIST"};
 
 	this.configurationObject = {};
 	

@@ -47,7 +47,7 @@ Sbi.kpi.ManageModelsGrid = function(config, ref) {
 	
 	var readonly = config.readonly;
 	
-	var paramsList = {MESSAGE_DET: "MODELS_LIST"};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELS_LIST"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODE_DELETE"};
 	
 	this.configurationObject = {};

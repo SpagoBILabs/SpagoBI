@@ -45,8 +45,8 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelsTree = function(config, ref) { 
 	
-	//alert("ManageModelsTree:"+config.notDraggable);
-	var paramsList = {MESSAGE_DET: "MODEL_NODES_LIST_WITH_KPI"};
+
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODES_LIST_WITH_KPI"};
 	this.configurationObject = {};
 	
 	this.configurationObject.manageTreeService = Sbi.config.serviceRegistry.getServiceUrl({

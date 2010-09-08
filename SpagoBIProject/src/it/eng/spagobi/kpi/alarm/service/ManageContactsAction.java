@@ -69,6 +69,7 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 	private final String MOBILE = "mobile";
 	private final String EMAIL = "email";
 	private final String RESOURCES = "resources";
+	private final String NO_RESOURCES_STR = "-";
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -93,6 +94,7 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 					Resource res = resourcesOBJ.get(i);
 					resources.add(res.getName());
 				}
+				resources.add(NO_RESOURCES_STR);
 				getSessionContainer().setAttribute(RESOURCES_LIST, resources);
 			}
 			
@@ -141,7 +143,11 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 			contact.setEmail(email);
 			contact.setMobile(mobile);
 			contact.setName(name);
-			contact.setResources(resources);
+			if(resources != null && !resources.equals(NO_RESOURCES_STR)){
+				contact.setResources(resources);
+			}else{
+				contact.setResources(null);
+			}
 			try {
 				if(id != null && !id.equals("") && !id.equals("0")){							
 					contact.setId(Integer.valueOf(id));

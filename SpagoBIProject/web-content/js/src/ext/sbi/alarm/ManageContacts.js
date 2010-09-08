@@ -208,6 +208,7 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 		                  mode: 'local',
 		                  triggerAction: 'all',
 		                  selectOnFocus: true,
+		                  emptyText: '-',
 		                  editable: false,
 		                  allowBlank: true,
 		                  validationEvent:true,
