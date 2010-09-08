@@ -337,6 +337,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
 		        , id : 'contactsList'
 	            , items : [ this.contactsGridPanel ]
 		        , itemId: 'contacts'
+		        , layout: 'fit'
+				, autoWidth: true
 		    });
 		    
     }
@@ -362,7 +364,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
    	     	, cm: this.cmContacts
    	     	, sm: this.smContacts
    	     	, frame: false
-   	     	, border:false  
+   	     	, border:false 
    	     	, height: 450
    	     	, collapsible:false
    	     	, loadMask: true
@@ -378,6 +380,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
 			Ext.getCmp("contacts-form").selModel.selectRow(index,true);
 		});
 
+		this.doLayout();
 	}
     
 	,onKpiSelect: function(){
