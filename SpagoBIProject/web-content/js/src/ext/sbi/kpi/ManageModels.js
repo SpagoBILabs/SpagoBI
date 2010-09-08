@@ -87,14 +87,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			items : [
 			// ACID operations on nodes
 					'-', {
-						text : 'Add Model Node',
+						text : LN('sbi.models.addNode'),
 						iconCls : 'icon-add',
 						handler : function() {
 							this.addNewItem(this.ctxNode);
 						},
 						scope : this
 					}, {
-						text : 'Remove Model Node',
+						text : LN('sbi.models.remodeNode'),
 						iconCls : 'icon-remove',
 						handler : function() {
 							this.deleteItem(this.ctxNode);
@@ -182,7 +182,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 	   
 	 	    this.kpiClearBtn = new Ext.Button({
  	    		iconCls: 'icon-clear'
-				, tooltip: 'Delete Kpi'					
+				, tooltip: LN('sbi.generic.deleteKpi')					
  	    		, style: '{border:none; width: 30px; border:none; margin-left: 5px;}'
 				, scope: this
 				, handler: this.clearKpi
@@ -260,7 +260,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	        target: 'model-detailFieldKpi',
 	        anchor: 'right',
 	        trackMouse: true,
-	        html: 'Drag and drop a kpi from Kpi List here'
+	        html: LN('sbi.models.DDKpiMsg')
 	    });
 
 	}
@@ -335,7 +335,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			scope : this,
 			failure : function(response) {
 				if(response.responseText !== undefined) {
-					alert("Error");
+					alert(LN('sbi.generic.savingItemError'));
 				}
 			},
 			params : params
@@ -411,7 +411,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			scope : this,
 			failure : function(response) {
 				if(response.responseText !== undefined) {
-					alert("Error");
+					alert(LN('sbi.generic.savingItemError'));
 				}
 			},
 			params : params
@@ -605,7 +605,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				   var parent = e.target;
 				   if(e.target.attributes.modelId == null || e.target.attributes.modelId === undefined){
 					   //drop forbidden!
-					   alert("Parent undefined: drop forbidden");
+					   alert(LN('sbi.models.DDNoParentMsg'));
 					   return false;
 				   }
 				   var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
@@ -640,7 +640,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			var recDomain = this.typesStore.getAt(idxNodeType);	
 			
 			if (parent === undefined || parent == null) {
-				alert("Select parent node");
+				alert(LN('sbi.models.DDNoParentMsg'));
 				return;
 			} else {
 				parent.leaf = false;
@@ -651,7 +651,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			if(parentId == null || parentId == undefined){
 				Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm'),
-					'Per inserire il nodo bisogna prima salvare il nodo padre. Effettuare salvataggio?',            
+					LN('sbi.models.confirmSaveParent'),            
 		            function(btn, text) {
 		                if (btn=='yes') {
 		                	//save parent
@@ -719,7 +719,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		deleteItem : function(node) {
 			
 			if (node === undefined || node == null) {
-				alert("Select node to delete");
+				alert(LN('sbi.models.selectNode'));
 				return;
 			}
 			

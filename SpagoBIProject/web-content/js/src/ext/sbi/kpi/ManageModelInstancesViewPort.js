@@ -427,7 +427,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		if(this.modelInstance !== undefined && this.modelInstance != null){
 			//alert(this.modelInstance.data.modelInstId);
 			if(this.modelInstance.data.modelInstId === undefined){
-				alert('Save Model Instance first');
+				alert(LN('sbi.modelinstances.saveFirstMsg'));
 				return;
 			}
 		}

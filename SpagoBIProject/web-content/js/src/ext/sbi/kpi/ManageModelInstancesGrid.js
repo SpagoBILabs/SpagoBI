@@ -44,7 +44,7 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstancesGrid = function(config, ref) { 
-	var paramsList = {MESSAGE_DET: "MODELINSTS_LIST"};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_LIST"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
 	
 	this.configurationObject = {};
