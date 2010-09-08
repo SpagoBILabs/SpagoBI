@@ -493,7 +493,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		});
 		this.periodicityPanel = new Ext.Panel({
-			fieldLabel:LN('sbi.generic.kpi'),
+			fieldLabel:'Periodicity',
 			labelWidth: 90,
             defaults: {width: 140, border:false},   
             layout : 'column',
