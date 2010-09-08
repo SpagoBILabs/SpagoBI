@@ -58,7 +58,7 @@
 				</FIELD>
 				<FIELD name="resources" label="resources">
 					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
-					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\x2D]*$"/>
+					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_-\x2D]*$"/>
 				</FIELD>
 
 			</FIELDS>
