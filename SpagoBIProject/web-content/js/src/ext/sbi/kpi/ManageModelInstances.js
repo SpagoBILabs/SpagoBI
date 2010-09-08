@@ -188,14 +188,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        , items: [{
 
 		 		   	 itemId: 'items-detail1',   	              
-		 		   	 columnWidth: 0.4,
+		 		   	 columnWidth: 0.8,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
 		             defaults: {width: 140, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
 		             border: false,
 		             style: {
 		                 //"background-color": "#f1f1f1",
@@ -207,7 +207,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
 			        , width: 430
-			        //, buttons: [this.kpiPeriodicityButton]
+			        , bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;'
 			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
@@ -215,6 +215,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			        title: 'Source node'
 				        , itemId: 'src_model'
 				        , width: 430
+				        , bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;'
 				        , items: [{
 	
 				 		   	 itemId: 'src-detail',   	              

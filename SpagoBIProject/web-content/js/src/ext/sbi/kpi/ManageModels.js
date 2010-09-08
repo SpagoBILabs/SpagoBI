@@ -230,6 +230,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		             xtype: 'fieldset',
 		             labelWidth: 90,
 		             defaults: {width: 140, border:false},    
+		             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
