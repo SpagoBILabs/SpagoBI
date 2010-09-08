@@ -44,8 +44,8 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstancesViewPort = function(config) { 
-	var paramsResList = {MESSAGE_DET: "MODELINST_RESOURCE_LIST"};
-	var paramsResSave = {MESSAGE_DET: "MODELINST_RESOURCE_SAVE"};
+	var paramsResList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINST_RESOURCE_LIST"};
+	var paramsResSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINST_RESOURCE_SAVE"};
 
 	var conf = config;
 	this.resListService = Sbi.config.serviceRegistry.getServiceUrl({
