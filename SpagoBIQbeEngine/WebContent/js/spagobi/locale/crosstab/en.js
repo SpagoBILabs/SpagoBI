@@ -41,6 +41,7 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choose th
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Apply';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Crosstab preview';
+Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one';
 
 //===================================================================
 //CROSSTAB 

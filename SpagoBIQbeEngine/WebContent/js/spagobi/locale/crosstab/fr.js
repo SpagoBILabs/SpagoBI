@@ -38,7 +38,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agrégation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Annuler';
-
+Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one';
 
 //===================================================================
 //CROSSTAB 
