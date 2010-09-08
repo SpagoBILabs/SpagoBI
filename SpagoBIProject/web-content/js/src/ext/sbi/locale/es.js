@@ -42,6 +42,7 @@ Sbi.locale.ln['sbi.generic.warning'] = 'Warning';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Please confirm';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confirm item delete?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Confirm root node change?';
+Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete Kpi';
 //END Generic messages
 
 //START List Detail messages
@@ -54,11 +55,33 @@ Sbi.locale.ln['sbi.kpis.listTitle'] = 'Kpis List';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Models Management';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Models List';
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Models';
+Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Drag and drop a kpi from Kpi List here';
+Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Select parent node';
+Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'To insert node here parent node must be previously saved. Save now?';
+Sbi.locale.ln['sbi.models.selectNode'] = 'Select node to delete';
+
+Sbi.locale.ln['sbi.models.remodeNode'] = 'Remove Model node';
+Sbi.locale.ln['sbi.models.addNode'] = 'Add Model node';
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Model Instances Management';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Model Instances List';
 Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Model Instances';
 Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Resources';
 Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Import sub-tree also';
+Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Save Model instance first';
+Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Kpi Instance';
+Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Source Node';
+Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Periodicities List';
+
+Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicity';
+Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Add Periodicity';
+Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Chart Type';
+Sbi.locale.ln['sbi.modelinstances.saveHistory'] = 'Save History';
+Sbi.locale.ln['sbi.modelinstances.restoreDefault'] = 'Restore Default';
+Sbi.locale.ln['sbi.modelinstances.DDKpiMsg'] = 'Drag and drop a kpi from Kpi List here';
+Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'Nodes hierarchy must be respected!';
+Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Remove Model Instance node';
+Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Select node to delete';
+Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 //END List Detail messages
 
 //START kpi interface messages

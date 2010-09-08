@@ -43,6 +43,7 @@ Sbi.locale.ln['sbi.generic.warning'] = 'Attenzione';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confermi l\'eliminazione dell\'oggetto?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Ci sono delle modifiche non salvate. Confermare il cambio di root?';
+Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Elimina Kpi';
 //END Generic messages
 
 //START List Detail messages
@@ -55,18 +56,40 @@ Sbi.locale.ln['sbi.kpis.listTitle'] = 'Lista Kpi';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Gestione Modelli';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Lista Modelli';
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Modelli';
+Sbi.locale.ln['sbi.models.remodeNode'] = 'Cancella nodo Modello';
+Sbi.locale.ln['sbi.models.addNode'] = 'Aggiungi nodo Modello';
+Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Drag and drop un kpi dalla lista dei kpis qui';
+Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Selezionare il nodo genitore!';
+Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'Per inserire il nodo bisogna prima salvare il nodo padre. Effettuare salvataggio?';
+Sbi.locale.ln['sbi.models.selectNode'] = 'Seleziona un nodo da cancellare';
+
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Gestione Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Lista Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Risorse';
-Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Import sub-tree also';
+Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Importa sotto albero';
+Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Prima salvare l\'istanza di modello';
+Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Istanza di Kpi';
+Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Nodo Sorgente';
+Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Lista delle periodicità';
+
+Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicità';
+Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Aggiungi Periodicità';
+Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Tipo di Chart';
+Sbi.locale.ln['sbi.modelinstances.saveHistory'] = 'Salva Storico';
+Sbi.locale.ln['sbi.modelinstances.restoreDefault'] = 'Ripristina Default';
+Sbi.locale.ln['sbi.modelinstances.DDKpiMsg'] = 'Drag and drop un kpi dalla lusta dei kpis qui';
+Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'La gerarchia dei nodi va mantenuta!';
+Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Cancella nodo Istanza di Modello';
+Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleziona un nodo da cancellare';
+Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 //END List Detail messages
 
 //START kpi interface messages
 Sbi.locale.ln['sbi.resources.tablename'] = 'Nome Tabella';
 Sbi.locale.ln['sbi.resources.columnname'] = 'Nome Colonna';
 
-Sbi.locale.ln['sbi.kpis.threshold'] = 'Threshold';
+Sbi.locale.ln['sbi.kpis.threshold'] = 'Soglia';
 Sbi.locale.ln['sbi.kpis.weight'] = 'Peso';
 Sbi.locale.ln['sbi.kpis.dataset'] = 'Dataset';
 Sbi.locale.ln['sbi.kpis.documents'] = 'Documenti';
@@ -78,10 +101,10 @@ Sbi.locale.ln['sbi.kpis.targAud'] = 'Target Audience';
 Sbi.locale.ln['sbi.kpis.kpiType'] = 'Tipo di Kpi';
 Sbi.locale.ln['sbi.kpis.metricScale'] = 'Scala';
 Sbi.locale.ln['sbi.kpis.measType'] = 'Tipo di Misura';
-Sbi.locale.ln['sbi.kpis.months'] = 'Months';
-Sbi.locale.ln['sbi.kpis.days'] = 'Days';
-Sbi.locale.ln['sbi.kpis.hours'] = 'Hours';
-Sbi.locale.ln['sbi.kpis.mins'] = 'Minutes';
+Sbi.locale.ln['sbi.kpis.months'] = 'Mesi';
+Sbi.locale.ln['sbi.kpis.days'] = 'Giorni';
+Sbi.locale.ln['sbi.kpis.hours'] = 'Ore';
+Sbi.locale.ln['sbi.kpis.mins'] = 'Minuti';
 
 Sbi.locale.ln['sbi.thresholds.position'] = 'Posizione';
 Sbi.locale.ln['sbi.thresholds.include'] = 'Includi?';
