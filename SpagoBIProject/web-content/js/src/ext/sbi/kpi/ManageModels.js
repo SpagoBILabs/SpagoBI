@@ -174,29 +174,26 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 		   	 id: 'model-detailFieldKpi',
 	             fieldLabel: LN('sbi.generic.kpi'),
 	             readOnly: true,
-	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic; margin-right: 5px;}',
-	             value: 'drop kpi here...',
+	             width: 30,
+	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
 	             name: 'kpi'
 	         });	 
 	 	   this.detailFieldKpi.addListener('focus', this.kpiFiledNotify, this);  
 	 	   
 	 	    this.kpiClearBtn = new Ext.Button({
-				iconCls: 'icon-clear'
-					, tooltip: 'Delete Kpi'
-					, style: {border:false, width: 30, border:false}
-					, scope: this
-					, handler: this.clearKpi
-					, columnWidth: .25
-				});
+ 	    		iconCls: 'icon-clear'
+				, tooltip: 'Delete Kpi'					
+ 	    		, style: '{border:none; width: 30px; border:none; margin-left: 5px;}'
+				, scope: this
+				, handler: this.clearKpi
+				, columnWidth: .25
+			});
 	 	    
 			this.kpiPanel = new Ext.Panel({
 				fieldLabel:LN('sbi.generic.kpi'),
-				labelWidth: 90,
-	            defaults: {width: 140, border:false},   
 	            layout : 'column',
 				items: [this.detailFieldKpi,
 				        this.kpiClearBtn]
-				, width: 30
 			});
 	 	   
 	 	   this.detailFieldNodeType =  new Ext.form.ComboBox({
@@ -218,7 +215,6 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
-	             //validationEvent:true,
 	             readOnly: true,
 	             name: 'typeDescr'
 	         });
@@ -231,20 +227,13 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		        , items: {
 			   		 id: 'items-detail-models',   	
 		 		   	 itemId: 'items-detail1',   	              
-		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
 		             defaults: {width: 140, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 		             border: false,
-		             style: {
-		                 //"margin-left": "10px", 
-		                 "background-color": "#f1f1f1",
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
 		             items: [this.detailFieldLabel, this.detailFieldCode, this.detailFieldName,  this.detailFieldDescr,
 		                     this.kpiPanel, this.detailFieldNodeType, this.detailFieldTypeDescr]
 		    	}
@@ -515,11 +504,12 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
-		
-		if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
-			var size = this.nodesToSave.length;
-			this.nodesToSave[size] = this.selectedNodeToEdit;
-		}//else skip because already taken
+		if(this.selectedNodeToEdit !== null){
+			if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
+				var size = this.nodesToSave.length;
+				this.nodesToSave[size] = this.selectedNodeToEdit;
+			}//else skip because already taken
+		}
 	}
 	,setListeners : function() {
 			this.mainTree.getSelectionModel().addListener('selectionchange',
