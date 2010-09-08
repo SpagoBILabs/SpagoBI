@@ -180,20 +180,22 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	         });	 
 	 	   this.detailFieldKpi.addListener('focus', this.kpiFiledNotify, this);  
 	 	   
+	 	    this.kpiClearBtn = new Ext.Button({
+				iconCls: 'icon-clear'
+					, tooltip: 'Delete Kpi'
+					, style: {border:false, width: 30, border:false}
+					, scope: this
+					, handler: this.clearKpi
+					, columnWidth: .25
+				});
+	 	    
 			this.kpiPanel = new Ext.Panel({
 				fieldLabel:LN('sbi.generic.kpi'),
 				labelWidth: 90,
 	            defaults: {width: 140, border:false},   
 	            layout : 'column',
 				items: [this.detailFieldKpi,
-				        new Ext.Button({
-							iconCls: 'icon-clear'
-							, tooltip: 'Delete Kpi'
-							, style: {border:false, width: 30, border:false}
-							, scope: this
-							, handler: this.clearKpi
-							, columnWidth: .25
-						})]
+				        this.kpiClearBtn]
 				, width: 30
 			});
 	 	   
@@ -538,7 +540,12 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
 			
 			this.detailFieldNodeType.addListener('focus', this.selectNode, this);
-			this.detailFieldNodeType.addListener('select', this.setDomainType, this);
+			this.detailFieldNodeType.addListener('select', this.setDomainType, this);			
+			
+			this.detailFieldKpi.addListener('focus', this.selectNode, this);
+			this.detailFieldKpi.addListener('change', this.editNodeAttribute, this);			
+			
+			this.kpiClearBtn.addListener('click', this.selectNode, this);
 
 	},	
 	createRootNodeByRec: function(rec) {
