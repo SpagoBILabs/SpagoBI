@@ -95,10 +95,21 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 			};	
 	}
 	
+	this.addEvents();
+	
+	this.on('afterlayout',	function(f){	
+		if(horizontal){	
+			this.width = this.thisDimension*this.columnWidth;
+			this.setWidth(this.thisDimension*this.columnWidth);
+		}else{
+			this.height = this.thisDimension*this.rowHeight;
+			this.setHeight(this.thisDimension*this.rowHeight);
+		}
+	}, this);
 
 	
 	this.childs = new Array();
-
+	this.type='data';
 
 	// constructor
 	Sbi.crosstab.core.HeaderEntry.superclass.constructor.call(this, c);
@@ -108,6 +119,7 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	father: null, //father of the node
 	level: null,
+	type: null, //total, cf, data
 	horizontal: null,
 	childs: null, //childs of the node
 	name: null, // name of the node (displayed in the table)

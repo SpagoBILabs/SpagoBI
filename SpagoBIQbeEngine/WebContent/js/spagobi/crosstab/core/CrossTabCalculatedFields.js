@@ -146,9 +146,11 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	//add the entries in the table
     	for(var j=0; j<attributes.length-1; j++){
     		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true);
+    		//alert(attributes[j][1].length);
     	}
     	if(attributes.length>0){
     		crossTab.addNewEntries(level,attributes[attributes.length-1][0],headers, attributes[attributes.length-1][1], horizontal,false);
+    		//alert(attributes[j][1].length);
     	}
     	
     	//hide the hidden panels
@@ -403,11 +405,13 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     
     //build the structure of the subtree to add
     ,buildHeadersStructure: function(name, node, crossTab){
+    	//alert(node.name);
     	if(name!=null){
     		var clonedNode = new Sbi.crosstab.core.HeaderEntry(name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
     	}else{
     		var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
     	}
+    	clonedNode.type='CF';
     	crossTab.setHeaderListener(clonedNode,node.horizontal); 
     	var childs =node.childs;
     	var newDimension=0;
@@ -428,6 +432,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     		clonedNode.childs = new Array();
     		for(var t=0; t<this.leafs.length; t++){
             	var clonedNodeF = new Sbi.crosstab.core.HeaderEntry(this.leafs[t], 1, clonedNode.horizontal, clonedNode.level+1,node.childs[0].width, node.childs[0].height);
+            	clonedNodeF.type='CF';
             	crossTab.setHeaderListener(clonedNodeF,clonedNode.horizontal); 
             	clonedNodeF.father = clonedNode;
             	clonedNode.childs.push(clonedNodeF);
