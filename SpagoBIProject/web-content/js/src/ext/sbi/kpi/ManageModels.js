@@ -170,14 +170,33 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 	 	 			  
 	 	   this.detailFieldKpi = new Ext.form.TextField({
 	 		   	 itemId: 'model-detailFieldKpi',
+	 		   	 columnWidth: .75,
 	 		   	 id: 'model-detailFieldKpi',
 	             fieldLabel: LN('sbi.generic.kpi'),
 	             readOnly: true,
-	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
+	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic; margin-right: 5px;}',
 	             value: 'drop kpi here...',
 	             name: 'kpi'
 	         });	 
-	 	   this.detailFieldKpi.addListener('focus', this.kpiFiledNotify, this);   
+	 	   this.detailFieldKpi.addListener('focus', this.kpiFiledNotify, this);  
+	 	   
+			this.kpiPanel = new Ext.Panel({
+				fieldLabel:LN('sbi.generic.kpi'),
+				labelWidth: 90,
+	            defaults: {width: 140, border:false},   
+	            layout : 'column',
+				items: [this.detailFieldKpi,
+				        new Ext.Button({
+							iconCls: 'icon-clear'
+							, tooltip: 'Delete Kpi'
+							, style: {border:false, width: 30, border:false}
+							, scope: this
+							, handler: this.clearKpi
+							, columnWidth: .25
+						})]
+				, width: 30
+			});
+	 	   
 	 	   this.detailFieldNodeType =  new Ext.form.ComboBox({
 	        	  name: 'typeCd',
 	              store: this.typesStore,
@@ -225,23 +244,26 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [this.detailFieldLabel, this.detailFieldCode, this.detailFieldName,  this.detailFieldDescr,
-		                      this.detailFieldKpi, this.detailFieldNodeType, this.detailFieldTypeDescr]
+		                     this.kpiPanel, this.detailFieldNodeType, this.detailFieldTypeDescr]
 		    	}
 		    }];
 	 	  
 	}
-	
-	, kpiFiledNotify : function() {
-		this.detailFieldKpi.getEl().highlight('#E27119');
-		//this.detailFieldKpi.setValue('');
+	, clearKpi: function() {
+		this.detailFieldKpi.setValue('');
 		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
-/*		if(node !== undefined && node != null){
+		if(node !== undefined && node != null){
 			node.attributes.kpi = '';
 			node.attributes.kpiId = '';
 			node.attributes.iconCls = '';
 			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
 
-		}*/
+		}
+
+	}
+	, kpiFiledNotify : function() {
+		this.detailFieldKpi.getEl().highlight('#E27119');
+		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
 		var tooltip = new Ext.ToolTip({
 	        target: 'model-detailFieldKpi',
 	        anchor: 'right',

@@ -45,10 +45,10 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstances = function(config, ref) { 
 	var hideContextMenu = config.hideContextMenu;
-	var paramsList = {MESSAGE_DET: "MODELINSTS_NODES_LIST"};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
-	var periodsList = {MESSAGE_DET: "PERIODICTIES_LIST"};
+	var periodsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "PERIODICTIES_LIST"};
 	var paramsKpiRestore = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_KPI_RESTORE"};
 	
 	this.configurationObject = {};
@@ -207,7 +207,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        title: 'Kpi Instance'
 			        , itemId: 'kpi_model'
 			        , width: 430
-			        , buttons: [this.kpiPeriodicityButton]
+			        //, buttons: [this.kpiPeriodicityButton]
 			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
@@ -390,16 +390,34 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		});
 
  	    this.kpiName = new Ext.form.TextField({
+ 	    	 columnWidth: .75,
  	    	 id: 'kpinameField',
              fieldLabel:LN('sbi.generic.kpi'),
-             readOnly: true,
-             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
+             readOnly: false,
+             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic; margin-right: 5px;}',
              value: 'drop kpi here...',
              name: 'kpiName'
          });	  
  	    this.kpiName.addListener('render', this.configureDD2, this);
  	    this.kpiName.addListener('focus', this.kpiFiledNotify, this);
 
+ 	    
+		this.kpiPanel = new Ext.Panel({
+			fieldLabel:LN('sbi.generic.kpi'),
+			labelWidth: 90,
+            defaults: {width: 140, border:false},   
+            layout : 'column',
+			items: [this.kpiName,
+			        new Ext.Button({
+						iconCls: 'icon-clear'
+						, tooltip: 'Delete Kpi'
+						, style: {border:false, width: 30, border:false}
+						, scope: this
+						, handler: this.clearKpi
+						, columnWidth: .25
+					})]
+			, width: 30
+		});
 
  	 	 this.kpiThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
@@ -409,13 +427,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  		    });
  	 	 this.kpiThreshold.onTriggerClick = this.launchThrWindow;
 
-		this.kpiWeight = new Ext.form.TextField({
+		this.kpiWeight = new Ext.form.NumberField({
             readOnly: false,
             fieldLabel: 'Weight',
             name: 'kpiInstWeight'
         });
 		
-		this.kpiTarget = new Ext.form.TextField({
+		this.kpiTarget = new Ext.form.NumberField({
             readOnly: false,
             fieldLabel: 'Target',
             name: 'kpiInstTarget'
@@ -453,6 +471,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		Ext.StoreMgr.register (this.periodicityStore);
 
 		this.kpiPeriodicity = new Ext.form.ComboBox({
+			columnWidth: .75,
+			
       	    name: 'kpiInstPeriodicity',
             store: this.periodicityStore,
             fieldLabel: 'Periodicity',
@@ -469,9 +489,25 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiPeriodicityButton = new Ext.Button({
 			iconCls :'icon-add',
 			text: 'Add Periodicity',
-			handler: this.launchPeriodicityWindow	
+			handler: this.launchPeriodicityWindow
+
 		});
-		
+		this.periodicityPanel = new Ext.Panel({
+			fieldLabel:LN('sbi.generic.kpi'),
+			labelWidth: 90,
+            defaults: {width: 140, border:false},   
+            layout : 'column',
+			items: [this.kpiPeriodicity,
+			        new Ext.Button({
+						tooltip: 'Add Periodicity'
+						, style: '{border:none; width: 30px; border:none; margin-left: 5px;}'
+						, scope: this
+						, iconCls :'icon-add'
+						, handler: this.launchPeriodicityWindow
+						, columnWidth: .25
+					})]
+			, width: 30
+		});
 		//---------------chart type------------------------------
  	    //Store of the kpi chart types combobox
 	    this.chartTypeStore = new Ext.data.SimpleStore({
@@ -482,7 +518,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiChartType =  new Ext.form.ComboBox({
 	      	    name: 'kpiInstChartTypeId',
 	            store: this.chartTypeStore,
-	            //width : 120,
 	            fieldLabel: 'Chart type',
 	            displayField: 'kpiChartTypeCd',   // what the user sees in the popup
 	            valueField: 'kpiChartTypeId',        // what is passed to the 'change' event
@@ -505,29 +540,41 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             boxLabel       : ' ',
             inputValue     : true
         });
-        this.kpiRestoreDefault = new Ext.form.Checkbox({
-            fieldLabel     : "Restore Default",
-            labelSeparator : ' ',
-            boxLabel       : ' ',
-            inputValue     : true
-        });
+
+		this.kpiRestoreDefault = new Ext.Button({
+			iconCls :'icon-add',
+			text: 'Restore Default',
+			handler: this.restoreDefaults
+
+		});
+		this.kpiRestoreDefault = new Ext.Panel({
+            layout : 'column',
+			items: [
+			        new Ext.Button({
+						tooltip: 'Restore Default'						
+						, scope: this
+						, iconCls :'icon-refresh'
+						, handler: this.restoreDefaults
+						, columnWidth: .3
+						, text: 'Restore Default'
+					})]
+			, width: 30
+		});
 		this.kpiInstFieldset = new Ext.form.FieldSet({
-	 		   	 columnWidth: 0.4,
 	             labelWidth: 90,
 	             defaults: {width: 140, border:false},    
 	             autoHeight: true,
 	             autoScroll  : true,
-	             //bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
 	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	             },
 	             items: [
-	                     this.kpiName,
+	                     this.kpiPanel,
 	                     this.kpiThreshold,
 	                     this.kpiWeight,
 	                     this.kpiTarget,
-	                     this.kpiPeriodicity,
+	                     this.periodicityPanel,
 	                     this.kpiChartType,
 	                     this.kpiSaveHistory ,
 	                     this.kpiRestoreDefault
@@ -555,17 +602,21 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset2.setVisible(false);
 
 	}
-	, kpiFiledNotify : function() {
-		this.kpiName.getEl().highlight('#E27119');
-		///this.kpiName.setValue('');
+	, clearKpi: function() {
+		this.kpiName.setValue('');
 		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
-/*		if(node !== undefined && node != null){
+		if(node !== undefined && node != null){
 			node.attributes.kpiName = '';
 			node.attributes.kpiId = '';
 			node.attributes.kpiInstId = '';
 			node.attributes.iconCls = '';
 			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
-		}*/
+		}
+
+	}
+	, kpiFiledNotify : function() {
+		this.kpiName.getEl().highlight('#E27119');
+		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
 		var tooltip = new Ext.ToolTip({
 	        target: 'kpinameField',
 	        anchor: 'right',
@@ -657,8 +708,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiChartType.setValue(node.attributes.kpiInstChartTypeId);
 				this.kpiPeriodicity.setValue(node.attributes.kpiInstPeriodicity);
 				this.kpiSaveHistory.setValue(node.attributes.kpiInstSaveHistory);
-				this.kpiRestoreDefault.setValue(false);
-				
+
 				this.kpiInstFieldset.setVisible(true);
 				this.kpiInstFieldset2.setVisible(false);			
 				this.kpiModelType.onSetValue( 'kpiinst', true);
@@ -690,7 +740,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiInstFieldset.doLayout();
 	
 			}else{
-				//alert("nothing associated");
 				this.clearKpiInstanceTabForm();
 			}
 			this.kpiInstTypeFieldset.setVisible(true);
@@ -706,8 +755,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiChartType.setValue(null);
 		this.kpiPeriodicity.setValue(null);
 		this.kpiSaveHistory.setValue(false);
-		this.kpiRestoreDefault.setValue(false);
-		
+
 		this.kpiLabel.setValue(null);
 	}
 
@@ -884,36 +932,33 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
 		
 		this.kpiRestoreDefault.addListener('focus', this.selectNode, this);
-		this.kpiRestoreDefault.addListener('check', this.restoreDefaults, this);
 
 	}
-	, restoreDefaults: function(checkbox, checked) {
-	
-		if(checked){
-			//re-fills kpi instance form with kpi values
-			var node = this.mainTree.getSelectionModel().getSelectedNode();
-			
-			//gets new node values by ajax request
-			var params = {
-					kpiId: node.attributes.kpiId
-				};
+	, restoreDefaults: function() {
 
-			Ext.Ajax.request( {
-				url : this.configurationObject.kpiRestore,
-				success : function(response, options) {
-					if(response.responseText !== undefined) {
-		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			if(content !== undefined && content !== null){
+		//re-fills kpi instance form with kpi values
+		var node = this.mainTree.getSelectionModel().getSelectedNode();
+		
+		//gets new node values by ajax request
+		var params = {
+				kpiId: node.attributes.kpiId
+			};
 
-		      				this.fillKpiForRestore(content, node);
-		      			}
-					}
-	      			return;
-				},
-				scope : this,
-				params : params
-			});
-		}
+		Ext.Ajax.request( {
+			url : this.configurationObject.kpiRestore,
+			success : function(response, options) {
+				if(response.responseText !== undefined) {
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			if(content !== undefined && content !== null){
+
+	      				this.fillKpiForRestore(content, node);
+	      			}
+				}
+      			return;
+			},
+			scope : this,
+			params : params
+		});
 	}	
 	, fillKpiForRestore: function(content, node) {
 		//sets node attribute
@@ -939,8 +984,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			
 			this.kpiSaveHistory.setValue(false);
 
-			this.kpiRestoreDefault.setValue(true);
-			
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
