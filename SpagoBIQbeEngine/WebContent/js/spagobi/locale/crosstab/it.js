@@ -44,6 +44,7 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'A
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Cancella';
 
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Anteprima Crosstab';
+Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Il numero di celle eccede il limite impostato';
 
 
 //===================================================================
