@@ -22,6 +22,7 @@
 package it.eng.qbe.crosstab.bo;
 
 import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -66,18 +67,22 @@ public class CrossTab {
 	 * @param dataStore: the source of the data
 	 * @param crosstabDefinition: the definition of the crossTab
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition){
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition) throws JSONException{
 		IRecord record;
 		String rowPath;
 		String columnPath;
 		this.config = crosstabDefinition.getConfig();
-		
+		int cellLimit = new Integer((String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value"));
+		boolean columnsOverflow = false; //true if the number of cell shown in the crosstab is less than the total number of cells
 		
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		
 		int rowsCount = crosstabDefinition.getRows().size();
 		int columnsCount = crosstabDefinition.getColumns().size();
 		int measuresCount = crosstabDefinition.getMeasures().size();
+		int index;
+		
+		cellLimit = cellLimit/measuresCount;
 		
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
@@ -85,14 +90,23 @@ public class CrossTab {
 
 		columnsRoot = new Node("rootC");
 		rowsRoot = new Node("rootR");
-		
-		for(int index = 0; index<dataStore.getRecordsCount(); index++){
+
+		for(index = 0; index<dataStore.getRecordsCount() && index<cellLimit; index++){
 			record = dataStore.getRecordAt(index);
 			addRecord(columnsRoot, record, 0, columnsCount);
 			addRecord(rowsRoot, record, columnsCount, columnsCount+rowsCount);
 		}
-
-		for(int index = 0; index<dataStore.getRecordsCount(); index++){
+		
+		if(index<dataStore.getRecordsCount()){
+			Node completeColumnsRoot =  new Node("rootCompleteC");
+			for(index = 0; index<dataStore.getRecordsCount(); index++){
+				record = dataStore.getRecordAt(index);
+				addRecord(completeColumnsRoot, record, 0, columnsCount);
+			}
+			columnsOverflow =  columnsRoot.getLeafsNumber()<completeColumnsRoot.getLeafsNumber();
+		}
+				
+		for(index = 0; index<dataStore.getRecordsCount(); index++){
 			record = dataStore.getRecordAt(index);
 			List<IField> fields= new ArrayList<IField>();
 			fields = record.getFields();
@@ -121,8 +135,8 @@ public class CrossTab {
 		}else{
 			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
 		}
-		
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount);
+		config.put("columnsOverflow", columnsOverflow);
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount, columnsRoot.getLeafsNumber());
 	}
 		
 	/**
@@ -150,18 +164,19 @@ public class CrossTab {
 	 * @param measuresLength: the number of the measures
 	 * @return the matrix that represent the data
 	 */
-	private String[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification, List<String> columnCordinates, List<String> rowCordinates,  List<String> data, boolean measuresOnColumns, int measuresLength){
+	private String[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification, List<String> columnCordinates, List<String> rowCordinates,  List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN){
 		String[][] dataMatrix;
 		int x,y;
-		int rowsN,columnsN;
+		int rowsN;
 		
 		if(measuresOnColumns){
 			rowsN = rowsSpecification.size();
-			columnsN = columnsSpecification.size()*measuresLength;
+//			columnsN = columnsSpecification.size()*measuresLength;
 		}else{
 			rowsN = rowsSpecification.size()*measuresLength;
-			columnsN = columnsSpecification.size();
+//			columnsN = columnsSpecification.size();
 		}
+
 		
 		dataMatrix = new String[rowsN][columnsN];
 		
@@ -177,7 +192,9 @@ public class CrossTab {
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
-					dataMatrix[x][y*measuresLength+j]=data.get(i+j);
+					if((y*measuresLength+j)<columnsN && (y*measuresLength+j)>=0){
+						dataMatrix[x][y*measuresLength+j]=data.get(i+j);
+					}
 				}
 			}
 		}else{
@@ -185,7 +202,9 @@ public class CrossTab {
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
-					dataMatrix[x*measuresLength+j][y]=data.get(i+j);
+					if(y<columnsN && y>=0){
+						dataMatrix[x*measuresLength+j][y]=data.get(i+j);
+					}
 				}
 			}
 		}		
@@ -356,6 +375,18 @@ public class CrossTab {
 		
 		public boolean isChild(Node child){
 			return childs.contains(child);
+		}
+		
+		public int getLeafsNumber(){
+			if(childs.size()==0){
+				return 1;
+			}else{
+				int leafsNumber=0;
+				for(int i=0; i<childs.size(); i++){
+					leafsNumber = leafsNumber + childs.get(i).getLeafsNumber();
+				}
+				return leafsNumber;
+			}
 		}
 		
 		public JSONObject toJSONObject() throws JSONException{
