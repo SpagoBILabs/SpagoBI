@@ -401,21 +401,21 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	    this.kpiName.addListener('render', this.configureDD2, this);
  	    this.kpiName.addListener('focus', this.kpiFiledNotify, this);
 
- 	    
+ 	    this.kpiClearBtn = new Ext.Button({
+			iconCls: 'icon-clear'
+				, tooltip: 'Delete Kpi'
+				, style: {border:false, width: 30, border:false}
+				, scope: this
+				, handler: this.clearKpi
+				, columnWidth: .25
+			});
 		this.kpiPanel = new Ext.Panel({
 			fieldLabel:LN('sbi.generic.kpi'),
 			labelWidth: 90,
             defaults: {width: 140, border:false},   
             layout : 'column',
 			items: [this.kpiName,
-			        new Ext.Button({
-						iconCls: 'icon-clear'
-						, tooltip: 'Delete Kpi'
-						, style: {border:false, width: 30, border:false}
-						, scope: this
-						, handler: this.clearKpi
-						, columnWidth: .25
-					})]
+			        this.kpiClearBtn]
 			, width: 30
 		});
 
@@ -547,17 +547,18 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			handler: this.restoreDefaults
 
 		});
+		this.kpiRestoreDefaultBtn = new Ext.Button({
+			tooltip: 'Restore Default'						
+				, scope: this
+				, iconCls :'icon-refresh'
+				, handler: this.restoreDefaults
+				, columnWidth: .3
+				, text: 'Restore Default'
+			});
 		this.kpiRestoreDefault = new Ext.Panel({
             layout : 'column',
-			items: [
-			        new Ext.Button({
-						tooltip: 'Restore Default'						
-						, scope: this
-						, iconCls :'icon-refresh'
-						, handler: this.restoreDefaults
-						, columnWidth: .3
-						, text: 'Restore Default'
-					})]
+			items: [this.kpiRestoreDefaultBtn
+			        ]
 			, width: 30
 		});
 		this.kpiInstFieldset = new Ext.form.FieldSet({
@@ -931,7 +932,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
 		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
 		
-		this.kpiRestoreDefault.addListener('focus', this.selectNode, this);
+		this.kpiRestoreDefaultBtn.addListener('click', this.selectNode, this);
+		this.kpiClearBtn.addListener('click', this.selectNode, this);
+
 
 	}
 	, restoreDefaults: function() {
