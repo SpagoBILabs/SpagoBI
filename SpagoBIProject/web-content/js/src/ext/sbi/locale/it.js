@@ -44,6 +44,7 @@ Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confermi l\'eliminazione dell\'oggetto?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Ci sono delle modifiche non salvate. Confermare il cambio di root?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Elimina Kpi';
+Sbi.locale.ln['sbi.generic.attributes'] = 'Attributi';
 //END Generic messages
 
 //START List Detail messages

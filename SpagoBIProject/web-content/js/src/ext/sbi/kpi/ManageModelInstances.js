@@ -237,6 +237,24 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 							         this.srcModelType,
 							         this.srcModelTypeDescr ]
 				    	}]
+				    },
+				    {
+				        title: LN('sbi.generic.attributes')
+				        , itemId: 'attributes'
+				        , width: 430
+				        , items: [{
+					   		 id: 'items-attributes-models',   	
+				 		   	 itemId: 'items-attributes',   	              
+				             xtype: 'fieldset',
+				             labelWidth: 90,
+				             defaults: {width: 140, border:false},    
+				             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
+				             defaultType: 'textfield',
+				             autoHeight: true,
+				             autoScroll  : true,
+				             border: false,
+				             items: []
+				    	}]
 				    } ];
 	 	  
 	}
@@ -438,13 +456,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             fieldLabel: LN('sbi.modelinstances.target'),
             name: 'kpiInstTarget'
         });
-		// periodicity----------------
-/*	    this.periodicityStore = new Ext.data.SimpleStore({
-	        fields: ['kpiPeriodicityId', 'kpiPeriodicityName'],
-	        data: config.kpiPeriodicities,
-	        storeId: 'kpiperiodicitystore',	       
-	        autoLoad: false
-	    });*/
+
 		this.perReader = new Ext.data.JsonReader({
 			    totalProperty: 'total',
 			    successProperty: 'success',
@@ -471,8 +483,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		Ext.StoreMgr.register (this.periodicityStore);
 
 		this.kpiPeriodicity = new Ext.form.ComboBox({
-			columnWidth: .75,
-			
+			columnWidth: .75,			
       	    name: 'kpiInstPeriodicity',
             store: this.periodicityStore,
             fieldLabel: LN('sbi.modelinstances.periodicity'),
@@ -486,12 +497,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
             editable: false
         }); 
 
-		this.kpiPeriodicityButton = new Ext.Button({
-			iconCls :'icon-add',
-			text: LN('sbi.modelinstances.periodicityAdd'),
-			handler: this.launchPeriodicityWindow
-
-		});
 		this.periodicityPanel = new Ext.Panel({
 			fieldLabel:LN('sbi.modelinstances.periodicity'),
 			labelWidth: 90,
@@ -598,7 +603,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	            items: [
 	                    this.kpiLabel]
 			});
-			this.kpiPeriodicityButton.disable();
+
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
 
@@ -678,7 +683,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 
-			this.kpiPeriodicityButton.enable();
 			this.kpiInstFieldset.doLayout();
 
 		}else if(radio.getItemId() == 'uuid'){
@@ -686,7 +690,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(true);
 
-			this.kpiPeriodicityButton.disable();
 			this.kpiInstFieldset2.doLayout();
 
 		}
@@ -715,7 +718,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiInstFieldset.setVisible(true);
 				this.kpiInstFieldset2.setVisible(false);			
 				this.kpiModelType.onSetValue( 'kpiinst', true);
-				this.kpiPeriodicityButton.enable();
 				this.kpiInstFieldset.doLayout();
 	
 			}else if(hasKpiModelUuid !== undefined && hasKpiModelUuid != null){
@@ -724,7 +726,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiInstFieldset.setVisible(false);
 				this.kpiInstFieldset2.setVisible(true);
 				this.kpiModelType.onSetValue( 'uuid', true);
-				this.kpiPeriodicityButton.disable();
 				this.kpiInstFieldset2.doLayout();
 	
 			}else if(hasKpi !== undefined && hasKpi != null){
@@ -739,7 +740,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiInstFieldset.setVisible(true);
 				this.kpiInstFieldset2.setVisible(false);			
 				this.kpiModelType.onSetValue( 'kpiinst', true);
-				this.kpiPeriodicityButton.enable();
 				this.kpiInstFieldset.doLayout();
 	
 			}else{
@@ -996,7 +996,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiInstFieldset.setVisible(true);
 			this.kpiInstFieldset2.setVisible(false);			
 			this.kpiModelType.onSetValue( 'kpiinst', true);
-			this.kpiPeriodicityButton.enable();
 			this.kpiInstFieldset.doLayout();
 
 		

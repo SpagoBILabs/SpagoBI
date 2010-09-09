@@ -227,7 +227,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
 		        , width: 430
-		        , items: {
+		        , items: [{
 			   		 id: 'items-detail-models',   	
 		 		   	 itemId: 'items-detail1',   	              
 		             xtype: 'fieldset',
@@ -240,7 +240,25 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		             border: false,
 		             items: [this.detailFieldLabel, this.detailFieldCode, this.detailFieldName,  this.detailFieldDescr,
 		                     this.kpiPanel, this.detailFieldNodeType, this.detailFieldTypeDescr]
-		    	}
+		    	}]
+		    },
+		    {
+		        title: LN('sbi.generic.attributes')
+		        , itemId: 'attributes'
+		        , width: 430
+		        , items: [{
+			   		 id: 'items-attributes-models',   	
+		 		   	 itemId: 'items-attributes',   	              
+		             xtype: 'fieldset',
+		             labelWidth: 90,
+		             defaults: {width: 140, border:false},    
+		             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
+		             defaultType: 'textfield',
+		             autoHeight: true,
+		             autoScroll  : true,
+		             border: false,
+		             items: []
+		    	}]
 		    }];
 	 	  
 	}

@@ -346,11 +346,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				//Chart Types
 				List kpiChartTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_CHART_TYPE);
 				getSessionContainer().setAttribute("kpiChartTypesList", kpiChartTypesList);
-				
-				//Periodicity
-				List kpiPeriodicityList = DAOFactory.getPeriodicityDAO().loadPeriodicityList();
-				getSessionContainer().setAttribute("kpiPeriodicityList", kpiPeriodicityList);
-								
+			
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,

@@ -44,6 +44,7 @@ Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Please confirm';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confirm item delete?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Confirm root node change?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete Kpi';
+Sbi.locale.ln['sbi.generic.attributes'] = 'Attributes';
 //END Generic messages
 
 //START List Detail messages
