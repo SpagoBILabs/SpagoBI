@@ -81,7 +81,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 
 		this.modelsTree = new Ext.tree.TreePanel( {
 			title : this.treeTitle,
-			width : 250,
+			autoWidth : true,
 			height : 300,
 			layout: 'fit',
 			userArrows : true,
