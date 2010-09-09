@@ -347,15 +347,20 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     , headerClickHandler: function(event, element, object, theHeader) {
-		if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible()){
-			this.crossTabCFWizard.addField("field["+theHeader.name+"]", theHeader.level, theHeader.horizontal);
-		}else{
-			if(this.clickMenu!=null){
-				this.clickMenu.destroy();
+    	var theHandler = function(event, element, object, theHeader) {
+			if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible()){
+				this.crossTabCFWizard.addField("field["+theHeader.name+"]", theHeader.level, theHeader.horizontal);
+			}else{
+				if(this.clickMenu!=null){
+					this.clickMenu.destroy();
+				}
+				this.clickMenu = new Sbi.crosstab.core.CrossTabContextualMenu(theHeader, this);
+				this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
 			}
-			this.clickMenu = new Sbi.crosstab.core.CrossTabContextualMenu(theHeader, this);
-			this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
 		}
+    	theHandler.defer(100, this, [event, element, object, theHeader]); 
+    	// This is a work-around (workaround, work around): without deferring the function call, if you open the calculated fields wizard, 
+    	// then close it, and click quickly on a header, the context menu appears for a moment but it immediately disappears.
 	}
     
     , headerMouseenterHandler: function(event, htmlElement, o, theHeader, horizontal) {
