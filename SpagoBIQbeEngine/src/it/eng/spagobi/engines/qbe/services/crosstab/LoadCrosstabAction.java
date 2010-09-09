@@ -114,6 +114,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			try {
 				String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
+				logger.debug("Quering temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
+				auditlogger.info("Quering temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
 				DBConnection connection = ((IHibernateDataSource)getDatamartModel().getDataSource()).getConnection();
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());

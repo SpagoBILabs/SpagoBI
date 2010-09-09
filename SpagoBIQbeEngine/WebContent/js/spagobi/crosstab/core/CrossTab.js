@@ -78,7 +78,8 @@
 Ext.ns("Sbi.crosstab.core");
 
 //Sbi.crosstab.core.CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields, withRowsPartialSum, withColumnsPartialSum, misuresOnRow) {
-Sbi.crosstab.core.CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields, misuresOnRow) {
+Sbi.crosstab.core.CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, 
+		calculatedFields, misuresOnRow, measuresMetadata) {
 	this.fontSize = 12;
 	this.misuresOnRow = misuresOnRow;
 	this.entries = new Sbi.crosstab.core.CrossTabData(entries);
@@ -92,6 +93,7 @@ Sbi.crosstab.core.CrossTab = function(rowHeadersDefinition, columnHeadersDefinit
     this.setDragAndDrop(this.rowHeader, false, this);
     this.rowHeader[0][0].hidden=true;//hide the fake root header
     this.rowHeaderPanel = this.buildHeaderGroup(this.rowHeader, false);
+    this.measuresMetadata = measuresMetadata;
     
     this.columnHeader = new Array();
     this.build(columnHeadersDefinition, 0, this.columnHeader, true);
@@ -144,7 +146,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,withColumnsSum: null
 	,calculatedFields: null
 	,misuresOnRow: null
-
+	,measuresMetadata: null // metadata on measures: it is an Array, each entry is a json object with name, type and (in case of date/timestamp) format of the measure
     
     //================================================================
     // Loads and prepare the table with the data
@@ -164,9 +166,22 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     			partialSum =0;
     			for(var j=0; j<entries[i].length; j++){
     				if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
+    					// get measure metadata (name, type and format)
+    					var measureName = null;
+    					if (this.misuresOnRow) {
+    						measureName = this.rowHeader[this.rowHeader.length-1][i].name;
+    					} else {
+    						measureName = this.columnHeader[this.columnHeader.length-1][j].name;
+    					}
+    					var measureMetadata = this.getMeasureMetadata(measureName);
+    					var type = measureMetadata.type;
+    					var format = (measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+    					// put measure value and metadata into an array
     					var a = new Array();
     					a.push(entries[i][j]);
     					a.push('['+visiblei+','+visiblej+']');
+    					a.push(type);
+    					a.push(format);
 	    				toReturn.push(a);
 	    				visiblej++;
     				}   				
@@ -178,6 +193,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	return toReturn;
     }
 
+	, getMeasureMetadata: function (measureName) {
+		for (var i = 0; i < this.measuresMetadata.length; i++) {
+			if (this.measuresMetadata[i].name === measureName) {
+				return this.measuresMetadata[i];
+			}
+		}
+		return null;
+	}
 	    	
 	//returns the number of the visible (not hidden) rows		
     ,getRowsForView : function(){
@@ -938,8 +961,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    autoDestroy: true,
     	    storeId: 'myStore',
     	    fields: [
-    	             {name: 'name', type: 'float'},
-    	             'divId'
+    	             {name: 'name'},
+    	             'divId',
+    	             {name: 'type'},
+    	             {name: 'format'}
     	    ]
     	});
 
@@ -954,17 +979,57 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">',
     	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-    	    '{name}',
+    	    '{[this.format(values.name, values.type, values.format)]}',
     	    '</div> </div> </div>',
-    	    '</tpl>'
+    	    '</tpl>',
+    	    {
+    	    	format: function(value, type, format) {
+    	    		try {
+    	    			var valueObj = value;
+    	    			if (type == 'int') {
+    	    				valueObj = parseInt(value);
+    	    			} else if (type == 'float') {
+    	    				valueObj = parseFloat(value);
+    	    			} else if (type == 'date') {
+    	    				valueObj = Date.parseDate(value, format);
+    	    			} else if (type == 'timestamp') {
+    	    				valueObj = Date.parseDate(value, format);
+    	    			}
+		    			var str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+		    			return str;
+    	    		} catch (err) {
+    	    			return value;
+    	    		}
+    	    	}
+    	    }
     	);
     	
     	var tplsum = new Ext.XTemplate(
         	    '<tpl for=".">',
         	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader"  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-        	    '{name}',
+        	    '{name:this.format}',
         	    '</div> </div> </div>',
-        	    '</tpl>'
+        	    '</tpl>',
+        	    {
+        	    	format: function(value) {
+        	    		try {
+        	    			var valueObj = value;
+        	    			if (type == 'int') {
+        	    				valueObj = parseInt(value);
+        	    			} else if (type == 'float') {
+        	    				valueObj = parseFloat(value);
+        	    			} else if (type == 'date') {
+        	    				valueObj = Date.parseDate(value, format);
+        	    			} else if (type == 'timestamp') {
+        	    				valueObj = Date.parseDate(value, format);
+        	    			}
+    		    			var str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+    		    			return str;
+        	    		} catch (err) {
+        	    			return value;
+        	    		}
+        	    	}
+        	    }
         	);
     	
     	this.datapanel = new Ext.Panel({

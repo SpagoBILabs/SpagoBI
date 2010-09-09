@@ -243,19 +243,20 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	var i=0;
     	for(i=0; i<op.length-1; i++){
     		operation = operation+op[i];
-    		indexComma = listOfExp[i].indexOf('.');
-    		if(indexComma > 0 && (listOfExp[i].length-indexComma-1)>maxDigitAfterComma){
-    			maxDigitAfterComma = (listOfExp[i].length-indexComma-1);
-    		}
+//    		indexComma = listOfExp[i].indexOf('.');
+//    		if(indexComma > 0 && (listOfExp[i].length-indexComma-1)>maxDigitAfterComma){
+//    			maxDigitAfterComma = (listOfExp[i].length-indexComma-1);
+//    		}
     		
     		operation = operation+listOfExp[i];
-    		if(listOfExp[i]=="NA"){
+    		if(listOfExp[i]=="NA" || listOfExp[i]=="null"){
     			return "NA";
     		}
     	}
     	operation = operation + op[i];
     	var evalued = eval(operation);
-    	return Math.round(evalued*Math.pow(10,maxDigitAfterComma))/Math.pow(10,maxDigitAfterComma);  
+    	return evalued;  
+//    	return Math.round(evalued*Math.pow(10,maxDigitAfterComma))/Math.pow(10,maxDigitAfterComma);  
     }
     
     //Lista i cui indici sono le foglie.

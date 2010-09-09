@@ -24,12 +24,17 @@ package it.eng.qbe.crosstab.bo;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -55,12 +60,20 @@ public class CrossTab {
 	public static final String CROSSTAB_JSON_COLUMNS_HEADERS = "columns";
 	public static final String CROSSTAB_JSON_DATA = "data";
 	public static final String CROSSTAB_JSON_CONFIG = "config";
+	public static final String CROSSTAB_JSON_MEASURES_METADATA = "measures_metadata";
+	
+	public static final String MEASURE_NAME = "name";
+	public static final String MEASURE_TYPE = "type";
+	public static final String MEASURE_FORMAT = "format";
 
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
+	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
 	private Node columnsRoot;
 	private Node rowsRoot;
 	private String[][] dataMatrix;
 	private JSONObject config;
+	private List<MeasureInfo> measures;
 	
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -108,16 +121,29 @@ public class CrossTab {
 				
 		for(index = 0; index<dataStore.getRecordsCount(); index++){
 			record = dataStore.getRecordAt(index);
-			List<IField> fields= new ArrayList<IField>();
-			fields = record.getFields();
+			List<IField> fields= record.getFields();
 			columnPath="";
 			for(int i=0; i<columnsCount; i++){
-				columnPath = columnPath+ (String)fields.get(i).getValue();
+				Object value = fields.get(i).getValue();
+				String valueStr = null;
+				if (value == null){
+					valueStr = "null";
+				} else {
+					valueStr = value.toString();
+				}
+				columnPath = columnPath + valueStr;
 			}
 						
 			rowPath="";
 			for(int i=columnsCount; i<record.getFields().size()-measuresCount; i++){
-				rowPath = rowPath+ (String)fields.get(i).getValue();
+				Object value = fields.get(i).getValue();
+				String valueStr = null;
+				if (value == null){
+					valueStr = "NULL";
+				} else {
+					valueStr = value.toString();
+				}
+				rowPath = rowPath + valueStr.toString();
 			}
 
 			for(int i=record.getFields().size()-measuresCount; i<record.getFields().size(); i++){
@@ -137,8 +163,20 @@ public class CrossTab {
 		}
 		config.put("columnsOverflow", columnsOverflow);
 		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount, columnsRoot.getLeafsNumber());
-	}
 		
+		// put measures' info into measures variable 
+		measures = new ArrayList<CrossTab.MeasureInfo>();
+		IDataStoreMetaData meta = dataStore.getMetaData();
+		for(int i = meta.getFieldCount() - measuresCount; i < meta.getFieldCount(); i++){
+			// the field number i contains the measure number (i - <number of dimensions>)
+			// but <number of dimension> is <total fields count> - <total measures count>
+			IFieldMetaData fieldMeta = meta.getFieldMeta(i);
+			Measure relevantMeasure = crosstabDefinition.getMeasures().get( i - (meta.getFieldCount() - measuresCount));
+			measures.add(getMeasureInfo(fieldMeta, relevantMeasure));
+		}
+	}
+	
+
 	/**
 	 * Get the JSON representation of the cross tab  
 	 * @return JSON representation of the cross tab  
@@ -146,6 +184,7 @@ public class CrossTab {
 	 */
 	public JSONObject getJSONCrossTab() throws JSONException{
 		JSONObject crossTabDefinition = new JSONObject();
+		crossTabDefinition.put(CROSSTAB_JSON_MEASURES_METADATA, getJSONMeasuresMetadata());
 		crossTabDefinition.put(CROSSTAB_JSON_ROWS_HEADERS, rowsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_COLUMNS_HEADERS, columnsRoot.toJSONObject());
 		crossTabDefinition.put(CROSSTAB_JSON_DATA,  getJSONDataMatrix());
@@ -153,6 +192,7 @@ public class CrossTab {
 		return crossTabDefinition;
 	}
 	
+
 	/**
 	 * Get the matrix that represent the data
 	 * @param columnsSpecification: A list with all the possible coordinates of the columns 
@@ -320,33 +360,28 @@ public class CrossTab {
 	
 	private static String getStringValue(Object obj){
 		
+		if (obj == null) {
+			return "NULL";
+		}
+		
+		String fieldValue = null;
+		
 		Class clazz = obj.getClass();
 		if (clazz == null) {
 			clazz = String.class;
 		} 
-		if( Number.class.isAssignableFrom(clazz) ) {
-			
-			//BigInteger, Integer, Long, Short, Byte
-			if(Integer.class.isAssignableFrom(clazz) 
-		       || BigInteger.class.isAssignableFrom(clazz) 
-			   || Long.class.isAssignableFrom(clazz) 
-			   || Short.class.isAssignableFrom(clazz)
-			   || Byte.class.isAssignableFrom(clazz)) {
-				return ""+((Number)obj).intValue();
-			} else {
-				return ""+((Number)obj).floatValue();
-			}
-			
-		} else if( String.class.isAssignableFrom(clazz) ) {
-			return (String)obj;
-		} else if( Date.class.isAssignableFrom(clazz) ) {
-			return ((Date)obj).toString();
-		} else if( Boolean.class.isAssignableFrom(clazz) ) {
-			return obj.toString();
+		if (Timestamp.class.isAssignableFrom(clazz)) {
+			fieldValue =  TIMESTAMP_FORMATTER.format(  obj );
+		} else if (Date.class.isAssignableFrom(clazz)) {
+			fieldValue =  DATE_FORMATTER.format( obj );
 		} else {
-			return obj.toString();
+			fieldValue =  obj.toString();
 		}
+		
+		return fieldValue;
+
 	}
+
 
 	private class Node{
 		private String value;
@@ -454,4 +489,76 @@ public class CrossTab {
 			return CrossTab.this;
 		}
 	}
+	
+	
+	private MeasureInfo getMeasureInfo(IFieldMetaData fieldMeta, Measure measure) {
+		Class clazz = fieldMeta.getType();
+		if (clazz == null) {
+			clazz = String.class;
+		} 
+		
+		String fieldName = measure.getAlias();  // the measure name is not the name (or alias) of the field coming with the datastore
+												// since it is something like SUM(col_0_0_) (see how crosstab datastore query is created)
+		
+		if( Number.class.isAssignableFrom(clazz) ) {
+			
+			//BigInteger, Integer, Long, Short, Byte
+			if(Integer.class.isAssignableFrom(clazz) 
+		       || BigInteger.class.isAssignableFrom(clazz) 
+			   || Long.class.isAssignableFrom(clazz) 
+			   || Short.class.isAssignableFrom(clazz)
+			   || Byte.class.isAssignableFrom(clazz)) {
+				return new MeasureInfo(fieldName, "int", null);
+			} else {
+				return new MeasureInfo(fieldName, "float", null);
+			}
+			
+		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
+			return new MeasureInfo(fieldName, "timestamp", "d/m/Y H:i:s");
+		} else if( Date.class.isAssignableFrom(clazz) ) {
+			return new MeasureInfo(fieldName, "date", "d/m/Y");
+		} else {
+			return new MeasureInfo(fieldName, "string", null);
+		}
+	}
+	
+	
+	private JSONArray getJSONMeasuresMetadata() throws JSONException {
+		JSONArray array = new JSONArray();
+		Iterator<MeasureInfo> it = measures.iterator();
+		while (it.hasNext()) {
+			MeasureInfo mi = it.next();
+			JSONObject jsonMi = new JSONObject();
+			jsonMi.put(MEASURE_NAME, mi.getName());
+			jsonMi.put(MEASURE_TYPE, mi.getType());
+			jsonMi.put(MEASURE_FORMAT, mi.getFormat() != null ? mi.getFormat() : "");
+			array.put(jsonMi);
+		}
+		return array;
+	}
+	
+	public class MeasureInfo {
+		
+		String name;
+		String type;
+		String format;
+		
+		public MeasureInfo(String name, String type, String format) {
+			this.name = name;
+			this.type = type;
+			this.format = format;
+		}
+
+		public String getName() {
+			return name;
+		}
+		public String getType() {
+			return type;
+		}
+		public String getFormat() {
+			return format;
+		}
+
+	}
+	
 }
