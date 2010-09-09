@@ -335,77 +335,79 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
      //Adds the listeners to the header
     , setHeaderListener: function(header, horizontal){
      
-    	header.addListener({render: function(c) {
+    	header.addListener({render: function(theHeader) {
 			// open the show/hide dialog
-			c.el.on('click', function(event,element,object) {
-							if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible()){
-								this.crossTabCFWizard.addField("field["+c.name+"]", c.level, c.horizontal);
-							}else{
-								if(this.clickMenu!=null){
-									this.clickMenu.destroy();
-								}
-								this.clickMenu = new Sbi.crosstab.core.CrossTabContextualMenu(c, this);
-								this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
-							}
-						}
-					,this);
+    		theHeader.el.on('click', this.headerClickHandler.createDelegate(this, [theHeader], true), this);
 			//color the rows/columns when the mouse enter in the header
-			c.el.on('mouseenter', function() {
-							if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible() && this.crossTabCFWizard.isActiveLevel(c.level, c.horizontal)){
-								c.setWidth(c.getWidth()-2);
-								c.setHeight(c.getHeight()-2); 
-								c.addClass("crosstab-borderd");
-							}
-
-							var rowForView = this.getRowsForView();
-					 		var columnForView = this.getColumnsForView();
-							var start=0;
-							var i=0;
-							var headers;
-							
-							if(horizontal){
-								headers = this.columnHeader;
-							}else{
-								headers = this.rowHeader
-							}
-							
-							while(!this.isTheSameHeader(headers[c.level][i],c) && i<headers[c.level].length){
-								if(!headers[c.level][i].hidden){
-									start = start + headers[c.level][i].thisDimension;
-								}
-								i++;
-							}
-							if( i<headers[c.level].length){
-								var end = start+headers[c.level][i].thisDimension-1;
-	
-								if(horizontal){
-									for(i=start; i<=end; i++){
-										this.colorColumnBackground(i, rowForView, '#EFEFEF');
-									}
-								}else{
-									for(i=start; i<=end; i++){
-										this.colorRowBackground(i, columnForView, '#EFEFEF');
-									}
-								}
-							}
-							}
-						,this);
-			c.el.on('mouseleave', function() {
-						
-						if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible() && this.crossTabCFWizard.isActiveLevel(c.level, c.horizontal)){
-							c.removeClass("crosstab-borderd");
-							c.setWidth(c.getWidth()+2);
-							c.setHeight(c.getHeight()+2); 
-						}
-							this.clearTableBackground();
-							
-						}
-							
-						,this);
+    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader, horizontal], true), this);
+    		theHeader.el.on('mouseleave', this.headerMouseleaveHandler.createDelegate(this, [theHeader], true), this);
 			}, scope: this
 	  	});
+    	
     }
-     
+    
+    , headerClickHandler: function(event, element, object, theHeader) {
+		if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible()){
+			this.crossTabCFWizard.addField("field["+theHeader.name+"]", theHeader.level, theHeader.horizontal);
+		}else{
+			if(this.clickMenu!=null){
+				this.clickMenu.destroy();
+			}
+			this.clickMenu = new Sbi.crosstab.core.CrossTabContextualMenu(theHeader, this);
+			this.clickMenu.showAt([event.getPageX(), event.getPageY()]);
+		}
+	}
+    
+    , headerMouseenterHandler: function(event, htmlElement, o, theHeader, horizontal) {
+		if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible() && this.crossTabCFWizard.isActiveLevel(theHeader.level, theHeader.horizontal)){
+			theHeader.setWidth(theHeader.getWidth()-2);
+			theHeader.setHeight(theHeader.getHeight()-2); 
+			theHeader.addClass("crosstab-borderd");
+		}
+
+		var rowForView = this.getRowsForView();
+ 		var columnForView = this.getColumnsForView();
+		var start=0;
+		var i=0;
+		var headers;
+		
+		if(horizontal){
+			headers = this.columnHeader;
+		}else{
+			headers = this.rowHeader
+		}
+		
+		while(!this.isTheSameHeader(headers[theHeader.level][i],theHeader) && i<headers[theHeader.level].length){
+			if(!headers[theHeader.level][i].hidden){
+				start = start + headers[theHeader.level][i].thisDimension;
+			}
+			i++;
+		}
+		if( i<headers[theHeader.level].length){
+			var end = start+headers[theHeader.level][i].thisDimension-1;
+
+			if(horizontal){
+				for(i=start; i<=end; i++){
+					this.colorColumnBackground(i, rowForView, '#EFEFEF');
+				}
+			}else{
+				for(i=start; i<=end; i++){
+					this.colorRowBackground(i, columnForView, '#EFEFEF');
+				}
+			}
+		}
+	}
+    
+    , headerMouseleaveHandler: function(event, htmlElement, o, theHeader) {
+		
+		if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible() && this.crossTabCFWizard.isActiveLevel(theHeader.level, theHeader.horizontal)){
+			theHeader.removeClass("crosstab-borderd");
+			theHeader.setWidth(theHeader.getWidth()+2);
+			theHeader.setHeight(theHeader.getHeight()+2); 
+		}
+		this.clearTableBackground();
+			
+	}
      
      //Sets the father of every HeaderEntry
     , setFathers : function(headers){
