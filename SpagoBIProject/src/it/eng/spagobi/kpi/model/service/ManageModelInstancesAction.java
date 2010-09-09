@@ -175,7 +175,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
 						response = recursiveStart(modelNodesDD, root, response);
 					}
-					
+					try{
+						if(rootObj.get("toSave") != null && rootObj.get("toSave").equals("true")){
+							//root node has been modified
+							modelNodes.add(root);
+						}
+					}catch(Throwable e){
+						logger.debug("Root node is not modified");
+					}
 					response = saveModelNodeInstances(modelNodes);
 					//System.out.println(response);
 					writeBackToClient(new JSONSuccess(response));
