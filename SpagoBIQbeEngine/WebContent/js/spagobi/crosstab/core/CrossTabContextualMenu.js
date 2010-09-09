@@ -51,9 +51,9 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 	this.crossTab = crossTab;
 	
 	if(node.horizontal){
-		this.headers = crossTab.columnHeader;
+		this.headers = this.crossTab.columnHeader;
 	}else{
-		this.headers = crossTab.rowHeader;
+		this.headers = this.crossTab.rowHeader;
 	}
 
 	var c = {
@@ -64,12 +64,12 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 				       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
 				       	iconCls:'add',
 				       	handler:function(){
-			        		crossTab.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard(node.level, node.horizontal); 
-			        		crossTab.crossTabCFWizard.show(crossTab);  
-			        		crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
-			        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, crossTab);
-				       		crossTab.addCalculatedField(level, horizontal, op, CFName);
-				       		}, crossTab);    	 	
+				       		this.crossTab.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard(node.level, node.horizontal); 
+				       		this.crossTab.crossTabCFWizard.show(this.crossTab);  
+				       		this.crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
+				        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this.crossTab);
+				        		this.crossTab.addCalculatedField(level, horizontal, op, CFName);
+				       		}, this); 
 				       	},
 				       	scope: this
 			        },
