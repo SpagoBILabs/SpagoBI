@@ -697,11 +697,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, fillKpiPanel: function(sel, node) {
 		if(node !== undefined && node != null){
 
-			var hasKpiInst = node.attributes.kpiName;
+			var hasKpiAssoc = node.attributes.kpiName;
 			var hasKpiModelUuid = node.attributes.modelUuid;
 			var hasKpi = node.attributes.kpiId;
-			if(hasKpiInst !== undefined && hasKpiInst != null){
-	
+
+			
+			if(hasKpiAssoc !== undefined && hasKpiAssoc != null){
+				
 				this.kpiName.setValue(node.attributes.kpiName);
 				this.kpiThreshold.setValue(node.attributes.kpiInstThrName);
 				this.kpiTarget.setValue(node.attributes.kpiInstTarget);
@@ -868,16 +870,20 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
+			
+			var isDDNode = node.attributes.kpiInstId;
+			
 			var val = node.text;//name value
 			if (val != null && val !== undefined) {
 				var name = node.attributes.name;	
 				this.detailFieldDescr.setValue(node.attributes.description);
 				this.detailFieldName.setValue(name);
-				if(node.attributes.code !== undefined && node.attributes.modelId !== undefined){
-					this.detailFieldLabel.disable();
-				}else{
+				if(isDDNode){
 					this.detailFieldLabel.enable();
 					this.detailFieldLabel.setValue(node.attributes.label);
+				}else{
+					this.detailFieldLabel.disable();
+					
 				}
 			}
 		}
