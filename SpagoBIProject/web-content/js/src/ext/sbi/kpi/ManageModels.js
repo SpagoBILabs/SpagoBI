@@ -192,8 +192,11 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			this.kpiPanel = new Ext.Panel({
 				fieldLabel:LN('sbi.generic.kpi'),
 	            layout : 'column',
+				labelWidth: 90,
+	            defaults: {width: 140, border:false},   
 				items: [this.detailFieldKpi,
-				        this.kpiClearBtn]
+				        this.kpiClearBtn],
+				width: 30
 			});
 	 	   
 	 	   this.detailFieldNodeType =  new Ext.form.ComboBox({

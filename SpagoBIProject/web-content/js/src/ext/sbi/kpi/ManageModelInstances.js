@@ -393,7 +393,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	    	 columnWidth: .75,
  	    	 id: 'kpinameField',
              fieldLabel:LN('sbi.generic.kpi'),
-             readOnly: false,
              style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic}',
              readOnly: true,
              width: 30,
@@ -404,12 +403,12 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
  	    this.kpiClearBtn = new Ext.Button({
 			iconCls: 'icon-clear'
-				, tooltip: LN('sbi.generic.deleteKpi')
- 	    		, style: '{border:none; width: 30px; border:none; margin-left: 5px;}'
-				, scope: this
-				, handler: this.clearKpi
-				, columnWidth: .25
-			});
+			, tooltip: LN('sbi.generic.deleteKpi')
+    		, style: '{border:none; width: 30px; border:none; margin-left: 5px; float: left;}'
+			, scope: this
+			, handler: this.clearKpi
+			, columnWidth: .25
+		});
 		this.kpiPanel = new Ext.Panel({
 			fieldLabel:LN('sbi.generic.kpi'),
 			labelWidth: 90,
