@@ -871,8 +871,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
 			
-			var isDDNode = node.attributes.kpiInstId;
-			
+			var isDDNode = node.attributes.modelInstId;
+			alert(isDDNode);
 			var val = node.text;//name value
 			if (val != null && val !== undefined) {
 				var name = node.attributes.name;	
