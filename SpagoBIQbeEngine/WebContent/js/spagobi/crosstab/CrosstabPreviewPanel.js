@@ -99,7 +99,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				},
 		        success : function(response, opts) {
 	        		this.hideMask();
-		  				this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
+		  			this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
 		        },
 		        scope: this,
 				failure: function(response, options) {
@@ -121,7 +121,9 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var columns = this.fromNodeToArray(crosstab.columns);
 		var data = crosstab.data;
 		var config = crosstab.config;
-		this.crosstab =  new Sbi.crosstab.core.CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", this.calculatedFields, config.measureson=='rows');
+		var measuresMetadata = crosstab.measures_metadata;
+
+		this.crosstab =  new Sbi.crosstab.core.CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", this.calculatedFields, config.measureson=='rows', measuresMetadata);
 		this.crosstab.reloadHeadersAndTable();
 		this.add(this.crosstab);
 		this.doLayout();
