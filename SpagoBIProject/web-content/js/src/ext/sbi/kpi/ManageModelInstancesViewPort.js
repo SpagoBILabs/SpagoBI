@@ -163,7 +163,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				    }, {
 				        region: 'east',
 				        split: true,
-				        width: 500,
+				        width: 400,
 				        height:560,
 				        id: 'modelsTree00',
 				        collapsed:false,
