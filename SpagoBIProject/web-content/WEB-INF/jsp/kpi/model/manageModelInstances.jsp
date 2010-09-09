@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
 	List kpiChartTypesCd = (List) aSessionContainer.getAttribute("kpiChartTypesList");	
-	List kpiPeriodicities = (List) aSessionContainer.getAttribute("kpiPeriodicityList");	
 %>
 
 <LINK rel='StyleSheet' 
@@ -67,19 +66,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String chartTypes = kpiChartTypesArray.toString();
 	chartTypes = chartTypes.replaceAll("\"","'");
 
-	//Periodicities
-	JSONArray kpiPeriodicitiesArray = new JSONArray();
-	if(kpiPeriodicities != null){
-		for(int i=0; i< kpiPeriodicities.size(); i++){
-			Periodicity period = (Periodicity)kpiPeriodicities.get(i);
-			JSONArray temp = new JSONArray();
-			temp.put(period.getIdKpiPeriodicity());
-			temp.put(period.getName());
-			kpiPeriodicitiesArray.put(temp);
-		}
-	}	
-	String periodicities = kpiPeriodicitiesArray.toString();
-	periodicities = periodicities.replaceAll("\"","'");
 	%>
 
 	var url = {
@@ -98,7 +84,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	var config = {};  
 	config.thrTypes = <%= thrTypes%>;
 	config.kpiChartTypes = <%= chartTypes%>;
-	config.kpiPeriodicities = <%= periodicities%>;
     
 Ext.onReady(function(){
 	Ext.QuickTips.init();
