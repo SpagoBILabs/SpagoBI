@@ -194,6 +194,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	       		qbeConfig.displayQueryBuilderPanel = true;
 	       		qbeConfig.displayFormBuilderPanel = true;
 	       		qbeConfig.displayCrosstabDesignerPanel = false;
+	       		qbeConfig.displayCrosstabPreviewPanel = false;
 	       		
 				qbeConfig.formbuilder = {};
 				qbeConfig.formbuilder.template = <%= formTemplate != null ? formTemplate.toString() : "{}" %>;
