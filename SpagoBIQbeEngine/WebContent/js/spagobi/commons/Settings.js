@@ -64,11 +64,6 @@ Sbi.settings.qbe = {
 			enableTreeContextMenu: true
 		}
 		
-		, crosstab: {
-			calculatedfield: {
-				maxDigitAfterComma: 2
-			}
-		}
 };
 
 Sbi.settings.formviewer = {
