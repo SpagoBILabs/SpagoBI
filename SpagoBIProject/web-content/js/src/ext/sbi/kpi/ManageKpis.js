@@ -477,12 +477,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
             width       : 955,
-            height      : 550,
+            height      : 350,
             y			: 15,
             closeAction :'close',
             plain       : true,
             scope		: this,
             modal		: true,
+            autoScroll  : true,
             items       : [manageThresholds]
 		});
 		manageThresholds.on('selectEvent', function(itemId,index,code){this.thrWin.close();Ext.getCmp('detailFieldThreshold').setValue(code);}, this);
