@@ -951,6 +951,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
         }	
 		
 		Ext.getCmp('alarm-form').doLayout();
+		this.tabs.setActiveTab(0);
 	}
 	
 	, deleteSelectedAlarm: function(userId, index) {
