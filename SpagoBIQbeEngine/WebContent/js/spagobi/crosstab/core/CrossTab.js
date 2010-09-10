@@ -238,30 +238,48 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	return count;
     }
     
-    //color the background of a row of the tabel
+    //highlight a row of the table by adding a class to the cell elements (the additional class sets a background color)
     //i: the number of the row (visible)
-    //columnForView: number of visible columns
-    //color: the background color
-    ,highlightRow: function(i, columnForView, color){
-		for(var y = 0; y<columnForView; y++){
-			Ext.get('['+i+','+y+']').addClass('crosstab-table-cells-highlight');
+    ,highlightRow: function(i){
+		for(var y = 0; ; y++){
+			var el = Ext.get('['+i+','+y+']');
+			if (el == null) return;
+			el.addClass('crosstab-table-cells-highlight');
 		}
-     }
+    }
     
-    //color the background of a column of the tabel
-    //j: the number of the column (visible)
-    //rowForView: number of visible rows
-    //columnForView: number of visible columns
-     ,highlightColumn: function(j, rowForView){
-		for(var y = 0; y<rowForView; y++){
-			if(Ext.get('['+y+','+j+']')!=null){
-				Ext.get('['+y+','+j+']').addClass('crosstab-table-cells-highlight');
-			}
+    //remove highlight of a row of the table by removing an additional class 
+    //i: the number of the row (visible)
+    ,removeHighlightOnRow: function(i){
+		for(var y = 0; ; y++){
+			var el = Ext.get('['+i+','+y+']');
+			if (el == null) return;
+			el.removeClass('crosstab-table-cells-highlight');
 		}
-     }
+    }
+    
+    //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
+    //j: the number of the column (visible)
+    ,highlightColumn: function(j){
+		for (var y = 0; ; y++) {
+			var el = Ext.get('['+y+','+j+']');
+			if (el == null) return;
+			Ext.get('['+y+','+j+']').addClass('crosstab-table-cells-highlight');
+		}
+    }
      
-     //set transparent the backgound of all the cell of the tabel
-     ,clearTableBackground: function(){
+    //remove highlight of a column of the table by removing an additional class 
+    //j: the number of the column (visible)
+    ,removeHighlightOnColumn: function(j){
+ 		for (var y = 0; ; y++) {
+			var el = Ext.get('['+y+','+j+']');
+			if (el == null) return;
+			Ext.get('['+y+','+j+']').removeClass('crosstab-table-cells-highlight');
+ 		}
+    }
+     
+     //remove highlight from all the cell of the table by removing an additional class 
+     ,removeHighlightOnTable: function(){
     	var entries = this.entries.getEntries();
 		for(var i = 0; i<entries.length; i++){
 			for(var y = 0; y<entries[0].length; y++){
@@ -383,8 +401,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			theHeader.addClass("crosstab-borderd");
 		}
 
-		var rowForView = this.getRowsForView();
- 		var columnForView = this.getColumnsForView();
 		var start=0;
 		var i=0;
 		var headers;
@@ -406,11 +422,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
 			if(horizontal){
 				for(i=start; i<=end; i++){
-					this.highlightColumn(i, rowForView);
+					this.highlightColumn(i);
 				}
 			}else{
 				for(i=start; i<=end; i++){
-					this.highlightRow(i, columnForView);
+					this.highlightRow(i);
 				}
 			}
 		}
@@ -423,7 +439,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			theHeader.setWidth(theHeader.getWidth()+2);
 			theHeader.setHeight(theHeader.getHeight()+2); 
 		}
-		this.clearTableBackground();
+		this.removeHighlightOnTable();
 			
 	}
      
@@ -998,12 +1014,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
     	
     	var tpl = new Ext.XTemplate(
-    	    '<tpl for=".">',
-    	    '<div id="{divId}" class="x-panel crosstab-table-cells-{celltype}" style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-    	    '{[this.format(values.name, values.datatype, values.format)]}',
-    	    '</div> </div> </div>',
-    	    '</tpl>',
-    	    {
+    	    '<tpl for=".">'
+    	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
+    	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" >'
+    	    , '  <div class="x-panel-bwrap"> '
+    	    , '    <div style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
+    	    , '    {[this.format(values.name, values.datatype, values.format)]}'
+    	    , '    </div> '
+    	    , '  </div>'
+    	    , '</div>'
+    	    , '</tpl>'
+    	    , {
     	    	format: this.format
     	    }
     	);
@@ -1017,7 +1038,28 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
         	    {
         	    	format: this.format
         	    }
-        	);
+        );
+    	
+    	var dataView = new Ext.DataView({
+	        store: store,
+	        tpl: tpl,
+	        itemSelector: 'div.crosstab-table-cells',
+	        trackOver:true
+	    });
+    	dataView.on('mouseleave', function(dataView, index, htmlNode, event) {
+            var divId = eval(htmlNode.id);
+           	var row = divId[0];
+           	var column = divId[1];
+            this.removeHighlightOnColumn(column);
+            this.removeHighlightOnRow(row);
+        }, this);
+    	dataView.on('mouseenter', function(dataView, index, htmlNode, event) {
+    		var divId = eval(htmlNode.id);
+           	var row = divId[0];
+           	var column = divId[1];
+            this.highlightColumn(column);
+            this.highlightRow(row);
+        }, this);
     	
     	this.datapanel = new Ext.Panel({
             width: (columnsForView)*(this.columnWidth),
@@ -1025,11 +1067,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
             cellCls: dataPanelStyle,
             border: false,
     	    layout:'fit',
-    	    items: new Ext.DataView({
-    	        store: store,
-    	        tpl: tpl,
-    	        itemSelector: 'div.crosstab-table-cells'
-    	    })
+    	    items: dataView
     	});
 
    		this.table.add(this.emptypanelTopLeft);
@@ -1519,6 +1557,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     
 });
 
+/*
 function cruxBackground(id,rowsNumber,columnsNumber){
 
    	var row = id[0];
@@ -1550,3 +1589,4 @@ function clearBackground(id,rowsNumber,columnsNumber){
    		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
    	}
 }
+*/
