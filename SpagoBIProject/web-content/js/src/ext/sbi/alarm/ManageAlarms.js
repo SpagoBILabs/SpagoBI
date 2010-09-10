@@ -585,6 +585,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Ext.FormPanel, {
 							          ,scope: this
 							    });
 						    }
+							Ext.getCmp("kpi-grid").getView().refresh();
 	   	                  },
 
    	                      listeners: {
