@@ -21,3 +21,6 @@ ALTER TABLE SBI_VIEWPOINTS COMMENT = 'The table contains all viewpoints';
 ALTER TABLE SBI_DATA_SOURCE COMMENT = 'The table contains all data sources';
 ALTER TABLE SBI_MENU COMMENT = 'The table contains all menu voices';
 ALTER TABLE SBI_MENU_ROLE COMMENT = 'The table contains all relations between menu and roles';
+
+ALTER TABLE SBI_UDP = 'The table contains all generic attributes definition';
+ALTER TABLE SBI_UDP_VALUE = 'The table contains all generci attributes values';
