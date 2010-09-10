@@ -256,6 +256,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
+		             layout:'fit',
 		             border: false,
 		             items: []
 		    	}]
@@ -314,6 +315,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
+		      				if(nodeSel !== undefined && nodeSel != null){
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
 		 		      			  ///contains error gui ids      						  
@@ -325,7 +327,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  this.fireEvent('parentsave-complete', nodeSel);
 		      				  }
-		      				
+		      				}
 		      		    }
 	      				
 	      				if(hasErrors){
@@ -383,6 +385,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
+		      				if(nodeSel !== undefined && nodeSel != null){
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
 		 		      			  ///contains error gui ids      						  
@@ -401,7 +404,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			        			  var size = this.nodesToSave.length;
 			        			  this.nodesToSave[size] = child;
 	      				      }
-		      				
+		      				}
 		      		    }
 	      				
 	      				if(hasErrors){
