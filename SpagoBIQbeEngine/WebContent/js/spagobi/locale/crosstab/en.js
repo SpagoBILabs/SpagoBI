@@ -48,6 +48,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells
 //===================================================================
 
 Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Add calculated field';
+Sbi.locale.ln['sbi.crosstab.menu.removecalculatedfield'] = 'Remove calculated field';
 Sbi.locale.ln['sbi.crosstab.menu.hideheader'] = 'Hide this header';
 Sbi.locale.ln['sbi.crosstab.menu.hideheadertype'] = 'Hide all the headers of this type';
 Sbi.locale.ln['sbi.crosstab.menu.hidemeasure'] = 'Measures';

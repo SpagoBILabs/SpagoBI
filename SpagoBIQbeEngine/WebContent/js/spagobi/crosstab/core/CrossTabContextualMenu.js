@@ -50,63 +50,19 @@ Sbi.crosstab.core.CrossTabContextualMenu = function(node, crossTab) {
 	
 	this.crossTab = crossTab;
 	
-	if(node.horizontal){
+	if (node.horizontal) {
 		this.headers = this.crossTab.columnHeader;
-	}else{
+	} else {
 		this.headers = this.crossTab.rowHeader;
 	}
 
 	var c = {
 			id:'feeds-ctx',
-			items: [
-			        '-',
-			        {
-				       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
-				       	iconCls:'add',
-				       	handler:function(){
-				       		this.crossTab.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard(node.level, node.horizontal); 
-				       		this.crossTab.crossTabCFWizard.show(this.crossTab);  
-				       		this.crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
-				        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this.crossTab);
-				        		this.crossTab.addCalculatedField(level, horizontal, op, CFName);
-				       		}, this); 
-				       	},
-				       	scope: this
-			        },
-			        '-', 
-			        {
-			        	text: LN('sbi.crosstab.menu.hideheader'),
-			        	iconCls:'hide',
-			        	handler:function(){
-			        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(node, true, false, this.crossTab) ; 	
-			        	},
-			        	scope: this
-			        },
-			        {
-			        	text: LN('sbi.crosstab.menu.hideheadertype'),
-			        	iconCls:'hide',
-			        	handler:function(){
-			        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, false, this.crossTab);
-			        	},
-			        	scope: this
-			        },
-			        {
-			        	text: LN('sbi.crosstab.menu.hiddenheader'),
-			        	iconCls:'show',
-			        	menu:  new Ext.menu.Menu({
-			        		items: this.getHiddenCheckboxes(node)
-			        	})
-			        },
-			        {
-			        	text: LN('sbi.crosstab.menu.hidemeasure'),
-			        	iconCls:'show',
-			        	menu:  new Ext.menu.Menu({
-			        		items: this.getCheckboxesForMeasures(node.horizontal)
-			        	})
-			        }
-			     ]
-        }; 
-		Sbi.crosstab.core.CrossTabContextualMenu.superclass.constructor.call(this, c);
+			items: this.createMenuItems(node)
+    };
+	
+	Sbi.crosstab.core.CrossTabContextualMenu.superclass.constructor.call(this, c);
+	
 };
 		
 Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
@@ -220,5 +176,68 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     		checkBoxes.push(freshCheck);
     	}
     	return checkBoxes;
-	}  
+	}
+    
+    , addCalculatedFieldHandler: function(node) {
+   		this.crossTab.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard(node.level, node.horizontal); 
+   		this.crossTab.crossTabCFWizard.show(this.crossTab);  
+   		this.crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
+    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this.crossTab);
+    		this.crossTab.addCalculatedField(level, horizontal, op, CFName);
+   		}, this); 
+   	}
+    
+    , createMenuItems: function (node) {
+    	var toReturn = ['-'];
+    	if (node.type == 'CF') {
+    		toReturn.push({
+		       	text: LN('sbi.crosstab.menu.removecalculatedfield'),
+		       	iconCls: 'remove',
+		       	handler: function() {alert('to be implemented');},
+		       	scope: this
+    		});
+    	}
+    	toReturn = toReturn.concat([
+		        {
+			       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
+			       	iconCls: 'add',
+			       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], true),
+			       	scope: this
+		        },
+		        '-', 
+		        {
+		        	text: LN('sbi.crosstab.menu.hideheader'),
+		        	iconCls:'hide',
+		        	handler:function(){
+		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(node, true, false, this.crossTab) ; 	
+		        	},
+		        	scope: this
+		        },
+		        {
+		        	text: LN('sbi.crosstab.menu.hideheadertype'),
+		        	iconCls:'hide',
+		        	handler:function(){
+		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, false, this.crossTab);
+		        	},
+		        	scope: this
+		        },
+		        {
+		        	text: LN('sbi.crosstab.menu.hiddenheader'),
+		        	iconCls:'show',
+		        	menu:  new Ext.menu.Menu({
+		        		items: this.getHiddenCheckboxes(node)
+		        	})
+		        },
+		        {
+		        	text: LN('sbi.crosstab.menu.hidemeasure'),
+		        	iconCls:'show',
+		        	menu:  new Ext.menu.Menu({
+		        		items: this.getCheckboxesForMeasures(node.horizontal)
+		        	})
+		        }
+		]);
+    	return toReturn;
+    	
+    }
+    
 });
