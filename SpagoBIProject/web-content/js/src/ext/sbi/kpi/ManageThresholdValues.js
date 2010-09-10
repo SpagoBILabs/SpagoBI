@@ -63,6 +63,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 		},this);
 	
 	// Let's pretend we rendered our grid-columns with meta-data from our ORM framework.
+	//these are grid values for range type threshold value
 	this.userColumns =  [
 	    {
 	        name: 'idThrVal',

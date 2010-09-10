@@ -376,7 +376,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
                  "margin-top": "10px", 
                  "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
              },
-             items: [detailThrPosition, detailThrLabel, this.detailThrMin, 
+             items: [detailThrValFieldId, detailThrPosition, detailThrLabel, this.detailThrMin, 
                      this.detailThrMinClosed, this.detailThrMax, this.detailThrMaxClosed, 
                      detailThrValue, this.detailThrColor, detailThrSeverity]
     	});
@@ -406,7 +406,8 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			        , id : 'thr-values'
 			        , layout: 'fit'
 			        , autoScroll: false
-			        , items: [this.tempThrV,this.thrMinOrMaxDetail]
+			        , items: [this.tempThrV,
+			                  this.thrMinOrMaxDetail]
 			        , itemId: 'thrValues'
 			        , scope: this
 			    });
@@ -442,7 +443,8 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		var newRec;
 		var thrVal = new Array();
 	
-		if(idRec ==0 || idRec == null || idRec === ''){
+		if(idRec == 0 || idRec == null || idRec === ''){
+
 			newRec =new Ext.data.Record({
 					name: values['name'],
 					code: values['code'],
@@ -472,6 +474,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	      	        var storeL = tempStore.getCount();
 					for(var i=0;i<storeL;i++){
       		   	        var thrValRecord = tempStore.getAt(i);
+
       		   	        var tempRec ={
       		   	             idThrVal: thrValRecord.get('idThrVal'),
       		   	             label: thrValRecord.get('label'),
@@ -491,12 +494,15 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			}
 			
 		}else{
+
 			var record;
 			var length = this.mainElementsStore.getCount();
+			var toSelAfterSave;
 			for(var i=0;i<length;i++){
 	   	        var tempRecord = this.mainElementsStore.getAt(i);
 	   	        if(tempRecord.data.id==idRec){
 	   	        	record = tempRecord;
+	   	        	toSelAfterSave = i;
 				}			   
 	   	    }	
 
@@ -538,10 +544,11 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
       		   	             val: thrValRecord.get('val'),
       		   	             color: thrValRecord.get('color'),
       		   	             severityCd: thrValRecord.get('severityCd')
-      			      	          };	
+      			      	};	
       		   	        thrVal.push(tempRec);
       		   	    }
 					record.set('thrValues',thrVal);
+
 				}
 		}
 		
@@ -568,6 +575,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
         }
         
         var idThrValRec = values['idThrVal'];
+
         if(idThrValRec){
         	params.idThrVal = idThrValRec;
         }
@@ -612,11 +620,13 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      			}
 			      			this.mainElementsStore.commitChanges();
 			      			this.tempThrV.getStore().commitChanges();
-			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 					            this.rowselModel.selectLastRow(true);
 				            }else if(record != null && record != undefined && record.get('typeCd')=='RANGE'){
-			      				this.mainElementsStore.load();
+			      				//this.mainElementsStore.load();
+								if(toSelAfterSave !== undefined){
+									this.rowselModel.selectRow(toSelAfterSave);
+								}
 			      			}
 			      			
 			      			Ext.MessageBox.show({
