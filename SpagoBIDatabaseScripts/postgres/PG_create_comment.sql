@@ -129,3 +129,6 @@ COMMENT ON TABLE SBI_ROLE_TYPE_USER_FUNC IS 'The table contains all relations be
 
 COMMENT ON TABLE SBI_MENU IS 'The table contains all menu voices';
 COMMENT ON TABLE SBI_MENU_ROLE IS 'The table contains all relations between menu and roles';
+
+COMMENT ON  TABLE SBI_UDP IS 'The table contains all generic attributes definition';
+COMMENT ON  TABLE SBI_UDP_VALUE IS 'The table contains all generci attributes values';
