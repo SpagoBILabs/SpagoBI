@@ -380,7 +380,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	    this.tabs.items.each(function(item)
 		    {		
 		    	item.doLayout();
-		    });   
+		    });  
+	    this.tabs.setActiveTab(0);
 	}
 	
 	, deleteSelectedItem: function(itemId, index) {
