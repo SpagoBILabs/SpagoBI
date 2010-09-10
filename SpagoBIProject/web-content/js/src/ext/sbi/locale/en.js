@@ -23,6 +23,7 @@ Sbi.locale.ln['sbi.generic.type'] = 'Type';
 Sbi.locale.ln['sbi.generic.label'] = 'Label';
 Sbi.locale.ln['sbi.generic.engine'] = 'Engine';
 Sbi.locale.ln['sbi.generic.state'] = 'State';
+Sbi.locale.ln['sbi.generic.value'] = 'Value';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';

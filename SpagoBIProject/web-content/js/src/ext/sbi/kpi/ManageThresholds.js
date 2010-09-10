@@ -430,6 +430,8 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		    {		
 		    	item.doLayout();
 		    });   
+	    
+	    this.tabs.setActiveTab(0);
 	}
 	
     //OVERRIDING save method

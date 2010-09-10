@@ -154,6 +154,7 @@ Ext.extend(Sbi.kpi.ManageModelsViewPort, Ext.Viewport, {
 
 		                	this.manageModels.cleanAllUnsavedNodes();	        			
 		        			this.displayTree(rec);
+		        			//this.manageModels.renderAttributeGrid(rec);
 			        		if(rec != this.lastRecSelected){
 			        			this.lastRecSelected = rec;
 			        		}
@@ -168,6 +169,7 @@ Ext.extend(Sbi.kpi.ManageModelsViewPort, Ext.Viewport, {
 				);
 		}else{
 			this.displayTree(rec);
+			//this.manageModels.renderAttributeGrid(rec);
 			if(rec != this.lastRecSelected){
 				this.lastRecSelected = rec;
 			}

@@ -1358,6 +1358,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			tx = aSession.beginTransaction();
 			SbiKpi akpi = (SbiKpi) aSession.load(SbiKpi.class, kpiId);
+			String hql = "from SbiKpiDocument d where d.sbiKpi.kpiId = :id ";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger("id", kpiId);
+			List<SbiKpiDocument> docs = (List<SbiKpiDocument>)hqlQuery.list();
+			for(int i=0; i< docs.size();i++){
+				aSession.delete(docs.get(i));
+			}
+			aSession.flush();
 			aSession.delete(akpi);
 			tx.commit();
 
