@@ -174,14 +174,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     						measureName = this.columnHeader[this.columnHeader.length-1][j].name;
     					}
     					var measureMetadata = this.getMeasureMetadata(measureName);
-    					var type = measureMetadata.type;
+    					var datatype = measureMetadata.type;
     					var format = (measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+    					// get also type of the cell (data, CF = calculated fields, partialsum)
+    					var celltype = this.getCellType(this.rowHeader[this.rowHeader.length-1][i], this.columnHeader[this.columnHeader.length-1][j]);
     					// put measure value and metadata into an array
     					var a = new Array();
     					a.push(entries[i][j]);
     					a.push('['+visiblei+','+visiblej+']');
-    					a.push(type);
+    					a.push(datatype);
     					a.push(format);
+    					a.push(celltype);
 	    				toReturn.push(a);
 	    				visiblej++;
     				}   				
@@ -192,6 +195,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
     	return toReturn;
     }
+
+	// returns the type of the cell (data, CF = calculated fields, partialsum) by the cell headers
+	, getCellType: function(rowHeader, columnHeader) {
+		if (rowHeader.type == 'CF' || columnHeader.type == 'CF') {
+			return 'CF';
+		}
+		if (rowHeader.type == 'partialsum' || columnHeader.type == 'partialsum') {
+			return 'partialsum';
+		}
+		return 'data';
+	}
 
 	, getMeasureMetadata: function (measureName) {
 		for (var i = 0; i < this.measuresMetadata.length; i++) {
@@ -228,9 +242,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //i: the number of the row (visible)
     //columnForView: number of visible columns
     //color: the background color
-    ,colorRowBackground: function(i, columnForView, color){
+    ,highlightRow: function(i, columnForView, color){
 		for(var y = 0; y<columnForView; y++){
-			Ext.get('['+i+','+y+']').setStyle('background-color', color);
+			Ext.get('['+i+','+y+']').addClass('crosstab-table-cells-highlight');
 		}
      }
     
@@ -238,11 +252,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //j: the number of the column (visible)
     //rowForView: number of visible rows
     //columnForView: number of visible columns
-    //color: the background color
-     ,colorColumnBackground: function(j, rowForView, color){
+     ,highlightColumn: function(j, rowForView){
 		for(var y = 0; y<rowForView; y++){
 			if(Ext.get('['+y+','+j+']')!=null){
-				Ext.get('['+y+','+j+']').setStyle('background-color', color);
+				Ext.get('['+y+','+j+']').addClass('crosstab-table-cells-highlight');
 			}
 		}
      }
@@ -256,7 +269,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				if(el == null){
 					break;
 				}
-				el.setStyle('background-color', 'transparent');
+				el.removeClass('crosstab-table-cells-highlight');
 			}
 		}
      }
@@ -393,11 +406,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
 			if(horizontal){
 				for(i=start; i<=end; i++){
-					this.colorColumnBackground(i, rowForView, '#EFEFEF');
+					this.highlightColumn(i, rowForView);
 				}
 			}else{
 				for(i=start; i<=end; i++){
-					this.colorRowBackground(i, columnForView, '#EFEFEF');
+					this.highlightRow(i, columnForView);
 				}
 			}
 		}
@@ -970,8 +983,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    fields: [
     	             {name: 'name'},
     	             'divId',
-    	             {name: 'type'},
-    	             {name: 'format'}
+    	             {name: 'datatype'},
+    	             {name: 'format'},
+    	             {name: 'celltype'}
     	    ]
     	});
 
@@ -985,57 +999,23 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	
     	var tpl = new Ext.XTemplate(
     	    '<tpl for=".">',
-    	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader" style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-    	    '{[this.format(values.name, values.type, values.format)]}',
+    	    '<div id="{divId}" class="x-panel crosstab-table-cells-{celltype}" style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" onMouseOver="cruxBackground({divId},'+rowForView+','+columnsForView+')"  onMouseOut="clearBackground({divId},'+rowForView+','+columnsForView+')"> <div class="x-panel-bwrap"> <div style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
+    	    '{[this.format(values.name, values.datatype, values.format)]}',
     	    '</div> </div> </div>',
     	    '</tpl>',
     	    {
-    	    	format: function(value, type, format) {
-    	    		try {
-    	    			var valueObj = value;
-    	    			if (type == 'int') {
-    	    				valueObj = parseInt(value);
-    	    			} else if (type == 'float') {
-    	    				valueObj = parseFloat(value);
-    	    			} else if (type == 'date') {
-    	    				valueObj = Date.parseDate(value, format);
-    	    			} else if (type == 'timestamp') {
-    	    				valueObj = Date.parseDate(value, format);
-    	    			}
-		    			var str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
-		    			return str;
-    	    		} catch (err) {
-    	    			return value;
-    	    		}
-    	    	}
+    	    	format: this.format
     	    }
     	);
     	
     	var tplsum = new Ext.XTemplate(
         	    '<tpl for=".">',
-        	    '<div id="{divId}" class="x-panel crosstab-table-cells" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div class=x-panel-body-crosstab-table-cells-x-panel-body-noheader"  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
+        	    '<div id="{divId}" class="x-panel crosstab-table-cells-totals" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
         	    '{name:this.format}',
         	    '</div> </div> </div>',
         	    '</tpl>',
         	    {
-        	    	format: function(value) {
-        	    		try {
-        	    			var valueObj = value;
-        	    			if (type == 'int') {
-        	    				valueObj = parseInt(value);
-        	    			} else if (type == 'float') {
-        	    				valueObj = parseFloat(value);
-        	    			} else if (type == 'date') {
-        	    				valueObj = Date.parseDate(value, format);
-        	    			} else if (type == 'timestamp') {
-        	    				valueObj = Date.parseDate(value, format);
-        	    			}
-    		    			var str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
-    		    			return str;
-        	    		} catch (err) {
-        	    			return value;
-        	    		}
-        	    	}
+        	    	format: this.format
         	    }
         	);
     	
@@ -1097,6 +1077,27 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		
    		
     }
+    
+    
+    , format: function(value, type, format) {
+		try {
+			var valueObj = value;
+			if (type == 'int') {
+				valueObj = parseInt(value);
+			} else if (type == 'float') {
+				valueObj = parseFloat(value);
+			} else if (type == 'date') {
+				valueObj = Date.parseDate(value, format);
+			} else if (type == 'timestamp') {
+				valueObj = Date.parseDate(value, format);
+			}
+			var str = Sbi.locale.formatters[type].call(this, valueObj); // formats the value
+			return str;
+		} catch (err) {
+			return value;
+		}
+	}
+    
     
     , reloadHeadersAndTable: function(horizontal){
    // 	if(horizontal || horizontal==null){
@@ -1526,11 +1527,11 @@ function cruxBackground(id,rowsNumber,columnsNumber){
    	var cel;
    	for(var i=0; i<rowsNumber; i++){
    		cel = document.getElementById("["+i+","+column+"]");
-   		cel.style.backgroundColor = '#EFEFEF';
+   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
    	}
    	for(var i=0; i<columnsNumber; i++){
    		cel = document.getElementById("["+row+","+i+"]");
-   		cel.style.backgroundColor = '#EFEFEF';
+   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
    	}
 }
 
@@ -1542,10 +1543,10 @@ function clearBackground(id,rowsNumber,columnsNumber){
    	var cel;
    	for(var i=0; i<rowsNumber; i++){
    		cel = document.getElementById("["+i+","+column+"]");
-   		cel.style.backgroundColor = '#FFFFFF';
+   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
    	}
    	for(var i=0; i<columnsNumber; i++){
    		cel = document.getElementById("["+row+","+i+"]");
-   		cel.style.backgroundColor = '#FFFFFF';
+   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
    	}
 }
