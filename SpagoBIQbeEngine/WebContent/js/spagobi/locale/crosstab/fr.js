@@ -23,7 +23,7 @@ Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.tools.tt.showdetailswizard'] 
 Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.tools.tt.removeall'] = ['Tout supprimer'];
 
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.title'] = 'Détails Tableau Croisé';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measureson'] = 'Measures on';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measureson'] = 'Mesures en';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresonrows'] = 'Ligne';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresoncolumns'] = 'Colonne';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.onrows'] = 'En lignes';
@@ -38,22 +38,3 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agrégation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = 'Annuler';
-Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one';
-
-//===================================================================
-//CROSSTAB 
-//===================================================================
-
-Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Add calculated field';
-Sbi.locale.ln['sbi.crosstab.menu.hideheader'] = 'Hide this header';
-Sbi.locale.ln['sbi.crosstab.menu.hideheadertype'] = 'Hide all the headers of this type';
-Sbi.locale.ln['sbi.crosstab.menu.hidemeasure'] = 'Measures';
-Sbi.locale.ln['sbi.crosstab.menu.hiddenheader'] = 'Hidden headers';
-
-//===================================================================
-//CROSSTAB CALCULATED FIELDS WIZARD
-//===================================================================
-Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.title'] = 'Calculated Field';
-Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.validate'] = 'Validate';
-Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.clear'] = 'Clear';
-Sbi.locale.ln['sbi.crosstab.calculatefieldwizard.ok'] = 'OK';
