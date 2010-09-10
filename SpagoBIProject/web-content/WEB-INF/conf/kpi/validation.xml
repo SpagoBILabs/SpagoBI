@@ -167,7 +167,7 @@
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
-	<SERVICE name="MANAGE_MODELS_ACTION" type="ACTION">
+	<!-- SERVICE name="MANAGE_MODELS_ACTION" type="ACTION">
 		<VALIDATION blocking="false" validators="">
 			<CONDITIONS>
 				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="MODEL_NODES_SAVE"/>
@@ -220,7 +220,7 @@
 				
 			</FIELDS>
 		</VALIDATION>
-	</SERVICE>
+	</SERVICE-->
 	<!--END service for new Ext-based interface -->
 
   <DINAMIC_VALIDATIONS />

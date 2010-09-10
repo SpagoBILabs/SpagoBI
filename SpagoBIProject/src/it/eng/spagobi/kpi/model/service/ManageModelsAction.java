@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
+import it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -58,6 +59,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	private final String MODEL_NODES_SAVE = "MODEL_NODES_SAVE";
 	private final String MODEL_NODE_DELETE = "MODEL_NODE_DELETE";
 	private final String MODEL_NODES_LIST_WITH_KPI = "MODEL_NODES_LIST_WITH_KPI";
+	private final String MODEL_ATTRIBUTES = "MODEL_ATTRIBUTES";
 
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String METRIC_SCALE_DOMAIN_TYPE = "METRIC_SCALE_TYPE";
@@ -67,8 +69,6 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
-	
-
 	
 	private final String NODES_TO_SAVE = "nodes";
 
@@ -179,6 +179,33 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				logger.error("Exception occurred while retrieving model to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model to delete", e);
+			}
+			
+			
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_ATTRIBUTES)) {
+			
+			Integer modelId = getAttributeAsInteger("modelId");
+			try {
+				//dao over model attributes--> LIst 
+				logger.debug("Loaded model tree");
+				JSONArray attrJSON = new JSONArray();
+				if(modelId == null){
+					logger.debug("No attributes");
+				}else if(modelId == 1){
+					attrJSON.put(new JSONObject().put("id", "3").put("name", "attr3").put("value", "val3"));
+					attrJSON.put(new JSONObject().put("id", "4").put("name", "attr4").put("value", "val4"));					
+				}else if(modelId == 2){
+					attrJSON.put(new JSONObject().put("id", "5").put("name", "attr5").put("value", "val5"));
+					attrJSON.put(new JSONObject().put("id", "6").put("name", "attr6").put("value", "val6"));					
+				}else{
+					attrJSON.put(new JSONObject().put("id", "0").put("name", "attr0").put("value", "val0"));
+					attrJSON.put(new JSONObject().put("id", "10").put("name", "attr10").put("value", "val00"));					
+				}
+				writeBackToClient(new JSONSuccess(attrJSON));
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model attributes", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model attributes", e);
 			}
 			
 			
