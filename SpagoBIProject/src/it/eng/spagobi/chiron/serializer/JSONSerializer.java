@@ -53,6 +53,8 @@ import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -106,6 +108,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put( ModelExtended.class, new ModelExtendedJSONSerializer());
 		
 		mappings.put( GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
+		mappings.put( SbiUdp.class, new UdpJSONSerializer());
+		mappings.put( SbiUdpValue.class, new UdpValueJSONSerializer());
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {

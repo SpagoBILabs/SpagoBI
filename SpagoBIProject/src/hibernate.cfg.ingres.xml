@@ -104,6 +104,10 @@
         <mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRoles.hbm.xml" />
         <mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" /> 
         <mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" /> 
+        
+        <!-- User Defined Attributes -->
+        <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
                 
         <!-- end mapping -->
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>

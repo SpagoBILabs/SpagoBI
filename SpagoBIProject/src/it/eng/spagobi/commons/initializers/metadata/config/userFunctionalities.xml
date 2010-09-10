@@ -40,4 +40,5 @@
 <USER_FUNCTIONALITY name="KpiManagement" description="KpiManagement"/>
 <USER_FUNCTIONALITY name="ObjMetadataManagement" description="ObjMetadataManagement"/>
 <USER_FUNCTIONALITY name="ProfileManagement" description="ProfileManagement"/>
+<USER_FUNCTIONALITY name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
 </USER_FUNCTIONALITIES>
