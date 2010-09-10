@@ -78,6 +78,8 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
+import it.eng.spagobi.tools.udp.dao.IUdpDAO;
+import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 
@@ -704,6 +706,28 @@ public class DAOFactory {
 	 */
 	public static IModelAttrValDAO getSbiKpiModelAttrValDAO() throws EMFUserError{
 		return (IModelAttrValDAO)createDAOInstance("SbiKpiModelAttrValDAO");
+	}
+
+	/**
+	 * Creates a DAO instance for a object Udp.
+	 * 
+	 * @return a DAO instance for the  predefined Udp
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static IUdpDAO getUdpDAO() throws EMFUserError{
+		return (IUdpDAO)createDAOInstance("UdpDAO");
+	}
+	
+	/**
+	 * Creates a DAO instance for a object UdpValue.
+	 * 
+	 * @return a DAO instance for the  predefined UdpValue
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static IUdpValueDAO getUdpDAOValue() throws EMFUserError{
+		return (IUdpValueDAO)createDAOInstance("UdpDAOValue");
 	}
 
 }

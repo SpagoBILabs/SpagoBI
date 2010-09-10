@@ -271,6 +271,21 @@ Sbi.locale.ln['sbi.execution.metadata.longtextmetadata'] = 'Metadati Lunghi';
 Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Attendere prego...';
 Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Salvataggio metadati in corso';
 
+//UDP - User Defined Properties
+Sbi.locale.ln['sbi.udp.udpManagement'] = 'Gestione Proprietà';
+Sbi.locale.ln['sbi.udp.udpList'] = 'Lista Proprietà';
+Sbi.locale.ln['sbi.udp.add'] = 'Aggiungi';
+Sbi.locale.ln['sbi.udp.detail'] = 'Dettaglio';
+Sbi.locale.ln['sbi.udp.save'] = 'Salva';
+Sbi.locale.ln['sbi.udp.name'] = 'Nome';
+Sbi.locale.ln['sbi.udp.label'] = 'Codice';
+Sbi.locale.ln['sbi.udp.description'] = 'Descrizione';
+Sbi.locale.ln['sbi.udp.multivalue'] = 'Multivalore';
+Sbi.locale.ln['sbi.udp.family'] = 'Famiglia';
+Sbi.locale.ln['sbi.udp.type'] = 'Tipo';
+Sbi.locale.ln['sbi.udp.validString'] = 'Richiesta stringa alfanumerica';
+Sbi.locale.ln['sbi.udp.error'] = 'Errore';
+
 // Profile Management
 Sbi.locale.ln['sbi.attributes.add'] = 'Aggiungi';
 Sbi.locale.ln['sbi.attributes.delete'] = 'Elimina';

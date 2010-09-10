@@ -179,6 +179,13 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/distributionlist/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/distributionlist/business_map.xml" />
 	
+	<!-- tools.udp -->	
+	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/presentation.xml" />
+    <CONFIGURATOR path="/WEB-INF/conf/tools/udp/publishers.xml" /> 
+	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/validation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/business_map.xml" />
+
 	<!-- workflow -->	
 	<CONFIGURATOR path="/WEB-INF/conf/workflow/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/workflow/pages.xml" />

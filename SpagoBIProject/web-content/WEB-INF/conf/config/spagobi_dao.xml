@@ -59,6 +59,8 @@
 		<DAO name="SbiUserDAO" implementation="it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl"/>
 		<DAO name="SbiAttributeDAO" implementation="it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl"/>
 		<DAO name="SbiConfigDAO" implementation="it.eng.spagobi.commons.dao.ConfigDAO"/>
+		<DAO name="UdpDAO" implementation="it.eng.spagobi.tools.udp.dao.UdpDAOHibImpl"/>
+		<DAO name="UdpDAOValue" implementation="it.eng.spagobi.tools.udp.dao.UdpValueDAOHibImpl"/>
 	 </DAO-CONF>     
      
      <!-- ********************* END DAO CONFIGURATION ************************ -->

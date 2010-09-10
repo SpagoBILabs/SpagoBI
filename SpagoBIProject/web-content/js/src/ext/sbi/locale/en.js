@@ -274,6 +274,21 @@ Sbi.locale.ln['sbi.execution.metadata.longtextmetadata'] = 'Long Text Metadata';
 Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Please wait....';
 Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Saving metadata';
 
+//UDP - User Defined Properties
+Sbi.locale.ln['sbi.udp.udpManagement'] = 'User Defined Properties';
+Sbi.locale.ln['sbi.udp.udpList'] = 'Proprerty List';
+Sbi.locale.ln['sbi.udp.add'] = 'Add';
+Sbi.locale.ln['sbi.udp.detail'] = 'Detail';
+Sbi.locale.ln['sbi.udp.save'] = 'Save';
+Sbi.locale.ln['sbi.udp.name'] = 'Name';
+Sbi.locale.ln['sbi.udp.label'] = 'Label';
+Sbi.locale.ln['sbi.udp.description'] = 'Description';
+Sbi.locale.ln['sbi.udp.multivalue'] = 'Multivalue';
+Sbi.locale.ln['sbi.udp.family'] = 'Family';
+Sbi.locale.ln['sbi.udp.type'] = 'Type';
+Sbi.locale.ln['sbi.udp.validString'] = 'Alfanumeric string required ';
+Sbi.locale.ln['sbi.udp.error'] = 'Error';
+
 // Profile Management
 Sbi.locale.ln['sbi.attributes.add'] = 'Add';
 Sbi.locale.ln['sbi.attributes.delete'] = 'Delete';

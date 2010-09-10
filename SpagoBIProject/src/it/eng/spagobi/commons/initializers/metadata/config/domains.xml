@@ -104,5 +104,9 @@
 <DOMAIN valueCd="LONG_TEXT" valueNm="LONG_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type LONG TEXT for metadata"/>
 <DOMAIN valueCd="SHORT_TEXT" valueNm="SHORT_TEXT" domainCd="OBJMETA_DATA_TYPE" domainNm="Predefined data type for metadata" valueDs="Predefined data type SHORT TEXT for metadata"/>
 <DOMAIN valueCd="ACCESSIBLE_HTML" valueNm="Accessible Html" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Accessible HTML"/>
-
+<DOMAIN valueCd="Boolean" valueNm="Udp Boolean Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
+<DOMAIN valueCd="Text" valueNm="Udp Text Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
+<DOMAIN valueCd="Integer" valueNm="Udp Integer Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
+<DOMAIN valueCd="Model" valueNm="Model Family" domainCd="UDP_FAMILY" domainNm="Udp family" valueDs="Predefined udp family"/>
+<DOMAIN valueCd="Kpi" valueNm="Kpi_Family" domainCd="UDP_FAMILY" domainNm="Udp famil" valueDs="Predefined udp family"/>
 </DOMAINS>
