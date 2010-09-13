@@ -365,7 +365,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             triggerAction: 'all',
             selectOnFocus: true,
             editable: false,
-            allowBlank: false,
+            allowBlank: true,
             validationEvent:true,
             xtype: 'combo'
         }; 
@@ -383,7 +383,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	            triggerAction: 'all',
  	            selectOnFocus: true,
  	            editable: false,
- 	            allowBlank: false,
+ 	            allowBlank: true,
  	            validationEvent:true,
  	            xtype: 'combo'
  	        };
@@ -401,7 +401,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	            triggerAction: 'all',
  	            selectOnFocus: true,
  	            editable: false,
- 	            allowBlank: false,
+ 	            allowBlank: true,
  	            validationEvent:true,
  	            xtype: 'combo'
  	        };

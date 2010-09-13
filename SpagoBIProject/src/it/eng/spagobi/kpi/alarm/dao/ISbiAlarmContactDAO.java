@@ -10,6 +10,7 @@ package it.eng.spagobi.kpi.alarm.dao;
  * @version 1.0
  */
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.kpi.alarm.bo.AlarmContact;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 
@@ -48,6 +49,10 @@ public interface ISbiAlarmContactDAO {
     public List<SbiAlarmContact> findByCsp(String csp);
     
     public AlarmContact loadById(Integer id);
+    
+    public Integer countContacts()throws EMFUserError;
 
+    public List<SbiAlarmContact> loadPagedContactsList(Integer offset, Integer fetchSize)throws EMFUserError;
+	
 }
 

@@ -39,266 +39,167 @@
  * 
  * [list]
  * 
- * Authors - Monica Franceschini (monica.franceschini@eng.it)
+ * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it)
  */
 Ext.ns("Sbi.alarm");
 
 Sbi.alarm.ManageContacts = function(config) { 
+
 	var paramsList = {MESSAGE_DET: "CONTACTS_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "CONTACT_DETAIL"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "CONTACT_DELETE"};
 	
-	this.services = new Array();
-	this.services['manageContactsList'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.configurationObject = {};
+	
+	this.configurationObject.manageListService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_CONTACTS_ACTION'
 		, baseParams: paramsList
 	});
-	this.services['saveContactsService'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.configurationObject.saveItemService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_CONTACTS_ACTION'
 		, baseParams: paramsSave
 	});
-	this.services['deleteContactsService'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.configurationObject.deleteItemService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_CONTACTS_ACTION'
 		, baseParams: paramsDel
 	});
 	
-	this.contactsStore = new Ext.data.JsonStore({
-    	autoLoad: false    	  
-    	,id : 'id'		
-    	,fields: ['id'
-    	          , 'name'
-    	          , 'email'
-    	          , 'resources'
-    	          , 'mobile'
-    	          ]
-    	, root: 'samples'
-		, url: this.services['manageContactsList']
-		
-	});
+	this.initConfigObject();
+	config.configurationObject = this.configurationObject;
+	
+	var c = Ext.apply({}, config || {}, {});
 
-	this.contactsStore.load();
-	this.initManageContacts();
-	   
-   	Ext.getCmp('contactsgrid').store.on('load', function(){
-	 var grid = Ext.getCmp('contactsgrid');
-	 grid.getSelectionModel().selectRow(0);
-	 }, this, {
-	 single: true
-    });
-   	
-   	Ext.getCmp('contactsgrid').on('delete', this.deleteSelectedContact, this);
+	Sbi.kpi.ManageResources.superclass.constructor.call(this, c);	 
+	
+	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
+		this.getForm().loadRecord(rec);  
+     }, this);
+
 }
-Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
-	gridForm:null
-	, contactsStore:null
-	, colModel:null
-	, typeData: null
-	, buttons: null
-	, tabs: null
-	
-	,initManageContacts: function(){
+Ext.extend(Sbi.alarm.ManageContacts, Sbi.widgets.ListDetailForm, {
 
+	configurationObject: null
+	, gridForm:null
+	, mainElementsStore:null
 
-    this.deleteColumn = new Ext.grid.ButtonColumn({
-	       header:  ' ',
-	       iconCls: 'icon-remove',
-	       clickHandler: function(e, t) {
-
-	          var index = Ext.getCmp("contactsgrid").getView().findRowIndex(t);
-	          
-	          var selectedRecord = Ext.getCmp("contactsgrid").store.getAt(index);
-	          var contactId = selectedRecord.get('id');
-
-	          Ext.getCmp("contactsgrid").fireEvent('delete', contactId, index);
-	       }
-	       ,width: 25
-	       ,renderer : function(v, p, record){
-	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
-	       }
-	    });
-	    this.colModel = new Ext.grid.ColumnModel([
-	      {id:'name',header: LN('sbi.alarmcontact.name'), width: 50, sortable: true, locked:false, dataIndex: 'name'}
-	      , this.deleteColumn
-	   ]);
-
-	    this.typesStore = new Ext.data.SimpleStore({
-	        fields: ['resources'],
-	        data: config,
-	        autoLoad: false
-	    });
-	    
-	    this.tbSave = new Ext.Toolbar({
-	    	buttonAlign : 'right', 	    	
-	    	items:[new Ext.Toolbar.Button({
-	            text: LN('sbi.alarmcontact.save'),
-	            iconCls: 'icon-save',
-	            handler: this.save,
-	            width: 30,
-	            id: 'save-btn',
-	            scope: this
-	        })
-	    	]
-	    });
-
-	   this.tabs = new Ext.TabPanel({
-        enableTabScroll : true
-        , id: 'tab-panel'
-        , activeTab : 0
-        , autoScroll : true
-        , width: 450
-        , height: 500
-        , itemId: 'tabs' 
-        , tbar: this.tbSave
-		   , items: [{
-		        title: LN('sbi.alarmcontact.detail')
-		        , itemId: 'detail'
-		        , width: 430
-		        , items: {
-			   		id: 'contact-detail',   	
-		 		   	itemId: 'contact-detail',   	              
-		 		   	columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
-		             defaultType: 'textfield',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-		             border: false,
-		             style: {
-		                 "margin-left": "10px", 
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [{
-		                 name: 'id',
-		                 hidden: true
-		             },{
-		            	 maxLength:100,
-		            	 minLength:1,
-		            	 //regex : new RegExp("^([a-zA-Z1-9_\x2F\s])+$", "g"),
-		            	 regexText : LN('sbi.alarmcontact.validString'),
-		                 fieldLabel: LN('sbi.alarmcontact.name'),
-		                 allowBlank: false,
-		                 validationEvent:true,
-		                 name: 'name'
-		             },{
-		            	 maxLength:100,
-		            	 minLength:1,
-		            	 //regex : new RegExp("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", "g"),
-		            	 regexText : LN('sbi.alarmcontact.validEmailString'),
-		                 fieldLabel: LN('sbi.alarmcontact.email'),
-		                 validationEvent:true,
-		                 name: 'email'
-		             },{
-		            	 maxLength:50,
-		            	 minLength:0,
-		            	 //regex : new RegExp("^([0-9/])+$", "g"),
-		            	 regexText : LN('sbi.alarmcontact.validMobileString'),
-		                 fieldLabel:LN('sbi.alarmcontact.mobile'),
-		                 validationEvent:true,
-		                 name: 'mobile'
-		             }, {
-		            	  name: 'resources',
-		                  store: this.typesStore,
-		                  fieldLabel: LN('sbi.alarmcontact.resources'),
-		                  displayField: 'resources',   // what the user sees in the popup
-		                  valueField: 'resources',        // what is passed to the 'change' event
-		                  typeAhead: true,
-		                  forceSelection: true,
-		                  mode: 'local',
-		                  triggerAction: 'all',
-		                  selectOnFocus: true,
-		                  emptyText: '-',
-		                  editable: false,
-		                  allowBlank: true,
-		                  validationEvent:true,
-		                  xtype: 'combo'
-		             }]
-		    	
-		    	}
-		    }]
-		});
-
-	    this.tb = new Ext.Toolbar({
-	    	buttonAlign : 'right',
-	    	items:[new Ext.Toolbar.Button({
-	            text: LN('sbi.alarmcontact.add'),
-	            iconCls: 'icon-add',
-	            handler: this.addNewContact,
-	            width: 30,
-	            scope: this
-	        })
-	    	]
-	    });
-
-	   /*
-	   *    Here is where we create the Form
-	   */
-	   this.gridForm = new Ext.FormPanel({
-	          id: 'contact-form',
-	          frame: true,
-	          labelAlign: 'left',
-	          title: LN('sbi.alarmcontact.contactsManagement'),
-	          bodyStyle:'padding:5px',
-	          width: 850,
-	          height: 600,
-	          layout: 'column',
-	          trackResetOnLoad: true,
-	          renderTo: Ext.getBody(),
-	          items: [{
-	              columnWidth: 0.90,
-	              layout: 'fit',
-	              items: {
-	        	  	  id: 'contactsgrid',
-	                  xtype: 'grid',
-	                  ds: this.contactsStore,   	                  
-	                  cm: this.colModel,
-	                  plugins: this.deleteColumn,
-	                  sm: new Ext.grid.RowSelectionModel({
-	                      singleSelect: true,
-	                      scope:this,   	                   
-	                      listeners: {
-	                          rowselect: function(sm, row, rec) { 
-	                              Ext.getCmp('contact-form').getForm().loadRecord(rec);      	
-	                          }
-	                      }
-	                  }),
-	                  autoExpandColumn: 'name',
-	                  height: 500,
-	                  width: 400,
-	                  layout: 'fit',
-	                  title: LN('sbi.alarmcontact.contactsList'),
-	                  tbar: this.tb,
-
-	                  border: true,
-	                  listeners: {
-	                      viewready: function(g) {
-	                          g.getSelectionModel().selectRow(0);
-	                      } 
-	                  }
-	              }
-	          }, this.tabs
-	          ]
-	      });
-
-	}
-	, addNewContact : function(){
-	
-		var emptyRecToAdd =new Ext.data.Record({
+	,initConfigObject:function(){
+	    this.configurationObject.fields = ['id'
+	                         	          , 'name'
+	                        	          , 'email'
+	                        	          , 'resources'
+	                        	          , 'mobile'
+	                        	          ];
+		
+		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
 											id: 0,
 											name:'', 
 											mobile:'', 
 											email:'',
 											resources:''
 											});
-	
-		Ext.getCmp('contact-form').getForm().loadRecord(emptyRecToAdd);
-  
-		Ext.getCmp('contact-form').doLayout();
-	
+		
+		this.configurationObject.gridColItems = [
+		                                         {id:'name',header: LN('sbi.alarmcontact.name'), width: 150, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {id:'email',header:  LN('sbi.alarmcontact.email'), width: 200, sortable: true, locked:false, dataIndex: 'email'}
+		                                        ];
+		
+		this.configurationObject.panelTitle = LN('sbi.alarmcontact.contactsManagement');
+		this.configurationObject.listTitle = LN('sbi.alarmcontact.contactsList');
+		
+		this.initTabItems();
+    }
+
+	,initTabItems: function(){
+		//Store of the combobox
+	   this.typesStore = new Ext.data.SimpleStore({
+	        fields: ['resources'],
+	        data: config,
+	        autoLoad: false
+	    });
+		
+ 	    
+ 	   var detailFieldId = {
+               name: 'id',
+               hidden: true
+           };
+ 	   
+ 	   var detailFieldName = {
+          	 maxLength:100,
+          	 minLength:1,
+          	 //regex : new RegExp("^([a-zA-Z1-9_\x2F\s])+$", "g"),
+          	 regexText : LN('sbi.alarmcontact.validString'),
+             fieldLabel: LN('sbi.alarmcontact.name'),
+             allowBlank: false,
+             validationEvent:true,
+             name: 'name'
+           };
+  			  
+  	   var detailFieldEmail = {
+          	 maxLength:100,
+        	 minLength:1,
+        	 //regex : new RegExp("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", "g"),
+        	 regexText : LN('sbi.alarmcontact.validEmailString'),
+             fieldLabel: LN('sbi.alarmcontact.email'),
+             validationEvent:true,
+             name: 'email'
+         };	  
+  	   
+  	   var detailFieldCell = {
+          	 maxLength:50,
+        	 minLength:0,
+        	 //regex : new RegExp("^([0-9/])+$", "g"),
+        	 regexText : LN('sbi.alarmcontact.validMobileString'),
+             fieldLabel:LN('sbi.alarmcontact.mobile'),
+             validationEvent:true,
+             name: 'mobile'
+         };	
+  	   
+  	   var detailFieldResources = {
+         	  name: 'resources',
+              store: this.typesStore,
+              fieldLabel: LN('sbi.alarmcontact.resources'),
+              displayField: 'resources',   // what the user sees in the popup
+              valueField: 'resources',        // what is passed to the 'change' event
+              typeAhead: true,
+              forceSelection: true,
+              mode: 'local',
+              triggerAction: 'all',
+              selectOnFocus: true,
+              emptyText: '-',
+              editable: false,
+              allowBlank: true,
+              validationEvent:true,
+              xtype: 'combo'
+         };	
+ 	    
+ 	   this.configurationObject.tabItems = [{
+	        title: LN('sbi.alarmcontact.detail')
+	        , itemId: 'detail'
+	        , width: 430
+	        , items: {
+		   		id: 'items-detail',   	
+	 		   	itemId: 'items-detail',   	              
+	 		   	columnWidth: 0.4,
+	             xtype: 'fieldset',
+	             labelWidth: 90,
+	             defaults: {width: 200, border:false},    
+	             defaultType: 'textfield',
+	             autoHeight: true,
+	             autoScroll  : true,
+	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	             border: false,
+	             style: {
+	                 "margin-left": "10px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [detailFieldId, detailFieldName, detailFieldEmail, detailFieldCell, detailFieldResources]	    	
+	    	}
+	    }];
 	}
+	
+    //OVERRIDING save method
 	,save : function() {
-		var values = this.gridForm.getForm().getValues();
+		var values = this.getForm().getFieldValues();
 		var idRec = values['id'];
 		var newRec;
 	
@@ -313,9 +214,9 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 			
 		}else{
 			var newRec;
-			var length = this.contactsStore.getCount();
+			var length = this.mainElementsStore.getCount();
 			for(var i=0;i<length;i++){
-	   	        var tempRecord = this.contactsStore.getAt(i);
+	   	        var tempRecord = this.mainElementsStore.getAt(i);
 	   	        if(tempRecord.data.id==idRec){
 	   	        	newRec = tempRecord;
 				}			   
@@ -337,7 +238,7 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
      }
      
      Ext.Ajax.request({
-         url: this.services['saveContactsService'],
+         url: this.services['saveItemService'],
          params: params,
          method: 'GET',
          success: function(response, options) {
@@ -354,23 +255,23 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
 			                        buttons: Ext.MessageBox.OK
 			                   });
 			      		}else{
-			      			var contactID = content.id;
-			      			if(contactID != null && contactID !==''){
-			      				newRec.set('id', contactID);
-			      				this.contactsStore.add(newRec);  
+			      			var itemId = content.id;			      			
+			      			
+			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
+			      				newRec.set('id', itemId);
+			      				this.mainElementsStore.add(newRec);  
 			      			}
-			      			this.contactsStore.commitChanges();
-			      		    if(contactID != null && contactID !==''){
-								var grid = Ext.getCmp('contactsgrid');
-					            grid.getSelectionModel().selectLastRow(true);
+			      			this.mainElementsStore.commitChanges();
+			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
+								this.rowselModel.selectLastRow(true);
 				            }
 			      			
 			      			Ext.MessageBox.show({
-			                        title: LN('sbi.alarmcontact.result'),
-			                        msg: 'Operation succeded',
+			                        title: LN('sbi.generic.result'),
+			                        msg: LN('sbi.generic.resultMsg'),
 			                        width: 200,
 			                        buttons: Ext.MessageBox.OK
-			                });    
+			                });  
 			      		}      				 
 
 		      		} else {
@@ -415,55 +316,5 @@ Ext.extend(Sbi.alarm.ManageContacts, Ext.FormPanel, {
      });
 	}
 
-	, deleteSelectedContact: function(contactId, index) {
-		Ext.MessageBox.confirm(
-         'Please confirm',
-         'Confirm contact delete?',            
-         function(btn, text) {
-             if (btn=='yes') {
-             	if (contactId != null) {	
-
-						Ext.Ajax.request({
-				            url: this.services['deleteContactsService'],
-				            params: {'id': contactId},
-				            method: 'GET',
-				            success: function(response, options) {
-								if (response !== undefined) {
-
-									var sm = Ext.getCmp('contactsgrid').getSelectionModel();
-									var deleteRow = sm.getSelected();
-									this.contactsStore.remove(deleteRow);
-									this.contactsStore.commitChanges();
-									if(this.contactsStore.getCount()>0){
-										var grid = Ext.getCmp('contactsgrid');
-										grid.getSelectionModel().selectRow(0);
-										grid.fireEvent('rowclick', grid, 0);
-									}else{
-										this.addNewContact();
-									}
-								} else {
-									Sbi.exception.ExceptionHandler.showErrorMessage('Error while deleting Contact', 'Service Error');
-								}
-				            },
-				            failure: function() {
-				                Ext.MessageBox.show({
-				                    title: LN('sbi.alarmcontact.error'),
-				                    msg: 'Error while deleting Contact',
-				                    width: 150,
-				                    buttons: Ext.MessageBox.OK
-				               });
-				            }
-				            ,scope: this
-			
-						});
-					} else {
-						Sbi.exception.ExceptionHandler.showWarningMessage('Operation failed', 'Warning');
-					}
-             }
-         },
-         this
-		);
-	}
 });
 
-Ext.reg('managecontacts', Sbi.alarm.ManageContacts);
