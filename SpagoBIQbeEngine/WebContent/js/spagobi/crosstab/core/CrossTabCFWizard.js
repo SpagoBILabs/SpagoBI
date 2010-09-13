@@ -45,8 +45,14 @@
   */
 Ext.ns("Sbi.crosstab.core");
 
-Sbi.crosstab.core.CrossTabCFWizard = function(level, horizontal) {
+Sbi.crosstab.core.CrossTabCFWizard = function(config) {
 
+	this.baseNode = config.baseNode;
+	this.activeLevel = this.baseNode.level;
+	this.horizontal = this.baseNode.horizontal;
+	
+	this.modality = config.modality; // new (for a new calculated field definition) or edit (for an existing calculated field modification)
+	
 	this.initMainPanel();
 
 	var c = {
@@ -84,21 +90,13 @@ Sbi.crosstab.core.CrossTabCFWizard = function(level, horizontal) {
 		    }]
 	};
 	
-	
-	// constructor
-	if(level!=null){
-		this.activeLevel = level;
-	}
-	if(horizontal!=null){
-		this.horizontal = horizontal;
-	}
-	
 	Sbi.crosstab.core.CrossTabCFWizard.superclass.constructor.call(this, c);
 	
 };
 	
 Ext.extend(Sbi.crosstab.core.CrossTabCFWizard, Ext.Window, {
-	textField: null
+	baseNode: null
+	,textField: null
 	,activeLevel: null
 	,horizontal: null
 	,cfNameField: null
@@ -207,6 +205,11 @@ Ext.extend(Sbi.crosstab.core.CrossTabCFWizard, Ext.Window, {
 			allowBlank: false, 
 			fieldLabel: 'Nome'
 		});
+		
+		// in case of modifying an existing CF, putting the initial value info CF name field
+		if (this.modality == 'edit' && this.baseNode.type == 'CF') {
+			this.cfNameField.setValue(this.baseNode.name);
+		}
 		
 		this.mainPanel = new Ext.Panel({
 			layout: 'border',
