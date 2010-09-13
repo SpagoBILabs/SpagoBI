@@ -113,8 +113,16 @@ public class CrosstabQueryCreator {
 			CrosstabDefinition.Column aColumn = columsIt.next();
 			String alias = getSQLAlias(aColumn, baseQuery, baseQuerySelectedFields);
 			toReturn.append(alias);
+			if (columsIt.hasNext()) {
+				toReturn.append(", ");
+			}
+		}
+		
+		// append an extra comma between grouping on columns and grouping on rows, if necessary
+		if (colums.size() > 0 && rows.size() > 0) {
 			toReturn.append(", ");
 		}
+		
 		// appends rows
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
