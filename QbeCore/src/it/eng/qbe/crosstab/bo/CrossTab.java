@@ -210,7 +210,7 @@ public class CrossTab {
 		int rowsN;
 		
 		if (measuresOnColumns) {
-			rowsN = rowsSpecification.size();
+			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1);
 		} else {
 			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1)*measuresLength;
 		}
@@ -229,6 +229,9 @@ public class CrossTab {
 			for(int i=0; i<data.size(); i=i+measuresLength){
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
+					if ( x < 0 ) {
+						x = 0;
+					}
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
 					if ( y < 0 ) {
 						y = 0;
@@ -246,6 +249,9 @@ public class CrossTab {
 						x = 0;
 					}
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
+					if ( y < 0 ) {
+						y = 0;
+					}
 					if(y<columnsN && y>=0){
 						dataMatrix[x*measuresLength+j][y]=data.get(i+j);
 					}
