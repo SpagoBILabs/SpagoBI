@@ -52,9 +52,12 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	return {
 
 	//execute the calculations 
-    calculateCF: function(level, horizontal, op, CFName, crossTab){
+    calculateCF: function(level, horizontal, op, CFName, crossTab, lazy, type){
 
     	var headers;
+    	if (type==null){
+    		type = 'CF';
+    	}
     	if(horizontal){
     		headers = crossTab.columnHeader;
     	}else{
@@ -127,22 +130,43 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
         	
         	//execute the operation
 	    	var entries = this.executeOp(operation,horizontal,linesValueForHeader,expIds,crossTab);
-	    	var panel1 = headers[level][operationExpsIds[j][0]];
+	    	
 	    	
 	    	if(CFName==null){
 	    		CFName = "CF";
 	    	}
 	    	//build the structure of the subtree
-	    	var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
-	    	// saving the CF expression into the node
-	    	cfNode.cfExpression = op;
 	    	
-	    	cfNode.father = panel1.father;
-	    	for(var y=0; y<cfNode.childs.length; y++){
-	    		cfNode.childs[y].father = cfNode;
+	    	var cfNode = new Sbi.crosstab.core.HeaderEntry(CFName, 1, horizontal, level,  headers[level][operationExpsIds[j][0]].width,  headers[level][operationExpsIds[j][0]].height);
+	    	cfNode.type=type;
+	    	//alert(operationExpsIds[j]);
+	    	var childs = new Array();
+	    	for(var o=0; o<operationExpsIds[j].length; o++){
+	    		childs = this.mergeNodesChilds(childs, (headers[level][operationExpsIds[j][o]]).childs);
 	    	}
+	    	
+	    	var clonedChild;
+
+	    	var fatherDimension = 0;
+	    	for(var o=0; o<childs.length; o++){
+	    		clonedChild = this.buildHeadersStructure(null, childs[o], crossTab, type );
+	    		clonedChild.father = cfNode;
+	    		fatherDimension = fatherDimension + clonedChild.thisDimension;
+	    		cfNode.childs.push(clonedChild);
+	    		crossTab.setHeaderListener(clonedChild); 
+	    	}
+	    	if(fatherDimension == 0){
+	    		fatherDimension=1;
+	    	}
+	    	cfNode.thisDimension = fatherDimension;
+	    	
+	    	//var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
+
+	    	cfNode.father = (headers[level][operationExpsIds[j][0]]).father;
+	    	crossTab.setHeaderListener(cfNode); 
 
 	    	attributes.push([cfNode, entries]);   
+    	
     	}
     	
     	//add the entries in the table
@@ -174,14 +198,33 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     			if(headers[x][y].horizontal){
     				headers[x][y].updateStaticDimension(headers[x][y].height);
     			}else{
-    				headers[x][y].update();
+    				headers[x][y].updateStaticDimension(headers[x][y].width);
     			}
     		}
     	}
     	
-    	crossTab.reloadHeadersAndTable();
+    	if(!lazy){
+    		crossTab.reloadHeadersAndTable();
+    	}
     	
     }
+	
+	//returns a list of node that is the merging of node1childs, node2childs with out repetition.
+	,mergeNodesChilds : function (node1childs, node2childs){
+		var childs = node1childs;
+		var j;
+		for(var i=0; i<node2childs.length; i++){
+			for(j=0; j<childs.length; j++){
+				if(node2childs[i].name==childs[j].name){
+					break;
+				}
+			}
+			if(j==childs.length){
+				childs.push(node2childs[i]);
+			}
+		}
+		return childs;
+	}
     
     //Execute the operation: extracts the columns/rows 
     //op: the skeleton of the operation
@@ -199,16 +242,17 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	}else{
     		lineLength = crossTab.entries.getEntries()[0].length;
     	}
-
+    	
   	   	for(var j=0; j<linesValueForHeader.length; j++){
   	   		var CFFresh = new Array();
   	   		if(linesValueForHeader[j].length>0){
   	   			var y;
+  	   			var novalues=0;
   	   			exps = new Array();
   	   			//get the lines and the columns
   	   			for(y=0; y<expIds.length; y++){
   	   				if(linesValueForHeader[j][expIds[y]]==null || linesValueForHeader[j][expIds[y]]==undefined ){
-  				    	break;
+  	   					novalues++;
   	   				}else{
   	   					if(horizontal){
   	   						exps.push(crossTab.entries.getColumn(linesValueForHeader[j][expIds[y]]));
@@ -217,11 +261,13 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
   	   					}
   	   				}
   	   			}
-  	   			if(y<expIds.length){
+  	   			
+  	   			if(novalues<expIds.length && novalues>0){
   	   				for(var i=0; i<lineLength; i++){
 			    		CFFresh.push("NA");
 			    	}
-  	   			}else{
+  	   				CF.push(CFFresh);
+  	   			}else if(novalues==0){
 			    	for(var m=0; m<exps[0].length; m++){//per ogni riga/colonna
 			    		listOfExp  = new Array();
 			    		for(var i=0; i<exps.length; i++){//estraggo gli indici delle colonne/righe
@@ -229,10 +275,12 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 					    }
 			    		CFFresh.push(""+this.executeSingleOp(listOfExp,op));
 				    }
+			    	CF.push(CFFresh);
   	   			}
-  	   			CF.push(CFFresh);
+  	   			
   	   		}
     	}
+ // 	   	alert("CF "+CF.length);
     	return CF;
     }
     
@@ -400,15 +448,14 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     }
     
     //build the structure of the subtree to add
-    ,buildHeadersStructure: function(name, node, crossTab){
+    ,buildHeadersStructure: function(name, node, crossTab, type){
     	//alert(node.name);
     	if(name!=null){
     		var clonedNode = new Sbi.crosstab.core.HeaderEntry(name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
     	}else{
     		var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
     	}
-    	clonedNode.type='CF';
-    	crossTab.setHeaderListener(clonedNode,node.horizontal); 
+    	clonedNode.type=type;
     	var childs =node.childs;
     	var newDimension=0;
     	//if the node is a leaf
@@ -417,9 +464,10 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	}
     	if(node.childs[0].childs.length>0){
     		for(var i=0; i<childs.length; i++){
-    			clonedNode.childs.push(this.buildHeadersStructure(childs[i].name, childs[i], crossTab));
+    			clonedNode.childs.push(this.buildHeadersStructure(childs[i].name, childs[i], crossTab, type));
     			clonedNode.childs[i].father = clonedNode;
     			newDimension = newDimension+clonedNode.childs[i].thisDimension;
+    			crossTab.setHeaderListener(clonedNode.childs[i]); 
     		}
     		clonedNode.thisDimension = newDimension;
     	}else{
@@ -428,13 +476,14 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     		clonedNode.childs = new Array();
     		for(var t=0; t<this.leafs.length; t++){
             	var clonedNodeF = new Sbi.crosstab.core.HeaderEntry(this.leafs[t], 1, clonedNode.horizontal, clonedNode.level+1,node.childs[0].width, node.childs[0].height);
-            	clonedNodeF.type='CF';
-            	crossTab.setHeaderListener(clonedNodeF,clonedNode.horizontal); 
+            	clonedNodeF.type=type;
             	clonedNodeF.father = clonedNode;
             	clonedNode.childs.push(clonedNodeF);
+            	crossTab.setHeaderListener(clonedNodeF); 
     		}
     		clonedNode.thisDimension = this.leafs.length;
     	}
+    	
     	return clonedNode;
     }
     

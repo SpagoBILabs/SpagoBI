@@ -159,13 +159,11 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 				this.body.update(this.getBackground('105%', paddingTop+'px'));
 				this.setSize(dimension, this.thisDimension*this.rowHeight);
 			}else{
-				
-				this.on('afterlayout',	this.updateAfterLayout, this);
-//				this.on('render',	function(f){	
-//					var paddingTop = (this.thisDimension*this.rowHeight+this.fontSize)/2;
-//					this.body.update(this.getBackground('105%', paddingTop+'px'));
-//					this.setSize(dimension, this.thisDimension*this.rowHeight);
-//				}, this);
+				this.on('render',	function(f){	
+					var paddingTop = (this.thisDimension*this.rowHeight+this.fontSize)/2+4;
+					this.body.update(this.getBackground('105%', paddingTop+'px'));
+					this.setSize(dimension, this.thisDimension*this.rowHeight);
+				}, this);
 			}
 		}
 	}
@@ -174,6 +172,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 		var paddingTop = (this.thisDimension*this.rowHeight/2+this.fontSize);
 		this.body.update(this.getBackground('105%', paddingTop+'px'));
 		this.setSize(this.width, this.thisDimension*this.rowHeight);
+		this.un('afterlayout',	this.updateAfterLayout, this);
 	}
 
 	,getBackground : function(height, padding){
