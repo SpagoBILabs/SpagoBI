@@ -188,7 +188,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     
     , createMenuItems: function (node) {
     	var toReturn = ['-'];
-    	if (node.type == 'CF') {
+    	if (node.type == 'CF' && node.cfExpression !== undefined) {
     		toReturn.push({
 		       	text: LN('sbi.crosstab.menu.removecalculatedfield'),
 		       	iconCls: 'remove',
