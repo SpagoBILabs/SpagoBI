@@ -39,7 +39,6 @@ import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
