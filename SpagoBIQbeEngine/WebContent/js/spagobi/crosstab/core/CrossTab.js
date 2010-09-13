@@ -77,12 +77,12 @@
 
 Ext.ns("Sbi.crosstab.core");
 
-//Sbi.crosstab.core.CrossTab = function(rowHeadersDefinition, columnHeadersDefinition, entries, withRowsSum, withColumnsSum, calculatedFields, withRowsPartialSum, withColumnsPartialSum, misuresOnRow) {
 Sbi.crosstab.core.CrossTab = function(config) {
     this.calculatedFields = new Array();
     
 	Ext.apply(this, config);
 	
+	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
 	this.fontSize = 12;
 	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
     this.rowHeader = new Array();
@@ -151,7 +151,20 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,calculatedFields: null
 	,misuresOnRow: null
 	,measuresMetadata: null // metadata on measures: it is an Array, each entry is a json object with name, type and (in case of date/timestamp) format of the measure
-    
+	
+	, manageDegenerateCrosstab: function(rowHeadersDefinition, columnHeadersDefinition) {
+		if (rowHeadersDefinition.length == 1) { // degenerate crosstab (everything on columns)
+			var array = ["Data"];
+			var wrapper = [array];
+			rowHeadersDefinition.push(wrapper);
+		}
+		if (columnHeadersDefinition.length == 1) { // degenerate crosstab (everything on rows)
+			var array = ["Data"];
+			var wrapper = [array];
+			columnHeadersDefinition.push(wrapper);
+		}
+	}
+	
     //================================================================
     // Loads and prepare the table with the data
     //================================================================
@@ -1035,8 +1048,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	
     	var tplsum = new Ext.XTemplate(
         	    '<tpl for=".">',
-        	    '<div id="{divId}" class="x-panel crosstab-table-cells-totals" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-        	    '{name:this.format}',
+        	    '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-totals" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
+        	    '{[this.format(values.name, values.datatype, values.format)]}',
         	    '</div> </div> </div>',
         	    '</tpl>',
         	    {
