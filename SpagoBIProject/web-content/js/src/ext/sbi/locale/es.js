@@ -84,6 +84,7 @@ Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'Nodes hierarchy must be respe
 Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Remove Model Instance node';
 Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Select node to delete';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
+Sbi.locale.ln['sbi.modelinstances.code'] = 'Model Code';
 //END List Detail messages
 
 //START kpi interface messages
