@@ -139,7 +139,7 @@ public class CrossTab {
 				Object value = fields.get(i).getValue();
 				String valueStr = null;
 				if (value == null){
-					valueStr = "NULL";
+					valueStr = "null";
 				} else {
 					valueStr = value.toString();
 				}
@@ -209,12 +209,10 @@ public class CrossTab {
 		int x,y;
 		int rowsN;
 		
-		if(measuresOnColumns){
+		if (measuresOnColumns) {
 			rowsN = rowsSpecification.size();
-//			columnsN = columnsSpecification.size()*measuresLength;
-		}else{
-			rowsN = rowsSpecification.size()*measuresLength;
-//			columnsN = columnsSpecification.size();
+		} else {
+			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1)*measuresLength;
 		}
 
 		
@@ -232,6 +230,9 @@ public class CrossTab {
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
+					if ( y < 0 ) {
+						y = 0;
+					}
 					if((y*measuresLength+j)<columnsN && (y*measuresLength+j)>=0){
 						dataMatrix[x][y*measuresLength+j]=data.get(i+j);
 					}
@@ -241,6 +242,9 @@ public class CrossTab {
 			for(int i=0; i<data.size(); i=i+measuresLength){
 				for(int j=0; j<measuresLength; j++){
 					x = rowsSpecification.indexOf(rowCordinates.get(i+j));
+					if ( x < 0 ) {
+						x = 0;
+					}
 					y = columnsSpecification.indexOf(columnCordinates.get(i+j));
 					if(y<columnsN && y>=0){
 						dataMatrix[x*measuresLength+j][y]=data.get(i+j);
