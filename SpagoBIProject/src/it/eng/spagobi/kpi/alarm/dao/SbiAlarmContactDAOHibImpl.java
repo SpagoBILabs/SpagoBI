@@ -13,14 +13,21 @@ package it.eng.spagobi.kpi.alarm.dao;
 
 
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.kpi.alarm.bo.AlarmContact;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.model.metadata.SbiResources;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -245,6 +252,82 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
 		toReturn.setName(sbiAlarmContact.getName());
 		toReturn.setResources(sbiAlarmContact.getResources());
 		return toReturn;
+	}
+
+
+	public Integer countContacts() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiAlarmContact ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of Contacts", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
+
+	public List<SbiAlarmContact> loadPagedContactsList(Integer offset,
+			Integer fetchSize) throws EMFUserError {
+		logger.debug("IN");
+		List<SbiAlarmContact> toTransform = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();		
+		
+			String hql = "select count(*) from SbiAlarmContact ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery("from SbiAlarmContact order by name ");
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			toTransform = (List<SbiAlarmContact>)hibernateQuery.list();	
+				
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of Resources", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toTransform;
 	}
     
 

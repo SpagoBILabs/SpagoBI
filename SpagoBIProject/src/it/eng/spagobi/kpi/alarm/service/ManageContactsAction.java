@@ -24,9 +24,7 @@ package it.eng.spagobi.kpi.alarm.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.model.bo.Resource;
@@ -70,6 +68,12 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 	private final String EMAIL = "email";
 	private final String RESOURCES = "resources";
 	private final String NO_RESOURCES_STR = "-";
+	
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
+	
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -81,42 +85,28 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
 		}
 		HttpServletRequest httpRequest = getHttpRequest();
-		MessageBuilder m = new MessageBuilder();
-		Locale locale = m.getLocale(httpRequest);
-		//loads resources
-		try {
-			IResourceDAO resourceDao = DAOFactory.getResourceDAO();
-			List<String> resources = (List<String>)getSessionContainer().getAttribute(RESOURCES_LIST);
-			if(resources == null){
-				List<Resource> resourcesOBJ = resourceDao.loadResourcesList(null, null);
-				resources = new ArrayList<String>();
-				for(int i =0; i< resourcesOBJ.size(); i++){
-					Resource res = resourcesOBJ.get(i);
-					resources.add(res.getName());
-				}
-				resources.add(NO_RESOURCES_STR);
-				getSessionContainer().setAttribute(RESOURCES_LIST, resources);
-			}
-			
-		} catch (EMFUserError e) {
-			logger.error(e.getMessage(), e);
-			try {
-				writeBackToClient("Exception occurred while retrieving resources");
-			} catch (IOException e1) {
-				logger.error(e1.getMessage(), e1);
-			}
-			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Exception occurred while retrieving resources", e);
-		}
-		
+		Locale locale = getLocale();
+	
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 		if(serviceType != null && serviceType.equals(CONTACTS_LIST)){
 			try {
-				List<SbiAlarmContact> contacts = contactDao.findAll();
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalResNum = contactDao.countContacts();
+				List<SbiAlarmContact> contacts = contactDao.loadPagedContactsList(start, limit);
+				
 				logger.debug("Loaded contacts list");
 				JSONArray contactsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(contacts,locale);
-				JSONObject contactsResponseJSON = createJSONResponseContacts(contactsJSON);
+				JSONObject contactsResponseJSON = createJSONResponseContacts(contactsJSON, totalResNum);
 
 				writeBackToClient(new JSONSuccess(contactsResponseJSON));
 
@@ -190,6 +180,31 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 						"Exception occurred while deleting contact",
 						e);
 			}
+		}else if(serviceType == null){
+			try {
+				IResourceDAO resourceDao = DAOFactory.getResourceDAO();
+				List<String> resources = (List<String>)getSessionContainer().getAttribute(RESOURCES_LIST);
+				if(resources == null){
+					List<Resource> resourcesOBJ = resourceDao.loadResourcesList(null, null);
+					resources = new ArrayList<String>();
+					for(int i =0; i< resourcesOBJ.size(); i++){
+						Resource res = resourcesOBJ.get(i);
+						resources.add(res.getName());
+					}
+					resources.add(NO_RESOURCES_STR);
+					getSessionContainer().setAttribute(RESOURCES_LIST, resources);
+				}
+				
+			} catch (EMFUserError e) {
+				logger.error(e.getMessage(), e);
+				try {
+					writeBackToClient("Exception occurred while retrieving resources");
+				} catch (IOException e1) {
+					logger.error(e1.getMessage(), e1);
+				}
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving resources", e);
+			}
 		}
 
 		logger.debug("OUT");
@@ -202,13 +217,14 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseContacts(JSONArray rows)
+	private JSONObject createJSONResponseContacts(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
+		results.put("total", totalResNumber);
 		results.put("title", "Contacts");
-		results.put("samples", rows);
+		results.put("rows", rows);
 		return results;
 	}
 }
