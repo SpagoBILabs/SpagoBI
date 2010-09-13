@@ -134,7 +134,9 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	    	}
 	    	//build the structure of the subtree
 	    	var cfNode = this.buildHeadersStructure(CFName, panel1, crossTab);
-
+	    	// saving the CF expression into the node
+	    	cfNode.cfExpression = op;
+	    	
 	    	cfNode.father = panel1.father;
 	    	for(var y=0; y<cfNode.childs.length; y++){
 	    		cfNode.childs[y].father = cfNode;
