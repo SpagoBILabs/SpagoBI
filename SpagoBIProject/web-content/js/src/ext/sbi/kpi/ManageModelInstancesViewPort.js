@@ -213,7 +213,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	,sendSelectedItem: function(grid, rowIndex, e){
 		var rec = grid.getSelectionModel().getSelected();
-	
+
 		//if unsaved changes
 		if(this.manageModelInstances.nodesToSave.length > 0){
 			//if there are modification on current selection
@@ -255,13 +255,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		//checks if model instance id is defined
 		var modelInstID = rec.get('modelInstId');
 		if(modelInstID === undefined){
+
 			//new model instance --> data coming from model
 			var analyzedRec = new Ext.data.Record ({
-				 modelInstId : '',
-				 modelId : rec.get('modelId') ,
+				 modelInstId : '',				 
 				 kpiInstId : '',
 				 name : rec.get('name'),
 				 description : rec.get('description'),
+				 modelId : rec.get('modelId') ,
 				 modelName : rec.get('name'),
 				 modelCode : rec.get('code'),
 				 modelDescr : rec.get('description'),
@@ -269,8 +270,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				 modelTypeDescr : rec.get('typeDescr'),
 				 text : rec.get('text'),
 				 modelText : rec.get('text'),
+				 kpiName : rec.get('kpi'),
+				 kpiId : rec.get('kpiId'),
 				 error: false,
-				 toSave : true
+				 //iconCls: icon,
+				 toSave : true,
+				 isNewRec: true
+				 
 			});
 			return analyzedRec;
 		}

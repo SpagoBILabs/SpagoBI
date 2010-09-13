@@ -116,11 +116,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	                attr.id = attr.modelInstId;
 	            }
 
-	    		if (attr.kpiInstId !== undefined && attr.kpiInstId != null
+	    		if (attr.kpiInstId !== undefined && attr.kpiInstId !== null
 	    				&& attr.kpiInstId != '') {
 	    			attr.iconCls = 'has-kpi';
 	    		}
-	    		if (attr.error !== undefined && attr.error != false) {
+	    		if (attr.error !== undefined && attr.error !== false) {
 	    			attr.cls = 'has-error';
 	    		}
 	    		var attrKpiCode = '';
@@ -237,25 +237,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 							         this.srcModelType,
 							         this.srcModelTypeDescr ]
 				    	}]
-				    },
-				    {
-				        title: LN('sbi.generic.attributes')
-				        , itemId: 'attributes'
-				        , width: 430
-				        , items: [{
-					   		 id: 'items-attributes-models',   	
-				 		   	 itemId: 'items-attributes',   	              
-				             xtype: 'fieldset',
-				             labelWidth: 90,
-				             defaults: {width: 140, border:false},    
-				             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
-				             defaultType: 'textfield',
-				             autoHeight: true,
-				             autoScroll  : true,
-				             border: false,
-				             items: []
-				    	}]
-				    } ];
+				    }];
 	 	  
 	}
 	, initSourcePanel: function() {
@@ -349,14 +331,34 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 											}, this);
 		this.thrWin.show();
 	}
-	, editNodeAttribute: function(field, newVal, oldVal) {
-
+	, editNodeAttribute: function(field, newVal, oldVal) {	
+		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
+			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
+		}
 		var node = this.selectedNodeToEdit;
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			var fName = field.name;
 			node.attributes[fName] = newVal;
-
+			if(fName == 'name'){
+				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
+				rec.data.name = newVal;
+				this.referencedCmp.modelInstancesGrid.mainElementsStore.commitChanges();
+				this.referencedCmp.modelInstancesGrid.getView().refresh();
+				var val = node.attributes.text;
+				var aPosition = val.indexOf(" - ");
+				var name = "";
+				var code = "";
+				if (aPosition !== undefined && aPosition != -1) {
+					name = val.substr(aPosition + 3);
+					code = val.substr(0, aPosition);
+					if (field.getName() == 'name') {
+						name = newVal;
+					} 
+				}
+				var text = code + " - " + name;
+				node.setText(text);
+			}
 		}
 	}
 	, editThreshold: function(code){
@@ -370,7 +372,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		
-		if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
+		if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave === false){
 			var size = this.nodesToSave.length;
 			this.nodesToSave[size] = this.selectedNodeToEdit;
 		}//else skip because already taken
@@ -611,7 +613,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, clearKpi: function() {
 		this.kpiName.setValue('');
 		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
-		if(node !== undefined && node != null){
+		if(node !== undefined && node !== null){
 			node.attributes.kpiName = '';
 			node.attributes.kpiId = '';
 			node.attributes.kpiInstId = '';
@@ -791,6 +793,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		jsonDroppedStr += ']';
 		
 		var jsonRoot = '';
+		//alert("new"+this.newRootNode);
+		//alert("exist"+this.existingRootNode);
 		if(this.newRootNode !== undefined && this.newRootNode != null){
 			jsonRoot = Ext.util.JSON.encode(this.newRootNode.attributes);
 		}
@@ -815,7 +819,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
 		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelInstId if operation succeded
-		      				  if(nodeSel !== undefined && nodeSel != null){
+		      				  if(nodeSel !== undefined && nodeSel !== null){
 			      				  if(value  == 'KO'){
 			      					  hasErrors= true;
 			 		      			  ///contains error gui ids      						  
@@ -871,18 +875,25 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	,fillDetail : function(sel, node) {
 		if(node !== undefined && node != null){
 			
-			var isDDNode = node.attributes.modelInstId;
-
+			var isDDNode = node.attributes.modelInstId;			
+			
 			var val = node.text;//name value
 			if (val != null && val !== undefined) {
 				var name = node.attributes.name;	
 				this.detailFieldDescr.setValue(node.attributes.description);
 				this.detailFieldName.setValue(name);
 				if(isDDNode){
+
 					this.detailFieldLabel.enable();
 					this.detailFieldLabel.setValue(node.attributes.label);
 				}else{
-					this.detailFieldLabel.disable();
+					
+					if(!node.attributes.isNewRec){
+						this.detailFieldLabel.disable();
+					}else{
+						this.detailFieldLabel.enable();
+					}
+					
 					
 				}
 			}
@@ -1017,6 +1028,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     		if(rec.get('kpiCode') !== undefined){
     			attrKpiCode = ' - '+rec.get('kpiCode');
     		}
+
     		var tip = rec.get('modelCode')+' - '+rec.get('name')+ attrKpiCode;
     		
 			var node = new Ext.tree.AsyncTreeNode({
@@ -1048,7 +1060,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				cls			: cssClass,
 		        draggable	: false,
 		        qtip		: tip,
-		        toSave: true
+		        toSave: true,
+		        isNewRec :  rec.get( 'isNewRec')
 		    });
 
 			return node;
