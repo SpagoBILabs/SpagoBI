@@ -174,8 +174,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     						measureName = this.columnHeader[this.columnHeader.length-1][j].name;
     					}
     					var measureMetadata = this.getMeasureMetadata(measureName);
-    					var datatype = measureMetadata.type;
-    					var format = (measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
+    					// in case of calculated fields made with measures, measureMetadata is null!!!
+    					var datatype = measureMetadata !== null ? measureMetadata.type : 'float';
+    					var format = (measureMetadata !== null && measureMetadata.format !== null && measureMetadata.format !== '') ? measureMetadata.format : null;
     					// get also type of the cell (data, CF = calculated fields, partialsum)
     					var celltype = this.getCellType(this.rowHeader[this.rowHeader.length-1][i], this.columnHeader[this.columnHeader.length-1][j]);
     					// put measure value and metadata into an array
@@ -1553,6 +1554,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    })
     	});
     	return datapanelRowSum;
+    }
+    
+    , showCFWizard: function(node, modality) {
+   		this.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard({'baseNode' : node, 'modality' : modality}); 
+   		this.crossTabCFWizard.show(this);  
+   		this.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
+    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
+    		this.addCalculatedField(level, horizontal, op, CFName);
+   		}, this); 
     }
     
 });

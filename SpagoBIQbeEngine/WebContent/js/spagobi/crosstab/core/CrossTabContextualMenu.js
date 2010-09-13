@@ -178,13 +178,12 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     	return checkBoxes;
 	}
     
-    , addCalculatedFieldHandler: function(node) {
-   		this.crossTab.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard(node.level, node.horizontal); 
-   		this.crossTab.crossTabCFWizard.show(this.crossTab);  
-   		this.crossTab.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
-    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this.crossTab);
-    		this.crossTab.addCalculatedField(level, horizontal, op, CFName);
-   		}, this); 
+    , addCalculatedFieldHandler: function(header) {
+   		this.crossTab.showCFWizard(header, 'new');
+   	}
+    
+    , modifyCalculatedFieldHandler: function(header) {
+   		this.crossTab.showCFWizard(header, 'edit');
    	}
     
     , createMenuItems: function (node) {
@@ -194,6 +193,12 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		       	text: LN('sbi.crosstab.menu.removecalculatedfield'),
 		       	iconCls: 'remove',
 		       	handler: function() {alert('to be implemented');},
+		       	scope: this
+    		});
+    		toReturn.push({
+		       	text: LN('sbi.crosstab.menu.modifycalculatedfield'),
+		       	iconCls: 'edit',
+		       	handler: this.modifyCalculatedFieldHandler.createDelegate(this, [node], 0),
 		       	scope: this
     		});
     	}
