@@ -122,8 +122,21 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		var data = crosstab.data;
 		var config = crosstab.config;
 		var measuresMetadata = crosstab.measures_metadata;
-
-		this.crosstab =  new Sbi.crosstab.core.CrossTab( rows,columns, data, config.calculatetotalsonrows=="on", config.calculatetotalsoncolumns=="on", this.calculatedFields, config.measureson=='rows', measuresMetadata);
+		
+		var c = {
+				 rowHeadersDefinition: rows
+				, columnHeadersDefinition: columns
+				, entries: data
+				, withRowsSum: config.calculatetotalsonrows=="on"
+				, withColumnsSum: config.calculatetotalsoncolumns=="on"
+				, withRowsPartialSum: config.calculatesubtotalsonrows=="on"
+				, withColumnsPartialSum: config.calculatesubtotalsoncolumns=="on"
+				, calculatedFields: this.calculatedFields
+				, misuresOnRow: config.measureson=='rows'
+				, measuresMetadata: measuresMetadata
+		};
+		
+		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
 		this.crosstab.reloadHeadersAndTable();
 		this.add(this.crosstab);
 		this.doLayout();
