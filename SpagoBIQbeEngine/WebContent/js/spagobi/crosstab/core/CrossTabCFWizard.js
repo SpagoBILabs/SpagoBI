@@ -67,7 +67,7 @@ Sbi.crosstab.core.CrossTabCFWizard = function(config) {
 		    		var expression= this.getExpression();
 		    		var cfName= this.cfNameField.getValue()
 		    		if(expression!=null && expression!="" && cfName!=null && cfName!="" && this.validate(false)){
-		    			this.fireEvent('applyCalculatedField', this.activeLevel, this.horizontal, expression, cfName);
+		    			this.fireEvent('applyCalculatedField', this.baseNode, this.activeLevel, this.horizontal, expression, cfName);
 		    			this.close();
 		    		}
 	        	}
@@ -194,6 +194,11 @@ Ext.extend(Sbi.crosstab.core.CrossTabCFWizard, Ext.Window, {
     	        } 
     	    }
     	});
+		
+		// in case of modifying an existing CF, putting the initial value info CF name field
+		if (this.modality == 'edit' && this.baseNode.type == 'CF') {
+			this.textField.setValue(this.baseNode.cfExpression);
+		}
 	}
 	
 	, initMainPanel: function() {

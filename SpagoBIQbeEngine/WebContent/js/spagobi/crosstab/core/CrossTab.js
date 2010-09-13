@@ -1557,9 +1557,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     , showCFWizard: function(node, modality) {
-   		this.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard({'baseNode' : node, 'modality' : modality}); 
+   		this.crossTabCFWizard = new Sbi.crosstab.core.CrossTabCFWizard({
+   			'baseNode' : node, 
+   			'modality' : modality
+   		}); 
    		this.crossTabCFWizard.show(this);  
-   		this.crossTabCFWizard.on('applyCalculatedField', function(level, horizontal, op, CFName){
+   		this.crossTabCFWizard.on('applyCalculatedField', function(theNode, level, horizontal, op, CFName){
     		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
     		this.addCalculatedField(level, horizontal, op, CFName);
    		}, this); 
