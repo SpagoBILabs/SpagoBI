@@ -206,7 +206,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        {
 			       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
 			       	iconCls: 'add',
-			       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], true),
+			       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], 0),
 			       	scope: this
 		        },
 		        '-', 
