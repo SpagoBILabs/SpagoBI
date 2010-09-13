@@ -254,36 +254,11 @@
 
     <!-- kpi --> 
     <CONFIGURATOR path="/WEB-INF/conf/kpi/actions.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/graphs.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/kpi/messages.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/kpi/presentation.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/kpi/publishers.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/kpi/business_map.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/kpi/validation.xml" />
-    
-    <!-- kpi config -->     
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/config/modules.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/config/pages.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/config/presentation.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/config/publishers.xml" />	
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/config/validation.xml" />
-     <CONFIGURATOR path="/WEB-INF/conf/kpi/config/business_map.xml" />
-    
-    <!-- threshold -->
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/modules.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/pages.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/presentation.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/publishers.xml" />   
-    <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/validation.xml" />
-     <CONFIGURATOR path="/WEB-INF/conf/kpi/threshold/business_map.xml" />
-    
-    <!-- model -->
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/modules.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/pages.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/presentation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/publishers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/business_map.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/kpi/model/validation.xml" />
 	
 	<!-- objmetadata -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/objmetadata/actions.xml" />
