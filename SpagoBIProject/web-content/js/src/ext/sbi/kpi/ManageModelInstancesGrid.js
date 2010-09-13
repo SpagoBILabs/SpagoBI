@@ -122,7 +122,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		
 		this.configurationObject.gridColItems = [
 		                                         {id:'modelInstId',	header: LN('sbi.generic.name'), width: 120, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 120, sortable: true, dataIndex: 'modelCode'}
+		                                         {header: LN('sbi.modelinstances.code'), width: 120, sortable: true, dataIndex: 'modelCode'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');

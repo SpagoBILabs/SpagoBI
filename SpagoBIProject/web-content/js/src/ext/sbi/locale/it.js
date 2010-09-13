@@ -85,6 +85,7 @@ Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'La gerarchia dei nodi va mant
 Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Cancella nodo Istanza di Modello';
 Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleziona un nodo da cancellare';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
+Sbi.locale.ln['sbi.modelinstances.code'] = 'Codice Modello';
 //END List Detail messages
 
 //START kpi interface messages
