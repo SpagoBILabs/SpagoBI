@@ -135,8 +135,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		                                         {header: LN('sbi.alarms.alarmName'), width: 170, sortable: true, dataIndex: 'name'}
 		                                        ];
 		
-		this.configurationObject.panelTitle = LN('sbi.alarmcontact.contactsManagement');
-		this.configurationObject.listTitle = LN('sbi.alarmcontact.contactsList');
+		this.configurationObject.panelTitle = LN('sbi.alarms.manageAlarms');
+		this.configurationObject.listTitle = LN('sbi.alarms.alarmsList');
 		
 		this.initTabItems();
     },
@@ -557,8 +557,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	,save : function() {
 		   
 	   var values = this.getForm().getValues();
-	   alert(values.toSource());
-
        var newRec = null;
        var idRec = values['id'];
 
