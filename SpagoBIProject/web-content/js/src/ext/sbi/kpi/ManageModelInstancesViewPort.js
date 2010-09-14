@@ -252,8 +252,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	
 	}
 	, copyModelTree: function(rec){
-		alert(rec.data);
-		alert("yess");
 		//copies root of model tree and all its descendants
 		this.manageModelInstances.rootNodeText = rec.get('text');
 		this.manageModelInstances.rootNodeId = rec.get('modelId');
