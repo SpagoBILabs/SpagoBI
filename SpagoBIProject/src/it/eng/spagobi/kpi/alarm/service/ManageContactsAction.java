@@ -56,7 +56,7 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 	
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
-	private final String CONTACT_DETAIL = "CONTACT_DETAIL";
+	private final String CONTACT_INSERT = "CONTACT_INSERT";
 	private final String CONTACTS_LIST = "CONTACTS_LIST";
 	private final String CONTACT_DELETE = "CONTACT_DELETE";
 	
@@ -121,7 +121,7 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 						"Exception occurred while retrieving contacts", e);
 			}
 			
-		}else if(serviceType != null && serviceType.equals(CONTACT_DETAIL)){
+		}else if(serviceType != null && serviceType.equals(CONTACT_INSERT)){
 			String name = getAttributeAsString(NAME);
 			String email = getAttributeAsString(EMAIL);
 			String mobile = getAttributeAsString(MOBILE);

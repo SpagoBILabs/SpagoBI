@@ -46,7 +46,7 @@ Ext.ns("Sbi.alarm");
 Sbi.alarm.ManageContacts = function(config) { 
 
 	var paramsList = {MESSAGE_DET: "CONTACTS_LIST"};
-	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "CONTACT_DETAIL"};
+	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "CONTACT_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "CONTACT_DELETE"};
 	
 	this.configurationObject = {};
