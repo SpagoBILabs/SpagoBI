@@ -416,7 +416,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 				                Ext.MessageBox.show({
 				                    title: LN('sbi.generic.error'),
 				                    msg: LN('sbi.generic.deletingItemError'),
-				                    width: 150,
+				                    width: 250,
 				                    buttons: Ext.MessageBox.OK
 				               });
 				            }
