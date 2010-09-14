@@ -43,8 +43,8 @@ import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -94,7 +94,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		String lookupQuery;
 		
 		IDataStore dataStore = null;
-		QbeDataSet dataSet = null;
+		HQLDataSet dataSet = null;
 		JSONDataWriter dataSetWriter;
 		Query query = null;
 		IStatement statement = null;
@@ -158,7 +158,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new QbeDataSet(statement);
+				dataSet = new HQLDataSet(statement);
 				dataSet.setAbortOnOverflow(true);
 				
 				Map userAttributes = new HashMap();

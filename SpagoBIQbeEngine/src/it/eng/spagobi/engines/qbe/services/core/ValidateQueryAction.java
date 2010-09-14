@@ -28,8 +28,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -62,7 +62,7 @@ public class ValidateQueryAction extends AbstractQbeEngineAction {
 			logger.debug("Validating query (HQL): [" +  hqlQuery+ "]");
 			logger.debug("Validating query (SQL): [" + sqlQuery + "]");
 			try {
-				QbeDataSet dataSet = new QbeDataSet(statement);
+				HQLDataSet dataSet = new HQLDataSet(statement);
 				
 				Map userAttributes = new HashMap();
 				UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
