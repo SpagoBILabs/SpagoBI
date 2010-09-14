@@ -108,12 +108,16 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  		var serializedEntries = this.getEntries();
  		
  		if(rowsum!=null){
- 			for(var i=0; i<rowsum.length; i++){
- 				serializedEntries[i].push(rowsum[i]);
+ 			for(var i=0; i<rowsum[0].length; i++){
+ 	 			for(var j=0; j<rowsum.length; j++){
+ 	 				serializedEntries[i].push(rowsum[j][i]);
+ 	 			}
  			}	
  		}
     	if(columnsum!=null){
-    		serializedEntries.push(columnsum);
+			for(var j=0; j<columnsum.length; j++){
+ 				serializedEntries.push(columnsum[j]);
+ 			}
     	}
 		return serializedEntries;
 	}
