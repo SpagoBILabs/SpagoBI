@@ -20,7 +20,7 @@
 
 <%@ taglib uri='http://java.sun.com/portlet' prefix='portlet'%>
 
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 
 <portlet:defineObjects/>
 
@@ -44,8 +44,7 @@
     </td>
     <td width="20">&nbsp;</td>
     <td vAlign="middle">
-      <a href='<portlet:actionURL><portlet:param name="PAGE" value="KpiPage"/>
-								  <portlet:param name="FIELD_ORDER" value="NAME"/></portlet:actionURL>'
+      <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_KPIS_ACTION"/></portlet:actionURL>'
          class="link_main_menu"> 
         <spagobi:message key="sbi.kpi.kpiDefinition.label" bundle="<%=messageBunle%>"/>
       </a>
@@ -58,8 +57,7 @@
     </td>
 	<td width="20">&nbsp;</td>
 	<td vAlign="middle">
-	  <a href='<portlet:actionURL><portlet:param name="PAGE" value="ThresholdPage"/>
-								  <portlet:param name="FIELD_ORDER" value="NAME"/></portlet:actionURL>'
+	  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_THRESHOLDS_ACTION"/></portlet:actionURL>'
 	    class="link_main_menu">
 		<spagobi:message key="sbi.kpi.thresholdDefinition.label" bundle="<%=messageBunle%>" />
   	  </a>
@@ -72,8 +70,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="PAGE" value="ModelPage"/>
-		  							  <portlet:param name="FIELD_ORDER" value="NAME"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_MODELS_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.modelDefinition.label" bundle="<%=messageBunle%>" />
@@ -87,8 +84,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="PAGE" value="ModelInstancePage"/>
-		  							  <portlet:param name="FIELD_ORDER" value="NAME"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_MODEL_INSTANCES_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.modelInstanceDefinition.label" bundle="<%=messageBunle%>" />
@@ -102,8 +98,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="PAGE" value="ResourcesPage"/>
-		  							  <portlet:param name="FIELD_ORDER" value="NAME"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_RESOURCES_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.resourcesDefinition.label" bundle="<%=messageBunle%>" />
@@ -111,42 +106,34 @@
 		</td>
 	</tr>
 	
-	<%--
-	 
-	  <tr class="portlet-font">
-    <td width="100" align="center"><img
-      src='<%=renderResponse.encodeURL(renderRequest.getContextPath() + "/img/userKpi.png")%>' />
-    </td>
-    <td width="20">&nbsp;</td>
-    <td vAlign="middle"><br />
-    <a
-      href='<portlet:actionURL><portlet:param name="PAGE" value="UserKpiPage"/></portlet:actionURL>'
-      class="link_main_menu"> <spagobi:message key="s4q.wz7.userKpi" /> </a>
-    </td>
-  </tr>
 	<tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=renderResponse.encodeURL(renderRequest.getContextPath() + "/img/measureIcon.png")%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/alarm16.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
-		<td vAlign="middle"><br />
-		<a
-			href='<portlet:actionURL><portlet:param name="PAGE" value="MeasureModelPage"/></portlet:actionURL>'
-			class="link_main_menu"> <spagobi:message key="s4q.wz1.measureModel" /> </a></td>
+		<td vAlign="middle">
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_ALARMS_ACTION"/>
+									  </portlet:actionURL>'
+			class="link_main_menu">
+			<spagobi:message key="Alarms Definition" bundle="<%=messageBunle%>" />
+		  </a>
+		</td>
 	</tr>
+	
 	<tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=renderResponse.encodeURL(renderRequest.getContextPath() + "/img/assessmentIcon.png")%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/mail_generic16.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
-		<td vAlign="middle"><br />
-		<a
-			href='<portlet:actionURL><portlet:param name="PAGE" value="AssessmentModelPage"/></portlet:actionURL>'
-			class="link_main_menu"> <spagobi:message key="s4q.wz2.assessmentModel" /> </a></td>
+		<td vAlign="middle">
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_CONTACTS_ACTION"/>
+									  </portlet:actionURL>'
+			class="link_main_menu">
+			<spagobi:message key="Contacts Definition" bundle="<%=messageBunle%>" />
+		  </a>
+		</td>
 	</tr>
-	
-	
-	--%>	
+
 </table>
 
 </div>
