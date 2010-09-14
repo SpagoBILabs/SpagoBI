@@ -1129,16 +1129,21 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    }
     	);
     	
+    	/*
     	var tplsum = new Ext.XTemplate(
-        	    '<tpl for=".">',
-        	    '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-totals" style="width:'+(this.columnWidth-2+ieOffset)+'px; height: '+(this.rowHeight-2+ieOffset)+'px; float:left;"> <div class="x-panel-bwrap"> <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">',
-        	    '{[this.format(values.name, values.datatype, values.format)]}',
-        	    '</div> </div> </div>',
-        	    '</tpl>',
-        	    {
+        	    '<tpl for=".">'
+        	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-totals" '
+        	    , '  style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2+ieOffset)+'px; float:left;">'
+        	    , '    <div class="x-panel-bwrap"> '
+        	    , '      <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
+        	    , '      {[this.format(values.name, values.datatype, values.format)]}'
+        	    , '      </div> </div> </div>'
+        	    , '</tpl>'
+        	    , {
         	    	format: this.format
         	    }
         );
+        */
     	
     	var dataView = new Ext.DataView({
 	        store: store,
@@ -1175,11 +1180,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		this.table.add(this.rowHeaderPanelContainer);
    		this.table.add(this.datapanel);
 		if(this.withRowsSum){
-			this.datapanelRowSum = this.getRowsSumPanel(tplsum, rowForView, this.withColumnsSum);
+			this.datapanelRowSum = this.getRowsSumPanel(tpl, rowForView, this.withColumnsSum);
 			this.table.add(this.datapanelRowSum);
 		}
     	if(this.withColumnsSum){
-	   		this.datapanelColumnSum = this.getColumnsSumPanel(tplsum, columnsForView, this.withRowsSum);
+	   		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
 	   		this.table.add(this.datapanelColumnSum);
     		this.table.add(this.emptypanelBottomRight);
     	}
@@ -1252,7 +1257,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   	        layoutConfig: {
 	   	            columns: 1
 	   	        },
-	   	        items: this.columnHeaderPanel,
+	   	        items: this.columnHeaderPanel
 	   	    });
 //    	}
 //    	
@@ -1650,8 +1655,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    autoDestroy: true,
     	    storeId: 'myStore',
     	    fields: [
-    	             {name: 'name', type: 'float'},
-    	             'divId'
+    	             {name: 'name'},
+    	             'divId',
+    	             {name: 'datatype'},
+    	             {name: 'format'},
+    	             {name: 'celltype'}
     	    ]
     	});
     	var sumColumnsStore = new Array();
@@ -1664,6 +1672,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					var a = new Array();
 					a.push(sumColumns[j][i]);
 					a.push('[partialSumC'+j+','+i+']');
+					a.push('float');
+					a.push(null);
+					a.push('totals');
 					sumColumnsStore.push(a);
 	   			}
 	   		}
@@ -1674,6 +1685,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   			var a = new Array();
 	   			a.push(sumColumns[j]);
 	   			a.push('[partialSumC'+j+']');
+				a.push('float');
+				a.push(null);
+				a.push('totals');
 	   			sumColumnsStore.push(a);
 	   		}
 	   		dataViewHeight = (this.rowHeight);
@@ -1707,8 +1721,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    autoDestroy: true,
     	    storeId: 'myStore',
     	    fields: [
-    	             {name: 'name', type: 'float'},
-    	             'divId'
+    	             {name: 'name'},
+    	             'divId',
+    	             {name: 'datatype'},
+    	             {name: 'format'},
+    	             {name: 'celltype'}
     	    ]
     	});
 		var sumRowsStore = new Array();
@@ -1722,6 +1739,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					var a = new Array();
 					a.push(sumRows[i][j]);
 					a.push('[partialSumR'+i+','+j+']');
+					a.push('float');
+					a.push(null);
+					a.push('totals');
 					sumRowsStore.push(a);
 	   			}
 	   		}
@@ -1732,6 +1752,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				var a = new Array();
 				a.push(sumRows[j]);
 				a.push('[partialSumR'+j+']');
+				a.push('float');
+				a.push(null);
+				a.push('totals');
 				sumRowsStore.push(a);
 	   		}
 	   		dataViewWidth=this.columnWidth;
