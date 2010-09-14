@@ -231,6 +231,10 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 			          }
 			          ,scope: this
 			    });
+		    }else{
+		    	this.tresholdsCombo.store.removeAll();
+		    	this.tresholdsCombo.store.commitChanges();
+		    	this.tresholdsCombo.clearValue();
 		    }
 			this.kpiGrid.getView().refresh();
 	}
