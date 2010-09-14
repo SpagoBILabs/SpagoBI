@@ -1,3 +1,0 @@
-Crosstab:
-1. manage calculate fields (in-line and post-processing calculated fields) into crosstab definition;
-at the time being (17/06/2010) you cannot use calculated fields into the crosstab
