@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.statment;
+package it.eng.qbe.statment.hibernate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +42,7 @@ import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.statment.IStatement;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -63,7 +64,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QbeDataSet extends AbstractDataSet {
+public class HQLDataSet extends AbstractDataSet {
 
 	private IStatement statement;
 	private IDataStore dataStore;
@@ -71,10 +72,10 @@ public class QbeDataSet extends AbstractDataSet {
 	private Map bindings;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(QbeDataSet.class);
+    public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
     
 	
-	public QbeDataSet(IStatement statement) {
+	public HQLDataSet(IStatement statement) {
 		setStatement(statement);
 		bindings = new HashMap();
 	}
