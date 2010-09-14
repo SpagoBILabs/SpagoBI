@@ -111,15 +111,17 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	for(var j=0; j<headers[level-1].length; j++){
     		operationExpsIdsItem = new Array();
     		operationExpsIdsItem.length = operationExpsNames.length;
+    		var count =0;
     		for(var y=0; y<headers[level-1][j].childs.length; y++){
 	    		for(var i=0; i<operationExpsNames.length; i++){
 	    			if(headers[level-1][j].childs[y].name==operationExpsNames[i]){
 	    				operationExpsIdsItem[i]=(pos+y);
+	    				count++;
 	        		}
 	    		}
     		}
     		pos = headers[level-1][j].childs.length+ pos;
-			if(operationExpsIdsItem.length==operationExpsNames.length){
+			if(count==operationExpsNames.length){
 				operationExpsIds.push(operationExpsIdsItem);
 			}
     	}
