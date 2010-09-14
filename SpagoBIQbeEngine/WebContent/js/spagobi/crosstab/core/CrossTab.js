@@ -444,7 +444,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			// open the show/hide dialog
     		theHeader.el.on('click', this.headerClickHandler.createDelegate(this, [theHeader], true), this);
 			//color the rows/columns when the mouse enter in the header
-    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader, header.horizontal], true), this);
+    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader], true), this);
     		theHeader.el.on('mouseleave', this.headerMouseleaveHandler.createDelegate(this, [theHeader], true), this);
 			}, scope: this
 	  	});
@@ -468,7 +468,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	// then close it, and click quickly on a header, the context menu appears for a moment but it immediately disappears.
 	}
     
-    , headerMouseenterHandler: function(event, htmlElement, o, theHeader, horizontal) {
+    , headerMouseenterHandler: function(event, htmlElement, o, theHeader) {
 		if(this.crossTabCFWizard!=null && this.crossTabCFWizard.isVisible() && this.crossTabCFWizard.isActiveLevel(theHeader.level, theHeader.horizontal)){
 			theHeader.setWidth(theHeader.getWidth()-2);
 			theHeader.setHeight(theHeader.getHeight()-2); 
@@ -479,7 +479,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		var i=0;
 		var headers;
 		
-		if(horizontal){
+		if(theHeader.horizontal){
 			headers = this.columnHeader;
 		}else{
 			headers = this.rowHeader
@@ -494,7 +494,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		
 		if( i<headers[theHeader.level].length){
 			var end = start+headers[theHeader.level][i].thisDimension-1;
-			if(horizontal){
+			if(theHeader.horizontal){
 				for(i=start; i<=end; i++){
 					this.highlightColumn(i);
 				}
