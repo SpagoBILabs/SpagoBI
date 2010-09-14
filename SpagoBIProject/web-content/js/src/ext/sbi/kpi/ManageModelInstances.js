@@ -767,6 +767,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     //OVERRIDING save method
 	,save : function() {
 
+    	
     	var jsonStr = '[';
 
 		Ext.each(this.nodesToSave, function(node, index) {
