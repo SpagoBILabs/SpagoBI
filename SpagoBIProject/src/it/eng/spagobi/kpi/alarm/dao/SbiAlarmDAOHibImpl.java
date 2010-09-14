@@ -22,8 +22,6 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 
 import java.util.ArrayList;

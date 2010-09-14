@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -646,6 +647,91 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			
 			logger.debug("OUT");
 			return userBO;
+	}
+
+	public Integer countUsers() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiUser ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiUser", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
+	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)
+			throws EMFUserError {
+		logger.debug("IN");
+		List<UserBO> toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			List toTransform = null;
+			String hql = "select count(*) from SbiUser ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery("from SbiUser order by userId");
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+	
+			toTransform = hibernateQuery.list();	
+			
+			if(toTransform!=null && !toTransform.isEmpty()){
+				toReturn = new ArrayList<UserBO>();
+				Iterator it = toTransform.iterator();
+				while(it.hasNext()){
+					SbiUser sbiUser = (SbiUser)it.next();
+					UserBO us = toUserBO(sbiUser);
+					toReturn.add(us);
+				}
+			}
+			
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiAlarm", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
 	}
 
 
