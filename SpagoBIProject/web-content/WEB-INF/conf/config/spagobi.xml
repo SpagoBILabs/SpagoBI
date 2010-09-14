@@ -255,7 +255,7 @@ END-LIFERAY -->
      <INDEX_INITIALIZATION>
 		<INDEX jndiResourcePath="java://comp/env/spagobi_resource_path" name="//idx" />
 	 </INDEX_INITIALIZATION>
-     <INTERNAL_PROFILING_INITIALIZER passwordAbilitated="false">
+     <INTERNAL_PROFILING_INITIALIZER>
 		<DEFAULT_USERS>
 			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator">
 				<ATTRIBUTE name="email" value="admin@eng.it" />

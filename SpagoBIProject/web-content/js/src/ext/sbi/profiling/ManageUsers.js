@@ -76,6 +76,7 @@ Sbi.profiling.ManageUsers = function(config) {
 			this.getForm().loadRecord(rec);  
 			this.detailFieldPwd.disable(); 
        	    this.detailFieldConfirmPwd.disable();
+       	    Sbi.config.passwordAbilitated = false;
 	       	this.changePwdButton.show();
 		  	this.fillAttributes(row, rec);
 		  	this.fillRoles(row, rec); 
@@ -217,6 +218,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 		             handler: function(){
 			        	 this.detailFieldPwd.enable(); 
 			        	 this.detailFieldConfirmPwd.enable();
+			        	 Sbi.config.passwordAbilitated = true;
 		             }
 			         ,scope: this
 		         });
@@ -359,72 +361,76 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 	
 	,save : function() {
 		   
-	   var values = this.getForm().getValues();
-	   
-       if(!Sbi.config.passwordAbilitated || (values['pwd']===values['confirmpwd'])){
-
-	      	var newRec = null;
+	    var values = this.getForm().getValues();     	
+        
+		if(Sbi.config.passwordAbilitated && !(values['pwd'] === values['confirmpwd'])){
+			alert(LN('sbi.users.pwdNotMatching'))	
+		}else{
+			
+			var newRec = null;
 	      	var idRec = values['id'];
 	      	
 			var params = {
 	        	userId : values['userId'],
 	        	fullName : values['fullName']  
 	        }
-	        params.id = values['id'];
-	        
-			if(values['pwd'] != undefined){
-				params.pwd = values['pwd'] ;
+	        params.id = values['id'];			
+			
+			if(Sbi.config.passwordAbilitated && (values['pwd'] === values['confirmpwd'])){
+				if(values['pwd'] != undefined){
+					params.pwd = values['pwd'] ;
+				}
 			}
-	        
+        
 	        var rolesSelected = this.rolesGrid.selModel.getSelections();
 	        var lengthR = rolesSelected.length;
-            var roles =new Array();
-            for(var i=0;i<lengthR;i++){
-             	var role ={'name':rolesSelected[i].get("name"),'id':rolesSelected[i].get("id"),'description':rolesSelected[i].get("description"),'checked':true};
- 				roles.push(role);
-           }
-	       params.userRoles =  Ext.util.JSON.encode(roles);
-  
-       	   var userRoles =new Array();
-	       var tempArr = this.rolesGrid.store;
-           var length = this.rolesGrid.store.data.length;
-
-           for(var i=0;i<length;i++){
-           		var selected = false;
-           		for(var j=0;j<lengthR;j++){
-           			if(rolesSelected[j].get("id")===tempArr.getAt(i).get("id")){
-           				selected = true;
-           				var role ={'name':tempArr.getAt(i).get("name"),'id':tempArr.getAt(i).get("id"),'description':tempArr.getAt(i).get("description"),'checked':true};
+	        var roles =new Array();
+	        for(var i=0;i<lengthR;i++){
+	         	var role ={'name':rolesSelected[i].get("name"),'id':rolesSelected[i].get("id"),'description':rolesSelected[i].get("description"),'checked':true};
+	 				roles.push(role);
+	           }
+		       params.userRoles =  Ext.util.JSON.encode(roles);
+	  
+	       	   var userRoles =new Array();
+		       var tempArr = this.rolesGrid.store;
+	           var length = this.rolesGrid.store.data.length;
+	
+	           for(var i=0;i<length;i++){
+	           		var selected = false;
+	           		for(var j=0;j<lengthR;j++){
+	           			if(rolesSelected[j].get("id")===tempArr.getAt(i).get("id")){
+	       				selected = true;
+	       				var role ={'name':tempArr.getAt(i).get("name"),'id':tempArr.getAt(i).get("id"),'description':tempArr.getAt(i).get("description"),'checked':true};
 							userRoles.push(role);
-           				break;
-           			}
+	       				break;
+	       			}
 	            }
 	            if(!selected){
 	          		var role ={'name':tempArr.getAt(i).get("name"),'id':tempArr.getAt(i).get("id"),'description':tempArr.getAt(i).get("description"),'checked':false};
 	 				userRoles.push(role);
- 				}
+				}
 		    }	
-      
+	  
 	        var modifAttributes = this.attributesStore.getModifiedRecords();
-            var lengthA = modifAttributes.length;
-            var attrs =new Array();
-            for(var i=0;i<lengthA;i++){
-             	var attr ={'name':modifAttributes[i].get("name"),'id':modifAttributes[i].get("id"),'value':modifAttributes[i].get("value")};
- 				attrs.push(attr);
-            }
+	        var lengthA = modifAttributes.length;
+	        var attrs =new Array();
+	        for(var i=0;i<lengthA;i++){
+	         	var attr ={'name':modifAttributes[i].get("name"),'id':modifAttributes[i].get("id"),'value':modifAttributes[i].get("value")};
+				attrs.push(attr);
+	        }
 	        params.userAttributes =  Ext.util.JSON.encode(attrs);      
 	        
 	        
-       	    var userAttributes = new Array();
+	   	    var userAttributes = new Array();
 	        var tempArr =  this.attributesGridPanel.store;
-            var length =  this.attributesGridPanel.store.data.length;
-
-            for(var i=0;i<length;i++){
-          		var attr ={'name':tempArr.getAt(i).get("name"),'id':tempArr.getAt(i).get("id"),'value':tempArr.getAt(i).get("value")};
- 				userAttributes.push(attr);
+	        var length =  this.attributesGridPanel.store.data.length;
+	
+	        for(var i=0;i<length;i++){
+	      		var attr ={'name':tempArr.getAt(i).get("name"),'id':tempArr.getAt(i).get("id"),'value':tempArr.getAt(i).get("value")};
+				userAttributes.push(attr);
 		    }	
-
- 			if(idRec ==0 || idRec == null || idRec === ''){
+	
+			if(idRec ==0 || idRec == null || idRec === ''){
 	          newRec =new Ext.data.Record({'userId': values['userId'],'fullName': values['fullName'],'pwd':values['pwd']});	  
 	          newRec.set('userRoles', userRoles);
 			  newRec.set('userAttributes', userAttributes);        
@@ -446,7 +452,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 				record.set('userRoles',userRoles);
 				record.set('userAttributes',userAttributes);				      
 			}
-    
+	
 	        
 	        Ext.Ajax.request({
 	            url: this.services['saveItemService'],
@@ -478,6 +484,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 					            }
 								this.detailFieldPwd.disable(); 
 						   	 	this.detailFieldConfirmPwd.disable();
+						   	    Sbi.config.passwordAbilitated = false;
 						   	 	
 								Ext.MessageBox.show({
 			                        title: LN('sbi.generic.result'),
@@ -525,12 +532,8 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 		      		}
 	            }
 	            ,scope: this
-       		 });
-			
-		}else{
-			alert(LN('sbi.users.pwdNotMatching'))			
-		}
-	
+	   		 });			
+		}	
     }
 	, addNewItem : function(){
 		var emptyRecToAdd =new Ext.data.Record({userId:'', 
@@ -548,8 +551,8 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 		this.tabs.setActiveTab(0);
 		this.detailFieldPwd.enable(); 
    	 	this.detailFieldConfirmPwd.enable();
-		this.changePwdButton.hide();
-        
+   	 	Sbi.config.passwordAbilitated = true;
+		this.changePwdButton.hide();      
 	}
 
 });
