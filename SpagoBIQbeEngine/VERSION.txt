@@ -1,5 +1,5 @@
 ENGINE-NAME: SpagoBIQbeEngine
-VERSION: 2.3.0 (Stable)
+VERSION: 2.6.0 (Stable)
 
 NOTE: Please do not modify the content of this file. If you modify the code of the package, for example 
 adding some patches to it, report a detailed description of these modifications and how to re-genearte them
