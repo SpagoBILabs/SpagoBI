@@ -107,6 +107,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
+		this.modelInstancesGrid.addListener('copytree', this.copyModelTree,  this);	
 		
 		this.manageModelsTree.addListener('render', this.configureDD, this);
 
@@ -249,6 +250,22 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			}
 		}
 	
+	}
+	, copyModelTree: function(rec){
+		alert(rec.data);
+		alert("yess");
+		//copies root of model tree and all its descendants
+		this.manageModelInstances.rootNodeText = rec.get('text');
+		this.manageModelInstances.rootNodeId = rec.get('modelId');
+
+		//main instances tree - center
+		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+		this.manageModelInstances.mainTree.setRootNode(newroot);
+		this.manageModelInstances.newRootNode = newroot;
+
+		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
+		this.manageModelInstances.mainTree.doLayout();
+
 	}
 	, recordAnalyze: function(rec){
 

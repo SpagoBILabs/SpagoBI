@@ -23,6 +23,7 @@ public class ModelNodeJSONSerializer implements Serializer {
 	private static final String MODEL_TYPE_DESCR = "typeDescr";
 	private static final String MODEL_KPI = "kpi";
 	private static final String MODEL_KPI_ID = "kpiId";
+	private static final String MODEL_KPI_CODE = "kpiCode";
 	private static final String MODEL_IS_LEAF = "leaf";
 	private static final String MODEL_TEXT = "text";
 	
@@ -54,6 +55,7 @@ public class ModelNodeJSONSerializer implements Serializer {
 				Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(model.getKpiId());
 				if(kpi != null){
 					result.put(MODEL_KPI, kpi.getKpiName());
+					result.put(MODEL_KPI_CODE, kpi.getCode());
 				}else{
 					result.put(MODEL_KPI, "");
 				}

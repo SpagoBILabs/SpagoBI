@@ -1014,6 +1014,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			node.attributes.toSave = true;
 		}
 	}
+
 	,createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';
