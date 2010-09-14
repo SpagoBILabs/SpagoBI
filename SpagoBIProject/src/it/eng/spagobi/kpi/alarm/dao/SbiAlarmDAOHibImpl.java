@@ -22,10 +22,9 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
+import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
-import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -439,6 +438,94 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		}
 
 
+		return toReturn;
+	}
+
+
+	public Integer countAlarms() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiAlarm ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiAlarm", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
+
+	public List<SbiAlarm> loadPagedAlarmsList(Integer offset, Integer fetchSize)throws EMFUserError {
+		logger.debug("IN");
+		List<SbiAlarm> toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiAlarm ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery("from SbiAlarm order by label");
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+	
+			toReturn = (List<SbiAlarm>)hibernateQuery.list();	
+			if(toReturn!=null && !toReturn.isEmpty()){
+				Iterator it = toReturn.iterator();
+				while(it.hasNext()){
+					SbiAlarm alarm = (SbiAlarm)it.next();
+					Hibernate.initialize(alarm);
+					Hibernate.initialize(alarm.getModality());
+					Hibernate.initialize(alarm.getSbiAlarmContacts());
+					Iterator it2 = alarm.getSbiAlarmContacts().iterator();
+					while(it2.hasNext()){
+						Hibernate.initialize(it2.next());
+					}
+				}
+			}
+			
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiAlarm", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
 		return toReturn;
 	}
 

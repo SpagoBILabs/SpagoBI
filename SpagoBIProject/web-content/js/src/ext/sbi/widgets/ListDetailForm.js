@@ -159,6 +159,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.listTitle = conf.listTitle;  	
 	this.drawSelectColumn = conf.drawSelectColumn;  
 	this.ddGroup = conf.dragndropGroup;
+	this.rowselModel = conf.rowselModel;
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -173,7 +174,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	 /*
  	   *    Here is where we create the Form
  	   */
- 	  var gridForm = {
+ 	  this.gridForm = {
  	          frame: true,
  	          autoScroll: true,
  	          labelAlign: 'left',
@@ -209,7 +210,7 @@ Sbi.widgets.ListDetailForm = function(config) {
  		
  		this.mainElementsStore.load();	
    	
-	var c = Ext.apply({}, config, gridForm);
+	var c = Ext.apply({}, config, this.gridForm);
    	
    	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
    	
@@ -333,9 +334,11 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
     	  pluginsToAdd = this.deleteColumn; 
        }
  	   
- 	  this.rowselModel = new Ext.grid.RowSelectionModel({
-           singleSelect: true
-       });
+ 	   if(this.rowselModel==null || this.rowselModel ==undefined){
+	 	  this.rowselModel = new Ext.grid.RowSelectionModel({
+	           singleSelect: true
+	       });
+ 	   }
  	   
  	   this.mainGrid = {
  			   		  id: 'maingrid',
@@ -375,7 +378,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	
 		var emptyRecToAdd = this.emptyRecord;
 		this.getForm().loadRecord(emptyRecToAdd);
-		//this.mainElementsStore.add(emptyRecToAdd); 
 	
 	    this.tabs.items.each(function(item)
 		    {		

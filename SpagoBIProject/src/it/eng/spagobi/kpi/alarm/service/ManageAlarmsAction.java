@@ -26,11 +26,11 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.KpiAlarmInstance;
+import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
@@ -83,6 +83,11 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 	public static final String KPI_LIST = "KPI_LIST";
 	public static final String TRESHOLD_LIST = "TRESHOLD_LIST";
 	
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
+	
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -95,19 +100,30 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
 		}
 		HttpServletRequest httpRequest = getHttpRequest();
-		MessageBuilder m = new MessageBuilder();
-		Locale locale = m.getLocale(httpRequest);
+		Locale locale = getLocale();
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 
 		if (serviceType != null && serviceType.equalsIgnoreCase(ALARMS_LIST)) {
 			//loads kpi 
-			try {				
-				List<SbiAlarm> alarms = alarmDao.findAll();
+			try {			
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalResNum = alarmDao.countAlarms();
+				List<SbiAlarm> alarms = alarmDao.loadPagedAlarmsList(start, limit);
+				
 				logger.debug("Loaded users list");
 				JSONArray alarmsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(alarms,locale);
-				JSONObject usersResponseJSON = createJSONResponseAlarms(alarmsJSON);
+				JSONObject usersResponseJSON = createJSONResponseAlarms(alarmsJSON, totalResNum);
 
 				writeBackToClient(new JSONSuccess(usersResponseJSON));
 			
@@ -119,7 +135,7 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 			
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ALARM_INSERT)) {
 			
-			Integer id = getAttributeAsInteger(ID);
+			String id = getAttributeAsString(ID);
 			String name = getAttributeAsString(NAME);
 			String descr = getAttributeAsString(DESCRIPTION);
 			String label = getAttributeAsString(LABEL);
@@ -155,9 +171,9 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 				SbiThresholdValue sbiThresholdValue = DAOFactory.getThresholdValueDAO().loadSbiThresholdValueById(thresholdId);
 				alarm.setSbiThresholdValue(sbiThresholdValue);
 			}
-				
-			if(id!=null && id!=0){
-				alarm.setId(id);
+			
+			if(id != null && !id.equals("") && !id.equals("0")){	
+				alarm.setId(Integer.valueOf(id));
 			}
 			
 				Set<SbiAlarmContact> contactsList = null;
@@ -165,13 +181,13 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 					contactsList = deserializeContactsJSONArray(contactsJSON);
 					alarm.setSbiAlarmContacts(contactsList);
 				}
-				id = alarmDao.update(alarm);
+				Integer idToReturn = alarmDao.update(alarm);
 				logger.debug("Alarm updated or Inserted");
 				
 				JSONObject attributesResponseSuccessJSON = new JSONObject();
 				attributesResponseSuccessJSON.put("success", true);
 				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-				attributesResponseSuccessJSON.put("id", id);
+				attributesResponseSuccessJSON.put("id", idToReturn);
 				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 
 			} catch (EMFUserError e) {
@@ -204,12 +220,18 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 			try {
 				if(id != null){
 					IThresholdValueDAO tresholdDao = DAOFactory.getThresholdValueDAO();
-					List<ThresholdValue> tresholds = tresholdDao.loadThresholdValuesByThresholdId(id);
-					logger.debug("Threshold values loaded");
-					JSONArray trshJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(tresholds,locale);
-					JSONObject trashResponseJSON = createJSONResponseAlarms(trshJSON);
-	
-					writeBackToClient(new JSONSuccess(trashResponseJSON));
+					IKpiInstanceDAO kpiDao = DAOFactory.getKpiInstanceDAO();
+					KpiInstance k = kpiDao.loadKpiInstanceById(id);
+					if(k!=null){
+						List<ThresholdValue> tresholds = tresholdDao.loadThresholdValuesByThresholdId(k.getThresholdId());
+						logger.debug("Threshold values loaded");
+						JSONArray trshJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(tresholds,locale);
+						JSONObject trashResponseJSON = createJSONResponseThresholds(trshJSON);
+		
+						writeBackToClient(new JSONSuccess(trashResponseJSON));
+					}else{
+						writeBackToClient("Error");
+					}
 				}
 
 			} catch (Throwable e) {
@@ -242,9 +264,17 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 		logger.debug("OUT");	
 	}
 	
-	private JSONObject createJSONResponseAlarms(JSONArray rows) throws JSONException {
-		JSONObject results;
-		
+	private JSONObject createJSONResponseAlarms(JSONArray rows, Integer totalResNumber) throws JSONException {
+		JSONObject results;		
+		results = new JSONObject();
+		results.put("total", totalResNumber);
+		results.put("title", "Alarms");
+		results.put("rows", rows);
+		return results;
+	}
+	
+	private JSONObject createJSONResponseThresholds(JSONArray rows)throws JSONException {
+		JSONObject results;	
 		results = new JSONObject();
 		results.put("title", "Alarms");
 		results.put("samples", rows);
