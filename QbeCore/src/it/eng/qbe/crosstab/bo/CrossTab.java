@@ -305,7 +305,11 @@ public class CrossTab {
 		fields = record.getFields();
 		for(int indexFields = startPosition; indexFields<endPosition; indexFields++){
 			field = fields.get(indexFields);
-			node = new Node(field.getValue().toString());
+			if (field.getValue() != null) {
+				node = new Node(field.getValue().toString());
+			} else {
+				node = new Node("null");
+			}
 			nodePosition = nodeToCheck.getChilds().indexOf(node);
 			if(nodePosition<0){
 				nodeToCheck.addChild(node);
