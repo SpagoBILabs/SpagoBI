@@ -312,6 +312,101 @@ Sbi.locale.ln['sbi.attributes.result'] = 'Modifications enregistr\u00E9s';
 Sbi.locale.ln['sbi.attributes.resultMsg'] = 'Sors et rentres dans SpagoBi';
 Sbi.locale.ln['sbi.roles.resultMsg'] = 'Modifications enregistr\u00E9s';
 
+Sbi.locale.ln['sbi.roles.save'] = 'Save';
+Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Save into Personal Folder';
+Sbi.locale.ln['sbi.roles.saveMeta'] = 'Save Metadata';
+Sbi.locale.ln['sbi.roles.saveRemember'] = 'Save Remember Me';
+Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Save Subobjects';
+Sbi.locale.ln['sbi.roles.see'] = 'See';
+Sbi.locale.ln['sbi.roles.seeMeta'] = 'View Metadata';
+Sbi.locale.ln['sbi.roles.seeNotes'] = 'View Notes';
+Sbi.locale.ln['sbi.roles.seeSnapshot'] = 'View Snapshots';
+Sbi.locale.ln['sbi.roles.seeSubobj'] = 'View Subobjects';
+Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'View Viewpoints';
+Sbi.locale.ln['sbi.roles.sendMail'] = 'Send Mail';
+Sbi.locale.ln['sbi.roles.send'] = 'Send';
+Sbi.locale.ln['sbi.roles.build'] = 'Build';
+Sbi.locale.ln['sbi.roles.buildQbe'] = 'Build QBE';
+Sbi.locale.ln['sbi.roles.headerName'] = 'Name';
+Sbi.locale.ln['sbi.roles.headerDescr'] = 'Description';
+Sbi.locale.ln['sbi.roles.headerCode'] = 'Code';
+Sbi.locale.ln['sbi.roles.headerRoleType'] = 'Role Type';
+Sbi.locale.ln['sbi.roles.detail'] = 'Detail';
+Sbi.locale.ln['sbi.roles.details'] = 'Details';
+Sbi.locale.ln['sbi.roles.authorizations'] = 'Authorizations';
+Sbi.locale.ln['sbi.roles.alfanumericString'] = 'Alfanumeric string required (\x2F included)';
+Sbi.locale.ln['sbi.roles.alfanumericString2'] = 'Alfanumeric string required';
+Sbi.locale.ln['sbi.roles.rolesManagement'] = 'Roles management';
+Sbi.locale.ln['sbi.roles.rolesList'] = 'Roles list';
+Sbi.locale.ln['sbi.roles.error'] = 'Error';
+Sbi.locale.ln['sbi.roles.result'] = 'Result';
+
+Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
+Sbi.locale.ln['sbi.users.userId'] = 'User ID';
+Sbi.locale.ln['sbi.users.pwd'] = 'Password';
+Sbi.locale.ln['sbi.users.confPwd'] = 'Confirm Password';
+Sbi.locale.ln['sbi.users.changePwd'] = 'Change Password';
+Sbi.locale.ln['sbi.users.wrongFormat'] = 'Wrong Format';
+Sbi.locale.ln['sbi.users.roles'] = 'Roles';
+Sbi.locale.ln['sbi.users.attributes'] = 'Attributes';
+Sbi.locale.ln['sbi.users.manageUsers'] = 'Users Management';
+Sbi.locale.ln['sbi.users.usersList'] = 'Users list';
+Sbi.locale.ln['sbi.users.headerValue'] = 'Value';
+Sbi.locale.ln['sbi.users.pwdNotMatching'] = 'Password and Confirm Password fields must be equal!';
+Sbi.locale.ln['sbi.users.confirm'] = 'Please confirm';
+Sbi.locale.ln['sbi.users.confirmDelete'] = 'Confirm User delete?';
+
+//KPI ALARMS
+Sbi.locale.ln['sbi.alarmcontact.contactsManagement'] = 'Contacts Management';
+Sbi.locale.ln['sbi.alarmcontact.contactsList'] = 'Contacts List';
+Sbi.locale.ln['sbi.alarmcontact.name'] = 'Name';
+Sbi.locale.ln['sbi.alarmcontact.email'] = 'E-mail';
+Sbi.locale.ln['sbi.alarmcontact.mobile'] = 'Mobile';
+Sbi.locale.ln['sbi.alarmcontact.resources'] = 'Resources';
+Sbi.locale.ln['sbi.alarmcontact.save'] = 'Save';
+Sbi.locale.ln['sbi.alarmcontact.add'] = 'Add';
+Sbi.locale.ln['sbi.alarmcontact.detail'] = 'Detail';
+Sbi.locale.ln['sbi.alarmcontact.validString'] = 'Alfanumeric string required (\x2F - included)';
+Sbi.locale.ln['sbi.alarmcontact.validEmailString'] = 'Email type required';
+Sbi.locale.ln['sbi.alarmcontact.validMobileString'] = 'Only digits allowed';
+Sbi.locale.ln['sbi.alarmcontact.error'] = 'Error';
+Sbi.locale.ln['sbi.alarmcontact.result'] = 'Result';
+Sbi.locale.ln['sbi.alarmcontact.validationError'] = 'Validation Error';
+
+Sbi.locale.ln['sbi.alarms.options'] = 'Options';
+Sbi.locale.ln['sbi.alarms.alarmSingleEvent'] = 'Single Event';
+Sbi.locale.ln['sbi.alarms.alarmAutoDisabled'] = 'Automatic';
+Sbi.locale.ln['sbi.alarms.alarmName'] = 'Name';
+Sbi.locale.ln['sbi.alarms.alarmLabel'] = 'Label';
+Sbi.locale.ln['sbi.alarms.alarmDescr'] = 'Description';
+Sbi.locale.ln['sbi.alarms.alarmModality'] = 'Modality';
+Sbi.locale.ln['sbi.alarms.SMS'] = 'SMS';
+Sbi.locale.ln['sbi.alarms.MAIL'] = 'MAIL';
+Sbi.locale.ln['sbi.alarms.alarmMailUrl'] = 'Url';
+Sbi.locale.ln['sbi.alarms.alarmMailText'] = 'Mail Text';
+
+Sbi.locale.ln['sbi.alarms.manageAlarms'] = 'Manage Alarms';
+Sbi.locale.ln['sbi.alarms.alarmsList'] = 'Alarms List';
+Sbi.locale.ln['sbi.alarms.details'] = 'Detail';
+Sbi.locale.ln['sbi.alarms.update'] = 'Save';
+Sbi.locale.ln['sbi.alarms.add'] = 'Add';
+Sbi.locale.ln['sbi.alarms.validString'] = 'Alfanumeric String required (\x2F - included)';
+Sbi.locale.ln['sbi.alarms.validEmailString'] = 'Email Required';
+Sbi.locale.ln['sbi.alarms.validMobileString'] = 'Only numbers allowed';
+Sbi.locale.ln['sbi.alarms.error'] = 'Error';
+Sbi.locale.ln['sbi.alarms.result'] = 'Result';
+Sbi.locale.ln['sbi.alarms.validationError'] = 'Validation Error';
+Sbi.locale.ln['sbi.alarms.confirm'] = 'Confirm?';
+Sbi.locale.ln['sbi.alarms.confirmDelete'] = 'Do you really want to delete this alarm?';
+Sbi.locale.ln['sbi.alarms.alarmKpiThreshold'] = 'Threshold';
+Sbi.locale.ln['sbi.alarms.kpis'] = 'KPI';
+Sbi.locale.ln['sbi.alarms.contacts'] = 'Contacts';
+Sbi.locale.ln['sbi.alarms.kpiInstanceIdHeader'] = 'Kpi Instance Id';
+Sbi.locale.ln['sbi.alarms.kpiModelHeader'] = 'Model Instance Node';
+Sbi.locale.ln['sbi.alarms.kpiNameHeader'] = 'Kpi Name';
+Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No Threshold and/or Kpi Instance selected do you want to save the alarm anyway?';
+
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================

@@ -206,7 +206,7 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 	             });	
 	  	   
 	  	 this.changePwdButton = new Ext.Toolbar.Button({
-		             text: 'Change Password',
+		             text: LN('sbi.users.changePwd'),
 		             id: 'changePwd',
 		             iconCls: 'icon-refresh',		                 
 		             style: Ext.isIE ? {} : {	

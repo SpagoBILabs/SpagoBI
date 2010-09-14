@@ -325,6 +325,7 @@ Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';
 Sbi.locale.ln['sbi.users.pwd'] = 'Password';
 Sbi.locale.ln['sbi.users.confPwd'] = 'Confirm Password';
+Sbi.locale.ln['sbi.users.changePwd'] = 'Change Password';
 Sbi.locale.ln['sbi.users.wrongFormat'] = 'Formato errato';
 Sbi.locale.ln['sbi.users.roles'] = 'Roles';
 Sbi.locale.ln['sbi.users.attributes'] = 'Attributes';
