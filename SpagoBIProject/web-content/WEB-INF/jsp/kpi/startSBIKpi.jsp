@@ -40,7 +40,7 @@
 
   <tr class="portlet-font">
     <td width="100" align="center">
-      <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/kpi.png", currTheme)%>' />
+      <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/kpi64.png", currTheme)%>' />
     </td>
     <td width="20">&nbsp;</td>
     <td vAlign="middle">
@@ -53,7 +53,7 @@
 
   <tr class="portlet-font">
     <td width="100" align="center">
-      <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/thresholds.png", currTheme)%>' />
+      <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/thresholds64.png", currTheme)%>' />
     </td>
 	<td width="20">&nbsp;</td>
 	<td vAlign="middle">
@@ -66,7 +66,7 @@
 
   <tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/model-def.png", currTheme)%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/model64.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
@@ -80,7 +80,7 @@
 	
 	  <tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/model-inst.png", currTheme)%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/modelinst64.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
@@ -94,7 +94,7 @@
 	
 	<tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/resources.png", currTheme)%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/resources64.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
@@ -108,7 +108,7 @@
 	
 	<tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/alarm16.png", currTheme)%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/alarms64.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
@@ -122,7 +122,7 @@
 	
 	<tr class="portlet-font">
 		<td width="100" align="center"><img
-			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/mail_generic16.png", currTheme)%>' />
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/contacts64.png", currTheme)%>' />
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
