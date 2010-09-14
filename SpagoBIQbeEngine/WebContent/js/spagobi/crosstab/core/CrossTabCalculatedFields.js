@@ -105,14 +105,16 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	//operationExpsIds: The ids of the elements inside the list of header
     	//                  es: z1-->[0,2,4,6]  z2-->[1,3,5,7]
     	//					operationExpsIds = [[0,1][2,3],[4,5],[6,7]]
+    	
     	var pos =0;
     	var operationExpsIdsItem;
     	for(var j=0; j<headers[level-1].length; j++){
     		operationExpsIdsItem = new Array();
+    		operationExpsIdsItem.length = operationExpsNames.length;
     		for(var y=0; y<headers[level-1][j].childs.length; y++){
 	    		for(var i=0; i<operationExpsNames.length; i++){
 	    			if(headers[level-1][j].childs[y].name==operationExpsNames[i]){
-	    				operationExpsIdsItem.push(pos+y);
+	    				operationExpsIdsItem[i]=(pos+y);
 	        		}
 	    		}
     		}
@@ -232,6 +234,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     //linesValueForHeader
     //expIds: the ids of the columns or rows that stay for the elements of the operation 
     ,executeOp: function(op, horizontal, linesValueForHeader, expIds, crossTab){
+    	
     	var exps = new Array();
     	var CF = new Array();
     	var lineLength;
