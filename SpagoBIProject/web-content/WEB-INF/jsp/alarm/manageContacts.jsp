@@ -63,7 +63,6 @@ if(resourcesList != null){
 		, items: [
 		    {
 		       region: 'center',
-		      // layout: 'fit',
 		       items: [manageContacts]
 		    }
 		]
