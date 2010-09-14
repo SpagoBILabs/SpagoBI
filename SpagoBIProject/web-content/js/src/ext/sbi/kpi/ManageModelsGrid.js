@@ -65,6 +65,8 @@ Sbi.kpi.ManageModelsGrid = function(config, ref) {
 	config.configurationObject = this.configurationObject;
 	
 	config.readonly = readonly;
+	
+	config.addcopycolumn = true;
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageModelsGrid.superclass.constructor.call(this, c);	 	

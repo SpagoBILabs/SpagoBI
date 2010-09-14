@@ -279,6 +279,12 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			}
 			try{
 				model.setCode(obj.getString("code"));
+				try{
+					model.setDescription(obj.getString("description"));
+				}catch(Throwable t){
+					//nothing
+					model.setDescription(null);
+				}
 				model.setDescription(obj.getString("description"));
 				model.setLabel(obj.getString("label"));
 				model.setName(obj.getString("name"));
