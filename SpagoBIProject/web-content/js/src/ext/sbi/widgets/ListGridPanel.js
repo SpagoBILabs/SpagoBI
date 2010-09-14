@@ -123,6 +123,9 @@ Sbi.widgets.ListGridPanel = function(config) {
    	Sbi.widgets.ListGridPanel.superclass.constructor.call(this,c);	
   //to be addedd at the end!
    	this.mainGrid.addEvents('selected');	
+   //	if(this.addcopycolumn){
+   		this.mainGrid.addEvents('copy');	
+   //	}
 };
 
 Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
@@ -180,21 +183,21 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
          });
 
         this.copyColumn = new Ext.grid.ButtonColumn({
-  	       header:  ' '
-  	       ,iconCls: 'icon-copytree'
-  	       ,scope: this
-  	       ,initialConfig: this.idKeyForGrid
-  	       ,clickHandler: function(e, t) {   
-	          var index = this.grid.getView().findRowIndex(t);	          
-	          var selectedRecord = this.grid.store.getAt(index);
-	          var itemId = selectedRecord.get('modelId');
-	          this.grid.fireEvent('selected', selectedRecord);
-  	       }
-  	       ,width: 25
-  	       ,tooltip: LN('sbi.modelinstances.copyalltree')	
-  	       ,renderer : function(v, p, record){
-  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
-  	       }
+		       header:  ' '
+		       ,iconCls: 'icon-copytree'
+		       ,scope: this
+		       ,clickHandler: function(e, t) {
+		          var index = this.grid.getView().findRowIndex(t);	          
+		          var selectedRecord = this.grid.store.getAt(index);
+		          var itemId = selectedRecord.get('modelId');
+		          this.grid.fireEvent('copy', selectedRecord);
+		       }
+	    	   ,tooltip: LN('sbi.modelinstances.copyalltree')	    		   
+		       ,width: 25
+		       ,renderer : function(v, p, record){
+		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+		       }
+
           });	
 
         if(this.readonly){
@@ -234,9 +237,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	  
  	   var pluginsToAdd;
  	   if(this.readonly){
- 		   	pluginsToAdd = [this.selectColumn];
-        	if(this.addcopycolumn){
-        		pluginsToAdd.push(this.copyColumn); 
+ 		   	if(this.addcopycolumn){
+ 		   		pluginsToAdd = [this.selectColumn, this.copyColumn];
+        	}else{
+        		pluginsToAdd = [this.selectColumn];
         	}
         }else{
         	if(!this.readonlyStrict){

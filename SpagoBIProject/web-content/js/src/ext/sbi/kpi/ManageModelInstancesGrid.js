@@ -202,10 +202,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		
 		manageModels.modelsGrid.on('selected', function(rec){
 							this.modelsWin.close();
-
 							this.addModelInstanceRecord(rec);
 							}, this);
-
+		
+		manageModels.modelsGrid.on('copy', function(rec){
+							this.modelsWin.close();
+							this.addModelInstanceTree(rec);
+							}, this);
 		this.modelsWin.show();
 		this.modelsWin.doLayout();
 
@@ -220,6 +223,19 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		}
 		//fills node detail and tabs by rowclick
 		this.fireEvent('rowclick', this);
+	}
+	, addModelInstanceTree: function(rec){
+		this.mainElementsStore.add(rec);
+		this.mainElementsStore.commitChanges();
+		this.rowselModel.selectRecords([rec]);
+
+		if(rec.get('code')){
+			rec.set('modelCode', rec.get('code'));
+		}
+		//fills node detail and tabs by rowclick
+		this.fireEvent('rowclick', this);
+		this.fireEvent('copytree', rec, this);
+
 	}
 	, addNewItem : function(){
 
