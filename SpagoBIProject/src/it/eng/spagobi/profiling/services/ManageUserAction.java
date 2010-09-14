@@ -27,7 +27,6 @@ import it.eng.spagobi.analiticalmodel.document.x.SaveMetadataAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
@@ -41,8 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -71,6 +68,10 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	private final String ROLES = "userRoles";
 	private final String ATTRIBUTES = "userAttributes";
 
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
 
 	@Override
 	public void doService() {
@@ -89,10 +90,21 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		if (serviceType != null && serviceType.equalsIgnoreCase(USERS_LIST)) {
 			
 			try {				
-				ArrayList<UserBO> users = userDao.loadUsers();
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalResNum = userDao.countUsers();
+				List<UserBO> users = userDao.loadPagedUsersList(start, limit);
 				logger.debug("Loaded users list");
 				JSONArray usersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(users,	locale);
-				JSONObject usersResponseJSON = createJSONResponseUsers(usersJSON);
+				JSONObject usersResponseJSON = createJSONResponseUsers(usersJSON, totalResNum);
 
 				writeBackToClient(new JSONSuccess(usersResponseJSON));
 
@@ -196,24 +208,22 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseUsers(JSONArray rows)
+	private JSONObject createJSONResponseUsers(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
+		results.put("total", totalResNumber);
 		results.put("title", "Users");
-		results.put("samples", rows);
+		results.put("rows", rows);
 		return results;
 	}
 	
 	private List deserializeRolesJSONArray(JSONArray rows) throws JSONException{
 		List toReturn = new ArrayList();
-		//HashMap<Integer, String> toReturn = new HashMap<Integer, String>();
 		for(int i=0; i< rows.length(); i++){
 			JSONObject obj = (JSONObject)rows.get(i);
 			Integer id = obj.getInt("id");
-			//String name = obj.getString("name");
-			//String description = obj.getString("description");
 			toReturn.add(id);
 		}	
 		return toReturn;

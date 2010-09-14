@@ -23,7 +23,6 @@ package it.eng.spagobi.profiling.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -62,5 +61,9 @@ public interface ISbiUserDAO {
 	public void updateSbiUser(SbiUser user, Integer userID) throws EMFUserError;
 	
 	public Integer fullSaveOrUpdateSbiUser(SbiUser user, List roles, HashMap<Integer, String> attributes) throws EMFUserError;
+	
+	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)throws EMFUserError;
+	
+	public Integer countUsers()throws EMFUserError;
 
 }

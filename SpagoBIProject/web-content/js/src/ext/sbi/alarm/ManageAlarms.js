@@ -70,7 +70,7 @@ Sbi.alarms.ManageAlarms = function(config) {
 	
 	var c = Ext.apply({}, config || {}, {});
 	
-	Sbi.kpi.ManageResources.superclass.constructor.call(this, c);	 
+	Sbi.alarms.ManageAlarms.superclass.constructor.call(this, c);	 
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.getForm().loadRecord(rec);  
