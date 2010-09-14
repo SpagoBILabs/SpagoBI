@@ -29,6 +29,7 @@ import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.model.bo.Model;
+import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResources;
 import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
@@ -71,6 +72,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
 	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
 	private final String MODELINSTS_KPI_RESTORE = "MODELINSTS_KPI_RESTORE";
+	
+	private final String MODELINSTS_COPY_MODEL = "MODELINSTS_COPY_MODEL";
 
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
@@ -87,6 +90,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String NODES_TO_SAVE = "nodes";
 	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
 	private final String ROOT_TO_SAVE = "rootNode";
+
 
 	@Override
 	public void doService() {
@@ -142,6 +146,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						"Exception occurred while retrieving model tree", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODES_SAVE)) {
+
 			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
 			JSONArray droppedNodesToSaveJSON = getAttributeAsJSONArray(DROPPED_NODES_TO_SAVE);
 			JSONObject rootObj = getAttributeAsJSONObject(ROOT_TO_SAVE);
@@ -152,6 +157,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Vector idsToRemove = new Vector();
 			if(nodesToSaveJSON != null || droppedNodesToSaveJSON != null){
 				JSONObject response = new JSONObject();
+
 				try {
 					modelNodesDD = deserializeNodesJSONArrayDD(droppedNodesToSaveJSON);
 					
@@ -199,6 +205,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception saving model instance nodes", e);
 				}
+				
 			}
 			
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODE_DELETE)) {
@@ -327,6 +334,25 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						"Exception in response", e);
 			}
 			
+		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_COPY_MODEL)) {
+			
+			try {	
+				//saves all model nodes hierarchy as model instance
+				JSONObject response = new JSONObject();
+				Integer modelId = (Integer)getAttributeAsInteger("modelId");
+
+				ModelInstance root = new ModelInstance ();
+				response = recurseOverModelTree(modelId, response, null);
+				
+				logger.debug("Loaded model tree");		
+				
+				writeBackToClient(new JSONSuccess(response));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model tree", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model tree", e);
+			}
 		}else if(serviceType == null){
 			try {
 
@@ -404,6 +430,63 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results.put("title", "ResourcesList");
 		results.put("rows", rows);
 		return results;
+	}
+	private JSONObject recurseOverModelTree(Integer id, JSONObject response, Integer parentId) throws JSONException{
+
+		try {
+			Model model =DAOFactory.getModelDAO().loadModelWithChildrenById(id);
+			Integer modelInstId = null;
+			if(id != null){
+				ModelInstance modelInstNode = new ModelInstance();
+	
+				//save root first
+				try {
+					modelInstNode.setName(model.getName());
+					modelInstNode.setDescription(model.getDescription());
+					modelInstNode.setModel(model);
+					modelInstNode.setParentId(parentId);
+					modelInstNode.setLabel(java.util.UUID.randomUUID().toString());
+					
+					Integer kpiId = model.getKpiId();
+					if(kpiId != null){
+						Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+						KpiInstance kpiInst = new KpiInstance();
+						kpiInst.setKpi(kpiId);
+						kpiInst.setWeight(kpi.getStandardWeight());
+						modelInstNode.setKpiInstance(kpiInst);
+					}	
+		
+					//save node as ModelInstance node
+					modelInstId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
+					modelInstNode.setId(modelInstId);
+
+					if(parentId == null){
+						response.append("root",modelInstId.intValue()+"");
+					}
+				} catch (EMFUserError e) {
+					response.append("tree", "KO");
+				}
+				
+				List <Model> children = model.getChildrenNodes();
+				if(children == null){
+					try {
+						DAOFactory.getModelDAO().loadModelWithChildrenById(parentId);
+					} catch (EMFUserError e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if(children != null && ! children.isEmpty()){
+					for(int i=0; i< children.size(); i++){
+						recurseOverModelTree(((Model)children.get(i)).getId(), response, modelInstId);
+					}
+				}
+			}
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
 
 	private JSONObject recursiveStart(List<ModelInstance> modelInstList, ModelInstance root, JSONObject response) throws JSONException{

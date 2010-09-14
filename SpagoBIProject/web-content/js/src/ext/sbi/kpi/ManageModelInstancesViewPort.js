@@ -63,10 +63,10 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 		, fields: ['resourceId', 'resourceName', 'resourceCode', 'resourceType', 'modelInstId']
 
 	});
-	var paramsTree = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODES_LIST_WITH_KPI"};
+	var paramsTree = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_COPY_MODEL"};
 	
 	this.modelTreeService = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_MODELS_ACTION'
+		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsTree
 	});	
 	//DRAW center element
@@ -215,32 +215,12 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				
 
 			};
-		
-		this.modelTreeLoader =new Ext.tree.TreeLoader({
-			dataUrl: this.modelTreeService,
-	        createNode: function(attr) {
-	            if (attr.modelId) {
-	                attr.id = attr.modelId;
-	            }
 
-	    		if (attr.kpi !== undefined && attr.kpi != null
-	    				&& attr.kpi != '') {
-	    			attr.iconCls = 'has-kpi';
-	    		}
-	    		if (attr.error !== undefined && attr.error != false) {
-	    			attr.cls = 'has-error';
-	    		}
-	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-	        }
-		})
 
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
-		
-		this.manageModelInstances.mainTree.loader = this.manageModelInstances.kpitreeLoader ;
-		this.manageModelInstances.mainTree.loader.nodeParameter = 'modelInstId';
-		
+	
 		var rec = grid.getSelectionModel().getSelected();
 
 		//if unsaved changes
@@ -280,23 +260,61 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	
 	}
 	, copyModelTree: function(rec){
-		//copies root of model tree and all its descendants
-		this.manageModelInstances.rootNodeText = rec.get('text');
-		this.manageModelInstances.rootNodeId = rec.get('modelId');
+
 		
-		
-		this.manageModelInstances.mainTree.loader = this.modelTreeLoader;
-		this.manageModelInstances.mainTree.loader.nodeParameter = 'modelId';
+		var params = {
+			modelId : rec.data.modelId
+		};
+		Ext.Ajax.request( {
+			url : this.modelTreeService,
+			success : function(response, options) {
+				if(response.responseText !== undefined) {
+					//alert(response.responseText);
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			
+	      			if(content !== undefined && content !== null){
+	      				//get response record for root node
+      					this.manageModelInstances.cleanAllUnsavedNodes();
+      					alert(LN('sbi.generic.resultMsg'));
+	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
+	      				this.modelInstancesGrid.getSelectionModel().selectRecords([rec]);
+	      				//if everithing ok--> use it to display tree
+	      				
+	      				this.manageModelInstances.rootNodeText = rec.get('text');
+	      				this.manageModelInstances.rootNodeId = content.root;
 
-		//main instances tree - center
-		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
-
-		this.manageModelInstances.mainTree.setRootNode(newroot);
-		this.manageModelInstances.mainTree.getRootNode().expand(false, /*no anim*/false);
-
-		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
+	      				//main instances tree - center
+	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+	      				this.manageModelInstances.mainTree.setRootNode(newroot);
+	      				this.manageModelInstances.newRootNode = newroot;
+	      				this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 
 
+	      			}else{
+	      				alert(LN('sbi.generic.savingItemError'));
+	      			}
+				}else{
+					this.manageModelInstances.cleanAllUnsavedNodes();
+      				alert(LN('sbi.generic.resultMsg'));
+      				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
+				}
+				this.manageModelInstances.mainTree.doLayout();
+				this.modelInstancesGrid.getView().refresh();
+				this.modelInstancesGrid.doLayout();
+				
+				this.manageModelInstances.newRootNode = null;
+				this.manageModelInstances.existingRootNode = null;
+				
+      			return;
+			},
+			scope : this,
+			failure : function(response) {
+				if(response.responseText !== undefined) {
+					alert(LN('sbi.generic.savingItemError'));
+				}
+			},
+			params : params
+		});
 	}
 	, recordAnalyze: function(rec){
 
