@@ -401,7 +401,6 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 		      		if(response.responseText !== undefined) {
 
 		      			var content = Ext.util.JSON.decode( response.responseText );
-
 		      			if(content.responseText !== 'Operation succeded') {
 			                    Ext.MessageBox.show({
 			                        title: LN('sbi.udp.error'),
@@ -422,18 +421,18 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 				            }
 			      			
 			      			Ext.MessageBox.show({
-			                        title: LN('sbi.udp.result'),
-			                        msg: 'Operation succeded',
+			      					title: LN('sbi.generic.result'),
+			                        msg: LN('sbi.generic.resultMsg'),
 			                        width: 200,
 			                        buttons: Ext.MessageBox.OK
 			                });    
 			      		}      				 
 
 		      		} else {
-		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 		      		}
 				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Error while saving Property', 'Service Error');
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
 				}
          },
          failure: function(response) {
@@ -453,15 +452,15 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 					}
 
 	                Ext.MessageBox.show({
-	                    title: LN('sbi.udp.validationError'),
+	                	title: LN('sbi.generic.validationError'),
 	                    msg: errMessage,
 	                    width: 400,
 	                    buttons: Ext.MessageBox.OK
 	               });
 	      		}else{
 	                Ext.MessageBox.show({
-	                    title: LN('sbi.udp.error'),
-	                    msg: 'Error while Saving Property',
+	                	title: LN('sbi.generic.error'),
+	                    msg: LN('sbi.generic.savingItemError'),
 	                    width: 150,
 	                    buttons: Ext.MessageBox.OK
 	               });
@@ -473,8 +472,8 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 
 	, deleteSelectedUdp: function(udpId, index) {
 		Ext.MessageBox.confirm(
-         'Please confirm',
-         'Confirm property delete?',
+		LN('sbi.generic.pleaseConfirm'),
+		LN('sbi.generic.confirmDelete'), 
          function(btn, text) {
              if (btn=='yes') {
              	if (udpId != null) {	
@@ -498,13 +497,13 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 										this.addNewUdp();
 									}
 								} else {
-									Sbi.exception.ExceptionHandler.showErrorMessage('Error while deleting Property', 'Service Error');
+									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 								}
 				            },
 				            failure: function() {
 				                Ext.MessageBox.show({
-				                    title: LN('sbi.udp.error'),
-				                    msg: 'Error while deleting Property',
+				                	title: LN('sbi.generic.error'),
+				                    msg: LN('sbi.generic.deletingItemError'),
 				                    width: 150,
 				                    buttons: Ext.MessageBox.OK
 				               });
@@ -513,7 +512,7 @@ Ext.extend(Sbi.udp.ManageUdp, Ext.FormPanel, {
 			
 						});
 					} else {
-						Sbi.exception.ExceptionHandler.showWarningMessage('Operation failed', 'Warning');
+						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
 					}
              }
          },

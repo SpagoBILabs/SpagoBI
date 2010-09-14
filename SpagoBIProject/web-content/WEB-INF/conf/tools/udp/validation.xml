@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <VALIDATIONS>
-	<!-- 
+	
 	<SERVICE name="MANAGE_UDP_ACTION" type="ACTION">
 		<VALIDATION blocking="false" validators="">
 			<CONDITIONS>
@@ -11,24 +11,19 @@
 				<FIELD name="name" label="name">
 					<VALIDATOR validatorName="MANDATORY"/>	
 					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>				
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
 				</FIELD>
-				<FIELD name="email" label="email">
-				  	<VALIDATOR validatorName="REGEXP" arg0="([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})"/>
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				<FIELD name="label" label="label">
+					<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
 				</FIELD>
-
-				<FIELD name="mobile" label="mobile">
-					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
-					<VALIDATOR validatorName="REGEXP" arg0="^[0-9/]*$"/>
+				<FIELD name="DESCRIPTION" label="DESCRIPTION">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>	
 				</FIELD>
-				<FIELD name="resources" label="resources">
-					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
-					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\x2D]*$"/>
-				</FIELD>
-
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
-	 -->
+	
 </VALIDATIONS>
