@@ -259,9 +259,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //i: the number of the row (visible)
     ,highlightRow: function(i){
 		for(var y = 0; ; y++){
-			var el = Ext.get('['+i+','+y+']');
-			if (el == null) return;
-			el.addClass('crosstab-table-cells-highlight');
+			//var el = Ext.get('['+i+','+y+']');
+			//if (el == null) return;
+			//el.addClass('crosstab-table-cells-highlight');
+	   		var cel = document.getElementById('['+i+','+y+']');
+	   		if (cel == null) return;
+	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
 		}
     }
     
@@ -269,9 +272,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //i: the number of the row (visible)
     ,removeHighlightOnRow: function(i){
 		for(var y = 0; ; y++){
-			var el = Ext.get('['+i+','+y+']');
-			if (el == null) return;
-			el.removeClass('crosstab-table-cells-highlight');
+			//var el = Ext.get('['+i+','+y+']');
+			//if (el == null) return;
+			//el.removeClass('crosstab-table-cells-highlight');
+	   		var cel = document.getElementById('['+i+','+y+']');
+	   		if (cel == null) return;
+	   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
 		}
     }
     
@@ -279,9 +285,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //j: the number of the column (visible)
     ,highlightColumn: function(j){
 		for (var y = 0; ; y++) {
-			var el = Ext.get('['+y+','+j+']');
-			if (el == null) return;
-			Ext.get('['+y+','+j+']').addClass('crosstab-table-cells-highlight');
+			//var el = Ext.get('['+y+','+j+']');
+			//if (el == null) return;
+			//Ext.get('['+y+','+j+']').addClass('crosstab-table-cells-highlight');
+	   		var cel = document.getElementById('['+y+','+j+']');
+	   		if (cel == null) return;
+	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
 		}
     }
      
@@ -289,9 +298,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //j: the number of the column (visible)
     ,removeHighlightOnColumn: function(j){
  		for (var y = 0; ; y++) {
-			var el = Ext.get('['+y+','+j+']');
-			if (el == null) return;
-			Ext.get('['+y+','+j+']').removeClass('crosstab-table-cells-highlight');
+			//var el = Ext.get('['+y+','+j+']');
+			//if (el == null) return;
+			//Ext.get('['+y+','+j+']').removeClass('crosstab-table-cells-highlight');
+	   		var cel = document.getElementById('['+y+','+j+']');
+	   		if (cel == null) return;
+	   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
  		}
     }
      
@@ -300,11 +312,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
 		for(var i = 0; i<entries.length; i++){
 			for(var y = 0; y<entries[0].length; y++){
-				var el = Ext.get('['+i+','+y+']');
-				if(el == null){
-					break;
-				}
-				el.removeClass('crosstab-table-cells-highlight');
+				//var el = Ext.get('['+i+','+y+']');
+				//if(el == null){
+				//	break;
+				//}
+				//el.removeClass('crosstab-table-cells-highlight');
+		   		var cel = document.getElementById('['+i+','+y+']');
+		   		if (cel == null) break;
+		   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
 			}
 		}
      }
@@ -1035,7 +1050,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
     	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" >'
     	    , '  <div class="x-panel-bwrap"> '
-    	    , '    <div style="width:'+(this.columnWidth-2)+'px;  padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
+    	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
     	    , '    {[this.format(values.name, values.datatype, values.format)]}'
     	    , '    </div> '
     	    , '  </div>'
