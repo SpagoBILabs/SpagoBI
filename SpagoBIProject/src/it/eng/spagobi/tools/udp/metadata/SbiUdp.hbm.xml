@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 9-set-2010 10.57.32 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.tools.udp.metadata.SbiUdp" table="sbi_udp" >
+    <class name="it.eng.spagobi.tools.udp.metadata.SbiUdp" table="SBI_UDP" >
         <id name="udpId" type="integer">
             <column name="UDP_ID" />
             <generator class="increment" />
