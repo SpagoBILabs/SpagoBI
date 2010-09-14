@@ -31,7 +31,6 @@ import it.eng.qbe.datasource.hibernate.BasicHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.CompositeHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.DBConnection;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DataSourceFactory.
  * 
@@ -39,8 +38,7 @@ import it.eng.qbe.datasource.hibernate.DBConnection;
  */
 public class DataSourceFactory {
 	
-	
-	
+
 	/**
 	 * Builds the data source.
 	 * 
@@ -50,11 +48,12 @@ public class DataSourceFactory {
 	 * @param dblinkMap the dblink map
 	 * @param connection the connection
 	 * 
-	 * @return the i data source
+	 * @return the idata source
 	 */
 	public static IDataSource buildDataSource(String dataSourceName, 
 			String datamartName, List datamartNames,  Map dblinkMap, 
 			DBConnection connection) {
+		
 		AbstractHibernateDataSource dataSource = null;
 		
 		if(datamartNames.size() == 1) {
@@ -91,7 +90,6 @@ public class DataSourceFactory {
 		dataSource.setDblinkMap(dblinkMap);		
 		
 		dataSource.setProperties( getProperties(datamartNames) );
-		//dataSource.setLabels( DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(datamartName) );
 	}
 	
 	private static DatamartProperties getProperties(List datamartNames) {
