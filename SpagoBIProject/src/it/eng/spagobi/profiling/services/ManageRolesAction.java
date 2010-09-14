@@ -28,17 +28,13 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -77,6 +73,11 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String SAVE_METADATA="saveMeta";
 	private final String BUILD_QBE_QUERY="buildQbe";
 	
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
+	
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -94,10 +95,23 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 		logger.debug("Service type "+serviceType);
 		if (serviceType != null && serviceType.equalsIgnoreCase(ROLES_LIST)) {
 			try {
-				ArrayList<Role> roles = (ArrayList<Role>)roleDao.loadAllRoles();
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalResNum = roleDao.countRoles();
+				List<Role> roles = roleDao.loadPagedRolesList(start, limit);				
+				
+				//ArrayList<Role> roles = (ArrayList<Role>)roleDao.loadAllRoles();
 				logger.debug("Loaded roles list");
 				JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(roles,	locale);
-				JSONObject rolesResponseJSON = createJSONResponseRoles(rolesJSON);
+				JSONObject rolesResponseJSON = createJSONResponseRoles(rolesJSON,totalResNum);
 
 				writeBackToClient(new JSONSuccess(rolesResponseJSON));
 
@@ -224,13 +238,14 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseRoles(JSONArray rows)
+	private JSONObject createJSONResponseRoles(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
+		results.put("total", totalResNumber);
 		results.put("title", "Roles");
-		results.put("samples", rows);
+		results.put("rows", rows);
 		return results;
 	}
 	
