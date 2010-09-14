@@ -51,6 +51,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
         	tx = session.beginTransaction();
 			id = (Integer)session.save(prop);
 			tx.commit();
+			return id;
 			
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -62,8 +63,6 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			if(session != null){
 				session.close();
 			}
-			
-			return id;
 		}
     }
     
