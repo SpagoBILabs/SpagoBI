@@ -173,4 +173,8 @@ public interface IRoleDAO {
 	 */
 	public Integer insertRoleComplete(Role aRole) throws EMFUserError;
 	
+	public List<Role> loadPagedRolesList(Integer offset, Integer fetchSize)throws EMFUserError;
+	
+	public Integer countRoles()throws EMFUserError;
+	
 }

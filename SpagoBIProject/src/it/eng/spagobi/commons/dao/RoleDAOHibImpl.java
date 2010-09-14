@@ -661,6 +661,90 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		}
 		
 	}
+
+	public Integer countRoles() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiExtRoles ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiExtRoles", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
+	public List<Role> loadPagedRolesList(Integer offset, Integer fetchSize)
+			throws EMFUserError {
+		logger.debug("IN");
+		List<Role> toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+			List toTransform = null;
+		
+			String hql = "select count(*) from SbiExtRoles ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery("from SbiExtRoles order by name");
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			toTransform = hibernateQuery.list();				
+		
+			if(toTransform != null){
+				for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
+					SbiExtRoles hibRole = (SbiExtRoles) iterator.next();
+					Role role = toRole(hibRole);
+					toReturn.add(role);
+				}
+			}	
+			
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiExtRoles", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
+	}
 	
 	
 	
