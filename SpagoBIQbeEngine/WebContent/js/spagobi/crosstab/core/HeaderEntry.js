@@ -155,11 +155,11 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 			this.height = this.thisDimension*this.rowHeight;
 			this.width = dimension;
 			if(this.body!=null){
-				var paddingTop = (this.thisDimension*this.rowHeight/2+this.fontSize);
+				var paddingTop = (this.thisDimension*this.rowHeight+this.fontSize)/2; // TODO chiedere ad Alberto
 				this.body.update(this.getBackground('105%', paddingTop+'px'));
 				this.setSize(dimension, this.thisDimension*this.rowHeight);
 			}else{
-				this.on('render',	function(f){	
+				this.on('render',	function(f){ // ma qui ci entra mai????
 					var paddingTop = (this.thisDimension*this.rowHeight+this.fontSize)/2+4;
 					this.body.update(this.getBackground('105%', paddingTop+'px'));
 					this.setSize(dimension, this.thisDimension*this.rowHeight);
@@ -176,7 +176,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	}
 
 	,getBackground : function(height, padding){
-		return '<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; margin-top: -'+padding+';\"\">'+this.name+'<div>';
+		return '<IMG SRC=\"'+this.backgroundImg+'\" WIDTH=\"100%\" HEIGHT=\"'+height+'\" style=\"z-index:0\"><div style= \" position:relative; z-index:6; height:'+height+'; margin-top: -'+padding+';\">'+this.name+'<div>';
 	}
 
 	
