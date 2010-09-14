@@ -246,7 +246,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
            xtype:'fieldset'
            ,id: 'checks-form'
            ,columnWidth: 0.8
-           ,autoHeight:true
+           ,height: 400
            ,autoWidth: true
            , defaults: {
                anchor: '-20' // leave room for error icon
@@ -314,6 +314,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	        , width: 430
 	        , items: this.checkGroup
 	        , itemId: 'checks'
+	        , layout: 'fit'
 	    });
 	}
 	
