@@ -63,6 +63,12 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 		, fields: ['resourceId', 'resourceName', 'resourceCode', 'resourceType', 'modelInstId']
 
 	});
+	var paramsTree = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODEL_NODES_LIST_WITH_KPI"};
+	
+	this.modelTreeService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_MODELS_ACTION'
+		, baseParams: paramsTree
+	});	
 	//DRAW center element
 	conf.hideContextMenu = false;
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
@@ -209,10 +215,32 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				
 
 			};
+		
+		this.modelTreeLoader =new Ext.tree.TreeLoader({
+			dataUrl: this.modelTreeService,
+	        createNode: function(attr) {
+	            if (attr.modelId) {
+	                attr.id = attr.modelId;
+	            }
+
+	    		if (attr.kpi !== undefined && attr.kpi != null
+	    				&& attr.kpi != '') {
+	    			attr.iconCls = 'has-kpi';
+	    		}
+	    		if (attr.error !== undefined && attr.error != false) {
+	    			attr.cls = 'has-error';
+	    		}
+	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	        }
+		})
 
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
+		
+		this.manageModelInstances.mainTree.loader = this.manageModelInstances.kpitreeLoader ;
+		this.manageModelInstances.mainTree.loader.nodeParameter = 'modelInstId';
+		
 		var rec = grid.getSelectionModel().getSelected();
 
 		//if unsaved changes
@@ -255,14 +283,19 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		//copies root of model tree and all its descendants
 		this.manageModelInstances.rootNodeText = rec.get('text');
 		this.manageModelInstances.rootNodeId = rec.get('modelId');
+		
+		
+		this.manageModelInstances.mainTree.loader = this.modelTreeLoader;
+		this.manageModelInstances.mainTree.loader.nodeParameter = 'modelId';
 
 		//main instances tree - center
 		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+
 		this.manageModelInstances.mainTree.setRootNode(newroot);
-		this.manageModelInstances.newRootNode = newroot;
+		this.manageModelInstances.mainTree.getRootNode().expand(false, /*no anim*/false);
 
 		this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
-		this.manageModelInstances.mainTree.doLayout();
+
 
 	}
 	, recordAnalyze: function(rec){

@@ -1014,7 +1014,41 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			node.attributes.toSave = true;
 		}
 	}
-
+/*	,createTreeModelByRec: function(rec) {
+			var iconClass = '';
+			var cssClass = '';
+			if (rec.get('kpiId') !== undefined && rec.get('kpiId') != null) {
+				iconClass = 'has-kpi';
+			}
+			var attrKpiCode = '';
+			if(rec.get('kpiCode') !== undefined){
+				attrKpiCode = ' - '+rec.get('kpiCode');
+			}
+	
+			var tip = rec.get('code')+' - '+rec.get('name')+ attrKpiCode;
+			
+			var node = new Ext.tree.AsyncTreeNode({
+		        text		: this.rootNodeText,
+		        expanded	: true,
+		        leaf		: false,
+				modelInstId : this.rootNodeId,
+				id			: this.rootNodeId,
+				label		: rec.get('label'),
+				description	: rec.get('description'),
+				name		: rec.get('name'),
+				code		: rec.get('code'),
+				kpiName		: rec.get( 'kpiName'),
+				kpiId		: rec.get( 'kpiId'),
+				iconCls		: iconClass,
+				cls			: cssClass,
+		        draggable	: false,
+		        qtip		: tip,
+		        toSave		: true,
+		        isNewRec 	:  rec.get( 'isNewRec')
+		    });
+	
+			return node;
+	}*/
 	,createRootNodeByRec: function(rec) {
 			var iconClass = '';
 			var cssClass = '';
