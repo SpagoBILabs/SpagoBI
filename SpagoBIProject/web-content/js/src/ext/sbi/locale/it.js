@@ -15,6 +15,7 @@ Sbi.locale.ln['sbi.generic.delete'] = 'Elimina';
 Sbi.locale.ln['sbi.generic.update'] = 'Salva';
 Sbi.locale.ln['sbi.generic.details'] = 'Dettaglio';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Avanzato';
+Sbi.locale.ln['sbi.generic.select'] = 'Seleziona';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nome';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descrizione';
@@ -86,6 +87,7 @@ Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Cancella nodo Istanza di Model
 Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleziona un nodo da cancellare';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 Sbi.locale.ln['sbi.modelinstances.code'] = 'Codice Modello';
+Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copia tutto l\'albero';
 //END List Detail messages
 
 //START kpi interface messages

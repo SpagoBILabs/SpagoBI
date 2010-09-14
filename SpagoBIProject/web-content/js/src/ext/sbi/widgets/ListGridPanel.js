@@ -105,6 +105,7 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.drawSelectColumn = conf.drawSelectColumn; 
 	this.readonly = config.readonly;
 	this.readonlyStrict = config.readonlyStrict;
+	this.addcopycolumn = config.addcopycolumn;
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -138,6 +139,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, reference : null
 	, readonly: null
 	, readonlyStrict: null
+	, addcopycolumn : null
 	
 	,initWidget: function(){
 	
@@ -151,6 +153,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 		          var itemId = selectedRecord.get('modelId');
 		          this.grid.fireEvent('selected', selectedRecord);
 		       }
+	    	   ,tooltip: LN('sbi.generic.select')	    		   
 		       ,width: 25
 		       ,renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
@@ -170,20 +173,39 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	          this.grid.fireEvent('delete', itemId, index);
  	       }
  	       ,width: 25
+ 	       ,tooltip: LN('sbi.generic.delete')	
  	       ,renderer : function(v, p, record){
  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
  	       }
          });
 
-        	
+        this.copyColumn = new Ext.grid.ButtonColumn({
+  	       header:  ' '
+  	       ,iconCls: 'icon-copytree'
+  	       ,scope: this
+  	       ,initialConfig: this.idKeyForGrid
+  	       ,clickHandler: function(e, t) {   
+	          var index = this.grid.getView().findRowIndex(t);	          
+	          var selectedRecord = this.grid.store.getAt(index);
+	          var itemId = selectedRecord.get('modelId');
+	          this.grid.fireEvent('selected', selectedRecord);
+  	       }
+  	       ,width: 25
+  	       ,tooltip: LN('sbi.modelinstances.copyalltree')	
+  	       ,renderer : function(v, p, record){
+  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+  	       }
+          });	
 
         if(this.readonly){
         	this.gridColItems.push(this.selectColumn); 
+        	if(this.addcopycolumn){
+        		this.gridColItems.push(this.copyColumn); 
+        	}
         }else{
         	if(!this.readonlyStrict){
         		this.gridColItems.push(this.deleteColumn); 
-        	}
-        	 
+        	}        	 
         }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
@@ -213,6 +235,9 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	   var pluginsToAdd;
  	   if(this.readonly){
  		   	pluginsToAdd = [this.selectColumn];
+        	if(this.addcopycolumn){
+        		pluginsToAdd.push(this.copyColumn); 
+        	}
         }else{
         	if(!this.readonlyStrict){
         		pluginsToAdd = this.deleteColumn; 
