@@ -39,8 +39,8 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
@@ -78,7 +78,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Integer maxSize = null;
 		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		QbeDataSet dataSet = null;
+		HQLDataSet dataSet = null;
 		JSONDataWriter dataSetWriter;
 		
 		Query query = null;
@@ -144,7 +144,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new QbeDataSet(statement);
+				dataSet = new HQLDataSet(statement);
 				dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 				
 				Map userAttributes = new HashMap();

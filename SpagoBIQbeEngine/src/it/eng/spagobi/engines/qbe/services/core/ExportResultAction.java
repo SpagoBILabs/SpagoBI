@@ -48,7 +48,7 @@ import it.eng.qbe.export.TemplateBuilder;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDataSet;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -190,13 +190,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					if (!isFormEngineInstance) {
 						// case of standard QBE
 						
-						QbeDataSet dataSet = null;
+						HQLDataSet dataSet = null;
 						
 						Integer limit = 0;
 						Integer start = 0;
 						Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();	
 						boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-						dataSet = new QbeDataSet(statement);
+						dataSet = new HQLDataSet(statement);
 						dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 						
 						Map userAttributes = new HashMap();

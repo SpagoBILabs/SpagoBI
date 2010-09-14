@@ -7,8 +7,8 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
@@ -60,7 +60,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		Integer maxSize = null;
 		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		QbeDataSet dataSet = null;
+		HQLDataSet dataSet = null;
 		JSONDataWriter serializer;
 		LookupStoreJSONSerializer serializer2;
 		JSONObject filtersJSON = null;
@@ -106,7 +106,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new QbeDataSet(statement);
+				dataSet = new HQLDataSet(statement);
 				dataSet.setAbortOnOverflow(true);
 				
 				Map userAttributes = new HashMap();
