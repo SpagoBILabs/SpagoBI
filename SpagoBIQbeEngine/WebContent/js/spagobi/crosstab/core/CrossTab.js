@@ -1550,7 +1550,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    		partialSum =0;
 	        	for(var j=start; j<entries[0].length && j<end; j++){
 	        		if(!this.columnHeader[this.columnHeader.length-1][j].hidden && this.columnHeader[this.columnHeader.length-1][j].type=='data'){
-	        			partialSum = partialSum + parseInt(entries[i][j]);
+	        			partialSum = partialSum + parseFloat(entries[i][j]);
 	        		}
 	        	}
 	        	sum.push(''+partialSum);
@@ -1569,7 +1569,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	       		partialSum =0;
 	        	for(var i=start; i<entries.length && i<end; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][i].hidden && this.rowHeader[this.rowHeader.length-1][i].type=='data'){
-	        			partialSum = partialSum + parseInt(entries[i][j]);
+	        			partialSum = partialSum + parseFloat(entries[i][j]);
 	        		}
 	        	}
 	        	sum.push(''+partialSum);
@@ -1601,7 +1601,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        	for(var j=0; j<lines.length; j++){
 	        		
 	        		if(!this.columnHeader[this.columnHeader.length-1][lines[j]].hidden ){//}&& this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
-	        			partialSum = partialSum + parseInt(entries[i][lines[j]]);
+	        			partialSum = partialSum + parseFloat(entries[i][lines[j]]);
 	        		}
 	        	}
 	        	sum.push(''+partialSum);
@@ -1621,7 +1621,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	       		partialSum =0;
 	        	for(var i=0; i<lines.length; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][lines[i]].hidden ){//&& this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
-	        			partialSum = partialSum + parseInt(entries[lines[i]][j]);
+	        			partialSum = partialSum + parseFloat(entries[lines[i]][j]);
 	        		}
 	        	}
 	        	sum.push(''+partialSum);
