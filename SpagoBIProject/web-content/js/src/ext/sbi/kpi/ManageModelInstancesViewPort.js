@@ -64,11 +64,16 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 
 	});
 	var paramsTree = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_COPY_MODEL"};
+	var paramsSaveRoot = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_SAVE_ROOT"};
 	
 	this.modelTreeService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
 		, baseParams: paramsTree
 	});	
+	this.saveRootService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
+		, baseParams: paramsSaveRoot
+	});
 	//DRAW center element
 	conf.hideContextMenu = false;
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
@@ -259,9 +264,50 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		}
 	
 	}
+	, saveModelRoot: function(rec){
+
+		var params = {
+			modelId : rec.data.modelId
+		};
+		Ext.Ajax.request( {
+			url : this.saveRootService,
+			success : function(response, options) {
+				if(response.responseText !== undefined) {
+					//alert(response.responseText);
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			
+	      			if(content !== undefined && content !== null){
+	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+	      				this.manageModelInstances.rootNodeText = rec.get('text');
+	      				this.manageModelInstances.rootNodeId = content.root;
+	      				newroot.attributes.modelInstId = content.root;
+      					alert(LN('sbi.generic.resultMsg'));
+
+	      			}else{
+	      				alert(LN('sbi.generic.savingItemError'));
+	      			}
+				}else{
+					this.manageModelInstances.cleanAllUnsavedNodes();
+      				alert(LN('sbi.generic.resultMsg'));
+      				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
+				}
+
+				this.manageModelInstances.newRootNode = null;
+				this.manageModelInstances.existingRootNode = null;
+				
+      			return;
+			},
+			scope : this,
+			failure : function(response) {
+				if(response.responseText !== undefined) {
+					alert(LN('sbi.generic.savingItemError'));
+				}
+			},
+			params : params
+		});
+	}
 	, copyModelTree: function(rec){
 
-		
 		var params = {
 			modelId : rec.data.modelId
 		};
@@ -273,7 +319,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			
 	      			if(content !== undefined && content !== null){
-	      				//get response record for root node
+
       					this.manageModelInstances.cleanAllUnsavedNodes();
       					alert(LN('sbi.generic.resultMsg'));
 	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
@@ -285,6 +331,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	      				//main instances tree - center
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+	      				newroot.attributes.modelInstId = content.root;
 	      				this.manageModelInstances.mainTree.setRootNode(newroot);
 	      				this.manageModelInstances.newRootNode = newroot;
 	      				this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
@@ -359,6 +406,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		//if new model instance
 		if(rec.get('modelInstId') == ''){
 			this.manageModelInstances.newRootNode = newroot;
+			this.saveModelRoot(rec);
 		}else{
 			this.manageModelInstances.existingRootNode = newroot;
 		}
