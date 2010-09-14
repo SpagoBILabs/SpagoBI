@@ -143,10 +143,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 					}
 					
 					id = userDao.fullSaveOrUpdateSbiUser(user, rolesList, attrList);
-					logger.debug("User udated or Inserted");
-					
-					//Integer id = userDao.saveSbiUser(user);
-					logger.debug("New user inserted");
+					logger.debug("User updated or Inserted");
 					JSONObject attributesResponseSuccessJSON = new JSONObject();
 					attributesResponseSuccessJSON.put("success", true);
 					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
