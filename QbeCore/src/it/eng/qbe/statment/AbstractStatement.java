@@ -31,7 +31,7 @@ import it.eng.qbe.query.Query;
  * 
  * @author Andrea Gioia
  */
-public abstract class  BasicStatement implements IStatement{
+public abstract class  AbstractStatement implements IStatement{
 
 	
 	IDataSource dataSource;
@@ -64,7 +64,7 @@ public abstract class  BasicStatement implements IStatement{
 	 * 
 	 * @param dataMartModel the data mart model
 	 */
-	protected BasicStatement(IDataSource dataSource) {
+	protected AbstractStatement(IDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 	
@@ -74,7 +74,7 @@ public abstract class  BasicStatement implements IStatement{
 	 * @param dataMartModel the data mart model
 	 * @param query the query
 	 */
-	protected BasicStatement(IDataSource dataSource, Query query) {
+	protected AbstractStatement(IDataSource dataSource, Query query) {
 		this.dataSource = dataSource;
 		this.query = query;
 	}

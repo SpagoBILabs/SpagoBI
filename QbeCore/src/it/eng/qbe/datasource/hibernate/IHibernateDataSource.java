@@ -30,9 +30,6 @@ import it.eng.qbe.datasource.IDataSource;
  */
 public interface IHibernateDataSource extends IDataSource {
 
-	
-	
-	
 	DBConnection getConnection();
 	Configuration getConfiguration();	
 	SessionFactory getSessionFactory();

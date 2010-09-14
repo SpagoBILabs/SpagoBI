@@ -32,7 +32,7 @@ import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statment.StatementFactory;
 
 
 public class DataMartModel implements IDataMartModel {
@@ -74,7 +74,7 @@ public class DataMartModel implements IDataMartModel {
 	
 	
 	//////////////////////////////////////////////////////////////////////////
-	/// Access methds
+	/// Access metohds
 	/////////////////////////////////////////////////////////////////////////
 	
 	public String getDescription() {
@@ -114,7 +114,7 @@ public class DataMartModel implements IDataMartModel {
 	}
 	
 	public IStatement createStatement(Query query) {
-		return new HQLStatement(getDataSource(), query);
+		return StatementFactory.createStatement(getDataSource(), query);
 	}
 
 	public DataMartModelAccessModality getDataMartModelAccessModality() {

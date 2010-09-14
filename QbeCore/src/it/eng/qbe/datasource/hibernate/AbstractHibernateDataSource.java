@@ -45,12 +45,7 @@ import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.io.IDataMartModelRetriever;
-import it.eng.qbe.model.structure.DataMartModelStructure;
-import it.eng.qbe.model.structure.builder.HibernateDatamartStructureBuilder;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
-import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
 import it.eng.qbe.utility.IDBSpaceChecker;
 import it.eng.qbe.utility.Utils;
 import it.eng.spago.base.ApplicationContainer;
@@ -59,29 +54,14 @@ import it.eng.spagobi.utilities.DynamicClassLoader;
 
 public abstract class AbstractHibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
 
-	
-	protected String datamartName = null;
-	protected List datamartNames = null;
 	private Map dblinkMap = null;
 	private DBConnection connection = null;
-	private DataMartModelStructure dataMartModelStructure = null;
-    
+	
 	private static transient Logger logger = Logger.getLogger(AbstractHibernateDataSource.class);
 	
 	
-	public IStatement createStatement(Query query) {
-		return new HQLStatement(this, query);
-	}
+	
 		
-	public DataMartModelStructure getDataMartModelStructure() {
-		IDataMartStructureBuilder builder;
-		if(dataMartModelStructure == null) {
-			builder = new HibernateDatamartStructureBuilder(this);
-			dataMartModelStructure = builder.build();
-		}
-		
-		return dataMartModelStructure;
-	}
 	
 	/**
 	 * Builds the empty configuration.
@@ -111,21 +91,7 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 	}	
 
 	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getDatamartName()
-	 */
-	public String getDatamartName() {
-		return datamartName;
-	}
-
-	/**
-	 * Sets the datamart name.
-	 * 
-	 * @param datamartName the new datamart name
-	 */
-	public void setDatamartName(String datamartName) {
-		this.datamartName = datamartName;
-	}
+	
 	
 	
 	/**
@@ -303,24 +269,6 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 	 */
 	public void setConnection(DBConnection connection) {
 		this.connection = connection;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getDatamartNames()
-	 */
-	public List getDatamartNames() {
-		return datamartNames;
-	}
-
-
-	/**
-	 * Sets the datamart names.
-	 * 
-	 * @param datamartNames the new datamart names
-	 */
-	public void setDatamartNames(List datamartNames) {
-		this.datamartNames = datamartNames;
 	}
 
 

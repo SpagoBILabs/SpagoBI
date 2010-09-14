@@ -42,7 +42,6 @@ import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.hibernate.HQLStatement;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -135,7 +134,7 @@ public class QbeDataSet extends AbstractDataSet {
 	private int getResultNumberUsingInlineView(org.hibernate.Query hibernateQuery, Session session) throws Exception {
 		int resultNumber = 0;
 		logger.debug("IN");
-		String sqlQuery = "SELECT COUNT(*) FROM (" + ((HQLStatement)statement).getSqlQueryString() + ") temptable";
+		String sqlQuery = "SELECT COUNT(*) FROM (" + statement.getSqlQueryString() + ") temptable";
 		logger.debug("Executing query " + sqlQuery + " ...");
 		JDBCDataSet dataSet = new JDBCDataSet();
 		JDBCSharedConnectionDataProxy proxy = new JDBCSharedConnectionDataProxy(session.connection());

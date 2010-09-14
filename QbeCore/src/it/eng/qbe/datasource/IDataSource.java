@@ -33,6 +33,8 @@ import it.eng.qbe.statment.IStatement;
  */
 public interface IDataSource {
 	
+	int HIBERNATE_DS_TYPE = 1;
+	int COMPOSITE_HIBERNATE_DS_TYPE = 2;
 	
 	DataMartModelStructure getDataMartModelStructure();
 	IStatement createStatement(Query query);
@@ -40,8 +42,7 @@ public interface IDataSource {
 	DataMartModelAccessModality getDataMartModelAccessModality();
 	void setDataMartModelAccessModality(DataMartModelAccessModality dataMartModelAccessModality) ;
 	
-	int HIBERNATE_DS_TYPE = 1;
-	int COMPOSITE_HIBERNATE_DS_TYPE = 2;
+	
 		
 
 	String getName();
@@ -52,5 +53,10 @@ public interface IDataSource {
 	String getDatamartName();
 	List getDatamartNames();
 	
+	/**
+	 * 
+	 * @deprecated
+	 * 
+	 */
 	void addView(String name, IStatement statement, List columnNames, List columnAlias, List columnHibernateTypes);
 }

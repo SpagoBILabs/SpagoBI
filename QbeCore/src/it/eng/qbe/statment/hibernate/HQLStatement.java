@@ -39,7 +39,7 @@ import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
-import it.eng.qbe.statment.BasicStatement;
+import it.eng.qbe.statment.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -62,7 +62,7 @@ import org.hibernate.Session;
 /**
  * The Class HQLStatement.
  */
-public class HQLStatement extends BasicStatement {
+public class HQLStatement extends AbstractStatement {
 	
 	
 	/** Logger component. */
