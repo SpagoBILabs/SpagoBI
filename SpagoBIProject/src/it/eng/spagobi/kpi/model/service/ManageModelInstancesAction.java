@@ -74,6 +74,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODELINSTS_KPI_RESTORE = "MODELINSTS_KPI_RESTORE";
 	
 	private final String MODELINSTS_COPY_MODEL = "MODELINSTS_COPY_MODEL";
+	private final String MODELINSTS_SAVE_ROOT = "MODELINSTS_SAVE_ROOT";
 
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
@@ -341,7 +342,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				JSONObject response = new JSONObject();
 				Integer modelId = (Integer)getAttributeAsInteger("modelId");
 
-				ModelInstance root = new ModelInstance ();
 				response = recurseOverModelTree(modelId, response, null);
 				
 				logger.debug("Loaded model tree");		
@@ -349,9 +349,31 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				writeBackToClient(new JSONSuccess(response));
 
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving model tree", e);
+				logger.error("Exception occurred while copying model tree", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving model tree", e);
+						"Exception occurred while copying model tree", e);
+			}
+		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_SAVE_ROOT)) {
+			
+			try {	
+				//saves all model nodes hierarchy as model instance
+				JSONObject response = new JSONObject();
+				Integer modelId = (Integer)getAttributeAsInteger("modelId");
+				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
+				ModelInstance modelInstNode = new ModelInstance();
+				modelInstNode = fillModelInstanceByModel(model, modelInstNode, null);
+				
+				Integer miId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
+				response.append("root", miId);
+				
+				logger.debug("Loaded model tree");		
+				
+				writeBackToClient(new JSONSuccess(response));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while saving model instance root", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while saving model instance root", e);
 			}
 		}else if(serviceType == null){
 			try {
@@ -431,6 +453,26 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
+	
+	private ModelInstance fillModelInstanceByModel(Model model, ModelInstance modelInstNode, Integer parentId) throws EMFUserError{
+		modelInstNode.setName(model.getName());
+		modelInstNode.setDescription(model.getDescription());
+		modelInstNode.setModel(model);
+		modelInstNode.setParentId(parentId);
+		modelInstNode.setLabel(java.util.UUID.randomUUID().toString());
+		
+		Integer kpiId = model.getKpiId();
+		if(kpiId != null){
+			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+			KpiInstance kpiInst = new KpiInstance();
+			kpiInst.setKpi(kpiId);
+			kpiInst.setWeight(kpi.getStandardWeight());
+			modelInstNode.setKpiInstance(kpiInst);
+		}
+		
+		return modelInstNode;
+		
+	}
 	private JSONObject recurseOverModelTree(Integer id, JSONObject response, Integer parentId) throws JSONException{
 
 		try {
@@ -441,20 +483,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	
 				//save root first
 				try {
-					modelInstNode.setName(model.getName());
-					modelInstNode.setDescription(model.getDescription());
-					modelInstNode.setModel(model);
-					modelInstNode.setParentId(parentId);
-					modelInstNode.setLabel(java.util.UUID.randomUUID().toString());
-					
-					Integer kpiId = model.getKpiId();
-					if(kpiId != null){
-						Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
-						KpiInstance kpiInst = new KpiInstance();
-						kpiInst.setKpi(kpiId);
-						kpiInst.setWeight(kpi.getStandardWeight());
-						modelInstNode.setKpiInstance(kpiInst);
-					}	
+					modelInstNode = fillModelInstanceByModel(model, modelInstNode, parentId);
 		
 					//save node as ModelInstance node
 					modelInstId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
