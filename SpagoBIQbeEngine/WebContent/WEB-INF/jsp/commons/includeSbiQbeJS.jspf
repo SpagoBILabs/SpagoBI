@@ -27,19 +27,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/qbe/filterwizard/filterWizard.js'/></script>
-
-
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTab.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedFields.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCFWizard.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabContextualMenu.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/HeaderEntry.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedFieldsValidator.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabData.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedField.js'/></script>
-<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabShowHideUtility.js'/></script>
-                                                                
-
 		
 <script type="text/javascript" src='../js/spagobi/qbe/DataStorePanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/qbe/DataMartStructurePanel.js'/></script>
@@ -105,15 +92,21 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableGroupEditor.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableEditorPanel.js'/></script>
 
-
 <script type="text/javascript" src='../js/spagobi/formbuilder/TestTemplate.js'/></script>
-
 
 <script type="text/javascript" src='../js/spagobi/formtemplate/DocumentTemplateBuilder.js'/></script>
 
-<script type="text/javascript" src='../js/spagobi/crosstab/test/crosstabDefinitionExample.js'/></script>
-
 <script type="text/javascript" src='../js/spagobi/widgets/GenericDropTarget.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTab.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedFields.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCFWizard.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabContextualMenu.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/HeaderEntry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedFieldsValidator.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabData.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabCalculatedField.js'/></script>
+<script type="text/javascript" src='../js/spagobi/crosstab/core/CrossTabShowHideUtility.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/ChooseAggregationFunctionWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDetailsWizard.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/AttributesContainerPanel.js'/></script>
@@ -127,4 +120,4 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-PRODUCTION
 <script type="text/javascript" src='../js/spagobi/qbe-all-2.6.0.js'></script>
- END-PRODUCTION -->
+END-PRODUCTION -->
