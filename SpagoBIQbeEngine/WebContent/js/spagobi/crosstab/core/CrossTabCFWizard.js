@@ -67,7 +67,11 @@ Sbi.crosstab.core.CrossTabCFWizard = function(config) {
 		    		var expression= this.getExpression();
 		    		var cfName= this.cfNameField.getValue()
 		    		if(expression!=null && expression!="" && cfName!=null && cfName!="" && this.validate(false)){
-		    			this.fireEvent('applyCalculatedField', this.baseNode, this.activeLevel, this.horizontal, expression, cfName);
+		    			if(this.modality == 'edit'){
+		    				this.fireEvent('modifyCalculatedField', this.baseNode, this.activeLevel, this.horizontal, expression, cfName);
+		    			}else{
+		    				this.fireEvent('applyCalculatedField', this.baseNode, this.activeLevel, this.horizontal, expression, cfName);
+		    			}
 		    			this.close();
 		    		}
 	        	}
