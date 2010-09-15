@@ -160,6 +160,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.drawSelectColumn = conf.drawSelectColumn;  
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
+	this.singleSelection = config.singleSelection;
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -234,6 +235,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, gridForm: null
 	, rowselModel:null
 	, ddGroup : null //for dragndrop
+	, singleSelection: true
 	
 	
 	,initWidget: function(){
@@ -333,12 +335,11 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
        }else{
     	  pluginsToAdd = this.deleteColumn; 
        }
- 	   
- 	   if(this.rowselModel==null || this.rowselModel ==undefined){
-	 	  this.rowselModel = new Ext.grid.RowSelectionModel({
-	           singleSelect: true
-	       });
- 	   }
+ 	  if(this.rowselModel==null || this.rowselModel ==undefined){ 
+ 	      this.rowselModel = new Ext.grid.RowSelectionModel({
+              singleSelect: this.singleSelection
+          });
+       }
  	   
  	   this.mainGrid = {
  			   		  id: 'maingrid',
