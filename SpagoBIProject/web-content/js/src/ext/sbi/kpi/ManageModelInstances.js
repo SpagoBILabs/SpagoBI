@@ -1091,12 +1091,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 
 		   // e.data.selections is the array of selected records
 		if(!Ext.isArray(e.data.selections)) {	
- 
-			   var srcNodeDepth = e.dropNode.parentNode.getDepth();
-
-			   var targetNodeDepth = e.target.getDepth();
-				//alert("targer parent depth:"+targetNodeDepth +" srr parent depth:"+srcNodeDepth);
-
 			   //simulates drag&drop but copies the node
 
 			   var importSub = this.referencedCmp.manageModelsTree.importCheck;
@@ -1117,8 +1111,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 			   e.cancel = true;
 			   //if parents have same depth --> enable kind of drop else forbid
-			   if(srcNodeDepth == targetNodeDepth){
-				   
+			   if(this.checkNodeParent(copiedNode, e.dropNode.parentNode, e.target)){
+				   //check that nodes don't go under uncles 
 				   copiedNode.attributes.toSave = true;
 				   copiedNode.attributes.parentId = parentNode.attributes.modelInstId;
 
@@ -1135,10 +1129,23 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				   alert(LN('sbi.modelinstances.DDHierarchy'));
 			   }		   
 		   }
-
-
-	   // if we get here the drop is automatically cancelled by Ext
-	   }
+	    // if we get here the drop is automatically cancelled by Ext
+	    }
+		, checkNodeParent : function (node, srcParent, targetParent){
+			   var srcNodeDepth = srcParent.getDepth();
+			   var targetNodeDepth = targetParent.getDepth();
+			   
+			   if(srcNodeDepth == targetNodeDepth){				   
+				   //check modelId of parent nodes
+				   var srcParentModelId = srcParent.attributes.modelId;	
+				   var targetParentModelId = targetParent.attributes.modelId;	
+				   
+				   if(srcParentModelId == targetParentModelId){
+					   return true;
+				   }
+			   }
+			   return false;
+		}
 		, initContextMenu : function() {
 
 			this.menu = new Ext.menu.Menu( {
