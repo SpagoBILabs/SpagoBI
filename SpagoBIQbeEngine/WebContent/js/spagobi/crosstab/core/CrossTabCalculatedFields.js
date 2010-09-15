@@ -143,6 +143,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	    	
 	    	var cfNode = new Sbi.crosstab.core.HeaderEntry(CFName, 1, horizontal, level,  headers[level][operationExpsIds[j][0]].width,  headers[level][operationExpsIds[j][0]].height);
 	    	cfNode.type=type;
+	    	cfNode.cfExpression=op;
 	    	//alert(operationExpsIds[j]);
 	    	var childs = new Array();
 	    	for(var o=0; o<operationExpsIds[j].length; o++){

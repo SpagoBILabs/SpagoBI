@@ -1490,7 +1490,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	var sums = new Array();
 	    	
 	    	var totalNode = new Sbi.crosstab.core.HeaderEntry('Total', 1, header.horizontal, header.level+1, header.childs[0].width, header.childs[0].height);
-	    	totalNode.type=type;
+	    	totalNode.type='partialsum';
 	    	totalNode.father = header;
 	    	this.setHeaderListener(totalNode);
 	    	
@@ -1649,7 +1649,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     
     
     
-    //Build the panel with the partial sum of the columns
+    //Build the panel with the sum of the columns
     , getColumnsSumPanel : function(tpl, columnsForView, withRowsSum){
     	var storeColumns = new Ext.data.ArrayStore({
     	    autoDestroy: true,
@@ -1671,7 +1671,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   			for(var i=0; i<sumColumns[j].length; i++){
 					var a = new Array();
 					a.push(sumColumns[j][i]);
-					a.push('[partialSumC'+j+','+i+']');
+					a.push('[sumC'+j+','+i+']');
 					a.push('float');
 					a.push(null);
 					a.push('totals');
@@ -1684,7 +1684,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		for(var j=0; j<sumColumns.length; j++){
 	   			var a = new Array();
 	   			a.push(sumColumns[j]);
-	   			a.push('[partialSumC'+j+']');
+	   			a.push('[sumC'+j+']');
 				a.push('float');
 				a.push(null);
 				a.push('totals');
@@ -1738,7 +1738,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   			for(var i=0; i<sumRows.length; i++){
 					var a = new Array();
 					a.push(sumRows[i][j]);
-					a.push('[partialSumR'+i+','+j+']');
+					a.push('[sumR'+i+','+j+']');
 					a.push('float');
 					a.push(null);
 					a.push('totals');
@@ -1751,7 +1751,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		for(var j=0; j<sumRows.length; j++){
 				var a = new Array();
 				a.push(sumRows[j]);
-				a.push('[partialSumR'+j+']');
+				a.push('[sumR'+j+']');
 				a.push('float');
 				a.push(null);
 				a.push('totals');

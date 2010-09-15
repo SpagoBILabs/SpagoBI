@@ -120,6 +120,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	father: null, //father of the node
 	level: null,
 	type: null, //total, cf, data
+	cfExpression: undefined, // the expression of the calculated field, in case the header is a calculated one
 	horizontal: null,
 	childs: null, //childs of the node
 	name: null, // name of the node (displayed in the table)
