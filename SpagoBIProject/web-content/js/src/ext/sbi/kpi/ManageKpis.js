@@ -80,8 +80,10 @@ Sbi.kpi.ManageKpis = function(config) {
 	});
 	
 	this.initConfigObject();
+	var singleSelection = config.singleSelection;
 	config.configurationObject = this.configurationObject;
-	
+	config.singleSelection = singleSelection;
+
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageKpis.superclass.constructor.call(this, c);	
