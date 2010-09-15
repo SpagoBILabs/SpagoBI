@@ -34,8 +34,9 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -66,7 +67,6 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		IDataStore dataStore = null;
-		JSONDataWriter dataSetWriter;
 		
 		Query query = null;
 		IStatement statement = null;
@@ -74,7 +74,6 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		Integer maxSize = null;
 		Integer resultNumber = null;
 		CrosstabDefinition crosstabDefinition = null;
-		JSONObject gridDataFeed = new JSONObject();
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -107,38 +106,49 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			String hqlQuery = statement.getQueryString();
 			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (HQL): [" + hqlQuery + "]");
-			logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + sqlQuery + "]");
-			auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
-			auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 			
-			try {
-				String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
-				logger.debug("Quering temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
-				auditlogger.info("Quering temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
-				DBConnection connection = ((IHibernateDataSource)getDatamartModel().getDataSource()).getConnection();
-				DataSource dataSource = new DataSource();
-				dataSource.setJndi(connection.getJndiName());
-				dataSource.setHibDialectName(connection.getDialect());
-				dataSource.setUrlConnection(connection.getUrl());
-				dataSource.setDriver(connection.getDriverClass());
-				dataSource.setUser(connection.getUsername());
-				dataSource.setPwd(connection.getPassword());
-				dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource);
-				Assert.assertNotNull(dataStore, "The dataStore returned by queryTemporaryTable method of the class [" + TemporaryTableManager.class.getName()+ "] cannot be null");
-			} catch (Exception e) {
-				logger.debug("Query execution aborted because of an internal exceptian");
-				SpagoBIEngineServiceException exception;
-				String message;
-				
-				message = "An error occurred in " + getActionName() + " service while executing query: [" +  statement.getQueryString() + "]";				
-				exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-				exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
-				exception.addHint("Check connection configuration");
-				exception.addHint("Check the qbe jar file");
-				
-				throw exception;
+			DBConnection connection = ((IHibernateDataSource)getDatamartModel().getDataSource()).getConnection();
+			DataSource dataSource = getDataSource(connection);
+			
+			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
+			logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
+			
+			if (!TemporaryTableManager.isEnabled()) {
+				logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
+						"Using inline view construct, therefore performance will be very low");
+				int beginIndex = sqlStatement.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
+				int endIndex = sqlStatement.indexOf(" ", beginIndex);
+				String inlineSQLQuery = sqlStatement.substring(0, beginIndex) + " ( " + sqlQuery + " ) TEMP " + sqlStatement.substring(endIndex);
+				logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
+				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
+				JDBCStandardDataSet dataSet = new JDBCStandardDataSet();
+				dataSet.setDataSource(dataSource);
+				dataSet.setQuery(inlineSQLQuery);
+				dataSet.loadData();
+				dataStore = (DataStore) dataSet.getDataStore();
+			} else {
+				logger.debug("Using temporary table strategy....");
+				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (HQL): [" + hqlQuery + "]");
+				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + sqlQuery + "]");
+				auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
+				auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
+				auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
+
+				try {
+					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource);
+				} catch (Exception e) {
+					logger.debug("Query execution aborted because of an internal exception");
+					String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
+					SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
+					exception.addHint("Check if the base query is properly formed: [" + statement.getQueryString() + "]");
+					exception.addHint("Check if the crosstab's query is properly formed: [" + sqlStatement + "]");
+					exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
+					
+					throw exception;
+				}
 			}
+
+			Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 			logger.debug("Query executed succesfully");
 			
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
@@ -152,14 +162,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 			
-			//gridDataFeed = buildGridDataFeed(results, resultNumber.intValue());	
-	
 			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
 			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
-
-//			dataSetWriter = new JSONDataWriter();
-//			gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
-			//logger.debug("Response object: " + gridDataFeed.toString(3));
 			
 			try {
 				writeBackToClient( new JSONSuccess(crossTabDefinition) );
@@ -176,5 +180,16 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			if (totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}	
+	}
+
+	private DataSource getDataSource(DBConnection connection) {
+		DataSource dataSource = new DataSource();
+		dataSource.setJndi(connection.getJndiName());
+		dataSource.setHibDialectName(connection.getDialect());
+		dataSource.setUrlConnection(connection.getUrl());
+		dataSource.setDriver(connection.getDriverClass());
+		dataSource.setUser(connection.getUsername());
+		dataSource.setPwd(connection.getPassword());
+		return dataSource;
 	}
 }

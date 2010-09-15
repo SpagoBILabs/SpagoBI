@@ -26,20 +26,16 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import sun.text.Normalizer;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -50,7 +46,7 @@ public class TemporaryTableManager {
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(TemporaryTableManager.class);
     
-    private static String DEFAULT_TABLE_NAME_PREFIX = "SBIQBETMP_";
+    private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
     
     /**
      * Contains the definition of the existing temporary table.
@@ -59,7 +55,22 @@ public class TemporaryTableManager {
      */
     private static Map<String, String> tables = new HashMap<String, String>();
 
-	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, DataSource dataSource)
+    public static boolean isEnabled() {
+		logger.debug("IN");
+		boolean toReturn = true;
+		String enabled = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.enabled");
+		logger.debug("Configured temporary table strategy enabled: " + enabled);
+		if ( enabled == null) {
+			logger.warn("Missing temporary table strategy configuration!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE enabled=\"true\" />");
+			logger.debug("Default value is true");
+			enabled = "true";
+		}
+		toReturn = Boolean.parseBoolean(enabled);
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+    }
+    
+	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource)
 	 			throws Exception {
 		logger.debug("IN");
     	Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
@@ -100,7 +111,7 @@ public class TemporaryTableManager {
 	}
 	
 	private static boolean checkTableExistence(String tableName,
-			DataSource dataSource) throws Exception {
+			IDataSource dataSource) throws Exception {
 		logger.debug("IN: tableName = " + tableName);
 		boolean toReturn = false;
 		try {
@@ -142,7 +153,7 @@ public class TemporaryTableManager {
 	}
 
 	private static DataStore queryTemporaryTable(String sqlStatement, String tableName,
-			DataSource dataSource) throws Exception {
+			IDataSource dataSource) throws Exception {
 		
 		logger.debug("IN");
 		// injecting temporary table name into SQL statement
@@ -162,7 +173,7 @@ public class TemporaryTableManager {
 	}
 
 	private static void createTable(String baseQuery, String tableName,
-			DataSource dataSource) throws Exception {
+			IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		String sql = null;
 		String dialect = dataSource.getHibDialectName();
@@ -180,7 +191,7 @@ public class TemporaryTableManager {
 		logger.debug("OUT");
 	}
 
-	private static void dropTableIfExists(String tableName, DataSource dataSource) throws Exception {
+	private static void dropTableIfExists(String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN: dropping table " + tableName + " if exists");
 		String dialect = dataSource.getHibDialectName();
 		if (dialect.contains("Oracle")) { // ORACLE does not support DROP TABLE IF EXISTS command
@@ -205,7 +216,7 @@ public class TemporaryTableManager {
 		logger.debug("OUT");
 	}
 	
-	private static void executeStatement(String sql, DataSource dataSource) throws Exception {
+	private static void executeStatement(String sql, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
 		try {
@@ -228,21 +239,32 @@ public class TemporaryTableManager {
 			logger.debug("OUT");
 		}
 	}
-
-	private static String getTableName(UserProfile userProfile) {
-		logger.debug("IN");
+	
+	public static String getTableNamePrefix() {
 		String tableNamePrefix = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.prefix");
 		logger.debug("Configured temporary table prefix: " + tableNamePrefix);
-		String tableNameSuffix = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.suffix");
-		logger.debug("Configured temporary table suffix: " + tableNameSuffix);
 		if ( tableNamePrefix == null ) {
-			logger.warn("Missing temporary table prefix!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE prefix=\"SBI_QBE_TEMP_\" />");
+			logger.warn("Missing temporary table prefix!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE prefix=\"TMPSBIQBE_\" />");
 			logger.debug("Using default prefix: " + DEFAULT_TABLE_NAME_PREFIX);
 			tableNamePrefix = DEFAULT_TABLE_NAME_PREFIX;
 		}
+		return tableNamePrefix;
+	}
+	
+	public static String getTableNameSuffix() {
+		String tableNameSuffix = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.suffix");
+		logger.debug("Configured temporary table suffix: " + tableNameSuffix);
 		if (tableNameSuffix == null) {
 			tableNameSuffix = "";
 		}
+		return tableNameSuffix;
+	}
+
+	private static String getTableName(UserProfile userProfile) {
+		logger.debug("IN");
+
+		String tableNamePrefix = getTableNamePrefix();
+		String tableNameSuffix = getTableNameSuffix();
 		String userId = userProfile.getUserId().toString();
 		String cleanUserId = StringUtils.convertNonAscii(userId);
 		// removing non letters
