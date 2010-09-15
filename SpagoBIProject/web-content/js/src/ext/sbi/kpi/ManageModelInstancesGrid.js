@@ -233,7 +233,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 			rec.set('modelCode', rec.get('code'));
 		}
 		//fills node detail and tabs by rowclick
-		this.fireEvent('rowclick', this);
+		//this.fireEvent('rowclick', this);
 		this.fireEvent('copytree', rec, this);
 
 	}
