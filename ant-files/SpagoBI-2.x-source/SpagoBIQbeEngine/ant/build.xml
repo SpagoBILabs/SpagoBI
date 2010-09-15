@@ -242,8 +242,6 @@
             
             <file name='./spagobi/formtemplate/DocumentTemplateBuilder.js'/>
             
-            <file name='./spagobi/crosstab/test/crosstabDefinitionExample.js'/>
-            
             <file name='./spagobi/widgets/GenericDropTarget.js'/>
 
 <file name='./spagobi/crosstab/AttributesContainerPanel.js'/>
