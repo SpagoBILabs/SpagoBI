@@ -330,7 +330,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	 if(misuresOnLine){
 	    	 for(var y=1; y<headers.length;y++){
 				if(y<headers.length-1){
-					var freshNode = new Sbi.crosstab.core.HeaderEntry('Total', this.measuresMetadata.length, horizontal, y);
+					var freshNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.measuresMetadata.length, horizontal, y);
 					freshNode.father = node;
 						node.childs.push(freshNode);	
 						node = freshNode;
@@ -344,7 +344,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			}
 	     }else{
 				for(var y=1; y<headers.length;y++){
-					var freshNode =(new Sbi.crosstab.core.HeaderEntry('Total', 1, horizontal, y));
+					var freshNode =(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, horizontal, y));
 					freshNode.father = node;
 					node.childs.push(freshNode);	
 					node = freshNode;
@@ -885,9 +885,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			if((!horizontal && this.withColumnsSum && this.misuresOnRow) || (horizontal && this.withRowsSum && !this.misuresOnRow)){
 				if(y<headers.length-1){
 					if(horizontal){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry('Total', this.measuresMetadata.length, horizontal, y, null , headers[y][0].height));	
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.measuresMetadata.length, horizontal, y, null , headers[y][0].height));	
 					}else{
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry('Total', this.measuresMetadata.length, horizontal, y, headers[y][0].width,  null));
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.measuresMetadata.length, horizontal, y, headers[y][0].width,  null));
 					}
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
@@ -898,9 +898,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			
 			if((!horizontal && this.withColumnsSum && !this.misuresOnRow) || (horizontal && this.withRowsSum && this.misuresOnRow)){
 				if(horizontal){
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry('Total', 1, horizontal, y, null , headers[y][0].height));	
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, horizontal, y, null , headers[y][0].height));	
 				}else{
-					headersPanel.push(new Sbi.crosstab.core.HeaderEntry('Total', 1, horizontal, y, headers[y][0].width,  null));
+					headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, horizontal, y, headers[y][0].width,  null));
 				}
 			}
 
@@ -1535,9 +1535,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	
 	    	
 	    	if(header.horizontal){
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry('Total', 1, header.horizontal, header.level+1, null, header.childs[0].height);
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, header.horizontal, header.level+1, null, header.childs[0].height);
 	    	}else{
-	    		var totalNode = new Sbi.crosstab.core.HeaderEntry('Total', 1, header.horizontal, header.level+1, header.childs[0].width, null);
+	    		var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, header.horizontal, header.level+1, header.childs[0].width, null);
 	    	}
 	    	
 	    	totalNode.type=type;
@@ -1551,7 +1551,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    	var freshFatherNode = totalNode;
 		    	
 		    	while(cousinNode.childs.length>0){
-		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry('Total', 1, freshFatherNode.horizontal, freshFatherNode.level+1, cousinNode.childs[0].width, cousinNode.childs[0].height);
+		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, freshFatherNode.horizontal, freshFatherNode.level+1, cousinNode.childs[0].width, cousinNode.childs[0].height);
 		    		freshTotalChildNode.type=type;
 		    		freshTotalChildNode.father = freshFatherNode;
 		    		freshFatherNode.childs.push(freshTotalChildNode);
@@ -1692,7 +1692,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	        	}
 	    	        	if(check){
 	    	        		operations.push(op);
-	    	        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(headers[i][j].level+1, headers[i][j].horizontal, op, 'Total', this, true, 'partialsum');
+	    	        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(headers[i][j].level+1, headers[i][j].horizontal, op, LN('sbi.crosstab.header.total.text'), this, true, 'partialsum');
 	    	        	}
 	    	       	}
 		        }
@@ -1727,7 +1727,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	
 	    	        	if(partialSumNode!=null){
 		        	        //prepare the total node
-		        	        var totalNode = new Sbi.crosstab.core.HeaderEntry('Total', partialSumNode.thisDimension, partialSumNode.horizontal, k, headers[k][0].width, headers[k][0].height);
+		        	        var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), partialSumNode.thisDimension, partialSumNode.horizontal, k, headers[k][0].width, headers[k][0].height);
 		        	        totalNode.father = partialSumNode.father.father;
 		        	        totalNode.type = 'partialsum';
 		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode);

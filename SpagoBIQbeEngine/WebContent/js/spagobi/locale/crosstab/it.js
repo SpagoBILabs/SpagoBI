@@ -51,6 +51,8 @@ Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Il numero
 //CROSSTAB 
 //===================================================================
 
+Sbi.locale.ln['sbi.crosstab.header.total.text'] = 'Totale';
+
 Sbi.locale.ln['sbi.crosstab.menu.addcalculatedfield'] = 'Aggiungi campo calcolato';
 Sbi.locale.ln['sbi.crosstab.menu.removecalculatedfield'] = 'Rimuovi campo calcolato';
 Sbi.locale.ln['sbi.crosstab.menu.modifycalculatedfield'] = 'Modifica campo calcolato';
