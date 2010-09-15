@@ -222,7 +222,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        	text: LN('sbi.crosstab.menu.hideheadertype'),
 		        	iconCls:'hide',
 		        	handler:function(){
-		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, false, this.crossTab);
+		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, this.crossTab);
 		        	},
 		        	scope: this
 		        },
