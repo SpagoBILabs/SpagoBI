@@ -101,6 +101,22 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
     		this.entries[i+rowId] = rows[i];
     	}
     }
+    
+    //remove the columns between the startId and the endId
+    , removeColumns : function(startId, endId){
+    	for(var k=0; k<this.entries.length; k++){
+        	for(var i=endId; i>=startId && i>=0; i--){
+        		this.entries[k].remove(this.entries[k][i]);
+        	}
+    	}
+    }
+    
+    //remove the columns between the startId and the endId
+    , removeRows : function(startId, endId){
+    	for(var i=endId; i>=startId && i>=0; i--){
+    		this.entries.remove(this.entries[i]);
+    	}
+    }
 
 	 //serialize the data (it ads also the sums)
  	, serializeEntries: function(rowsum, columnsum ){
