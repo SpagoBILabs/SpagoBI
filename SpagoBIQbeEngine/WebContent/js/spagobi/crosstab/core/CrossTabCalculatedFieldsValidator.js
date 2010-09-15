@@ -60,8 +60,6 @@
     
     This is in the public domain.
 
-
-	
 	/~ --- Token definitions --- ~/
 	
 	/~ Characters to be ignored ~/
@@ -73,7 +71,7 @@
 	    '[0-9]+'                        			INT   [* %match = parseInt( %match ); *]
 	    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' 			FLOAT [* %match = parseFloat( %match ); *]
 	    '\'[A-Za-z0-9_]+\''					String
-	    'field\[[A-Za-z0-9_ ]*\]'		Identifier
+	    'field\[[^\]]*\]'		Identifier
 	    ;
 	
 	/~ Left-associative tokens, lowest precedence ~/
@@ -97,14 +95,11 @@
 	       			| numberexpression '-' numberexpression      
 				| numberexpression '*' numberexpression      
 				| numberexpression '/' numberexpression      
-				| '-' numberexpression &'*'   
 				| '(' numberexpression ')'    
 				| INT
 				| FLOAT
 				| Identifier
 				;
-
-
 */
 
 Ext.ns("Sbi.crosstab.core");
@@ -112,8 +107,6 @@ Ext.ns("Sbi.crosstab.core");
 Sbi.crosstab.core.ArithmeticExpressionParser = {}; 
 
 Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){ 
-
-
 
 	var _dbg_withtrace        = false;
 	var _dbg_string            = new String();
@@ -273,7 +266,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 
 	    case 20:
 	        if( info.src.charCodeAt( pos ) == 93 ) state = 11;
-	        else if( info.src.charCodeAt( pos ) == 32 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 20;
+	        else if( ( info.src.charCodeAt( pos ) >= 0 && info.src.charCodeAt( pos ) <= 92 ) || ( info.src.charCodeAt( pos ) >= 94 && info.src.charCodeAt( pos ) <= 254 ) ) state = 20;
 	        else state = -1;
 	        break;
 
@@ -341,7 +334,6 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	    new Array( 12/* numberexpression */, 3 ),
 	    new Array( 12/* numberexpression */, 3 ),
 	    new Array( 12/* numberexpression */, 3 ),
-	    new Array( 12/* numberexpression */, 2 ),
 	    new Array( 12/* numberexpression */, 3 ),
 	    new Array( 12/* numberexpression */, 1 ),
 	    new Array( 12/* numberexpression */, 1 ),
@@ -350,25 +342,23 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 
 	/* Action-Table */
 	var act_tab = new Array(
-	    /* State 0 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
+	    /* State 0 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
 	    /* State 1 */ new Array( 14/* "$" */,0 ),
-	    /* State 2 */ new Array( 11/* "/" */,8 , 10/* "*" */,9 , 9/* "-" */,10 , 8/* "+" */,11 , 14/* "$" */,-1 ),
-	    /* State 3 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
-	    /* State 4 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
+	    /* State 2 */ new Array( 11/* "/" */,7 , 10/* "*" */,8 , 9/* "-" */,9 , 8/* "+" */,10 , 14/* "$" */,-1 ),
+	    /* State 3 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
+	    /* State 4 */ new Array( 14/* "$" */,-7 , 8/* "+" */,-7 , 9/* "-" */,-7 , 10/* "*" */,-7 , 11/* "/" */,-7 , 3/* ")" */,-7 ),
 	    /* State 5 */ new Array( 14/* "$" */,-8 , 8/* "+" */,-8 , 9/* "-" */,-8 , 10/* "*" */,-8 , 11/* "/" */,-8 , 3/* ")" */,-8 ),
 	    /* State 6 */ new Array( 14/* "$" */,-9 , 8/* "+" */,-9 , 9/* "-" */,-9 , 10/* "*" */,-9 , 11/* "/" */,-9 , 3/* ")" */,-9 ),
-	    /* State 7 */ new Array( 14/* "$" */,-10 , 8/* "+" */,-10 , 9/* "-" */,-10 , 10/* "*" */,-10 , 11/* "/" */,-10 , 3/* ")" */,-10 ),
-	    /* State 8 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
-	    /* State 9 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
-	    /* State 10 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
-	    /* State 11 */ new Array( 9/* "-" */,3 , 2/* "(" */,4 , 4/* "INT" */,5 , 5/* "FLOAT" */,6 , 7/* "Identifier" */,7 ),
-	    /* State 12 */ new Array( 11/* "/" */,-6 , 10/* "*" */,-6 , 9/* "-" */,-6 , 8/* "+" */,-6 , 14/* "$" */,-6 , 3/* ")" */,-6 ),
-	    /* State 13 */ new Array( 11/* "/" */,8 , 10/* "*" */,9 , 9/* "-" */,10 , 8/* "+" */,11 , 3/* ")" */,18 ),
-	    /* State 14 */ new Array( 11/* "/" */,-5 , 10/* "*" */,-5 , 9/* "-" */,-5 , 8/* "+" */,-5 , 14/* "$" */,-5 , 3/* ")" */,-5 ),
-	    /* State 15 */ new Array( 11/* "/" */,-4 , 10/* "*" */,-4 , 9/* "-" */,-4 , 8/* "+" */,-4 , 14/* "$" */,-4 , 3/* ")" */,-4 ),
-	    /* State 16 */ new Array( 11/* "/" */,8 , 10/* "*" */,9 , 9/* "-" */,-3 , 8/* "+" */,-3 , 14/* "$" */,-3 , 3/* ")" */,-3 ),
-	    /* State 17 */ new Array( 11/* "/" */,8 , 10/* "*" */,9 , 9/* "-" */,-2 , 8/* "+" */,-2 , 14/* "$" */,-2 , 3/* ")" */,-2 ),
-	    /* State 18 */ new Array( 14/* "$" */,-7 , 8/* "+" */,-7 , 9/* "-" */,-7 , 10/* "*" */,-7 , 11/* "/" */,-7 , 3/* ")" */,-7 )
+	    /* State 7 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
+	    /* State 8 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
+	    /* State 9 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
+	    /* State 10 */ new Array( 2/* "(" */,3 , 4/* "INT" */,4 , 5/* "FLOAT" */,5 , 7/* "Identifier" */,6 ),
+	    /* State 11 */ new Array( 11/* "/" */,7 , 10/* "*" */,8 , 9/* "-" */,9 , 8/* "+" */,10 , 3/* ")" */,16 ),
+	    /* State 12 */ new Array( 11/* "/" */,-5 , 10/* "*" */,-5 , 9/* "-" */,-5 , 8/* "+" */,-5 , 14/* "$" */,-5 , 3/* ")" */,-5 ),
+	    /* State 13 */ new Array( 11/* "/" */,-4 , 10/* "*" */,-4 , 9/* "-" */,-4 , 8/* "+" */,-4 , 14/* "$" */,-4 , 3/* ")" */,-4 ),
+	    /* State 14 */ new Array( 11/* "/" */,7 , 10/* "*" */,8 , 9/* "-" */,-3 , 8/* "+" */,-3 , 14/* "$" */,-3 , 3/* ")" */,-3 ),
+	    /* State 15 */ new Array( 11/* "/" */,7 , 10/* "*" */,8 , 9/* "-" */,-2 , 8/* "+" */,-2 , 14/* "$" */,-2 , 3/* ")" */,-2 ),
+	    /* State 16 */ new Array( 14/* "$" */,-6 , 8/* "+" */,-6 , 9/* "-" */,-6 , 10/* "*" */,-6 , 11/* "/" */,-6 , 3/* ")" */,-6 )
 	);
 
 	/* Goto-Table */
@@ -376,22 +366,20 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	    /* State 0 */ new Array( 13/* p */,1 , 12/* numberexpression */,2 ),
 	    /* State 1 */ new Array( ),
 	    /* State 2 */ new Array( ),
-	    /* State 3 */ new Array( 12/* numberexpression */,12 ),
-	    /* State 4 */ new Array( 12/* numberexpression */,13 ),
+	    /* State 3 */ new Array( 12/* numberexpression */,11 ),
+	    /* State 4 */ new Array( ),
 	    /* State 5 */ new Array( ),
 	    /* State 6 */ new Array( ),
-	    /* State 7 */ new Array( ),
-	    /* State 8 */ new Array( 12/* numberexpression */,14 ),
-	    /* State 9 */ new Array( 12/* numberexpression */,15 ),
-	    /* State 10 */ new Array( 12/* numberexpression */,16 ),
-	    /* State 11 */ new Array( 12/* numberexpression */,17 ),
+	    /* State 7 */ new Array( 12/* numberexpression */,12 ),
+	    /* State 8 */ new Array( 12/* numberexpression */,13 ),
+	    /* State 9 */ new Array( 12/* numberexpression */,14 ),
+	    /* State 10 */ new Array( 12/* numberexpression */,15 ),
+	    /* State 11 */ new Array( ),
 	    /* State 12 */ new Array( ),
 	    /* State 13 */ new Array( ),
 	    /* State 14 */ new Array( ),
 	    /* State 15 */ new Array( ),
-	    /* State 16 */ new Array( ),
-	    /* State 17 */ new Array( ),
-	    /* State 18 */ new Array( )
+	    /* State 16 */ new Array( )
 	);
 
 
@@ -433,7 +421,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 
 	    while( true )
 	    {
-	        act = 20;
+	        act = 18;
 	        for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
 	        {
 	            if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -456,7 +444,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	        
 	            
 	        //Panic-mode: Try recovery when parse-error occurs!
-	        if( act == 20 )
+	        if( act == 18 )
 	        {
 	            if( _dbg_withtrace )
 	                __dbg_print( "Error detected: There is no reduce or shift on the symbol " + labels[la] );
@@ -476,7 +464,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	                rvstack[i] = vstack[i];
 	            }
 	            
-	            while( act == 20 && la != 14 )
+	            while( act == 18 && la != 14 )
 	            {
 	                if( _dbg_withtrace )
 	                    __dbg_print( "\tError recovery\n" +
@@ -485,7 +473,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	                if( la == -1 )
 	                    info.offset++;
 	                    
-	                while( act == 20 && sstack.length > 0 )
+	                while( act == 18 && sstack.length > 0 )
 	                {
 	                    sstack.pop();
 	                    vstack.pop();
@@ -493,7 +481,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	                    if( sstack.length == 0 )
 	                        break;
 	                        
-	                    act = 20;
+	                    act = 18;
 	                    for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
 	                    {
 	                        if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -504,7 +492,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	                    }
 	                }
 	                
-	                if( act != 20 )
+	                if( act != 18 )
 	                    break;
 	                
 	                for( var i = 0; i < rsstack.length; i++ )
@@ -516,7 +504,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	                la = __lex( info );
 	            }
 	            
-	            if( act == 20 )
+	            if( act == 18 )
 	            {
 	                if( _dbg_withtrace )
 	                    __dbg_print( "\tError recovery failed, terminating parse process..." );
@@ -529,7 +517,7 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	        }
 	        
 	        /*
-	        if( act == 20 )
+	        if( act == 18 )
 	            break;
 	        */
 	        
@@ -595,12 +583,12 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	    break;
 	    case 6:
 	    {
-	        rval = vstack[ vstack.length - 2 ];
+	        rval = vstack[ vstack.length - 3 ];
 	    }
 	    break;
 	    case 7:
 	    {
-	        rval = vstack[ vstack.length - 3 ];
+	        rval = vstack[ vstack.length - 1 ];
 	    }
 	    break;
 	    case 8:
@@ -609,11 +597,6 @@ Sbi.crosstab.core.ArithmeticExpressionParser.module = function(){
 	    }
 	    break;
 	    case 9:
-	    {
-	        rval = vstack[ vstack.length - 1 ];
-	    }
-	    break;
-	    case 10:
 	    {
 	        rval = vstack[ vstack.length - 1 ];
 	    }
