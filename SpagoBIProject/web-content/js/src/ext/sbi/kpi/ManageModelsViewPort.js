@@ -53,6 +53,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 	//DRAW west element
     this.modelsGrid = new Sbi.kpi.ManageModelsGrid(conf, this.manageModels);
    //DRAW east element
+    conf.singleSelection = false;
     this.manageKpis = new Sbi.kpi.ManageKpis(conf);
 	
 	var viewport = {

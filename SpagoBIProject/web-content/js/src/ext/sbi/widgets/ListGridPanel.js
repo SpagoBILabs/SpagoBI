@@ -106,6 +106,7 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.readonly = config.readonly;
 	this.readonlyStrict = config.readonlyStrict;
 	this.addcopycolumn = config.addcopycolumn;
+	this.singleSelection = config.singleSelection;
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -143,6 +144,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, readonly: null
 	, readonlyStrict: null
 	, addcopycolumn : null
+	, singleSelection : true
 	
 	,initWidget: function(){
 	
@@ -250,7 +252,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
         }
  	   
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
-           singleSelect: true
+           singleSelect: this.singleSelection
        });
   	 
  	  this.mainGrid = new Ext.grid.GridPanel({

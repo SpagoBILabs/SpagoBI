@@ -63,6 +63,7 @@ Sbi.kpi.ManageKpisGrid = function(config, ref) {
 
 	config.readonlyStrict = readonlyStrict;
 	config.dropToItem = dropToItem;
+	config.multipleSelection = true;
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageKpisGrid.superclass.constructor.call(this, c);	
