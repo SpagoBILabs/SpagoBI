@@ -61,6 +61,7 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 	this.level = level;
 	this.horizontal = horizontal;
 	this.thisDimension = thisDimension;
+	this.leafsNumber = thisDimension;
 	var h;
 	var w;
 	if(width!=null){
@@ -125,6 +126,7 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	childs: null, //childs of the node
 	name: null, // name of the node (displayed in the table)
 	thisDimension: null, //see the component description
+	leafsNumber: null,
 	columnWidth: 100,
 	rowHeight: 25,
 	fontSize: 12

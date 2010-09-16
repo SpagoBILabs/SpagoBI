@@ -106,16 +106,29 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
     , removeColumns : function(startId, endId){
     	for(var k=0; k<this.entries.length; k++){
         	for(var i=endId; i>=startId && i>=0; i--){
-        		this.entries[k].remove(this.entries[k][i]);
+        		this.entries[k][i] = null;
         	}
+        	this.entries[k] = this.arrayCompression(this.entries[k]);
     	}
     }
     
     //remove the columns between the startId and the endId
     , removeRows : function(startId, endId){
     	for(var i=endId; i>=startId && i>=0; i--){
-    		this.entries.remove(this.entries[i]);
+    		this.entries[i]=null;
     	}
+    	this.entries = this.arrayCompression(this.entries);
+    }
+    
+    //remove the columns between the startId and the endId
+    , arrayCompression : function(array){
+    	var freshArray = new Array();	
+    	for(var i=0; i<array.length; i++){
+    		if(array[i]!=null){
+    			freshArray.push(array[i]);
+    		}
+    	}
+    	return freshArray;
     }
 
 	 //serialize the data (it ads also the sums)
