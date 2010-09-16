@@ -682,8 +682,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		       }
 	     });
 		var linkColItems = [
-			{id:'id',header: 'Parameter', width: 160, sortable: true, locked:false, dataIndex: 'parameterName'},
-			{header:  'Kpi', width: 160, sortable: true}
+			{id:'id',header: LN('sbi.kpis.parameter'), width: 160, sortable: true, locked:false, dataIndex: 'parameterName'},
+			{header:  LN('sbi.generic.kpi'), width: 160, sortable: true}
 		];
 
     	this.parameterStore = new Ext.data.JsonStore({	

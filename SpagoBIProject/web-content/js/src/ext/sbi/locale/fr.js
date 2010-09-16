@@ -53,6 +53,7 @@ Sbi.locale.ln['sbi.thresholds.listTitle'] = 'Thresholds List';
 Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Kpis Management';
 Sbi.locale.ln['sbi.kpis.listTitle'] = 'Kpis List';
 Sbi.locale.ln['sbi.kpis.linksTitle'] = 'Kpi Links';
+Sbi.locale.ln['sbi.kpis.parameter'] = 'Parameter';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Models Management';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Models List';
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Models';
