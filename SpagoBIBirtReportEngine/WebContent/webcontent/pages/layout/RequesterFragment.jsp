@@ -1,5 +1,5 @@
 <%-----------------------------------------------------------------------------
-	Copyright (c) 2004 Actuate Corporation and others.
+	Copyright (c) 2004-2008 Actuate Corporation and others.
 	All rights reserved. This program and the accompanying materials 
 	are made available under the terms of the Eclipse Public License v1.0
 	which accompanies this distribution, and is available at
@@ -33,12 +33,14 @@
 	baseHref += request.getContextPath( ) + fragment.getJSPRootPath( );
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <HTML>
 	<HEAD>
 		<TITLE>PARAMETER SELECTION PAGE</TITLE>
 		<BASE href="<%= baseHref %>" >
 		
+		<!-- Mimics Internet Explorer 7, it just works on IE8. -->
+		<META HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=EmulateIE7">
 		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; CHARSET=utf-8">
 		<LINK REL="stylesheet" HREF="birt/styles/style.css" TYPE="text/css">
 		<%
@@ -103,6 +105,8 @@
 		<script src="birt/ajax/ui/dialog/AbstractBaseDialog.js" type="text/javascript"></script>
 		<script src="birt/ajax/ui/dialog/AbstractParameterDialog.js" type="text/javascript"></script>
 		<script src="birt/ajax/ui/dialog/BirtParameterDialog.js" type="text/javascript"></script>
+		<script src="birt/ajax/ui/dialog/AbstractExceptionDialog.js" type="text/javascript"></script>
+		<script src="birt/ajax/ui/dialog/BirtExceptionDialog.js" type="text/javascript"></script>
 		
 		<SCRIPT SRC="birt/ajax/utility/BirtPosition.js" type="text/javascript"></script>
 
@@ -112,7 +116,7 @@
 				
 	</HEAD>
 
-	<BODY CLASS="BirtViewer_Body" onload="Javascript:init()" LEFTMARGIN='0px' STYLE='overflow:hidden'>
+	<BODY CLASS="BirtViewer_Body" onload="Javascript:init()" SCROLL="no" LEFTMARGIN='0px' STYLE='overflow:hidden'>
 		<%
 		if( attributeBean.isRtl() )
 		{
@@ -176,26 +180,23 @@
 
 		var birtProgressBar = new BirtProgressBar( 'progressBar' );
 		var birtReportDocument = new BirtReportDocument( "Document" );
-		
-		<%
-		//FIXME: workaround for Jetty
-		String servletPath = (String)request.getAttribute( "ServletPath" );
-		if ( "/parameter".equalsIgnoreCase( servletPath ) )
+
+		var parameterMode;
+		if ( Constants.request.servletPath == Constants.SERVLET_PARAMETER )
 		{
-		%>
-			var birtParameterDialog = new BirtParameterDialog( 'parameterDialog', 'parameter' );
-		<%
+			parameterMode = Constants.SERVLET_PARAMETER;
 		}
 		else
 		{
-		%>
-			var birtParameterDialog = new BirtParameterDialog( 'parameterDialog', 'preview' );
-		<%
+			parameterMode = Constants.SERVLET_PREVIEW;
 		}
-		%>
+		
+		var birtParameterDialog = new BirtParameterDialog( 'parameterDialog', parameterMode );
+		var birtExceptionDialog = new BirtExceptionDialog( 'exceptionDialog' );
 		
 		function init( )
 		{					
+			soapURL = birtUtility.initSessionId( soapURL );
 			birtParameterDialog.__cb_bind( );
 		}
 		

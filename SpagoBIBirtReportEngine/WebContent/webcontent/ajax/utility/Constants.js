@@ -65,6 +65,7 @@ var Constants = {
 	PARAM_DATA_EXTRACT_FORMAT : '__extractformat',
 	PARAM_DATA_EXTRACT_EXTENSION : '__extractextension',
 	PARAM_ISNULL : '__isnull',
+	PARAM_ISNULLLIST : '__isnulllist',
 	PARAM_EMITTER_ID : '__emitterid',
 	
 	PARAM_PRINTER_NAME : '__printer',
@@ -74,8 +75,10 @@ var Constants = {
 	PARAM_PRINTER_MODE : '__printer_mode',
 	PARAM_PRINTER_MEDIASIZE : '__printer_pagesize',
 	
-	PARAM_PAGE_OVERFLOW : '__pageoverflow',
-	PARAM_PAGEBREAKONLY : '__pagebreakonly',		
+	PARAM_PAGE_OVERFLOW : '__pageoverflow',	
+	PARAM_PAGEBREAKONLY : '__pagebreakonly',
+	
+	PARAM_SESSION_ID : '__sessionId',
 	
 	// Parameter Data Type
 	TYPE_ANY : '0',
@@ -91,6 +94,9 @@ var Constants = {
 	// Servlet patterns
 	SERVLET_OUTPUT : 'output',
 	SERVLET_EXTRACT : 'extract',
+	SERVLET_FRAMESET : 'frameset',
+	SERVLET_PARAMETER : 'parameter',
+	SERVLET_PREVIEW : 'preview',
 	
 	// Output formats
 	FORMAT_POSTSCRIPT : 'postscript',

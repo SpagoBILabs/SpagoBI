@@ -1,5 +1,5 @@
 /******************************************************************************
- *	Copyright (c) 2004 Actuate Corporation and others.
+ *	Copyright (c) 2004-2008 Actuate Corporation and others.
  *	All rights reserved. This program and the accompanying materials 
  *	are made available under the terms of the Eclipse Public License v1.0
  *	which accompanies this distribution, and is available at
@@ -206,6 +206,38 @@ BirtUtility.prototype =
 	},
 	
 	/**
+	 * Adds a parameter to a given URL.
+	 */
+	addURLParameter : function ( url, parameterName, parameterValue )
+	{
+		var paramPart = encodeURI(parameterName) + "=" + encodeURI(parameterValue)
+		var lastChar = url.charAt(url.length - 1); 
+		if ( lastChar != "&" && lastChar != "?" )
+		{
+			if ( url.indexOf("?") > 0 )
+			{
+				paramPart = "&" + paramPart;
+			}
+			else
+			{
+				paramPart += "?" + paramPart;
+			}		
+		}
+		
+		var anchorPos = url.lastIndexOf("#");
+		if ( anchorPos >= 0 )
+		{
+			// insert the param part before the anchor
+			url = url.substr(url, anchorPos - 1) + paramPart + url.substr(anchorPos);
+		}
+		else
+		{
+			url += paramPart;
+		}
+		return url;
+	},
+	
+	/**
 	 * Deletes a parameter specified in the given URL.
 	 * If for example the given URL is the following http://localhost/myUrl?param1=2&param2=3&param3=4
 	 * and the value of parameterName is "param2", the resulting URL will be:
@@ -218,6 +250,31 @@ BirtUtility.prototype =
 	{
 		var reg = new RegExp( "([&|?]{1})" + escape(encodeURIComponent(parameterName)) + "\s*=[^&|^#]*", "gi" );
 		return url.replace( reg, "$1");		
+	},
+	
+	/**
+	 * Removes the URL anchor.
+	 */
+	deleteURLAnchor : function(url)
+	{
+		return url.replace( /#[a-zA-Z0-9\-_\$]*$/, "" );
+	},
+	
+	/**
+	 * Creates a hidden input form field.
+	 * @param formObj form object
+	 * @param paramName parameter name
+	 * @param paramValue parameter value
+	 * @return the newly created input element
+	 */
+	addHiddenFormField : function(formObj, paramName, paramValue)
+	{
+		var param = document.createElement( "INPUT" );
+		formObj.appendChild( param );
+		param.TYPE = "HIDDEN";
+		param.name = paramName;
+		param.value = paramValue;
+		return param;
 	},
 	
 	/**
@@ -496,6 +553,24 @@ BirtUtility.prototype =
 	},
 	
 	/**
+	 * Adds the current session id to the given url and returns it.
+	 * If a session id already exists in the url, does nothing.
+	 * @return processed url
+	 */
+	initSessionId : function( url )
+	{
+		// remove existing session id from the URL
+		url = birtUtility.deleteURLParameter(url, Constants.PARAM_SESSION_ID);
+		
+		// add session id in SOAP URL
+		if ( Constants.viewingSessionId )
+		{
+			url = birtUtility.addURLParameter( url, Constants.PARAM_SESSION_ID, Constants.viewingSessionId);
+		}
+		return url;
+	},
+	
+	/**
 	 * Initialize the client DPI setting
 	 * 
 	 * @param, url
@@ -640,18 +715,19 @@ BirtUtility.prototype =
 		if( !str )
 			return null;
 		
-		str = str.replace( "&#09;", "\t" );
-		str = str.replace( "<br>", "\n" );
-		str = str.replace( "&#13;", "\r" );
-		str = str.replace( "&#32;", " " );
-		str = str.replace( "&#34;", "\"" );
-		str = str.replace( "&#39;", "'" );
-		str = str.replace( "&#60;", "<" );
-		str = str.replace( "&#62;", ">" );
-		str = str.replace( "&#96;", "`" );
-		str = str.replace( "&#38;", "&" );
-		str = str.replace( "&#92;", "\\" );
-		str = str.replace( "&#47;", "/" );
+		// Replaces all HTML encoded string with original character. 
+		str = str.replace( /&#09;/g, "\t" );
+		str = str.replace( /<br>/g, "\n" );
+		str = str.replace( /&#13;/g, "\r" );
+		str = str.replace( /&#32;/g, " " );
+		str = str.replace( /&#34;/g, "\"" );
+		str = str.replace( /&#39;/g, "'" );
+		str = str.replace( /&#60;/g, "<" );
+		str = str.replace( /&#62;/g, ">" );
+		str = str.replace( /&#96;/g, "`" );
+		str = str.replace( /&#38;/g, "&" );
+		str = str.replace( /&#92;/g, "\\" );
+		str = str.replace( /&#47;/g, "/" );
 
 		return str;
 	},
