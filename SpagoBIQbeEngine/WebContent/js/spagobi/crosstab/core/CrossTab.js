@@ -531,6 +531,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    		pannels[y].childs = new Array();
 	    		while(heigthCount<heigth){
 	    			pannels[y].childs.push(headers[k+1][i]);
+	    			if(headers[k+1][i]==null){
+	    				alert((k+1)+" "+i+" "+pannels[y].name);
+	    			}
 	    			headers[k+1][i].father = pannels[y];
 	    			heigthCount = heigthCount+headers[k+1][i].thisDimension;
 	    			i++;
@@ -1326,18 +1329,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //      it's usefull if we call this method more than one time: we call it with lazy=true far all the iteration and with lazy=false in the last one +
     //       (take a look at the method calculateCF)
     , addNewEntries: function(level,node,headers,entries, horizontal, lazy){
-    	    	
     	var father = node.father;
     	var dimensionToAdd= node.thisDimension;
     	//update the father
     	father.childs.push(node);
     	
-    	//update the fathers dimension of the subtree of headers where we put the node..
-    	while(father!=null){
-    		father.thisDimension= father.thisDimension+dimensionToAdd;
-    		father=father.father;
-    	}
-    	
+      	//update the fathers dimension of the subtree of headers where we put the node..
+	   	while(father!=null){
+	   		father.thisDimension= father.thisDimension+dimensionToAdd;
+	   		father.leafsNumber = father.leafsNumber+dimensionToAdd;
+	   		father=father.father;
+	   	}
     	var nodeToAddList = new Array();
     	var freshNodeToAddList;
     	var nodePosition;
@@ -1351,11 +1353,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		for(var i=0; i<headers[level].length; i++){
 			nodeS =  headers[level][i];
 			if(nodeS.father == node.father){
-				startDimension=startDimension+node.father.thisDimension-node.thisDimension;
+				startDimension=startDimension+this.getLeafsNumber(node.father)-this.getLeafsNumber(node);
 				startPos = i+nodeS.father.childs.length-1;
 				break;
 			}
-			startDimension = startDimension+nodeS.thisDimension;
+			startDimension = startDimension+this.getLeafsNumber(nodeS);
 		}
 		nodePosition=startDimension;
 		
@@ -1388,7 +1390,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 						startPos = i;
 						break;
 					}
-					freshStartDimension=freshStartDimension+headers[y+1][i].thisDimension;
+					if(headers[y+1][i]!=null){
+						freshStartDimension=freshStartDimension+this.getLeafsNumber(headers[y+1][i]);
+					}else{
+						startPos = i;
+						break;
+					}
 				}
 			}
     	}
@@ -1409,10 +1416,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	if(!lazy){
 	    	this.setFathers(headers);
 			this.setDragAndDrop(headers, horizontal, this);
-		
-			
-
-	  
 	    	this.reloadTable();
     	}
     }   
@@ -1425,6 +1428,41 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     , getCalculatedFields: function() {
     	return this.calculatedFields;
     }
+    
+    // Returns an array with the lower and upper bounds of a header:
+    // The lower bound is the id(position of the leaf inside the header[header.lenght-1] array) of the firs leaf, the upper is the id of the last one
+//    , getHeaderBounds: function(header, horizontal, level){
+//    	var headers;
+//    	var bounds = new Array();
+//    	var dimension=0;
+//    	
+//    	if(header != null){
+//    		horizontal = header.horizontal;
+//    		level = header.level;
+//    	}
+//    	if(level == null){
+//    		level =0;
+//    	}
+//    	if(horizontal){
+//    		headers = this.columnHeader[level];
+//    	}else{
+//    		headers = this.rowHeader[level];
+//    	}
+//    	if(header == null){
+//    		header = headers[0];
+//    	}
+//    	
+//    	for(var i=0; i<headers.length; i++){
+//    		if(headers[i]==header){
+//    			bounds[0] = dimension;
+//    			bounds[1] = dimension+headers[i].thisDimension-1;
+//    			break; 
+//    		}else{
+//    			dimension = dimension+headers[i].thisDimension;
+//    		}
+//    	}
+//    	return bounds;
+//    } 
     
     // Returns an array with the lower and upper bounds of a header:
     // The lower bound is the id(position of the leaf inside the header[header.lenght-1] array) of the firs leaf, the upper is the id of the last one
@@ -1452,14 +1490,33 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	for(var i=0; i<headers.length; i++){
     		if(headers[i]==header){
     			bounds[0] = dimension;
-    			bounds[1] = dimension+headers[i].thisDimension-1;
+    			bounds[1] = dimension+this.getLeafsNumber(headers[i])-1;
     			break; 
     		}else{
-    			dimension = dimension+headers[i].thisDimension;
+    			dimension = dimension+this.getLeafsNumber(headers[i]);
     		}
     	}
+    	
     	return bounds;
-    }   
+    } 
+    
+    
+    
+    , getLeafsNumber: function(header){
+    	
+    //	return header.leafsNumber;
+    	
+    	if(header.childs==0){
+    		return 1;
+    	}else{
+    		var leafs=0;
+    		for(var i=0; i<header.childs.length; i++){
+    			leafs = leafs+this.getLeafsNumber(header.childs[i]);
+    		}
+    		return leafs;
+    	}
+    }
+    
     
     //remove a header and all its childs from the headers structure
     , removeHeader: function(header, updateFathers){
@@ -1469,20 +1526,52 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}else{
     		headers = this.rowHeader;
     	}
-    	
+    	var array;
+    	var value;
+    	var freshArray;
     	if(updateFathers){
 	    	var father = header.father;
+	    	var leafsToRemove= this.getLeafsNumber(header);
 	    	var dimensionToRemove= header.thisDimension;
-	    	//update the father
-	    	father.childs.remove(header);
-
+	    	
 	    	while(father!=null){
+	    		
+	    		if((this.getLeafsNumber(father)-leafsToRemove)==0){
+	    			this.removeHeader(father, true);//se il padre =0 allora lo rimuovo
+	    			return;
+	    		}
 	    		father.thisDimension= father.thisDimension-dimensionToRemove;
+	    		father.leafsNumber= father.leafsNumber-leafsToRemove;
 	    		father=father.father;
-	    	}  	
+	    	}  
+	    	
+	    	for(var i=0; i<header.father.childs.length; i++){
+	    		if(this.isTheSameHeader(header.father.childs[i],header)){
+	    			for(var j=i; j<header.father.childs.length-1; j++){
+	    				header.father.childs[j]=header.father.childs[j+1];
+	    			}
+	    			header.father.childs.length = header.father.childs.length-1;
+	    			i=header.father.childs.length;
+	    		}
+	    	} 	
     	}
     	
-    	headers[header.level].remove(header);
+    	for(var i=0; i<headers[header.level].length; i++){
+    		if(this.isTheSameHeader(headers[header.level][i],header)){
+    			for(var j=i; j<headers[header.level].length-1; j++){
+    				headers[header.level][j]=headers[header.level][j+1];
+    			}
+    			headers[header.level].length = headers[header.level].length-1;
+    			i=headers[header.level].length;
+    		}
+    	}
+
+    	if(header.horizontal){
+    		this.columnHeader[header.level] = headers[header.level];
+    	}else{
+    		this.rowHeader[header.level] = headers[header.level];
+    	}
+
     	
     	for(var i=0; i<header.childs.length; i++){
     		this.removeHeader(header.childs[i], false);
@@ -1491,14 +1580,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
     //remove the header and all its entries
     , removeEntries: function(header, lazy){
-    
 		var bounds = this.getHeaderBounds(header);
 		if(header.horizontal){
 			this.entries.removeColumns(bounds[0],bounds[1]);
 		}else{
 			this.entries.removeRows(bounds[0],bounds[1]);
 		}
+		
 		this.removeHeader(header, true);
+
 		if(!lazy){
 			this.reloadHeadersAndTable();
 		}
@@ -1539,6 +1629,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	}else{
 	    		var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, header.horizontal, header.level+1, header.childs[0].width, null);
 	    	}
+
+	    	totalNode.hidden = header.hidden;
+	    	if(totalNode.hidden){
+	    		totalNode.thisDimension=0;
+	    	}
 	    	
 	    	totalNode.type=type;
 	    	totalNode.father = header;
@@ -1554,10 +1649,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    		freshTotalChildNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), 1, freshFatherNode.horizontal, freshFatherNode.level+1, cousinNode.childs[0].width, cousinNode.childs[0].height);
 		    		freshTotalChildNode.type=type;
 		    		freshTotalChildNode.father = freshFatherNode;
+		    		freshTotalChildNode.hidden = freshFatherNode.hidden;
 		    		freshFatherNode.childs.push(freshTotalChildNode);
 		    		freshFatherNode = freshTotalChildNode;
 		    		cousinNode = cousinNode.childs[0];
 		    		this.setHeaderListener(freshTotalChildNode);
+			    	if(totalNode.hidden){
+			    		freshTotalChildNode.thisDimension=0;
+			    	}
 		    	}
 	    	}
 	    	sums.push(sum);
@@ -1571,15 +1670,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var sum = new Array();
     	var partialSum;
     	for(var i=0; i<entries.length; i++){
+    		partialSum =0;
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
-	    		partialSum =0;
+	    		
 	        	for(var j=start; j<entries[0].length && j<=end; j++){
 	        		if(!this.columnHeader[this.columnHeader.length-1][j].hidden && this.columnHeader[this.columnHeader.length-1][j].type=='data'){
 	        			partialSum = partialSum + parseFloat(entries[i][j]);
 	        		}
 	        	}
-	        	sum.push(''+partialSum);
     		}
+    		sum.push(''+partialSum);
     	}
     	return sum;
     }
@@ -1590,15 +1690,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var sum = new Array();
     	var partialSum;
        	for(var j=0; j<entries[0].length; j++){
-       		if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
-	       		partialSum =0;
+	       	partialSum =0;
+	       	if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
 	        	for(var i=start; i<entries.length && i<=end; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][i].hidden && this.rowHeader[this.rowHeader.length-1][i].type=='data'){
 	        			partialSum = partialSum + parseFloat(entries[i][j]);
 	        		}
 	        	}
-	        	sum.push(''+partialSum);
-       		}
+	       	}
+	        sum.push(''+partialSum);
+       		
     	}
     	return sum;
     } 
@@ -1609,16 +1710,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var sum = new Array();
     	var partialSum;
     	for(var i=0; i<entries.length; i++){
+    		partialSum =0;
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
-	    		partialSum =0;
 	        	for(var j=0; j<lines.length; j++){
 	        		
 	        		if(!this.columnHeader[this.columnHeader.length-1][lines[j]].hidden ){//}&& this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
 	        			partialSum = partialSum + parseFloat(entries[i][lines[j]]);
 	        		}
 	        	}
-	        	sum.push(''+partialSum);
     		}
+    		sum.push(''+partialSum);
     	}
     	return sum;
     }
@@ -1630,74 +1731,140 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var sum = new Array();
     	var partialSum;
        	for(var j=0; j<entries[0].length; j++){
-       		if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
-	       		partialSum =0;
+       		partialSum =0;
+	       	if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
 	        	for(var i=0; i<lines.length; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][lines[i]].hidden ){//&& this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
 	        			partialSum = partialSum + parseFloat(entries[lines[i]][j]);
 	        		}
 	        	}
-	        	sum.push(''+partialSum);
-       		}
+	       	}
+	        sum.push(''+partialSum);
     	}
     	return sum;
     } 
   
+    , removePartialSum: function(){
+    	for(var j=0; j<2; j++){
+			var headers;
+			var horizontal = j==0;
+			if(horizontal){
+				if(this.misuresOnRow){
+					headers = this.columnHeader[this.columnHeader.length-1];
+				}else{
+					headers = this.columnHeader[this.columnHeader.length-2];
+				}
+			}else{
+				if(this.misuresOnRow){
+					headers = this.rowHeader[this.rowHeader.length-2];
+				}else{
+					headers = this.rowHeader[this.rowHeader.length-1];
+				}
+			}  		
+			for(var i=headers.length-1; i>=0; i--){
+				if(headers[i].type == 'partialsum'){
+					this.removeEntries(headers[i], true);
+				}
+			}
+    	}
+    	this.reloadHeadersAndTable();
+
+    }
+    
+    
     , calculatePartialSum: function(horizontal){
+    	var withRowsPartialSumLocal = this.withRowsPartialSum;
+    	var withColumnsPartialSumLocal = this.withColumnsPartialSum;
     	
-	    var headers;
-	    	
-		if(this.withRowsPartialSum && !this.misuresOnRow){
+    	if(horizontal!=null){
+    		withRowsPartialSumLocal = withRowsPartialSumLocal && !horizontal;
+    		withColumnsPartialSumLocal = withColumnsPartialSumLocal && horizontal;
+    	}
+    	
+		if(withRowsPartialSumLocal && !this.misuresOnRow){
 		    for(var i=0; i<this.rowHeader.length-1; i++){
 		        for(var j=0; j<this.rowHeader[i].length; j++){
 		        	this.addHeaderSum(this.rowHeader[i][j], 'partialsum');
 		        }
 		    }
 		}
-		if(this.withColumnsPartialSum && this.misuresOnRow){
+		if(withColumnsPartialSumLocal && this.misuresOnRow){
 			for(var i=0; i<this.columnHeader.length-1; i++){
 		        for(var j=0; j<this.columnHeader[i].length; j++){
 		        	this.addHeaderSum(this.columnHeader[i][j], 'partialsum');
 		        }
 		    }
 		}
-	    
-	    if((this.withRowsPartialSum && this.misuresOnRow) || (this.withColumnsPartialSum && !this.misuresOnRow)){
+		
+	//	this.reloadHeadersAndTable();
+
+	    if((withRowsPartialSumLocal && this.misuresOnRow) || (withColumnsPartialSumLocal && !this.misuresOnRow)){
 		
     		if(!this.misuresOnRow){
     			headers = this.columnHeader;
     		}else{
     			headers = this.rowHeader;
     		}
+    		
 		    var check = false;
-		    var operations = new Array();//Lista di operazioni, per non ripetere 2 volte la stessa (I campi calcolati gia da soli ripetono la stessa operazione in ogni sottoalbero)
-		    
+		    var bounds;
+		    var sums;
+		    var measuresNames;
+		    var measuresPosition;
+		    var partialTotalNode;
+		    var freshChild;
+		    var measurePosition;
 		    if(headers.length>=3){//if there are more than one level
 		    	var i = headers.length-3;
 		        for(var j=0; j<headers[i].length; j++){
+
+		        	bounds = this.getHeaderBounds(headers[i][j]);
+		        	//alert(headers[i][j].name+" "+bounds.toSource());
+			    	measuresNames = new Array();
+			    	measuresPosition = new Array();
+
+				    for(var k=bounds[0]; k<=bounds[1]; k++){
+				    	if(headers[headers.length-1][k].type=='data' && !headers[headers.length-1][k].hidden){
+				    		measurePosition = measuresNames.indexOf(headers[headers.length-1][k].name);
+				    		if(measurePosition<0){
+				    			measuresNames.push(headers[headers.length-1][k].name);
+				    			measurePosition = measuresNames.length-1;
+				    			measuresPosition.push(new Array());
+				    		}
+				    		measuresPosition[measurePosition].push(k);
+					    }
+				    }
+				    
+				    if(measuresNames.length>0){
+				    
+					    sums = new Array(); 
+					    for(var x=0; x<measuresNames.length;x++){
+					    	if(this.misuresOnRow){
+			 		    		sums.push(this.columnsHeaderListSum(measuresPosition[x]));
+					    	}else{
+					    		sums.push(this.rowsHeaderListSum(measuresPosition[x]));
+					    	}
+					    }
+					    
+					    if(headers[i][0].horizontal){
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, null , headers[i][0].height);
+					    }else{
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, headers[i][0].width, null);	
+					    }
+					    partialTotalNode.type = 'partialsum';
+					    partialTotalNode.father = headers[i][j];
 	
-	    	       	if(headers[i][j].type=='data'){
-	    	        	var op ='0';
-	    	        	for(var y=0; y<headers[i][j].childs.length; y++){
-	    	        		if(headers[i][j].childs[y].type=='data'){
-	    	        			op = op+' + field['+headers[i][j].childs[y].name+']';
-	    	        		}
-	    	        	}
-	    	        	check = true;
-	    	        	for(var y=0; y<operations.length; y++){
-	    	        		if(operations[y]==op){
-	    	        			check = false;
-	    	        			break;
-	    	        		}
-	    	        	}
-	    	        	if(check){
-	    	        		operations.push(op);
-	    	        		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(headers[i][j].level+1, headers[i][j].horizontal, op, LN('sbi.crosstab.header.total.text'), this, true, 'partialsum');
-	    	        	}
-	    	       	}
+						for(var k=0; k<measuresNames.length; k++){
+							freshChild = new Sbi.crosstab.core.HeaderEntry(measuresNames[k], 1, headers[i][0].horizontal, headers.length-1, headers[headers.length-1][0].width, headers[headers.length-1][0].height);
+							partialTotalNode.childs.push(freshChild);
+							freshChild.father = partialTotalNode;
+							freshChild.type = 'partialsum';
+						}	
+
+						this.addNewEntries(partialTotalNode.level,partialTotalNode,headers,sums, partialTotalNode.horizontal, true);
+
+				    }
 		        }
-		        
-		        //this.crossTab.reloadHeadersAndTable();
 		        
 		        var measuresSum = new Array();
 		        var lineCount=0;
@@ -1721,22 +1888,27 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		        	       		measuresPosition.push(lineCount);
 		        	       		partialSumNode=headers[k+1][j];
 		        	       	}
-		        	       	lineCount = lineCount+headers[k+1][j].thisDimension;
+		        	       	lineCount = lineCount+ this.getLeafsNumber(headers[k+1][j]);
 		        	       	j++;
 	        	        }
 	
 	    	        	if(partialSumNode!=null){
-		        	        //prepare the total node
-		        	        var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), partialSumNode.thisDimension, partialSumNode.horizontal, k, headers[k][0].width, headers[k][0].height);
+	    	        		//prepare the total node
+	    	        		if(partialSumNode.horizontal){
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), partialSumNode.thisDimension, partialSumNode.horizontal, k, null, headers[k][0].height);	
+	    	        		}else{
+	    	        			var totalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), partialSumNode.thisDimension, partialSumNode.horizontal, k, headers[k][0].width, null);	
+	    	        		}
+		        	        
 		        	        totalNode.father = partialSumNode.father.father;
 		        	        totalNode.type = 'partialsum';
 		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode);
 		        	        totalNode.childs.push(totalNodeChild);
 		        	        
 		        	        this.setHeaderListener(totalNode);
-		        	       
+
 		        	        var totalSum = new Array();
-		        	        for(var y=0; y<partialSumNode.thisDimension; y++){//the number of the leafs(measures)
+		        	        for(var y=0; y<this.getLeafsNumber(partialSumNode); y++){//the number of the leafs(measures)
 		        	        	var lineToSum = new Array();
 		        	        	var sum;
 			        	        for(var x=0; x<measuresPosition.length; x++){
@@ -1748,13 +1920,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			        	        	totalSum.push(this.rowsHeaderListSum(lineToSum));
 			        	        }
 		        	        }
-	
+
 		        	        this.addNewEntries( k,totalNode,headers,totalSum, totalNode.horizontal, true);
 		        	        //prepare for the next step
 		        	        if(j+2<headers[k+1].length){//2 perchè bisogna aggiunge i per il subtotale del livello k+1 piu il totale che sto aggiungendo ora
 	        	        		j=j+1; //the totalNode entry
 	        	        		grandFather = headers[k+1][j].father.father;
-	        	        		lineCount = lineCount+partialSumNode.thisDimension;
+	        	        		lineCount = lineCount+this.getLeafsNumber(partialSumNode);
 	        	        		partialSumNode = null;
 	        	        	}else{
 	        	        		break;
@@ -1764,12 +1936,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	        	}
 		        	}
 		        }
+		       
 		    }
 	    }
 	    
-	    if(this.withRowsPartialSum || this.withColumnsPartialSum){
+	    if(withRowsPartialSumLocal || withColumnsPartialSumLocal){
 	    	this.reloadHeadersAndTable();
 	    }
+	    
     }
     
     //calculate the totals
@@ -1780,8 +1954,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		}else{
     			headers = this.rowHeader;
     		}
-		    var check = false;
-		    var operations = new Array();//Lista di operazioni, per non ripetere 2 volte la stessa (I campi calcolati gia da soli ripetono la stessa operazione in ogni sottoalbero)
 		    var sums = new Array();
 		    if(headers.length>=2){//if there are more than zero level
 		    	var i = headers.length-1;
@@ -1954,8 +2126,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		}); 
    		this.crossTabCFWizard.show(this);  
    		this.crossTabCFWizard.on('applyCalculatedField', function(theNode, level, horizontal, op, CFName){
-    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
+   			
+    		this.removePartialSum();
+    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);	
     		this.addCalculatedField(level, horizontal, op, CFName);
+     		this.calculatePartialSum();
+    		
    		}, this); 
    		this.crossTabCFWizard.on('modifyCalculatedField', function(theNode, level, horizontal, op, CFName){
    			
@@ -1982,7 +2158,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //                    UTILITY
     //===========================================    
 	, cloneNode: function(node,father){
-		var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
+		
+		if(node.horizontal){
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, null, node.height);
+		}else{
+			var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, null);
+		}
 		clonedNode.type = node.type;
 		clonedNode.father = father;
 		for(var i=0; i<node.childs.length;i++){

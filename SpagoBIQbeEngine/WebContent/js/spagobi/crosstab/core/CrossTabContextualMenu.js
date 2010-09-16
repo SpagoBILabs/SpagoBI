@@ -76,27 +76,29 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
     	var header=this.headers[node.level];
     	var checkBoxes= new Array();    	
     	for(var i=0; i<header.length; i++){
-    		var text= header[i].name;   	
-    		var father = header[i].father;
-    		while(father.father!=null){//the node is not the root
-    			text = father.name+" / "+ text;
-    			father = father.father;
-    		}
-
-    		if(header[i].hidden){
-	    		var freshCheck = new Ext.menu.CheckItem({
-					checked: false,
-					text: text,
-					id : (i+1)//with 0 it doesn't work
-				});
-	    		freshCheck.on('checkchange', function(checkBox, checked){
-	        		this.crossTab.removePartialSum(true);
-	    			Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(header[checkBox.id-1], false, false, this.crossTab);
-	        		this.crossTab.calculatePartialSum();
-	    		}, this);
-	    		checkBoxes.push(freshCheck);
-	    		if(i<header.length-1 && (header[i].father.name != header[i+1].father.name)){
-	    			checkBoxes.push('-');
+    		if(header[i].type!='partialsum'){
+	    		var text= header[i].name;   	
+	    		var father = header[i].father;
+	    		while(father.father!=null){//the node is not the root
+	    			text = father.name+" / "+ text;
+	    			father = father.father;
+	    		}
+	
+	    		if(header[i].hidden){
+		    		var freshCheck = new Ext.menu.CheckItem({
+						checked: false,
+						text: text,
+						id : (i+1)//with 0 it doesn't work
+					});
+		    		freshCheck.on('checkchange', function(checkBox, checked){
+		        		this.crossTab.removePartialSum();
+		    			Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(header[checkBox.id-1], false, false, this.crossTab);
+		        		this.crossTab.calculatePartialSum();
+		    		}, this);
+		    		checkBoxes.push(freshCheck);
+		    		if(i<header.length-1 && (header[i].father.name != header[i+1].father.name)){
+		    			checkBoxes.push('-');
+		    		}
 	    		}
     		}
     	}
@@ -173,7 +175,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 				id : text
 			});
     		freshCheck.on('checkchange', function(checkBox, checked){
-        		this.crossTab.removePartialSum(true);
+        		this.crossTab.removePartialSum();
     			Sbi.crosstab.core.CrossTabShowHideUtility.showHideMeasure(checkBox.id, !checked, horizontal, this.crossTab);
         		this.crossTab.calculatePartialSum();
     		}, this);
@@ -213,12 +215,14 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 			       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], 0),
 			       	scope: this
 		        },
-		        '-', 
+		        '-']);
+       	if(!(node.childs.length==0) || ((node.childs.length==0)&&(this.crossTab.misuresOnRow == node.horizontal))){
+       		toReturn = toReturn.concat([
 		        {
 		        	text: LN('sbi.crosstab.menu.hideheader'),
 		        	iconCls:'hide',
 		        	handler:function(){
-		        		this.crossTab.removePartialSum(true);
+		        		this.crossTab.removePartialSum();
 		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideNode(node, true, false, this.crossTab) ;       
 		        		this.crossTab.calculatePartialSum();
 		        	},
@@ -228,12 +232,16 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        	text: LN('sbi.crosstab.menu.hideheadertype'),
 		        	iconCls:'hide',
 		        	handler:function(){
-		        		this.crossTab.removePartialSum(true);
+		        		this.crossTab.removePartialSum();
 		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, this.crossTab);
 		        		this.crossTab.calculatePartialSum();
 		        	},
 		        	scope: this
-		        },
+		        }
+       		 ]);
+    	}
+    
+       	toReturn = toReturn.concat([ 
 		        {
 		        	text: LN('sbi.crosstab.menu.hiddenheader'),
 		        	iconCls:'show',

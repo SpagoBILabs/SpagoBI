@@ -51,7 +51,8 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     // public space
 	return {
 
-	//execute the calculations 
+	//execute the calculations
+		
     calculateCF: function(level, horizontal, op, CFName, crossTab, lazy, type){
 
     	var headers;
@@ -197,7 +198,16 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	    		father = father.father;
 	    	}
     	}
-
+    	
+    	if(!lazy){
+    		this.updateHeadersDimensions(headers);
+    		crossTab.reloadHeadersAndTable();
+    	}
+    	
+    }
+	
+	//update the dimension of all the headers(we need to call this after insert some header)
+	,updateHeadersDimensions: function(headers){
     	for(var x=0; x<headers.length;x++){
     		for(var y=0; y<headers[x].length;y++){
     			if(headers[x][y].horizontal){
@@ -207,12 +217,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     			}
     		}
     	}
-    	
-    	if(!lazy){
-    		crossTab.reloadHeadersAndTable();
-    	}
-    	
-    }
+	}
 	
 	//returns a list of node that is the merging of node1childs, node2childs with out repetition.
 	,mergeNodesChilds : function (node1childs, node2childs){
