@@ -208,14 +208,16 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		       	scope: this
     		});
     	}
-    	toReturn = toReturn.concat([
-		        {
-			       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
-			       	iconCls: 'add',
-			       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], 0),
-			       	scope: this
-		        },
-		        '-']);
+    	if(node.type!='partialsum'){
+	    	toReturn = toReturn.concat([
+			        {
+				       	text: LN('sbi.crosstab.menu.addcalculatedfield'),
+				       	iconCls: 'add',
+				       	handler: this.addCalculatedFieldHandler.createDelegate(this, [node], 0),
+				       	scope: this
+			        },
+			        '-']);
+    	}
        	if(!(node.childs.length==0) || ((node.childs.length==0)&&(this.crossTab.misuresOnRow == node.horizontal))){
        		toReturn = toReturn.concat([
 		        {
