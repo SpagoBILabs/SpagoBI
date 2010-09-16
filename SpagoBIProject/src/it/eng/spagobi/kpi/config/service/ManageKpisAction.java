@@ -21,8 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.kpi.config.service;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -57,6 +60,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String KPIS_LIST = "KPIS_LIST";
 	private final String KPI_INSERT = "KPI_INSERT";
 	private final String KPI_DELETE = "KPI_DELETE";
+	private final String KPI_LINKS = "KPI_LINKS";
 	
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
@@ -294,6 +298,36 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving resource to delete", e);
 			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINKS)) {			
+			try {
+				Integer id = getAttributeAsInteger(ID);
+				IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(id);
+				String parametersString = dataSet.getParameters();
+
+				ArrayList<String> parameters = new ArrayList<String>();
+				logger.debug("Dataset Parameters loaded");
+				if(parametersString != null){
+					SourceBean source = SourceBean.fromXMLString(parametersString);
+					if(source.getName().equals("PARAMETERSLIST")) {
+						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+						for(int i=0; i< rows.size(); i++){
+							SourceBean row = rows.get(i);
+							String name = (String)row.getAttribute("name");
+							parameters.add(name);
+						}
+					}
+					JSONArray paramsJSON = serializeParametersList(parameters);
+					JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
+					writeBackToClient(new JSONSuccess(paramsResponseJSON));
+				}else{
+					writeBackToClient(new JSONSuccess("No parameters"));
+				}
+				
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving resource to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving resource to delete", e);
+			}
 		}else if(serviceType == null){
 			try {
 				List kpiTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_DOMAIN_TYPE);
@@ -306,6 +340,9 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				getSessionContainer().setAttribute("metricScaleTypesList", metricScaleTypesList);
 				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
+				
+				
+				
 				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
@@ -345,6 +382,17 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			}
 		}	
 		return toReturn;
+	}
+	
+	private JSONArray serializeParametersList(ArrayList params) throws JSONException{
+		JSONArray rows = new JSONArray();
+		for(int i=0; i< params.size(); i++){
+			JSONObject obj = new JSONObject();
+			obj.put("parameterName", (String)params.get(i));
+			rows.put(obj);
+		}
+		return rows;
+		
 	}
 
 }
