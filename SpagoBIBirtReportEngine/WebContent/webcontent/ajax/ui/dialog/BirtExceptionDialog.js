@@ -28,6 +28,9 @@ BirtExceptionDialog.prototype = Object.extend( new AbstractExceptionDialog( ),
 	__LABEL_SHOW_TRACE: 'showTraceLabel',
 	__LABEL_HIDE_TRACE: 'hideTraceLabel',
 	
+	_showTraceLabel : null,
+	_hideTraceLabel : null,
+	
 	/**
 	 * Event handler closures.
 	 */
@@ -40,7 +43,13 @@ BirtExceptionDialog.prototype = Object.extend( new AbstractExceptionDialog( ),
 	 */
 	initialize : function( id )
 	{
-		this.__initBase( id, "600px" );
+		var dialogWidth = (Constants.request.servletPath == Constants.SERVLET_PARAMETER)?500:600;
+		if ( BrowserUtility.isIE && !BrowserUtility.isIE7 )
+		{
+			dialogWidth -= 55;
+		}
+		
+		this.__initBase( id, dialogWidth + "px" );
 		this.__allowSelection = true; // allow selecting text with the mouse
 		
 		// it looks like IE 6 handles the width differently
@@ -48,31 +57,56 @@ BirtExceptionDialog.prototype = Object.extend( new AbstractExceptionDialog( ),
 		var faultStringContainer = $("faultStringContainer");
 		if ( BrowserUtility.isIE && !BrowserUtility.isIE7 )
 		{
-			this.__setFaultContainersWidth( "580px" );
+			this.__setFaultContainersWidth( ( dialogWidth - 20 ) + "px" );
 			faultStringContainer.style.overflowX = "auto";
 			faultStringContainer.style.paddingBottom = "20px";
-			faultDetailContainer.parentNode.style.width = "570px";
+			faultDetailContainer.parentNode.style.width = ( dialogWidth - 30 ) + "px";
 			faultDetailContainer.style.width = "100%";
 		}
 		else
 		{
-			this.__setFaultContainersWidth( "520px" );
+			this.__setFaultContainersWidth( ( dialogWidth - 80 ) + "px" );
 			faultStringContainer.style.overflow = "auto";
 		}
 
-		// Bugzilla 225924: Fix overflow issue in the stack trace container		
-		if ( BrowserUtility.isSafari || BrowserUtility.isIE7 || BrowserUtility.isFirefox3 )
+		// Bugzilla 225924: Fix overflow issue in the stack trace container
+		if ( BrowserUtility.isSafari || BrowserUtility.isIE7 || ( BrowserUtility.isGecko && !BrowserUtility.isFirefox2 ) )
 		{
-			faultDetailContainer.parentNode.style.width = "510px";	
+			faultDetailContainer.parentNode.style.width = (dialogWidth - 90 ) + "px";
+		}
+	
+		if ( Constants.request.servletPath == Constants.SERVLET_PARAMETER )
+		{
+			// Hide dialog title bar if embedded in designer.
+			this.__setTitleBarVisibile(false);
+			// expand the dialog's height 
+			var contentContainer = $( id + "dialogContentContainer");
+			contentContainer.style.height = "355px";
 		}
 		
 		this.__z_index = 300;
 		
 		// click event on input control
+		this._showTraceLabel = $( this.__LABEL_SHOW_TRACE );
+		this._showTraceLabel.tabIndex = 0;
+		this._hideTraceLabel = $( this.__LABEL_HIDE_TRACE );
+		this._hideTraceLabel.tabIndex = 0;
+		
 		this.__neh_click_input_closure = this.__neh_click_input.bindAsEventListener( this );
-		Event.observe( $( this.__LABEL_SHOW_TRACE ), 'click', this.__neh_click_input_closure, false );				
-		Event.observe( $( this.__LABEL_HIDE_TRACE ), 'click', this.__neh_click_input_closure, false );
+		this.__neh_key_input_closure = this.__neh_key_input.bindAsEventListener( this );
+		Event.observe( this._showTraceLabel, 'click', this.__neh_click_input_closure, false );				
+		Event.observe( this._showTraceLabel, 'keyup', this.__neh_key_input_closure, false );				
+		Event.observe( $( this._hideTraceLabel ), 'click', this.__neh_click_input_closure, false );
+		Event.observe( this._hideTraceLabel, 'keyup', this.__neh_key_input_closure, false );				
 	},	
+
+	__neh_key_input: function( event )
+	{
+		if ( event.keyCode == 13 || event.keyCode == 32 )
+		{
+			this.__neh_click_input();
+		}
+	},
 	
 	/**
 	*	Handle clicking on input control.
@@ -86,20 +120,45 @@ BirtExceptionDialog.prototype = Object.extend( new AbstractExceptionDialog( ),
 			$( this.__TRACE_CONTAINER ).style.display = "block";
 			$( this.__LABEL_SHOW_TRACE ).style.display = "none";
 			$( this.__LABEL_HIDE_TRACE ).style.display = "block";
+			var that = this;
+			window.setTimeout( function() { that._hideTraceLabel.focus(); }, 0 );
 		}
 		else
 		{
 			$( this.__TRACE_CONTAINER ).style.display = "none";
 			$( this.__LABEL_SHOW_TRACE ).style.display = "block";
 			$( this.__LABEL_HIDE_TRACE ).style.display = "none";			
+			var that = this;
+			window.setTimeout( function() { that._showTraceLabel.focus(); }, 0 );
 		}
 		
 		this.__isShow = !this.__isShow;
 		
 		// refresh the dialog size (Mozilla/Firefox element resize bug)
 		birtUtility.refreshElement(this.__instance);
+		
+		if ( Constants.request.servletPath == Constants.SERVLET_PARAMETER )
+		{
+			// in designer mode, recenter the dialog
+			BirtPosition.center( this.__instance );
+		}
 	},
 		
+	__bind : function( data )
+	{
+		// call to super
+		AbstractExceptionDialog.prototype.__bind.apply( this, arguments );
+		
+		var label = this._showTraceLabel;
+		// defer
+		setTimeout(function(){
+			// cause any focussed element to lose focus
+			// (ex: opened drop-down lists)
+			label.focus();
+			label.blur();
+		},50);
+	},
+	
 	/**
 	*	Handle clicking on ok.
 	* 

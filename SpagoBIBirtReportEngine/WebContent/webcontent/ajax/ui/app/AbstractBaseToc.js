@@ -1,5 +1,5 @@
 /******************************************************************************
- *	Copyright (c) 2004 Actuate Corporation and others.
+ *	Copyright (c) 2004-2008 Actuate Corporation and others.
  *	All rights reserved. This program and the accompanying materials 
  *	are made available under the terms of the Eclipse Public License v1.0
  *	which accompanies this distribution, and is available at
@@ -120,7 +120,7 @@ AbstractBaseToc.prototype = Object.extend( new AbstractUIComponent( ),
 			img.plusMinus = '+';	//default it is collapsed
 			img.id = imgid;
 			img.query = '0';		//default it needs to communicate with the server.
-			img.title = s_displayname;
+			img.title = birtUtility.htmlDecode( s_displayname );
 			
 			if ( isLeafs[0].firstChild.data == "false" )
 			{
@@ -150,9 +150,9 @@ AbstractBaseToc.prototype = Object.extend( new AbstractUIComponent( ),
 			img.bookmark = bookmarks[0].firstChild.data;			
 
 			var tocitem = document.createElement( "div" );			
-			tocitem.title = s_displayname;
+			tocitem.title = birtUtility.htmlDecode( s_displayname );
 			tocitem.id =  'span_' + imgid;
-			tocitem.innerHTML = s_displayname;
+			tocitem.innerHTML = s_displayname ? s_displayname : "&nbsp;";
 						
 			var cssText = "cursor:pointer;border:0px;font-family:Verdana;font-size:9pt;background-color:#FFFFFF;overflow:visible;";			
 			var styles = tmp.getElementsByTagName( 'Style' );

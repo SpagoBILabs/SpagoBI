@@ -76,6 +76,7 @@
 %>
 		<LABEL FOR="<%= encodedParameterName + "_radio_selection" %>" CLASS="birtviewer_hidden_label">Select</LABEL>
 		<INPUT TYPE="RADIO"
+			birtParameterType="combobox"
 			NAME="<%= encodedParameterName + "_radios" %>" 
 			ID="<%= encodedParameterName + "_radio_selection" %>" 
 			VALUE="<%= encodedParameterName %>"
@@ -85,36 +86,13 @@
 %>
 		<SELECT ID="<%= encodedParameterName + "_selection"%>"
 			TITLE="<%= parameterBean.getToolTip( ) %>"
-			CLASS="birtviewer_parameter_dialog_Select" 
+			CLASS="birtviewer_parameter_dialog_Select"
+			birtParameterType="combobox" 
 			<%= !CHECKED ? "DISABLED='true'" : "" %> 
-			<%=  allowMultiValue? "multiple='true'" : "" %> >
+			<%=  allowMultiValue? "multiple='true'" : "" %>
+			<%= ( !parameterBean.allowNewValues( ) && parameterBean.isRequired( ) ) ? "aria-required='true'" : "" %>
+		    >
 <%
-
-	if ( !parameterBean.isRequired( ) )
-	{
-		if( allowMultiValue )
-		{
-			if( DataUtil.contain( values, null, true ) )
-			{
-	%>
-		<OPTION VALUE="" TITLE="<%= IBirtConstants.NULL_VALUE %>" SELECTED ><%= IBirtConstants.NULL_VALUE %></OPTION>
-	<%			
-			}
-			else
-			{
-	%>
-		<OPTION VALUE="" TITLE="<%= IBirtConstants.NULL_VALUE %>"><%= IBirtConstants.NULL_VALUE %></OPTION>
-	<%				
-			}
-		}
-		else
-		{
-	%>
-		<OPTION VALUE="" TITLE="<%= IBirtConstants.NULL_VALUE %>" <%= ( paramValue == null )? "SELECTED" : ""%> ><%= IBirtConstants.NULL_VALUE %></OPTION>
-	<%
-		}
-	}
-
 	if ( parameterBean.getSelectionList( ) != null )
 	{
 		if( !parameterBean.isRequired( ) || ( parameterBean.isCascade( ) && DataUtil.trimString( defaultValue ).length( )<=0 ) )
@@ -162,43 +140,45 @@
 			ParameterSelectionChoice selectionItem = ( ParameterSelectionChoice )parameterBean.getSelectionList( ).get( i );						
 			String label = selectionItem.getLabel( );
 			String value = ( String ) selectionItem.getValue( );
+			String outputValue = ParameterAccessor.htmlEncode(( value == null)?IBirtConstants.NULL_VALUE:value);
+			String outputLabel = ParameterAccessor.htmlEncode(( label == null)?IBirtConstants.NULL_VALUE_DISPLAY:label);
 
 			if( allowMultiValue )
 			{
 				if( DataUtil.contain( values, value, true ) )
 				{
 %>
-			<OPTION VALUE="<%= ParameterAccessor.htmlEncode( value ) %>"
-			        TITLE="<%= ParameterAccessor.htmlEncode( label ) %>"
-			        SELECTED><%= ParameterAccessor.htmlEncode( label ) %></OPTION>
+			<OPTION VALUE="<%= outputValue %>"
+			        TITLE="<%= outputLabel %>"
+			        SELECTED><%= outputLabel %></OPTION>
 <%
 					
 				}
 				else
 				{
 %>
-			<OPTION VALUE="<%= ParameterAccessor.htmlEncode( value ) %>"
-			        TITLE="<%= ParameterAccessor.htmlEncode( label ) %>"><%= ParameterAccessor.htmlEncode( label ) %></OPTION>
+			<OPTION VALUE="<%= outputValue %>"
+			        TITLE="<%= outputLabel %>"><%= outputLabel %></OPTION>
 <%					
 				}
 			}
 			else
 			{
-				if ( !isSelected && paramValue != null && paramValue.equals( value ) 
-					 && ( !isDisplayTextInList || ( isDisplayTextInList && label.equals( displayText ) ) ) )
+				if ( !isSelected && DataUtil.equals( paramValue, value ) 
+					 && ( !isDisplayTextInList || ( isDisplayTextInList && DataUtil.equals(label, displayText ) )))
 				{
 					isSelected = true;				
 %>
-			<OPTION VALUE="<%= ParameterAccessor.htmlEncode( value ) %>" 
-			        TITLE="<%= ParameterAccessor.htmlEncode( label ) %>"
-			        SELECTED><%= ParameterAccessor.htmlEncode( label ) %></OPTION>
+			<OPTION VALUE="<%= outputValue %>" 
+			        TITLE="<%= outputLabel %>"
+			        SELECTED><%= outputLabel %></OPTION>
 <%
 				}
 				else
 				{
 %>
-			<OPTION VALUE="<%= ParameterAccessor.htmlEncode( value ) %>"
-			        TITLE="<%= ParameterAccessor.htmlEncode( label ) %>"><%= ParameterAccessor.htmlEncode( label ) %></OPTION>
+			<OPTION VALUE="<%= outputValue %>"
+			        TITLE="<%= outputLabel %>"><%= outputLabel %></OPTION>
 <%
 				}
 			}
@@ -213,6 +193,7 @@
 		<BR>
 		<LABEL FOR="<%= encodedParameterName + "_radio_input" %>" CLASS="birtviewer_hidden_label">Input</LABEL>
 		<INPUT TYPE="RADIO"
+			birtParameterType="combobox"
 			NAME="<%= encodedParameterName + "_radios" %>" 
 			ID="<%= encodedParameterName + "_radio_input"%>" 
 			VALUE="<%= encodedParameterName %>"
@@ -220,6 +201,7 @@
 			
 		<LABEL FOR="<%= encodedParameterName + "_input" %>" CLASS="birtviewer_hidden_label">Input text</LABEL>
 		<INPUT CLASS="BirtViewer_parameter_dialog_Input"
+			birtParameterType="combobox"
 			TYPE="<%= parameterBean.isValueConcealed( )? "PASSWORD" : "TEXT" %>"
 			TITLE="<%= parameterBean.getToolTip( ) %>"
 			<%= !CHECKED ? "NAME=\"" + encodedParameterName + "_default\"": "" %> 
