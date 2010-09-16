@@ -1219,6 +1219,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     
     
     , format: function(value, type, format) {
+    	if(value=='NA'){
+    		return value;
+    	}
 		try {
 			var valueObj = value;
 			if (type == 'int') {
@@ -1669,13 +1672,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
+    	var number;
     	for(var i=0; i<entries.length; i++){
     		partialSum =0;
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
 	    		
 	        	for(var j=start; j<entries[0].length && j<=end; j++){
 	        		if(!this.columnHeader[this.columnHeader.length-1][j].hidden && this.columnHeader[this.columnHeader.length-1][j].type=='data'){
-	        			partialSum = partialSum + parseFloat(entries[i][j]);
+	        			number = parseFloat(entries[i][j]);
+	        			if(!isNaN(number)){
+	        				partialSum = partialSum + number;
+	        			}
 	        		}
 	        	}
     		}
@@ -1689,12 +1696,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
+    	var number;
        	for(var j=0; j<entries[0].length; j++){
 	       	partialSum =0;
 	       	if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
 	        	for(var i=start; i<entries.length && i<=end; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][i].hidden && this.rowHeader[this.rowHeader.length-1][i].type=='data'){
-	        			partialSum = partialSum + parseFloat(entries[i][j]);
+	        			number = parseFloat(entries[i][j]);
+	        			if(!isNaN(number)){
+	        				partialSum = partialSum + number;
+	        			}
 	        		}
 	        	}
 	       	}
@@ -1709,13 +1720,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
+    	var number;
     	for(var i=0; i<entries.length; i++){
     		partialSum =0;
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
 	        	for(var j=0; j<lines.length; j++){
 	        		
 	        		if(!this.columnHeader[this.columnHeader.length-1][lines[j]].hidden ){//}&& this.columnHeader[this.columnHeader.length-1][lines[j]].type=='data'){
-	        			partialSum = partialSum + parseFloat(entries[i][lines[j]]);
+	        			number = parseFloat(entries[i][lines[j]]);
+	        			if(!isNaN(number)){
+	        				partialSum = partialSum + number;
+	        			}
 	        		}
 	        	}
     		}
@@ -1730,12 +1745,16 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
+    	var number;
        	for(var j=0; j<entries[0].length; j++){
        		partialSum =0;
 	       	if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
 	        	for(var i=0; i<lines.length; i++){
 	        		if(!this.rowHeader[this.rowHeader.length-1][lines[i]].hidden ){//&& this.rowHeader[this.rowHeader.length-1][lines[i]].type=='data'){
-	        			partialSum = partialSum + parseFloat(entries[lines[i]][j]);
+	        			number = parseFloat(entries[lines[i]][j]);
+	        			if(!isNaN(number)){
+	        				partialSum = partialSum + number;
+	        			}
 	        		}
 	        	}
 	       	}
@@ -1853,16 +1872,18 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					    }
 					    partialTotalNode.type = 'partialsum';
 					    partialTotalNode.father = headers[i][j];
-	
+					    this.setHeaderListener(partialTotalNode);
+					    
 						for(var k=0; k<measuresNames.length; k++){
 							freshChild = new Sbi.crosstab.core.HeaderEntry(measuresNames[k], 1, headers[i][0].horizontal, headers.length-1, headers[headers.length-1][0].width, headers[headers.length-1][0].height);
 							partialTotalNode.childs.push(freshChild);
 							freshChild.father = partialTotalNode;
 							freshChild.type = 'partialsum';
+							this.setHeaderListener(freshChild);
 						}	
 
 						this.addNewEntries(partialTotalNode.level,partialTotalNode,headers,sums, partialTotalNode.horizontal, true);
-
+						
 				    }
 		        }
 		        
@@ -1904,7 +1925,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		        	        totalNode.type = 'partialsum';
 		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode);
 		        	        totalNode.childs.push(totalNodeChild);
-		        	        
 		        	        this.setHeaderListener(totalNode);
 
 		        	        var totalSum = new Array();
@@ -2147,10 +2167,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    					this.removeEntries(headers[i], true);
    				}
    			}
-
+   			this.removePartialSum();
    			//add the new CF
    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
     		this.addCalculatedField(level, horizontal, op, CFName);
+    		this.calculatePartialSum();
    		}, this); 
     }
     
