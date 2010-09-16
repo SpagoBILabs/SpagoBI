@@ -90,6 +90,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.getForm().loadRecord(rec);  
+		this.fillKpiLinks(row, rec);
      }, this);
 };
 
@@ -408,7 +409,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	            xtype: 'combo'
  	        };
  	   //END list of Advanced fields
-
+ 	   var conf = {};
+ 	   conf.readonlyStrict = true;
+ 	   
+ 	   this.initKpiLinksTab();  
+ 	   
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -460,7 +465,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                     detailFieldModelReference, detailFieldKpiType,
 		                     detailFieldMeasureType, detailFieldMetricScaleType ]
 		    	}		    	
-		    }];
+		    },this.kpiLinksTab];
+ 	   
+ 	   
+ 	 
 	}
 	
 	,launchThrWindow : function() {
@@ -643,5 +651,150 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             ,scope: this
         });
     }
+	,initKpiLinksTab: function() {
+		
+		this.lookupColumn = new Ext.grid.ButtonColumn({
+		       header:  ' '
+		       ,iconCls: 'icon-inspect'
+		       ,scope: this
+		       ,clickHandler: function(e, t) {
+		          var index = this.grid.getView().findRowIndex(t);
+		          var selectedRecord = this.grid.store.getAt(index);
+		          var param = selectedRecord.get('id');
+		          this.grid.fireEvent('select', param);
+		       }
+		       ,width: 25
+		       ,renderer : function(v, p, record){
+		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+		       }
+	        }, this); 
+  
+	    this.deleteLinkColumn = new Ext.grid.ButtonColumn({
+		       header:  ' '
+		       ,iconCls: 'icon-remove'
+		       ,scope: this
+		       ,clickHandler: function(e, t) {   
+	 	 		alert("del");
+		       }
+		       ,width: 25
+		       ,renderer : function(v, p, record){
+		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+		       }
+	     });
+		var linkColItems = [
+			{id:'id',header: 'Parameter', width: 160, sortable: true, locked:false, dataIndex: 'parameterName'},
+			{header:  'Kpi', width: 160, sortable: true}
+		];
 
+    	this.parameterStore = new Ext.data.JsonStore({	
+			fields : [ {name: 'parameterName'},{name: 'kpi'},{},{}]
+	    });
+    	
+		linkColItems.push(this.deleteLinkColumn);  
+		linkColItems.push(this.lookupColumn);  
+		
+		var linkColModel = new Ext.grid.ColumnModel(linkColItems);
+		
+ 	    var linkspluginsToAdd = [this.deleteLinkColumn, this.lookupColumn]; 
+ 	    
+	 	this.rowlinkselModel = new Ext.grid.RowSelectionModel({
+	           singleSelect: this.singleSelection
+	    });
+	 	
+	 	//this.parameterStore.loadData({});	
+	 	
+		this.kpiLinksGrid = new Ext.grid.GridPanel ({
+			id: 'kpilinks-grid',
+			store: this.parameterStore,
+			autoHeight : true,
+			cm: linkColModel,
+			sm: this.rowlinkselModel,
+			plugins: linkspluginsToAdd ,
+            width: 380,
+            layout:'fit',
+			//frame: true,
+	        singleSelect : true,
+	        ownerCt : this,
+	        scope:this
+	    }); 
+
+		
+    	this.kpiLinksTab = new Ext.Panel({
+		        title: LN('sbi.kpis.linksTitle')
+		        , id : 'linksKpi'
+		        , layout: 'form'
+		        , autoScroll: true
+		        , itemId: 'kpis'
+		        , scope: this
+	            , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
+			    , border: false
+		        , items: [
+		            this.kpiLinksGrid
+		        ]
+		    });
+    	
+    	this.kpiLinksGrid.on('select', this.launchKpisWindow, this);
+ 
+	}
+	, fillKpiLinks : function(row, rec) {
+		 
+		var kpiSelected = rec.data.id;
+		if(kpiSelected!=null){
+
+			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS"};	
+			var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName: 'MANAGE_KPIS_ACTION'
+				, baseParams: paramsList
+			 });	
+			
+			Ext.Ajax.request({
+		          url: loadParams,
+		          params: {id: kpiSelected},
+		          method: 'GET',
+		          success: function(response, options) {   	
+					if (response !== undefined) {		
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			//alert(content.rows);
+		      			if(content !== undefined) {	  
+		      				var record = content.rows;
+		      				this.kpiLinksGrid.store.loadData(record);
+		      				this.kpiLinksGrid.store.commitChanges();
+		      			}
+					 } 	
+		          }
+		          ,scope: this
+		    });
+	    }else{
+	    	this.kpiLinksGrid.store.removeAll();
+	    	this.kpiLinksGrid.store.commitChanges();
+	    	this.kpiLinksGrid.clearValue();
+	    }
+		this.kpiLinksGrid.getView().refresh();
+	}
+	,launchKpisWindow : function() {
+		
+		var conf = {};
+	
+		this.manageKpiLinksWin = new Sbi.kpi.ManageKpiWindow(conf);
+	
+		this.linksWin = new Ext.Window({
+			title: LN('sbi.lookup.Select') ,   
+            layout      : 'fit',
+            width       : 430,
+            height      : 250,
+            closeAction :'close',
+            plain       : false,
+            modal		: true,
+            scope		: this,
+            y			: 20,
+            items       : [this.manageKpiLinksWin]
+		});
+		this.manageKpiLinksWin.on('selected', function(selectedRecord, code){
+												var record = this.rowlinkselModel.getSelected();
+												record.set('kpi',selectedRecord.data.name);
+												record.markDirty() ;
+												this.linksWin.close();
+											}, this);
+		this.linksWin.show();
+	}
 });
