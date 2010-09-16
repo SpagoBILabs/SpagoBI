@@ -56,6 +56,7 @@ Sbi.locale.ln['sbi.thresholds.panelTitle'] = 'Gestione Soglie';
 Sbi.locale.ln['sbi.thresholds.listTitle'] = 'Lista Soglie';
 Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Gestione Kpi';
 Sbi.locale.ln['sbi.kpis.listTitle'] = 'Lista Kpi';
+Sbi.locale.ln['sbi.kpis.linksTitle'] = 'Kpi Links';
 Sbi.locale.ln['sbi.models.panelTitle'] = 'Gestione Modelli';
 Sbi.locale.ln['sbi.models.listTitle'] = 'Lista Modelli';
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Modelli';
