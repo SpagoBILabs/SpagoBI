@@ -109,7 +109,7 @@ Sbi.crosstab.core.CrossTabShowHideUtility = function(){
 	    //show/hide the node and all its brothers with the same name
 	    //node: the node to hide
 	    //hide: true for hide, false for show  
-	    , showHideAllNodes: function(node, hide, crossTab){
+	    , showHideAllNodes: function(node, hide, crossTab, lazy){
 	    	var headers;
 	    	
 	    	if(node.horizontal){
@@ -124,7 +124,9 @@ Sbi.crosstab.core.CrossTabShowHideUtility = function(){
 	   				this.showHideNode(header[y], hide, true, crossTab);
 	    		}
 	    	}
-	    	crossTab.reloadHeadersAndTable();
+	    	if(!lazy){
+	    		crossTab.reloadHeadersAndTable();
+	    	}
 	    }
 	    
 	    //Hide a line

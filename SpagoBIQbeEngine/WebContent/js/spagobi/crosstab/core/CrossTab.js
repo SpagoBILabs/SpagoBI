@@ -1763,7 +1763,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	return sum;
     } 
   
-    , removePartialSum: function(){
+    , removePartialSum: function(lazy){
     	for(var j=0; j<2; j++){
 			var headers;
 			var horizontal = j==0;
@@ -1786,7 +1786,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				}
 			}
     	}
-    	this.reloadHeadersAndTable();
+    	if(!lazy){
+    		this.reloadHeadersAndTable();
+    	}
 
     }
     
@@ -2147,7 +2149,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		this.crossTabCFWizard.show(this);  
    		this.crossTabCFWizard.on('applyCalculatedField', function(theNode, level, horizontal, op, CFName){
    			
-    		this.removePartialSum();
+    		this.removePartialSum(true);
     		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);	
     		this.addCalculatedField(level, horizontal, op, CFName);
      		this.calculatePartialSum();
@@ -2167,7 +2169,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    					this.removeEntries(headers[i], true);
    				}
    			}
-   			this.removePartialSum();
+   			this.removePartialSum(true);
    			//add the new CF
    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
     		this.addCalculatedField(level, horizontal, op, CFName);
