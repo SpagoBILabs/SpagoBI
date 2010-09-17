@@ -340,10 +340,15 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			Integer kpiLinked = getAttributeAsInteger("kpiLinked");
 			String parameter = getAttributeAsString("parameter");
 			
-			Integer relId = getAttributeAsInteger("relId");
+			
 			try {
-				if(relId != null){
-					boolean res = kpiDao.deleteKpiRel(relId);
+				try{
+					Integer relId = getAttributeAsInteger("relId");
+					if(relId != null){
+						boolean res = kpiDao.deleteKpiRel(relId);
+					}
+				}catch(Throwable t){
+					logger.debug("Insert new relation");
 				}
 				Integer idRel = kpiDao.setKpiRel(kpiParentId, kpiLinked, parameter);
 				logger.debug("Resource deleted");
