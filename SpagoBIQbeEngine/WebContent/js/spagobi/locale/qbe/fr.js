@@ -336,7 +336,7 @@ Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.parameterreference'] = 'Param
 //===================================================================
 //DATA STORE PANEL AND EXTERNAL SERVICES
 //===================================================================
-Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.title'] = 'Le service a correctement été invoqué;
+Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.title'] = 'Le service a correctement été invoqué';
 Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.serviceresponse'] = 'Le service a retourné ce message :';
 Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.errors.title'] = 'Erruer';
 Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.errors.missingcolumns'] = 'Le service a besoin des colonnes suivantes : ';
