@@ -1605,4 +1605,32 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return kpiRel;
 		
 	}
+	public boolean deleteKpiRel(Integer kpiRelId) throws EMFUserError {
+		Session aSession = getSession();
+		Transaction tx = null;
+		try {
+			tx = aSession.beginTransaction();
+			SbiKpiRel akpirel = (SbiKpiRel) aSession.load(SbiKpiRel.class, kpiRelId);
+
+			aSession.delete(akpirel);
+			tx.commit();
+
+		} catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Impossible to delete a Kpi relation", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10015);
+
+		} catch (HibernateException e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Error while delete a Kpi relation", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+		} finally {
+			aSession.close();
+		}
+		return true;
+	}
 }
