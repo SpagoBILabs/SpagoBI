@@ -63,6 +63,8 @@
         <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
 
     </session-factory>
 </hibernate-configuration>

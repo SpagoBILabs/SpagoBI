@@ -10,11 +10,13 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
+import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
@@ -1508,4 +1510,99 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 
+	public Integer setKpiRel(Integer kpiParentId, Integer kpiChildId,
+			String parameter) throws EMFUserError {
+		logger.debug("IN");
+		Integer idToReturn;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiKpiRel kpiRelation = new SbiKpiRel();
+			
+			SbiKpi parentKpi = (SbiKpi)aSession.load(SbiKpi.class, kpiParentId);
+			SbiKpi childKpi = (SbiKpi)aSession.load(SbiKpi.class, kpiChildId);
+			
+			kpiRelation.setParameter(parameter);
+			kpiRelation.setSbiKpiByKpiChildId(childKpi);
+			kpiRelation.setSbiKpiByKpiFatherId(parentKpi);
+			
+			idToReturn = (Integer)aSession.save(kpiRelation);
+			
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return idToReturn;
+	}
+
+	public List loadKpiRelListByParentId(Integer kpiParentId)
+			throws EMFUserError {
+		// TODO Auto-generated method stub
+		logger.debug("IN");
+		List toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+			String query = "from SbiKpiRel r where r.sbiKpiByKpiFatherId.kpiId= :parentId";
+			Query q = aSession.createQuery(query);
+			q.setInteger("parentId", kpiParentId);
+			List toTransform =  q.list();
+
+			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
+				SbiKpiRel sbiKpiRel = (SbiKpiRel) iterator.next();
+				KpiRel rel = toKpiRel(sbiKpiRel);
+				toReturn.add(rel);
+			}
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of Kpi relations", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+	public KpiRel toKpiRel(SbiKpiRel sbiKpiRel) throws EMFUserError {
+		logger.debug("IN");
+		KpiRel kpiRel = new KpiRel();
+		if(sbiKpiRel != null){
+			kpiRel.setKpiChildId(sbiKpiRel.getSbiKpiByKpiChildId().getKpiId());
+			kpiRel.setKpiFatherId(sbiKpiRel.getSbiKpiByKpiFatherId().getKpiId());
+			kpiRel.setParameter(sbiKpiRel.getParameter());
+			kpiRel.setKpiRelId(sbiKpiRel.getKpiRelId());
+			kpiRel.setChildKpiName(sbiKpiRel.getSbiKpiByKpiChildId().getName());
+		}
+		
+		logger.debug("OUT");
+		return kpiRel;
+		
+	}
 }

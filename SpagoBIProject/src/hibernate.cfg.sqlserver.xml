@@ -45,6 +45,7 @@
 		<mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingsqlserver/SbiDistributionList.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingsqlserver/SbiDistributionListsObjects.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mappingsqlserver/SbiDistributionListUser.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
                         
         <!-- map catalogue -->
         <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mappingsqlserver/SbiGeoMapFeatures.hbm.xml" />
