@@ -228,7 +228,9 @@ public interface IKpiDAO {
 	public Integer insertKpi(Kpi toCreate)throws EMFUserError;
 
 	public boolean deleteKpi(Integer kpiId) throws EMFUserError;
-
+	
+	public Integer setKpiRel(Integer kpiParentId, Integer kpiChildId, String parameter)throws EMFUserError;
+	public List loadKpiRelListByParentId(Integer kpiParentId) throws EMFUserError;
 	//public List loadResourcesList(String fieldOrder, String typeOrder)throws EMFUserError;
 	
 

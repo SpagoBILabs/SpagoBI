@@ -92,6 +92,8 @@ Sbi.kpi.ManageKpis = function(config) {
 		this.getForm().loadRecord(rec);  
 		this.fillKpiLinks(row, rec);
      }, this);
+	
+	this.tabs.addListener('tabchange', this.modifyToolbar, this);
 };
 
 Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
@@ -151,8 +153,17 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.listTitle = LN('sbi.kpis.listTitle');
 		this.configurationObject.dragndropGroup ='grid2treeAndDetail';
 		this.initTabItems();
+		
+		
     }
-
+	, modifyToolbar : function(tabpanel, panel){
+		var itemId = panel.getItemId();
+		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
+			this.tbSave.hide();
+		}else{
+			this.tbSave.show();
+		}
+	}
 	,initTabItems: function(){
 		
  	   //START list of detail fields
@@ -468,7 +479,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		    },this.kpiLinksTab];
  	   
  	   
- 	 
+ 	   	
 	}
 	
 	,launchThrWindow : function() {
@@ -701,8 +712,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	           singleSelect: this.singleSelection
 	    });
 	 	
-	 	//this.parameterStore.loadData({});	
-	 	
 		this.kpiLinksGrid = new Ext.grid.GridPanel ({
 			id: 'kpilinks-grid',
 			store: this.parameterStore,
@@ -721,10 +730,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
     	this.kpiLinksTab = new Ext.Panel({
 		        title: LN('sbi.kpis.linksTitle')
-		        , id : 'linksKpi'
 		        , layout: 'form'
 		        , autoScroll: true
-		        , itemId: 'kpis'
+		        , itemId: 'kpiLinks'
 		        , scope: this
 	            , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
 			    , border: false
@@ -792,9 +800,53 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.manageKpiLinksWin.on('selected', function(selectedRecord, code){
 												var record = this.rowlinkselModel.getSelected();
 												record.set('kpi',selectedRecord.data.name);
-												record.markDirty() ;
+												record.commit() ;
 												this.linksWin.close();
+												this.saveKpiLink(selectedRecord.data.id, record.data.parameterName);
 											}, this);
 		this.linksWin.show();
+	}
+	, saveKpiLink : function(kpiId, parameter){
+		
+		var kpiParent = this.rowselModel.getSelected();
+		var kpiParentId = kpiParent.data.id;
+		var kpiLinked = kpiId;
+		
+		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_SAVE"};	
+		var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'MANAGE_KPIS_ACTION'
+			, baseParams: paramsList
+		 });	
+		
+		Ext.Ajax.request({
+	          url: loadParams,
+	          params: {kpiParentId: kpiParentId, kpiLinked : kpiLinked, parameter: parameter},
+	          method: 'GET',
+	          success: function(response, options) {   	
+				if (response !== undefined) {		
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			//alert(content.rows);
+	      			if(content !== undefined) {	  
+	      				//alert(content.id);
+		      			Ext.MessageBox.show({
+	                        title: LN('sbi.generic.result'),
+	                        msg: LN('sbi.generic.resultMsg'),
+	                        width: 200,
+	                        buttons: Ext.MessageBox.OK
+		      			});
+	      			}
+				 } 	
+	          }
+	          ,failure: function(response) {
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.generic.error'),
+	                    msg: LN('sbi.generic.savingItemError'),
+	                    width: 150,
+	                    buttons: Ext.MessageBox.OK
+	               });
+
+	            }
+	          ,scope: this
+	    });
 	}
 });

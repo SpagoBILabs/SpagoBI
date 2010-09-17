@@ -24,12 +24,12 @@ package it.eng.spagobi.kpi.config.service;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
+import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -61,6 +60,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String KPI_INSERT = "KPI_INSERT";
 	private final String KPI_DELETE = "KPI_DELETE";
 	private final String KPI_LINKS = "KPI_LINKS";
+	private final String KPI_LINK_SAVE = "KPI_LINK_SAVE";
 	
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
@@ -301,7 +301,12 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINKS)) {			
 			try {
 				Integer id = getAttributeAsInteger(ID);
-				IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(id);
+				//looks up for relations
+				ArrayList <KpiRel> relations = (ArrayList <KpiRel>)kpiDao.loadKpiRelListByParentId(id);
+				logger.debug("Kpi relations loaded");
+				
+				//looks up for dataset parameters				
+				IDataSet dataSet = kpiDao.getDsFromKpiId(id);
 				String parametersString = dataSet.getParameters();
 
 				ArrayList<String> parameters = new ArrayList<String>();
@@ -316,13 +321,27 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 							parameters.add(name);
 						}
 					}
-					JSONArray paramsJSON = serializeParametersList(parameters);
+					JSONArray paramsJSON = serializeParametersList(parameters, relations);
 					JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
 					writeBackToClient(new JSONSuccess(paramsResponseJSON));
 				}else{
 					writeBackToClient(new JSONSuccess("No parameters"));
 				}
 				
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving resource to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving resource to delete", e);
+			}
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINK_SAVE)) {
+			
+			Integer kpiParentId = getAttributeAsInteger("kpiParentId");
+			Integer kpiLinked = getAttributeAsInteger("kpiLinked");
+			String parameter = getAttributeAsString("parameter");
+			try {
+				Integer idRel = kpiDao.setKpiRel(kpiParentId, kpiLinked, parameter);
+				logger.debug("Resource deleted");
+				writeBackToClient( new JSONSuccess(new JSONObject("{id: "+idRel.intValue()+"}")) );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving resource to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -384,11 +403,18 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 	
-	private JSONArray serializeParametersList(ArrayList params) throws JSONException{
+	private JSONArray serializeParametersList(ArrayList params, ArrayList<KpiRel> relations) throws JSONException{
 		JSONArray rows = new JSONArray();
 		for(int i=0; i< params.size(); i++){
 			JSONObject obj = new JSONObject();
-			obj.put("parameterName", (String)params.get(i));
+			String par = (String)params.get(i);
+			obj.put("parameterName", par);
+			for(int k =0; k< relations.size(); k++){
+				KpiRel rel = relations.get(k);
+				if(rel.getParameter().equals(par)){
+					obj.put("kpi", rel.getChildKpiName());
+				}
+			}
 			rows.put(obj);
 		}
 		return rows;
