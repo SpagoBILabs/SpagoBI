@@ -61,6 +61,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String KPI_DELETE = "KPI_DELETE";
 	private final String KPI_LINKS = "KPI_LINKS";
 	private final String KPI_LINK_SAVE = "KPI_LINK_SAVE";
+	private final String KPI_LINK_DELETE = "KPI_LINK_DELETE";
 	
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
@@ -329,23 +330,40 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				}
 				
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving resource to delete", e);
+				logger.error("Exception occurred while retrieving kpi links", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving resource to delete", e);
+						"Exception occurred while retrieving kpi links", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINK_SAVE)) {
 			
 			Integer kpiParentId = getAttributeAsInteger("kpiParentId");
 			Integer kpiLinked = getAttributeAsInteger("kpiLinked");
 			String parameter = getAttributeAsString("parameter");
+			
+			Integer relId = getAttributeAsInteger("relId");
 			try {
+				if(relId != null){
+					boolean res = kpiDao.deleteKpiRel(relId);
+				}
 				Integer idRel = kpiDao.setKpiRel(kpiParentId, kpiLinked, parameter);
 				logger.debug("Resource deleted");
 				writeBackToClient( new JSONSuccess(new JSONObject("{id: "+idRel.intValue()+"}")) );
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving resource to delete", e);
+				logger.error("Exception occurred while saving kpis link", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving resource to delete", e);
+						"Exception occurred while saving kpis link", e);
+			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINK_DELETE)) {
+			
+			Integer kpiRelId = getAttributeAsInteger("relId");
+			try {
+				boolean res = kpiDao.deleteKpiRel(kpiRelId);
+				logger.debug("Resource deleted");
+				writeBackToClient( new JSONSuccess("Operation succeded") );
+			} catch (Throwable e) {
+				logger.error("Exception occurred while deleting kpis link", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while saving kpis link", e);
 			}
 		}else if(serviceType == null){
 			try {
@@ -413,6 +431,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				KpiRel rel = relations.get(k);
 				if(rel.getParameter().equals(par)){
 					obj.put("kpi", rel.getChildKpiName());
+					obj.put("relId", rel.getKpiRelId().intValue());
 				}
 			}
 			rows.put(obj);

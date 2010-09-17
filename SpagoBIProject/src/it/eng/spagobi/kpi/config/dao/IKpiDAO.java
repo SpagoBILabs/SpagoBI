@@ -231,6 +231,7 @@ public interface IKpiDAO {
 	
 	public Integer setKpiRel(Integer kpiParentId, Integer kpiChildId, String parameter)throws EMFUserError;
 	public List loadKpiRelListByParentId(Integer kpiParentId) throws EMFUserError;
+	public boolean deleteKpiRel(Integer kpiRelId) throws EMFUserError;
 	//public List loadResourcesList(String fieldOrder, String typeOrder)throws EMFUserError;
 	
 

@@ -685,7 +685,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		       ,iconCls: 'icon-remove'
 		       ,scope: this
 		       ,clickHandler: function(e, t) {   
-	 	 		alert("del");
+		          var index = this.grid.getView().findRowIndex(t);
+		          var selectedRecord = this.grid.store.getAt(index);
+		          var relId = selectedRecord.get('relId');
+		          this.grid.fireEvent('delete', relId);
 		       }
 		       ,width: 25
 		       ,renderer : function(v, p, record){
@@ -698,7 +701,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		];
 
     	this.parameterStore = new Ext.data.JsonStore({	
-			fields : [ {name: 'parameterName'},{name: 'kpi'},{},{}]
+			fields : [ {name: 'parameterName'},{name: 'kpi'},{name: 'relId'},{}]
 	    });
     	
 		linkColItems.push(this.deleteLinkColumn);  
@@ -742,6 +745,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		    });
     	
     	this.kpiLinksGrid.on('select', this.launchKpisWindow, this);
+    	this.kpiLinksGrid.on('delete', this.deleteKpiLink, this);
  
 	}
 	, fillKpiLinks : function(row, rec) {
@@ -802,16 +806,20 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 												record.set('kpi',selectedRecord.data.name);
 												record.commit() ;
 												this.linksWin.close();
-												this.saveKpiLink(selectedRecord.data.id, record.data.parameterName);
+												this.saveKpiLink(selectedRecord, record.data.parameterName);
 											}, this);
 		this.linksWin.show();
 	}
-	, saveKpiLink : function(kpiId, parameter){
+	, saveKpiLink : function(kpisel, parameter){
 		
 		var kpiParent = this.rowselModel.getSelected();
 		var kpiParentId = kpiParent.data.id;
-		var kpiLinked = kpiId;
 		
+		var kpiLinked = kpisel.data.id;
+		
+		var recordRel = this.rowlinkselModel.getSelected();
+		var relIdPrv = recordRel.data.relId;
+		//alert(relIdPrv);
 		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_SAVE"};	
 		var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'MANAGE_KPIS_ACTION'
@@ -820,14 +828,58 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
 		Ext.Ajax.request({
 	          url: loadParams,
-	          params: {kpiParentId: kpiParentId, kpiLinked : kpiLinked, parameter: parameter},
+	          params: {kpiParentId: kpiParentId, kpiLinked : kpiLinked, parameter: parameter, relId: relIdPrv},
 	          method: 'GET',
 	          success: function(response, options) {   	
 				if (response !== undefined) {		
 	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			//alert(content.rows);
 	      			if(content !== undefined) {	  
 	      				//alert(content.id);
+	      				var record = this.rowlinkselModel.getSelected();
+	      				record.set('relId', content.id);
+	      				record.commit();
+		      			Ext.MessageBox.show({
+	                        title: LN('sbi.generic.result'),
+	                        msg: LN('sbi.generic.resultMsg'),
+	                        width: 200,
+	                        buttons: Ext.MessageBox.OK
+		      			});
+	      			}
+				 } 	
+	          }
+	          ,failure: function(response) {
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.generic.error'),
+	                    msg: LN('sbi.generic.savingItemError'),
+	                    width: 150,
+	                    buttons: Ext.MessageBox.OK
+	               });
+
+	            }
+	          ,scope: this
+	    });
+	}
+	, deleteKpiLink : function(relId){
+
+		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_DELETE"};	
+		var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'MANAGE_KPIS_ACTION'
+			, baseParams: paramsList
+		 });	
+		
+		Ext.Ajax.request({
+	          url: loadParams,
+	          params: {relId: relId},
+	          method: 'GET',
+	          success: function(response, options) {   	
+				if (response !== undefined) {		
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			if(content !== undefined) {	  
+						var deleteRow = this.rowlinkselModel.getSelected();
+						deleteRow.set('kpi', '');
+						deleteRow.set('relId', '');
+						deleteRow.commit();
+
 		      			Ext.MessageBox.show({
 	                        title: LN('sbi.generic.result'),
 	                        msg: LN('sbi.generic.resultMsg'),
