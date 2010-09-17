@@ -129,8 +129,8 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, entries: data
 				, withRowsSum: config.calculatetotalsonrows=="on"
 				, withColumnsSum: config.calculatetotalsoncolumns=="on"
-				, withColumnsPartialSum: config.calculatesubtotalsoncolumns=="on"
-				, withRowsPartialSum: config.calculatesubtotalsonrows=="on"
+				, withColumnsPartialSum: config.calculatesubtotalsonrows=="on"
+				, withRowsPartialSum: config.calculatesubtotalsoncolumns=="on"
 				, calculatedFields: this.calculatedFields
 				, misuresOnRow: config.measureson=='rows'
 				, measuresMetadata: measuresMetadata
