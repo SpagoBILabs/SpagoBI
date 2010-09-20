@@ -7,8 +7,9 @@ public class KpiRel implements Serializable{
 	private Integer kpiRelId =null;
 	private Integer kpiFatherId = null;
 	private Integer kpiChildId =null;
-	private String childKpiName =null;
 	private String parameter = null;
+	private Kpi kpiChild =null;
+	
 	public Integer getKpiRelId() {
 		return kpiRelId;
 	}
@@ -33,11 +34,12 @@ public class KpiRel implements Serializable{
 	public void setParameter(String parameter) {
 		this.parameter = parameter;
 	}
-	public String getChildKpiName() {
-		return childKpiName;
+
+	public Kpi getKpiChild() {
+		return kpiChild;
 	}
-	public void setChildKpiName(String childKpiName) {
-		this.childKpiName = childKpiName;
+	public void setKpiChild(Kpi kpiChild) {
+		this.kpiChild = kpiChild;
 	}
 
 }
