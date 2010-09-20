@@ -44,8 +44,9 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageKpiWindow = function(config) { 
+	var kpiParentId = config.kpiParentId;
 	
-	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPIS_LIST"};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPIS_LIST", id: kpiParentId};
 	this.services = new Array();
 	
 	this.services['manageKpiService'] = Sbi.config.serviceRegistry.getServiceUrl({
