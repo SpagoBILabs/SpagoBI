@@ -58,5 +58,9 @@ public interface IUdpValueDAO {
     
     public UdpValue loadById(Integer id);
 
+	public List findByReferenceId(Integer kpiId);
+
+	public UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family);
+	
 }
 

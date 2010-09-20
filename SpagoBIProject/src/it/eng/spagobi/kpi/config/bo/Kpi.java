@@ -1,6 +1,7 @@
 package it.eng.spagobi.kpi.config.bo;
 
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class Kpi implements Serializable{
 	
 	List sbiKpiDocuments = new ArrayList(); // documents related to this KPI
 
+	List udpValues = new ArrayList<UdpValue>();
 
 	public List getSbiKpiDocuments() {
 		return sbiKpiDocuments;
@@ -245,4 +247,15 @@ public class Kpi implements Serializable{
 		this.kpiDsId = kpiDsId;
 	}
 
+	public List getUdpValues() {
+		return udpValues;
+	}
+
+	public void setUdpValues(List udpValues) {
+		this.udpValues = udpValues;
+	}
+
+	
+	
+	
 }

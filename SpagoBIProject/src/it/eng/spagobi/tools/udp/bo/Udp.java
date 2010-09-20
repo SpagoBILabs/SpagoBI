@@ -37,6 +37,9 @@ public class Udp implements Serializable {
     private Integer dataTypeId=null;
     private Integer familyId=null;
 	private Boolean multivalue=null;
+
+	private String dataTypeValeCd = null;
+	
 	/**
 	 * @return the udpId
 	 */
@@ -120,6 +123,12 @@ public class Udp implements Serializable {
 	 */
 	public void setMultivalue(Boolean multivalue) {
 		this.multivalue = multivalue;
+	}
+	public String getDataTypeValeCd() {
+		return dataTypeValeCd;
+	}
+	public void setDataTypeValeCd(String dataTypeValeCd) {
+		this.dataTypeValeCd = dataTypeValeCd;
 	}
 	
 	
