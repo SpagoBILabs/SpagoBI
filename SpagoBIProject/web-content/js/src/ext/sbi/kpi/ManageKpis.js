@@ -799,7 +799,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.linksWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 430,
+            width       : 450,
             height      : 250,
             closeAction :'close',
             plain       : false,
