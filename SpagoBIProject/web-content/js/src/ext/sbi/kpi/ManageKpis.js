@@ -48,7 +48,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	var paramsList = {MESSAGE_DET: "KPIS_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_DELETE"};
-	
+		
 	this.configurationObject = {};
 	
 	this.configurationObject.manageListService = Sbi.config.serviceRegistry.getServiceUrl({
@@ -90,6 +90,8 @@ Sbi.kpi.ManageKpis = function(config) {
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.getForm().loadRecord(rec);  
+		this.udpValueGrid.fillUdpValues(sm, row, rec);
+		
 		this.fillKpiLinks(row, rec);
      }, this);
 	
@@ -122,6 +124,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                    	          , 'kpiTypeCd'
 		                    	          , 'metricScaleCd'
 		                    	          , 'measureTypeCd'
+		                    	          , 'udpValues'
 		                    	          ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -141,6 +144,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                    	          , kpiTypeCd:''
 		                    	          , metricScaleCd:''
 		                    	          , measureTypeCd:''
+		                    	          , udpValues:''
 										 });
 		
 		this.configurationObject.gridColItems = [
@@ -426,6 +430,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	   
  	   this.initKpiLinksTab();  
  	   
+
+ 	  this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
+ 	  this.udpValueGrid.setSource(config.udpEmptyList); 
+ 	     
+ 	     
+ 	     
+
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -476,11 +487,39 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             items: [detailFieldInterpretation, detailFieldAlgDesc, detailFieldTargetAud, detailFieldInputAttr, 
 		                     detailFieldModelReference, detailFieldKpiType,
 		                     detailFieldMeasureType, detailFieldMetricScaleType ]
+		    	}
+		
+		    
+		    },{
+		    	title: LN('sbi.generic.udpValues')
+		        , itemId: 'upd-values'
+		        , width: 350
+		        , items: {
+			   		 id: 'upd-values-detail',   	
+		 		   	 itemId: 'upd-values-detail',   	              
+		 		   	// columnWidth: 0.4,
+		             xtype: 'fieldset',
+		             scope: this,
+		             labelWidth: 90,
+		             defaults: {width: 200, border:false},    
+		             defaultType: 'textfield',
+		             layout: 'fit',
+		             autoHeight: true,
+		             autoScroll  : true,
+		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             border: false,
+		             style: {
+		                 "margin-left": "10px", 
+		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+		             },
+		             items: [
+		                    this.udpValueGrid   // claire, isnerisic widget nel pannello
+		                     ]
 		    	}		    	
-		    },this.kpiLinksTab];
- 	   
- 	   
- 	   	
+		    }
+		    ,this.kpiLinksTab];
+
+
 	}
 	
 	,launchThrWindow : function() {
@@ -514,10 +553,15 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
     //OVERRIDING save method
 	,save : function() {
+
 		var values = this.getForm().getFieldValues();
 		var idRec = values['id'];
 		var newRec;
 	
+		var storeUdps = this.udpValueGrid.getStore();
+
+		var arrayUdps = this.udpValueGrid.saveUdpValues();		
+		
 		if(idRec == 0 || idRec == null || idRec === ''){
 			newRec = new Ext.data.Record({
 					name: values['name'],
@@ -534,7 +578,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			        targetAudience: values['targetAudience'],		        
 			        kpiTypeCd: values['kpiTypeCd'],	
 			        metricScaleCd: values['metricScaleCd'],
-			        measureTypeCd: values['measureTypeCd']
+			        measureTypeCd: values['measureTypeCd'],
+			        "udpValues": arrayUdps
 			});	  
 			
 		}else{
@@ -560,10 +605,15 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('targetAudience',values['targetAudience']);	
 			record.set('kpiTypeCd',values['kpiTypeCd']);
 			record.set('metricScaleCd',values['metricScaleCd']);
-			record.set('measureTypeCd',values['measureTypeCd']);	
+			record.set('measureTypeCd',values['measureTypeCd']);
+			record.set('udpValues',arrayUdps);
+			
 		}
 
-        var params = {
+
+
+	
+	var params = {
         	name :  values['name'],
         	code : values['code'],
         	description : values['description'],
@@ -578,8 +628,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
         	targetAudience : values['targetAudience'],
         	kpiTypeCd : values['kpiTypeCd'],
         	metricScaleCd : values['metricScaleCd'],
-        	measureTypeCd : values['measureTypeCd']	
+        	measureTypeCd : values['measureTypeCd']
+        	, "udpValuesAtt" : arrayUdps.toSource()
         };
+
         
         if(idRec){
         	params.id = idRec;
@@ -592,27 +644,33 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             success: function(response, options) {
 				if (response !== undefined) {			
 		      		if(response.responseText !== undefined) {
-
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content.responseText !== 'Operation succeded') {
-			                    Ext.MessageBox.show({
+
+		      				Ext.MessageBox.show({
 			                        title: LN('sbi.generic.error'),
 			                        msg: content,
 			                        width: 150,
 			                        buttons: Ext.MessageBox.OK
 			                   });
 			      		}else{
-			      			var itemId = content.id;			      			
+			      			var itemId = content.id;			      						      			
 			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 			      				newRec.set('id', itemId);
 			      				this.mainElementsStore.add(newRec);  
 			      			}
+
 			      			this.mainElementsStore.commitChanges();
 			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 								this.rowselModel.selectLastRow(true);
 				            }
+			      			record.commit();
+			      			// commit changes on store udpValue
+			      			if(storeUdps){
+			      				storeUdps.commitChanges();
+			      			}
 			      			
 			      			Ext.MessageBox.show({
 			                        title: LN('sbi.generic.result'),
@@ -773,7 +831,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		          success: function(response, options) {   	
 					if (response !== undefined) {		
 		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			//alert(content.rows);
 		      			if(content !== undefined) {	  
 		      				var record = content.rows;
 		      				this.kpiLinksGrid.store.loadData(record);
@@ -826,7 +883,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
 		var recordRel = this.rowlinkselModel.getSelected();
 		var relIdPrv = recordRel.data.relId;
-		//alert(relIdPrv);
 		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_SAVE"};	
 		var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'MANAGE_KPIS_ACTION'
