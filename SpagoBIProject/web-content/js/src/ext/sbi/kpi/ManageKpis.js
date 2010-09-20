@@ -48,7 +48,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	var paramsList = {MESSAGE_DET: "KPIS_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_DELETE"};
-		
+	
 	this.configurationObject = {};
 	
 	this.configurationObject.manageListService = Sbi.config.serviceRegistry.getServiceUrl({
@@ -516,10 +516,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                    this.udpValueGrid   // claire, isnerisic widget nel pannello
 		                     ]
 		    	}		    	
-		    }
-		    ,this.kpiLinksTab];
-
-
+		    },this.kpiLinksTab];
+ 	   
+ 	   
+ 	   	
 	}
 	
 	,launchThrWindow : function() {
@@ -553,7 +553,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
     //OVERRIDING save method
 	,save : function() {
-
 		var values = this.getForm().getFieldValues();
 		var idRec = values['id'];
 		var newRec;
@@ -610,10 +609,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			
 		}
 
-
-
-	
-	var params = {
+        var params = {
         	name :  values['name'],
         	code : values['code'],
         	description : values['description'],
@@ -644,17 +640,17 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             success: function(response, options) {
 				if (response !== undefined) {			
 		      		if(response.responseText !== undefined) {
+
 		      			var content = Ext.util.JSON.decode( response.responseText );
 		      			if(content.responseText !== 'Operation succeded') {
-
-		      				Ext.MessageBox.show({
+			                    Ext.MessageBox.show({
 			                        title: LN('sbi.generic.error'),
 			                        msg: content,
 			                        width: 150,
 			                        buttons: Ext.MessageBox.OK
 			                   });
 			      		}else{
-			      			var itemId = content.id;			      						      			
+			      			var itemId = content.id;			      			
 			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 			      				newRec.set('id', itemId);
@@ -831,6 +827,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		          success: function(response, options) {   	
 					if (response !== undefined) {		
 		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			//alert(content.rows);
 		      			if(content !== undefined) {	  
 		      				var record = content.rows;
 		      				this.kpiLinksGrid.store.loadData(record);
@@ -850,7 +847,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	,launchKpisWindow : function() {
 		
 		var conf = {};
-	
+		var kpiParent = this.rowselModel.getSelected();
+		var kpiParentId = kpiParent.data.id;
+		conf.kpiParentId = kpiParentId;
+		
 		this.manageKpiLinksWin = new Sbi.kpi.ManageKpiWindow(conf);
 	
 		this.linksWin = new Ext.Window({

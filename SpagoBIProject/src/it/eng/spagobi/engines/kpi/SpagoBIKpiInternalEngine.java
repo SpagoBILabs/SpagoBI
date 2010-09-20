@@ -938,7 +938,11 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		dataSet.setParamsMap(pars);
 		dataSet.setUserProfile(profile);	
 		logger.info("Load Data Set. Label="+dataSet.getLabel());
-		dataSet.loadData();
+		try{
+			dataSet.loadData();
+		}catch(EMFUserError e){
+			System.out.println(e.getAdditionalInfo());
+		}
 		IDataStore dataStore = dataSet.getDataStore();
 		logger.debug("Got the datastore");
 		
