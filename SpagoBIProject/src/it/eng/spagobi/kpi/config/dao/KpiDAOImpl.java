@@ -1297,10 +1297,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 
 				// fill SbiUdpValue values
-				sbiUdpValue.setFamily("KPI");
-				//sbiUdpValue.setLabel(udpValue.getLabel());
-				//sbiUdpValue.setName(udpValue.getName());
-				//sbiUdpValue.setProg(udpValue.getProg());
+				//sbiUdpValue.setFamily("KPI");
+				sbiUdpValue.setLabel(udpValue.getLabel());
+				sbiUdpValue.setName(udpValue.getName());
+				sbiUdpValue.setProg(udpValue.getProg());
+				sbiUdpValue.setFamily(udpValue.getFamily());
+				
 				sbiUdpValue.setReferenceId(idKpi);
 				SbiUdp hibUdp = (SbiUdp) aSession.load(SbiUdp.class,
 						udpId);
