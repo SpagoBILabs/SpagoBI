@@ -434,8 +434,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	  this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
  	  this.udpValueGrid.setSource(config.udpEmptyList); 
  	     
- 	     
- 	     
 
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
@@ -513,7 +511,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [
-		                    this.udpValueGrid   // claire, isnerisic widget nel pannello
+		                    this.udpValueGrid   
 		                     ]
 		    	}		    	
 		    },this.kpiLinksTab];
@@ -558,7 +556,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var newRec;
 	
 		var storeUdps = this.udpValueGrid.getStore();
-
 		var arrayUdps = this.udpValueGrid.saveUdpValues();		
 		
 		if(idRec == 0 || idRec == null || idRec === ''){
