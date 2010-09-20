@@ -158,6 +158,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
     }
 	, modifyToolbar : function(tabpanel, panel){
 		var itemId = panel.getItemId();
+		//alert(itemId);
 		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
 			this.tbSave.hide();
 		}else{
@@ -243,7 +244,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             		}
         		])
 		 }));  
-
+ 	 //detailFieldDataset.addListener('change', this.refillKpiLinks, this ); 
  	  
  	 this.detailFieldThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
@@ -710,7 +711,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var linkColModel = new Ext.grid.ColumnModel(linkColItems);
 		
  	    var linkspluginsToAdd = [this.deleteLinkColumn, this.lookupColumn]; 
- 	    
+
 	 	this.rowlinkselModel = new Ext.grid.RowSelectionModel({
 	           singleSelect: this.singleSelection
 	    });
@@ -748,9 +749,15 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
     	this.kpiLinksGrid.on('delete', this.deleteKpiLink, this);
  
 	}
+/*	, refillKpiLinks  : function(field , newval, olval) {
+		var rec = this.rowselModel.getSelected();
+		this.fillKpiLinks(null, rec);
+		
+	}*/
 	, fillKpiLinks : function(row, rec) {
-		 
+		
 		var kpiSelected = rec.data.id;
+		//alert(kpiSelected);
 		if(kpiSelected!=null){
 
 			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS"};	
