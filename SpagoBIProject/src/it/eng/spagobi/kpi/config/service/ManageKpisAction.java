@@ -309,6 +309,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				//looks up for dataset parameters				
 				IDataSet dataSet = kpiDao.getDsFromKpiId(id);
 				String parametersString = dataSet.getParameters();
+				//togliere parametri di default!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 				ArrayList<String> parameters = new ArrayList<String>();
 				logger.debug("Dataset Parameters loaded");
@@ -435,7 +436,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			for(int k =0; k< relations.size(); k++){
 				KpiRel rel = relations.get(k);
 				if(rel.getParameter().equals(par)){
-					obj.put("kpi", rel.getChildKpiName());
+					obj.put("kpi", rel.getKpiChild().getKpiName());
 					obj.put("relId", rel.getKpiRelId().intValue());
 				}
 			}

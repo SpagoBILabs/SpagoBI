@@ -1598,7 +1598,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiRel.setKpiFatherId(sbiKpiRel.getSbiKpiByKpiFatherId().getKpiId());
 			kpiRel.setParameter(sbiKpiRel.getParameter());
 			kpiRel.setKpiRelId(sbiKpiRel.getKpiRelId());
-			kpiRel.setChildKpiName(sbiKpiRel.getSbiKpiByKpiChildId().getName());
+			kpiRel.setKpiChild(toKpi(sbiKpiRel.getSbiKpiByKpiChildId()));
 		}
 		
 		logger.debug("OUT");
