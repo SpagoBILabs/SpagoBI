@@ -8,6 +8,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.kpi.alarm.bo.Alarm;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
@@ -29,6 +30,10 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.udp.bo.Udp;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,7 +89,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 		return xmlToReturn;
 	}
-	
+
 	private KpiDocuments toKpiDoc(SbiKpiDocument kpiDoc) throws EMFUserError {
 		logger.debug("IN");
 		KpiDocuments toReturn = new KpiDocuments();
@@ -95,7 +100,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		toReturn.setKpiId(kpiDoc.getSbiKpi().getKpiId());
 		return toReturn;
 	}
-	
+
 	public KpiDocuments loadKpiDocByKpiIdAndDocId(Integer kpiId,Integer docId) throws EMFUserError {
 		logger.debug("IN");
 		KpiDocuments toReturn = null;
@@ -260,12 +265,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 		}
 
+		// add also associated UDP
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId);
+		toReturn.setUdpValues(udpValues);
+
+
 		toReturn.setInterpretation(interpretation);
 		logger.debug("Kpi Interpretation setted");
 		toReturn.setInputAttribute(inputAttribute);
 		logger.debug("Kpi InputAttribute setted");
 		toReturn.setModelReference(modelReference);	
-		logger.debug("Kpi ModelReference setted");
+		logger.debug("Kpi ModelReference se	tted");
 		toReturn.setTargetAudience(targetAudience);
 		logger.debug("Kpi TargetAudience setted");
 
@@ -327,7 +337,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			String hql = "select max(s.idKpiInstanceValue) , s.beginDt";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? " ;
@@ -337,7 +347,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logger.debug("Null resource setted");
 			}
 			hql += "group by s.beginDt order by s.beginDt desc";         
-			
+
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
 			hqlQuery.setDate(1, endDate);
@@ -398,7 +408,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			String hql = "select max(s.idKpiInstanceValue), s.beginDt";
 			hql += " from SbiKpiValue s where s.sbiKpiInstance.idKpiInstance = ? ";
 			hql += " and s.beginDt <= ? and s.beginDt >= ? ";
@@ -408,7 +418,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logger.debug("Null resource setted");
 			}	
 			hql += "group by s.beginDt order by s.beginDt desc";         
-			
+
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
 			hqlQuery.setDate(1, endDate);
@@ -708,7 +718,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logger.debug("Order Date Criteria setted");
 				finder2.setMaxResults(1);
 				logger.debug("Max result to 1 setted");
-				
+
 				if (r != null) {
 					finder2.add(Expression.eq("sbiResources.resourceId", r.getId()));
 				}
@@ -816,12 +826,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					+ " in between beginDate and EndDate");
 			SbiThreshold t = kpiInst.getSbiThreshold();
 			if(t!=null){
-				
+
 				Set ts = t.getSbiThresholdValues();
 				Iterator i = ts.iterator();
 				while (i.hasNext()) {
 					SbiThresholdValue tls = (SbiThresholdValue) i.next();
-			
+
 					IThresholdValueDAO thDao=(IThresholdValueDAO)DAOFactory.getThresholdValueDAO();
 					ThresholdValue tr = thDao.toThresholdValue(tls);
 					thresholdValues.add(tr);
@@ -864,7 +874,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						Iterator it = ts.iterator();
 						while (it.hasNext()) {
 							SbiThresholdValue tls = (SbiThresholdValue) it.next();
-						
+
 							IThresholdValueDAO thDao=(IThresholdValueDAO)DAOFactory.getThresholdValueDAO();
 							ThresholdValue tr = thDao.toThresholdValue(tls);
 							thresholdValues.add(tr);
@@ -961,7 +971,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			scaleCode = kpi.getSbiMeasureUnit().getScaleCd();
 			scaleName = kpi.getSbiMeasureUnit().getScaleNm();
 		}
-		
+
 
 		Set kpiDocs = kpi.getSbiKpiDocumentses();
 		List kpiDocsList = new ArrayList();
@@ -979,6 +989,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 			}
 		}
+
+		// add also associated UDP
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId);
+		toReturn.setUdpValues(udpValues);
+
 
 		toReturn.setDescription(description);
 		logger.debug("Kpi description setted");
@@ -1030,8 +1045,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	
+
+
 	private String getKpiProperty(String property) {
 		String toReturn = null;
 		if (property != null && property.toUpperCase().equals("CODE"))
@@ -1046,7 +1061,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			toReturn = "sbiThreshold";
 		return toReturn;
 	}
-	 
+
 
 	public List loadKpiList(String fieldOrder, String typeOrder)
 	throws EMFUserError {
@@ -1160,28 +1175,30 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Integer measureTypeId = kpi.getMeasureTypeId();
 				measureType = (SbiDomains) aSession.load(SbiDomains.class, measureTypeId);
 			}
-			
+
+
+
 			//Loading all old sbiObjects
 			Criterion kpiCriter = Expression.eq("sbiKpi",sbiKpi);
 			Criteria crite = aSession.createCriteria(SbiKpiDocument.class);
 			crite.add(kpiCriter);
 			List existingDocs = crite.list();
-			
+
 			List kpiDocsList = kpi.getSbiKpiDocuments();
 			Set sbiKpiDocuments = new HashSet(0);
 			Iterator i = kpiDocsList.iterator();
 			while (i.hasNext()) {
-				
+
 				KpiDocuments doc = (KpiDocuments) i.next();
-				
+
 				String label = doc.getBiObjLabel();
 				Criterion labelCriterrion = Expression.eq("label",label);
 				Criteria criteria = aSession.createCriteria(SbiObjects.class);
 				criteria.add(labelCriterrion);
 				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
-				
-				
-				
+
+
+
 				Integer kpiId = kpi.getKpiId();
 				Criterion kpiCriterrion = Expression.eq("sbiKpi",sbiKpi);
 				Criterion sbiObjCriterrion = Expression.eq("sbiObjects",hibObject);
@@ -1189,7 +1206,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				crit.add(kpiCriterrion);
 				crit.add(sbiObjCriterrion);
 				SbiKpiDocument kpiDoc = (SbiKpiDocument) crit.uniqueResult();
-				
+
 				if(existingDocs!=null && !existingDocs.isEmpty() && kpiDoc!=null){
 					if(existingDocs.contains(kpiDoc)){
 						existingDocs.remove(kpiDoc);
@@ -1202,7 +1219,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					aSession.saveOrUpdate(temp);
 				}
 			}
-			
+
 			if(existingDocs!=null && !existingDocs.isEmpty() ){
 				Iterator it2 = existingDocs.iterator();
 				while(it2.hasNext()){
@@ -1229,11 +1246,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			aSession.saveOrUpdate(sbiKpi);
 
+			insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
+			
 			tx.commit();
 
 		} catch (HibernateException he) {
 			logException(he);
-
+			logger.error("error in modifying kpi");
 			if (tx != null)
 				tx.rollback();
 
@@ -1248,6 +1267,62 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 	}
 
+	
+	
+	/**
+	 *  Get the Udp Value, update the existing one, add the new ones
+	 * @throws EMFUserError 
+	 */
+	public void insertOrUpdateRelatedUdpValues(Kpi kpi, SbiKpi sbiKpi, Session aSession) throws EMFUserError{
+		// if there are values associated 
+		List<UdpValue> udpValues = kpi.getUdpValues();
+		if(udpValues != null){
+			// an udp value is never erased for a kpi once memorized, that is because by user interface integer have no null value and boolean too
+			// these are current UdpValues; for each:
+			for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
+				UdpValue udpValue = (UdpValue) iterator.next();
+				// the tow ids of relationship; Kpi and Udp
+				Integer idKpi = sbiKpi.getKpiId();
+				Integer udpId = udpValue.getUdpId();
+				
+				// search if KpiValue is already present, in that case update otherwise insert
+				SbiUdpValue sbiUdpValue  = null;
+				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idKpi, udpValue.getUdpId(), "KPI");						
+				if(already == null){
+					sbiUdpValue = new SbiUdpValue();					
+				}
+				else{
+					sbiUdpValue = (SbiUdpValue) aSession.load(SbiUdpValue.class,
+							already.getUdpValueId());						
+				}
+
+				// fill SbiUdpValue values
+				sbiUdpValue.setFamily("KPI");
+				//sbiUdpValue.setLabel(udpValue.getLabel());
+				//sbiUdpValue.setName(udpValue.getName());
+				//sbiUdpValue.setProg(udpValue.getProg());
+				sbiUdpValue.setReferenceId(idKpi);
+				SbiUdp hibUdp = (SbiUdp) aSession.load(SbiUdp.class,
+						udpId);
+				sbiUdpValue.setSbiUdp(hibUdp);
+				sbiUdpValue.setValue(udpValue.getValue());
+				sbiUdpValue.setBeginTs(new Date());
+
+				
+				if(sbiUdpValue.getUdpValueId() == null){
+					DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);					
+					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been inserted");
+				}
+				else{
+					DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValue);
+					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been updated");
+				}
+			}
+		}	
+	}
+	
+	
+	
 	public Integer insertKpi(Kpi kpi) throws EMFUserError {
 		logger.debug("IN");
 		Integer idToReturn;
@@ -1262,7 +1337,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			String code = kpi.getCode();
 			String metric = kpi.getMetric();
 			Double weight = kpi.getStandardWeight();
-			
+
 			SbiDataSetConfig ds = null;
 			if (kpi.getKpiDsId()  != null) {
 				Integer ds_id = kpi.getKpiDsId();
@@ -1318,7 +1393,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setSbiThreshold(sbiThreshold);
 
 			idToReturn = (Integer) aSession.save(sbiKpi);
-			
+
 			List kpiDocsList = kpi.getSbiKpiDocuments();
 			Set sbiKpiDocuments = new HashSet(0);
 			Iterator i = kpiDocsList.iterator();
@@ -1329,13 +1404,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Criteria criteria = aSession.createCriteria(SbiObjects.class);
 				criteria.add(labelCriterrion);
 				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
-				
+
 				SbiKpiDocument temp = new SbiKpiDocument();
 				temp.setSbiKpi(sbiKpi);
 				temp.setSbiObjects(hibObject);
 				aSession.save(temp);
 			}
 
+			insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
+			
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1430,11 +1507,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		Session aSession = null;
 		Transaction tx = null;
 		Integer resultNumber;
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
+
 			String hql = "select count(*) from SbiKpi ";
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Integer)hqlQuery.uniqueResult();
@@ -1444,7 +1521,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (tx != null)
 				tx.rollback();	
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-		
+
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -1457,7 +1534,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 
 	public List loadPagedKpiList(Integer offset, Integer fetchSize)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		List toReturn = null;
 		Session aSession = null;
@@ -1470,16 +1547,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			tx = aSession.beginTransaction();
 			toReturn = new ArrayList();
 			List toTransform = null;
-			
+
 			String hql = "select count(*) from SbiKpi ";
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Integer)hqlQuery.uniqueResult();
-			
+
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
 				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
 			}
-			
+
 			hibernateQuery = aSession.createQuery("from SbiKpi order by name");
 			hibernateQuery.setFirstResult(offset);
 			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
