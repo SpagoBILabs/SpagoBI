@@ -18,7 +18,7 @@
             <column name="PROG" />
         </property>
         <property name="label" type="string">
-            <column name="LABEL" length="20" not-null="true" unique="true" />
+            <column name="LABEL" length="20" not-null="false" unique="false" />
         </property>
         <property name="name" type="string">
             <column name="NAME" length="40" />

@@ -40,6 +40,9 @@ public class UdpValue implements Serializable {
 	private Integer prog=null;
 	private Date beginTs=null;
 	private Date endTs=null;
+	// memorize from UDB the type label, needed ffor editors creation
+	private String typeLabel = null;
+	
 	/**
 	 * @return the udpValueId
 	 */
@@ -159,6 +162,12 @@ public class UdpValue implements Serializable {
 	 */
 	public void setEndTs(Date endTs) {
 		this.endTs = endTs;
+	}
+	public String getTypeLabel() {
+		return typeLabel;
+	}
+	public void setTypeLabel(String typeLabel) {
+		this.typeLabel = typeLabel;
 	}
 	
 	

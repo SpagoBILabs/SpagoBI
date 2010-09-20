@@ -28,10 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
 	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
 	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
+	List udpListCd = (List) aSessionContainer.getAttribute("udpList");
+
 	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
+
 %>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+
+<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
+<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
+<%@page import="org.json.JSONObject"%><script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 
@@ -96,6 +102,66 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String metricScalesTypes = metricScaleTypesArray.toString();
 	metricScalesTypes = metricScalesTypes.replaceAll("\"","'");	
+   
+	
+	
+    // create jason array for udp attributes
+	
+	String udpEmptyListJSON ="{}";
+	if(udpListCd != null){
+		udpEmptyListJSON="[";
+		for(int i=0; i< udpListCd.size(); i++){
+			Udp udp = (Udp)udpListCd.get(i);
+			udpEmptyListJSON+="{";
+			udpEmptyListJSON+="'label':'"+udp.getLabel()+"',";
+			udpEmptyListJSON+="'value':'',";
+			udpEmptyListJSON+="}";
+			if(i != (udpListCd.size()-1)){
+				udpEmptyListJSON+=",";
+			}
+		}
+		udpEmptyListJSON+="]";
+	}
+
+	
+	// create jason array for udp attributes, keep them for info	
+//	JSONArray udpJSONArray = new JSONArray();
+//	UdpJSONSerializer udpJSONSerializer = new UdpJSONSerializer();
+//	int indx = 0;
+//	if(udpListCd != null){
+//		for(int i=0; i< udpListCd.size(); i++){
+//			Udp udp = (Udp)udpListCd.get(i);
+//			JSONObject jsonObject = (JSONObject)udpJSONSerializer.serialize(udp,locale);
+//			udpJSONArray.put(jsonObject);
+//		}
+//	}
+//	String udpListJSON = udpJSONArray.toString();
+//	udpListJSON = udpListJSON.replaceAll("\"","'");	
+	
+	String udpListJSON ="{}";
+	if(udpListCd != null){
+		udpListJSON="[";
+		for(int i=0; i< udpListCd.size(); i++){
+			Udp udp = (Udp)udpListCd.get(i);
+			udpListJSON+="{";
+			udpListJSON+="'udpId':"+udp.getUdpId()+",";
+			udpListJSON+="'label':'"+udp.getLabel()+"',";
+			udpListJSON+="'name':'"+udp.getName()+"',";
+			udpListJSON+="'description':'"+udp.getDescription()+"',";
+			udpListJSON+="'dataTypeId':'"+udp.getDataTypeId()+"',";
+			udpListJSON+="'familyId':'"+udp.getFamilyId()+"',";
+			udpListJSON+="'multivalue':'"+udp.getMultivalue()+"',";
+			udpListJSON+="'dataTypeCd':'"+udp.getDataTypeValeCd()+"'";
+
+			udpListJSON+="}";
+			if(i != (udpListCd.size()-1)){
+				udpListJSON+=",";
+			}
+		}
+			udpListJSON+="]";
+	}    
+	
+    
     %>
 
     var config = {};  
@@ -104,6 +170,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	config.measureTypesCd = <%= measureTypes%>;
 	config.metricScaleTypesCd = <%= metricScalesTypes%>;
 	config.thrTypes = <%= thrTypes%>;
+	config.udpEmptyList = <%= udpEmptyListJSON%>;
+	config.udpList = <%= udpListJSON%>;
+
 	
 	var url = {
     	host: '<%= request.getServerName()%>'
