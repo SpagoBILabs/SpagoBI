@@ -262,6 +262,7 @@
 		<target name="delete-debug">
 			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js"/>
 			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all.js"/>
+			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js"/>
 		</target>
   
 		<target name="create-debug" depends="delete-debug">
@@ -325,16 +326,8 @@
 			    </filelist>
 
 			</concat>
-		</target>
-		
-		<target name="create-production" depends="create-debug">
-				<java jar="./yuicompressor-2.4.2.jar" fork="true">
-					<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-debug.js --nomunge"/>		   
-				</java>
-		</target>
-	
-	<target name="create-ext311-debug" depends="create-production">
-				<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
+
+			<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 				    <filelist  dir="${build}/${webapp_name}/js">
 				    	 <file name="./src/ext/sbi/locale/LocaleUtils.js"/>			    	 
 				    	 <file name="./src/ext/sbi/exception/ExceptionHandler.js"/>				    	 
@@ -354,6 +347,7 @@
 				    	 <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
 
 				    	 <file name="./src/ext/sbi/udp/ManageUdp.js"/>
+				    	<file name="./src/ext/sbi/udp/ManageUdpValues.js"/>				    	
 				    	
 				    	 <file name="./src/ext/sbi/profiling/ManageAttributes.js"/>
 				    	 <file name="./src/ext/sbi/profiling/ManageRoles.js"/>
@@ -379,17 +373,17 @@
 				    </filelist>
 
 				</concat>
-			</target>
-	
-			<target name="create-ext311-production" depends="create-ext311-debug">
-					<java jar="./yuicompressor-2.4.2.jar" fork="true">
+		</target>
+		
+		<target name="create-production" depends="create-debug">
+				<java jar="./yuicompressor-2.4.2.jar" fork="true">
+					<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-debug.js --nomunge"/>		   
+				</java>
+				<java jar="./yuicompressor-2.4.2.jar" fork="true">
 						<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js --nomunge"/>		   
-					</java>
-			</target>
-	
-	
-	
-	
+				</java>
+		</target>
+
 	
   	<target name="development"  >
 
