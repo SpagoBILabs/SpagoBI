@@ -493,7 +493,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			node.attributes.typeId = rec.data.typeId;
 			node.attributes.type = rec.data.typeCd;//unused server side		
 
-			this.detailFieldTypeDescr.setValue(rec.data.typeDs);			
+			this.detailFieldTypeDescr.setValue(LN(rec.data.typeDs));			
 		}
 	}
 	,fillDetail : function(sel, node) {
@@ -517,7 +517,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				this.detailFieldName.setValue(name);
 				this.detailFieldCode.setValue(code);
 				
-				this.detailFieldTypeDescr.setValue(node.attributes.typeDescr);
+				this.detailFieldTypeDescr.setValue(LN(node.attributes.typeDescr));
 			}
 		}
 	}
