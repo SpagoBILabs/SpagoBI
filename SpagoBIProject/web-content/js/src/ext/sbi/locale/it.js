@@ -7,6 +7,8 @@ Sbi.locale.ln['Documents']  = 'Documenti';
 Sbi.locale.ln['sbi.general.yes'] = 'Si';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 
+Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Generico';
+Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Radice Generica';
 
 //START Generic messages
 //Buttons
@@ -67,6 +69,7 @@ Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Drag and drop un kpi dalla lista dei kpi
 Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Selezionare il nodo genitore!';
 Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'Per inserire il nodo bisogna prima salvare il nodo padre. Effettuare salvataggio?';
 Sbi.locale.ln['sbi.models.selectNode'] = 'Seleziona un nodo da cancellare';
+
 
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Gestione Istanze di Modello';
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Lista Istanze di Modello';
