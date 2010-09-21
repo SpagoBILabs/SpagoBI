@@ -8,7 +8,6 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.kpi.alarm.bo.Alarm;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
@@ -30,7 +29,6 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
@@ -1712,4 +1710,218 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		return true;
 	}
+
+	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r) throws EMFUserError {
+		logger.debug("IN");
+		KpiValue toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
+					kpiInstanceId));
+			finder.add(Expression.eq("beginDt", from));
+			finder.add(Expression.eq("endDt", to));
+			finder.addOrder(Order.desc("beginDt"));
+			finder.addOrder(Order.desc("idKpiInstanceValue"));
+			logger.debug("Order Date Criteria setted");
+			finder.setMaxResults(1);
+			logger.debug("Max result to 1 setted");
+
+			if (r != null) {
+				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
+			}
+
+			List l = finder.list();
+			if (!l.isEmpty()) {
+				KpiValue tem = null;
+				Iterator it = l.iterator();
+				while (it.hasNext()) {
+					SbiKpiValue temp = (SbiKpiValue) it.next();
+					toReturn = toKpiValue(temp, from, to);
+				}
+			}
+
+		} catch (HibernateException he) {
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10108);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	private KpiValue toKpiValue(SbiKpiValue value, Date from, Date to) throws EMFUserError {
+
+		logger.debug("IN");
+		KpiValue toReturn = new KpiValue();
+
+		Date beginDate = value.getBeginDt();
+		logger.debug("SbiKpiValue begin date: "
+				+ (beginDate != null ? beginDate.toString() : "Begin date null"));
+		Date endDate = value.getEndDt();
+		logger.debug("SbiKpiValue end date: "
+				+ (endDate != null ? endDate.toString() : "End date null"));
+		String val = value.getValue();
+		logger.debug("SbiKpiValue value: "
+				+ (val != null ? val : "Value null"));
+		String valueDescr = value.getDescription();
+		logger.debug("SbiKpiValue description: "
+				+ (valueDescr != null ? valueDescr : "Value description null"));
+		
+		Integer kpiInstanceID = null;
+		Double weight = null;
+		Double target = null;
+		String scaleCode = null;
+		String scaleName = null;
+
+		SbiResources res = value.getSbiResources();
+		Resource r = null;
+		IResourceDAO resDao=DAOFactory.getResourceDAO();
+		if (res != null) {
+			r = resDao.toResource(res);
+			logger.debug("SbiKpiValue resource: "
+					+ (r.getColumn_name() != null ? r.getColumn_name() : "resource name null"));
+		}
+
+		kpiInstanceID = value.getSbiKpiInstance().getIdKpiInstance();
+		logger.debug("SbiKpiValue kpiInstanceID: "
+				+ (kpiInstanceID != null ? kpiInstanceID.toString() : "kpiInstanceID null"));
+		SbiKpiInstance kpiInst = value.getSbiKpiInstance();
+
+		List thresholdValues = new ArrayList();
+		Date kpiInstBegDt = kpiInst.getBeginDt();
+		logger.debug("kpiInstBegDt begin date: "
+				+ (kpiInstBegDt != null ? kpiInstBegDt.toString() : "Begin date null"));
+		
+		// TODO for the moment get actual values of weight/target etc check if it is correct
+		weight = kpiInst.getWeight();
+		logger.debug("SbiKpiValue weight: "
+				+ (weight != null ? weight.toString() : "weight null"));
+		target = kpiInst.getTarget();
+		logger.debug("SbiKpiValue target: "
+				+ (target != null ? target.toString() : "target null"));
+
+		if (kpiInst.getSbiMeasureUnit() != null) {
+			scaleCode = kpiInst.getSbiMeasureUnit().getScaleCd();
+			logger.debug("SbiKpiValue scaleCode: "
+					+ (scaleCode != null ? scaleCode : "scaleCode null"));
+			scaleName = kpiInst.getSbiMeasureUnit().getScaleNm();
+			logger.debug("SbiKpiValue scaleName: "
+					+ (scaleName != null ? scaleName : "scaleName null"));
+		}
+		SbiThreshold t = kpiInst.getSbiThreshold();
+		if(t!=null){
+
+			Set ts = t.getSbiThresholdValues();
+			Iterator i = ts.iterator();
+			while (i.hasNext()) {
+				SbiThresholdValue tls = (SbiThresholdValue) i.next();
+
+				IThresholdValueDAO thDao=(IThresholdValueDAO)DAOFactory.getThresholdValueDAO();
+				ThresholdValue tr = thDao.toThresholdValue(tls);
+				thresholdValues.add(tr);
+			}
+		}			
+		// TODO for the moment get actual values of weight/target etc check if it is correct
+		
+		toReturn.setValueDescr(valueDescr);
+		logger.debug("Kpi value descritpion setted");
+		toReturn.setTarget(target);
+		logger.debug("Kpi value target setted");
+		toReturn.setBeginDate(beginDate);
+		logger.debug("Kpi value begin date setted");
+		toReturn.setEndDate(endDate);
+		logger.debug("Kpi value end date setted");
+		toReturn.setValue(val);
+		logger.debug("Kpi value setted");
+		toReturn.setKpiInstanceId(kpiInstanceID);
+		logger.debug("Kpi value Instance ID setted");
+		toReturn.setWeight(weight);
+		logger.debug("Kpi value weight setted");
+		toReturn.setR(r);
+		logger.debug("Kpi value resource setted");
+		toReturn.setScaleCode(scaleCode);
+		logger.debug("Kpi value scale Code setted");
+		toReturn.setScaleName(scaleName);
+		logger.debug("Kpi value scale Name setted");
+		toReturn.setThresholdValues(thresholdValues);
+		logger.debug("Kpi value Thresholds setted");
+		toReturn.setKpiValueId(value.getIdKpiInstanceValue());
+		logger.debug("Kpi value ID setted");
+		toReturn.setValueXml(value.getXmlData());
+		logger.debug("Kpi value XML setted");
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	public void deleteKpiValueFromInterval(Integer kpiInstanceId, Date from,
+			Date to, Resource r) throws EMFUserError {
+		logger.debug("IN");
+		KpiValue toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
+					kpiInstanceId));
+			finder.add(Expression.eq("beginDt", from));
+			finder.add(Expression.eq("endDt", to));
+			finder.addOrder(Order.desc("beginDt"));
+			finder.addOrder(Order.desc("idKpiInstanceValue"));
+			logger.debug("Order Date Criteria setted");
+			finder.setMaxResults(1);
+			logger.debug("Max result to 1 setted");
+
+			if (r != null) {
+				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
+			}
+
+			List l = finder.list();
+			if (!l.isEmpty()) {
+				KpiValue tem = null;
+				Iterator it = l.iterator();
+				while (it.hasNext()) {					
+					SbiKpiValue temp = (SbiKpiValue) it.next();
+					aSession.delete(temp);
+				}
+			}
+			tx.commit();
+
+		} catch (HibernateException he) {
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10108);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+
+		logger.debug("OUT");
+		
+	}
+	
 }

@@ -9,7 +9,7 @@ public class KpiLineVisibilityOptions {
 	private Boolean display_semaphore = true;
 	private Boolean display_weight = true;
 	private Boolean show_axis = true;
-	private Boolean weighted_values = true;
+	private Boolean weighted_values = false;
 	private String model_title = "MODEL";
 	private String threshold_image_title = null;
 	private String bullet_chart_title = null;

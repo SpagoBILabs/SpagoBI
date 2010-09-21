@@ -172,6 +172,10 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	protected Date timeRangeFrom = null;//Begin date of range
 
 	protected Date timeRangeTo = null;//End date of range
+	
+	protected Date dateIntervalFrom = null;//Begin date of range
+
+	protected Date dateIntervalTo = null;//End date of range
 
 	// used to set the return of the execution
 	protected List<KpiResourceBlock> kpiResultsList;
@@ -710,37 +714,59 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r);
 			logger.debug("Old KpiValue retrieved it could be still valid or not");
 		}else{	
-			if(behaviour.equalsIgnoreCase("default") || //If the behaviour is default
-					(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()!=null)){//or the behaviour is recalculate and the kpiinstance has a setted periodicity
-				// the old value still valid is retrieved
-				logger.debug("Trying to retrieve the old value still valid");
-				value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r);
-				logger.debug("Old KpiValue retrieved");		
-			}
-			if(value!=null && value.getEndDate()!=null && kpiI.getPeriodicityId()!=null){
-				GregorianCalendar c2 = new GregorianCalendar();		
-				c2.setTime(value.getEndDate());
-				int year = c2.get(1);
-				if(year==9999){
-					no_period_to_period = true;
-					logger.debug("The periodicity was null and now exists");
+			if(behaviour.equalsIgnoreCase("timeIntervalDefault")){
+				if(dateIntervalFrom!=null && dateIntervalTo!=null){
+					value = DAOFactory.getKpiDAO().getKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r);
+					if (value==null){
+						IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
+						logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
+						value = getNewKpiValue(dataSet, kpiI, r, miId);		
+					}
+				}else{
+					value = null;
 				}
+			}else if(behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
+				if(dateIntervalFrom!=null && dateIntervalTo!=null){
+					DAOFactory.getKpiDAO().deleteKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r);
+					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
+					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
+					value = getNewKpiValue(dataSet, kpiI, r, miId);		
+				}else{
+					value = null;
+				}
+			}else{
+				if(behaviour.equalsIgnoreCase("default") || //If the behaviour is default
+						(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()!=null)){//or the behaviour is recalculate and the kpiinstance has a setted periodicity
+					// the old value still valid is retrieved
+					logger.debug("Trying to retrieve the old value still valid");
+					value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r);
+					logger.debug("Old KpiValue retrieved");		
+				}
+				if(value!=null && value.getEndDate()!=null && kpiI.getPeriodicityId()!=null){
+					GregorianCalendar c2 = new GregorianCalendar();		
+					c2.setTime(value.getEndDate());
+					int year = c2.get(1);
+					if(year==9999){
+						no_period_to_period = true;
+						logger.debug("The periodicity was null and now exists");
+					}
+				}
+				if (value==null || //If the retrieved value is null
+						no_period_to_period || //or the periodicity was before null and now is setted
+						behaviour.equalsIgnoreCase("force_recalculation") || //or the  behaviour is force_recalculation
+						(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()==null) ) {// or the behaviour is recalculate and the kpiinstance hasn't a setted periodicity
+					//a new value is calculated
+					logger.debug("Old value not valid anymore or recalculation forced");
+					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
+					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
+					value = getNewKpiValue(dataSet, kpiI, r, miId);		
+		
+				}else if(behaviour.equalsIgnoreCase("display")){//diplay behaviour
+					logger.debug("Display behaviour");
+					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r);
+					logger.debug("Old KpiValue retrieved it could be still valid or not");
+				} 
 			}
-			if (value==null || //If the retrieved value is null
-					no_period_to_period || //or the periodicity was before null and now is setted
-					behaviour.equalsIgnoreCase("force_recalculation") || //or the  behaviour is force_recalculation
-					(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()==null) ) {// or the behaviour is recalculate and the kpiinstance hasn't a setted periodicity
-				//a new value is calculated
-				logger.debug("Old value not valid anymore or recalculation forced");
-				IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
-				logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-				value = getNewKpiValue(dataSet, kpiI, r, miId);		
-	
-			}else if(behaviour.equalsIgnoreCase("display")){//diplay behaviour
-				logger.debug("Display behaviour");
-				value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r);
-				logger.debug("Old KpiValue retrieved it could be still valid or not");
-			} 
 		}
 		logger.debug("OUT");
 		return value;
@@ -783,7 +809,6 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			temp.put("ParKpiResource", value);
 			temp.put("ParKpiResourceCode", code);
 		}
-		
 		// cast Integer Ids to String
 		temp.put("ParModelInstance", modelInstanceId.toString());
 		temp.put("ParKpiInstance", kpiInstanceID.toString());
@@ -793,6 +818,12 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		if(dataSet!=null){
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
 			kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate());
+			if(behaviour.equalsIgnoreCase("timeIntervalDefault") || behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
+				if(dateIntervalFrom!=null && dateIntervalTo!=null){
+					kVal.setBeginDate(dateIntervalFrom);
+					kVal.setEndDate(dateIntervalTo);
+				}
+			}
 			kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true);
 		}
 		logger.debug("OUT");
@@ -927,7 +958,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						
 						if(doSave){
 							// Insert new Value into the DB
-							Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kpiValTemp);
+							Integer kpiValueId = DAOFactory.getKpiDAO().insertKpiValue(kpiValTemp);
 							kVal.setKpiValueId(kpiValueId);
 							logger.info("New value inserted in the DB. Resource="+kpiValTemp.getR().getName()+" KpiInstanceId="+kpiValTemp.getKpiInstanceId());
 						}
@@ -1092,8 +1123,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						}else if (value.equalsIgnoreCase("false")){
 							this.dataset_multires = false;
 						}
-					}
-					else {
+					}else{
 						String value = (String) values.get(0);	
 						if (url.equals("ParKpiDate")) {
 							value = setCalculationDateOfKpi(value);		
@@ -1107,6 +1137,22 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						}else if (url.equals("TimeRangeTo")) {
 							try {
 								timeRangeTo = f.parse(value);
+							} catch (ParseException e) {
+								logger.error("ParseException.value=" + value, e);
+							}
+							logger.debug("Setted TIME RANGE TO");
+						}else if(url.equals("dateIntervalFrom")){
+							try {
+								dateIntervalFrom = f.parse(value);
+								value = getDateForDataset(dateIntervalFrom);
+							} catch (ParseException e) {
+								logger.error("ParseException.value=" + value, e);
+							}
+							logger.debug("Setted TIME RANGE TO");
+						}else if(url.equals("dateIntervalTo")){
+							try {
+								dateIntervalTo = f.parse(value);
+								value = getDateForDataset(dateIntervalTo);
 							} catch (ParseException e) {
 								logger.error("ParseException.value=" + value, e);
 							}
@@ -1151,7 +1197,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		String format = (String) formatSB.getAttribute("format");
 		SimpleDateFormat f = new SimpleDateFormat();
 		f.applyPattern(format);
-		toReturn = f.format(this.dateOfKPI);
+		toReturn = f.format(d);
 		return toReturn;
 	}
 	
