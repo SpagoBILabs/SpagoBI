@@ -175,9 +175,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 
 	// used to set the return of the execution
 	protected List<KpiResourceBlock> kpiResultsList;
-	
-	private List<Integer> kpisRegisterValue = new ArrayList<Integer>();
-	
+
 	//Method usually called by the scheduler only in order to recalculate kpi values
 	public void execute(RequestContainer requestContainer, SourceBean response) throws EMFUserError, SourceBeanException {
 		logger.debug("IN");
@@ -404,9 +402,6 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			//sets up register values
 			ModelInstanceNode modI = DAOFactory.getModelInstanceDAO().loadModelInstanceById(mI.getModelInstanceNodeId(), dateOfKPI);
 
-			recurseGetKpiInstanceRoot(modI);
-
-			
 			logger.debug("Setted the List of Kpis that does not need to be persisted in db");
 			if (this.resources == null || this.resources.isEmpty()) {
 				logger.debug("There are no resources assigned to the Model Instance");
@@ -625,48 +620,13 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
 			if(dataSet!=null){
 				Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiI.getKpi());
-				getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), kpi);
+				kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate());
+				kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true);
 			}
 		} 	
 		logger.debug("OUT");
 	}
-	
-	public void recurseSetNotKpisRegisterValue(Integer kpiId) throws EMFUserError, EMFInternalError, SourceBeanException{
-		//extract kpi from table
-		List <KpiRel> relations = DAOFactory.getKpiDAO().loadKpiRelListByParentId(kpiId);
-		KpiDAOImpl kpiDao = (KpiDAOImpl)DAOFactory.getKpiDAO();
-		for(int i= 0; i< relations.size(); i++){
-			KpiRel rel = relations.get(i);
-			Kpi child = rel.getKpiChild();
-			this.kpisRegisterValue.add(child.getKpiId());
-			recurseSetNotKpisRegisterValue(child.getKpiId());
-			
-		}		
-	}
-	public void recurseGetKpiInstanceRoot(ModelInstanceNode modI) throws EMFUserError, EMFInternalError, SourceBeanException{
-		logger.debug("IN");
-		KpiInstance kpiInst = modI.getKpiInstanceAssociated();
-		
-		if(kpiInst != null){
-			Integer kpiId = kpiInst.getKpi();
-			logger.debug("Found kpi instance root of relations");
-			recurseSetNotKpisRegisterValue(kpiId);
-		}else{
-			//get the first model instance node with kpi instance
-			List children = new ArrayList();
-			List childrenIds = modI.getChildrenIds();
-			if (!childrenIds.isEmpty()) {
-				Iterator childrenIt = childrenIds.iterator();
-				while (childrenIt.hasNext()) {
-					Integer id = (Integer) childrenIt.next();	
-					ModelInstanceNode modIChild = DAOFactory.getModelInstanceDAO().loadModelInstanceById(id, dateOfKPI);
-					recurseGetKpiInstanceRoot(modIChild);
-					
-				}
-			}
-		}	
-		logger.debug("OUT");
-	}
+
 	public KpiLine getBlock(Integer miId, Resource r) throws EMFUserError, EMFInternalError, SourceBeanException {
 		logger.debug("IN");
 		KpiLine line = new KpiLine();
@@ -831,9 +791,9 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		// and the DataSet won't expect a parameter of type resource
 		//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
 		if(dataSet!=null){
-			//kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate());
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
 			kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate());
+			kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true);
 		}
 		logger.debug("OUT");
 		return kVal;
@@ -926,27 +886,23 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			pars.put(parameter, kpiVal.getValue());
 			
 		}
+		//checks if it is to recalculate
 		//calculate with dataset
-		KpiValue value = getKpiValueFromDataset(dataSet, pars, kVal, begD, endDate, kpiParent);
-		logger.info("gets value from dataset : "+value.getValue());
+		KpiValue value = getKpiValueFromDataset(dataSet, pars, kVal, begD, endDate, false);
+		logger.debug("gets value from dataset : "+value.getValue());
 		logger.debug("OUT");
 		return value;
 	}
-	public KpiValue getKpiValueFromDataset(IDataSet dataSet, HashMap pars, KpiValue kVal, Date begD, Date endDate, Kpi kpi) throws EMFUserError, EMFInternalError, SourceBeanException{
+	
+	public KpiValue getKpiValueFromDataset(IDataSet dataSet, HashMap pars, KpiValue kVal, Date begD, Date endDate, boolean doSave) throws EMFUserError, EMFInternalError, SourceBeanException{
 		logger.debug("IN");
 		KpiValue kpiValTemp = null;
 		dataSet.setParamsMap(pars);
 		dataSet.setUserProfile(profile);	
 		logger.info("Load Data Set. Label="+dataSet.getLabel());
-		try{
-			dataSet.loadData();
-		}catch(EMFUserError e){
-			System.out.println(e.getAdditionalInfo());
-		}
+		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		logger.debug("Got the datastore");
-		
-		Integer kpiID = kpi.getKpiId();
 		
 		if (dataStore != null && !dataStore.isEmpty()) {
 			// Transform result into KPIValue (I suppose that the result has a unique value)
@@ -969,7 +925,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 					logger.debug("New value calculated");
 					if(register_values && kpiValTemp.getR().getName()!=null){
 						
-						if(!this.kpisRegisterValue.contains(kpiID)){
+						if(doSave){
 							// Insert new Value into the DB
 							Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kpiValTemp);
 							kVal.setKpiValueId(kpiValueId);
@@ -991,7 +947,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				kVal = setKpiValuesFromDataset(kVal,fields,d, begD, endDate);
 				logger.debug("New value calculated");
 				if(register_values){
-					if(!this.kpisRegisterValue.contains(kpiID)){
+					if(doSave){
 						// Insert new Value into the DB
 						Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kVal);
 						kVal.setKpiValueId(kpiValueId);
@@ -1007,7 +963,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		} else {
 			logger.warn("The Data Set doesn't return any value!!!!!");
 			if(register_values){
-				if(!this.kpisRegisterValue.contains(kpiID)){
+				if(doSave){
 					// Insert new Value into the DB
 					Integer kpiValueId =DAOFactory.getKpiDAO().insertKpiValue(kVal);
 					kVal.setKpiValueId(kpiValueId);
