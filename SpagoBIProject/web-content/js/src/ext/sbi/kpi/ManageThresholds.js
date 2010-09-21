@@ -134,6 +134,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			this.tempThrV.setVisible(true);
 			this.thrMinOrMaxDetail.setVisible(false);	
 			var myData = record.get('thrValues');
+			
 			if(myData!=null && myData!=undefined){
 				this.tempThrV.loadItems(myData);
 			}else{
@@ -192,6 +193,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 
 		this.configurationObject.panelTitle = LN('sbi.thresholds.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.thresholds.listTitle');
+		
 		
 		this.initTabItems();
     }
@@ -621,9 +623,9 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      			this.mainElementsStore.commitChanges();
 			      			this.tempThrV.getStore().commitChanges();
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
+			      				this.mainElementsStore.load();
 					            this.rowselModel.selectLastRow(true);
-				            }else if(record != null && record != undefined && record.get('typeCd')=='RANGE'){
-			      				//this.mainElementsStore.load();
+				            }else if(record != null && record != undefined && record.get('typeCd')=='RANGE'){				            
 								if(toSelAfterSave !== undefined){
 									this.rowselModel.selectRow(toSelAfterSave);
 								}

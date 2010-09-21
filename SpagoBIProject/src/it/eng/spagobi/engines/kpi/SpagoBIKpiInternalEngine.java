@@ -665,8 +665,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	           kpiI = modelInstanceRefered.getKpiInstanceAssociated();
 	           modI.setKpiInstanceAssociated(kpiI);
 	        }
-	    }
-		
+	    }		
 		
 		line.setChildren(children);
 		if (kpiI != null) {
