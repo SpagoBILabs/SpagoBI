@@ -7,6 +7,9 @@ Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Root';
 Sbi.locale.ln['sbi.general.yes'] = 'Si';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 
+Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
+Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
+
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.add'] = 'Add';

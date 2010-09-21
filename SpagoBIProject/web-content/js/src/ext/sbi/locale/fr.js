@@ -4,6 +4,9 @@ Sbi.locale.ln = new Array();
 Sbi.locale.ln['sbi.general.yes'] = 'Oui';
 Sbi.locale.ln['sbi.general.No'] = 'Non';
 
+Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
+Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
+
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.add'] = 'Ajouter';
