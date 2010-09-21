@@ -91,8 +91,13 @@ Sbi.kpi.ManageModels = function(config, ref) {
 			   e.point = 'append';
 			   e.target.expand();
 			   Ext.fly(e.target.getUI().getEl()).repaint();
+			   
 		   }
 
+	 }, this);
+	 this.mainTree.on('nodedrop', function(e, newNode){
+		 e.tree.getSelectionModel().select(e.dropNode[0]);
+		 this.selectNode(null);
 	 }, this);
 }
 
@@ -673,8 +678,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				   
 				   // create node from record data
 				   e.dropNode.push(newNode);
-				   
-
+				   this.fireEvent('nodedrop', newNode);
 			   }
 		    
 			   // we want Ext to complete the drop, thus return true
