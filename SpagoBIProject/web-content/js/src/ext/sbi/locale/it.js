@@ -10,6 +10,9 @@ Sbi.locale.ln['sbi.general.No'] = 'No';
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Generico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Radice Generica';
 
+Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Nodo Generico';
+Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Radice Generica';
+
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi';
