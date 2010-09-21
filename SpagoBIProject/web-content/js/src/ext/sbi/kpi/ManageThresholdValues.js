@@ -62,6 +62,12 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 		this.getView().refresh();		
 		},this);
 	
+	/*var checkMinColumn = new Ext.grid.CheckColumn({
+	       header: LN('sbi.thresholds.include'), 
+		   width: 50
+		   //dataIndex: 'minIncluded'
+	    });*/
+	
 	// Let's pretend we rendered our grid-columns with meta-data from our ORM framework.
 	//these are grid values for range type threshold value
 	this.userColumns =  [
@@ -73,9 +79,9 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 	    	id:'position',
 	    	width: 60, 
 	    	sortable: true, 
-	    	xtype: 'numbercolumn',
 	    	dataIndex: 'position', 
-	    	editor: new Ext.form.NumberField({})	
+	    	//decimalPrecision :0,
+	    	editor: new Ext.form.NumberField({decimalPrecision :0})	
 	    },{
 	    	header: LN('sbi.generic.label'), 
 	    	width: 60, 
@@ -95,14 +101,20 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 			xtype: 'numbercolumn',
 			dataIndex: 'min',  
 			editor: new Ext.form.NumberField({})				
-		},{
-			header: LN('sbi.thresholds.include'), 
-			width: 50, 
-			xtype: 'booleancolumn',
-			sortable: true, 
-			dataIndex: 'minIncluded',
-			editor:new Ext.form.Checkbox({})
-		},{
+		},
+		{
+            xtype: 'booleancolumn',
+            align: 'center',
+            width: 50,
+            header: LN('sbi.thresholds.include'), 
+ 		    dataIndex: 'minIncluded',
+            //trueText: 'Yes',
+            //falseText: 'No',
+            editor: {
+                xtype: 'checkbox'
+            }
+        }
+		,{
 			header: LN('sbi.thresholds.max'), 
 			width: 45, 
 			xtype: 'numbercolumn',
@@ -256,6 +268,7 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
   	,severityStore:null
 	
   	,loadItems: function(thrValues){
+		alert(thrValues.toSource());
 		this.store.loadData(thrValues);
 	}
 

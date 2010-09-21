@@ -160,7 +160,11 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.drawSelectColumn = conf.drawSelectColumn;  
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
-	this.singleSelection = config.singleSelection;
+	if(config.singleSelection){
+		this.singleSelection = config.singleSelection;
+	}else{
+		this.singleSelection = true;
+	}
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
