@@ -363,8 +363,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		}
 	}
 	, editThreshold: function(code){
+		this.selectNode(null);
 		var node = this.selectedNodeToEdit;
+		if(node === undefined || node === null){
+			node = this.mainTree.getSelectionModel().getSelectedNode();
+		}
 		node.attributes.kpiInstThrName = code;
+		
 		
 	}
 
