@@ -3,15 +3,15 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 17-set-2010 11.25.47 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiRel" table="sbi_kpi_rel" catalog="spagobi">
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiRel" table="sbi_kpi_rel" >
         <id name="kpiRelId" type="java.lang.Integer">
             <column name="KPI_REL_ID" />
             <generator class="identity" />
         </id>
-        <many-to-one name="sbiKpiByKpiChildId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" fetch="select">
+        <many-to-one name="sbiKpiByKpiChildId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
             <column name="KPI_CHILD_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiKpiByKpiFatherId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" fetch="select">
+        <many-to-one name="sbiKpiByKpiFatherId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
             <column name="KPI_FATHER_ID" not-null="true" />
         </many-to-one>
         <property name="parameter" type="string">
