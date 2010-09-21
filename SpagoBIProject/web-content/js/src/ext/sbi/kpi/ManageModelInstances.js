@@ -660,6 +660,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			    	  
 				      node.attributes.kpiId = selectedRecord.get('id');
 				      node.attributes.kpiName = selectedRecord.get('name');
+				      node.attributes.kpiInstThrName = selectedRecord.get('threshold');
+				      node.attributes.kpiInstWeight = selectedRecord.get('weight');
 				      node.attributes.iconCls = 'has-kpi';
 				      Ext.fly(node.getUI().getIconEl() ).replaceClass('', 'has-kpi');
 
