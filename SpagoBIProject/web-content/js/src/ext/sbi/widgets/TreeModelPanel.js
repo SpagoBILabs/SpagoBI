@@ -117,6 +117,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
              fieldLabel: label,
              allowBlank: false,
          	 inputValue  :'true',
+         	 labelStyle: 'font-weight:bold; color: #3D8635;',
              name: 'importChildrenFlag'
          });
 		this.modelPanel = new Ext.form.FormPanel( {
@@ -132,7 +133,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			},
 			trackResetOnLoad : true,
 			//, this.importCheck
-			items: [this.modelsTree, this.importCheck]
+			items: [this.importCheck, this.modelsTree ]
 		});
 		
 		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
