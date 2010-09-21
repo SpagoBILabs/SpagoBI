@@ -676,8 +676,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.srcModelName.setValue(node.attributes.modelName);
 			this.srcModelCode.setValue(node.attributes.modelCode);
 			this.srcModelDescr.setValue(node.attributes.modelDescr);
-			this.srcModelType.setValue(node.attributes.modelType);
-			this.srcModelTypeDescr.setValue(node.attributes.modelTypeDescr);
+			this.srcModelType.setValue(LN(node.attributes.modelType));
+			this.srcModelTypeDescr.setValue(LN(node.attributes.modelTypeDescr));
 		}
 	}
 	, changeKpiPanel: function(radioGroup, radio){
