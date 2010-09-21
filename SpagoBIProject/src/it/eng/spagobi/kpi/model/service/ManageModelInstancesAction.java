@@ -466,6 +466,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
 			KpiInstance kpiInst = new KpiInstance();
 			kpiInst.setKpi(kpiId);
+			Threshold thrSrc = kpi.getThreshold();
+			if(thrSrc != null){
+				kpiInst.setThresholdId(thrSrc.getId());
+			}
 			kpiInst.setWeight(kpi.getStandardWeight());
 			modelInstNode.setKpiInstance(kpiInst);
 		}
