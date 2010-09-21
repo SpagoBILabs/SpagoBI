@@ -70,7 +70,30 @@ Sbi.kpi.ManageModels = function(config, ref) {
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageModels.superclass.constructor.call(this, c);	 	
-	
+	  
+	 this.mainTree.on('beforenodedrop', function(e){
+		 /* * tree - The TreePanel
+		    * target - The node being targeted for the drop
+		    * data - The drag data from the drag source
+		    * point - The point of the drop - append, above or below
+		    * source - The drag source
+		    * rawEvent - Raw mouse event
+		    * dropNode - Drop node(s) provided by the source OR you can supply node(s) to be inserted by setting them on this object.
+		    * cancel - Set this to true to cancel the drop.
+		    * dropStatus - If the default drop action is cancelled but the drop is valid, setting this to true will prevent the animated 'repair' from appearing.
+		*/
+
+		   e.target.allowChildren = true;
+		   if(e.target.attributes.leaf){
+			   e.target.leaf = false;
+			   e.target.allowChildren = true;
+			   e.target.allowDrop = true;
+			   e.point = 'append';
+			   e.target.expand();
+			   Ext.fly(e.target.getUI().getEl()).repaint();
+		   }
+
+	 }, this);
 }
 
 Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
@@ -261,7 +284,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		             items: []
 		    	}]
 		    }];
-	 	  
+
+
 	}
 	, clearKpi: function() {
 		this.detailFieldKpi.setValue('');
@@ -625,7 +649,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 					    * cancel - Set this to true to cancel the drop.
 					    * dropStatus - If the default drop action is cancelled but the drop is valid, setting this to true will prevent the animated 'repair' from appearing.
 					*/  
-				   e.target.allowChildren = true;
+
 				   var parent = e.target;
 				   if(e.target.attributes.modelId == null || e.target.attributes.modelId === undefined){
 					   //drop forbidden!
