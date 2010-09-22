@@ -55,6 +55,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 
 	public Integer insert(SbiUdp prop) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		Integer id = null;
@@ -72,17 +73,20 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			if(session != null){
 				session.close();
 			}
-
+			logger.debug("OUT");
 			return id;
 		}
 	}
 
 
 	public void insert(Session session, SbiUdp prop) {
+		logger.debug("IN");
 		session.save(prop);
+		logger.debug("OUT");
 	}
 
 	public void update(SbiUdp prop) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -99,13 +103,17 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");		
 	}	
 
 	public void update(Session session, SbiUdp prop) {
+		logger.debug("IN");
 		session.update(prop);
+		logger.debug("OUT");
 	}	
 
 	public void delete(SbiUdp prop) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -122,13 +130,17 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
 	}
 
 	public void delete(Session session, SbiUdp item) {
+		logger.debug("IN");
 		session.delete(item);
+		logger.debug("OUT");
 	}
 
 	public void delete(Integer id) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -145,22 +157,26 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
 	}
 
 
 	public void delete(Session session, Integer id) {
+		logger.debug("IN");
 		session.delete(session.load(SbiUdp.class, id));
+		logger.debug("OUT");
 	}
 
 	@SuppressWarnings("unchecked")
 	public SbiUdp findById(Integer id) {
+		logger.debug("IN");
+		SbiUdp prop = null;
 		Session session = getSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			SbiUdp prop = (SbiUdp)session.get(SbiUdp.class, id);
+			prop = (SbiUdp)session.get(SbiUdp.class, id);
 			tx.commit();
-			return prop;
 
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -171,20 +187,22 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return prop;
 	}
 
 
 
 	public Udp loadById(Integer id) {
+		logger.debug("IN");
 		Session session = getSession();
+		Udp udp = null;
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			SbiUdp prop = (SbiUdp)session.get(SbiUdp.class, id);
 			tx.commit();
-			Udp udp=toUdp(prop);
-			return udp;
-
+			udp=toUdp(prop);
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
 				tx.rollback();
@@ -194,10 +212,12 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return udp;
 	}
 
 
-	
+
 	/**
 	 *  Load a Udp by Label
 	 * @throws EMFUserError 
@@ -233,8 +253,57 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		return udp;		
 
 	}
-	
-	
+
+
+	/**
+	 *  Load a Udp by Label and Family code
+	 * @throws EMFUserError 
+	 */
+
+	public Udp loadByLabelAndFamily(String label, String family) throws EMFUserError {
+		logger.debug("IN");
+		Udp udp = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			// get familyId
+			Criterion labelCriterrionFam = Expression.eq("valueCd", family);	
+			Criteria criteria = tmpSession.createCriteria(SbiDomains.class);
+			criteria.add(labelCriterrionFam);	
+			Criterion labelCriterrionFamDom = Expression.eq("domainCd", "UDP_FAMILY");	
+			criteria.add(labelCriterrionFamDom);	
+			SbiDomains famiDom = (SbiDomains) criteria.uniqueResult();
+			if (famiDom == null) return null;
+
+			Criterion labelCriterrion = Expression.eq("label", label);
+			Criteria criteria2 = tmpSession.createCriteria(SbiUdp.class);
+			criteria2.add(labelCriterrion);	
+			Criterion famCriterrion = Expression.eq("familyId", famiDom.getValueId());
+			criteria2.add(famCriterrion);	
+
+			SbiUdp hibUDP = (SbiUdp) criteria2.uniqueResult();
+			if (hibUDP == null) return null;
+			udp = toUdp(hibUDP);				
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the udp with label " + label, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession!=null){
+				if (tmpSession.isOpen()) tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return udp;		
+
+	}
+
+
 
 	@SuppressWarnings("unchecked")
 	public List<SbiUdp> findAll() {
@@ -261,6 +330,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Udp> loadAllByFamily(String familyCd) throws EMFUserError {
+		logger.debug("IN");
 		Session session = getSession();
 		List<Udp> toReturn = null;
 		// get Domain id form KPI family
@@ -268,9 +338,9 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		try {
 
 			Integer domainId;
-			SbiDomains domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", "KPI");
+			SbiDomains domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", familyCd);
 			if(domain == null){
-				domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", "Kpi");
+				domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", familyCd);
 			}
 			if(domain== null){
 				logger.error("could not find domain of type UDP_FAMILY with value code KPI");
@@ -295,7 +365,6 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 				}
 			}
 			tx.commit();
-			return toReturn;
 
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -313,10 +382,13 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return toReturn;
 	}	
 
 
 	public Udp toUdp(SbiUdp sbiUdp){
+		logger.debug("IN");
 		Udp toReturn=new Udp();
 
 		toReturn.setUdpId(sbiUdp.getUdpId());
@@ -337,9 +409,9 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 				logger.error("error in loading domain with Id "+sbiUdp.getTypeId(), e);
 			}
 		}
+		logger.debug("OUT");
 		return toReturn;
 	}
-
 
 }
 

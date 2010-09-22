@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
 	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
 	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
-	List udpListCd = (List) aSessionContainer.getAttribute("udpList");
+	List udpListCd = (List) aSessionContainer.getAttribute("udpKpiList");
 
 	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
 
@@ -114,7 +114,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			Udp udp = (Udp)udpListCd.get(i);
 			udpEmptyListJSON+="{";
 			udpEmptyListJSON+="'label':'"+udp.getLabel()+"',";
-			udpEmptyListJSON+="'value':'',";
+			udpEmptyListJSON+="'value':''";
 			udpEmptyListJSON+="}";
 			if(i != (udpListCd.size()-1)){
 				udpEmptyListJSON+=",";
@@ -123,20 +123,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		udpEmptyListJSON+="]";
 	}
 
-	
-	// create jason array for udp attributes, keep them for info	
-//	JSONArray udpJSONArray = new JSONArray();
-//	UdpJSONSerializer udpJSONSerializer = new UdpJSONSerializer();
-//	int indx = 0;
-//	if(udpListCd != null){
-//		for(int i=0; i< udpListCd.size(); i++){
-//			Udp udp = (Udp)udpListCd.get(i);
-//			JSONObject jsonObject = (JSONObject)udpJSONSerializer.serialize(udp,locale);
-//			udpJSONArray.put(jsonObject);
-//		}
-//	}
-//	String udpListJSON = udpJSONArray.toString();
-//	udpListJSON = udpListJSON.replaceAll("\"","'");	
 	
 	String udpListJSON ="{}";
 	if(udpListCd != null){

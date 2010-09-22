@@ -18,18 +18,18 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.kpi.model.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.model.bo.Model;
-import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResources;
 import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
@@ -37,6 +37,8 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
+import it.eng.spagobi.tools.udp.bo.Udp;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -72,22 +74,23 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
 	private final String MODELINSTS_NODE_DELETE = "MODELINSTS_NODE_DELETE";
 	private final String MODELINSTS_KPI_RESTORE = "MODELINSTS_KPI_RESTORE";
-	
+
 	private final String MODELINSTS_COPY_MODEL = "MODELINSTS_COPY_MODEL";
 	private final String MODELINSTS_SAVE_ROOT = "MODELINSTS_SAVE_ROOT";
+	private final String UDP_VALUE_LIST = "udpValuesAtt";
 
-	
+
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
-	
+
 	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
 	private final String KPI_CHART_TYPE = "KPI_CHART";
-	
+
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 16;
-	
+
 	private final String NODES_TO_SAVE = "nodes";
 	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
 	private final String ROOT_TO_SAVE = "rootNode";
@@ -109,12 +112,12 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
-		
+
 		if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_LIST)) {
-			
+
 			try {				
 				List modelRootsList = modelDao.loadModelsInstanceRoot();
-				
+
 				logger.debug("Loaded models list");
 				JSONArray modelsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelRootsList,locale);
 				JSONObject modelsResponseJSON = createJSONResponseModelsList(modelsListJSON,modelRootsList.size());
@@ -126,17 +129,17 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model tree", e);
 			}
-		  }else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_NODES_LIST)) {
-			
+		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_NODES_LIST)) {
+
 			try {	
-				
+
 				String parentId = (String)getAttributeAsString("modelInstId");
 				if(parentId == null || parentId.startsWith("xnode")){
 					writeBackToClient(new JSONSuccess("OK"));
 					return;
 				}
 				ModelInstance aModel = modelDao.loadModelInstanceWithChildrenById(Integer.parseInt(parentId));
-				
+
 				logger.debug("Loaded model tree");
 				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getChildrenNodes(),	locale);
 				writeBackToClient(new JSONSuccess(modelChildrenJSON));
@@ -151,7 +154,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			JSONArray nodesToSaveJSON = getAttributeAsJSONArray(NODES_TO_SAVE);
 			JSONArray droppedNodesToSaveJSON = getAttributeAsJSONArray(DROPPED_NODES_TO_SAVE);
 			JSONObject rootObj = getAttributeAsJSONObject(ROOT_TO_SAVE);
-			
+
 			List<ModelInstance> modelNodes = null;
 			List<ModelInstance> modelNodesDD = null;
 			ModelInstance root = null;
@@ -161,7 +164,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				try {
 					modelNodesDD = deserializeNodesJSONArrayDD(droppedNodesToSaveJSON);
-					
+
 					//clean nodes modified from DD ones
 					for(int i=0; i<modelNodesDD.size(); i++){
 						ModelInstance mi = modelNodesDD.get(i);
@@ -169,8 +172,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						idsToRemove.add(guidToSkip);
 					}
 					modelNodes = deserializeJSONArray(nodesToSaveJSON, idsToRemove);
-					
-					
+
+
 					//save DD nodes
 					if(rootObj != null){						
 						root = deserializeJSONObjectDD(rootObj, new ArrayList<ModelInstance>());	
@@ -193,7 +196,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					response = saveModelNodeInstances(modelNodes);
 					//System.out.println(response);
 					writeBackToClient(new JSONSuccess(response));
-					
+
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 					try {
@@ -206,11 +209,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception saving model instance nodes", e);
 				}
-				
+
 			}
-			
+
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_NODE_DELETE)) {
-			
+
 			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
 				boolean result = DAOFactory.getModelInstanceDAO().deleteModelInstance(modelInstId);
@@ -221,14 +224,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model instance to delete", e);
 			}
-			
-			
+
+
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINSTS_KPI_RESTORE)) {
-			
+
 			Integer kpiId = getAttributeAsInteger("kpiId");
 			try {
 				Kpi kpiToRestore = DAOFactory.getKpiDAO().loadKpiById(kpiId);
-				
+
 				logger.debug("Found kpi to restore");
 				JSONObject kpiJson = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(kpiToRestore,	locale);
 				writeBackToClient(new JSONSuccess(kpiJson));
@@ -237,65 +240,65 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving kpi to restore", e);
 			}
-			
-			
+
+
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_LIST)) {
-			
+
 			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
-				
-					Integer start = getAttributeAsInteger( START );
-					Integer limit = getAttributeAsInteger( LIMIT );
-					
-					if(start==null){
-						start = START_DEFAULT;
+
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+				List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
+				//extract resources
+				List<ModelResources> modelResources = new ArrayList<ModelResources>();
+				if(modelInstId != null){
+					modelResources = modelResourcesDao.loadModelResourceByModelId(modelInstId);
+				}
+				HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
+				if(modelResources != null){
+					for(int i =0;i<modelResources.size(); i++){
+						ModelResources mr = modelResources.get(i);
+						modResourcesIds.put(mr.getResourceId(), mr);
 					}
-					if(limit==null){
-						limit = LIMIT_DEFAULT;
-					}
-					List<ModelResourcesExtended> modelResourcesExtenList = new ArrayList<ModelResourcesExtended>();
-					//extract resources
-					List<ModelResources> modelResources = new ArrayList<ModelResources>();
-					if(modelInstId != null){
-						modelResources = modelResourcesDao.loadModelResourceByModelId(modelInstId);
-					}
-					HashMap<Integer, ModelResources> modResourcesIds = new HashMap<Integer, ModelResources>();
-					if(modelResources != null){
-						for(int i =0;i<modelResources.size(); i++){
-							ModelResources mr = modelResources.get(i);
-							modResourcesIds.put(mr.getResourceId(), mr);
-						}
-					}
-					//extract all resources
-					Vector resourcesIds = new Vector<Integer>();
-	
-					List<Resource> allResources = (List<Resource>)getSessionContainer().getAttribute("ALL_RESOURCES_LIST");
-					
-					//if null than extract
-					if(allResources == null){
-						allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
-					}
-					modelResourcesExtendedListCreate(modelResourcesExtenList, allResources, modResourcesIds);
-					
-					logger.debug("Loaded model resources");
-					JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
-					JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
-	
-					writeBackToClient(new JSONSuccess(modelsResourcesResponseJSON));
-				
+				}
+				//extract all resources
+				Vector resourcesIds = new Vector<Integer>();
+
+				List<Resource> allResources = (List<Resource>)getSessionContainer().getAttribute("ALL_RESOURCES_LIST");
+
+				//if null than extract
+				if(allResources == null){
+					allResources = DAOFactory.getResourceDAO().loadPagedResourcesList(start,limit);
+				}
+				modelResourcesExtendedListCreate(modelResourcesExtenList, allResources, modResourcesIds);
+
+				logger.debug("Loaded model resources");
+				JSONArray modelsResourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modelResourcesExtenList,locale);
+				JSONObject modelsResourcesResponseJSON = createJSONResponsemodelsResourcesList(modelsResourcesJSON, modelResourcesExtenList.size());
+
+				writeBackToClient(new JSONSuccess(modelsResourcesResponseJSON));
+
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving model tree", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving model tree", e);
 			}
-			
+
 		}else if(serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_SAVE)){
 			JSONArray resToSaveJSON = getAttributeAsJSONArray("ids");
 			Integer modelId = getAttributeAsInteger("modelInstId");
-			
+
 			try {
-				
+
 				List ids = deserializeResourceJSONArray(resToSaveJSON);
 				List toAddIds = ids;
 				//loops over all model resources
@@ -310,7 +313,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						toAddIds.remove(modelres.getResourceId());
 					}
 
-					
+
 				}
 				//now adds new ones					
 				for(int i=0; i< toAddIds.size(); i++){
@@ -320,7 +323,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				writeBackToClient(new JSONSuccess("Operation succeded"));
 
-								
+
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -334,18 +337,18 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception in response", e);
 			}
-			
+
 		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_COPY_MODEL)) {
-			
+
 			try {	
 				//saves all model nodes hierarchy as model instance
 				JSONObject response = new JSONObject();
 				Integer modelId = (Integer)getAttributeAsInteger("modelId");
 
 				response = recurseOverModelTree(modelId, response, null);
-				
+
 				logger.debug("Loaded model tree");		
-				
+
 				writeBackToClient(new JSONSuccess(response));
 
 			} catch (Throwable e) {
@@ -354,7 +357,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						"Exception occurred while copying model tree", e);
 			}
 		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_SAVE_ROOT)) {
-			
+
 			try {	
 				//saves all model nodes hierarchy as model instance
 				JSONObject response = new JSONObject();
@@ -362,12 +365,12 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
 				ModelInstance modelInstNode = new ModelInstance();
 				modelInstNode = fillModelInstanceByModel(model, modelInstNode, null);
-				
+
 				Integer miId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
 				response.append("root", miId);
-				
+
 				logger.debug("Loaded model tree");		
-				
+
 				writeBackToClient(new JSONSuccess(response));
 
 			} catch (Throwable e) {
@@ -382,7 +385,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
 				Integer start = getAttributeAsInteger( START );
 				Integer limit = getAttributeAsInteger( LIMIT );
-				
+
 				if(start==null){
 					start = START_DEFAULT;
 				}
@@ -394,7 +397,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				//Chart Types
 				List kpiChartTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_CHART_TYPE);
 				getSessionContainer().setAttribute("kpiChartTypesList", kpiChartTypesList);
-			
+
+				// Add Udp Values to sessionContainer
+				List udpList = DAOFactory.getUdpDAO().loadAllByFamily("MODEL");
+				getSessionContainer().setAttribute("udpList", udpList);
+
+
+
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -404,10 +413,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 
 	}
-	
+
 	private void modelResourcesExtendedListCreate(List<ModelResourcesExtended> modelResourcesExtenList,
-													List<Resource> allResources,
-													HashMap<Integer, ModelResources> modResourcesIds ){
+			List<Resource> allResources,
+			HashMap<Integer, ModelResources> modResourcesIds ){
 		if(allResources != null){
 			for(int i =0;i<allResources.size(); i++){
 				Resource res = allResources.get(i);
@@ -437,7 +446,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	
+
 	/**
 	 * Creates a json array with children resources
 	 * 
@@ -453,14 +462,14 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	
+
 	private ModelInstance fillModelInstanceByModel(Model model, ModelInstance modelInstNode, Integer parentId) throws EMFUserError{
 		modelInstNode.setName(model.getName());
 		modelInstNode.setDescription(model.getDescription());
 		modelInstNode.setModel(model);
 		modelInstNode.setParentId(parentId);
 		modelInstNode.setLabel(java.util.UUID.randomUUID().toString());
-		
+
 		Integer kpiId = model.getKpiId();
 		if(kpiId != null){
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiId);
@@ -473,9 +482,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			kpiInst.setWeight(kpi.getStandardWeight());
 			modelInstNode.setKpiInstance(kpiInst);
 		}
-		
+
 		return modelInstNode;
-		
+
 	}
 	private JSONObject recurseOverModelTree(Integer id, JSONObject response, Integer parentId) throws JSONException{
 
@@ -484,11 +493,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Integer modelInstId = null;
 			if(id != null){
 				ModelInstance modelInstNode = new ModelInstance();
-	
+
 				//save root first
 				try {
 					modelInstNode = fillModelInstanceByModel(model, modelInstNode, parentId);
-		
+
 					//save node as ModelInstance node
 					modelInstId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
 					modelInstNode.setId(modelInstId);
@@ -499,7 +508,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				} catch (EMFUserError e) {
 					response.append("tree", "KO");
 				}
-				
+
 				List <Model> children = model.getChildrenNodes();
 				if(children == null){
 					try {
@@ -525,13 +534,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private JSONObject recursiveStart(List<ModelInstance> modelInstList, ModelInstance root, JSONObject response) throws JSONException{
 		//first time--> searches for root
 		Integer parentIdToSearch = null;
-		
+
 		Integer id = root.getId();
 		if(id != null){
 			//isRoot = false;
 			parentIdToSearch = id;
 			recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
-			
+
 		}else{
 			//if new root
 			List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
@@ -565,9 +574,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			}
 
 			response.append(modInstToSave.getGuiId(), "OK");
-			
+
 			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);//scazza qui!!!!invece di doughter estrae nonno
-			
+
 			if(nodes == null || nodes.isEmpty()){
 				//try another way
 				nodes = modInstToSave.getChildrenNodes();
@@ -595,7 +604,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			if(parentIDToSearch == null){//parent is newly added
 				if(modInstToSave.getParentId() == null    
 						&& !modInstToSave.getGuiId().matches("^\\d+$")){
-					
+
 					nodes.add(modInstToSave);
 				}
 			}else{//parent is existing
@@ -632,17 +641,17 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
 
 		for(int i=0; i< rows.length(); i++){
-			
+
 			JSONObject obj = (JSONObject)rows.get(i);
 			ModelInstance modelInst = deserializeJSONObjectDD(obj, toReturn);
-			
+
 		}	
 		return toReturn;
 	}
 
-	
+
 	private ModelInstance fillModelInstance(JSONObject obj, ModelInstance modelInst){
-		
+
 		String guiId = "";
 		try{
 			guiId = obj.getString("id");
@@ -653,13 +662,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 
 		try{
-			
+
 			modelInst.setId(obj.getInt("modelInstId"));
 		}catch(Throwable t){
 			//nothing
 			modelInst.setId(null);
 		}
-		
+
 		try{
 			modelInst.setParentId(obj.getInt("parentId"));
 		}catch(Throwable t){
@@ -695,7 +704,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modelUuid = obj.getString("modelUuid");
 			}catch(Throwable t){
 				modelUuid = null;
-			
+
 			}
 			Integer modelId = obj.getInt("modelId");
 			try{
@@ -710,7 +719,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				IKpiInstanceDAO kpiInstDao = DAOFactory.getKpiInstanceDAO();
 				String kpiIdStr ;
 				try{
-				    kpiIdStr = obj.getString("kpiId");
+					kpiIdStr = obj.getString("kpiId");
 				}catch(Throwable t){
 					kpiIdStr = null;
 				}
@@ -719,7 +728,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInIDStr = obj.getString("kpiInstId");
 				}catch(Throwable t){
 					kpiInIDStr = null;
-				
+
 				}
 				KpiInstance kpiInstance = null;
 				if(kpiInIDStr != null){
@@ -729,8 +738,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				}else{
 					//new kpi instance 
 					if(kpiIdStr != null){
-						kpiInstance = new KpiInstance();
-						kpiInstDao.setKpiInstanceFromKPI(kpiInstance, obj.getInt("kpiId"));
+						if(obj.get("kpiId")!= null && !obj.getString("kpiId").equalsIgnoreCase("")){
+							kpiInstance = new KpiInstance();
+							int idd = obj.getInt("kpiId");
+							kpiInstDao.setKpiInstanceFromKPI(kpiInstance, idd);
+						}
 					}	
 				}
 				String kpiInstPeriodicity;
@@ -739,29 +751,29 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					kpiInstance.setPeriodicityId(Integer.valueOf(kpiInstPeriodicity));
 				}catch(Throwable t){
 					kpiInstPeriodicity = null;
-					kpiInstance.setPeriodicityId(null);
+					if(kpiInstance != null)	kpiInstance.setPeriodicityId(null);
 				}
-				
-				
+
+
 				String kpiInstChartTypeId;
 				try{
 					kpiInstChartTypeId = obj.getString("kpiInstChartTypeId");
 					kpiInstance.setChartTypeId(Integer.valueOf(kpiInstChartTypeId));
 				}catch(Throwable t){
 					kpiInstChartTypeId = null;
-					kpiInstance.setChartTypeId(null);
+					if(kpiInstance != null) kpiInstance.setChartTypeId(null);
 				}
-				
+
 				String kpiInstTarget;
 				try{
 					kpiInstTarget = obj.getString("kpiInstTarget");
 					kpiInstance.setTarget(Double.valueOf(kpiInstTarget));
 				}catch(Throwable t){
 					kpiInstTarget = null;
-					kpiInstance.setTarget(null);
+					if(kpiInstance != null) kpiInstance.setTarget(null);
 				}
-				
-				
+
+
 				String kpiInstThrCode;
 				try{
 					kpiInstThrCode = obj.getString("kpiInstThrName");
@@ -771,27 +783,61 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					}
 				}catch(Throwable t){
 					kpiInstThrCode = null;
-					kpiInstance.setThresholdId(null);
+					if(kpiInstance != null) kpiInstance.setThresholdId(null);
 				}
-				
+
 				String kpiInstWeight;
 				try{
 					kpiInstWeight = obj.getString("kpiInstWeight");
 					kpiInstance.setWeight(Double.valueOf(kpiInstWeight));
 				}catch(Throwable t){
 					kpiInstWeight = null;
-					kpiInstance.setWeight(null);
+					if(kpiInstance != null)
+						kpiInstance.setWeight(null);
 				}
 				String saveHistory;
 				try{
 					saveHistory = obj.getString("kpiInstSaveHistory");
 					kpiInstance.setSaveKpiHistory(true);
 				}catch(Throwable t){
-					kpiInstance.setSaveKpiHistory(false);
-				
+					if(kpiInstance != null)
+						kpiInstance.setSaveKpiHistory(false);
+
 				}
 
 				modelInst.setKpiInstance(kpiInstance);
+
+				// add the udpValues to Model Instance Definition, that will be serialized
+				List<UdpValue> udpValues = new ArrayList<UdpValue>();	
+				JSONArray jsonArray = obj.getJSONArray("udpValues");
+				logger.debug("found udpValues Array containing number of Udp "+jsonArray.length());
+				for(int i=0; i< jsonArray.length(); i++){
+					JSONObject objJS = (JSONObject)jsonArray.get(i);
+					// only label and value information are retrieved by JSON object
+					String labelJ = objJS.getString("name");	
+					String value = objJS.getString("value");	
+
+					UdpValue udpValue = new UdpValue();
+
+					// reference id is the kpi id
+					udpValue.setLabel(label);
+					udpValue.setValue(value);
+					udpValue.setReferenceId(modelInst.getId());
+
+					// get the UDP to get ID (otherwise could be taken in js page)
+					Udp udp = DAOFactory.getUdpDAO().loadByLabelAndFamily(labelJ, "MODEL");
+					Domain familyDomain = DAOFactory.getDomainDAO().loadDomainById(udp.getFamilyId());
+					logger.debug("Udp value assigning value "+value+" to UDP with label "+udp.getLabel()+ " and Model Instance with label "+ modelInst.getLabel());
+					udpValue.setLabel(udp.getLabel());
+					udpValue.setName(udp.getName());
+					udpValue.setFamily(familyDomain != null ? familyDomain.getValueCd() : null);
+					udpValue.setUdpId(udp.getUdpId());
+
+					udpValues.add(udpValue);
+				}
+				modelInst.setUdpValues(udpValues);
+
+
 			}catch(Throwable t){
 				//nothing
 				modelInst.setKpiInstance(null);
@@ -802,7 +848,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		return modelInst;
 	}
 	private ModelInstance deserializeJSONObjectDD (JSONObject obj, List<ModelInstance> nodeslist)throws JSONException{
-		
+
 		ModelInstance modelInst = new ModelInstance();
 
 		fillModelInstance(obj, modelInst);
@@ -827,11 +873,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
 
 		for(int i=0; i< rows.length(); i++){
-			
+
 			JSONObject obj = (JSONObject)rows.get(i);
 
 			ModelInstance modelInst = new ModelInstance();
-			
+
 			fillModelInstance(obj, modelInst);
 			//skip root node if new one:
 			if(!(modelInst.getParentId() == null && modelInst.getId() == null) &&
@@ -846,7 +892,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		List<Integer> toReturn = new ArrayList<Integer>();
 		if(rows != null){
 			for(int i=0; i< rows.length(); i++){
-				
+
 				JSONObject obj = (JSONObject)rows.get(i);
 				toReturn.add(obj.getInt("id"));
 			}
@@ -856,29 +902,29 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 	private JSONObject saveModelNodeInstances(List<ModelInstance> nodesToSave) throws Exception{
 		JSONArray errorNodes = new JSONArray();
-		
+
 		JSONObject respObj = new JSONObject();
-		
+
 		//loop over nodes and order them ascending
 		TreeMap<Integer, ModelInstance> treeMap = new TreeMap<Integer, ModelInstance>();
 		for(int i= 0; i<nodesToSave.size(); i++){
-			
+
 			ModelInstance modelInstance = (ModelInstance)nodesToSave.get(i);
 
 			//loads all nodes guiid with type error
-			
+
 			respObj.put(modelInstance.getGuiId(), "OK");
-			
+
 			if(modelInstance.getParentId() != null){
 				//look up for its id: if null --> newly created node
 				Integer id = modelInstance.getId();
 				if(id == null){
 					treeMap.put(Integer.valueOf("-"+i+1), modelInstance);
 				}else{
-				//else to modify node
+					//else to modify node
 					treeMap.put(modelInstance.getId(), modelInstance);
 				}
-				
+
 			}else{
 				//root node --> save first
 				try {
@@ -898,11 +944,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				} catch (Exception e) {
 					//send error!!!		
 					respObj.put(modelInstance.getGuiId(), "KO");
-					
+
 				}
 			}
 		}
-		
+
 		Set set = treeMap.entrySet();
 		// Get an iterator
 		Iterator it = set.iterator(); 
@@ -911,7 +957,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Map.Entry orderedEntry = (Map.Entry)it.next();
 			//check that parent exists
 			ModelInstance orderedNode = (ModelInstance)orderedEntry.getValue();
-			
+
 			//GET JSON OBJECT VALUE
 			Integer parentId = orderedNode.getParentId();
 			try {
@@ -928,11 +974,11 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 							respObj.put(orderedNode.getGuiId(), "KO");
 						}
 					}else{
-					//else update
+						//else update
 						DAOFactory.getModelInstanceDAO().modifyModelInstance(orderedNode);
 						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
 					}
-					
+
 				}
 			} catch (Exception e) {
 				//if parentId != null but no parent node stored on db --> exception

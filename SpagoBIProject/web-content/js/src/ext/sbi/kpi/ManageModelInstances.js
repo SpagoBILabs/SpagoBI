@@ -180,6 +180,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 	  this.initSourcePanel();
 	 	  this.initKpiPanel();
 	 	  
+	 	  this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
+	 	  this.udpValueGrid.setSource(config.udpEmptyList); 
+	 	 this.udpValueGrid.identifica='identifica';
+	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -210,13 +214,42 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
-			    },{
+			    }
+		    ,{
+		    	title: LN('sbi.generic.udpValues')
+		        , itemId: 'upd-values'
+		        , width: 430
+		        , bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;'
+		        , items: {
+			   		 id: 'upd-values-detail',   	
+		 		   	 itemId: 'upd-values-detail',   	              
+		 		   	// columnWidth: 0.4,
+		             xtype: 'fieldset',
+		             scope: this,
+		             labelWidth: 90,
+		             defaults: {width: 140, border:false},    
+		             defaultType: 'textfield',
+		             layout: 'fit',
+		             autoHeight: true,
+		             autoScroll  : true,
+		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             border: false,
+		             style: {
+		                 "margin-left": "10px", 
+		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+		             },
+		             items: [
+		                    this.udpValueGrid   
+		                     ]
+		    	}				    	
+		    	
+		    }   
+			    ,{
 			        title: LN('sbi.modelinstances.srcNode')
 				        , itemId: 'src_model'
 				        , width: 430
 				        , bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;'
-				        , items: [{
-	
+				        , items: [{	
 				 		   	 itemId: 'src-detail',   	              
 				 		   	 columnWidth: 0.4,
 				             xtype: 'fieldset',
@@ -237,7 +270,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 							         this.srcModelType,
 							         this.srcModelTypeDescr ]
 				    	}]
-				    }];
+				    }
+			    ];
 	 	  
 	}
 	, initSourcePanel: function() {
@@ -332,7 +366,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.thrWin.show();
 	}
 	, editNodeAttribute: function(field, newVal, oldVal) {	
-
+		//alert('edit field='+field.toSource()+' newVal='+newVal+' oldVal='+oldVal);
 		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
 			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		}
@@ -340,6 +374,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			var fName = field.name;
+			//alert(field.toSource());
 			node.attributes[fName] = newVal;
 			if(fName == 'name'){
 				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
@@ -360,6 +395,20 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				var text = code + " - " + name;
 				node.setText(text);
 			}
+		}
+	}
+	, editNodeUdpValues: function(source, recordId, value, oldValue) {	
+		//alert('source ='+source.toSource()+' recordId ='+recordId+' value='+value+ ' oldValue='+oldValue);
+		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
+			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
+		}
+		var node = this.selectedNodeToEdit;
+		if (node !== undefined && node !== null) {
+			node.attributes.toSave = true;
+			//get the array of all attributes (would be better to change only current one but recordId is not very useful
+			var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
+			node.attributes.udpValues = arrayUdps;
+			//alert(node.attributes.toSource());
 		}
 	}
 	, editThreshold: function(code){
@@ -614,6 +663,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 			this.kpiInstFieldset.setVisible(false);
 			this.kpiInstFieldset2.setVisible(false);
+			
+
 
 	}
 	, clearKpi: function() {
@@ -679,6 +730,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	}
 	, fillSourceModelPanel: function(sel, node) {
+//		alert('fill source Panel');
 		if(node !== undefined && node != null){
 			this.srcModelName.setValue(node.attributes.modelName);
 			this.srcModelCode.setValue(node.attributes.modelCode);
@@ -775,7 +827,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     //OVERRIDING save method
 	,save : function() {
 
-    	
+//		var storeUdps = this.udpValueGrid.getStore();
+//		var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
+		
     	var jsonStr = '[';
 
 		Ext.each(this.nodesToSave, function(node, index) {
@@ -809,12 +863,16 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		if(this.existingRootNode !== undefined && this.existingRootNode != null){
 			jsonRoot = Ext.util.JSON.encode(this.existingRootNode.attributes);
 		}
+		//alert('parametri');
 		var params = {
 			nodes : jsonStr,
 			droppedNodes : jsonDroppedStr,
 			rootNode : jsonRoot
-		};
+        	//, "udpValuesAtt" : arrayUdps.toSource()
+		};	
 
+		
+		
 		Ext.Ajax.request( {
 			url : this.services['saveTreeService'],
 			success : function(response, options) {
@@ -907,6 +965,20 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
+	,fillUdpValues : function(sel, node) {
+		
+		//alert(node.toSource());
+		if(node !== undefined && node != null){
+			
+			var isDDNode = node.attributes.modelInstId;			
+			// get Udpvalues array
+			var udpValues = node.attributes.udpValues;
+
+			this.udpValueGrid.fillUdpValues(udpValues);
+						
+		}
+}	
+	
 	,renderTree : function(tree) {
 		tree.getLoader().nodeParameter = 'modelInstId';
 		tree.getRootNode().expand(false, /*no anim*/false);
@@ -919,6 +991,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.fillKpiPanel, this);
 		this.mainTree.getSelectionModel().addListener('selectionchange',
 				this.fillSourceModelPanel, this);
+		this.mainTree.getSelectionModel().addListener('selectionchange',
+				this.fillUdpValues, this);
+		
 		
 		this.mainTree.addListener('render', this.renderTree, this);
 
@@ -956,6 +1031,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
 		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
+
+		// udp mylisteners
+		this.udpValueGrid.addListener('click', this.selectNode, this);
+		this.udpValueGrid.addListener('propertychange', this.editNodeUdpValues, this);
+		// end my listeners
 		
 		this.kpiRestoreDefaultBtn.addListener('click', this.selectNode, this);
 		this.kpiClearBtn.addListener('click', this.selectNode, this);
@@ -1070,7 +1150,8 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        draggable	: false,
 		        qtip		: tip,
 		        toSave: true,
-		        isNewRec :  rec.get( 'isNewRec')
+		        isNewRec :  rec.get( 'isNewRec'),
+		        udpValues : rec.get('udpValues')
 		    });
 
 			return node;

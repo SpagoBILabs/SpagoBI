@@ -52,7 +52,6 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	        title: 'Udp Values',
 	        id: 'propGrid',
 	        autoHeight: true,
-//	        width: 800,
 	        source: config.udpEmptyList,
 	        propertyNames: {
 	            tested: 'QA',
@@ -88,15 +87,23 @@ Sbi.kpi.ManageUdpValues = function(config) {
 
 Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
   
-	fillUdpValues:function(sm, index, record){
-		//	remove preceding content
-		this.store.removeAll();
+	// fills value if present: if not present set defaults type in order to have right editors
+	fillUdpValues:function(udpValues){
+		//alert(udpValues);	
+	//	remove preceding content
+	this.store.removeAll();
 		// get selected kpi udp values
-		var udpValues = record.get('udpValues');
+		//var udpValues = par.get('udpValues');
 	
 		var udpEmptyList = this.udpEmptyList;
 		var udpList = this.udpList;
-		//alert('yeay');
+		
+		// if not defined give a default
+		if(!udpValues){
+			udpValues = new Array();
+		}
+		
+		if(udpList){
 		// fill udp st if present with values associated		
 		for(i = 0; i<udpList.length;i++){
 			var udp = udpList[i];
@@ -145,18 +152,22 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 
 		var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});					
 		this.store.add(tempRecord);
+		//alert(udp.label+" "+udp.valueToInsert);
+
 		}
+	 }
+
 	}
 	,
 	// return array with values in grid
-	saveUdpValues:function(){
+	saveUdpValues:function(type){
 	     var arrayUdps = new Array();
 			var storeUdps = this.getStore();
 			for(var i = 0;i< storeUdps.getCount();i++){
 				var item = storeUdps.getAt(i);
 				var data = item.data;
 				// want to add type and family to this record
-				data.familyId= 'KPI';
+				data.familyId = type;
 				var stop = false;
 				for ( var int = 0; int < this.udpList.length && stop == false; int++) {
 					var udpVal = config.udpList[int];
