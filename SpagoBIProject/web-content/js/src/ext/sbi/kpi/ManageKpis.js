@@ -48,7 +48,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	var paramsList = {MESSAGE_DET: "KPIS_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_DELETE"};
-	
+
 	this.configurationObject = {};
 	
 	this.configurationObject.manageListService = Sbi.config.serviceRegistry.getServiceUrl({
@@ -110,8 +110,8 @@ Sbi.kpi.ManageKpis = function(config) {
 	Sbi.kpi.ManageKpis.superclass.constructor.call(this, c);	
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
-		this.getForm().loadRecord(rec);  
-		this.udpValueGrid.fillUdpValues(sm, row, rec);
+		this.getForm().loadRecord(rec); 
+		this.udpValueGrid.fillUdpValues(rec.get('udpValues'));
 		
 		this.fillKpiLinks(row, rec);
      }, this);
@@ -132,7 +132,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, gridColumnNumber: null
 
 	,initConfigObject:function(){
-	   this.configurationObject.fields = ['id'
+
+	this.configurationObject.fields = ['id'
 		                     	          , 'name'
 		                    	          , 'code'
 		                    	          , 'description'   
@@ -590,7 +591,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var newRec;
 	
 		var storeUdps = this.udpValueGrid.getStore();
-		var arrayUdps = this.udpValueGrid.saveUdpValues();		
+		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
 		
 		if(idRec == 0 || idRec == null || idRec === ''){
 			newRec = new Ext.data.Record({
@@ -609,7 +610,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			        kpiTypeCd: values['kpiTypeCd'],	
 			        metricScaleCd: values['metricScaleCd'],
 			        measureTypeCd: values['measureTypeCd'],
-			        "udpValues": arrayUdps
+			        udpValues: arrayUdps
 			});	  
 			
 		}else{
@@ -655,8 +656,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
         	targetAudience : values['targetAudience'],
         	kpiTypeCd : values['kpiTypeCd'],
         	metricScaleCd : values['metricScaleCd'],
-        	measureTypeCd : values['measureTypeCd']
-        	, "udpValuesAtt" : arrayUdps.toSource()
+        	measureTypeCd : values['measureTypeCd'],
+        	udpValuesAtt : arrayUdps.toSource()
         };
 
         

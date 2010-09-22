@@ -42,13 +42,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
 
 public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
-		IModelInstanceDAO {
+IModelInstanceDAO {
 
 	static private Logger logger = Logger.getLogger(ModelInstanceDAOImpl.class);
 
 	private ModelInstanceNode toModelInstanceNode(
 			SbiKpiModelInst hibSbiKpiModelInst, Date requestedDate)
-			throws EMFUserError {
+	throws EMFUserError {
 
 		logger.debug("IN");
 		ModelInstanceNode toReturn = new ModelInstanceNode();
@@ -97,9 +97,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		if (father != null) {
 			fatherId = father.getKpiModelInst();
 			logger
-					.debug("SbiKpiModelInstanceNode fatherId: "
-							+ (fatherId != null ? fatherId.toString()
-									: "fatherId null"));
+			.debug("SbiKpiModelInstanceNode fatherId: "
+					+ (fatherId != null ? fatherId.toString()
+							: "fatherId null"));
 		} else {
 			isRoot = true;
 		}
@@ -117,12 +117,24 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			childrenIds.add(childId);
 		}
 
+
+		// Put
+		// add also associated UDP
+		List udpValues = null;
+		try {
+			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
+		} catch (EMFUserError e) {
+			logger.error("Errror in retrieving udp values", e);
+		}
+		toReturn.setUdpValues(udpValues);
+
+
 		// gets ModelNode referenced
 		Integer reference = hibSbiKpiModelInst.getSbiKpiModel().getKpiModelId();
 		logger
-				.debug("SbiKpiModelInstanceNode modelNodeReference: "
-						+ (reference != null ? reference.toString()
-								: "reference null"));
+		.debug("SbiKpiModelInstanceNode modelNodeReference: "
+				+ (reference != null ? reference.toString()
+						: "reference null"));
 
 		toReturn.setModelInstanceNodeId(id);
 		logger.debug("KpiModelInstanceNode id setted");
@@ -162,7 +174,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) aSession
-					.get(SbiKpiModelInst.class, id);
+			.get(SbiKpiModelInst.class, id);
 			toReturn = toModelInstanceNode(hibSbiKpiModelInst, requestedDate);
 
 		} catch (HibernateException he) {
@@ -199,7 +211,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			Criteria criteria = aSession.createCriteria(SbiKpiModelInst.class);
 			criteria.add(nameCriterrion);
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) criteria
-					.uniqueResult();
+			.uniqueResult();
 			if (hibSbiKpiModelInst == null)
 				return null;
 			toReturn = toModelInstanceNode(hibSbiKpiModelInst, requestedDate);
@@ -236,9 +248,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			crit.add(Expression.isNull("sbiKpiModelInst"));
 			List sbiKpiModelInstanceList = crit.list();
 			for (Iterator iterator = sbiKpiModelInstanceList.iterator(); iterator
-					.hasNext();) {
+			.hasNext();) {
 				SbiKpiModelInst sbiKpiModelInst = (SbiKpiModelInst) iterator
-						.next();
+				.next();
 				ModelInstance aModelInst = toModelInstanceWithoutChildren(
 						sbiKpiModelInst, aSession);
 				toReturn.add(aModelInst);
@@ -314,7 +326,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if (sbiKpiInstance.getSbiKpiInstPeriods() != null
 					&& !(sbiKpiInstance.getSbiKpiInstPeriods().isEmpty())) {
 				SbiKpiInstPeriod instPeriod = (SbiKpiInstPeriod) sbiKpiInstance
-						.getSbiKpiInstPeriods().toArray()[0];
+				.getSbiKpiInstPeriods().toArray()[0];
 
 				aKpiInstance.setPeriodicityId(instPeriod.getSbiKpiPeriodicity()
 						.getIdKpiPeriodicity());
@@ -325,6 +337,18 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			//
 			toReturn.setKpiInstance(aKpiInstance);
 		}
+
+		// Put
+		// add also associated UDP
+		List udpValues = null;
+		try {
+			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
+		} catch (EMFUserError e) {
+			logger.error("Errror in retrieving udp values", e);
+		}
+		toReturn.setUdpValues(udpValues);
+
+		
 
 		toReturn.setId(id);
 		toReturn.setName(name);
@@ -340,7 +364,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public ModelInstance loadModelInstanceWithoutChildrenById(Integer id)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		ModelInstance toReturn = null;
 		Session aSession = null;
@@ -349,7 +373,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiKpiModelInst hibSbiKpiModelInstance = (SbiKpiModelInst) aSession
-					.load(SbiKpiModelInst.class, id);
+			.load(SbiKpiModelInst.class, id);
 			toReturn = toModelInstanceWithoutChildren(hibSbiKpiModelInstance,
 					aSession);
 
@@ -374,7 +398,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public ModelInstance loadModelInstanceWithoutChildrenByLabel(String label)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		ModelInstance toReturn = null;
 		Session aSession = null;
@@ -387,7 +411,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			Criteria criteria = aSession.createCriteria(SbiKpiModelInst.class);
 			criteria.add(nameCriterrion);
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) criteria
-					.uniqueResult();
+			.uniqueResult();
 			if (hibSbiKpiModelInst == null)
 				return null;
 			toReturn = toModelInstanceWithoutChildren(hibSbiKpiModelInst,
@@ -469,8 +493,8 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			sbiKpiModelInst.setModelUUID(modelUUID);
 
 			SbiKpiInstance oldSbiKpiInstance = sbiKpiModelInst
-					.getSbiKpiInstance();
-			
+			.getSbiKpiInstance();
+
 			//default behaviour
 			boolean newKpiInstanceHistory = true;
 			boolean deleteOldHistory = false;
@@ -478,7 +502,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if(value.getKpiInstance() != null && !value.getKpiInstance().isSaveKpiHistory()){
 				dontSaveKpiHistory = true;
 			}
-			
+
 			// new kpiInstance is null
 			if (value.getKpiInstance() == null) {
 				newKpiInstanceHistory = false;
@@ -500,9 +524,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if (newKpiInstanceHistory
 					&& !(areBothNull(oldSbiKpiInstance.getSbiKpi(), value
 							.getKpiInstance().getKpi()) || (oldSbiKpiInstance
-							.getSbiKpi() != null && areNullOrEquals(
-							oldSbiKpiInstance.getSbiKpi().getKpiId(), value
-									.getKpiInstance().getKpi())))) {
+									.getSbiKpi() != null && areNullOrEquals(
+											oldSbiKpiInstance.getSbiKpi().getKpiId(), value
+											.getKpiInstance().getKpi())))) {
 				newKpiInstanceHistory = false;
 				deleteOldHistory = true;
 				// create new sbiKpiInstance
@@ -512,27 +536,27 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if (newKpiInstanceHistory
 					&& !((areBothNull(oldSbiKpiInstance.getSbiThreshold(),
 							value.getKpiInstance().getThresholdId()) || (oldSbiKpiInstance
-							.getSbiThreshold() != null && areNullOrEquals(
-							oldSbiKpiInstance.getSbiThreshold()
-									.getThresholdId(), value.getKpiInstance()
-									.getThresholdId())))
-							&& (areBothNull(oldSbiKpiInstance.getChartType(),
-									value.getKpiInstance().getChartTypeId()) || (oldSbiKpiInstance
-									.getChartType() != null && areNullOrEquals(
-									oldSbiKpiInstance.getChartType()
-											.getValueId(), value
-											.getKpiInstance().getChartTypeId())))
-					/*
-					 * TODO && (areBothNull(oldSbiKpiInstance
-					 * .getSbiKpiPeriodicity(), value
-					 * .getKpiInstance().getPeriodicityId()) ||
-					 * (oldSbiKpiInstance .getSbiKpiPeriodicity() != null &&
-					 * areNullOrEquals( oldSbiKpiInstance.getSbiKpiPeriodicity()
-					 * .getIdKpiPeriodicity(), value .getKpiInstance()
-					 * .getPeriodicityId())))
-					 */
-					&& areNullOrEquals(oldSbiKpiInstance.getWeight(), value
-							.getKpiInstance().getWeight()))) {
+									.getSbiThreshold() != null && areNullOrEquals(
+											oldSbiKpiInstance.getSbiThreshold()
+											.getThresholdId(), value.getKpiInstance()
+											.getThresholdId())))
+											&& (areBothNull(oldSbiKpiInstance.getChartType(),
+													value.getKpiInstance().getChartTypeId()) || (oldSbiKpiInstance
+															.getChartType() != null && areNullOrEquals(
+																	oldSbiKpiInstance.getChartType()
+																	.getValueId(), value
+																	.getKpiInstance().getChartTypeId())))
+																	/*
+																	 * TODO && (areBothNull(oldSbiKpiInstance
+																	 * .getSbiKpiPeriodicity(), value
+																	 * .getKpiInstance().getPeriodicityId()) ||
+																	 * (oldSbiKpiInstance .getSbiKpiPeriodicity() != null &&
+																	 * areNullOrEquals( oldSbiKpiInstance.getSbiKpiPeriodicity()
+																	 * .getIdKpiPeriodicity(), value .getKpiInstance()
+																	 * .getPeriodicityId())))
+																	 */
+																	&& areNullOrEquals(oldSbiKpiInstance.getWeight(), value
+																			.getKpiInstance().getWeight()))) {
 				// create new History
 				Calendar now = Calendar.getInstance();
 				SbiKpiInstanceHistory sbiKpiInstanceHistory = new SbiKpiInstanceHistory();
@@ -543,15 +567,15 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 						.getChartType());
 				sbiKpiInstanceHistory.setWeight(oldSbiKpiInstance.getWeight());
 				sbiKpiInstanceHistory
-						.setBeginDt(oldSbiKpiInstance.getBeginDt());
+				.setBeginDt(oldSbiKpiInstance.getBeginDt());
 				sbiKpiInstanceHistory.setEndDt(now.getTime());
 				aSession.save(sbiKpiInstanceHistory);
 			}
 
 			SbiKpiInstance kpiInstanceToCreate = null;
 
-			
-			
+
+
 			if (value.getKpiInstance() != null) {
 				if (newKpiInstanceHistory || dontSaveKpiHistory) {
 					kpiInstanceToCreate = setSbiKpiInstanceFromModelInstance(
@@ -570,7 +594,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 				sbiKpiModelInst.setSbiKpiInstance(null);
 			}
 			aSession.update(sbiKpiModelInst);
-			
+
 			//adds or updates periodicity
 			setSbiKpiPeriodicity(aSession, value, kpiInstanceToCreate);
 
@@ -579,6 +603,8 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 						.getIdKpiInstance());
 			}
 
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(value, sbiKpiModelInst, aSession, "MODEL");
+			
 			tx.commit();
 
 		}
@@ -597,7 +623,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 
 			if (tx != null)
 				tx.rollback();
-
+			
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
 
 		} finally {
@@ -653,36 +679,36 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if (value.getKpiInstance().getPeriodicityId() != null) {
 				// AGGIUNTA O AGGIORNAMENTO RIGA
 				// TODO
-	
+
 				SbiKpiPeriodicity sbiKpiPeriodicity = (SbiKpiPeriodicity) aSession
-						.load(SbiKpiPeriodicity.class, value.getKpiInstance()
-								.getPeriodicityId());
-	
+				.load(SbiKpiPeriodicity.class, value.getKpiInstance()
+						.getPeriodicityId());
+
 				Criteria critt = aSession.createCriteria(SbiKpiInstPeriod.class);
 				critt.add(Expression.eq("sbiKpiInstance", sbiKpiInstance));
 				List instPeriodsList = critt.list();
-				
-	
+
+
 				if (instPeriodsList == null || instPeriodsList.isEmpty()) {
 					SbiKpiInstPeriod toInsert = new SbiKpiInstPeriod();
 					toInsert.setSbiKpiInstance(sbiKpiInstance);
 					toInsert.setSbiKpiPeriodicity(sbiKpiPeriodicity);
 					toInsert.setDefault_(true);
-	
+
 					aSession.save(toInsert);
-	
+
 				} else {
 					((SbiKpiInstPeriod) instPeriodsList.get(0))
-							.setSbiKpiPeriodicity(sbiKpiPeriodicity);
+					.setSbiKpiPeriodicity(sbiKpiPeriodicity);
 					aSession.update(instPeriodsList.get(0));
 				}
-	
+
 			} else {
 				// RIMOZIONE DELLA RIGA DAL DB
 				Set InstPeriods = sbiKpiInstance.getSbiKpiInstPeriods();
 				for (Iterator iterator = InstPeriods.iterator(); iterator.hasNext();) {
 					SbiKpiInstPeriod sbiKpiInstPeriod = (SbiKpiInstPeriod) iterator
-							.next();
+					.next();
 					aSession.delete(sbiKpiInstPeriod);
 				}
 				//
@@ -710,7 +736,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public Integer insertModelInstanceWithKpi(ModelInstance toCreate)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		Integer idToReturn;
 		Session aSession = null;
@@ -737,12 +763,12 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 
 				// set the sbiKpiInstance
 				KpiInstance kpiInst = toCreate.getKpiInstance();
-				
+
 				//if already present
 				if(kpiInst != null){
 					SbiKpiInstance sbiKpiInstance = new SbiKpiInstance();
 					if(kpiInst.getKpi() != null){
-						
+
 						SbiKpi sbiKpi =  (SbiKpi) aSession.load(SbiKpi.class, kpiInst.getKpi());						
 						sbiKpiInstance.setSbiKpi(sbiKpi);
 						if(kpiInst.getThresholdId() != null){
@@ -750,9 +776,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 							sbiKpiInstance.setSbiThreshold(sbiThr);
 						}
 						sbiKpiInstance.setWeight(kpiInst.getWeight());
-						
+
 						sbiKpiInstance.setTarget(kpiInst.getTarget());						
-						
+
 						//if periodicity exists then set it
 						if(kpiInst.getPeriodicityId() != null){
 							Set periods = new HashSet<SbiKpiInstPeriod>();
@@ -768,7 +794,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 						}
 						Calendar now = Calendar.getInstance();
 						sbiKpiInstance.setBeginDt(now.getTime());
-						
+
 						aSession.save(sbiKpiInstance);
 						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
 					}
@@ -776,7 +802,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			}
 			if (parentId != null) {
 				SbiKpiModelInst sbiKpiModelInstParent = (SbiKpiModelInst) aSession
-						.load(SbiKpiModelInst.class, parentId);
+				.load(SbiKpiModelInst.class, parentId);
 				sbiKpiModelInst.setSbiKpiModelInst(sbiKpiModelInstParent);
 			}
 
@@ -802,7 +828,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public Integer insertModelInstance(ModelInstance toCreate)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		Integer idToReturn;
 		Session aSession = null;
@@ -843,11 +869,14 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			}
 			if (parentId != null) {
 				SbiKpiModelInst sbiKpiModelInstParent = (SbiKpiModelInst) aSession
-						.load(SbiKpiModelInst.class, parentId);
+				.load(SbiKpiModelInst.class, parentId);
 				sbiKpiModelInst.setSbiKpiModelInst(sbiKpiModelInstParent);
 			}
 
 			idToReturn = (Integer) aSession.save(sbiKpiModelInst);
+
+			// insert or update the udp values
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(toCreate, sbiKpiModelInst, aSession, "MODEL");
 
 			tx.commit();
 
@@ -869,7 +898,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public ModelInstance loadModelInstanceWithChildrenById(Integer id)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -878,7 +907,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) aSession
-					.load(SbiKpiModelInst.class, id);
+			.load(SbiKpiModelInst.class, id);
 			toReturn = toModelInstanceWithChildren(aSession,
 					hibSbiKpiModelInst, null);
 		} catch (HibernateException he) {
@@ -903,7 +932,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public ModelInstance loadModelInstanceWithChildrenByLabel(String label)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -912,7 +941,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) aSession
-					.load(SbiKpiModelInst.class, label);
+			.load(SbiKpiModelInst.class, label);
 			toReturn = toModelInstanceWithChildren(aSession,
 					hibSbiKpiModelInst, null);
 		} catch (HibernateException he) {
@@ -949,7 +978,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		SbiKpiModel sbiKpiModel = value.getSbiKpiModel();
 		String modelUUID = value.getModelUUID();
 		Model aModel = ModelDAOImpl
-				.toModelWithoutChildren(sbiKpiModel, session);
+		.toModelWithoutChildren(sbiKpiModel, session);
 		SbiKpiInstance sbiKpiInstance = value.getSbiKpiInstance();
 
 		if (sbiKpiInstance != null) {
@@ -969,7 +998,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			if (sbiKpiInstance.getSbiKpiInstPeriods() != null
 					&& !(sbiKpiInstance.getSbiKpiInstPeriods().isEmpty())) {
 				SbiKpiInstPeriod instPeriod = (SbiKpiInstPeriod) sbiKpiInstance
-						.getSbiKpiInstPeriods().toArray()[0];
+				.getSbiKpiInstPeriods().toArray()[0];
 
 				aKpiInstance.setPeriodicityId(instPeriod.getSbiKpiPeriodicity()
 						.getIdKpiPeriodicity());
@@ -995,6 +1024,16 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 					sbiKpichild, id);
 			childrenNodes.add(child);
 		}
+		
+		// Put
+		// add also associated UDP
+		List udpValues = null;
+		try {
+			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
+		} catch (EMFUserError e) {
+			logger.error("Errror in retrieving udp values", e);
+		}
+		toReturn.setUdpValues(udpValues);
 
 		toReturn.setId(id);
 		toReturn.setName(name);
@@ -1028,21 +1067,21 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 				Set modelChildren = aModel.getSbiKpiModels();
 				// Load all ModelInstance Children
 				Set modelInstanceChildren = sbiKpiModelInst
-						.getSbiKpiModelInsts();
+				.getSbiKpiModelInsts();
 				// Remove all Children just instantiated
 				for (Iterator iterator = modelInstanceChildren.iterator(); iterator
-						.hasNext();) {
+				.hasNext();) {
 					SbiKpiModelInst child = (SbiKpiModelInst) iterator.next();
 					modelChildren.remove(child.getSbiKpiModel());
 				}
 				for (Iterator iterator = modelChildren.iterator(); iterator
-						.hasNext();) {
+				.hasNext();) {
 					SbiKpiModel sbiKpiModelCandidate = (SbiKpiModel) iterator
-							.next();
+					.next();
 					Model modelCandidate = new Model();
 					modelCandidate.setId(sbiKpiModelCandidate.getKpiModelId());
 					modelCandidate
-							.setName(sbiKpiModelCandidate.getKpiModelNm());
+					.setName(sbiKpiModelCandidate.getKpiModelNm());
 					toReturn.add(modelCandidate);
 				}
 			}
@@ -1050,7 +1089,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		} catch (HibernateException he) {
 			logger.error(
 					"Error while loading the model canidate children of the parent "
-							+ ((parentId == null) ? "" : parentId.toString()),
+					+ ((parentId == null) ? "" : parentId.toString()),
 					he);
 
 			if (tx != null)
@@ -1071,7 +1110,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	private void deleteKpiInstance(Session aSession, Integer kpiInstId)
-			throws EMFUserError {
+	throws EMFUserError {
 		SbiKpiInstance sbiKpiInst = (SbiKpiInstance) aSession.load(
 				SbiKpiInstance.class, kpiInstId);
 
@@ -1081,9 +1120,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 		List sbiKpiInstanceHistory = critt.list();
 
 		for (Iterator iterator = sbiKpiInstanceHistory.iterator(); iterator
-				.hasNext();) {
+		.hasNext();) {
 			SbiKpiInstanceHistory sbiKpiH = (SbiKpiInstanceHistory) iterator
-					.next();
+			.next();
 
 			aSession.delete(sbiKpiH);
 		}
@@ -1122,7 +1161,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 			List sbiKpiValueList = critt.list();
 
 			for (Iterator iterator = sbiKpiValueList.iterator(); iterator
-					.hasNext();) {
+			.hasNext();) {
 				SbiKpiValue sbiKpiValue = (SbiKpiValue) iterator.next();
 
 				aSession.delete(sbiKpiValue);
@@ -1199,7 +1238,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	public List loadModelsInstanceRoot(String fieldOrder, String typeOrder)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -1221,9 +1260,9 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 
 			List sbiKpiModelInstanceList = crit.list();
 			for (Iterator iterator = sbiKpiModelInstanceList.iterator(); iterator
-					.hasNext();) {
+			.hasNext();) {
 				SbiKpiModelInst sbiKpiModelInst = (SbiKpiModelInst) iterator
-						.next();
+				.next();
 				ModelInstance aModelInst = toModelInstanceWithoutChildren(
 						sbiKpiModelInst, aSession);
 				toReturn.add(aModelInst);
@@ -1262,7 +1301,7 @@ public class ModelInstanceDAOImpl extends AbstractHibernateDAO implements
 	 * @throws EMFUserError
 	 */
 	public ModelInstance loadModelInstanceRoot(ModelInstance mi)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		if (mi.getParentId() == null) {
 			logger.debug("OUT");

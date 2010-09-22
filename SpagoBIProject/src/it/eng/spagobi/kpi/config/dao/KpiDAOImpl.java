@@ -29,9 +29,6 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.udp.bo.UdpValue;
-import it.eng.spagobi.tools.udp.metadata.SbiUdp;
-import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -264,7 +261,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 
 		// add also associated UDP
-		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId);
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
 		toReturn.setUdpValues(udpValues);
 
 
@@ -989,7 +986,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 
 		// add also associated UDP
-		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId);
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
 		toReturn.setUdpValues(udpValues);
 
 
@@ -1244,8 +1241,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			aSession.saveOrUpdate(sbiKpi);
 
-			insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
-			
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1265,64 +1262,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 	}
 
-	
-	
-	/**
-	 *  Get the Udp Value, update the existing one, add the new ones
-	 * @throws EMFUserError 
-	 */
-	public void insertOrUpdateRelatedUdpValues(Kpi kpi, SbiKpi sbiKpi, Session aSession) throws EMFUserError{
-		// if there are values associated 
-		List<UdpValue> udpValues = kpi.getUdpValues();
-		if(udpValues != null){
-			// an udp value is never erased for a kpi once memorized, that is because by user interface integer have no null value and boolean too
-			// these are current UdpValues; for each:
-			for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
-				UdpValue udpValue = (UdpValue) iterator.next();
-				// the tow ids of relationship; Kpi and Udp
-				Integer idKpi = sbiKpi.getKpiId();
-				Integer udpId = udpValue.getUdpId();
-				
-				// search if KpiValue is already present, in that case update otherwise insert
-				SbiUdpValue sbiUdpValue  = null;
-				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idKpi, udpValue.getUdpId(), "KPI");						
-				if(already == null){
-					sbiUdpValue = new SbiUdpValue();					
-				}
-				else{
-					sbiUdpValue = (SbiUdpValue) aSession.load(SbiUdpValue.class,
-							already.getUdpValueId());						
-				}
 
-				// fill SbiUdpValue values
-				//sbiUdpValue.setFamily("KPI");
-				sbiUdpValue.setLabel(udpValue.getLabel());
-				sbiUdpValue.setName(udpValue.getName());
-				sbiUdpValue.setProg(udpValue.getProg());
-				sbiUdpValue.setFamily(udpValue.getFamily());
-				
-				sbiUdpValue.setReferenceId(idKpi);
-				SbiUdp hibUdp = (SbiUdp) aSession.load(SbiUdp.class,
-						udpId);
-				sbiUdpValue.setSbiUdp(hibUdp);
-				sbiUdpValue.setValue(udpValue.getValue());
-				sbiUdpValue.setBeginTs(new Date());
 
-				
-				if(sbiUdpValue.getUdpValueId() == null){
-					DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);					
-					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been inserted");
-				}
-				else{
-					DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValue);
-					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been updated");
-				}
-			}
-		}	
-	}
-	
-	
-	
+
+
+
+
 	public Integer insertKpi(Kpi kpi) throws EMFUserError {
 		logger.debug("IN");
 		Integer idToReturn;
@@ -1411,8 +1356,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				aSession.save(temp);
 			}
 
-			insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
-			
+			//insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1596,18 +1542,18 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiKpiRel kpiRelation = new SbiKpiRel();
-			
+
 			SbiKpi parentKpi = (SbiKpi)aSession.load(SbiKpi.class, kpiParentId);
 			SbiKpi childKpi = (SbiKpi)aSession.load(SbiKpi.class, kpiChildId);
-			
+
 			kpiRelation.setParameter(parameter);
 			kpiRelation.setSbiKpiByKpiChildId(childKpi);
 			kpiRelation.setSbiKpiByKpiFatherId(parentKpi);
-			
+
 			idToReturn = (Integer)aSession.save(kpiRelation);
-			
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1627,7 +1573,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	public List loadKpiRelListByParentId(Integer kpiParentId)
-			throws EMFUserError {
+	throws EMFUserError {
 		// TODO Auto-generated method stub
 		logger.debug("IN");
 		List toReturn = null;
@@ -1677,10 +1623,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiRel.setKpiRelId(sbiKpiRel.getKpiRelId());
 			kpiRel.setKpiChild(toKpi(sbiKpiRel.getSbiKpiByKpiChildId()));
 		}
-		
+
 		logger.debug("OUT");
 		return kpiRel;
-		
+
 	}
 	public boolean deleteKpiRel(Integer kpiRelId) throws EMFUserError {
 		Session aSession = getSession();

@@ -29,9 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
 	List kpiChartTypesCd = (List) aSessionContainer.getAttribute("kpiChartTypesList");	
+	List udpListCd = (List) aSessionContainer.getAttribute("udpList");
+
 %>
 
-<LINK rel='StyleSheet' 
+
+<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%><LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
       type='text/css' />
       
@@ -66,6 +69,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String chartTypes = kpiChartTypesArray.toString();
 	chartTypes = chartTypes.replaceAll("\"","'");
 
+	
+    // create jason arrays for udp attributes 
+	// this is empty list label + empty value to fill firstly the tab
+	String udpEmptyListJSON ="{}";
+	if(udpListCd != null){
+		udpEmptyListJSON="[";
+		for(int i=0; i< udpListCd.size(); i++){
+			Udp udp = (Udp)udpListCd.get(i);
+			udpEmptyListJSON+="{";
+			udpEmptyListJSON+="'label':'"+udp.getLabel()+"',";
+			udpEmptyListJSON+="'value':''";
+			udpEmptyListJSON+="}";
+			if(i != (udpListCd.size()-1)){
+				udpEmptyListJSON+=",";
+			}
+		}
+		udpEmptyListJSON+="]";
+	}
+	// this is the list of udps carrying all udp nformations
+	String udpListJSON ="{}";
+	if(udpListCd != null){
+		udpListJSON="[";
+		for(int i=0; i< udpListCd.size(); i++){
+			Udp udp = (Udp)udpListCd.get(i);
+			udpListJSON+="{";
+			udpListJSON+="'udpId':"+udp.getUdpId()+",";
+			udpListJSON+="'label':'"+udp.getLabel()+"',";
+			udpListJSON+="'name':'"+udp.getName()+"',";
+			udpListJSON+="'description':'"+udp.getDescription()+"',";
+			udpListJSON+="'dataTypeId':'"+udp.getDataTypeId()+"',";
+			udpListJSON+="'familyId':'"+udp.getFamilyId()+"',";
+			udpListJSON+="'multivalue':'"+udp.getMultivalue()+"',";
+			udpListJSON+="'dataTypeCd':'"+udp.getDataTypeValeCd()+"'";
+
+			udpListJSON+="}";
+			if(i != (udpListCd.size()-1)){
+				udpListJSON+=",";
+			}
+		}
+			udpListJSON+="]";
+	}    
+
+	
+	
 	%>
 
 	var url = {
@@ -84,6 +131,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	var config = {};  
 	config.thrTypes = <%= thrTypes%>;
 	config.kpiChartTypes = <%= chartTypes%>;
+	config.udpEmptyList = <%= udpEmptyListJSON%>;
+	config.udpList = <%= udpListJSON%>;
+	
     
 Ext.onReady(function(){
 	Ext.QuickTips.init();

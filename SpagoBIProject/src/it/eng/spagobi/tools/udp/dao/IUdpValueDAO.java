@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.udp.dao;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
@@ -58,9 +59,11 @@ public interface IUdpValueDAO {
     
     public UdpValue loadById(Integer id);
 
-	public List findByReferenceId(Integer kpiId);
+	public List findByReferenceId(Integer kpiId, String family);
 
 	public UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family);
+	
+	public void insertOrUpdateRelatedUdpValues(Object object, Object sbiObject, Session aSession, String family) throws EMFUserError;
 	
 }
 

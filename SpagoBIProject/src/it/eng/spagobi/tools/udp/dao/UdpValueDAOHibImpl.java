@@ -22,19 +22,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.tools.udp.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.model.bo.ModelInstance;
+import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -58,6 +60,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 
 	public Integer insert(SbiUdpValue propValue) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		Integer id = null;
@@ -77,6 +80,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 				session.close();
 			}
 
+			logger.debug("OUT");
 			return id;
 		}
 	}
@@ -87,6 +91,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 	}
 
 	public void update(SbiUdpValue propValue) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -103,13 +108,18 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+
 	}	
 
 	public void update(Session session, SbiUdpValue propValue) {
+		logger.debug("IN");
 		session.update(propValue);
+		logger.debug("OUT");
 	}	
 
 	public void delete(SbiUdpValue propValue) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -126,13 +136,17 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");		
 	}
 
 	public void delete(Session session, SbiUdpValue item) {
+		logger.debug("IN");
 		session.delete(item);
+		logger.debug("OUT");
 	}
 
 	public void delete(Integer id) {
+		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -149,6 +163,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
 	}
 
 
@@ -158,14 +173,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	@SuppressWarnings("unchecked")
 	public SbiUdpValue findById(Integer id) {
+		logger.debug("IN");
+		SbiUdpValue propValue = null;
 		Session session = getSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			SbiUdpValue propValue = (SbiUdpValue)session.get(SbiUdpValue.class, id);
+			propValue = (SbiUdpValue)session.get(SbiUdpValue.class, id);
 			tx.commit();
-			return propValue;
-
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
 				tx.rollback();
@@ -175,11 +190,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return propValue;
 	}
 
 
 	@SuppressWarnings("unchecked")
-	public List findByReferenceId(Integer kpiId) {
+	public List findByReferenceId(Integer kpiId, String family) {
+		logger.debug("IN");
 		Session aSession = getSession();
 		Transaction tx = null;
 		List<UdpValue> toReturn = null;
@@ -189,7 +207,8 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx = aSession.beginTransaction();
 			String hql = "from SbiUdpValue s " +
 			"	where s.referenceId = ? AND " +
-			"         s.family = 'KPI' " +
+			"         s.family = '"+family+"' AND "+
+			"         s.endTs is NULL " +
 			" order by s.label asc";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiId);
@@ -211,6 +230,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			aSession.close();
 		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 
@@ -220,14 +240,15 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 	 */
 
 	public UdpValue loadById(Integer id) {
+		logger.debug("IN");
 		Session session = getSession();
+		UdpValue udpValue = null;
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			SbiUdpValue prop = (SbiUdpValue)session.get(SbiUdpValue.class, id);
 			tx.commit();
-			UdpValue udpValue=toUdpValue(prop);
-			return udpValue;
+			udpValue=toUdpValue(prop);
 
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -238,6 +259,8 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return udpValue;
 	}
 
 	/**
@@ -245,6 +268,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 	 */
 
 	public UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family) {
+		logger.debug("IN");
 		UdpValue toReturn = null;
 		Session tmpSession = getSession();
 		Transaction tx = null;
@@ -257,6 +281,9 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			criteria.add(labelCriterrion2);	
 			Criterion labelCriterrion3 = Expression.eq("family", family);
 			criteria.add(labelCriterrion3);	
+			// take not closed ones!
+			Criterion labelCriterrion4 = Expression.isNull("endTs");
+			criteria.add(labelCriterrion4);	
 
 			SbiUdpValue hibValueUDP = (SbiUdpValue) criteria.uniqueResult();
 			if (hibValueUDP == null) return null;
@@ -274,6 +301,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		finally{
 			tmpSession.close();
 		}
+		logger.debug("OUT");		
 		return toReturn;
 	}
 
@@ -282,14 +310,15 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	@SuppressWarnings("unchecked")
 	public List<SbiUdpValue> findAll() {
+		logger.debug("IN");
 		Session session = getSession();
+		List<SbiUdpValue> list = null;
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 
-			List<SbiUdpValue> list = (List<SbiUdpValue>)session.createQuery("from SbiUdpValue").list();
+			list = (List<SbiUdpValue>)session.createQuery("from SbiUdpValue").list();
 			tx.commit();
-			return list;
 
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -300,10 +329,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}finally{
 			session.close();
 		}
+		logger.debug("OUT");
+		return list;
+
 	}	
 
 
 	public UdpValue toUdpValue(SbiUdpValue sbiUdpValue){
+		logger.debug("IN");
 		UdpValue toReturn=new UdpValue();
 
 		toReturn.setUdpValueId(sbiUdpValue.getUdpValueId());
@@ -337,10 +370,141 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		toReturn.setBeginTs(sbiUdpValue.getBeginTs());
 		toReturn.setEndTs(sbiUdpValue.getEndTs());
 
-
+		logger.debug("OUT");
 		return toReturn;
 	}
 
+
+
+
+	/**
+	 * Given a ModelInstance Node or a Kpi
+	 *  Get the Udp Value, update the existing one, add the new ones
+	 * @throws EMFUserError 
+	 */
+	public void insertOrUpdateRelatedUdpValues(Object object, Object sbiObject, Session aSession, String family) throws EMFUserError{
+		logger.debug("IN");
+
+		SbiKpi sbiKpi = null;
+		Kpi kpi = null;
+		SbiKpiModelInst sbiKpiModelInst = null;
+		ModelInstance modelInstanceNode = null;
+		boolean isKpi = false;
+		if(family.equalsIgnoreCase("KPI")){
+			isKpi = true;
+			sbiKpi = (SbiKpi)sbiObject;
+			kpi = (Kpi)object;
+			logger.debug("kpi udp attributes");
+		}
+		else if(family.equalsIgnoreCase("MODEL")){
+			isKpi = false;
+			sbiKpiModelInst = (SbiKpiModelInst)sbiObject;
+			modelInstanceNode = (ModelInstance)object;
+			logger.debug("model udp attributes");
+		}
+		else {
+			logger.debug("family not recognied "+ family);
+			return;
+		}
+
+
+		// if there are values associated 
+		List<UdpValue> udpValues = null;
+		Integer idObject = null;
+		if(isKpi){
+			udpValues = kpi.getUdpValues();
+			idObject = sbiKpi.getKpiId();
+		}
+		else{
+			udpValues = modelInstanceNode.getUdpValues();			
+			idObject = sbiKpiModelInst.getKpiModelInst();
+		}		
+		if(udpValues != null){
+			// an udp value is never erased for a kpi once memorized, that is because by user interface integer have no null value and boolean too
+			// these are current UdpValues; for each:
+			for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
+				UdpValue udpValue = (UdpValue) iterator.next();
+				// the tow ids of relationship; Kpi / Model and Udp				
+				Integer udpId = udpValue.getUdpId();
+
+				// search if KpiValue is already present, in that case update otherwise insert
+				SbiUdpValue sbiUdpValue  = null;
+				SbiUdpValue sbiUdpValueToClose  = null;
+
+
+
+				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idObject, udpValue.getUdpId(), family.toUpperCase());						
+				boolean inserting = true;
+				boolean openNewOne = true;
+
+				if(already == null){
+					sbiUdpValue = new SbiUdpValue();					
+				}
+				else{
+					inserting = false;
+					// check if value has changed, if not so don't open a new one
+					SbiUdpValue sbiUdpValueRetrieved = (SbiUdpValue) aSession.load(SbiUdpValue.class,
+							already.getUdpValueId());												
+
+					if(udpValue.getValue() != null &&  udpValue.getValue().equals(already.getValue())){
+						// same value as before, simple update
+						openNewOne = false;
+						sbiUdpValue = sbiUdpValueRetrieved;
+					}
+					else{
+						// new value, close preceding open a new one
+						sbiUdpValueToClose = sbiUdpValueRetrieved;
+						sbiUdpValue = new SbiUdpValue();
+					}
+				}
+
+				// fill SbiUdpValue values
+				sbiUdpValue.setLabel(udpValue.getLabel());
+				sbiUdpValue.setName(udpValue.getName());
+				sbiUdpValue.setProg(udpValue.getProg());
+				sbiUdpValue.setFamily(udpValue.getFamily());
+
+				sbiUdpValue.setReferenceId(idObject);
+				SbiUdp hibUdp = (SbiUdp) aSession.load(SbiUdp.class,
+						udpId);
+				sbiUdpValue.setSbiUdp(hibUdp);
+				sbiUdpValue.setValue(udpValue.getValue());
+
+				if(inserting){
+					logger.debug("Inserting Udp association between udp "+udpValue.getLabel() + " referencing family " + udpValue.getFamily() + 
+							" with id "+ udpValue.getReferenceId() + "with value "+sbiUdpValue.getValue());
+					sbiUdpValue.setBeginTs(new Date());
+					DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);					
+					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been inserted");
+				}
+				else{
+					// the update must close the previous record and open a new one, but only if value has changed
+					if(openNewOne){
+						logger.debug("Close previous udp value and open Udp association between udp "+udpValue.getLabel() + " referencing family " + udpValue.getFamily() + 
+								" with id "+ udpValue.getReferenceId() + "with value "+sbiUdpValue.getValue());
+						// close previous one
+						sbiUdpValueToClose.setBeginTs(already.getBeginTs());
+						sbiUdpValueToClose.setEndTs(new Date());
+						DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValueToClose);
+						// insert new one
+						sbiUdpValue.setBeginTs(new Date());
+						DAOFactory.getUdpDAOValue().insert(aSession, sbiUdpValue);
+					}
+					else{
+						logger.debug("Update without closing Udp association between udp "+udpValue.getLabel() + " referencing family " + udpValue.getFamily() + 
+								" with id "+ udpValue.getReferenceId() + "with value "+sbiUdpValue.getValue());						
+						// just update fields no new opening
+						sbiUdpValue.setBeginTs(already.getBeginTs());
+						DAOFactory.getUdpDAOValue().update(aSession, sbiUdpValue);						
+					}
+
+					logger.debug("value to Udp "+hibUdp.getLabel()+ " has been updated; associated to a "+family);
+				}
+			}
+		}	
+		logger.debug("OUT");
+
+	}
 
 }
 

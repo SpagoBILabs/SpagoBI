@@ -1,6 +1,7 @@
 package it.eng.spagobi.kpi.model.bo;
 
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class ModelInstanceNode implements Serializable{
 	KpiInstance kpiInstanceAssociated = null;
 	List resources = null ; //Resources to which this model has to be applied
 	String modelInstaceReferenceLabel = null;
+	
+	List udpValues = new ArrayList<UdpValue>();
+
 	
 	public Boolean getIsRoot() {
 		return isRoot;
@@ -121,6 +125,14 @@ public class ModelInstanceNode implements Serializable{
 
 	public void setModelInstaceReferenceLabel(String modelInstaceReferenceLabel) {
 		this.modelInstaceReferenceLabel = modelInstaceReferenceLabel;
+	}
+
+	public List getUdpValues() {
+		return udpValues;
+	}
+
+	public void setUdpValues(List udpValues) {
+		this.udpValues = udpValues;
 	}
 	
 
