@@ -116,7 +116,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
     
     if(this.calculatedFields!=null && this.calculatedFields.size>0){
     	
-    	this.calculatedFields = calculatedFields;
+    	//this.calculatedFields = calculatedFields;
     	this.on('afterrender', function(){
     		for(var i=0; i<this.calculatedFields.length; i++){
     			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this);
@@ -1425,6 +1425,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 
     , addCalculatedField: function(level, horizontal, op, CFName){
     	var calculatedField = new Sbi.crosstab.core.CrossTabCalculatedField(CFName, level, horizontal, op); 
+    	if(this.calculatedFields==null){
+    		this.calculatedFields = new Array();
+    	}
     	this.calculatedFields.push(calculatedField);
     }
 
