@@ -275,6 +275,7 @@ import org.json.JSONObject;
 							tVal.setThresholdId(Integer.valueOf(idToReturnToClient));							
 							//insert or update all threshold values
 							Integer thrValueId = tDao.saveOrUpdateThresholdValue(tVal);
+							tVal.setId(thrValueId);
 							thrValueIds.add(thrValueId);
 						}				
 					}
@@ -288,7 +289,8 @@ import org.json.JSONObject;
 						if(thrValueIds.size()==1){
 							attributesResponseSuccessJSON.put("idThrVal", thrValueIds.get(0));
 						}else{
-							//attacco l'array di id
+							JSONArray thrValsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(thrValuesList, locale);			
+							attributesResponseSuccessJSON.put("thrValues", thrValsJSONArray);
 						}
 					}
 					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
