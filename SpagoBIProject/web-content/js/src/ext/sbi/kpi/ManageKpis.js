@@ -79,10 +79,31 @@ Sbi.kpi.ManageKpis = function(config) {
 		, baseParams: paramsDatasetList
 	});
 	
-	this.initConfigObject();
+	
 	var singleSelection = config.singleSelection;
+	var tabPanelWidth = config.tabPanelWidth;
+	var gridWidth = config.gridWidth;
+	this.configurationObject.tabPanelWidth = tabPanelWidth;
+	this.configurationObject.gridWidth = gridWidth;
+	
+	if(config.textAreaWidth){
+		this.textAreaWidth = config.textAreaWidth;
+    }else{
+    	this.textAreaWidth = 250;
+    }
+	if(config.fieldsDefaultWidth){
+		this.fieldsDefaultWidth = config.fieldsDefaultWidth;
+	}else{
+		this.fieldsDefaultWidth = 200;
+	}
+	this.gridColumnNumber = config.gridColumnNumber;
+	
+	this.initConfigObject();
+	
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = singleSelection;
+	
+	
 
 	var c = Ext.apply({}, config || {}, {});
 
@@ -106,6 +127,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, thrWin:null
 	, dsWin:null
 	, detailFieldThreshold: null
+	, fieldsDefaultWidth: null
+	, textAreaWidth: null
+	, gridColumnNumber: null
 
 	,initConfigObject:function(){
 	   this.configurationObject.fields = ['id'
@@ -147,11 +171,22 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                    	          , udpValues:''
 										 });
 		
-		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'},
-		                                         {header: LN('sbi.kpis.threshold'), width: 110, sortable: true, dataIndex: 'threshold'}
-		                                        ];
+		if(this.gridColumnNumber == 1){
+			this.configurationObject.gridColItems = [
+			                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'}
+			                                        ];
+		}else if(this.gridColumnNumber == 2){
+			this.configurationObject.gridColItems = [
+			                                         {id:'name',header: LN('sbi.generic.name'), width: 110, sortable: true, locked:false, dataIndex: 'name'},
+			                                         {header: LN('sbi.generic.code'), width: 110, sortable: true, dataIndex: 'code'}
+			                                        ];
+		}else{
+			this.configurationObject.gridColItems = [
+			                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
+			                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'},
+			                                         {header: LN('sbi.kpis.threshold'), width: 110, sortable: true, dataIndex: 'threshold'}
+			                                        ];
+		}
 		
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.kpis.listTitle');
@@ -162,7 +197,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
     }
 	, modifyToolbar : function(tabpanel, panel){
 		var itemId = panel.getItemId();
-		//alert(itemId);
 		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
 			this.tbSave.hide();
 		}else{
@@ -200,7 +234,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	   var detailFieldDescr = {
           	 maxLength:1000,
           	 xtype: 'textarea',
-       	     width : 250,
+       	     width : this.textAreaWidth,
              height : 80,
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
@@ -320,7 +354,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    var detailFieldInterpretation = {
 	             maxLength:1000,
 	             xtype: 'textarea',
-	        	 width : 250,
+	        	 width : this.textAreaWidth,
 	             height : 80,
 	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
@@ -332,7 +366,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    var detailFieldAlgDesc = {
 	             maxLength:1000,
 	             xtype: 'textarea',
-	        	 width : 250,
+	        	 width : this.textAreaWidth,
 	             height : 80,
 	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
@@ -362,7 +396,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    var detailFieldTargetAud = {
 	             maxLength:1000,
 	             xtype: 'textarea',
-	        	 width : 250,
+	        	 width : this.textAreaWidth,
 	             height : 80,
 	          	// regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
 	          	 regexText : LN('sbi.roles.alfanumericString'),
@@ -447,11 +481,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 		   	 //columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             defaults: {width: this.fieldsDefaultWidth, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
 		             border: false,
 		             style: {
 		                 "margin-left": "10px", 
@@ -472,11 +506,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             xtype: 'fieldset',
 		             scope: this,
 		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             defaults: {width: this.fieldsDefaultWidth, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
 		             border: false,
 		             style: {
 		                 "margin-left": "10px", 
@@ -499,7 +533,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             xtype: 'fieldset',
 		             scope: this,
 		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             defaults: {width: this.fieldsDefaultWidth, border:false},    
 		             defaultType: 'textfield',
 		             layout: 'fit',
 		             autoHeight: true,
@@ -776,7 +810,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			plugins: linkspluginsToAdd ,
             width: 380,
             layout:'fit',
-			//frame: true,
+			frame: true,
 	        singleSelect : true,
 	        ownerCt : this,
 	        scope:this
@@ -785,7 +819,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
     	this.kpiLinksTab = new Ext.Panel({
 		        title: LN('sbi.kpis.linksTitle')
-		        , layout: 'form'
+		        , layout: 'fit'
 		        , autoScroll: true
 		        , itemId: 'kpiLinks'
 		        , scope: this
