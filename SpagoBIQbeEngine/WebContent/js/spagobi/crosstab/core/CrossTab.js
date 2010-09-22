@@ -113,10 +113,10 @@ Sbi.crosstab.core.CrossTab = function(config) {
 		this.calculatePartialSum();
 	}, this);
     
-    
-    if(this.calculatedFields!=null && this.calculatedFields.size>0){
-    	
-    	//this.calculatedFields = calculatedFields;
+   
+
+    if(this.calculatedFields!=null && this.calculatedFields.length>0){
+//this.calculatedFields = calculatedFields;
     	this.on('afterrender', function(){
     		for(var i=0; i<this.calculatedFields.length; i++){
     			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this);
