@@ -115,7 +115,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
     
    
 
-    if(this.calculatedFields!=null && this.calculatedFields.length>0){
+    if(this.calculatedFields!=null && this.calculatedFields.size>0){
 //this.calculatedFields = calculatedFields;
     	this.on('afterrender', function(){
     		for(var i=0; i<this.calculatedFields.length; i++){
@@ -531,9 +531,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    		pannels[y].childs = new Array();
 	    		while(heigthCount<heigth){
 	    			pannels[y].childs.push(headers[k+1][i]);
-	    			if(headers[k+1][i]==null){
-	    				alert((k+1)+" "+i+" "+pannels[y].name);
-	    			}
+//	    			if(headers[k+1][i]==null){
+//	    				alert((k+1)+" "+i+" "+pannels[y].name);
+//	    			}
 	    			headers[k+1][i].father = pannels[y];
 	    			heigthCount = heigthCount+headers[k+1][i].thisDimension;
 	    			i++;
