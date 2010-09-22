@@ -268,7 +268,6 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
   	,severityStore:null
 	
   	,loadItems: function(thrValues){
-		alert(thrValues.toSource());
 		this.store.loadData(thrValues);
 	}
 

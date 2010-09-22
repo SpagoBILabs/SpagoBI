@@ -601,6 +601,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      		}else{
 			      			var itemId = content.id;
 			      			var idThrVal = content.idThrVal;
+			      			var thrValues = content.thrValues;
 			      			var record;
 			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
@@ -608,9 +609,34 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      				if(idThrVal!=null && idThrVal!==''){
 			      					newRec.set('idThrVal', idThrVal);
 			      				}
-			      				this.mainElementsStore.add(newRec);  
+
+			      				if(thrValues!=null && thrValues!=undefined){
+			      					var thrVal = new Array();
+			      					var length = thrValues.length;		      					
+				      				for(var i=0;i<length;i++){
+				      		   	        var tempThrVal = thrValues[i];
+				      		   	        if(tempThrVal!=null && tempThrVal!=undefined){
+					      		   	       var tempRecord = {
+				      	      		   	             idThrVal: tempThrVal.idThrVal,
+				      	      		   	             label: tempThrVal.label,
+				      	      		   	             position: tempThrVal.position,
+				      	      		   	             min: tempThrVal.min,
+				      	      		   	             minIncluded: tempThrVal.minIncluded,
+				      	      		   	             max: tempThrVal.max,
+				      	      		   	             maxIncluded: tempThrVal.maxIncluded,
+				      	      		   	             val: tempThrVal.val,
+				      	      		   	             color: tempThrVal.color,
+				      	      		   	             severityCd: tempThrVal.severityCd
+				      	      			      	};	
+				      		   	        	thrVal.push(tempRecord);     				
+				      		   	        }				      		   	        		   
+				      		   	    }
+				      				newRec.set('thrValues',thrVal);
+			      				}
 			      				
-			      			}else if(idThrVal!=null && idThrVal!==''){			      				
+			      				this.mainElementsStore.add(newRec);
+			      				
+			      			}else {
 			      				var length = this.mainElementsStore.getCount();
 			      				for(var i=0;i<length;i++){
 			      		   	        var tempRecord = this.mainElementsStore.getAt(i);
@@ -618,14 +644,38 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 			      		   	        	record = tempRecord;
 			      					}			   
 			      		   	    }
-			      				record.set('idThrVal', idThrVal);
-			      			}
+			      				if(idThrVal!=null && idThrVal!==''){
+			      					record.set('idThrVal', idThrVal);
+			      				}else if (thrValues!=null && thrValues!=undefined){
+			      					var thrVal = new Array();
+			      					var length = thrValues.length;		      					
+				      				for(var i=0;i<length;i++){
+				      		   	        var tempThrVal = thrValues[i];
+				      		   	        if(tempThrVal!=null && tempThrVal!=undefined){
+					      		   	       var tempRecord = {
+				      	      		   	             idThrVal: tempThrVal.idThrVal,
+				      	      		   	             label: tempThrVal.label,
+				      	      		   	             position: tempThrVal.position,
+				      	      		   	             min: tempThrVal.min,
+				      	      		   	             minIncluded: tempThrVal.minIncluded,
+				      	      		   	             max: tempThrVal.max,
+				      	      		   	             maxIncluded: tempThrVal.maxIncluded,
+				      	      		   	             val: tempThrVal.val,
+				      	      		   	             color: tempThrVal.color,
+				      	      		   	             severityCd: tempThrVal.severityCd
+				      	      			      	};	
+				      		   	        	thrVal.push(tempRecord);     				
+				      		   	        }				      		   	        		   
+				      		   	    }
+				      				record.set('thrValues',thrVal);
+			      				}
+			      			}	
+			      				
 			      			this.mainElementsStore.commitChanges();
-			      			this.tempThrV.getStore().commitChanges();
+			      			
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
-			      				this.mainElementsStore.load();
 					            this.rowselModel.selectLastRow(true);
-				            }else if(record != null && record != undefined && record.get('typeCd')=='RANGE'){				            
+				            }else if(record != null && record != undefined ){				            
 								if(toSelAfterSave !== undefined){
 									this.rowselModel.selectRow(toSelAfterSave);
 								}
