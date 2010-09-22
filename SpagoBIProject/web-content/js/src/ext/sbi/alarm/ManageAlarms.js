@@ -79,6 +79,7 @@ Sbi.alarms.ManageAlarms = function(config) {
   		this.fillKpis(row, rec);        
 	}, this);
 	
+	
 
 };
 
@@ -93,6 +94,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	, alarmsEmptyStore: null
 	, kpisEmptyStore: null
 	, contactsEmptyStore: null
+	, kpiGrid:null
 	
 	, detailTab: null
     , kpiTab: null
@@ -386,20 +388,23 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		this.kpiGrid = new Ext.grid.EditorGridPanel ({
 			id: 'kpi-grid',
 			store: this.kpiStore,
-			autoHeight : true,
+			height: 380,
+			//autoHeight : true,
 			cm: this.kpiCm,
 			sm: this.kpiCheckColumn,
+			deferRowRender : false,
+			forceLayout:true,
 			frame: true,
             viewConfig : {
-	            forceFit : true,
+	            //forceFit : true,
 	            scrollOffset : 2
 	        // the grid will never have scrollbars
 	        },
 	        singleSelect : true,
 	        scope:this,
 	        clicksToEdit : 2
-
 		}); 
+		this.kpiGrid.setAutoScroll(true);	
 		
 		this.tresholdsCombo = new Ext.form.ComboBox(
 			{
@@ -426,6 +431,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		        , autoScroll: true
 		        , itemId: 'kpis'
 		        , scope: this
+		        , forceLayout: true
 	            , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
 			    , border: false
 		        , items: [

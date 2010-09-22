@@ -54,6 +54,12 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
     this.modelsGrid = new Sbi.kpi.ManageModelsGrid(conf, this.manageModels);
    //DRAW east element
     conf.singleSelection = false;
+    conf.tabPanelWidth = 260;
+	conf.gridWidth = 255;
+	conf.textAreaWidth = 120;
+	conf.fieldsDefaultWidth= 120;
+	conf.gridColumnNumber = 2;
+	
     this.manageKpis = new Sbi.kpi.ManageKpis(conf);
 	
 	var viewport = {
@@ -84,7 +90,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 		    }, {
 		        region: 'east',
 		        split: true,
-		        width: 900,
+		        width: 550,
 		        height:540,
 		        collapsed:true,
 		        collapseMode:'mini',

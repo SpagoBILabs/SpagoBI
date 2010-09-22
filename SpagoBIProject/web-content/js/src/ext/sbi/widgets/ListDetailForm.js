@@ -160,6 +160,18 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.drawSelectColumn = conf.drawSelectColumn;  
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
+	
+	if(conf.tabPanelWidth){
+		this.tabPanelWidth = conf.tabPanelWidth;
+    }else{
+    	this.tabPanelWidth = 430;
+    }
+	if(conf.gridWidth){
+		this.gridWidth = conf.gridWidth;
+    }else{
+    	this.gridWidth = 410;
+    }
+	
 	if(config.singleSelection){
 		this.singleSelection = config.singleSelection;
 	}else{
@@ -174,7 +186,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 		, url: this.services['manageListService']		
 	});
 
-	this.initWidget();
+	this.initWidget();	
 	
 	 /*
  	   *    Here is where we create the Form
@@ -190,15 +202,16 @@ Sbi.widgets.ListDetailForm = function(config) {
  	          height: 550,
  	          layout: 'column',
  	          scope:this,
+ 	          forceLayout: true,
  	          trackResetOnLoad: true,
+ 	          layoutConfig : {
+ 	 				animate : true,
+ 	 				activeOnTop : false
+
+ 	 			},
  	          items: [
- 	              
- 	            	 this.mainGrid
- 	             /* scope:this,
- 	              layout: 'fit',
- 	              items: this.mainGrid*/
- 	              , this.tabs
- 	            	  		
+ 	              this.mainGrid
+ 	              , this.tabs           	  		
  	          ]
  	          
  	      };
@@ -218,6 +231,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	var c = Ext.apply({}, config, this.gridForm);
    	
    	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
+   	this.doLayout(true,true);
    	
    	//to be addedd at the end!
    	this.addEvents('selected');	
@@ -240,6 +254,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, rowselModel:null
 	, ddGroup : null //for dragndrop
 	, singleSelection: true
+	, tabPanelWidth: null
+	, gridWidth: null
 	
 	
 	,initWidget: function(){
@@ -295,13 +311,15 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	            })
  	    	]
  	    });
+ 	    
 
  	   this.tabs = new Ext.TabPanel({
            enableTabScroll : true
+           , tabPosition:'top'
            , activeTab : 0
            , autoScroll : true
            , deferredRender: false
-           , width: 430          
+           , width: this.tabPanelWidth         
            , height: 490
            , itemId: 'tabs' 
            , tbar: this.tbSave
@@ -354,7 +372,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  selModel: this.rowselModel,
 	                  //autoExpandColumn: 'name',
 	                  height: 490,
-	                  width: 410,
+	                  width: this.gridWidth,
 	                  scope: this,
 	                  title: this.listTitle,
 		              bbar: pagingBar,
@@ -372,7 +390,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 							    	} ,
 	                      			viewready: function(g) {g.getSelectionModel().selectRow(0); } 
 	                             }
-	                  };
+	   };
+ 	  
 	}
 
 	,sendSelectedItem: function(itemId, index){

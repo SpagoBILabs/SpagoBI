@@ -27,6 +27,7 @@ Sbi.locale.ln['sbi.generic.label'] = 'Libell\u00E9';
 Sbi.locale.ln['sbi.generic.engine'] = 'Moteur';
 Sbi.locale.ln['sbi.generic.state'] = 'Etat';
 Sbi.locale.ln['sbi.generic.value'] = 'Value';
+Sbi.locale.ln['sbi.generic.udpValues'] = 'Udp Values';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';

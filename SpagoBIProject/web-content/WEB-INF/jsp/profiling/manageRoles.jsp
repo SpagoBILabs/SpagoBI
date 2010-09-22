@@ -69,6 +69,7 @@ Ext.onReady(function(){
 		, items: [
 		    {
 		       region: 'center',
+		       layout: 'fit',
 		       items: [manageRoles]
 		    }
 		]
