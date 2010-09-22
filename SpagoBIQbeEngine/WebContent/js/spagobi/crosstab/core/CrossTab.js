@@ -108,19 +108,18 @@ Sbi.crosstab.core.CrossTab = function(config) {
 		padding : 10
 	};
 
-    this.addEvents();
-	this.on('afterrender', function(){
-		this.calculatePartialSum();
-	}, this);
-    
-   
+    this.addEvents();   
 
-    if(this.calculatedFields!=null && this.calculatedFields.size>0){
-//this.calculatedFields = calculatedFields;
+    if(this.calculatedFields!=null && this.calculatedFields.length>0){
     	this.on('afterrender', function(){
     		for(var i=0; i<this.calculatedFields.length; i++){
     			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this);
     		}
+    		this.calculatePartialSum();
+    	}, this);
+    }else{
+    	this.on('afterrender', function(){
+    		this.calculatePartialSum();
     	}, this);
     }
     
@@ -1430,6 +1429,18 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
     	this.calculatedFields.push(calculatedField);
     }
+    
+    , modifyCalculatedField: function(level, horizontal, op, CFName){
+    	alert(this.calculatedFields.toSource());
+    	if(this.calculatedFields!=null){
+    		for(var i=0; i<this.calculatedFields.length; i++){
+    			if(this.calculatedFields[i].name == CFName){
+    				this.calculatedFields[i] = new Sbi.crosstab.core.CrossTabCalculatedField(CFName, level, horizontal, op);
+    			}
+    		}
+    	}
+    	alert(this.calculatedFields.toSource());
+    }
 
     , getCalculatedFields: function() {
     	return this.calculatedFields;
@@ -2175,7 +2186,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			this.removePartialSum(true);
    			//add the new CF
    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this);
-    		this.addCalculatedField(level, horizontal, op, CFName);
+    		this.modifyCalculatedField(level, horizontal, op, CFName);
     		this.calculatePartialSum();
    		}, this); 
     }
