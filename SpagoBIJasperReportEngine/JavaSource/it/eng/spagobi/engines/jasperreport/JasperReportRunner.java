@@ -158,8 +158,6 @@ public class JasperReportRunner {
 		parameters.put("SBI_RESOURCE_PATH", resourcePath);
 
 
-
-
 		/* TODO Since this is the back-end (logic) part of the JasperEngine the direct use of  HttpServletResponse, 
 		 * HttpServletRequest and ServletContext objects shuold be pushed back to JasperReportServlet that is 
 		 * the front-end (control) part of the engine */		
@@ -816,15 +814,16 @@ public class JasperReportRunner {
 		}
 
 		for(int i = 0; i < subreports.length; i++) {
-			String prefixDirTemplate = (String)params.get("prefixName");
-			String prefixTemplate = (String)params.get("subrpt." + (i + 1) + ".prefixName");
+			String masterIds = (String)params.get("prefixName");
+			String subIds = (String)params.get("subrpt." + (i + 1) + ".prefixName");
+			String nameTemplate = (String)params.get("subrpt." + (i + 1) + ".tempName");
 			//check if the subreport is cached into file system
-			String dirTemplate = getJRTempDirName(servletContext, prefixDirTemplate);
-			File destDir =  getJRCompilationDir(servletContext, prefixDirTemplate);
-			boolean exists = (new File(destDir.getPath() + System.getProperty("file.separator") + prefixTemplate + ".jasper")).exists(); 
+			String dirTemplate = getJRTempDirName(servletContext, masterIds + System.getProperty("file.separator") + subIds);
+			File destDir =  getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds);
+			boolean exists = (new File(dirTemplate + nameTemplate + ".jasper")).exists();
 			if (exists) {
-				// File or directory exists 
-				files[i] = new File(dirTemplate, prefixTemplate +  ".jasper");
+				// File already exists 
+				files[i] = new File(dirTemplate, nameTemplate +  ".jasper");				
 			} else { 
 				// File or directory does not exist, create a new file compiled!
 				//put "true" to the parameter that not permits the validation on parameters of the subreport.
@@ -871,23 +870,28 @@ public class JasperReportRunner {
 						}
 					}
 				}
+				
 				JasperDesign  jasperDesign = JRXmlLoader.load(is);
-				//the following instruction is necessary because the above istruction cleans variable 'is'
+				//the following instruction is necessary because the above instruction cleans variable 'is'
 				is = new java.io.ByteArrayInputStream(templateContent);
 				
-				//files[i] = new File(destDir, prefixTemplate + "__" + jasperDesign.getName()+ ".jasper");
-				files[i] = new File(destDir, prefixTemplate + ".jasper");
+				files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
 				logger.debug("Compiling template file: " + files[i]);
-			
+
 				FileOutputStream fos =  null;
 				try {
 					fos = new FileOutputStream(files[i]);
 				} catch (FileNotFoundException e) {
 					logger.error("Internal error in compiling subreport method", e);
 				}
-				JasperCompileManager.compileReportToStream(is, fos);			
+				JasperCompileManager.compileReportToStream(is, fos);
 				logger.debug("Template file compiled  succesfully");
 			}
+			//adds the subreport's folder to the classpath
+			ClassLoader previous = Thread.currentThread().getContextClassLoader();
+			ClassLoader current = URLClassLoader.newInstance(new URL[]{getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds).toURL()}, previous);
+			//System.out.println("files[i].toURL(): " + getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds).toURL());
+			Thread.currentThread().setContextClassLoader(current);
 		}
 		logger.debug("OUT");
 		return files;
@@ -908,6 +912,8 @@ public class JasperReportRunner {
 		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") +
 		"reports" +  System.getProperty("file.separator") +
 		JS_DIR + "__" + prefixTemplate + System.getProperty("file.separator");
+		//JS_DIR + "__" + prefixTemplate.substring(0,prefixTemplate.indexOf("__")) + System.getProperty("file.separator") + 
+		//prefixTemplate.substring(prefixTemplate.indexOf("__")+2) + System.getProperty("file.separator");
 		logger.debug("OUT");
 		return jrTempDir;		
 	}
