@@ -167,6 +167,9 @@ public class JasperReportDriver extends AbstractDriver implements IEngineDriver 
 			String prefixName = subrptbiobj.getId()  + "__" + objtemp.getBinId();
 			pars.put("subrpt." + (i + 1) + ".prefixName", prefixName);
 			logger.debug(" prefixName: " + prefixName);
+			String tempName =objtemp.getName().substring(0,objtemp.getName().indexOf("."));
+			pars.put("subrpt." + (i + 1) + ".tempName", tempName);			
+			logger.debug(" tempName: " + tempName);
 			
 			String flgTemplateStandard = "true";
 			if (objtemp.getName().indexOf(".zip") > -1) {
@@ -178,6 +181,7 @@ public class JasperReportDriver extends AbstractDriver implements IEngineDriver 
 			Integer id = subrptbiobj.getId();
 			logger.debug(" ID: " + id);
 			pars.put("subrpt." + (i + 1) + ".id", id);
+			
 	    }
 	    pars.put("srptnum", "" + subreportList.size());
 
