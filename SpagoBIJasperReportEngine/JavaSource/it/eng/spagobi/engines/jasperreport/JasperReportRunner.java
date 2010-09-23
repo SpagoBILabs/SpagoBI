@@ -5,20 +5,6 @@
  */
 package it.eng.spagobi.engines.jasperreport;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.utilities.DynamicClassLoader;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.ResourceClassLoader;
-import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -27,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -49,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -88,6 +74,20 @@ import com.jamonapi.MonitorFactory;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.ResourceClassLoader;
+import it.eng.spagobi.utilities.SpagoBIAccessUtils;
 
 /**
  * Jasper Report implementation built to provide all methods to
@@ -473,34 +473,7 @@ public class JasperReportRunner {
 	// UTILITY METHODS
 	/////////////////////////////////////////
 
-	/**
-	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
-	 * 
-	 * TODO convert this to a File returning method
-	 */
-	private String getJRLibDir(ServletContext servletContext) {
-		logger.debug("IN");
-		String jrLibDir = null;		
-		jrLibDir = servletContext.getRealPath("WEB-INF") + System.getProperty("file.separator") + "lib";		
-		logger.debug("OUT");
-		return jrLibDir;		
-	}
-/*
-	private File getJRCompilationDir(ServletContext servletContext, String executionId) {
-		logger.debug("IN");
-		File jrCompilationDir = null;		
-		jrCompilationDir = getJRTempDir(servletContext, executionId);
-		logger.debug("OUT");
-		return jrCompilationDir;		
-	}
-*/
-	private File getJRCompilationDir(ServletContext servletContext, String prefixTemplate) {
-		logger.debug("IN");
-		File jrCompilationDir = null;		
-		jrCompilationDir = getJRTempDir(servletContext, prefixTemplate);
-		logger.debug("OUT");
-		return jrCompilationDir;		
-	}
+	
 	
 	private void setJRClasspath(String jrLibDir) {
 		logger.debug("JasperReports lib-dir is [" + this.getClass().getName()+ "]");
@@ -509,11 +482,7 @@ public class JasperReportRunner {
 
 	}
 
-	private void setJRTempDir(String jrTmpDir) {
-		System.setProperty("jasper.reports.compile.temp", jrTmpDir);
-		logger.debug("Set [jasper.reports.compile.temp] to value [" + System.getProperty("jasper.reports.compile.temp")+"]");
-	}
-
+	
 
 	/**
 	 * Build a classpath variable appending all the jar files founded into the specified directory.
@@ -783,152 +752,45 @@ public class JasperReportRunner {
 		return bufferedImages;
 	}
 
-	//private File[] compileSubreports(Map params, File destDir, ContentServiceProxy contentProxy, HashMap requestParameters) throws JRException, Exception {
-	private File[] compileSubreports(Map params, ServletContext servletContext, ContentServiceProxy contentProxy, HashMap requestParameters) throws JRException, Exception {
-		logger.debug("IN");
-		
-		String subrptnumStr = (params.get("srptnum")==null)?"0":(String)params.get("srptnum");
-		int subrptnum = Integer.parseInt(subrptnumStr);
-		String[] subreports = new String[subrptnum];
-		String[] subreportsType = new String[subrptnum];
-		File[] files = new File[subrptnum];
-
-		Iterator it = params.keySet().iterator();
-		while(it.hasNext()){
-			String parName = (String)it.next();
-			if(parName.startsWith("subrpt") && parName.endsWith("id")) {
-				int start = parName.indexOf('.') + 1;
-				int end = parName.indexOf('.', start);				
-				String numberStr = parName.substring(start, end);
-				int number = Integer.parseInt(numberStr) - 1;
-				subreports[number] = (String)params.get(parName);
-				logger.debug("JasperReports subreport id : " +  params.get(parName));				
-			}
-			else if(parName.startsWith("subrpt") && parName.endsWith("flgTempStd")) {
-				int start = parName.indexOf('.') + 1;
-				int end = parName.indexOf('.', start);
-				String numberStr = parName.substring(start, end);
-				int number = Integer.parseInt(numberStr) - 1;
-				subreportsType[number] = (String)params.get(parName);
-			}
-		}
-
-		for(int i = 0; i < subreports.length; i++) {
-			String masterIds = (String)params.get("prefixName");
-			String subIds = (String)params.get("subrpt." + (i + 1) + ".prefixName");
-			String nameTemplate = (String)params.get("subrpt." + (i + 1) + ".tempName");
-			//check if the subreport is cached into file system
-			String dirTemplate = getJRTempDirName(servletContext, masterIds + System.getProperty("file.separator") + subIds);
-			File destDir =  getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds);
-			boolean exists = (new File(dirTemplate + nameTemplate + ".jasper")).exists();
-			if (exists) {
-				// File already exists 
-				files[i] = new File(dirTemplate, nameTemplate +  ".jasper");				
-			} else { 
-				// File or directory does not exist, create a new file compiled!
-				//put "true" to the parameter that not permits the validation on parameters of the subreport.
-				requestParameters.put("SBI_READ_ONLY_TEMPLATE", "true");
-				Content template=contentProxy.readTemplate(subreports[i], requestParameters);
-				logger.debug("Read the template.(subreport)"+template.getFileName());
-				InputStream is = null;		
-				BASE64Decoder bASE64Decoder = new BASE64Decoder();
-				byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
-				is = new java.io.ByteArrayInputStream(templateContent);
-				String str = new String(templateContent);
 	
-				SpagoBIAccessUtils util = new SpagoBIAccessUtils();
-	
-				/* Dynamic template management: if the template is a zip file it is opened and every class are added to 
-				 * the classpath
-				 */			
-				String flgTemplateStandard = subreportsType[i];
-				if (flgTemplateStandard.equalsIgnoreCase("false")){							
-					File fileZip = new File (destDir, this.JS_FILE_ZIP+i+ JS_EXT_ZIP);
-					FileOutputStream foZip = new FileOutputStream(fileZip);
-					foZip.write(templateContent);
-					foZip.close();				
-					util.unzip(fileZip,destDir);
-					JarFile zipFile = new JarFile(fileZip);				
-					Enumeration totalZipEntries = zipFile.entries();
-					File jarFile = null;
-					while (totalZipEntries.hasMoreElements()) {
-						ZipEntry entry = (ZipEntry)totalZipEntries.nextElement();
-						if (entry.getName().endsWith(".jar")) {
-							// set classloader with jar
-							jarFile = new File(destDir+entry.getName());
-							ClassLoader previous = Thread.currentThread().getContextClassLoader();
-							DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-							//ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURL()}, previous);
-							Thread.currentThread().setContextClassLoader(dcl);					   
-						}
-						if (entry.getName().endsWith(".jrxml")) {
-							// set InputStream with jrxml	    		   
-							File jrxmlFile = new File(destDir+System.getProperty("file.separator")+entry.getName());
-							InputStream isJrxml = new FileInputStream(jrxmlFile);		    		   
-							templateContent = util.getByteArrayFromInputStream(isJrxml);
-							is = new java.io.ByteArrayInputStream(templateContent);		    		   
-						}
-					}
-				}
-				
-				JasperDesign  jasperDesign = JRXmlLoader.load(is);
-				//the following instruction is necessary because the above instruction cleans variable 'is'
-				is = new java.io.ByteArrayInputStream(templateContent);
-				
-				files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
-				logger.debug("Compiling template file: " + files[i]);
 
-				FileOutputStream fos =  null;
-				try {
-					fos = new FileOutputStream(files[i]);
-				} catch (FileNotFoundException e) {
-					logger.error("Internal error in compiling subreport method", e);
-				}
-				JasperCompileManager.compileReportToStream(is, fos);
-				logger.debug("Template file compiled  succesfully");
-			}
-			//adds the subreport's folder to the classpath
-			ClassLoader previous = Thread.currentThread().getContextClassLoader();
-			ClassLoader current = URLClassLoader.newInstance(new URL[]{getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds).toURL()}, previous);
-			//System.out.println("files[i].toURL(): " + getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subIds).toURL());
-			Thread.currentThread().setContextClassLoader(current);
-		}
-		logger.debug("OUT");
-		return files;
-	}
-	/*
-
-	private String getJRTempDirName(ServletContext servletContext, String executionId) {	
+	/**
+	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
+	 * 
+	 * TODO convert this to a File returning method
+	 */
+	private String getJRLibDir(ServletContext servletContext) {
 		logger.debug("IN");
-		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") +
-		"reports" +  System.getProperty("file.separator") +
-		JS_DIR + executionId + System.getProperty("file.separator");
+		String jrLibDir = null;		
+		jrLibDir = servletContext.getRealPath("WEB-INF") + System.getProperty("file.separator") + "lib";		
 		logger.debug("OUT");
-		return jrTempDir;		
+		return jrLibDir;		
 	}
-	*/
+	
+	private void setJRTempDir(String jrTmpDir) {
+		System.setProperty("jasper.reports.compile.temp", jrTmpDir);
+		logger.debug("Set [jasper.reports.compile.temp] to value [" + System.getProperty("jasper.reports.compile.temp")+"]");
+	}
+
+	
+	private File getJRCompilationDir(ServletContext servletContext, String prefixTemplate) {
+		logger.debug("IN");
+		File jrCompilationDir = null;		
+		jrCompilationDir = getJRTempDir(servletContext, prefixTemplate);
+		logger.debug("OUT");
+		return jrCompilationDir;		
+	}
+	
+	
 	private String getJRTempDirName(ServletContext servletContext, String prefixTemplate) {	
 		logger.debug("IN");
 		String jrTempDir = servletContext.getRealPath("tmpdir") + System.getProperty("file.separator") +
 		"reports" +  System.getProperty("file.separator") +
 		JS_DIR + "__" + prefixTemplate + System.getProperty("file.separator");
-		//JS_DIR + "__" + prefixTemplate.substring(0,prefixTemplate.indexOf("__")) + System.getProperty("file.separator") + 
-		//prefixTemplate.substring(prefixTemplate.indexOf("__")+2) + System.getProperty("file.separator");
 		logger.debug("OUT");
 		return jrTempDir;		
 	}
-/*
-	private File getJRTempDir(ServletContext servletContext, String executionId) {
-		logger.debug("IN");
-		File jrTempDir = null;		
 
-		String jrTempDirStr = getJRTempDirName(servletContext, executionId);
-		jrTempDir = new File(jrTempDirStr.substring(0, jrTempDirStr.length()-1));
-		jrTempDir.mkdirs();
-		logger.debug("OUT");
-		return jrTempDir;		
-	}
-	*/
 	private File getJRTempDir(ServletContext servletContext, String prefixTemplate) {
 		logger.debug("IN");
 		File jrTempDir = null;		
@@ -939,6 +801,10 @@ public class JasperReportRunner {
 		logger.debug("OUT");
 		return jrTempDir;		
 	}
+	
+	
+	
+	
 
 	protected Map adaptReportParams(Map parameters, JasperReport report) {
 		logger.debug("IN");
@@ -990,6 +856,295 @@ public class JasperReportRunner {
 		}
 		logger.debug("OUT");
 		return parameters;
+	}
+	
+	// =========================================================================================================================
+	
+	
+	private static class SubreportMeta {
+		private String documentId; // 1, 2, ..., n
+		private String templateType; // file | archive
+		private String templateName;
+		private String templateFingerprint; // documentId + templateId
+		
+		public SubreportMeta(String documentId) {
+			setDocumentId(documentId);
+		}
+
+		
+		public String getDocumentId() {
+			return documentId;
+		}
+
+
+		public void setDocumentId(String documentId) {
+			this.documentId = documentId;
+		}
+
+
+		public String getTemplateFingerprint() {
+			return templateFingerprint;
+		}
+
+
+
+		public void setTemplateFingerprint(String templateFingerprint) {
+			this.templateFingerprint = templateFingerprint;
+		}
+
+
+
+		public String getTemplateType() {
+			return templateType;
+		}
+
+		public void setTemplateType(String templateType) {
+			this.templateType = templateType;
+		}
+
+		public String getTemplateName() {
+			return templateName;
+		}
+
+		public void setTemplateName(String templateName) {
+			this.templateName = templateName;
+		}
+	}
+	
+	private Map<String, SubreportMeta> getSubreportsMeta(Map params) {
+		Map<String,SubreportMeta> subreportsMeta;
+		
+		logger.debug("IN");
+		subreportsMeta = new HashMap<String,SubreportMeta>();
+		
+		try {
+			//String subrptnumStr = (params.get("srptnum")==null)?"0":(String)params.get("srptnum");
+			//int subrptnum = Integer.parseInt(subrptnumStr);
+			
+			/*
+			Iterator it = params.keySet().iterator();
+			while(it.hasNext()){
+				String parName = (String)it.next();
+				if(parName.startsWith("subrpt") && parName.endsWith("id")) {
+					int start = parName.indexOf('.') + 1;
+					int end = parName.indexOf('.', start);				
+					String subreportKey = parName.substring(start, end);
+					String subreportId = (String)params.get(parName);
+					SubreportMeta subreportMeta = new SubreportMeta( subreportId );
+					subreportMeta.setTemplateName( (String)params.get("subrpt." + subreportKey + ".tempName") );
+					subreportMeta.setTemplateFingerprint( (String)params.get("subrpt." + subreportKey + ".prefixName") );
+					subreportMeta.setTemplateType( (String)params.get("subrpt." + subreportKey + ".flgTempStd") );
+					subreportsMeta.put(subreportKey, subreportMeta);
+					logger.debug("JasperReports subreport id : " +  params.get(parName));				
+				}
+			}
+			*/
+			Iterator it = params.keySet().iterator();
+			while(it.hasNext()){
+				String parName = (String)it.next();
+				if(parName.startsWith("sr") && parName.endsWith("ids")) {
+					int start = parName.indexOf('.') + 1;
+					int end = parName.indexOf('.', start);				
+					String subreportKey = parName.substring(start, end);
+					String subreportIds = (String)params.get(parName);
+					String[] ids = subreportIds.split("_");
+					SubreportMeta subreportMeta = new SubreportMeta( ids[0] );
+					//subreportMeta.setTemplateName( (String)params.get("subrpt." + subreportKey + ".tempName") );
+					subreportMeta.setTemplateFingerprint( subreportIds );
+					//subreportMeta.setTemplateType( (String)params.get("subrpt." + subreportKey + ".flgTempStd") );
+					subreportsMeta.put(subreportKey, subreportMeta);
+					logger.debug("JasperReports subreport id : " +  params.get(parName));				
+				}
+			}
+			
+		} catch(Throwable t) {
+			logger.error("Error while extracting subreports meta", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return subreportsMeta;
+		
+	}
+	
+	
+	private File[] compileSubreports(Map params, ServletContext servletContext, ContentServiceProxy contentProxy, HashMap requestParameters)  {
+		
+		File[] files = null;
+		
+		logger.debug("IN");
+		try {
+			/*
+			String subrptnumStr = (params.get("srptnum")==null)?"0":(String)params.get("srptnum");
+			int subrptnum = Integer.parseInt(subrptnumStr);
+			String[] subreports = new String[subrptnum];
+			String[] subreportsType = new String[subrptnum];
+			*/
+			
+	
+			/*
+			Iterator it = params.keySet().iterator();
+			while(it.hasNext()){
+				String parName = (String)it.next();
+				if(parName.startsWith("subrpt") && parName.endsWith("id")) {
+					int start = parName.indexOf('.') + 1;
+					int end = parName.indexOf('.', start);				
+					String numberStr = parName.substring(start, end);
+					int number = Integer.parseInt(numberStr) - 1;
+					subreports[number] = (String)params.get(parName);
+					logger.debug("JasperReports subreport id : " +  params.get(parName));				
+				}
+				else if(parName.startsWith("subrpt") && parName.endsWith("flgTempStd")) {
+					int start = parName.indexOf('.') + 1;
+					int end = parName.indexOf('.', start);
+					String numberStr = parName.substring(start, end);
+					int number = Integer.parseInt(numberStr) - 1;
+					subreportsType[number] = (String)params.get(parName);
+				}
+			}
+			*/
+			Map<String, SubreportMeta> subreportsMeta = getSubreportsMeta(params);
+			int subreportNum = subreportsMeta.keySet().size();
+			
+			files = new File[subreportNum];
+			logger.debug("Subreports number is equal to [" + subreportNum + "]");
+	
+			Iterator it = subreportsMeta.keySet().iterator();
+			int i = 0;
+			while(it.hasNext()) {
+				SubreportMeta subreportMeta = subreportsMeta.get( (String)it.next() );
+				String masterIds = (String)params.get("prefixName");
+				
+				
+				//check if the subreport is cached into file system
+				String dirTemplate = getJRTempDirName(servletContext, masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
+				logger.debug("dirTemplate is equal to [" + dirTemplate + "]");
+				
+				
+				//boolean exists = (new File(dirTemplate + subreportMeta.getTemplateName() + ".jasper")).exists();
+				File subreportCacheDir = new File(dirTemplate);
+				if (subreportCacheDir.exists()) {
+					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] alredy exists");
+					
+					// File already exists 
+					File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter(){
+						public boolean accept(File dir, String name) {
+							logger.debug("scan dir [" + name + "]");
+							return name.endsWith(".jasper");
+						}
+					});
+					logger.debug("found [" + compiledJRFiles.length + "] compiled files");
+					if(compiledJRFiles.length > 1) {
+						throw new RuntimeException("More then one compiled file found in directory [" + subreportCacheDir + "]");
+					}
+					//files[i] = new File(dirTemplate, subreportMeta.getTemplateName() +  ".jasper");	
+					files[i] = compiledJRFiles[0];
+				} else { 
+					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] does not exists yet");
+					
+					File destDir =  getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
+									
+					logger.debug("destDir number is equal to [" + destDir + "]");
+					
+					
+					// File or directory does not exist, create a new file compiled!
+					//put "true" to the parameter that not permits the validation on parameters of the subreport.
+					requestParameters.put("SBI_READ_ONLY_TEMPLATE", "true");
+					Content template=contentProxy.readTemplate(subreportMeta.getDocumentId(), requestParameters);
+					template.getFileName();
+					logger.debug("Read the template.(subreport)"+template.getFileName());
+					InputStream is = null;		
+					BASE64Decoder bASE64Decoder = new BASE64Decoder();
+					byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
+					is = new java.io.ByteArrayInputStream(templateContent);
+					String str = new String(templateContent);
+		
+					SpagoBIAccessUtils util = new SpagoBIAccessUtils();
+		
+					/* Dynamic template management: if the template is a zip file it is opened and every class are added to 
+					 * the classpath
+					 */			
+					String flgTemplateStandard = "true"; // = subreportMeta.getTemplateType();
+					if (template.getFileName().indexOf(".zip") > -1) {
+						flgTemplateStandard = "false";
+					}
+					
+					if (flgTemplateStandard.equalsIgnoreCase("false")){							
+						File fileZip = new File (destDir, this.JS_FILE_ZIP+  i + JS_EXT_ZIP);
+						FileOutputStream foZip = new FileOutputStream(fileZip);
+						foZip.write(templateContent);
+						foZip.close();				
+						util.unzip(fileZip,destDir);
+						JarFile zipFile = new JarFile(fileZip);				
+						Enumeration totalZipEntries = zipFile.entries();
+						File jarFile = null;
+						while (totalZipEntries.hasMoreElements()) {
+							ZipEntry entry = (ZipEntry)totalZipEntries.nextElement();
+							if (entry.getName().endsWith(".jar")) {
+								// set classloader with jar
+								jarFile = new File(destDir+entry.getName());
+								ClassLoader previous = Thread.currentThread().getContextClassLoader();
+								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+								//ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURL()}, previous);
+								Thread.currentThread().setContextClassLoader(dcl);					   
+							}
+							if (entry.getName().endsWith(".jrxml")) {
+								// set InputStream with jrxml	    		   
+								File jrxmlFile = new File(destDir+System.getProperty("file.separator")+entry.getName());
+								InputStream isJrxml = new FileInputStream(jrxmlFile);		    		   
+								templateContent = util.getByteArrayFromInputStream(isJrxml);
+								is = new java.io.ByteArrayInputStream(templateContent);		    		   
+							}
+						}
+					}
+					
+					JasperDesign  jasperDesign = JRXmlLoader.load(is);
+					//the following instruction is necessary because the above instruction cleans variable 'is'
+					is = new java.io.ByteArrayInputStream(templateContent);
+					
+					files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
+					logger.debug("Compiling template file: " + files[i]);
+	
+					FileOutputStream fos =  null;
+					try {
+						fos = new FileOutputStream(files[i]);
+					} catch (FileNotFoundException e) {
+						logger.error("Internal error in compiling subreport method", e);
+					}
+					JasperCompileManager.compileReportToStream(is, fos);
+					logger.debug("Template file compiled  succesfully");
+				}
+				
+				//adds the subreport's folder to the classpath
+				/*
+				ClassLoader previous = Thread.currentThread().getContextClassLoader();
+				ClassLoader current = URLClassLoader.newInstance(
+						new URL[]{
+								getJRCompilationDir(servletContext, masterIds  + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint()).toURL()
+						}, 
+				previous);
+				*/
+				//Thread.currentThread().setContextClassLoader(current);
+				
+				i++;
+			}
+			
+			URL[] urls = new URL[files.length];
+			for(int j = 0; j < files.length; j++) {
+				//adds the subreport's folder to the classpath
+				urls[j] = files[j].getParentFile().toURL();
+				logger.debug("Added url [" + files[j].getParentFile().toURL() + "] to classloader");
+			}
+			ClassLoader previous = Thread.currentThread().getContextClassLoader();
+			ClassLoader current = URLClassLoader.newInstance(urls, previous);
+			Thread.currentThread().setContextClassLoader(current);
+		} catch(Throwable t) {
+			logger.error("Error while ccompiling subreports", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return files;
 	}
 
 }
