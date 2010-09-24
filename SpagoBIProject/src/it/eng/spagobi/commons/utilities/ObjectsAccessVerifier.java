@@ -21,17 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,6 +31,17 @@ import org.apache.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 
 /**
  * Contains some methods to control user exec/dev/test rights.
@@ -472,8 +472,11 @@ public class ObjectsAccessVerifier {
 			return false;
 		}
 
-
-
+		if(folder.getCodType().equalsIgnoreCase("USER_FUNCT")){
+			monitor.stop();
+			return true;
+		}
+		
 		Role[] execRoles = folder.getExecRoles();
 		List execRoleNames = new ArrayList();
 		for (int i = 0; i < execRoles.length; i++) {
@@ -907,14 +910,17 @@ public class ObjectsAccessVerifier {
 		Monitor monitor =MonitorFactory.start("spagobi.core.ObjectAccessVerifier.getCorrectRolesForExecution");
 		logger.debug("IN");
 		List correctRoles = null;
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
+		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) 
 				|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-				|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
+				|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			logger.debug("User is able to execute action");
 			correctRoles = DAOFactory.getBIObjectDAO()
 			.getCorrectRolesForExecution(objectId, profile);
-		else
+		} else {
+			logger.debug("User is NOT able to execute action");
 			correctRoles = DAOFactory.getBIObjectDAO()
 			.getCorrectRolesForExecution(objectId);
+		}
 		logger.debug("OUT");
 		monitor.stop();
 		return correctRoles;
