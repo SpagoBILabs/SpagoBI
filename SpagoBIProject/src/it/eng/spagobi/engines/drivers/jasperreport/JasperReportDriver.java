@@ -32,6 +32,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 package it.eng.spagobi.engines.drivers.jasperreport;
 
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
@@ -50,13 +57,6 @@ import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Jasper Report Engine.
@@ -145,53 +145,69 @@ public class JasperReportDriver extends AbstractDriver implements IEngineDriver 
 
     /**
      * Add subreport informations
-     * 
-     * @param biobj
-     * @param pars
-     * @return
      */
-    private Map addBISubreports(BIObject biobj, Map pars) {
-	Integer masterReportId = biobj.getId();
-
-	try {
-	    ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
-	    IBIObjectDAO biobjectdao = DAOFactory.getBIObjectDAO();
-
-	    List subreportList = subrptdao.loadSubreportsByMasterRptId(masterReportId);
-	    for (int i = 0; i < subreportList.size(); i++) {
-			Subreport subreport = (Subreport) subreportList.get(i);
-			BIObject subrptbiobj = biobjectdao.loadBIObjectForDetail(subreport.getSub_rpt_id());
-	
-			IObjTemplateDAO tempdao = DAOFactory.getObjTemplateDAO();
-			ObjTemplate objtemp = tempdao.getBIObjectActiveTemplate(subrptbiobj.getId());
-			String prefixName = subrptbiobj.getId()  + "__" + objtemp.getBinId();
-			pars.put("subrpt." + (i + 1) + ".prefixName", prefixName);
-			logger.debug(" prefixName: " + prefixName);
-			String tempName =objtemp.getName().substring(0,objtemp.getName().indexOf("."));
-			pars.put("subrpt." + (i + 1) + ".tempName", tempName);			
-			logger.debug(" tempName: " + tempName);
+    private Map addBISubreports(BIObject reportBObject, Map pars) {
+		ISubreportDAO subreportDAO;
+		IBIObjectDAO bobjectDAO;
+		IObjTemplateDAO templateDAO;
+		
+		List<Subreport> subreports;
+		Subreport subreport;
+		BIObject subreportBObject;	
+		ObjTemplate subreportTemplate;
+		
+		String prefixName;
+		String tempName;
+		String flgTemplateStandard;
+		Integer id;
+		
+		try {
 			
-			String flgTemplateStandard = "true";
-			if (objtemp.getName().indexOf(".zip") > -1) {
-			    flgTemplateStandard = "false";
-			}
-			logger.debug(" flgTemplateStandard: " + flgTemplateStandard);
-			pars.put("subrpt." + (i + 1) + ".flgTempStd", flgTemplateStandard);
+				    
+			subreportDAO = DAOFactory.getSubreportDAO();
+		    bobjectDAO = DAOFactory.getBIObjectDAO();
+		    templateDAO = DAOFactory.getObjTemplateDAO();
 	
-			Integer id = subrptbiobj.getId();
-			logger.debug(" ID: " + id);
-			pars.put("subrpt." + (i + 1) + ".id", id);
-			
-	    }
-	    pars.put("srptnum", "" + subreportList.size());
-
-	} catch (EMFUserError e) {
-	    logger.error("Error while reading subreports:", e);
-	} catch (EMFInternalError ex) {
-	    logger.error("Error while reading subreports:", ex);
-	}
-
-	return pars;
+		    subreports = subreportDAO.loadSubreportsByMasterRptId( reportBObject.getId() );
+		    for (int i = 0; i < subreports.size(); i++) {
+		    	subreport = subreports.get(i);
+				subreportBObject = bobjectDAO.loadBIObjectForDetail(subreport.getSub_rpt_id());
+				subreportTemplate = templateDAO.getBIObjectActiveTemplate(subreportBObject.getId());
+				
+				prefixName = subreportBObject.getId()  + "_" + subreportTemplate.getBinId();
+				pars.put("sr." + (i + 1) + ".ids", prefixName);
+				logger.debug("ids: " + prefixName);
+				
+				/*
+				tempName = subreportTemplate.getName().substring(0,subreportTemplate.getName().indexOf("."));
+				pars.put("subrpt." + (i + 1) + ".tempName", tempName);			
+				logger.debug("tempName: " + tempName);
+				*/
+				/*
+				flgTemplateStandard = "true";
+				if (subreportTemplate.getName().indexOf(".zip") > -1) {
+				    flgTemplateStandard = "false";
+				}
+				pars.put("subrpt." + (i + 1) + ".flgTempStd", flgTemplateStandard);
+				logger.debug("flgTemplateStandard: " + flgTemplateStandard);
+				*/
+				
+				/*
+				id = subreportBObject.getId();
+				pars.put("subrpt." + (i + 1) + ".id", id);
+				logger.debug("id: " + id);
+				*/
+				
+		    }
+		    //pars.put("srptnum", "" + subreports.size());
+	
+		} catch (EMFUserError e) {
+		    logger.error("Error while reading subreports:", e);
+		} catch (EMFInternalError ex) {
+		    logger.error("Error while reading subreports:", ex);
+		}
+	
+		return pars;
     }
 
     /**
