@@ -27,6 +27,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -34,7 +53,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
@@ -65,33 +83,11 @@ import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 /**
  *	Defines the Hibernate implementations for all DAO methods,
@@ -928,10 +924,12 @@ IBIObjectDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
+			logger.debug("The user have [" + roles.size() + "] different roles");
+			
 			// allRolesWithPermission will store all roles with permissions on folders containing the required document
 			List allRolesWithPermission = new ArrayList();
 
-			// firts filter on roles: finds only roles with permissions on folders containing the required document
+			// first filter on roles: finds only roles with permissions on folders containing the required document
 			SbiObjects hibBIObject = (SbiObjects)aSession.load(SbiObjects.class, id);
 			String objectState = hibBIObject.getState().getValueCd();
 			Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
@@ -940,7 +938,11 @@ IBIObjectDAO {
 				SbiObjFunc aSbiObjFunc = (SbiObjFunc) itObjFunc.next();
 				SbiFunctions aSbiFunctions = aSbiObjFunc.getId().getSbiFunctions();
 				String funcTypeCd = aSbiFunctions.getFunctTypeCd();
+				logger.debug("Folder type [" + funcTypeCd + "]");
 				if(!funcTypeCd.equalsIgnoreCase("USER_FUNCT")){
+					logger.debug("Folder id [" + aSbiFunctions.getFunctId() + "]");
+					logger.debug("Document state [" + objectState + "]");
+					
 					String rolesHql = "select distinct roles.name from " +
 					"SbiExtRoles as roles, SbiFuncRole as funcRole " + 
 					"where roles.extRoleId = funcRole.id.role.extRoleId and " +
@@ -951,9 +953,15 @@ IBIObjectDAO {
 					List rolesNames = new ArrayList();
 					rolesNames = rolesHqlQuery.list();
 					allRolesWithPermission.addAll(rolesNames);
+				} else {
+					List l = new ArrayList();
+					l.addAll(roles);					
+					return l;
 				}
 			}
 
+			logger.debug("There are [" + allRolesWithPermission.size() + "] roles that can execut doc [" + id + "] depending on its location");
+			
 			// userRolesWithPermission will store the filtered roles with permissions on folders containing the required document
 			List userRolesWithPermission = new ArrayList();
 			Iterator rolesIt = roles.iterator();
@@ -963,6 +971,8 @@ IBIObjectDAO {
 				String role = rolesIt.next().toString();
 				if (allRolesWithPermission.contains(role)) userRolesWithPermission.add(role);
 			}
+			
+			logger.debug("The user have [" + userRolesWithPermission.size() + "] different roles that can execute doc [" + id + "] depending on its location");
 
 			// find all id parameters relative to the objects
 			hql = "select par.parId from " +
@@ -1013,6 +1023,9 @@ IBIObjectDAO {
 				}
 				if(correct) {
 					correctRoles.add(role);
+					logger.debug("There is one  available modality for role [" + role + "] on parameter [" + idPar +"]");
+				} else {
+					logger.debug("There is no modality available for role [" + role + "] on parameter [" + idPar +"]");
 				}
 			}
 			tx.rollback();
