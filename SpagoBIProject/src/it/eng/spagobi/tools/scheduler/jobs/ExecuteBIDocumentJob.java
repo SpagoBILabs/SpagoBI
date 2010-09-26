@@ -21,6 +21,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
@@ -62,102 +96,112 @@ import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 public class ExecuteBIDocumentJob implements Job {
 
 	static private Logger logger = Logger.getLogger(ExecuteBIDocumentJob.class);	
 
-	/* (non-Javadoc)
-	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-	 */
-	public void execute(JobExecutionContext jex) throws JobExecutionException {
+	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+		IEngUserProfile profile;
+		JobDataMap jobDataMap;
+		
+		// documentLabel__num this is necessary because the same document can be added to one scheduled activity more than one time
+		String documentInstanceName;
+		String documentLabel;
+		
+		// par1=val1&par2=val2... for parameters already set in scheduled activity's configuration
+		String inputParametersQueryString;
+		
+		IBIObjectDAO biobjdao;
+		BIObject biobj;
+		ExecutionController executionController;
+		ExecutionProxy executionProxy;
+		EventsManager eventManager;
+		
 		logger.debug("IN");
-		try{
-			JobDataMap jdm = jex.getMergedJobDataMap();
-			String doclabelsConcat = jdm.getString("documentLabels");
+		
+		try {
+			profile = UserProfile.createSchedulerUserProfile();
+			jobDataMap = jobExecutionContext.getMergedJobDataMap();
+			biobjdao = DAOFactory.getBIObjectDAO();
+			
+			String doclabelsConcat = jobDataMap.getString("documentLabels");
 			String[] docLabels = doclabelsConcat.split(",");
+			Iterator itr = jobDataMap.keySet().iterator();
+			while(itr.hasNext()) {
+				Object key = itr.next();
+				Object value = jobDataMap.get(key);
+				logger.debug("jobDataMap parameter [" + key + "] is equal to [" + value + "]");
+			}
+			
+			long startSchedule = System.currentTimeMillis();
+			logger.debug("Scheduled activity contains [" + docLabels.length + "] documnt(s)");
 
-			IEngUserProfile profile = UserProfile.createSchedulerUserProfile();
-
-			for(int ind=0; ind<docLabels.length; ind++) {
-				String docLabel = docLabels[ind];
-				String docParQueryString = jdm.getString(docLabel);
+			for(int ind = 0; ind < docLabels.length; ind++) {
+				documentInstanceName = docLabels[ind];
+				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
+				logger.debug("Processing document [" + (ind+1) + "] with label [" + documentLabel + "] ...");
+				
+				inputParametersQueryString = jobDataMap.getString(documentInstanceName);
+				logger.debug("Input parameters query string for documet [" + documentLabel + "] is equal to [" + inputParametersQueryString + "]");
+				
 				// load bidocument
-				IBIObjectDAO biobjdao = DAOFactory.getBIObjectDAO();
-				BIObject biobj = biobjdao.loadBIObjectByLabel(docLabel.substring(0, docLabel.lastIndexOf("__")));
+				biobj = biobjdao.loadBIObjectByLabel(documentLabel);
+				
 				// get the save options
-				String saveOptString = jdm.getString("biobject_id_" + biobj.getId() + "__"+ (ind+1));
-				SaveInfo sInfo = SchedulerUtilities.fromSaveInfoString(saveOptString);
+				String saveOptString = jobDataMap.getString("biobject_id_" + biobj.getId() + "__"+ (ind+1));
+				SaveInfo saveInfo = SchedulerUtilities.fromSaveInfoString(saveOptString);
+				
 				// create the execution controller 
-				ExecutionController execCtrl = new ExecutionController();
-				execCtrl.setBiObject(biobj);
+				executionController = new ExecutionController();
+				executionController.setBiObject(biobj);
+				
 				// fill parameters 
-				execCtrl.refreshParameters(biobj, docParQueryString);
+				executionController.refreshParameters(biobj, inputParametersQueryString);
 
-				String iterativeParametersString = jdm.getString(docLabel + "_iterative");
+				String iterativeParametersString = jobDataMap.getString(documentInstanceName + "_iterative");
+				logger.debug("Iterative parameter configuration for documet [" + documentLabel + "] is equal to [" + iterativeParametersString + "]");
 				setIterativeParameters(biobj, iterativeParametersString);
-				String loadAtRuntimeParametersString = jdm.getString(docLabel + "_loadAtRuntime");
+				
+				String loadAtRuntimeParametersString = jobDataMap.getString(documentInstanceName + "_loadAtRuntime");
+				logger.debug("Runtime parameter configuration for documet [" + documentLabel + "] is equal to [" + loadAtRuntimeParametersString + "]");
 				setLoadAtRuntimeParameters(biobj, loadAtRuntimeParametersString);
-				String useFormulaParametersString = jdm.getString(docLabel + "_useFormula");
+				
+				String useFormulaParametersString = jobDataMap.getString(documentInstanceName + "_useFormula");
+				logger.debug("Formuula based parameter configuration for documet [" + documentLabel + "] is equal to [" + useFormulaParametersString + "]");
 				setUseFormulaParameters(biobj, useFormulaParametersString);
 
 				retrieveParametersValues(biobj);
 
 				//gets the dataset data about the email address
-				IDataStore dataStore = null;
-				if (sInfo.isUseDataSet()) {
-					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(sInfo.getDataSetLabel());
+				IDataStore emailDispatchDataStore = null;
+				if (saveInfo.isUseDataSet()) {
+					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetLabel());
 					dataSet.setUserProfile(profile);
 					dataSet.loadData();
-					dataStore = dataSet.getDataStore();
+					emailDispatchDataStore = dataSet.getDataStore();
 				}
 				//gets the dataset data about the folder for the document save
-				IDataStore dataStoreFolder = null;
-				if (sInfo.isUseFolderDataSet()) {
-					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(sInfo.getDataSetFolderLabel());
-					dataSet.setUserProfile(profile);
+				IDataStore folderDispatchDataSotre = null;
+				if (saveInfo.isUseFolderDataSet()) {
+					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetFolderLabel());
+				  	dataSet.setUserProfile(profile);
 					dataSet.loadData();
-					dataStoreFolder = dataSet.getDataStore();
+					 folderDispatchDataSotre = dataSet.getDataStore();
 				}
+				
+				eventManager = EventsManager.getInstance();
+				List roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(biobj.getId());
+				
+				String startExecMsg = "${scheduler.startexecsched} " + biobj.getName();	
+				Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles);
+
+				
 				Map tempParMap = new HashMap();
 				BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(biobj.getBiObjectParameters());
 				while (objectParametersIterator.hasNext()) {
 					List parameters = (List) objectParametersIterator.next();
 					biobj.setBiObjectParameters(parameters);
-					
+				
 
 					StringBuffer toBeAppendedToName = new StringBuffer();
 					StringBuffer toBeAppendedToDescription = new StringBuffer(" [");
@@ -187,6 +231,8 @@ public class ExecuteBIDocumentJob implements Job {
 					sdf.applyPattern("dd:MM:yyyy");
 					String dateStr = sdf.format(date);
 					toBeAppendedToName.append("_" + dateStr);
+					
+					
 
 					//check parameters value: if a parameter hasn't value but isn't mandatory the process 
 					//must go on and so hasValidValue is set to true
@@ -215,43 +261,73 @@ public class ExecuteBIDocumentJob implements Job {
 
 
 					// exec the document only if all its parameter are filled
-					if(execCtrl.directExecution()) {
-
-						ExecutionProxy proxy = new ExecutionProxy();
-						proxy.setBiObject(biobj);
-						//String startExecMsgIniPart = msgBuilder.getMessage("scheduler.startexecsched", "component_scheduler_messages");
-						//String startExecMsg = startExecMsgIniPart + " " + biobj.getName();
-						String startExecMsg = "${scheduler.startexecsched} " + biobj.getName();
-						//String endExecMsgIniPart = msgBuilder.getMessage("scheduler.endexecsched", "component_scheduler_messages");
-						//String endExecMsg = endExecMsgIniPart + " " + biobj.getName();
-						String endExecMsg = "${scheduler.endexecsched} " + biobj.getName();
-
-						EventsManager eventManager = EventsManager.getInstance();
-						List roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(biobj.getId());
-						Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles);
-
-						byte[] response = proxy.exec(profile, "SCHEDULATION", null);
-						String retCT = proxy.getReturnedContentType();
-						String fileextension = proxy.getFileExtensionFromContType(retCT);
-
-						eventManager.registerEvent("Scheduler", endExecMsg, "", roles);
-
-						if(sInfo.isSaveAsSnapshot()) {
-							saveAsSnap(sInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+					if(executionController.directExecution()) {
+						
+						logger.debug("Save as snapshot is eual to [" + saveInfo.isSaveAsSnapshot() + "]");
+						logger.debug("Dispatch to a distribution list is eual to [" + saveInfo.isSendToDl() + "]");
+						logger.debug("Dispatch to a java class is eual to [" + saveInfo.isSendToJavaClass() + "]");
+						logger.debug("Dispatch by mail-list is eual to [" + saveInfo.isSendMail() + "]");
+						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isSaveAsDocument() + "]");
+						
+						if(!saveInfo.isSaveAsSnapshot() && !saveInfo.isSendToDl() && !saveInfo.isSendToJavaClass()) {
+							boolean noValidDispatchTarget = true;
+							if(saveInfo.isSendMail()) {
+								String[] recipients = findRecipients(saveInfo, biobj, emailDispatchDataStore);
+								if (recipients != null && recipients.length > 0) {
+									noValidDispatchTarget = false;
+									logger.debug("Found at least one target of type mail");
+								}
+							} 
+							
+							if(saveInfo.isSaveAsDocument()) {
+								List storeInFunctionalities = findFolders(saveInfo, biobj, folderDispatchDataSotre);
+								if(storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
+									noValidDispatchTarget = false;
+									logger.debug("Found at least one target of type folder");
+								}
+							}
+							
+							if(noValidDispatchTarget) {
+								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
+								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " wont be executed");
+								continue;
+							} else {
+								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
+							}
 						}
 
-						if(sInfo.isSaveAsDocument()) {
-							saveAsDocument(sInfo, biobj,jex, response, fileextension, dataStoreFolder, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+						executionProxy = new ExecutionProxy();
+						executionProxy.setBiObject(biobj);
+						
+						
+						
+						
+						logger.debug("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
+						long start = System.currentTimeMillis();
+						byte[] response = executionProxy.exec(profile, "SCHEDULATION", null);
+						String retCT = executionProxy.getReturnedContentType();
+						String fileextension = executionProxy.getFileExtensionFromContType(retCT);
+						long end = System.currentTimeMillis();			
+						long elapsed = (end - start)/1000;
+						logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" executed in [" + elapsed + "]");
+						
+						
+						if(saveInfo.isSaveAsSnapshot()) {
+							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 						}
 
-						if(sInfo.isSendMail()) {
-							sendMail(sInfo, biobj, tempParMap, response, retCT, fileextension, dataStore, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+						if(saveInfo.isSaveAsDocument()) {
+							saveAsDocument(saveInfo, biobj,jobExecutionContext, response, fileextension, folderDispatchDataSotre, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
 						}
-						if(sInfo.isSendToDl()) {
-							sendToDl(sInfo, biobj, response, retCT, fileextension, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
-							if(jex.getNextFireTime()== null){
-								String triggername = jex.getTrigger().getName();
-								List dlIds = sInfo.getDlIds();
+
+						if(saveInfo.isSendMail()) {
+							sendMail(saveInfo, biobj, tempParMap, response, retCT, fileextension, emailDispatchDataStore, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+						}
+						if(saveInfo.isSendToDl()) {
+							sendToDl(saveInfo, biobj, response, retCT, fileextension, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+							if(jobExecutionContext.getNextFireTime()== null){
+								String triggername = jobExecutionContext.getTrigger().getName();
+								List dlIds = saveInfo.getDlIds();
 								it = dlIds.iterator();
 								while(it.hasNext()){
 									Integer dlId = (Integer)it.next();
@@ -261,20 +337,28 @@ public class ExecuteBIDocumentJob implements Job {
 							}
 						}
 
-						if(sInfo.isSendToJavaClass()) {
-							sendToJavaClass(sInfo, biobj, response);
+						if(saveInfo.isSendToJavaClass()) {
+							sendToJavaClass(saveInfo, biobj, response);
 						}
 
 
 					} else {
-						logger.warn("The document with label "+docLabel+" cannot be executed directly, " +
+						logger.warn("The document with label "+documentInstanceName+" cannot be executed directly, " +
 						"maybe some prameters are not filled ");
-						throw new Exception("The document with label "+docLabel+" cannot be executed directly, " +
+						throw new Exception("The document with label "+documentInstanceName+" cannot be executed directly, " +
 						"maybe some prameters are not filled ");
 					}
 				}
+				
+				String endExecMsg = "${scheduler.endexecsched} " + biobj.getName();
+				eventManager.registerEvent("Scheduler", endExecMsg, "", roles);
+
 			}
 
+			
+			long endSchedule = System.currentTimeMillis();
+			long elapsedSchedule = (endSchedule-startSchedule)/1000;
+			logger.info("Scheduled activity succesfully ended in [" + elapsedSchedule +"] sec.");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);
 		} finally {
@@ -1122,8 +1206,6 @@ public class ExecuteBIDocumentJob implements Job {
 			this.contentType = contentType;
 			this.name = name;
 		}
-
-
 	}
 
 }
