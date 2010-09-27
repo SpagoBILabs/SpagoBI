@@ -177,10 +177,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					//save DD nodes
 					if(rootObj != null){						
 						root = deserializeJSONObjectDD(rootObj, new ArrayList<ModelInstance>());	
-						if(root.getId() == null){
+						//if(root.getId() == null){
 							//adds no nodes to save/search
 							modelNodesDD.add(root);
-						}
+						//}
 					}
 					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
 						response = recursiveStart(modelNodesDD, root, response);
@@ -538,8 +538,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		Integer parentIdToSearch = null;
 
 		Integer id = root.getId();
-		if(id != null){
-			//isRoot = false;
+/*		if(id != null){
 			parentIdToSearch = id;
 			recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
 
@@ -548,9 +547,9 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
 			if(nodes != null && !nodes.isEmpty()){
 				ModelInstance modInst = nodes.get(0);//root
-				recurseOverTree(modelInstList, modInst, parentIdToSearch, response, true);
-			}
-		}
+*/				recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
+/*			}
+		}*/
 
 		return response;
 	}
@@ -563,7 +562,10 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			try{
 				oldId =Integer.valueOf(modInstToSave.getGuiId());//incorrect
 			}catch(Throwable t){
-				oldId = null;
+				if(!isToSave && modInstToSave.getId() != null){
+					oldId = modInstToSave.getId();
+				}else
+					oldId = null;
 			}
 		}
 		modInstToSave.setParentId(parentId);				
@@ -577,7 +579,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 			response.append(modInstToSave.getGuiId(), "OK");
 
-			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);//scazza qui!!!!invece di doughter estrae nonno
+			List<ModelInstance> nodes = findNextNodes(modelInstList, oldId);
 
 			if(nodes == null || nodes.isEmpty()){
 				//try another way
@@ -631,7 +633,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					nodes.add(modInstToSave);
 				}
 			}else{
-				if(modInstToSave.getParentId() != null &&(modInstToSave.getParentId().intValue() == parentIDToSearch.intValue())
+				if(modInstToSave.getParentId() != null 
+						&&(modInstToSave.getParentId().intValue() == parentIDToSearch.intValue())
 						&& modInstToSave.getGuiId().matches("^\\d+$")){
 					nodes.add(modInstToSave);
 				}

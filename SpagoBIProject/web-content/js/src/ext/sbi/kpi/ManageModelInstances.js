@@ -1097,8 +1097,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiModelType.onSetValue( 'kpiinst', true);
 			this.kpiInstFieldset.doLayout();
 
-		
-
 			node.attributes.toSave = true;
 		}
 	}
@@ -1156,13 +1154,18 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 			return node;
 	}
-	, cleanAllUnsavedNodes: function() {
-		
+	, cleanAllUnsavedNodes: function() {		
 		Ext.each(this.nodesToSave, function(node, index) {
-			node.attributes.toSave = false;  
+			node.attributes.toSave = false; 
 					
 		});
 		this.nodesToSave = new Array();
+		
+		Ext.each(this.droppedSubtreeToSave, function(node, index) {
+			node.attributes.toSave = false; 
+					
+		});
+		this.droppedSubtreeToSave = new Array();
 	}    
 	,dropNodeBehavoiur: function(e) {
   
@@ -1195,7 +1198,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				   importSub = false;
 				   copiedNode = new Ext.tree.TreeNode(e.dropNode.attributes); 
 			   }
-			   //copiedNode.setText(e.dropNode.attributes.name)
 
 			   e.cancel = true;
 			   //if parents have same depth --> enable kind of drop else forbid
