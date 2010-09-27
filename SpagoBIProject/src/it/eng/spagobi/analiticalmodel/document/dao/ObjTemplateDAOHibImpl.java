@@ -27,16 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -47,6 +37,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjTemplateDAO {
 
@@ -324,7 +323,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			} else {
 				nextProg = new Integer(maxProg.intValue() + 1);
 			}
-
+			
 			// store the object template
 			SbiObjTemplates hibObjTemplate = new SbiObjTemplates();
 			//check if id is already defined. In positive case update template else insert a new one
@@ -351,7 +350,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		} catch(HibernateException he) {
 			logException(he);
 			if (tx != null) tx.rollback();	
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");  
+			throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate .getBiobjId() + "]", he);
+			//throw new EMFUserError(EMFErrorSeverity.ERROR, "100");  
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen()) aSession.close();
