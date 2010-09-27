@@ -538,18 +538,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		Integer parentIdToSearch = null;
 
 		Integer id = root.getId();
-/*		if(id != null){
-			parentIdToSearch = id;
-			recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
+		recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
 
-		}else{
-			//if new root
-			List<ModelInstance> nodes = findRootNode(modelInstList, parentIdToSearch);
-			if(nodes != null && !nodes.isEmpty()){
-				ModelInstance modInst = nodes.get(0);//root
-*/				recurseOverTree(modelInstList, root, parentIdToSearch, response, false);
-/*			}
-		}*/
 
 		return response;
 	}
@@ -573,6 +563,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		try {
 			Integer genId = modInstToSave.getId();
 			if(isToSave){
+
 				genId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modInstToSave);
 				modInstToSave.setId(genId);
 			}
@@ -599,6 +590,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 		return response;
 	}
+	/*
 	private List<ModelInstance> findRootNode(List<ModelInstance> modelInstList, Integer parentIDToSearch){
 		//System.out.println(parentIDToSearch);
 		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
@@ -621,7 +613,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 		}
 		return nodes;
-	}
+	}*/
 	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer parentIDToSearch){
 		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
 		for(int i=0; i< modelInstList.size(); i++){			
@@ -813,8 +805,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				modelInst.setKpiInstance(kpiInstance);
 
 				// add the udpValues to Model Instance Definition, that will be serialized
-				List<UdpValue> udpValues = new ArrayList<UdpValue>();	
-				JSONArray jsonArray = obj.getJSONArray("udpValues");
+				List<UdpValue> udpValues = new ArrayList<UdpValue>();
+				JSONArray jsonArray = null;
+				try{
+					jsonArray = obj.getJSONArray("udpValues");
+				}catch(Throwable t){
+					jsonArray = new JSONArray();
+				}
 				logger.debug("found udpValues Array containing number of Udp "+jsonArray.length());
 				for(int i=0; i< jsonArray.length(); i++){
 					JSONObject objJS = (JSONObject)jsonArray.get(i);
