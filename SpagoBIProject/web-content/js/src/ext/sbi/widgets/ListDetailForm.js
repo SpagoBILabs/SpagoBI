@@ -300,16 +300,18 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
         }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
- 	    this.tbSave = new Ext.Toolbar({
- 	    	buttonAlign : 'right', 	    	
- 	    	items:[new Ext.Toolbar.Button({
+        this.tbSaveButton = new Ext.Toolbar.Button({
  	            text: LN('sbi.generic.update'),
  	            iconCls: 'icon-save',
  	            handler: this.save,
  	            width: 30,
  	            scope: this
- 	            })
- 	    	]
+ 	            });
+        
+ 	    this.tbSave = new Ext.Toolbar({
+ 	    	buttonAlign : 'right', 	 
+ 	    	height: 28,
+ 	    	items:[this.tbSaveButton]
  	    });
  	    
 

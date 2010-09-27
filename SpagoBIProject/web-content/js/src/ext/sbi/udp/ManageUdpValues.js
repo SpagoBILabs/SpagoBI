@@ -49,8 +49,9 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	// create the editor grid
 	    var grid = {
 	    	xtype: 'grid',
-	        title: 'Udp Values',
+	        //title: 'Udp Values',
 	        id: 'propGrid',
+	        width: 380,
 	        autoHeight: true,
 	        source: config.udpEmptyList,
 	        propertyNames: {
