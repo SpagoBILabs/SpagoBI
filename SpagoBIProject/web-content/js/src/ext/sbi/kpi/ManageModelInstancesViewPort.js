@@ -437,8 +437,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		
 		if(rec.get('modelInstId') == ''){
 			this.manageModelInstances.newRootNode = newroot;
-			this.saveModelRoot(rec);
-			
+
 		}else{
 			this.manageModelInstances.existingRootNode = newroot;
 		}
