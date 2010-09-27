@@ -379,6 +379,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  title: this.listTitle,
 		              bbar: pagingBar,
 	                  tbar: this.tb,
+	                  //stripeRows: true,
 	                  enableDragDrop: true,
 	                  ddGroup: this.ddGroup,
 	                  listeners: {
