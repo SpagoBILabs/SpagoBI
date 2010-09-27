@@ -277,8 +277,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			
 	      			if(content !== undefined && content !== null){
+	      				
+	      				rec.data.modelInstId = content.root[0];
+	      				rec.data.toSave = false;
+	      				rec.commit();
+	      				
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 	      				
+
 	      				this.manageModelInstances.rootNodeText = rec.get('text');
 	      				this.manageModelInstances.rootNodeId = content.root[0];
 	      				this.manageModelInstances.mainTree.setRootNode(newroot);
@@ -293,7 +299,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.existingRootNode = newroot;
 	      				this.manageModelInstances.newRootNode = null;
 	      				this.lastRecSelected = rec;
-
+	      				
       					alert(LN('sbi.generic.resultMsg'));
 
 	      			}else{
@@ -302,13 +308,11 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				}else{
 					this.manageModelInstances.cleanAllUnsavedNodes();
       				alert(LN('sbi.generic.resultMsg'));
-      				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
+      				this.modelInstancesGrid.mainElementsStore.load();
 				}
 
 				this.manageModelInstances.newRootNode = null;
-
-				
-      			return;
+      			return true;
 			},
 			scope : this,
 			failure : function(response) {
@@ -342,6 +346,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.rootNodeText = rec.get('text');
 	      				this.manageModelInstances.rootNodeId = content.root[0];
 	      				
+	      				rec.data.modelInstId = content.root[0];
+	      				rec.data.toSave = false;
+	      				rec.commit();
+	      				
 	      				//main instances tree - center
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 	      				newroot.attributes.modelInstId = content.root[0];
@@ -353,6 +361,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.existingRootNode = newroot;
 	      				this.manageModelInstances.newRootNode = null;
 	      				this.lastRecSelected = rec;
+	      				
+
 	      			
 	      			}else{
 	      				alert(LN('sbi.generic.savingItemError'));
@@ -361,13 +371,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 					this.manageModelInstances.cleanAllUnsavedNodes();
       				alert(LN('sbi.generic.resultMsg'));
       				this.referencedCmp.modelInstancesGrid.mainElementsStore.load();
+      				return true;
 				}
 				this.manageModelInstances.mainTree.doLayout();
 				this.modelInstancesGrid.getView().refresh();
 				this.modelInstancesGrid.doLayout();
 
-				
-      			return;
+      			return true;
 			},
 			scope : this,
 			failure : function(response) {
@@ -419,9 +429,11 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 		this.manageModelInstances.mainTree.setRootNode(newroot);
 		//if new model instance
+		
 		if(rec.get('modelInstId') == ''){
 			this.manageModelInstances.newRootNode = newroot;
 			this.saveModelRoot(rec);
+			
 		}else{
 			this.manageModelInstances.existingRootNode = newroot;
 		}
