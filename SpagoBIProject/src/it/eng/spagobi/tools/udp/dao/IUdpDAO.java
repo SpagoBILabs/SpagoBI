@@ -64,6 +64,10 @@ public interface IUdpDAO {
     public Udp loadByLabelAndFamily(String label, String family) throws EMFUserError;
 
     public Udp loadById(Integer id);
+    
+    public List<SbiUdp> loadPagedUdpList(Integer offset, Integer fetchSize)throws EMFUserError;
+	
+	public Integer countUdp()throws EMFUserError;
 
 }
 

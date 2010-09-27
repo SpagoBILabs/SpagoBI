@@ -71,6 +71,11 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 	private final String UDP_TYPES = "UDP_TYPE";
 	private final String UDP_FAMILIES = "UDP_FAMILY";
 	
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 16;
+	
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -90,10 +95,22 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 		
 		if(serviceType != null && serviceType.equals(UDP_LIST)){
 			try {
-				List<SbiUdp> udpList = udpDao.findAll();
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalNum = udpDao.countUdp();
+				
+				List<SbiUdp> udpList = udpDao.loadPagedUdpList(start,limit);
 				logger.debug("Loaded udp list");
 				JSONArray udpJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(udpList,locale);
-				JSONObject udpResponseJSON = createJSONResponseUdp(udpJSON);
+				JSONObject udpResponseJSON = createJSONResponseUdp(udpJSON, totalNum);
 
 				writeBackToClient(new JSONSuccess(udpResponseJSON));
 
@@ -202,13 +219,14 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 	 * @return
 	 * @throws JSONException
 	 */
-	private JSONObject createJSONResponseUdp(JSONArray rows)
+	private JSONObject createJSONResponseUdp(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
 		JSONObject results;
 
 		results = new JSONObject();
+		results.put("total", totalResNumber);
 		results.put("title", "Udp");
-		results.put("samples", rows);
+		results.put("rows", rows);
 		return results;
 	}
 }
