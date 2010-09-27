@@ -77,8 +77,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.services['manageDatasetsService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_DATASETS_ACTION'
 		, baseParams: paramsDatasetList
-	});
-	
+	});	
 	
 	var singleSelection = config.singleSelection;
 	var tabPanelWidth = config.tabPanelWidth;
@@ -102,8 +101,6 @@ Sbi.kpi.ManageKpis = function(config) {
 	
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = singleSelection;
-	
-	
 
 	var c = Ext.apply({}, config || {}, {});
 
@@ -192,16 +189,14 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.kpis.listTitle');
 		this.configurationObject.dragndropGroup ='grid2treeAndDetail';
-		this.initTabItems();
-		
-		
+		this.initTabItems();			
     }
 	, modifyToolbar : function(tabpanel, panel){
 		var itemId = panel.getItemId();
 		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
-			this.tbSave.hide();
+			this.tbSaveButton.hide();
 		}else{
-			this.tbSave.show();
+			this.tbSaveButton.show();
 		}
 	}
 	,initTabItems: function(){
@@ -527,7 +522,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		    	title: LN('sbi.generic.udpValues')
 		        , itemId: 'upd-values'
 		        , width: 350
-		        , items: {
+		        , items: this.udpValueGrid  
+		        , layout: 'fit'
+		        , autoScroll  : true
+		       /* {
 			   		 id: 'upd-values-detail',   	
 		 		   	 itemId: 'upd-values-detail',   	              
 		 		   	// columnWidth: 0.4,
@@ -548,7 +546,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             items: [
 		                    this.udpValueGrid   
 		                     ]
-		    	}		    	
+		    	}	*/	    	
 		    },this.kpiLinksTab];
  	   
  	   
@@ -813,33 +811,29 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             layout:'fit',
 			frame: true,
 	        singleSelect : true,
-	        ownerCt : this,
+	        //ownerCt : this,
 	        scope:this
 	    }); 
 
 		
-    	this.kpiLinksTab = new Ext.Panel({
+    	this.kpiLinksTab = {
 		        title: LN('sbi.kpis.linksTitle')
 		        , layout: 'fit'
+		        , autoHeight : true
 		        , autoScroll: true
 		        , itemId: 'kpiLinks'
 		        , scope: this
 	            , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
 			    , border: false
-		        , items: [
-		            this.kpiLinksGrid
-		        ]
-		    });
+		        , items: this.kpiLinksGrid
+		        
+		    };
     	
     	this.kpiLinksGrid.on('select', this.launchKpisWindow, this);
     	this.kpiLinksGrid.on('delete', this.deleteKpiLink, this);
  
 	}
-/*	, refillKpiLinks  : function(field , newval, olval) {
-		var rec = this.rowselModel.getSelected();
-		this.fillKpiLinks(null, rec);
-		
-	}*/
+
 	, fillKpiLinks : function(row, rec) {
 		
 		var kpiSelected = rec.data.id;
