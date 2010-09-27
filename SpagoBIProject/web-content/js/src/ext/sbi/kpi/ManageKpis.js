@@ -77,7 +77,8 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.services['manageDatasetsService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_DATASETS_ACTION'
 		, baseParams: paramsDatasetList
-	});	
+	});
+	
 	
 	var singleSelection = config.singleSelection;
 	var tabPanelWidth = config.tabPanelWidth;
@@ -740,6 +741,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		       ,renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
 		       }
+		       , resizable: true
 	        }, this); 
   
 	    this.deleteLinkColumn = new Ext.grid.ButtonColumn({
@@ -756,10 +758,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		       ,renderer : function(v, p, record){
 		           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
 		       }
+		       , resizable: true
 	     });
 		var linkColItems = [
-			{id:'id',header: LN('sbi.kpis.parameter'), width: 160, sortable: true, locked:false, dataIndex: 'parameterName'},
-			{header:  LN('sbi.generic.kpi'), width: 160, sortable: true}
+			{id:'id',header: LN('sbi.kpis.parameter'), autoWidth: true, sortable: true, locked:false, dataIndex: 'parameterName', resizable: true},
+			{header:  LN('sbi.generic.kpi'), autoWidth: true, sortable: true, resizable: true}
 		];
 
     	this.parameterStore = new Ext.data.JsonStore({	
@@ -784,9 +787,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			cm: linkColModel,
 			sm: this.rowlinkselModel,
 			plugins: linkspluginsToAdd ,
-            width: 380,
+            //width: 380,
+			autoWidth: true,
             layout:'fit',
 			frame: true,
+			forceFit: true,
 	        singleSelect : true,
 	        //ownerCt : this,
 	        scope:this
@@ -800,7 +805,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		        , autoScroll: true
 		        , itemId: 'kpiLinks'
 		        , scope: this
-	            , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
 			    , border: false
 		        , items: this.kpiLinksGrid
 		        
