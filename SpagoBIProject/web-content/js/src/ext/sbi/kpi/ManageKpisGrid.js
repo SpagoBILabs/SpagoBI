@@ -104,8 +104,8 @@ Ext.extend(Sbi.kpi.ManageKpisGrid, Sbi.widgets.ListGridPanel, {
 		                    	          ];
 
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'}
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 137, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 135, sortable: true, dataIndex: 'code'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');

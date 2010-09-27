@@ -195,7 +195,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				                	region:'east', 
 				                	collapsed: true,
 				                	collapseMode:'mini',
-				                    width: 300,
+				                    width: 280,
 				                    height: 500,
 				                    minSize: 100,
 				                    layout: 'fit',
