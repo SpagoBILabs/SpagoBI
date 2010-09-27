@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -289,7 +290,7 @@ public class ExecuteBIDocumentJob implements Job {
 							
 							if(noValidDispatchTarget) {
 								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
-								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " wont be executed");
+								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " not executed: no valid dispatch target");
 								continue;
 							} else {
 								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
@@ -302,7 +303,7 @@ public class ExecuteBIDocumentJob implements Job {
 						
 						
 						
-						logger.debug("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
+						logger.info("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
 						long start = System.currentTimeMillis();
 						byte[] response = executionProxy.exec(profile, "SCHEDULATION", null);
 						String retCT = executionProxy.getReturnedContentType();
@@ -684,7 +685,7 @@ public class ExecuteBIDocumentJob implements Job {
 			newbiobj.setVisible(new Integer(1));
 			newbiobj.setFunctionalities(storeInFunctionalities);
 			IBIObjectDAO objectDAO = DAOFactory.getBIObjectDAO();
-
+			 Timestamp aoModRecDate;
 			BIObject biobjexist = objectDAO.loadBIObjectByLabel(label);
 			if(biobjexist==null){
 				objectDAO.insertBIObject(newbiobj, objTemp);
@@ -692,8 +693,8 @@ public class ExecuteBIDocumentJob implements Job {
 				newbiobj.setId(biobjexist.getId());
 				objectDAO.modifyBIObject(newbiobj, objTemp);
 			}
-		} catch (Exception e) {
-			logger.error("Error while saving schedule result as new document",e);
+		} catch (Throwable t) {
+			logger.error("Error while saving schedule result as new document", t );
 		}finally{
 			logger.debug("OUT");
 		}
