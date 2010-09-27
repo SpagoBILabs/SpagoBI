@@ -279,6 +279,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      			if(content !== undefined && content !== null){
 	      				
 	      				rec.data.modelInstId = content.root[0];
+	      				rec.data.label = content.rootlabel[0];
 	      				rec.data.toSave = false;
 	      				rec.commit();
 	      				
@@ -292,7 +293,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 	      				
 	      				newroot.attributes.modelInstId = content.root[0];
-
+	      				newroot.attributes.label = content.rootlabel[0];
+	      				
 	      				newroot.attributes.isNewRec = false;
 	      				newroot.attributes.toSave = false;
 	      				///not as root
@@ -347,12 +349,15 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.rootNodeId = content.root[0];
 	      				
 	      				rec.data.modelInstId = content.root[0];
+	      				rec.data.label = content.rootlabel[0];
 	      				rec.data.toSave = false;
 	      				rec.commit();
 	      				
 	      				//main instances tree - center
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 	      				newroot.attributes.modelInstId = content.root[0];
+	      				newroot.attributes.label = content.rootlabel[0];
+	      				
 	      				newroot.attributes.isNewRec = false;
 	      				newroot.attributes.toSave = false;
 	      				this.manageModelInstances.mainTree.setRootNode(newroot);
