@@ -83,6 +83,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		
 		this.configurationObject.idKey = 'modelInstId';
 		this.configurationObject.referencedCmp = this.referencedCmp;
+		
 
 	    this.configurationObject.fields = ['modelInstId'
 		                     	          , 'name'
@@ -137,6 +138,13 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 
 
 	, deleteSelectedItem: function(itemId, index) {
+		//from tree node
+		var node = this.refTree.manageModelInstances.mainTree.getSelectionModel().getSelectedNode();
+		if(itemId === undefined){
+			itemId = node.attributes.modelInstId;
+			
+		}
+
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm'),
 				LN('sbi.generic.confirmDelete'),            

@@ -283,7 +283,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				rec.data.label = content.rootlabel[0];
 	      				rec.data.toSave = false;
 	      				rec.commit();
-	      				
+	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
 	      				
 
@@ -343,7 +343,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				
       					this.manageModelInstances.cleanAllUnsavedNodes();
       					alert(LN('sbi.generic.resultMsg'));
-	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
+	      				
 	      				this.modelInstancesGrid.getSelectionModel().selectRecords([rec]);
 	      				//if everithing ok--> use it to display tree
 	      				
@@ -354,6 +354,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				rec.data.label = content.rootlabel[0];
 	      				rec.data.toSave = false;
 	      				rec.commit();
+	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
 	      				
 	      				//main instances tree - center
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
