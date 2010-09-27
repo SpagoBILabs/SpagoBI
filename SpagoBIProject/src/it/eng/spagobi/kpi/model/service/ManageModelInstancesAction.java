@@ -368,6 +368,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				Integer miId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
 				response.append("root", miId);
+				response.append("rootlabel", modelInstNode.getLabel());
 
 				logger.debug("Loaded model tree");		
 
@@ -504,6 +505,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 					if(parentId == null){
 						response.append("root",modelInstId.intValue()+"");
+						response.append("rootlabel", modelInstNode.getLabel());
 					}
 				} catch (EMFUserError e) {
 					response.append("tree", "KO");
