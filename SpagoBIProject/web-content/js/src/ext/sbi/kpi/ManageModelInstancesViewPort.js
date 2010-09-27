@@ -479,7 +479,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
  	    	buttonAlign : 'right',
  	    	items:[new Ext.Toolbar.Button({
  	            text: LN('sbi.generic.update'),
- 	            //iconCls: 'icon-add',
+ 	            iconCls: 'icon-save',
  	            handler: this.saveResources,
  	            width: 30,
  	            scope: this
