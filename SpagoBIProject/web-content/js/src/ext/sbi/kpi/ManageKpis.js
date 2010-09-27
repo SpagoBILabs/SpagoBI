@@ -488,8 +488,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 		             },
 		             items: [detailFieldId, detailFieldName, detailFieldCode, 
-		                     detailFieldDescr, detailFieldDataset,
-		                     this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight]
+		                     detailFieldDescr,  detailFieldDataset,
+		                    this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight]
 		    	}
 		    },{
 		    	title: LN('sbi.generic.advanced')
@@ -515,8 +515,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             items: [detailFieldInterpretation, detailFieldAlgDesc, detailFieldTargetAud, detailFieldInputAttr, 
 		                     detailFieldModelReference, detailFieldKpiType,
 		                     detailFieldMeasureType, detailFieldMetricScaleType ]
-		    	}
-		
+		    	}		
 		    
 		    },{
 		    	title: LN('sbi.generic.udpValues')
@@ -524,29 +523,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		        , width: 350
 		        , items: this.udpValueGrid  
 		        , layout: 'fit'
-		        , autoScroll  : true
-		       /* {
-			   		 id: 'upd-values-detail',   	
-		 		   	 itemId: 'upd-values-detail',   	              
-		 		   	// columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             scope: this,
-		             labelWidth: 90,
-		             defaults: {width: this.fieldsDefaultWidth, border:false},    
-		             defaultType: 'textfield',
-		             layout: 'fit',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-		             border: false,
-		             style: {
-		                 "margin-left": "10px", 
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [
-		                    this.udpValueGrid   
-		                     ]
-		    	}	*/	    	
+		        , autoScroll  : true   	
 		    },this.kpiLinksTab];
  	   
  	   

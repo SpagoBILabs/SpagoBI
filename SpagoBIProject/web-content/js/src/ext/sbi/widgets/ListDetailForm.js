@@ -313,12 +313,12 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    	height: 28,
  	    	items:[this.tbSaveButton]
  	    });
- 	    
 
  	   this.tabs = new Ext.TabPanel({
            enableTabScroll : true
-           , tabPosition:'top'
            , activeTab : 0
+           , tabPosition: 'top'
+           //, columnWidth : 1
            , autoScroll : true
            , deferredRender: false
            , width: this.tabPanelWidth         
