@@ -114,7 +114,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	resourcesTab : null,
 	centerTabbedPanel: null,
 	viewport: null,
-	lastRecSelected: null
+	lastRecSelected: null,
+	isNewRec: true
 
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
@@ -226,7 +227,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 
 	,sendSelectedItem: function(grid, rowIndex, e){
 	
-		var rec = grid.getSelectionModel().getSelected();
+		var rec = this.modelInstancesGrid.getSelectionModel().getSelected();
 
 		//if unsaved changes
 		if(this.manageModelInstances.nodesToSave.length > 0){
@@ -301,6 +302,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.existingRootNode = newroot;
 	      				this.manageModelInstances.newRootNode = null;
 	      				this.lastRecSelected = rec;
+	      				this.isNewRec = false;
 	      				
       					alert(LN('sbi.generic.resultMsg'));
 
@@ -437,6 +439,9 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		
 		if(rec.get('modelInstId') == ''){
 			this.manageModelInstances.newRootNode = newroot;
+			if(this.isNewRec){
+				this.saveModelRoot(rec);
+			}
 
 		}else{
 			this.manageModelInstances.existingRootNode = newroot;
