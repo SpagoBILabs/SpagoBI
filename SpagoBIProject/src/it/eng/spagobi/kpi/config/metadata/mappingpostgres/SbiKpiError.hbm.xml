@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiError" table="SBI_KPI_ERROR" >
+        <id name="kpiErrorId" type="integer">
+            <column name="KPI_ERROR_ID" />
+            <generator class="native">
+            	<param name="sequence">SBI_KPI_ERROR_SEQ</param>
+            </generator>        
+        </id>
+        <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" fetch="select">
+            <column name="KPI_MODEL_INST_ID" not-null="true"/>
+        </many-to-one>
+        <property name="userMessage" type="string">
+            <column name="USER_MSG" length="1000" />
+        </property>
+        <property name="fullMessage" type="string">
+            <column name="FULL_MSG" length="10000" />
+        </property>
+        <property name="tsDate" type="timestamp">
+            <column name="TS_DATE" length="19" />
+        </property>
+        <property name="labelModInst" type="string">
+            <column name="LABEL_MOD_INST" length="100"  />
+        </property>
+        <property name="parameters" type="string">
+            <column name="PARAMETERS" length="1000" />
+        </property>
+    </class>
+</hibernate-mapping>
