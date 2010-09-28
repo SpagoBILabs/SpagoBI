@@ -277,6 +277,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		    {  	title: LN('sbi.generic.udpValues')
 		        , itemId: 'upd-values'
 		        , width: 350
+		        , deferredRender : false
 		        , items: this.udpValueGrid  
 		        , layout: 'fit'
 		        , autoScroll  : true   	

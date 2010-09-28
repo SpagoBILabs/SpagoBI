@@ -51,6 +51,7 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	        width: 380,
 	        autoHeight: true,
 	        source: config.udpEmptyList,
+	        deferRowRender : false,
 	        propertyNames: {
 	            tested: 'QA',
 	            borderWidth: 'Border Width'
