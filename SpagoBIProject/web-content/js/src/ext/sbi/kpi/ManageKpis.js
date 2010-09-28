@@ -566,6 +566,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
 		var storeUdps = this.udpValueGrid.getStore();
 		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
+		var record;
 		
 		if(idRec == 0 || idRec == null || idRec === ''){
 			newRec = new Ext.data.Record({
@@ -588,7 +589,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			});	  
 			
 		}else{
-			var record;
+			
 			var length = this.mainElementsStore.getCount();
 			for(var i=0;i<length;i++){
 	   	        var tempRecord = this.mainElementsStore.getAt(i);
@@ -668,7 +669,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
 								this.rowselModel.selectLastRow(true);
 				            }
-			      			record.commit();
+			      			if(record !== undefined){
+				      			record.commit();
+				      		}
 			      			// commit changes on store udpValue
 			      			if(storeUdps){
 			      				storeUdps.commitChanges();
@@ -910,16 +913,17 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 				if (response !== undefined) {		
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined) {	  
-	      				//alert(content.id);
 	      				var record = this.rowlinkselModel.getSelected();
-	      				record.set('relId', content.id);
-	      				record.commit();
-		      			Ext.MessageBox.show({
-	                        title: LN('sbi.generic.result'),
-	                        msg: LN('sbi.generic.resultMsg'),
-	                        width: 200,
-	                        buttons: Ext.MessageBox.OK
-		      			});
+	      				if(record !== undefined){
+		      				record.set('relId', content.id);
+		      				record.commit();
+			      			Ext.MessageBox.show({
+		                        title: LN('sbi.generic.result'),
+		                        msg: LN('sbi.generic.resultMsg'),
+		                        width: 200,
+		                        buttons: Ext.MessageBox.OK
+			      			});
+	      				}
 	      			}
 				 } 	
 	          }
