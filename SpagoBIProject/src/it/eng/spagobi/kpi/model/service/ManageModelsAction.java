@@ -24,11 +24,13 @@ package it.eng.spagobi.kpi.model.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
-import it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl;
+import it.eng.spagobi.tools.udp.bo.Udp;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -66,6 +68,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	private final String MEASURE_DOMAIN_TYPE = "MEASURE_TYPE";
 	private final String THRESHOLD_DOMAIN_TYPE = "THRESHOLD_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
+	private final String UDP_VALUE_LIST = "udpValuesAtt";
 	
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
@@ -227,7 +230,12 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				getSessionContainer().setAttribute("metricScaleTypesList", metricScaleTypesList);
 				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
-				
+				// Add Udp Values to sessionContainer
+				List udpModelList = DAOFactory.getUdpDAO().loadAllByFamily("MODEL");
+				getSessionContainer().setAttribute("udpModelList", udpModelList);
+				List udpKpiList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
+				getSessionContainer().setAttribute("udpKpiList", udpKpiList);
+
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -301,6 +309,41 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 					//nothing
 					model.setKpiId(null);
 				}
+				// add the udpValues to Model Instance Definition, that will be serialized
+				List<UdpValue> udpValues = new ArrayList<UdpValue>();
+				JSONArray jsonArray = null;
+				try{
+					jsonArray = obj.getJSONArray("udpValues");
+				}catch(Throwable t){
+					jsonArray = new JSONArray();
+				}
+				logger.debug("found udpValues Array containing number of Udp "+jsonArray.length());
+				for(int j=0; j< jsonArray.length(); j++){
+					JSONObject objJS = (JSONObject)jsonArray.get(j);
+					// only label and value information are retrieved by JSON object
+					String labelJ = objJS.getString("name");	
+					String value = objJS.getString("value");	
+
+					UdpValue udpValue = new UdpValue();
+
+					// reference id is the kpi id
+					udpValue.setLabel(obj.getString("label"));
+					udpValue.setValue(value);
+					udpValue.setReferenceId(model.getId());
+
+					// get the UDP to get ID (otherwise could be taken in js page)
+					Udp udp = DAOFactory.getUdpDAO().loadByLabelAndFamily(labelJ, "MODEL");
+					Domain familyDomain = DAOFactory.getDomainDAO().loadDomainById(udp.getFamilyId());
+					logger.debug("Udp value assigning value "+value+" to UDP with label "+udp.getLabel()+ " and Model Instance with label "+ model.getLabel());
+					udpValue.setLabel(udp.getLabel());
+					udpValue.setName(udp.getName());
+					udpValue.setFamily(familyDomain != null ? familyDomain.getValueCd() : null);
+					udpValue.setUdpId(udp.getUdpId());
+
+					udpValues.add(udpValue);
+				}
+				model.setUdpValues(udpValues);
+				
 				String value = obj.getString("toSave");
 			}catch(Throwable t){
 				logger.debug("Deserialization error on node: "+guiId);

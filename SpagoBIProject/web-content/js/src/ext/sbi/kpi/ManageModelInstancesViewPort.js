@@ -525,7 +525,6 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			Ext.getCmp("resources-grid-checks").selModel.clearSelections();
 
 		    var arRec = Ext.getCmp("resources-grid-checks").store.queryBy(function(record,id){
-		    	//alert(Ext.util.JSON.encode( record.data ));	
 		    	if(record.data.modelInstId !== undefined && record.data.modelInstId != ''){
 		    		return true;
 		    	}

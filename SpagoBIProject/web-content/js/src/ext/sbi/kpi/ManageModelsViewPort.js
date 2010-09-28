@@ -46,12 +46,15 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageModelsViewPort = function(config) { 
 	
 	var conf = config;
+	var d = conf;
+	d.udpEmptyList = conf.udpModelEmptyListJSON;
+	d.udpList = conf.udpModelListCdt ;
 
 	//DRAW center element
-	this.manageModels = new Sbi.kpi.ManageModels(conf, this);
+	this.manageModels = new Sbi.kpi.ManageModels(d, this);
 
 	//DRAW west element
-    this.modelsGrid = new Sbi.kpi.ManageModelsGrid(conf, this.manageModels);
+    this.modelsGrid = new Sbi.kpi.ManageModelsGrid(d, this.manageModels);
    //DRAW east element
     conf.singleSelection = false;
     conf.tabPanelWidth = 260;
@@ -59,8 +62,12 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 	conf.textAreaWidth = 120;
 	conf.fieldsDefaultWidth= 120;
 	conf.gridColumnNumber = 2;
+
+	var c = conf;
+	c.udpEmptyList = conf.udpKpiEmptyListJSON ;
+	c.udpList = conf.udpKpiListCdt;
 	
-    this.manageKpis = new Sbi.kpi.ManageKpis(conf);
+    this.manageKpis = new Sbi.kpi.ManageKpis(c);
 	
 	var viewport = {
 		layout: 'border'

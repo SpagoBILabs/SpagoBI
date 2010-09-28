@@ -29,7 +29,9 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
+import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
+import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
@@ -289,7 +291,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			if (hibValueUDP == null) return null;
 			toReturn = toUdpValue(hibValueUDP);				
 
-			tx.commit();
+			//tx.commit();
 
 		} catch (HibernateException e) {
 			if( tx != null && tx.isActive() ){
@@ -387,8 +389,8 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 		SbiKpi sbiKpi = null;
 		Kpi kpi = null;
-		SbiKpiModelInst sbiKpiModelInst = null;
-		ModelInstance modelInstanceNode = null;
+		SbiKpiModel sbiKpiModel = null;
+		Model modelNode = null;
 		boolean isKpi = false;
 		if(family.equalsIgnoreCase("KPI")){
 			isKpi = true;
@@ -398,15 +400,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		}
 		else if(family.equalsIgnoreCase("MODEL")){
 			isKpi = false;
-			sbiKpiModelInst = (SbiKpiModelInst)sbiObject;
-			modelInstanceNode = (ModelInstance)object;
+			sbiKpiModel = (SbiKpiModel)sbiObject;
+			modelNode = (Model)object;
 			logger.debug("model udp attributes");
 		}
 		else {
 			logger.debug("family not recognied "+ family);
 			return;
 		}
-
 
 		// if there are values associated 
 		List<UdpValue> udpValues = null;
@@ -416,8 +417,8 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			idObject = sbiKpi.getKpiId();
 		}
 		else{
-			udpValues = modelInstanceNode.getUdpValues();			
-			idObject = sbiKpiModelInst.getKpiModelInst();
+			udpValues = modelNode.getUdpValues();			
+			idObject = sbiKpiModel.getKpiModelId();
 		}		
 		if(udpValues != null){
 			// an udp value is never erased for a kpi once memorized, that is because by user interface integer have no null value and boolean too
@@ -431,8 +432,6 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 				SbiUdpValue sbiUdpValue  = null;
 				SbiUdpValue sbiUdpValueToClose  = null;
 
-
-
 				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idObject, udpValue.getUdpId(), family.toUpperCase());						
 				boolean inserting = true;
 				boolean openNewOne = true;
@@ -443,8 +442,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 				else{
 					inserting = false;
 					// check if value has changed, if not so don't open a new one
-					SbiUdpValue sbiUdpValueRetrieved = (SbiUdpValue) aSession.load(SbiUdpValue.class,
-							already.getUdpValueId());												
+					SbiUdpValue sbiUdpValueRetrieved = (SbiUdpValue) aSession.load(SbiUdpValue.class,already.getUdpValueId());												
 
 					if(udpValue.getValue() != null &&  udpValue.getValue().equals(already.getValue())){
 						// same value as before, simple update

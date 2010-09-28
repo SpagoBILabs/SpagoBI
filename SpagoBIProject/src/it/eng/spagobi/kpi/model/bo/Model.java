@@ -1,5 +1,7 @@
 package it.eng.spagobi.kpi.model.bo;
 
+import it.eng.spagobi.tools.udp.bo.UdpValue;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,14 @@ public class Model implements Serializable{
 	private Integer kpiId = null;// id of Kpi
 	private String label = null;// unique label of the model
 	
+	List udpValues = new ArrayList<UdpValue>();
+	
+	public List getUdpValues() {
+		return udpValues;
+	}
+	public void setUdpValues(List udpValues) {
+		this.udpValues = udpValues;
+	}
 	
 	public Integer getKpiId() {
 		return kpiId;

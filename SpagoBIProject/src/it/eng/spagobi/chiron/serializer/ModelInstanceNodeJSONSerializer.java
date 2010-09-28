@@ -6,13 +6,9 @@ import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
-import it.eng.spagobi.tools.udp.bo.UdpValue;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ModelInstanceNodeJSONSerializer implements Serializer {
@@ -35,7 +31,6 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String MODEL_TYPE = "modelType";
 	private static final String MODEL_TYPEDESCR = "modelTypeDescr";
 	private static final String MODEL_TEXT = "modelText";
-	private static final String UDP_VALUES = "udpValues";
 
 	private static final String KPI_NAME =  "kpiName";
 	private static final String KPI_CODE =  "kpiCode";
@@ -117,28 +112,6 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 				result.put(LEAF, true );
 			}
 
-			
-			// put udpValues assocated to ModelInstance Node
-			List udpValues = res.getUdpValues();
-			JSONArray udpValuesJSON = new JSONArray();
-
-			if(udpValues != null){
-				Iterator itUdpValues = udpValues.iterator();
-				while(itUdpValues.hasNext()){
-					UdpValue udpValue = (UdpValue)itUdpValues.next();
-					if(udpValue != null){
-						JSONObject jsonVal = new JSONObject();
-						//jsonVal.put("family", udpValue.getFamily());
-						jsonVal.put("label", udpValue.getLabel());
-						jsonVal.put("value", udpValue.getValue());
-						jsonVal.put("family", udpValue.getFamily());
-						jsonVal.put("type", udpValue.getTypeLabel());
-						udpValuesJSON.put(jsonVal);
-					}				
-				}	
-			}
-			result.put(UDP_VALUES, udpValuesJSON);
-			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
