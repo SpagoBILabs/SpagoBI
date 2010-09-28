@@ -29,6 +29,7 @@ public class SbiKpiModelInst  implements java.io.Serializable {
      private Set sbiKpiModelResourceses = new HashSet(0);
      private String label;
      private String modelUUID; // Label of model instance to reference
+     private Set sbiKpiError = new HashSet(0);
 
     // Constructors
 
@@ -154,4 +155,14 @@ public class SbiKpiModelInst  implements java.io.Serializable {
 		return modelUUID;
 	}
 
+	public Set getSbiKpiError() {
+		return sbiKpiError;
+	}
+
+	public void setSbiKpiError(Set sbiKpiError) {
+		this.sbiKpiError = sbiKpiError;
+	}
+
+	
+	
 }

@@ -54,5 +54,11 @@
             </key>
             <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" />
         </set>
+        <set name="sbiKpiError" inverse="true">
+            <key>
+                <column name="KPI_MODEL_INST" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiError" />
+        </set>        
     </class>
 </hibernate-mapping>
