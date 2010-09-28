@@ -36,7 +36,7 @@ public class QueryDsExecutionException extends DatasetException {
 		if(query.length() > 500){
 			query = query.substring(0, 499);
 		}
-		message = USER_MESSAGE + query;
+		userMessage = USER_MESSAGE + query;
 	}
 
 	public QueryDsExecutionException(String severity, int code,
@@ -45,7 +45,7 @@ public class QueryDsExecutionException extends DatasetException {
 		if(query.length() > 500){
 			query = query.substring(0, 499);
 		}	
-		message = USER_MESSAGE + query;	
+		userMessage = USER_MESSAGE + query;	
 	}
 
 }

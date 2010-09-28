@@ -32,7 +32,7 @@ public class ParameterDsException extends DatasetException {
 	public ParameterDsException(String severity, int code,
 			EMFInternalError e, String parameters) {
 		super(severity, code, e);
-		message = USER_MESSAGE + parameters;
+		userMessage = USER_MESSAGE + parameters;
 	}
 
 	public ParameterDsException(String severity, int code,
@@ -43,7 +43,7 @@ public class ParameterDsException extends DatasetException {
 	public ParameterDsException(String severity, int code,
 			Exception e, String parameters) {
 		super(severity, code, e);
-		message = USER_MESSAGE + parameters;
+		userMessage = USER_MESSAGE + parameters;
 	}
 
 

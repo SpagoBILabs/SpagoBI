@@ -30,13 +30,13 @@ public class ConnectionDsException extends DatasetException {
 	public ConnectionDsException(String severity, int code,
 			EMFInternalError e, String dataSourceLabel) {
 		super(severity, code, e);
-		message = USER_MESSAGE + dataSourceLabel;
+		userMessage = USER_MESSAGE + dataSourceLabel;
 	}
 
 	public ConnectionDsException(String severity, int code,
 			Exception e, String dataSourceLabel) {
 		super(severity, code, e);
-		message = USER_MESSAGE + dataSourceLabel;
+		userMessage = USER_MESSAGE + dataSourceLabel;
 	}
 	
 	
