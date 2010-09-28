@@ -784,9 +784,14 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			id: 'kpilinks-grid',
 			store: this.parameterStore,
 			autoHeight : true,
+			viewConfig : {
+	            forceFit: true,
+	            scrollOffset: 2 // the grid will never have scrollbars
+	        },
 			cm: linkColModel,
 			sm: this.rowlinkselModel,
 			plugins: linkspluginsToAdd ,
+			//autoExpandColumn : 'parameterName',
 			autoWidth: true,
 			autoScroll : true,
             layout:'fit',
