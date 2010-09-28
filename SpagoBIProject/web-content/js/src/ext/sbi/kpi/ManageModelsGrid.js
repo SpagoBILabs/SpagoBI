@@ -102,6 +102,7 @@ Ext.extend(Sbi.kpi.ManageModelsGrid, Sbi.widgets.ListGridPanel, {
 		                    	          , 'id'
 		                    	          , 'error'
 		                    	          , 'description'
+		                    	          , 'udpValues'
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [
