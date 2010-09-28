@@ -41,10 +41,17 @@
  * 
  * Authors - Monica Franceschini
  */
+/* 	configuration parameters
+ *  config.hideContextMenu : to hide right click context menu
+ *  config.showModelUuid : to show radio choose to get ModelUUid
+ * */
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageModelInstances = function(config, ref) { 
-	var hideContextMenu = config.hideContextMenu;
+	
+	var hideContextMenu = config.hideContextMenu;//to hide right click context menu
+	this.showModelUuid = config.showModelUuid;
+	
 	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_SAVE"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODE_DELETE"};
@@ -97,6 +104,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	, kpitreeLoader : null
 	, newRootNode: null
 	, existingRootNode: null
+	, showModelUuid : false
 
 	,initConfigObject: function(){
 
@@ -104,6 +112,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
 
 		this.initTabItems();
+
     }
 
 	,initTabItems: function(){
@@ -388,35 +397,40 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	}
 	, initKpiPanel: function() {
 
-		
-		this.kpiModelType = new Ext.form.RadioGroup({
-            fieldLabel: LN('sbi.generic.type'),	             
-    	    id:'kpiModelType',
-    	    xtype: 'radiogroup',
-    	    readonly: true,
-    	    columns: 2,
-    	    items: [
-    	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
-    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
-    	    ]
-    	});
-		this.kpiModelType.addListener('change', this.changeKpiPanel , this);
-		
+		if(this.showModelUuid){
+			this.kpiModelType = new Ext.form.RadioGroup({
+	            fieldLabel: LN('sbi.generic.type'),	             
+	    	    id:'kpiModelType',
+	    	    xtype: 'radiogroup',
+	    	    readonly: true,
+	    	    columns: 2,
+	    	    items: [
+	    	        {boxLabel: 'UUID', id:'uuid',name: 'kpiTypeRadio', inputValue: 1},
+	    	        {boxLabel: 'Kpi Instance', id:'kpiinst',name: 'kpiTypeRadio', inputValue: 2}
+	    	    ]
+	    	});
+			this.kpiModelType.addListener('change', this.changeKpiPanel , this);
+		}
 		this.kpiInstTypeFieldset = new Ext.form.FieldSet({
 		   	columnWidth: 1,
             labelWidth: 90,   
             autoHeight: true,
             autoScroll  : true,
-            bodyStyle: Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding: 5px;',
             border: false,
+            /*            bodyStyle: Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding: 5px;',            
             style: {
-            	//"border":"1px solid blue",
             	"background-color": "#f1f1f1",
                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-            },
-            items: [ this.kpiModelType]
-		});
+            },*/
 
+            items: [ ]
+		});
+		if(this.showModelUuid){
+			this.kpiInstTypeFieldset.add(this.kpiModelType);
+		}else{
+			this.kpiInstTypeFieldset.hide();
+			this.kpiInstTypeFieldset.setSize(0,0);
+		}
  	    this.kpiName = new Ext.form.TextField({
  	    	 columnWidth: .75,
  	    	 id: 'kpinameField',
@@ -718,7 +732,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			var hasKpiAssoc = node.attributes.kpiName;
 			var hasKpiModelUuid = node.attributes.modelUuid;
 			var hasKpi = node.attributes.kpiId;
-
+			if(!this.showModelUuid){
+				hasKpiAssoc = 'true';
+			}
 			
 			if(hasKpiAssoc !== undefined && hasKpiAssoc != null){
 				
@@ -731,8 +747,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				this.kpiSaveHistory.setValue(node.attributes.kpiInstSaveHistory);
 
 				this.kpiInstFieldset.setVisible(true);
-				this.kpiInstFieldset2.setVisible(false);			
-				this.kpiModelType.onSetValue( 'kpiinst', true);
+				this.kpiInstFieldset2.setVisible(false);
+				if(this.showModelUuid){
+					this.kpiModelType.onSetValue( 'kpiinst', true);
+				}
+				
 				this.kpiInstFieldset.doLayout();
 	
 			}else if(hasKpiModelUuid !== undefined && hasKpiModelUuid != null){
@@ -740,7 +759,9 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				
 				this.kpiInstFieldset.setVisible(false);
 				this.kpiInstFieldset2.setVisible(true);
-				this.kpiModelType.onSetValue( 'uuid', true);
+				if(this.showModelUuid){
+					this.kpiModelType.onSetValue( 'uuid', true);
+				}
 				this.kpiInstFieldset2.doLayout();
 	
 			}else if(hasKpi !== undefined && hasKpi != null){
@@ -753,8 +774,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				}
 
 				this.kpiInstFieldset.setVisible(true);
-				this.kpiInstFieldset2.setVisible(false);			
-				this.kpiModelType.onSetValue( 'kpiinst', true);
+				this.kpiInstFieldset2.setVisible(false);	
+				if(this.showModelUuid){
+					this.kpiModelType.onSetValue( 'kpiinst', true);
+				}
 				this.kpiInstFieldset.doLayout();
 	
 			}else{
@@ -1021,8 +1044,10 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			this.kpiSaveHistory.setValue(false);
 
 			this.kpiInstFieldset.setVisible(true);
-			this.kpiInstFieldset2.setVisible(false);			
-			this.kpiModelType.onSetValue( 'kpiinst', true);
+			this.kpiInstFieldset2.setVisible(false);
+			if(this.showModelUuid){
+				this.kpiModelType.onSetValue( 'kpiinst', true);
+			}
 			this.kpiInstFieldset.doLayout();
 
 			node.attributes.toSave = true;
