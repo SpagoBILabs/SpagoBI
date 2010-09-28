@@ -787,13 +787,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			cm: linkColModel,
 			sm: this.rowlinkselModel,
 			plugins: linkspluginsToAdd ,
-            //width: 380,
 			autoWidth: true,
+			autoScroll : true,
             layout:'fit',
-			frame: true,
+            //width: 300,
+			//frame: true,
 			forceFit: true,
 	        singleSelect : true,
-	        //ownerCt : this,
 	        scope:this
 	    }); 
 
@@ -807,6 +807,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		        , scope: this
 			    , border: false
 		        , items: this.kpiLinksGrid
+		       // , width: 300
 		        
 		    };
     	
