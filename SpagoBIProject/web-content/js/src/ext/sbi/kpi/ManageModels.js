@@ -308,7 +308,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 	}
 	
-	, editNodeUdpValues: function(source, recordId, value, oldValue) {	
+	, editNodeUdpValues: function(source, recordId, value, oldValue) {
+
 		//alert('source ='+source.toSource()+' recordId ='+recordId+' value='+value+ ' oldValue='+oldValue);
 		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
 			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
@@ -570,7 +571,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
 	,selectNode : function(field) {
-		
+
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		if(this.selectedNodeToEdit !== null){

@@ -87,8 +87,8 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 	// fills value if present: if not present set defaults type in order to have right editors
 	fillUdpValues:function(udpValues){
 
-	//	remove preceding content
-	this.store.removeAll();
+		//	remove preceding content
+		this.store.removeAll(true);
 		// get selected kpi udp values
 	
 		var udpEmptyList = this.udpEmptyList;
@@ -115,39 +115,39 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				}
 			}
 		
-		// get UDP type
-		var typeData = udp.dataTypeCd;
-		if(!typeData){
-			typeData = 'TEXT'
-		}
-		else{
-			typeData = typeData.toUpperCase();
-		}
-		//convert value to th right type
-		if(typeData == 'INTEGER'){
-			if(valueToInsert == null){
-			valueToInsert = parseFloat(0);	
+			// get UDP type
+			var typeData = udp.dataTypeCd;
+			if(!typeData){
+				typeData = 'TEXT'
 			}
 			else{
-				valueToInsert = parseFloat(valueToInsert);
+				typeData = typeData.toUpperCase();
 			}
+			//convert value to th right type
+			if(typeData == 'INTEGER'){
+				if(valueToInsert == null){
+				valueToInsert = parseFloat(0);	
+				}
+				else{
+					valueToInsert = parseFloat(valueToInsert);
+				}
+				}
+			else if (typeData == 'BOOLEAN'){
+				var boolToInsert = (valueToInsert === 'true' || valueToInsert === true)
+				valueToInsert = boolToInsert;						
 			}
-		else if (typeData == 'BOOLEAN'){
-			var boolToInsert = (valueToInsert === 'true' || valueToInsert === true)
-			valueToInsert = boolToInsert;						
-		}
-		else {
-			// case text
-			if(valueToInsert == null){
-				valueToInsert = '';
+			else {
+				// case text
+				if(valueToInsert == null){
+					valueToInsert = '';
+				}
+				else{
+					// keep valueToInsert
+				}
 			}
-			else{
-				// keep valueToInsert
-			}
-		}
-
-		var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});					
-		this.store.add(tempRecord);
+	
+			var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});					
+			this.store.add(tempRecord);
 		}
 	  }
 	}
