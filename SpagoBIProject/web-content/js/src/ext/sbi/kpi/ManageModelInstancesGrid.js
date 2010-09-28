@@ -165,6 +165,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 										}else{
 											this.addNewItem();
 										}
+										alert(LN('sbi.generic.resultMsg'));
 									} else {
 										Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 									}
