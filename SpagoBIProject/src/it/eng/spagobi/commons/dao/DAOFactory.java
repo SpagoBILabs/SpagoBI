@@ -56,6 +56,7 @@ import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmEventDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
+import it.eng.spagobi.kpi.config.dao.IKpiErrorDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiInstPeriodDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.dao.IMeasureUnitDAO;
@@ -730,4 +731,15 @@ public class DAOFactory {
 		return (IUdpValueDAO)createDAOInstance("UdpDAOValue");
 	}
 
+	/**
+	 * Creates a DAO instance for a object KpiError.
+	 * 
+	 * @return a DAO instance for the  predefined KpiError
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public static IKpiErrorDAO getKpiErrorDAO() throws EMFUserError{
+		return (IKpiErrorDAO)createDAOInstance("KpiErrorDAO");
+	}
+	
 }
