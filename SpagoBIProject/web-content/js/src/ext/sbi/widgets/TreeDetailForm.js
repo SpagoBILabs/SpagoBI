@@ -127,15 +127,15 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 			columnWidth : 0.6,
 			autoScroll : true,
 			width : 450,
-			height : 490,
+			height : 520,
 			itemId : 'tabs',
 			items : this.tabItems
 		});
 
 		this.mainTree = new Ext.tree.TreePanel( {
 			title : this.treeTitle,
-			width : 250,
-			height : 230,
+			width : 200,
+			height : 520,
 			userArrows : true,
 			animate : true,
 			autoScroll : true,		
@@ -172,9 +172,9 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 			autoScroll : true,
 			labelAlign : 'left',
 			title : this.panelTitle,
-			width : 600,
+			//width : 600,
 			height : 550,
-			layout : 'border',
+			layout : 'column',
 			layoutConfig : {
 				animate : true,
 				activeOnTop : false
@@ -185,7 +185,8 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 				region : 'west',
 				collapseMode : 'mini',
 				layout : 'fit',
-				width : 300,
+				columnWidth: 0.4,
+				//width : 200,
 				items : this.mainTree
 			}, {
 				border : false,
@@ -193,6 +194,7 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 				collapseMode : 'mini',
 				split : true,
 				region : 'center',
+				columnWidth: 0.6,
 				layout : 'fit',
 				items : this.tabs
 			} ]
