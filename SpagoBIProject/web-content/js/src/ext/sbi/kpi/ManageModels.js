@@ -557,10 +557,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
-	,fillUdpValues : function(sel, node) {		
-		//alert(node.toSource());
+	,fillUdpValues : function(sel, node) {	
+
 		if(node !== undefined && node != null){			
-			var isDDNode = node.attributes.modelInstId;			
 			// get Udpvalues array
 			var udpValues = node.attributes.udpValues;
 			this.udpValueGrid.fillUdpValues(udpValues);						
