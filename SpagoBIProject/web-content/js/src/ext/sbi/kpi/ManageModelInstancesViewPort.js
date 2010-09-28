@@ -120,7 +120,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	,initPanels : function() {
 		this.modelInstancesGrid.addListener('rowclick', this.sendSelectedItem, this);	
 		this.modelInstancesGrid.addListener('copytree', this.copyModelTree,  this);	
-		
+		this.modelInstancesGrid.addListener('closeList', this.closeListPanel,  this);	
 		this.manageModelsTree.addListener('render', this.configureDD, this);
 
 
@@ -370,7 +370,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				this.manageModelInstances.newRootNode = null;
 	      				this.lastRecSelected = rec;
 	      				
-
+	      				
 	      			
 	      			}else{
 	      				alert(LN('sbi.generic.savingItemError'));
@@ -395,6 +395,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			},
 			params : params
 		});
+	}
+	, closeListPanel: function(){
+        var toCollapse = Ext.getCmp('modelInstancesList00');
+        toCollapse.collapse();
 	}
 	, recordAnalyze: function(rec){
 

@@ -195,9 +195,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, modifyToolbar : function(tabpanel, panel){
 		var itemId = panel.getItemId();
 		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
-			this.tbSave.hide();
+			this.tbSaveButton.hide();
 		}else{
-			this.tbSave.show();
+			this.tbSaveButton.show();
 		}
 	}
 	,initTabItems: function(){
