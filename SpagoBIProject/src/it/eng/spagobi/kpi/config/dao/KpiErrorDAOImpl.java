@@ -57,6 +57,9 @@ public class KpiErrorDAOImpl extends AbstractHibernateDAO implements IKpiErrorDA
 		}
 		return id;
 	}
+	
+	
+	
 
 
 	/**
@@ -207,7 +210,7 @@ public class KpiErrorDAOImpl extends AbstractHibernateDAO implements IKpiErrorDA
 
 		SbiKpiError sbiKpiError = new SbiKpiError();
 
-		sbiKpiError.setUserMessage(dsException.getMessage());
+		sbiKpiError.setUserMessage(dsException.getUserMessage());
 		sbiKpiError.setFullMessage(dsException.getFullMessage());
 
 		SbiKpiModelInst sbiKpiModelInst = (SbiKpiModelInst)session.load(SbiKpiModelInst.class, modelInstanceId);

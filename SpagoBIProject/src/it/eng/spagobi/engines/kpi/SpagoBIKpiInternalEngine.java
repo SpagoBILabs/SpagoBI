@@ -54,6 +54,7 @@ import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.config.dao.KpiDAOImpl;
+import it.eng.spagobi.kpi.exceptions.MissingKpiValueException;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.bo.Resource;
@@ -63,6 +64,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
+import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
 
 import java.awt.Color;
 import java.text.ParseException;
@@ -973,7 +975,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 					kpiValTemp = kVal.clone();
 					IRecord record =(IRecord)it.next();
 					List fields = record.getFields();
-					kpiValTemp = setKpiValuesFromDataset(kpiValTemp,fields,d, begD, endDate);
+					kpiValTemp = setKpiValuesFromDataset(kpiValTemp,fields,d, begD, endDate, dataSet.getLabel(),modInstNodeId, kVal);
 
 					if (kpiValTemp.getR()!=null && kVal.getR()!=null && kpiValTemp.getR().getId()!=null && 
 							kVal.getR().getId()!=null && kpiValTemp.getR().getId().equals(kVal.getR().getId())){
@@ -1001,7 +1003,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 
 				IRecord record = dataStore.getRecordAt(0);
 				List fields = record.getFields();
-				kVal = setKpiValuesFromDataset(kVal,fields,d, begD, endDate);
+				kVal = setKpiValuesFromDataset(kVal,fields,d, begD, endDate, dataSet.getLabel(), modInstNodeId, kVal);
 				logger.debug("New value calculated");
 				if(register_values){
 					if(doSave){
@@ -1035,11 +1037,14 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		return kVal;
 	}
 
-	private KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IDataStoreMetaData d, Date begD, Date endDate ) throws EMFUserError, SourceBeanException{
+	private KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IDataStoreMetaData d, 
+			Date begD, Date endDate, String datasetLabel,
+			Integer modInstId, KpiValue kpiVal) throws EMFUserError, SourceBeanException{
 		int length = fields.size();
 		String xmlData = null;
 		String tempXMLroot = "<XML_DATA></XML_DATA>";
 		SourceBean dsValuesXml = SourceBean.fromXMLString(tempXMLroot);
+		boolean valueFound = false;
 		for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 
 			IField f = (IField)fields.get(fieldIndex);			
@@ -1068,6 +1073,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						String fieldValue = f.getValue().toString();
 						kpiValueToReturn.setValue(fieldValue);
 						logger.debug("Setted the kpiValue value:"+fieldValue);
+						valueFound = true;
 					}   
 					else if(fieldName.equalsIgnoreCase("XML_DATA")){
 						xmlData = f.getValue().toString();
@@ -1095,6 +1101,16 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			kpiValueToReturn.setValueXml(xmlData);
 			logger.debug("Setted the kpiValue xmlData:"+xmlData);
 		}
+
+		if (kpiValueToReturn == null && valueFound == true){
+			logger.error("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");
+			MissingKpiValueException missingKpiValueException = new MissingKpiValueException(EMFErrorSeverity.WARNING, 9221, new Exception(), datasetLabel);			
+			DAOFactory.getKpiErrorDAO().insertKpiError(
+					missingKpiValueException, 
+					modInstId, 
+					kpiVal.getR() != null ? kpiVal.getR().getName() : null );
+		}
+
 		return kpiValueToReturn;
 	}
 
