@@ -36,7 +36,6 @@ import java.util.List;
 
 public class DatasetException extends EMFUserError {
 
-	String message;
 	Throwable throwable;
 	Object additionalInfo;
 	SourceBean sourceBean; 
@@ -44,6 +43,7 @@ public class DatasetException extends EMFUserError {
 	String description; 
 	String category;
  // this field is filled with a message for the user
+	String userMessage;
 	String fullMessage;
 	
 	public DatasetException(String severity, int code, List params) {
@@ -54,7 +54,7 @@ public class DatasetException extends EMFUserError {
 		super(severity, code);
 		setStackTrace(e.getStackTrace());
 		fullMessage = e.getMessage();
-		throwable = e.getCause();		
+		throwable = e;		
 	}
 
 	public DatasetException(String severity, int code, EMFInternalError e) {
@@ -71,12 +71,12 @@ public class DatasetException extends EMFUserError {
 	}
 
 
-	public String getMessage() {
-		return message;
+	public String getUserMessage() {
+		return userMessage;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setUserMessage(String userMessage) {
+		this.userMessage = userMessage;
 	}
 
 	public Throwable getThrowable() {

@@ -31,13 +31,13 @@ public class ProfileAttributeDsException extends DatasetException {
 	public ProfileAttributeDsException(String severity, int code,
 			EMFInternalError e, String attributes) {
 		super(severity, code, e);
-		message = USER_MESSAGE + " '"+attributes+"'";
+		userMessage = USER_MESSAGE + " '"+attributes+"'";
 	}
 
 	public ProfileAttributeDsException(String severity, int code,
 			Exception e, String attributes) {
 		super(severity, code, e);
-		message = USER_MESSAGE + " '"+attributes+"'";
+		userMessage = USER_MESSAGE + " '"+attributes+"'";
 	}
 
 
