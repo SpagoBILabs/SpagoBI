@@ -18,12 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.tools.dataset.common.dataproxy;
-
-import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import it.eng.spago.dbaccess.Utils;
 import it.eng.spago.dbaccess.sql.DataConnection;
@@ -36,25 +32,31 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.exceptions.ConnectionDsException;
+import it.eng.spagobi.tools.dataset.exceptions.QueryDsExecutionException;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class JDBCDataProxy extends AbstractDataProxy {
-	
+
 	IDataSource dataSource;
 	String statement;
 	String schema=null;
-	
+
 	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
-	
-	
+
+
 	public JDBCDataProxy() {
-		
+
 	}
-			
+
 	public String getSchema() {
 		return schema;
 	}
@@ -67,31 +69,43 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
-	
+
 	public JDBCDataProxy(IDataSource dataSource) {
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
-	
+
 	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
 		if(statement != null) {
 			setStatement(statement);
 		}
 		return load(dataReader);
 	}
-	
+
 	public IDataStore load(IDataReader dataReader) throws EMFUserError {
-		
+
 		IDataStore dataStore = null;
 		Object result = null;
 		logger.debug("IN");
-		
+
 		DataConnection dataConnection = null;
 		SQLCommand sqlCommand = null;
 		DataResult dataResult = null;
-		try {
-			Connection conn = dataSource.toSpagoBiDataSource().readConnection(schema); 
+		Connection conn = null;
+		try{
+			conn = dataSource.toSpagoBiDataSource().readConnection(schema); 
 			dataConnection = getDataConnection(conn);
+
+		}
+		catch (Exception e) {
+			String dataSourceL ="''";
+			if(this.dataSource != null) dataSourceL = "'"+this.dataSource.getLabel()+"'";
+			ConnectionDsException queryException= new ConnectionDsException(EMFErrorSeverity.ERROR, 9221, e, dataSourceL);
+			logger.error("Error in data connection to data source "+dataSourceL,e);
+			throw queryException;
+		}
+
+		try {
 			logger.debug("Executing statemnet ["  + statement + "]");
 			sqlCommand = dataConnection.createSelectCommand( statement );
 			dataResult = sqlCommand.execute();
@@ -99,18 +113,19 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				result = (ScrollableDataResult) dataResult.getDataObject();				
 			}
 			dataStore = dataReader.read( result );
-		} catch(Exception e){
-			logger.error("Error in query Execution",e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 9221);
+		} catch(EMFInternalError e){
+			QueryDsExecutionException queryException= new QueryDsExecutionException(EMFErrorSeverity.ERROR, 9221, e, statement);
+			logger.error("Error in query Execution "+statement,e);
+			throw queryException;
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 			logger.debug("OUT");
 		}
-		
+
 		return dataStore;
 	}
-	
-	
+
+
 	private DataConnection getDataConnection(Connection con) throws EMFInternalError {
 		DataConnection dataCon = null;
 		try {
