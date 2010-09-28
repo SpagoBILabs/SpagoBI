@@ -44,13 +44,10 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageUdpValues = function(config) { 
-	
-	
+		
 	// create the editor grid
 	    var grid = {
 	    	xtype: 'grid',
-	        //title: 'Udp Values',
-	        id: 'propGrid',
 	        width: 380,
 	        autoHeight: true,
 	        source: config.udpEmptyList,
@@ -61,8 +58,7 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	        viewConfig : {
 	            forceFit: true,
 	            scrollOffset: 2 // the grid will never have scrollbars
-	        },
-	        //frame: true
+	        }
 	        };
 
     var c = Ext.apply( {}, config, grid);
@@ -90,11 +86,10 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
   
 	// fills value if present: if not present set defaults type in order to have right editors
 	fillUdpValues:function(udpValues){
-		//alert(udpValues);	
+
 	//	remove preceding content
 	this.store.removeAll();
 		// get selected kpi udp values
-		//var udpValues = par.get('udpValues');
 	
 		var udpEmptyList = this.udpEmptyList;
 		var udpList = this.udpList;
@@ -153,11 +148,8 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 
 		var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});					
 		this.store.add(tempRecord);
-		//alert(udp.label+" "+udp.valueToInsert);
-
 		}
-	 }
-
+	  }
 	}
 	,
 	// return array with values in grid
@@ -182,11 +174,5 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 			return arrayUdps;
 	}
 	
-	
-	
-	
-	
-	
-}
-);
+});
 

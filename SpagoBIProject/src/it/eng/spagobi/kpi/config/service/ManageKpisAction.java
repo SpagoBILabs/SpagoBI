@@ -455,9 +455,6 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				List udpList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
 				getSessionContainer().setAttribute("udpKpiList", udpList);
 
-
-
-
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,

@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 java.util.ArrayList,
 				 java.util.List,
 				 org.json.JSONArray, 
-				 org.json.JSONObject" %>
+				 org.json.JSONObject,
+				 it.eng.spagobi.tools.udp.bo.Udp" %>
 <%
 
 	List nodeTypesCd = (List) aSessionContainer.getAttribute("nodeTypesList");
@@ -32,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
 	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
 	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
+	List udpModelListCd = (List) aSessionContainer.getAttribute("udpModelList");
+	List udpKpiListCd = (List) aSessionContainer.getAttribute("udpKpiList");
 
 %>
 
@@ -120,7 +123,87 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String nodeTypes = nodeTypesArray.toString();
 	nodeTypes = nodeTypes.replaceAll("\"","'");
 	
-	
+	// create jason arrays for udp attributes of the model
+	// this is empty list label + empty value to fill firstly the tab
+	String udpModelEmptyListJSON ="{}";
+	if(udpModelListCd != null){
+		udpModelEmptyListJSON="[";
+		for(int i=0; i< udpModelListCd.size(); i++){
+			Udp udp = (Udp)udpModelListCd.get(i);
+			udpModelEmptyListJSON+="{";
+			udpModelEmptyListJSON+="'label':'"+udp.getLabel()+"',";
+			udpModelEmptyListJSON+="'value':''";
+			udpModelEmptyListJSON+="}";
+			if(i != (udpModelListCd.size()-1)){
+				udpModelEmptyListJSON+=",";
+			}
+		}
+		udpModelEmptyListJSON+="]";
+	}
+	// this is the list of udps carrying all udp nformations
+	String udpModelListJSON ="{}";
+	if(udpModelListCd != null){
+		udpModelListJSON="[";
+		for(int i=0; i< udpModelListCd.size(); i++){
+			Udp udp = (Udp)udpModelListCd.get(i);
+			udpModelListJSON+="{";
+			udpModelListJSON+="'udpId':"+udp.getUdpId()+",";
+			udpModelListJSON+="'label':'"+udp.getLabel()+"',";
+			udpModelListJSON+="'name':'"+udp.getName()+"',";
+			udpModelListJSON+="'description':'"+udp.getDescription()+"',";
+			udpModelListJSON+="'dataTypeId':'"+udp.getDataTypeId()+"',";
+			udpModelListJSON+="'familyId':'"+udp.getFamilyId()+"',";
+			udpModelListJSON+="'multivalue':'"+udp.getMultivalue()+"',";
+			udpModelListJSON+="'dataTypeCd':'"+udp.getDataTypeValeCd()+"'";
+
+			udpModelListJSON+="}";
+			if(i != (udpModelListCd.size()-1)){
+				udpModelListJSON+=",";
+			}
+		}
+		udpModelListJSON+="]";
+	}    
+
+	// create jason arrays for udp attributes of the kpis
+	// this is empty list label + empty value to fill firstly the tab
+	String udpKpiEmptyListJSON ="{}";
+	if(udpKpiListCd != null){
+		udpKpiEmptyListJSON="[";
+		for(int i=0; i< udpKpiListCd.size(); i++){
+			Udp udp = (Udp)udpKpiListCd.get(i);
+			udpKpiEmptyListJSON+="{";
+			udpKpiEmptyListJSON+="'label':'"+udp.getLabel()+"',";
+			udpKpiEmptyListJSON+="'value':''";
+			udpKpiEmptyListJSON+="}";
+			if(i != (udpKpiListCd.size()-1)){
+				udpKpiEmptyListJSON+=",";
+			}
+		}
+		udpKpiEmptyListJSON+="]";
+	}
+	// this is the list of udps carrying all udp nformations
+	String udpKpiListJSON ="{}";
+	if(udpKpiListCd != null){
+		udpKpiListJSON="[";
+		for(int i=0; i< udpKpiListCd.size(); i++){
+			Udp udp = (Udp)udpKpiListCd.get(i);
+			udpKpiListJSON+="{";
+			udpKpiListJSON+="'udpId':"+udp.getUdpId()+",";
+			udpKpiListJSON+="'label':'"+udp.getLabel()+"',";
+			udpKpiListJSON+="'name':'"+udp.getName()+"',";
+			udpKpiListJSON+="'description':'"+udp.getDescription()+"',";
+			udpKpiListJSON+="'dataTypeId':'"+udp.getDataTypeId()+"',";
+			udpKpiListJSON+="'familyId':'"+udp.getFamilyId()+"',";
+			udpKpiListJSON+="'multivalue':'"+udp.getMultivalue()+"',";
+			udpKpiListJSON+="'dataTypeCd':'"+udp.getDataTypeValeCd()+"'";
+
+			udpKpiListJSON+="}";
+			if(i != (udpKpiListCd.size()-1)){
+				udpKpiListJSON+=",";
+			}
+		}
+		udpKpiListJSON+="]";
+	}    
 
 	%>
 
@@ -144,12 +227,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	config.metricScaleTypesCd = <%= metricScalesTypes%>;
 	config.thrTypes = <%= thrTypes%>;
     config.nodeTypesCd = <%= nodeTypes%>;
+    config.udpModelEmptyListJSON = <%= udpModelEmptyListJSON%>;
+	config.udpModelListCdt = <%= udpModelListJSON%>;
+	config.udpKpiEmptyListJSON = <%= udpKpiEmptyListJSON%>;
+	config.udpKpiListCdt = <%= udpKpiListJSON%>;
     
-Ext.onReady(function(){
-	Ext.QuickTips.init();
-	var manageModelsViewPort = new Sbi.kpi.ManageModelsViewPort(config);
-   	
-});
+	Ext.onReady(function(){
+		Ext.QuickTips.init();
+		var manageModelsViewPort = new Sbi.kpi.ManageModelsViewPort(config);
+	   	
+	});
 
 
 </script>

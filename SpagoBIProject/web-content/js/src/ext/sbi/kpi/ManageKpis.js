@@ -461,10 +461,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	   
  	   this.initKpiLinksTab();  
  	   
-
- 	  this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
- 	  this.udpValueGrid.setSource(config.udpEmptyList); 
- 	     
+ 	   this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
+ 	   this.udpValueGrid.setSource(config.udpKpiEmptyList); 	     
 
  	   this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
@@ -857,6 +855,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	    }
 		this.kpiLinksGrid.getView().refresh();
 	}
+	
 	,launchKpisWindow : function() {
 		
 		var conf = {};
@@ -887,6 +886,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 											}, this);
 		this.linksWin.show();
 	}
+	
 	, saveKpiLink : function(kpisel, parameter){
 		
 		var kpiParent = this.rowselModel.getSelected();
@@ -935,6 +935,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	          ,scope: this
 	    });
 	}
+	
 	, deleteKpiLink : function(relId){
 
 		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_DELETE"};	

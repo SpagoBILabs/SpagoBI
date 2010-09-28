@@ -24,7 +24,6 @@ package it.eng.spagobi.kpi.model.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
@@ -37,8 +36,6 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
-import it.eng.spagobi.tools.udp.bo.Udp;
-import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -77,8 +74,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 	private final String MODELINSTS_COPY_MODEL = "MODELINSTS_COPY_MODEL";
 	private final String MODELINSTS_SAVE_ROOT = "MODELINSTS_SAVE_ROOT";
-	private final String UDP_VALUE_LIST = "udpValuesAtt";
-
 
 	private final String MODEL_DOMAIN_TYPE_ROOT = "MODEL_ROOT";
 	private final String MODEL_DOMAIN_TYPE_NODE = "MODEL_NODE";
@@ -399,12 +394,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				List kpiChartTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(KPI_CHART_TYPE);
 				getSessionContainer().setAttribute("kpiChartTypesList", kpiChartTypesList);
 
-				// Add Udp Values to sessionContainer
-				List udpList = DAOFactory.getUdpDAO().loadAllByFamily("MODEL");
-				getSessionContainer().setAttribute("udpList", udpList);
-
-
-
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -590,30 +579,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 		return response;
 	}
-	/*
-	private List<ModelInstance> findRootNode(List<ModelInstance> modelInstList, Integer parentIDToSearch){
-		//System.out.println(parentIDToSearch);
-		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
-		for(int i=0; i< modelInstList.size(); i++){			
-			ModelInstance modInstToSave = (ModelInstance)modelInstList.get(i);
-
-			if(parentIDToSearch == null){//parent is newly added
-				if(modInstToSave.getParentId() == null    
-						&& !modInstToSave.getGuiId().matches("^\\d+$")){
-
-					nodes.add(modInstToSave);
-				}
-			}else{//parent is existing
-				if(modInstToSave.getParentId() != null 
-						&&( modInstToSave.getParentId().intValue() == parentIDToSearch.intValue())
-						&& !modInstToSave.getGuiId().matches("^\\d+$")){
-					nodes.add(modInstToSave);
-				}
-			}
-
-		}
-		return nodes;
-	}*/
+	
 	private List<ModelInstance> findNextNodes(List<ModelInstance> modelInstList, Integer parentIDToSearch){
 		List<ModelInstance> nodes = new ArrayList<ModelInstance>();
 		for(int i=0; i< modelInstList.size(); i++){			
@@ -634,6 +600,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}
 		return nodes;
 	}
+	
 	private List<ModelInstance> deserializeNodesJSONArrayDD(JSONArray rows) throws JSONException{
 		List<ModelInstance> toReturn = new ArrayList<ModelInstance>();
 
@@ -645,7 +612,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}	
 		return toReturn;
 	}
-
 
 	private ModelInstance fillModelInstance(JSONObject obj, ModelInstance modelInst){
 
@@ -803,42 +769,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				}
 
 				modelInst.setKpiInstance(kpiInstance);
-
-				// add the udpValues to Model Instance Definition, that will be serialized
-				List<UdpValue> udpValues = new ArrayList<UdpValue>();
-				JSONArray jsonArray = null;
-				try{
-					jsonArray = obj.getJSONArray("udpValues");
-				}catch(Throwable t){
-					jsonArray = new JSONArray();
-				}
-				logger.debug("found udpValues Array containing number of Udp "+jsonArray.length());
-				for(int i=0; i< jsonArray.length(); i++){
-					JSONObject objJS = (JSONObject)jsonArray.get(i);
-					// only label and value information are retrieved by JSON object
-					String labelJ = objJS.getString("name");	
-					String value = objJS.getString("value");	
-
-					UdpValue udpValue = new UdpValue();
-
-					// reference id is the kpi id
-					udpValue.setLabel(label);
-					udpValue.setValue(value);
-					udpValue.setReferenceId(modelInst.getId());
-
-					// get the UDP to get ID (otherwise could be taken in js page)
-					Udp udp = DAOFactory.getUdpDAO().loadByLabelAndFamily(labelJ, "MODEL");
-					Domain familyDomain = DAOFactory.getDomainDAO().loadDomainById(udp.getFamilyId());
-					logger.debug("Udp value assigning value "+value+" to UDP with label "+udp.getLabel()+ " and Model Instance with label "+ modelInst.getLabel());
-					udpValue.setLabel(udp.getLabel());
-					udpValue.setName(udp.getName());
-					udpValue.setFamily(familyDomain != null ? familyDomain.getValueCd() : null);
-					udpValue.setUdpId(udp.getUdpId());
-
-					udpValues.add(udpValue);
-				}
-				modelInst.setUdpValues(udpValues);
-
 
 			}catch(Throwable t){
 				//nothing

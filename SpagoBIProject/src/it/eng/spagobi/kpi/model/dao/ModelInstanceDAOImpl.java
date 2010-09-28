@@ -117,18 +117,6 @@ IModelInstanceDAO {
 			childrenIds.add(childId);
 		}
 
-
-		// Put
-		// add also associated UDP
-		List udpValues = null;
-		try {
-			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
-		} catch (EMFUserError e) {
-			logger.error("Errror in retrieving udp values", e);
-		}
-		toReturn.setUdpValues(udpValues);
-
-
 		// gets ModelNode referenced
 		Integer reference = hibSbiKpiModelInst.getSbiKpiModel().getKpiModelId();
 		logger
@@ -337,18 +325,6 @@ IModelInstanceDAO {
 			//
 			toReturn.setKpiInstance(aKpiInstance);
 		}
-
-		// Put
-		// add also associated UDP
-		List udpValues = null;
-		try {
-			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
-		} catch (EMFUserError e) {
-			logger.error("Errror in retrieving udp values", e);
-		}
-		toReturn.setUdpValues(udpValues);
-
-		
 
 		toReturn.setId(id);
 		toReturn.setName(name);
@@ -1024,16 +1000,6 @@ IModelInstanceDAO {
 					sbiKpichild, id);
 			childrenNodes.add(child);
 		}
-		
-		// Put
-		// add also associated UDP
-		List udpValues = null;
-		try {
-			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
-		} catch (EMFUserError e) {
-			logger.error("Errror in retrieving udp values", e);
-		}
-		toReturn.setUdpValues(udpValues);
 
 		toReturn.setId(id);
 		toReturn.setName(name);

@@ -251,6 +251,10 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	         });
 	 	   /*END*/
 	 	  
+	 	 this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
+	 	 this.udpValueGrid.setSource(config.udpEmptyList); 
+	 	 this.udpValueGrid.identifica='identifica';
+	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -270,25 +274,13 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		                     this.kpiPanel, this.detailFieldNodeType, this.detailFieldTypeDescr]
 		    	}]
 		    },
-		    {
-		        title: LN('sbi.generic.attributes')
-		        , itemId: 'attributes'
-		        , width: 430
-		        , items: [{
-			   		 id: 'items-attributes-models',   	
-		 		   	 itemId: 'items-attributes',   	              
-		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
-		             bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
-		             defaultType: 'textfield',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             layout:'fit',
-		             border: false,
-		             items: []
-		    	}]
-		    }];
+		    {  	title: LN('sbi.generic.udpValues')
+		        , itemId: 'upd-values'
+		        , width: 350
+		        , items: this.udpValueGrid  
+		        , layout: 'fit'
+		        , autoScroll  : true   	
+		    } ];
 
 
 	}
@@ -314,6 +306,21 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	        html: LN('sbi.models.DDKpiMsg')
 	    });
 
+	}
+	
+	, editNodeUdpValues: function(source, recordId, value, oldValue) {	
+		//alert('source ='+source.toSource()+' recordId ='+recordId+' value='+value+ ' oldValue='+oldValue);
+		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
+			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
+		}
+		var node = this.selectedNodeToEdit;
+		if (node !== undefined && node !== null) {
+			node.attributes.toSave = true;
+			//get the array of all attributes (would be better to change only current one but recordId is not very useful
+			var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
+			node.attributes.udpValues = arrayUdps;
+			//alert(node.attributes.toSource());
+		}
 	}
     //OVERRIDING save method
 	,save : function() {
@@ -550,6 +557,15 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
+	,fillUdpValues : function(sel, node) {		
+		//alert(node.toSource());
+		if(node !== undefined && node != null){			
+			var isDDNode = node.attributes.modelInstId;			
+			// get Udpvalues array
+			var udpValues = node.attributes.udpValues;
+			this.udpValueGrid.fillUdpValues(udpValues);						
+		}
+	}	
 	,renderTree : function(tree) {
 		tree.getLoader().nodeParameter = 'modelId';
 		tree.getRootNode().expand(false, /*no anim*/false);
@@ -568,6 +584,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	,setListeners : function() {
 			this.mainTree.getSelectionModel().addListener('selectionchange',
 					this.fillDetail, this);
+			this.mainTree.getSelectionModel().addListener('selectionchange',
+					this.fillUdpValues, this);
 			this.mainTree.addListener('render', this.renderTree, this);
 
 			/* form fields editing */
@@ -588,6 +606,11 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			
 			this.detailFieldKpi.addListener('focus', this.selectNode, this);
 			this.detailFieldKpi.addListener('change', this.editNodeAttribute, this);			
+			
+			// udp mylisteners
+			this.udpValueGrid.addListener('click', this.selectNode, this);
+			this.udpValueGrid.addListener('propertychange', this.editNodeUdpValues, this);
+			// end my listeners
 			
 			this.kpiClearBtn.addListener('click', this.selectNode, this);
 
@@ -619,7 +642,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				name		: rec.get('name'),
 				iconCls		: iconClass,
 				cls			: cssClass,
-		        draggable	: false
+		        draggable	: false,
+		        udpValues   : rec.get('udpValues')
 		    });
 			return node;
 	}

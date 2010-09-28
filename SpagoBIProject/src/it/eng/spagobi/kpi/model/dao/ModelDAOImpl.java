@@ -3,6 +3,7 @@ package it.eng.spagobi.kpi.model.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.model.bo.Model;
@@ -154,6 +155,8 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 
 				aSession.saveOrUpdate(modelAttrValToCreate);
 			}
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(value, sbiKpiModel, aSession, "MODEL");
+			
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -219,6 +222,16 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 			Model child = toModelWithChildren(session, sbiKpichild, id);
 			childrenNodes.add(child);
 		}
+		
+		// Put
+		// add also associated UDP
+		List udpValues = null;
+		try {
+			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
+		} catch (EMFUserError e) {
+			logger.error("Errror in retrieving udp values", e);
+		}
+		toReturn.setUdpValues(udpValues);
 
 		toReturn.setId(id);
 		toReturn.setName(name);
@@ -309,35 +322,16 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 		Integer typeId = value.getModelType().getValueId();
 		String typeName = value.getModelType().getValueNm();
 		String typeDescription = value.getModelType().getValueDs();
-
-//		List modelAttributes = new ArrayList();
-//		//
-//
-//		List modelAttrList = getModelAttListByDomain(value.getModelType(),
-//				aSession);
-//
-//		for (Iterator iterator = modelAttrList.iterator(); iterator.hasNext();) {
-//			ModelAttribute attribute = new ModelAttribute();
-//			SbiKpiModelAttr attr = (SbiKpiModelAttr) iterator.next();
-//			String aCode = null;
-//			String aName = null;
-//			String aDesc = null;
-//			String aValue = null;
-//			Integer aId = null;
-//
-//			aCode = attr.getKpiModelAttrCd();
-//			aName = attr.getKpiModelAttrNm();
-//			aDesc = attr.getKpiModelAttrDescr();
-//			aValue = getModelAttrValue(value, attr, aSession);
-//			aId = attr.getKpiModelAttrId();
-//
-//			attribute.setId(aId);
-//			attribute.setCode(aCode);
-//			attribute.setName(aName);
-//			attribute.setDescr(aDesc);
-//			attribute.setValue(aValue);
-//			modelAttributes.add(attribute);
-//		}
+		
+		// Put
+		// add also associated UDP
+		List udpValues = null;
+		try {
+			udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(id, "MODEL");
+		} catch (EMFUserError e) {
+			logger.error("Errror in retrieving udp values", e);
+		}
+		toReturn.setUdpValues(udpValues);
 
 		toReturn.setId(id);
 		toReturn.setName(name);
@@ -417,6 +411,8 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 			}
 
 			idToReturn = (Integer) aSession.save(sbiKpiModel);
+			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(model, sbiKpiModel, aSession, "MODEL");
+
 
 			tx.commit();
 
