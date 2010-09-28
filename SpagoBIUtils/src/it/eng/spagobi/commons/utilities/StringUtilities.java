@@ -598,7 +598,7 @@ public class StringUtilities {
 			attribute = quote(attribute);
 			statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replacement);
 
-//			statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
+			//			statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
 			/*
 	profileAttributeStartIndex = statement.indexOf("$P{", profileAttributeEndIndex-1);
 	if (profileAttributeStartIndex != -1)
@@ -772,6 +772,21 @@ public class StringUtilities {
 		}
 		if(parType==null)parType=new String("");
 
+
+		// check if numbers are number otherwise throw exception
+		try{
+			if(parType.equalsIgnoreCase("NUMBER")){
+				Double double1 = Double.valueOf(replacement); 
+			}
+		}
+		catch (NumberFormatException e) {
+			String me = e.getMessage();
+			me += " - attribute "+attribute+" should be of number type";
+			NumberFormatException numberFormatException = new NumberFormatException(attribute);
+			numberFormatException.setStackTrace(e.getStackTrace());	
+			throw numberFormatException;
+		}
+
 		if (surroundWithQuotes || parType.equalsIgnoreCase("STRING") || parType.equalsIgnoreCase("DATE")) {
 			if(!isNullValue){
 				if (!replacement.startsWith("'")) replacement = "'" + replacement;
@@ -782,7 +797,7 @@ public class StringUtilities {
 		attribute = quote(attribute);
 		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replacement);
 
-//		statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
+		//		statement = statement.replaceAll("\\P\\{" + attribute + "\\}", replacement);
 		/*
 	profileAttributeStartIndex = statement.indexOf("$P{", profileAttributeEndIndex-1);
 	if (profileAttributeStartIndex != -1)
