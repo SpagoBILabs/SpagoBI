@@ -62,7 +62,7 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	            forceFit: true,
 	            scrollOffset: 2 // the grid will never have scrollbars
 	        },
-	        frame: true
+	        //frame: true
 	        };
 
     var c = Ext.apply( {}, config, grid);
