@@ -263,6 +263,7 @@
 			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js"/>
 			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all.js"/>
 			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js"/>
+			<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311.js"/>
 		</target>
   
 		<target name="create-debug" depends="delete-debug">
