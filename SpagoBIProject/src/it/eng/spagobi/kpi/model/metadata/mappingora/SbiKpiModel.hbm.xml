@@ -31,12 +31,6 @@
 		<property name="kpiModelLabel" type="string">
             <column name="KPI_MODEL_LBL" />
         </property>                
-        <set name="sbiKpiModelAttrVals" inverse="true">
-            <key>
-                <column name="KPI_MODEL_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal" />
-        </set>
         <set name="sbiKpiModels" inverse="true">
             <key>
                 <column name="KPI_PARENT_MODEL_ID" />

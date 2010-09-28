@@ -75,8 +75,6 @@
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingora/SbiKpiModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingora/SbiKpiModelAttr.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingora/SbiKpiModelAttrVal.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingora/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingora/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingora/SbiKpiPeriodicity.hbm.xml" />

@@ -68,8 +68,6 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttr;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
@@ -2609,8 +2607,8 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		}
 
-		// Model Attr
-
+		// TODO cambiare con i nuovi UDP VAlues
+/*
 		List exportedKpiModelAttrs = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttr", null);
 		Iterator iterSbiKpiModelAttr = exportedKpiModelAttrs.iterator();
 		while (iterSbiKpiModelAttr.hasNext()) {
@@ -2653,7 +2651,7 @@ public class ImportManager implements IImportManager, Serializable {
 						+ "the same name of one exported kpi model attr");
 			}
 		}
-
+*/
 
 		logger.debug("check existence of Object MetaContent, only for Objects!");
 		List exportedMetaContent = importer.getAllExportedSbiObjects(sessionExpDB, "SbiObjMetacontents", null);
@@ -3661,6 +3659,8 @@ public class ImportManager implements IImportManager, Serializable {
 	 */
 	private void importKpiModelAttr(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
+		// TODO cambiare con i nuovi UDP VAlues
+		/*
 		SbiKpiModelAttr exportedKpiModelAttr = null;
 		try {
 			List exportedKpiModelAttrs = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttr", null);
@@ -3702,7 +3702,7 @@ public class ImportManager implements IImportManager, Serializable {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
 		} finally {
 			logger.debug("OUT");
-		}
+		}*/
 	}
 
 
@@ -3713,7 +3713,8 @@ public class ImportManager implements IImportManager, Serializable {
 	 */
 	private void importKpiModelAttrVal(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
-		SbiKpiModelAttrVal exportedKpiModelAttrVal = null;
+		// TODO cambiare con i nuovi UDP VAlues
+		/*SbiKpiModelAttrVal exportedKpiModelAttrVal = null;
 		try {
 			List exportedKpiModelAttrVals = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttrVal", null);
 			Iterator iterSbiKpiModelAttrVal = exportedKpiModelAttrVals.iterator();
@@ -3759,7 +3760,7 @@ public class ImportManager implements IImportManager, Serializable {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
 		} finally {
 			logger.debug("OUT");
-		}
+		}*/
 	}
 
 

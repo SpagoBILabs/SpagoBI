@@ -80,8 +80,6 @@
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelAttr.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelAttrVal.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappinghsqldb/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiPeriodicity.hbm.xml" />

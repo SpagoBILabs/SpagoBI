@@ -48,8 +48,6 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttr;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
@@ -840,21 +838,21 @@ public class ImporterMetadata {
 	 * @throws EMFUserError the EMF user error
 	 */
 	public Object checkExistenceKpiModelAttr(Integer newSbiDomainId, String kpiModelAttrCd,Session sessionCurrDB, Object hibObj) throws EMFUserError {
-		// TODO
+		// TODO cambiare con i nuovi UDP VAlues
 		logger.debug("IN");
 		String hql = null;
 		Query hqlQuery = null;
-		SbiKpiModelAttr toReturn = null;
+		/*SbiKpiModelAttr toReturn = null;
 
 		if (hibObj instanceof SbiKpiModelAttr && newSbiDomainId != null) {
 			// check if there is a model attribute referring to the same domain (with new ID) and with the same Label
 			hql = "from SbiKpiModelAttr s where s.sbiDomains.valueId = " + newSbiDomainId + " "+"AND s.kpiModelAttrCd = '"+kpiModelAttrCd+"'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			toReturn = (SbiKpiModelAttr) hqlQuery.uniqueResult();
-		} 	
+		} 	*/
 
 		logger.debug("OUT");
-		return toReturn;
+		return null;
 	}
 
 
@@ -875,9 +873,10 @@ public class ImporterMetadata {
 	 */
 	public Object checkExistenceKpiModelAttrVal(Integer kpiModelAttrId, Integer kpiModelId,Session sessionCurrDB, Object hibObj) throws EMFUserError {
 		logger.debug("IN");
+		// TODO cambiare con i nuovi UDP VAlues
 		String hql = null;
 		Query hqlQuery = null;
-		SbiKpiModelAttrVal toReturn = null;
+		/*SbiKpiModelAttrVal toReturn = null;
 
 		if (hibObj instanceof SbiKpiModelAttrVal && kpiModelAttrId != null && kpiModelId != null) {
 			// check if there is a model attribute referring to the same domain (with new ID) and with the same Label
@@ -887,7 +886,8 @@ public class ImporterMetadata {
 		} 	
 
 		logger.debug("OUT");
-		return toReturn;
+		return toReturn;*/
+		return null;
 	}
 
 }

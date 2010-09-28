@@ -67,8 +67,6 @@
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiInstance.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModelAttr.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModelAttrVal.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/metadata/mappingsqlserver/SbiKpiPeriodicity.hbm.xml" />

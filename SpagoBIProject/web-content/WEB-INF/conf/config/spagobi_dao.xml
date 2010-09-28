@@ -52,8 +52,6 @@
 		<DAO name="KpiInstPeriodDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiInstPeriodDAOImpl" />
 		<DAO name="ObjMetadataDAO" implementation="it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl" />
 		<DAO name="ObjMetacontentDAO" implementation="it.eng.spagobi.tools.objmetadata.dao.ObjMetacontentDAOHibImpl" />
-		<DAO name="SbiKpiModelAttrDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelAttrDAOImpl" />
-		<DAO name="SbiKpiModelAttrValDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelAttrValDAOImpl" />
 		<DAO name="KpiErrorDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiErrorDAOImpl" />
 		
 		<DAO name="SbiUserDAO" implementation="it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl"/>
