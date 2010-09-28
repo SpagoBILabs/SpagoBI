@@ -149,6 +149,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
            
 		this.viewport = {
 				layout: 'border'
+				, id: 'modelInstViewport00'
 				, height:560
 				, autoScroll: true
 				, items: [
@@ -166,7 +167,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				    {
 			           id: 'main00',	  
 				       region: 'center',
-				       width: 300,
+				       //width: 300,
 				       height:560,
 				       split: true,
 				       collapseMode:'mini',
@@ -176,7 +177,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				    }, {
 				        region: 'east',
 				        split: true,
-				        width: 400,
+				        width: 300,
 				        height:560,
 				        id: 'modelsTree00',
 				        collapsed:false,
@@ -207,11 +208,19 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				                            //expand model instances list
 				                            var toCollapse = Ext.getCmp('modelInstancesList00');
 				                            toCollapse.expand();
+				                            var toExpand = Ext.getCmp('modelsTree00');
+				                            toExpand.setWidth(300);
+				                            toExpand.doLayout();
+				                            Ext.getCmp('modelInstViewport00').doLayout();
 				                        },
 				                        beforeExpand: function(cmp){
 				                            //collapse model instances list
 				                            var toCollapse = Ext.getCmp('modelInstancesList00');
 				                            toCollapse.collapse();
+				                            var toExpand = Ext.getCmp('modelsTree00');
+				                            toExpand.setWidth(500);
+				                            toExpand.doLayout();
+				                            Ext.getCmp('modelInstViewport00').doLayout();
 				                        }
 				                    }
 				                }    

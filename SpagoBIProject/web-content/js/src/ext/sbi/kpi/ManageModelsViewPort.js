@@ -80,7 +80,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 	          },
 		    {
 		       region: 'center',
-		       width: 300,
+
 		       height:560,
 		       split: true,
 		       collapseMode:'mini',
@@ -91,7 +91,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 		        region: 'east',
 		        split: true,
 		        width: 550,
-		        height:540,
+		        height:560,
 		        collapsed:true,
 		        collapseMode:'mini',
 		        autoScroll: true,
