@@ -44,7 +44,7 @@ public class DatasetException extends EMFUserError {
 	String description; 
 	String category;
  // this field is filled with a message for the user
-	String userMessage;
+	String fullMessage;
 	
 	public DatasetException(String severity, int code, List params) {
 		super(severity, code, params);
@@ -53,7 +53,7 @@ public class DatasetException extends EMFUserError {
 	public DatasetException(String severity, int code, Exception e) {
 		super(severity, code);
 		setStackTrace(e.getStackTrace());
-		message = e.getMessage();
+		fullMessage = e.getMessage();
 		throwable = e.getCause();		
 	}
 
@@ -66,7 +66,7 @@ public class DatasetException extends EMFUserError {
 		severity = e.getSeverity();
 		sourceBean = e.getSourceBean();
 		setStackTrace(e.getStackTrace());
-		message = e.getMessage();
+		fullMessage = e.getMessage();
 		throwable = e.getCause();		
 	}
 
@@ -127,12 +127,12 @@ public class DatasetException extends EMFUserError {
 		this.category = category;
 	}
 
-	public String getUserMessage() {
-		return userMessage;
+	public String getFullMessage() {
+		return fullMessage;
 	}
 
-	public void setUserMessage(String userMessage) {
-		this.userMessage = userMessage;
+	public void setFullMessage(String fullMessage) {
+		this.fullMessage = fullMessage;
 	}
 
 	
