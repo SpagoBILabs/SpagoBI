@@ -79,6 +79,7 @@
         <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappingmysql/SbiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappingmysql/SbiThresholdValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiError.hbm.xml" />
          <!-- Menu -->
         <mapping resource="it/eng/spagobi/wapp/metadata/mappingmysql/SbiMenu.hbm.xml" />
         <mapping resource="it/eng/spagobi/wapp/metadata/mappingmysql/SbiMenuRole.hbm.xml" />
