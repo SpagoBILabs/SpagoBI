@@ -180,10 +180,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	 	  this.initSourcePanel();
 	 	  this.initKpiPanel();
 	 	  
-	 	  this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
-	 	  this.udpValueGrid.setSource(config.udpEmptyList); 
-	 	 this.udpValueGrid.identifica='identifica';
-	 	  
 	 	  this.configurationObject.tabItems = [{
 		        title: LN('sbi.generic.details')
 		        , itemId: 'detail'
@@ -214,37 +210,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			        , items: [this.kpiInstTypeFieldset ,
 			                  this.kpiInstFieldset, 
 			                  this.kpiInstFieldset2]
-			    }
-		    ,{
-		    	title: LN('sbi.generic.udpValues')
-		        , itemId: 'upd-values'
-		        , width: 430
-		        , bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;'
-		        , items: {
-			   		 id: 'upd-values-detail',   	
-		 		   	 itemId: 'upd-values-detail',   	              
-		 		   	// columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             scope: this,
-		             labelWidth: 90,
-		             defaults: {width: 140, border:false},    
-		             defaultType: 'textfield',
-		             layout: 'fit',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-		             border: false,
-		             style: {
-		                 "margin-left": "10px", 
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [
-		                    this.udpValueGrid   
-		                     ]
-		    	}				    	
-		    	
-		    }   
-			    ,{
+			    },{
 			        title: LN('sbi.modelinstances.srcNode')
 				        , itemId: 'src_model'
 				        , width: 430
@@ -397,20 +363,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
-	, editNodeUdpValues: function(source, recordId, value, oldValue) {	
-		//alert('source ='+source.toSource()+' recordId ='+recordId+' value='+value+ ' oldValue='+oldValue);
-		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
-			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
-		}
-		var node = this.selectedNodeToEdit;
-		if (node !== undefined && node !== null) {
-			node.attributes.toSave = true;
-			//get the array of all attributes (would be better to change only current one but recordId is not very useful
-			var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
-			node.attributes.udpValues = arrayUdps;
-			//alert(node.attributes.toSource());
-		}
-	}
+	
 	, editThreshold: function(code){
 		this.selectNode(null);
 		var node = this.selectedNodeToEdit;
@@ -825,10 +778,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	}
 
     //OVERRIDING save method
-	,save : function() {
-
-//		var storeUdps = this.udpValueGrid.getStore();
-//		var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
+	,save : function() {	
 		
     	var jsonStr = '[';
 
@@ -863,12 +813,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		if(this.existingRootNode !== undefined && this.existingRootNode != null){
 			jsonRoot = Ext.util.JSON.encode(this.existingRootNode.attributes);
 		}
-		//alert('parametri');
+
 		var params = {
 			nodes : jsonStr,
 			droppedNodes : jsonDroppedStr,
 			rootNode : jsonRoot
-        	//, "udpValuesAtt" : arrayUdps.toSource()
 		};	
 
 		
@@ -965,19 +914,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
-	,fillUdpValues : function(sel, node) {
-		
-		//alert(node.toSource());
-		if(node !== undefined && node != null){
-			
-			var isDDNode = node.attributes.modelInstId;			
-			// get Udpvalues array
-			var udpValues = node.attributes.udpValues;
-
-			this.udpValueGrid.fillUdpValues(udpValues);
-						
-		}
-}	
 	
 	,renderTree : function(tree) {
 		tree.getLoader().nodeParameter = 'modelInstId';
@@ -990,10 +926,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.mainTree.getSelectionModel().addListener('selectionchange',
 				this.fillKpiPanel, this);
 		this.mainTree.getSelectionModel().addListener('selectionchange',
-				this.fillSourceModelPanel, this);
-		this.mainTree.getSelectionModel().addListener('selectionchange',
-				this.fillUdpValues, this);
-		
+				this.fillSourceModelPanel, this);		
 		
 		this.mainTree.addListener('render', this.renderTree, this);
 
@@ -1032,11 +965,6 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
 		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
 
-		// udp mylisteners
-		this.udpValueGrid.addListener('click', this.selectNode, this);
-		this.udpValueGrid.addListener('propertychange', this.editNodeUdpValues, this);
-		// end my listeners
-		
 		this.kpiRestoreDefaultBtn.addListener('click', this.selectNode, this);
 		this.kpiClearBtn.addListener('click', this.selectNode, this);
 
@@ -1148,8 +1076,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		        draggable	: false,
 		        qtip		: tip,
 		        toSave: true,
-		        isNewRec :  rec.get( 'isNewRec'),
-		        udpValues : rec.get('udpValues')
+		        isNewRec :  rec.get( 'isNewRec')
 		    });
 
 			return node;
