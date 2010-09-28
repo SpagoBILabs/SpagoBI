@@ -67,8 +67,6 @@
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstPeriod.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiInstanceHistory.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModel.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelAttr.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelAttrVal.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelInst.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/model/metadata/mappingmysql/SbiKpiModelResources.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpiPeriodicity.hbm.xml" />

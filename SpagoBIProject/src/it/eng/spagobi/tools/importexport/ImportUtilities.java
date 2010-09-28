@@ -57,8 +57,6 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttr;
-import it.eng.spagobi.kpi.model.metadata.SbiKpiModelAttrVal;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
@@ -2979,7 +2977,8 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiModelAttr makeNewSbiKpiModelAttr(SbiKpiModelAttr kpiModelAttr,Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static SbiKpiModelAttr makeNewSbiKpiModelAttr(SbiKpiModelAttr kpiModelAttr,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiModelAttr newKpiModelAttr = new SbiKpiModelAttr();
@@ -3000,7 +2999,7 @@ public class ImportUtilities {
 
 		}
 		return newKpiModelAttr;
-	}
+	}*/
 
 
 	/**
@@ -3014,7 +3013,8 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiModelAttr modifyExistingSbiKpiModelAttr(SbiKpiModelAttr exportedKpiModelAttr, Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static SbiKpiModelAttr modifyExistingSbiKpiModelAttr(SbiKpiModelAttr exportedKpiModelAttr, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiModelAttr existingKpiModelAttr = null;
@@ -3034,9 +3034,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		return existingKpiModelAttr;
-	}
-
-
+	}*/
 
 	/**
 	 * For KpiModelAttr search new Ids
@@ -3048,7 +3046,8 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpiModelAttr(SbiKpiModelAttr exportedKpiModelAttr, SbiKpiModelAttr existingKpiModelAttr,Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static void entitiesAssociationsSbiKpiModelAttr(SbiKpiModelAttr exportedKpiModelAttr, SbiKpiModelAttr existingKpiModelAttr,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -3070,7 +3069,7 @@ public class ImportUtilities {
 		else{
 			existingKpiModelAttr.setSbiDomains(null);
 		}
-	}
+	}*/
 
 
 
@@ -3082,7 +3081,8 @@ public class ImportUtilities {
 	 * 
 	 * @return the new hibernate parameter object
 	 */
-	public static SbiKpiModelAttrVal makeNewSbiKpiModelAttrVal(SbiKpiModelAttrVal kpiModelAttrVal,Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static SbiKpiModelAttrVal makeNewSbiKpiModelAttrVal(SbiKpiModelAttrVal kpiModelAttrVal,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer){
 		logger.debug("IN");
 		SbiKpiModelAttrVal newKpiModelAttrVal = new SbiKpiModelAttrVal();
@@ -3101,7 +3101,7 @@ public class ImportUtilities {
 
 		}
 		return newKpiModelAttrVal;
-	}
+	}*/
 
 
 	/**
@@ -3113,7 +3113,8 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static SbiKpiModelAttrVal modifyExistingSbiKpiModelAttrVal(SbiKpiModelAttrVal exportedKpiModelAttrVal, Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static SbiKpiModelAttrVal modifyExistingSbiKpiModelAttrVal(SbiKpiModelAttrVal exportedKpiModelAttrVal, Session sessionCurrDB, 
 			Integer existingId, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		SbiKpiModelAttrVal existingKpiModelAttrVal = null;
@@ -3132,7 +3133,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		return existingKpiModelAttrVal;
-	}
+	}*/
 
 
 
@@ -3146,7 +3147,8 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public static void entitiesAssociationsSbiKpiModelAttrVal(SbiKpiModelAttrVal exportedKpiModelAttrVal, SbiKpiModelAttrVal existingKpiModelAttrVal,Session sessionCurrDB, 
+	// TODO cambiare con i nuovi UDP VAlues
+	/*public static void entitiesAssociationsSbiKpiModelAttrVal(SbiKpiModelAttrVal exportedKpiModelAttrVal, SbiKpiModelAttrVal existingKpiModelAttrVal,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
 		// overwrite existging entities
@@ -3190,7 +3192,7 @@ public class ImportUtilities {
 			existingKpiModelAttrVal.setSbiKpiModelAttr(null);
 		}
 
-	}
+	}*/
 
 
 
