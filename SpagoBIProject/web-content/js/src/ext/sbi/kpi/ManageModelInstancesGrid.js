@@ -67,7 +67,7 @@ Sbi.kpi.ManageModelInstancesGrid = function(config, ref) {
 	Sbi.kpi.ManageModelInstancesGrid.superclass.constructor.call(this, c);	
 	
 	this.addEvents('selected');
-
+	this.addEvents('closeList');
 }
 
 Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
@@ -219,6 +219,10 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 							}, this);
 		this.modelsWin.show();
 		this.modelsWin.doLayout();
+		
+		this.modelsWin.on('close', function(){
+							this.fireEvent('closeList');
+							}, this);
 
 	}
 	, addModelInstanceRecord: function(rec){
