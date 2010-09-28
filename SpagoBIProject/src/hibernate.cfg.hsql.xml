@@ -92,6 +92,7 @@
         <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappinghsqldb/SbiThreshold.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mappinghsqldb/SbiThresholdValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mappinghsqldb/SbiKpiError.hbm.xml" />
         
         <!-- Kpi.alarm -->
         <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mappinghsqldb/SbiAlarm.hbm.xml" />
