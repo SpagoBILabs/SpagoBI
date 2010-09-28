@@ -5,6 +5,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.kpi.config.bo.KpiInstPeriod;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -33,7 +34,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -1231,7 +1231,18 @@ IModelInstanceDAO {
 		// delete the model Inst
 		aSession.delete(aModelInst);
 		// Delete Kpi Instance Kpi Instance History Value
-		if (aModelInst.getSbiKpiInstance() != null) {
+		if (aModelInst.getSbiKpiInstance() != null) {			
+			//look up for periodicities
+			List<KpiInstPeriod> instPeriods = DAOFactory.getKpiInstPeriodDAO().loadKpiInstPeriodId(aModelInst.getSbiKpiInstance()
+					.getIdKpiInstance());
+			if(instPeriods != null){
+				for(int i=0; i<instPeriods.size(); i++){
+					KpiInstPeriod instPer = instPeriods.get(i);
+					SbiKpiInstPeriod sbiKpiInstPer = (SbiKpiInstPeriod)aSession.load(SbiKpiInstPeriod.class, instPer.getId());
+					aSession.delete(sbiKpiInstPer);
+				}
+				aSession.flush();
+			}
 			deleteKpiInstance(aSession, aModelInst.getSbiKpiInstance()
 					.getIdKpiInstance());
 		}
