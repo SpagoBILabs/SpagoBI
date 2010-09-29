@@ -68,7 +68,7 @@ Sbi.kpi.ManageModelInstancesGrid = function(config, ref) {
 	
 	this.addEvents('selected');
 	this.addEvents('closeList');
-}
+};
 
 Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 	

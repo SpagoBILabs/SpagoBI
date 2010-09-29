@@ -79,7 +79,7 @@ Sbi.kpi.ManageKpiWindow = function(config) {
     this.addEvents('selectEvent');
     this.addEvents('selected');
 
-}
+};
 
 Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
   

@@ -99,7 +99,7 @@ Sbi.kpi.ManageModels = function(config, ref) {
 		 e.tree.getSelectionModel().select(e.dropNode[0]);
 		 this.selectNode(null);
 	 }, this);
-}
+};
 
 Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	

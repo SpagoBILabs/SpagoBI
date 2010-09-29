@@ -77,7 +77,7 @@ Sbi.udp.ManageUdp = function(config) {
 		this.getForm().loadRecord(rec);  
      }, this);
 	   
-}
+};
 Ext.extend(Sbi.udp.ManageUdp, Sbi.widgets.ListDetailForm, {
 	configurationObject: null
 	, gridForm:null

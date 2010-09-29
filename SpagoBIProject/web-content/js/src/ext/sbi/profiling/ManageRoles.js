@@ -76,7 +76,7 @@ Sbi.profiling.ManageRoles = function(config) {
 		this.fillChecks(row, rec);
      }, this);
 
-}
+};
 
 Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	

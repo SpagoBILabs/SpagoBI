@@ -70,7 +70,7 @@ Sbi.kpi.ManageModelsGrid = function(config, ref) {
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageModelsGrid.superclass.constructor.call(this, c);	 	
-}
+};
 
 Ext.extend(Sbi.kpi.ManageModelsGrid, Sbi.widgets.ListGridPanel, {
 	

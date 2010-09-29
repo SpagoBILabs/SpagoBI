@@ -245,7 +245,7 @@ Sbi.profiling.ManageAttributes = function(config) {
     // constructor
     Sbi.profiling.ManageAttributes.superclass.constructor.call(this, c);
 
-}
+};
 
 Ext.extend(Sbi.profiling.ManageAttributes, Ext.grid.GridPanel, {
   

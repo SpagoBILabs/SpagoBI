@@ -81,7 +81,7 @@ Sbi.profiling.ManageUsers = function(config) {
 		  	this.fillAttributes(row, rec);
 		  	this.fillRoles(row, rec); 
      }, this);
-}
+};
 
 Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 	
