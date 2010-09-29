@@ -566,9 +566,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
 		var storeUdps = this.udpValueGrid.getStore();
 		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
-		var record;
+		var record ;
 		
-		if(idRec === 0 || idRec === null || idRec === ''){
+		if(idRec == 0 || idRec === null || idRec === ''){
 			newRec = new Ext.data.Record({
 					name: values['name'],
 					code: values['code'],
@@ -593,10 +593,11 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			var length = this.mainElementsStore.getCount();
 			for(var i=0;i<length;i++){
 	   	        var tempRecord = this.mainElementsStore.getAt(i);
-	   	        if(tempRecord.data.id==idRec){
+	   	        if(tempRecord.data.id === idRec){
 	   	        	record = tempRecord;
 				}			   
 	   	    }	
+
 			record.set('name',values['name']);
 			record.set('code',values['code']);
 			record.set('description',values['description']);
@@ -615,7 +616,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('udpValues',arrayUdps);
 			
 		}
-		var udpATTR ='['+ Ext.util.JSON.encode(arrayUdps)+']';
+		var udpATTR =Ext.util.JSON.encode(arrayUdps);
         var params = {
         	name :  values['name'],
         	code : values['code'],
