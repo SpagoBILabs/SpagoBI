@@ -312,6 +312,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 			aSession.save(hibOU);
 			
+			ou.setId(hibOU.getId());
+			
 			tx.commit();
 		} finally {
 			if (tx != null && tx.isActive()) {
@@ -364,6 +366,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 			aSession.save(hibHierarchy);
 			
+			h.setId(hibHierarchy.getId());
+			
 			tx.commit();
 		} finally {
 			if (tx != null && tx.isActive()) {
@@ -415,7 +419,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibQuery.setString(1, path);
 			
 			List hibList = hibQuery.list();
-			toReturn = hibList.isEmpty();
+			toReturn = !hibList.isEmpty();
 			
 		} finally {
 			if (tx != null && tx.isActive()) {
@@ -488,6 +492,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			}
 
 			aSession.save(hibNode);
+			
+			aNode.setNodeId(hibNode.getNodeId());
 			
 			tx.commit();
 		} finally {
