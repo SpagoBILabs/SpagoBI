@@ -120,4 +120,8 @@ ALTER TABLE `sbi_viewpoints` RENAME `SBI_VIEWPOINTS`;
 ALTER TABLE `sbi_udp` RENAME `SBI_UDP`;
 ALTER TABLE `sbi_udp_value` RENAME `SBI_UDP_VALUE`;
 ALTER TABLE `sbi_kpi_error` RENAME `SBI_KPI_ERROR`;
-
+ALTER TABLE `sbi_org_unit_grant_nodes` RENAME `SBI_ORG_UNIT_GRANT_NODES`;
+ALTER TABLE `sbi_org_unit_grant` RENAME `SBI_ORG_UNIT_GRANT`;
+ALTER TABLE `sbi_org_unit_nodes` RENAME `SBI_ORG_UNIT_NODES`;
+ALTER TABLE `sbi_org_unit_hierarchies` RENAME `SBI_ORG_UNIT_HIERARCHIES`;
+ALTER TABLE `sbi_org_unit` RENAME `SBI_ORG_UNIT`;
