@@ -134,7 +134,12 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				}
 				}
 			else if (typeData == 'BOOLEAN'){
-				var boolToInsert = (valueToInsert === 'true' || valueToInsert === true)
+				var boolToInsert;
+				if(valueToInsert === 'true' || valueToInsert === true){
+				    boolToInsert = true;
+				}else{
+					boolToInsert = false;
+				}
 				valueToInsert = boolToInsert;						
 			}
 			else {
