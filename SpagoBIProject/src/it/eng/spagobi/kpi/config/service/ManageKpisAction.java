@@ -77,6 +77,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String CODE = "code";
 	private final String DESCRIPTION = "description";
 	private final String WEIGHT = "weight";
+	private final String ISADDITIVE = "isAdditive";	
 	private final String DATASET = "dataset";
 	private final String THR = "threshold";
 	private final String DOCS = "documents";
@@ -157,6 +158,8 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			String name = getAttributeAsString(NAME);
 			String description = getAttributeAsString(DESCRIPTION);
 			String weight = getAttributeAsString(WEIGHT);
+			Boolean isAdditive = getAttributeAsBoolean(ISADDITIVE);
+			
 			String dsLabel = getAttributeAsString(DATASET);
 			String thresholdCode = getAttributeAsString(THR);
 			JSONArray docLabelsJSON = null;
@@ -200,7 +203,6 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				Kpi k = new Kpi();
 
 				try {
-					//<<<<<<< .mine
 
 					k.setKpiName(name);
 					k.setCode(code);
@@ -211,6 +213,11 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 					if(weight != null && !weight.equalsIgnoreCase("")){
 						k.setStandardWeight(Double.valueOf(weight));
 					}	
+					if(isAdditive != null && isAdditive.booleanValue()==true){
+						k.setIsAdditive(new Boolean(true));
+					}else{
+						k.setIsAdditive(new Boolean(false));
+					}
 					if(dsLabel != null){
 						k.setDsLabel(dsLabel);
 						IDataSet ds = dsDao.loadDataSetByLabel(dsLabel);

@@ -28,6 +28,7 @@ public class SbiKpi implements java.io.Serializable {
 	private String description;
 	private Double weight;
 	private Character flgIsFather;
+	private Boolean isAdditive;
 	private String interpretation;
 	private String inputAttributes;
 	private String modelReference;
@@ -265,6 +266,14 @@ public class SbiKpi implements java.io.Serializable {
 
 	public void setSbiKpiModels(Set sbiKpiModels) {
 		this.sbiKpiModels = sbiKpiModels;
+	}
+	
+	public Boolean getIsAdditive() {
+		return isAdditive;
+	}
+
+	public void setIsAdditive(Boolean isAdditive) {
+		this.isAdditive = isAdditive;
 	}
 
 }

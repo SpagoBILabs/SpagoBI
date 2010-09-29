@@ -60,7 +60,10 @@
         </property>
         <property name="targetAudience" type="string">
             <column name="target_audience" length="1000" />
-        </property>       
+        </property>     
+        <property name="isAdditive" type="true_false">
+            <column name="is_additive" not-null="false" default="T" />
+        </property>   
         <set name="sbiKpiModels" inverse="true">
             <key>
                 <column name="KPI_ID" />

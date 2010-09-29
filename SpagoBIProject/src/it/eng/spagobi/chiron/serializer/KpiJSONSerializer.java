@@ -22,6 +22,7 @@ public class KpiJSONSerializer implements Serializer {
 	private static final String KPI_CODE = "code";
 	private static final String KPI_DESCRIPTION = "description";
 	private static final String KPI_WEIGHT = "weight";
+	private static final String IS_ADDITIVE = "isAdditive";
 	private static final String KPI_DATASET = "dataset";
 	private static final String KPI_THR = "threshold";
 	private static final String KPI_DOCS = "documents";
@@ -55,6 +56,11 @@ public class KpiJSONSerializer implements Serializer {
 			result.put(KPI_DESCRIPTION, kpi.getDescription() );
 			result.put(KPI_CODE, kpi.getCode() );
 			result.put(KPI_WEIGHT, kpi.getStandardWeight() );
+			boolean isAdd = false;
+			if(kpi.getIsAdditive()!=null){
+				isAdd = kpi.getIsAdditive().booleanValue();
+			}
+			result.put(IS_ADDITIVE, isAdd);
 			result.put(KPI_DATASET, kpi.getDsLabel());
 			if(kpi.getThreshold()!=null){
 				result.put(KPI_THR, kpi.getThreshold().getCode() );

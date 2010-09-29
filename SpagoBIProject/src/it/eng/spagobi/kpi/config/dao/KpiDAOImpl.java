@@ -245,6 +245,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi description setted");
 		toReturn.setStandardWeight(standardWeight);
 		logger.debug("Kpi weight setted");
+		toReturn.setIsAdditive(kpi.getIsAdditive());
 
 		toReturn.setKpiId(kpiId);
 		logger.debug("Kpi Id setted");
@@ -1007,6 +1008,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi name setted");
 		toReturn.setStandardWeight(standardWeight);
 		logger.debug("Kpi weight setted");
+		toReturn.setIsAdditive(kpi.getIsAdditive());
 		toReturn.setCode(code);
 		logger.debug("Kpi code setted");
 		toReturn.setMetric(metric);
@@ -1235,6 +1237,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setCode(code);
 			sbiKpi.setMetric(metric);
 			sbiKpi.setWeight(weight);
+			sbiKpi.setIsAdditive(kpi.getIsAdditive());
 			//sbiKpi.setSbiKpiDocumentses(sbiKpiDocuments);
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
@@ -1334,6 +1337,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setCode(code);
 			sbiKpi.setMetric(metric);
 			sbiKpi.setWeight(weight);
+			sbiKpi.setIsAdditive(kpi.getIsAdditive());
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
 

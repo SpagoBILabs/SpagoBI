@@ -51,6 +51,7 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	        width: 380,
 	        autoHeight: true,
 	        source: config.udpEmptyList,
+	        forceLayout: true,
 	        deferRowRender : false,
 	        propertyNames: {
 	            tested: 'QA',
@@ -147,9 +148,10 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				}
 			}
 	
-			var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});					
+			var tempRecord = new Ext.data.Record({"name": udp.label,"value": valueToInsert});		
 			this.store.add(tempRecord);
 		}
+		this.doLayout();
 	  }
 	}
 	,

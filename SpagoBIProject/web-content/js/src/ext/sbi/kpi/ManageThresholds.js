@@ -420,6 +420,10 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		        , items: [this.detailItem]
 		    },this.thrValuesItem];
  	   
+ 	   this.tempThrV.on('DeletedThrVal', function(e) {
+ 	    	alert('qui');	 	    	
+ 	    }, this);
+ 	   
 	}
 	
 	//OVERRIDING METHOD
