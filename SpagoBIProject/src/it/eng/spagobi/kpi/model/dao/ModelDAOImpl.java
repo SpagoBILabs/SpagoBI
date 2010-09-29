@@ -360,6 +360,8 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 				recursiveStepDelete(aSession, modelChild);
 			}
 		}
+		aSession.delete(aModel);
+		aSession.flush();
 	}
 
 	public List loadModelsRoot(String fieldOrder, String typeOrder)
