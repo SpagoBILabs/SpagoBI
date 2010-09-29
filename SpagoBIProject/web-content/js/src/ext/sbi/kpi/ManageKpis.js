@@ -649,7 +649,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			var length = this.mainElementsStore.getCount();
 			for(var i=0;i<length;i++){
 	   	        var tempRecord = this.mainElementsStore.getAt(i);
-	   	        if(tempRecord.data.id === idRec){
+	   	        if(tempRecord.data.id == idRec){
 	   	        	record = tempRecord;
 				}			   
 	   	    }	
