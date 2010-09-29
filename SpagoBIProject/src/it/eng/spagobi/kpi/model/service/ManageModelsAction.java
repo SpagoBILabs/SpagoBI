@@ -174,8 +174,9 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_NODE_DELETE)) {
 			
 			Integer modelId = getAttributeAsInteger("modelId");
+			logger.warn("DELETING NODE WITH MODEL_ID:"+modelId);
 			try {
-				boolean result = DAOFactory.getModelDAO().deleteModel(modelId);
+				DAOFactory.getModelDAO().deleteModel(modelId);
 				logger.debug("Model deleted");
 				writeBackToClient( new JSONSuccess("Operation succeded") );
 			} catch (Throwable e) {
