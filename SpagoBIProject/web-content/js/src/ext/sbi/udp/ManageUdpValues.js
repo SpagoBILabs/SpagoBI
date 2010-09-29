@@ -60,7 +60,7 @@ Sbi.kpi.ManageUdpValues = function(config) {
 	            forceFit: true,
 	            scrollOffset: 2 // the grid will never have scrollbars
 	        }
-	        };
+	    };
 
     var c = Ext.apply( {}, config, grid);
     
@@ -126,14 +126,13 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 			}
 			//convert value to th right type
 			if(typeData == 'INTEGER'){
-				if(valueToInsert == null){
-				valueToInsert = parseFloat(0);	
-				}
-				else{
-					valueToInsert = parseFloat(valueToInsert);
-				}
-				}
-			else if (typeData == 'BOOLEAN'){
+					if(valueToInsert == null){
+						valueToInsert = parseFloat(0);	
+					}
+					else{
+						valueToInsert = parseFloat(valueToInsert);
+					}
+			}else if (typeData == 'BOOLEAN'){
 				var boolToInsert;
 				if(valueToInsert === 'true' || valueToInsert === true){
 				    boolToInsert = true;
@@ -141,14 +140,10 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 					boolToInsert = false;
 				}
 				valueToInsert = boolToInsert;						
-			}
-			else {
+			} else {
 				// case text
 				if(valueToInsert == null){
 					valueToInsert = '';
-				}
-				else{
-					// keep valueToInsert
 				}
 			}
 	
@@ -177,7 +172,7 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				}
 				arrayUdps.push(data);
 			}
-			return arrayUdps;
+		return arrayUdps;
 	}
 	
 });
