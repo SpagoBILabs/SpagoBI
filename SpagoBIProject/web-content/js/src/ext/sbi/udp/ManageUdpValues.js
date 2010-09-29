@@ -108,8 +108,8 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 			// check if udo.label is present among udpValues
 			var valueToInsert = null;
 			var stop = false;
-			for ( var int = 0; int < udpValues.length && stop == false; int++) {
-				var udpVal = udpValues[int];
+			for ( var j = 0; j < udpValues.length && stop == false; j++) {
+				var udpVal = udpValues[j];
 				if(udpVal.label == udp.label || udpVal.name == udp.label){
 					valueToInsert = udpVal.value;					
 					stop = true;
@@ -163,8 +163,8 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 				// want to add type and family to this record
 				data.familyId = type;
 				var stop = false;
-				for ( var int = 0; int < this.udpList.length && stop == false; int++) {
-					var udpVal = config.udpList[int];
+				for ( var j = 0; j < this.udpList.length && stop == false; j++) {
+					var udpVal = config.udpList[j];
 					if(udpVal.label == data.name){
 						data.dataTypeCd = udpVal.dataTypeCd;
 						stop = true;
