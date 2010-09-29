@@ -674,6 +674,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			
 		}
 		var udpATTR =Ext.util.JSON.encode(arrayUdps);
+		alert(udpATTR);
         var params = {
         	name :  values['name'],
         	code : values['code'],
@@ -691,7 +692,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
         	kpiTypeCd : values['kpiTypeCd'],
         	metricScaleCd : values['metricScaleCd'],
         	measureTypeCd : values['measureTypeCd'],
-        	udpValuesAtt : udpATTR
+        	udpValuesAtt : ''
         };
 
         
