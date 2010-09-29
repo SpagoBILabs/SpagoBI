@@ -812,7 +812,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 								Ext.Ajax.request({
 						            url: this.services['deleteTreeService'],
 						            params: {'modelId': node.attributes.modelId},
-						            method: 'GET',
+						            //method: 'GET',
 						            success: function(response, options) {
 										if (response !== undefined) {
 											this.mainTree.getSelectionModel().clearSelections(false);
