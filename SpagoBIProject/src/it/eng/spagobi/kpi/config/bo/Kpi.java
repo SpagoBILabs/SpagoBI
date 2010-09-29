@@ -22,6 +22,7 @@ public class Kpi implements Serializable{
 	String scaleName = null;
 	String code = null;
 	Threshold threshold = null;
+	Boolean isAdditive = null;
 
 	String interpretation = null;
 	String inputAttribute = null;
@@ -255,7 +256,14 @@ public class Kpi implements Serializable{
 		this.udpValues = udpValues;
 	}
 
-	
+
+	public Boolean getIsAdditive() {
+		return isAdditive;
+	}
+
+	public void setIsAdditive(Boolean isAdditive) {
+		this.isAdditive = isAdditive;
+	}
 	
 	
 }

@@ -99,6 +99,7 @@ Sbi.kpi.ManageModels = function(config, ref) {
 		 e.tree.getSelectionModel().select(e.dropNode[0]);
 		 this.selectNode(null);
 	 }, this);
+	 this.doLayout();
 };
 
 Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
@@ -560,11 +561,13 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		}
 	}
 	,fillUdpValues : function(sel, node) {	
-
+		
 		if(node !== undefined && node != null){			
 			// get Udpvalues array
 			var udpValues = node.attributes.udpValues;
-			this.udpValueGrid.fillUdpValues(udpValues);						
+			
+			this.udpValueGrid.fillUdpValues(udpValues);		
+			this.udpValueGrid.doLayout();
 		}
 	}	
 	,renderTree : function(tree) {

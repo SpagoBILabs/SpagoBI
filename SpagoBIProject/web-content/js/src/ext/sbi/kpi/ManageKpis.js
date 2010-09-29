@@ -110,7 +110,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.getForm().loadRecord(rec); 
 		this.udpValueGrid.fillUdpValues(rec.get('udpValues'));
-		
+		this.fillIsAdditive(row, rec);   
 		this.fillKpiLinks(row, rec);
      }, this);
 	
@@ -128,6 +128,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, fieldsDefaultWidth: null
 	, textAreaWidth: null
 	, gridColumnNumber: null
+	, detailTab: null
+	, detailFieldIsAdditive: null
 
 	,initConfigObject:function(){
 
@@ -136,6 +138,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		                    	          , 'code'
 		                    	          , 'description'   
 		                    	          , 'weight' 
+		                    	          , 'isAdditive'
 		                    	          , 'dataset'
 		                    	          , 'threshold'
 		                    	          , 'documents'
@@ -156,6 +159,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 										  , code:'' 
 										  , description:''
 										  , weight:''
+										  , isAdditive: false
 		                    	          , dataset:''
 		                    	          , threshold:''
 		                    	          , documents:''
@@ -192,6 +196,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.dragndropGroup ='grid2treeAndDetail';
 		this.initTabItems();			
     }
+
 	, modifyToolbar : function(tabpanel, panel){
 		var itemId = panel.getItemId();
 		if(itemId !== undefined && itemId !== null && itemId === 'kpiLinks'){
@@ -247,6 +252,19 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
              validationEvent:true,
              name: 'weight'
           };	
+ 	  
+ 	 this.detailFieldIsAdditive = new Ext.form.CheckboxGroup({
+         xtype: 'checkboxgroup',
+         itemId: 'isAdditive',
+         columns: 1,
+         boxMinWidth  : 200,
+         boxMinHeight  : 100,
+         hideLabel  : false,
+         fieldLabel: 'Is Additive',
+         items: [
+             {boxLabel: ' ', name: 'isAdditive', checked:false}
+         ]
+      });
  	  
  	 
   	 var baseConfig = {drawFilterToolbar:false};
@@ -462,35 +480,37 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	   this.initKpiLinksTab();  
  	   
  	   this.udpValueGrid = new Sbi.kpi.ManageUdpValues(config);
- 	   this.udpValueGrid.setSource(config.udpKpiEmptyList); 	     
+ 	   this.udpValueGrid.setSource(config.udpKpiEmptyList); 	   
+ 	   
+ 	   this.detailTab = new Ext.Panel({
+	        title: LN('sbi.generic.details')
+	        , itemId: 'detail'
+	        , width: 350
+	        , scope: this
+	        , items: {
+		   			 scope: this,
+		   		 id: 'kpis-detail',   	
+	 		   	 itemId: 'items-detail',   	              
+	 		   	 //columnWidth: 0.4,
+	             xtype: 'fieldset',
+	             labelWidth: 90,
+	             defaults: {width: this.fieldsDefaultWidth, border:false},    
+	             defaultType: 'textfield',
+	             autoHeight: true,
+	             autoScroll  : true,
+	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
+	             border: false,
+	             style: {
+	                 "margin-left": "10px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [detailFieldId, detailFieldName, detailFieldCode, 
+	                     detailFieldDescr,  detailFieldDataset,
+	                    this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight,this.detailFieldIsAdditive]
+	    	}
+	    });
 
- 	   this.configurationObject.tabItems = [{
-		        title: LN('sbi.generic.details')
-		        , itemId: 'detail'
-		        , width: 350
-		        , scope: this
-		        , items: {
- 		   			 scope: this,
-			   		 id: 'items-detail',   	
-		 		   	 itemId: 'items-detail',   	              
-		 		   	 //columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: this.fieldsDefaultWidth, border:false},    
-		             defaultType: 'textfield',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
-		             border: false,
-		             style: {
-		                 "margin-left": "10px", 
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [detailFieldId, detailFieldName, detailFieldCode, 
-		                     detailFieldDescr,  detailFieldDataset,
-		                    this.detailFieldThreshold, detailFieldDocuments, detailFieldWeight]
-		    	}
-		    },{
+ 	   this.configurationObject.tabItems = [this.detailTab,{
 		    	title: LN('sbi.generic.advanced')
 		        , itemId: 'advanced'
 		        , width: 350
@@ -558,6 +578,36 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.thrWin.show();
 	}
 	
+	//OVERRIDING ADD METHOD
+	, addNewItem : function(){
+
+		var emptyRecToAdd = new Ext.data.Record({
+			  id: 0
+			  , name:'' 
+			  , code:'' 
+			  , description:''
+			  , weight:''
+			  , isAdditive: false
+	          , dataset:''
+	          , threshold:''
+	          , documents:''
+	          , interpretation:''
+	          , algdesc:''
+	          , inputAttr:''
+	          , modelReference:''
+	          , targetAudience:''
+	          , kpiTypeCd:''
+	          , metricScaleCd:''
+	          , measureTypeCd:''
+	          , udpValues:''
+			 });
+	
+		this.getForm().loadRecord(emptyRecToAdd); 
+		this.fillIsAdditive(0, emptyRecToAdd);   
+		this.tabs.setActiveTab(0);
+	}
+	
+	
     //OVERRIDING save method
 	,save : function() {
 		var values = this.getForm().getFieldValues();
@@ -566,14 +616,20 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	
 		var storeUdps = this.udpValueGrid.getStore();
 		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
-		var record ;
-		
+		var record;
+		var isAdditive = false;
+		//alert(values.toSource());
+        if(values['isAdditive']=='on'){
+          isAdditive = true;         
+        }
+       
 		if(idRec == 0 || idRec === null || idRec === ''){
 			newRec = new Ext.data.Record({
 					name: values['name'],
 					code: values['code'],
 			        description: values['description'],		
 			        weight: values['weight'],	
+			        isAdditive: isAdditive,	
 			        dataset: values['dataset'],	
 			        threshold: values['threshold'],
 			        documents: values['documents'],
@@ -602,6 +658,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('code',values['code']);
 			record.set('description',values['description']);
 			record.set('weight',values['weight']);
+			record.set('isAdditive',isAdditive);
 			record.set('dataset',values['dataset']);
 			record.set('threshold',values['threshold']);
 			record.set('documents',values['documents']);
@@ -616,12 +673,13 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('udpValues',arrayUdps);
 			
 		}
-		var udpATTR =Ext.util.JSON.encode(arrayUdps);
+
         var params = {
         	name :  values['name'],
         	code : values['code'],
         	description : values['description'],
         	weight : values['weight'],
+        	isAdditive : isAdditive,
         	dataset : values['dataset'],
         	threshold : values['threshold'],
         	documents : values['documents'],
@@ -821,7 +879,23 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
     	this.kpiLinksGrid.on('select', this.launchKpisWindow, this);
     	this.kpiLinksGrid.on('delete', this.deleteKpiLink, this);
  
-	}
+	},
+	 fillIsAdditive : function(row, rec) {	 
+       	var isAdditive = rec.get('isAdditive');
+       //	alert(this.detailFieldIsAdditive);
+       	this.detailFieldIsAdditive.setValue('isAdditive', isAdditive);
+       	
+       /*	this.detailTab.items.each(function(item){	  
+       		if(item.getItemId() == 'kpis-detail'){ 
+       			this.detailTab.each(function(item){	  
+           		   if(item.getItemId() == 'isAdditive'){
+           			   alert('dentro');
+           		   		item.setValue('isAdditive', isAdditive);
+     		        }
+              });
+       		}  
+	 	});	 */     
+	 }
 
 	, fillKpiLinks : function(row, rec) {
 		

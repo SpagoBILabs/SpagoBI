@@ -5,9 +5,13 @@ import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ModelExtendedJSONSerializer implements Serializer {
@@ -26,16 +30,15 @@ public class ModelExtendedJSONSerializer implements Serializer {
 	private static final String MODEL_KPI_ID = "kpiId";
 	private static final String MODEL_IS_LEAF = "leaf";
 	private static final String MODEL_TEXT = "text";
+	private static final String UDP_VALUES = "udpValues";
 	//extended fields
 	private static final String KPI_NAME = "kpiName";
 	private static final String KPI_LABEL = "modelUuid";
 	private static final String KPI_THRESHOLD = "kpiInstThrName";
 	private static final String KPI_WEIGHT = "kpiInstWeight";
 	private static final String KPI_TARGET = "kpiInstTarget";
-
 	
 	private static final String MODEL_ERROR = "error";
-
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -86,6 +89,26 @@ public class ModelExtendedJSONSerializer implements Serializer {
 			}
 			result.put(MODEL_TEXT, model.getCode()+" - "+ model.getName() );
 			result.put(MODEL_ERROR, false);
+			// put udpValues assocated to ModelInstance Node
+			List udpValues = model.getUdpValues();
+			JSONArray udpValuesJSON = new JSONArray();
+
+			if(udpValues != null){
+				Iterator itUdpValues = udpValues.iterator();
+				while(itUdpValues.hasNext()){
+					UdpValue udpValue = (UdpValue)itUdpValues.next();
+					if(udpValue != null){
+						JSONObject jsonVal = new JSONObject();
+						//jsonVal.put("family", udpValue.getFamily());
+						jsonVal.put("label", udpValue.getLabel());
+						jsonVal.put("value", udpValue.getValue());
+						jsonVal.put("family", udpValue.getFamily());
+						jsonVal.put("type", udpValue.getTypeLabel());
+						udpValuesJSON.put(jsonVal);
+					}				
+				}	
+			}
+			result.put(UDP_VALUES, udpValuesJSON);
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

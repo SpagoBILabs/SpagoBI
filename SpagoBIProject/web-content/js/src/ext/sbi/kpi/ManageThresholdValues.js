@@ -251,6 +251,13 @@ Sbi.kpi.ManageThresholdValues = function(config) {
 		var row = e.row;	
     	
     }, this);
+   this.on('DeletedThrVal', function(e) {
+    	
+		alert('ciao');
+    	
+    }, this);
+    
+    this.addEvent('DeletedThrVal');
 
 };
 
@@ -310,6 +317,7 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
     									var deleteRow = this.getSelectionModel().getSelected();
     									this.store.remove(deleteRow);
     									this.store.commitChanges();
+    									this.fireEvent('DeletedThrVal',deleteRow);
     								} else {
     									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
     								}
