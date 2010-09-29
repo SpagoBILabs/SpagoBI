@@ -64,7 +64,7 @@ Sbi.kpi.ManageModelsTree = function(config, ref) {
 	
 	var c = Ext.apply({}, config || {}, {});
 	Sbi.kpi.ManageModelsTree.superclass.constructor.call(this, c);	 	
-}
+};
 
 Ext.extend(Sbi.kpi.ManageModelsTree, Sbi.widgets.TreeModelPanel, {
 	

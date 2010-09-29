@@ -270,7 +270,7 @@ Sbi.kpi.ManagePeriodicities = function(config) {
 	
     this.store.load();
 
-}
+};
 
 Ext.extend(Sbi.kpi.ManagePeriodicities, Ext.grid.EditorGridPanel, {
   

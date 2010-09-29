@@ -75,7 +75,7 @@ Sbi.alarm.ManageContacts = function(config) {
 		this.getForm().loadRecord(rec);  
      }, this);
 
-}
+};
 Ext.extend(Sbi.alarm.ManageContacts, Sbi.widgets.ListDetailForm, {
 
 	configurationObject: null

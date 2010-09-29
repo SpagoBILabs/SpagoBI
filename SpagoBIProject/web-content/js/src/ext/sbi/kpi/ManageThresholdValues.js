@@ -252,7 +252,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
     	
     }, this);
 
-}
+};
 
 Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
   
