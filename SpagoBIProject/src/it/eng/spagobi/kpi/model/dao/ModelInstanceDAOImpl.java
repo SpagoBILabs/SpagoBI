@@ -46,8 +46,8 @@ IModelInstanceDAO {
 
 	static private Logger logger = Logger.getLogger(ModelInstanceDAOImpl.class);
 
-	private ModelInstanceNode toModelInstanceNode(
-			SbiKpiModelInst hibSbiKpiModelInst, Date requestedDate)
+	public static ModelInstanceNode toModelInstanceNode(
+			SbiKpiModelInst hibSbiKpiModelInst)
 	throws EMFUserError {
 
 		logger.debug("IN");
@@ -163,7 +163,7 @@ IModelInstanceDAO {
 			tx = aSession.beginTransaction();
 			SbiKpiModelInst hibSbiKpiModelInst = (SbiKpiModelInst) aSession
 			.get(SbiKpiModelInst.class, id);
-			toReturn = toModelInstanceNode(hibSbiKpiModelInst, requestedDate);
+			toReturn = toModelInstanceNode(hibSbiKpiModelInst);
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the Model Instance with id "
@@ -202,7 +202,7 @@ IModelInstanceDAO {
 			.uniqueResult();
 			if (hibSbiKpiModelInst == null)
 				return null;
-			toReturn = toModelInstanceNode(hibSbiKpiModelInst, requestedDate);
+			toReturn = toModelInstanceNode(hibSbiKpiModelInst);
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the Model Instance with name "
@@ -262,7 +262,7 @@ IModelInstanceDAO {
 
 	}
 
-	private ModelInstance toModelInstanceWithoutChildren(SbiKpiModelInst value,
+	public static ModelInstance toModelInstanceWithoutChildren(SbiKpiModelInst value,
 			Session aSession) {
 		logger.debug("IN");
 		ModelInstance toReturn = new ModelInstance();

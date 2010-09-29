@@ -29,7 +29,6 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectRating;
@@ -46,7 +45,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
@@ -65,6 +63,7 @@ import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
+import it.eng.spagobi.kpi.ou.dao.IOrganizationalUnitDAO;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdValueDAO;
 import it.eng.spagobi.mapcatalogue.bo.dao.ISbiGeoFeaturesDAO;
@@ -79,8 +78,11 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
+
+import org.apache.log4j.Logger;
 
 /**
  * Contains all the data access object for all the BO objects defined into
@@ -89,7 +91,7 @@ import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 public class DAOFactory {
 
 	
-	private static final String MODULE_NAME = "MetadataService";
+	static private Logger logger = Logger.getLogger(DAOFactory.class);
 	
 	/**
 	 * Given, for a defined BO, its DAO name, creates the correct DAO instance 
@@ -97,23 +99,21 @@ public class DAOFactory {
 	 * 
 	 * @param daoName The BO DAO name
 	 * @return An object representing the DAO instance
-	 * @throws EMFUserError If an Exception occurred
 	 */
 	
-	private static Object createDAOInstance(String daoName) throws EMFUserError {
-		SpagoBITracer.debug(MODULE_NAME, DAOFactory.class.getName(), "createDAOInstance", "Begin Istantiation of DAO ["+daoName+"]");
+	private static Object createDAOInstance(String daoName) {
+		logger.debug("Begin Istantiation of DAO ["+daoName+"]");
 		Object daoObject = null;
-		try{
+		try {
 			ConfigSingleton configSingleton=ConfigSingleton.getInstance();
 			SourceBean daoConfigSourceBean =(SourceBean) configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name", daoName);
 			String daoClassName = (String)daoConfigSourceBean.getAttribute("implementation");
-			SpagoBITracer.debug(MODULE_NAME, DAOFactory.class.getName(), "createDAOInstance", "DAO ["+daoName+"] Implementation class ["+daoClassName+"]");
+			logger.debug("DAO ["+daoName+"] Implementation class ["+daoClassName+"]");
 			daoObject = Class.forName(daoClassName).newInstance();
-			SpagoBITracer.debug(MODULE_NAME, DAOFactory.class.getName(), "createDAOInstance", "DAO ["+daoName+"] Instatiate successfully");
-		}catch(Exception e){
-			SpagoBITracer.debug(MODULE_NAME, DAOFactory.class.getName(), "createDAOInstance", "Error occurred", e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 1000);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot instantiate " + daoName, e);
 		}
+		logger.debug("DAO ["+daoName+"] instantiated successfully");
 		return daoObject;
 		
 	}
@@ -605,7 +605,14 @@ public class DAOFactory {
 		return (IMeasureUnitDAO)createDAOInstance("MeasureUnitDAO");
 	}
 	
-	
+	/**
+	 * Creates a DAO instance for Organizational Unit.
+	 * 
+	 * @return a DAO instance for Organizational Unit
+	 */
+	public static IOrganizationalUnitDAO getOrganizationalUnitDAO() {
+		return (IOrganizationalUnitDAO) createDAOInstance("SbiKpiOUDAO");
+	}
 	
 	/**
 	 * Creates a DAO instance for a predefined Resource.
