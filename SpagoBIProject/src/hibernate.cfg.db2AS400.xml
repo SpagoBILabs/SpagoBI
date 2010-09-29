@@ -97,6 +97,13 @@
         <mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" /> 
         <mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" /> 
         
+        <!-- Kpi Organizational Units -->
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitHierarchies.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitNodes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrant.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrantNodes.hbm.xml" />
+        
         <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
