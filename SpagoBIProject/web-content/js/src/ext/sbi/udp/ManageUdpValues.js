@@ -119,7 +119,7 @@ Ext.extend(Sbi.kpi.ManageUdpValues, Ext.grid.PropertyGrid, {
 			// get UDP type
 			var typeData = udp.dataTypeCd;
 			if(!typeData){
-				typeData = 'TEXT'
+				typeData = 'TEXT';
 			}
 			else{
 				typeData = typeData.toUpperCase();
