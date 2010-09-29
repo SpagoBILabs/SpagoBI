@@ -693,6 +693,7 @@ Create table `SBI_KPI` (
 	`metric` Varchar(1000),
 	`description` Varchar(1000),
 	`weight` Double,
+	'is_additive' Char(1),
 	`flg_is_father` Char(1),
 	`kpi_type` Int,
 	`metric_scale_type` Int,

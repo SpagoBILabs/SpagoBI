@@ -617,6 +617,7 @@ Create table SBI_KPI (
 	METRIC Varchar(1000),
 	DESCRIPTION Varchar(1000),
 	WEIGHT Float,
+	IS_ADDITIVE Char(1),
 	FLG_IS_FATHER Char(1),
 	KPI_TYPE Integer,
 	METRIC_SCALE_TYPE Integer,
