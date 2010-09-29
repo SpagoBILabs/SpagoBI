@@ -673,7 +673,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('udpValues',arrayUdps);
 			
 		}
-
+		var udpATTR =Ext.util.JSON.encode(arrayUdps);
         var params = {
         	name :  values['name'],
         	code : values['code'],
