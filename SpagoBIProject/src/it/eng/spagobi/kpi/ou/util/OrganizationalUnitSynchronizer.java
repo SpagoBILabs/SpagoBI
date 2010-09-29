@@ -85,10 +85,12 @@ public class OrganizationalUnitSynchronizer {
 			insertNode(node, parent, hierarchy);
 		}
 		List<Node<OrganizationalUnit>> children = node.getChildren();
-		Iterator<Node<OrganizationalUnit>> it = children.iterator();
-		while (it.hasNext()) {
-			Node<OrganizationalUnit> aChild = it.next();
-			insertNewNodes(aChild, hierarchy);
+		if (children != null && children.size() > 0) {
+			Iterator<Node<OrganizationalUnit>> it = children.iterator();
+			while (it.hasNext()) {
+				Node<OrganizationalUnit> aChild = it.next();
+				insertNewNodes(aChild, hierarchy);
+			}
 		}
 	}
 	
