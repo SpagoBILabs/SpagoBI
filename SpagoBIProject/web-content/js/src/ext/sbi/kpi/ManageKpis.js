@@ -568,7 +568,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
 		var record;
 		
-		if(idRec == 0 || idRec == null || idRec === ''){
+		if(idRec === 0 || idRec === null || idRec === ''){
 			newRec = new Ext.data.Record({
 					name: values['name'],
 					code: values['code'],
@@ -615,7 +615,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			record.set('udpValues',arrayUdps);
 			
 		}
-
+		var udpATTR ='['+ Ext.util.JSON.encode(arrayUdps)+']';
         var params = {
         	name :  values['name'],
         	code : values['code'],
@@ -632,7 +632,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
         	kpiTypeCd : values['kpiTypeCd'],
         	metricScaleCd : values['metricScaleCd'],
         	measureTypeCd : values['measureTypeCd'],
-        	udpValuesAtt : arrayUdps.toSource()
+        	udpValuesAtt : udpATTR
         };
 
         
@@ -659,14 +659,14 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			      		}else{
 			      			var itemId = content.id;			      			
 			      			
-			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
+			      			if(newRec !== null && newRec !== undefined && itemId !== null && itemId !==''){
 			      				newRec.set('id', itemId);
 			      				this.mainElementsStore.add(newRec);  
 			      			}
 
 			      			this.mainElementsStore.commitChanges();
 			      			
-			      			if(newRec != null && newRec != undefined && itemId != null && itemId !==''){
+			      			if(newRec !== null && newRec !== undefined && itemId !== null && itemId !==''){
 								this.rowselModel.selectLastRow(true);
 				            }
 			      			if(record !== undefined){
@@ -826,7 +826,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		
 		var kpiSelected = rec.data.id;
 		//alert(kpiSelected);
-		if(kpiSelected!=null){
+		if(kpiSelected !== null){
 
 			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS"};	
 			var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
