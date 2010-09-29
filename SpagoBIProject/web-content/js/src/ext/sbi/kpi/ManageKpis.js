@@ -703,7 +703,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
         Ext.Ajax.request({
             url: this.services['saveItemService'],
             params: params,
-            //method: 'POST',
+            //method: 'GET',
             success: function(response, options) {
 				if (response !== undefined) {			
 		      		if(response.responseText !== undefined) {
@@ -755,15 +755,16 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             failure: function(response) {
 	      		if(response.responseText !== undefined) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			
 	      			var errMessage ='';
-					for (var count = 0; count < content.errors.length; count++) {
-						var anError = content.errors[count];
+					for (var counter = 0; counter < content.errors.length; counter++) {
+						var anError = content.errors[counter];
 	        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
 	        				errMessage += anError.localizedMessage;
 	        			} else if (anError.message !== undefined && anError.message !== '') {
 	        				errMessage += anError.message;
 	        			}
-	        			if (count < content.errors.length - 1) {
+	        			if (counter < (content.errors.length - 1)) {
 	        				errMessage += '<br/>';
 	        			}
 					}
