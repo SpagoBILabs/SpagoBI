@@ -579,7 +579,7 @@ IModelInstanceDAO {
 						.getIdKpiInstance());
 			}
 
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(value, sbiKpiModelInst, aSession, "MODEL");
+			//DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(value, sbiKpiModelInst, aSession, "MODEL");
 			
 			tx.commit();
 
@@ -852,7 +852,7 @@ IModelInstanceDAO {
 			idToReturn = (Integer) aSession.save(sbiKpiModelInst);
 
 			// insert or update the udp values
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(toCreate, sbiKpiModelInst, aSession, "MODEL");
+			//DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(toCreate, sbiKpiModelInst, aSession, "MODEL");
 
 			tx.commit();
 
