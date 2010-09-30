@@ -82,6 +82,13 @@ public class OrganizationalUnitGrantNode {
 	public void setGrant(OrganizationalUnitGrant grant) {
 		this.grant = grant;
 	}
-    
+
+
+	@Override
+	public String toString() {
+		return "OrganizationalUnitGrantNode [ouNode=" + ouNode
+				+ ", modelInstanceNode=" + modelInstanceNode + ", grant="
+				+ grant + "]";
+	}
 
 }

@@ -58,12 +58,16 @@ public class Tree<E> {
 			Iterator<Node<E>> it = children.iterator();
 			while (it.hasNext()) {
 				Node<E> aChild = it.next();
-				if (path.startsWith(aChild.getPath() + NODES_PATH_SEPARATOR)) {
-					return containsPath(aChild, path);
-				}
+				if (containsPath(aChild, path))
+					return true;
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "Tree [root=" + root + "]";
 	}
 
 }

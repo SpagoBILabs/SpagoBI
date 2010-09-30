@@ -48,6 +48,11 @@ public interface IOrganizationalUnitDAO {
 	public void insertOrganizationalUnit(OrganizationalUnit ou);
 	
 	/**
+	 * Modifies the organizational unit
+	 */
+	public void modifyOrganizationalUnit(OrganizationalUnit ou);
+	
+	/**
 	 * @return the list of hierarchies
 	 */
 	public List<OrganizationalUnitHierarchy> getHierarchiesList();
@@ -61,6 +66,11 @@ public interface IOrganizationalUnitDAO {
 	 * Inserts the hierarchy
 	 */
 	public void insertHierarchy(OrganizationalUnitHierarchy h);
+	
+	/**
+	 * Modifies the hierarchy
+	 */
+	public void modifyHierarchy(OrganizationalUnitHierarchy h);
 	
 	/**
 	 * @return the list of root nodes for a single hierarchy
@@ -78,9 +88,34 @@ public interface IOrganizationalUnitDAO {
 	public List<OrganizationalUnitGrant> getGrantsList();
 	
 	/**
+	 * Inserts a new grant
+	 * @param grant
+	 */
+	public void insertGrant(OrganizationalUnitGrant grant);
+	
+	/**
+	 * Modify a grant
+	 * @param grant
+	 */
+	public void modifyGrant(OrganizationalUnitGrant grant);
+	
+	/**
+	 * Removes a grant
+	 * @param grant
+	 */
+	public void eraseGrant(OrganizationalUnitGrant grant);
+	
+	/**
 	 * @return the list of grants for a single node of a hierarchy (i.e. association between a KPI model instance node and a OU hierarchy node)
 	 */
 	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId);
+	
+	/**
+	 * Inserts a list of grant nodes (a grant node is an association between a hierarchy node and a KPI model instance node 
+	 * in the context of a grant)
+	 * @param grantNodes
+	 */
+	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes);
 	
 	/**
 	 * Removes a node from the structure with its descendants
