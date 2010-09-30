@@ -40,7 +40,7 @@ public interface IOrganizationalUnitDAO {
 	/**
 	 * Removes the organizational unit
 	 */
-	public void eraseOrganizationalUnit(OrganizationalUnit ou);
+	public void eraseOrganizationalUnit(Integer ouId);
 	
 	/**
 	 * Inserts the organizational unit
@@ -60,7 +60,7 @@ public interface IOrganizationalUnitDAO {
 	/**
 	 * Removes the hierarchy
 	 */
-	public void eraseHierarchy(OrganizationalUnitHierarchy ou);
+	public void eraseHierarchy(Integer hierarchyId);
 	
 	/**
 	 * Inserts the hierarchy
@@ -73,14 +73,14 @@ public interface IOrganizationalUnitDAO {
 	public void modifyHierarchy(OrganizationalUnitHierarchy h);
 	
 	/**
-	 * @return the list of root nodes for a single hierarchy
+	 * @return the root node for a single hierarchy
 	 */
-	public List<OrganizationalUnitNode> getRootNodes(Integer hierarchyId);
+	public OrganizationalUnitNode getRootNode(Integer hierarchyId);
 	
 	/**
 	 * @return the list of children nodes for a single node of a hierarchy
 	 */
-	public List<OrganizationalUnitNode> getChildrenNodes(Integer hierarchyId, Integer nodeId);
+	public List<OrganizationalUnitNode> getChildrenNodes(Integer nodeId);
 	
 	/**
 	 * @return the list of grants (i.e. association between a KPI model instance and a OU hierarchy)
@@ -101,9 +101,9 @@ public interface IOrganizationalUnitDAO {
 	
 	/**
 	 * Removes a grant
-	 * @param grant
+	 * @param grantId The grant identifier
 	 */
-	public void eraseGrant(OrganizationalUnitGrant grant);
+	public void eraseGrant(Integer grantId);
 	
 	/**
 	 * @return the list of grants for a single node of a hierarchy (i.e. association between a KPI model instance node and a OU hierarchy node)
@@ -126,18 +126,18 @@ public interface IOrganizationalUnitDAO {
 	/**
 	 * Checks if the input path exists in the given hierarchy
 	 * @param path
-	 * @param hierarchy
+	 * @param hierarchyId The hierarchy identifier
 	 * @return true if the path exists in the given hierarchy, false otherwise
 	 */
-	public boolean existsNodeInHierarchy(String path, OrganizationalUnitHierarchy hierarchy);
+	public boolean existsNodeInHierarchy(String path, Integer hierarchyId);
 	
 	/**
 	 * Retrieve the node with the input path in the given hierarchy
 	 * @param path
-	 * @param hierarchy
+	 * @param hierarchyId The hierarchy identifier
 	 * @return the node with the input path in the given hierarchy
 	 */
-	public OrganizationalUnitNode getOrganizationalUnitNode(String path, OrganizationalUnitHierarchy hierarchy);
+	public OrganizationalUnitNode getOrganizationalUnitNode(String path, Integer hierarchyId);
 
 	/**
 	 * Inserts the input node in the hierarchy

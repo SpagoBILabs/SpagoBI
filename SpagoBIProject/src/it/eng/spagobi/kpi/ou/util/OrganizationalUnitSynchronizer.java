@@ -31,6 +31,7 @@ import it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderMock;
 import it.eng.spagobi.utilities.tree.Node;
 import it.eng.spagobi.utilities.tree.Tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -129,7 +130,7 @@ public class OrganizationalUnitSynchronizer {
 		aNode.setOu(node.getNodeContent());
 		aNode.setPath(node.getPath());
 		if (parent != null) {
-			OrganizationalUnitNode parentNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(parent.getPath(), hierarchy);
+			OrganizationalUnitNode parentNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(parent.getPath(), hierarchy.getId());
 			Integer parentNodeId = parentNode.getNodeId();
 			aNode.setParentNodeId(parentNodeId);
 		}
@@ -139,15 +140,19 @@ public class OrganizationalUnitSynchronizer {
 
 	private boolean exists(Node<OrganizationalUnit> node, OrganizationalUnitHierarchy hierarchy) {
 		logger.debug("IN: node = " + node + ", hierarchy = " + hierarchy);
-		boolean toReturn = DAOFactory.getOrganizationalUnitDAO().existsNodeInHierarchy(node.getPath(), hierarchy);
+		boolean toReturn = DAOFactory.getOrganizationalUnitDAO().existsNodeInHierarchy(node.getPath(), hierarchy.getId());
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 	
 	private void removeNoMoreExistingNodes(Tree<OrganizationalUnit> tree, OrganizationalUnitHierarchy hierarchy) {
 		logger.debug("IN");
-		List<OrganizationalUnitNode> rootNodes = DAOFactory.getOrganizationalUnitDAO().getRootNodes(hierarchy.getId());
-		removeNoMoreExistingNodes(tree, rootNodes, hierarchy);
+		OrganizationalUnitNode rootNode = DAOFactory.getOrganizationalUnitDAO().getRootNode(hierarchy.getId());
+		if (rootNode != null) {
+			List<OrganizationalUnitNode> nodes = new ArrayList<OrganizationalUnitNode>();
+			nodes.add(rootNode);
+			removeNoMoreExistingNodes(tree, nodes, hierarchy);
+		}
 		logger.debug("OUT");
 	}
 	
@@ -160,7 +165,7 @@ public class OrganizationalUnitSynchronizer {
 			if (tree.containsPath(aNode.getPath())) {
 				logger.debug("Node " + aNode + " exists in hierarchy " + hierarchy + ".");
 				// recursion
-				List<OrganizationalUnitNode> children = DAOFactory.getOrganizationalUnitDAO().getChildrenNodes(hierarchy.getId(), aNode.getNodeId());
+				List<OrganizationalUnitNode> children = DAOFactory.getOrganizationalUnitDAO().getChildrenNodes(aNode.getNodeId());
 				removeNoMoreExistingNodes(tree, children, hierarchy);
 			} else {
 				logger.debug("Node " + aNode + " does no more exists. Removing it ....");
@@ -214,7 +219,7 @@ public class OrganizationalUnitSynchronizer {
 			OrganizationalUnit ou = it.next();
 			if (!newOUs.contains(ou)) {
 				logger.debug("OU " + ou + " does no more exists. Removing it ...");
-				DAOFactory.getOrganizationalUnitDAO().eraseOrganizationalUnit(ou);
+				DAOFactory.getOrganizationalUnitDAO().eraseOrganizationalUnit(ou.getId());
 				logger.debug("OU " + ou + " removed.");
 			}
 		}
@@ -264,7 +269,7 @@ public class OrganizationalUnitSynchronizer {
 			OrganizationalUnitHierarchy h = it.next();
 			if (!newHierarchies.contains(h)) {
 				logger.debug("Hierarchy " + h + " does no more exists. Removing it ...");
-				DAOFactory.getOrganizationalUnitDAO().eraseHierarchy(h);
+				DAOFactory.getOrganizationalUnitDAO().eraseHierarchy(h.getId());
 				logger.debug("Hierarchy " + h + " removed.");
 			}
 		}
