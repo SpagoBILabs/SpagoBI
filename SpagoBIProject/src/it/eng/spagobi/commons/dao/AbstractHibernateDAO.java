@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.utilities.HibernateUtil;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 
 
@@ -54,5 +55,14 @@ public class AbstractHibernateDAO {
 	 */
 	public void logException(Throwable t){
 	    logger.error(t.getClass().getName()+" "+t.getMessage(),t);
+	}
+	
+	public void rollbackIfActiveAndClose(Transaction tx, Session aSession) {
+		if (tx != null && tx.isActive()) {
+			tx.rollback();
+		}
+		if (aSession != null && aSession.isOpen()) {
+			aSession.close();
+		}
 	}
 }

@@ -50,6 +50,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+/**
+ * 
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ *
+ */
 public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements IOrganizationalUnitDAO {
 
 	static private Logger logger = Logger.getLogger(OrganizationalUnitDAOImpl.class);
@@ -72,14 +77,9 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				toReturn.add(toOrganizationalUnit((SbiOrgUnit) it.next()));
 			}
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
@@ -101,20 +101,15 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				toReturn.add(toOrganizationalUnitHierarchy((SbiOrgUnitHierarchies) it.next()));
 			}
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
-	public List<OrganizationalUnitNode> getRootNodes(Integer hierarchyId) {
-		logger.debug("IN");
-		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
+	public OrganizationalUnitNode getRootNode(Integer hierarchyId) {
+		logger.debug("IN: hierarchyId = " + hierarchyId);
+		OrganizationalUnitNode toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -122,8 +117,32 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? " +
-					"and n.sbiOrgUnitNodes is null");
+					" and n.sbiOrgUnitNodes is null");
 			hibQuery.setInteger(0, hierarchyId);
+			
+			SbiOrgUnitNodes root = (SbiOrgUnitNodes) hibQuery.uniqueResult();
+
+			if (root != null) {
+				toReturn = toOrganizationalUnitNode(root);
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
+	public List<OrganizationalUnitNode> getChildrenNodes(Integer nodeId) {
+		logger.debug("IN: nodeId = " + nodeId);
+		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitNodes.nodeId = ? ");
+			hibQuery.setInteger(0, nodeId);
 			
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -132,46 +151,9 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				toReturn.add(toOrganizationalUnitNode((SbiOrgUnitNodes) it.next()));
 			}
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
-		return toReturn;
-	}
-
-	public List<OrganizationalUnitNode> getChildrenNodes(Integer hierarchyId, Integer nodeId) {
-		logger.debug("IN");
-		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
-		Session aSession = null;
-		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-
-			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? " +
-					"and n.sbiOrgUnitNodes.nodeId = ?");
-			hibQuery.setInteger(0, hierarchyId);
-			hibQuery.setInteger(1, nodeId);
-			
-			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();
-
-			while (it.hasNext()) {
-				toReturn.add(toOrganizationalUnitNode((SbiOrgUnitNodes) it.next()));
-			}
-		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
-		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 	
@@ -193,20 +175,15 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				toReturn.add(toOrganizationalUnitGrant((SbiOrgUnitGrant) it.next(), aSession));
 			}
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 	
 	
 	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId) {
-		logger.debug("IN");
+		logger.debug("IN: nodeId = " + nodeId);
 		List<OrganizationalUnitGrantNode> toReturn = new ArrayList<OrganizationalUnitGrantNode>();
 		Session aSession = null;
 		Transaction tx = null;
@@ -224,67 +201,33 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				toReturn.add(toOrganizationalUnitGrantNode((SbiOrgUnitGrantNodes) it.next(), aSession));
 			}
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
 	
-	public void eraseOrganizationalUnit(OrganizationalUnit ou) {
-		logger.debug("IN");
+	public void eraseOrganizationalUnit(Integer ouId) {
+		logger.debug("IN: ouId = " + ouId);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
-			// deletes nodes (and their children) on hierarchies' structures
-			/*
-			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes s where s.sbiOrgUnit.id = ? ");
-			hibQuery.setInteger(0, ou.getId());
-			
-			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();
-
-			while (it.hasNext()) {
-				SbiOrgUnitNodes aNode = (SbiOrgUnitNodes) it.next();
-				removeChildren(aNode, aSession);
-				aSession.delete(aNode);
-			}
-			*/
-			
-			// deletes ou from list
-			SbiOrgUnit hibOU = (SbiOrgUnit) aSession.load(SbiOrgUnit.class, ou.getId());
+			SbiOrgUnit hibOU = (SbiOrgUnit) aSession.load(SbiOrgUnit.class, ouId);
 			aSession.delete(hibOU);
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnit removed successfully.");
 	}
-
-	/*
-	private void removeChildren(SbiOrgUnitNodes aNode, Session aSession) {
-		String hql = "delete from SbiOrgUnitNodes where path like :path";
-        Query query = aSession.createQuery(hql);
-        query.setString("path", aNode.getPath() + NODES_PATH_SEPARATOR + "%");
-        query.executeUpdate();
-	}
-	*/
 
 	public void insertOrganizationalUnit(OrganizationalUnit ou) {
+		logger.debug("IN: ou = " + ou);
 		if (ou.getLabel().contains(Tree.NODES_PATH_SEPARATOR)) 
 			throw new SpagoBIRuntimeException("OrganizationalUnit label cannot contain " + Tree.NODES_PATH_SEPARATOR + " character");
 		logger.debug("IN");
@@ -305,17 +248,13 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnit inserted successfully with id " + ou.getId());
 	}
 	
 	public void modifyOrganizationalUnit(OrganizationalUnit ou) {
+		logger.debug("IN: ou = " + ou);
 		if (ou.getLabel().contains(Tree.NODES_PATH_SEPARATOR)) 
 			throw new SpagoBIRuntimeException("OrganizationalUnit label cannot contain " + Tree.NODES_PATH_SEPARATOR + " character");
 		logger.debug("IN");
@@ -334,42 +273,32 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnit modified successfully");
 	}
 
-	public void eraseHierarchy(OrganizationalUnitHierarchy h) {
-		logger.debug("IN");
+	public void eraseHierarchy(Integer hierarchyId) {
+		logger.debug("IN: hierarchyId = " + hierarchyId);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiOrgUnitHierarchies hibHierarchy = (SbiOrgUnitHierarchies) aSession.load(SbiOrgUnitHierarchies.class, h.getId());
+			SbiOrgUnitHierarchies hibHierarchy = (SbiOrgUnitHierarchies) aSession.load(SbiOrgUnitHierarchies.class, hierarchyId);
 			aSession.delete(hibHierarchy);
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: Hierarchy removed successfully");
 		
 	}
 
 	public void insertHierarchy(OrganizationalUnitHierarchy h) {
-		logger.debug("IN");
+		logger.debug("IN: h = " + h);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -388,19 +317,14 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: Hierarchy inserted successfully with id " + h.getId());
 		
 	}
 	
 	public void modifyHierarchy(OrganizationalUnitHierarchy h) {
-		logger.debug("IN");
+		logger.debug("IN: h = " + h);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -417,19 +341,14 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: Hierarchy modified successfully");
 		
 	}
 
 	public void eraseOrganizationalUnitNode(OrganizationalUnitNode node) {
-		logger.debug("IN");
+		logger.debug("IN: node = " + node);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -441,18 +360,13 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: node removed successfully.");
 	}
 
-	public boolean existsNodeInHierarchy(String path, OrganizationalUnitHierarchy hierarchy) {
-		logger.debug("IN");
+	public boolean existsNodeInHierarchy(String path, Integer hierarchyId) {
+		logger.debug("IN: path = " + path + ", hierarchy = " + hierarchyId);
 		boolean toReturn = false;
 		Session aSession = null;
 		Transaction tx = null;
@@ -462,26 +376,21 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? " +
 					" and n.path = ? ");
-			hibQuery.setInteger(0, hierarchy.getId());
+			hibQuery.setInteger(0, hierarchyId);
 			hibQuery.setString(1, path);
 			
 			List hibList = hibQuery.list();
 			toReturn = !hibList.isEmpty();
 			
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 	
-	public OrganizationalUnitNode getOrganizationalUnitNode(String path, OrganizationalUnitHierarchy hierarchy) {
-		logger.debug("IN");
+	public OrganizationalUnitNode getOrganizationalUnitNode(String path, Integer hierarchyId) {
+		logger.debug("IN: path = " + path + ", hierarchy = " + hierarchyId);
 		OrganizationalUnitNode toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -491,26 +400,21 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? " +
 					" and n.path = ? ");
-			hibQuery.setInteger(0, hierarchy.getId());
+			hibQuery.setInteger(0, hierarchyId);
 			hibQuery.setString(1, path);
 			
 			SbiOrgUnitNodes hibNode = (SbiOrgUnitNodes) hibQuery.uniqueResult();
 			toReturn = toOrganizationalUnitNode(hibNode);
 			
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
 	public void insertOrganizationalUnitNode(OrganizationalUnitNode aNode) {
-		logger.debug("IN");
+		logger.debug("IN: aNode = " + aNode);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -544,20 +448,14 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
-		
+		logger.debug("OUT: OrganizationalUnitNode inserted successfully with id " + aNode.getNodeId());
 	}
 	
 
 	public void insertGrant(OrganizationalUnitGrant grant) {
-		logger.debug("IN");
+		logger.debug("IN: grant = " + grant);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -591,18 +489,13 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnitGrant inserted successfully with id " + grant.getId());
 	}
 
 	public void modifyGrant(OrganizationalUnitGrant grant) {
-		logger.debug("IN");
+		logger.debug("IN: grant = " + grant);
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -649,17 +542,12 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnitGrant modified successfully.");
 	}
 
-	public void eraseGrant(OrganizationalUnitGrant grant) {
+	public void eraseGrant(Integer grantId) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -667,19 +555,14 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grant.getId());
+			SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grantId);
 			aSession.delete(hibGrant);
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: OrganizationalUnitGrant removed successfully.");
 	}
 	
 	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes) {
@@ -704,14 +587,9 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			
 			tx.commit();
 		} finally {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-			logger.debug("OUT");
+			rollbackIfActiveAndClose(tx, aSession);
 		}
+		logger.debug("OUT: List of OrganizationalUnitGrantNode inserted successfully.");
 		
 	}
 	
