@@ -5,6 +5,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
@@ -195,6 +196,14 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 				ArrayList thValues=new ArrayList();
 				for (Iterator iterator = set.iterator(); iterator.hasNext();) {
 					SbiThresholdValue sbiThValue = (SbiThresholdValue) iterator.next();
+					//look up for alarms
+					String hql = "from SbiAlarm a where a.sbiThresholdValue.idThresholdValue = :id";
+					Query hqlQuery = aSession.createQuery(hql);
+					hqlQuery.setInteger("id", sbiThValue.getIdThresholdValue());
+					List <SbiAlarm> alarms = hqlQuery.list();
+					if(alarms != null && !alarms.isEmpty()){
+						throw new EMFUserError(EMFErrorSeverity.ERROR, 10119);
+					}
 					aSession.delete(sbiThValue);
 					aSession.flush();
 				}

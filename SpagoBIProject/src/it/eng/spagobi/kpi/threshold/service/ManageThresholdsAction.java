@@ -260,7 +260,13 @@ import org.json.JSONObject;
 					if(id != null && !id.equals("") && !id.equals("0")){	
 						//modify
 						thr.setId(Integer.valueOf(id));
-						thrDao.modifyThreshold(thr);
+						try{
+							thrDao.modifyThreshold(thr);
+						}catch(EMFUserError e){
+							logger.error(e.getMessage(), e);
+							throw e;
+							
+						}
 						idToReturnToClient = Integer.valueOf(id);						
 					}else{
 						//insert new
@@ -298,6 +304,13 @@ import org.json.JSONObject;
 	
 				} catch (Throwable e) {
 					logger.error(e.getMessage(), e);
+					if(e instanceof EMFUserError && ((EMFUserError)e).getCode() == 10119){
+						String descr = e.getLocalizedMessage();
+						String[] descrTokens = descr.split("[\\]\\[]");
+
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								descrTokens[descrTokens.length-1], e);
+					}
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Exception occurred while saving new threshold", e);
 				}
