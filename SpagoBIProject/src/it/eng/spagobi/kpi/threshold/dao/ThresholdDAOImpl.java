@@ -196,6 +196,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 				for (Iterator iterator = set.iterator(); iterator.hasNext();) {
 					SbiThresholdValue sbiThValue = (SbiThresholdValue) iterator.next();
 					aSession.delete(sbiThValue);
+					aSession.flush();
 				}
 			}
 

@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -407,12 +408,28 @@ IThresholdValueDAO {
 			
 			if(thrValId!=null && !thrValId.equals(new Integer(0))){
 				save = false;
-				sbiThresholdValue = (SbiThresholdValue) aSession.load(SbiThresholdValue.class, thrValId);
-				toReturn = thrValId;
+				try{
+					sbiThresholdValue = (SbiThresholdValue) aSession.load(SbiThresholdValue.class, thrValId);
+					Hibernate.initialize(sbiThresholdValue);
+					toReturn = thrValId;
+					if(sbiThresholdValue == null || (sbiThresholdValue != null && sbiThresholdValue.getIdThresholdValue() == null)){
+						sbiThresholdValue = new SbiThresholdValue();
+						save = true;
+					}
+				}catch(Throwable ex){
+					sbiThresholdValue = new SbiThresholdValue();
+					save = true;
+				}
+
 			}else{
 				sbiThresholdValue = new SbiThresholdValue();
 			}
-
+			if(sbiThresholdValue == null || (sbiThresholdValue != null && sbiThresholdValue.getIdThresholdValue() == null)){
+				//previously deleted
+				//reinsert
+				sbiThresholdValue = new SbiThresholdValue();
+				save = true;
+			}
 			sbiThresholdValue.setPosition(position);
 			sbiThresholdValue.setLabel(label);
 			sbiThresholdValue.setMinValue(minValue);
@@ -431,6 +448,7 @@ IThresholdValueDAO {
 			}else{
 				//update
 				aSession.saveOrUpdate(sbiThresholdValue);
+
 			}
 
 			tx.commit();
@@ -443,7 +461,7 @@ IThresholdValueDAO {
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
 
-		} finally {
+		}finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
