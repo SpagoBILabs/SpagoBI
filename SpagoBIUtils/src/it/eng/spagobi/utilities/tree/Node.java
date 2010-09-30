@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.kpi.ou.bo;
+package it.eng.spagobi.utilities.tree;
 
 import java.util.List;
 
@@ -71,8 +71,7 @@ public class Node<T> {
 	
 	@Override
 	public String toString() {
-		return "Node [object=" + object + ", children=" + children + ", path="
-				+ path + ", parent=" + parent + "]";
+		return "Node [object=" + object + ", path=" + path + "]";
 	}
 	
 }

@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.kpi.ou.bo;
+package it.eng.spagobi.utilities.tree;
 
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +67,26 @@ public class Tree<E> {
 
 	@Override
 	public String toString() {
-		return "Tree [root=" + root + "]";
+		StringBuffer buffer = new StringBuffer("Root: " + root);
+		List<Node<E>> children = root.getChildren();
+		if (children != null && children.size() > 0) {
+			Iterator<Node<E>> it = children.iterator();
+			while (it.hasNext()) {
+				append(buffer, it.next());
+			}
+		}
+		return buffer.toString();
+	}
+	
+	public void append(StringBuffer buffer, Node<E> node) {
+		buffer.append("\n" + node);
+		List<Node<E>> children = node.getChildren();
+		if (children != null && children.size() > 0) {
+			Iterator<Node<E>> it = children.iterator();
+			while (it.hasNext()) {
+				append(buffer, it.next());
+			}
+		}
 	}
 
 }

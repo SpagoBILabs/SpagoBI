@@ -32,7 +32,6 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
-import it.eng.spagobi.kpi.ou.bo.Tree;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
@@ -40,6 +39,7 @@ import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.tree.Tree;
 
 import java.util.ArrayList;
 import java.util.Iterator;
