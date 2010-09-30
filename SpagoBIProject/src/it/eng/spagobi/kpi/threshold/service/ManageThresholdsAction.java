@@ -274,7 +274,8 @@ import org.json.JSONObject;
 							ThresholdValue tVal = (ThresholdValue)it.next();
 							tVal.setThresholdId(Integer.valueOf(idToReturnToClient));							
 							//insert or update all threshold values
-							Integer thrValueId = tDao.saveOrUpdateThresholdValue(tVal);
+							Integer thrValueId = null;
+							thrValueId = tDao.saveOrUpdateThresholdValue(tVal);								
 							tVal.setId(thrValueId);
 							thrValueIds.add(thrValueId);
 						}				
