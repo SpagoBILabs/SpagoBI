@@ -33,11 +33,11 @@ public class OrganizationalUnitHierarchy {
 
     // Fields    
 
-     private Integer id;
-     private String label;
-     private String name;
-     private String description;
-     private String target;
+	private Integer id;
+	private String label;
+	private String name;
+	private String description;
+	private String target;
 
 
     // Constructors
@@ -105,5 +105,70 @@ public class OrganizationalUnitHierarchy {
     public void setTarget(String target) {
         this.target = target;
     }
+    
+    @Override
+	public String toString() {
+		return "OrganizationalUnitHierarchy [id=" + id + ", label=" + label
+				+ ", name=" + name + ", description=" + description
+				+ ", target=" + target + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
+	}
+
+	public boolean deepEquals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrganizationalUnitHierarchy other = (OrganizationalUnitHierarchy) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		return true;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrganizationalUnitHierarchy other = (OrganizationalUnitHierarchy) obj;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		return true;
+	}
+    
+    
 
 }

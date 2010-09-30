@@ -129,4 +129,12 @@ public class OrganizationalUnitGrant {
 		this.description = description;
 	}
 
+    @Override
+	public String toString() {
+		return "OrganizationalUnitGrant [id=" + id + ", modelInstance="
+				+ modelInstance + ", hierarchy=" + hierarchy + ", startDate="
+				+ startDate + ", endDate=" + endDate + ", label=" + label
+				+ ", name=" + name + ", description=" + description + "]";
+	}
+	
 }

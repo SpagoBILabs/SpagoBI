@@ -75,14 +75,14 @@ public class OrganizationalUnitListProviderMock extends
 			Node<OrganizationalUnit> nodeo2o3 = new Node<OrganizationalUnit>(o2o3, nodeo2.getPath() + S + o2o3.getLabel(), nodeo2);
 			nodeo2.setChildren(Arrays.asList(nodeo2o1, nodeo2o2, nodeo2o3));
 			
-			Node<OrganizationalUnit> nodeo3o1 = new Node<OrganizationalUnit>(o3o1, nodeo3.getPath() + S + o2o3.getLabel(), nodeo3);
-			Node<OrganizationalUnit> nodeo3o2 = new Node<OrganizationalUnit>(o3o2, nodeo3.getPath() + S + o2o3.getLabel(), nodeo3);
-			Node<OrganizationalUnit> nodeo3o3 = new Node<OrganizationalUnit>(o3o3, nodeo3.getPath() + S + o2o3.getLabel(), nodeo3);
+			Node<OrganizationalUnit> nodeo3o1 = new Node<OrganizationalUnit>(o3o1, nodeo3.getPath() + S + o3o1.getLabel(), nodeo3);
+			Node<OrganizationalUnit> nodeo3o2 = new Node<OrganizationalUnit>(o3o2, nodeo3.getPath() + S + o3o2.getLabel(), nodeo3);
+			Node<OrganizationalUnit> nodeo3o3 = new Node<OrganizationalUnit>(o3o3, nodeo3.getPath() + S + o3o3.getLabel(), nodeo3);
 			nodeo3.setChildren(Arrays.asList(nodeo3o1, nodeo3o2, nodeo3o3));
 			
-			Node<OrganizationalUnit> nodeo3o1o1 = new Node<OrganizationalUnit>(o3o1o1, nodeo3.getPath() + S + o3o1o1.getLabel(), nodeo3o1);
-			Node<OrganizationalUnit> nodeo3o1o2 = new Node<OrganizationalUnit>(o3o1o2, nodeo3.getPath() + S + o3o1o2.getLabel(), nodeo3o1);
-			Node<OrganizationalUnit> nodeo3o1o3 = new Node<OrganizationalUnit>(o3o1o3, nodeo3.getPath() + S + o3o1o3.getLabel(), nodeo3o1);
+			Node<OrganizationalUnit> nodeo3o1o1 = new Node<OrganizationalUnit>(o3o1o1, nodeo3o1.getPath() + S + o3o1o1.getLabel(), nodeo3o1);
+			Node<OrganizationalUnit> nodeo3o1o2 = new Node<OrganizationalUnit>(o3o1o2, nodeo3o1.getPath() + S + o3o1o2.getLabel(), nodeo3o1);
+			Node<OrganizationalUnit> nodeo3o1o3 = new Node<OrganizationalUnit>(o3o1o3, nodeo3o1.getPath() + S + o3o1o3.getLabel(), nodeo3o1);
 			nodeo3o1.setChildren(Arrays.asList(nodeo3o1o1, nodeo3o1o2, nodeo3o1o3));
 			
 			rootNode.setChildren(Arrays.asList(nodeo1, nodeo2, nodeo3));

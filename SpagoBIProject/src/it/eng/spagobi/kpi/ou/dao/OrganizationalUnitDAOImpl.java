@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.dao.ModelInstanceDAOImpl;
+import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
@@ -35,6 +36,7 @@ import it.eng.spagobi.kpi.ou.bo.Tree;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -232,20 +234,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		}
 		return toReturn;
 	}
-	
-	public OrganizationalUnitGrantNode toOrganizationalUnitGrantNode(
-			SbiOrgUnitGrantNodes hibGrantNode, Session aSession) {
-		OrganizationalUnitNode ouNode = toOrganizationalUnitNode(hibGrantNode.getSbiOrgUnitNodes());
-		ModelInstanceNode modelInstanceNode;
-		try {
-			modelInstanceNode = ModelInstanceDAOImpl.toModelInstanceNode(hibGrantNode.getSbiKpiModelInst());
-		} catch (EMFUserError e) {
-			throw new RuntimeException(e);
-		}
-		OrganizationalUnitGrant grant = toOrganizationalUnitGrant(hibGrantNode.getSbiOrgUnitGrant(), aSession);
-		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode(ouNode, modelInstanceNode, grant);
-		return grantNode;
-	}
+
 	
 	public void eraseOrganizationalUnit(OrganizationalUnit ou) {
 		logger.debug("IN");
@@ -325,6 +314,35 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			logger.debug("OUT");
 		}
 	}
+	
+	public void modifyOrganizationalUnit(OrganizationalUnit ou) {
+		if (ou.getLabel().contains(Tree.NODES_PATH_SEPARATOR)) 
+			throw new SpagoBIRuntimeException("OrganizationalUnit label cannot contain " + Tree.NODES_PATH_SEPARATOR + " character");
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiOrgUnit hibOU = (SbiOrgUnit) aSession.load(SbiOrgUnit.class, ou.getId());
+			hibOU.setLabel(ou.getLabel());
+			hibOU.setName(ou.getName());
+			hibOU.setDescription(ou.getDescription());
+
+			aSession.save(hibOU);
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+	}
 
 	public void eraseHierarchy(OrganizationalUnitHierarchy h) {
 		logger.debug("IN");
@@ -367,6 +385,35 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			aSession.save(hibHierarchy);
 			
 			h.setId(hibHierarchy.getId());
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		
+	}
+	
+	public void modifyHierarchy(OrganizationalUnitHierarchy h) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiOrgUnitHierarchies hibHierarchy = (SbiOrgUnitHierarchies) aSession.load(SbiOrgUnitHierarchies.class, h.getId());
+			hibHierarchy.setLabel(h.getLabel());
+			hibHierarchy.setName(h.getName());
+			hibHierarchy.setDescription(h.getDescription());
+			hibHierarchy.setTarget(h.getTarget());
+
+			aSession.save(hibHierarchy);
 			
 			tx.commit();
 		} finally {
@@ -508,6 +555,167 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		
 	}
 	
+
+	public void insertGrant(OrganizationalUnitGrant grant) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOrgUnitGrant hibGrant = new SbiOrgUnitGrant();
+			hibGrant.setLabel(grant.getLabel());
+			hibGrant.setName(grant.getName());
+			hibGrant.setDescription(grant.getDescription());
+			hibGrant.setStartDate(grant.getStartDate());
+			hibGrant.setEndDate(grant.getEndDate());
+			
+			// set hierarchy
+			Integer hierachyId = grant.getHierarchy().getId();
+			Query query = aSession.createQuery(" from SbiOrgUnitHierarchies s where s.id = ? ");
+			query.setInteger(0, hierachyId);
+			SbiOrgUnitHierarchies h = (SbiOrgUnitHierarchies) query.uniqueResult();
+			hibGrant.setSbiOrgUnitHierarchies(h);
+			
+			// set kpi model instance
+			Integer kpiModelInstId = grant.getModelInstance().getId();
+			query = aSession.createQuery(" from SbiKpiModelInst s where s.kpiModelInst = ? ");
+			query.setInteger(0, kpiModelInstId);
+			SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
+			hibGrant.setSbiKpiModelInst(s);
+			
+			aSession.save(hibGrant);
+			
+			grant.setId(hibGrant.getId());
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+
+	public void modifyGrant(OrganizationalUnitGrant grant) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grant.getId());
+			hibGrant.setLabel(grant.getLabel());
+			hibGrant.setName(grant.getName());
+			hibGrant.setDescription(grant.getDescription());
+			hibGrant.setStartDate(grant.getStartDate());
+			hibGrant.setEndDate(grant.getEndDate());
+			
+			// if hierarchy and/or kpi model instance have been changed, erase previous defined node grants
+			Integer previousHierachyId = hibGrant.getSbiOrgUnitHierarchies().getId();
+			Integer newHierachyId = grant.getHierarchy().getId();
+			Integer previousKpiModelInstId = hibGrant.getSbiKpiModelInst().getKpiModelInst();
+			Integer newKpiModelInstId = grant.getModelInstance().getId();
+			if (previousHierachyId.intValue() != newHierachyId.intValue() 
+					|| previousKpiModelInstId.intValue() != newKpiModelInstId.intValue()) {
+				String hql = "delete from SbiOrgUnitGrantNodes s where s.id.grantId = ?";
+		        Query query = aSession.createQuery(hql);
+		        query.setInteger(0, hibGrant.getId());
+		        query.executeUpdate();
+			}
+			
+			// update hierarchy
+			if (previousHierachyId.intValue() != newHierachyId.intValue()) {
+				Query query = aSession.createQuery(" from SbiOrgUnitHierarchies s where s.id = ? ");
+				query.setInteger(0, newHierachyId);
+				SbiOrgUnitHierarchies h = (SbiOrgUnitHierarchies) query.uniqueResult();
+				hibGrant.setSbiOrgUnitHierarchies(h);
+			}
+			
+			// update kpi model instance
+			if (previousKpiModelInstId.intValue() != newKpiModelInstId.intValue()) {
+				Query query = aSession.createQuery(" from SbiKpiModelInst s where s.kpiModelInst = ? ");
+				query.setInteger(0, newKpiModelInstId);
+				SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
+				hibGrant.setSbiKpiModelInst(s);
+			}
+			
+			aSession.save(hibGrant);
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+
+	public void eraseGrant(OrganizationalUnitGrant grant) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grant.getId());
+			aSession.delete(hibGrant);
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+	
+	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Iterator<OrganizationalUnitGrantNode> it = grantNodes.iterator();
+			while (it.hasNext()) {
+				OrganizationalUnitGrantNode aGrantNode = it.next();
+				Integer grantId = aGrantNode.getGrant().getId();
+				Integer hierarchyNodeId = aGrantNode.getOuNode().getNodeId();
+				Integer kpiModelInstNodeId = aGrantNode.getModelInstanceNode().getModelInstanceNodeId();
+				
+				SbiOrgUnitGrantNodesId grantNodeId = new SbiOrgUnitGrantNodesId(hierarchyNodeId, kpiModelInstNodeId, grantId);
+				SbiOrgUnitGrantNodes grantNode = new SbiOrgUnitGrantNodes(grantNodeId, null, null, null);
+				aSession.save(grantNode);
+			}
+			
+			tx.commit();
+		} finally {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			if (aSession != null && aSession.isOpen()) {
+				aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		
+	}
+	
+	
 	public OrganizationalUnitGrant toOrganizationalUnitGrant(
 			SbiOrgUnitGrant hibGrant, Session aSession) {
 		OrganizationalUnitHierarchy hierarchy = toOrganizationalUnitHierarchy(hibGrant.getSbiOrgUnitHierarchies());
@@ -540,4 +748,19 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return node;
 	}
 	
+	
+	public OrganizationalUnitGrantNode toOrganizationalUnitGrantNode(
+			SbiOrgUnitGrantNodes hibGrantNode, Session aSession) {
+		OrganizationalUnitNode ouNode = toOrganizationalUnitNode(hibGrantNode.getSbiOrgUnitNodes());
+		ModelInstanceNode modelInstanceNode;
+		try {
+			modelInstanceNode = ModelInstanceDAOImpl.toModelInstanceNode(hibGrantNode.getSbiKpiModelInst());
+		} catch (EMFUserError e) {
+			throw new RuntimeException(e);
+		}
+		OrganizationalUnitGrant grant = toOrganizationalUnitGrant(hibGrantNode.getSbiOrgUnitGrant(), aSession);
+		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode(ouNode, modelInstanceNode, grant);
+		return grantNode;
+	}
+
 }

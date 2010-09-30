@@ -66,4 +66,10 @@ public class OrganizationalUnitNodeWithGrant {
 		this.node = node;
 	}
 
+	@Override
+	public String toString() {
+		return "OrganizationalUnitNodeWithGrant [grants=" + grants + ", node="
+				+ node + "]";
+	}
+	
 }

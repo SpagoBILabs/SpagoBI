@@ -92,4 +92,11 @@ public class OrganizationalUnitNode {
 		this.path = path;
 	}
 
+	@Override
+	public String toString() {
+		return "OrganizationalUnitNode [nodeId=" + nodeId + ", ou=" + ou
+				+ ", hierarchy=" + hierarchy + ", parentNodeId=" + parentNodeId
+				+ ", path=" + path + "]";
+	}
+	
 }

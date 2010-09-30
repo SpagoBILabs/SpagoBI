@@ -68,4 +68,11 @@ public class Node<T> {
 	public void setParent(Node<T> parent) {
 		this.parent = parent;
 	}
+	
+	@Override
+	public String toString() {
+		return "Node [object=" + object + ", children=" + children + ", path="
+				+ path + ", parent=" + parent + "]";
+	}
+	
 }

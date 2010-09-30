@@ -139,6 +139,7 @@ public class OrganizationalUnitSynchronizer {
 		List<OrganizationalUnitHierarchy> newHierarchies = provider.getHierarchies();
 		List<OrganizationalUnitHierarchy> oldHierarchies = DAOFactory.getOrganizationalUnitDAO().getHierarchiesList();
 		removeNonExistingHierarchies(newHierarchies, oldHierarchies);
+		modifyExistingHierarchies(newHierarchies, oldHierarchies);
 		insertNewHierarchies(newHierarchies, oldHierarchies);
 	}
 
@@ -150,6 +151,7 @@ public class OrganizationalUnitSynchronizer {
 		List<OrganizationalUnit> newOUs = provider.getOrganizationalUnits();
 		List<OrganizationalUnit> oldOUs = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitList();
 		removeNonExistingOUs(newOUs, oldOUs);
+		modifyExistingOUs(newOUs, oldOUs);
 		insertNewOUs(newOUs, oldOUs);
 	}
 	
@@ -159,6 +161,23 @@ public class OrganizationalUnitSynchronizer {
 			OrganizationalUnit ou = it.next();
 			if (!newOUs.contains(ou)) {
 				DAOFactory.getOrganizationalUnitDAO().eraseOrganizationalUnit(ou);
+			}
+		}
+	}
+	
+	private void modifyExistingOUs(List<OrganizationalUnit> newOUs, List<OrganizationalUnit> oldOUs) {
+		Iterator<OrganizationalUnit> it = oldOUs.iterator();
+		while (it.hasNext()) {
+			OrganizationalUnit ou = it.next();
+			int index = newOUs.indexOf(ou);
+			if (index >= 0) {
+				OrganizationalUnit newOU = newOUs.get(index);
+				if (!newOU.deepEquals(ou)) {
+					ou.setName(newOU.getName());
+					ou.setDescription(newOU.getDescription());
+					DAOFactory.getOrganizationalUnitDAO().modifyOrganizationalUnit(ou);
+				}
+				newOU.setId(ou.getId()); // setting the current OU id
 			}
 		}
 	}
@@ -179,6 +198,24 @@ public class OrganizationalUnitSynchronizer {
 			OrganizationalUnitHierarchy h = it.next();
 			if (!newHierarchies.contains(h)) {
 				DAOFactory.getOrganizationalUnitDAO().eraseHierarchy(h);
+			}
+		}
+	}
+	
+	private void modifyExistingHierarchies(List<OrganizationalUnitHierarchy> newHierarchies, List<OrganizationalUnitHierarchy> oldHierarchies) {
+		Iterator<OrganizationalUnitHierarchy> it = oldHierarchies.iterator();
+		while (it.hasNext()) {
+			OrganizationalUnitHierarchy h = it.next();
+			int index = newHierarchies.indexOf(h);
+			if (index >= 0) {
+				OrganizationalUnitHierarchy newHierarchy = newHierarchies.get(index);
+				if (!newHierarchy.deepEquals(h)) {
+					h.setName(newHierarchy.getName());
+					h.setDescription(newHierarchy.getDescription());
+					h.setTarget(newHierarchy.getTarget());
+					DAOFactory.getOrganizationalUnitDAO().modifyHierarchy(h);
+				}
+				newHierarchy.setId(h.getId());
 			}
 		}
 	}
