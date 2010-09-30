@@ -23,7 +23,7 @@ package it.eng.spagobi.kpi.ou.provider;
 
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
-import it.eng.spagobi.kpi.ou.bo.Tree;
+import it.eng.spagobi.utilities.tree.Tree;
 
 import java.util.List;
 
