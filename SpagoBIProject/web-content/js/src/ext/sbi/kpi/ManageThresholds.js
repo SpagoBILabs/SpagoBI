@@ -421,7 +421,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		    },this.thrValuesItem];
  	   
  	   this.tempThrV.on('DeletedThrVal', function(e) {
- 	    	alert('qui');	 	    	
+ 	    	//alert('qui');	 	    	
  	    }, this);
  	   
 	}
