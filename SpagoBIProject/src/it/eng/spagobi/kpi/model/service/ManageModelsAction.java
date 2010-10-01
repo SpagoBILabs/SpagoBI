@@ -35,6 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -264,6 +265,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	}
 	private List<Model> deserializeNodesJSONArray(JSONArray rows) throws JSONException{
 		List<Model> toReturn = new ArrayList<Model>();
+		HashMap<String, Model> labels = new HashMap<String, Model>();
 		for(int i=0; i< rows.length(); i++){
 			
 			JSONObject obj = (JSONObject)rows.get(i);
@@ -294,7 +296,14 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 					//nothing
 					model.setDescription(null);
 				}
-				model.setLabel(obj.getString("label"));
+				String labelKey = obj.getString("label");
+				model.setLabel(labelKey);
+				if(!labels.containsKey(labelKey)){
+					labels.put(labelKey, model);
+				}else{
+					//skip it
+					continue;
+				}
 				model.setName(obj.getString("name"));
 				model.setTypeCd(obj.getString("type"));
 				model.setTypeId(obj.getInt("typeId"));
