@@ -253,7 +253,7 @@ Sbi.kpi.ManageThresholdValues = function(config) {
     }, this);
    this.on('DeletedThrVal', function(e) {
     	
-		alert('ciao');
+		//alert('ciao');
     	
     }, this);
     
