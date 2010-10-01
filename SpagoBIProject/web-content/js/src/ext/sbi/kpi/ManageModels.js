@@ -110,6 +110,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	, root:null
 	, referencedCmp : null
 	, treeLoader : null
+	, nodesLabels : new Array()
 	, initContextMenu : function() {
 
 		this.menu = new Ext.menu.Menu( {
@@ -440,8 +441,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				        		  //this.mainTree.getSelectionModel().select(child);
 
 			  	        		  child.attributes.parentId = parent.attributes.modelId;
-			        			  var size = this.nodesToSave.length;
-			        			  this.nodesToSave[size] = child;
+			  	        		  this.selectNode(null);
+			        			  //var size = this.nodesToSave.length;
+			        			  //this.nodesToSave[size] = child;
 	      				      }
 		      				}
 		      		    }
@@ -580,8 +582,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		if(this.selectedNodeToEdit !== null){
 			if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
-				var size = this.nodesToSave.length;
-				this.nodesToSave[size] = this.selectedNodeToEdit;
+				//checks for the label
+				if(this.nodesLabels.indexOf(this.selectedNodeToEdit.attributes.label) == -1){
+					var labSize = this.nodesLabels.length;
+					this.nodesLabels[labSize] = this.selectedNodeToEdit.attributes.label;
+					var size = this.nodesToSave.length;
+					this.nodesToSave[size] = this.selectedNodeToEdit;
+				}
+
 			}//else skip because already taken
 		}
 	}
@@ -658,6 +666,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 					
 		});
 		this.nodesToSave = new Array();
+		this.nodesLabels = new Array();
 	}
 	,dropNodeBehavoiur: function(e) {
 
