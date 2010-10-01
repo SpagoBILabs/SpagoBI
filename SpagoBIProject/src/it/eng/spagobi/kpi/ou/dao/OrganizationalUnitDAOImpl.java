@@ -32,6 +32,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
@@ -591,6 +592,81 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		}
 		logger.debug("OUT: List of OrganizationalUnitGrantNode inserted successfully.");
 		
+	}
+	
+
+	public OrganizationalUnitNodeWithGrant getRootNodeWithGrants(
+			Integer hierarchyId, Integer grantId) {
+		logger.debug("IN: hierarchyId = " + hierarchyId + ", grantId = " + grantId);
+		OrganizationalUnitNodeWithGrant toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? " +
+					" and n.sbiOrgUnitNodes is null");
+			hibQuery.setInteger(0, hierarchyId);
+			
+			SbiOrgUnitNodes root = (SbiOrgUnitNodes) hibQuery.uniqueResult();
+
+			if (root != null) {
+				OrganizationalUnitNode node = toOrganizationalUnitNode(root);
+				toReturn = getNodeWithGrants(node, grantId, aSession);
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
+	private OrganizationalUnitNodeWithGrant getNodeWithGrants(
+			OrganizationalUnitNode node, Integer grantId, Session aSession) {
+		logger.debug("IN");
+		OrganizationalUnitNodeWithGrant toReturn = null;
+		List<OrganizationalUnitGrantNode> grants = new ArrayList<OrganizationalUnitGrantNode>();
+		Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrantNodes n where n.id.nodeId = ? " +
+			" and n.id.grantId = ?");
+		hibQuery.setInteger(0, node.getNodeId());
+		hibQuery.setInteger(1, grantId);
+		List hibList = hibQuery.list();
+		Iterator it = hibList.iterator();
+		while (it.hasNext()) {
+			grants.add(toOrganizationalUnitGrantNode((SbiOrgUnitGrantNodes) it.next(), aSession));
+		}
+		toReturn = new OrganizationalUnitNodeWithGrant(node, grants);
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	public List<OrganizationalUnitNodeWithGrant> getChildrenNodesWithGrants(
+			Integer nodeId, Integer grantId) {
+		logger.debug("IN: nodeId = " + nodeId + ", grantId = " + grantId);
+		List<OrganizationalUnitNodeWithGrant> toReturn = new ArrayList<OrganizationalUnitNodeWithGrant>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitNodes.nodeId = ? ");
+			hibQuery.setInteger(0, nodeId);
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				OrganizationalUnitNode node = toOrganizationalUnitNode((SbiOrgUnitNodes) it.next());
+				OrganizationalUnitNodeWithGrant nodeWithGrants = getNodeWithGrants(node, grantId, aSession);
+				toReturn.add(nodeWithGrants);
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
 	}
 	
 	

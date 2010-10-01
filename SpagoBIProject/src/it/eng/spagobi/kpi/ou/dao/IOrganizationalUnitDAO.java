@@ -26,6 +26,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 
 import java.util.List;
 
@@ -78,9 +79,19 @@ public interface IOrganizationalUnitDAO {
 	public OrganizationalUnitNode getRootNode(Integer hierarchyId);
 	
 	/**
+	 * @return the root node (with grants) for a single hierarchy
+	 */
+	public OrganizationalUnitNodeWithGrant getRootNodeWithGrants(Integer hierarchyId, Integer grantId);
+	
+	/**
 	 * @return the list of children nodes for a single node of a hierarchy
 	 */
 	public List<OrganizationalUnitNode> getChildrenNodes(Integer nodeId);
+	
+	/**
+	 * @return the list of children nodes for a single node of a hierarchy
+	 */
+	public List<OrganizationalUnitNodeWithGrant> getChildrenNodesWithGrants(Integer nodeId, Integer grantId);
 	
 	/**
 	 * @return the list of grants (i.e. association between a KPI model instance and a OU hierarchy)
