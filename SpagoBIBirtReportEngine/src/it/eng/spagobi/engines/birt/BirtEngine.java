@@ -82,6 +82,8 @@ public class BirtEngine {
 		    level = Level.FINER;
 		} else if ("FINEST".equalsIgnoreCase(logLevel)) {
 		    level = Level.FINEST;
+		} else if ("ALL".equalsIgnoreCase(logLevel)) {
+			level = Level.ALL;
 		} else if ("OFF".equalsIgnoreCase(logLevel)) {
 		    level = Level.OFF;
 		}
@@ -99,6 +101,7 @@ public class BirtEngine {
 	    config.setEngineHome("");
 	    IPlatformContext context = new PlatformServletContext(sc);
 	    config.setPlatformContext(context);
+	    config.setTempDir(System.getProperty("java.io.tmpdir") + "/birt/");
 
 			
 	   // ParameterAccessor.initParameters(sc);
