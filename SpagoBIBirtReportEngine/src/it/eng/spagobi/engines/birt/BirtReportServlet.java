@@ -208,10 +208,10 @@ public class BirtReportServlet extends HttpServlet {
 	protected HTMLRenderOption prepareHtmlRenderOption(ServletContext servletContext, HttpServletRequest servletRequest)
 	throws Exception {
 		logger.debug("IN");
-		String imageDirectory = servletContext.getRealPath("/report/images");
+		String tmpDir = System.getProperty("java.io.tmpdir");
+		String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
 		String contextPath = servletRequest.getContextPath();
-		//String imageBaseUrl = "/BirtImageServlet?params="+reportParams+"&imagePath=/report/images&imageID=";
-		String imageBaseUrl = "/BirtImageServlet?imagePath=/report/images&imageID=";
+		String imageBaseUrl = "/BirtImageServlet?imageID=";
 
 		// Register new image handler
 		HTMLRenderOption renderOption = new HTMLRenderOption();

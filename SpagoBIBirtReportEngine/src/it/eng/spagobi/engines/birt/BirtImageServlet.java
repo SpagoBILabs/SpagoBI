@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,34 +49,32 @@ public class BirtImageServlet extends HttpServlet {
 		response.setContentType("image");
 
 		
-		if (chartLabel == null){
-			String imagePath = request.getParameter("imagePath");
-			String imageDirectory = getServletContext().getRealPath(imagePath);
+		if (chartLabel == null) {
+			String tmpDir = System.getProperty("java.io.tmpdir");
+			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
 			String imageFileName = request.getParameter("imageID");
 	
-		
-			if (imageDirectory == null || imageFileName == null) {
+			if (imageFileName == null) {
 				logger.error("Image directory or image file name missing.");
-				return;
+				throw new RuntimeException("Image file name missing.");
 			}
+			
+			if (imageFileName.contains("/") || imageFileName.contains("\\")) {
+				logger.error("Image name contains invalid characters!!! " + imageFileName);
+				throw new RuntimeException("Image name contains invalid characters!!! " + imageFileName);
+			}
+			
 			//gets complete image file name:
-			if (imageDirectory.endsWith("/"))
-				completeImageFileName = imageDirectory + imageFileName;
-			else completeImageFileName = imageDirectory + "/" + imageFileName;
+			completeImageFileName = imageDirectory +  File.separator + imageFileName;
 	
 			imageFile = new File(completeImageFileName);
 			
-			if (imageDirectory.endsWith("/"))
-				imageFile = new File(imageDirectory + imageFileName);
-			else imageFile = new File(imageDirectory + "/" + imageFileName);
-			
-			if (imageFile == null || !imageFile.isFile()) {
+			if (imageFile == null || !imageFile.exists() || !imageFile.isFile()) {
 				logger.error("File [" + completeImageFileName + "] not found.");
-				return;
+				throw new RuntimeException("Image file not found. File [" + completeImageFileName + "] not found.");
 			}
 		
-		
-			try{		
+			try {		
 				fis = new FileInputStream(imageFile);
 			}catch (Exception e) {
 				logger.error("Error writing image into file input stream", e);
