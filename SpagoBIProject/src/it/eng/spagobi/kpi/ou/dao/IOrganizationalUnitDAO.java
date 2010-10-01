@@ -39,6 +39,11 @@ public interface IOrganizationalUnitDAO {
 	public List<OrganizationalUnit> getOrganizationalUnitList();
 	
 	/**
+	 * @return the OU with the given identifier
+	 */
+	public OrganizationalUnit getOrganizationalUnit(Integer id);
+	
+	/**
 	 * Removes the organizational unit
 	 */
 	public void eraseOrganizationalUnit(Integer ouId);
@@ -57,6 +62,11 @@ public interface IOrganizationalUnitDAO {
 	 * @return the list of hierarchies
 	 */
 	public List<OrganizationalUnitHierarchy> getHierarchiesList();
+	
+	/**
+	 * @return the Hierarchy with the given identifier
+	 */
+	public OrganizationalUnitHierarchy getHierarchy(Integer id);
 	
 	/**
 	 * Removes the hierarchy

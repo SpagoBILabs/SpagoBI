@@ -108,6 +108,46 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 
+	public OrganizationalUnit getOrganizationalUnit(Integer id) {
+		logger.debug("IN: id = " + id);
+		OrganizationalUnit toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOrgUnit hibOU = (SbiOrgUnit) aSession.load(SbiOrgUnit.class, id);
+
+			toReturn = toOrganizationalUnit(hibOU);
+			
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
+	public OrganizationalUnitHierarchy getHierarchy(Integer id) {
+		logger.debug("IN: id = " + id);
+		OrganizationalUnitHierarchy toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiOrgUnitHierarchies hibHierarchy = (SbiOrgUnitHierarchies) aSession.load(SbiOrgUnitHierarchies.class, id);
+
+			toReturn = toOrganizationalUnitHierarchy(hibHierarchy);
+			
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+	
 	public OrganizationalUnitNode getRootNode(Integer hierarchyId) {
 		logger.debug("IN: hierarchyId = " + hierarchyId);
 		OrganizationalUnitNode toReturn = null;
