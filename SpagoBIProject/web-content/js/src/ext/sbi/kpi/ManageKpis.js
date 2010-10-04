@@ -256,6 +256,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
  	 this.detailFieldIsAdditive = new Ext.form.CheckboxGroup({
          xtype: 'checkboxgroup',
          itemId: 'isAdditive',
+         name: 'isAdditive',
          columns: 1,
          boxMinWidth  : 200,
          boxMinHeight  : 100,
@@ -296,13 +297,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             		    width: 75
             		}
         		])
-		   , listeners: {
-	 			'change': {
-	        		fn: this.refillKpiLinks,
-	        		scope: this
-	      		} 
-	 		}
-
 		 }));  
  	 detailFieldDataset.sm.addListener('selectionchange', this.refillKpiLinks, this ); 
  	  
@@ -625,10 +619,14 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
 		var record;
 		var isAdditive = false;
-		//alert(values.toSource());
-        if(values['isAdditive']=='on'){
-          isAdditive = true;         
-        }
+		
+		var temp =  this.detailFieldIsAdditive.getValue()[0];
+		if( temp!= null && temp!=undefined){
+			var retrievedValue = temp.getValue();
+	        if(retrievedValue==true){
+	          isAdditive = true;         
+	        }
+		}
        
 		if(idRec == 0 || idRec === null || idRec === ''){
 			newRec = new Ext.data.Record({
@@ -660,7 +658,6 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	   	        	record = tempRecord;
 				}			   
 	   	    }	
-
 			record.set('name',values['name']);
 			record.set('code',values['code']);
 			record.set('description',values['description']);
