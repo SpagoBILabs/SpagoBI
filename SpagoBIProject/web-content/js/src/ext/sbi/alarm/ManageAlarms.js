@@ -415,7 +415,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	             store: this.thresholdsStore,
 	             forceReload:true,
 	             displayField:'label',
-	             valueField: 'id',
+	             valueField: 'idThrVal',
 	             typeAhead: true,
 	             mode: 'local',
 	             triggerAction: 'all',
@@ -503,9 +503,9 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		this.kpiStore.loadData(config.kpisEmptyList);		
 	    
 	    this.thresholdsStore = new Ext.data.JsonStore({
-	    	id: 'id',
+	    	id: 'idThrVal',
 	    	root: 'samples',
-	        fields : ['id', 'label']
+	        fields : ['idThrVal', 'label']
 	    });
 	    
 	    this.contactsStore = new Ext.data.JsonStore({
@@ -551,6 +551,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	          	
 				if (response !== undefined) {		
 	      			var content = Ext.util.JSON.decode( response.responseText );
+
 	      			if(content !== undefined) {	     				
 	      				this.tresholdsCombo.getStore().loadData(content);
 	      				this.tresholdsCombo.getStore().commitChanges();
@@ -653,7 +654,9 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	   }
 	  
 	   var noThr = true;
-	   var thrId = Ext.getCmp("tresholds-combo").value;
+	   //var thrId = Ext.getCmp("tresholds-combo").value;
+	   var thrId = this.tresholdsCombo.getValue();
+
 	   if(thrId == undefined || thrId == null || thrId ==''){
 	   		noThr = true;
        }else{
@@ -686,7 +689,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 			record.set('kpi', kpiId);
 			record.set('threshold', thrId);         
 	  }
-	  
+
 	  if(noKpi || noThr){
 	    Ext.MessageBox.confirm(
 		     	LN('sbi.alarms.confirm'),
