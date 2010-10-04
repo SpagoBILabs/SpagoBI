@@ -36,6 +36,8 @@ public interface IModelInstanceDAO {
 	
 	public ModelInstanceNode loadModelInstanceByLabel(String label,Date requestedDate) throws EMFUserError;
 	
+	public Integer getExistentRootsByName(String name) throws EMFUserError;
+	
 	/**
 	 * Delete a Model Instance. 
 	 * @param modelId id of the model instance to delete.

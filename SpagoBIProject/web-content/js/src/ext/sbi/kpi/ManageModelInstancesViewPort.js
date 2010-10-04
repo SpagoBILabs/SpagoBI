@@ -287,26 +287,26 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			
 	      			if(content !== undefined && content !== null){
+	      				this.manageModelInstances.cleanAllUnsavedNodes();
 	      				
-	      				rec.data.modelInstId = content.root[0];
-	      				rec.data.label = content.rootlabel[0];
-	      				rec.data.toSave = false;
-	      				rec.commit();
-	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
-	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+	      				this.modelInstancesGrid.getSelectionModel().selectRecords([rec]);
 	      				
-
 	      				this.manageModelInstances.rootNodeText = rec.get('text');
 	      				this.manageModelInstances.rootNodeId = content.root[0];
+	      				
+	      				this.doAfterSaveOnRecRender(rec, content);
+
+	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
+	      				
+	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
+	      				
+	      				this.doAfterSaveOnNodeRender(newroot, content);
+
+
 	      				this.manageModelInstances.mainTree.setRootNode(newroot);
 
 	      				this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 	      				
-	      				newroot.attributes.modelInstId = content.root[0];
-	      				newroot.attributes.label = content.rootlabel[0];
-	      				
-	      				newroot.attributes.isNewRec = false;
-	      				newroot.attributes.toSave = false;
 	      				///not as root
 	      				this.manageModelInstances.existingRootNode = newroot;
 	      				this.manageModelInstances.newRootNode = null;
@@ -336,6 +336,25 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			params : params
 		});
 	}
+	, doAfterSaveOnRecRender: function(rec, content){
+		rec.data.modelInstId = content.root[0];
+		rec.data.label = content.rootlabel[0];
+		rec.data.name = content.rootname[0];
+		rec.set('name', content.rootname[0]);
+		rec.data.text = content.roottext[0];
+		rec.data.toSave = false;
+		
+		rec.commit();
+
+	}
+	, doAfterSaveOnNodeRender: function(newroot, content){
+		newroot.attributes.modelInstId = content.root[0];
+		newroot.attributes.label = content.rootlabel[0];
+		newroot.attributes.name = content.rootname[0];
+		newroot.text = content.roottext[0];
+		newroot.attributes.isNewRec = false;
+		newroot.attributes.toSave = false;
+	}
 	, copyModelTree: function(rec){
 
 		var params = {
@@ -358,20 +377,16 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	      				
 	      				this.manageModelInstances.rootNodeText = rec.get('text');
 	      				this.manageModelInstances.rootNodeId = content.root[0];
+
+	      				this.doAfterSaveOnRecRender(rec, content);
 	      				
-	      				rec.data.modelInstId = content.root[0];
-	      				rec.data.label = content.rootlabel[0];
-	      				rec.data.toSave = false;
-	      				rec.commit();
 	      				this.modelInstancesGrid.mainElementsStore.commitChanges();
 	      				
 	      				//main instances tree - center
 	      				var newroot = this.manageModelInstances.createRootNodeByRec(rec);
-	      				newroot.attributes.modelInstId = content.root[0];
-	      				newroot.attributes.label = content.rootlabel[0];
 	      				
-	      				newroot.attributes.isNewRec = false;
-	      				newroot.attributes.toSave = false;
+	      				this.doAfterSaveOnNodeRender(newroot, content);
+	      				
 	      				this.manageModelInstances.mainTree.setRootNode(newroot);
 	      				this.manageModelInstances.mainTree.getSelectionModel().select(newroot);
 	      				

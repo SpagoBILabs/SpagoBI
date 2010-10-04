@@ -239,9 +239,8 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_LIST)) {
 
-			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
-
+				Integer modelInstId = getAttributeAsInteger("modelInstId");
 				Integer start = getAttributeAsInteger( START );
 				Integer limit = getAttributeAsInteger( LIMIT );
 
@@ -360,10 +359,21 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				Model model = DAOFactory.getModelDAO().loadModelWithoutChildrenById(modelId);
 				ModelInstance modelInstNode = new ModelInstance();
 				modelInstNode = fillModelInstanceByModel(model, modelInstNode, null);
-
+				
+				modelInstNode = setProgressiveOnDuplicate(modelInstNode);
+				
 				Integer miId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
+				
 				response.append("root", miId);
 				response.append("rootlabel", modelInstNode.getLabel());
+				response.append("rootname", modelInstNode.getName());
+				
+				String text = modelInstNode.getName() ;
+				if(text.length()>= 20){
+					text = text.substring(0, 19)+"...";
+				}
+				text = modelInstNode.getModel().getCode()+" - "+ text;
+				response.append("roottext", text);
 
 				logger.debug("Loaded model tree");		
 
@@ -403,7 +413,15 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 
 	}
-
+	private ModelInstance setProgressiveOnDuplicate(ModelInstance modelInst) throws EMFUserError{
+		String name = modelInst.getName();
+		Integer howManyExistent = DAOFactory.getModelInstanceDAO().getExistentRootsByName(name);
+		if(howManyExistent != null && howManyExistent.intValue() != 0){
+			String newName = name + "_"+(howManyExistent.intValue()+1);
+			modelInst.setName(newName);
+		}
+		return modelInst;
+	}
 	private void modelResourcesExtendedListCreate(List<ModelResourcesExtended> modelResourcesExtenList,
 			List<Resource> allResources,
 			HashMap<Integer, ModelResources> modResourcesIds ){
@@ -487,7 +505,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				//save root first
 				try {
 					modelInstNode = fillModelInstanceByModel(model, modelInstNode, parentId);
-
+					modelInstNode = setProgressiveOnDuplicate(modelInstNode);
 					//save node as ModelInstance node
 					modelInstId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
 					modelInstNode.setId(modelInstId);
@@ -495,6 +513,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					if(parentId == null){
 						response.append("root",modelInstId.intValue()+"");
 						response.append("rootlabel", modelInstNode.getLabel());
+						response.append("rootname", modelInstNode.getName());
+						String text = modelInstNode.getName() ;
+						if(text.length()>= 20){
+							text = text.substring(0, 19)+"...";
+						}
+						text = modelInstNode.getModel().getCode()+" - "+ text;
+						response.append("roottext", text);
 					}
 				} catch (EMFUserError e) {
 					response.append("tree", "KO");

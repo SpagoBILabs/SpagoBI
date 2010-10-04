@@ -1070,6 +1070,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
     		}
 
     		var tip = rec.get('modelCode')+' - '+rec.get('name')+ attrKpiCode;
+
     		
 			var node = new Ext.tree.AsyncTreeNode({
 		        text		: this.rootNodeText,

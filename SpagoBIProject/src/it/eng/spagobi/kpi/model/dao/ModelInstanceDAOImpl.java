@@ -1291,4 +1291,55 @@ IModelInstanceDAO {
 		}
 	}
 
+	public Integer getExistentRootsByName(String name)
+			throws EMFUserError {
+		logger.debug("IN");
+		Integer toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criterion nameCriterrion = Expression.eq("name", name);
+			Criteria criteria = aSession.createCriteria(SbiKpiModelInst.class);
+			criteria.add(nameCriterrion);
+			criteria.add(Expression.isNull("sbiKpiModelInst"));
+			List<SbiKpiModelInst> hibSbiKpiModelInsts = (List<SbiKpiModelInst>) criteria.list();
+			if (hibSbiKpiModelInsts != null){
+				//looks up for progressive names
+				nameCriterrion = Expression.like("name", name+"_%");
+				criteria = aSession.createCriteria(SbiKpiModelInst.class);
+				criteria.add(nameCriterrion);
+				criteria.add(Expression.isNull("sbiKpiModelInst"));
+				List<SbiKpiModelInst> progrMI = (List<SbiKpiModelInst>) criteria.list();
+				if (progrMI != null && progrMI.size() != 0){
+					toReturn =  progrMI.size();
+				}else{
+					toReturn = hibSbiKpiModelInsts.size();
+				}
+				
+			}
+
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the Model Instance root with name "
+					+ ((name == null) ? "null" : name), he);
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10101);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 }
