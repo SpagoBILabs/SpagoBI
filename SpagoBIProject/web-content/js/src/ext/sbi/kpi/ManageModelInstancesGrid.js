@@ -122,8 +122,8 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		                    	          ];
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'modelInstId',	header: LN('sbi.generic.name'), width: 120, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.modelinstances.code'), width: 120, sortable: true, dataIndex: 'modelCode'}
+		                                         {id:'modelInstId',	header: LN('sbi.generic.name'), width: 115, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.modelinstances.code'), width: 110, sortable: true, dataIndex: 'modelCode'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
@@ -234,6 +234,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		if(rec.get('code')){
 			rec.set('modelCode', rec.get('code'));
 			rec.set('isNewRec', true);
+
 		}
 		//fills node detail and tabs by rowclick
 		this.fireEvent('rowclick', rec, this);
