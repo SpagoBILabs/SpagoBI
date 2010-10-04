@@ -165,4 +165,11 @@ public interface IOrganizationalUnitDAO {
 	 * @param aNode
 	 */
 	public void insertOrganizationalUnitNode(OrganizationalUnitNode aNode);
+	
+	/**
+	 * Retrieves the grants associated the KPI model instance node identified by the input integer
+	 * @param kpiModelInstanceId
+	 * @return the grants associated the KPI model instance node identified by the input integer
+	 */
+	public List<OrganizationalUnitGrantNode> getGrants(Integer kpiModelInstanceId);
 }

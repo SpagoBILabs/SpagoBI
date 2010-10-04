@@ -712,6 +712,33 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 	}
 	
 	
+	public List<OrganizationalUnitGrantNode> getGrants(
+			Integer kpiModelInstanceId) {
+		logger.debug("IN: kpiModelInstanceId = " + kpiModelInstanceId);
+		List<OrganizationalUnitGrantNode> toReturn = new ArrayList<OrganizationalUnitGrantNode>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrantNodes n where n.id.kpiModelInstNodeId = ? ");
+			hibQuery.setInteger(0, kpiModelInstanceId);
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				toReturn.add(toOrganizationalUnitGrantNode((SbiOrgUnitGrantNodes) it.next(), aSession));
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+	
+	
 	public OrganizationalUnitGrant toOrganizationalUnitGrant(
 			SbiOrgUnitGrant hibGrant, Session aSession) {
 		OrganizationalUnitHierarchy hierarchy = toOrganizationalUnitHierarchy(hibGrant.getSbiOrgUnitHierarchies());
