@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.kpi.ou.util;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
@@ -55,7 +57,7 @@ public class OrganizationalUnitSynchronizer {
 	
 	static private Logger logger = Logger.getLogger(OrganizationalUnitSynchronizer.class);
 	
-	public void synchronize() throws Exception {
+	public void synchronize() {
 		logger.debug("IN");
         try {
         	OrganizationalUnitListProvider provider = getProvider();
@@ -315,8 +317,16 @@ public class OrganizationalUnitSynchronizer {
 
 	private OrganizationalUnitListProvider getProvider() {
 		logger.debug("IN");
-		OrganizationalUnitListProvider o = new OrganizationalUnitListProviderMock(); // TODO: read from configuration implementation class
-		logger.debug("OUT");
+		OrganizationalUnitListProvider o = null;
+		try {
+			SourceBean ouConfig = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.ORGANIZATIONAL-UNIT");
+			String prodiverClassName = (String) ouConfig.getAttribute("provider");
+			o = (OrganizationalUnitListProvider) Class.forName(prodiverClassName).newInstance();
+			logger.debug("OUT");
+		} catch (Exception e) {
+			logger.error("Cannot get Organizational Unit list provider class", e);
+			throw new RuntimeException("Cannot get Organizational Unit list provider class", e);
+		}
 		return o;
 	}
 
