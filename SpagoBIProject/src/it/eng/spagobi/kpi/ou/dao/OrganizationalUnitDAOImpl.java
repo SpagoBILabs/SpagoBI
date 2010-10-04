@@ -223,7 +223,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 	}
 	
 	
-	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId) {
+	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId, Integer grantId) {
 		logger.debug("IN: nodeId = " + nodeId);
 		List<OrganizationalUnitGrantNode> toReturn = new ArrayList<OrganizationalUnitGrantNode>();
 		Session aSession = null;
@@ -232,8 +232,10 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrantNodes s where s.sbiOrgUnitNodes.nodeId = ? ");
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrantNodes s where s.id.nodeId = ? " +
+					" and s.id.grantId = ?");
 			hibQuery.setInteger(0, nodeId);
+			hibQuery.setInteger(1, grantId);
 			
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();

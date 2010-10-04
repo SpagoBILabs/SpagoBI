@@ -129,7 +129,7 @@ public interface IOrganizationalUnitDAO {
 	/**
 	 * @return the list of grants for a single node of a hierarchy (i.e. association between a KPI model instance node and a OU hierarchy node)
 	 */
-	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId);
+	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId, Integer grantId);
 	
 	/**
 	 * Inserts a list of grant nodes (a grant node is an association between a hierarchy node and a KPI model instance node 
