@@ -296,8 +296,15 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             		    width: 75
             		}
         		])
+		   , listeners: {
+	 			'change': {
+	        		fn: this.refillKpiLinks,
+	        		scope: this
+	      		} 
+	 		}
+
 		 }));  
- 	 //detailFieldDataset.addListener('change', this.refillKpiLinks, this ); 
+ 	 detailFieldDataset.sm.addListener('selectionchange', this.refillKpiLinks, this ); 
  	  
  	 this.detailFieldThreshold = new Ext.form.TriggerField({
  		     triggerClass: 'x-form-search-trigger',
@@ -902,7 +909,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, fillKpiLinks : function(row, rec) {
 		
 		var kpiSelected = rec.data.id;
-		//alert(kpiSelected);
+
 		if(kpiSelected !== null){
 
 			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS"};	
@@ -1016,7 +1023,35 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	          ,scope: this
 	    });
 	}
-	
+	, refillKpiLinks: function( sm){
+		var rec = sm.getSelected();
+		if(rec !== undefined){
+			var label = rec.get('label');;
+			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS_BY_DS"};	
+			var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName: 'MANAGE_KPIS_ACTION'
+				, baseParams: paramsList
+			 });	
+			
+			Ext.Ajax.request({
+		          url: loadParams,
+		          params: {label: label},
+		          method: 'GET',
+		          success: function(response, options) {   	
+					if (response !== undefined) {		
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			//alert(content.rows);
+		      			if(content !== undefined) {	  
+		      				var record = content.rows;
+		      				this.kpiLinksGrid.store.loadData(record);
+		      				this.kpiLinksGrid.store.commitChanges();
+		      			}
+					 } 	
+		          }
+		          ,scope: this
+		    });
+		}
+	}
 	, deleteKpiLink : function(relId){
 
 		var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINK_DELETE"};	

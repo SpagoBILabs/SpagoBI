@@ -64,6 +64,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	private final String KPI_LINKS = "KPI_LINKS";
 	private final String KPI_LINK_SAVE = "KPI_LINK_SAVE";
 	private final String KPI_LINK_DELETE = "KPI_LINK_DELETE";
+	private final String KPI_LINKS_BY_DS = "KPI_LINKS_BY_DS";
 
 	private final String KPI_DOMAIN_TYPE = "KPI_TYPE";
 	private final String THRESHOLD_SEVERITY_TYPE = "SEVERITY";
@@ -410,7 +411,42 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Exception occurred while retrieving kpi links", e);
 			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINK_SAVE)) {
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINKS_BY_DS)) {			
+			try {
+				String labelDS = getAttributeAsString("label");
+				//looks up for relations
+				ArrayList <KpiRel> relations = new ArrayList <KpiRel>();
+
+				//looks up for dataset parameters				
+				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(labelDS);
+				String parametersString = dataSet.getParameters();
+
+				ArrayList<String> parameters = new ArrayList<String>();
+				logger.debug("Dataset Parameters loaded");
+				if(parametersString != null){
+					SourceBean source = SourceBean.fromXMLString(parametersString);
+					if(source.getName().equals("PARAMETERSLIST")) {
+						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+						for(int i=0; i< rows.size(); i++){
+							SourceBean row = rows.get(i);
+							String name = (String)row.getAttribute("name");
+							parameters.add(name);
+						}
+					}
+					JSONArray paramsJSON = serializeParametersList(parameters, relations);
+					JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
+					writeBackToClient(new JSONSuccess(paramsResponseJSON));
+				}else{
+					writeBackToClient(new JSONSuccess("No parameters"));
+				}
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving kpi links", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving kpi links", e);
+			}
+		}
+		else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINK_SAVE)) {
 
 			Integer kpiParentId = getAttributeAsInteger("kpiParentId");
 			Integer kpiLinked = getAttributeAsInteger("kpiLinked");

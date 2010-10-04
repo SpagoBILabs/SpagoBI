@@ -419,10 +419,18 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		        , itemId: 'detail'
 		        , items: [this.detailItem]
 		    },this.thrValuesItem];
- 	   
- 	   this.tempThrV.on('DeletedThrVal', function(e) {
- 	    	//alert('qui');	 	    	
- 	    }, this);
+
+ 	   this.tempThrV.on('DeletedThrVal', function(itemId) { 		   
+	    	var rec = this.rowselModel.getSelected();
+ 	    	var thrval = rec.get('thrValues');
+ 			Ext.each(thrval, function(item, index) {
+ 	    		if(item.idThrVal == itemId){
+ 	    			thrval.remove(item);
+			    }		
+ 			});
+ 	    	rec.set('thrValues', thrval);
+	    	rec.commit();
+	    }, this);
  	   
 	}
 	
