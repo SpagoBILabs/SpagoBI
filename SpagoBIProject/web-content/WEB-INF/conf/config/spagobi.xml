@@ -32,6 +32,10 @@
 
     <!-- ********************* END MENU CONFIGURATION ************************** -->
      
+    
+    <!-- ********************* START ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
+    <ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderMock" />
+    <!-- ********************* END ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
      
     <!-- ********************* START SECURITY CONFIGURATION ************************ -->
      
