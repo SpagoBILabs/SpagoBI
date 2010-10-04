@@ -925,6 +925,10 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		      			//alert(content.rows);
 		      			if(content !== undefined) {	  
 		      				var record = content.rows;
+
+		      				if(record === undefined){
+			      				record = '';
+			      			}
 		      				this.kpiLinksGrid.store.loadData(record);
 		      				this.kpiLinksGrid.store.commitChanges();
 		      			}
@@ -1020,33 +1024,35 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	          ,scope: this
 	    });
 	}
-	, refillKpiLinks: function( sm){
-		var rec = sm.getSelected();
-		if(rec !== undefined){
-			var label = rec.get('label');;
-			var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS_BY_DS"};	
-			var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName: 'MANAGE_KPIS_ACTION'
-				, baseParams: paramsList
-			 });	
-			
-			Ext.Ajax.request({
-		          url: loadParams,
-		          params: {label: label},
-		          method: 'GET',
-		          success: function(response, options) {   	
-					if (response !== undefined) {		
-		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			//alert(content.rows);
-		      			if(content !== undefined) {	  
-		      				var record = content.rows;
-		      				this.kpiLinksGrid.store.loadData(record);
-		      				this.kpiLinksGrid.store.commitChanges();
-		      			}
-					 } 	
-		          }
-		          ,scope: this
-		    });
+	, refillKpiLinks: function( sm ){
+		if(sm !== undefined && sm !== null){
+			var rec = sm.getSelected();
+			if(rec !== undefined){
+				var label = rec.get('label');;
+				var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: "KPI_LINKS_BY_DS"};	
+				var loadParams = Sbi.config.serviceRegistry.getServiceUrl({
+					serviceName: 'MANAGE_KPIS_ACTION'
+					, baseParams: paramsList
+				 });	
+				
+				Ext.Ajax.request({
+			          url: loadParams,
+			          params: {label: label},
+			          method: 'GET',
+			          success: function(response, options) {   	
+						if (response !== undefined) {		
+			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			//alert(content.rows);
+			      			if(content !== undefined) {	  
+			      				var record = content.rows;
+			      				this.kpiLinksGrid.store.loadData(record);
+			      				this.kpiLinksGrid.store.commitChanges();
+			      			}
+						 } 	
+			          }
+			          ,scope: this
+			    });
+			}
 		}
 	}
 	, deleteKpiLink : function(relId){
