@@ -317,7 +317,8 @@ Ext.extend(Sbi.kpi.ManageThresholdValues, Ext.grid.EditorGridPanel, {
     									var deleteRow = this.getSelectionModel().getSelected();
     									this.store.remove(deleteRow);
     									this.store.commitChanges();
-    									this.fireEvent('DeletedThrVal',deleteRow);
+    									//this.fireEvent('DeletedThrVal',deleteRow);
+    									this.fireEvent('DeletedThrVal',itemId);
     								} else {
     									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
     								}
