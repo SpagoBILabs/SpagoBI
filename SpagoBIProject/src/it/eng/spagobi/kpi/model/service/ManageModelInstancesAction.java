@@ -240,7 +240,13 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODELINST_RESOURCE_LIST)) {
 
 			try {
-				Integer modelInstId = getAttributeAsInteger("modelInstId");
+				Integer modelInstId = null;
+				try{
+					modelInstId = getAttributeAsInteger("modelInstId");
+				}catch (Exception e) {
+					// TODO: handle exception
+					logger.debug("No model Instance Id");
+				}
 				Integer start = getAttributeAsInteger( START );
 				Integer limit = getAttributeAsInteger( LIMIT );
 
