@@ -378,32 +378,46 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(KPI_LINKS)) {			
 			try {
-				Integer id = getAttributeAsInteger(ID);
+				Integer id =null;
+				try{
+					id = getAttributeAsInteger(ID);
+				}catch (Exception e) {
+					logger.debug("No Kpi Instance Id");
+				}
+				ArrayList <KpiRel> relations = new ArrayList<KpiRel>();
 				//looks up for relations
-				ArrayList <KpiRel> relations = (ArrayList <KpiRel>)kpiDao.loadKpiRelListByParentId(id);
-				logger.debug("Kpi relations loaded");
-
-				//looks up for dataset parameters				
-				IDataSet dataSet = kpiDao.getDsFromKpiId(id);
-				String parametersString = dataSet.getParameters();
-
-				ArrayList<String> parameters = new ArrayList<String>();
-				logger.debug("Dataset Parameters loaded");
-				if(parametersString != null){
-					SourceBean source = SourceBean.fromXMLString(parametersString);
-					if(source.getName().equals("PARAMETERSLIST")) {
-						List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
-						for(int i=0; i< rows.size(); i++){
-							SourceBean row = rows.get(i);
-							String name = (String)row.getAttribute("name");
-							parameters.add(name);
+				if(id != null){
+					relations = (ArrayList <KpiRel>)kpiDao.loadKpiRelListByParentId(id);
+					logger.debug("Kpi relations loaded");
+	
+					//looks up for dataset parameters				
+					IDataSet dataSet = kpiDao.getDsFromKpiId(id);
+					if(dataSet != null){
+						String parametersString = dataSet.getParameters();
+		
+						ArrayList<String> parameters = new ArrayList<String>();
+						logger.debug("Dataset Parameters loaded");
+						if(parametersString != null){
+							SourceBean source = SourceBean.fromXMLString(parametersString);
+							if(source.getName().equals("PARAMETERSLIST")) {
+								List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+								for(int i=0; i< rows.size(); i++){
+									SourceBean row = rows.get(i);
+									String name = (String)row.getAttribute("name");
+									parameters.add(name);
+								}
+							}
+							JSONArray paramsJSON = serializeParametersList(parameters, relations);
+							JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
+							writeBackToClient(new JSONSuccess(paramsResponseJSON));
+						}else{
+							writeBackToClient(new JSONSuccess(new JSONObject()));
 						}
+					}else{
+						writeBackToClient(new JSONSuccess(new JSONObject()));
 					}
-					JSONArray paramsJSON = serializeParametersList(parameters, relations);
-					JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
-					writeBackToClient(new JSONSuccess(paramsResponseJSON));
 				}else{
-					writeBackToClient(new JSONSuccess("No parameters"));
+					writeBackToClient(new JSONSuccess(new JSONObject()));
 				}
 
 			} catch (Throwable e) {
@@ -437,7 +451,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 					JSONObject paramsResponseJSON = createJSONResponseResources(paramsJSON, parameters.size());
 					writeBackToClient(new JSONSuccess(paramsResponseJSON));
 				}else{
-					writeBackToClient(new JSONSuccess("No parameters"));
+					writeBackToClient(new JSONSuccess(new JSONObject()));
 				}
 
 			} catch (Throwable e) {
