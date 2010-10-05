@@ -66,6 +66,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	// type of service
 	private final String MODELINSTS_LIST = "MODELINSTS_LIST";
 	private final String MODELINST_RESOURCE_LIST = "MODELINST_RESOURCE_LIST";
+	private final String MODELINSTS_NODE_DETAILS = "MODELINSTS_NODE_DETAILS";
 	private final String MODELINST_RESOURCE_SAVE = "MODELINST_RESOURCE_SAVE";
 	private final String MODELINSTS_NODES_LIST = "MODELINSTS_NODES_LIST";
 	private final String MODELINSTS_NODES_SAVE = "MODELINSTS_NODES_SAVE";
@@ -137,6 +138,23 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 				logger.debug("Loaded model tree");
 				JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(aModel.getChildrenNodes(),	locale);
+				writeBackToClient(new JSONSuccess(modelChildrenJSON));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving model tree", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving model tree", e);
+			}
+		}else if (serviceType != null && serviceType.equalsIgnoreCase(MODELINSTS_NODE_DETAILS)) {
+
+			try {	
+
+				String node = (String)getAttributeAsString("modelInstId");
+
+				ModelInstance aModel = modelDao.loadModelInstanceWithChildrenById(Integer.parseInt(node));
+
+				logger.debug("Loaded model tree");
+				JSONObject modelChildrenJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(aModel, locale);
 				writeBackToClient(new JSONSuccess(modelChildrenJSON));
 
 			} catch (Throwable e) {

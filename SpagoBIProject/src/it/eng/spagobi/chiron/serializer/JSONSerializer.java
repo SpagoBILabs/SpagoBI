@@ -41,6 +41,10 @@ import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelResourcesExtended;
 import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -110,6 +114,11 @@ public class JSONSerializer implements Serializer {
 		mappings.put( GetParametersForExecutionAction.ParameterForExecution.class, new ParameterForExecutionJSONSerializer() );
 		mappings.put( SbiUdp.class, new UdpJSONSerializer());
 		mappings.put( SbiUdpValue.class, new UdpValueJSONSerializer());
+		
+		mappings.put( OrganizationalUnitGrant.class, new OrganizationalUnitGrantJSONSerializer());
+		mappings.put( OrganizationalUnit.class, new OrganizationalUnitJSONSerializer());
+		mappings.put( OrganizationalUnitHierarchy.class, new OrganizationalUnitHierarchyJSONSerializer());
+		mappings.put( OrganizationalUnitNodeWithGrant.class, new OrganizationalUnitNodeWithGrantJSONSerializer());
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {

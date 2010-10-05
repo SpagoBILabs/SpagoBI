@@ -81,7 +81,7 @@ Ext.extend(Sbi.kpi.ManageKpisGrid, Sbi.widgets.ListGridPanel, {
 	, emptyRecord: null
 
 	,initConfigObject:function(){
-	
+		this.configurationObject.rowIdentificationString = 'modelId';
 		this.configurationObject.idKey = 'id';
 		this.configurationObject.referencedCmp = this.referencedCmp;
 		

@@ -6,6 +6,8 @@
   <MAPPING business_type="ACTION" business_name="MANAGE_RESOURCES_ACTION" publisher_name="ManageResourcesPublisher"/>
   <MAPPING business_type="ACTION" business_name="MANAGE_MODELS_ACTION" publisher_name="ManageModelsPublisher"/>
   <MAPPING business_type="ACTION" business_name="MANAGE_MODEL_INSTANCES_ACTION" publisher_name="ManageModelInstancesPublisher"/>
-  
+ <MAPPING business_type="ACTION" business_name="MANAGE_OUS_ACTION" publisher_name="ManageGrantsPublisher"/>
+ 
+ 
   <MAPPING business_type="ACTION" business_name="MANAGE_THRESHOLDS_ACTION" publisher_name="ManageThresholdsPublisher"/>
 </PRESENTATION>

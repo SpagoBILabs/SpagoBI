@@ -132,6 +132,16 @@ Sbi.locale.ln['sbi.thresholds.value'] = 'Valore';
 Sbi.locale.ln['sbi.thresholds.values'] = 'Valori';
 //END kpi interface messages
 
+//START GRANTS messages
+Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Gerarchia KPI Instance';
+Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'Gerarchia OU';
+Sbi.locale.ln['sbi.grants.loadtrees'] = 'Carica alberi';
+Sbi.locale.ln['sbi.grants.panelTitle'] = 'Gestione Abilitazioni';
+Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista Abilitazioni';
+Sbi.locale.ln['sbi.grants.trees.tab'] = 'Alberature';
+//END GRANTS messages
+
+
 Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalità';
 Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Radice';
 
@@ -479,3 +489,11 @@ Sbi.locale.ln['sbi.lookup.asA'] = 'inteso come';
 //===================================================================
 Ext.Msg.buttonText.yes = 'Sì'; 
 Ext.Msg.buttonText.no = 'No';
+
+
+
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Sbi.locale.ln['sbi.generic.from'] = 'Data inizio';
+Sbi.locale.ln['sbi.generic.to'] = 'Data fine';

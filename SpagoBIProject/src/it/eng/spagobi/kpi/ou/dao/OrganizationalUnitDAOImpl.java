@@ -589,6 +589,26 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		}
 		logger.debug("OUT: OrganizationalUnitGrant modified successfully.");
 	}
+	
+	public void eraseNodeGrants(Integer grantId) {
+		logger.debug("IN: grantId = " + grantId);
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			String hql = "delete from SbiOrgUnitGrantNodes s where s.id.grantId = ?";
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, grantId);
+			query.executeUpdate();
+
+			tx.commit();
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: OrganizationalUnitGrant modified successfully.");
+	}
 
 	public void eraseGrant(Integer grantId) {
 		logger.debug("IN");

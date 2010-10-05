@@ -83,7 +83,7 @@ Ext.extend(Sbi.kpi.ManageModelsGrid, Sbi.widgets.ListGridPanel, {
 	
 
 	,initConfigObject:function(){
-		
+		this.configurationObject.rowIdentificationString = 'modelId';
 		this.configurationObject.idKey = 'modelId';
 		this.configurationObject.referencedCmp = this.referencedCmp;
 		this.configurationObject.dragndropGroup = 'grid2kpi';

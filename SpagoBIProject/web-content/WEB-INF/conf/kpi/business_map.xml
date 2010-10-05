@@ -5,6 +5,7 @@
 		<MAP_ACTION actionName="MANAGE_THRESHOLDS_ACTION" businessProcess="KpiManagement" />
 		<MAP_ACTION actionName="MANAGE_MODELS_ACTION" businessProcess="KpiManagement" />
 		<MAP_ACTION actionName="MANAGE_MODEL_INSTANCES_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="MANAGE_OUS_ACTION" businessProcess="KpiManagement" />
 		<MAP_ACTION actionName="MANAGE_PERIODICITIES_ACTION" businessProcess="KpiManagement" />
 		<MAP_ACTION actionName="MANAGE_RESOURCES_ACTION" businessProcess="KpiManagement" />
 	</MAP_ACTIONS>

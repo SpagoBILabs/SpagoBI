@@ -97,6 +97,16 @@ Sbi.locale.ln['sbi.modelinstances.code'] = 'Model Code';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copy all model tree';
 //END List Detail messages
 
+//START GRANTS messages
+Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'KPI instance hierarchy';
+Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'OU hierarchy';
+Sbi.locale.ln['sbi.grants.loadtrees'] = 'Load Trees';
+Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manage Grants';
+Sbi.locale.ln['sbi.grants.listTitle'] = 'Grants List';
+Sbi.locale.ln['sbi.grants.trees.tab'] = 'Trees';
+//END GRANTS messages
+
+
 //START kpi interface messages
 Sbi.locale.ln['sbi.resources.tablename'] = 'Table Name';
 Sbi.locale.ln['sbi.resources.columnname'] = 'Column Name';

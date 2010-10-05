@@ -16,7 +16,10 @@
   <ACTION name="MANAGE_MODEL_INSTANCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelInstancesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
-  <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
+   <ACTION name="MANAGE_OUS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageOUsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
  <!--END Kpi new interface actions -->

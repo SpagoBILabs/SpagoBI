@@ -326,7 +326,9 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 		        	selectedRecs.push(rec);
 		        }
 		    }, this);
-		    this.sm.selectRecords(selectedRecs);
+			if(selectedRecs.length>0){
+				this.sm.selectRecords(selectedRecs);
+			}
 		 }		
     }
 	
