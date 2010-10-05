@@ -122,6 +122,19 @@ Sbi.exception.ExceptionHandler = function(){
        		});
         },
         
+        showInfoMessage : function(errMessage, title) {
+        	var m = errMessage || 'Info';
+        	var t = title || 'Info';
+        	
+        	Ext.MessageBox.show({
+           		title: t
+           		, msg: m
+           		, buttons: Ext.MessageBox.OK     
+           		, icon: Ext.MessageBox.INFO
+           		, modal: false
+       		});
+        },
+        
         redirectToLoginUrl: function() {
         	var sessionExpiredSpagoBIJSFound = false;
         	try {
