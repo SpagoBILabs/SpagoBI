@@ -161,6 +161,10 @@
 				functionality="KpiManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/model16.png" />
+		<ITEM	title="#menu.GrantDefinition"
+				functionality="KpiManagement"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OUS_ACTION"
+				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" />
 		<ITEM	title="#menu.ResourcesDefinition"
 				functionality="KpiManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION"

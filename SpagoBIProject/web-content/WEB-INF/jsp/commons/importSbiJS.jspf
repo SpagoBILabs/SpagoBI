@@ -60,6 +60,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/Banner.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/ListNotesWindow.js")%>'></script> 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/DefaultRoleWindow.js")%>'></script> 
+
+
+
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/KpiTreeOuTreePanel.js")%>'></script>  
+
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION

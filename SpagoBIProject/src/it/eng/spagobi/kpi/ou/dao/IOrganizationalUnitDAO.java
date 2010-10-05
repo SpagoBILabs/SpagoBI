@@ -138,11 +138,20 @@ public interface IOrganizationalUnitDAO {
 	 */
 	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes);
 	
+	
+	/**
+	 * Remove all the grant nodes of a grant(a grant node is an association between a hierarchy node and a KPI model instance node 
+	 * in the context of a grant)
+	 * @param grantNodes
+	 */
+	public void eraseNodeGrants(Integer grantId);
+	
 	/**
 	 * Removes a node from the structure with its descendants
 	 * @param node The node to be removed
 	 */
 	public void eraseOrganizationalUnitNode(OrganizationalUnitNode node);
+	
 
 	/**
 	 * Checks if the input path exists in the given hierarchy

@@ -96,6 +96,7 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.services['manageListService'] = conf.manageListService;
 	this.services['deleteItemService'] = conf.deleteItemService;
 	
+	this.rowIdentificationString = conf.rowIdentificationString;
 	this.gridColItems = conf.gridColItems;
 	this.panelTitle = conf.panelTitle;
 	this.listTitle = conf.listTitle;  	  
@@ -110,13 +111,12 @@ Sbi.widgets.ListGridPanel = function(config) {
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
-
     	, fields: conf.fields
     	, root: 'rows'
 		, url: this.services['manageListService']		
 	});
 	this.initWidget();
-	   
+
 	this.mainElementsStore.load();	
    	
 	var c = Ext.apply({}, config, this.mainGrid);
@@ -145,6 +145,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	, readonlyStrict: null
 	, addcopycolumn : null
 	, singleSelection : true
+	, rowIdentificationString: this
 	
 	,initWidget: function(){
 	
@@ -155,7 +156,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 		       ,clickHandler: function(e, t) {
 		          var index = this.grid.getView().findRowIndex(t);	          
 		          var selectedRecord = this.grid.store.getAt(index);
-		          var itemId = selectedRecord.get('modelId');
+		          var itemId = selectedRecord.get(this.rowIdentificationString);
 		          this.grid.fireEvent('selected', selectedRecord);
 		       }
 	    	   ,tooltip: LN('sbi.generic.select')	    		   
@@ -191,7 +192,7 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 		       ,clickHandler: function(e, t) {
 		          var index = this.grid.getView().findRowIndex(t);	          
 		          var selectedRecord = this.grid.store.getAt(index);
-		          var itemId = selectedRecord.get('modelId');
+		          var itemId = selectedRecord.get(this.rowIdentificationString);
 		          this.grid.fireEvent('copy', selectedRecord);
 		       }
 	    	   ,tooltip: LN('sbi.modelinstances.copyalltree')	    		   

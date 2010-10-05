@@ -69,7 +69,7 @@ public class OrganizationalUnitNodeWithGrantJSONSerializer implements Serializer
 			Iterator<OrganizationalUnitGrantNode> it = nodeGrants.iterator();
 			while (it.hasNext()) {
 				OrganizationalUnitGrantNode grant = it.next();
-				modelInstanceNodesIds.put(grant.getModelInstanceNode().getModelNodeId());
+				modelInstanceNodesIds.put(grant.getModelInstanceNode().getModelInstanceNodeId());
 			}
 			result.put(MODEL_INSTANCE_NODES, modelInstanceNodesIds);
 			
