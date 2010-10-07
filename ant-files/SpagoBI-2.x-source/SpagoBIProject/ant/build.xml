@@ -363,6 +363,7 @@
 				    	 <file name="./src/ext/sbi/widgets/TreeDetailForm.js"/>
 				    	 <file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
 				    	 <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
+				    	 <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
 
 				    	 <file name="./src/ext/sbi/udp/ManageUdp.js"/>
 				    	 <file name="./src/ext/sbi/udp/ManageUdpValues.js"/>				    	
@@ -388,6 +389,9 @@
 				    	 <file name="./src/ext/sbi/kpi/ManageAddModelPanel.js"/>
 				    	 <file name="./src/ext/sbi/kpi/ManageKpisGrid.js"/>
 				    	 <file name="./src/ext/sbi/kpi/ManageKpiWindow.js"/>				    	
+				    	 <file name="./src/ext/sbi/kpi/ManageOUGrants.js"/>
+				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js"/>
+				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>
 				    </filelist>
 
 				</concat>
