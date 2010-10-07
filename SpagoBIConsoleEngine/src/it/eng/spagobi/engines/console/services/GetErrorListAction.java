@@ -90,7 +90,7 @@ public class GetErrorListAction extends AbstractConsoleEngineAction {
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
 			
 			rowId = getAttributeAsString( ID );
-			logger.debug("Parameter [" + ID + "] is equals to [" + callback + "]");
+			logger.debug("Parameter [" + ID + "] is equals to [" + rowId + "]");
 			Assert.assertNotNull(rowId, "Input parameters [" + ID + "] cannot be null");
 			
 			dataSet = null;
