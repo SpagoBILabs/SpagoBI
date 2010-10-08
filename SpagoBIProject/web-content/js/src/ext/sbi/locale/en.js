@@ -104,6 +104,8 @@ Sbi.locale.ln['sbi.grants.loadtrees'] = 'Load Trees';
 Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manage Grants';
 Sbi.locale.ln['sbi.grants.listTitle'] = 'Grants List';
 Sbi.locale.ln['sbi.grants.trees.tab'] = 'Trees';
+Sbi.locale.ln['sbi.grants.hide.leafs'] ='Hide leafs organizational units';
+Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Hide organizational units without grants';
 //END GRANTS messages
 
 

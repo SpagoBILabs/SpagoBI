@@ -139,6 +139,8 @@ Sbi.locale.ln['sbi.grants.loadtrees'] = 'Carica alberi';
 Sbi.locale.ln['sbi.grants.panelTitle'] = 'Gestione Abilitazioni';
 Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista Abilitazioni';
 Sbi.locale.ln['sbi.grants.trees.tab'] = 'Alberature';
+Sbi.locale.ln['sbi.grants.hide.leafs'] ='Nascondi unità organizzative foglie';
+Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Nascondi unità organizzative senza abilitazioni';
 //END GRANTS messages
 
 

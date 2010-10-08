@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Monica Franceschini
+ * Authors - Alberto Ghedin
  */
 Ext.ns("Sbi.kpi");
 
@@ -75,7 +75,6 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 			, baseParams: paramsSaveRoot
 	});
 	//DRAW center element
-	conf.hideContextMenu = false;
 	this.ManageOUGrants = new Sbi.kpi.ManageOUGrants(conf, this);
 	this.ManageOUGrants.addEvents('changeOU_KPI');
 	this.ManageOUGrants.addEvents('saved');
