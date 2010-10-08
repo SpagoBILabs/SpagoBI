@@ -39,12 +39,11 @@
  * 
  * [list]
  * 
- * Authors - Monica Franceschini
+ * Authors - Alberto Ghedin
  */
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageOUGrants = function(config, ref) { 
-	var hideContextMenu = config.hideContextMenu;
 	this.showModelUuid = config.showModelUuid;
 
 	var paramsNodeList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "MODELINSTS_NODES_LIST"};
@@ -73,11 +72,6 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 			, baseParams: paramsNode
 	});	
 
-	this.configurationObject.manageOUTreeService = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_MODEL_INSTANCES_ACTION'
-			, baseParams: paramsNodeList
-	});	
-
 	this.configurationObject.manageOUListService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_OUS_ACTION'
 			, baseParams: paramsOUList
@@ -101,18 +95,20 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 
 
 	this.initConfigObject();
-	this.hideOULeafs = true;
-	this.hideNotActivatedOUS = false;
+
+	//the default values 2 checks of the south panel
+	this.hideOULeafs = true;//hide the leaf ous
+	this.hideNotActivatedOUS = false;//hide the ous without grants
 
 
 	config.configurationObject = this.configurationObject;
-	config.hideContextMenu = hideContextMenu;
 	config.toolsMenuItems= this.getToolsMenu();
 
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageOUGrants.superclass.constructor.call(this, c);	 	
 
+	//after the 2 trees have been displayed we select the root node of the ou tree
 	this.treePanel.on('afterlayout', function(){		
 		this.leftTree.getSelectionModel().select(this.leftTree.getRootNode());
 		this.updateKpisCheck(this.leftTree.getRootNode());},
@@ -137,17 +133,16 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	, ouHierarchy: null
 	, kpiModelInstanceRoot: null
 	, selectedGrantId: null
+	, detailsForm: null
 	
 	,initConfigObject: function(){
-//		this.configurationObject.panelTitle = LN('sbi.grants.panelTitle');
-//		this.configurationObject.panelTitle = LN('sbi.grants.panelTitle');
-//		this.configurationObject.listTitle = LN('sbi.grants.listTitle');
 		this.initTabItems();
 	}
 	
 	,initTabItems: function(){
 		var thisPanel = this;
 	
+		//loader for the tree of the kpis
 		this.kpitreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: this.configurationObject.manageTreeService,
 			createNode: function(attr) {
@@ -178,6 +173,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 		});
 	
+		//loader for the tree of the ous
 		this.outreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: thisPanel.configurationObject.manageOUChildService,
 			baseParams : {'grantId': thisPanel.selectedGrantId},
@@ -205,22 +201,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			}
 		});  
 	
-		/*DETAIL FIELDS*/
-		var b =  new Ext.Button({ 
-			text: LN('sbi.grants.loadtrees'),
-			width: 150,
-			handler: function(){this.loadTrees(); this.setActiveTab(1);},
-			scope: thisPanel
-		});
-	
-		this.detailFieldLabel = new Ext.form.TextField({
-			minLength:1,
-			fieldLabel:LN('sbi.generic.label'),
-			allowBlank: false,
-			//validationEvent:true,
-			name: 'label'
-		});	  
-	
+		//fileds of the detail panel
 		this.detailFieldLabel = new Ext.form.TextField({
 			minLength:1,
 			fieldLabel:LN('sbi.generic.label'),
@@ -245,25 +226,24 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			height : 80,
 			fieldLabel: LN('sbi.generic.descr'),
 			//validationEvent:true,
-			name: 'description'
+			name: 'description',
+			allowBlank: false
 		});
-	
 	
 		this.detailFieldFrom = new Ext.form.DateField({
 			id: 'from',
 			name: 'from',
 			fieldLabel: LN('sbi.generic.from'),
 			format: 'd/m/Y',
-			allowBlank: false,
+			allowBlank: false
 		});
-	
 	
 		this.detailFieldTo = new Ext.form.DateField({
 			id: 'to',
 			name: 'to',
 			fieldLabel: LN('sbi.generic.to'),
 			format: 'd/m/Y',
-			allowBlank: false,
+			allowBlank: false
 		});
 	
 		var baseConfig = {drawFilterToolbar:false}; 
@@ -279,7 +259,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			fields: ['id','label','name','description']
 		});
 	
-	
 		this.detailFieldOUHierarchy = new Sbi.widgets.LookupField(Ext.apply( baseConfig, {
 			name: 'name',
 			valueField: 'id',
@@ -288,6 +267,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			fieldLabel: LN('sbi.grants.ouhierarchy'),
 			store: OUStore,
 			singleSelect: true,
+			allowBlank: false,
 			cm: new Ext.grid.ColumnModel([
 			                              new Ext.grid.RowNumberer(),
 			                              {   header: LN('sbi.generic.label'),
@@ -319,9 +299,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			fieldLabel: LN('sbi.grants.kpihierarchy'),
 			store: kpiInstStore,
 			singleSelect: true,
+			allowBlank: false,
 			cm: new Ext.grid.ColumnModel([
 			                              new Ext.grid.RowNumberer(),
-
+	
 			                              {   header: LN('sbi.generic.name'),
 			                            	  dataIndex: 'name',
 			                            	  width: 75
@@ -333,50 +314,83 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			                              ])
 		}));
 	
-		this.configurationObject.tabItems = [{
-			title: LN('sbi.generic.details')
-			, itemId: 'detail'
-				, width: 430
-				, items: [{
+		var tbSave2 = new Ext.Toolbar( {
+			buttonAlign : 'right',
+			items : [ 
+			         new Ext.Toolbar.Button({ 
+			        	 text: LN('sbi.grants.loadtrees'),
+			        	 iconCls : 'icon-execute',
+			        	 handler: function(){this.loadTrees(); this.setActiveTab(1);},
+			        	 width : 30,
+			        	 scope: thisPanel
+			         }),
+			         new Ext.Toolbar.Button( {
+			        	 text : LN('sbi.generic.update'),
+			        	 iconCls : 'icon-save',
+			        	 handler : this.save,
+			        	 width : 30,
+			        	 scope : thisPanel
+			         })
+			         ]
+		});
 	
-					id: 'items-detail',   	
-					itemId: 'items-detail',               
-					columnWidth: 2,
-					xtype: 'fieldset',
-					labelWidth: 150,
-					defaults: {width: 200, border:false},    
-					defaultType: 'textfield',
-					autoHeight: true,
-					autoScroll  : true,
-					bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
-							border: false,
-							style: {
-								"margin-left": "10px", 
-								"margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-							},
-							items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr,
-							        this.detailFieldFrom, this.detailFieldTo, this.detailFieldOUHierarchy, 
-							        this.detailFieldKpiHierarchy, b]
-				}]
-		}];  
+		
+		this.detailsForm = new Ext.FormPanel({
+       	 title: LN('sbi.generic.details')
+    	 , itemId: 'detail'
+    	 ,tbar: tbSave2
+    	 , width: 430
+    	 , items: [{
+    		 id: 'items-detail',   	
+    			 itemId: 'items-detail',               
+    			 columnWidth: 2,
+    			 xtype: 'fieldset',
+    			 labelWidth: 150,
+    			 defaults: {width: 200, border:false},    
+    			 defaultType: 'textfield',
+    			 autoHeight: true,
+    			 autoScroll  : true,
+    			 bodyStyle: Ext.isIE ? 'padding:15 0 5px 10px;' : 'padding:10px 15px;',
+    					 border: false,
+    					 style: {
+    						 "margin-left": "10px", 
+    						 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+    					 },
+    					 items: [this.detailFieldLabel, this.detailFieldName,  this.detailFieldDescr,
+    					         this.detailFieldFrom, this.detailFieldTo, this.detailFieldOUHierarchy, 
+    					         this.detailFieldKpiHierarchy]
+    		 }]});
+		
+		//the detail panel
+		this.configurationObject.tabItems = [this.detailsForm];  
 	}
 	
 	//add the listeners to the kpi nodes
 	, addKPINodeListeners: function(node){
 		node.on('expand', this.getSelectedOUAndUpdateKpisCheck,this);
+		/*
+		 * When the user change the check of a kpi node
+		 * we add/remove the id of the kpi from the list
+		 * of the grants of the selected ou node
+		 * */
 		node.on('checkchange', function(node, checked){
 			node.suspendEvents(false);
-			var modelinstancenodes = this.leftTree.getSelectionModel().getSelectedNode().attributes.modelinstancenodes;
 	
-			if(!checked){
-				for(var i=0; i<modelinstancenodes.length; i++){
-					if(modelinstancenodes[i]==node.id){
-						modelinstancenodes.splice(i,1);
-						break;
+			//change to the selected node and all it's child the kpi model instance list
+			var subTreeNodes = this.getSubTreeNodes(this.leftTree.getSelectionModel().getSelectedNode());
+	
+			for(var j=0; j<subTreeNodes.length; j++){
+				var modelinstancenodes = subTreeNodes[j].attributes.modelinstancenodes;
+				if(!checked){
+					for(var i=0; i<modelinstancenodes.length; i++){
+						if(modelinstancenodes[i]==node.id){
+							modelinstancenodes.splice(i,1);
+							break;
+						}
 					}
+				}else{
+					modelinstancenodes.push(node.id);
 				}
-			}else{
-				modelinstancenodes.push(node.id);
 			}
 			node.resumeEvents();
 		},this);
@@ -484,12 +498,12 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	}
 	
 	
-	//Build the tools menu
+	//Build the tools menu (the south panel)
 	,getToolsMenu: function(){
 		var tools = new Array();
 	
 		var hideOULeafsRadio = new Ext.form.Checkbox({
-			boxLabel: 'Nascondi OU Foglie',
+			boxLabel: LN('sbi.grants.hide.labels'),
 			checked: true
 		});
 	
@@ -499,7 +513,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		},this);
 	
 		var hideNotActivatedOUSCheckbox = new Ext.form.Checkbox({
-			boxLabel: 'Nascondi OU Non Abilitate',
+			boxLabel: LN('sbi.grants.hide.nogrants.ous'),
 			checked: false
 		});
 	
@@ -516,40 +530,44 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	//save the ou hierarchy with the selected grants
 	save : function() {
-		var thisPanel = this;
-		var grantNodes = Ext.encode(this.getAllNodesWithAbilitation(this.leftTree.getRootNode()));
-		var grant =  Ext.encode(this.getGrantFormValues());
-		Ext.Ajax.request({
-			url: this.configurationObject.saveGrantService,
-			params: {'grantnodes': grantNodes, 'grant': grant},
-			method: 'GET',
-			success: function(response, options) {
-				if (response !== undefined) {
-					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-					thisPanel.fireEvent('saved');
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+		if(this.detailsForm.getForm().isValid()){
+			var thisPanel = this;
+			var grantNodes = Ext.encode(this.getAllNodesWithAbilitation(this.leftTree.getRootNode()));
+			var grant =  Ext.encode(this.getGrantFormValues());
+			Ext.Ajax.request({
+				url: this.configurationObject.saveGrantService,
+				params: {'grantnodes': grantNodes, 'grant': grant},
+				method: 'GET',
+				success: function(response, options) {
+					if (response !== undefined) {
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
+						thisPanel.fireEvent('saved');
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+					}
+				},
+				failure: function() {
+					Ext.MessageBox.show({
+						title: LN('sbi.generic.error'),
+						msg: LN('sbi.generic.savingItemError'),
+						width: 150,
+						buttons: Ext.MessageBox.OK
+					});
 				}
-			},
-			failure: function() {
-				Ext.MessageBox.show({
-					title: LN('sbi.generic.error'),
-					msg: LN('sbi.generic.savingItemError'),
-					width: 150,
-					buttons: Ext.MessageBox.OK
-				});
-			}
-			,scope: this
-	
-		});
+				,scope: this
+		
+			});
+		}
 	},
 	
+	//Load the trees from the server
 	loadTrees:	function() {
 		var thisPanel = this;
 		thisPanel.outreeLoader.baseParams.grantId=thisPanel.selectedGrantId;
 		var modelInstId = thisPanel.detailFieldKpiHierarchy.getValue();
 		var ouHierarchyId = thisPanel.detailFieldOUHierarchy.getValue();
 		if(modelInstId!=null && ouHierarchyId!=null && modelInstId!='undefined' && ouHierarchyId!='undefined' && modelInstId!='' && ouHierarchyId!=''){
+			//Ajax request used to load the model instance tree
 			Ext.Ajax.request({
 				url: thisPanel.configurationObject.manageNodeListService,
 				params: {'modelInstId': modelInstId},
@@ -558,6 +576,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					if (response !== undefined) {		
 						if(response.responseText !== undefined) {
 							thisPanel.kpiModelInstanceRoot = Ext.util.JSON.decode( response.responseText )
+							//Ajax request used to load the organizationa units tree
 							Ext.Ajax.request({
 								url: thisPanel.configurationObject.manageOURootService,
 								params: {'hierarchyId': ouHierarchyId, 'grantId': thisPanel.selectedGrantId},
@@ -598,6 +617,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		}
 	},
 	
+	//read the details form and build a grant object
 	getGrantFormValues: function(){
 		var grant = {
 				label: this.detailFieldLabel.getValue(), 
@@ -612,26 +632,30 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		return grant;
 	},
 	
-	//return an array with couples ouId/grant for that ou
+	//return an array with couples ouId/grant for the passed ou node
 	getAllNodesWithAbilitation: function(node){
 		var children = node.childNodes;
 		var array = new Array(); 
-		for(var i=0; i<node.attributes.modelinstancenodes.length; i++){
-			var c={
-					ouPath: node.attributes.path,
-					modelinstance: node.attributes.modelinstancenodes[i],
-					hierarchyId: this.ouHierarchy.ou.id
-			};
-			array.push(c);
+		if(node.attributes.modelinstancenodes!=null){
+			for(var i=0; i<node.attributes.modelinstancenodes.length; i++){
+				var c={
+						ouPath: node.attributes.path,
+						modelinstance: node.attributes.modelinstancenodes[i],
+						hierarchyId: this.ouHierarchy.ou.id
+				};
+				array.push(c);
+			}
 		}
 		if(children!=null){
 			for(var i=0; i<children.length; i++){
 				array = array.concat(this.getAllNodesWithAbilitation(children[i]));
 			}
 		}
+	
 		return array;
 	}
 	
+	//create the root node of the kpi tree
 	,createKPIRootNodeByRec: function(rec) {
 		this.nrec = rec;
 		var iconClass = '';
@@ -687,6 +711,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		return node;
 	}
 	
+	//create the root node of the ou tree
 	,createRootNodeByRec: function(rec) {
 		var iconClass = '';
 		var cssClass = '';
@@ -710,20 +735,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		node.on('click',this.updateKpisCheck,this);
 		return node;
 	}
-	
-	, initContextMenu : function() {
-	
-		this.menu = new Ext.menu.Menu( {
-			items : [{
-				text : LN('sbi.modelinstances.remodeNode'),
-				iconCls : 'icon-remove',
-				handler : function() {
-					alert('contextMenu');
-				},
-				scope : this
-			} ]
-		});
-	
-	}
+
 
 });
