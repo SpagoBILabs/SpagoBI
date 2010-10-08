@@ -35,6 +35,8 @@ public interface IDataSource {
 	
 	int HIBERNATE_DS_TYPE = 1;
 	int COMPOSITE_HIBERNATE_DS_TYPE = 2;
+	int JPA_DS_TYPE = 3;
+	int COMPOSITE_JPA_DS_TYPE = 4;
 	
 	DataMartModelStructure getDataMartModelStructure();
 	IStatement createStatement(Query query);
