@@ -87,9 +87,11 @@ public class LocalFileSystemDataMartModelRetriever implements IDataMartModelRetr
 			if (!datamartJarFile.exists()) {
 				logger.warn("[" + datamartName + "] datamart jar file [" + datamartJarFile + "] does not exist");
 				datamartJarFile = null;				
+			}else {
+				logger.debug("Datamart [" + datamartName + "] jar file succesfully found in [" + datamartJarFile.getAbsolutePath() + "]");
 			}
 			
-			logger.debug("Datamart [" + datamartName + "] jar file succesfully found in [" + datamartJarFile.getAbsolutePath() + "]");
+			
 		} catch (Throwable t) {
 			logger.error("Ok, we are in truble", t);
 		} finally {
