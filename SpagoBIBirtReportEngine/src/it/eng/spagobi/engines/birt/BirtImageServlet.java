@@ -90,7 +90,7 @@ public class BirtImageServlet extends HttpServlet {
 			Map allParams = request.getParameterMap();
 			fis = executeEngineChart(allParams);
 			// chart is a PNG fine
-			mimeType = MimeUtils.getMimeType("chart.png");  // TODO find mimetype for PNG images and put it on mime-types.properties
+			mimeType = MimeUtils.getMimeType("chart.png");
 		}
 		
 		try {
