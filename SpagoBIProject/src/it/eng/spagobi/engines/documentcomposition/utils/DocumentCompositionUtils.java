@@ -198,7 +198,11 @@ public class DocumentCompositionUtils {
 				}
 				mapPars.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
 				mapPars.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
-				mapPars.put("SBI_EXECUTION_ID", instance.getExecutionId());
+				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+				UUID uuidObj = uuidGen.generateRandomBasedUUID();
+				String executionId = uuidObj.toString();
+				executionId  = executionId.replaceAll("-", "");
+				mapPars.put("SBI_EXECUTION_ID", executionId);
 				mapPars.put("EXECUTION_CONTEXT", "DOCUMENT_COMPOSITION");
 				// Auditing
 				AuditManager auditManager = AuditManager.getInstance();
