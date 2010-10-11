@@ -7,23 +7,24 @@ package it.eng.spagobi.engines.birt;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 
 
@@ -38,30 +39,26 @@ public class BirtImageServlet extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	public void service(HttpServletRequest request, HttpServletResponse response) {	
-		Map allParams = request.getParameterMap();
-		
+
 		String chartLabel = request.getParameter(CHART_LABEL);
 	
 		ServletOutputStream ouputStream = null;
 		InputStream fis = null;
+		File imageTmpDir = null;
 		File imageFile = null;
-		String completeImageFileName = "";
-		response.setContentType("image");
+		String completeImageFileName = null;
+		String mimeType = null;
 
 		
-		if (chartLabel == null) {
+		if ( chartLabel == null ) {
 			String tmpDir = System.getProperty("java.io.tmpdir");
 			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
-			String imageFileName = request.getParameter("imageID");
+			imageTmpDir = new File(imageDirectory);
 	
+			String imageFileName = request.getParameter("imageID");
 			if (imageFileName == null) {
 				logger.error("Image directory or image file name missing.");
 				throw new RuntimeException("Image file name missing.");
-			}
-			
-			if (imageFileName.contains("/") || imageFileName.contains("\\")) {
-				logger.error("Image name contains invalid characters!!! " + imageFileName);
-				throw new RuntimeException("Image name contains invalid characters!!! " + imageFileName);
 			}
 			
 			//gets complete image file name:
@@ -69,36 +66,45 @@ public class BirtImageServlet extends HttpServlet {
 	
 			imageFile = new File(completeImageFileName);
 			
-			if (imageFile == null || !imageFile.exists() || !imageFile.isFile()) {
-				logger.error("File [" + completeImageFileName + "] not found.");
-				throw new RuntimeException("Image file not found. File [" + completeImageFileName + "] not found.");
+			File parent = imageFile.getParentFile();
+			// Prevent directory traversal (path traversal) attacks
+			if (!imageTmpDir.equals(parent)) {
+				logger.error("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
+				throw new SecurityException("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
 			}
-		
+			
 			try {		
 				fis = new FileInputStream(imageFile);
-			}catch (Exception e) {
-				logger.error("Error writing image into file input stream", e);
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException("Image file [" + completeImageFileName + "] not found.", e);
 			}
-		}
-		else{
+			
+			mimeType = MimeUtils.getMimeType(imageFileName);
+			
+		} else {
 			// USER PROFILE
 			session = request.getSession();
 			IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			userId = (String) profile.getUserUniqueIdentifier();
 			logger.debug("userId=" + userId);
-			
+			Map allParams = request.getParameterMap();
 			fis = executeEngineChart(allParams);
+			// chart is a PNG fine
+			mimeType = MimeUtils.getMimeType("chart.png");  // TODO find mimetype for PNG images and put it on mime-types.properties
 		}
+		
 		try {
 			
 			ouputStream = response.getOutputStream();
+			
+			logger.debug("Mime type is = " + mimeType);
+			response.setContentType(mimeType);
+			response.setHeader("Content-Type", mimeType);
 			
 			byte[] buffer = new byte[1024];
 			int len; 
 			while ((len = fis.read(buffer)) >= 0) 
 				ouputStream.write(buffer, 0, len);
-			
-			if ( (chartLabel == null)) imageFile.delete();
 			
 		} catch (Exception e) {
 			logger.error("Error writing image into servlet output stream", e);
@@ -117,6 +123,9 @@ public class BirtImageServlet extends HttpServlet {
 					logger.error("Error flushing servlet output stream", e);
 				}
 			}
+			if (imageFile != null && imageFile.exists() && imageFile.isFile()) {
+				imageFile.delete();
+			}
 		} 
 
 	}
@@ -126,7 +135,7 @@ public class BirtImageServlet extends HttpServlet {
 	 * @param request the httpRequest 
 	 * @return the chart in inputstream form
 	 */
-	private InputStream executeEngineChart(Map parametersMap){
+	private InputStream executeEngineChart(Map parametersMap) {
 		logger.debug("IN");
 		InputStream is = null;
 
@@ -152,13 +161,14 @@ public class BirtImageServlet extends HttpServlet {
 			
 			is=new ByteArrayInputStream(image);
 			
-		}catch (Exception e) {
-			logger.error("Error in execution chart engine",e);
-		//s	throw new Exception(e);
+		} catch (Exception e) {
+			logger.error("Error in chart execution", e);
+			throw new RuntimeException("Error in chart execution", e);
 		}
 		return is;
 	}
 	
+	/*
 	private Map getMapParameters(Map allParams){
 		Map toReturn = new HashMap();
 		String[] strArParams = (String[])allParams.get("params");
@@ -178,5 +188,6 @@ public class BirtImageServlet extends HttpServlet {
 		}
 		return toReturn;
 	}
+	*/
 	
 }
