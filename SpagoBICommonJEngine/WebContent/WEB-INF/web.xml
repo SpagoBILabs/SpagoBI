@@ -213,7 +213,7 @@ END-CAS -->
 	
 	 <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
-		<url-pattern>/WorkRunServiceTest</url-pattern>
+		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
 	
 		<welcome-file-list>
