@@ -290,6 +290,7 @@ public class DetailParameterModule extends AbstractModule {
 		paruse.setDescription("");
 		paruse.setLabel("");
 		paruse.setManualInput(new Integer(0));
+		paruse.setSelectionType("COMBOBOX");
 	    List listRoles = new ArrayList();
 	    paruse.setAssociatedRoles(listRoles);
 	    List listChecks = new ArrayList();
