@@ -63,6 +63,7 @@ public class TransformerFrom2_6_0To2_7_0 implements ITransformer {
 		try {
 			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
 			fixKpis(conn);
+			fixAnalyticalDriversVisibility(conn);
 			conn.commit();
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -78,6 +79,21 @@ public class TransformerFrom2_6_0To2_7_0 implements ITransformer {
 		}
 	}
 
+	/**
+	 * Since SpagoBI 2.7, analytical drivers can be hidden.
+	 * Since we used an already existing column (VIEW_FL) but its value was 0, now we set VIEW_FL = 1 to every analytical driver 
+	 * to let it be visible.
+	 * @param conn The connection
+	 * @throws Exception
+	 */
+	private void fixAnalyticalDriversVisibility(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "UPDATE SBI_OBJ_PAR SET VIEW_FL = 1;";
+		stmt.executeUpdate(sql);
+		logger.debug("OUT");
+	}
+	
 
 	/*
 	 * Adjust Obj Notes Table
