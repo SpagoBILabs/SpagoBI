@@ -127,6 +127,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 		String selectionType; // COMBOBOX, LIST, ...
 		String typeCode; // SpagoBIConstants.INPUT_TYPE_X
 		boolean mandatory;
+		boolean visible;
 		
 		List dependencies;
 		
@@ -154,11 +155,11 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				}
 			} 
 			
+			visible = biparam.getVisible() == 1;
+			
 			ExecutionInstance executionInstance =  getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			
-			if("COMBOBOX".equalsIgnoreCase(selectionType)
-					|| "LIST".equalsIgnoreCase(selectionType)
-					|| "CHECK_LIST".equalsIgnoreCase(selectionType)) {
+			if("COMBOBOX".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
 				List lovs = getLOV( biparam );
 				setValuesCount( lovs == null? 0: lovs.size() );
 				if(getValuesCount() == 1) {
@@ -166,7 +167,11 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 					value = getValueFromLov(biparam, lovSB);
 				}
 			}
-	
+			
+			if("LIST".equalsIgnoreCase(selectionType)
+					|| "CHECK_LIST".equalsIgnoreCase(selectionType)) {
+				setValuesCount( -1 ); // it means that we don't know the lov size
+			}
 			
 			ParameterUse biParameterExecModality;
 			
@@ -299,6 +304,14 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			this.mandatory = mandatory;
 		}
 
+		public boolean isVisible() {
+			return visible;
+		}
+
+		public void setVisible(boolean visible) {
+			this.visible = visible;
+		}
+		
 		public String getSelectionType() {
 			return selectionType;
 		}

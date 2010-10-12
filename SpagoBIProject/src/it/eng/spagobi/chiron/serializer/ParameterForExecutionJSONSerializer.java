@@ -54,6 +54,7 @@ public class ParameterForExecutionJSONSerializer implements Serializer {
 			result.put("selectionType", parameter.getSelectionType() );
 			result.put("typeCode", parameter.getTypeCode() );
 			result.put("mandatory", parameter.isMandatory() );
+			result.put("visible", parameter.isVisible() );
 			result.put("valuesCount", parameter.getValuesCount() );
 			if(parameter.getValuesCount() == 1) result.put("value", parameter.getValue() );
 			JSONArray dependencies = new JSONArray();

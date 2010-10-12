@@ -30,6 +30,7 @@ import it.eng.spago.dbaccess.sql.SQLCommand;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -172,6 +173,7 @@ public class QueryDetail  implements ILovDetail  {
 		logger.debug("IN");
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile,statement);
 		logger.debug("OUT.result="+result);
 		return result;

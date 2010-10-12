@@ -1068,10 +1068,12 @@ function isBIParameterFormChanged () {
 	var objParLabel = document.getElementById('objParLabel').value;
 	var par_Id = document.getElementById('par_Id').value;
 	var parurl_nm = document.getElementById('parurl_nm').value;
+	var view_fl = document.getElementById('view_fl').checked ? 1 : 0;
 			
 	if ((objParLabel != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObjectParameter.getLabel()))%>')
 		|| (par_Id != '<%=(initialBIObjectParameter.getParID() == null || initialBIObjectParameter.getParID().intValue() == -1) ? "" : initialBIObjectParameter.getParID().toString()%>')
-		|| (parurl_nm != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObjectParameter.getParameterUrlName()))%>') )
+		|| (parurl_nm != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils.escapeHtml(initialBIObjectParameter.getParameterUrlName()))%>') 
+		|| (view_fl != '<%=initialBIObjectParameter.getVisible()%>') )
 	{
 		biobjParFormModified = 'true';
 	}
@@ -1367,19 +1369,19 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	</div>
 	
 	
-	<div class='div_detail_label' style='display:none;'>
+	<div class='div_detail_label'>
 		<span class='portlet-form-field-label'>
 			<spagobi:message key = "SBIDev.docConf.docDetParam.view_flField" />
 		</span>
 	</div>
-	<div class='div_detail_form' style='display:none;'>
+	<div class='div_detail_form'>
 	<% 
     	isVisible = false;
     	visible = objPar.getVisible().intValue();
     	if(visible > 0) { isVisible = true; }
     %> 
-		<input type="radio" name="view_fl" value="1" <% if(isVisible) { out.println(" checked='checked' "); } %> >True</input>
-    	<input type="radio" name="view_fl" value="0" <% if(!isVisible) { out.println(" checked='checked' "); } %> >False</input>
+		<input class='portlet-form-input-field' type="checkbox" name="view_fl" id="view_fl" 
+			   value="1" <%=(isVisible ? "checked='checked'" : "")%>/>
 	</div>
 	<div class='div_detail_label' style='display:none;'>
 		<span class='portlet-form-field-label'>
