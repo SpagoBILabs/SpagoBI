@@ -59,11 +59,15 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.chiron.serializer.JSONStoreFeedTransformer;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.CacheSingleton;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -106,6 +110,7 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 		String displayColumn;
 		String descriptionColumn;
 		List rows;
+		CacheInterface cache;
 		
 		
 		logger.debug("IN");
@@ -190,8 +195,25 @@ public class GetParameterValuesForExecutionAction  extends AbstractSpagoBIAction
 				// get the result of the lov
 				IEngUserProfile profile = getUserProfile();
 				lovResult = biObjectParameter.getLovResult();
-				if ((lovResult == null) || (lovResult.trim().equals(""))) {
-					lovResult = lovProvDet.getLovResult(profile);
+				
+				if (lovResult == null  || lovResult.trim().equals("")) {
+					// get from cache, if available
+					String userID = (String)((UserProfile)profile).getUserId();
+					cache = CacheSingleton.getInstance();
+					logger.info("User id : " + userID + "; lov provider : " + lovProv);
+					if (lovProv != null && cache.isPresent(userID + lovProv) && (lovProvDet instanceof QueryDetail)){
+						logger.info("Retrieving lov result from cache...");
+						// lov provider is present, so read the DATA in cache
+						lovResult = (String) cache.get(userID + lovProv);
+						logger.debug(lovResult);
+					} else {
+						logger.info("Getting lov result ...");
+						lovResult = lovProvDet.getLovResult(profile);
+						logger.debug(lovResult);
+						// insert the data in cache
+						if (lovProv != null && lovResult != null) 
+							cache.put(userID + lovProv, lovResult);								
+					}
 				}
 				
 				// get all the rows of the result

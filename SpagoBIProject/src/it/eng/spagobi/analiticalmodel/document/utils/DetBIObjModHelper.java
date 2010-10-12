@@ -339,6 +339,9 @@ public class DetBIObjModHelper {
 		String modFl = (String) request.getAttribute("mod_fl");
 		Integer modFlBD = new Integer(modFl);
 		String viewFl = (String) request.getAttribute("view_fl");
+		if (viewFl == null || viewFl.trim().equals("")) {
+			viewFl = "0";
+		}
 		Integer viewFlBD = new Integer(viewFl);
 		String multFl = (String) request.getAttribute("mult_fl");
 		Integer multFlBD = new Integer(multFl);
@@ -482,7 +485,7 @@ public class DetBIObjModHelper {
 		biObjPar.setParameterUrlName("");
 		biObjPar.setProg(new Integer(0));
 		biObjPar.setRequired(new Integer(0));
-		biObjPar.setVisible(new Integer(0));
+		biObjPar.setVisible(new Integer(1));
 		int objParsNumber = 0;
 		IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
 		List objPars = objParDAO.loadBIObjectParametersById(objId);

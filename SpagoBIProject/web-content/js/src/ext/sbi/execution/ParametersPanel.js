@@ -251,17 +251,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1) {
 				field.isTransient = true;
 				field.setValue(parameters[i].value);
-				this.fields[parameters[i].id] = field;
 			} else if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
 				field.isTransient = true;
 				field.setValue(preferenceState[parameters[i].id]);
-				this.fields[parameters[i].id] = field;
+			} else if (parameters[i].visible === false) {
+				field.isTransient = true;
+				if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
+					field.setValue(preferenceState[parameters[i].id]);
+				}
 			} else {
 				field.isTransient = false;
 				field.columnNo = (nonTransientField++)%this.columns.length;
-				this.fields[parameters[i].id] = field;
 				this.columns[field.columnNo].add( field );
 			}
+			this.fields[parameters[i].id] = field;
 		}
 		
 		var thereAreParametersToBeFilled = false;
@@ -339,7 +342,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				for(var i = 0; i < field.dependencies.length; i++) {
 					var f = this.fields[ field.dependencies[i] ];
 					f.dependants = f.dependants || [];
-					f.dependants.push( field.getName() );                      
+					f.dependants.push( parameters[j].id );                      
 				}	
 			}			
 		}

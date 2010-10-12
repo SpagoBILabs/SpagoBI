@@ -183,25 +183,27 @@ public class ExecutionInstance implements Serializable{
 			Parameter par = aBIObjectParameter.getParameter();
 			if(par != null) {
 				ModalitiesValue paruse = par.getModalityValue();
-				if (!paruse.getITypeCd().equals("MAN_IN")) {					
+				if (!paruse.getITypeCd().equals("MAN_IN") && paruse.getSelectionType().equals("COMBOBOX")) {	// load values only if not a lookup						
 					try {
 						String lovResult = aBIObjectParameter.getLovResult();
 						if(lovResult == null) {
 							String userID=(String)((UserProfile)this.userProfile).getUserId();
 							CacheInterface cache=CacheSingleton.getInstance();
-							String lovprov = paruse.getLovProvider();
-							logger.info("userID="+userID);
-							logger.info("lovprov="+lovprov);
-							ILovDetail lovDetail = LovDetailFactory.getLovFromXML(lovprov);
-							if (lovprov!=null && cache.isPresent(userID+lovprov) && (lovDetail instanceof QueryDetail)){
+							String lovProv = paruse.getLovProvider();
+							logger.info("User id : " + userID + "; lov provider : " + lovProv);
+							ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+							if (lovProv != null && cache.isPresent(userID + lovProv) && (lovProvDet instanceof QueryDetail)){
+								logger.info("Retrieving lov result from cache...");
 								// lov provider is present, so read the DATA in cache
-								lovResult= (String)cache.get(userID+lovprov);
-								logger.info("Use cache for read the LOV DATA:"+lovResult);
-							}else {
-								lovResult = lovDetail.getLovResult(this.userProfile);
-								logger.info("Read the LOV DATA:"+lovResult);
+								lovResult = (String) cache.get(userID + lovProv);
+								logger.debug(lovResult);
+							} else {
+								logger.info("Getting lov result ...");
+								lovResult = lovProvDet.getLovResult(this.userProfile);
+								logger.debug(lovResult);
 								// insert the data in cache
-								if (lovprov!=null && lovResult!=null) cache.put(userID+lovprov, lovResult);								
+								if (lovProv != null && lovResult != null) 
+									cache.put(userID + lovProv, lovResult);								
 							}
 
 							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -209,7 +211,7 @@ public class ExecutionInstance implements Serializable{
 							// if the lov is single value and the parameter value is not set, the parameter value 
 							// is the lov result
 							if(lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
-								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovDetail.getValueColumnName()));
+								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
 								aBIObjectParameter.setHasValidValues(true);
 								aBIObjectParameter.setTransientParmeters(true);
 							}
@@ -427,7 +429,7 @@ public class ExecutionInstance implements Serializable{
 		String nameUrl = biparam.getParameterUrlName();
 		List values = new ArrayList();
 		try {
-			Object o = jsonObject.get(nameUrl);
+			Object o = jsonObject.opt(nameUrl);
 			if (o != null) {
 				if (o instanceof JSONArray) {
 					JSONArray jsonArray = (JSONArray) o;
@@ -571,15 +573,18 @@ public class ExecutionInstance implements Serializable{
 				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for biparameter " + biparam.getLabel());
 			}
 			toReturn.addAll(errorsOnChecks);
-			List errorsOnValues = getValidationErrorsOnValues(biparam);
-			if (errorsOnValues != null && errorsOnValues.size() > 0) {
-				logger.warn("Found " + errorsOnValues.size() + " errors on values for biparameter " + biparam.getLabel());
-			}
-			toReturn.addAll(errorsOnValues);
 			List values = biparam.getParameterValues();
+			if (values != null && values.size() >= 1 && 
+					!(values.size() == 1 && ( values.get(0) == null || values.get(0).toString().trim().equals("") ) )) {
+				List errorsOnValues = getValidationErrorsOnValues(biparam);
+				if (errorsOnValues != null && errorsOnValues.size() > 0) {
+					logger.warn("Found " + errorsOnValues.size() + " errors on values for biparameter " + biparam.getLabel());
+				}
+				toReturn.addAll(errorsOnValues);
+			}
 			boolean hasValidValues = false;
 			// if parameter has values and there are no errors, the parameter has valid values
-			if (values != null && values.size() > 0 && errorsOnChecks.isEmpty() && errorsOnValues.isEmpty()) {
+			if (values != null && values.size() > 0 && toReturn.isEmpty()) {
 				hasValidValues = true;
 			}
 			biparam.setHasValidValues(hasValidValues);
@@ -711,10 +716,29 @@ public class ExecutionInstance implements Serializable{
 
 		List parameterValuesDescription = new ArrayList();
 		// get the lov provider detail
-		String lovProvider = lov.getLovProvider();
-		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProvider);
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 		// get lov result
 		String lovResult = biparam.getLovResult();
+		if (lovResult == null) {
+			// get from cache, if available
+			String userID=(String)((UserProfile)this.userProfile).getUserId();
+			CacheInterface cache = CacheSingleton.getInstance();
+			logger.info("User id : " + userID + "; lov provider : " + lovProv);
+			if (lovProv != null && cache.isPresent(userID + lovProv) && (lovProvDet instanceof QueryDetail)){
+				logger.info("Retrieving lov result from cache...");
+				// lov provider is present, so read the DATA in cache
+				lovResult = (String) cache.get(userID + lovProv);
+				logger.debug(lovResult);
+			} else {
+				logger.info("Getting lov result ...");
+				lovResult = lovProvDet.getLovResult(this.userProfile);
+				logger.debug(lovResult);
+				// insert the data in cache
+				if (lovProv != null && lovResult != null) 
+					cache.put(userID + lovProv, lovResult);								
+			}
+		}
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List values = biparam.getParameterValues();
