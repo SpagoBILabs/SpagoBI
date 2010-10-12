@@ -43,10 +43,14 @@ import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.geo.GeoDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -221,21 +225,6 @@ public class ExecutionProxy {
 				}
 			// get driver class
 			String driverClassName = eng.getDriverName();
-			// get the url of the engine
-
-			// in case there is a Secondary URL, use it
-			String urlEngine = eng.getSecondaryUrl();
-			if (urlEngine == null || urlEngine.trim().equals("")) {
-				logger.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
-				// in case there is not a Secondary URL, use the main url
-				urlEngine = eng.getUrl();
-			}
-			logger.debug("Engine url is " + urlEngine);
-
-
-			// ADD this extension because this is a BackEnd engine invocation
-			urlEngine = urlEngine+backEndExtension;
-
 
 			// build an instance of the driver
 			IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
@@ -325,6 +314,8 @@ public class ExecutionProxy {
 			// built the request to sent to the engine
 			Iterator iterMapPar = mapPars.keySet().iterator();
 			HttpClient client = new HttpClient();
+			// get the url of the engine
+			String urlEngine = getExternalEngineUrl(eng);
 			PostMethod httppost = new PostMethod(urlEngine);
 			while (iterMapPar.hasNext()) {
 				String parurlname = (String) iterMapPar.next();
@@ -354,6 +345,37 @@ public class ExecutionProxy {
 		return response;
 	}
 
+	private String getExternalEngineUrl(Engine eng) {
+		logger.debug("IN");
+		// in case there is a Secondary URL, use it
+		String urlEngine = eng.getSecondaryUrl();
+		if (urlEngine == null || urlEngine.trim().equals("")) {
+			logger.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
+			// in case there is not a Secondary URL, use the main url
+			urlEngine = eng.getUrl();
+		}
+		logger.debug("Engine url is " + urlEngine);
+		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
+		resolveRelativeUrls(urlEngine);
+		// ADD this extension because this is a BackEnd engine invocation
+		urlEngine = urlEngine + backEndExtension;
+		logger.debug("OUT: returning " + urlEngine);
+		return urlEngine;
+	}
+	
+	private String resolveRelativeUrls(String url) {
+		logger.debug("IN: url = " + url);
+		if (url.startsWith("/")) {
+			logger.debug("Url is relative");
+			String domain = GeneralUtilities.getSpagoBiHost();
+		    logger.debug("SpagoBI domain is " + domain);
+		    url = domain + url;
+		    logger.debug("Absolute url is " + url);
+		}
+		logger.debug("OUT: returning " + url);
+		return url;
+	}
+	
 	/**
 	 * Gets the returned content type.
 	 * 

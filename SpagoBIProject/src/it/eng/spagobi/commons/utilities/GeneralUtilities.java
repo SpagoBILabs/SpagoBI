@@ -51,6 +51,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -334,25 +335,35 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	public static String getSpagoBiHost() {
 		logger.debug("IN");
 		if (SPAGOBI_HOST == null) {
+			String tmp = null;
 			try {
 				logger.debug("Trying to recover SpagoBiHost from ConfigSingleton");
 				ConfigSingleton spagoConfig = ConfigSingleton.getInstance();
 				SourceBean sbTmp = (SourceBean) spagoConfig.getAttribute("SPAGOBI.SPAGOBI_HOST_JNDI");
 				if (sbTmp != null) {
 					String jndi = sbTmp.getCharacters();
-					SPAGOBI_HOST = readJndiResource(jndi);
+					tmp = readJndiResource(jndi);
 				}
-				if (SPAGOBI_HOST == null) {
+				if (tmp == null) {
 					logger.debug("SPAGOBI_HOST not set, using the default value ");
-					SPAGOBI_HOST = "http://localhost:8080";
+					tmp = "http://localhost:8080";
 				}
 			} catch (Exception e) {
-				logger.error("Error while recovering getSpagoBiHost", e);
+				logger.error("Error while recovering SpagoBI host url", e);
+				throw new SpagoBIRuntimeException("Error while recovering SpagoBI host url", e);
 			}
+			try {
+				new URL(tmp);
+			} catch (MalformedURLException e) {
+				SpagoBIRuntimeException sre = new SpagoBIRuntimeException("SpagoBI host URL is malformed!!", e);
+				sre.addHint("Check configuration for spagobi_host_url environment variable");
+				throw sre;
+			}
+			SPAGOBI_HOST = tmp;
 		}
 		logger.debug("OUT:" + SPAGOBI_HOST);
 		return SPAGOBI_HOST;
-	}  
+	}
 
 	/*
 	public static String getSpagoBiDomain() {
