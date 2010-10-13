@@ -76,6 +76,7 @@ Sbi.kpi.ManageModelInstancesViewPort = function(config) {
 	});
 	//DRAW center element
 	conf.hideContextMenu = false;
+	conf.showModelUuid = true;
 	this.manageModelInstances = new Sbi.kpi.ManageModelInstances(conf, this);
 
 	//DRAW west element
