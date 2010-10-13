@@ -266,6 +266,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'averege';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'count distinct';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'No aggregation function applied';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Return the sum of all values in group';
@@ -273,6 +274,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.avg'] = 'Return the average 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Return the max of all values in group';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Return the min of all values in group';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Return the count of all values in group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Return the count of distinct values in group';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'Select a function...';
 

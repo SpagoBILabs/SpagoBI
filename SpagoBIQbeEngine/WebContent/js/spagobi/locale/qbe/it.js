@@ -255,6 +255,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'media';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'massimo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'conteggio';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'conteggio distinti';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'Nessuna modalita\' d\'aggregazione attivata';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Restituisce la somma dei valori nel gruppo';
@@ -262,6 +263,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.avg'] = 'Restituisce la medi
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Restituisce il massimo dei valori nel gruppo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Restituisce il minimo dei valori nel gruppo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Restituisce il conteggio dei valori nel gruppo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Restituisce il conteggio dei valori distinti nel gruppo';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'Seleziona una funzione...';
 

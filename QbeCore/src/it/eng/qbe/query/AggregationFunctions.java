@@ -34,6 +34,7 @@ public class AggregationFunctions {
 	public static String MAX = "MAX";
 	public static String MIN = "MIN";
 	public static String COUNT = "COUNT";
+	public static String COUNT_DISTINCT = "COUNT_DISTINCT";
 	
 	
 	public static IAggregationFunction NONE_FUNCTION = new IAggregationFunction() {
@@ -78,6 +79,13 @@ public class AggregationFunctions {
 		}
 	};
 	
+	public static IAggregationFunction COUNT_DISTINCT_FUNCTION = new IAggregationFunction() {
+		public String getName() {return COUNT_DISTINCT;}
+		public String apply(String fieldName) {
+			return "COUNT(DISTINCT " + fieldName + ")";
+		}
+	};
+	
 	static {
 		aggregationFunctions = new HashMap<String, IAggregationFunction>();
 		aggregationFunctions.put(NONE, NONE_FUNCTION);
@@ -86,6 +94,7 @@ public class AggregationFunctions {
 		aggregationFunctions.put(MAX, MAX_FUNCTION);
 		aggregationFunctions.put(MIN, MIN_FUNCTION);
 		aggregationFunctions.put(COUNT, COUNT_FUNCTION);
+		aggregationFunctions.put(COUNT_DISTINCT, COUNT_DISTINCT_FUNCTION);
 	}
 	
 	public static IAggregationFunction get(String functionName) {
