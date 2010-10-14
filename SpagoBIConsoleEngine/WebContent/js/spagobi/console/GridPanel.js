@@ -195,9 +195,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					              results[p] = record.get(this.store.getFieldNameByAlias(param[p])); 
 					           }
 			               }
-		              } else if (param.scope === 'env'){ 
-		            	  if(p === 'scope') continue;
+		              } else if (param.scope === 'env'){ 		            	  
 			               for(p in param) { 
+			                if(p === 'scope') continue;
 			            	  if (p !== this.USER_ID && context[p] === undefined) {                         
 			            		   msgErr += 'Parameter "' + p + '" undefined into request. <p>';
 		                      } else {                                   
