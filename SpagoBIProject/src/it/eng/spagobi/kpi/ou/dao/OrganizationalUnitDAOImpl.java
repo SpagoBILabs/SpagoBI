@@ -643,8 +643,20 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				Integer hierarchyNodeId = aGrantNode.getOuNode().getNodeId();
 				Integer kpiModelInstNodeId = aGrantNode.getModelInstanceNode().getModelInstanceNodeId();
 				
+				SbiOrgUnitGrantNodes grantNode = new SbiOrgUnitGrantNodes();
+			
 				SbiOrgUnitGrantNodesId grantNodeId = new SbiOrgUnitGrantNodesId(hierarchyNodeId, kpiModelInstNodeId, grantId);
-				SbiOrgUnitGrantNodes grantNode = new SbiOrgUnitGrantNodes(grantNodeId, null, null, null);
+				grantNode.setId(grantNodeId);
+				
+				SbiOrgUnitNodes hibNode = (SbiOrgUnitNodes) aSession.load(SbiOrgUnitNodes.class, hierarchyNodeId);
+				grantNode.setSbiOrgUnitNodes(hibNode);
+				
+				SbiKpiModelInst kpiModelInst = (SbiKpiModelInst) aSession.load(SbiKpiModelInst.class, kpiModelInstNodeId);
+				grantNode.setSbiKpiModelInst(kpiModelInst);
+				
+				SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grantId);
+				grantNode.setSbiOrgUnitGrant(hibGrant);
+				
 				aSession.save(grantNode);
 			}
 			
