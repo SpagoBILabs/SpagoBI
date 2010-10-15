@@ -21,7 +21,7 @@
             <column name="END_DATE" length="19" />
         </property>
         <property name="label" type="string" not-null="true" unique="true">
-            <column name="LABEL" length="400" />
+            <column name="LABEL" length="200" />
         </property>
         <property name="name" type="string" not-null="true">
             <column name="NAME" length="400" />
