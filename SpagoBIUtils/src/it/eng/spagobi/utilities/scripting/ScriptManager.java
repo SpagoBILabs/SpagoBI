@@ -192,11 +192,15 @@ public class ScriptManager {
 		Set setattrs = attrs.keySet();
 		Iterator iterattrs = setattrs.iterator();
 		String key = null;
-		String value = null;
+		Object value = null;
 		while(iterattrs.hasNext()) {
 			key = iterattrs.next().toString();
-			value = attrs.get(key).toString();
-			bind.setVariable(key, value);
+			value = attrs.get(key);
+			if (value != null) {
+				bind.setVariable(key, value);
+			} else {
+				logger.warn("Variable [" + key + "] is null!!!");
+			}
 		}
 		return bind;
 	}
