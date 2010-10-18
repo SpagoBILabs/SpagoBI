@@ -6,6 +6,7 @@ import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 import java.util.Date;
@@ -67,37 +68,37 @@ public interface IKpiDAO {
 	 * KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
 	 * 
 	 * @param KpiValue 
-	 * @return KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
+	 * @return KpiValue valid for the the KpiInstance selected, for the resource selected,ou selected in the date selected 
 	 * @throws EMFUserError if an Exception occurs
 	 */
-	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r) throws EMFUserError;
+	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou) throws EMFUserError;
 	
 	/**
-	 * KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
+	 * KpiValue valid for the the KpiInstance selected, for the resource selected,ou selected in the date selected 
+	 * 
+	 * @param KpiValue 
+	 * @return KpiValue valid for the the KpiInstance selected, ou selected  for the resource selected, in the date selected 
+	 * @throws EMFUserError if an Exception occurs
+	 */
+	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r, OrganizationalUnit ou) throws EMFUserError;
+	
+	/**
+	 * KpiValue valid for the the KpiInstance selected, ou selected for the resource selected, in the date selected 
 	 * 
 	 * @param KpiValue 
 	 * @return KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
 	 * @throws EMFUserError if an Exception occurs
 	 */
-	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r) throws EMFUserError;
+	public void deleteKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r, OrganizationalUnit ou) throws EMFUserError;
 	
 	/**
-	 * KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
-	 * 
-	 * @param KpiValue 
-	 * @return KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected 
-	 * @throws EMFUserError if an Exception occurs
-	 */
-	public void deleteKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r) throws EMFUserError;
-	
-	/**
-	 * The last KpiValue for the the KpiInstance selected, for the resource selected, in the date selected or before
+	 * The last KpiValue for the the KpiInstance selected, for the resource selected, ou selected in the date selected or before
 	 * 
 	 * @param KpiValue 
 	 * @return The last KpiValue valid for the the KpiInstance selected, for the resource selected, in the date selected or before
 	 * @throws EMFUserError if an Exception occurs
 	 */
-	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d, Resource r) throws EMFUserError;
+	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou) throws EMFUserError;
 
 	/**
 	 * Returns the list of Kpi.

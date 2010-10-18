@@ -28,6 +28,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -42,7 +43,10 @@ public interface IOrganizationalUnitDAO {
 	 * @return the OU with the given identifier
 	 */
 	public OrganizationalUnit getOrganizationalUnit(Integer id);
-	
+	/**
+	 * @return the OU with the given label
+	 */
+	public OrganizationalUnit getOrganizationalUnitByLabel(String label);	
 	/**
 	 * Removes the organizational unit
 	 */
@@ -138,7 +142,6 @@ public interface IOrganizationalUnitDAO {
 	 */
 	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes);
 	
-	
 	/**
 	 * Remove all the grant nodes of a grant(a grant node is an association between a hierarchy node and a KPI model instance node 
 	 * in the context of a grant)
@@ -151,7 +154,6 @@ public interface IOrganizationalUnitDAO {
 	 * @param node The node to be removed
 	 */
 	public void eraseOrganizationalUnitNode(OrganizationalUnitNode node);
-	
 
 	/**
 	 * Checks if the input path exists in the given hierarchy
@@ -181,4 +183,13 @@ public interface IOrganizationalUnitDAO {
 	 * @return the grants associated the KPI model instance node identified by the input integer
 	 */
 	public List<OrganizationalUnitGrantNode> getGrants(Integer kpiModelInstanceId);
+	
+	/**
+	 * Retrieves the grants associated the KPI model instance node identified by the input integer,
+	 * valid in the real time
+	 * @param kpiModelInstanceId
+	 * @param now
+	 * @return the grants associated the KPI model instance node identified by the input integer
+	 */
+	public List<OrganizationalUnitGrantNode> getGrantsValidByDate(Integer kpiModelInstanceId, Date now);
 }

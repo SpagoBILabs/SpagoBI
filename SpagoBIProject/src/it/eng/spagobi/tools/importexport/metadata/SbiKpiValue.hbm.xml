@@ -13,6 +13,9 @@
         <many-to-one name="sbiResources" class="it.eng.spagobi.kpi.model.metadata.SbiResources" >
             <column name="RESOURCE_ID"  />
         </many-to-one>
+        <many-to-one name="sbiOrgUnit" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit" >
+            <column name="ORG_UNIT_ID"  />
+        </many-to-one>
         <property name="value" type="string">
             <column name="VALUE" length="40" />
         </property>

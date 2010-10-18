@@ -2,6 +2,7 @@ package it.eng.spagobi.kpi.config.metadata;
 // Generated 5-nov-2008 17.16.36 by Hibernate Tools 3.1.0 beta3
 
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class SbiKpiValue  implements java.io.Serializable {
      private Date endDt;
      private String description;
      private String xmlData; 
-
+     private SbiOrgUnit sbiOrgUnit;
 
     // Constructors
 
@@ -39,7 +40,13 @@ public class SbiKpiValue  implements java.io.Serializable {
         this.sbiKpiInstance = sbiKpiInstance;
         this.sbiResources = sbiResources;
     }
-    
+	/** minimal constructor with ou*/
+    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources,SbiOrgUnit sbiOrgUnit) {
+        this.idKpiInstanceValue = idKpiInstanceValue;
+        this.sbiKpiInstance = sbiKpiInstance;
+        this.sbiResources = sbiResources;
+        this.sbiOrgUnit = sbiOrgUnit;
+    } 
     /** full constructor */
     public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources, String value, Date beginDt, Date endDt, String description, String xmlData) {
         this.idKpiInstanceValue = idKpiInstanceValue;
@@ -52,7 +59,18 @@ public class SbiKpiValue  implements java.io.Serializable {
         this.xmlData = xmlData;
     }
     
-
+    /** full constructor */
+    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources, String value, Date beginDt, Date endDt, String description, String xmlData, SbiOrgUnit sbiOrgUnit) {
+        this.idKpiInstanceValue = idKpiInstanceValue;
+        this.sbiKpiInstance = sbiKpiInstance;
+        this.sbiResources = sbiResources;
+        this.value = value;
+        this.beginDt = beginDt;
+        this.endDt = endDt;
+        this.description = description;
+        this.xmlData = xmlData;
+        this.sbiOrgUnit = sbiOrgUnit;
+    }
    
     // Property accessors
 
@@ -118,6 +136,14 @@ public class SbiKpiValue  implements java.io.Serializable {
 
 	public void setXmlData(String xmlData) {
 		this.xmlData = xmlData;
+	}
+
+	public SbiOrgUnit getSbiOrgUnit() {
+		return sbiOrgUnit;
+	}
+
+	public void setSbiOrgUnit(SbiOrgUnit sbiOrgUnit) {
+		this.sbiOrgUnit = sbiOrgUnit;
 	}
 
 }

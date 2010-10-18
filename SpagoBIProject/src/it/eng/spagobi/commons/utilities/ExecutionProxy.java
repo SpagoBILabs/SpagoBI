@@ -111,7 +111,7 @@ public class ExecutionProxy {
 			// if engine is not an external it's not possible to call it using
 			// url
 			if (!EngineUtilities.isExternal(eng))
-				if(eng.getLabel().equals("KpiEngine")){
+				if(eng.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")){
 					SourceBean request = null;
 					SourceBean resp = null;
 					EMFErrorHandler errorHandler = null;
@@ -165,6 +165,7 @@ public class ExecutionProxy {
 						return response;
 					}
 					try {
+						reqContainer.setAttribute("scheduledExecution", "true");
 						internalEngine.execute(reqContainer, biObject, resp);
 					} catch (EMFUserError e) {
 						logger.error("Error during engine execution", e);

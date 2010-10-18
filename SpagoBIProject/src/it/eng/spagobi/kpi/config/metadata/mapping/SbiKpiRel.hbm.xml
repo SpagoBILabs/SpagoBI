@@ -6,7 +6,7 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiRel" table="SBI_KPI_REL" >
         <id name="kpiRelId" type="java.lang.Integer">
             <column name="KPI_REL_ID" />
-            <generator class="identity" />
+            <generator class="increment" />
         </id>
         <many-to-one name="sbiKpiByKpiChildId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
             <column name="KPI_CHILD_ID" not-null="true" />
