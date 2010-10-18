@@ -21,6 +21,8 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiValue;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
@@ -580,6 +582,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 								: "Resource name null"));
 				hibKpiValue.setSbiResources(sbiResources);
 			}
+			OrganizationalUnit ou = value.getOrgUnit();
+			if (ou != null) {
+				SbiOrgUnit hibOU = new SbiOrgUnit();
+				hibOU.setLabel(ou.getLabel());
+				hibOU.setName(ou.getName());
+				hibOU.setDescription(ou.getDescription());
+				hibOU.setId(ou.getId());
+				
+				logger.debug("Organizational unit: "
+						+ (ou.getName() != null ? ou.getName()
+								: "OU name null"));
+				hibKpiValue.setSbiOrgUnit(hibOU);
+			}
 			hibKpiValue.setDescription(valueDescr);
 			logger.debug("Kpi value description setted");
 			hibKpiValue.setBeginDt(beginDt);
@@ -619,7 +634,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 
 
-	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r)
+	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou)
 	throws EMFUserError {
 
 		logger.debug("IN");
@@ -644,7 +659,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-
+			if (ou != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
 				KpiValue tem = null;
@@ -673,7 +690,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return toReturn;
 	}
 
-	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d, Resource r) throws EMFUserError{
+	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou) throws EMFUserError{
 		logger.debug("IN");
 		KpiValue toReturn = null;
 		Session aSession = null;
@@ -696,7 +713,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-
+			if (ou != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
 				KpiValue tem = null;
@@ -786,7 +805,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					+ (r.getColumn_name() != null ? r.getColumn_name()
 							: "resource name null"));
 		}
-
+		SbiOrgUnit sbiOrgUnit = value.getSbiOrgUnit();
+		OrganizationalUnit orgUnit = null;
+		if(sbiOrgUnit != null){
+			orgUnit = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(sbiOrgUnit.getId());	
+			logger.debug("SbiKpiValue ou: "
+					+ (orgUnit.getName() != null ? orgUnit.getName()
+							: "ou name null"));
+		}
 		kpiInstanceID = value.getSbiKpiInstance().getIdKpiInstance();
 		logger.debug("SbiKpiValue kpiInstanceID: "
 				+ (kpiInstanceID != null ? kpiInstanceID.toString()
@@ -905,7 +931,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value ID setted");
 		toReturn.setValueXml(value.getXmlData());
 		logger.debug("Kpi value XML setted");
-
+		toReturn.setOrgUnit(orgUnit);
+		logger.debug("Kpi value organizational unit setted");
+		
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -1661,7 +1689,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return true;
 	}
 
-	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r) throws EMFUserError {
+	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r, OrganizationalUnit ou) throws EMFUserError {
 		logger.debug("IN");
 		KpiValue toReturn = null;
 		Session aSession = null;
@@ -1684,7 +1712,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-
+			if (ou != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
 				KpiValue tem = null;
@@ -1746,7 +1776,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			logger.debug("SbiKpiValue resource: "
 					+ (r.getColumn_name() != null ? r.getColumn_name() : "resource name null"));
 		}
-
+		SbiOrgUnit sbiOrgUnit = value.getSbiOrgUnit();
+		OrganizationalUnit orgUnit = null;
+		if(sbiOrgUnit != null){
+			orgUnit = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(sbiOrgUnit.getId());	
+			logger.debug("SbiKpiValue ou: "
+					+ (orgUnit.getName() != null ? orgUnit.getName()
+							: "ou name null"));
+		}
 		kpiInstanceID = value.getSbiKpiInstance().getIdKpiInstance();
 		logger.debug("SbiKpiValue kpiInstanceID: "
 				+ (kpiInstanceID != null ? kpiInstanceID.toString() : "kpiInstanceID null"));
@@ -1814,13 +1851,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value ID setted");
 		toReturn.setValueXml(value.getXmlData());
 		logger.debug("Kpi value XML setted");
-
+		toReturn.setOrgUnit(orgUnit);
+		logger.debug("Kpi value ou setted");
+		
 		logger.debug("OUT");
 		return toReturn;
 	}
 
 	public void deleteKpiValueFromInterval(Integer kpiInstanceId, Date from,
-			Date to, Resource r) throws EMFUserError {
+			Date to, Resource r, OrganizationalUnit ou) throws EMFUserError {
 		logger.debug("IN");
 		KpiValue toReturn = null;
 		Session aSession = null;
@@ -1843,7 +1882,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-
+			if (ou != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
 				KpiValue tem = null;

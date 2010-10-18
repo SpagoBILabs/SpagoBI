@@ -43,6 +43,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.tree.Tree;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -770,7 +771,31 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 	
-	
+	public List<OrganizationalUnitGrantNode> getGrantsValidByDate(
+			Integer kpiModelInstanceId, Date now) {
+		logger.debug("IN: kpiModelInstanceId = " + kpiModelInstanceId);
+		List<OrganizationalUnitGrantNode> toReturn = new ArrayList<OrganizationalUnitGrantNode>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrantNodes n where n.id.kpiModelInstNodeId = ? and ? between n.sbiOrgUnitGrant.startDate and n.sbiOrgUnitGrant.endDate");
+			hibQuery.setInteger(0, kpiModelInstanceId);
+			hibQuery.setDate(1, now);
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				toReturn.add(toOrganizationalUnitGrantNode((SbiOrgUnitGrantNodes) it.next(), aSession));
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
 	public OrganizationalUnitGrant toOrganizationalUnitGrant(
 			SbiOrgUnitGrant hibGrant, Session aSession) {
 		OrganizationalUnitHierarchy hierarchy = toOrganizationalUnitHierarchy(hibGrant.getSbiOrgUnitHierarchies());
@@ -817,5 +842,28 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode(ouNode, modelInstanceNode, grant);
 		return grantNode;
 	}
+
+	public OrganizationalUnit getOrganizationalUnitByLabel(String label) {
+		logger.debug("IN: label = " + label);
+		OrganizationalUnit toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnit o where o.label = ?");
+			hibQuery.setString(0, label);
+			SbiOrgUnit hibOU = (SbiOrgUnit)hibQuery.uniqueResult();
+
+			toReturn = toOrganizationalUnit(hibOU);
+			
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
+
 
 }
