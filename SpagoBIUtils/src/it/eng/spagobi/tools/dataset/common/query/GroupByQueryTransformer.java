@@ -71,14 +71,14 @@ public class GroupByQueryTransformer extends AbstractQueryTransformer{
     	for(int i = 0; i < aggregateColumnNames.size(); i++) {
     		
     		String aggFunc = (String)aggregateFunctions.get(i);
-    		aggFunc = aggFunc.trim().toUpperCase();
+    		IAggregationFunction function = AggregationFunctions.get(aggFunc);
     		alias = (String)(aggregateColumnAliases.get(i) == null?aggregateColumnNames.get(i): aggregateColumnAliases.get(i));
     		if( !(alias.startsWith("'") || alias.startsWith("\"")) ) {
 				alias = "\"" + alias + "\"";
 			}
     		String columnName = (String)aggregateColumnNames.get(i);
     		columnName = columnName.trim().equalsIgnoreCase("*")? columnName: subQueryAlias + "." + columnName;
-    		transformedStatment +=  ", " + aggFunc + "(" + columnName + ") AS " + alias;
+    		transformedStatment +=  ", " + function.apply(columnName) + " AS " + alias;
     	}
     	transformedStatment += " \nFROM ( " + statement + ") " + subQueryAlias;
     	transformedStatment += " \nGROUP BY ";

@@ -21,8 +21,8 @@
 package it.eng.qbe.crosstab.bo;
 
 import it.eng.qbe.crosstab.serializer.json.CrosstabSerializationConstants;
-import it.eng.qbe.query.AggregationFunctions;
-import it.eng.qbe.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 
 import java.util.ArrayList;
 import java.util.List;

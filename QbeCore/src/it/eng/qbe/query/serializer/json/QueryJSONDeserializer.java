@@ -25,14 +25,14 @@ import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
-import it.eng.qbe.query.IAggregationFunction;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 

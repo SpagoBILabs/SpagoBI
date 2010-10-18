@@ -746,6 +746,12 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
  	 			, value: Ext.util.Format.htmlEncode('COUNT(op1)')
  	 			, alias: Ext.util.Format.htmlEncode('COUNT(op1)')
  		    }, {
+ 			    text: 'COUNT_DISTINCT'
+ 			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')
+ 			    , type: 'function'
+ 	 			, value: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
+ 	 			, alias: Ext.util.Format.htmlEncode('COUNT(DISTINCT op1)')
+ 		    }, {
 			    text: 'AVG'
 				, qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')
 				, type: 'function'
