@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.query.AggregationFunctions;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ExpressionNode;
@@ -32,6 +31,7 @@ import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
 import it.eng.qbe.query.transformers.AbstractQbeQueryTransformer;
 import it.eng.spagobi.engines.qbe.bo.FormViewerState;
 import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;

@@ -34,7 +34,6 @@ import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.HavingField;
-import it.eng.qbe.query.IAggregationFunction;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
@@ -42,6 +41,7 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
