@@ -49,8 +49,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.kpi.model.bo.ModelInstance;
-import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -60,7 +58,7 @@ import it.eng.spagobi.tools.importexport.typesmanager.TypesExportManagerFactory;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.ObjMetacontentDAOHibImpl;
+import it.eng.spagobi.tools.udp.bo.Udp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -157,6 +155,8 @@ public class ExportManager implements IExportManager {
 			exportDomains();
 			logger.debug("export metadata categories");
 			exportObjectMetadata();
+			logger.debug("export udp");
+			exportUdp();
 
 			Iterator iterObjs = objIds.iterator();
 			while (iterObjs.hasNext()) {
@@ -329,7 +329,29 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
-
+	/**
+	 * Exports SpagoBI Udp Items
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void exportUdp() throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List<Udp> udpList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
+			if(udpList != null && !udpList.isEmpty()){
+				for (Iterator iterator = udpList.iterator(); iterator.hasNext();) {
+					Udp udp = (Udp) iterator.next();
+					exporter.insertUdp(udp, session);
+					
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while exporting udp ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 
 	/**
 	 * Exports SpagoBI Object Metadata (metadata categories)
