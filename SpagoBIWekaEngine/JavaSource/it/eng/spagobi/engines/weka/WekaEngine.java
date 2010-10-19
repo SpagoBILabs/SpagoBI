@@ -49,9 +49,7 @@ public class WekaEngine {
 	 * @param template the template
 	 * @param env the env
 	 * 
-	 * @return the geo engine instance
-	 * 
-	 * @throws GeoEngineException the geo engine exception
+	 * @return the weka engine instance
 	 */
 	public static WekaEngineInstance createInstance(String template, Map env) {
 		WekaEngineInstance wekaEngineInstance = null;
