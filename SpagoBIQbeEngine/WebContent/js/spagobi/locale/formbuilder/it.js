@@ -79,6 +79,13 @@ Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.maxselectionnumber.
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.orderbyfield.label'] = 'Ordina risultati per';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.ordertype.label'] = 'Tipo di ordinamento';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.title'] = 'Dettaglio query di lookup';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.title'] = 'Query custom';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.standardquerydetailssection.title'] = 'Query standard';
+
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.lookupquery'] = 'Query di lookup';
+
+
+
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.promptvalues'] = 'Proponi i valori';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.donotqueryrootentity'] = 'ammissibili per il campo selezionato';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity'] = 'ammissibili per il campo corrispondente nell\'entità di primo livello';
