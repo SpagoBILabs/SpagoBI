@@ -79,6 +79,7 @@ import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiInstPeriod;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
+import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.MeasureUnit;
 import it.eng.spagobi.kpi.config.bo.Periodicity;
 import it.eng.spagobi.kpi.config.dao.IKpiDAO;
@@ -91,6 +92,7 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
 import it.eng.spagobi.kpi.config.metadata.SbiMeasureUnit;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
@@ -104,6 +106,13 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
@@ -139,6 +148,10 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
+import it.eng.spagobi.tools.udp.bo.Udp;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1631,6 +1644,17 @@ public class ExporterMetadata {
 
 			}
 
+			//load all organizational units
+			List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrants(mi.getId());
+			if(grants != null){
+				for (OrganizationalUnitGrantNode organizationalUnitGrantNode : grants) {
+					OrganizationalUnitGrant organizationalUnitGrant = organizationalUnitGrantNode.getGrant();
+					insertOrgUnitGrant(organizationalUnitGrant, session);
+					insertOrgUnitGrantNodes(organizationalUnitGrantNode, session);
+				}
+			}
+			
+
 			Transaction tx = session.beginTransaction();
 			session.save(hibMi);
 			tx.commit();
@@ -1794,7 +1818,7 @@ public class ExporterMetadata {
 			hibKpi.setInputAttributes(kpi.getInputAttribute());
 			hibKpi.setModelReference(kpi.getModelReference());
 			hibKpi.setTargetAudience(kpi.getTargetAudience());
-
+			hibKpi.setIsAdditive(kpi.getIsAdditive());
 
 			if(kpi.getMeasureTypeId()!=null){
 				SbiDomains measureType=(SbiDomains)session.load(SbiDomains.class, kpi.getMeasureTypeId());			
@@ -1871,7 +1895,26 @@ public class ExporterMetadata {
 					}
 				}
 			}
+			//manage insert of kpi relations
+			List<KpiRel> relations = DAOFactory.getKpiDAO().loadKpiRelListByParentId(kpi.getKpiId());
+			if(relations != null && !relations.isEmpty()){
+				for (int j = 0; j < relations.size(); j++) {
+					KpiRel kpiRel = (KpiRel)relations.get(j);
+					insertKpiRel(kpiRel, session);					
+				}
+				
+			}
 			
+			//manage insert of udp values
+
+			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
+			if(udpValues != null && !udpValues.isEmpty()){
+				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
+					UdpValue udpValue = (UdpValue) iterator.next();
+					insertUdpValue(udpValue, session);
+					
+				}
+			}
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
@@ -2502,7 +2545,216 @@ public class ExporterMetadata {
 		}
 	}
 
+	/**
+	 * Insert KpiRel .
+	 * 
+	 * @param kpiRel the KpiRel
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertKpiRel(KpiRel kpiRel, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiKpiRel where kpiRelId = " + kpiRel.getKpiRelId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+
+			SbiKpi kpiChild=(SbiKpi)session.load(SbiKpi.class, kpiRel.getKpiChildId());
+			SbiKpi kpiFather=(SbiKpi)session.load(SbiKpi.class, kpiRel.getKpiFatherId());
+
+			// main attributes			
+			SbiKpiRel hibRel = new SbiKpiRel();
+			hibRel.setParameter(kpiRel.getParameter());
+			hibRel.setSbiKpiByKpiChildId(kpiChild);
+			hibRel.setSbiKpiByKpiFatherId(kpiFather);
+			hibRel.setKpiRelId(kpiRel.getKpiRelId());
+			Transaction tx = session.beginTransaction();
+			session.save(hibRel);
+			tx.commit();
 
 
+		} catch (Exception e) {
+			logger.error("Error while inserting kpi relation into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
 
+	/**
+	 * Insert Threshold .
+	 * 
+	 * @param th the Threshold
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertUdp(Udp udp, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiUdp where udpId = " + udp.getUdpId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+
+			SbiDomains udpType=(SbiDomains)session.load(SbiDomains.class, udp.getDataTypeId());
+
+			// main attributes			
+			SbiUdp hibUdp = new SbiUdp();
+			hibUdp.setDescription(udp.getDescription());
+			hibUdp.setFamilyId(udp.getFamilyId());
+			hibUdp.setIsMultivalue(udp.getMultivalue());
+			hibUdp.setLabel(udp.getLabel());
+			hibUdp.setName(udp.getName());
+			
+			hibUdp.setTypeId(udpType.getValueId());
+			hibUdp.setUdpId(udp.getUdpId());
+
+			Transaction tx = session.beginTransaction();
+			session.save(hibUdp);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting udp into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+
+
+	/**
+	 * Insert Threshold Value.
+	 * 
+	 * @param th the Threshold Value
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertUdpValue(UdpValue udpValue, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiUdpValue where udpValueId = " + udpValue.getUdpValueId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+
+			SbiUdp udp =(SbiUdp)session.load(SbiUdp.class, udpValue.getUdpId());
+
+			// main attributes			
+			SbiUdpValue hibUdpValue = new SbiUdpValue();
+			hibUdpValue.setBeginTs(udpValue.getBeginTs());
+			hibUdpValue.setEndTs(udpValue.getEndTs());
+			hibUdpValue.setFamily(udpValue.getFamily());
+			hibUdpValue.setLabel(udpValue.getLabel());
+			hibUdpValue.setName(udpValue.getName());
+			hibUdpValue.setProg(udpValue.getProg());
+			hibUdpValue.setReferenceId(udpValue.getReferenceId());
+			hibUdpValue.setSbiUdp(udp);
+			hibUdpValue.setUdpValueId(udpValue.getUdpValueId());
+			hibUdpValue.setValue(udpValue.getValue());
+
+			Transaction tx = session.beginTransaction();			
+			session.save(hibUdpValue);
+			tx.commit();
+		} catch (Exception e) {
+			logger.error("Error while inserting udp value into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Insert all grants for model instance node.
+	 * 
+	 * @param grant the OrganizationalUnitGrant
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertOrgUnitGrant(OrganizationalUnitGrant grant, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiOrgUnitGrant where id = " + grant.getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			}
+			SbiOrgUnitHierarchies hier =(SbiOrgUnitHierarchies)session.load(SbiOrgUnitHierarchies.class, grant.getHierarchy().getId());
+			SbiKpiModelInst mi =(SbiKpiModelInst)session.load(SbiKpiModelInst.class, grant.getModelInstance().getId());
+			
+			// main attributes			
+			SbiOrgUnitGrant hibGrant = new SbiOrgUnitGrant();
+			hibGrant.setDescription(grant.getDescription());
+			hibGrant.setEndDate(grant.getEndDate());
+			hibGrant.setId(grant.getId());
+			hibGrant.setLabel(grant.getLabel());
+			hibGrant.setName(grant.getName());
+			hibGrant.setSbiKpiModelInst(mi);
+			hibGrant.setSbiOrgUnitHierarchies(hier);
+			hibGrant.setStartDate(grant.getStartDate());
+			
+			Transaction tx = session.beginTransaction();			
+			session.save(hibGrant);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting grants into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Insert all grants nodes for model instance node.
+	 * 
+	 * @param ou the OrganizationalUnitGrantNode
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertOrgUnitGrantNodes(OrganizationalUnitGrantNode ou, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiOrgUnitGrantNodes s where s.id.nodeId = " + ou.getOuNode().getNodeId()
+												+" and s.id.kpiModelInstNodeId = "+ou.getModelInstanceNode().getModelInstanceNodeId()
+												+" and s.id.grantId = "+ou.getGrant().getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+			
+			SbiKpiModelInst mi =(SbiKpiModelInst)session.load(SbiKpiModelInst.class, ou.getModelInstanceNode().getModelInstanceNodeId());
+			SbiOrgUnitGrant g =(SbiOrgUnitGrant)session.load(SbiOrgUnitGrant.class, ou.getGrant().getId());
+			SbiOrgUnitNodes n =(SbiOrgUnitNodes)session.load(SbiOrgUnitNodes.class, ou.getOuNode().getNodeId());
+			// main attributes			
+			SbiOrgUnitGrantNodes hibGrant = new SbiOrgUnitGrantNodes();
+			SbiOrgUnitGrantNodesId id = new SbiOrgUnitGrantNodesId();
+			id.setKpiModelInstNodeId(ou.getModelInstanceNode().getModelInstanceNodeId());
+			id.setGrantId(ou.getGrant().getId());
+			id.setNodeId(ou.getOuNode().getNodeId());
+			hibGrant.setId(id);		
+			
+			
+			hibGrant.setSbiKpiModelInst(mi);
+			hibGrant.setSbiOrgUnitGrant(g);
+			hibGrant.setSbiOrgUnitNodes(n);
+			
+			Transaction tx = session.beginTransaction();			
+			session.save(hibGrant);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting grants into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	//Query hibQuery = session.createQuery(" from SbiOrgUnitGrant where grant.id = " + ou.getGrant().getId());
 }

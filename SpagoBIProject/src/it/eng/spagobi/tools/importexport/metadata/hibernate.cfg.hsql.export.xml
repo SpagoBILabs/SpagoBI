@@ -52,6 +52,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiModel.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiPeriodicity.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiRel.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiKpiValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMeasureUnit.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAlarm.hbm.xml" />
@@ -61,11 +62,14 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiThresholdValue.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetadata.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjMetacontents.hbm.xml" />
-        <!-- Kpi Organizational Units 
-        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnit.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitHierarchies.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitNodes.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrant.hbm.xml" />
-        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrantNodes.hbm.xml" />-->
+        <!-- Kpi Organizational Units -->
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitHierarchies.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitNodes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrant.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrantNodes.hbm.xml" />
+                <!-- User Defined Attributes -->
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
