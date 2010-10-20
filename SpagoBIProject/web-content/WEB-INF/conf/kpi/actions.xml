@@ -22,6 +22,9 @@
  <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
+ <ACTION name="SYNCHRONIZE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.SynchronizeOUsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
  <!--END Kpi new interface actions -->
 
     <ACTION name="LOGIN_ACTION_KPI_CONFIGURATION" class="it.eng.spagobi.commons.services.PortletLoginAction"

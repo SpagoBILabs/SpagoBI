@@ -141,6 +141,11 @@ Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista Abilitazioni';
 Sbi.locale.ln['sbi.grants.trees.tab'] = 'Alberature';
 Sbi.locale.ln['sbi.grants.hide.leafs'] ='Nascondi unità organizzative foglie';
 Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Nascondi unità organizzative senza abilitazioni';
+Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizza unità organizzative';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Attendere prego...';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='Sincronizzazione delle unità organizzative in corso...';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='Operazione eseguita';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Unità organizzative sincronizzate!';
 //END GRANTS messages
 
 

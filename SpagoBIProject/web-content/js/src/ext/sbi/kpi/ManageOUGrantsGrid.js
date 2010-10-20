@@ -58,6 +58,10 @@ Sbi.kpi.ManageOUGrantsGrid = function(config, ref) {
 		serviceName: 'MANAGE_OUS_ACTION'
 			, baseParams: paramsDel
 	});
+	this.configurationObject.synchronizeOUsService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SYNCHRONIZE_OUS_ACTION'
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+	});
 
 	this.refTree = ref;
 	this.initConfigObject();
@@ -67,7 +71,15 @@ Sbi.kpi.ManageOUGrantsGrid = function(config, ref) {
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageOUGrantsGrid.superclass.constructor.call(this, c);	
-
+	
+	this.tb.addSeparator();
+	this.tb.addButton(new Ext.Toolbar.Button({
+		iconCls: 'icon-refresh' 
+		, text: LN('sbi.grants.synchronize.ous.btn.text')
+		, scope: this
+		, handler : this.synchronizeOUs
+	}));
+	
 	this.addEvents('selected');
 	this.addEvents('closeList');
 }
@@ -181,5 +193,22 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 	var records = new Array();
 	records.push(new Ext.data.Record(record));
 	this.addModelInstanceRecord(records);	}
+
+	, synchronizeOUs: function() {
+		Ext.MessageBox.wait(LN('sbi.grants.synchronize.ous.wait.msg'), LN('sbi.grants.synchronize.ous.wait.title'));
+		Ext.Ajax.request({
+	        url: this.configurationObject.synchronizeOUsService
+	        , success: function(response, options) {
+	        	Ext.MessageBox.show({
+	        		title: LN('sbi.grants.synchronize.ous.performed.title')
+	        		, msg: LN('sbi.grants.synchronize.ous.performed.msg')
+	        		, icon: Ext.MessageBox.INFO
+	        		, buttons: Ext.MessageBox.OK
+	        	});
+	        }
+	        , scope: this
+			, failure: Sbi.exception.ExceptionHandler.handleFailure      
+	   });
+	}
 
 });
