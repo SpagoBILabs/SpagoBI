@@ -63,9 +63,6 @@ Sbi.exception.ExceptionHandler = function(){
 		
         handleFailure : function(response, options) {
         	
-        	// hide the message box, if it is displayed
-        	//Ext.MessageBox.hide();
-        	
         	var errMessage = ''
         	if(response !== undefined) {
         		
