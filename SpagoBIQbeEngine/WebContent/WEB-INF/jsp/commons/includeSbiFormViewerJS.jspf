@@ -12,10 +12,10 @@
 <script type="text/javascript" src='../js/spagobi/locale/formviewer/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'/></script>
 
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
+
 <!-- START-DEBUG -->
 
-<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
-<script type="text/javascript" src='../js/spagobi/overrides/overrides.js'/></script>
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
