@@ -124,6 +124,7 @@ END-CAS -->
 		</filter-class>
 	</filter>
 	
+	<!-- EngineCheckSessionFilter first on jsps but not on JPivotServlet!!! JPivotServlet may open a new session, no problem for that -->
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
