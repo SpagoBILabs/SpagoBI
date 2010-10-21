@@ -799,6 +799,10 @@ public class HQLStatement extends AbstractStatement {
 		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
+			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
+			if (alias.toUpperCase().startsWith("DISTINCT ")) {
+				alias = alias.substring("DISTINCT ".length());
+			}
 			String uniqueName;
 			allSelectFields = query.getSelectFields(false);
 			for(int i=0; i<allSelectFields.size(); i++){
@@ -822,6 +826,10 @@ public class HQLStatement extends AbstractStatement {
 		stk = new StringTokenizer(expr.replace("\'", ""), "+-|*/()");
 		while(stk.hasMoreTokens()){
 			String alias = stk.nextToken().trim();
+			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
+			if (alias.toUpperCase().startsWith("DISTINCT ")) {
+				alias = alias.substring("DISTINCT ".length());
+			}
 			pos = freshExpr.indexOf(alias, pos);
 			if(ind<aliases.size() && aliases.get(ind).equals(alias)){
 				freshExpr = freshExpr.substring(0, pos)+ aliasEntityMapping.get(ind)+freshExpr.substring(pos+alias.length());
@@ -834,6 +842,7 @@ public class HQLStatement extends AbstractStatement {
 		}
 		return freshExpr;
 	}
+	
 	
 	/*
 	private String buildUserProvidedWhereField(WhereField whereField, Query query, Map entityAliasesMaps) {
