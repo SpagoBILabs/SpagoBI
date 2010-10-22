@@ -300,7 +300,9 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	}
     
     , resetSelection: function() {
-    	this.xselection = Ext.apply({}, this.xvalue);    
+    	this.sm.clearSelections(true);
+    	this.xselection = Ext.apply({}, this.xvalue);  
+    	
    	}
     
     , onSelect: function(sm, rowIndex, record) {
