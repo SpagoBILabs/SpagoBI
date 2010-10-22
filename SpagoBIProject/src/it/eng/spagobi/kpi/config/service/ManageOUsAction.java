@@ -103,6 +103,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				logger.debug("Added the grant.");
 			}else if(serviceType == null){
 				logger.debug("no service");
+				//Assert.assertUnreachable("No service defined.");
 			}
 			
 		} finally {
@@ -122,8 +123,6 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 			JSONObject grantsJSONObject = new JSONObject();
 			grantsJSONObject.put("rows", grantsJSON);
 			writeBackToClient( new JSONSuccess( grantsJSONObject ) );
-		} catch (IOException e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize the responce to the client", e);
 		}
@@ -226,7 +225,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				DAOFactory.getOrganizationalUnitDAO().insertGrant(grant);
 			}
 
-			List<OrganizationalUnitGrantNode> grantNodes = deserializeOrganizationalUnitGrantNodes(grantNodesJSON, grant);
+			List<OrganizationalUnitGrantNode> grantNodes = deserializeOrganizationalUnitGrantNodesAndUpdateChilds(grantNodesJSON, grant);
 			DAOFactory.getOrganizationalUnitDAO().insertNodeGrants(grantNodes);
 			writeBackToClient( new JSONAcknowledge() );
 		} catch (IOException e) {
@@ -302,18 +301,82 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		return node;
 	}
 	
+	
+	
+	/**
+	 * Deserialize a list of OrganizationalUnitGrantNode objects. If the nodes have not been expanded by the
+	 * user, this methods load the subtree rooted in all the JSONGrantNodes and
+	 * build one grant node for each node of the subtree
+	 * @param JSONGrantNodes the JSON representation of the list of OrganizationalUnitGrantNode
+	 * @param grant the grant of that list
+	 * @return the deserialized object
+	 * @throws Exception
+	 */
+	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodesAndUpdateChilds(JSONArray JSONGrantNodes, OrganizationalUnitGrant grant) throws Exception{
+		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
+		for(int i=0; i<JSONGrantNodes.length(); i++){
+			nodes.addAll(deserializeOrganizationalUnitGrantNodeAndUpdateChilds( JSONGrantNodes.getJSONObject(i), grant));
+		}
+		return nodes;
+	}
+	
+	/**
+	 * Deserialize a OrganizationalUnitGrantNode object. If the node has not been expanded by the
+	 * user, this methods load the subtree rooted in the JSONGrantNodes and
+	 * build one grant node for each node of the subtree
+	 * @param JSONGrantNodes the JSON representation of the OrganizationalUnitGrantNode
+	 * @param grant the grant of that object
+	 * @return the deserialized object
+	 * @throws Exception
+	 */
+	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodeAndUpdateChilds(JSONObject JSONGrantNode, OrganizationalUnitGrant grant) throws Exception{
+		OrganizationalUnitGrantNode node = new OrganizationalUnitGrantNode();
+		int hierarchyId = JSONGrantNode.getInt("hierarchyId");
+		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
+		String ouPath = JSONGrantNode.getString("ouPath");
+		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
+		OrganizationalUnitNode ouNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(ouPath, hierarchyId);
+		node.setGrant(grant);
+		node.setModelInstanceNode(modelInstanceNode);
+		node.setOuNode(ouNode);
+		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
+		nodes.add(node);
+		boolean expanded = JSONGrantNode.getBoolean("expanded");
+		if(!expanded){
+			nodes.addAll(buildGrantForChilds(ouNode, modelInstanceNode, grant));
+		}
+		return nodes;
+	}
+	
+	/**
+	 * For each child of the OrganizationalUnitNode ouNode, build a OrganizationalUnitGrantNode
+	 * with grant grant and model Instance Node modelInstanceNode
+	 * @param ouNode
+	 * @param modelInstanceNode
+	 * @param grant
+	 * @return
+	 */
+	private List<OrganizationalUnitGrantNode> buildGrantForChilds(OrganizationalUnitNode ouNode, ModelInstanceNode modelInstanceNode,  OrganizationalUnitGrant grant){
+		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
+		OrganizationalUnitGrantNode childNode;
+		List<OrganizationalUnitNode> childOus = DAOFactory.getOrganizationalUnitDAO().getChildrenNodes(ouNode.getNodeId());
+		for(int i=0; i<childOus.size(); i++){
+			childNode= new OrganizationalUnitGrantNode();
+			childNode.setGrant(grant);
+			childNode.setModelInstanceNode(modelInstanceNode);
+			childNode.setOuNode(childOus.get(i));
+			nodes.add(childNode);
+			nodes.addAll(buildGrantForChilds(childOus.get(i), modelInstanceNode, grant));
+		}
+		return nodes;
+	}
+	
 	public Date toDate(String dateStr, String format) throws Exception {
 		SimpleDateFormat dateFormat = new SimpleDateFormat();
-
-
 		Date date = null;
-		try {
-			dateFormat.applyPattern("yyyy-MM-dd");
-			dateFormat.setLenient(false);
-			date = dateFormat.parse(dateStr);
-		} catch (Exception e) { 
-			throw e;
-		}
+		dateFormat.applyPattern("yyyy-MM-dd");
+		dateFormat.setLenient(false);
+		date = dateFormat.parse(dateStr);
 		return date;
 	}
 
