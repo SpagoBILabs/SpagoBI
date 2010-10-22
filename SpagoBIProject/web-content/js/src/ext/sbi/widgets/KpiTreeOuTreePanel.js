@@ -91,16 +91,16 @@ Ext.extend(Sbi.widgets.KpiTreeOuTreePanel, Ext.TabPanel, {
 
 		this.leftTree = new Ext.tree.TreePanel( {
 			title : this.OUTreeTitle,
-			flex : 1,
-			height : 500,
+			layout : 'fit',
 			userArrows : true,
 			animate : true,
 			autoScroll : true,		
 			style: {
-				"background-color": "white"
+				"background-color": "white",
+				"height": "100%"
 			},
+			cellCls: 'kpi-ou-trees',
 			loader: this.outreeLoader,
-
 			preloadTree : this.preloadTree,
 			enableDD : true,
 			enableDrop: true,
@@ -120,16 +120,16 @@ Ext.extend(Sbi.widgets.KpiTreeOuTreePanel, Ext.TabPanel, {
 
 		this.rightTree = new Ext.tree.TreePanel( {
 			title : this.kpiTreeTitle,
-			flex : 1,
-			height : 600,
+			cellCls: 'kpi-ou-trees',
+			layout : 'fit',
 			userArrows : true,
 			animate : true,
 			autoScroll : true,		
 			style: {
-				"background-color": "white"
+				"background-color": "white",
+				"height": "100%"
 			},
 			loader: this.kpitreeLoader,
-
 			preloadTree : this.preloadTree,
 			enableDD : true,
 			enableDrop: true,
@@ -152,10 +152,18 @@ Ext.extend(Sbi.widgets.KpiTreeOuTreePanel, Ext.TabPanel, {
 
 		this.treePanel = new Ext.Panel({
 			border: true,
-			layout : 'hbox',
+			layout:'table',
+            layoutConfig: {
+                columns: 2,
+                rows: 1
+            },
+            autoScroll : true,	
 			region : 'center',
 			border : true,
 			collapseMode : 'mini',
+			style: {
+				"background-color": "white"
+			},
 			split : true,
 			items : [this.leftTree, this.rightTree]
 		});
