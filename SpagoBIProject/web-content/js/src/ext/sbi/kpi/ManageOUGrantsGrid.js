@@ -60,7 +60,7 @@ Sbi.kpi.ManageOUGrantsGrid = function(config, ref) {
 	});
 	this.configurationObject.synchronizeOUsService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SYNCHRONIZE_OUS_ACTION'
-		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+			, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 	});
 
 	this.refTree = ref;
@@ -71,15 +71,15 @@ Sbi.kpi.ManageOUGrantsGrid = function(config, ref) {
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageOUGrantsGrid.superclass.constructor.call(this, c);	
-	
+
 	this.tb.addSeparator();
 	this.tb.addButton(new Ext.Toolbar.Button({
 		iconCls: 'icon-refresh' 
-		, text: LN('sbi.grants.synchronize.ous.btn.text')
-		, scope: this
-		, handler : this.synchronizeOUs
+			, text: LN('sbi.grants.synchronize.ous.btn.text')
+			, scope: this
+			, handler : this.synchronizeOUs
 	}));
-	
+
 	this.addEvents('selected');
 	this.addEvents('closeList');
 }
@@ -113,102 +113,103 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 		                                         {id:'name', header: LN('sbi.generic.name'), width: 110, sortable: true, locked:false, dataIndex: 'name'},
 		                                         {header: LN('sbi.generic.label'), width: 110, sortable: true, dataIndex: 'label'}
 		                                         ];
-		
+
 		this.configurationObject.listTitle = LN('sbi.grants.listTitle');
 
 	}
 
-//OVERRIDING save method
-,save : function() {
-	alert('Save');
-}
-
-
-, deleteSelectedItem: function(itemId) {
-
-	Ext.MessageBox.confirm(
-			LN('sbi.generic.pleaseConfirm'),
-			LN('sbi.generic.confirmDelete'),            
-			function(btn, text) {
-				if (btn=='yes') {
-					if (itemId != null) {	
-						Ext.Ajax.request({
-							url: this.services['deleteItemService'],
-							params: {'grantId': itemId},
-							method: 'GET',
-							success: function(response, options) {
-								if (response !== undefined) {
-									var deleteRow = this.rowselModel.getSelected();
-									this.mainElementsStore.remove(deleteRow);
-									this.mainElementsStore.commitChanges();
-									if(this.mainElementsStore.getCount()>0){
-										this.rowselModel.selectRow(0);
-									}else{
-										this.addNewItem();
+	//OVERRIDING save method
+	,save : function() {
+		alert('Save');
+	}
+	
+	
+	, deleteSelectedItem: function(itemId) {
+	
+		Ext.MessageBox.confirm(
+				LN('sbi.generic.pleaseConfirm'),
+				LN('sbi.generic.confirmDelete'),            
+				function(btn, text) {
+					if (btn=='yes') {
+						if (itemId != null) {	
+							Ext.Ajax.request({
+								url: this.services['deleteItemService'],
+								params: {'grantId': itemId},
+								method: 'GET',
+								success: function(response, options) {
+									if (response !== undefined) {
+										var deleteRow = this.rowselModel.getSelected();
+										this.mainElementsStore.remove(deleteRow);
+										this.mainElementsStore.commitChanges();
+										if(this.mainElementsStore.getCount()>0){
+											this.rowselModel.selectRow(0);
+										}else{
+											this.addNewItem();
+										}
+										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 									}
-									Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-								} else {
-									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+								},
+								failure: function() {
+									Ext.MessageBox.show({
+										title: LN('sbi.generic.error'),
+										msg: LN('sbi.generic.deletingItemError'),
+										width: 150,
+										buttons: Ext.MessageBox.OK
+									});
 								}
-							},
-							failure: function() {
-								Ext.MessageBox.show({
-									title: LN('sbi.generic.error'),
-									msg: LN('sbi.generic.deletingItemError'),
-									width: 150,
-									buttons: Ext.MessageBox.OK
-								});
-							}
-							,scope: this
-
-						});
-					} else {
-						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+								,scope: this
+	
+							});
+						} else {
+							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+						}
 					}
-				}
-			},
-			this
-	);
-}
-
-, addModelInstanceRecord: function(rec){
-	this.mainElementsStore.add(rec);
-	//this.mainElementsStore.commitChanges();
-	this.rowselModel.selectRecords([rec]);
-	//this.fireEvent('rowclick', rec, this);
-}
-
-, addNewItem : function(){
-	var record = {
-			id:'', 
-			label: '', 
-			name:'',
-			description:'',
-			startdate:'',
-			enddate:'', 
-			hierarchy:'', 
-			modelinstance: ''
-	};
-
-	var records = new Array();
-	records.push(new Ext.data.Record(record));
-	this.addModelInstanceRecord(records);	}
-
+				},
+				this
+		);
+	}
+	
+	, addModelInstanceRecord: function(rec){
+		this.mainElementsStore.add(rec);
+		//this.mainElementsStore.commitChanges();
+		this.rowselModel.selectRecords([rec]);
+		//this.fireEvent('rowclick', rec, this);
+	}
+	
+	, addNewItem : function(){
+		var record = {
+				id:'', 
+				label: '', 
+				name:'',
+				description:'',
+				startdate:'',
+				enddate:'', 
+				hierarchy:'', 
+				modelinstance: ''
+		};
+	
+		var records = new Array();
+		records.push(new Ext.data.Record(record));
+		this.addModelInstanceRecord(records);	
+	}
+	
 	, synchronizeOUs: function() {
 		Ext.MessageBox.wait(LN('sbi.grants.synchronize.ous.wait.msg'), LN('sbi.grants.synchronize.ous.wait.title'));
 		Ext.Ajax.request({
-	        url: this.configurationObject.synchronizeOUsService
-	        , success: function(response, options) {
-	        	Ext.MessageBox.show({
-	        		title: LN('sbi.grants.synchronize.ous.performed.title')
-	        		, msg: LN('sbi.grants.synchronize.ous.performed.msg')
-	        		, icon: Ext.MessageBox.INFO
-	        		, buttons: Ext.MessageBox.OK
-	        	});
-	        }
-	        , scope: this
-			, failure: Sbi.exception.ExceptionHandler.handleFailure      
-	   });
+			url: this.configurationObject.synchronizeOUsService
+			, success: function(response, options) {
+				Ext.MessageBox.show({
+					title: LN('sbi.grants.synchronize.ous.performed.title')
+					, msg: LN('sbi.grants.synchronize.ous.performed.msg')
+					, icon: Ext.MessageBox.INFO
+					, buttons: Ext.MessageBox.OK
+				});
+			}
+		, scope: this
+		, failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
 	}
 
 });
