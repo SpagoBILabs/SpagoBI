@@ -195,8 +195,16 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				if(node.isLeaf() && thisPanel.hideOULeafs){//for hide the leafs
 					return;
 				}
-	
+
+				
 				node.on('click',thisPanel.updateKpisCheck,thisPanel);
+				node.on('append', function( tree, thisNode, childNode,index ) {
+					if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
+						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodes.slice(0);//copy the array
+					}
+				},this);
+
+				
 				return node;
 			}
 		});  
@@ -420,9 +428,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 		if(node.parentNode!=null){
 			//If there is no kpis for the node it copies the kpis selected for the father
-			if(node.attributes.modelinstancenodes==null || node.attributes.modelinstancenodes.length==0){
-				node.attributes.modelinstancenodes = node.parentNode.attributes.modelinstancenodes.slice(0);//copy the array
-			}else{//else
+			if(node.attributes.modelinstancenodes!=null && node.attributes.modelinstancenodes.length>0){
 				//remove the kpis not living in the father list from the node.attributes.modelinstancenodes 
 				for(var i=node.attributes.modelinstancenodes.length-1; i>=0; i--){
 					n = this.rightTree.getNodeById(node.attributes.modelinstancenodes[i]);
@@ -641,7 +647,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				var c={
 						ouPath: node.attributes.path,
 						modelinstance: node.attributes.modelinstancenodes[i],
-						hierarchyId: this.ouHierarchy.ou.id
+						hierarchyId: this.ouHierarchy.ou.id,
+						expanded: node.expanded
 				};
 				array.push(c);
 			}
@@ -728,8 +735,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			qtip		: tip,
 			toSave: true
 		});
-		node.id = rec.ou.id;
-		node.attributes.id = rec.ou.id;
+		node.id = rec.id;
+		node.attributes.id = rec.id;
 		node.attributes.path = rec.path;
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
 		node.on('click',this.updateKpisCheck,this);
