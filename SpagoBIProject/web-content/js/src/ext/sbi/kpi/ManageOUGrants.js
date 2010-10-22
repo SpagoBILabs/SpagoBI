@@ -196,11 +196,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					return;
 				}
 
+				attr.modelinstancenodesOfThisSession = new Array();
 				
 				node.on('click',thisPanel.updateKpisCheck,thisPanel);
 				node.on('append', function( tree, thisNode, childNode,index ) {
 					if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
-						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodes.slice(0);//copy the array
+						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
+						childNode.attributes.modelinstancenodesOfThisSession = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
 					}
 				},this);
 
@@ -386,9 +388,9 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 			//change to the selected node and all it's child the kpi model instance list
 			var subTreeNodes = this.getSubTreeNodes(this.leftTree.getSelectionModel().getSelectedNode());
-	
 			for(var j=0; j<subTreeNodes.length; j++){
 				var modelinstancenodes = subTreeNodes[j].attributes.modelinstancenodes;
+				var modelinstancenodesOfThisSession = subTreeNodes[j].attributes.modelinstancenodesOfThisSession;
 				if(!checked){
 					for(var i=0; i<modelinstancenodes.length; i++){
 						if(modelinstancenodes[i]==node.id){
@@ -396,8 +398,15 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							break;
 						}
 					}
+					for(var i=0; i<modelinstancenodesOfThisSession.length; i++){
+						if(modelinstancenodesOfThisSession[i]==node.id){
+							modelinstancenodesOfThisSession.splice(i,1);
+							break;
+						}
+					}
 				}else{
 					modelinstancenodes.push(node.id);
+					modelinstancenodesOfThisSession.push(node.id);
 				}
 			}
 			node.resumeEvents();
@@ -423,9 +432,9 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		}	
 	
 		//disable the kpis not living in the father list.
-		//If the node is the root it enables all the nodes
+			//If the node is the root it enables all the nodes
 		this.deepDisableCheck(this.rightTree.getRootNode(), node);
-	
+
 		if(node.parentNode!=null){
 			//If there is no kpis for the node it copies the kpis selected for the father
 			if(node.attributes.modelinstancenodes!=null && node.attributes.modelinstancenodes.length>0){
@@ -437,8 +446,18 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					}
 				}
 			}
+			//If there is no kpis for the node it copies the kpis selected for the father
+			if(node.attributes.modelinstancenodesOfThisSession!=null && node.attributes.modelinstancenodesOfThisSession.length>0){
+				//remove the kpis not living in the father list from the node.attributes.modelinstancenodes 
+				for(var i=node.attributes.modelinstancenodesOfThisSession.length-1; i>=0; i--){
+					n = this.rightTree.getNodeById(node.attributes.modelinstancenodesOfThisSession[i]);
+					if(n!=null && n.getUI().checkbox.disabled){
+						node.attributes.modelinstancenodesOfThisSession.splice(i,1);
+					}
+				}
+			}
 		}
-	
+
 		//check the kpis living in the node.attributes.modelinstancenodes
 		if(node!=null && node.attributes.modelinstancenodes!=null){
 			for(var i=0; i<node.attributes.modelinstancenodes.length; i++){
@@ -478,7 +497,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			kpiNode.getUI().checkbox.disabled=false;
 		}
 	}
-	
+
 	,renderTree : function(tree) {
 		tree.getLoader().nodeParameter = 'modelInstId';
 		tree.getRootNode().expand(false, /*no anim*/false);
@@ -735,13 +754,17 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			qtip		: tip,
 			toSave: true
 		});
+
 		node.id = rec.id;
 		node.attributes.id = rec.id;
 		node.attributes.path = rec.path;
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
+		node.attributes.modelinstancenodesOfThisSession = new Array();
 		node.on('click',this.updateKpisCheck,this);
 		return node;
 	}
 
 
 });
+
+
