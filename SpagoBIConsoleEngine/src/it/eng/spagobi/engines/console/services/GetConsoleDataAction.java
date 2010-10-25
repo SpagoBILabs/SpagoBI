@@ -21,25 +21,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.console.services;
 
-import java.io.IOException;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 
 
@@ -92,17 +95,39 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfile((UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			//dataSet.setParamsMap(getEnv());
-			dataSet.loadData();
+			//gets the max number of rows for the table
+			String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
+			int rowLimit = (strRowLimit == null)? 0 : Integer.parseInt(strRowLimit);
+			if (rowLimit > 0){
+				dataSet.loadData(-1, -1, rowLimit);
+			}else{
+				dataSet.loadData();
+			}
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
-					
+			
 			JSONObject results = new JSONObject();
 			try {
 				JSONDataWriter writer = new JSONDataWriter();
 				
 				Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
 				if(resultNumber == null) dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
+				/*
+				//gets the max number of rows for the table
+				String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
+				int rowLimit = (strRowLimit == null)? 0 : Integer.parseInt(strRowLimit);
 				
+	
+				if (rowLimit > 0){
+					IDataStore tmpDS = new DataStore();
+					for(int index = 0; index<dataStore.getRecordsCount() && index<rowLimit; index++){
+						IRecord record = dataStore.getRecordAt(index);
+						tmpDS.appendRecord(record);
+					}
+					//set the original datastore with the new one
+					dataStore = tmpDS;
+				}
+*/
 				JSONObject dataSetJSON = (JSONObject)writer.write(dataStore);				
 				results = dataSetJSON;
 			} catch (Throwable e) {

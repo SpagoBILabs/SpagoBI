@@ -32,7 +32,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -81,8 +83,7 @@ public class ConsoleEngineConfig {
 			results.addAll(urls);
 			logger.debug("Added [" + urls.size() + "] for include [" + includeName + "]");
 		}
-		
-		
+
 		return results;
 	}
 	
@@ -139,6 +140,25 @@ public class ConsoleEngineConfig {
 		}		
 	}
 	
+	// utils 
+	
+	public String getProperty(String propertName) {
+		String propertyValue = null;		
+		SourceBean sourceBeanConf;
+		
+		Assert.assertNotNull( getConfigSourceBean(), "Impossible to parse engine-config.xml file");
+		
+		sourceBeanConf = (SourceBean) getConfigSourceBean().getAttribute( propertName);
+		if(sourceBeanConf != null) {
+			propertyValue  = (String) sourceBeanConf.getCharacters();
+			logger.debug("Configuration attribute [" + propertName + "] is equals to: [" + propertyValue + "]");
+		}
+		
+		return propertyValue;		
+	}
+	
+
+	
 	// -- ACCESS Methods  -----------------------------------------------
 	public EnginConf getEngineConfig() {
 		return engineConfig;
@@ -151,4 +171,6 @@ public class ConsoleEngineConfig {
 	public SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
 	}
+	
+	
 }
