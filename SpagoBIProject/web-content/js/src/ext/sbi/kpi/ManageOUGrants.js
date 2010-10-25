@@ -559,6 +559,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			var thisPanel = this;
 			var grantNodes = Ext.encode(this.getAllNodesWithAbilitation(this.leftTree.getRootNode()));
 			var grant =  Ext.encode(this.getGrantFormValues());
+
 			Ext.Ajax.request({
 				url: this.configurationObject.saveGrantService,
 				params: {'grantnodes': grantNodes, 'grant': grant},
@@ -591,6 +592,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		thisPanel.outreeLoader.baseParams.grantId=thisPanel.selectedGrantId;
 		var modelInstId = thisPanel.detailFieldKpiHierarchy.getValue();
 		var ouHierarchyId = thisPanel.detailFieldOUHierarchy.getValue();
+		this.ouHierarchy = ouHierarchyId;
 		if(modelInstId!=null && ouHierarchyId!=null && modelInstId!='undefined' && ouHierarchyId!='undefined' && modelInstId!='' && ouHierarchyId!=''){
 			//Ajax request used to load the model instance tree
 			Ext.Ajax.request({
@@ -609,8 +611,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 								success: function(response, options) {
 									if (response !== undefined) {		
 										if(response.responseText !== undefined) {
-											thisPanel.ouHierarchy = Ext.util.JSON.decode( response.responseText )
-											thisPanel.fireEvent('changeOU_KPI',thisPanel.kpiModelInstanceRoot, thisPanel.ouHierarchy);
+											thisPanel.fireEvent('changeOU_KPI',thisPanel.kpiModelInstanceRoot, Ext.util.JSON.decode( response.responseText ));
 										} else {
 											Sbi.exception.ExceptionHandler.showErrorMessage( LN('sbi.generic.serviceError'),  LN('sbi.generic.serviceError'));
 										}
@@ -666,7 +667,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				var c={
 						ouPath: node.attributes.path,
 						modelinstance: node.attributes.modelinstancenodes[i],
-						hierarchyId: this.ouHierarchy.ou.id,
+						hierarchyId: this.ouHierarchy,
 						expanded: node.expanded
 				};
 				array.push(c);
