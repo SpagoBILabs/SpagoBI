@@ -186,6 +186,7 @@ Ext.extend(Sbi.widgets.KpiTreeOuTreePanel, Ext.TabPanel, {
 		};
 
 		this.tabPanel = new Ext.FormPanel({
+			id: 'treePanel',
 			title: LN('sbi.grants.trees.tab')
 			, tbar: this.tbSave
 			, width: 430

@@ -92,7 +92,8 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 			, baseParams: paramsOUInsert
 	});	
 
-
+	this.addEvents();
+	
 
 	this.initConfigObject();
 
@@ -372,7 +373,15 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
     		 }]});
 		
 		//the detail panel
-		this.configurationObject.tabItems = [this.detailsForm];  
+		this.configurationObject.tabItems = [this.detailsForm];
+		
+		
+		//when the user changes tab from the details tab to the trees tab we call the loadTrees method
+		this.on('tabchange', function(thisPanel, tab){
+			if(tab.id=='treePanel'){
+				this.loadTrees();
+			}
+		}, this)
 	}
 	
 	//add the listeners to the kpi nodes
