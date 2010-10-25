@@ -63,12 +63,11 @@ Sbi.widgets.LookupField = function(config) {
 		this.applySelection();		
 	}, this);
 		
-	if(config.drawFilterToolbar!=null && config.drawFilterToolbar!=undefined && config.drawFilterToolbar==false){
+	if(config.drawFilterToolbar !== undefined && config.drawFilterToolbar !== null && config.drawFilterToolbar==false){
 		this.drawFilterToolbar = false;
 	}else{
 		this.drawFilterToolbar = true;
 	}
-	this.drawFilterToolbar = config.drawFilterToolbar;
 	this.store.baseParams  = config.params;
 	this.params = config.params;
 	this.initWin();
