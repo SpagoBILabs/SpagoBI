@@ -59,7 +59,7 @@ public abstract class AbstractDataProxy implements IDataProxy {
 	}
 
 	public boolean isMaxResultsSupported() {
-		return false;
+		return true;
 	}
 	
 	public int getMaxResults() {

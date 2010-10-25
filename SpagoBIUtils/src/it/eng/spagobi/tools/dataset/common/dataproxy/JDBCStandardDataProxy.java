@@ -105,7 +105,12 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 			
 			
 	        try {
+	        	//get max size 
+	        	if(getMaxResults() > 0){
+	        		stmt.setMaxRows(getMaxResults());
+	        	}
 				resultSet = stmt.executeQuery( getStatement() );
+				
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
