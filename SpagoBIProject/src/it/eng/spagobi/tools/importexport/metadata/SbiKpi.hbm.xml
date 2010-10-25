@@ -4,7 +4,7 @@
 <!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
 <hibernate-mapping>
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpi" table="SBI_KPI" >
-        <id name="kpiId" type="integer">
+        <id name="kpiId" type="java.lang.Integer">
             <column name="KPI_ID" />
         </id>
         <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >

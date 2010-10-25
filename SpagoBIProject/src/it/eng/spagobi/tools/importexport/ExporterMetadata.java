@@ -1756,6 +1756,17 @@ public class ExporterMetadata {
 			tx.commit();
 			logger.debug("current model "+mod.getCode()+" inserted");
 
+			//manage insert of udp values
+
+			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(mod.getId(), "Model");
+			if(udpValues != null && !udpValues.isEmpty()){
+				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
+					UdpValue udpValue = (UdpValue) iterator.next();
+					insertUdpValue(udpValue, session);
+					
+				}
+			}
+			
 			Set modelChildren=new HashSet();
 			logger.debug("insert current model children");
 
@@ -1900,9 +1911,143 @@ public class ExporterMetadata {
 			if(relations != null && !relations.isEmpty()){
 				for (int j = 0; j < relations.size(); j++) {
 					KpiRel kpiRel = (KpiRel)relations.get(j);
+					//insert child kpi first
+					insertKpi(kpiRel.getKpiChildId(), session);
 					insertKpiRel(kpiRel, session);					
 				}
 				
+			}
+			
+			//manage insert of udp values
+
+			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "Kpi");
+			if(udpValues != null && !udpValues.isEmpty()){
+				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
+					UdpValue udpValue = (UdpValue) iterator.next();
+					insertUdpValue(udpValue, session);
+					
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while inserting kpi into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+
+	/**
+	 * Insert Kpi child for relations.
+	 * 
+	 * @param kpiId the Kpi child id
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public SbiKpi insertKpiNorelations(Integer kpiId, Session session) throws EMFUserError {
+		logger.debug("IN");
+		SbiKpi hibKpi = null;
+		try {
+			Query hibQuery = session.createQuery(" from SbiKpi where kpiId = " + kpiId);
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return null;
+			}
+			// get the Kpi BO from id
+			IKpiDAO kpiDao=DAOFactory.getKpiDAO();
+			Kpi kpi=kpiDao.loadKpiById(kpiId);
+
+			// main attributes			
+			hibKpi = new SbiKpi();
+			hibKpi.setKpiId(kpi.getKpiId());
+			hibKpi.setCode(kpi.getCode());
+			hibKpi.setDescription(kpi.getDescription());
+			hibKpi.setInterpretation(kpi.getInterpretation());
+			hibKpi.setName(kpi.getKpiName());
+			// Weight???	hibKpi.setWeight(kpi.get)
+			hibKpi.setWeight(kpi.getStandardWeight());
+			char isFather=kpi.getIsParent().equals(true)? 'T' : 'F';
+			hibKpi.setFlgIsFather(new Character(isFather));
+			hibKpi.setInterpretation(kpi.getInterpretation());
+			hibKpi.setInputAttributes(kpi.getInputAttribute());
+			hibKpi.setModelReference(kpi.getModelReference());
+			hibKpi.setTargetAudience(kpi.getTargetAudience());
+			hibKpi.setIsAdditive(kpi.getIsAdditive());
+
+			if(kpi.getMeasureTypeId()!=null){
+				SbiDomains measureType=(SbiDomains)session.load(SbiDomains.class, kpi.getMeasureTypeId());			
+				hibKpi.setSbiDomainsByMeasureType(measureType);
+			}
+			if(kpi.getKpiTypeId()!=null){
+				SbiDomains kpiType=(SbiDomains)session.load(SbiDomains.class, kpi.getKpiTypeId());			
+				hibKpi.setSbiDomainsByKpiType(kpiType);
+			}
+			if(kpi.getMetricScaleId()!=null){
+				SbiDomains metricScaleType=(SbiDomains)session.load(SbiDomains.class, kpi.getMetricScaleId());			
+				hibKpi.setSbiDomainsByMetricScaleType(metricScaleType);
+			}
+
+			// load dataset
+			if (kpi.getKpiDsId() != null) {    
+				Integer dsID = kpi.getKpiDsId();				
+				IDataSet ds=DAOFactory.getDataSetDAO().loadDataSetByID(dsID);
+				insertDataSet(ds, session);
+				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, ds.getId());
+				hibKpi.setSbiDataSet(sbiDs);
+			}
+
+			// load threshold
+			if (kpi.getThreshold() != null) {
+				Threshold th=kpi.getThreshold();
+				insertThreshold(th, session);
+				SbiThreshold sbiTh= (SbiThreshold) session.load(SbiThreshold.class, th.getId());
+				hibKpi.setSbiThreshold(sbiTh);
+			}
+			
+			// Measure Unit   ???
+			if(kpi.getScaleCode()!=null && !kpi.getScaleCode().equalsIgnoreCase("")){
+				IMeasureUnitDAO muDao=DAOFactory.getMeasureUnitDAO();
+				MeasureUnit mu=muDao.loadMeasureUnitByCd(kpi.getScaleCode());
+				insertMeasureUnit(mu, session);
+				SbiMeasureUnit sbiMu= (SbiMeasureUnit) session.load(SbiMeasureUnit.class, mu.getId());
+				hibKpi.setSbiMeasureUnit(sbiMu);
+			}
+
+			Transaction tx = session.beginTransaction();
+			Integer kpiIdReturned = (Integer)session.save(hibKpi);
+			tx.commit();
+			
+			List kpiDocsList = kpi.getSbiKpiDocuments();
+			Iterator i = kpiDocsList.iterator();
+			while (i.hasNext()) {
+				KpiDocuments doc = (KpiDocuments) i.next();
+				String label = doc.getBiObjLabel();
+				
+				IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
+				BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
+				if(biobj!=null){
+					insertBIObject(biobj, session);
+					doc.setBiObjId(biobj.getId());				
+				}
+				
+				Integer origDocId = doc.getBiObjId();
+				Criterion labelCriterrion = Expression.eq("label",label);
+				Criteria criteria = session.createCriteria(SbiObjects.class);
+				criteria.add(labelCriterrion);
+				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
+				
+				if(hibObject!=null){
+					SbiKpiDocument temp = new SbiKpiDocument();
+					temp.setSbiKpi(hibKpi);
+					temp.setSbiObjects(hibObject);
+					KpiDocuments docK = kpiDao.loadKpiDocByKpiIdAndDocId(kpiId, origDocId);
+					if(docK!=null && docK.getKpiDocId()!=null){
+						temp.setIdKpiDoc(docK.getKpiDocId());
+						Transaction tx2 = session.beginTransaction();
+						session.save(temp);
+						tx2.commit();
+					}
+				}
 			}
 			
 			//manage insert of udp values
@@ -1920,11 +2065,12 @@ public class ExporterMetadata {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
 		}finally{
 			logger.debug("OUT");
+			return hibKpi;
+			
+			
 		}
 	}
-
-
-
+	
 
 	/**
 	 * Insert Kpi Instance.
@@ -2561,21 +2707,31 @@ public class ExporterMetadata {
 			if(!hibList.isEmpty()) {
 				return;
 			} 
-
+			SbiKpiRel hibRel = new SbiKpiRel();
 			SbiKpi kpiChild=(SbiKpi)session.load(SbiKpi.class, kpiRel.getKpiChildId());
+
+			try {
+				kpiChild.getKpiId();
+				logger.error("kpi child id= "+kpiChild.getKpiId());
+				
+				hibRel.setSbiKpiByKpiChildId(kpiChild);
+				logger.error("set in try__ok: kpi child saved before");
+			}catch(Throwable t){
+				logger.error("set in try__ok: kpi child didn't exist");
+			}
+			
 			SbiKpi kpiFather=(SbiKpi)session.load(SbiKpi.class, kpiRel.getKpiFatherId());
 
 			// main attributes			
-			SbiKpiRel hibRel = new SbiKpiRel();
-			hibRel.setParameter(kpiRel.getParameter());
-			hibRel.setSbiKpiByKpiChildId(kpiChild);
+			
+			hibRel.setParameter(kpiRel.getParameter());			
 			hibRel.setSbiKpiByKpiFatherId(kpiFather);
 			hibRel.setKpiRelId(kpiRel.getKpiRelId());
 			Transaction tx = session.beginTransaction();
 			session.save(hibRel);
+			logger.error("saved rel");
 			tx.commit();
-
-
+			
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi relation into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");

@@ -337,12 +337,18 @@ public class ExportManager implements IExportManager {
 	private void exportUdp() throws EMFUserError {
 		logger.debug("IN");
 		try {
-			List<Udp> udpList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
-			if(udpList != null && !udpList.isEmpty()){
-				for (Iterator iterator = udpList.iterator(); iterator.hasNext();) {
-					Udp udp = (Udp) iterator.next();
-					exporter.insertUdp(udp, session);
-					
+			List udpFamilies = DAOFactory.getDomainDAO().loadListDomainsByType("UDP_FAMILY");
+			if(udpFamilies != null){
+				for(int i=0; i< udpFamilies.size(); i++){
+					Domain type = (Domain)udpFamilies.get(i);
+					//kpi udp/model udp
+					List<Udp> udpList = DAOFactory.getUdpDAO().loadAllByFamily(type.getValueCd());
+					if(udpList != null && !udpList.isEmpty()){
+						for (Iterator iterator = udpList.iterator(); iterator.hasNext();) {
+							Udp udp = (Udp) iterator.next();
+							exporter.insertUdp(udp, session);					
+						}
+					}
 				}
 			}
 		} catch (Exception e) {

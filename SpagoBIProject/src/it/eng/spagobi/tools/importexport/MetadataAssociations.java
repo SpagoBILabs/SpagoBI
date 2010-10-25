@@ -104,7 +104,9 @@ public class MetadataAssociations {
 	private Map objMetacontentsIDAssociation = new HashMap();
 	private Map objMetacontentsAssociation = new HashMap();
 	private Map subObjectIDAssociation = new HashMap();
-
+	private Map kpiRelAssociation = new HashMap();
+	private Map udpAssociation = new HashMap();
+	private Map udpValueAssociation = new HashMap();
 
 
 
@@ -176,7 +178,12 @@ public class MetadataAssociations {
 			return false;	
 		if(!subObjectIDAssociation.keySet().isEmpty())
 			return false;	
-
+		if(!kpiRelAssociation.keySet().isEmpty())
+			return false;
+		if(!udpValueAssociation.keySet().isEmpty())
+			return false;
+		if(!udpAssociation.keySet().isEmpty())
+			return false;
 		return true;
 	}
 
@@ -233,7 +240,11 @@ public class MetadataAssociations {
 		objMetacontentsIDAssociation = new HashMap();
 		objMetacontentsAssociation = new HashMap();
 		subObjectIDAssociation = new HashMap();
+		kpiRelAssociation = new HashMap ();
+		udpValueAssociation = new HashMap ();
+		udpAssociation = new HashMap();
 	}
+
 
 	/**
 	 * Checks if Associations for the specific object are empty.
@@ -1416,6 +1427,58 @@ public class MetadataAssociations {
 	public void insertCoupleSubObjectsIDAssociation(Integer exp, Integer curr) {
 		subObjectIDAssociation.put(exp, curr);	
 	}
+	/**
+	 * Gets the Map of associations between current and exported kpi relation ID.
+	 * 
+	 * @return Map of SubObjects
+	 */
+	public Map getKpiRelAssociation() {
+		return kpiRelAssociation;
+	}
+
+	/**
+	 * Inserts a couple of KpiRel ID into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleKpiRelAssociation(Integer exp, Integer curr) {
+		kpiRelAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported udp.
+	 * 
+	 * @return Map of udp
+	 */
+	public Map getUdpAssociation() {
+		return udpAssociation;
+	}
 	
+	/**
+	 * Inserts a couple of Udp into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleUdpAssociation(Integer exp, Integer curr) {
+		udpAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported udp value.
+	 * 
+	 * @return Map of udp
+	 */
+	public Map getUdpValueAssociation() {
+		return udpValueAssociation;
+	}
+	/**
+	 * Inserts a couple of Udp value into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleUdpValueAssociation(Integer exp, Integer curr) {
+		udpValueAssociation.put(exp, curr);	
+	}
 
 }

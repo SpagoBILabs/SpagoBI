@@ -233,9 +233,9 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
 				// Add Udp Values to sessionContainer
-				List udpModelList = DAOFactory.getUdpDAO().loadAllByFamily("MODEL");
+				List udpModelList = DAOFactory.getUdpDAO().loadAllByFamily("Model");
 				getSessionContainer().setAttribute("udpModelList", udpModelList);
-				List udpKpiList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
+				List udpKpiList = DAOFactory.getUdpDAO().loadAllByFamily("Kpi");
 				getSessionContainer().setAttribute("udpKpiList", udpKpiList);
 
 			} catch (EMFUserError e) {
