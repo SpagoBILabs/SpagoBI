@@ -47,6 +47,7 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
@@ -60,6 +61,8 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -578,6 +581,41 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiObjMetadata hibMeta = (SbiObjMetadata) hqlQuery.uniqueResult();
 			return hibMeta;		
+		}else if (hibObj instanceof SbiKpiRel) {
+			Map uniqueMap = (Map) unique;
+			Integer fatherId = (Integer) uniqueMap.get("fatherId");
+			Integer childId = (Integer) uniqueMap.get("childId");
+			String parameter = (String) uniqueMap.get("parameter");
+			hql = "from SbiKpiRel kr where kr.sbiKpiByKpiChildId.kpiId=" + childId + " and kr.sbiKpiByKpiFatherId.kpiId = " + fatherId
+			+ " and kr.parameter = '" + parameter+ "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiKpiRel hibKpiRel = null;
+			try{
+				hibKpiRel = (SbiKpiRel) hqlQuery.uniqueResult();
+			}
+			catch (Exception e) {
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "9010", "component_impexp_messages");
+			}
+			return hibKpiRel;	
+		}else if (hibObj instanceof SbiUdpValue) {
+			Map uniqueMap = (Map) unique;
+			String family = (String) uniqueMap.get("family");
+			Integer udpId = (Integer) uniqueMap.get("udpId");
+			Integer referenceId = (Integer) uniqueMap.get("referenceId");
+			hql = "from SbiUdpValue u where u.sbiUdp.udpId = " + udpId + " and u.referenceId ="+referenceId +" and u.family ='"+family+"'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiUdpValue hibUdpVal = (SbiUdpValue) hqlQuery.uniqueResult();
+			return hibUdpVal;		
+		}else if (hibObj instanceof SbiUdp) {
+			//checks existence in import db
+			Map uniqueMap = (Map) unique;
+			Integer typeId = (Integer) uniqueMap.get("typeId");
+			Integer familyId = (Integer) uniqueMap.get("familyId");
+			String label = (String) uniqueMap.get("label");
+			hql = "from SbiUdp u where u.label = '" + label + "' and u.typeId ="+typeId+" and u.familyId = "+familyId;
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiUdp hibUdp = (SbiUdp) hqlQuery.uniqueResult();
+			return hibUdp;		
 		}
 
 

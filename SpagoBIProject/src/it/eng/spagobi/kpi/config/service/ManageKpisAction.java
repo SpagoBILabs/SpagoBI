@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
@@ -509,7 +510,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				List thrTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(THRESHOLD_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("thrTypesList", thrTypesList);
 				// add also UDPs
-				List udpList = DAOFactory.getUdpDAO().loadAllByFamily("KPI");
+				List udpList = DAOFactory.getUdpDAO().loadAllByFamily("Kpi");
 				getSessionContainer().setAttribute("udpKpiList", udpList);
 
 			} catch (EMFUserError e) {

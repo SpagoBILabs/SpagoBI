@@ -23,7 +23,6 @@ package it.eng.spagobi.tools.importexport;
 
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -52,10 +51,12 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
@@ -71,6 +72,8 @@ import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -3450,9 +3453,329 @@ public class ImportUtilities {
 
 		logger.debug("OUT");
 	}
+	/**
+	 * Creates a new hibernate SbiKpiRel object.
+	 * 
+	 * @param SbiKpiRel relation
+	 * 
+	 * @return the new hibernate parameter object
+	 */
+	public static SbiKpiRel makeNewSbiKpiRel(SbiKpiRel kpirel,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+		logger.debug("IN");
+		SbiKpiRel newSbiKpiRel = new SbiKpiRel();
+		try{
+			newSbiKpiRel.setParameter(kpirel.getParameter());
+		
+			// associations
+			entitiesAssociationsSbiKpiRel(kpirel, newSbiKpiRel, sessionCurrDB, metaAss, importer);
+
+			logger.debug("OUT");
+		}
+		catch (Exception e) {
+			logger.error("Error in creating new kpi relation with exported id " + newSbiKpiRel.getKpiRelId());			
+		}
+		return newSbiKpiRel;
+	}
+	
+	/**
+	 * For SbiKpiRel search new Ids
+	 * 
+	 * @param exportedKpiRel the exported SbiKpiRel
+	 * @param sessionCurrDB the session curr db
+	 * 
+	 * @return the existing KPIREL modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static void entitiesAssociationsSbiKpiRel(SbiKpiRel exportedKpiRel, SbiKpiRel existingKpiRel,Session sessionCurrDB, 
+			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+		logger.debug("IN");	
+
+		// overwrite existing entities
+
+		// kpi child
+		Map kpiAss = metaAss.getKpiIDAssociation();
+		if(exportedKpiRel.getSbiKpiByKpiChildId()!=null){
+			Integer oldKpiId=exportedKpiRel.getSbiKpiByKpiChildId().getKpiId();
+			Integer newKpiId=(Integer)kpiAss.get(oldKpiId);
+			if(newKpiId==null) {
+				logger.error("could not find association with kpi child with id " + exportedKpiRel.getSbiKpiByKpiChildId().getName());
+				existingKpiRel.setSbiKpiByKpiChildId(null);
+			}
+			else{
+				SbiKpi newSbiKpi = (SbiKpi) sessionCurrDB.load(SbiKpi.class, newKpiId);
+				existingKpiRel.setSbiKpiByKpiChildId(newSbiKpi);
+			}
+		}
+		// kpi father
+
+		if(exportedKpiRel.getSbiKpiByKpiFatherId()!=null){
+			Integer oldKpiId=exportedKpiRel.getSbiKpiByKpiFatherId().getKpiId();
+			Integer newKpiId=(Integer)kpiAss.get(oldKpiId);
+			if(newKpiId==null) {
+				logger.error("could not find association with kpi father  with id " + exportedKpiRel.getSbiKpiByKpiFatherId().getName());
+				existingKpiRel.setSbiKpiByKpiFatherId(null);
+			}
+			else{
+				SbiKpi newSbiKpi = (SbiKpi) sessionCurrDB.load(SbiKpi.class, newKpiId);
+				existingKpiRel.setSbiKpiByKpiFatherId(newSbiKpi);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+	
+	/**
+	 * Creates a new hibernate SbiUdp udp object.
+	 * 
+	 * @param SbiUdp udp
+	 * 
+	 * @return the new hibernate parameter object
+	 */
+	public static SbiUdp makeNewSbiUdp(SbiUdp udp,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+		logger.debug("IN");
+		SbiUdp newUdp = new SbiUdp();
+		try{
+			newUdp.setDescription(udp.getDescription());
+			newUdp.setIsMultivalue(udp.isIsMultivalue());
+			newUdp.setLabel(udp.getLabel());
+			newUdp.setName(udp.getName());
+			
+			// associations
+			entitiesAssociationsSbiUdp(udp, newUdp, sessionCurrDB, metaAss, importer);
+
+			logger.debug("OUT");
+		}
+		catch (Exception e) {
+			logger.error("Error in creating new udp with exported id " + newUdp.getUdpId());			
+		}
+		return newUdp;
+	}
+	/**
+	 * For SbiUdp search new Ids
+	 * 
+	 * @param exportedSbiUdp the exported SbiUdp
+	 * @param sessionCurrDB the session curr db
+	 * 
+	 * @return the existing SbiUdp modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static void entitiesAssociationsSbiUdp(SbiUdp exportedSbiUdp, SbiUdp existingSbiUdp,Session sessionCurrDB, 
+			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+		logger.debug("IN");	
+
+		// overwrite existing entities
+		// type id
+		Map doaminAss = metaAss.getDomainIDAssociation();
+		//original value of exported object != null
+		if(exportedSbiUdp.getTypeId()!=null){
+			Integer oldTypeId = exportedSbiUdp.getTypeId();
+			Integer newTypeId=(Integer)doaminAss.get(oldTypeId);
+			if(newTypeId==null) {
+				logger.error("could not find association with domain type id with id " + exportedSbiUdp.getTypeId());
+				existingSbiUdp.setTypeId(null);
+			}
+			else{
+				existingSbiUdp.setTypeId(newTypeId);
+			}
+		}
+		// family id
+		if(exportedSbiUdp.getFamilyId()!=null){
+			Integer oldFamilyId = exportedSbiUdp.getFamilyId();
+			Integer newFamilyId=(Integer)doaminAss.get(oldFamilyId);
+			if(newFamilyId==null) {
+				logger.error("could not find association with domain Family Id with id " + exportedSbiUdp.getFamilyId());
+				existingSbiUdp.setFamilyId(null);
+			}
+			else{
+				existingSbiUdp.setFamilyId(newFamilyId);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+	
+	/**
+	 * Load an existing Udp and make modifications as per the exported udp in input
+	 * 
+	 * @param exportedUdp the exported SbiUdp
+	 * @param sessionCurrDB the session curr db
+	 * @param existingUdpid the existing id
+	 * 
+	 * @return the existing Udp modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static SbiUdp modifyExistingUdp(SbiUdp exportedUdp, Session sessionCurrDB, Integer existingUdpId) throws EMFUserError {
+		logger.debug("IN");
+		SbiUdp existingSbiUdp = null;
+		try {
+			existingSbiUdp = (SbiUdp) sessionCurrDB.load(SbiUdp.class, existingUdpId);
+
+			existingSbiUdp.setDescription(exportedUdp.getDescription());
+			existingSbiUdp.setIsMultivalue(exportedUdp.isIsMultivalue());
+			existingSbiUdp.setLabel(exportedUdp.getLabel());
+			existingSbiUdp.setName(exportedUdp.getName());
 
 
+		}
 
+		finally {
+			logger.debug("OUT");
+		}
+		return existingSbiUdp;
+	}
+	/**
+	 * Load an existing Kpi Relation and make modifications as per the exported udp in input
+	 * 
+	 * @param exportedKpiRel the exported SbiKpiRel
+	 * @param sessionCurrDB the session curr db
+	 * @param existingKpiRelId the existing id
+	 * 
+	 * @return the existing SbiKpiRel modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static SbiKpiRel modifyExistingKpiRel(SbiKpiRel exportedKpiRel, Session sessionCurrDB, Integer existingKpiRelId) throws EMFUserError {
+		logger.debug("IN");
+		SbiKpiRel existingKpiRel = null;
+		try {
+			existingKpiRel = (SbiKpiRel) sessionCurrDB.load(KpiRel.class, existingKpiRelId);
+			existingKpiRel.setParameter(exportedKpiRel.getParameter());
+
+		}
+
+		finally {
+			logger.debug("OUT");
+		}
+		return existingKpiRel;
+	}
+	/**
+	 * Creates a new hibernate SbiUdpValue udp value object.
+	 * 
+	 * @param SbiUdpValue udp value
+	 * 
+	 * @return the new hibernate parameter object
+	 */
+	public static SbiUdpValue makeNewSbiUdpValue(SbiUdpValue udpValue ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+		logger.debug("IN");
+		SbiUdpValue newUdpValue = new SbiUdpValue();
+		try{
+			newUdpValue.setBeginTs(udpValue.getBeginTs());
+			newUdpValue.setEndTs(udpValue.getEndTs());
+			newUdpValue.setFamily(udpValue.getFamily());
+			newUdpValue.setLabel(udpValue.getLabel());
+			newUdpValue.setName(udpValue.getName());
+			newUdpValue.setProg(udpValue.getProg());
+			newUdpValue.setFamily(udpValue.getFamily());
+			newUdpValue.setValue(udpValue.getValue());
+			// associations
+			entitiesAssociationsSbiUdpValue(udpValue, newUdpValue, sessionCurrDB, metaAss, importer);
+
+			logger.debug("OUT");
+		}
+		catch (Exception e) {
+			logger.error("Error in creating new udp value with exported id " + newUdpValue.getUdpValueId());			
+		}
+		return newUdpValue;
+	}
+	/**
+	 * For SbiUdpValue search new Ids
+	 * 
+	 * @param exportedSbiUdpValue the exported SbiUdpValue
+	 * @param sessionCurrDB the session curr db
+	 * 
+	 * @return the existing SbiUdpValue modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static void entitiesAssociationsSbiUdpValue(SbiUdpValue exportedSbiUdpValue, SbiUdpValue existingSbiUdpValue,Session sessionCurrDB, 
+			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+		logger.debug("IN");	
+
+		// overwrite existing entities
+
+		// udp id
+		Map udpAss = metaAss.getUdpAssociation();		
+		//original value of exported object != null
+		if(exportedSbiUdpValue.getSbiUdp()!=null){
+			Integer oldUdpId = exportedSbiUdpValue.getSbiUdp().getUdpId();
+			Integer newUdpId=(Integer)udpAss.get(oldUdpId);
+			if(newUdpId==null) {
+				logger.error("could not find association with udp id with id " + oldUdpId);
+				existingSbiUdpValue.setSbiUdp(null);
+			}
+			else{
+				SbiUdp newSbiUdp = (SbiUdp) sessionCurrDB.load(SbiUdp.class, newUdpId);
+				existingSbiUdpValue.setSbiUdp(newSbiUdp);
+			}
+		}
+		//checks family
+		if(exportedSbiUdpValue.getFamily() != null && exportedSbiUdpValue.getFamily().equalsIgnoreCase("Kpi")){
+			// reference id
+			Map kpiAss = metaAss.getKpiIDAssociation();
+			if(exportedSbiUdpValue.getReferenceId()!=null){
+				Integer oldReferenceId = exportedSbiUdpValue.getReferenceId();
+				Integer newReferenceId=(Integer)kpiAss.get(oldReferenceId);
+				if(newReferenceId==null) {
+					logger.error("could not find association with domain kpi reference Id with id " + exportedSbiUdpValue.getReferenceId());
+					existingSbiUdpValue.setReferenceId(null);
+				}
+				else{
+					existingSbiUdpValue.setReferenceId(newReferenceId);
+				}
+			}
+		}else if(exportedSbiUdpValue.getFamily() != null && exportedSbiUdpValue.getFamily().equalsIgnoreCase("Model")){
+			// reference id
+			Map modelAss = metaAss.getModelIDAssociation();
+			if(exportedSbiUdpValue.getReferenceId()!=null){
+				Integer oldReferenceId = exportedSbiUdpValue.getReferenceId();
+				Integer newReferenceId=(Integer)modelAss.get(oldReferenceId);
+				if(newReferenceId==null) {
+					logger.error("could not find association with domain model reference Id with id " + exportedSbiUdpValue.getReferenceId());
+					existingSbiUdpValue.setReferenceId(null);
+				}
+				else{
+					existingSbiUdpValue.setReferenceId(newReferenceId);
+				}
+			}
+		}
+
+		logger.debug("OUT");
+	}
+	
+	/**
+	 * Load an existing Udp value and make modifications as per the exported udp in input
+	 * 
+	 * @param exportedUdp the exported SbiUdp
+	 * @param sessionCurrDB the session curr db
+	 * @param existingUdpid the existing id
+	 * 
+	 * @return the existing SbiUdpValue modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static SbiUdpValue modifyExistingSbiUdpValue(SbiUdpValue exportedUdpValue, Session sessionCurrDB, Integer existingUdpValueId) throws EMFUserError {
+		logger.debug("IN");
+		SbiUdpValue existingSbiUdpValue = null;
+		try {
+			existingSbiUdpValue = (SbiUdpValue) sessionCurrDB.load(SbiUdpValue.class, existingUdpValueId);
+			existingSbiUdpValue.setBeginTs(exportedUdpValue.getBeginTs());
+			existingSbiUdpValue.setEndTs(exportedUdpValue.getEndTs());
+			existingSbiUdpValue.setFamily(exportedUdpValue.getFamily());
+			existingSbiUdpValue.setLabel(exportedUdpValue.getLabel());
+			existingSbiUdpValue.setName(exportedUdpValue.getName());
+			existingSbiUdpValue.setProg(exportedUdpValue.getProg());
+			existingSbiUdpValue.setFamily(exportedUdpValue.getFamily());
+			existingSbiUdpValue.setValue(exportedUdpValue.getValue());
+		}
+
+		finally {
+			logger.debug("OUT");
+		}
+		return existingSbiUdpValue;
+	}
 }
 
 

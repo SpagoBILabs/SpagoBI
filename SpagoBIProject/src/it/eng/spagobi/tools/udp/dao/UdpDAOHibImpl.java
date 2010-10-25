@@ -341,11 +341,9 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 			Integer domainId;
 			SbiDomains domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", familyCd);
-			if(domain == null){
-				domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", familyCd);
-			}
+
 			if(domain== null){
-				logger.error("could not find domain of type UDP_FAMILY with value code KPI");
+				logger.error("could not find domain of type UDP_FAMILY with value code "+familyCd);
 				return null;
 			}
 			else{

@@ -25,8 +25,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -67,6 +65,7 @@ import it.eng.spagobi.kpi.config.metadata.SbiKpiDocument;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.kpi.config.metadata.SbiKpiRel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
@@ -86,6 +85,8 @@ import it.eng.spagobi.tools.importexport.bo.AssociationFile;
 import it.eng.spagobi.tools.importexport.transformers.TransformersUtilities;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -319,8 +320,10 @@ public class ImportManager implements IImportManager, Serializable {
 		importKpiModelAttrVal(overwrite);
 		metaLog.log("-------SbiObjMetacontents -----");
 		importObjMetacontent(overwrite);
-
-
+		metaLog.log("-------UDP -----");
+		importUdp(overwrite);
+		metaLog.log("-------UDP values -----");
+		importUdpValues(overwrite);
 
 		logger.debug("OUT");
 	}
@@ -788,7 +791,8 @@ public class ImportManager implements IImportManager, Serializable {
 	private void importDataSet(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		SbiDataSetConfig exportedDataSet = null;
-		try {
+		try {				
+
 			List exportedDatasets = importer.getAllExportedSbiObjects(sessionExpDB, "SbiDataSetConfig", null);
 			Iterator iterSbiDataSet = exportedDatasets.iterator();
 
@@ -2681,9 +2685,75 @@ public class ImportManager implements IImportManager, Serializable {
 				);
 			}
 		}
+		// Kpi Relations
 
+		List exportedKpiRelList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiRel", null);
+		Iterator iterKpiRel = exportedKpiRelList.iterator();
+		while (iterKpiRel.hasNext()) {
+			SbiKpiRel kpirel = (SbiKpiRel) iterKpiRel.next();
+			// check if the association already exist
+			Map uniqueMap = new HashMap();
+			if(kpirel.getSbiKpiByKpiFatherId() != null){
+				uniqueMap.put("fatherId", kpirel.getSbiKpiByKpiFatherId().getKpiId());
+				if(kpirel.getSbiKpiByKpiChildId()!= null){
+					uniqueMap.put("childId", kpirel.getSbiKpiByKpiChildId().getKpiId());
+					uniqueMap.put("parameter", kpirel.getParameter());
+				}
+			}
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiKpiRel());
+			if (existObj != null) {
+				SbiKpiRel dsCurr = (SbiKpiRel) existObj;
+				metaAss.insertCoupleKpiRelAssociation(kpirel.getKpiRelId(), dsCurr.getKpiRelId());
+				metaLog.log("Found an existing kpi Relation");
+			}
+		}
+		// Udp
 
+		List exportedUdpList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdp", null);
+		Iterator iterUdp = exportedUdpList.iterator();
+		while (iterUdp.hasNext()) {
+			SbiUdp udp = (SbiUdp) iterUdp.next();
+			// check if the association already exist
+			Map uniqueMap = new HashMap();
+			uniqueMap.put("typeId", udp.getTypeId());
+			uniqueMap.put("familyId", udp.getFamilyId());
+			uniqueMap.put("label", udp.getLabel());
 
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());
+			if (existObj != null) {
+				SbiUdp dsCurr = (SbiUdp) existObj;
+				metaAss.insertCoupleUdpAssociation(udp.getUdpId(), dsCurr.getUdpId());
+				metaLog.log("Exported association between type id " + udp.getTypeId() + " "
+						+ " and family id " + udp.getFamilyId() + " with label "
+						+ udp.getLabel() + " not inserted"
+						+ " because already existing into the current database");
+			}
+		}
+		// Udp Value
+
+		List exportedUdpValList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdpValue", null);
+		Iterator iterUdpVal = exportedUdpValList.iterator();
+		while (iterUdpVal.hasNext()) {
+			SbiUdpValue udpVal = (SbiUdpValue) iterUdpVal.next();
+			// check if the association already exist
+			Map uniqueMap = new HashMap();
+			
+			if(udpVal.getSbiUdp() != null){
+				uniqueMap.put("udpId", udpVal.getSbiUdp().getUdpId());
+				uniqueMap.put("referenceId", udpVal.getReferenceId());
+				uniqueMap.put("family", udpVal.getFamily());
+			}
+	
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdpValue());
+			if (existObj != null) {
+				SbiUdpValue dsCurr = (SbiUdpValue) existObj;
+				metaAss.insertCoupleUdpValueAssociation(udpVal.getUdpValueId(), dsCurr.getUdpValueId());
+				metaLog.log("Exported association udp value between udp with label " + udpVal.getSbiUdp().getLabel() + " "
+						+ " and family " + udpVal.getFamily() + " with reference id "
+						+  udpVal.getReferenceId() + " not inserted"
+						+ " because already existing into the current database");
+			}
+		}
 		logger.debug("OUT");
 	}
 
@@ -3064,6 +3134,7 @@ public class ImportManager implements IImportManager, Serializable {
 					Integer newId = newModel.getKpiModelId();
 					metaAss.insertCoupleModel(oldId, newId);
 				}
+
 			}
 		} catch (Exception e) {
 			if (exportedModel != null) {
@@ -3195,7 +3266,15 @@ public class ImportManager implements IImportManager, Serializable {
 						}
 					}
 				}
+				
+
 			}
+			//loop again to get relations (after all kpi are imported)
+			Iterator iterSbiKpisForRel = exportedKpis.iterator();
+			while (iterSbiKpisForRel.hasNext()) {
+				exportedKpi = (SbiKpi) iterSbiKpisForRel.next();
+				importKpiRel(exportedKpi.getKpiId(), overwrite);
+			}	
 		} catch (Exception e) {
 			if (exportedKpi != null) {
 				logger.error("Error while importing exported kpi with code [" + exportedKpi.getCode() + "].", e);
@@ -3884,5 +3963,188 @@ public class ImportManager implements IImportManager, Serializable {
 		}
 	}
 
+	/**
+	 * Import exported Udp
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void importUdp(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		SbiUdp udp = null;
+		try {
 
+			List exportedUdps = importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdp", null);
+			Iterator iterSbiUdp = exportedUdps.iterator();
+			while (iterSbiUdp.hasNext()) {
+				udp = (SbiUdp) iterSbiUdp.next();
+				Integer oldId = udp.getUdpId();
+
+				Integer existingUdpId = null;
+				//other methd
+				Map udpAss = metaAss.getUdpAssociation();
+				Set udpAssSet = udpAss.keySet();
+				if (udpAssSet.contains(oldId) && !overwrite) {
+					metaLog.log("Exported association between type id " + udp.getTypeId() + " "
+							+ " and family id " + udp.getFamilyId() + " with label "
+							+ udp.getLabel() + " not inserted"
+							+ " because already existing into the current database");
+					continue;
+				} else {
+					existingUdpId = (Integer) udpAss.get(oldId);
+				}
+				if (existingUdpId != null) {
+					logger.info("The udp with label:[" + udp.getLabel() + "] is just present. It will be updated.");
+					metaLog.log("The udp with label = [" + udp.getLabel() + "] will be updated.");
+					SbiUdp existingUdp = ImportUtilities.modifyExistingUdp(udp, sessionCurrDB, existingUdpId);
+					ImportUtilities.entitiesAssociationsSbiUdp(existingUdp, udp, sessionCurrDB,  metaAss, importer);
+					sessionCurrDB.update(existingUdp);
+				} else {
+					SbiUdp newUdp = ImportUtilities.makeNewSbiUdp(udp, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.save(newUdp);
+					metaLog.log("Inserted new udp with label " + newUdp.getLabel()+" type id " + udp.getTypeId() + " "
+								+ " and family id " + udp.getFamilyId());
+					Integer newId = newUdp.getUdpId();
+					sessionExpDB.evict(udp);
+					metaAss.insertCoupleUdpAssociation(oldId, newId);
+				}
+
+			}
+		} catch (Exception e) {
+			if (udp != null) {
+				logger.error("Error while importing exported udp with name [" + udp.getName() + "].", e);
+			}
+			logger.error("Error while inserting object ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	/**Import Udp values
+	 * @param referenceId
+	 * @param overwrite
+	 * @param family
+	 * @throws EMFUserError
+	 */
+	private void importUdpValues(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			String family = "";
+			Integer referenceId = null;
+			List exportedUdpValue = (List<SbiKpiRel>)importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdpValue", null);
+
+			Iterator iterSbiUdpValue = exportedUdpValue.iterator();
+
+			while (iterSbiUdpValue.hasNext()) {
+				SbiUdpValue udpvalue = (SbiUdpValue) iterSbiUdpValue.next();
+				Integer oldId = udpvalue.getUdpValueId();
+	
+				Map assUdpValue = metaAss.getUdpValueAssociation();
+				Integer existingUdpValueId = null;
+				Set assUdpValueSet = assUdpValue.keySet();
+				if (assUdpValueSet.contains(oldId) && !overwrite) {
+					metaLog.log("Exported association udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId() + " not inserted"
+							+ " because already existing into the current database");
+					continue;
+				} else {
+					existingUdpValueId = (Integer) assUdpValue.get(oldId);
+				}
+				if (existingUdpValueId != null) {
+
+					metaLog.log("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId()+ "] will be updated.");
+					SbiUdpValue existingUdpValue = ImportUtilities.modifyExistingSbiUdpValue(udpvalue, sessionCurrDB, existingUdpValueId);
+					ImportUtilities.entitiesAssociationsSbiUdpValue(udpvalue, existingUdpValue, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.update(existingUdpValue);
+				} else {
+					SbiUdpValue newUdpValue = ImportUtilities.makeNewSbiUdpValue(udpvalue, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.save(newUdpValue);
+					metaLog.log("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
+							+ " and family " + udpvalue.getFamily() + " with reference id "
+							+  udpvalue.getReferenceId()+" is inserted");
+					Integer newId = newUdpValue.getUdpValueId();
+					sessionExpDB.evict(udpvalue);
+					metaAss.insertCoupleUdpValueAssociation(udpvalue.getUdpValueId(), newId);
+				}
+
+			}
+		} catch (HibernateException he) {
+			logger.error("Error while inserting udp value ", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} catch (Exception e) {
+			logger.error("Error while inserting udp value ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}	
+	
+	
+	/**Import kpi relations
+	 * @param kpiParentId
+	 * @param overwrite
+	 * @throws EMFUserError
+	 */
+	private void importKpiRel(Integer kpiParentId, boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List exportedKpiRel = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiKpiRel", "sbiKpiByKpiFatherId.kpiId", kpiParentId);
+			
+			Iterator iterSbiKpiRel = exportedKpiRel.iterator();
+
+			while (iterSbiKpiRel.hasNext()) {
+				SbiKpiRel kpirel = (SbiKpiRel) iterSbiKpiRel.next();
+				SbiKpi child = kpirel.getSbiKpiByKpiChildId();
+				SbiKpi father = kpirel.getSbiKpiByKpiFatherId();
+				if(child != null && father != null){
+
+					Integer oldChildId  = child.getKpiId();
+					Integer oldFatherId = father.getKpiId();
+					String oldParam = kpirel.getParameter();
+					
+					Map assKpiRel = metaAss.getKpiRelAssociation();
+					Integer existingKpiRelId = null;
+					Set assKpiRelSet = assKpiRel.keySet();
+					if (assKpiRelSet.contains(kpirel.getKpiRelId()) && !overwrite) {
+						metaLog.log("Exported association between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter() + " not inserted"
+								+ " because already existing into the current database");
+						continue;
+					} else {
+						existingKpiRelId = (Integer) assKpiRel.get(kpirel.getKpiRelId());
+					}
+					if (existingKpiRelId != null) {
+						metaLog.log("The relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter()+ "] will be updated.");
+						SbiKpiRel existingKpiRel = ImportUtilities.modifyExistingKpiRel(kpirel, sessionCurrDB, existingKpiRelId);
+						ImportUtilities.entitiesAssociationsSbiKpiRel(kpirel, existingKpiRel, sessionCurrDB, metaAss, importer);
+						sessionCurrDB.update(existingKpiRel);
+					} else {
+						SbiKpiRel newRel = ImportUtilities.makeNewSbiKpiRel(kpirel, sessionCurrDB, metaAss, importer);
+						sessionCurrDB.save(newRel);
+						metaLog.log("Inserted new relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
+								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
+								+ kpirel.getParameter());
+						Integer newId = newRel.getKpiRelId();
+						sessionExpDB.evict(kpirel);
+						metaAss.insertCoupleUdpAssociation(kpirel.getKpiRelId(), newId);
+					}
+
+				}
+			}
+		} catch (HibernateException he) {
+			logger.error("Error while inserting kpi relation ", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} catch (Exception e) {
+			logger.error("Error while inserting kpi relation ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 }
