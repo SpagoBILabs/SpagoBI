@@ -20,6 +20,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -103,7 +104,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				logger.debug("Added the grant.");
 			}else if(serviceType == null){
 				logger.debug("no service");
-				//Assert.assertUnreachable("No service defined.");
+				Assert.assertUnreachable("No service defined.");
 			}
 			
 		} finally {

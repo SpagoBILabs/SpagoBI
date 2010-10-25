@@ -19,6 +19,9 @@
    <ACTION name="MANAGE_OUS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageOUsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+  <ACTION name="MANAGE_OU_EMPTY_ACTION" class="it.eng.spago.dispatching.action.EmptyAction"  scope="REQUEST">
+    <CONFIG/>
+ </ACTION>
  <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
