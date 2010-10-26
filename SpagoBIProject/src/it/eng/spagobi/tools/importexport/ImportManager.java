@@ -2702,10 +2702,13 @@ public class ImportManager implements IImportManager, Serializable {
 			SbiKpiRel kpirel = (SbiKpiRel) iterKpiRel.next();
 			// check if the association already exist
 			Map uniqueMap = new HashMap();
+			Map kpiAss = metaAss.getKpiIDAssociation();
 			if(kpirel.getSbiKpiByKpiFatherId() != null){
-				uniqueMap.put("fatherId", kpirel.getSbiKpiByKpiFatherId().getKpiId());
+				Integer newFatherId = (Integer)kpiAss.get(kpirel.getSbiKpiByKpiFatherId().getKpiId());
+				uniqueMap.put("fatherId", newFatherId);
 				if(kpirel.getSbiKpiByKpiChildId()!= null){
-					uniqueMap.put("childId", kpirel.getSbiKpiByKpiChildId().getKpiId());
+					Integer newChildId = (Integer)kpiAss.get(kpirel.getSbiKpiByKpiChildId().getKpiId());
+					uniqueMap.put("childId", newChildId);
 					uniqueMap.put("parameter", kpirel.getParameter());
 				}
 			}
@@ -2829,8 +2832,8 @@ public class ImportManager implements IImportManager, Serializable {
 		}// OU grants  SbiOrgUnitGrant
 		List exportedSbiOUGrantList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitGrant", null);
 		Iterator iterOUGrantVal = exportedSbiOUGrantList.iterator();
-		while (iterOUNodeVal.hasNext()) {
-			SbiOrgUnitGrant ouGrantVal = (SbiOrgUnitGrant) iterOUNodeVal.next();
+		while (iterOUGrantVal.hasNext()) {
+			SbiOrgUnitGrant ouGrantVal = (SbiOrgUnitGrant) iterOUGrantVal.next();
 			String label = ouGrantVal.getLabel();
 			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnitGrant());
 			if (existObj != null) {
