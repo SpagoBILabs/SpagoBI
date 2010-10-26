@@ -61,6 +61,11 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
@@ -3775,6 +3780,217 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		return existingSbiUdpValue;
+	}
+	/**
+	 * Creates a new hibernate SbiOrgUnitGrant grant object.
+	 * 
+	 * @param SbiOrgUnitGrant grant
+	 * 
+	 * @return the new hibernate parameter object
+	 */
+	public static SbiOrgUnitGrant makeNewOuGrant(SbiOrgUnitGrant grant ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+		logger.debug("IN");
+		SbiOrgUnitGrant newGrant = new SbiOrgUnitGrant();
+		try{
+			newGrant.setDescription(grant.getDescription());
+			newGrant.setEndDate(grant.getEndDate());
+			newGrant.setLabel(grant.getLabel());
+			newGrant.setName(grant.getName());
+			newGrant.setStartDate(grant.getStartDate());
+
+			// associations
+			entitiesAssociationsOuGrant(grant, newGrant, sessionCurrDB, metaAss, importer);
+
+			logger.debug("OUT");
+		}
+		catch (Exception e) {
+			logger.error("Error in creating new grant with exported id " + grant.getId());			
+		}
+		return newGrant;
+	}
+	/**
+	 * For SbiOrgUnitGrant search new Ids
+	 * 
+	 * @param exportedSbiUdpValue the exported SbiOrgUnitGrant
+	 * @param sessionCurrDB the session curr db
+	 * 
+	 * @return the existing SbiOrgUnitGrant modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static void entitiesAssociationsOuGrant(SbiOrgUnitGrant exportedGrant, SbiOrgUnitGrant existingGrant,Session sessionCurrDB, 
+			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+		logger.debug("IN");	
+		// model instance id
+		Map modInstAss = metaAss.getModelInstanceIDAssociation();
+		//original value of exported object != null
+		if(exportedGrant.getSbiKpiModelInst()!=null){
+			Integer oldMiId = exportedGrant.getSbiKpiModelInst().getKpiModelInst();
+			Integer newMiId=(Integer)modInstAss.get(oldMiId);
+			if(newMiId==null) {
+				logger.error("could not find association with modelinstance id with id " + oldMiId);				
+			}
+			else{
+				SbiKpiModelInst newSbiMi = (SbiKpiModelInst) sessionCurrDB.load(SbiKpiModelInst.class, newMiId);
+				existingGrant.setSbiKpiModelInst(newSbiMi);
+			}
+		}
+		// hierarchy id
+		Map ouHierAss = metaAss.getOuHierarchiesAssociation();
+		//original value of exported object != null
+		if(exportedGrant.getSbiOrgUnitHierarchies()!=null){
+			Integer oldHierId = exportedGrant.getSbiOrgUnitHierarchies().getId();
+			Integer newHierId=(Integer)ouHierAss.get(oldHierId);
+			if(newHierId==null) {
+				logger.error("could not find association with ou hierarchy id with id " + oldHierId);				
+			}
+			else{
+				SbiOrgUnitHierarchies newSbiHier = (SbiOrgUnitHierarchies) sessionCurrDB.load(SbiOrgUnitHierarchies.class, newHierId);
+				existingGrant.setSbiOrgUnitHierarchies(newSbiHier);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+	/**
+	 * Load an existing grant and make modifications as per the exported grant in input
+	 * 
+	 * @param exportedGrant the exported grant
+	 * @param sessionCurrDB the session curr db
+	 * @param existingId the existing id
+	 * 
+	 * @return the existing grant modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static SbiOrgUnitGrant modifyExistingOuGrant(SbiOrgUnitGrant exportedGrant, Session sessionCurrDB, 
+			Integer existingId) throws EMFUserError {
+		logger.debug("IN");
+		SbiOrgUnitGrant existingGrant = null;
+		try {
+			// update Grant
+			existingGrant = (SbiOrgUnitGrant) sessionCurrDB.load(SbiOrgUnitGrant.class, existingId);
+			existingGrant.setDescription(exportedGrant.getDescription());
+			existingGrant.setEndDate(exportedGrant.getEndDate());
+			existingGrant.setLabel(exportedGrant.getLabel());
+			existingGrant.setName(exportedGrant.getName());
+			existingGrant.setStartDate(exportedGrant.getStartDate());
+		}
+
+		finally {
+			logger.debug("OUT");
+		}
+		return existingGrant;
+	}
+	/**
+	 * Creates a new hibernate SbiOrgUnitGrantNodes grant node object.
+	 * 
+	 * @param SbiOrgUnitGrantNodes grant node
+	 * 
+	 * @return the new hibernate parameter object
+	 */
+	public static SbiOrgUnitGrantNodes makeNewOuGrantNode(SbiOrgUnitGrantNodes grantNode ,Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer){
+		logger.debug("IN");
+		SbiOrgUnitGrantNodes newGrantNode = new SbiOrgUnitGrantNodes();
+		try{
+			SbiOrgUnitGrantNodesId id = new SbiOrgUnitGrantNodesId();
+			// associations
+			entitiesAssociationsOuGrantNode(id, grantNode, newGrantNode, sessionCurrDB, metaAss, importer);
+
+			logger.debug("OUT");
+		}
+		catch (Exception e) {
+			logger.error("Error in creating new grant node with exported grant id " + grantNode.getId().getGrantId());			
+		}
+		return newGrantNode;
+	}
+	/**
+	 * For SbiOrgUnitGrantNodes search new Ids
+	 * 
+	 * @param exportedGrantNode the exported SbiOrgUnitGrantNodes
+	 * @param sessionCurrDB the session curr db
+	 * 
+	 * @return the existing SbiOrgUnitGrantNodes modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static void entitiesAssociationsOuGrantNode(SbiOrgUnitGrantNodesId id, SbiOrgUnitGrantNodes exportedGrantNode, SbiOrgUnitGrantNodes existingGrantNode,Session sessionCurrDB, 
+			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
+		logger.debug("IN");	
+		
+		// model instance id
+		Map modInstAss = metaAss.getModelInstanceIDAssociation();
+		//original value of exported object != null
+		if(exportedGrantNode.getSbiKpiModelInst()!=null){
+			Integer oldMiId = exportedGrantNode.getSbiKpiModelInst().getKpiModelInst();
+			Integer newMiId=(Integer)modInstAss.get(oldMiId);
+			if(newMiId==null) {
+				logger.error("could not find association with modelinstance id with id " + oldMiId);				
+			}
+			else{
+				SbiKpiModelInst newSbiMi = (SbiKpiModelInst) sessionCurrDB.load(SbiKpiModelInst.class, newMiId);
+				exportedGrantNode.setSbiKpiModelInst(newSbiMi);
+				id.setKpiModelInstNodeId(newSbiMi.getKpiModelInst());
+			}
+		}
+		// grant id
+		Map grantAss = metaAss.getOuGrantAssociation();
+		//original value of exported object != null
+		if(exportedGrantNode.getSbiOrgUnitGrant()!=null){
+			Integer oldGrantId = exportedGrantNode.getSbiOrgUnitGrant().getId();
+			Integer newGrantId=(Integer)grantAss.get(oldGrantId);
+			if(newGrantId==null) {
+				logger.error("could not find association with grant id with id " + oldGrantId);				
+			}
+			else{
+				SbiOrgUnitGrant newSbiGrant = (SbiOrgUnitGrant) sessionCurrDB.load(SbiOrgUnitGrant.class, newGrantId);
+				exportedGrantNode.setSbiOrgUnitGrant(newSbiGrant);
+				id.setGrantId(newSbiGrant.getId());
+			}
+		}
+		// node id
+		Map nodeAss = metaAss.getOuNodeAssociation();
+		//original value of exported object != null
+		if(exportedGrantNode.getSbiOrgUnitNodes()!=null){
+			Integer oldNodeId = exportedGrantNode.getSbiOrgUnitNodes().getNodeId();
+			Integer newNodeId=(Integer)nodeAss.get(oldNodeId);
+			if(newNodeId==null) {
+				logger.error("could not find association with node id with id " + oldNodeId);				
+			}
+			else{
+				SbiOrgUnitNodes newSbiNode = (SbiOrgUnitNodes) sessionCurrDB.load(SbiOrgUnitNodes.class, newNodeId);
+				exportedGrantNode.setSbiOrgUnitNodes(newSbiNode);
+				id.setNodeId(newSbiNode.getNodeId());
+			}
+		}
+		existingGrantNode.setId(id);
+		logger.debug("OUT");
+	}
+	/**
+	 * Load an existing grant node and make modifications as per the exported grant node in input
+	 * 
+	 * @param exportedGrantNode the exported grant node
+	 * @param sessionCurrDB the session curr db
+	 * @param existingId the existing id
+	 * 
+	 * @return the existing grant modified as per the exported parameter in input
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static SbiOrgUnitGrantNodes modifyExistingOuGrantNode(SbiOrgUnitGrantNodes exportedGrantNode, Session sessionCurrDB, 
+			SbiOrgUnitGrantNodesId existingId) throws EMFUserError {
+		logger.debug("IN");
+		SbiOrgUnitGrantNodes existingGrantNode = null;
+		try {
+			// update Grant node
+			existingGrantNode = (SbiOrgUnitGrantNodes) sessionCurrDB.load(SbiOrgUnitGrantNodes.class, existingId);
+
+		}
+
+		finally {
+			logger.debug("OUT");
+		}
+		return existingGrantNode;
 	}
 }
 

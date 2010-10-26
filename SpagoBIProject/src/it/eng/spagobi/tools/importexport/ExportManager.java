@@ -49,6 +49,10 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -157,6 +161,12 @@ public class ExportManager implements IExportManager {
 			exportObjectMetadata();
 			logger.debug("export udp");
 			exportUdp();
+			logger.debug("export organizational units");
+			exportOu();
+			logger.debug("export ou hierarchies");
+			exportOuHierarchies();
+			logger.debug("export ou nodes");
+			exportOuNodes();
 
 			Iterator iterObjs = objIds.iterator();
 			while (iterObjs.hasNext()) {
@@ -358,7 +368,78 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+	/**
+	 * Exports SpagoBI OU Items
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void exportOu() throws EMFUserError {
+		logger.debug("IN");
+		try {
 
+			List<OrganizationalUnit> ouList = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitList();
+			if(ouList != null && !ouList.isEmpty()){
+				for (Iterator iterator = ouList.iterator(); iterator.hasNext();) {
+					OrganizationalUnit ou = (OrganizationalUnit) iterator.next();
+					exporter.insertOu(ou, session);					
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while exporting ou ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Exports SpagoBI OU Hierarchies Items
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void exportOuHierarchies() throws EMFUserError {
+		logger.debug("IN");
+		try {
+
+			List<OrganizationalUnitHierarchy> hierList = DAOFactory.getOrganizationalUnitDAO().getHierarchiesList();
+			if(hierList != null && !hierList.isEmpty()){
+				for (Iterator iterator = hierList.iterator(); iterator.hasNext();) {
+					OrganizationalUnitHierarchy hier = (OrganizationalUnitHierarchy) iterator.next();
+					exporter.insertHierarchy(hier, session);					
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while exporting hierarchy ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Exports SpagoBI OU nodes Items
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void exportOuNodes() throws EMFUserError {
+		logger.debug("IN");
+		try {
+
+			List<OrganizationalUnitNode> nodesList = DAOFactory.getOrganizationalUnitDAO().getNodes();
+			if(nodesList != null && !nodesList.isEmpty()){
+				for (Iterator iterator = nodesList.iterator(); iterator.hasNext();) {
+					OrganizationalUnitNode node = (OrganizationalUnitNode) iterator.next();
+					exporter.insertOuNode(node, session);					
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while exporting ou nodes ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 	/**
 	 * Exports SpagoBI Object Metadata (metadata categories)
 	 * 

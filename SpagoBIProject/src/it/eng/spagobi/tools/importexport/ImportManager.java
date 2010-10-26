@@ -70,6 +70,12 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
@@ -324,6 +330,10 @@ public class ImportManager implements IImportManager, Serializable {
 		importUdp(overwrite);
 		metaLog.log("-------UDP values -----");
 		importUdpValues(overwrite);
+		metaLog.log("-------OU grants -----");
+		importOuGrants(overwrite);
+		metaLog.log("-------OU grant nodes -----");
+		importOuGrantNodes(overwrite);
 
 		logger.debug("OUT");
 	}
@@ -2686,7 +2696,6 @@ public class ImportManager implements IImportManager, Serializable {
 			}
 		}
 		// Kpi Relations
-
 		List exportedKpiRelList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiRel", null);
 		Iterator iterKpiRel = exportedKpiRelList.iterator();
 		while (iterKpiRel.hasNext()) {
@@ -2715,8 +2724,11 @@ public class ImportManager implements IImportManager, Serializable {
 			SbiUdp udp = (SbiUdp) iterUdp.next();
 			// check if the association already exist
 			Map uniqueMap = new HashMap();
-			uniqueMap.put("typeId", udp.getTypeId());
-			uniqueMap.put("familyId", udp.getFamilyId());
+			Map doaminAss = metaAss.getDomainIDAssociation();
+			Integer newTypeId = (Integer)doaminAss.get(udp.getTypeId());
+			uniqueMap.put("typeId", newTypeId);
+			Integer newFamilyId = (Integer)doaminAss.get(udp.getFamilyId());
+			uniqueMap.put("familyId", newFamilyId);
 			uniqueMap.put("label", udp.getLabel());
 
 			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());
@@ -2737,10 +2749,20 @@ public class ImportManager implements IImportManager, Serializable {
 			SbiUdpValue udpVal = (SbiUdpValue) iterUdpVal.next();
 			// check if the association already exist
 			Map uniqueMap = new HashMap();
+			Map kpiAss = metaAss.getKpiIDAssociation();
+			Map modelAss = metaAss.getModelIDAssociation();
+			Map udpAss = metaAss.getUdpAssociation();
 			
 			if(udpVal.getSbiUdp() != null){
-				uniqueMap.put("udpId", udpVal.getSbiUdp().getUdpId());
-				uniqueMap.put("referenceId", udpVal.getReferenceId());
+				Integer newUdpId = (Integer)udpAss.get(udpVal.getSbiUdp().getUdpId());
+				uniqueMap.put("udpId", newUdpId);
+				Integer newRefId = null;
+				if(udpVal.getFamily().equalsIgnoreCase("Kpi")){
+					newRefId = (Integer)kpiAss.get(udpVal.getReferenceId());
+				}else{
+					newRefId = (Integer)modelAss.get(udpVal.getReferenceId());
+				}
+				uniqueMap.put("referenceId", newRefId);
 				uniqueMap.put("family", udpVal.getFamily());
 			}
 	
@@ -2752,6 +2774,94 @@ public class ImportManager implements IImportManager, Serializable {
 						+ " and family " + udpVal.getFamily() + " with reference id "
 						+  udpVal.getReferenceId() + " not inserted"
 						+ " because already existing into the current database");
+			}
+		}
+		// OU  SbiOrgUnit
+		List exportedSbiOrgUnitList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnit", null);
+		Iterator iterOUVal = exportedSbiOrgUnitList.iterator();
+		while (iterOUVal.hasNext()) {
+			SbiOrgUnit ouVal = (SbiOrgUnit) iterOUVal.next();
+			// check if the association already exist
+			String label = ouVal.getLabel();
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnit());
+			if (existObj != null) {
+				SbiOrgUnit dsCurr = (SbiOrgUnit) existObj;
+				metaAss.insertCoupleIdOuAssociation(ouVal.getId(), dsCurr.getId());
+				metaLog.log("Found an existing ou " + dsCurr.getName() + " with "
+						+ "the same label of one exported ou");
+			}
+		}// OU hierarchy SbiOrgUnitHierarchies 
+		List exportedSbiOuHierList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitHierarchies", null);
+		Iterator iterOUHierVal = exportedSbiOuHierList.iterator();
+		while (iterOUHierVal.hasNext()) {
+			SbiOrgUnitHierarchies ouHierVal = (SbiOrgUnitHierarchies) iterOUHierVal.next();
+			// check if the association already exist
+			String label = ouHierVal.getLabel();
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnitHierarchies());
+			if (existObj != null) {
+				SbiOrgUnitHierarchies dsCurr = (SbiOrgUnitHierarchies) existObj;
+				metaAss.insertCoupleIdOuHierarchyAssociation(ouHierVal.getId(), dsCurr.getId());
+				metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with "
+						+ "the same label of one exported ou hierarchy");
+			}
+		}// OU node  SbiOrgUnitNodes
+		List exportedSbiOrgUnitNodeList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitNodes", null);
+		Iterator iterOUNodeVal = exportedSbiOrgUnitNodeList.iterator();
+		while (iterOUNodeVal.hasNext()) {
+			SbiOrgUnitNodes ouVal = (SbiOrgUnitNodes) iterOUNodeVal.next();
+			// check if the association already exist
+			Map uniqueMap = new HashMap();
+			Map ouAss = metaAss.getOuAssociation();
+			Map hierAss = metaAss.getOuHierarchiesAssociation();
+			if(ouVal.getSbiOrgUnit() != null){
+				Integer newOuId = (Integer)ouAss.get(ouVal.getSbiOrgUnit().getId());
+				uniqueMap.put("ouId", newOuId);
+				Integer newHierId = (Integer)hierAss.get(ouVal.getSbiOrgUnitHierarchies().getId());
+				uniqueMap.put("hierarchyId", newHierId);
+			}
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiOrgUnitNodes());
+			if (existObj != null) {
+				SbiOrgUnitNodes dsCurr = (SbiOrgUnitNodes) existObj;
+				metaAss.insertCoupleIdOuNodeAssociation(ouVal.getNodeId(), dsCurr.getNodeId());
+				metaLog.log("Found an existing ou node " + dsCurr.getNodeId() + " with "
+						+ "the same organizational unit and hierarchy of one exported ou node");
+			}
+		}// OU grants  SbiOrgUnitGrant
+		List exportedSbiOUGrantList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitGrant", null);
+		Iterator iterOUGrantVal = exportedSbiOUGrantList.iterator();
+		while (iterOUNodeVal.hasNext()) {
+			SbiOrgUnitGrant ouGrantVal = (SbiOrgUnitGrant) iterOUNodeVal.next();
+			String label = ouGrantVal.getLabel();
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnitGrant());
+			if (existObj != null) {
+				SbiOrgUnitGrant dsCurr = (SbiOrgUnitGrant) existObj;
+				metaAss.insertCoupleIdOuGrantAssociation(ouGrantVal.getId(), dsCurr.getId());
+				metaLog.log("Found an existing ou grant " + dsCurr.getId() + " with "
+						+ "the same label of one exported ou grant");
+			}
+		}// OU grant nodes  SbiOrgUnitGrantNodes
+		List exportedSbiOUGrantNodeList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitGrantNodes", null);
+		Iterator iterOUGrantNodesVal = exportedSbiOUGrantNodeList.iterator();
+		while (iterOUGrantNodesVal.hasNext()) {
+			SbiOrgUnitGrantNodes ouGrantNode = (SbiOrgUnitGrantNodes) iterOUGrantNodesVal.next();
+			Map uniqueMap = new HashMap();		
+			Map nodeAss = metaAss.getOuNodeAssociation();
+			Map miAss = metaAss.getModelInstanceIDAssociation();
+			Map grantAss = metaAss.getOuGrantAssociation();
+			if(ouGrantNode.getId() != null){
+				Integer newGrantId = (Integer)grantAss.get(ouGrantNode.getId().getGrantId());
+				uniqueMap.put("grantId", newGrantId );
+				Integer newNodeId = (Integer)nodeAss.get(ouGrantNode.getId().getNodeId());
+				uniqueMap.put("nodeId", newNodeId);
+				Integer newMiId = (Integer)miAss.get(ouGrantNode.getId().getKpiModelInstNodeId());
+				uniqueMap.put("modelInstId", newMiId);
+			}
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiOrgUnitGrantNodes());
+			if (existObj != null) {
+				SbiOrgUnitGrantNodes dsCurr = (SbiOrgUnitGrantNodes) existObj;
+				metaAss.insertCoupleIdOuGrantNodesAssociation(ouGrantNode.getId(), dsCurr.getId());
+				metaLog.log("Found an existing ou grant node with grant id " + dsCurr.getId().getGrantId() + " with "
+						+ "the same id of one exported ou grant node");
 			}
 		}
 		logger.debug("OUT");
@@ -3561,16 +3671,6 @@ public class ImportManager implements IImportManager, Serializable {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * Import exported periodicity
 	 * 
@@ -4029,8 +4129,7 @@ public class ImportManager implements IImportManager, Serializable {
 	private void importUdpValues(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			String family = "";
-			Integer referenceId = null;
+
 			List exportedUdpValue = (List<SbiKpiRel>)importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdpValue", null);
 
 			Iterator iterSbiUdpValue = exportedUdpValue.iterator();
@@ -4100,10 +4199,6 @@ public class ImportManager implements IImportManager, Serializable {
 				SbiKpi child = kpirel.getSbiKpiByKpiChildId();
 				SbiKpi father = kpirel.getSbiKpiByKpiFatherId();
 				if(child != null && father != null){
-
-					Integer oldChildId  = child.getKpiId();
-					Integer oldFatherId = father.getKpiId();
-					String oldParam = kpirel.getParameter();
 					
 					Map assKpiRel = metaAss.getKpiRelAssociation();
 					Integer existingKpiRelId = null;
@@ -4132,7 +4227,7 @@ public class ImportManager implements IImportManager, Serializable {
 								+ kpirel.getParameter());
 						Integer newId = newRel.getKpiRelId();
 						sessionExpDB.evict(kpirel);
-						metaAss.insertCoupleUdpAssociation(kpirel.getKpiRelId(), newId);
+						metaAss.insertCoupleKpiRelAssociation(kpirel.getKpiRelId(), newId);
 					}
 
 				}
@@ -4142,6 +4237,96 @@ public class ImportManager implements IImportManager, Serializable {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi relation ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	private void importOuGrants(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List exportedGrants = (List<SbiOrgUnitGrant>)importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitGrant", null);
+			
+			Iterator iterGrants = exportedGrants.iterator();
+
+			while (iterGrants.hasNext()) {
+				SbiOrgUnitGrant grant = (SbiOrgUnitGrant) iterGrants.next();
+					
+				Map assGrants = metaAss.getOuGrantAssociation();
+				Integer existingGrantId = null;
+				Set assGrantsSet = assGrants.keySet();
+				if (assGrantsSet.contains(grant.getId()) && !overwrite) {
+					metaLog.log("Exported association of grant with name " + grant.getName() + "  not inserted"
+							+ " because already existing into the current database");
+					continue;
+				} else {
+					existingGrantId = (Integer) assGrants.get(grant.getId());
+				}
+				if (existingGrantId != null) {
+					metaLog.log("Exported association of grant with name " + grant.getName() + "] will be updated.");
+					SbiOrgUnitGrant existingGrant = ImportUtilities.modifyExistingOuGrant(grant, sessionCurrDB, existingGrantId);
+					ImportUtilities.entitiesAssociationsOuGrant(grant, existingGrant, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.update(existingGrant);
+				} else {
+					SbiOrgUnitGrant newGrant = ImportUtilities.makeNewOuGrant(grant, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.save(newGrant);
+					metaLog.log("Inserted new grant with name " + grant.getName() );
+					Integer newId = newGrant.getId();
+					sessionExpDB.evict(grant);
+					metaAss.insertCoupleIdOuGrantAssociation(grant.getId(), newId);
+				}
+
+			}
+		} catch (HibernateException he) {
+			logger.error("Error while inserting grant ", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} catch (Exception e) {
+			logger.error("Error while inserting grant ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	private void importOuGrantNodes(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List exportedGrantNodes = (List<SbiOrgUnitGrantNodes>)importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitGrantNodes", null);
+			
+			Iterator iterGrantNodes = exportedGrantNodes.iterator();
+
+			while (iterGrantNodes.hasNext()) {
+				SbiOrgUnitGrantNodes grantNode = (SbiOrgUnitGrantNodes) iterGrantNodes.next();
+					
+				Map assGrantNodes = metaAss.getOuGrantNodesAssociation();
+				SbiOrgUnitGrantNodesId existingGrantNodeId = null;
+				Set assGrantNodesSet = assGrantNodes.keySet();
+				if (assGrantNodesSet.contains(grantNode.getId()) && !overwrite) {
+					metaLog.log("Exported association of grant node with grant id " + grantNode.getId().getGrantId()+ "  not inserted"
+							+ " because already existing into the current database");
+					continue;
+				} else {
+					existingGrantNodeId = (SbiOrgUnitGrantNodesId) assGrantNodes.get(grantNode.getId());
+				}
+				if (existingGrantNodeId != null) {
+					metaLog.log("Exported association of grant node with grant id " + grantNode.getId().getGrantId() + "] will be updated.");
+					SbiOrgUnitGrantNodes existingGrantNode = ImportUtilities.modifyExistingOuGrantNode(grantNode, sessionCurrDB, existingGrantNodeId);
+					ImportUtilities.entitiesAssociationsOuGrantNode(existingGrantNode.getId(), grantNode, existingGrantNode, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.update(existingGrantNode);
+				} else {
+					SbiOrgUnitGrantNodes newGrantNode = ImportUtilities.makeNewOuGrantNode(grantNode, sessionCurrDB, metaAss, importer);
+					sessionCurrDB.save(newGrantNode);
+					metaLog.log("Inserted new grant node with grant id " + grantNode.getId().getGrantId() );
+					SbiOrgUnitGrantNodesId newId = newGrantNode.getId();
+					sessionExpDB.evict(grantNode);
+					metaAss.insertCoupleIdOuGrantNodesAssociation(grantNode.getId(), newId);
+				}
+
+			}
+		} catch (HibernateException he) {
+			logger.error("Error while inserting grant node ", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
+		} catch (Exception e) {
+			logger.error("Error while inserting grant node ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
 		} finally {
 			logger.debug("OUT");

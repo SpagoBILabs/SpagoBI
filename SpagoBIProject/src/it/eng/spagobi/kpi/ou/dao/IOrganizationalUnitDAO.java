@@ -192,4 +192,9 @@ public interface IOrganizationalUnitDAO {
 	 * @return the grants associated the KPI model instance node identified by the input integer
 	 */
 	public List<OrganizationalUnitGrantNode> getGrantsValidByDate(Integer kpiModelInstanceId, Date now);
+	/**
+	 * Retrieves all ou nodes
+	 * @return all the ou nodes
+	 */
+	public List<OrganizationalUnitNode> getNodes();
 }
