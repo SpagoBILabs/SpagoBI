@@ -979,15 +979,15 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		var mf = this.miframe;
 		var frame = mf.getFrame();
 	    var docurl = frame.getDocumentURI();
-	    var startIndex =docurl.indexOf('?')+1;
+	    var startIndex = docurl.indexOf('?')+1;
 	    var endIndex = docurl.length;
 	    var baseUrl = docurl.substring(0,startIndex);
 	    var docurlPar = docurl.substring(startIndex,endIndex);
+	    
+	    docurlPar = docurlPar.replace(/\+/g, " ");
 	    var parurl = Ext.urlDecode(docurlPar);
 	    parurl.outputType = exportType;
 	    parurl = Ext.urlEncode(parurl);
-	    // method that does not encode parameters
-	    //parurl = Sbi.commons.Utilities.urlToString(parurl);
 	    var endUrl = baseUrl +parurl;
 		window.open(endUrl,'name','resizable=1,height=750,width=1000');
 	}
