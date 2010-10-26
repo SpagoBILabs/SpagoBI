@@ -43,3 +43,18 @@ public String getListFromMultiValueProfileAttribute(String attrName) {
 	strBuf.append("</ROWS>");
 	return strBuf.toString();
 };
+
+public String split(String attrName, String splitter) {
+	String [] values = attrName.split(splitter);
+	StringBuffer strBuf = new StringBuffer();
+	strBuf.append("<ROWS>");
+	for (i in 0..<values.length) {
+		String aValue = values[i];
+		if (aValue.startsWith("'") && aValue.endsWith("'")) {
+			aValue = aValue.substring(1, aValue.length() - 1);
+		}
+		strBuf.append("<ROW VALUE=\"" + aValue +  "\" />");
+	};
+	strBuf.append("</ROWS>");
+	return strBuf.toString();
+};
