@@ -179,6 +179,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			dataUrl: thisPanel.configurationObject.manageOUChildService,
 			baseParams : {'grantId': thisPanel.selectedGrantId},
 			createNode: function(attr) {
+				
 				if (attr.nodeId) {
 					attr.id = attr.nodeId;
 				}
@@ -192,8 +193,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}
 	
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-	
-				if(node.isLeaf() && thisPanel.hideOULeafs){//for hide the leafs
+
+				if(attr.leaf && thisPanel.hideOULeafs){//for hide the leafs
 					return;
 				}
 
@@ -201,6 +202,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				
 				node.on('click',thisPanel.updateKpisCheck,thisPanel);
 				node.on('append', function( tree, thisNode, childNode,index ) {
+
 					if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
 						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
 						childNode.attributes.modelinstancenodesOfThisSession = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
@@ -432,7 +434,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	,updateKpisCheck : function(node, event){
 		var n;
 		var checkedNodes = this.rightTree.getChecked();
-	
 		//uncheck all the kpis
 		for(var i=0; i<checkedNodes.length; i++){
 			checkedNodes[i].suspendEvents(false);
@@ -693,7 +694,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	//create the root node of the kpi tree
 	,createKPIRootNodeByRec: function(rec) {
-		this.nrec = rec;
 		var iconClass = '';
 		var cssClass = '';
 		if (rec.kpiInstId !== undefined && rec.kpiInstId != null
@@ -749,6 +749,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	//create the root node of the ou tree
 	,createRootNodeByRec: function(rec) {
+
 		var iconClass = '';
 		var cssClass = '';
 		var tip = rec.ou.name;
@@ -771,6 +772,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
 		node.attributes.modelinstancenodesOfThisSession = new Array();
 		node.on('click',this.updateKpisCheck,this);
+		this.nrec = rec;
 		return node;
 	}
 
