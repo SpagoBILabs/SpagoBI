@@ -330,13 +330,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var tbSave2 = new Ext.Toolbar( {
 			buttonAlign : 'right',
 			items : [ 
-			         new Ext.Toolbar.Button({ 
-			        	 text: LN('sbi.grants.loadtrees'),
-			        	 iconCls : 'icon-execute',
-			        	 handler: function(){this.loadTrees(); this.setActiveTab(1);},
-			        	 width : 30,
-			        	 scope: thisPanel
-			         }),
+//			         new Ext.Toolbar.Button({ 
+//			        	 text: LN('sbi.grants.loadtrees'),
+//			        	 iconCls : 'icon-execute',
+//			        	 handler: function(){this.loadTrees(); this.setActiveTab(1);},
+//			        	 width : 30,
+//			        	 scope: thisPanel
+//			         }),
 			         new Ext.Toolbar.Button( {
 			        	 text : LN('sbi.generic.update'),
 			        	 iconCls : 'icon-save',
@@ -538,7 +538,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var tools = new Array();
 	
 		var hideOULeafsRadio = new Ext.form.Checkbox({
-			boxLabel: LN('sbi.grants.hide.labels'),
+			boxLabel: LN('sbi.grants.hide.leafs'),
 			checked: true
 		});
 	
