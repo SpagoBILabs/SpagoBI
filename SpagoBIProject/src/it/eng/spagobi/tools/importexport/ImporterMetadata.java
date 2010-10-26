@@ -612,12 +612,15 @@ public class ImporterMetadata {
 			SbiUdpValue hibUdpVal = (SbiUdpValue) hqlQuery.uniqueResult();
 			return hibUdpVal;		
 		}else if (hibObj instanceof SbiUdp) {
-			//checks existence in import db
-			Map uniqueMap = (Map) unique;
+			//logical unique key but table just looks for label
+/*			Map uniqueMap = (Map) unique;
 			Integer typeId = (Integer) uniqueMap.get("typeId");
 			Integer familyId = (Integer) uniqueMap.get("familyId");
 			String label = (String) uniqueMap.get("label");
-			hql = "from SbiUdp u where u.label = '" + label + "' and u.typeId ="+typeId+" and u.familyId = "+familyId;
+			hql = "from SbiUdp u where u.label = '" + label + "' and u.typeId ="+typeId+" and u.familyId = "+familyId;*/
+						
+			String label = (String) unique;
+			hql = "from SbiUdp u where u.label = '" + label + "'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiUdp hibUdp = (SbiUdp) hqlQuery.uniqueResult();
 			return hibUdp;		

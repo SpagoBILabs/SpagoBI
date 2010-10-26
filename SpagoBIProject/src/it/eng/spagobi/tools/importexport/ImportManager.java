@@ -326,10 +326,10 @@ public class ImportManager implements IImportManager, Serializable {
 		importKpiModelAttrVal(overwrite);
 		metaLog.log("-------SbiObjMetacontents -----");
 		importObjMetacontent(overwrite);
-		metaLog.log("-------UDP -----");
+/*		metaLog.log("-------UDP -----");
 		importUdp(overwrite);
 		metaLog.log("-------UDP values -----");
-		importUdpValues(overwrite);
+		importUdpValues(overwrite);*/
 		metaLog.log("-------OU grants -----");
 		importOuGrants(overwrite);
 		metaLog.log("-------OU grant nodes -----");
@@ -2725,16 +2725,18 @@ public class ImportManager implements IImportManager, Serializable {
 		Iterator iterUdp = exportedUdpList.iterator();
 		while (iterUdp.hasNext()) {
 			SbiUdp udp = (SbiUdp) iterUdp.next();
-			// check if the association already exist
-			Map uniqueMap = new HashMap();
+
+			//logical unique key but table just looks for label
+/*			Map uniqueMap = new HashMap();
 			Map doaminAss = metaAss.getDomainIDAssociation();
 			Integer newTypeId = (Integer)doaminAss.get(udp.getTypeId());
 			uniqueMap.put("typeId", newTypeId);
 			Integer newFamilyId = (Integer)doaminAss.get(udp.getFamilyId());
 			uniqueMap.put("familyId", newFamilyId);
 			uniqueMap.put("label", udp.getLabel());
-
-			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());*/
+			String label = udp.getLabel();
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiUdp());
 			if (existObj != null) {
 				SbiUdp dsCurr = (SbiUdp) existObj;
 				metaAss.insertCoupleUdpAssociation(udp.getUdpId(), dsCurr.getUdpId());
@@ -3247,7 +3249,7 @@ public class ImportManager implements IImportManager, Serializable {
 					Integer newId = newModel.getKpiModelId();
 					metaAss.insertCoupleModel(oldId, newId);
 				}
-
+				importUdpValues(oldId, "Model", overwrite);
 			}
 		} catch (Exception e) {
 			if (exportedModel != null) {
@@ -3379,7 +3381,7 @@ public class ImportManager implements IImportManager, Serializable {
 						}
 					}
 				}
-				
+				importUdpValues(oldId, "Kpi", overwrite);
 
 			}
 			//loop again to get relations (after all kpi are imported)
@@ -4071,12 +4073,12 @@ public class ImportManager implements IImportManager, Serializable {
 	 * 
 	 * @throws EMFUserError
 	 */
-	private void importUdp(boolean overwrite) throws EMFUserError {
+	private void importUdp(Integer udpId, boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		SbiUdp udp = null;
 		try {
 
-			List exportedUdps = importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdp", null);
+			List exportedUdps = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiUdp", "udpId", udpId);
 			Iterator iterSbiUdp = exportedUdps.iterator();
 			while (iterSbiUdp.hasNext()) {
 				udp = (SbiUdp) iterSbiUdp.next();
@@ -4129,18 +4131,24 @@ public class ImportManager implements IImportManager, Serializable {
 	 * @param family
 	 * @throws EMFUserError
 	 */
-	private void importUdpValues(boolean overwrite) throws EMFUserError {
+	private void importUdpValues(Integer referenceId, String family, boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		try {
-
-			List exportedUdpValue = (List<SbiKpiRel>)importer.getAllExportedSbiObjects(sessionExpDB, "SbiUdpValue", null);
-
+			Query hibQuery = sessionExpDB.createQuery(" from SbiUdpValue uv where uv.referenceId = ? and uv.family = ?");
+			hibQuery.setInteger(0, referenceId);
+			hibQuery.setString(1, family);
+			
+			List exportedUdpValue = (List<SbiUdpValue>) hibQuery.list();
 			Iterator iterSbiUdpValue = exportedUdpValue.iterator();
 
 			while (iterSbiUdpValue.hasNext()) {
 				SbiUdpValue udpvalue = (SbiUdpValue) iterSbiUdpValue.next();
 				Integer oldId = udpvalue.getUdpValueId();
-	
+				//import udp first
+				importUdp(udpvalue.getSbiUdp().getUdpId(), overwrite);
+				
+				//then udp values
+
 				Map assUdpValue = metaAss.getUdpValueAssociation();
 				Integer existingUdpValueId = null;
 				Set assUdpValueSet = assUdpValue.keySet();
