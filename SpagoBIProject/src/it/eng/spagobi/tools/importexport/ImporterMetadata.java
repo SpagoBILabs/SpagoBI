@@ -52,6 +52,11 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
@@ -616,6 +621,42 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiUdp hibUdp = (SbiUdp) hqlQuery.uniqueResult();
 			return hibUdp;		
+		}else if (hibObj instanceof SbiOrgUnit) {
+			//checks existence in import db
+			String label = (String) unique;
+			hql = "from SbiOrgUnit u where u.label = '" + label + "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiOrgUnit hibOu = (SbiOrgUnit) hqlQuery.uniqueResult();
+			return hibOu;		
+		}else if (hibObj instanceof SbiOrgUnitHierarchies) {
+			String label = (String) unique;
+			hql = "from SbiOrgUnitHierarchies h where h.label = '" + label + "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiOrgUnitHierarchies hibHier = (SbiOrgUnitHierarchies) hqlQuery.uniqueResult();
+			return hibHier;		
+		}else if (hibObj instanceof SbiOrgUnitNodes) {
+			Map uniqueMap = (Map) unique;
+			Integer ouId = (Integer) uniqueMap.get("ouId");
+			Integer hierarchyId = (Integer) uniqueMap.get("hierarchyId");
+			hql = "from SbiOrgUnitNodes n where n.sbiOrgUnit.id = " + ouId + " and n.sbiOrgUnitHierarchies.id = "+hierarchyId;
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiOrgUnitNodes hibnode = (SbiOrgUnitNodes) hqlQuery.uniqueResult();
+			return hibnode;		
+		}else if (hibObj instanceof SbiOrgUnitGrant) {
+			String label = (String) unique;
+			hql = "from SbiOrgUnitGrant u where u.label = '" + label + "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiOrgUnitGrant hibOu = (SbiOrgUnitGrant) hqlQuery.uniqueResult();
+			return hibOu;		
+		}else if (hibObj instanceof SbiOrgUnitGrantNodes) {
+			Map uniqueMap = (Map) unique;
+			Integer nodeId = (Integer) uniqueMap.get("nodeId");
+			Integer grantId = (Integer) uniqueMap.get("grantId");
+			Integer modelInstId = (Integer) uniqueMap.get("modelInstId");
+			hql = "from SbiOrgUnitGrantNodes n where n.id.nodeId = " + nodeId + " and n.id.kpiModelInstNodeId = "+modelInstId+" and n.id.grantId = "+grantId;
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiOrgUnitGrantNodes hibOu = (SbiOrgUnitGrantNodes) hqlQuery.uniqueResult();
+			return hibOu;		
 		}
 
 

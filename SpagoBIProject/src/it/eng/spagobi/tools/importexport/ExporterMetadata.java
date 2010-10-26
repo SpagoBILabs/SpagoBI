@@ -106,8 +106,12 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
@@ -2741,9 +2745,9 @@ public class ExporterMetadata {
 	}
 
 	/**
-	 * Insert Threshold .
+	 * Insert Udp .
 	 * 
-	 * @param th the Threshold
+	 * @param udp the Udp
 	 * @param session the session
 	 * 
 	 * @throws EMFUserError the EMF user error
@@ -2784,9 +2788,9 @@ public class ExporterMetadata {
 
 
 	/**
-	 * Insert Threshold Value.
+	 * Insert Udp Value.
 	 * 
-	 * @param th the Threshold Value
+	 * @param udpValue the Udp Value
 	 * @param session the session
 	 * 
 	 * @throws EMFUserError the EMF user error
@@ -2820,6 +2824,116 @@ public class ExporterMetadata {
 			tx.commit();
 		} catch (Exception e) {
 			logger.error("Error while inserting udp value into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Insert OU .
+	 * 
+	 * @param ou the OU
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertOu(OrganizationalUnit ou, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiOrgUnit o where o.id = " + ou.getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+			// main attributes			
+			SbiOrgUnit hibOu = new SbiOrgUnit();
+			hibOu.setDescription(ou.getDescription());
+			hibOu.setId(ou.getId());
+			hibOu.setLabel(ou.getLabel());
+			hibOu.setName(ou.getName());
+
+			Transaction tx = session.beginTransaction();
+			session.save(hibOu);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting ou into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Insert Hierarchy .
+	 * 
+	 * @param hier the Hierarchy
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertHierarchy(OrganizationalUnitHierarchy hier, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiOrgUnitHierarchies h where h.id = " + hier.getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+			// main attributes			
+			SbiOrgUnitHierarchies hibHier = new SbiOrgUnitHierarchies();
+			hibHier.setDescription(hier.getDescription());
+			hibHier.setId(hier.getId());
+			hibHier.setLabel(hier.getLabel());
+			hibHier.setName(hier.getName());
+			hibHier.setTarget(hier.getTarget());
+
+			Transaction tx = session.beginTransaction();
+			session.save(hibHier);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting Hierarchy into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+	/**
+	 * Insert ou node .
+	 * 
+	 * @param node the ou node
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertOuNode(OrganizationalUnitNode node, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiOrgUnitNodes n where n.nodeId = " + node.getNodeId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			} 
+			SbiOrgUnit ou = (SbiOrgUnit)session.load(SbiOrgUnit.class, node.getOu().getId());
+			SbiOrgUnitHierarchies hier =(SbiOrgUnitHierarchies)session.load(SbiOrgUnitHierarchies.class, node.getHierarchy().getId());
+			SbiOrgUnitNodes parent = null;
+			if(node.getParentNodeId() != null){
+				parent =(SbiOrgUnitNodes)session.load(SbiOrgUnitNodes.class, node.getParentNodeId());
+			}
+			// main attributes			
+			SbiOrgUnitNodes hibNode = new SbiOrgUnitNodes();
+			hibNode.setNodeId(node.getNodeId());
+			hibNode.setPath(node.getPath());
+			hibNode.setSbiOrgUnit(ou);
+			hibNode.setSbiOrgUnitHierarchies(hier);
+			hibNode.setSbiOrgUnitNodes(parent);
+
+			Transaction tx = session.beginTransaction();
+			session.save(hibNode);
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting ou node into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
 		}finally{
 			logger.debug("OUT");

@@ -41,6 +41,7 @@ import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
@@ -48,6 +49,7 @@ import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MetadataAssociations {
 
@@ -107,8 +109,11 @@ public class MetadataAssociations {
 	private Map kpiRelAssociation = new HashMap();
 	private Map udpAssociation = new HashMap();
 	private Map udpValueAssociation = new HashMap();
-
-
+	private Map ouAssociation = new HashMap();
+	private Map ouHierarchiesAssociation = new HashMap();
+	private Map ouNodesAssociation = new TreeMap();
+	private Map ouGrantAssociation = new HashMap();
+	private Map ouGrantNodesAssociation = new HashMap();
 
 	/**
 	 * Checks if the metadata association is empty.
@@ -184,6 +189,16 @@ public class MetadataAssociations {
 			return false;
 		if(!udpAssociation.keySet().isEmpty())
 			return false;
+		if(!ouAssociation.keySet().isEmpty())
+			return false;
+		if(!ouHierarchiesAssociation.keySet().isEmpty())
+			return false;
+		if(!ouNodesAssociation.keySet().isEmpty())
+			return false;
+		if(!ouGrantAssociation.keySet().isEmpty())
+			return false;
+		if(!ouGrantNodesAssociation.keySet().isEmpty())
+			return false;
 		return true;
 	}
 
@@ -243,6 +258,11 @@ public class MetadataAssociations {
 		kpiRelAssociation = new HashMap ();
 		udpValueAssociation = new HashMap ();
 		udpAssociation = new HashMap();
+		ouAssociation = new HashMap ();
+		ouHierarchiesAssociation = new HashMap();
+		ouNodesAssociation = new TreeMap();
+		ouGrantAssociation = new HashMap();
+		ouGrantNodesAssociation = new HashMap();
 	}
 
 
@@ -1480,5 +1500,89 @@ public class MetadataAssociations {
 	public void insertCoupleUdpValueAssociation(Integer exp, Integer curr) {
 		udpValueAssociation.put(exp, curr);	
 	}
-
+	/**
+	 * Gets the Map of associations between current and exported ou.
+	 * 
+	 * @return Map of ou
+	 */
+	public Map getOuAssociation() {
+		return ouAssociation;
+	}
+	/**
+	 * Inserts a couple of ou id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleIdOuAssociation(Integer exp, Integer curr) {
+		ouAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported ou  hierarchy.
+	 * 
+	 * @return Map of hierarchies
+	 */
+	public Map getOuHierarchiesAssociation() {
+		return ouHierarchiesAssociation;
+	}
+	/**
+	 * Inserts a couple of ou hierarchy id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleIdOuHierarchyAssociation(Integer exp, Integer curr) {
+		ouHierarchiesAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported ou node.
+	 * 
+	 * @return Map of ou nodes
+	 */
+	public Map getOuNodeAssociation() {
+		return ouNodesAssociation;
+	}
+	/**
+	 * Inserts a couple of ou nodes id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleIdOuNodeAssociation(Integer exp, Integer curr) {
+		ouNodesAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported ou grant.
+	 * 
+	 * @return Map of ou grants
+	 */
+	public Map getOuGrantAssociation() {
+		return ouGrantAssociation;
+	}
+	/**
+	 * Inserts a couple of ou Grant id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleIdOuGrantAssociation(Integer exp, Integer curr) {
+		ouGrantAssociation.put(exp, curr);	
+	}
+	/**
+	 * Gets the Map of associations between current and exported ou grant node.
+	 * 
+	 * @return Map of ou grant nodes
+	 */
+	public Map getOuGrantNodesAssociation() {
+		return ouGrantNodesAssociation;
+	}
+	/**
+	 * Inserts a couple of ou Grant node id objects into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleIdOuGrantNodesAssociation(SbiOrgUnitGrantNodesId exp, SbiOrgUnitGrantNodesId curr) {
+		ouGrantNodesAssociation.put(exp, curr);	
+	}
 }

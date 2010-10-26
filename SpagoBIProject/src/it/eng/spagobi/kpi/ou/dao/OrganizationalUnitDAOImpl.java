@@ -864,6 +864,30 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 
+	public List<OrganizationalUnitNode> getNodes() {
+		logger.debug("IN");
+		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes ");
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				OrganizationalUnitNode node = toOrganizationalUnitNode((SbiOrgUnitNodes) it.next());
+				toReturn.add(node);
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
 
 
 }
