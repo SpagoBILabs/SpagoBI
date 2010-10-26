@@ -36,6 +36,7 @@ public class OrganizationalUnitNode {
      private OrganizationalUnitHierarchy hierarchy;
      private Integer parentNodeId;
      private String path;
+     private boolean leaf;
 
 
     // Constructors
@@ -90,6 +91,14 @@ public class OrganizationalUnitNode {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	public boolean isLeaf() {
+		return leaf;
+	}
+
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
 	}
 
 	@Override

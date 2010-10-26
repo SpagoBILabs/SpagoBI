@@ -39,6 +39,7 @@ public class OrganizationalUnitNodeWithGrantJSONSerializer implements Serializer
 	
 	public static final String ID = "id";
 	public static final String OU = "ou";
+	public static final String LEAF= "leaf";
 	public static final String PATH = "path";
 	public static final String PARENT_NODE_ID = "parentnodeid";
 	public static final String MODEL_INSTANCE_NODES = "modelinstancenodes";
@@ -61,6 +62,7 @@ public class OrganizationalUnitNodeWithGrantJSONSerializer implements Serializer
 			result.put(ID, node.getNodeId() );
 			result.put(PARENT_NODE_ID, node.getParentNodeId() );
 			result.put(PATH, node.getPath() );
+			result.put(LEAF, node.isLeaf() );
 			OrganizationalUnitJSONSerializer orgUnitJSONSerializer = new OrganizationalUnitJSONSerializer();
 			result.put(OU, orgUnitJSONSerializer.serialize(node.getOu(), locale));
 			// TODO serialize hierarchy?

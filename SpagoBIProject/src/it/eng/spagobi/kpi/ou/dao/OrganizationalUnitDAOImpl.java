@@ -825,6 +825,26 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		OrganizationalUnitNode node = new OrganizationalUnitNode(hibOrgUnitNode.getNodeId(), ou, hierarchy, 
 				hibOrgUnitNode.getPath(), 
 				hibOrgUnitNode.getSbiOrgUnitNodes() == null ? null : hibOrgUnitNode.getSbiOrgUnitNodes().getNodeId() );
+
+		Session aSession = null;
+		Transaction tx = null;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitNodes.nodeId = ? ");
+			hibQuery.setInteger(0, node.getNodeId());
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			node.setLeaf(!it.hasNext());
+
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		
 		return node;
 	}
 	
