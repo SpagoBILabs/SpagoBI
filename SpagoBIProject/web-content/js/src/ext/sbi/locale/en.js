@@ -497,3 +497,9 @@ Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
 //===================================================================
 Ext.Msg.buttonText.yes = 'Yes'; 
 Ext.Msg.buttonText.no = 'No';
+
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Sbi.locale.ln['sbi.generic.from'] = 'Start date';
+Sbi.locale.ln['sbi.generic.to'] = 'End date';
