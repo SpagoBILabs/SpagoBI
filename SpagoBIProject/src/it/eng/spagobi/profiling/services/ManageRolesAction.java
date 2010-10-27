@@ -139,63 +139,74 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 			Boolean buildQbeQuery= getAttributeAsBoolean(BUILD_QBE_QUERY);
 
 			if (name != null) {
-
-				    List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("roleTypes");
-	
-				    HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
-				    for(int i=0; i< domains.size(); i++){
-				    	domainIds.put(domains.get(i).getValueCd(), domains.get(i).getValueId());
-				    }
-				    
-				    Integer roleTypeID = domainIds.get(roleTypeCD);
-				    if(roleTypeID == null){
-				    	logger.error("Role type CD not existing");
-				    	throw new SpagoBIServiceException(SERVICE_NAME,	"Role Type ID is undefined");
-				    }
-				    
-					Role role = new Role();
-					role.setCode(code);
-					role.setDescription(description);
-					role.setName(name);
-					role.setRoleTypeCD(roleTypeCD);
-					role.setRoleTypeID(roleTypeID);
-					role.setIsAbleToBuildQbeQuery(buildQbeQuery);
-					role.setIsAbleToSaveIntoPersonalFolder(saveIntoPersonalFolder);
-					role.setIsAbleToSaveMetadata(saveMetadata);
-					role.setIsAbleToSaveRememberMe(saveRememberMe);
-					role.setIsAbleToSaveSubobjects(saveSubobjects);
-					role.setIsAbleToSeeMetadata(seeMetadata);
-					role.setIsAbleToSeeNotes(seeNotes);
-					role.setIsAbleToSeeSnapshots(seeSnapshots);
-					role.setIsAbleToSeeSubobjects(seeSubobjects);
-					role.setIsAbleToSeeViewpoints(seeViewpoints);
-					role.setIsAbleToSendMail(sendMail);
-					try {
-						String id = getAttributeAsString(ID);
-						if(id != null && !id.equals("") && !id.equals("0")){							
-							role.setId(Integer.valueOf(id));
-							roleDao.modifyRole(role);
-							logger.debug("Role "+id+" updated");
-							JSONObject attributesResponseSuccessJSON = new JSONObject();
-							attributesResponseSuccessJSON.put("success", true);
-							attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-							writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-						}else{
-							Integer roleID = roleDao.insertRoleComplete(role);
-							logger.debug("New Role inserted");
-							JSONObject attributesResponseSuccessJSON = new JSONObject();
-							attributesResponseSuccessJSON.put("success", true);
-							attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-							attributesResponseSuccessJSON.put("id", roleID);
-							writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-						}
-
-					} catch (Throwable e) {
-						logger.error(e.getMessage(), e);
-						throw new SpagoBIServiceException(SERVICE_NAME,
-								"Exception occurred while saving new role",
-								e);
+				//checks for unique role name
+				try {
+					Role existentRole = DAOFactory.getRoleDAO().loadByName(name);
+					if(existentRole != null){
+						throw new SpagoBIServiceException(SERVICE_NAME,	"Role Name already present.");
 					}
+				} catch (EMFUserError e1) {
+					logger.error(e1.getMessage(), e1);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Exception occurred while retrieving role by name", e1);
+				}
+
+			    List<Domain> domains = (List<Domain>)getSessionContainer().getAttribute("roleTypes");
+
+			    HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
+			    for(int i=0; i< domains.size(); i++){
+			    	domainIds.put(domains.get(i).getValueCd(), domains.get(i).getValueId());
+			    }
+			    
+			    Integer roleTypeID = domainIds.get(roleTypeCD);
+			    if(roleTypeID == null){
+			    	logger.error("Role type CD not existing");
+			    	throw new SpagoBIServiceException(SERVICE_NAME,	"Role Type ID is undefined");
+			    }
+			    
+				Role role = new Role();
+				role.setCode(code);
+				role.setDescription(description);
+				role.setName(name);
+				role.setRoleTypeCD(roleTypeCD);
+				role.setRoleTypeID(roleTypeID);
+				role.setIsAbleToBuildQbeQuery(buildQbeQuery);
+				role.setIsAbleToSaveIntoPersonalFolder(saveIntoPersonalFolder);
+				role.setIsAbleToSaveMetadata(saveMetadata);
+				role.setIsAbleToSaveRememberMe(saveRememberMe);
+				role.setIsAbleToSaveSubobjects(saveSubobjects);
+				role.setIsAbleToSeeMetadata(seeMetadata);
+				role.setIsAbleToSeeNotes(seeNotes);
+				role.setIsAbleToSeeSnapshots(seeSnapshots);
+				role.setIsAbleToSeeSubobjects(seeSubobjects);
+				role.setIsAbleToSeeViewpoints(seeViewpoints);
+				role.setIsAbleToSendMail(sendMail);
+				try {
+					String id = getAttributeAsString(ID);
+					if(id != null && !id.equals("") && !id.equals("0")){							
+						role.setId(Integer.valueOf(id));
+						roleDao.modifyRole(role);
+						logger.debug("Role "+id+" updated");
+						JSONObject attributesResponseSuccessJSON = new JSONObject();
+						attributesResponseSuccessJSON.put("success", true);
+						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+					}else{
+						Integer roleID = roleDao.insertRoleComplete(role);
+						logger.debug("New Role inserted");
+						JSONObject attributesResponseSuccessJSON = new JSONObject();
+						attributesResponseSuccessJSON.put("success", true);
+						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+						attributesResponseSuccessJSON.put("id", roleID);
+						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+					}
+
+				} catch (Throwable e) {
+					logger.error(e.getMessage(), e);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Exception occurred while saving new role",
+							e);
+				}
 
 			}else{
 				logger.error("Missing role name");
