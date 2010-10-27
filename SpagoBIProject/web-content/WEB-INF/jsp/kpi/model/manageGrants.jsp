@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 java.util.List,
 				 org.json.JSONArray, 
 				 org.json.JSONObject" %>
-<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 
 <% if ( "WEB".equalsIgnoreCase(sbiMode) ) { %>
 
