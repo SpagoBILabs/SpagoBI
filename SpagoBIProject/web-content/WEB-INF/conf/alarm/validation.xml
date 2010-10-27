@@ -38,7 +38,7 @@
 	<SERVICE name="MANAGE_CONTACTS_ACTION" type="ACTION">
 		<VALIDATION blocking="false" validators="">
 			<CONDITIONS>
-				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="CONTACT_DETAIL"/>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="CONTACT_INSERT"/>
 			</CONDITIONS>
 			<FIELDS>
 
@@ -48,13 +48,13 @@
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
 				</FIELD>
 				<FIELD name="email" label="email">
-				  	<VALIDATOR validatorName="REGEXP" arg0="([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})"/>
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+					<VALIDATOR validatorName="REGEXP" arg0="([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>					
 				</FIELD>
-
 				<FIELD name="mobile" label="mobile">
 					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
-					<VALIDATOR validatorName="REGEXP" arg0="^[0-9/]*$"/>
+					<!--VALIDATOR validatorName="REGEXP" arg0="^[0-9/]*$"/-->
+					<VALIDATOR validatorName="NUMERIC"/>
 				</FIELD>
 				<FIELD name="resources" label="resources">
 					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
