@@ -448,13 +448,14 @@ Ext.extend(Sbi.home.Banner, Ext.Panel, {
 			win_info_1= new Ext.Window({
 			id:'win_info_1',
 			autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},             				
-				layout:'fit',
-				width:210,
-				height:180,
-				closeAction:'hide',
- 				buttonAlign : 'left',
-				plain: true,
-				title: LN('sbi.home.Info')
+			layout:'fit',
+			width:210,
+			height:180,
+			//closeAction:'hide',
+			closeAction:'close',
+			buttonAlign : 'left',
+			plain: true,
+			title: LN('sbi.home.Info')
 			});
 		};
 		win_info_1.show();
