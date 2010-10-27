@@ -226,6 +226,17 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 					((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
 				}				
 			}
+			
+			else if(aDataSet instanceof JDBCStandardDataSet){
+				if(((JDBCStandardDataSet)aDataSet).getQuery()!=null){
+					((SbiQueryDataSet)hibDataSet).setQuery(((JDBCStandardDataSet)aDataSet).getQuery().toString());
+				}
+				if(((JDBCStandardDataSet)aDataSet).getDataSource()!=null){
+					SbiDataSource hibDataSource = null;
+					hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(((JDBCStandardDataSet)aDataSet).getDataSource().getDsId()));
+					((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
+				}				
+			}
 
 			else if(aDataSet instanceof WebServiceDataSet){
 				//hibDataSet=new SbiWSDataSet();
@@ -611,7 +622,7 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 		Session aSession = null;
 		Transaction tx = null;
 		Integer resultNumber;
-		Query hibernateQuery;
+		Query hibernateQuery; 
 		
 		try {
 			aSession = getSession();
