@@ -133,6 +133,20 @@
 		  </a>
 		</td>
 	</tr>
+	
+	<tr class="portlet-font">
+		<td width="100" align="center"><img
+			src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/kpi/grants64.png", currTheme)%>' />
+		</td>
+		<td width="20">&nbsp;</td>
+		<td vAlign="middle">
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_OU_EMPTY_ACTION"/>
+									  </portlet:actionURL>'
+			class="link_main_menu">
+			<spagobi:message key="sbi.kpi.grantsDefinition.label" bundle="<%=messageBunle%>" />
+		  </a>
+		</td>
+	</tr>
 
 </table>
 
