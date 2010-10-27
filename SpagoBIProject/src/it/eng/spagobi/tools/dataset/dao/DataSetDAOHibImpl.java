@@ -25,11 +25,10 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.kpi.model.bo.Resource;
-import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -333,6 +332,17 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 				if(((JDBCDataSet)aDataSet).getDataSource()!=null){
 					SbiDataSource hibDataSource = null;
 					hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(((JDBCDataSet)aDataSet).getDataSource().getDsId()));
+					((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
+				}				
+			}
+			else if(aDataSet instanceof JDBCStandardDataSet){
+				hibDataSet=new SbiQueryDataSet();
+				if(((JDBCStandardDataSet)aDataSet).getQuery()!=null){
+					((SbiQueryDataSet)hibDataSet).setQuery(((JDBCStandardDataSet)aDataSet).getQuery().toString());
+				}
+				if(((JDBCStandardDataSet)aDataSet).getDataSource()!=null){
+					SbiDataSource hibDataSource = null;
+					hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(((JDBCStandardDataSet)aDataSet).getDataSource().getDsId()));
 					((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
 				}				
 			}
