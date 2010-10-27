@@ -213,13 +213,15 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
             params: params
         });                	
                 	
-                	this.hide();
+                	//this.hide();
+        			this.close();
             	}
            , scope: this
     	    },{
     		    text: LN('sbi.browser.defaultRole.cancel'),
     		    handler: function(){
-                	this.hide();
+                	//this.hide();
+    	    		this.close();
             	}
             	, scope: this
     		}]
