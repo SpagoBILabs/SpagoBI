@@ -50,7 +50,7 @@ FilterDynamicSchemaProcessor {
 			}		
 			att = findProfileAttributeInSchema(modifiedSchema);
 		}
-		logger.debug("OUT");
+		logger.debug("OUT: modified schema is:\n" + modifiedSchema);
 		return modifiedSchema;
 	}
 
