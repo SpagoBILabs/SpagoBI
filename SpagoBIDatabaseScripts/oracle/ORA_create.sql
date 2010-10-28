@@ -245,7 +245,7 @@ PRIMARY KEY (EVENT_ID,ROLE_ID)
 
 Create table SBI_EXT_ROLES (
 	EXT_ROLE_ID Number(38,0) Constraint "SYS_C0011867" NOT NULL ,
-	NAME Varchar2 (100),
+	NAME Varchar2 (100) NOT NULL,
 	DESCR Varchar2 (160),
 	CODE Varchar2 (20),
 	ROLE_TYPE_CD Varchar2 (20) Constraint "SYS_C0011868" NOT NULL ,
@@ -261,6 +261,7 @@ Create table SBI_EXT_ROLES (
 	SAVE_METADATA Number(38,0) Default 1,
 	SAVE_SUBOBJECTS Number(38,0) Default 1,
 	BUILD_QBE_QUERY Number(38,0) Default 1,
+	CONSTRAINT XAK1SBI_EXT_ROLES UNIQUE (NAME),
 primary key ("EXT_ROLE_ID") 
 ) 
 /
