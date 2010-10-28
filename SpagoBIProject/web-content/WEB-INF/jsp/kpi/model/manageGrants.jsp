@@ -24,9 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 java.util.List,
 				 org.json.JSONArray, 
 				 org.json.JSONObject" %>
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-
-<% if ( "WEB".equalsIgnoreCase(sbiMode) ) { %>
 
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
@@ -60,23 +57,5 @@ Ext.onReady(function(){
 
 
 </script>
-
-<% } else {
-	
-	String url = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier)+  "&ACTION_NAME=MANAGE_OU_EMPTY_ACTION";
-	url += "&LANGUAGE=" + locale.getLanguage();
-	url += "&COUNTRY=" + locale.getCountry();
-	%>
-
- 	<iframe 
- 		id='grantsIframe'
- 		name='grantsIframe'
- 		src='<%= url %>'
- 		frameBorder = 0
- 		width=100%
- 		height=<%= ChannelUtilities.getPreferenceValue(aRequestContainer, "HEIGHT", "600") %>
- 	/>
- 
-<% } %>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
