@@ -82,6 +82,9 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		if(s.refreshTime) {
 			var task = {
 				run: function(){
+					//if the console is hidden doesn't refresh the datastore
+					if(s.stopped) return;
+					
 					// if store is paging...
 					if(s.lastParams) {
 						// ...force remote reload
@@ -102,6 +105,15 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 
 	, getStore: function(storeId) {
 		return this.stores.get(storeId);
+	}
+	
+	, activeRefresh: function(activeValue){
+		for(var i = 0, l = this.stores.length, s; i < l; i++) {
+			var s = this.stores.get(i);
+			s.stopped = activeValue;
+		//	alert('set stopped value ' + activeValue + ' to store: ' + s.toSource());
+		}
+		 
 	}
 	
 	//  -- private methods ---------------------------------------------------------

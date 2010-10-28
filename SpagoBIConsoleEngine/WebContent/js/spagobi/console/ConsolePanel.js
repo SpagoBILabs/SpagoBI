@@ -125,11 +125,18 @@ Sbi.console.ConsolePanel = function(config) {
 		items: items
 	});
 	
-
 	// constructor
 	Sbi.console.ConsolePanel.superclass.constructor.call(this, c);
 	
 	onhostmessage(this.exportConsole, this, false, 'export');
+	
+	//set message tag for the dynamic management of refresh of datasources
+//	if(this.onhostmessage){
+		onhostmessage(this.onHide, this, false, 'hide');
+		onhostmessage(this.onShow, this, false, 'show');
+//	}
+	
+	
 };
 
 Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
@@ -178,7 +185,26 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 		});
 	}
 
-
+	
+	//stop all datastore of the hidden console 
+	, onHide: function(){
+		this.storeManager.activeRefresh(true);
+		/*
+		 for(var i = 0, l = this.storeManager.stores.length; i < l; i++) {
+			 alert(this.storeManager.stores[i].toSource());
+			var s = this.storeManager.stores.get[i];
+			alert(s);
+			s.stopped = true;
+			alert('hide: s.stopped ' + s.stopped);
+		}*/
+		
+	}
+	
+	//active all datastore of the active console
+	, onShow: function(datasetConfig){
+		this.storeManager.activeRefresh(false);
+	}
+	//------------------ FINE TEST ANTO -------------------
     
     
 });
