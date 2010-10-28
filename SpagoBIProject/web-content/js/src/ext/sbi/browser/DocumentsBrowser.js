@@ -128,6 +128,21 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		);
 	}
 	
+	//send messages about enable or disable datastore refreh action (for console engine) 
+	this.centerContainerPanel.on(
+	   'beforetabchange',
+	   function (tabPanel, newTab, currentTab ) {
+	//	   alert('tabPanel: ' + tabPanel + ' newTab: ' + newTab + ' currentTab: ' + currentTab);
+		    if(currentTab && currentTab.activeDocument) {
+		    	currentTab.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore', 'hide');
+		    }
+		    if(newTab.activeDocument && newTab.activeDocument.documentExecutionPage){
+		    	newTab.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore', 'show');
+		    }
+	   }
+	   , this
+	);
+	
 	config.baseLayout = config.baseLayout || {}; 	
 	var c = Ext.apply({}, config.baseLayout, {
 		layout: 'border',
