@@ -812,7 +812,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		} else if (inlineActionColumnConfig.name === 'start'){	
 			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
 			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
-			inlineActionColumnConfig.toggleOnClick = false;
+			//inlineActionColumnConfig.toggleOnClick = false;
+			inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.startProcess;
 			inlineActionColumnConfig.isChecked = function(record) {
 				var v, active;
@@ -837,7 +838,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		} else if (inlineActionColumnConfig.name === 'stop'){			
 			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
 			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
-			inlineActionColumnConfig.toggleOnClick = false;
+			//inlineActionColumnConfig.toggleOnClick = false;
+			inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.stopProcess;
 			inlineActionColumnConfig.isChecked = function(record) {
 				var v, active;
@@ -860,13 +862,13 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);
 			
 		}else if (inlineActionColumnConfig.name === 'informationlog'){			
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images
+			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images;
 			inlineActionColumnConfig.handler = this.downloadLogs;			
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 			
 		}else {
 			
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images
+			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images;
 			inlineActionColumnConfig.handler = this.execAction;
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 		}
