@@ -52,7 +52,7 @@
   	 <PUBLISHER name="ManageGrantsPublisher">
     	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/model/manageGrants.jsp"/>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/model/manageGrantsPortlet.jsp"/>
       		</RESOURCES>
     	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
