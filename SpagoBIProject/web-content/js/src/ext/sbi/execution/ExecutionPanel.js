@@ -194,6 +194,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		} else {
 			this.executeCrossNavInline(config);
 		}
+		
 	}
 	
 	, executeCrossNavUpdate: function(config) {
@@ -261,6 +262,8 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	}
 	
 	, executeCrossNavInline: function(config) {
+		//save the original document
+		var oldDoc = this.activeDocument;
 		
 		//alert(config.preferences.parameters);
 		var formState = Ext.urlDecode(config.preferences.parameters);
@@ -283,12 +286,16 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 				sendMessage({}, 'collapse2'); 
 			}, this);
 		}, this);
-			
+		
+		
 		this.add(this.activeDocument);
 		this.doLayout();
-		this.getLayout().setActiveItem(this.documentsStack.length -1);
-			
+		this.getLayout().setActiveItem(this.documentsStack.length -1);	
+		
 		this.activeDocument.execute();
+		
+		//send hide message to the hidden console
+		oldDoc.documentExecutionPage.miframe.sendMessage('Disable datastore', 'hide');
 	}
 	
 	, setBreadcrumbs: function(tb) {
@@ -332,6 +339,10 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	, onBreadCrumbClick: function(b, e) {
 		var prevActiveDoc =  this.activeDocument;		
 		this.activeDocument = this.documentsStack[b.stackIndex];
+		
+		//send show message to the new actived console
+		this.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore!', 'show');
+
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
 		this.getLayout().setActiveItem(b.stackIndex);
