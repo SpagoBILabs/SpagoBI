@@ -44,7 +44,7 @@ public class ScriptDataProxy extends AbstractDataProxy {
 
 	String script;
 	String languageScript;
-	
+
 	private static transient Logger logger = Logger.getLogger(ScriptDataProxy.class);
 
 
@@ -64,14 +64,22 @@ public class ScriptDataProxy extends AbstractDataProxy {
 		}
 		return load(dataReader);
 	}
-	
+
 
 	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+		logger.debug("IN");
 		String data = null;
 		IDataStore dataStore = null;
 		try {
-			data = ScriptManager.runScript(script, languageScript);
+			if(statement != null){
+				logger.debug("Statement "+statement);
+				data = ScriptManager.runScript(statement, languageScript);
+			}
+			else{
+				logger.debug("Use script (no parameters) "+script);
+				data = ScriptManager.runScript(script, languageScript);
 
+			}
 			// check if the result must be converted into the right xml sintax
 			boolean toconvert = checkSintax(data);
 			if(toconvert) { 
@@ -197,5 +205,5 @@ public class ScriptDataProxy extends AbstractDataProxy {
 	}
 
 
-	
+
 }
