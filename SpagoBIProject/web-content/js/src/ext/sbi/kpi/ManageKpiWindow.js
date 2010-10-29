@@ -92,6 +92,15 @@ Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
   	
   	, initWindow: function(){
 	
+	   	var pagingBar = new Ext.PagingToolbar({
+	        pageSize: 16,
+	        store: this.store,
+	        displayInfo: true,
+	        displayMsg: '', 
+	        scope: this,
+	        emptyMsg: "No topics to display"	        
+	    }); 
+	
 		var selectColumn = new Ext.grid.ButtonColumn({
 		       header:  ' '
 		       ,iconCls: 'icon-select'
@@ -142,6 +151,7 @@ Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
 		        plugins: [selectColumn],
 		        width: 400,
 		        height: 250,
+		        bbar: pagingBar,
 		        //autoExpandColumn: 'label', // column with this id will be expanded
 		        frame: true,
 		        listeners: {
