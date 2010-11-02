@@ -130,9 +130,6 @@ function execCrossNavigation(windowName, label, parameters) {
 }
 </script>
 <%-- End javascript function for document composition cross navigation (workaround for ie) --%>
-
-<link href="<%=contextName%>/js/lib/ext-2.0.1/resources/css/ext-all-SpagoBI-web.css"
-	rel="stylesheet" type="text/css" />
 	
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';

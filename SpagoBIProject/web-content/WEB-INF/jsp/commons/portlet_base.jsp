@@ -293,12 +293,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/menu.css",currTheme)%>' 
       type='text/css' />
-      
-  <!-- 
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "css/extjs/ext-all.css")%>' 
-	  type='text/css' />
-	   --> 
+
 <LINK rel='StyleSheet' 
 	  href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/ext-all.css")%>' 
 	  type='text/css' />
@@ -315,12 +310,11 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <LINK rel='StyleSheet'
       href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/"+extTheme)%>'
       type='text/css' />
-      	  
- <!--   for web menu
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "css/extjs/extSpagoBI.css")%>' 
-	  type='text/css' />
-  -->
+      
+<LINK rel='StyleSheet'
+      href='<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-2.0.1/resources/css/"+extTheme)%>'
+      type='text/css' />
+
 <script>
 	document.onselectstart = function() { return true; }
 </script>
