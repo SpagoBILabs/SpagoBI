@@ -385,6 +385,11 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 
 		return nodes;
 	}
+	/**Loops over JSON nodes array to erase descendants of the nodes with "childrenToUncheck" attribute defined.
+	 * @param JSONGrantNodes
+	 * @param grant
+	 * @throws JSONException
+	 */
 	private void eraseDescendantGrantNodes(JSONArray JSONGrantNodes, OrganizationalUnitGrant grant) throws JSONException{
 		Integer uncheckChildren = null;
 		for (int i= 0; i < JSONGrantNodes.length(); i++) {
@@ -406,6 +411,12 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 			}
 		}
 	}
+	/**Recursive method that disables grants for modelInstNodeToDisable children for a defined grant and OU node.
+	 * @param modelInstNodeToDisable model instance to erase grant
+	 * @param grant grant
+	 * @param ouNode ou node
+	 * @throws EMFUserError
+	 */
 	private void eraseDescendant(ModelInstanceNode modelInstNodeToDisable, OrganizationalUnitGrant grant, OrganizationalUnitNode ouNode) throws EMFUserError{
 		List ids = modelInstNodeToDisable.getChildrenIds();
 		if(ids != null && !ids.isEmpty()){

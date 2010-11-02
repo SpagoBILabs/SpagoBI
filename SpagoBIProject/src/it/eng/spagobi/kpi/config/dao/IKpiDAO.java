@@ -125,5 +125,12 @@ public interface IKpiDAO {
 	public List loadKpiRelListByParentId(Integer kpiParentId) throws EMFUserError;
 	
 	public boolean deleteKpiRel(Integer kpiRelId) throws EMFUserError;
+	/**
+	 * Returns the list of Kpi filtered by hsql query string.
+	 * @param hsql query string 
+	 * @return the list of filtered Kpi.
+	 * @throws EMFUserError if an Exception occurs
+	 */
+	public List loadKpiListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
 	
 }
