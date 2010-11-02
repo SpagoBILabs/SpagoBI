@@ -34,8 +34,8 @@ package it.eng.spagobi.engines.talend.runtime;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -168,23 +168,25 @@ public class TalendWork implements Work {
 		try {
 		    logger.debug("Java Command:"+_command);
 		    logger.debug("Executable Job Dir:"+_executableJobDir);
-		    Process p =Runtime.getRuntime().exec(_command, _envr, _executableJobDir);
+		    Process p = Runtime.getRuntime().exec(_command, _envr, _executableJobDir);
 	
-		    p.waitFor();
+		    // any error message?
+            StreamGobbler errorGobbler = new 
+                StreamGobbler(p.getErrorStream(), "ERROR");            
+            
+            // any output?
+            StreamGobbler outputGobbler = new 
+                StreamGobbler(p.getInputStream(), "OUTPUT");
+                
+            // kick them off
+            errorGobbler.start();
+            outputGobbler.start();
+                                  
+		    
+		    
+		    int exitCode = p.waitFor();
 		   
-		    
-		   LineNumberReader in = new LineNumberReader( new InputStreamReader(p.getErrorStream()) );
-		   String line = null;
-		   String str = "";
-		   while( (line = in.readLine()) != null) {
-			   str += line  + "\n";
-		   }
-		   logger.debug(str);
-		   
-		    
-		    
-		   
-		    
+		    	    
 		    //CODICE DA USARE EVENTUALMENTE IN FUTURO CON ALTRE MODIFICHE:
 		    /*this.talendJobClass = Class.forName(talendJobClassName); 
 		    this.runJob = this.talendJobClass.getMethod("runJob", new  Class[]{String[].class}); 
@@ -231,37 +233,54 @@ public class TalendWork implements Work {
     }
 
     private String getParamsStr(Map params) {
-	logger.debug("IN");
-	StringBuffer buffer = new StringBuffer();
-	Iterator it = params.keySet().iterator();
-	boolean isFirstParameter = true;
-	while (it.hasNext()) {
-	    String pname = (String) it.next();
-	    String pvalue = (String) params.get(pname);
-	    if (!isFirstParameter)
-		buffer.append("&");
-	    else
-		isFirstParameter = false;
-	    buffer.append(pname + "=" + pvalue);
-	}
-	logger.debug("parameters: " + buffer.toString());
-	logger.debug("OUT");
-	return buffer.toString();
+		logger.debug("IN");
+		StringBuffer buffer = new StringBuffer();
+		Iterator it = params.keySet().iterator();
+		boolean isFirstParameter = true;
+		while (it.hasNext()) {
+		    String pname = (String) it.next();
+		    String pvalue = (String) params.get(pname);
+		    if (!isFirstParameter)
+			buffer.append("&");
+		    else
+			isFirstParameter = false;
+		    buffer.append(pname + "=" + pvalue);
+		}
+		logger.debug("parameters: " + buffer.toString());
+		logger.debug("OUT");
+		return buffer.toString();
     }
 
-    /* (non-Javadoc)
-     * @see commonj.work.Work#isDaemon()
-     */
     public boolean isDaemon() {
-	return false;
+    	return false;
     }
 
-    /* (non-Javadoc)
-     * @see commonj.work.Work#release()
-     */
     public void release() {
-	logger.debug("IN");
-
+    	logger.debug("IN");
+    }
+    
+    class StreamGobbler extends Thread {
+        InputStream is;
+        String type;
+        
+        StreamGobbler(InputStream is, String type) {
+            this.is = is;
+            this.type = type;
+        }
+        
+        public void run() {
+        	try {
+        		InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
+                String line=null;
+                while ( (line = br.readLine()) != null) {
+                    logger.debug("[" + type + "]: " + line);
+                }
+                
+        	} catch (IOException ioe) {
+                 ioe.printStackTrace();  
+            }
+        }
     }
 
 }
