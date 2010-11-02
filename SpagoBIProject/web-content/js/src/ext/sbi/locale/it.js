@@ -146,6 +146,8 @@ Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Attendere prego...';
 Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='Sincronizzazione delle unità organizzative in corso...';
 Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='Operazione eseguita';
 Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Unità organizzative sincronizzate!';
+Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Abilita tutti i figli';
+Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disabilita tutti i figli';
 //END GRANTS messages
 
 
