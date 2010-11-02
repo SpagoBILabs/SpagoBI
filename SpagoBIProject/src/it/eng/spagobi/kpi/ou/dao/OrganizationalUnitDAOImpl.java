@@ -657,7 +657,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				
 				SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grantId);
 				grantNode.setSbiOrgUnitGrant(hibGrant);
-				
+				logger.debug("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
+				System.out.println("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
 				aSession.save(grantNode);
 			}
 			
@@ -906,6 +907,28 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		}
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
+	}
+
+	public void eraseNodeGrant(OrganizationalUnitGrantNode grantNode) {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "delete from SbiOrgUnitGrantNodes s where s.id.grantId = ? and s.id.nodeId = ? and s.id.kpiModelInstNodeId = ? ";
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, grantNode.getGrant().getId());
+			query.setInteger(1, grantNode.getOuNode().getNodeId());
+			query.setInteger(2, grantNode.getModelInstanceNode().getModelInstanceNodeId());
+			query.executeUpdate();
+			
+			tx.commit();
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: OrganizationalUnitGrantNode deleted successfully.");
 	}
 
 

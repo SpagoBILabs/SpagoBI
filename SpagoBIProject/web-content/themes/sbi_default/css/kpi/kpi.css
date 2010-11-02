@@ -27,3 +27,13 @@
 	width: 50%;
 	height: 100%;
 }
+.no-grant {
+	 font-weight: bold;
+	 font-style: italic;
+	 text-decoration: none;
+}
+.grant {
+	 font-weight: normal;
+	 font-style: normal;
+	 text-decoration: none;
+}

@@ -104,7 +104,11 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 
 	config.configurationObject = this.configurationObject;
 	config.toolsMenuItems= this.getToolsMenu();
-
+	//kpi tree context menu
+	this.initKpiContextMenu();
+	//ou tree context menu
+	this.initOUContextMenu();
+	
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageOUGrants.superclass.constructor.call(this, c);	 	
@@ -135,7 +139,41 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	, kpiModelInstanceRoot: null
 	, selectedGrantId: null
 	, detailsForm: null
-	
+	, kpiCtxMenu: null
+	, ouCtxMenu: null
+	, initKpiContextMenu : function() {
+		this.kpiCtxMenu = new Ext.menu.Menu( {
+			items : [
+					'-', {
+						text : LN('sbi.grants.contextmenu.enable.children'),
+						iconCls : 'icon-select',
+						handler : function() {
+							this.enableAllChildren(this.ctxNode, 'kpi');
+						},
+						scope : this
+					}, {
+						text : LN('sbi.grants.contextmenu.disable.children'),
+						iconCls : 'icon-remove',
+						handler : function() {
+							this.disableAllChildren(this.ctxNode, 'kpi');
+						},
+						scope : this
+					}]
+		});
+	}
+	, initOUContextMenu : function() {
+		this.ouCtxMenu = new Ext.menu.Menu( {
+			items : [
+					'-', {
+						text : LN('sbi.grants.contextmenu.disable.children'),
+						iconCls : 'icon-remove',
+						handler : function() {
+							this.disableAllChildren(this.ctxNodeOu, "ou");
+						},
+						scope : this
+					}]
+		});
+	}
 	,initConfigObject: function(){
 		this.initTabItems();
 	}
@@ -166,9 +204,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
 	
 				attr.checked = false;
-	
+				attr.checkAllChildren = false;
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
 				thisPanel.addKPINodeListeners(node);
+
 				return node;
 			}
 	
@@ -199,7 +238,14 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}
 
 				attr.modelinstancenodesOfThisSession = new Array();
-				
+				attr.childrenToCheck = new Array();
+				attr.childrenToUncheck = new Array();
+				if(attr.modelinstancenodes==null || attr.modelinstancenodes.length==0){
+					attr.cls = 'no-grant';
+				}else{
+					attr.cls = 'grant';
+				}
+
 				node.on('click',thisPanel.updateKpisCheck,thisPanel);
 				node.on('append', function( tree, thisNode, childNode,index ) {
 
@@ -207,7 +253,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 						childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
 						childNode.attributes.modelinstancenodesOfThisSession = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
 					}
-				},this);
+					},this);
 
 				
 				return node;
@@ -264,7 +310,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var kpiInstStore = new Ext.data.JsonStore({
 			root: 'rows',
 			url: this.configurationObject.manageListService,
-			fields: ['modelText','kpiCode','text','modelCode','kpiId','modelInstId','label','leaf','modelId','modelName','modelTypeDescr','modelType','kpiName','description','name','kpiInstId','modelDescr','kpiInstSaveHistory']
+			fields: ['modelText','kpiCode','text','modelCode','kpiId','modelInstId','label','leaf','modelId','modelName','modelTypeDescr','modelType','kpiName','description','name','kpiInstId','modelDescr','kpiInstSaveHistory', "checkAllChildren"]
 		});
 	
 		var OUStore = new Ext.data.JsonStore({
@@ -389,6 +435,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	//add the listeners to the kpi nodes
 	, addKPINodeListeners: function(node){
 		node.on('expand', this.getSelectedOUAndUpdateKpisCheck,this);
+		
 		/*
 		 * When the user change the check of a kpi node
 		 * we add/remove the id of the kpi from the list
@@ -398,11 +445,19 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			node.suspendEvents(false);
 	
 			//change to the selected node and all it's child the kpi model instance list
-			var subTreeNodes = this.getSubTreeNodes(this.leftTree.getSelectionModel().getSelectedNode());
+			var ouNode = this.leftTree.getSelectionModel().getSelectedNode();
+			var subTreeNodes = this.getSubTreeNodes(ouNode);
 			for(var j=0; j<subTreeNodes.length; j++){
+				//Ext.fly(subTreeNodes[j].getUI().getEl()).highlight("ff0000");
+				subTreeNodes[j].getUI().removeClass('no-grant');
+				subTreeNodes[j].getUI().removeClass('grant');
+
+
 				var modelinstancenodes = subTreeNodes[j].attributes.modelinstancenodes;
 				var modelinstancenodesOfThisSession = subTreeNodes[j].attributes.modelinstancenodesOfThisSession;
 				if(!checked){
+					subTreeNodes[j].getUI().addClass('no-grant');
+					subTreeNodes[j].cls='no-grant';
 					for(var i=0; i<modelinstancenodes.length; i++){
 						if(modelinstancenodes[i]==node.id){
 							modelinstancenodes.splice(i,1);
@@ -418,9 +473,15 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}else{
 					modelinstancenodes.push(node.id);
 					modelinstancenodesOfThisSession.push(node.id);
+					subTreeNodes[j].getUI().addClass('grant');
+					subTreeNodes[j].cls='grant';
 				}
+
+
 			}
 			node.resumeEvents();
+
+
 		},this);
 	}
 	
@@ -476,7 +537,15 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					n.suspendEvents(false);
 					n.getUI().toggleCheck(true);
 					n.resumeEvents( );
+					
 				}
+			}
+		}
+		//to check children nodes of kpi if checkAllChildren
+		var kpinode = this.rightTree.getSelectionModel().getSelectedNode();
+		if(kpinode !== undefined && kpinode != null){
+			if(kpinode.attributes.checkAllChildren !== undefined && kpinode.attributes.checkAllChildren){
+				this.childrenCheck(kpinode, node, false, 'kpi');
 			}
 		}
 	}
@@ -516,6 +585,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	,renderTreeOU : function(tree) {
 		tree.getLoader().nodeParameter = 'nodeId';
 		tree.getRootNode().expand(false, /*no anim*/false);
+
 	}
 	
 	
@@ -530,6 +600,8 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	,setListeners : function() {
 		this.rightTree.addListener('render', this.renderTree, this);
 		this.leftTree.addListener('render', this.renderTreeOU, this);
+		this.rightTree.on('contextmenu', this.onKpiContextMenu, this);
+		this.leftTree.on('contextmenu', this.onOUContextMenu, this);
 	}
 	
 	
@@ -678,8 +750,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 						ouPath: node.attributes.path,
 						modelinstance: node.attributes.modelinstancenodes[i],
 						hierarchyId: this.ouHierarchy,
+						childrenToCheck : node.attributes.childrenToCheck[i],
+						childrenToUncheck : node.attributes.childrenToUncheck[i],
 						expanded: node.expanded
 				};
+
 				array.push(c);
 			}
 		}
@@ -752,6 +827,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 		var iconClass = '';
 		var cssClass = '';
+		var cssClass = 'no-grant';
+		if(rec.modelinstancenodes !== undefined && rec.modelinstancenodes != null && rec.modelinstancenodes.length != 0){
+			cssClass = 'grant';
+		}
 		var tip = rec.ou.name;
 		var node = new Ext.tree.AsyncTreeNode({
 			text		: rec.ou.name,
@@ -771,12 +850,108 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		node.attributes.path = rec.path;
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
 		node.attributes.modelinstancenodesOfThisSession = new Array();
+		node.attributes.childrenToCheck = new Array();
+		node.attributes.childrenToUncheck = new Array();
 		node.on('click',this.updateKpisCheck,this);
 		this.nrec = rec;
 		return node;
 	}
+	,onKpiContextMenu : function(node, e) {
+		if (this.kpiCtxMenu == null) { // create context menu on first right click
+			this.initKpiContextMenu();
+		}
+		if (this.ctxNode && this.ctxNode.ui) {
+			this.ctxNode.ui.removeClass('x-node-ctx');
+			this.ctxNode = null;
+		}
+		
+		this.ctxNode = node;
+		this.ctxNode.ui.addClass('x-node-ctx');
+		this.kpiCtxMenu.showAt(e.getXY());
+	
+	}
+	,onOUContextMenu : function(node, e) {
+		if (this.ouCtxMenu == null) { // create context menu on first right click
+			this.initOUContextMenu();
+		}
+		if (this.ctxNodeOu && this.ctxNodeOu.ui) {
+			this.ctxNodeOu.ui.removeClass('x-node-ctx');
+			this.ctxNodeOu = null;
+		}
+		
+		this.ctxNodeOu = node;
+		this.ctxNodeOu.ui.addClass('x-node-ctx');
+		this.ouCtxMenu.showAt(e.getXY());
+	
+	}
+	, enableAllChildren: function(node, type){
+		var kpiNode = this.rightTree.getSelectionModel().getSelectedNode();
+		var uoNode = this.leftTree.getSelectionModel().getSelectedNode();
+		this.childrenCheck(kpiNode, uoNode, false, type);
+	}
+	, disableAllChildren: function(node, type){
+		var kpiNode = this.rightTree.getSelectionModel().getSelectedNode();
+		var uoNode = this.leftTree.getSelectionModel().getSelectedNode();
+		this.childrenCheck(kpiNode, uoNode, true, type);
+	}
+	,childrenCheck: function(kpiNode, uoNode, isDisabled, type){
+		var children = null;
+		if(kpiNode.getUI().checkbox.disabled){
+			alert("Operation denied: check ou parent first.");
+			return;
+		}
+		if(type !== undefined && type == "kpi"){
+			children = kpiNode.childNodes;
+			if(children!=null){
+				for(var i=0; i<children.length; i++){
+					this.childrenCheck(children[i], uoNode, isDisabled, "kpi");
+				}
+			}
+		}else if(type !== undefined && type == "ou"){
+			children = uoNode.childNodes;
+			if(children!=null){
+				for(var i=0; i<children.length; i++){
+					this.childrenCheck(kpiNode, children[i], isDisabled, "ou");
+				}
+			}
+		}
+		kpiNode.getUI().toggleCheck(!isDisabled);
+		if(uoNode.attributes.childrenToCheck === undefined){
+			uoNode.attributes.childrenToCheck = new Array();
+		}
+		if(uoNode.attributes.childrenToUncheck === undefined){
+			uoNode.attributes.childrenToUncheck = new Array();
+		}
+		uoNode.getUI().removeClass('no-grant');
+		uoNode.getUI().removeClass('grant');
 
+		if(isDisabled){
+			//uncheck all children to disable them for uoNode
+			if(uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id) == -1){
+				uoNode.attributes.modelinstancenodesOfThisSession.remove(kpiNode.id);
+			}			
+			kpiNode.attributes.checkAllChildren = false;
+			if(!kpiNode.isExpanded()){							
+				uoNode.getUI().addClass('no-grant');
+				uoNode.cls='no-grant';
+				uoNode.attributes.childrenToCheck.remove(kpiNode.id);	
+				uoNode.attributes.childrenToUncheck.push(kpiNode.id);
+			}
+		}else{
+			//check all children to enable them for uoNode
+			if(uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id) == -1){
+				uoNode.attributes.modelinstancenodesOfThisSession.push(kpiNode.id);
+			}			
+			kpiNode.attributes.checkAllChildren = true;
+			if(!kpiNode.isExpanded()){
+				uoNode.getUI().addClass('grant');
+				uoNode.cls='grant';
+				uoNode.attributes.childrenToCheck.push(kpiNode.id);
+				uoNode.attributes.childrenToUncheck.remove(kpiNode.id);
+			}
+		}
 
+	}
 });
 
 

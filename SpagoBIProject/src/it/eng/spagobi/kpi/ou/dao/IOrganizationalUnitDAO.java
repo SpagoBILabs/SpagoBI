@@ -197,4 +197,9 @@ public interface IOrganizationalUnitDAO {
 	 * @return all the ou nodes
 	 */
 	public List<OrganizationalUnitNode> getNodes();
+	/**
+	 * Remove the grant nodes of a grant 
+	 * @param grantNode to erase
+	 */
+	public void eraseNodeGrant(OrganizationalUnitGrantNode grantNode);
 }
