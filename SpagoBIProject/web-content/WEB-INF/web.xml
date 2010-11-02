@@ -59,29 +59,29 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<url-pattern>/servlet/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 
 <!-- START-CAS
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>  
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>   
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>  
  END-CAS --> 
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<url-pattern>/servlet/*</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
  
     <!-- START LISTENERS -->
@@ -113,6 +113,11 @@ END-LIFERAY -->
 		<servlet-class>
 			it.eng.spagobi.commons.services.ChangePwdServlet
 		</servlet-class>
+	</servlet>
+	   
+	<servlet>
+		<servlet-name>ExtendSessionServlet</servlet-name>
+		<servlet-class>it.eng.spagobi.utilities.servlet.session.ExtendSessionServlet</servlet-class>
 	</servlet>
 	   
   <servlet>
@@ -180,7 +185,11 @@ END-LIFERAY -->
 		<servlet-name>ChangePwdServlet</servlet-name>
 		<url-pattern>/ChangePwdServlet</url-pattern>
 	</servlet-mapping>
-  
+
+    <servlet-mapping>
+        <servlet-name>ExtendSessionServlet</servlet-name>
+        <url-pattern>/servlet/ExtendSession</url-pattern>
+    </servlet-mapping>  
     <servlet-mapping>
         <servlet-name>AdapterHTTP</servlet-name>
         <url-pattern>/servlet/AdapterHTTP</url-pattern>

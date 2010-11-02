@@ -1226,6 +1226,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 							//intercept click on <input> elements and show load  mask
 							frame.getDoc().on('click',function(){ frame.showMask() },this,     {delegate:'input[type=image]'});
 						}
+						
+						//intercept click and extend SpagoBI session
+						frame.getDoc().on('click', this.extendSession, this);
 
                 }
 				
@@ -1307,4 +1310,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			, hidden: shortcutsHidden
 	    });
 	}
+	
+	, extendSession: function() {
+		Sbi.commons.Session.extend();
+	}
+	
 });
