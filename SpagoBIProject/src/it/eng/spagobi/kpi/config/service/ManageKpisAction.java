@@ -26,8 +26,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
@@ -102,6 +102,8 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 16;
+	//filters parameters
+	public static String FILTERS = "FILTERS";
 
 	@Override
 	public void doService() {
@@ -123,7 +125,8 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 		logger.debug("Service type "+serviceType);
 		if (serviceType != null && serviceType.equalsIgnoreCase(KPIS_LIST)) {
 
-			try {		
+			try {
+				JSONObject filtersJSON = null;
 
 				Integer start = getAttributeAsInteger( START );
 				Integer limit = getAttributeAsInteger( LIMIT );
@@ -136,7 +139,16 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				}
 
 				Integer totalItemsNum = kpiDao.countKpis();
-				List kpis = kpiDao.loadPagedKpiList(start,limit);
+				
+				List kpis = null;
+				if(this.requestContainsAttribute( FILTERS ) ) {
+					filtersJSON = getAttributeAsJSONObject( FILTERS );
+					String hsql = filterList(filtersJSON);
+					kpis = kpiDao.loadKpiListFiltered(hsql, start, limit);
+				}else{//not filtered
+					kpis = kpiDao.loadPagedKpiList(start,limit);
+				}
+
 				logger.debug("Loaded thresholds list");
 
 				Integer kpiParent = this.getAttributeAsInteger("id");
@@ -585,5 +597,22 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 		}
 
 		return newList;
+	}
+	private String filterList(JSONObject filtersJSON) throws JSONException {
+		logger.debug("IN");
+		String hsql= " from SbiKpi k ";
+		if (filtersJSON != null) {
+			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			if(typeFilter.equals("=")){
+				hsql += " where k."+columnFilter+" = '"+valuefilter+"'";
+			}else if(typeFilter.equals("like")){
+				hsql += " where k."+columnFilter+" like '%"+valuefilter+"%'";
+			}
+			
+		}
+		logger.debug("OUT");
+		return hsql;
 	}
 }

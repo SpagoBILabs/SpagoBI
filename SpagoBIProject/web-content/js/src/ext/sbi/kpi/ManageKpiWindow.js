@@ -100,7 +100,8 @@ Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
 	        scope: this,
 	        emptyMsg: "No topics to display"	        
 	    }); 
-	
+
+	   	
 		var selectColumn = new Ext.grid.ButtonColumn({
 		       header:  ' '
 		       ,iconCls: 'icon-select'
@@ -127,7 +128,13 @@ Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
 	        {header: LN('sbi.generic.descr'), width: 110, sortable: true, dataIndex: 'description'},
 	        selectColumn
 		];
-	    
+		
+	   	var filteringToolbar = new Sbi.widgets.FilteringToolbarLight( {
+	   		store: this.store,
+	   		columnName: LN('sbi.generic.name'),
+	   		columnValue: this.userColumns[1].dataIndex
+	   	});
+	   	
 		 var cm = new Ext.grid.ColumnModel({
 		        // specify any defaults for each column
 		        defaults: {
@@ -149,10 +156,10 @@ Ext.extend(Sbi.kpi.ManageKpiWindow, Ext.grid.GridPanel, {
 		        cm: cm,
 		        sm: sm,
 		        plugins: [selectColumn],
-		        width: 400,
-		        height: 250,
+		        width: 450,
+		        height: 350,
 		        bbar: pagingBar,
-		        //autoExpandColumn: 'label', // column with this id will be expanded
+		        tbar: filteringToolbar,
 		        frame: true,
 		        listeners: {
 			    	'select': {
