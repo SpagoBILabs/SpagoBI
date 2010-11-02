@@ -298,6 +298,7 @@
 
 			    	 <file name="./src/ext/sbi/commons/Format.js"/>
 					 <file name="./src/ext/sbi/commons/JSON.js"/>
+			    	 <file name="./src/ext/sbi/commons/Session.js"/>
 
 			    	 <file name="./src/ext/sbi/browser/SearchField.js"/>
 			    	 <file name="./src/ext/sbi/browser/Toolbar.js"/>
