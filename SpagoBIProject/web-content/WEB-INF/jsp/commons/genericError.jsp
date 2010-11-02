@@ -17,8 +17,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
-<%@ page isErrorPage="true" language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page isErrorPage="true" 
+		 language="java" 
+		 contentType="text/html; charset=ISO-8859-1"
+    	 pageEncoding="ISO-8859-1" 
+    	 session="false"%>
 <%@page import="org.apache.log4j.Logger"%>
 <%
 // The exception variable may be null since this jsp is used as general error page but also as Spago service exception publisher
