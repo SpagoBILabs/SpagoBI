@@ -63,7 +63,7 @@ Sbi.kpi.ManageOUGrantsGrid = function(config, ref) {
 			, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 	});
 
-	this.refTree = ref;
+	this.referencedCmp = ref;
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
 
@@ -173,9 +173,10 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 	
 	, addModelInstanceRecord: function(rec){
 		this.mainElementsStore.add(rec);
-		//this.mainElementsStore.commitChanges();
-		this.rowselModel.selectRecords([rec]);
-		//this.fireEvent('rowclick', rec, this);
+		this.rowselModel.selectLastRow();
+		this.fireEvent('rowclick', rec, this);
+		//reference component is viewport
+		this.referencedCmp.ManageOUGrants.setActiveTab(0);
 	}
 	
 	, addNewItem : function(){

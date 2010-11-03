@@ -116,7 +116,8 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 	//after the 2 trees have been displayed we select the root node of the ou tree
 	this.treePanel.on('afterlayout', function(){		
 		this.leftTree.getSelectionModel().select(this.leftTree.getRootNode());
-		this.updateKpisCheck(this.leftTree.getRootNode());},
+		this.updateKpisCheck(this.leftTree.getRootNode());	
+		},
 		this);
 
 };
@@ -483,6 +484,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 
 		},this);
+		
 	}
 	
 	//discovers the selected ou and update the tree panel of the kpis with the grant of the selected ou 
@@ -503,7 +505,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		}	
 	
 		//disable the kpis not living in the father list.
-			//If the node is the root it enables all the nodes
+		//If the node is the root it enables all the nodes
 		this.deepDisableCheck(this.rightTree.getRootNode(), node);
 
 		if(node.parentNode!=null){
@@ -549,7 +551,14 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			}
 		}
 	}
-	
+	, initialKpisLoadForRootOU: function(){		
+		var kpiRoot = this.rightTree.getRootNode();
+		var ouRoot = this.leftTree.getRootNode();
+		var children = kpiRoot.childNodes;
+		ouNode.attributes.modelinstancenodes = new Array();		
+		this.childrenCheck(kpiRoot, ouRoot, false, "kpi");		
+		return true;
+	}
 	//Set disable all the nodes of the subtree rooted in uoNode.. 
 	//If the uoNode has no father (id est, it is the root) than it
 	//Enables all the check boxes
