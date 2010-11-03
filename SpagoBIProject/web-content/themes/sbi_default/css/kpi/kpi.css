@@ -37,3 +37,9 @@
 	 font-style: normal;
 	 text-decoration: none;
 }
+.no-pad{
+	padding: 0;
+	margin: 0;
+	/*float: left;
+	width: 100%;*/
+}

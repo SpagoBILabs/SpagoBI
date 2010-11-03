@@ -81,7 +81,6 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	}
 	
 	, onRender : function(ct, position) {
-	    
 		Sbi.widgets.FilteringToolbarLight.superclass.onRender.call(this, ct, position);
 	    
 		this.addText(this.columnToSearch);	
@@ -111,7 +110,6 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	    
 	    this.inputField = new Ext.form.TextField({width: 70});
 	    this.addField( this.inputField );
-	    this.addSeparator();
 	    
 	    this.doButton = this.addButton({
 	        tooltip: 'apply filter'
@@ -128,8 +126,9 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	        , disabled: false
 	        , handler: this.onUnfilter.createDelegate(this)
 	    });
-	    
+
 	    this.addFill();	    
+
 	}
 
 	, getFilterBarState: function(asObject) {

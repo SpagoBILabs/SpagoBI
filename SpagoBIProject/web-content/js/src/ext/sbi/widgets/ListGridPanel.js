@@ -108,7 +108,8 @@ Sbi.widgets.ListGridPanel = function(config) {
 	this.readonlyStrict = config.readonlyStrict;
 	this.addcopycolumn = config.addcopycolumn;
 	this.singleSelection = config.singleSelection;
-
+	this.filter = conf.filter;
+	
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
     	, fields: conf.fields
@@ -215,20 +216,22 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
         }
         this.colModel = new Ext.grid.ColumnModel(this.gridColItems);
 
- 	    this.tb = new Ext.Toolbar({
- 	    	buttonAlign : 'right',
- 	    	items:[new Ext.Toolbar.Button({
+        
+        this.toolbarAddBtn = new Ext.Toolbar.Button({
  	            text: LN('sbi.generic.add'),
  	            iconCls: 'icon-add',
  	            handler: this.addNewItem,
  	            width: 30,
  	            ref : this.renference,
  	            scope: this
- 	            })
- 	    	]
+ 	            });
+        
+ 	    this.tb = new Ext.Toolbar({
+ 	    	buttonAlign : 'right',
+ 	    	items:[this.toolbarAddBtn]
  	    });
  	    
- 	  // var filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
+ 	   
  	   var pagingBar = new Ext.PagingToolbar({
 	        pageSize: 16,
 	        store: this.mainElementsStore,
@@ -255,7 +258,15 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
  	  this.rowselModel = new Ext.grid.RowSelectionModel({
            singleSelect: this.singleSelection
        });
-  	 
+ 	  
+ 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({store: this.mainElementsStore,
+		 			columnName: LN('sbi.generic.name'),
+			   		cls: 'no-pad',
+			   		columnValue: this.gridColItems[0].dataIndex});;
+	  if(this.filter === undefined || ! this.filter){
+		 filteringToolbar.setVisible(false);
+	  }
+
  	  this.mainGrid = new Ext.grid.GridPanel({
 	                  ds: this.mainElementsStore,   	                  
 	                  colModel: this.colModel,
@@ -269,9 +280,11 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	                  title: this.listTitle,
 		              bbar: pagingBar,
 	                  tbar: this.tb,
+	                  fbar : [filteringToolbar],
 	                  stripeRows: false,
 	                  enableDragDrop: true,
 	                  ddGroup: this.ddGroup,
+	                  footerStyle:'background-color: #D0D0D0; padding: 0; margin: 0; border: 0px;',
 	                  listeners: {
    							'delete': {
 					     		fn: this.deleteSelectedItem,
@@ -288,7 +301,10 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
 	                  });
  	   if(this.readonly || this.readonlyStrict){
  		  this.tb.setVisible(false);
+ 		  this.toolbarAddBtn.setVisible(false);
        }
+
+
 
 	}
 
