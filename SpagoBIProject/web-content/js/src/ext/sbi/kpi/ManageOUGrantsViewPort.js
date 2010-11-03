@@ -159,7 +159,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 	,sendSelectedItem: function(grid, rowIndex, e){
 		
 		this.ManageOUGrants.setDisabled(false);
-		var rec = grid.getSelectionModel().getSelected();
+		var rec = this.manageOUGrantsGrid.rowselModel.getSelected();
 		this.ManageOUGrants.detailFieldLabel.setValue(rec.data.label);
 		this.ManageOUGrants.detailFieldName.setValue(rec.data.name);
 		this.ManageOUGrants.detailFieldDescr.setValue(rec.data.description);
