@@ -128,7 +128,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesGrid, Sbi.widgets.ListGridPanel, {
 		
 		this.configurationObject.panelTitle = LN('sbi.modelinstances.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.modelinstances.listTitle');
-
+		this.configurationObject.filter = false;
     }
 	
     //OVERRIDING save method

@@ -111,6 +111,7 @@ Ext.extend(Sbi.kpi.ManageKpisGrid, Sbi.widgets.ListGridPanel, {
 		this.configurationObject.panelTitle = LN('sbi.kpis.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.kpis.listTitle');
 		this.configurationObject.dragndropGroup ='kpiGrid2kpiForm';
+		this.configurationObject.filter = true;
 
     }
 

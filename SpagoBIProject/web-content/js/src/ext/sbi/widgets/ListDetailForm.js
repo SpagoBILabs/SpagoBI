@@ -160,6 +160,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.drawSelectColumn = conf.drawSelectColumn;  
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
+	this.filter = conf.filter;
 	
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
@@ -364,7 +365,16 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
               singleSelect: this.singleSelection
           });
        }
- 	   
+ 	  
+ 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({store: this.mainElementsStore,
+	   			columnName: LN('sbi.generic.name'),
+		   		cls: 'no-pad',
+		   		columnValue: this.gridColItems[0].dataIndex});;
+ 	  if(this.filter === undefined || ! this.filter){
+ 		 filteringToolbar.setVisible(false);
+ 	  }
+
+ 	  
  	   this.mainGrid = {
  			   		  id: 'maingrid',
 	                  xtype: 'grid',
@@ -379,6 +389,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  title: this.listTitle,
 		              bbar: pagingBar,
 	                  tbar: this.tb,
+	                  fbar : [filteringToolbar],
+	                  footerStyle:'background-color: #D0D0D0; padding: 0; margin: 0; border: 0px; text-align: left;',
 	                  //stripeRows: true,
 	                  enableDragDrop: true,
 	                  ddGroup: this.ddGroup,
