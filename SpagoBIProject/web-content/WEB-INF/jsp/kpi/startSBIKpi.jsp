@@ -44,7 +44,7 @@
     </td>
     <td width="20">&nbsp;</td>
     <td vAlign="middle">
-      <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_KPIS_ACTION"/></portlet:actionURL>'
+      <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_KPIS_GUI_ACTION"/></portlet:actionURL>'
          class="link_main_menu"> 
         <spagobi:message key="sbi.kpi.kpiDefinition.label" bundle="<%=messageBunle%>"/>
       </a>
@@ -57,7 +57,7 @@
     </td>
 	<td width="20">&nbsp;</td>
 	<td vAlign="middle">
-	  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_THRESHOLDS_ACTION"/></portlet:actionURL>'
+	  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_THRESHOLDS_GUI_ACTION"/></portlet:actionURL>'
 	    class="link_main_menu">
 		<spagobi:message key="sbi.kpi.thresholdDefinition.label" bundle="<%=messageBunle%>" />
   	  </a>
@@ -70,7 +70,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_MODELS_ACTION"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_MODELS_GUI_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.modelDefinition.label" bundle="<%=messageBunle%>" />
@@ -84,7 +84,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_MODEL_INSTANCES_ACTION"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_MODEL_INSTANCES_GUI_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.modelInstanceDefinition.label" bundle="<%=messageBunle%>" />
@@ -98,7 +98,7 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_RESOURCES_ACTION"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_RESOURCES_GUI_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
 			<spagobi:message key="sbi.kpi.resourcesDefinition.label" bundle="<%=messageBunle%>" />
@@ -112,10 +112,10 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_ALARMS_ACTION"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_ALARMS_GUI_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
-			<spagobi:message key="Alarms Definition" bundle="<%=messageBunle%>" />
+			<spagobi:message key="sbi.kpi.alarmsDefinition.label" bundle="<%=messageBunle%>" />
 		  </a>
 		</td>
 	</tr>
@@ -126,10 +126,10 @@
 		</td>
 		<td width="20">&nbsp;</td>
 		<td vAlign="middle">
-		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="MANAGE_CONTACTS_ACTION"/>
+		  <a href='<portlet:actionURL><portlet:param name="ACTION_NAME" value="INIT_MANAGE_CONTACTS_GUI_ACTION"/>
 									  </portlet:actionURL>'
 			class="link_main_menu">
-			<spagobi:message key="Contacts Definition" bundle="<%=messageBunle%>" />
+			<spagobi:message key="sbi.kpi.contactsDefinition.label" bundle="<%=messageBunle%>" />
 		  </a>
 		</td>
 	</tr>
