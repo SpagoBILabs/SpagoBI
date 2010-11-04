@@ -190,7 +190,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 				hierarchy:'', 
 				modelinstance: ''
 		};
-	
+
 		var records = new Array();
 		records.push(new Ext.data.Record(record));
 		this.addModelInstanceRecord(records);	

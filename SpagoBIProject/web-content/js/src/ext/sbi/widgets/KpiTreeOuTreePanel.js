@@ -177,8 +177,7 @@ Ext.extend(Sbi.widgets.KpiTreeOuTreePanel, Ext.TabPanel, {
 				collapseMode : 'mini',
 				split : true,
 				region : 'south',
-
-				height: 50,
+				height: 75,
 				collapsed: true,
 				items : config.toolsMenuItems
 			});
