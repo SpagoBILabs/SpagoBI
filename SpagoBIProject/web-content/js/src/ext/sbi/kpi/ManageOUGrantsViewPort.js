@@ -181,7 +181,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 			|| ou.modelinstancenodes == null 
 			|| ou.modelinstancenodes.length == 0){
 			//add all model inst nodes to ou root
-			this.ManageOUGrants.deepCheckFoRoot(newOURoot, newKpiRoot);
+			this.ManageOUGrants.checkForRoot(newOURoot, newKpiRoot);
 		}
 	}
 	
