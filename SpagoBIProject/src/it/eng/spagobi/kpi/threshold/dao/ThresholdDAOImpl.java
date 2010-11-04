@@ -435,5 +435,60 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 		}
 		return toReturn;
 	}
+
+
+	public List loadThresholdListFiltered(String hsql, Integer offset,
+			Integer fetchSize) throws EMFUserError {
+		logger.debug("IN");
+		List toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+			List toTransform = null;
+			
+			String hql = "select count(*) "+hsql;
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery(hsql);
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			toTransform = hibernateQuery.list();			
+
+			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
+				SbiThreshold hibThreshold = (SbiThreshold) iterator.next();
+				Threshold threshold = toThreshold(hibThreshold);
+				toReturn.add(threshold);
+			}
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the filtered list of Threshold", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
+	}
 	
 }

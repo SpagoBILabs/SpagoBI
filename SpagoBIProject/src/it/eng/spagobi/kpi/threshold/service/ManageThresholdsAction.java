@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
@@ -82,7 +83,8 @@ import org.json.JSONObject;
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 16;
-	
+	//filters parameters
+	public static String FILTERS = "FILTERS";
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -102,6 +104,7 @@ import org.json.JSONObject;
 		if (serviceType != null && serviceType.equalsIgnoreCase(THRESHOLDS_LIST)) {
 			
 			try {		
+				JSONObject filtersJSON = null;
 				
 				Integer start = getAttributeAsInteger( START );
 				Integer limit = getAttributeAsInteger( LIMIT );
@@ -114,7 +117,18 @@ import org.json.JSONObject;
 				}
 	
 				Integer totalItemsNum = thrDao.countThresholds();
-				List thresholds = thrDao.loadPagedThresholdList(start,limit);
+				
+				
+				List thresholds = null;
+				if(this.requestContainsAttribute( FILTERS ) ) {
+					filtersJSON = getAttributeAsJSONObject( FILTERS );
+					String hsql = filterList(filtersJSON);
+					thresholds = thrDao.loadThresholdListFiltered(hsql, start, limit);
+				}else{//not filtered
+					thresholds = thrDao.loadPagedThresholdList(start,limit);
+				}
+				
+
 				logger.debug("Loaded thresholds list");
 				JSONArray resourcesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(thresholds, locale);
 				JSONObject resourcesResponseJSON = createJSONResponseResources(resourcesJSON, totalItemsNum);
@@ -444,5 +458,22 @@ import org.json.JSONObject;
 			toReturn.add(tVal);			
 		}	
 		return toReturn;
+	}
+	private String filterList(JSONObject filtersJSON) throws JSONException {
+		logger.debug("IN");
+		String hsql= " from SbiThreshold t ";
+		if (filtersJSON != null) {
+			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			if(typeFilter.equals("=")){
+				hsql += " where t."+columnFilter+" = '"+valuefilter+"'";
+			}else if(typeFilter.equals("like")){
+				hsql += " where t."+columnFilter+" like '%"+valuefilter+"%'";
+			}
+			
+		}
+		logger.debug("OUT");
+		return hsql;
 	}
 }

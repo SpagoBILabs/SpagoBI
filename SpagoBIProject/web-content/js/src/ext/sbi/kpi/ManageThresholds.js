@@ -194,6 +194,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.panelTitle = LN('sbi.thresholds.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.thresholds.listTitle');
 		
+		this.configurationObject.filter = true;
 		
 		this.initTabItems();
     }

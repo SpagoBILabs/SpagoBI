@@ -42,5 +42,6 @@ public interface IThresholdDAO {
 	
 	public Threshold toThreshold(SbiThreshold t) throws EMFUserError; 
 
-	
+	public List loadThresholdListFiltered(String hsql, Integer offset, Integer fetchSize)throws EMFUserError ;
+
 }

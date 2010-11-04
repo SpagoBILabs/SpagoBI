@@ -1929,7 +1929,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			toReturn = new ArrayList();
 			List toTransform = null;
 
-			String hql = "select count(*) from SbiKpi ";
+			String hql = "select count(*) "+hsql;
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Integer)hqlQuery.uniqueResult();
 
