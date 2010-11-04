@@ -126,6 +126,7 @@ public class FileDestination extends JavaClassDestination{
 		BIObject analyticalDoc;
 		List analyticalDrivers; // questi sono i parametri associati al doc
 		BIObjectParameter analyticalDriver;
+		String extension = "pdf";
 		
 		analyticalDoc = getBiObj();
 		analyticalDrivers = analyticalDoc.getBiObjectParameters();
@@ -133,15 +134,18 @@ public class FileDestination extends JavaClassDestination{
 			analyticalDriver = (BIObjectParameter)analyticalDrivers.get(i);
 			
 			String parameterUrlName = analyticalDriver.getParameterUrlName();
+			List values = analyticalDriver.getParameterValues();
+			
 			if(!parameterUrlName.equalsIgnoreCase("outputType")) {
-				List values = analyticalDriver.getParameterValues();
 				filename += values.get(0);
+			} else {
+				extension = "" + values.get(0);
 			}
 			
 		}
 		
 		filename =  filename.replaceAll("[^a-zA-Z0-9]", "_");
-		filename += ".pdf";
+		filename += "." + extension;
 		
 		return filename;
 	}
