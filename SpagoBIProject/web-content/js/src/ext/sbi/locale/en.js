@@ -105,6 +105,7 @@ Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manage Grants';
 Sbi.locale.ln['sbi.grants.listTitle'] = 'Grants List';
 Sbi.locale.ln['sbi.grants.trees.tab'] = 'Trees';
 Sbi.locale.ln['sbi.grants.hide.leafs'] ='Hide leafs organizational units';
+Sbi.locale.ln['sbi.grants.hide.nogrants.kpi'] ='Hide kpi without grants';
 Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Hide organizational units without grants';
 Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Synchronize organizational units';
 Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Please wait...';

@@ -116,10 +116,10 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.tabs = new Ext.Panel({
 			title: LN('sbi.grants.panelTitle')
 			, id : 'modeinstTab'
-				, layout: 'fit'
-					, autoScroll: true
-					, items: [this.ManageOUGrants]
-		, itemId: 'modInstTab'
+			, layout: 'fit'
+			, autoScroll: true
+			, items: [this.ManageOUGrants]
+			, itemId: 'modInstTab'
 			, scope: this
 		});
 
@@ -174,9 +174,15 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 	}
 	
 	, displayTree: function(kpi, ou){
-		this.displayOuTree(ou);
-		this.displayKpiTree(kpi);
+		var newOURoot = this.displayOuTree(ou);
+		var newKpiRoot = this.displayKpiTree(kpi);
 		this.ManageOUGrants.treePanel.doLayout();
+		if(ou.modelinstancenodes == undefined 
+			|| ou.modelinstancenodes == null 
+			|| ou.modelinstancenodes.length == 0){
+			//add all model inst nodes to ou root
+			this.ManageOUGrants.deepCheckFoRoot(newOURoot, newKpiRoot);
+		}
 	}
 	
 	, displayKpiTree: function(rec){
@@ -184,6 +190,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.ManageOUGrants.rootNodeRightId = rec.modelInstId;
 		var newroot = this.ManageOUGrants.createKPIRootNodeByRec(rec);
 		this.ManageOUGrants.rightTree.setRootNode(newroot);
+		return newroot;
 	}
 	
 	, displayOuTree: function(rec){
@@ -191,6 +198,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		this.ManageOUGrants.rootNodeLeftId = rec.id;
 		var newroot2 = this.ManageOUGrants.createRootNodeByRec(rec);
 		this.ManageOUGrants.leftTree.setRootNode(newroot2);
+		return newroot2;
 	}
 
 });
