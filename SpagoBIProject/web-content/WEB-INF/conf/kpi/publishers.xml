@@ -74,11 +74,52 @@
     	</RENDERING>
   	</PUBLISHER>
 
-  <PUBLISHER name="KPIConfigurationPublisher">
-    <RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
-      <RESOURCES>
-        <ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/startSBIKpi.jsp" />
-      </RESOURCES>
-    </RENDERING>
-  </PUBLISHER>
+	<PUBLISHER name="KPIConfigurationPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/startSBIKpi.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+  
+	<PUBLISHER name="InitManageKpisGuiPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/config/manageKpisPortlet.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+	
+	<PUBLISHER name="InitManageThresholdsGuiPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/threshold/manageThresholdsPortlet.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+	<PUBLISHER name="InitManageModelsGuiPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/model/manageModelsPortlet.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+	<PUBLISHER name="InitModelInstancesGuiPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/model/manageModelInstancesPortlet.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+	<PUBLISHER name="InitManageResourcesGuiPublisher">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+			<RESOURCES>
+				<ITEM mode="VIEW" resource="/WEB-INF/jsp/kpi/model/manageResourcesPortlet.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
 </PUBLISHERS>

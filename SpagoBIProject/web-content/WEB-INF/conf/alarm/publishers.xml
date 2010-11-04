@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <PUBLISHERS>
   	<PUBLISHER name="ManageAlarmsPublisher">
-    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
-      		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/alarm/manageAlarms.jsp"/>
-      		</RESOURCES>
-    	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
         		<ITEM prog="0" resource="/WEB-INF/jsp/alarm/manageAlarms.jsp"/>
@@ -13,16 +8,24 @@
     	</RENDERING>
   	</PUBLISHER>
   	<PUBLISHER name="ManageContactsPublisher">
-    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
-      		<RESOURCES>
-        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/alarm/manageContacts.jsp"/>
-      		</RESOURCES>
-    	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
         		<ITEM prog="0" resource="/WEB-INF/jsp/alarm/manageContacts.jsp"/>
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
-
+  	<PUBLISHER name="InitManageAlarmsGuiPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/alarm/manageAlarmsPortlet.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="InitManageContactsGuiPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/alarm/manageContactsPortlet.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
 </PUBLISHERS>

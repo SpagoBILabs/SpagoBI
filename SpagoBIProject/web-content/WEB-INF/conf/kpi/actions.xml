@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <ACTIONS>
-<!--START Kpi new interface actions -->
+<!--START Kpi new interface actions in WEB modality -->
  <ACTION name="MANAGE_KPIS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageKpisAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
@@ -25,10 +25,31 @@
  <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
- <ACTION name="SYNCHRONIZE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.SynchronizeOUsAction" scope="REQUEST">
+ <!--END Kpi new interface actions in WEB modality -->
+
+<!--START Kpi new interface actions in PORTLET modality -->
+ <ACTION name="INIT_MANAGE_KPIS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_THRESHOLDS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_MODELS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="INIT_MANAGE_PERIODICITIES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_MODEL_INSTANCES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+   <ACTION name="INIT_MANAGE_OUS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- <!--END Kpi new interface actions -->
+ <ACTION name="INIT_MANAGE_RESOURCES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END Kpi new interface actions in PORTLET modality -->
 
     <ACTION name="LOGIN_ACTION_KPI_CONFIGURATION" class="it.eng.spagobi.commons.services.PortletLoginAction"
     scope="REQUEST">
@@ -42,4 +63,10 @@
     scope="REQUEST">
     <CONFIG></CONFIG>
   </ACTION>  
+  
+ <!-- Action for organizational units synchronization --> 
+ <ACTION name="SYNCHRONIZE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.SynchronizeOUsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
 </ACTIONS>

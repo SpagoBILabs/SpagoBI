@@ -3,6 +3,9 @@
 	<MAP_ACTIONS>
 		<MAP_ACTION actionName="MANAGE_ALARMS_ACTION" businessProcess="KpiManagement" />
 		<MAP_ACTION actionName="MANAGE_CONTACTS_ACTION" businessProcess="KpiManagement" />
+		
+		<MAP_ACTION actionName="INIT_MANAGE_ALARMS_GUI_ACTION" businessProcess="KpiManagement" />
+		<MAP_ACTION actionName="INIT_MANAGE_CONTACTS_GUI_ACTION" businessProcess="KpiManagement" />
 				
 	</MAP_ACTIONS>
 	
