@@ -42,6 +42,9 @@ Sbi.browser.DocumentsTree = function(config) {
 	this.loader = new Ext.tree.TreeLoader({
         dataUrl   : this.services['loadFTreeFoldersService']
     });
+	this.loader.on('loadexception', function(loader, node, response) {
+		Sbi.exception.ExceptionHandler.handleFailure(response);
+	});
 		
     var c = Ext.apply({}, config, {
     	title            : LN('sbi.browser.documentstree.title'),
