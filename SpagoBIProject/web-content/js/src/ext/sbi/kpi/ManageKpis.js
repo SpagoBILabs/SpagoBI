@@ -96,13 +96,16 @@ Sbi.kpi.ManageKpis = function(config) {
 	}else{
 		this.fieldsDefaultWidth = 200;
 	}
+
 	this.gridColumnNumber = config.gridColumnNumber;
 	
 	this.initConfigObject();
 	
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = singleSelection;
-
+	if(config.filterWidth !== undefined){
+		config.configurationObject.filterWidth = config.filterWidth;
+	}
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.kpi.ManageKpis.superclass.constructor.call(this, c);	

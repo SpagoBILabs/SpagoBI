@@ -66,6 +66,7 @@ Sbi.kpi.ManageModelsViewPort = function(config) {
 	var c = conf;
 	c.udpEmptyList = conf.udpKpiEmptyListJSON ;
 	c.udpList = conf.udpKpiListCdt;
+	c.filterWidth = 250;
 	
     this.manageKpis = new Sbi.kpi.ManageKpis(c);
 	

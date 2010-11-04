@@ -161,6 +161,9 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
 	this.filter = conf.filter;
+	if(conf.filterWidth !== undefined){
+		this.filterWidth = conf.filterWidth;
+	}
 	
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
@@ -257,6 +260,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, singleSelection: true
 	, tabPanelWidth: null
 	, gridWidth: null
+	, filterWidth: 405
 	
 	
 	,initWidget: function(){
@@ -369,7 +373,9 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({store: this.mainElementsStore,
 	   			columnName: LN('sbi.generic.name'),
 		   		cls: 'no-pad',
-		   		columnValue: this.gridColItems[0].dataIndex});;
+		   		width: this.filterWidth,
+		   		columnValue: this.gridColItems[0].dataIndex});
+ 	  
  	  if(this.filter === undefined || ! this.filter){
  		 filteringToolbar.setVisible(false);
  	  }
@@ -382,7 +388,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-	                  //autoExpandColumn: 'name',
 	                  height: 490,
 	                  width: this.gridWidth,
 	                  scope: this,
@@ -390,8 +395,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 		              bbar: pagingBar,
 	                  tbar: this.tb,
 	                  fbar : [filteringToolbar],
-	                  footerStyle:'background-color: #D0D0D0; padding: 0; margin: 0; border: 0px; text-align: left;',
-	                  //stripeRows: true,
+	                  footerStyle:'background-color: #D0D0D0; padding: 0; margin: 0; border: 0px; empty-cells: hide; ',
 	                  enableDragDrop: true,
 	                  ddGroup: this.ddGroup,
 	                  listeners: {
