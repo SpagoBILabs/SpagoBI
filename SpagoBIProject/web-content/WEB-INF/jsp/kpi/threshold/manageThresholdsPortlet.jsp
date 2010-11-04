@@ -34,7 +34,7 @@ String backUrl = urlBuilder.getUrl(request, backUrlPars);
 	<tr class='header-row-portlet-section'>
 		<td class='header-title-column-portlet-section' 
 		    style='vertical-align:middle;padding-left:5px;'>
-			<spagobi:message key = "sbi.kpi.grantsDefinition.label" bundle="<%=messageBunle%>" />
+			<spagobi:message key = "sbi.kpi.thresholdDefinition.label" bundle="<%=messageBunle%>" />
 		</td>
 		<td class='header-empty-column-portlet-section'>&nbsp;</td>
 		<td class='header-button-column-portlet-section'>
@@ -50,13 +50,13 @@ String backUrl = urlBuilder.getUrl(request, backUrlPars);
 
 <%
 
-String url = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier)+  "&ACTION_NAME=MANAGE_OU_EMPTY_ACTION";
+String url = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier)+  "&ACTION_NAME=MANAGE_THRESHOLDS_ACTION";
 url += "&LANGUAGE=" + locale.getLanguage();
 url += "&COUNTRY=" + locale.getCountry();
 %>
 	<iframe 
-		id='grantsIframe'
-		name='grantsIframe'
+		id='thresholdsIframe'
+		name='thresholdsIframe'
 		src='<%= url %>'
 		frameBorder = 0
 		width=100%
