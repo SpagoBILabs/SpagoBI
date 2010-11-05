@@ -61,6 +61,7 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
@@ -193,7 +194,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	private boolean executionModalityScheduler = false;
 	
 	//collection of OU available and valid
-	private ArrayList<String> ouList = new ArrayList<String>();
+	private ArrayList<OrganizationalUnitGrantNode> ouList = new ArrayList<OrganizationalUnitGrantNode>();
 	private String ouWarning = null;
 
 	//Method usually called by the scheduler only in order to recalculate kpi values
@@ -655,18 +656,23 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
 				String parKpiOuLabel = (String)this.parametersObject.get("ParKpiOU");
 				logger.info("Got ParKpiOU: " + parKpiOuLabel);
-
-				setOUAbilitated(miId, parKpiOuLabel);
+				
+				String paramLabelHierarchy = (String)this.parametersObject.get("ParKpiHierarchy");
+				logger.info("Got ParKpiHierarchy: " + paramLabelHierarchy);
+				setOUAbilitated(miId, parKpiOuLabel, paramLabelHierarchy);
 				
 				if(ouList != null && !ouList.isEmpty()){
 					if(use_ou){
 						for(int i = 0; i<ouList.size(); i++){
-							String label = ouList.get(i);
+							OrganizationalUnitGrantNode grantNode = ouList.get(i);
+							String ouLabel = grantNode.getOuNode().getOu().getLabel();
+							String hierLabel = grantNode.getOuNode().getHierarchy().getLabel();
 							if(parKpiOuLabel == null){
-								this.parametersObject.put("ParKpiOU", label);
+								this.parametersObject.put("ParKpiOU", ouLabel);
+								this.parametersObject.put("ParKpiHierarchy", hierLabel);
 							}
-							OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(label);
-							kVal.setOrgUnit(ou);
+
+							kVal.setGrantNodeOU(grantNode);
 							kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
 							kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
 							if(ouWarning != null){
@@ -674,6 +680,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 							}
 							if(parKpiOuLabel == null){
 								this.parametersObject.remove("ParKpiOU");
+								this.parametersObject.remove("ParKpiHierarchy");
 							}
 						}
 					}else{
@@ -697,9 +704,12 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				}
 				if(ouList != null && !ouList.isEmpty()){
 					for(int i = 0; i<ouList.size(); i++){
-						String label = ouList.get(i);
-						OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(label);
-						kVal.setOrgUnit(ou);
+
+						OrganizationalUnitGrantNode grantNode = ouList.get(i);
+						String ouLabel = grantNode.getOuNode().getOu().getLabel();
+						String hierLabel = grantNode.getOuNode().getHierarchy().getLabel();
+
+						kVal.setGrantNodeOU(grantNode);
 						kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
 						kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
 					}
@@ -717,18 +727,22 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		//if parameter exists and OU is abilitaded for Model Instance, than calculate as dataset parameter
 		String parKpiOuLabel = (String)this.parametersObject.get("ParKpiOU");
 		logger.info("Got ParKpiOU: " + parKpiOuLabel);
-
-		setOUAbilitated(miId, parKpiOuLabel);
+		String paramLabelHierarchy = (String)this.parametersObject.get("ParKpiHierarchy");
+		logger.info("Got ParKpiHierarchy: " + paramLabelHierarchy);
+		setOUAbilitated(miId, parKpiOuLabel, paramLabelHierarchy);
 		
 
 		if(ouList != null && !ouList.isEmpty()){
 			if(use_ou){
 				for(int i = 0; i<ouList.size(); i++){
-					String ouLabel = (String)ouList.get(i);
+					OrganizationalUnitGrantNode grantNode = (OrganizationalUnitGrantNode)ouList.get(i);
+					String ouLabel =grantNode.getOuNode().getOu().getLabel();
+					String hierLabel =grantNode.getOuNode().getHierarchy().getLabel();
 					if(parKpiOuLabel == null){
 						this.parametersObject.put("ParKpiOU", ouLabel);
+						this.parametersObject.put("ParKpiHierarchy", hierLabel);
 					}
-					value = getValueDependingOnBehaviour(kpiI, miId, r, alreadyExistent , ouLabel);
+					value = getValueDependingOnBehaviour(kpiI, miId, r, alreadyExistent , grantNode);
 					line.setValue(value);
 					if(ouWarning != null){
 						value.setValueDescr(ouWarning);		
@@ -849,30 +863,33 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	 * @param miId
 	 * @param paramLabelOU
 	 */
-	private void setOUAbilitated(Integer miId, String paramLabelOU){
+	private void setOUAbilitated(Integer miId, String paramLabelOU, String paramLabelHierarchy){
 		//if paramLabelOU doesn't exist, then scheduling mode
 		//else document execution mode
-		ouList = new ArrayList<String>();
+		ouList = new ArrayList<OrganizationalUnitGrantNode>();
 		ouWarning = null;
 		//looks up for OU grants
 		List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsValidByDate(miId, dateOfKPI);
 		if(grants != null){
 			for(int i = 0; i<grants.size(); i++){				
 				OrganizationalUnitGrantNode grantNode = grants.get(i);
-				OrganizationalUnitGrant grant = grantNode.getGrant();
+				OrganizationalUnitGrant grant = grantNode.getGrant();				
+				OrganizationalUnitHierarchy hier = grant.getHierarchy();
+				String hierarchyLabel = hier.getLabel();
+
 				String label = grantNode.getOuNode().getOu().getLabel();
 
 				if(paramLabelOU == null){
 					//scheduling mode 
 					if(executionModalityScheduler){
 						//than all OU valid by date are filling
-						ouList.add(label);
+						ouList.add(grantNode);
 						ouWarning = null;
 					}else{
 						ouWarning = "Warning: kpi needed ParKpiOU parameter.";
 					}	
 				}else{
-					behaveLikeDocumentExecution(paramLabelOU, label);
+					behaveLikeDocumentExecution(paramLabelOU, paramLabelHierarchy, grantNode);
 				}
 
 
@@ -880,46 +897,48 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		}
 	}
 	//if parameter is passed, than checks if it is granted for the node
-	private void behaveLikeDocumentExecution(String paramLabelOU, String oulabel){
+	private void behaveLikeDocumentExecution(String paramLabelOU, String paramLabelHierarchy , OrganizationalUnitGrantNode grantNode) {
 		//document execution mode with parameter OU
-		if(oulabel.equals(paramLabelOU)){
-			ouList.add(paramLabelOU);
+		String hierarchyLabel = grantNode.getOuNode().getHierarchy().getLabel();
+		String oulabel = grantNode.getOuNode().getOu().getLabel();
+		if(oulabel.equals(paramLabelOU) && hierarchyLabel.equals(paramLabelHierarchy)){
+			ouList.add(grantNode);
 			ouWarning = null;
 		}else{
-			ouWarning = "Warning: wrong OU passed as parameter.";
+			ouWarning = "Warning: wrong OU/Hierarchy passed as parameters.";
 		}
 
 	}
-	private KpiValue getValueDependingOnBehaviour(KpiInstance kpiI,Integer miId, Resource r, boolean alreadyExistent, String ouLabel) throws EMFUserError, EMFInternalError, SourceBeanException{
+	private KpiValue getValueDependingOnBehaviour(KpiInstance kpiI,Integer miId, Resource r, boolean alreadyExistent, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException{
 		logger.debug("IN");
 		KpiValue value = new KpiValue();
 		boolean no_period_to_period = false;
-		OrganizationalUnit ou = null;
-		if(ouLabel != null && use_ou){
-			ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(ouLabel);
+		OrganizationalUnitGrantNode grantNodeToUse = null;
+		if(grantNode != null && use_ou){
+			grantNodeToUse = grantNode;
 		}
 		if(alreadyExistent){//use diplay behaviour since value already exists
 			logger.debug("Display behaviour");
-			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, ou);
+			value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
 			logger.debug("Old KpiValue retrieved it could be still valid or not");
 		}else{	
 			if(behaviour.equalsIgnoreCase("timeIntervalDefault")){
 				if(dateIntervalFrom!=null && dateIntervalTo!=null){
-					value = DAOFactory.getKpiDAO().getKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, ou);
+					value = DAOFactory.getKpiDAO().getKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, grantNodeToUse);
 					if (value==null){
 						IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 						logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-						value = getNewKpiValue(dataSet, kpiI, r, miId, ou);		
+						value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 					}
 				}else{
 					value = null;
 				}
 			}else if(behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
 				if(dateIntervalFrom!=null && dateIntervalTo!=null){
-					DAOFactory.getKpiDAO().deleteKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, ou);
+					DAOFactory.getKpiDAO().deleteKpiValueFromInterval(kpiI.getKpiInstanceId(), dateIntervalFrom, dateIntervalTo, r, grantNodeToUse);
 					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-					value = getNewKpiValue(dataSet, kpiI, r, miId, ou);		
+					value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 				}else{
 					value = null;
 				}
@@ -928,7 +947,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						(behaviour.equalsIgnoreCase("recalculate") && kpiI.getPeriodicityId()!=null)){//or the behaviour is recalculate and the kpiinstance has a setted periodicity
 					// the old value still valid is retrieved
 					logger.debug("Trying to retrieve the old value still valid");
-					value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, ou);
+					value = DAOFactory.getKpiDAO().getKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
 					logger.debug("Old KpiValue retrieved");		
 				}
 				if(value!=null && value.getEndDate()!=null && kpiI.getPeriodicityId()!=null){
@@ -948,11 +967,11 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 					logger.debug("Old value not valid anymore or recalculation forced");
 					IDataSet dataSet = DAOFactory.getKpiDAO().getDsFromKpiId(kpiI.getKpi());	
 					logger.info("Retrieved the Dataset to be calculated: " + (dataSet!=null ? dataSet.getId():"null"));
-					value = getNewKpiValue(dataSet, kpiI, r, miId, ou);		
+					value = getNewKpiValue(dataSet, kpiI, r, miId, grantNodeToUse);		
 
 				}else if(behaviour.equalsIgnoreCase("display")){//diplay behaviour
 					logger.debug("Display behaviour");
-					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, ou);
+					value = DAOFactory.getKpiDAO().getDisplayKpiValue(kpiI.getKpiInstanceId(), dateOfKPI, r, grantNodeToUse);
 					logger.debug("Old KpiValue retrieved it could be still valid or not");
 				} 
 			}
@@ -962,7 +981,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	}
 
 
-	public KpiValue getNewKpiValue(IDataSet dataSet, KpiInstance kpiInst, Resource r, Integer modelInstanceId, OrganizationalUnit ou) throws EMFUserError, EMFInternalError, SourceBeanException {
+	public KpiValue getNewKpiValue(IDataSet dataSet, KpiInstance kpiInst, Resource r, Integer modelInstanceId, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException {
 
 		logger.debug("IN");
 		Integer kpiInstanceID = kpiInst.getKpiInstanceId();
@@ -973,9 +992,11 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		kVal.setKpiInstanceId(kpiInstanceID);
 		logger.debug("Setted the KpiValue Instance ID:"+kpiInstanceID);	
 		logger.debug("kpiInstBegDt begin date: "+(kpiInstBegDt!=null ? kpiInstBegDt.toString(): "Begin date null"));
-		kVal.setOrgUnit(ou);
-		if(ou != null){
-			logger.debug("Setted the OU label :"+ou.getLabel());	
+		
+		if(grantNode != null){
+			kVal.setGrantNodeOU(grantNode);
+			logger.debug("Setted the OU label :"+grantNode.getOuNode().getOu().getLabel());	
+			logger.debug("Setted the hierarchy label :"+grantNode.getOuNode().getHierarchy().getLabel());	
 		}
 		if ( (dateOfKPI.after(kpiInstBegDt)||dateOfKPI.equals(kpiInstBegDt))) {
 			//kpiInstance doesn't change
@@ -1107,10 +1128,10 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		List <KpiRel> relations = DAOFactory.getKpiDAO().loadKpiRelListByParentId(kpiParent.getKpiId());
 		logger.info("extracts relations for kpi parent : "+kpiParent.getKpiName());
 		KpiDAOImpl kpiDao = (KpiDAOImpl)DAOFactory.getKpiDAO();
-		OrganizationalUnit ou = kVal.getOrgUnit();
+		OrganizationalUnitGrantNode ouGrant = kVal.getGrantNodeOU();
 		String ouLabel = "";
-		if(ou != null){
-			ouLabel = ou.getLabel();
+		if(ouGrant != null){
+			ouLabel = ouGrant.getOuNode().getOu().getLabel();
 		}
 		logger.debug("kpi inst id= "+kVal.getKpiInstanceId()+" parent kpi is "+ kpiParent.getKpiName()+" and OU :"+ ouLabel);
 		for(int i= 0; i< relations.size(); i++){

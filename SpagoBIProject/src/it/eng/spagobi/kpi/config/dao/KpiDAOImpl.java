@@ -22,7 +22,11 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
@@ -582,8 +586,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 								: "Resource name null"));
 				hibKpiValue.setSbiResources(sbiResources);
 			}
-			OrganizationalUnit ou = value.getOrgUnit();
-			if (ou != null) {
+			OrganizationalUnitGrantNode grantNode = value.getGrantNodeOU();
+			if (grantNode != null) {
+				OrganizationalUnit ou = grantNode.getOuNode().getOu();
 				SbiOrgUnit hibOU = new SbiOrgUnit();
 				hibOU.setLabel(ou.getLabel());
 				hibOU.setName(ou.getName());
@@ -594,6 +599,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						+ (ou.getName() != null ? ou.getName()
 								: "OU name null"));
 				hibKpiValue.setSbiOrgUnit(hibOU);
+				//same for hierarchy
+				OrganizationalUnitHierarchy hier = grantNode.getOuNode().getHierarchy();
+				SbiOrgUnitHierarchies hibHier = new SbiOrgUnitHierarchies();
+				hibHier.setDescription(hier.getDescription());
+				hibHier.setId(hier.getId());
+				hibHier.setLabel(hier.getLabel());
+				hibHier.setName(hier.getName());
+				hibHier.setTarget(hier.getTarget());
+				hibKpiValue.setSbiOrgUnitHierarchies(hibHier);
+				
 			}
 			hibKpiValue.setDescription(valueDescr);
 			logger.debug("Kpi value description setted");
@@ -634,7 +649,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 
 
-	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou)
+	public KpiValue getKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnitGrantNode grantNode)
 	throws EMFUserError {
 
 		logger.debug("IN");
@@ -659,8 +674,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-			if (ou != null) {
-				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			if (grantNode != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
+				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -931,8 +947,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value ID setted");
 		toReturn.setValueXml(value.getXmlData());
 		logger.debug("Kpi value XML setted");
-		toReturn.setOrgUnit(orgUnit);
-		logger.debug("Kpi value organizational unit setted");
+		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode();
+		OrganizationalUnitNode node = new OrganizationalUnitNode();
+		OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
+		OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
+		node.setOu(ou);
+		node.setHierarchy(hierarchy);
+		grantNode.setOuNode(node);
+		toReturn.setGrantNodeOU(grantNode);
+		logger.debug("Kpi value organizational unit grant node setted");
 		
 		logger.debug("OUT");
 		return toReturn;
@@ -1689,7 +1712,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return true;
 	}
 
-	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r, OrganizationalUnit ou) throws EMFUserError {
+	public KpiValue getKpiValueFromInterval(Integer kpiInstanceId, Date from, Date to, Resource r, OrganizationalUnitGrantNode grantNode) throws EMFUserError {
 		logger.debug("IN");
 		KpiValue toReturn = null;
 		Session aSession = null;
@@ -1712,8 +1735,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-			if (ou != null) {
-				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			if (grantNode != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
+				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", grantNode.getOuNode().getHierarchy().getId()));
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -1851,15 +1875,22 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value ID setted");
 		toReturn.setValueXml(value.getXmlData());
 		logger.debug("Kpi value XML setted");
-		toReturn.setOrgUnit(orgUnit);
-		logger.debug("Kpi value ou setted");
-		
+		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode();
+		OrganizationalUnitNode node = new OrganizationalUnitNode();
+		OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
+		OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
+		node.setOu(ou);
+		node.setHierarchy(hierarchy);
+		grantNode.setOuNode(node);
+		toReturn.setGrantNodeOU(grantNode);
+		logger.debug("Kpi value orgnaizational unit grant node setted");
+
 		logger.debug("OUT");
 		return toReturn;
 	}
 
 	public void deleteKpiValueFromInterval(Integer kpiInstanceId, Date from,
-			Date to, Resource r, OrganizationalUnit ou) throws EMFUserError {
+			Date to, Resource r, OrganizationalUnitGrantNode grantNode) throws EMFUserError {
 		logger.debug("IN");
 		KpiValue toReturn = null;
 		Session aSession = null;
@@ -1882,8 +1913,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (r != null) {
 				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
 			}
-			if (ou != null) {
-				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
+			if (grantNode != null) {
+				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
+				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", grantNode.getOuNode().getHierarchy().getId()));
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -1965,6 +1997,93 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logger.debug("OUT");
 			}
 		}
+		return toReturn;
+	}
+
+	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d,
+			Resource r, OrganizationalUnitGrantNode grantNode)
+			throws EMFUserError {
+		logger.debug("IN");
+		KpiValue toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
+			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
+					kpiInstanceId));
+			finder.add(Expression.le("beginDt", d));
+			finder.add(Expression.ge("endDt", d));
+			finder.addOrder(Order.desc("beginDt"));
+			finder.addOrder(Order.desc("idKpiInstanceValue"));
+			logger.debug("Order Date Criteria setted");
+			finder.setMaxResults(1);
+			logger.debug("Max result to 1 setted");
+
+			if (r != null) {
+				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
+			}
+			if (grantNode != null) {
+				Integer hierarchyId = grantNode.getOuNode().getHierarchy().getId();
+				Integer ouId = grantNode.getOuNode().getOu().getId();
+				finder.add(Expression.eq("sbiOrgUnit.id", ouId));
+				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", hierarchyId));
+			}
+/*			if (company != null) {
+				finder.add(Expression.eq("company", company));
+			}*/
+			List l = finder.list();
+			if (!l.isEmpty()) {
+				KpiValue tem = null;
+				Iterator it = l.iterator();
+				while (it.hasNext()) {
+					SbiKpiValue temp = (SbiKpiValue) it.next();
+					toReturn = toKpiValue(temp, d);
+				}
+			}else{
+				Criteria finder2 = aSession.createCriteria(SbiKpiValue.class);
+				finder2.add(Expression.eq("sbiKpiInstance.idKpiInstance",
+						kpiInstanceId));
+				finder2.add(Expression.le("beginDt", d));
+				finder2.addOrder(Order.desc("beginDt"));
+				logger.debug("Order Date Criteria setted");
+				finder2.setMaxResults(1);
+				logger.debug("Max result to 1 setted");
+
+				if (r != null) {
+					finder2.add(Expression.eq("sbiResources.resourceId", r.getId()));
+				}
+
+				List l2 = finder2.list();
+				if (!l2.isEmpty()) {
+					KpiValue tem = null;
+					Iterator it = l2.iterator();
+					while (it.hasNext()) {
+						SbiKpiValue temp = (SbiKpiValue) it.next();
+						toReturn = toKpiValue(temp, d);
+					}
+				}
+
+			}
+
+		} catch (HibernateException he) {
+
+			if (tx != null)
+				tx.rollback();
+			logger.error(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10108);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 	

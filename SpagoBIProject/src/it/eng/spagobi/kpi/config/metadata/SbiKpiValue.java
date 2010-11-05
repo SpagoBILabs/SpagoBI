@@ -3,6 +3,7 @@ package it.eng.spagobi.kpi.config.metadata;
 
 import it.eng.spagobi.kpi.model.metadata.SbiResources;
 import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies;
 
 import java.util.Date;
 
@@ -25,6 +26,8 @@ public class SbiKpiValue  implements java.io.Serializable {
      private String description;
      private String xmlData; 
      private SbiOrgUnit sbiOrgUnit;
+     private SbiOrgUnitHierarchies sbiOrgUnitHierarchies;
+     private String company;
 
     // Constructors
 
@@ -41,11 +44,13 @@ public class SbiKpiValue  implements java.io.Serializable {
         this.sbiResources = sbiResources;
     }
 	/** minimal constructor with ou*/
-    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources,SbiOrgUnit sbiOrgUnit) {
+    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources,SbiOrgUnit sbiOrgUnit, SbiOrgUnitHierarchies sbiOrgUnitHierarchies) {
         this.idKpiInstanceValue = idKpiInstanceValue;
         this.sbiKpiInstance = sbiKpiInstance;
         this.sbiResources = sbiResources;
         this.sbiOrgUnit = sbiOrgUnit;
+        this.sbiOrgUnit = sbiOrgUnit;
+        this.sbiOrgUnitHierarchies = sbiOrgUnitHierarchies;
     } 
     /** full constructor */
     public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources, String value, Date beginDt, Date endDt, String description, String xmlData) {
@@ -60,7 +65,10 @@ public class SbiKpiValue  implements java.io.Serializable {
     }
     
     /** full constructor */
-    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources, String value, Date beginDt, Date endDt, String description, String xmlData, SbiOrgUnit sbiOrgUnit) {
+    public SbiKpiValue(Integer idKpiInstanceValue, SbiKpiInstance sbiKpiInstance, SbiResources sbiResources, String value, Date beginDt, Date endDt, String description, String xmlData, 
+    					SbiOrgUnit sbiOrgUnit,
+    					SbiOrgUnitHierarchies sbiOrgUnitHierarchies,
+    					String company) {
         this.idKpiInstanceValue = idKpiInstanceValue;
         this.sbiKpiInstance = sbiKpiInstance;
         this.sbiResources = sbiResources;
@@ -70,6 +78,8 @@ public class SbiKpiValue  implements java.io.Serializable {
         this.description = description;
         this.xmlData = xmlData;
         this.sbiOrgUnit = sbiOrgUnit;
+        this.sbiOrgUnitHierarchies = sbiOrgUnitHierarchies;
+        this.company = company;
     }
    
     // Property accessors
@@ -144,6 +154,22 @@ public class SbiKpiValue  implements java.io.Serializable {
 
 	public void setSbiOrgUnit(SbiOrgUnit sbiOrgUnit) {
 		this.sbiOrgUnit = sbiOrgUnit;
+	}
+
+	public SbiOrgUnitHierarchies getSbiOrgUnitHierarchies() {
+		return sbiOrgUnitHierarchies;
+	}
+
+	public void setSbiOrgUnitHierarchies(SbiOrgUnitHierarchies sbiOrgUnitHierarchies) {
+		this.sbiOrgUnitHierarchies = sbiOrgUnitHierarchies;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
 	}
 
 }

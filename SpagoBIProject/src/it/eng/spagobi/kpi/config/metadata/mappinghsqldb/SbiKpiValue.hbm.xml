@@ -19,6 +19,9 @@
         <many-to-one name="sbiOrgUnit" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit" >
             <column name="ORG_UNIT_ID"  />
         </many-to-one>
+        <many-to-one name="sbiOrgUnitHierarchies" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies" >
+            <column name="HIERARCHY_ID"  />
+        </many-to-one>
         <property name="value" type="string">
             <column name="VALUE" length="40" />
         </property>
@@ -33,6 +36,9 @@
         </property>
         <property name="xmlData" type="string">
             <column name="XML_DATA" />
+        </property>
+        <property name="company" type="string">
+            <column name="COMPANY" length="200" />
         </property>
     </class>
 </hibernate-mapping>
