@@ -4,6 +4,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
 import java.awt.Color;
@@ -32,7 +33,7 @@ public class KpiValue implements Cloneable{
 	String scaleName = null;
 	Resource r = null;//Resource (project/process) to which refers the value
 	String chartType = null;
-	OrganizationalUnit orgUnit = null;
+	OrganizationalUnitGrantNode grantNodeOU = null;
 
 	/**
 	 * This function returns the value of the attribute required, if existent in the xml field
@@ -288,16 +289,18 @@ public class KpiValue implements Cloneable{
 		 toReturn.setValueDescr(valueDescr);
 		 toReturn.setValueXml(valueXml);
 		 toReturn.setWeight(weight);
-		 toReturn.setOrgUnit(orgUnit);
+		 toReturn.setGrantNodeOU(grantNodeOU);
 		 return toReturn;
 	}
 
-	public OrganizationalUnit getOrgUnit() {
-		return orgUnit;
+
+
+	public OrganizationalUnitGrantNode getGrantNodeOU() {
+		return grantNodeOU;
 	}
 
-	public void setOrgUnit(OrganizationalUnit orgUnit) {
-		this.orgUnit = orgUnit;
+	public void setGrantNodeOU(OrganizationalUnitGrantNode grantNodeOU) {
+		this.grantNodeOU = grantNodeOU;
 	}
 
 	public Integer getKpiValueId() {
