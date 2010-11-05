@@ -50,7 +50,7 @@ public class OrganizationalUnitListProviderMock extends
 		Node<OrganizationalUnit> rootNode = new Node<OrganizationalUnit>(root, S + root.getLabel(), null);
 		Tree<OrganizationalUnit> toReturn = new Tree<OrganizationalUnit>(rootNode);
 		
-		if (hierarchy.getLabel().equals("h2")) {
+		if (hierarchy.getLabel().equals("AZ1 - h2")) {
 			
 			Node<OrganizationalUnit> nodeo2 = new Node<OrganizationalUnit>(o2, rootNode.getPath() + S + o2.getLabel(), rootNode);
 			Node<OrganizationalUnit> nodeo2o1 = new Node<OrganizationalUnit>(o2o1, nodeo2.getPath() + S + o2o1.getLabel(), nodeo2);
