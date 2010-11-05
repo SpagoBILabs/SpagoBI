@@ -19,6 +19,7 @@ public class SbiOrgUnitHierarchies  implements java.io.Serializable {
      private String name;
      private String description;
      private String target;
+     private String company;
      private Set sbiOrgUnitNodeses = new HashSet(0);
      private Set sbiOrgUnitGrants = new HashSet(0);
 
@@ -90,6 +91,14 @@ public class SbiOrgUnitHierarchies  implements java.io.Serializable {
         this.target = target;
     }
 
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getCompany() {
+        return this.company;
+    }
+    
     public Set getSbiOrgUnitNodeses() {
         return this.sbiOrgUnitNodeses;
     }

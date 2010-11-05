@@ -31,8 +31,8 @@ public class OrganizationalUnitListProviderMock extends
 	OrganizationalUnit o3o1o2 = new OrganizationalUnit(null, "o3o1o2", "o3o1o2", null);
 	OrganizationalUnit o3o1o3 = new OrganizationalUnit(null, "o3o1o3", "o3o1o3", null);
 
-	OrganizationalUnitHierarchy h1 = new OrganizationalUnitHierarchy(null, "h1", "h1", null, null);
-	OrganizationalUnitHierarchy h2 = new OrganizationalUnitHierarchy(null, "h2", "h2", null, null);
+	OrganizationalUnitHierarchy h1 = new OrganizationalUnitHierarchy(null, "h1", "h1", null, null, "AZ1");
+	OrganizationalUnitHierarchy h2 = new OrganizationalUnitHierarchy(null, "h2", "h2", null, null, "AZ1");
 	
 	
 	@Override

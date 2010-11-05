@@ -2886,6 +2886,7 @@ public class ExporterMetadata {
 			hibHier.setLabel(hier.getLabel());
 			hibHier.setName(hier.getName());
 			hibHier.setTarget(hier.getTarget());
+			hibHier.setCompany(hier.getCompany());
 
 			Transaction tx = session.beginTransaction();
 			session.save(hibHier);

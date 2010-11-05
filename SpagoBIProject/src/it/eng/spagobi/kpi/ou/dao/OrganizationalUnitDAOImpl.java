@@ -816,7 +816,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 	public OrganizationalUnitHierarchy toOrganizationalUnitHierarchy(SbiOrgUnitHierarchies hibOrgUnitHierarchies){
 		OrganizationalUnitHierarchy hierarchy = new OrganizationalUnitHierarchy(hibOrgUnitHierarchies.getId(), 
 				hibOrgUnitHierarchies.getLabel(), hibOrgUnitHierarchies.getName(), hibOrgUnitHierarchies.getDescription(), 
-				hibOrgUnitHierarchies.getTarget());
+				hibOrgUnitHierarchies.getTarget(), hibOrgUnitHierarchies.getCompany());
 		return hierarchy;
 	}
 	

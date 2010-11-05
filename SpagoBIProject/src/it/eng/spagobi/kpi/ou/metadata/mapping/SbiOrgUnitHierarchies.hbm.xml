@@ -20,6 +20,9 @@
         <property name="target" type="string">
             <column name="TARGET" length="1000" />
         </property>
+        <property name="company" type="string">
+            <column name="COMPANY" length="200" />
+        </property>
         <set name="sbiOrgUnitNodeses" inverse="true">
             <key>
                 <column name="HIERARCHY_ID" not-null="true" />

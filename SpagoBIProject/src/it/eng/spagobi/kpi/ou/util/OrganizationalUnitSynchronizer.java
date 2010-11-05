@@ -62,6 +62,8 @@ public class OrganizationalUnitSynchronizer {
         try {
         	OrganizationalUnitListProvider provider = getProvider();
         	logger.debug("OrganizationalUnitListProvider retrieved: " + provider);
+        	adjustHierarchies(provider);
+        	logger.debug("Hierarchies' names adjusted");
         	synchronizeOU(provider);
         	logger.debug("OU synchronized");
         	synchronizeHierarchies(provider);
@@ -71,6 +73,29 @@ public class OrganizationalUnitSynchronizer {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	/**
+	 * Adjust hierarchies' label in order to have the label starting with the company name
+	 * @param provider The Organizational Units info provider
+	 */
+	private void adjustHierarchies(OrganizationalUnitListProvider provider) {
+		logger.debug("IN: provider = " + provider);
+		List<OrganizationalUnitHierarchy> newHierarchies = provider.getHierarchies();
+		logger.debug("Hierarchies retrieved by the provider:");
+		logger.debug(newHierarchies);
+		Iterator<OrganizationalUnitHierarchy> it = newHierarchies.iterator();
+		while (it.hasNext()) {
+			OrganizationalUnitHierarchy h = it.next();
+			String label = h.getLabel();
+			String company = h.getCompany();
+			logger.debug("Hierarchy label = [" + label + "], company = [" + company + "]");
+			if (company != null && !company.trim().equals("") && !label.startsWith(company + " - ")) {
+				h.setLabel(company + " - " + label);
+				logger.info("Hierarchy label modified : new label is [" + label + "]");
+			}
+		}
+		logger.debug("OUT");
 	}
 
 	private void synchronizeHierarchiesStructure(

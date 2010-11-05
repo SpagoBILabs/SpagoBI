@@ -38,6 +38,7 @@ public class OrganizationalUnitHierarchy {
 	private String name;
 	private String description;
 	private String target;
+	private String company;
 
 
     // Constructors
@@ -47,19 +48,20 @@ public class OrganizationalUnitHierarchy {
     }
 
 	/** minimal constructor */
-    public OrganizationalUnitHierarchy(Integer id, String label,String name) {
+    public OrganizationalUnitHierarchy(Integer id, String label, String name) {
         this.id = id;
         this.label = label;
         this.name = name;
     }
     
     /** full constructor */
-    public OrganizationalUnitHierarchy(Integer id, String label, String name, String description, String target) {
+    public OrganizationalUnitHierarchy(Integer id, String label, String name, String description, String target, String company) {
         this.id = id;
         this.label = label;
         this.name = name;
         this.description = description;
         this.target = target;
+        this.company = company;
     }
     
 
@@ -106,11 +108,19 @@ public class OrganizationalUnitHierarchy {
         this.target = target;
     }
     
+    public String getCompany() {
+        return this.company;
+    }
+    
+    public void setCompany(String company) {
+        this.company = company;
+    }
+    
     @Override
 	public String toString() {
 		return "OrganizationalUnitHierarchy [id=" + id + ", label=" + label
 				+ ", name=" + name + ", description=" + description
-				+ ", target=" + target + "]";
+				+ ", target=" + target + ", company=" + company + "]";
 	}
 
 	@Override
@@ -148,6 +158,11 @@ public class OrganizationalUnitHierarchy {
 			if (other.target != null)
 				return false;
 		} else if (!target.equals(other.target))
+			return false;
+		if (company == null) {
+			if (other.company != null)
+				return false;
+		} else if (!company.equals(other.company))
 			return false;
 		return true;
 	}
