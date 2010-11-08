@@ -354,6 +354,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibHierarchy.setName(h.getName());
 			hibHierarchy.setDescription(h.getDescription());
 			hibHierarchy.setTarget(h.getTarget());
+			hibHierarchy.setCompany(h.getCompany());
 
 			aSession.save(hibHierarchy);
 			
@@ -380,7 +381,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibHierarchy.setName(h.getName());
 			hibHierarchy.setDescription(h.getDescription());
 			hibHierarchy.setTarget(h.getTarget());
-
+			hibHierarchy.setCompany(h.getCompany());
+			
 			aSession.save(hibHierarchy);
 			
 			tx.commit();
