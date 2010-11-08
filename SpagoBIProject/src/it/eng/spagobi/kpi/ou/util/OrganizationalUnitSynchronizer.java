@@ -316,6 +316,7 @@ public class OrganizationalUnitSynchronizer {
 					h.setName(newHierarchy.getName());
 					h.setDescription(newHierarchy.getDescription());
 					h.setTarget(newHierarchy.getTarget());
+					h.setCompany(newHierarchy.getCompany());
 					DAOFactory.getOrganizationalUnitDAO().modifyHierarchy(h);
 					logger.debug("Hierarchy updated: " + h);
 				}
