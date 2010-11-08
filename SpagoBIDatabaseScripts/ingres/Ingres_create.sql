@@ -742,6 +742,9 @@ Create table SBI_KPI_VALUE (
 	END_DT Date,
 	DESCRIPTION Varchar(100),
 	XML_DATA Long nvarchar,
+	ORG_UNIT_ID Integer,
+	HIERARCHY_ID Integer,
+	COMPANY Varchar(200),
 Primary Key (id_kpi_instance_value)
 ) ;\p\g
 CREATE SEQUENCE SBI_KPI_MODEL_INST_SEQ;\p\g
@@ -759,7 +762,14 @@ Create table SBI_KPI_MODEL_INST (
 UNIQUE(LABEL),	
 Primary Key (KPI_MODEL_INST)
 ) ;\p\g
-
+CREATE SEQUENCE SBI_KPI_REL_SEQ;\p\g
+CREATE TABLE SBI_KPI_REL (
+  KPI_REL_ID INTEGER NOT NULL with default next value for SBI_KPI_REL_SEQ,
+  KPI_FATHER_ID INTEGER  NOT NULL,
+  KPI_CHILD_ID INTEGER  NOT NULL,
+  PARAMETER VARCHAR(100) NULL,
+  PRIMARY KEY (KPI_REL_ID)
+);\p\g
 CREATE SEQUENCE SBI_RESOURCES_SEQ;\p\g
 Create table SBI_RESOURCES (
 	RESOURCE_ID Integer NOT NULL with default next value for SBI_RESOURCES_SEQ,
