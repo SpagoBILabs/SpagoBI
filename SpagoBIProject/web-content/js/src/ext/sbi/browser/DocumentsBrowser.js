@@ -133,7 +133,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	   'beforetabchange',
 	   function (tabPanel, newTab, currentTab ) {
 	//	   alert('tabPanel: ' + tabPanel + ' newTab: ' + newTab + ' currentTab: ' + currentTab);
-		    if(currentTab && currentTab.activeDocument) {
+		    if(currentTab && currentTab.activeDocument && currentTab.activeDocument.documentExecutionPage) {
 		    	currentTab.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore', 'hide');
 		    }
 		    if(newTab.activeDocument && newTab.activeDocument.documentExecutionPage){
