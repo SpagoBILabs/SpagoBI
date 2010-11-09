@@ -607,7 +607,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				hibHier.setLabel(hier.getLabel());
 				hibHier.setName(hier.getName());
 				hibHier.setTarget(hier.getTarget());
+				hibHier.setCompany(hier.getCompany());
+				
 				hibKpiValue.setSbiOrgUnitHierarchies(hibHier);
+				//inserts company too as standalone column field
+				hibKpiValue.setCompany(hier.getCompany());
 				
 			}
 			hibKpiValue.setDescription(valueDescr);
@@ -676,7 +680,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 			if (grantNode != null) {
 				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
-				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
+				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", grantNode.getOuNode().getHierarchy().getId()));
+				if(grantNode.getOuNode().getHierarchy().getCompany() != null){
+					finder.add(Expression.eq("company", grantNode.getOuNode().getHierarchy().getCompany()));
+				}
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -705,86 +712,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("OUT");
 		return toReturn;
 	}
-
-	public KpiValue getDisplayKpiValue(Integer kpiInstanceId, Date d, Resource r, OrganizationalUnit ou) throws EMFUserError{
-		logger.debug("IN");
-		KpiValue toReturn = null;
-		Session aSession = null;
-		Transaction tx = null;
-
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiKpiValue.class);
-			finder.add(Expression.eq("sbiKpiInstance.idKpiInstance",
-					kpiInstanceId));
-			finder.add(Expression.le("beginDt", d));
-			finder.add(Expression.ge("endDt", d));
-			finder.addOrder(Order.desc("beginDt"));
-			finder.addOrder(Order.desc("idKpiInstanceValue"));
-			logger.debug("Order Date Criteria setted");
-			finder.setMaxResults(1);
-			logger.debug("Max result to 1 setted");
-
-			if (r != null) {
-				finder.add(Expression.eq("sbiResources.resourceId", r.getId()));
-			}
-			if (ou != null) {
-				finder.add(Expression.eq("sbiOrgUnit.id", ou.getId()));
-			}
-			List l = finder.list();
-			if (!l.isEmpty()) {
-				KpiValue tem = null;
-				Iterator it = l.iterator();
-				while (it.hasNext()) {
-					SbiKpiValue temp = (SbiKpiValue) it.next();
-					toReturn = toKpiValue(temp, d);
-				}
-			}else{
-				Criteria finder2 = aSession.createCriteria(SbiKpiValue.class);
-				finder2.add(Expression.eq("sbiKpiInstance.idKpiInstance",
-						kpiInstanceId));
-				finder2.add(Expression.le("beginDt", d));
-				finder2.addOrder(Order.desc("beginDt"));
-				logger.debug("Order Date Criteria setted");
-				finder2.setMaxResults(1);
-				logger.debug("Max result to 1 setted");
-
-				if (r != null) {
-					finder2.add(Expression.eq("sbiResources.resourceId", r.getId()));
-				}
-
-				List l2 = finder2.list();
-				if (!l2.isEmpty()) {
-					KpiValue tem = null;
-					Iterator it = l2.iterator();
-					while (it.hasNext()) {
-						SbiKpiValue temp = (SbiKpiValue) it.next();
-						toReturn = toKpiValue(temp, d);
-					}
-				}
-
-			}
-
-		} catch (HibernateException he) {
-
-			if (tx != null)
-				tx.rollback();
-			logger.error(he);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 10108);
-
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
-		}
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-
 
 	private KpiValue toKpiValue(SbiKpiValue value, Date d) throws EMFUserError {
 
@@ -821,14 +748,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					+ (r.getColumn_name() != null ? r.getColumn_name()
 							: "resource name null"));
 		}
-		SbiOrgUnit sbiOrgUnit = value.getSbiOrgUnit();
-		OrganizationalUnit orgUnit = null;
-		if(sbiOrgUnit != null){
-			orgUnit = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(sbiOrgUnit.getId());	
-			logger.debug("SbiKpiValue ou: "
-					+ (orgUnit.getName() != null ? orgUnit.getName()
-							: "ou name null"));
-		}
+
 		kpiInstanceID = value.getSbiKpiInstance().getIdKpiInstance();
 		logger.debug("SbiKpiValue kpiInstanceID: "
 				+ (kpiInstanceID != null ? kpiInstanceID.toString()
@@ -956,7 +876,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		grantNode.setOuNode(node);
 		toReturn.setGrantNodeOU(grantNode);
 		logger.debug("Kpi value organizational unit grant node setted");
-		
+
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -1738,6 +1658,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (grantNode != null) {
 				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
 				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", grantNode.getOuNode().getHierarchy().getId()));
+				if(grantNode.getOuNode().getHierarchy().getCompany() != null){
+					finder.add(Expression.eq("company", grantNode.getOuNode().getHierarchy().getCompany()));
+				}
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -1916,6 +1839,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (grantNode != null) {
 				finder.add(Expression.eq("sbiOrgUnit.id", grantNode.getOuNode().getOu().getId()));
 				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", grantNode.getOuNode().getHierarchy().getId()));
+				if(grantNode.getOuNode().getHierarchy().getCompany() != null){
+					finder.add(Expression.eq("company", grantNode.getOuNode().getHierarchy().getCompany()));
+				}
 			}
 			List l = finder.list();
 			if (!l.isEmpty()) {
@@ -2031,6 +1957,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Integer ouId = grantNode.getOuNode().getOu().getId();
 				finder.add(Expression.eq("sbiOrgUnit.id", ouId));
 				finder.add(Expression.eq("sbiOrgUnitHierarchies.id", hierarchyId));
+				if(grantNode.getOuNode().getHierarchy().getCompany() != null){
+					finder.add(Expression.eq("company", grantNode.getOuNode().getHierarchy().getCompany()));
+				}
 			}
 /*			if (company != null) {
 				finder.add(Expression.eq("company", company));

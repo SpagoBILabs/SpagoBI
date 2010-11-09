@@ -277,7 +277,8 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						logger.info("-------Resource: " + r.getName());
 						KpiResourceBlock block = new KpiResourceBlock();
 						block.setR(r);
-						block.setD(dateOfKPI);
+
+				block.setD(dateOfKPI);
 						block.setOptions(options);
 						KpiLine line = getBlock(mI.getModelInstanceNodeId(), r);
 						block.setRoot(line);

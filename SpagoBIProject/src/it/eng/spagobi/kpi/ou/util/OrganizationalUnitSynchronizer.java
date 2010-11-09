@@ -158,7 +158,10 @@ public class OrganizationalUnitSynchronizer {
 		aNode.setHierarchy(hierarchy);
 		OrganizationalUnit content = node.getNodeContent();
 		content = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(content.getLabel());
-		aNode.setOu(node.getNodeContent());
+		if(content == null){
+			//then insert it!!
+		}
+		aNode.setOu(content);
 		aNode.setPath(node.getPath());
 		if (parent != null) {
 			OrganizationalUnitNode parentNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(parent.getPath(), hierarchy.getId());
