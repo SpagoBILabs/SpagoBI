@@ -13,7 +13,7 @@ public class OrganizationalUnitListProviderMock extends
 		OrganizationalUnitListProvider {
 	
 	String S = Tree.NODES_PATH_SEPARATOR;
-	
+
 	OrganizationalUnit root = new OrganizationalUnit(null, "root", "root", null);
 	OrganizationalUnit o1 = new OrganizationalUnit(null, "o1", "o1", null);
 	OrganizationalUnit o2 = new OrganizationalUnit(null, "o2", "o2", null);
@@ -111,6 +111,12 @@ public class OrganizationalUnitListProviderMock extends
 		toReturn.add(o3o1o2);
 		toReturn.add(o3o1o3);
 		return toReturn;
+	}
+
+	@Override
+	public void initialize() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -32,6 +32,8 @@ import java.util.List;
  */
 public abstract class OrganizationalUnitListProvider {
 
+	public abstract void initialize();
+	
 	public abstract List<OrganizationalUnit> getOrganizationalUnits();
 	
 	public abstract List<OrganizationalUnitHierarchy> getHierarchies();
