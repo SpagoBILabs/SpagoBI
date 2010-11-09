@@ -75,9 +75,6 @@ Sbi.console.GridPanel = function(config) {
 		filterConfig.executionContext = c.executionContext;
 		Ext.apply(this, c);
 		
-		
-		
-		
 		this.initServices();
 		this.initStore();		
 		this.initColumnModel();
@@ -371,6 +368,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	}
 	
 	, startProcess: function(action, r, index, options) {
+		//alert('startProcess');
 		if(action.isChecked(r)) {
 			Sbi.Msg.showWarning('Process is already running');
 			return;
@@ -812,13 +810,14 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		} else if (inlineActionColumnConfig.name === 'start'){	
 			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
 			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
-			//inlineActionColumnConfig.toggleOnClick = false;
-			inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
+			inlineActionColumnConfig.toggleOnClick = false;
+			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.startProcess;
 			inlineActionColumnConfig.isChecked = function(record) {
 				var v, active;
 				if(this.isBoundToColumn()) {
 					v = this.getBoundColumnValue(record);
+				//	alert('myIsCHecked-v: ' + v);
 			    	active = (v != 0);
 				}
 				
@@ -838,8 +837,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		} else if (inlineActionColumnConfig.name === 'stop'){			
 			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
 			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
-			//inlineActionColumnConfig.toggleOnClick = false;
-			inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
+			inlineActionColumnConfig.toggleOnClick = false;
+			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.stopProcess;
 			inlineActionColumnConfig.isChecked = function(record) {
 				var v, active;
