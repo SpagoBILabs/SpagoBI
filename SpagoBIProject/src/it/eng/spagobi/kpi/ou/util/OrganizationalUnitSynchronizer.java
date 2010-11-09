@@ -159,7 +159,9 @@ public class OrganizationalUnitSynchronizer {
 		OrganizationalUnit content = node.getNodeContent();
 		content = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(content.getLabel());
 		if(content == null){
-			//then insert it!!
+			//then insert it!!there could be a misalignment
+			DAOFactory.getOrganizationalUnitDAO().insertOrganizationalUnit(node.getNodeContent());
+			content = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(node.getNodeContent().getLabel());
 		}
 		aNode.setOu(content);
 		aNode.setPath(node.getPath());
