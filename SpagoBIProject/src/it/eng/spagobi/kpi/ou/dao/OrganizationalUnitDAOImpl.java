@@ -287,10 +287,10 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibOU.setDescription(ou.getDescription());
 
 			aSession.save(hibOU);
-			
+			tx.commit();
 			ou.setId(hibOU.getId());
 			
-			tx.commit();
+			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -358,9 +358,8 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 
 			aSession.save(hibHierarchy);
 			
-			h.setId(hibHierarchy.getId());
-			
 			tx.commit();
+			h.setId(hibHierarchy.getId());
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -382,7 +381,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibHierarchy.setDescription(h.getDescription());
 			hibHierarchy.setTarget(h.getTarget());
 			hibHierarchy.setCompany(h.getCompany());
-			
+
 			aSession.save(hibHierarchy);
 			
 			tx.commit();
@@ -489,10 +488,11 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			}
 
 			aSession.save(hibNode);
+			tx.commit();
 			
 			aNode.setNodeId(hibNode.getNodeId());
 			
-			tx.commit();
+			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -530,10 +530,11 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibGrant.setSbiKpiModelInst(s);
 			
 			aSession.save(hibGrant);
+			tx.commit();
 			
 			grant.setId(hibGrant.getId());
 			
-			tx.commit();
+			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
