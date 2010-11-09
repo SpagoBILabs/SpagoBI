@@ -131,12 +131,8 @@ Sbi.console.ConsolePanel = function(config) {
 	onhostmessage(this.exportConsole, this, false, 'export');
 	
 	//set message tag for the dynamic management of refresh of datasources
-//	if(this.onhostmessage){
-		onhostmessage(this.onHide, this, false, 'hide');
-		onhostmessage(this.onShow, this, false, 'show');
-//	}
-	
-	
+	onhostmessage(this.onHide, this, false, 'hide');
+	onhostmessage(this.onShow, this, false, 'show');
 };
 
 Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
@@ -204,7 +200,5 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 	, onShow: function(datasetConfig){
 		this.storeManager.activeRefresh(false);
 	}
-	//------------------ FINE TEST ANTO -------------------
-    
     
 });
