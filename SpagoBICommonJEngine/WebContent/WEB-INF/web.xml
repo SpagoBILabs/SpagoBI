@@ -129,35 +129,16 @@ END-CAS -->
     	<filter-name>SpagoBIAccessFilter</filter-name>
     	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
-	
-	<!--
-	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/WorkRunServlet/*</url-pattern>
-	</filter-mapping> 
-	 -->
 	 
 	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/EngineInfoService/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/version/*</url-pattern>
-	</filter-mapping>	
-	<filter-mapping>
-    	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/WorkRunServletBackEnd/*</url-pattern>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
 	</filter-mapping>	
 
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
-	<!--<servlet>
-		<servlet-name>WorkRunServlet</servlet-name>
-		<servlet-class>it.eng.spagobi.engines.commonj.services.WorkRunServlet</servlet-class>
-	</servlet>
-	 -->
+
 	 
 		<servlet>
 		<servlet-name>AdapterHTTP</servlet-name>
@@ -210,7 +191,11 @@ END-CAS -->
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
 	</servlet-mapping>
-	
+	<servlet-mapping>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+	</servlet-mapping>
+  	
 	 <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
