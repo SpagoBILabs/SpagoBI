@@ -62,6 +62,8 @@ public class OrganizationalUnitSynchronizer {
         try {
         	OrganizationalUnitListProvider provider = getProvider();
         	logger.debug("OrganizationalUnitListProvider retrieved: " + provider);
+        	provider.initialize();
+        	logger.debug("Provider Initialized");
         	adjustHierarchies(provider);
         	logger.debug("Hierarchies' names adjusted");
         	synchronizeOU(provider);
@@ -154,6 +156,8 @@ public class OrganizationalUnitSynchronizer {
 		logger.debug("IN: node = " + node + ", parent = " + parent + ", hierarchy = " + hierarchy);
 		OrganizationalUnitNode aNode = new OrganizationalUnitNode();
 		aNode.setHierarchy(hierarchy);
+		OrganizationalUnit content = node.getNodeContent();
+		content = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitByLabel(content.getLabel());
 		aNode.setOu(node.getNodeContent());
 		aNode.setPath(node.getPath());
 		if (parent != null) {
