@@ -44,9 +44,9 @@ public interface IOrganizationalUnitDAO {
 	 */
 	public OrganizationalUnit getOrganizationalUnit(Integer id);
 	/**
-	 * @return the OU with the given label
+	 * @return the OU with the given label and name (unique key)
 	 */
-	public OrganizationalUnit getOrganizationalUnitByLabel(String label);	
+	public OrganizationalUnit getOrganizationalUnitByLabelAndName(String label, String name);	
 	/**
 	 * Removes the organizational unit
 	 */

@@ -867,16 +867,17 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return grantNode;
 	}
 
-	public OrganizationalUnit getOrganizationalUnitByLabel(String label) {
-		logger.debug("IN: label = " + label);
+	public OrganizationalUnit getOrganizationalUnitByLabelAndName(String label, String name) {
+		logger.debug("IN: label = " + label+" name = "+name);
 		OrganizationalUnit toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession.createQuery(" from SbiOrgUnit o where o.label = ?");
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnit o where o.label = ? and o.name = ?");
 			hibQuery.setString(0, label);
+			hibQuery.setString(1, name);
 			SbiOrgUnit hibOU = (SbiOrgUnit)hibQuery.uniqueResult();
 
 			toReturn = toOrganizationalUnit(hibOU);
