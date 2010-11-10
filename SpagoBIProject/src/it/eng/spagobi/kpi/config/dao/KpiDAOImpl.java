@@ -869,12 +869,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value XML setted");
 		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode();
 		OrganizationalUnitNode node = new OrganizationalUnitNode();
-		OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
-		OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
-		node.setOu(ou);
-		node.setHierarchy(hierarchy);
-		grantNode.setOuNode(node);
-		toReturn.setGrantNodeOU(grantNode);
+		if(value.getSbiOrgUnit() != null){
+			OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
+			node.setOu(ou);
+		}
+		if(value.getSbiOrgUnitHierarchies() != null){
+			OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
+			node.setHierarchy(hierarchy);
+		}
+		if(value.getSbiOrgUnit() != null && value.getSbiOrgUnitHierarchies() != null){
+			grantNode.setOuNode(node);
+			toReturn.setGrantNodeOU(grantNode);
+		}
+
 		logger.debug("Kpi value organizational unit grant node setted");
 
 		logger.debug("OUT");
@@ -1798,14 +1805,21 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		logger.debug("Kpi value ID setted");
 		toReturn.setValueXml(value.getXmlData());
 		logger.debug("Kpi value XML setted");
+
 		OrganizationalUnitGrantNode grantNode = new OrganizationalUnitGrantNode();
 		OrganizationalUnitNode node = new OrganizationalUnitNode();
-		OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
-		OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
-		node.setOu(ou);
-		node.setHierarchy(hierarchy);
-		grantNode.setOuNode(node);
-		toReturn.setGrantNodeOU(grantNode);
+		if(value.getSbiOrgUnit() != null){
+			OrganizationalUnit ou = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnit(value.getSbiOrgUnit().getId());
+			node.setOu(ou);
+		}
+		if(value.getSbiOrgUnitHierarchies() != null){
+			OrganizationalUnitHierarchy hierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(value.getSbiOrgUnitHierarchies().getId());
+			node.setHierarchy(hierarchy);
+		}
+		if(value.getSbiOrgUnit() != null && value.getSbiOrgUnitHierarchies() != null){
+			grantNode.setOuNode(node);
+			toReturn.setGrantNodeOU(grantNode);
+		}
 		logger.debug("Kpi value orgnaizational unit grant node setted");
 
 		logger.debug("OUT");
