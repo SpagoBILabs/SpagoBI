@@ -357,7 +357,7 @@ public class ExecutionProxy {
 		}
 		logger.debug("Engine url is " + urlEngine);
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
-		resolveRelativeUrls(urlEngine);
+		urlEngine=resolveRelativeUrls(urlEngine);
 		// ADD this extension because this is a BackEnd engine invocation
 		urlEngine = urlEngine + backEndExtension;
 		logger.debug("OUT: returning " + urlEngine);
