@@ -158,7 +158,7 @@ END-LIFERAY -->
      <!--  Ingres: Uncomment the row below and edit the file to provide connection info -->
      <!--   hibernate.cfg.ingres.xml -->
      
-	 <HIBERNATE-CFGFILE>hibernate.cfg.hsql.xml</HIBERNATE-CFGFILE>
+	 <HIBERNATE-CFGFILE>hibernate.cfg.mysql.xml</HIBERNATE-CFGFILE>
 	
      <!-- ********************* END DATABASE CONFIGURATION ************************ -->
      
