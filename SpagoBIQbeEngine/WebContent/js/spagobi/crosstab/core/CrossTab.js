@@ -1860,6 +1860,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    var freshChild;
 		    var measurePosition;
 		    if(headers.length>=3){//if there are more than one level
+		    	//calculate the partial sum and prepare the header of the level above the measures
 		    	var i = headers.length-3;
 		        for(var j=0; j<headers[i].length; j++){
 
@@ -1892,9 +1893,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					    }
 					    
 					    if(headers[i][0].horizontal){
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, null , headers[i][0].height);
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, null , headers[headers.length-2][0].height);
 					    }else{
-					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, headers[i][0].width, null);	
+					    	partialTotalNode = new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), measuresNames.length, headers[i][0].horizontal, headers.length-2, headers[headers.length-2][0].width, null);	
 					    }
 					    partialTotalNode.type = 'partialsum';
 					    partialTotalNode.father = headers[i][j];
@@ -1913,6 +1914,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 				    }
 		        }
 		        
+		        //build the headres of all the others levels
 		        var measuresSum = new Array();
 		        var lineCount=0;
 		        for(var k=i; k>0; k--){
