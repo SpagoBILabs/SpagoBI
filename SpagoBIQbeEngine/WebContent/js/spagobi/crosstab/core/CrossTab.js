@@ -437,16 +437,26 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
 
      //Adds the listeners to the header
-    , setHeaderListener: function(header){
-     
-    	header.addListener({render: function(theHeader) {
-			// open the show/hide dialog
-    		theHeader.el.on('click', this.headerClickHandler.createDelegate(this, [theHeader], true), this);
-			//color the rows/columns when the mouse enter in the header
-    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader], true), this);
-    		theHeader.el.on('mouseleave', this.headerMouseleaveHandler.createDelegate(this, [theHeader], true), this);
-			}, scope: this
-	  	});
+    , setHeaderListener: function(header, noMenu){
+    	
+
+    	if(noMenu){
+	    	header.addListener({render: function(theHeader) {
+				//color the rows/columns when the mouse enter in the header
+	    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader], true), this);
+	    		theHeader.el.on('mouseleave', this.headerMouseleaveHandler.createDelegate(this, [theHeader], true), this);
+				}, scope: this
+		  	});
+    	}else{
+	    	header.addListener({render: function(theHeader) {
+				// open the show/hide dialog
+	    		theHeader.el.on('click', this.headerClickHandler.createDelegate(this, [theHeader], true), this);
+				//color the rows/columns when the mouse enter in the header
+	    		theHeader.el.on('mouseenter', this.headerMouseenterHandler.createDelegate(this, [theHeader], true), this);
+	    		theHeader.el.on('mouseleave', this.headerMouseleaveHandler.createDelegate(this, [theHeader], true), this);
+				}, scope: this
+		  	});
+    	}
     	
     }
     
@@ -1431,7 +1441,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     , modifyCalculatedField: function(level, horizontal, op, CFName){
-    	alert(this.calculatedFields.toSource());
+    	//alert(this.calculatedFields.toSource());
     	if(this.calculatedFields!=null){
     		for(var i=0; i<this.calculatedFields.length; i++){
     			if(this.calculatedFields[i].name == CFName){
@@ -1439,7 +1449,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     			}
     		}
     	}
-    	alert(this.calculatedFields.toSource());
+    	//alert(this.calculatedFields.toSource());
     }
 
     , getCalculatedFields: function() {
@@ -1654,7 +1664,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	
 	    	totalNode.type=type;
 	    	totalNode.father = header;
-	    	this.setHeaderListener(totalNode);
+	    	this.setHeaderListener(totalNode, true);
 	    	
 	    	if (header.childs[0].childs.length>0){
 	    	
@@ -1670,7 +1680,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    		freshFatherNode.childs.push(freshTotalChildNode);
 		    		freshFatherNode = freshTotalChildNode;
 		    		cousinNode = cousinNode.childs[0];
-		    		this.setHeaderListener(freshTotalChildNode);
+		    		this.setHeaderListener(freshTotalChildNode, true);
 			    	if(totalNode.hidden){
 			    		freshTotalChildNode.thisDimension=0;
 			    	}
@@ -1888,14 +1898,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					    }
 					    partialTotalNode.type = 'partialsum';
 					    partialTotalNode.father = headers[i][j];
-					    this.setHeaderListener(partialTotalNode);
+					    this.setHeaderListener(partialTotalNode, true);
 					    
 						for(var k=0; k<measuresNames.length; k++){
 							freshChild = new Sbi.crosstab.core.HeaderEntry(measuresNames[k], 1, headers[i][0].horizontal, headers.length-1, headers[headers.length-1][0].width, headers[headers.length-1][0].height);
 							partialTotalNode.childs.push(freshChild);
 							freshChild.father = partialTotalNode;
 							freshChild.type = 'partialsum';
-							this.setHeaderListener(freshChild);
+							this.setHeaderListener(freshChild, true);
 						}	
 
 						this.addNewEntries(partialTotalNode.level,partialTotalNode,headers,sums, partialTotalNode.horizontal, true);
@@ -1939,9 +1949,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		        	        
 		        	        totalNode.father = partialSumNode.father.father;
 		        	        totalNode.type = 'partialsum';
-		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode);
+		        	        var totalNodeChild = this.cloneNode(partialSumNode,totalNode,true);
 		        	        totalNode.childs.push(totalNodeChild);
-		        	        this.setHeaderListener(totalNode);
+		        	        this.setHeaderListener(totalNode, true);
 
 		        	        var totalSum = new Array();
 		        	        for(var y=0; y<this.getLeafsNumber(partialSumNode); y++){//the number of the leafs(measures)
@@ -2194,7 +2204,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //===========================================
     //                    UTILITY
     //===========================================    
-	, cloneNode: function(node,father){
+	, cloneNode: function(node,father, noHeaderMenu){
 		
 		if(node.horizontal){
 			var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, null, node.height);
@@ -2204,9 +2214,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		clonedNode.type = node.type;
 		clonedNode.father = father;
 		for(var i=0; i<node.childs.length;i++){
-			clonedNode.childs.push(this.cloneNode(node.childs[i],clonedNode));
+			clonedNode.childs.push(this.cloneNode(node.childs[i],clonedNode,noHeaderMenu));
 		}
-		this.setHeaderListener(clonedNode);
+		this.setHeaderListener(clonedNode, noHeaderMenu);
 		return clonedNode;
 	}
     
