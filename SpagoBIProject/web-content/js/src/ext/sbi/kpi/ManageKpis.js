@@ -80,7 +80,8 @@ Sbi.kpi.ManageKpis = function(config) {
 	});
 	
 	
-	var singleSelection = config.singleSelection;
+	this.singleSelection = config.singleSelection;
+
 	var tabPanelWidth = config.tabPanelWidth;
 	var gridWidth = config.gridWidth;
 	this.configurationObject.tabPanelWidth = tabPanelWidth;
@@ -102,7 +103,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.initConfigObject();
 	
 	config.configurationObject = this.configurationObject;
-	config.singleSelection = singleSelection;
+	config.singleSelection = this.singleSelection;
 	if(config.filterWidth !== undefined){
 		config.configurationObject.filterWidth = config.filterWidth;
 	}

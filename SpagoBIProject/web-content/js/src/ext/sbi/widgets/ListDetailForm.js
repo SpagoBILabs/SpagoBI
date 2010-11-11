@@ -179,7 +179,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(config.singleSelection){
 		this.singleSelection = config.singleSelection;
 	}else{
-		this.singleSelection = true;
+		this.singleSelection = false;
 	}
 
 	this.mainElementsStore = new Ext.data.JsonStore({
