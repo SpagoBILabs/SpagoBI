@@ -626,7 +626,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	,reloadTree : function(tree, rec) {
 		var newroot;
-		if(rec.hierarchy == undefined || rec.hierarchy == null){
+		if(rec.path == undefined || rec.path == null){
 			newroot = this.createKPIRootNodeByRec(rec);
 		}else{
 			newroot = this.createRootNodeByRec(rec);

@@ -1162,7 +1162,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 
 		dataSet.setParamsMap(pars);
 		dataSet.setUserProfile(profile);	
-		//this.resources; oppure kpiVal.getR
+
 		logger.info("Load Data Set. Label="+dataSet.getLabel());
 
 		// Handle in table SbiKpiError dataset Error

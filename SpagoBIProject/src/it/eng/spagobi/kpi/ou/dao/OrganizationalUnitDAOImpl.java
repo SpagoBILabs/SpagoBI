@@ -286,10 +286,20 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibOU.setName(ou.getName());
 			hibOU.setDescription(ou.getDescription());
 
-			aSession.save(hibOU);
-			tx.commit();
-			ou.setId(hibOU.getId());
-			
+			//look for preexisting one with same same label-name key
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnit s where s.name = ? and s.label = ?");
+			hibQuery.setString(0, ou.getName());
+			hibQuery.setString(1, ou.getLabel());
+	
+			SbiOrgUnit exists= (SbiOrgUnit)hibQuery.uniqueResult();
+			if(exists == null){
+				aSession.save(hibOU);	
+				tx.commit();
+				ou.setId(hibOU.getId());
+			}else{
+				ou.setId(exists.getId());
+				tx.commit();
+			}
 			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
@@ -879,8 +889,11 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibQuery.setString(0, label);
 			hibQuery.setString(1, name);
 			SbiOrgUnit hibOU = (SbiOrgUnit)hibQuery.uniqueResult();
-
-			toReturn = toOrganizationalUnit(hibOU);
+			if(hibOU != null){
+				toReturn = toOrganizationalUnit(hibOU);
+			}else
+				return null;
+			
 			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);

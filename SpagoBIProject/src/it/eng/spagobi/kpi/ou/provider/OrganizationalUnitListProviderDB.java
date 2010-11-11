@@ -2,6 +2,7 @@ package it.eng.spagobi.kpi.ou.provider;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.utilities.tree.Node;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -106,7 +108,8 @@ public class OrganizationalUnitListProviderDB extends
 				String replacedQuery = getOUsQuery.replaceAll("\\!", Integer.toString(i));
 				boolean isToBreak = executeQuery(replacedQuery, OU, toReturn);
 				if(isToBreak){
-					break;
+					continue;
+					
 				}
 			} catch (Exception e) {
 				logger.error("Error getting OU list");
@@ -127,12 +130,8 @@ public class OrganizationalUnitListProviderDB extends
 			Node<OrganizationalUnit> rootNode = getRootByQueryString(getRootByHierarchy, params, null);
 			if(rootNode != null){
 				toReturn = new Tree<OrganizationalUnit>(rootNode);
-				for(int i=2; i<= 15 ; i++){
-					boolean isToBreak = getChildrenByLevel(i, hierarchy.getName(), hierarchy.getCompany(), rootNode);
-					if(isToBreak){
-						break;
-					}
-				}	
+				getChildrenByLevel(hierarchy.getName(), hierarchy.getCompany(), rootNode);
+
 			}
 		} catch (Exception e) {
 			logger.error("Unable to get root node for hiererchy "+hierarchy.getName());
@@ -150,7 +149,7 @@ public class OrganizationalUnitListProviderDB extends
 
 			con = getJNDIConnection();
 			Statement stmt = con.createStatement();
-			System.out.println(sqlQuery);
+			logger.debug(sqlQuery);
 			ResultSet rs = stmt.executeQuery(sqlQuery);
 			while (rs.next()) {
 
@@ -170,8 +169,10 @@ public class OrganizationalUnitListProviderDB extends
 					if(ouCode != null){
 						OrganizationalUnit item = new OrganizationalUnit(null, ouCode, ouName, null);
 						toReturn.add(item);
-					}else
+					}else{
 						isToBreak = true;
+						break;
+					}
 				}
 
 			}
@@ -186,20 +187,17 @@ public class OrganizationalUnitListProviderDB extends
 			return isToBreak;
 		}
 	}	
-	private boolean getChildrenByLevel (int level, String hierarchy, String company, Node<OrganizationalUnit> parent){
+	private boolean getChildrenByLevel (String hierarchy, String company, Node<OrganizationalUnit> parent){
 		boolean isToBreak = false;
-		String replacedQuery = getChildrenByLevel.replaceAll("\\!", Integer.toString(level));
+
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(HIERARCHY, hierarchy);
 		params.put(COMPANY, company);
-		
 		try {
-			List<Node<OrganizationalUnit>> children = getNodeByQueryString(replacedQuery, params, parent);
-			if(children != null && !children.isEmpty()){
-				parent.setChildren(children);
-			}else
+			List<Node<OrganizationalUnit>> children = getNodeByQueryString(params, parent);
+			if(children == null || children.isEmpty()){
 				isToBreak = true;
-			
+			}	
 
 		} catch (Exception e) {
 			logger.error("Unable to get node for hiererchy "+hierarchy);
@@ -247,15 +245,28 @@ public class OrganizationalUnitListProviderDB extends
 			return root;
 		}
 	}
-	private List<Node<OrganizationalUnit>> getNodeByQueryString(String sqlQuery, HashMap<String, String> parameters, Node<OrganizationalUnit> ouParentNode) throws Exception {
+	private List<Node<OrganizationalUnit>> getNodeByQueryString(HashMap<String, String> parameters, Node<OrganizationalUnit> parent) throws Exception {
 		List<Node<OrganizationalUnit>> children = new ArrayList<Node<OrganizationalUnit>>();
+		int level = 2;
+
+		if(parent != null){
+			StringTokenizer st = new StringTokenizer(parent.getPath(), S, false);
+			level = st.countTokens()+1;
+		}
+		logger.debug("level "+level+" for parent "+parent.getNodeContent().getLabel()+" with path:"+parent.getPath());
 		Connection con = null;
+
+		String replacedQuery = getChildrenByLevel.replaceAll("\\!", Integer.toString(level));
+		replacedQuery = replacedQuery.replaceAll("\\%", Integer.toString(level-1));
 		try {
 
 			con = getJNDIConnection();
-			PreparedStatement pstmt = con.prepareStatement(sqlQuery);
+			PreparedStatement pstmt = con.prepareStatement(replacedQuery);
 			pstmt.setString(1, (String)parameters.get(HIERARCHY));
 			pstmt.setString(2, (String)parameters.get(COMPANY));
+			pstmt.setString(3, parent.getNodeContent().getLabel());
+			pstmt.setString(4, parent.getNodeContent().getName());
+
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				
@@ -267,20 +278,29 @@ public class OrganizationalUnitListProviderDB extends
 				ou.setLabel(code);
 				ou.setName(name);
 				String path = "";
-				if(ouParentNode != null){
-					path = ouParentNode.getPath();
+				if(level != 1){
+					path = parent.getPath();
 				}
 				if(code != null){
-					Node <OrganizationalUnit> node = new Node<OrganizationalUnit>(ou, path + S + ou.getLabel(), ouParentNode);				
+					Node<OrganizationalUnit> node = new Node<OrganizationalUnit>(ou, path + S+ ou.getLabel(), parent);		
 					children.add(node);
 				}
-
 			}
 			rs.close();
 			pstmt.close();
+			
+			///sets children to parent node
+			parent.setChildren(children);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			for(int i=0 ; i<children.size(); i++){
+				Node<OrganizationalUnit> node = (Node<OrganizationalUnit>)children.get(i);
+				if(level == 15){break;}				
+				getNodeByQueryString(parameters, node);
+			}
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+
 		}finally{
 			if(con != null)
 				con.close();
