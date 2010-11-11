@@ -133,6 +133,17 @@ Sbi.console.ConsolePanel = function(config) {
 	//set message tag for the dynamic management of refresh of datasources
 	onhostmessage(this.onHide, this, false, 'hide');
 	onhostmessage(this.onShow, this, false, 'show');
+	
+	
+	//manages the stop refresh on popup windows call
+	if (this.detailPanel){
+		for(var i = 0; i< this.detailPanel.pages.length; i++){
+			this.detailPanel.pages[i].gridPanel.on('lock', this.onHide, this);
+			this.detailPanel.pages[i].gridPanel.on('unlock', this.onShow, this);
+		}
+	}
+	
+	
 };
 
 Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
@@ -184,21 +195,14 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 	
 	//stop all datastore of the hidden console 
 	, onHide: function(){
-		this.storeManager.activeRefresh(true);
-		/*
-		 for(var i = 0, l = this.storeManager.stores.length; i < l; i++) {
-			 alert(this.storeManager.stores[i].toSource());
-			var s = this.storeManager.stores.get[i];
-			alert(s);
-			s.stopped = true;
-			alert('hide: s.stopped ' + s.stopped);
-		}*/
-		
+		//alert('ConsolePanel: sono in onHide');
+		this.storeManager.stopRefresh(true);
 	}
 	
 	//active all datastore of the active console
 	, onShow: function(datasetConfig){
-		this.storeManager.activeRefresh(false);
+		//alert('ConsolePanel: sono in onHide');
+		this.storeManager.stopRefresh(false);
 	}
     
 });

@@ -107,11 +107,12 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		return this.stores.get(storeId);
 	}
 	
-	, activeRefresh: function(activeValue){
+	, stopRefresh: function(value){
 		for(var i = 0, l = this.stores.length, s; i < l; i++) {
 			var s = this.stores.get(i);
-			s.stopped = activeValue;
-		//	alert('set stopped value ' + activeValue + ' to store: ' + s.toSource());
+			s.stopped = value;
+			//alert('set stopped value ' + value + ' to store: ' + s.toSource());
+			//alert('set stopped value ' + value);
 		}
 		 
 	}
