@@ -304,11 +304,43 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		tb.addDom('<image width="12" height="12" src="../themes/sbi_default/img/analiticalmodel/execution/link16x16.gif"></image>');
 		tb.addSpacer();
 		
-		for(var i = 0; i < this.documentsStack.length-1; i++) {
+		if (this.documentsStack.length > 1) {
+			this.addBreadcrumbsMiddleButtons(tb);
+		}
+		this.addBreadcrumbsLastButton(tb);
+	}
+	
+	, addBreadcrumbsLastButton: function(tb) {
+		var index = this.documentsStack.length-1;
+		var text = this.documentsStack[index].document.title || this.documentsStack[index].document.name;
+		tb.add({
+			text: text
+			, stackIndex: index
+			, disabled: true
+			, cls: 'sbi-last-folder'
+		    , listeners: {
+    			'click': {
+              		fn: this.onBreadCrumbClick,
+              		scope: this
+            	} 
+    		}
+		});
+	}
+	
+	, addBreadcrumbsMiddleButtons: function(tb) {
+		
+		var truncateLength = this.getTruncateLength(tb);
+		
+		for(var i = 0; i < this.documentsStack.length - 1; i++) {
 			this.documentsStack[i].document = this.documentsStack[i].document || {};
-			
+			var tooltip = this.documentsStack[i].document.title || this.documentsStack[i].document.name;
+			var text = tooltip;
+			if (truncateLength > 0) {
+				text = Ext.util.Format.ellipsis(text, truncateLength);
+			}
 			tb.add({
-				text: this.documentsStack[i].document.title || this.documentsStack[i].document.name
+				text: text
+				, tooltip: tooltip
 				, stackIndex: i
 			    , listeners: {
         			'click': {
@@ -321,19 +353,35 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			tb.addDom('<image width="3" height="6" src="../themes/sbi_default/img/analiticalmodel/execution/c-sep.gif"></image>');
 			tb.addSpacer();
 		}
-		
-		tb.add({
-			text: this.documentsStack[i].document.title || this.documentsStack[i].document.name
-			, stackIndex: this.documentsStack.length-1
-			, disabled: true
-			, cls: 'sbi-last-folder'
-		    , listeners: {
-    			'click': {
-              		fn: this.onBreadCrumbClick,
-              		scope: this
-            	} 
-    		}
-		});
+	}
+	
+	, getTruncateLength: function(tb) {
+		var toReturn = -1;
+		var pixelPerChar = 6;
+		var tbWidth = tb.getSize().width;
+		var breadcrumbsCharLength = this.getBreadcrumbsCharLength();
+		var documentsNo = this.documentsStack.length;
+		if ( (breadcrumbsCharLength * pixelPerChar) < (tbWidth - 200 - (documentsNo * 20))) { // 200 is for toolbar buttons, documentsNo * 20 is for spaces between documents
+			// no need to truncate
+			return toReturn;
+		}
+		var lastDocument = this.documentsStack[documentsNo - 1].document;
+		var lastButtonText = lastDocument.title || lastDocument.name;
+		var lastButtonWidth = lastButtonText.length * pixelPerChar;
+		var middleWidth = tbWidth - lastButtonWidth - 200 - (documentsNo * 20); // 200 is for toolbar buttons, documentsNo * 20 is for spaces between documents
+		var maxElementWidth = middleWidth / ( documentsNo - 1 );
+		toReturn = Math.floor(maxElementWidth / pixelPerChar);
+		return toReturn;
+	}
+	
+	, getBreadcrumbsCharLength: function() {
+		var length = 0;
+		for(var i = 0; i < this.documentsStack.length; i++) {
+			this.documentsStack[i].document = this.documentsStack[i].document || {};
+			var text = this.documentsStack[i].document.title || this.documentsStack[i].document.name;
+			length += text.length;
+		}
+		return length;
 	}
 	
 	, onBreadCrumbClick: function(b, e) {
