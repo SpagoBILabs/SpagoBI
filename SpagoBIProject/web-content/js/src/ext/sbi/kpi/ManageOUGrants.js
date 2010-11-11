@@ -98,7 +98,7 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 	this.initConfigObject();
 
 	//the default values 2 checks of the south panel
-	this.hideOULeafs = true;//hide the leaf ous
+	this.hideOULeafs = false;//hide the leaf ous
 	this.hideNotActivatedOUS = false;//hide the ous without grants
 
 
@@ -247,7 +247,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					attr.id = attr.nodeId;
 				}
 				if (attr.ou!=null) {
-					attr.text = attr.ou.label;
+					attr.text = attr.ou.name;
 					attr.qtip = attr.ou.name;
 				}
 				//attr.iconCls = 'ou';
@@ -400,13 +400,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var tbSave2 = new Ext.Toolbar( {
 			buttonAlign : 'right',
 			items : [ 
-//			         new Ext.Toolbar.Button({ 
-//			        	 text: LN('sbi.grants.loadtrees'),
-//			        	 iconCls : 'icon-execute',
-//			        	 handler: function(){this.loadTrees(); this.setActiveTab(1);},
-//			        	 width : 30,
-//			        	 scope: thisPanel
-//			         }),
 			         new Ext.Toolbar.Button( {
 			        	 text : LN('sbi.generic.update'),
 			        	 iconCls : 'icon-save',
@@ -626,6 +619,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	,reloadTree : function(tree, rec) {
 		var newroot;
+
 		if(rec.path == undefined || rec.path == null){
 			newroot = this.createKPIRootNodeByRec(rec);
 		}else{
@@ -651,7 +645,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 		var hideOULeafsRadio = new Ext.form.Checkbox({
 			boxLabel: LN('sbi.grants.hide.leafs'),
-			checked: true
+			checked: false
 		});
 	
 		hideOULeafsRadio.on('check',function(radio, checked){
@@ -876,7 +870,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	//create the root node of the ou tree
 	,createRootNodeByRec: function(rec) {
-
+		
 		var iconClass = '';
 		var cssClass = '';
 		var cssClass = 'no-grant';
