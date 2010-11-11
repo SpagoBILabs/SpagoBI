@@ -695,7 +695,7 @@ Create table `SBI_KPI` (
 	`metric` Varchar(1000),
 	`description` Varchar(1000),
 	`weight` Double,
-	'is_additive' Char(1),
+	`is_additive` Char(1),
 	`flg_is_father` Char(1),
 	`kpi_type` Int,
 	`metric_scale_type` Int,
@@ -1040,8 +1040,8 @@ CREATE TABLE SBI_UDP_VALUE (
 
 CREATE TABLE SBI_ORG_UNIT (
   ID            INTEGER NOT NULL,
-  LABEL            VARCHAR(200) NOT NULL,
-  NAME             VARCHAR(400) NOT NULL,
+  LABEL            VARCHAR(100) NOT NULL,
+  NAME             VARCHAR(100) NOT NULL,
   DESCRIPTION      VARCHAR(1000),
   UNIQUE (LABEL, NAME),
   PRIMARY KEY(ID)
