@@ -116,6 +116,9 @@ Sbi.console.GridPanel = function(config) {
 		// constructor
 		Sbi.console.GridPanel.superclass.constructor.call(this, c);
 		
+		this.addEvents('lock');
+		this.addEvents('unlock');
+		
 };
 
 Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
@@ -229,6 +232,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     			}, this);
     	//	}
       		this.promptWin.show();
+      		this.promptWin.on('hide', function() {
+      			this.fireEvent('unlock', this);
+      			}, this);
       	}
       	else {
       		callback.call (this, results);	  
@@ -305,6 +311,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				serviceName: 'GET_ERROR_LIST_ACTION'
 			  , action: action				
 			});
+			this.errorWin.on('show', function() {
+      			this.fireEvent('lock', this);
+      			}, this);
 			this.errorWin.on('checked', function(win, record) {
 				this.errorWin.action.toggle(record);
 				this.execAction(this.errorWin.action, record, null, options);
@@ -314,6 +323,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					this.errorWin.checkButton.setText(LN('sbi.console.error.btnSetChecked'));
 				}				
 			}, this);
+			this.errorWin.on('hide', function() {
+      			this.fireEvent('unlock', this);
+      			}, this);
 		}
 		var callback = function(params){ 
 			params.ds_label = this.store.getDsLabel() + this.errorDs;
@@ -338,6 +350,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				serviceName: 'GET_WARNING_LIST_ACTION'
 			  , action: action
 			});
+			this.alarmWin.on('show', function() {
+      			this.fireEvent('lock', this);
+      			}, this);
 			this.alarmWin.on('checked', function(win, record) {
 				this.alarmWin.action.toggle(record);
 				this.execAction(action, record, null, options);
@@ -347,6 +362,9 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					this.alarmWin.checkButton.setText(LN('sbi.console.error.btnSetChecked'));
 				}	
 			}, this);
+			this.alarmWin.on('hide', function() {
+      			this.fireEvent('unlock', this);
+      			}, this);
 		}
 
 		//var params = {};
@@ -369,6 +387,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	
 	, startProcess: function(action, r, index, options) {
 		//alert('startProcess');
+		this.fireEvent('lock', this);
+		
 		if(action.isChecked(r)) {
 			Sbi.Msg.showWarning('Process is already running');
 			return;
@@ -429,7 +449,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    });
 		};
 		this.resolveParameters(options.document, r, this.executionContext, callback);
-		
 	}
 	
 	, stopProcess: function(action, r, index, options) {
