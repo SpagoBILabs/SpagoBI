@@ -7,6 +7,7 @@ Sbi.settings.execution = {
 			, labelAlign: 'left'
 			, fieldWidth: 200	
 			, maskOnRender: false
+			, fieldLabelWidth: 210
 		}
 		, shortcutsPanel: {
 			panelsOrder: {
