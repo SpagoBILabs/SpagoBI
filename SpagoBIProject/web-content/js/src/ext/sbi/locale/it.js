@@ -133,7 +133,7 @@ Sbi.locale.ln['sbi.thresholds.values'] = 'Valori';
 //END kpi interface messages
 
 //START GRANTS messages
-Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Gerarchia KPI Instance';
+Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Istanza di Modello';
 Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'Gerarchia OU';
 Sbi.locale.ln['sbi.grants.loadtrees'] = 'Carica alberi';
 Sbi.locale.ln['sbi.grants.panelTitle'] = 'Gestione Abilitazioni';
