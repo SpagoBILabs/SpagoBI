@@ -88,11 +88,7 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 	conf.readonlyStrict = true;
 	conf.dropToItem = 'kpinameField';
 
-
-
 	this.initPanels();
-
-
 
 	var c = Ext.apply({}, config || {}, this.viewport);
 
