@@ -8,10 +8,10 @@
             <column name="ID" />
         </id>
         <property name="label" type="string">
-            <column name="LABEL" length="200" not-null="true" />
+            <column name="LABEL" length="100" not-null="true" />
         </property>
         <property name="name" type="string">
-            <column name="NAME" length="400" not-null="true" />
+            <column name="NAME" length="100" not-null="true" />
         </property>
         <property name="description" type="string">
             <column name="DESCRIPTION" length="1000" />
