@@ -55,6 +55,7 @@ Sbi.execution.ParametersPanel = function(config) {
 		, labelAlign: 'left'
 		, fieldWidth: 200	
 		, maskOnRender: false
+		, fieldLabelWidth: 100
 	};
 	if(Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.parametersPanel) {
 		settings = Sbi.settings.execution.parametersPanel;
@@ -398,6 +399,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var labelStyle = '';
 		labelStyle += (p.mandatory === true)?'font-weight:bold;': '';
 		labelStyle += (p.dependencies.length > 0)?'font-style: italic;': '';
+		labelStyle += 'width: '+this.baseConfig.fieldLabelWidth+'px;';
 		baseConfig.labelStyle = labelStyle;
 		
 		//if(p.dependencies.length > 0) baseConfig.fieldClass = 'background-color:yellow;';
