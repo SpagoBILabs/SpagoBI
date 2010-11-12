@@ -945,7 +945,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	,childrenCheck: function(kpiNode, uoNode, isDisabled, type){
 		var children = null;
 		if(kpiNode.getUI().checkbox.disabled){
-			alert("Operation denied: check ou parent first.");
+			//alert("Operation denied: check ou parent first.");
 			return;
 		}
 		if(type !== undefined && type == "kpi"){
