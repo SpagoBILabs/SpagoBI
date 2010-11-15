@@ -1157,6 +1157,9 @@ public class DetailDataSetModule extends AbstractModule {
 //						}
 
 					}
+					else if(type.equalsIgnoreCase("Raw")){
+						valueToPass = value;
+					}					
 					else if(type.equals("Date")){
 						valueToPass="\'"+value+"\'";
 					}
