@@ -31,6 +31,7 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
@@ -74,7 +75,10 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				statement = (String) ((ScriptDataSet)getTargetDataSet()).getScript();
 			} else if (getTargetDataSet() instanceof JDBCDataSet) {
 				statement = (String) ((JDBCDataSet)getTargetDataSet()).getQuery();
-			} else {
+			} else if (getTargetDataSet() instanceof JDBCStandardDataSet){
+				statement = (String) ((JDBCStandardDataSet)getTargetDataSet()).getQuery();			
+			}
+			else {
 				// maybe better to delete getQuery from IDataSet
 				statement = (String)getTargetDataSet().getQuery();
 			}
@@ -90,7 +94,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 					logger.error("Error in query Execution",e);
 					throw parException;				
 				}
-			} else if (getTargetDataSet() instanceof JDBCDataSet) {	
+			} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCStandardDataSet) {	 
 				try {
 					statement = StringUtilities.substituteProfileAttributesInString(statement, getTargetDataSet().getUserProfile() );
 				} catch (Exception e) {
