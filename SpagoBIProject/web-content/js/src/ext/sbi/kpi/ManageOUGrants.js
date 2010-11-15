@@ -1025,6 +1025,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}
 			}
 		}
+		
 		kpiNode.getUI().toggleCheck(!isToUnCK);
 		//if(uoNode.attributes.childrenToCheck === undefined){
 			uoNode.attributes.childrenToCheck = new Array();
