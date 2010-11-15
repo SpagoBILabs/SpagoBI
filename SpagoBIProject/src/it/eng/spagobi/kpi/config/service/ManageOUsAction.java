@@ -179,6 +179,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		}
 	}
 	
+	
 	/**
 	 * Load the children ou node of a passed node 
 	 * @param nodeId the id of the parent node
