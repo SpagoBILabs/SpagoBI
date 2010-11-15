@@ -205,6 +205,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	Ext.Ajax.defaultHeaders = {
 			'Powered-By': 'Ext'
 	};
+	Ext.Ajax.timeout = 300000;
 
     // general SpagoBI configuration
     Ext.ns("Sbi.config");
