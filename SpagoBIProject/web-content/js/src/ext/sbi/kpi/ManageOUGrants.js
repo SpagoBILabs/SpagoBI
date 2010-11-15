@@ -219,7 +219,9 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 								return;
 							}
 				}
-				if(ounode != null
+
+				
+/*				if(ounode != null
 						&& (ounode.attributes == undefined 
 								|| ounode.attributes.modelinstancenodes == undefined 
 								|| ounode.attributes.modelinstancenodes == null
@@ -227,11 +229,28 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 						&& ounode.parentNode == null){//ou root node
 						attr.checked = true;
 						ounode.attributes.modelinstancenodes.push(attr.modelInstId);
-				}
+				}*/
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
 				thisPanel.addKPINodeListeners(node);
 				
+				node.on('append', function( tree, thisNode, childNode,index ) {
 
+					var ouChildrenToUnCheck = thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.childrenToUncheck;
+					if(ouChildrenToUnCheck!=null && ouChildrenToUnCheck.indexOf(thisNode.attributes.modelInstId)>=0){
+						childNode.getUI().toggleCheck(false);
+						thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.modelinstancenodes.remove(childNode.attributes.modelInstId);
+						ouChildrenToUnCheck.push(childNode.attributes.modelInstId);
+					}
+					
+					var ouChildrenToCheck = thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.childrenToCheck;
+					if(ouChildrenToCheck!=null && ouChildrenToCheck.indexOf(thisNode.attributes.modelInstId)>=0){
+						childNode.getUI().toggleCheck(true);
+						thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.modelinstancenodes.push(childNode.attributes.modelInstId);
+						ouChildrenToCheck.remove(childNode.attributes.modelInstId);
+					}
+					
+					},this);	
+				
 				return node;
 			}
 	
@@ -487,7 +506,9 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							break;
 						}
 					}
+					ouNode.attributes.childrenToCheck.remove(node.id);
 				}else{
+					ouNode.attributes.childrenToUncheck.remove(node.id);
 					modelinstancenodes.push(node.id);
 					modelinstancenodesOfThisSession.push(node.id);
 					subTreeNodes[j].getUI().addClass('grant');
@@ -508,15 +529,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var selectedOUNode = this.leftTree.getSelectionModel().getSelectedNode();
 		this.updateKpisCheck(selectedOUNode);
 	}
-	, checkForRoot: function(ouNode, kpiNode){
-		kpiNode.attributes.checked = true;
-		kpiNode.getUI().toggleCheck(true);
-		if( ouNode.attributes.modelinstancenodesOfThisSession == undefined || ouNode.attributes.modelinstancenodesOfThisSession == null){
-			ouNode.attributes.modelinstancenodesOfThisSession = new Array();
-		}
-		ouNode.attributes.modelinstancenodesOfThisSession.push(kpiNode.attributes.modelInstId);
-		
-	}
+
 	//update the tree panel of the kpis with the grant of the selected ou 
 	,updateKpisCheck : function(node, event){
 		
@@ -733,7 +746,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							//Ajax request used to load the organizationa units tree
 							Ext.Ajax.request({
 								url: thisPanel.configurationObject.manageOURootService,
-								params: {'hierarchyId': ouHierarchyId, 'grantId': thisPanel.selectedGrantId},
+								params: {'hierarchyId': ouHierarchyId, 'grantId': thisPanel.selectedGrantId, 'modelInstanceId': modelInstId},
 								method: 'GET',
 								success: function(response, options) {
 									if (response !== undefined) {		
@@ -788,21 +801,56 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	//return an array with couples ouId/grant for the passed ou node
 	getAllNodesWithAbilitation: function(node){
 		var children = node.childNodes;
-		var array = new Array(); 
-		if(node.attributes.modelinstancenodes!=null){
+		var array = new Array();
+
+		if(node.attributes.modelinstancenodes!=null && node.attributes.modelinstancenodes.length>0){
 			for(var i=0; i<node.attributes.modelinstancenodes.length; i++){
 				var c={
 						ouPath: node.attributes.path,
 						modelinstance: node.attributes.modelinstancenodes[i],
 						hierarchyId: this.ouHierarchy,
-						childrenToCheck : node.attributes.childrenToCheck[i],
-						childrenToUncheck : node.attributes.childrenToUncheck[i],
+						childrenToCheck : null,
+						childrenToUncheck : null,
 						expanded: node.expanded
-				};
-
+				};	
+				for(var y=0;y< node.attributes.childrenToCheck.length; y++){
+					if(node.attributes.modelinstancenodes[i]==node.attributes.childrenToCheck[y]){
+						c.childrenToCheck=(node.attributes.modelinstancenodes[i]); 
+						
+						break;
+					}
+				}
 				array.push(c);
 			}
 		}
+		if(node.attributes.childrenToUncheck!=null){
+			for(var y=0;y< node.attributes.childrenToUncheck.length; y++){
+				if(node.disableOu){
+					var c={
+							ouPath: node.attributes.path,
+							modelinstance: node.attributes.childrenToUncheck[y],
+							hierarchyId: this.ouHierarchy,
+							childrenToCheck : null,
+							childrenToUncheck : null,
+							expanded: node.expanded
+					};					
+				}else{
+					var c={
+							ouPath: node.attributes.path,
+							modelinstance: -1,
+							hierarchyId: this.ouHierarchy,
+							childrenToCheck : null,
+							childrenToUncheck : null,
+							expanded: node.expanded
+					};					
+				}
+
+				c.childrenToUncheck=(node.attributes.childrenToUncheck[y]); 
+				alert('push');
+				array.push(c);
+			}
+		}
+
 		if(children!=null){
 			for(var i=0; i<children.length; i++){
 				array = array.concat(this.getAllNodesWithAbilitation(children[i]));
@@ -896,7 +944,20 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		node.attributes.id = rec.id;
 		node.attributes.path = rec.path;
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
-		node.attributes.modelinstancenodesOfThisSession = new Array();
+		if(this.selectedGrantId==null){
+			node.attributes.modelinstancenodesOfThisSession = new Array();
+		}else{
+			node.attributes.modelinstancenodesOfThisSession = rec.modelinstancenodes;
+		}
+		
+		node.on('append', function( tree, thisNode, childNode,index ) {
+
+			if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
+				childNode.attributes.modelinstancenodes = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
+				childNode.attributes.modelinstancenodesOfThisSession = thisNode.attributes.modelinstancenodesOfThisSession.slice(0);//copy the array
+			}
+			},this);
+		
 		node.attributes.childrenToCheck = new Array();
 		node.attributes.childrenToUncheck = new Array();
 		node.on('click',this.updateKpisCheck,this);
@@ -941,39 +1002,40 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		var kpiNode = this.rightTree.getSelectionModel().getSelectedNode();
 		var uoNode = this.leftTree.getSelectionModel().getSelectedNode();
 		this.childrenCheck(kpiNode, uoNode, true, type);
+
 	}
-	,childrenCheck: function(kpiNode, uoNode, isDisabled, type){
+	,childrenCheck: function(kpiNode, uoNode, isToUnCK, type){
 		var children = null;
-		if(kpiNode.getUI().checkbox.disabled){
-			//alert("Operation denied: check ou parent first.");
+		if(kpiNode == null || kpiNode.getUI().checkbox.disabled){
 			return;
 		}
 		if(type !== undefined && type == "kpi"){
 			children = kpiNode.childNodes;
 			if(children!=null){
 				for(var i=0; i<children.length; i++){
-					this.childrenCheck(children[i], uoNode, isDisabled, "kpi");
+					this.childrenCheck(children[i], uoNode, isToUnCK, "kpi");
 				}
 			}
 		}else if(type !== undefined && type == "ou"){
 			children = uoNode.childNodes;
+			uoNode.disableOu = true;
 			if(children!=null){
 				for(var i=0; i<children.length; i++){
-					this.childrenCheck(kpiNode, children[i], isDisabled, "ou");
+					this.childrenCheck(kpiNode, children[i], isToUnCK, "ou");
 				}
 			}
 		}
-		kpiNode.getUI().toggleCheck(!isDisabled);
-		if(uoNode.attributes.childrenToCheck === undefined){
+		kpiNode.getUI().toggleCheck(!isToUnCK);
+		//if(uoNode.attributes.childrenToCheck === undefined){
 			uoNode.attributes.childrenToCheck = new Array();
-		}
-		if(uoNode.attributes.childrenToUncheck === undefined){
+		//}
+		//if(uoNode.attributes.childrenToUncheck === undefined){
 			uoNode.attributes.childrenToUncheck = new Array();
-		}
+		//}
 		uoNode.getUI().removeClass('no-grant');
 		uoNode.getUI().removeClass('grant');
 
-		if(isDisabled){
+		if(isToUnCK){
 			//uncheck all children to disable them for uoNode
 			if(uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id) == -1){
 				uoNode.attributes.modelinstancenodesOfThisSession.remove(kpiNode.id);

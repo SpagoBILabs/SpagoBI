@@ -173,12 +173,14 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 		var newOURoot = this.displayOuTree(ou);
 		var newKpiRoot = this.displayKpiTree(kpi);
 		this.ManageOUGrants.treePanel.doLayout();
-		if(ou.modelinstancenodes == undefined 
-			|| ou.modelinstancenodes == null 
-			|| ou.modelinstancenodes.length == 0){
-			//add all model inst nodes to ou root
-			this.ManageOUGrants.checkForRoot(newOURoot, newKpiRoot);
-		}
+
+		
+//		if(ou.modelinstancenodes == undefined 
+//			|| ou.modelinstancenodes == null 
+//			|| ou.modelinstancenodes.length == 0){
+//			//add all model inst nodes to ou root
+//			this.ManageOUGrants.checkForRoot(newOURoot, newKpiRoot);
+//		}
 	}
 	
 	, displayKpiTree: function(rec){
