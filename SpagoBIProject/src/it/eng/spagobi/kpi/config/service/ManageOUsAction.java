@@ -84,7 +84,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 					}
 					grantId =  getAttributeAsInteger("grantId");
 					logger.debug("Loading the list of ous childs of the node with id"+nodeId+" and grant "+grantId+"...");
-				}catch(Exception e){
+				}catch(Throwable e){
 					grantId = null;
 					logger.debug("Loading the list of ous childs of the node with id"+nodeId+"...");
 				}
@@ -99,7 +99,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				try{
 					grantId =  getAttributeAsInteger("grantId");
 					logger.debug("Loading the ou root of the hierarchy with id"+hierarchyId+" and grant "+grantId+"...");
-				}catch(Exception e){
+				}catch(Throwable e){
 					grantId = null;
 					
 					try{
@@ -362,6 +362,9 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * @throws Exception
 	 */
 	private List<OrganizationalUnitGrantNode> deserializeOrganizationalUnitGrantNodesAndUpdateChilds(JSONArray JSONGrantNodes, OrganizationalUnitGrant grant) throws Exception{
+		
+		//System.out.println(JSONGrantNodes);
+		
 		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
 		
 		List<JSONObject> JSONGrantNodesFiltered = new ArrayList<JSONObject>();
