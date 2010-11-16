@@ -143,6 +143,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	, detailsForm: null
 	, kpiCtxMenu: null
 	, ouCtxMenu: null
+	, loadMask: null
 	, initKpiContextMenu : function() {
 		this.kpiCtxMenu = new Ext.menu.Menu( {
 			items : [
@@ -691,15 +692,32 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		tools.push(hideNotGrantedKpiCheckbox);
 		
 		return tools;
-	},
+	}
+	
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
+    	alert('HIDE');
+	}
+	
+    , showMask : function(){
+    	alert('SHOW');
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask('ManageOUGrants', {msg: "Loading.."});
+    	}
+    	this.loadMask.show();
+    }
 	
 	//save the ou hierarchy with the selected grants
-	save : function() {
+	, save : function() {
 		if(this.detailsForm.getForm().isValid()){
 			var thisPanel = this;
 			var grantNodes = Ext.encode(this.getAllNodesWithAbilitation(this.leftTree.getRootNode()));
 			var grant =  Ext.encode(this.getGrantFormValues());
-
+			this.showMask();
+			
+			
 			Ext.Ajax.request({
 				url: this.configurationObject.saveGrantService,
 				params: {'grantnodes': grantNodes, 'grant': grant},
@@ -711,14 +729,17 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					} else {
 						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
 					}
+					thisPanel.hideMask();
 				},
 				failure: function() {
+					thisPanel.hideMask();
 					Ext.MessageBox.show({
 						title: LN('sbi.generic.error'),
 						msg: LN('sbi.generic.savingItemError'),
 						width: 150,
 						buttons: Ext.MessageBox.OK
 					});
+					
 				}
 				,scope: this
 		
