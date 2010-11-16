@@ -226,16 +226,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							}
 				}
 
-				
-/*				if(ounode != null
-						&& (ounode.attributes == undefined 
-								|| ounode.attributes.modelinstancenodes == undefined 
-								|| ounode.attributes.modelinstancenodes == null
-								|| ounode.attributes.modelinstancenodes.length != 0)//the root node of kpi tree
-						&& ounode.parentNode == null){//ou root node
-						attr.checked = true;
-						ounode.attributes.modelinstancenodes.push(attr.modelInstId);
-				}*/
+
 				var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
 				thisPanel.addKPINodeListeners(node);
 				
@@ -720,11 +711,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			var grant =  Ext.encode(this.getGrantFormValues());
 			this.showMask();
 			
-			
 			Ext.Ajax.request({
 				url: this.configurationObject.saveGrantService,
 				params: {'grantnodes': grantNodes, 'grant': grant},
-				method: 'GET',
+				method: 'POST',
 				success: function(response, options) {
 					if (response !== undefined) {
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
@@ -968,12 +958,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		node.attributes.id = rec.id;
 		node.attributes.path = rec.path;
 		node.attributes.modelinstancenodes = rec.modelinstancenodes;
-		if(this.selectedGrantId==null){
+		if(this.selectedGrantId!=null && this.selectedGrantId!=''){
 			node.attributes.modelinstancenodesOfThisSession = new Array();
 		}else{
 			node.attributes.modelinstancenodesOfThisSession = rec.modelinstancenodes;
 		}
-		
 		node.on('append', function( tree, thisNode, childNode,index ) {
 
 			if(childNode.attributes.modelinstancenodes==null || childNode.attributes.modelinstancenodes.length==0){
@@ -989,6 +978,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 		return node;
 	}
+	
+	
+	
+	
 	,onKpiContextMenu : function(node, e) {
 		if (this.kpiCtxMenu == null) { // create context menu on first right click
 			this.initKpiContextMenu();
