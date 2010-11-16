@@ -115,6 +115,15 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 	</head>
 
 	<body  >
+	
+	<iframe id='invalidSessionJasper'
+                 name='invalidSessionJasper'
+                 src='/SpagoBICommonJEngine/servlet/AdapterHTTP?ACTION_NAME=START_WORK'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe>
+
 		<script>
 
 			var template = Sbi.template || <%= consoleEngineInstance.getTemplate().toString()  %>;
