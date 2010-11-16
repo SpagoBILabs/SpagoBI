@@ -846,7 +846,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}
 
 				c.childrenToUncheck=(node.attributes.childrenToUncheck[y]); 
-				alert('push');
+
 				array.push(c);
 			}
 		}
