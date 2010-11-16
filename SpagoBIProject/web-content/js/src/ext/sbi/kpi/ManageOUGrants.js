@@ -104,12 +104,17 @@ Sbi.kpi.ManageOUGrants = function(config, ref) {
 
 	config.configurationObject = this.configurationObject;
 	config.toolsMenuItems= this.getToolsMenu();
+	
+	
 	//kpi tree context menu
 	this.initKpiContextMenu();
 	//ou tree context menu
 	this.initOUContextMenu();
 	
 	var c = Ext.apply({}, config || {}, {});
+	
+	c.id = 'ManageOUGrants';
+	
 
 	Sbi.kpi.ManageOUGrants.superclass.constructor.call(this, c);	 	
 
@@ -698,13 +703,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
     	if (this.loadMask != null) {
     		this.loadMask.hide();
     	}
-    	alert('HIDE');
 	}
 	
     , showMask : function(){
-    	alert('SHOW');
     	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask('ManageOUGrants', {msg: "Loading.."});
+    		this.loadMask = new Ext.LoadMask('ManageOUGrants', {msg: "Saving.."});
     	}
     	this.loadMask.show();
     }
