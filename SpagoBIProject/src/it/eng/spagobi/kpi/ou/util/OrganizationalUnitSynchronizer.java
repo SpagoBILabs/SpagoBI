@@ -110,8 +110,10 @@ public class OrganizationalUnitSynchronizer {
 			Tree<OrganizationalUnit> tree = provider.getHierarchyStructure(hierarchy);
 			logger.debug("Tree structure for hierarchy " + hierarchy + ":");
 			logger.debug(tree);
-			synchronizeHierarchyStructure(tree, hierarchy);
-			logger.debug("Structure of hierarchy " + hierarchy + " synchronized");
+			if(tree != null){
+				synchronizeHierarchyStructure(tree, hierarchy);
+				logger.debug("Structure of hierarchy " + hierarchy + " synchronized");
+			}
 		}
 		logger.debug("OUT");
 	}
