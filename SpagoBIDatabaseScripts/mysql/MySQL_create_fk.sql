@@ -301,8 +301,6 @@ Alter table `SBI_KPI_MODEL_RESOURCES` add Foreign Key (`RESOURCE_ID`) references
 Alter table `SBI_RESOURCES` add Foreign Key (`RESOURCE_TYPE_ID`) references `SBI_DOMAINS` (`VALUE_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_VALUE` add Foreign Key (`RESOURCE_ID`) references `SBI_RESOURCES` (`RESOURCE_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_VALUE` add Foreign Key (`id_kpi_instance`) references `SBI_KPI_INSTANCE` (`id_kpi_instance`) on delete  restrict on update  restrict;
-Alter table `SBI_KPI_VALUE` add Foreign Key (`ORG_UNIT_ID`) references `SBI_ORG_UNIT` (`id`) on delete  restrict on update  restrict;
-Alter table `SBI_KPI_VALUE` add Foreign Key (`HIERARCHY_ID`) references `SBI_ORG_UNIT_HIERARCHIES` (`id`) on delete  restrict on update  restrict;
 
 Alter TABLE `SBI_KPI_INST_PERIOD` ADD FOREIGN KEY (`PERIODICITY_ID`) REFERENCES `SBI_KPI_PERIODICITY` (`id_kpi_periodicity`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 Alter TABLE `SBI_KPI_INST_PERIOD` ADD FOREIGN KEY  (`KPI_INSTANCE_ID`) REFERENCES `SBI_KPI_INSTANCE` (`id_kpi_instance`) ON DELETE RESTRICT ON UPDATE RESTRICT;
