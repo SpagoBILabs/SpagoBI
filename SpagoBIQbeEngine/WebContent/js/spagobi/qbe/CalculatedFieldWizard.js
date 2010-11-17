@@ -439,7 +439,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 	        root: this.expItemsTreeRootNode,
 	        enableDD:false,
 	        expandable:true,
-	        collapsible:true,
+	       // collapsible:true,
 	        autoHeight:true ,
 	        bodyBorder:false ,
 	        leaf:false,
