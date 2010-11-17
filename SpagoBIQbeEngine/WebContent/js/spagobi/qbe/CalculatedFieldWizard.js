@@ -142,19 +142,16 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 
 
 	, setExpression: function(expression) {
-		//alert('setExpression');
 		if(this.expressionEditor) {
-			this.expressionEditor.reset();
 			//expresion = Ext.util.Format.htmlEncode(expresion);
 			expression = expression.replace(/ /g,"&nbsp;");
 	  		expression = expression.replace(/</g,"&lt;");
 	  		expression = expression.replace(/>/g,"&gt;");
-
+	  		this.baseExpression = expression;
 	  		if(this.expressionEditor.initialized) {
-	  			this.expressionEditor.insertAtCursor( expression );
-	  		} else {
-	  			this.baseExpression = expression;
-	  		}
+	  			this.expressionEditor.reset();
+  				this.expressionEditor.insertAtCursor( expression );
+	  		} 
 		}
 	}
 	
@@ -178,7 +175,8 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 		if(this.target) {
 			this.inputFields.alias.setValue( record.data.alias );
 			this.inputFields.type.setValue( record.data.id.type );
-			this.setExpression( record.data.id.expression );
+			//this.setExpression(record.data.id.expression);
+			this.setExpression.defer(100,this,[record.data.id.expression]);
 		} else {
 			this.inputFields.alias.reset();
 			this.inputFields.type.reset();
@@ -203,11 +201,11 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 			} else if(nodeType === 'calculatedField') {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
 				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
-				this.setExpression( node.attributes.attributes.formState.expression );
+				this.setExpression.defer(100,this, [node.attributes.attributes.formState.expression] );
 			} else if(nodeType === 'inLineCalculatedField') {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
 				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
-				this.setExpression( node.attributes.attributes.formState.expression );
+				this.setExpression.defer(100,this,[node.attributes.attributes.formState.expression] );
 			} else if(nodeType === 'field') {
 				alert('Impossible to edit node of type [' + nodeType +']');
 			} 
