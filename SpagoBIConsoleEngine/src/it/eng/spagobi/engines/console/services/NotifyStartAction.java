@@ -142,7 +142,7 @@ public class NotifyStartAction extends AbstractConsoleEngineAction {
 			    		"RESOURCE_ID) "							// 17
 			    + "VALUES "
 			    + " (?, ?, NULL, NULL, NULL, " +
-			    	"0, ?, NULL, ?, 0, " +
+			    	"0, ?, to_date('12/12/9999','dd/MM/yyyy'), ?, 0, " +
 			    	"0, 0, 0, 0, NULL, ?, ?)";
 						
 			if (formatDate != null){
