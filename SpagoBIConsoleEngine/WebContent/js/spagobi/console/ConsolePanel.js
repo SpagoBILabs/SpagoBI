@@ -128,12 +128,19 @@ Sbi.console.ConsolePanel = function(config) {
 	// constructor
 	Sbi.console.ConsolePanel.superclass.constructor.call(this, c);
 	
-	onhostmessage(this.exportConsole, this, false, 'export');
-	
-	//set message tag for the dynamic management of refresh of datasources
-	onhostmessage(this.onHide, this, false, 'hide');
-	onhostmessage(this.onShow, this, false, 'show');
-	
+	//WORKAROUND: on FF is possible to have a problem with the definition of the objects because is faster than other browser,
+	//so it gives the error: 'onhostmessage is not defined.' So, now, it forces a pause before to define the callbacks on events
+	if (Ext.isIE){
+		onhostmessage(this.exportConsole, this, false, 'export');
+		onhostmessage(this.onHide, this, false, 'hide');
+		onhostmessage(this.onShow, this, false, 'show');
+	}else{
+		var that = this;
+		var setHostMsg = function(){
+			that.setHostMessagges();
+		}; 
+		setTimeout(setHostMsg, 8000); 
+	}
 	
 	//manages the stop refresh on popup windows call
 	if (this.detailPanel){
@@ -142,8 +149,7 @@ Sbi.console.ConsolePanel = function(config) {
 			this.detailPanel.pages[i].gridPanel.on('unlock', this.onShow, this);
 		}
 	}
-	
-	
+
 };
 
 Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
@@ -190,19 +196,35 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 			url: this.services['export']
 			, params: params
 		});
+		
 	}
 
 	
 	//stop all datastore of the hidden console 
 	, onHide: function(){
-		//alert('ConsolePanel: sono in onHide');
+	//	alert('ConsolePanel: sono in onHide');
 		this.storeManager.stopRefresh(true);
 	}
 	
 	//active all datastore of the active console
 	, onShow: function(datasetConfig){
-		//alert('ConsolePanel: sono in onHide');
+//		alert('ConsolePanel: sono in onShow');
 		this.storeManager.stopRefresh(false);
 	}
-    
+	
+	, setHostMessagges: function() {
+		onhostmessage(this.exportConsole, this, false, 'export');
+		onhostmessage(this.onHide, this, false, 'hide');
+		onhostmessage(this.onShow, this, false, 'show'); 
+	}
+	
+	/*
+	, pause:  function (millis){
+		var date = new Date();
+		var curDate = null;
+	
+		do { curDate = new Date(); }
+		while(curDate-date < millis);
+	}*/
+
 });
