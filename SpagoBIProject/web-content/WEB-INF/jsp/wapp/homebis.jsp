@@ -101,6 +101,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
 	}
 	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+	MenuUtilities.resolveExternalAppUrlWithSSO(filteredMenuList, userProfile);
 	MenuListJSONSerializer m = new MenuListJSONSerializer();
 	JSONObject jsonMenuList = (JSONObject)m.serialize(filteredMenuList,locale);
 	if(jsonMenuList == null) jsonMenuList= new JSONObject();	
@@ -205,6 +206,8 @@ var themesViewName;
 				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
 			}else if(firtsItem.getFunctionality()!=null){
 				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
+			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
+				firstUrlToCall = firtsItem.getExternalApplicationUrl();
 			}
 		}
 		

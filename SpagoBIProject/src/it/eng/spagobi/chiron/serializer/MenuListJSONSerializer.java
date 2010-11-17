@@ -30,6 +30,7 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,6 +109,8 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(HREF, "execDirectUrl('"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+menuElem.getMenuId()+"', '"+path+"' )");
 						}else if(menuElem.getFunctionality()!=null){
 							temp.put(HREF, "execDirectUrl('"+DetailMenuModule.findFunctionalityUrl(menuElem, contextName)+"', '"+path+"')");
+						}else if(menuElem.getExternalApplicationUrl()!=null){
+							temp.put(HREF, "execDirectUrl('"+StringEscapeUtils.escapeJavaScript(menuElem.getExternalApplicationUrl())+"', '"+path+"')");
 						}else if (menuElem.isAdminsMenu() && menuElem.getUrl()!=null){							
 							String url = "javascript:execDirectUrl('"+ menuElem.getUrl()+"'";
 							url = url.replace("${SPAGOBI_CONTEXT}",contextName);
@@ -134,7 +137,7 @@ public class MenuListJSONSerializer implements Serializer {
 		}
 		return result;
 	}
-	
+
 	private Object getChildren(List children, int level, Locale locale) throws JSONException{
 		JSONArray tempMenuList = new JSONArray();
 		for (int j=0; j<children.size(); j++){ 
@@ -168,6 +171,8 @@ public class MenuListJSONSerializer implements Serializer {
 				temp2.put(HREF, "javascript:execDirectUrl('"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+childElem.getMenuId()+"', '"+path+"' )");
 			}else if(childElem.getFunctionality()!=null){
 				temp2.put(HREF, "javascript:execDirectUrl('"+DetailMenuModule.findFunctionalityUrl(childElem, contextName)+"', '"+path+"')");
+			}else if(childElem.getExternalApplicationUrl()!=null){
+				temp2.put(HREF, "javascript:execDirectUrl('"+StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl())+"', '"+path+"')");
 			}else if(childElem.isAdminsMenu() && childElem.getUrl()!=null){				
 				String url = "javascript:execDirectUrl('"+ childElem.getUrl()+"'";
 				url = url.replace("${SPAGOBI_CONTEXT}",contextName);
@@ -185,5 +190,5 @@ public class MenuListJSONSerializer implements Serializer {
 	   }	
 	  return tempMenuList;
 	}
-
+	
 }

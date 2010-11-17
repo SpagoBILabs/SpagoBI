@@ -352,6 +352,7 @@ Create table SBI_MENU (
 	SNAPSHOT_HISTORY Integer,
 	FUNCTIONALITY Varchar(50),
 	INITIAL_PATH Varchar(400),
+	EXT_APP_URL Varchar(1000),
 	PROG Integer Default 1 NOT NULL,
 Primary Key (MENU_ID)
 ) ;\p\g

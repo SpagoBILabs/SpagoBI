@@ -45,8 +45,9 @@ public class SbiMenu  implements java.io.Serializable {
      private String initialPath;
      private String name;
      private String descr;
-     private String staticPage;     
-     private Integer parentId;
+     private String staticPage;    
+     private String externalApplicationUrl;
+	 private Integer parentId;
      private Set sbiMenuRoles = new HashSet(0);
      private Boolean viewIcons;
      private Boolean hideToolbar;
@@ -71,26 +72,34 @@ public class SbiMenu  implements java.io.Serializable {
         this.menuId = menuId;
     }
     
-    /**
-     * full constructor.
-     */
-    public SbiMenu(Integer menuId, Integer objId, String name, String descr, Integer parentId, Set sbiMenuRoles,
-    	     String objParameters, String subObjName, String snapshotName, Integer snapshotHistory) {
-        this.menuId = menuId;
-        this.objId = objId;
-        this.name = name;
-        this.descr = descr;
-        this.parentId = parentId;
-        this.sbiMenuRoles = sbiMenuRoles;
-        this.objParameters = objParameters;
-        this.subObjName = subObjName;
-        this.snapshotName = snapshotName;
-        this.snapshotHistory = snapshotHistory;
-    }
-    
+    public SbiMenu(Integer menuId, Integer objId, String objParameters,
+			String subObjName, String snapshotName, Integer snapshotHistory,
+			String functionality, String initialPath, String name,
+			String descr, String staticPage, String externalApplicationUrl,
+			Integer parentId, Set sbiMenuRoles, Boolean viewIcons,
+			Boolean hideToolbar, Boolean hideSliders, Integer prog) {
+		super();
+		this.menuId = menuId;
+		this.objId = objId;
+		this.objParameters = objParameters;
+		this.subObjName = subObjName;
+		this.snapshotName = snapshotName;
+		this.snapshotHistory = snapshotHistory;
+		this.functionality = functionality;
+		this.initialPath = initialPath;
+		this.name = name;
+		this.descr = descr;
+		this.staticPage = staticPage;
+		this.externalApplicationUrl = externalApplicationUrl;
+		this.parentId = parentId;
+		this.sbiMenuRoles = sbiMenuRoles;
+		this.viewIcons = viewIcons;
+		this.hideToolbar = hideToolbar;
+		this.hideSliders = hideSliders;
+		this.prog = prog;
+	}
 
-   
-    // Property accessors
+	// Property accessors
 
     /**
      * Gets the menu id.
@@ -278,5 +287,12 @@ public class SbiMenu  implements java.io.Serializable {
 		this.initialPath = initialPath;
 	}
 
+    public String getExternalApplicationUrl() {
+		return externalApplicationUrl;
+	}
+
+	public void setExternalApplicationUrl(String externalApplicationUrl) {
+		this.externalApplicationUrl = externalApplicationUrl;
+	}
 
 }

@@ -299,17 +299,11 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		try {
 			adapUrlStr = getSpagoAdapterHttpUrl();
 			path= getSpagoBiHost()+getSpagoBiContext();
-
-			ConfigSingleton config = ConfigSingleton.getInstance();
-			SourceBean configSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.ACTIVE");
-			String active = (String) configSB.getCharacters();
-			logger.debug("active SSO: " + active);
-			if (active != null && active.equalsIgnoreCase("true") ){
+			if (isSSOEnabled()) {
 				url = path + adapUrlStr + "?NEW_SESSION=TRUE";
-			}else{
+			} else {
 				url = path + adapUrlStr + "?NEW_SESSION=TRUE&"+SsoServiceInterface.USER_ID+"="+userId;	
 			}
-
 
 			logger.debug("using URL: " + url);
 		} catch (Exception e) {
@@ -319,6 +313,25 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		return url;
 	}   
 
+	
+	/**
+	 * Returns true if the SSO is enabled (SPAGOBI_SSO.ACTIVE in spagobi_SSO.xml equals true ignoring the case), false otherwise
+	 * @return true if the SSO is enabled (SPAGOBI_SSO.ACTIVE in spagobi_SSO.xml equals true ignoring the case), false otherwise
+	 */
+	public static boolean isSSOEnabled() {
+		boolean toReturn;
+		ConfigSingleton config = ConfigSingleton.getInstance();
+		SourceBean configSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.ACTIVE");
+		String active = (String) configSB.getCharacters();
+		logger.debug("active SSO: " + active);
+		if (active != null && active.equalsIgnoreCase("true") ){
+			toReturn = true;
+		} else {
+			toReturn = false;	
+		}
+		logger.debug("returning " + toReturn);
+		return toReturn;
+	}
 
 	/**
 	 * Gets the spagoBI's dashboards servlet information as a string.

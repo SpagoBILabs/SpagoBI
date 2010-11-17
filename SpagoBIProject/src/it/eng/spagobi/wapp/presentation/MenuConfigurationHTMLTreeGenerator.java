@@ -184,25 +184,25 @@ public class MenuConfigurationHTMLTreeGenerator implements ITreeHtmlGenerator {
 
 		String imgFolder=""; 
 		String imgFolderOp="";
-		if ((menu.getStaticPage() == null || menu.getStaticPage().trim().equals("")) && menu.getObjId() == null) {
-			imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_white.png",currTheme);
+		
+		if(menu.getObjId()!=null){
+			//String icon=DetailMenuModule.assignImage(menu);
+			if (menu.getSnapshotName() != null || menu.getSubObjName() != null) {
+				imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_yellow.png",currTheme);
+			} else {
+				imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_blue.png",currTheme);
+			}
+			imgFolderOp=imgFolder;
+		} else if (menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("")) {
+			imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_gray.png",currTheme);
+			imgFolderOp=imgFolder;
+		} else if (menu.getExternalApplicationUrl() != null) {
+			imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_purple.png",currTheme);
 			imgFolderOp=imgFolder;
 		} else {
-			if(menu.getObjId()!=null){
-				//String icon=DetailMenuModule.assignImage(menu);
-				if (menu.getSnapshotName() != null || menu.getSubObjName() != null) {
-					imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_yellow.png",currTheme);
-				} else {
-					imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_blue.png",currTheme);
-				}
-				imgFolderOp=imgFolder;
-			}
-			if (menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("")) {
-				imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_gray.png",currTheme);
-				imgFolderOp=imgFolder;
-			}
+			imgFolder=urlBuilder.getResourceLinkByTheme(httpRequest, "/img/wapp/bullet_white.png",currTheme);
+			imgFolderOp=imgFolder;
 		}
-
 
 
 		if (isRoot) {
