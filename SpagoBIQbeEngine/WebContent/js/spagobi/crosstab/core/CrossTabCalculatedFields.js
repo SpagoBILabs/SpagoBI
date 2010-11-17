@@ -176,14 +176,14 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	}
     	
     	//add the entries in the table
-    	for(var j=0; j<attributes.length-1; j++){
+    	for(var j=0; j<attributes.length; j++){
     		crossTab.addNewEntries(level,attributes[j][0],headers, attributes[j][1], horizontal,true);
     		//alert(attributes[j][1].length);
     	}
-    	if(attributes.length>0){
-    		crossTab.addNewEntries(level,attributes[attributes.length-1][0],headers, attributes[attributes.length-1][1], horizontal,false);
-    		//alert(attributes[j][1].length);
-    	}
+//    	if(attributes.length>0){
+//    		crossTab.addNewEntries(level,attributes[attributes.length-1][0],headers, attributes[attributes.length-1][1], horizontal,false);
+//    		//alert(attributes[j][1].length);
+//    	}
     	
     	//hide the hidden panels
     	for(var y=0; y<hiddenPannels.length; y++){
@@ -198,9 +198,9 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	    		father = father.father;
 	    	}
     	}
-    	
+    	this.updateHeadersDimensions(headers);
     	if(!lazy){
-    		this.updateHeadersDimensions(headers);
+    		
     		crossTab.reloadHeadersAndTable();
     	}
     	

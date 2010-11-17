@@ -112,10 +112,13 @@ Sbi.crosstab.core.CrossTab = function(config) {
 
     if(this.calculatedFields!=null && this.calculatedFields.length>0){
     	this.on('afterrender', function(){
-    		for(var i=0; i<this.calculatedFields.length; i++){
-    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this);
+    		var i=0; 
+    		for(i=0; i<this.calculatedFields.length; i++){
+    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this, true);
     		}
-    		this.calculatePartialSum();
+   			this.calculatePartialSum(null, true);
+   	    	this.reloadHeadersAndTable();
+    		
     	}, this);
     }else{
     	this.on('afterrender', function(){
@@ -1016,7 +1019,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     //reload the container table
-    , reloadTable : function(horizontal){
+    , reloadTable : function(lazy){
     	
     	var d1 = new Date();
     	
@@ -1141,22 +1144,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    }
     	);
     	
-    	/*
-    	var tplsum = new Ext.XTemplate(
-        	    '<tpl for=".">'
-        	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-totals" '
-        	    , '  style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2+ieOffset)+'px; float:left;">'
-        	    , '    <div class="x-panel-bwrap"> '
-        	    , '      <div padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
-        	    , '      {[this.format(values.name, values.datatype, values.format)]}'
-        	    , '      </div> </div> </div>'
-        	    , '</tpl>'
-        	    , {
-        	    	format: this.format
-        	    }
-        );
-        */
-    	
     	var dataView = new Ext.DataView({
 	        store: store,
 	        tpl: tpl,
@@ -1202,26 +1189,27 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
     	
    		this.add(this.table);
-   		var d22 = new Date();
-   		this.rowHeaderPanelContainer.doLayout();
-   		var d3 = new Date();
-   		this.columnHeaderPanelContainer.doLayout();
-   		var d4 = new Date();
-   		this.datapanel.doLayout();
-   		var d5 = new Date();
-   		this.emptypanelTopLeft.doLayout();
-   		var d6 = new Date();
-
-   		this.table.doLayout(false);
-   		this.doLayout(false);
-   		
+   		if(!lazy){
+	   		var d22 = new Date();
+	   		this.rowHeaderPanelContainer.doLayout();
+	   		var d3 = new Date();
+	   		this.columnHeaderPanelContainer.doLayout();
+	   		var d4 = new Date();
+	   		this.datapanel.doLayout();
+	   		var d5 = new Date();
+	   		this.emptypanelTopLeft.doLayout();
+	   		var d6 = new Date();
+	
+	   		this.table.doLayout(false);
+	   		this.doLayout(false);
+   		}
    		var d7 = new Date();
 
 //   		alert("B: "+(d3-d22));
 //   		alert("C: "+(d4-d3));
 //   		alert("D: "+(d5-d4));
 //   		alert("E: "+(d6-d5));
-//   		alert("F: "+(d7-d6));
+//   		alert("F: "+(d7-d1));
    		
    		
     }
@@ -1250,7 +1238,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	}
     
     
-    , reloadHeadersAndTable: function(horizontal){
+    , reloadHeadersAndTable: function(horizontal, lazy){
    // 	if(horizontal || horizontal==null){
     	
     		var span=1;
@@ -1302,7 +1290,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   	        colspan: 1
 	   	    });
  //   	}
-		this.reloadTable();
+		this.reloadTable(lazy);
     }
     
 	, createResizable: function(aPanel, heandles, items, horizontal) {
@@ -1817,7 +1805,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     }
     
     
-    , calculatePartialSum: function(horizontal){
+    , calculatePartialSum: function(horizontal, lazy){
     	var withRowsPartialSumLocal = this.withRowsPartialSum;
     	var withColumnsPartialSumLocal = this.withColumnsPartialSum;
     	
@@ -1988,7 +1976,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    }
 	    }
 	    
-	    if(withRowsPartialSumLocal || withColumnsPartialSumLocal){
+	    if((withRowsPartialSumLocal || withColumnsPartialSumLocal) &&!lazy){
 	    	this.reloadHeadersAndTable();
 	    }
 	    

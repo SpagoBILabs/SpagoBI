@@ -110,13 +110,13 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		}
 			
 	, refreshCrossTab: function(crosstab){
-		
+
 		if(this.crosstab!=null){
 			this.calculatedFields = this.crosstab.getCalculatedFields();
 		}
 		
 		this.removeAll(true);
-	
+		
 		var rows = this.fromNodeToArray(crosstab.rows);
 		var columns = this.fromNodeToArray(crosstab.columns);
 		var data = crosstab.data;
@@ -135,11 +135,11 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, misuresOnRow: config.measureson=='rows'
 				, measuresMetadata: measuresMetadata
 		};
-		
+
 		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
-		this.crosstab.reloadHeadersAndTable();
+		this.crosstab.reloadHeadersAndTable(true,true);
 		this.add(this.crosstab);
-		this.doLayout();
+		this.doLayout(true);
 		if(config.columnsOverflow){		
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.crosstab.crosstabpreviewpanel.overflow.warning'), 'Warning');
 		}
