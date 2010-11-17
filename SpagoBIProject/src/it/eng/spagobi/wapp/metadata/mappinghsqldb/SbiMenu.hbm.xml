@@ -49,7 +49,10 @@
         </property>
         <property name="staticPage" type="string">
             <column name="static_page" />
-        </property>   
+        </property>
+        <property name="externalApplicationUrl" type="string">
+            <column name="EXT_APP_URL" />
+        </property>
         <property name="prog" type="integer">
             <column name="prog" />
         </property>                      

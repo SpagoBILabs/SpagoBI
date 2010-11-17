@@ -173,25 +173,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<option value="nodeDocument" <%= menu.getObjId() != null ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeDocument" /></option>
 			<option value="nodeStaticPage" <%= menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeStaticPage" /></option>
 			<option value="nodeFunctionality" <%= menu.getFunctionality() != null && !menu.getFunctionality().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeFunctionality" /></option>
+			<option value="nodeExternalApp" <%= menu.getExternalApplicationUrl() != null && !menu.getExternalApplicationUrl().trim().equals("") ? "selected" : ""%>><spagobi:message key="SBISet.menu.nodeExternalApp" /></option>
 		</select>
 		</div>
 
 		<%
 		String toggledDivs = null;
 		String currentVisibleDiv = null;
-		toggledDivs = "['nodeDocument','nodeStaticPage', 'nodeFunctionality']";
+		toggledDivs = "['nodeDocument','nodeStaticPage', 'nodeFunctionality', 'nodeExternalApp']";
 		currentVisibleDiv = "'nodeEmpty'";
 		if (menu.getObjId() != null) {
-			toggledDivs = "['nodeEmpty','nodeStaticPage', 'nodeFunctionality']";
+			toggledDivs = "['nodeEmpty','nodeStaticPage', 'nodeFunctionality', 'nodeExternalApp']";
 			currentVisibleDiv = "'nodeDocument'";
 		}
 		if (menu.getStaticPage() != null && !menu.getStaticPage().trim().equals("")) {
-			toggledDivs = "['nodeEmpty','nodeDocument', 'nodeFunctionality']";
+			toggledDivs = "['nodeEmpty','nodeDocument', 'nodeFunctionality', 'nodeExternalApp']";
 			currentVisibleDiv = "'nodeStaticPage'";
 		}
 		if (menu.getFunctionality() != null && !menu.getFunctionality().trim().equals("")) {
-			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage']";
+			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage', 'nodeExternalApp']";
 			currentVisibleDiv = "'nodeFunctionality'";
+		}
+		if (menu.getExternalApplicationUrl() != null && !menu.getExternalApplicationUrl().trim().equals("")) {
+			toggledDivs = "['nodeEmpty','nodeDocument','nodeStaticPage', 'nodeFunctionality']";
+			currentVisibleDiv = "'nodeExternalApp'";
 		}
 		%>
 
@@ -594,7 +599,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			</select>	
 		</div>
 	</div>
-		
+	
+	<div id="nodeExternalApp">
+		<div class='div_detail_label'>
+			<span class='portlet-form-field-label'>
+				<spagobi:message key = "SBISet.menu.externalAppUrl" />
+			</span>
+		</div>
+		<%
+		String externalAppUrl = menu.getExternalApplicationUrl() != null ? menu.getExternalApplicationUrl() : "";
+		%>
+		<div class='div_detail_form'> 
+			<input class='portlet-form-input-field' type="text" size="50" 
+				name="EXT_APP_URL" id="EXT_APP_URL" value="<%=StringEscapeUtils.escapeHtml(externalAppUrl)%>" maxlength="1000" /> 
+		</div>
+	</div>
 	 
 	<div id="nodeFunctionality">
 		<div class='div_detail_label'>

@@ -243,6 +243,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			hibMenu.setHideSliders(new Boolean(aMenu.getHideSliders()));
 
 			hibMenu.setStaticPage(aMenu.getStaticPage());
+			hibMenu.setExternalApplicationUrl(aMenu.getExternalApplicationUrl());
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -321,6 +322,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			hibMenu.setHideToolbar(new Boolean(aMenu.getHideToolbar()));
 			hibMenu.setHideSliders(new Boolean(aMenu.getHideSliders()));
 			hibMenu.setStaticPage(aMenu.getStaticPage());
+			hibMenu.setExternalApplicationUrl(aMenu.getExternalApplicationUrl());
 			
 			// manages prog column that determines the menu order
 			Query hibQuery = null;
@@ -676,6 +678,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 		else menu.setHideSliders(false);
 		
 		menu.setStaticPage(hibMenu.getStaticPage());
+		menu.setExternalApplicationUrl(hibMenu.getExternalApplicationUrl());
 		
 		
 		//set the dephts

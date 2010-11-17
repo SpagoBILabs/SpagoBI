@@ -70,6 +70,7 @@ public class DetailMenuModule extends AbstractModule {
 	public static final String messageBundle = "messages";
 
 	public final static String PATH = "PATH";
+	public final static String EXT_APP_URL = "EXT_APP_URL";
 	private String typeFunct = null;
 	EMFErrorHandler errorHandler=null;
 
@@ -364,6 +365,7 @@ public class DetailMenuModule extends AbstractModule {
 				menu.setSnapshotHistory(null);
 			}
 			menu.setStaticPage(null);
+			menu.setExternalApplicationUrl(null);
 			menu.setFunctionality(null);
 			menu.setInitialPath(null);
 			String hideToolbarB=(String)request.getAttribute("hideToolbar");
@@ -374,6 +376,7 @@ public class DetailMenuModule extends AbstractModule {
 			else menu.setHideSliders(false);
 		} else if ("nodeStaticPage".equals(nodeContent)) {
 			// menu node with static page
+			menu.setExternalApplicationUrl(null);
 			menu.setObjId(null);
 			menu.setSubObjName(null);
 			menu.setObjParameters(null);
@@ -393,6 +396,7 @@ public class DetailMenuModule extends AbstractModule {
 			menu.setSnapshotName(null);
 			menu.setSnapshotHistory(null);
 			menu.setStaticPage(null);
+			menu.setExternalApplicationUrl(null);
 			menu.setHideToolbar(false);
 			menu.setHideSliders(false);
 			String functionality = (String) request.getAttribute("functionality");
@@ -403,6 +407,21 @@ public class DetailMenuModule extends AbstractModule {
 			} else {
 				menu.setInitialPath(null);
 			}
+		} else if ("nodeExternalApp".equals(nodeContent)) {
+			// url for external application
+			String url = (String) request.getAttribute(DetailMenuModule.EXT_APP_URL);
+			menu.setExternalApplicationUrl(url);
+			
+			menu.setObjId(null);
+			menu.setSubObjName(null);
+			menu.setObjParameters(null);
+			menu.setSnapshotName(null);
+			menu.setSnapshotHistory(null);
+			menu.setStaticPage(null);
+			menu.setFunctionality(null);
+			menu.setInitialPath(null);
+			menu.setHideToolbar(false);
+			menu.setHideSliders(false);
 		} else {
 			// empty menu node
 			menu.setObjId(null);
@@ -411,6 +430,7 @@ public class DetailMenuModule extends AbstractModule {
 			menu.setSnapshotName(null);
 			menu.setSnapshotHistory(null);
 			menu.setStaticPage(null);
+			menu.setExternalApplicationUrl(null);
 			menu.setFunctionality(null);
 			menu.setInitialPath(null);
 			menu.setHideToolbar(false);
@@ -564,6 +584,10 @@ public class DetailMenuModule extends AbstractModule {
 		}
 		else if(menu.getStaticPage()!=null){
 			url="/img/wapp/static_page.png";
+			return url;
+		}
+		else if(menu.getExternalApplicationUrl()!=null){
+			url="/img/wapp/application_link16.png";
 			return url;
 		}
 		else if (menu.getFunctionality() != null && !menu.getFunctionality().equals("")) {

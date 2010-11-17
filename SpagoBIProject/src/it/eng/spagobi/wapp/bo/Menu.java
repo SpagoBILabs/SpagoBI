@@ -57,6 +57,7 @@ public class Menu  implements Serializable  {
     private boolean hideToolbar=false;
     private boolean hideSliders=false;
     private String staticPage;
+    private String extApplicationUrl;
     private String code;
     private String url;
     private String iconPath;
@@ -379,5 +380,13 @@ public class Menu  implements Serializable  {
 		this.iconPath = iconPath;
 	}	
 	
+
+    public String getExternalApplicationUrl() {
+		return extApplicationUrl;
+	}
+
+	public void setExternalApplicationUrl(String extApplicationUrl) {
+		this.extApplicationUrl = extApplicationUrl;
+	}
 	
 }
