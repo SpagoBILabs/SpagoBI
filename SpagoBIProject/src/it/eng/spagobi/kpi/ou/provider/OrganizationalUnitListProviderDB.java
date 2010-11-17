@@ -157,7 +157,7 @@ public class OrganizationalUnitListProviderDB extends
 					String hierName =  rs.getString("HIERARCHY");
 					String company =  rs.getString("COMPANY");
 					if(hierName != null){					
-						OrganizationalUnitHierarchy item = new OrganizationalUnitHierarchy(null, company+" - "+hierName, hierName, null, null, company);
+						OrganizationalUnitHierarchy item = new OrganizationalUnitHierarchy(null, hierName, hierName, null, null, company);
 						toReturn.add(item);
 					}
 
