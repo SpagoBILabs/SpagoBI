@@ -214,12 +214,16 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	curr_country: '<%= curr_country %>',
         	curr_language: '<%= curr_language%>',
         	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
-        	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>
+        	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+        	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
+        	sessionParametersManagerEnabled: <%= Boolean.valueOf(sessionParamsManagerEnabled) %>,
+        	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
         };
     }();
 
     // javascript-side user profile object
     Ext.ns("Sbi.user");
+    Sbi.user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
     Sbi.user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
     Sbi.user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;

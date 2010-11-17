@@ -371,49 +371,5 @@ public class MenuUtilities {
 		}
 		return false;
 	}
-	
-	/**
-	 * If SSO is disabled, iterates on input list of Menu items and check if they are external applications references: 
-	 * in this case, puts the user identifier on external applications' URLs.
-	 * @param menuList The list of Menu items
-	 * @param userProfile The user profile object
-	 */
-	public static void resolveExternalAppUrlWithSSO(List menuList, IEngUserProfile userProfile) {
-		logger.debug("IN");
-		if (GeneralUtilities.isSSOEnabled()) {
-			// do nothing
-		} else {
-			if (menuList != null && !menuList.isEmpty()) {
-				Iterator it = menuList.iterator();
-				while (it.hasNext()) {
-					Menu menu = (Menu) it.next();
-					if (menu.getExternalApplicationUrl() != null) {
-						String newUrl = addUserIdentifierParameter(menu.getExternalApplicationUrl(), userProfile);
-						menu.setExternalApplicationUrl(newUrl);
-					}
-				}
-			}
-		}
-		logger.debug("OUT");
-	}
-	
-	/**
-	 * Adds the user identifier parameter on the input URL.
-	 * @param externalApplicationUrl The external application URL
-	 * @param userProfile The user profile object
-	 * @return the input URL modified with user identifier parameter
-	 */
-	public static String addUserIdentifierParameter(String externalApplicationUrl, IEngUserProfile userProfile) {
-		logger.debug("IN: externalApplicationUrl = " + externalApplicationUrl);
-		String toReturn = externalApplicationUrl;
-		String userId = userProfile.getUserUniqueIdentifier().toString();
-		// add user id into URL
-		if (externalApplicationUrl.indexOf("?") == -1) {
-			toReturn += "?" + SsoServiceInterface.USER_ID + "=" + userId;
-		} else {
-			toReturn += "&" + SsoServiceInterface.USER_ID + "=" + userId;;
-		}
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
-	}
+
 }

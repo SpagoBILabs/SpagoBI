@@ -110,7 +110,7 @@ public class MenuListJSONSerializer implements Serializer {
 						}else if(menuElem.getFunctionality()!=null){
 							temp.put(HREF, "execDirectUrl('"+DetailMenuModule.findFunctionalityUrl(menuElem, contextName)+"', '"+path+"')");
 						}else if(menuElem.getExternalApplicationUrl()!=null){
-							temp.put(HREF, "execDirectUrl('"+StringEscapeUtils.escapeJavaScript(menuElem.getExternalApplicationUrl())+"', '"+path+"')");
+							temp.put(HREF, "callExternalApp('"+StringEscapeUtils.escapeJavaScript(menuElem.getExternalApplicationUrl())+"', '"+path+"')");
 						}else if (menuElem.isAdminsMenu() && menuElem.getUrl()!=null){							
 							String url = "javascript:execDirectUrl('"+ menuElem.getUrl()+"'";
 							url = url.replace("${SPAGOBI_CONTEXT}",contextName);
@@ -172,7 +172,7 @@ public class MenuListJSONSerializer implements Serializer {
 			}else if(childElem.getFunctionality()!=null){
 				temp2.put(HREF, "javascript:execDirectUrl('"+DetailMenuModule.findFunctionalityUrl(childElem, contextName)+"', '"+path+"')");
 			}else if(childElem.getExternalApplicationUrl()!=null){
-				temp2.put(HREF, "javascript:execDirectUrl('"+StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl())+"', '"+path+"')");
+				temp2.put(HREF, "javascript:callExternalApp('"+StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl())+"', '"+path+"')");
 			}else if(childElem.isAdminsMenu() && childElem.getUrl()!=null){				
 				String url = "javascript:execDirectUrl('"+ childElem.getUrl()+"'";
 				url = url.replace("${SPAGOBI_CONTEXT}",contextName);

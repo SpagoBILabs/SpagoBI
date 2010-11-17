@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.chiron.serializer.MenuListJSONSerializer"%>
 <%@page import="java.net.URLEncoder"%>
 <%@page import="org.apache.log4j.Logger"%>
+<%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
 
 <%! private static transient Logger logger = Logger.getLogger("it.eng.spagobi.homebis_jsp");%>
 
@@ -101,7 +102,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
 	}
 	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-	MenuUtilities.resolveExternalAppUrlWithSSO(filteredMenuList, userProfile);
 	MenuListJSONSerializer m = new MenuListJSONSerializer();
 	JSONObject jsonMenuList = (JSONObject)m.serialize(filteredMenuList,locale);
 	if(jsonMenuList == null) jsonMenuList= new JSONObject();	
@@ -362,6 +362,19 @@ if(showfooter){%>
 	}
      	 
 	function execDirectUrl(url, path){
+		centerFrame.getFrame().setSrc(url);
+		return;
+	}
+	
+	function callExternalApp(url, path){
+		if (!Sbi.config.isSSOEnabled) {
+			if (url.indexOf("?") == -1) {
+				url += '?<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+			} else {
+				url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
+			}
+		}
+		alert(url);
 		centerFrame.getFrame().setSrc(url);
 		return;
 	}
