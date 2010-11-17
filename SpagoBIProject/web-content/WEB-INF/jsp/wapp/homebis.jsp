@@ -374,7 +374,6 @@ if(showfooter){%>
 				url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
 			}
 		}
-		alert(url);
 		centerFrame.getFrame().setSrc(url);
 		return;
 	}
