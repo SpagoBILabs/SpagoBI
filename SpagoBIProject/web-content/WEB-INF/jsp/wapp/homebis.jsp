@@ -208,6 +208,13 @@ var themesViewName;
 				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
 			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
 				firstUrlToCall = firtsItem.getExternalApplicationUrl();
+				if (!GeneralUtilities.isSSOEnabled()) {
+					if (firstUrlToCall.indexOf("?") == -1) {
+						firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
+					} else {
+						firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
+					}
+				}
 			}
 		}
 		
@@ -367,6 +374,12 @@ if(showfooter){%>
 	}
 	
 	function callExternalApp(url, path){
+		url = getExternalAppUrl(url);
+		centerFrame.getFrame().setSrc(url);
+		return;
+	}
+	
+	function getExternalAppUrl(url){
 		if (!Sbi.config.isSSOEnabled) {
 			if (url.indexOf("?") == -1) {
 				url += '?<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
@@ -374,9 +387,9 @@ if(showfooter){%>
 				url += '&<%= SsoServiceInterface.USER_ID %>=' + Sbi.user.userUniqueIdentifier;
 			}
 		}
-		centerFrame.getFrame().setSrc(url);
-		return;
+		return url;
 	}
+	
 	
 	function execUrl(url){
 		document.location.href=url;
