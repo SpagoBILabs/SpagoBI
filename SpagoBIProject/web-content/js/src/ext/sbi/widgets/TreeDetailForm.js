@@ -57,7 +57,8 @@ Sbi.widgets.TreeDetailForm = function(config) {
 	this.tabItems = conf.tabItems;
 
 	this.treeTitle = conf.treeTitle;
-
+	this.ddGroup = conf.dragndropGroup;
+	
 	this.initWidget();
 	if(this.hideContextMenu === undefined || this.hideContextMenu == null || this.hideContextMenu != true ){
 		this.initContextMenu();
@@ -81,33 +82,12 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 	treeTitle : null,
 	menu : null,
 	hideContextMenu: null,
+	ddGroup : null, //for dragndrop
 	
 	nodesToSave : new Array(),
 	selectedNodeToEdit : null,
 	
-/*	initContextMenu : function() {
 
-		this.menu = new Ext.menu.Menu( {
-			items : [
-			// ACID operations on nodes
-					'-', {
-						text : 'Add Model Node',
-						iconCls : 'icon-add',
-						handler : function() {
-							this.addNewItem(this.ctxNode);
-						},
-						scope : this
-					}, {
-						text : 'Remove Model Node',
-						iconCls : 'icon-remove',
-						handler : function() {
-							this.deleteItem(this.ctxNode);
-						},
-						scope : this
-					} ]
-		});
-
-	},*/
 	initWidget : function() {
 
 		this.tbSave = new Ext.Toolbar( {
@@ -138,7 +118,8 @@ Ext.extend(Sbi.widgets.TreeDetailForm, Ext.FormPanel, {
 			height : 520,
 			userArrows : true,
 			animate : true,
-			autoScroll : true,		
+			autoScroll : true,
+			ddGroup: this.ddGroup,
             style: {
                 "background-color": "white"
             },
