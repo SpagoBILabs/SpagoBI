@@ -787,6 +787,30 @@ public class StringUtilities {
 			throw numberFormatException;
 		}
 
+		// check when type is RAW that there are not '' surrounding values (in case remove them)
+		// remotion done here in order to not modify SpagoBI Analytical driver of type string handling
+		try{
+			if(parType.equalsIgnoreCase("RAW")){
+				logger.debug("Parmaeter is Raw type, check if there are '' and remove them");
+				if(replacement.length()>2){
+					if(replacement.startsWith("'")){
+						logger.debug("first character is ', remove");
+						replacement = replacement.substring(1);	
+					}
+					if(replacement.endsWith("'")){
+						logger.debug("last character is ', remove");
+						replacement = replacement.substring(0, replacement.length()-1);	
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			logger.error("Error in removing the '' in value "+replacement+" do not substitute them");
+		}
+
+
+
+
 		if (surroundWithQuotes || parType.equalsIgnoreCase("STRING") || parType.equalsIgnoreCase("DATE")) {
 			if(!isNullValue){
 				if (!replacement.startsWith("'")) replacement = "'" + replacement;
