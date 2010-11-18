@@ -170,6 +170,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	
 	String currViewThemeName = ThemesManager.getCurrentThemeName(currTheme);
 	
+	String sessionParamsManagerEnabled = (String) ConfigSingleton.getInstance().getAttribute("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
+	
 	%>
 
 <!-- based on ecexution mode include initial html  -->   
