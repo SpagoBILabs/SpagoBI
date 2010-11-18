@@ -38,8 +38,9 @@
     	jndiDatasource="java:comp/env/jdbc/DWS"
 		getHierarchiesQuery="select distinct ag_ctab as HIERARCHY, cd_az as COMPANY from dws_t_an_aggr_ce"
 		getOUsQuery="SELECT AG_CETABL! AS CODE, AG_DETABL! AS NAME, CD_AZ AS COMPANY, AG_CTAB AS HIERARCHY FROM DWS_T_AN_AGGR_CE GROUP BY AG_CETABL!, AG_DETABL!, CD_AZ, AG_CTAB" 
-		getRootByHierarchy="select distinct ag_cetabl1 code, ag_detabl1 name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ? and UPPER(ag_detabl1) not like UPPER('%NON DISPONIBILE') and ag_cetabl2 is not null"
-		getChildrenByLevel="select distinct ag_cetabl! code, ag_detabl! name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ? and UPPER(ag_detabl!) not like UPPER('%NON DISPONIBILE') and ag_cetabl% = ? and ag_detabl% = ?"
+		getRootByHierarchy="select distinct ag_cetabl1 code, ag_detabl1 name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ?  and ag_cetabl2 is not null"
+		getRootLeaves="select distinct ag_cetabl1 code, ag_detabl1 name , ag_dim as leaf from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ? and ag_cetabl2 is null and ag_cetabl1 = ag_dim"
+		getChildrenByLevel="select distinct ag_cetabl! code, ag_detabl! name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ?  and ag_cetabl% = ? and ag_detabl% = ?"
 		/>
     <!-- ********************* END ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
      
