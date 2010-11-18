@@ -35,6 +35,7 @@ package it.eng.spagobi.utilities.servlet.session;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +51,11 @@ public class ExtendSessionServlet extends HttpServlet {
     public void service(HttpServletRequest request, HttpServletResponse response)
     	throws IOException, ServletException {
     	request.getSession(false);
+    	response.setContentType("text/plain");
+		ServletOutputStream ouputStream = response.getOutputStream();
+		ouputStream.write("".getBytes());
+		ouputStream.flush();
+		ouputStream.close();
     }
 
 }
