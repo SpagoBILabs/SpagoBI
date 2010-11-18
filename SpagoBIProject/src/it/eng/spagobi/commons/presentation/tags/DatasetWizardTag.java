@@ -144,6 +144,7 @@ public class DatasetWizardTag  extends TagSupport {
 				output.append("			<option value=\"String\">String</option>");
 				output.append("			<option value=\"Number\">Number</option>");
 				output.append("			<option value=\"Raw\">Raw</option>");
+				output.append("			<option value=\"Generic\">Generic</option>");
 				//output.append("			<option value=\"Date\">Date</option>");
 				output.append("</select>");
 				//output.append("			<input class='portlet-form-input-field' type='text' "+readonly+" name='typeOfDatasetParameterItemNew' size='50' value=''/>&nbsp;*\n");
@@ -223,14 +224,17 @@ public class DatasetWizardTag  extends TagSupport {
 						String str="";
 						String num="";
 						String raw="";
+						String generic="";
 						String dat="";
 						if(typeDec.equals("String"))str="selected";
 						else if(typeDec.equals("Number"))num="selected";
 						else if(typeDec.equals("Raw"))raw="selected";
+						else if(typeDec.equals("Generic"))generic="selected";
 						//else if(typeDec.equals("Date"))dat="selected";
 						output.append("			<option value=\"String\""+str+" >String</option>");
 						output.append("			<option value=\"Number\""+num+">Number</option>");
 						output.append("			<option value=\"Raw\""+raw+">Raw</option>");
+						output.append("			<option value=\"Generic\""+generic+">Generic</option>");
 						//output.append("			<option value=\"Date\""+dat+">Date</option></select>");
 						output.append("     </td>\n");
 						if(!isreadonly){
