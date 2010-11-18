@@ -96,9 +96,13 @@ Sbi.kpi.ManageModels = function(config, ref) {
 
 	 }, this);
 	 this.mainTree.on('nodedrop', function(e, newNode){
-		 e.tree.getSelectionModel().select(e.dropNode[0]);
-		 this.selectNode(null);
+		 if(e.dropNode[0] !== undefined && e.dropNode[0] != null){
+			 e.tree.getSelectionModel().select(e.dropNode[0]);
+			 this.selectNode(null);
+		 }
+
 	 }, this);
+
 	 this.doLayout();
 };
 
@@ -141,6 +145,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	
 		this.configurationObject.panelTitle = LN('sbi.models.panelTitle');
 		this.configurationObject.listTitle = LN('sbi.models.listTitle');
+		this.configurationObject.dragndropGroup ='treeAutoDD';
 		
 		this.initTabItems();
     }
@@ -149,6 +154,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		
 		this.kpitreeLoader =new Ext.tree.TreeLoader({
 			dataUrl: this.configurationObject.manageTreeService,
+			scope: this,
 	        createNode: function(attr) {
 
 	            if (attr.modelId) {
@@ -162,7 +168,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	    		if (attr.error !== undefined && attr.error != false) {
 	    			attr.cls = 'has-error';
 	    		}
-	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	    		
+	            var node =Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	            return node;
 	        }
 
 		});
@@ -670,6 +678,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	}
 	,dropNodeBehavoiur: function(e) {
 
+
 		   // e.data.selections is the array of selected records
 		   if(Ext.isArray(e.data.selections)) {					    
 			   // reset cancel flag
@@ -720,6 +729,10 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		    
 			   // we want Ext to complete the drop, thus return true
 			   return true;
+		   }else{
+			   //inner DD to reorder tree forbidden
+			   	e.dropNode.parentId = e.target.attributes.modelId;
+			   	e.cancel = true;	
 		   }
  
 	   // if we get here the drop is automatically cancelled by Ext
