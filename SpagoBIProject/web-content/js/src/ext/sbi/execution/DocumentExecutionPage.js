@@ -262,7 +262,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}
 		
 		// 20100505
-	if (this.callFromTreeListDoc == true && drawParBack == false) {
+		if (this.callFromTreeListDoc == true && drawParBack == false) {
 			this.toolbar.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-back' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.documentView')
@@ -273,49 +273,16 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			}));
 		}
 		
-		this.toolbar.addButton(new Ext.Toolbar.Button({
-			iconCls: 'icon-refresh' 
-			, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
-		    , scope: this
-		    , handler : function() {
-					// save parameters into session
-					// if type is QBE inform user that will lose configurations
-					if(executionInstance.document.typeCode == 'DATAMART'){
-
-							Ext.MessageBox.confirm(
-    						    LN('sbi.generic.warning'),
-            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
-            					function(btn, text) {
-                					if (btn=='yes') {
-										Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
-										this.southPanel.collapse();
-										this.northPanel.collapse();
-										this.refreshExecution();
-                					}
-            					},
-            					this
-								);
-					
-					} // it 's not a qbe
-					else {
-						Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
-						this.southPanel.collapse();
-						this.northPanel.collapse();
-						this.refreshExecution();
-				}
-			}			
-		}));
-		//
-    this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
-		if(Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true){
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-expand' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
-			    , scope: this
-			    , handler : function() {
-						this.fireEvent('collapse3');
-				}			
-			}));
+    	this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
+			if(Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true){
+				this.toolbar.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-expand' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+				    , scope: this
+				    , handler : function() {
+							this.fireEvent('collapse3');
+					}			
+				}));
 		}
 		
 		this.toolbar.addButton(new Ext.Toolbar.Button({
@@ -361,14 +328,14 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}
 		
 		if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !executionInstance.SBI_SNAPSHOT_ID) {
-      this.getNoteIcon();
-    	this.toolbar.addButton(new Ext.Toolbar.Button({
-  			   id: 'noteIcon'
-  				, tooltip: LN('sbi.execution.executionpage.toolbar.annotate')
-  				, iconCls: 'icon-no-notes'
-  		     	, scope: this
-  		    	, handler : this.annotateExecution
-  			}));    
+			this.getNoteIcon();
+	    	this.toolbar.addButton(new Ext.Toolbar.Button({
+	  			   id: 'noteIcon'
+	  				, tooltip: LN('sbi.execution.executionpage.toolbar.annotate')
+	  				, iconCls: 'icon-no-notes'
+	  		     	, scope: this
+	  		    	, handler : this.annotateExecution
+	  			}));    
 		}
 		
 		if (Sbi.user.functionalities.contains('SeeMetadataFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
@@ -379,7 +346,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		    	, handler : this.metaExecution
 			}));
 		}
-	
+		
 		if(executionInstance.document.exporters){
 			if ( executionInstance.document.typeCode == 'KPI' && executionInstance.document.exporters.contains('PDF')) {
 				this.toolbar.addButton(new Ext.Toolbar.Button({
@@ -790,6 +757,41 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				}));*/
 			}	
 		}
+		
+		this.toolbar.addSeparator();
+		
+		this.toolbar.addButton(new Ext.Toolbar.Button({
+			iconCls: 'icon-execute' 
+			, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
+		    , scope: this
+		    , handler : function() {
+					// save parameters into session
+					// if type is QBE inform user that will lose configurations
+					if(executionInstance.document.typeCode == 'DATAMART'){
+
+							Ext.MessageBox.confirm(
+    						    LN('sbi.generic.warning'),
+            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
+            					function(btn, text) {
+                					if (btn=='yes') {
+										Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+										this.southPanel.collapse();
+										this.northPanel.collapse();
+										this.refreshExecution();
+                					}
+            					},
+            					this
+								);
+					
+					} // it 's not a qbe
+					else {
+						Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+						this.southPanel.collapse();
+						this.northPanel.collapse();
+						this.refreshExecution();
+				}
+			}			
+		}));
 	}
 
 
