@@ -231,7 +231,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		activeDocumentExecutionPage.synchronize(executionInstance, false);
 	}
 	
-	, executeCrossNavigationPopup: function(config) {
+	, executeCrossNavigationPopup: function(config) {	
 		config.preferences.executionToolbarConfig = {};
 		config.preferences.executionToolbarConfig.expandBtnVisible = false;
 	
@@ -250,7 +250,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			buttons: [{
         	  text: 'Close',
               handler: function(){
-              	this.destroy();
+            	popupWin.destroy();
               }
 			}]
 		});
@@ -385,12 +385,14 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	}
 	
 	, onBreadCrumbClick: function(b, e) {
+		//send hide message to the old actived console
+		this.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore!', 'hide');
+		
 		var prevActiveDoc =  this.activeDocument;		
 		this.activeDocument = this.documentsStack[b.stackIndex];
-		
+
 		//send show message to the new actived console
 		this.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore!', 'show');
-
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
 		this.getLayout().setActiveItem(b.stackIndex);
