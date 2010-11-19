@@ -145,7 +145,7 @@ Ext.ux.ColorMenu = Ext.extend(Ext.menu.Menu, {
    
 });
 
-/* Preload the picker images so they're available at render time */
+/* Preload the picker images so they're available at render time 
 Ext.ux.ColorMenu.prototype.wheelImage = (function(){
     var wheelImage = new Image();
     wheelImage.onload = Ext.emptyFn;
@@ -159,6 +159,7 @@ Ext.ux.ColorMenu.prototype.gradientImage = (function(){
     gradientImage.src = '../images/gradient.png';
     return gradientImage;
 })();
+*/
 
 Ext.ux.ColorPicker = function(config){
     Ext.ux.ColorPicker.superclass.constructor.call(this, config);
