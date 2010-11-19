@@ -158,7 +158,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, GRID_ACTIONS: {
 		start: {serviceName: 'START_WORK', images: {active:'../img/ico_start.gif', inactive:'../img/ico_start_gray.gif'}}
 		, stop: {serviceName: 'STOP_WORK', images: {active:'../img/ico_stop.gif', inactive:'../img/ico_stop_gray.gif'}}
-		, informationlog: {serviceName: 'DOWNLOAD_ZIP', images: '../img/ico_info.gif'}
+		, informationlog: {serviceName: 'DOWNLOAD_ZIP', images: '../img/ico_download_logs.gif'}
 		, crossnav: {serviceName: 'CROSS_ACTION', images: {cross_detail: '../img/ico_cross_detail.gif', popup_detail: '../img/ico_popup_detail.gif'}}
 		, monitor: {serviceName: 'UPDATE_ACTION', images: {inactive: '../img/ico_monitor.gif', active: '../img/ico_monitor_gray.gif'}}
 		, errors: {serviceName: 'UPDATE_ACTION', images: {active: '../img/ico_errors.gif', inactive: '../img/ico_errors_gray.gif'}} 
