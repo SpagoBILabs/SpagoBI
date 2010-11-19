@@ -42,5 +42,5 @@
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='../js/spagobi/qbe-all-2.5.0.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe-all-2.7.0.js'></script>
  END-PRODUCTION -->
