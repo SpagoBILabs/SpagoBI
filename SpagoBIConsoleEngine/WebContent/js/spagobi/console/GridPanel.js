@@ -518,11 +518,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, downloadLogs: function(action, r, index, options) {		
 		var callback = function(params){
 			var url =  Sbi.config.spagobiServiceRegistry.getServiceUrl({serviceName: 'DOWNLOAD_ZIP'
-				   , baseParams: new Object()
+				     , baseParams: new Object()
 					});
+			
 			params = Ext.apply(params, {
-			USER_ID: Sbi.user.userId 
-			, URL: url
+				USER_ID: Sbi.user.userId 
+			  , URL: url
 			}); 
 			
 			if(this.logsWin === null) {
@@ -531,10 +532,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				, action: action
 				});
 				
-				this.logsWin.on('checked', function(win, record) {	
-				this.logsWin.downloadLogs(action, record, null, params);
-				}, this);
+				
 			}
+			
+			this.logsWin.on('checked', function(win, record) {	
+				this.logsWin.downloadLogs(action, record, null, params);
+			}, this);
 			
 			this.logsWin.show();
 		};
