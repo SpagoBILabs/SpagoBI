@@ -235,7 +235,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        	iconCls:'hide',
 		        	handler:function(){
 		        		this.crossTab.removePartialSum(true);
-		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, this.crossTab, true);
+		        		Sbi.crosstab.core.CrossTabShowHideUtility.showHideAllNodes(node, true, this.crossTab, false);
 		        		this.crossTab.calculatePartialSum();
 		        	},
 		        	scope: this
