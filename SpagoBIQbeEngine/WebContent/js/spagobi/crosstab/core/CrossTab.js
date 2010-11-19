@@ -153,6 +153,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,calculatedFields: null
 	,misuresOnRow: null
 	,measuresMetadata: null // metadata on measures: it is an Array, each entry is a json object with name, type and (in case of date/timestamp) format of the measure
+	,visibleMeasuresMetadataLength: null
+	,measuresNames: null
+	,measuresPosition: null
+	
+	
+	
 	
 	, manageDegenerateCrosstab: function(rowHeadersDefinition, columnHeadersDefinition) {
 		if (rowHeadersDefinition.length == 1) { // degenerate crosstab (everything on columns)
@@ -898,15 +904,18 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			
 			
 			if((!horizontal && this.withColumnsSum && this.misuresOnRow) || (horizontal && this.withRowsSum && !this.misuresOnRow)){
+				this.getVisibleMeasures(headers);
 				if(y<headers.length-1){
 					if(horizontal){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.measuresMetadata.length, horizontal, y, null , headers[y][0].height));	
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.visibleMeasuresMetadataLength, horizontal, y, null , headers[y][0].height));	
 					}else{
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.measuresMetadata.length, horizontal, y, headers[y][0].width,  null));
+						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(LN('sbi.crosstab.header.total.text'), this.visibleMeasuresMetadataLength, horizontal, y, headers[y][0].width,  null));
 					}
 				}else{
 					for(var k=0; k<this.measuresMetadata.length; k++){
-						headersPanel.push(new Sbi.crosstab.core.HeaderEntry(this.measuresMetadata[k].name, 1, horizontal, headers.length-1, headers[y][headers[y].length-1].width, headers[y][headers[y].length-1].height));
+						if(this.measuresMetadata[k].visible){
+							headersPanel.push(new Sbi.crosstab.core.HeaderEntry(this.measuresMetadata[k].name, 1, horizontal, headers.length-1, headers[y][headers[y].length-1].width, headers[y][headers[y].length-1].height));
+						}
 					}	
 				}
 			}
@@ -933,6 +942,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		    headerGroup.push(p);
 
 		}
+	//	alert('finito headerGroup');
 		return headerGroup;
 	}
 	
@@ -1615,13 +1625,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
   //============================
     
     //Calculate the partial sum of the rows
-    , rowsSum : function(){
-    	return this.rowsHeaderSum(0, this.entries.getEntries()[0].length-1);
+    , rowsSum : function(isATotalSum){
+    	return this.rowsHeaderSum(0, this.entries.getEntries()[0].length-1, isATotalSum);
     }
     
     //Calculate the partial sum of the columns
-    , columnsSum : function(){
-    	return this.columnsHeaderSum(0, this.entries.getEntries().length-1);
+    , columnsSum : function(isATotalSum){
+    	return this.columnsHeaderSum(0, this.entries.getEntries().length-1, isATotalSum);
     }  
 
     , addHeaderSum: function(header, type){
@@ -1679,8 +1689,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	}
     }
     
-    //Calculate the partial sum of the rows
-    , rowsHeaderSum : function(start, end){
+      //Calculate the partial sum of the rows
+    , rowsHeaderSum : function(start, end, isATotalSum){
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
@@ -1697,14 +1707,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        			}
 	        		}
 	        	}
+	    		if(isATotalSum){
+	    			sum.push(''+partialSum);
+	    		}
     		}
-    		sum.push(''+partialSum);
+    		if(!isATotalSum){
+    			sum.push(''+partialSum);
+    		}
     	}
     	return sum;
     }
     
     //Calculate the partial sum of the columns
-    , columnsHeaderSum : function(start, end){
+    , columnsHeaderSum : function(start, end, isATotalSum){
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
@@ -1720,15 +1735,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        			}
 	        		}
 	        	}
-	       	}
-	        sum.push(''+partialSum);
-       		
+	    		if(isATotalSum){
+	    			sum.push(''+partialSum);
+	    		}
+    		}
+    		if(!isATotalSum){
+    			sum.push(''+partialSum);
+    		}
     	}
     	return sum;
     } 
 
     //Calculate the sum of the rows
-    , rowsHeaderListSum : function(lines){
+    , rowsHeaderListSum : function(lines, isATotalSum){
     	var entries = this.entries.getEntries();
     	var sum = new Array();
     	var partialSum;
@@ -1745,14 +1764,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        			}
 	        		}
 	        	}
+	    		if(isATotalSum){
+	    			sum.push(''+partialSum);
+	    		}
     		}
-    		sum.push(''+partialSum);
+    		if(!isATotalSum){
+    			sum.push(''+partialSum);
+    		}
     	}
     	return sum;
     }
     
     //Calculate the sum of the columns
-    , columnsHeaderListSum : function(lines){
+    , columnsHeaderListSum : function(lines, isATotalSum){
     	
     	var entries = this.entries.getEntries();
     	var sum = new Array();
@@ -1769,11 +1793,17 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        			}
 	        		}
 	        	}
-	       	}
-	        sum.push(''+partialSum);
+	    		if(isATotalSum){
+	    			sum.push(''+partialSum);
+	    		}
+    		}
+    		if(!isATotalSum){
+    			sum.push(''+partialSum);
+    		}
     	}
     	return sum;
     } 
+  
   
     , removePartialSum: function(lazy){
     	for(var j=0; j<2; j++){
@@ -1905,7 +1935,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		        //build the headres of all the others levels
 		        var measuresSum = new Array();
 		        var lineCount=0;
-		        for(var k=i; k>0; k--){
+		        for(var k=i; k>1; k--){
 		        	
 		        	if(!this.misuresOnRow){
 	        			headers = this.columnHeader;
@@ -1991,33 +2021,59 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     			headers = this.rowHeader;
     		}
 		    var sums = new Array();
+		    var sumsLine;
 		    if(headers.length>=2){//if there are more than zero level
-		    	var i = headers.length-1;
-		    	var measuresNames = new Array();
-		    	var measuresPosition = new Array();
-		        for(var j=0; j<headers[i].length; j++){
-		        	if(headers[i][j].type=='data'){
-			        	var measurePosition = measuresNames.indexOf(headers[i][j].name);
-			        	if(measurePosition<0){
-			        		measuresNames.push(headers[i][j].name);
-			        		measurePosition = measuresNames.length-1;
-			        		measuresPosition.push(new Array());
-			        	}
-			        	measuresPosition[measurePosition].push(j);
-			        }
-		        }
-		        
-		        for(var j=0; j<measuresNames.length;j++){
-		    		if(this.misuresOnRow){
-		    			sums.push(this.columnsHeaderListSum(measuresPosition[j]));
-		    		}else{
-		    			sums.push(this.rowsHeaderListSum(measuresPosition[j]));
-		    		}
+   
+		        for(var j=0; j<this.measuresNames.length;j++){
+		        	//if(measuresPosition[j].length>0){
+			    	if(this.misuresOnRow){
+			    		sumsLine = this.columnsHeaderListSum(this.measuresPosition[j], true);
+			    	}else{
+			    		sumsLine = this.rowsHeaderListSum(this.measuresPosition[j], true);
+			    	}
+			    	//if we add rows and there is the sum also for the rows, so we have to
+			    	//remove the last line (the total line)
+//			    	if((this.withColumnsSum && this.misuresOnRow && this.withRowsSum) || (this.withRowsSum && !this.misuresOnRow && this.withColumnsSum)){
+//			    		sumsLine.length = sumsLine.length-1;
+//			    	}
+			    	sums.push(sumsLine);
+			    	
 		        }
 		    }
 		    return sums;
+		   
 	    }
 	   
+    }
+    
+    , getVisibleMeasures: function(headers){
+    	var i = headers.length-1;
+    	this.measuresNames = new Array();
+    	this.measuresPosition = new Array();
+        for(var j=0; j<headers[i].length; j++){
+        	if(headers[i][j].type=='data' && !headers[i][j].hidden){
+	        	var measurePosition = this.measuresNames.indexOf(headers[i][j].name);
+	        	if(measurePosition<0){
+	        		this.measuresNames.push(headers[i][j].name);
+	        		measurePosition = this.measuresNames.length-1;
+	        		this.measuresPosition.push(new Array());
+	        	}
+	        	this.measuresPosition[measurePosition].push(j);
+	        }
+        }
+        
+        this.visibleMeasuresMetadataLength=0;
+        
+        for(var j=0; j<this.measuresMetadata.length; j++){
+        	if(this.measuresNames.indexOf(this.measuresMetadata[j].name)>=0){
+        		this.measuresMetadata[j].visible = true;
+        		this.visibleMeasuresMetadataLength++;
+        	}else{
+        		this.measuresMetadata[j].visible = false;
+        	}
+        }
+        
+  //      alert('finito getVisibleMeasures');
     }
     
     
@@ -2054,7 +2110,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		}
 	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
 		}else{
-	   		var sumColumns = this.columnsSum();
+	   		var sumColumns = this.columnsSum(true);
 	   		for(var j=0; j<sumColumns.length; j++){
 	   			var a = new Array();
 	   			a.push(sumColumns[j]);
@@ -2121,7 +2177,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		}
 	   		dataViewWidth=this.columnWidth*sumRows.length;
 		}else{
-	   		var sumRows = this.rowsSum();
+	   		var sumRows = this.rowsSum(true);
 	   		for(var j=0; j<sumRows.length; j++){
 				var a = new Array();
 				a.push(sumRows[j]);
