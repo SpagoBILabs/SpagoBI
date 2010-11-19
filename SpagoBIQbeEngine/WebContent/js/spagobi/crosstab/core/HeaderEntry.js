@@ -55,7 +55,7 @@
 
 Ext.ns("Sbi.crosstab.core");
 
-Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level, width, height) {
+Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level, width, height, type) {
 	this.backgroundImg = "../img/crosstab/headerbackground.gif";
 	var c ={};
 	this.level = level;
@@ -110,7 +110,12 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 
 	
 	this.childs = new Array();
-	this.type='data';
+	
+	if(type){
+		this.type = type;
+	}else{
+		this.type='data';
+	}
 
 	// constructor
 	Sbi.crosstab.core.HeaderEntry.superclass.constructor.call(this, c);
