@@ -67,6 +67,7 @@ public class LiferaySecurityServiceSupplierImpl implements ISecurityServiceSuppl
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(userId);
 		profile.setUserId(userId);
+		
 
 		try {
 		  
@@ -83,7 +84,12 @@ public class LiferaySecurityServiceSupplierImpl implements ISecurityServiceSuppl
 				userAttributes.put("SURNAME", user.getLastName());
 				userAttributes.put("E_MAIL", user.getEmailAddress());
 
+				//set up the userID with email - adress
+				profile.setUserName(user.getEmailAddress());
+				profile.setUserId(user.getEmailAddress());
+				
 				logger.debug("user.getUserId()="+ user.getUserId());
+				logger.debug("user.getScreenName()="+ user.getScreenName());
 				logger.debug( "user.getFirstName()="+ user.getFirstName());
 				logger.debug( "user.getLastName()="+ user.getLastName());
 
