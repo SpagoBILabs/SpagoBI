@@ -71,7 +71,7 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 			logger.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
 			
 			wfsUrl += "?request=GetFeature" +
-					  "&typename=topp:" + layerName + 
+					  "&typename=" + layerName + 
 					  "&Filter=<Filter><PropertyIsEqualTo><PropertyName>"+ geoIdPName +"</PropertyName><Literal>"+ geoIdPValue +"</Literal></PropertyIsEqualTo></Filter>" +
 					  "&outputformat=json" +
 					  "&version=1.0.0";
