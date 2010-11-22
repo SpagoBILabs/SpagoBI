@@ -74,6 +74,12 @@ Sbi.georeport.MainPanel = function(config) {
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
+	
+	// patch for an old typo
+	if(c.feautreInfo) {
+		c.featureInfo = c.feautreInfo;
+		delete c.feautreInfo;
+	}
 		
 	Ext.apply(this, c);
 		
@@ -478,8 +484,8 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	, getInfo: function(feature) {
 		//alert(feature.attributes.toSource());
 		var info = "";
-	    for(var i=0; i<this.feautreInfo.length; i++){
-	    	info = info+"<b>"+ this.feautreInfo[i][0] +"</b>: " + feature.attributes[this.feautreInfo[i][1]] + "<br />";    
+	    for(var i=0; i<this.featureInfo.length; i++){
+	    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
 	    } 
 	    return info;
 	}
