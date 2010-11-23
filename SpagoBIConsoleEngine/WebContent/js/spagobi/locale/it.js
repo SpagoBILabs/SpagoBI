@@ -82,3 +82,7 @@ Sbi.locale.ln['sbi.console.downloadlogs.rangeInvalid'] = 'Intervallo date errato
 //propmtables window
 Sbi.locale.ln['sbi.console.promptables.btnOK'] = 'OK';
 Sbi.locale.ln['sbi.console.promptables.btnClose'] = 'Chiudi';
+Sbi.locale.ln['sbi.console.promptables.lookup.Annulla'] = 'Annulla';
+Sbi.locale.ln['sbi.console.promptables.lookup.Confirm'] = 'Conferma';
+Sbi.locale.ln['sbi.console.promptables.lookup.Select'] = 'Seleziona';
+

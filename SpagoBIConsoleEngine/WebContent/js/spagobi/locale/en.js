@@ -79,3 +79,6 @@ Sbi.locale.ln['sbi.console.downloadlogs.btnDownload'] = 'Download';
 //propmtables window
 Sbi.locale.ln['sbi.console.promptables.btnOK'] = 'OK';
 Sbi.locale.ln['sbi.console.promptables.btnClose'] = 'Close';
+Sbi.locale.ln['sbi.console.promptables.lookup.Annulla'] = 'Cancel';
+Sbi.locale.ln['sbi.console.promptables.lookup.Confirm'] = 'Confirm';
+Sbi.locale.ln['sbi.console.promptables.lookup.Select'] = 'Select';
