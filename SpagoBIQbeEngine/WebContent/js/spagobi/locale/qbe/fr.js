@@ -233,8 +233,9 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.wizard'] = 'Assistant Exp.';
 //warnings
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.title'] = 'Supprimer le filtre ?';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.msg'] = 'Vous êtes sur le point de supprimer un filtre qui est utilisé par une expression (voir l\'assistant des expressions). Le supprimer réinitialise complètement l\'expression. Souhaitez-vous toujours le supprimer ?';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.title'] = 'Supprimer les filtres ?';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.msg'] = 'Tu es en train de suppremer tous les filtres. Continues?';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.title'] = 'Supprimer toutes les filtres ?';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.msg'] = 'Vous \u00EAtes sur le point de supprimer tous les filtres. Etes vous s\u00DBr de vouloir les supprimer ?';
+
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.title'] = 'Changer le connecteur booleen ?';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.msg'] = 'Changer le connecteur booleen de ce filtre réinitialise l\'expression associée (voir l\'assistant des expressions). Souhaitez-vous toujours le supprimer ?';
@@ -265,6 +266,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'moyenne';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'd\u00E9ecompte';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'D\u00E9compte distinct';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'Aucune fonction d\'agr\u00E9gation appliqu\u00E9e';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Calcule la somme des valeurs du groupe';
@@ -272,6 +274,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.avg'] = 'Calcule la moyenne 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Calcule la valeur maximale dans le groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Calcule la valeur minimale dans le groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Calcule le nombre de valeurs pr\u00E9sentes dans le groupe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Retourner le d\u00E9compte de valeurs distinctes dans le groupe';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'S\u00E9lectionner une fonction...';
 
@@ -350,4 +353,4 @@ Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Valid
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation échouée';
 Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Warning: avec ce type de champ impossible d\utiliser un filtre';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
-Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Cancel';
+Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annuler';
