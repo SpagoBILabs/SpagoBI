@@ -226,7 +226,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     			this.promptWin = new Sbi.console.PromptablesWindow({
     				promptables: promptables	    					
     			});
-    			this.promptWin.on('click', function(win, pp) {				
+    			this.promptWin.on('click', function(win, pp) {
     				Ext.apply(results, pp);
     			    callback.call (this, results);	    								
     			}, this);
@@ -393,13 +393,26 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			Sbi.Msg.showWarning('Process is already running');
 			return;
 		}
-		
-		var callback = function(params){ 		
+	
+		var callback = function(params){ 	
+			//split the array values in a single string
+			for(p in params) { 
+				var tmpPar = params[p];
+				if(Ext.isArray(tmpPar)) {		
+					var strValue = "";
+					for(var i = 0; i < tmpPar.length; i++) {
+						strValue +=	tmpPar[i]+',';
+					}
+					strValue = strValue.substr(0,strValue.length-1);
+					params[p] = strValue;
+				}	
+			}
+			
 			params = Ext.apply(params, {
 				userId: Sbi.user.userId 
 	          , DOCUMENT_LABEL: options.document.label
 	  		}); 
-		
+			
 			if(this.waitWin === null) {
 				this.waitWin = new Sbi.console.WaitWindow({});
 			}

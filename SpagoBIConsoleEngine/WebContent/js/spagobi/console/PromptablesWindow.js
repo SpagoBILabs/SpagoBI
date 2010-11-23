@@ -55,8 +55,7 @@ Sbi.console.PromptablesWindow = function(config) {
 		, hasBuddy: false	
 		, modal: true
 	});
-	
-		
+
 	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.promptablesWindow) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.promptablesWindow);
 	}
@@ -144,25 +143,82 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
         		          		
     		} else if (param.values.type == 'combo'){	
     			//combobox 
-    			var tmpStore = null;    			
-    			tmpStore = new Ext.data.SimpleStore({
-    	              fields: ['value','text']
-    	            , data: param.values.data
-    	        });
-
-        		 tmpField = new Ext.form.ComboBox({
-	        		  fieldLabel: tmpLabel
-	    	          , width: 250    	    
-	    	          , store: tmpStore,
-	    	        valueField: 'value',
-	    	        displayField: 'text',
+    			var tmpStore = null; 
+    			var tmpValueField = 'column_1';
+    			var tmpValueText = 'column_2';
+    			
+    			tmpStore = this.createStore(param.values);
+    			
+    			if (param.values.datasetLabel){    				
+    				tmpStore.load();
+    			}
+    			
+        		tmpField = new Ext.form.ComboBox({
+        		    fieldLabel: tmpLabel,
+    	            width: 250,    	    
+    	            store: tmpStore,
+	    	        valueField: tmpValueField,	
+	    	        displayField: tmpValueText,
 	    	        mode : 'local',
 	    	        typeAhead: true,
 	    	        emptyText:'Select ...',
 	    	        selectOnFocus:true,
 	    	        triggerAction: 'all'
         		 });        		 		 
-    		}
+    		} else if (param.values.type == 'checkList'){
+    			//multivalue management
+    			var tmpStore = null; 
+    			tmpStore = this.createStore(param.values);
+    			
+    			tmpStore.on('beforeload', function(store, o) {
+    				var p = Sbi.commons.JSON.encode(this.getFormState());
+    				o.params.PARAMETERS = p;
+    				return true;
+    			}, this);
+    			
+    			
+    			var baseConfig = {
+    				       fieldLabel: tmpLabel
+    					   , name : p.id
+    					   , width: 250
+    					   , allowBlank: !p.mandatory
+    					   , valueField: (param.values.valueField)?param.values.valueField:'code'
+    					};
+    			
+    			tmpField = new Sbi.console.LookupField(Ext.apply(baseConfig, {
+   				  	  store: tmpStore
+   					//, params: params
+   					, params: {}
+   					, singleSelect: false
+    			}));
+    		} else if (param.values.type == 'lookup'){
+    			//singlevalue management
+    			var tmpStore = null; 
+    			tmpStore = this.createStore(param.values);
+    			
+    			tmpStore.on('beforeload', function(store, o) {
+    				var p = Sbi.commons.JSON.encode(this.getFormState());
+    				o.params.PARAMETERS = p;
+    				return true;
+    			}, this);
+    			
+    			
+    			var baseConfig = {
+    				       fieldLabel: tmpLabel
+    					   , name : p.id
+    					   , width: 250
+    					   , allowBlank: !p.mandatory
+    					   , valueField: (param.values.valueField)?param.values.valueField:'code'
+    					};
+  			
+	  			tmpField = new Sbi.console.LookupField(Ext.apply(baseConfig, {
+	 				  	  store: tmpStore
+	 					//, params: params
+	 				  	, params: {}
+	 					, singleSelect: true
+	  			}));
+	  		}
+    		
     		if (param.values !== undefined && param.values.defaultValue !== undefined){
    			 tmpField.defaultValue = param.values.defaultValue;
    		 	}
@@ -203,5 +259,35 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     	return state;
     }
     
-    
+	, createStore: function(config) {
+		var store;
+		var params = {};
+		
+		if (config.datasetLabel){
+			//the store is created by the result of a dataset
+			params.ds_label = config.datasetLabel;	
+
+			var serviceConfig;
+			serviceConfig = {serviceName: 'GET_CONSOLE_DATA_ACTION'};
+			serviceConfig.baseParams = params;	
+			
+			store = new Ext.data.JsonStore({
+				url: Sbi.config.serviceRegistry.getServiceUrl( serviceConfig )
+			});
+			
+		} else if (config.data){
+			//the store is created by fix values
+			store = new Ext.data.SimpleStore({
+	              fields: ['column_1','column_2']
+	            , data: config.data
+	        });
+		}else{
+			Sbi.Msg.showError('Store not defined for the prompt.', 'Service Error');
+		}
+		
+		store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
+		
+		return store;
+		
+	}
 });
