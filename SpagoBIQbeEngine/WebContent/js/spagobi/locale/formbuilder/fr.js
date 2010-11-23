@@ -82,6 +82,9 @@ Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity'] = 'Il y a des champs autorisés pour la racine';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.title'] = 'Requ\u00EAte personnalis\u00E9e';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.standardquerydetailssection.title'] = 'Requ\u00EAte Standard';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.lookupquery'] = 'Requ\u00EAte de recherche';
 
 
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.title'] = 'Filtres statiques fermés';
