@@ -74,7 +74,8 @@ Sbi.console.DownloadLogsWindow = function(config) {
 	this.closeButton = new Ext.Button({
 		text: LN('sbi.console.downloadlogs.btnClose'),
 		handler: function(){
-        	this.hide();
+        	//this.hide();
+        	this.close();
         }
         , scope: this
 	});
@@ -85,8 +86,10 @@ Sbi.console.DownloadLogsWindow = function(config) {
 			//check parameters
 			if (!this.checkParameters()) { return; }			
 			
-			this.hide();
+			
         	this.fireEvent('checked', this, this.target);
+        	//this.hide();
+			this.close();
         }
         , scope: this
 	});
@@ -94,7 +97,8 @@ Sbi.console.DownloadLogsWindow = function(config) {
 
 	c = Ext.apply(c, {  	
 		layout: 'fit'
-	,	closeAction:'hide'
+	//,	closeAction:'hide'
+	,	closeAction:'close'
 	,	plain: true
 	,	modal:true
 	,	title: this.title
@@ -147,14 +151,17 @@ Ext.extend(Sbi.console.DownloadLogsWindow, Ext.Window, {
         	BEGIN_DATE: this.initialDate.value,
         	END_DATE: this.finalDate.value,
         	BEGIN_TIME: this.initialTime.value,
-        	END_TIME: this.finalTime.value
+        	END_TIME: this.finalTime.value,
+        	PREFIX1: params.PREFIX1,
+        	PREFIX2: params.PREFIX2,
+        	DIRECTORY: params.DIRECTORY
   		}); 
-		
+		 
   		Ext.Ajax.request({
 	       	url: params.URL			       
 	       	, params: params 			       
 	    	, success: function(response, options) {
-	    		if(response !== undefined && response.responseText !== undefined) {														     
+	    		if(response !== undefined && response.responseText !== undefined) {			    				
 						//call by submit to download really 
 						form.action = params.URL +  '&PREFIX1=' + params.PREFIX1 + '&PREFIX2=' + params.PREFIX2 +
 									  '&DIRECTORY=' + params.DIRECTORY + 

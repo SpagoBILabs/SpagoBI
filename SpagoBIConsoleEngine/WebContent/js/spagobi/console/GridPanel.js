@@ -550,6 +550,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			
 			this.logsWin.on('checked', function(win, record) {	
 				this.logsWin.downloadLogs(action, record, null, params);
+				this.logsWin = null;
 			}, this);
 			
 			this.logsWin.show();
