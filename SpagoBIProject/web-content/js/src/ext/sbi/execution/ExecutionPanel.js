@@ -386,8 +386,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	
 	, onBreadCrumbClick: function(b, e) {
 		//send hide message to the old actived console
-		this.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore!', 'hide');
-		
+		if (this.activeDocument.documentExecutionPage){
+			this.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore!', 'hide');
+		}
 		var prevActiveDoc =  this.activeDocument;		
 		this.activeDocument = this.documentsStack[b.stackIndex];
 
