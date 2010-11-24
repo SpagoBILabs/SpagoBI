@@ -137,9 +137,9 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		};
 
 		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
-		this.crosstab.reloadHeadersAndTable(true,true);
+		this.crosstab.reloadHeadersAndTable(null,true);
 		this.add(this.crosstab);
-		this.doLayout(true);
+		this.doLayout();
 		if(config.columnsOverflow){		
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.crosstab.crosstabpreviewpanel.overflow.warning'), 'Warning');
 		}

@@ -610,7 +610,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	            		arrowTop.style.left = father.getEl().getLeft(false)-5;
 		    	           		arrowTop.style.top =  father.getEl().getBottom(false)-10;
 		    	           		arrowBottom.style.left = father.getEl().getLeft(false)-5;
-		    	           		arrowBottom.style.top =  father.getEl().getBottom(false)+pel.getHeight();;
+		    	           		arrowBottom.style.top =  father.getEl().getBottom(false)+pel.getHeight();
 		    	            }else{//the cursor is over the panel we try to dd
 		    	            	
 		    	            	var visibleBrother = this.getDragData().panel.getPreviousSibling(true);
