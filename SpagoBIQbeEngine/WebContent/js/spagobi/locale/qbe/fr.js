@@ -28,7 +28,7 @@ Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Information';
 //===================================================================
 //SESSION EXPIRED
 //===================================================================
-Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expirée. Essayer de ré-exécuter le document';
+Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expir\u00E9e. Essayer de r\u00E9-ex\u00E9cuter le document';
 
 
 //===================================================================
@@ -58,7 +58,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Biblioth\u00E8que de re
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Supprimer la requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.add'] = 'Ajouter une requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.insert'] = 'Ins\u00E9rer une requ\u00EAte';
-Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.wanringEraseRoot'] = 'Impossible de supprimer la requête principale';
+Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.wanringEraseRoot'] = 'Impossible de supprimer la requ\u00E8te principale';
 
 
 //===================================================================
@@ -113,7 +113,7 @@ Sbi.locale.ln['sbi.qbe.savewindow.public'] = 'Publique';
 Sbi.locale.ln['sbi.qbe.savewindow.private'] = 'Priv\u00E9e';
 Sbi.locale.ln['sbi.qbe.savewindow.publicdesc'] = 'Toute personne ex\u00E9cutant ce document verra vos sous-projets sauvegard\u00E9s';
 Sbi.locale.ln['sbi.qbe.savewindow.privatedesc'] = 'La requ\u00EAte enregistr\u00E9e sera visible uniquement pour vous';
-Sbi.locale.ln['sbi.qbe.savewindow.selectmetadata'] = 'Insérer métadonnées';
+Sbi.locale.ln['sbi.qbe.savewindow.selectmetadata'] = 'Ins\u00E9rer m\u00E9tadonn\u00E9es';
 
 
 //===================================================================
@@ -232,13 +232,13 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.wizard'] = 'Assistant Exp.';
 
 //warnings
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.title'] = 'Supprimer le filtre ?';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.msg'] = 'Vous êtes sur le point de supprimer un filtre qui est utilisé par une expression (voir l\'assistant des expressions). Le supprimer réinitialise complètement l\'expression. Souhaitez-vous toujours le supprimer ?';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.msg'] = 'Vous \u00EAtes sur le point de supprimer un filtre qui est utilis\u00E9 par une expression (voir l\'assistant des expressions). Le supprimer r\u00E9initialise compl\u00E8tement l\'expression. Souhaitez-vous toujours le supprimer ?';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.title'] = 'Supprimer toutes les filtres ?';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.deleteAll.msg'] = 'Vous \u00EAtes sur le point de supprimer tous les filtres. Etes vous s\u00DBr de vouloir les supprimer ?';
 
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.title'] = 'Changer le connecteur booleen ?';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.msg'] = 'Changer le connecteur booleen de ce filtre réinitialise l\'expression associée (voir l\'assistant des expressions). Souhaitez-vous toujours le supprimer ?';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.msg'] = 'Changer le connecteur booleen de ce filtre r\u00E9initialise l\'expression associ\u00E9e (voir l\'assistant des expressions). Souhaitez-vous toujours le supprimer ?';
 
 
 // ===================================================================
@@ -339,8 +339,8 @@ Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.parameterreference'] = 'Param
 //===================================================================
 //DATA STORE PANEL AND EXTERNAL SERVICES
 //===================================================================
-Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.title'] = 'Le service a correctement été invoqué';
-Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.serviceresponse'] = 'Le service a retourné ce message :';
+Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.title'] = 'Le service a correctement \u00E9t\u00E9 invoqu\u00E9';
+Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.serviceresponse'] = 'Le service a retourn\u00E9 ce message :';
 Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.errors.title'] = 'Erruer';
 Sbi.locale.ln['sbi.qbe.datastorepanel.externalservices.errors.missingcolumns'] = 'Le service a besoin des colonnes suivantes : ';
 Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restaurer le style grille'
@@ -350,7 +350,7 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restaurer le style grille'
 //===================================================================
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
-Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation échouée';
+Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation \u00E9chou\u00E9e';
 Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Warning: avec ce type de champ impossible d\utiliser un filtre';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annuler';
