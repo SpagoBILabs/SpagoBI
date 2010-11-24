@@ -65,7 +65,7 @@ Sbi.crosstab.core.CrossTabCFWizard = function(config) {
 				text: LN('sbi.crosstab.calculatefieldwizard.ok'),
 			    handler: function(){
 		    		var expression= this.getExpression();
-		    		var cfName= this.cfNameField.getValue()
+		    		var cfName= this.cfNameField.getValue();
 		    		if(expression!=null && expression!="" && cfName!=null && cfName!="" && this.validate(false)){
 		    			if(this.modality == 'edit'){
 		    				this.fireEvent('modifyCalculatedField', this.baseNode, this.activeLevel, this.horizontal, expression, cfName);
