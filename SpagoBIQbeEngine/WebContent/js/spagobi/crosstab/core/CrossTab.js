@@ -275,20 +275,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
 		}
     }
-    
-    //remove highlight of a row of the table by removing an additional class 
-    //i: the number of the row (visible)
-    ,removeHighlightOnRow: function(i){
-		for(var y = 0; ; y++){
-			//var el = Ext.get('['+i+','+y+']');
-			//if (el == null) return;
-			//el.removeClass('crosstab-table-cells-highlight');
-	   		var cel = document.getElementById('['+i+','+y+']');
-	   		if (cel == null) return;
-	   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
-		}
-    }
-    
+
     //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
     //j: the number of the column (visible)
     ,highlightColumn: function(j){
@@ -301,14 +288,49 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
 		}
     }
-     
+
+    //highlight a row of the table by adding a class to the cell elements (the additional class sets a background color)
+    //i: the number of the row (visible)
+    ,highlightRowWithTimeOut: function(i){
+    	if(this.selectedRowId!=null){
+    		this.removeHighlightOnRow(this.selectedRowId);
+    	}
+    	this.selectedRowId = i;
+    	for(var y = 0; ; y++){
+	   		var cel = document.getElementById('['+i+','+y+']');
+	   		if (cel == null) return;
+	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
+		}
+    }
+    
+    //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
+    //j: the number of the column (visible)
+    ,highlightColumnWithTimeOut: function(j){
+    	if(this.selectedColumnId!=null){
+    		this.removeHighlightOnColumn(this.selectedColumnId);
+    	}
+    	this.selectedColumnId = j;        
+		for (var y = 0; ; y++) {
+	   		var cel = document.getElementById('['+y+','+j+']');
+	   		if (cel == null) return;
+	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
+		}
+    }
+    
+    //remove highlight of a row of the table by removing an additional class 
+    //i: the number of the row (visible)
+    ,removeHighlightOnRow: function(i){
+		for(var y = 0; ; y++){
+	   		var cel = document.getElementById('['+i+','+y+']');
+	   		if (cel == null) return;
+	   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
+		}
+    }
+         
     //remove highlight of a column of the table by removing an additional class 
     //j: the number of the column (visible)
     ,removeHighlightOnColumn: function(j){
  		for (var y = 0; ; y++) {
-			//var el = Ext.get('['+y+','+j+']');
-			//if (el == null) return;
-			//Ext.get('['+y+','+j+']').removeClass('crosstab-table-cells-highlight');
 	   		var cel = document.getElementById('['+y+','+j+']');
 	   		if (cel == null) return;
 	   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
@@ -320,11 +342,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
 		for(var i = 0; i<entries.length; i++){
 			for(var y = 0; y<entries[0].length; y++){
-				//var el = Ext.get('['+i+','+y+']');
-				//if(el == null){
-				//	break;
-				//}
-				//el.removeClass('crosstab-table-cells-highlight');
 		   		var cel = document.getElementById('['+i+','+y+']');
 		   		if (cel == null) break;
 		   		cel.className = cel.className.replace(/\bcrosstab-table-cells-highlight\b/,''); // removing class crosstab-table-cells-highlight
@@ -1161,18 +1178,30 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	        trackOver:true
 	    });
     	dataView.on('mouseleave', function(dataView, index, htmlNode, event) {
+            clearTimeout(this.selectedColumnTimeout);
+            clearTimeout(this.selectedRowTimeout);
             var divId = eval(htmlNode.id);
            	var row = divId[0];
            	var column = divId[1];
-            this.removeHighlightOnColumn(column);
-            this.removeHighlightOnRow(row);
+          	this.removeHighlightOnColumn(column);
+          	this.removeHighlightOnRow(row);
+//            this.selectedColumnExitTimeout=(this.removeHighlightOnColumn).defer(200,this,[column]);
+//            this.selectedRowExitTimeout=(this.removeHighlightOnRow).defer(200,this,[row]);
         }, this);
     	dataView.on('mouseenter', function(dataView, index, htmlNode, event) {
+//    		clearTimeout(this.selectedColumnExitTimeout);
+//    		clearTimeout(this.selectedRowExitTimeout);
     		var divId = eval(htmlNode.id);
            	var row = divId[0];
            	var column = divId[1];
-            this.highlightColumn(column);
-            this.highlightRow(row);
+//            this.selectedColumnTimeout=(this.highlightColumnWithTimeOut).defer(200,this,[column]);
+//            this.selectedRowTimeout=(this.highlightRowWithTimeOut).defer(200,this,[row]);
+           	
+           	//defer the highlight: during the navigation tipically the mouse
+           	// passes over some cells with out stop in them. Deferring the highlightColumn
+           	// and eith the clearTimeout in the mouseleve event we try to not highlight the transit cells
+            this.selectedColumnTimeout=(this.highlightColumn).defer(200,this,[column]);
+            this.selectedRowTimeout=(this.highlightRow).defer(200,this,[row]);
         }, this);
     	
     	this.datapanel = new Ext.Panel({
