@@ -289,33 +289,33 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		}
     }
 
-    //highlight a row of the table by adding a class to the cell elements (the additional class sets a background color)
-    //i: the number of the row (visible)
-    ,highlightRowWithTimeOut: function(i){
-    	if(this.selectedRowId!=null){
-    		this.removeHighlightOnRow(this.selectedRowId);
-    	}
-    	this.selectedRowId = i;
-    	for(var y = 0; ; y++){
-	   		var cel = document.getElementById('['+i+','+y+']');
-	   		if (cel == null) return;
-	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
-		}
-    }
+//    //highlight a row of the table by adding a class to the cell elements (the additional class sets a background color)
+//    //i: the number of the row (visible)
+//    ,highlightRowWithTimeOut: function(i){
+//    	if(this.selectedRowId!=null){
+//    		this.removeHighlightOnRow(this.selectedRowId);
+//    	}
+//    	this.selectedRowId = i;
+//    	for(var y = 0; ; y++){
+//	   		var cel = document.getElementById('['+i+','+y+']');
+//	   		if (cel == null) return;
+//	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
+//		}
+//    }
     
-    //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
-    //j: the number of the column (visible)
-    ,highlightColumnWithTimeOut: function(j){
-    	if(this.selectedColumnId!=null){
-    		this.removeHighlightOnColumn(this.selectedColumnId);
-    	}
-    	this.selectedColumnId = j;        
-		for (var y = 0; ; y++) {
-	   		var cel = document.getElementById('['+y+','+j+']');
-	   		if (cel == null) return;
-	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
-		}
-    }
+//    //highlight a column of the table by adding a class to the cell elements (the additional class sets a background color)
+//    //j: the number of the column (visible)
+//    ,highlightColumnWithTimeOut: function(j){
+//    	if(this.selectedColumnId!=null){
+//    		this.removeHighlightOnColumn(this.selectedColumnId);
+//    	}
+//    	this.selectedColumnId = j;        
+//		for (var y = 0; ; y++) {
+//	   		var cel = document.getElementById('['+y+','+j+']');
+//	   		if (cel == null) return;
+//	   		cel.className += ' crosstab-table-cells-highlight'; // adding class crosstab-table-cells-highlight
+//		}
+//    }
     
     //remove highlight of a row of the table by removing an additional class 
     //i: the number of the row (visible)
