@@ -288,6 +288,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				geoException = new GeoEngineException("Impossible to render map", e);
 				geoException.setDescription(description);
 				throw  geoException;
+			}catch (Throwable t) {
+				GeoEngineException geoException;
+				logger.error("Impossible to create a temporary file", t);
+				String description = "Impossible to create a temporary file";
+				geoException = new GeoEngineException("Impossible to render map", t);
+				geoException.setDescription(description);
+				throw  geoException;
 			}				
 			try {
 				SVGMapSaver.saveMap(masterMap, tmpMap);
@@ -305,6 +312,14 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				String str = e.getMessage()!=null?e.getMessage():e.getClass().getName();
 				String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
 				geoException = new GeoEngineException("Impossible to render map",  e);
+				geoException.setDescription(description);
+				throw  geoException;
+			}catch (Throwable t) {
+				GeoEngineException geoException;
+				logger.error("Impossible to save map on temporary file " + tmpMap, t);
+				String str = t.getMessage()!=null?t.getMessage():t.getClass().getName();
+				String description = "Impossible to save map on temporary file " + tmpMap + ". Root cause: " + str;
+				geoException = new GeoEngineException("Impossible to render map",  t);
 				geoException.setDescription(description);
 				throw  geoException;
 			}
