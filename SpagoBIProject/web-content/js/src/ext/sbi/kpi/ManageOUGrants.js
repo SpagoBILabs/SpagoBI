@@ -347,12 +347,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 		var baseConfig = {drawFilterToolbar:false}; 
 	
-		var kpiInstStore = new Ext.data.JsonStore({
-			root: 'rows',
-			url: this.configurationObject.manageListService,
-			fields: ['modelText','kpiCode','text','modelCode','kpiId','modelInstId','label','leaf','modelId','modelName','modelTypeDescr','modelType','kpiName','description','name','kpiInstId','modelDescr','kpiInstSaveHistory', "checkAllChildren"]
-		});
-	
 		var OUStore = new Ext.data.JsonStore({
 			url: this.configurationObject.manageOUListService,
 			fields: ['id','label','name','description']
