@@ -18,87 +18,159 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-
+ 
 /**
- * Object name
- * 
- * [description]
- * 
- * 
- * Public Properties
- * 
- * [list]
- * 
- * 
- * Public Methods
- * 
- * [list]
- * 
- * 
- * Public Events
- * 
- * [list]
- * 
- * Authors - Monica Franceschini
- */
+  * Object name 
+  * 
+  * [description]
+  * 
+  * 
+  * Public Properties
+  * 
+  * [list]
+  * 
+  * 
+  * Public Methods
+  * 
+  *  [list]
+  * 
+  * 
+  * Public Events
+  * 
+  *  [list]
+  * 
+  * Authors
+  * 
+  * - Alberto Ghedin (alberto.ghedin@eng.it)
+  */
+
 Ext.ns("Sbi.widgets");
 
-Sbi.widgets.ModelsInstanceTree = function(config, ref) { 
+Sbi.widgets.ModelInstanceTree = function(){
 	
-	this.addEvents();
-	this.configurationObject = config;
+    // public space
+	return {
+    
 
-	this.referencedCmp = ref;
-	this.initConfigObject();
+    createGoalModelInstanceTree: function(conf){
+    	return new Sbi.widgets.ColumnTree({
+	        height: 300,
+	        autoScroll:true,
+	        title: ' ',
+			autoWidth : true,
+			height : 300,
+			layout: 'fit',
+			userArrows : true,
+			animate : true,
+			autoScroll : true,		
+            style: {
+                "border":"none"
+            },
+			enableDD : true,
+            enableDrop: false,
+            enableDrag: true,
+            ddAppendOnly: false ,
+            ddGroup  : 'tree2tree',
+			scope : this,
+			shadow : true,
+			root : conf.rootNode, 
+	        columns:[{
+	            header:'kpi',
+	            columnId: 'weight1',
+	            width:200,
+	            dataIndex:'modelText',
+	            fieldType: 'text'
+	        },{
+	            header:'kpiId',
+	            columnId: 'id',
+	            width:0,
+	            visibility: 'hidden',
+	            dataIndex:'modelText',
+	            fieldType: 'text'
+	        },{
+	            header:' ',
+	            columnId: 'check',
+	            width:30,
+	            dataIndex:'checked',
+	            fieldType: 'checkbox'
+	        },{
+	            header:'Peso 1',
+	            columnId: 'weight1',
+	            width:70,
+	            dataIndex:'modelCode',
+	            fieldType: 'input'
+	        },{
+	            header:'Peso 2',
+	            columnId: 'weight2',
+	            width:70,
+	            dataIndex:'modelCode',
+	            fieldType: 'input'
+	        },{
+	            header:' ',
+	            columnId: 'threshold1',
+	            width:70,
+	            dataIndex:'kpiCode',
+	            fieldType: 'input'
+	        },{
+	            header:' ',
+	            columnId: 'threshold2',
+	            width:55,
+	            dataIndex:'modelCode',
+	            fieldType: 'combo'
+	        },{
+	            header:' ',
+	            columnId: 'threshold3',
+	            width:55,
+	            dataIndex:'kpiCode',
+	            fieldType: 'combo'
+	        },{
+	            header:' ',
+	            columnId: 'threshold4',
+	            width:70,
+	            dataIndex:'modelCode',
+	            fieldType: 'input'
+	        }],
+
+	        loader: new Ext.tree.TreeLoader({
+	           
+	            uiProviders:{
+	                'col': Sbi.widgets.ColumnNodeUI
+	            },
+				nodeParameter: 'modelInstId',
+				dataUrl: conf.manageTreeService,
+				baseParams : conf.treeLoaderBaseParameters,
+		        createNode: function(attr) {
+		        	attr.uiProvider='col';
+		            if (attr.modelInstId) {
+		                attr.id = attr.modelInstId;
+		            }
+
+		    		if (attr.kpiInstId !== undefined && attr.kpiInstId !== null
+		    				&& attr.kpiInstId != '') {
+		    			attr.iconCls = 'has-kpi';
+		    		}
+		    		if (attr.error !== undefined && attr.error !== false) {
+		    			attr.cls = 'has-error';
+		    		}
+		    		var attrKpiCode = '';
+		    		if(attr.kpiCode !== undefined){
+		    			attrKpiCode = ' - '+attr.kpiCode;
+		    		}
+		    		if(attr.kpiInstActive !== undefined && attr.kpiInstActive){
+		    			attr.disabled = attr.kpiInstActive;
+		    			attr.cls = attr.cls+' line-through';
+		    		}
 	
-	var c = Ext.apply({}, config || {}, {});
-	Sbi.widgets.ModelsInstanceTree.superclass.constructor.call(this, c);
-	this.on('render', function(){this.getRootNode().expand(false, /*no anim*/false);}, this)
-};
+					attr.checked= true;
+					
 
-Ext.extend(Sbi.widgets.ModelsInstanceTree , Sbi.widgets.SimpleTreePanel, {
-	
-	configurationObject: null
-	, root:null
-	, referencedCmp : null
-	, initConfigObject: function(){
+		    		attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
+		    		
+		    		return node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+		        }
+	        })
 
-		var thisPanel = this;
-		this.treeLoader =new Ext.tree.TreeLoader({
-			nodeParameter: 'modelInstId',
-			dataUrl: this.configurationObject.manageTreeService,
-			baseParams : this.configurationObject.treeLoaderBaseParameters,
-	        createNode: function(attr) {
-			
-	            if (attr.modelInstId) {
-	                attr.id = attr.modelInstId;
-	            }
-
-	    		if (attr.kpiInstId !== undefined && attr.kpiInstId !== null
-	    				&& attr.kpiInstId != '') {
-	    			attr.iconCls = 'has-kpi';
-	    		}
-	    		if (attr.error !== undefined && attr.error !== false) {
-	    			attr.cls = 'has-error';
-	    		}
-	    		var attrKpiCode = '';
-	    		if(attr.kpiCode !== undefined){
-	    			attrKpiCode = ' - '+attr.kpiCode;
-	    		}
-	    		if(attr.kpiInstActive !== undefined && attr.kpiInstActive){
-	    			attr.disabled = attr.kpiInstActive;
-	    			attr.cls = attr.cls+' line-through';
-	    		}
-				if(thisPanel.configurationObject.checkbox){
-					attr.checked= false;
-				}
-				
-	    		attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
-	            return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-	        }
-		});
+	    });
     }
-
-
-
-});
+	};
+}();
