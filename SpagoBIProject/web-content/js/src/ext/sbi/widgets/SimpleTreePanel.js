@@ -93,7 +93,7 @@ Ext.extend(Sbi.widgets.SimpleTreePanel, Ext.tree.TreePanel, {
 				id:  this.rootNodeId
 			}
 		});
-		return conf;
+		return conf || config;
 	}
 
 });
