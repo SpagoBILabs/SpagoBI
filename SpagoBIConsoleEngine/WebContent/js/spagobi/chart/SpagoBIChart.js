@@ -375,7 +375,6 @@ Sbi.chart.Speedometer = Ext.extend(Sbi.chart.SpagoBIChart, {
 		, lowValue: 33
 		, highValue: 66
 		, field: 'EffortIndex'
-	    , descValue: 'descEffortIndex'
 	}
 		
 	, isSwfReady: function() {
