@@ -25,8 +25,6 @@ package it.eng.spagobi.engines.jasperreport;
 
 
 
-import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -42,6 +40,8 @@ import net.sf.jasperreports.engine.fill.JRFillParameter;
 import net.sf.jasperreports.engine.fill.JRFillVariable;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
 
 /**
  * @author Giulio Gavardi
