@@ -38,15 +38,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		types="[";
 		for(int i=0; i< roleTypesCd.size(); i++){
 			Domain domain = roleTypesCd.get(i);
-			//types+="{typeCd: '"+domain.getValueCd()+"'}";
-			types+="['"+domain.getValueCd()+"']";
+			types+="{'typeCd': '"+domain.getValueCd()+"', 'valueNm': '"+domain.getValueName()+"'}";
 			if(i != (roleTypesCd.size()-1)){
 				types+=",";
 			}
 		}
 		types+="]";
+		
 	}
 	%>
+
 	var config=<%= types%>;
 	var url = {
     	host: '<%= request.getServerName()%>'
