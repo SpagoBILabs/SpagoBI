@@ -143,7 +143,10 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				try {
 					Role existentRole = DAOFactory.getRoleDAO().loadByName(name);
 					if(existentRole != null){
-						throw new SpagoBIServiceException(SERVICE_NAME,	"Role Name already present.");
+						String id = getAttributeAsString(ID);
+						if(id == null || id.equals("") || id.equals("0")){
+							throw new SpagoBIServiceException(SERVICE_NAME,	"Role Name already present.");
+						}
 					}
 				} catch (EMFUserError e1) {
 					logger.error(e1.getMessage(), e1);

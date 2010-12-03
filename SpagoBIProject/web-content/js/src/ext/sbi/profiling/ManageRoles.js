@@ -146,10 +146,25 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	}
 
 	,initDetailtab: function() {
-		
-		this.typesStore = new Ext.data.SimpleStore({
- 	        fields: ['typeCd'],
+
+		this.typesStore = new Ext.data.JsonStore({
+ 	        fields: ['typeCd', 'valueNm'],
  	        data: config,
+ 	        listeners: {
+	                'load': {
+                        fn: function( store, records, options) {
+                             for (i=0; i< records.length; i++){ 
+                            	 var a = LN(records[i].data.valueNm);                            	 
+                            	 var b = records[i].data.typeCd;                            	 
+                            	 
+                            	 records[i].set('typeCd1', b);
+                            	 records[i].set('valueNm1', a);
+                            	 records[i].commit();
+                             }
+                             
+                        }
+	                }
+	        },
  	        autoLoad: false
  	    });
 		
@@ -157,7 +172,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	 	   var detailFieldId = {
 	                 name: 'id',
 	                 hidden: true
-	             };
+	       };
 	 		   
 	 	   var detailFieldName = {
 	            	 maxLength:100,
@@ -191,23 +206,25 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                 name: 'description'
 	             };
 
-	 		   
-	 	   var detailFieldNodeType =  {
+
+	 	   var detailFieldNodeType =  new Ext.form.ComboBox({
 	            	  name: 'typeCd',
+	            	  hiddenName: 'typeCd',
 	                  store: this.typesStore,
 	                  fieldLabel: LN('sbi.roles.headerRoleType'),
-	                  displayField: 'typeCd',   // what the user sees in the popup
-	                  valueField: 'typeCd',        // what is passed to the 'change' event
+	                  displayField: 'valueNm1',   // what the user sees in the popup
+	                  valueField: 'typeCd1',      // what is passed to the 'change' event
 	                  typeAhead: true,
 	                  forceSelection: true,
 	                  mode: 'local',
 	                  triggerAction: 'all',
-	                  selectOnFocus: true,
+	                  selectOnFocus: false,
 	                  editable: false,
 	                  allowBlank: false,
 	                  validationEvent:true,
-	                  xtype: 'combo'
-	             };  
+	                  tpl: '<tpl for="."><div ext:qtip="{typeCd1}" class="x-combo-list-item">{valueNm1}</div></tpl>'
+	             });  
+
 	 	  //END list of detail fields
 	 	   
 	 	  this.detailTab = new Ext.Panel({

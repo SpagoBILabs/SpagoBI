@@ -9,6 +9,14 @@ Sbi.locale.ln['sbi.execution.export.qbe.results']     = 'R\u00E9sultat';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
+Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Generic Node';
+Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Generic Root';
+Sbi.locale.ln['sbidomains.nm.user'] = 'User';
+Sbi.locale.ln['sbidomains.nm.admin'] = 'Administrator';
+Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developer';
+Sbi.locale.ln['sbidomains.nm.test_role'] = 'Test User';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
+
 Sbi.locale.ln['sbi.general.No']                       = 'Non';
 Sbi.locale.ln['sbi.general.yes']                      = 'Oui';
 Sbi.locale.ln['sbi.generic.serviceError']             = 'Erreur du service';

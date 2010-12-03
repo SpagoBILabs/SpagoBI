@@ -12,7 +12,14 @@ Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
 
 Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Generic Root';
+Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Generic Node';
+Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Generic Root';
 
+Sbi.locale.ln['sbidomains.nm.user'] = 'User';
+Sbi.locale.ln['sbidomains.nm.admin'] = 'Administrator';
+Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developer';
+Sbi.locale.ln['sbidomains.nm.test_role'] = 'Test User';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.add'] = 'Add';
