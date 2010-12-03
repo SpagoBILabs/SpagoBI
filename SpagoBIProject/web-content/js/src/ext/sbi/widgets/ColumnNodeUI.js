@@ -157,8 +157,34 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 	            	 checkboxConf.width = c.width-bw;
 
 	             }else if(c.fieldType == 'combo'){
+	            	 var selectedId = parseInt(a[c.dataIndex]);
 	                 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
-	                         '<div class="x-tree-col-text">','<select ',disabled,' id=',c.columnId,n.columnValues, ' style="width: 100%"><option>&lt;</option><option>&gt;</option><option>&lt;=</option><option>&gt;=</option></select>',"</div>","</div>");
+	                         '<div class="x-tree-col-text">','<select ',disabled,' id=',c.columnId,n.columnValues,' style="width: 100%">');
+	                 buf.push('<option');
+	                 if(selectedId==0){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push('>=</option>');
+	                 buf.push('<option');
+	                 if(selectedId==1){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push('>&lt;</option>');
+	                 buf.push('<option');
+	                 if(selectedId==2){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push('>&gt;</option>');
+	                 buf.push('<option');
+	                 if(selectedId==3){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push('>&lt;=</option>');
+	                 buf.push('<option');
+	                 if(selectedId==4){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push('>&gt;=</option>','</select>',"</div>","</div>");
 	    		 }
              }else{
             	 buf.push('<input type="hidden" id=',c.columnId,n.columnValues, ' style="width: 0px; float: left;" value=',a[c.dataIndex],'>',"</input>");

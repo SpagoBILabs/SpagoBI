@@ -54,6 +54,7 @@ Sbi.widgets.ModelInstanceTree = function(){
 
     createGoalModelInstanceTree: function(conf){
     	return new Sbi.widgets.ColumnTree({
+    		border: false,
 	        height: 300,
 	        autoScroll:true,
 	        title: ' ',
@@ -97,37 +98,37 @@ Sbi.widgets.ModelInstanceTree = function(){
 	            header:'Peso 1',
 	            columnId: 'weight1',
 	            width:70,
-	            dataIndex:'modelCode',
+	            dataIndex:'weight1',
 	            fieldType: 'input'
 	        },{
 	            header:'Peso 2',
 	            columnId: 'weight2',
 	            width:70,
-	            dataIndex:'modelCode',
+	            dataIndex:'weight2',
 	            fieldType: 'input'
 	        },{
 	            header:' ',
 	            columnId: 'threshold1',
 	            width:70,
-	            dataIndex:'kpiCode',
+	            dataIndex:'threshold1',
 	            fieldType: 'input'
 	        },{
 	            header:' ',
+	            columnId: 'sign1',
+	            width:55,
+	            dataIndex:'sign1',
+	            fieldType: 'combo'
+	        },{
+	            header:' ',
+	            columnId: 'sign2',
+	            width:55,
+	            dataIndex:'sign2',
+	            fieldType: 'combo'
+	        },{
+	            header:' ',
 	            columnId: 'threshold2',
-	            width:55,
-	            dataIndex:'modelCode',
-	            fieldType: 'combo'
-	        },{
-	            header:' ',
-	            columnId: 'threshold3',
-	            width:55,
-	            dataIndex:'kpiCode',
-	            fieldType: 'combo'
-	        },{
-	            header:' ',
-	            columnId: 'threshold4',
 	            width:70,
-	            dataIndex:'modelCode',
+	            dataIndex:'threshold2',
 	            fieldType: 'input'
 	        }],
 
@@ -166,7 +167,9 @@ Sbi.widgets.ModelInstanceTree = function(){
 
 		    		attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
 		    		
-		    		return node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+		    		var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+		    		
+		    		return node;
 		        }
 	        })
 

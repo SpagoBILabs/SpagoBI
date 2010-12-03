@@ -68,14 +68,10 @@ Sbi.widgets.ConfigurableTree = function(config) {
         ddGroup  : 'tree2tree',
 		scope : this,
 		shadow : true,
-		root : {
-			nodeType : 'async',
-			text : '1',
-			id:  '1'
-		}
+		root : config.rootNode
 	};
     
-    Sbi.widgets.ConfigurableTree.superclass.constructor.call(this, c || config);	
+    Sbi.widgets.ConfigurableTree.superclass.constructor.call(this, c );	
     
     this.initWidget();
 	

@@ -116,6 +116,11 @@ Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Enable all descendant
 Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disable all descendants';
 //END GRANTS messages
 
+//START GOALS messages
+Sbi.locale.ln['sbi.goals.listTitle'] = 'Goals List';
+Sbi.locale.ln['sbi.goals.nogrant'] = 'You should select a grant'
+//END GOALS messages
+
 
 //START kpi interface messages
 Sbi.locale.ln['sbi.resources.tablename'] = 'Table Name';
