@@ -227,6 +227,7 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 		    {
 		    	header: 'EffortIdx',
 		    	name:'EffortIndex', 
+		    	descValue:'descEffortIndex',
 		    	rangeMaxValue: 100, 
 		    	secondIntervalUb: 66, 
 		    	firstIntervalUb: 10, 
@@ -234,6 +235,7 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 		    }, {
 		    	header: 'Compet.',
 		    	name:'Competitiveness', 
+		    	descValue:'descCompetitiveness',
 		    	rangeMaxValue: 100, 
 		    	secondIntervalUb: 66, 
 		    	firstIntervalUb: 33, 
@@ -241,6 +243,7 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 		    }, {
 		    	header: 'CostOpt.',
 		    	name:'CostOptimization', 
+		    	descValue:'descCostOptimization',
 		    	rangeMaxValue: 100, 
 		    	secondIntervalUb: 66, 
 		    	firstIntervalUb: 33, 
@@ -248,6 +251,7 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 		    }, {
 		    	header: 'Health',
 		    	name:'Health', 
+		    	descValue:'descHealth',
 		    	rangeMaxValue: 100, 
 		    	secondIntervalUb: 66, 
 		    	firstIntervalUb: 33, 
@@ -261,25 +265,44 @@ Sbi.chart.Multileds = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 	
 	, onRefresh: function() {
-			
-			//alert('refresh multileds');
 			var data = {};
 			var rec = this.store.getAt(0);
 			if(rec) {
 				var fields = this.storeMeta.fields;
 				for(var i = 0, l = fields.length, f; i < l; i++) {
 					f = fields[i];
+					//alert("f: " + f.toSource());
 					if( (typeof f) === 'string') {
 						f = {name: f};
 					}
 					var alias = f.header || f.name;
 					if(alias === 'recNo') continue;
-					data[alias] = rec.get(f.name);				
+					//data[alias] = rec.get(f.name);
+					
+					var tmpDescValue = this.getDescriptionColumn(alias);
+					if (tmpDescValue!== undefined && tmpDescValue != ''){											
+						data[alias] = rec.get(f.name) + '|' + rec.get(this.store.getFieldNameByAlias(tmpDescValue));
+					}else{
+						data[alias] = rec.get(f.name);
+					}
 				}
 				this.swf.loadData(data);
 			}
-			
-			
+	}
+	
+	// checks if the column is configurated as visible into template
+	, getDescriptionColumn: function(alias){
+		if (this.fields === undefined) return '';
+		
+		var desc = '';
+		for (var i = 0; i < this.fields.length; i++){
+			if (alias === this.fields[i].name ){
+				desc = this.fields[i].descValue;
+				break;
+			}				
+		}
+		return desc;	
+		
 	}
 });
 Ext.reg('chart.sbi.multileds', Sbi.chart.Multileds);
@@ -352,6 +375,7 @@ Sbi.chart.Speedometer = Ext.extend(Sbi.chart.SpagoBIChart, {
 		, lowValue: 33
 		, highValue: 66
 		, field: 'EffortIndex'
+	    , descValue: 'descEffortIndex'
 	}
 		
 	, isSwfReady: function() {
@@ -364,15 +388,23 @@ Sbi.chart.Speedometer = Ext.extend(Sbi.chart.SpagoBIChart, {
 		Sbi.chart.SpagoBIChart.superclass.onRender.call(this, ct, position);
 	}
 	
+	
 	, onRefresh: function() {
 		var value;
 		var rec = this.store.getAt(0);
 		if(rec) {
-			var fName = this.store.getFieldNameByAlias(this.flashVars.field);
-			value = rec.get(fName);
+			var fName = this.store.getFieldNameByAlias(this.flashVars.field);			
+			var tmpDescValue = this.flashVars.descValue;
+			if (tmpDescValue!== undefined && tmpDescValue != ''){											
+				value = rec.get(fName) + '|' + rec.get(this.store.getFieldNameByAlias(tmpDescValue));
+			}else{
+				value = rec.get(fName);
+			}
+			//value = rec.get(fName);
 		}
 		this.swf.setValue(value);			
 	}
+	
 });
 Ext.reg('chart.sbi.speedometer', Sbi.chart.Speedometer);
 
@@ -403,8 +435,15 @@ Sbi.chart.Semaphore = Ext.extend(Sbi.chart.SpagoBIChart, {
 		var rec = this.store.getAt(0);
 		if(rec) {
 			var fName = this.store.getFieldNameByAlias(this.flashVars.field);
-			value = rec.get(fName);
+			var tmpDescValue = this.flashVars.descValue;
+			if (tmpDescValue!== undefined && tmpDescValue != ''){											
+				value = rec.get(fName) + '|' + rec.get(this.store.getFieldNameByAlias(tmpDescValue));
+			}else{
+				value = rec.get(fName);
+			}
+		//	value = rec.get(fName);
 		}
+		
 		this.swf.setValue(value);			
 	}
 });
