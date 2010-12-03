@@ -45,41 +45,26 @@
 Ext.ns("Sbi.widgets");
 
 Sbi.widgets.TreeModelPanel = function(config) {
-
-	var conf = config.configurationObject;
-	this.services = new Array();
-	this.services['listModelService'] = conf.manageTreeService;
-	
-	this.tabItems = conf.tabItems;
-	this.notDraggable =config.notDraggable;
-	//alert(this.notDraggable);
-	this.treeTitle = conf.treeTitle;
-
-	this.initWidget();	
-
-	var c = Ext.apply( {}, config, this.modelPanel);
-
+	var c = this.initWidget(config);	
 	Sbi.widgets.TreeModelPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
+Ext.extend(Sbi.widgets.TreeModelPanel, Ext.tree.TreePanel, {
 
-	gridForm : null,
-	tabs : null,
-	tabItems : null,
-	treeLoader : null,
 	rootNode : null,
 	rootNodeId : null,
 	preloadTree : true,
 	rootNodeText : null,
 	treeTitle : null,
-	importCheck: null,
 	treeLoader: null,
-	
 
-	initWidget : function() {
+	initWidget : function(config) {
 
-		this.modelsTree = new Ext.tree.TreePanel( {
+		if(config.treeTitle!=null && config.treeTitle!=undefined){
+			this.treeTitle = config.treeTitle;
+		}
+		
+		var conf = new Ext.tree.TreePanel( {
 			title : this.treeTitle,
 			autoWidth : true,
 			height : 300,
@@ -88,11 +73,9 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			animate : true,
 			autoScroll : true,		
             style: {
-                //"background-color": "#f1f1f1",
                 "border":"none"
             },
 			loader: this.treeLoader,
-
 			preloadTree : this.preloadTree,
 			enableDD : true,
             enableDrop: false,
@@ -107,39 +90,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 				modelId : this.rootNodeId,
 				id:  this.rootNodeId
 			}
-		  // ,listeners:{  }
 		});
-		var label = LN('sbi.modelinstances.importCheck');
-		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
-			label ='';
-		}
-		this.importCheck = new Ext.form.Checkbox({
-             fieldLabel: label,
-             allowBlank: false,
-         	 inputValue  :'true',
-         	 labelStyle: 'font-weight:bold; color: #3D8635;',
-             name: 'importChildrenFlag'
-         });
-		this.modelPanel = new Ext.form.FormPanel( {
-			frame : true,
-			labelWidth: 150,  
-			autoScroll : true,
-			labelAlign : 'left',
-			width : 390,
-			height : 510,
-			layoutConfig : {
-				animate : true,
-				activeOnTop : false
-			},
-			trackResetOnLoad : true,
-			//, this.importCheck
-			items: [this.importCheck, this.modelsTree ]
-		});
-		
-		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
-			this.importCheck.hide();
-			this.modelsTree.enableDD = false;
-		}
 		this.setListeners();
 	}
 

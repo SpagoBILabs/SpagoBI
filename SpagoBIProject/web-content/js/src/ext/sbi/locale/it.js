@@ -151,6 +151,11 @@ Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Abilita tutti i disce
 Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disabilita tutti i discendenti';
 //END GRANTS messages
 
+//START GOALS messages
+Sbi.locale.ln['sbi.goals.listTitle'] = 'Lista degli Obiettivi';
+Sbi.locale.ln['sbi.goals.nogrant'] = 'Selezionare un abilitazione per procedere'
+//END GOALS messages
+
 
 Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalità';
 Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Radice';

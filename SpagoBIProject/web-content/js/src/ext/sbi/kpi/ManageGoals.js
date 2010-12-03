@@ -46,12 +46,12 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageGoals = function(config, ref) { 
 	
 	//debug options
-	this.selectedGrantId = '2';
+	this.selectedGrantId = '-2';
 	this.kpiTreeRoot ={
-		nodeType : 'async',
-		text : 'root',
-		modelId : '4',
-		id:  '4'
+		text : 'root'
+	}
+	this.goalTreeRoot = {
+		text : 'root'	
 	}
 
 	var paramsOUChildList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "OU_CHILDS_LIST"};
@@ -67,15 +67,17 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			, baseParams: paramsGoalChildList
 	});	
 	
+	var paramsGoalTreeRootService = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "OU_GOAL"};
+	this.configurationObject.manageGoalTreeRootService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_GOALS_ACTION'
+			, baseParams: paramsGoalTreeRootService
+	});	
+	
 	var paramsGoal = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "GRANT_DEF"};
 	this.configurationObject.manageGoalService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_OUS_ACTION'
 			, baseParams: paramsGoal
 	});	
-	
-	
-	
-	
 	
 	this.config = config;
 	this.addEvents();
@@ -103,7 +105,7 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			border: false,
 			items: [
 			        {
-			        	id: 'OU',
+			        	id: 'OUTab',
 			        	title: 'OU',
 			        	region: 'west',
 			        	width: 275,
@@ -114,9 +116,8 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			        	items: [this.ouTree]
 			        },
 			        {
-			        	id: 'goalPanel',	  
+			        	id: 'goalPanelTab',	  
 			        	region: 'center',
-			        	width: 300,
 			        	split: true,
 			        	collapseMode:'mini',
 			        	autoScroll: true,
@@ -133,10 +134,10 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	ouTree: null
 	,goalPanel: null
 	,goalTreePanel: null
+	,goalTreeRoot: null
 	,goalDetailsPanel: null
 	,goalDetailsFormPanel: null
 	,goalDetailsFormPanelGoal: null
-	,goalDetailsFormPanelName: null
 	,goalDetailskpiPanel: null
 	,kpiTreeRoot: null
 	
@@ -154,7 +155,13 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.ouTree.doLayout();
 	//	this.doLayout();
 		this.ouTree.on('afterLayout',this.selectOUPanelRoot, this);
-		this.ouTree.getSelectionModel().addListener('selectionchange', this.updateGoalDetailsKpi, this);
+		this.ouTree.getSelectionModel().addListener('selectionchange', this.updateGoalAfterOUChange, this);
+	}
+	
+	, updateGoalAfterOUChange: function(sel, node){
+		this.updateGoalDetailsKpi(sel, node);
+		this.updateGoalDetailsTree(sel, node);
+		
 	}
 	
 	, selectOUPanelRoot: function(tree){
@@ -167,7 +174,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.initGoalTreePanel();
 		this.goalPanel = new Ext.Panel({
     		layout: 'border',
-    		autoHeight: true,
     		border: false,
 			items: [
 			          {
@@ -176,6 +182,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			        	  region: 'north',
 			        	  height: 150,
 			        	  collapseMode:'mini',
+			        	  border: false,
 			        	  autoScroll: true,
 			        	  split: true,
 			        	  layout: 'fit',
@@ -185,6 +192,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			        	  id: 'goalPanelDetails',
 			        	  title: 'Details',
 			        	  region: 'center',
+			        	  border: false,
 			        	  split: true,
 			        	  collapseMode:'mini',
 			        	  autoScroll: true,
@@ -218,7 +226,16 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		}); 
 		
 		c.treeLoader = treeLoader;
+		c.rootNode = this.goalTreeRoot; 
 		this.goalTreePanel = new Sbi.widgets.ConfigurableTree(c);
+		this.goalTreePanel.getSelectionModel().addListener('selectionchange', 
+				function(sel, node){
+					if (this.previousGoalTreeNodeSelected!=null){
+						this.previousGoalTreeNodeSelected.attributes.goalDesc = this.goalDetailsFormPanelGoal.getValue();
+					}
+					this.goalDetailsFormPanelGoal.setValue(node.attributes.goalDesc);
+					this.previousGoalTreeNodeSelected= node;
+				}, this);
 	}
 	
 	,initGoalDetailsPanel: function(conf){
@@ -270,9 +287,10 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		
 	}
 	
+	
 	,initGoalDetailsKpiPanel: function(conf){
 
-		this.selectedOUNode = '1';//this.ouTree.modelsTree.getSelectionModel().getSelectedNode().id;//'1';
+		this.selectedOUNode = '-1';//this.ouTree.modelsTree.getSelectionModel().getSelectedNode().id;//'1';
 		
 		var paramsOUChildList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "KPI_ACTIVE_CHILDS_LIST"};
 		
@@ -291,25 +309,61 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	
 	,updateGoalDetailsKpi: function(sel, node){
 		var conf=this.config;
-
 		conf.checkbox= true;
-
 		this.selectedOUNode = ''+node.id;
-
-		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode}
-				
+		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode};	
 		this.goalDetailskpiPanel.loader.baseParams = conf.treeLoaderBaseParameters;
 		this.goalDetailskpiPanel.setRootNode(this.kpiTreeRoot);
 		this.goalDetailskpiPanel.getRootNode().expand(false, /*no anim*/false);
 	}
 	
 	,updateGoalDetailsKpiRoot: function(root){
-		var conf=this.config;
-		conf.checkbox= true;
 		this.kpiTreeRoot = root;
 		this.goalDetailskpiPanel.setRootNode(root);
 		this.goalDetailskpiPanel.getRootNode().expand(false, /*no anim*/false);
 	}
+	
+	,updateGoalDetailsTree: function(sel, node){
+		var thisPanel = this;
+		Ext.Ajax.request({
+			url: this.configurationObject.manageGoalTreeRootService,
+			params: {'ouNode': node.id},
+			method: 'POST',
+			success: function(response, options) {
+				if (response !== undefined && response.responseText!== undefined) {
+					var goalNode = Ext.util.JSON.decode(response.responseText);
+					var root = {
+							nodeType : 'async',
+							text : goalNode.name,
+							id:  goalNode.nodeId,
+							goalDesc: goalNode.goalDesc
+						}
+						
+					thisPanel.updateGoalRoot(root);
+					thisPanel.goalDetailsFormPanelGoal.setValue(goalNode.goalDesc);
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				}
+			},
+			failure: function() {
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: LN('sbi.generic.savingItemError'),
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
+				
+			}
+			,scope: this
+	
+		});
+	}
+	
+	,updateGoalRoot: function(root){
+		this.goalTreeRoot = root;
+		this.goalTreePanel.setRootNode(root);
+		this.goalTreePanel.getRootNode().expand(false, /*no anim*/false);
+	}	
 	
 	,updatePanel: function(grant){
 		this.selectedGrantId = grant;
@@ -322,7 +376,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			success: function(response, options) {
 				if (response !== undefined && response.responseText!== undefined) {
 					var kpiInstRoot = Ext.util.JSON.decode( response.responseText ).modelinstance;
-					alert(kpiInstRoot.modelCode+' - '+kpiInstRoot.name+ attrKpiCode);
 		    		var attrKpiCode = '';
 		    		if(kpiInstRoot.kpiCode !== undefined){
 		    			attrKpiCode = ' - '+kpiInstRoot.kpiCode;
