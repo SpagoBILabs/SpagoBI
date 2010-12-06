@@ -34,8 +34,8 @@
      
     
     <!-- ********************* START ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
-    <ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderMock" />
-	<!-- ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderDB" 
+    <!-- ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderMock" /-->
+	<!--ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderDB" 
     	jndiDatasource="java:comp/env/jdbc/DWS"
 		getHierarchiesQuery="select distinct ag_ctab as HIERARCHY, cd_az as COMPANY from dws_t_an_aggr_ce"
 		getOUsQuery="SELECT AG_CETABL! AS CODE, AG_DETABL! AS NAME, CD_AZ AS COMPANY, AG_CTAB AS HIERARCHY FROM DWS_T_AN_AGGR_CE GROUP BY AG_CETABL!, AG_DETABL!, CD_AZ, AG_CTAB" 
@@ -43,6 +43,16 @@
 		getRootLeaves="select distinct ag_cetabl1 code, ag_detabl1 name , ag_dim as leaf from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ? and ag_cetabl2 is null and ag_cetabl1 = ag_dim"
 		getChildrenByLevel="select distinct ag_cetabl! code, ag_detabl! name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ?  and ag_cetabl% = ? and ag_detabl% = ?"
 		/-->
+	<ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart" 
+    	jndiDatasource="java:comp/env/jdbc/foodmart"
+		getHierarchiesQuery="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store"
+		getOUsQuery="SELECT distinct a.store_state as name, a.store_state as code 
+			 FROM store a union select b.store_city as name, b.store_city as code
+			 from store b union select c.store_name as name , c.store_name as code from store c" 
+		getRootByHierarchy="SELECT distinct store_country as code, store_country as name FROM store where store_country = ?"
+		getRootLeaves=""
+		getChildrenByLevel="select distinct ! as code, ! as name from store where store_country = ? "
+		/>		
     <!-- ********************* END ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
      
     <!-- ********************* START SECURITY CONFIGURATION ************************ -->
