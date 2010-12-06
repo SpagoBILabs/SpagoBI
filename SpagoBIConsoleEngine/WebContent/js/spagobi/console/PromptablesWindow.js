@@ -141,7 +141,17 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     	          , width: 250    	     
     	        });
         		          		
-    		} else if (param.values.type == 'combo'){	
+    		}else if (param.values === undefined || param.values.type == 'data'){  
+    			//data
+        		tmpField = new Ext.form.DateField({
+        		  fieldLabel: tmpLabel 
+    	          , width: 250  
+    	          , format: param.values.format || 'd/m/Y'
+    	        });
+        		
+        		
+        		          		
+    		}  else if (param.values.type == 'combo'){	
     			//combobox 
     			var tmpStore = null; 
     			var tmpValueField = 'column_1';
@@ -183,6 +193,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     					   , width: 250
     					   , allowBlank: !p.mandatory
     					   , valueField: (param.values.valueField)?param.values.valueField:'code'
+    					   , descField: (param.values.descField)?param.values.descField:''
     					};
     			
     			tmpField = new Sbi.console.LookupField(Ext.apply(baseConfig, {
@@ -209,6 +220,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     					   , width: 250
     					   , allowBlank: !p.mandatory
     					   , valueField: (param.values.valueField)?param.values.valueField:'code'
+    					   , descField: (param.values.descField)?param.values.descField:''
     					};
   			
 	  			tmpField = new Sbi.console.LookupField(Ext.apply(baseConfig, {
@@ -223,8 +235,14 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
    			 tmpField.defaultValue = param.values.defaultValue;
    		 	}
     		fields.push(tmpField);
-			this.fieldMap[tmpName] = tmpField;  
-			    		
+			this.fieldMap[tmpName] = tmpField;
+			/*
+    		if (param.values.type === 'data'){
+    			this.fieldMap[tmpName] = tmpField.getValue();
+    		}else{
+				this.fieldMap[tmpName] = tmpField;
+    		}	
+    		*/
         }  			   
 	
     	this.formPanel = new  Ext.FormPanel({
@@ -251,9 +269,17 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     			state[f] = this.fieldMap[f].defaultValue;
     		}
     		else {
+    			/*
+    			if (this.fieldMap[f].getXTypes().indexOf('/datefield') >= 0){
+    				alert('data: ' + this.fieldMap[f].getValue().toLocaleString());
+    				state[f] = this.fieldMap[f].getValue().toLocaleString();
+    				
+    			}else{
+    				state[f] = this.fieldMap[f].getValue();
+    			}
+    			*/
     			state[f] = this.fieldMap[f].getValue();
-    		}
-    	
+    		}    	
     	}
     	
     	return state;

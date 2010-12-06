@@ -419,7 +419,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			this.waitWin.startingTxt = 'Starting process';
 			this.waitWin.start();
 			this.waitWin.show();
-	  			 
+	  			 //alert('params: ' + params.toSource());
 	  		Ext.Ajax.request({
 		       	url: this.services[action.name] 			       
 		       	, params: params 			       

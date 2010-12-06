@@ -57,8 +57,16 @@ Sbi.console.LookupField = function(config) {
 	    this.cm = config.cm;
     }
 	if(config.valueField){
-	    this.valueField = config.valueField;
+	    this.valueFieldName = config.valueField;
     }
+	
+	//alert('config: ' + config.toSource());
+	if(config.descField && config.descField !== ''){
+	    this.displayFieldName = config.descField;
+    }else{
+    	 this.displayFieldName = config.valueField;
+    }
+	
 	this.store.on('metachange', function( store, meta ) {
 		this.updateMeta( meta );
 	}, this);
@@ -109,7 +117,9 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     
 	// STATE MEMBERS
 	  valueField: null
+	, valueFieldName: null
 	, displayField: null
+	, displayFieldName: null
 	, columnField: null
     
     , drawFilterToolbar: null
@@ -293,11 +303,17 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
 			this.grid.getColumnModel().setConfig(meta.fields);
 			//sets the correct displayField
 			for(i = 0; i < meta.fields.length; i++) {
-				if (meta.fields[i].header == this.valueField){
+				if (meta.fields[i].header == this.valueFieldName){
+					this.valueField = meta.fields[i].name;
+					break;
+				}				
+			}
+			for(i = 0; i < meta.fields.length; i++) {
+				if (meta.fields[i].header == this.displayFieldName){
 					this.displayField = meta.fields[i].name;
 					break;
-				}
-			}		
+				}				
+			}
 		} else {
 		   alert('ERROR: store meta changed before grid instatiation');
 		}
@@ -311,9 +327,7 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     	if(this.singleSelect === true){
     		this.xselection = {};
     	}
-    	//this.xselection[ record.data[this.valueField] ] = record.data[this.displayField];
-    	
-    	this.xselection[ record.data[this.displayField] ] = record.data[this.displayField];
+    	this.xselection[ record.data[this.valueField] ] = record.data[this.displayField];
     }
     
     , onDeselect: function(sm, rowIndex, record) {
