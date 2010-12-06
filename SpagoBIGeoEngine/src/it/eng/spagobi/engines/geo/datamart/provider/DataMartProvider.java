@@ -102,12 +102,9 @@ public class DataMartProvider extends AbstractDataMartProvider {
     		    		
     		try {
 				dataSet.loadData();
-			} catch (EMFUserError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (EMFInternalError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Throwable e) {
+				logger.error(e.getMessage());
+				throw new GeoEngineException("Impossible to load data from dataset");
 			}
     		
 			IDataStore dataStore = dataSet.getDataStore();
@@ -150,7 +147,8 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	            IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
 	            dddLinkFieldTransformer.transform(dataStore);
 	        } catch (Exception e) {  
-	        	e.printStackTrace();
+				logger.error(e.getMessage());
+				throw new GeoEngineException("Impossible to get DataMart");
 	        }    		
     	}  
     	
