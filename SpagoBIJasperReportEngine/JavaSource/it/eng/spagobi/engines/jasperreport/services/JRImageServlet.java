@@ -1,10 +1,14 @@
-package it.eng.spagobi.engines.jasperreport;
+/**
+ * 
+ * LICENSE: see COPYING file. 
+ * 
+ */
+package it.eng.spagobi.engines.jasperreport.services;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -15,10 +19,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-/**
- * 
- * @deprecatde use JRImageServlet instead (for any questions contact andrea gioia)
- */
+import it.eng.spagobi.engines.jasperreport.JasperReportEngineInstance;
+
+
 public class JRImageServlet extends HttpServlet {
 
 	private static transient Logger logger = Logger.getLogger(JRImageServlet.class);
@@ -40,15 +43,15 @@ public class JRImageServlet extends HttpServlet {
 		//response.setHeader("Expires", "Sat, 6 May 2010 12:00:00 GMT");	
 		response.setHeader("Cache-Control: max-age", "600");
 
-		String mapName = request.getParameter("mapname");
-		Map imagesMap = (Map)session.getAttribute(mapName);
-		if(imagesMap != null){
+		String executionId = request.getParameter("SBI_EXECUTION_ID");
+		JasperReportEngineInstance jasperReportEngineInstance = (JasperReportEngineInstance)session.getAttribute(executionId);
+		if(jasperReportEngineInstance != null){
 			String imageName = request.getParameter("image");
 			if (imageName != null) {
-				byte[] imageData = (byte[])imagesMap.get(imageName);
-				imagesMap.remove(imageName);
-				if(imagesMap.isEmpty()){
-					session.removeAttribute(mapName);
+				byte[] imageData = (byte[])jasperReportEngineInstance.getImageMap().get(imageName);
+				jasperReportEngineInstance.getImageMap().remove(imageName);
+				if(jasperReportEngineInstance.getImageMap().isEmpty()){
+					session.removeAttribute(executionId);
 				}
 				response.setContentLength(imageData.length);
 				ServletOutputStream ouputStream = response.getOutputStream();
