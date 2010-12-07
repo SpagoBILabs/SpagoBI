@@ -1,8 +1,3 @@
-/**
- * 
- * LICENSE: see COPYING file. 
- * 
- */
 package it.eng.spagobi.engines.jasperreport;
 
 import java.io.BufferedInputStream;
@@ -39,23 +34,12 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
 /**
- * Process jasper report execution requests and returns bytes of the filled
- * reports
+ * 
+ * @deprecatde use JasperReportEngineStartAction instead (for any questions contact andrea gioia)
  */
 public class JasperReportServlet extends HttpServlet {
 
-    static Map<String, String> extensions;
-    static {
-	extensions = new HashMap<String, String>();
-	extensions.put("jrxml", "text/jrxml");
-	extensions.put("html", "text/html");
-	extensions.put("xml", "text/xml");
-	extensions.put("txt", "text/plain");
-	extensions.put("csv", "text/csv");
-	extensions.put("pdf", "application/pdf");
-	extensions.put("rtf", "application/rtf");
-	extensions.put("xls", "application/vnd.ms-excel");
-    }
+   
 
     /**
      * Logger component

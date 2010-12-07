@@ -78,6 +78,6 @@
 	<!-- ====================================================================================== -->
 	<VIRTUALIZER active="true" 
 				maxSize="100"
-				dir="tmpdir"/>
+				dir="virtualization"/>
 
 </ENGINE-CONFIGURATION>
