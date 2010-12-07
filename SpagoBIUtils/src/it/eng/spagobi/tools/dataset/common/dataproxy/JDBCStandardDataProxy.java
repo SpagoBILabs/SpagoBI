@@ -155,6 +155,7 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 			if(resultSet != null) {
 				try {
 					resultSet.close();
+
 				} catch (SQLException e) {
 					throw new SpagoBIRuntimeException("Impossible to release [resultSet]", e);
 				}
@@ -164,6 +165,7 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 			if(statement != null) {
 				try {
 					statement.close();
+					
 				} catch (SQLException e) {
 					throw new SpagoBIRuntimeException("Impossible to release [statement]", e);
 				}
@@ -172,7 +174,9 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 			
 			if(connection != null) {
 				try {
-					connection.close();
+					if (!connection.isClosed()) {
+					    connection.close();
+					}
 				} catch (SQLException e) {
 					throw new SpagoBIRuntimeException("Impossible to release [connection]", e);
 				}
