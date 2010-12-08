@@ -21,8 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.utilities.engines;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.container.ContextManager;
 import it.eng.spagobi.container.IBeanContainer;
@@ -30,12 +38,6 @@ import it.eng.spagobi.container.IContainer;
 import it.eng.spagobi.container.SpagoBIContainerFactory;
 import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
 import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -150,6 +152,31 @@ public class BaseServletIOManager {
 		
 		getResponse().getWriter().print(content);
 		getResponse().getWriter().flush();
+	}
+	
+	public void writeBackToClient(int statusCode, File file, boolean inline, String fileName, String contentType) throws IOException {
+		
+		// setup response header
+		if(getResponse() instanceof HttpServletResponse) {
+			getResponse().setHeader("Content-Disposition", (inline?"inline":"attachment") + "; filename=\"" + fileName + "\";");
+		}
+		
+		getResponse().setContentType( contentType );
+		getResponse().setStatus(statusCode);
+		
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+		
+		int b = -1;
+		int contentLength = 0;
+		byte[] buf = new byte[1024];
+		while((b = in.read(buf)) != -1) {
+			getResponse().getOutputStream().write(buf, 0, b);
+			contentLength += b;
+		}	
+		getResponse().setContentLength( contentLength );
+		getResponse().getOutputStream().flush();
+		
+		in.close();
 	}
 	
 	
