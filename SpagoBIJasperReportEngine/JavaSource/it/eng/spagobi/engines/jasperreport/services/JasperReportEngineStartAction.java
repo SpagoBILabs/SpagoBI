@@ -79,7 +79,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         	if(outputType == null) {
         		outputType = JasperReportEngine.getConfig().getDefaultOutputType();
         		servletIOManager.getEnv().put(OUTPUT_TYPE, outputType);
-        		logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value [" + outputType + "]");
+        		logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value [" + servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
         	}
         	
         	servletIOManager.auditServiceStartEvent();

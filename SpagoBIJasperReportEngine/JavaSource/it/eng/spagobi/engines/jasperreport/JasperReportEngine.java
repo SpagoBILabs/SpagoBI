@@ -64,6 +64,7 @@ public class JasperReportEngine {
 		engineInstance.setLibDir( JasperReportEngine.getConfig().getLibDir() );
 		engineInstance.setWorkingDir( JasperReportEngine.getConfig().getTempDir() );
 		    	
+		logger.debug("---> " + env.get("outputType"));
 		String outputType = (String) env.get("outputType");
 		engineInstance.setOutputType( outputType );
 		engineInstance.setExporter( JasperReportEngine.getConfig().getExporter(outputType) );
