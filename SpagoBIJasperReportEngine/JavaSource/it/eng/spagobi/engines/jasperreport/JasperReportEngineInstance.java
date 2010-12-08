@@ -63,6 +63,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.datasource.JRSpagoBIDataStoreDataSource;
 import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
@@ -177,9 +178,18 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 			logger.debug("Filling report ...");
 			Monitor monitorFillingReport =MonitorFactory.start("JasperReportRunner.FillingReport");
-			Connection conn = getConnection();
-			Assert.assertNotNull(conn, "Connection cannot be null");
-			JasperPrint jasperPrint = JasperFillManager.fillReport(report, getEnv(), conn);
+			JasperPrint jasperPrint = null;
+			if( getDataSet() != null) {
+				logger.debug("... using dataset [" + getDataSet().getName() + "]");
+				getDataSet().loadData();
+				JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( getDataSet().getDataStore() );
+				jasperPrint = JasperFillManager.fillReport(report, getEnv(), dataSource);
+			} else {
+				logger.debug("... using datasource [" + getDataSource().getLabel() + "]");
+				Connection conn = getConnection();
+				jasperPrint = JasperFillManager.fillReport(report, getEnv(), conn);
+			}
+			
 			monitorFillingReport.stop();
 			logger.debug("Report filled succesfully");
 

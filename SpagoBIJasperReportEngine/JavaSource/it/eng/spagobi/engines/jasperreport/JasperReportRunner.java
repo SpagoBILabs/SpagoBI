@@ -95,6 +95,8 @@ import it.eng.spagobi.utilities.SpagoBIAccessUtils;
  * for SpagoBI.
  * 
  * @author Gioia
+ * 
+ *  * @deprecated
  */
 public class JasperReportRunner {
 

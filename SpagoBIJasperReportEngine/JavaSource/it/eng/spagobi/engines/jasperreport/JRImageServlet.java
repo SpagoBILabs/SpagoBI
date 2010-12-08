@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 /**
  * 
- * @deprecatde use JRImageServlet instead (for any questions contact andrea gioia)
+ * @deprecated use JRImageServlet instead (for any questions contact andrea gioia)
  */
 public class JRImageServlet extends HttpServlet {
 

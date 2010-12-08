@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.callbacks.audit.AuditAccessUtils;
 
 /**
  * 
- * @deprecatde use JasperReportEngineStartAction instead (for any questions contact andrea gioia)
+ * @deprecated use JasperReportEngineStartAction instead (for any questions contact andrea gioia)
  */
 public class JasperReportServlet extends HttpServlet {
 
