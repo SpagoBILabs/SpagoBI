@@ -9,7 +9,10 @@ import net.sf.jasperreports.engine.JRExporter;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
-
+/**
+ * 
+ * @deprecated
+ */
 public class ExporterFactory {	
 	
 	/**
