@@ -146,7 +146,10 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		compiledSubreports = null;
 		prefixDirTemplate = null;
 		
-		try {								
+		try {		
+			Assert.assertNotNull(exporter, "exporter cannot be null");
+			
+			
 			setJRProperties();
 			setJRBuiltinParameters();
 
@@ -505,22 +508,19 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				File subreportCacheDir = getCacheDir(masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
 				logger.debug("dirTemplate is equal to [" + subreportCacheDir + "]");
 				
-				
-				if (subreportCacheDir.exists()) {
-					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] alredy exists");
-					
-					// File already exists 
-					File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter(){
-						public boolean accept(File dir, String name) {
-							logger.debug("scan dir [" + name + "]");
-							return name.endsWith(".jasper");
-						}
-					});
-					logger.debug("found [" + compiledJRFiles.length + "] compiled files");
-					if(compiledJRFiles.length > 1) {
-						throw new RuntimeException("More then one compiled file found in directory [" + subreportCacheDir + "]");
+				File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter(){
+					public boolean accept(File dir, String name) {
+						logger.debug("scan dir [" + name + "]");
+						return name.endsWith(".jasper");
 					}
-					//files[i] = new File(dirTemplate, subreportMeta.getTemplateName() +  ".jasper");	
+				});
+				logger.debug("found [" + compiledJRFiles.length + "] compiled files");
+				if(compiledJRFiles.length > 1) {
+					throw new RuntimeException("More then one compiled file found in directory [" + subreportCacheDir + "]");
+				}
+				
+				if (compiledJRFiles.length == 1) {
+					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] alredy exists");
 					files[i] = compiledJRFiles[0];
 				} else { 
 					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] does not exists yet");

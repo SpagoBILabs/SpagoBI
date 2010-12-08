@@ -42,6 +42,7 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.engines.jasperreport.exporters.JRImageBase64Exporter;
 import it.eng.spagobi.engines.jasperreport.exporters.JRJpegExporter;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -174,17 +175,21 @@ public class JasperReportEngineConfig {
 	public JRExporter getExporter(String format) {
 		JRExporter exporter = null;
 		
+		Assert.assertNotNull(format, "Input parameter [format] cennot be null");
+		
+		
 		SourceBean exporterConfig = (SourceBean) getConfigSourceBean().getFilteredSourceBeanAttribute ("EXPORTERS.EXPORTER", "format", format);
-		if(exporterConfig == null) return null;
-		
-		String exporterClassName = (String)exporterConfig.getAttribute("class");
-		if(exporterClassName == null) return exporter;
-		
-		try {
-			exporter = (JRExporter)Class.forName(exporterClassName).newInstance();
-		} catch (Throwable t) {
-			throw new JasperReportEngineRuntimeException("Impossible to instatiate exporter", t);
-		} 
+		if(exporterConfig != null) {
+			String exporterClassName = (String)exporterConfig.getAttribute("class");
+			if(exporterClassName != null) {
+			
+				try {
+					exporter = (JRExporter)Class.forName(exporterClassName).newInstance();
+				} catch (Throwable t) {
+					throw new JasperReportEngineRuntimeException("Impossible to instatiate exporter", t);
+				} 
+			}
+		}
 		
 		if(exporter == null) {
 			if (format.equalsIgnoreCase("csv")) exporter = new JRCsvExporter();
