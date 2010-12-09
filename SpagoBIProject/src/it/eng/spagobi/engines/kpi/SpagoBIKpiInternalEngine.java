@@ -676,7 +676,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 							kVal.setGrantNodeOU(grantNode);
 							kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
 							kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
-							if(ouWarning != null){
+							if(ouWarning != null && kVal.getValue() == null){
 								kVal.setValueDescr(ouWarning);		
 							}
 							if(parKpiOuLabel == null){
@@ -745,7 +745,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 					}
 					value = getValueDependingOnBehaviour(kpiI, miId, r, alreadyExistent , grantNode);
 					line.setValue(value);
-					if(ouWarning != null){
+					if(ouWarning != null && value.getValue() == null){
 						value.setValueDescr(ouWarning);		
 					}
 					if(parKpiOuLabel == null){
@@ -876,9 +876,6 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				OrganizationalUnitGrantNode grantNode = grants.get(i);
 				OrganizationalUnitGrant grant = grantNode.getGrant();				
 				OrganizationalUnitHierarchy hier = grant.getHierarchy();
-				String hierarchyLabel = hier.getLabel();
-
-				String label = grantNode.getOuNode().getOu().getLabel();
 
 				if(paramLabelOU == null){
 					//scheduling mode 
@@ -890,7 +887,17 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						ouWarning = "Warning: kpi needed ParKpiOU parameter.";
 					}	
 				}else{
-					behaveLikeDocumentExecution(paramLabelOU, paramLabelHierarchy, grantNode);
+					boolean found = behaveLikeDocumentExecution(paramLabelOU, paramLabelHierarchy, grantNode);
+					if(!found){
+						if(i == grants.size()-1){//last choice
+							ouWarning = "Warning: wrong OU/Hierarchy passed as parameters.";
+						}else{
+							ouWarning = null;
+						}
+						
+					}else{
+						break;
+					}
 				}
 
 
@@ -898,17 +905,17 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		}
 	}
 	//if parameter is passed, than checks if it is granted for the node
-	private void behaveLikeDocumentExecution(String paramLabelOU, String paramLabelHierarchy , OrganizationalUnitGrantNode grantNode) {
+	private boolean behaveLikeDocumentExecution(String paramLabelOU, String paramLabelHierarchy , OrganizationalUnitGrantNode grantNode) {
+		boolean found = false;
 		//document execution mode with parameter OU
 		String hierarchyLabel = grantNode.getOuNode().getHierarchy().getLabel();
 		String oulabel = grantNode.getOuNode().getOu().getLabel();
 		if(oulabel.equals(paramLabelOU) && hierarchyLabel.equals(paramLabelHierarchy)){
 			ouList.add(grantNode);
 			ouWarning = null;
-		}else{
-			ouWarning = "Warning: wrong OU/Hierarchy passed as parameters.";
+			found = false;
 		}
-
+		return found;
 	}
 	private KpiValue getValueDependingOnBehaviour(KpiInstance kpiI,Integer miId, Resource r, boolean alreadyExistent, OrganizationalUnitGrantNode grantNode) throws EMFUserError, EMFInternalError, SourceBeanException{
 		logger.debug("IN");
@@ -1818,7 +1825,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 	public void executeSubObject(RequestContainer requestContainer, BIObject obj, SourceBean response,
 			Object subObjectInfo) throws EMFUserError {
 		// it cannot be invoked
-		logger.error("SpagoBIDashboardInternalEngine cannot exec subobjects.");
+		logger.error("SpagoBIKpiInternalEngine cannot exec subobjects.");
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "101", messageBundle);
 	}
 
