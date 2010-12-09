@@ -111,6 +111,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
    , fieldMap: null
    , okButton: null
    , closeButton: null
+   , dateFormat: null
     
     // public methods
 
@@ -143,6 +144,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
         		          		
     		}else if (param.values === undefined || param.values.type == 'data'){  
     			//data
+    			this.dateFormat = param.values.format || 'd/m/Y';
         		tmpField = new Ext.form.DateField({
         		  fieldLabel: tmpLabel 
     	          , width: 250  
@@ -236,13 +238,8 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
    		 	}
     		fields.push(tmpField);
 			this.fieldMap[tmpName] = tmpField;
-			/*
-    		if (param.values.type === 'data'){
-    			this.fieldMap[tmpName] = tmpField.getValue();
-    		}else{
-				this.fieldMap[tmpName] = tmpField;
-    		}	
-    		*/
+			
+    		
         }  			   
 	
     	this.formPanel = new  Ext.FormPanel({
@@ -268,17 +265,15 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     		if ((this.fieldMap[f].getValue() === undefined || this.fieldMap[f].getValue() == '') && this.fieldMap[f].defaultValue !== undefined){
     			state[f] = this.fieldMap[f].defaultValue;
     		}
-    		else {
-    			/*
+    		else {    			
     			if (this.fieldMap[f].getXTypes().indexOf('/datefield') >= 0){
-    				alert('data: ' + this.fieldMap[f].getValue().toLocaleString());
-    				state[f] = this.fieldMap[f].getValue().toLocaleString();
+    				//state[f] = this.fieldMap[f].getValue().toLocaleString();    	
+    				state[f] = Sbi.console.commons.Format.date(this.fieldMap[f].getValue() , this.dateFormat);
     				
     			}else{
     				state[f] = this.fieldMap[f].getValue();
-    			}
-    			*/
-    			state[f] = this.fieldMap[f].getValue();
+    			}    			
+    			//state[f] = this.fieldMap[f].getValue();
     		}    	
     	}
     	
