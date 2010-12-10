@@ -187,33 +187,6 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			}
 			
 			
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(MODEL_ATTRIBUTES)) {
-			
-			Integer modelId = getAttributeAsInteger("modelId");
-			try {
-				//dao over model attributes--> LIst 
-				logger.debug("Loaded model tree");
-				JSONArray attrJSON = new JSONArray();
-				if(modelId == null){
-					logger.debug("No attributes");
-				}else if(modelId == 1){
-					attrJSON.put(new JSONObject().put("id", "3").put("name", "attr3").put("value", "val3"));
-					attrJSON.put(new JSONObject().put("id", "4").put("name", "attr4").put("value", "val4"));					
-				}else if(modelId == 2){
-					attrJSON.put(new JSONObject().put("id", "5").put("name", "attr5").put("value", "val5"));
-					attrJSON.put(new JSONObject().put("id", "6").put("name", "attr6").put("value", "val6"));					
-				}else{
-					attrJSON.put(new JSONObject().put("id", "0").put("name", "attr0").put("value", "val0"));
-					attrJSON.put(new JSONObject().put("id", "10").put("name", "attr10").put("value", "val00"));					
-				}
-				writeBackToClient(new JSONSuccess(attrJSON));
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving model attributes", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving model attributes", e);
-			}
-			
-			
 		}else if(serviceType == null){
 			try {
 				List nodeTypesNodes = DAOFactory.getDomainDAO().loadListDomainsByType(MODEL_DOMAIN_TYPE_NODE);
