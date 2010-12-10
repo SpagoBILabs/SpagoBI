@@ -96,10 +96,9 @@ Sbi.kpi.ManageModels = function(config, ref) {
 
 	 }, this);
 	 this.mainTree.on('nodedrop', function(e, newNode){
-		 if(e.dropNode[0] !== undefined && e.dropNode[0] != null){
-			 e.tree.getSelectionModel().select(e.dropNode[0]);
-			 this.selectNode(null);
-		 }
+
+		 e.tree.getSelectionModel().select(e.dropNode[0]);
+		 this.selectNode(null);
 
 	 }, this);
 
@@ -334,17 +333,45 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			//alert(node.attributes.toSource());
 		}
 	}
+	, filterAttributes: function(node){
+	    var attributeFilter = ["id", "modelId", "parentId", "code", "description", "label", "name", "type", "typeId", "typeDescr", "kpiId", "udpValues", "toSave"];
+	    var c = false;
+	    var result = "{";
+	    for(var key in node.attributes) {
+	        if (attributeFilter.indexOf(key) != -1) {
+		        if (c) { 
+		        	result += ','; 
+		        }
+		        result += '"' + key + '":"' + node.attributes[key] + '"';
+		        c = true;
+		    }
+
+	    }
+	    var children = node.childNodes;
+	    if(children !== undefined && children!= null){
+		    var clen = children.length;
+		    if(clen != 0){
+		        if (c) {result += ',';}
+		        result += '"children":[';
+		        for(var i = 0; i < clen; i++){
+		            if (i > 0) {result += ',';}
+		            result += this.nodeToString(children[i]);
+		        }
+		        result += ']';
+		    }
+	    }
+	    return result + "}";
+	}
     //OVERRIDING save method
 	,save : function() {
     	var jsonStr = '[';
-
+    	//alert(this.nodesToSave.length);
 		Ext.each(this.nodesToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){
-				//alert(node.attributes.name);
-				jsonStr += Ext.util.JSON.encode(node.attributes);
+				jsonStr += this.filterAttributes(node);
 				jsonStr +=',';
 			}
-		});
+		}, this);
 
 		jsonStr += ']';
 		
@@ -450,8 +477,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 			  	        		  child.attributes.parentId = parent.attributes.modelId;
 			  	        		  this.selectNode(null);
-			        			  //var size = this.nodesToSave.length;
-			        			  //this.nodesToSave[size] = child;
+
 	      				      }
 		      				}
 		      		    }
@@ -585,15 +611,22 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		tree.getRootNode().expand(false, /*no anim*/false);
 	}
 	,selectNode : function(field) {
-
+		
 		/*utility to store node that has been edited*/
 		this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
+		
 		if(this.selectedNodeToEdit !== null){
 			if(this.selectedNodeToEdit.attributes.toSave === undefined || this.selectedNodeToEdit.attributes.toSave == false){
 				//checks for the label
-				if(this.nodesLabels.indexOf(this.selectedNodeToEdit.attributes.label) == -1){
-					var labSize = this.nodesLabels.length;
-					this.nodesLabels[labSize] = this.selectedNodeToEdit.attributes.label;
+				if(this.selectedNodeToEdit.attributes.label !== undefined){
+					if(this.nodesLabels.indexOf(this.selectedNodeToEdit.attributes.label) == -1){						
+						var labSize = this.nodesLabels.length;
+						this.nodesLabels[labSize] = this.selectedNodeToEdit.attributes.label;
+						var size = this.nodesToSave.length;
+						this.nodesToSave[size] = this.selectedNodeToEdit;
+					}
+				}else{
+					//dropped nodes
 					var size = this.nodesToSave.length;
 					this.nodesToSave[size] = this.selectedNodeToEdit;
 				}

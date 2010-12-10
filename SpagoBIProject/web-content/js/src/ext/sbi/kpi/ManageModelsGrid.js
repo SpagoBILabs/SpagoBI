@@ -185,7 +185,9 @@ Ext.extend(Sbi.kpi.ManageModelsGrid, Sbi.widgets.ListGridPanel, {
 			 name:'...', 
 			 code:'...'});
 		this.mainElementsStore.add(this.emptyRecord);
-		this.emptyRecord.markDirty() 
+		if(this.fields !== undefined){
+			this.emptyRecord.markDirty() 
+		}
 
 	}
 
