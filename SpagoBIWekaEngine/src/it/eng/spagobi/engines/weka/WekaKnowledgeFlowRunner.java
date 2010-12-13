@@ -5,8 +5,6 @@
 **/
 package it.eng.spagobi.engines.weka;
 
-import it.eng.spagobi.engines.weka.configurators.WekaBeanConfiguratorFactory;
-
 import java.beans.beancontext.BeanContextChild;
 import java.beans.beancontext.BeanContextSupport;
 import java.io.File;
@@ -26,11 +24,13 @@ import weka.gui.beans.Loader;
 import weka.gui.beans.Saver;
 import weka.gui.beans.xml.XMLBeans;
 
+import it.eng.spagobi.engines.weka.configurators.WekaBeanConfiguratorFactory;
+
 /**
- * @author Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class WekaKFRunner {
+public class WekaKnowledgeFlowRunner {
 	
 	protected BeanContextSupport beanContextSupport;
 	protected Vector beans;
@@ -63,18 +63,18 @@ public class WekaKFRunner {
 	private static final String DEFAULT_DB_USER = "root";
 	private static final String DEFAULT_DB_PASSWORD = "admin";
 	*/
-	private static transient Logger logger = Logger.getLogger(WekaKFRunner.class);
+	private static transient Logger logger = Logger.getLogger(WekaKnowledgeFlowRunner.class);
 	
 	static private void log(String msg) {
 		logger.debug("WekaKFRunner:" + msg);
 	}
 	
 	
-	public WekaKFRunner() { 
+	public WekaKnowledgeFlowRunner() { 
 		this(null, null);
 	}
 	
-	public WekaKFRunner(Connection inConnection, Connection outConnection) { 
+	public WekaKnowledgeFlowRunner(Connection inConnection, Connection outConnection) { 
 		versioning = false;
 		versionColumnName = "version";
 		version = "base-version";
@@ -181,7 +181,7 @@ public class WekaKFRunner {
 		this.versioning = versioning;
 	}	
 	
-	public void loadKFTemplate(File template) throws Exception {
+	public void loadKnowledgeFlowTemplate(File template) throws Exception {
 		logger.debug("IN");
 		reset();
 		XMLBeans xml = new XMLBeans(null, beanContextSupport); 

@@ -56,7 +56,7 @@ public class WekaServlet extends AbstractEngineStartServlet {
 			
 			if(engineInstance != null) {
 				try {
-					engineInstance.start();
+					engineInstance.run();
 					logger.debug("Engine instance succesfully started");
 				} catch (Exception e) {
 					logger.error("Impossible to start-up engine instance", e);

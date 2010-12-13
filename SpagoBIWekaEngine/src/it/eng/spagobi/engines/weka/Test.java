@@ -59,7 +59,7 @@ public class Test {
 	 */
 	public static void main(String[] args) throws Exception {
 				
-		WekaKFRunner runner = new WekaKFRunner();
+		WekaKnowledgeFlowRunner runner = new WekaKnowledgeFlowRunner();
 		
 		File inputFile = getTemplateFile(args);
 		File filledInputFile = new File(path, "out.xml");
@@ -71,7 +71,7 @@ public class Test {
 		ParametersFiller.fill(inputFile, filledInputFile, params);
 		
 		log("Starting parsing file: " + inputFile);
-		runner.loadKFTemplate(filledInputFile);
+		runner.loadKnowledgeFlowTemplate(filledInputFile);
 		runner.setDbPassword("root");
 		runner.setWriteMode((String)params.get(WRITE_MODE));
 		runner.setKeyColumnNames(parseKeysProp((String)params.get(KEYS)));
