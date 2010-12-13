@@ -63,7 +63,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.datasource.JRSpagoBIDataStoreDataSource;
+import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
 import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
