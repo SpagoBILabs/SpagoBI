@@ -37,23 +37,12 @@ import it.eng.spagobi.engines.weka.WekaEngineInstance;
 import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
 import it.eng.spagobi.engines.weka.WekaKnowledgeFlowRunner;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class WekaWork implements Work {
 
-	public static final String WRITE_MODE = "writeMode"; 
-	public static final String KEYS = "keys";
-	public static final String VERSIONING = "versioning";
-	public static final String VERSION_COLUMN_NAME = "versionColumnName";
-	public static final String VERSION = "version";
-	
-	public static final String WEKA_ROLES_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.weka.events.handlers.WekaRolesHandler";
-	public static final String WEKA_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.weka.events.handlers.WekaEventPresentationHandler";
 	
 	
 	private static transient Logger logger = Logger.getLogger(WekaWork.class);
@@ -119,33 +108,28 @@ public class WekaWork implements Work {
 		knowledgeFlowRunner = null;
 		
 		try {
-			conn = getConnection();
-			knowledgeFlowRunner = new WekaKnowledgeFlowRunner(getConnection(), getConnection());
+			conn = engineInstance.getConnection();
+			knowledgeFlowRunner = new WekaKnowledgeFlowRunner(conn, conn);
 			logger.debug("Knowledge-Flow Runner successfully created");
 			
 			knowledgeFlowRunner.loadKnowledgeFlowTemplate(file);
-			knowledgeFlowRunner.setWriteMode((String)engineInstance.getEnv().get(WRITE_MODE));
+			knowledgeFlowRunner.setWriteMode( engineInstance.getWriteMode() );
 			logger.debug("Write mode is equal to [" + knowledgeFlowRunner.getWriteMode() + "]");
 			
-			String keys = (String)engineInstance.getEnv().get(KEYS);
-			String[] keyColumnNames = keys == null? null: keys.split(",");
-			knowledgeFlowRunner.setKeyColumnNames(keyColumnNames);
+			knowledgeFlowRunner.setKeyColumnNames( engineInstance.getKeys() );
 			logger.debug("Key column names are " + Arrays.toString( knowledgeFlowRunner.getKeyColumnNames() ) + "");
 			
-			String versioning = (String)engineInstance.getEnv().get(VERSIONING);
-			if(versioning != null && versioning.equalsIgnoreCase("true")){
+			if( engineInstance.isVerioningEnabled() ){
 				knowledgeFlowRunner.setVersioning(true);
 				logger.debug("Versioning is enabled");
 				
-				String versionColumnNam;
-				if( (versionColumnNam = (String)engineInstance.getEnv().get(VERSION_COLUMN_NAME)) != null) {
-					knowledgeFlowRunner.setVersionColumnName( versionColumnNam );
+				if( engineInstance.getVerionColumnName() != null) {
+					knowledgeFlowRunner.setVersionColumnName( engineInstance.getVerionColumnName() );
 					logger.debug("Version column name is equal to [" + knowledgeFlowRunner.getVersionColumnName() + "]");
 				}
 				
-				String version;
-				if( (version = (String)engineInstance.getEnv().get(VERSION)) != null) {
-					knowledgeFlowRunner.setVersion(version);
+				if( engineInstance.getVerion() != null) {
+					knowledgeFlowRunner.setVersion(engineInstance.getVerion());
 					logger.debug("Version is equal to [" + knowledgeFlowRunner.getVersion() + "]");
 				}
 			} else {
@@ -169,20 +153,4 @@ public class WekaWork implements Work {
 		return knowledgeFlowRunner;
 			
 	}
-	
-	
-	Connection getConnection() {
-		Connection conn = null;
-		try {
-			conn = getDataSource().getConnection();
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to get connection", t);
-		} 
-		return conn;  
-	}
-	
-	public IDataSource getDataSource() {
-		return (IDataSource)engineInstance.getEnv().get(EngineConstants.ENV_DATASOURCE);
-	}	
-
 }
