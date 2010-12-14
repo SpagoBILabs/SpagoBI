@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.engines.weka.WekaEngine;
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
+import it.eng.spagobi.engines.weka.runtime.RuntimeRepository;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -58,7 +59,9 @@ public class WekaEngineStartServlet extends AbstractEngineStartServlet {
 			
 			if(engineInstance != null) {
 				try {
-					engineInstance.run();
+					//engineInstance.run();
+					RuntimeRepository rt = new RuntimeRepository();
+					rt.runEngineInstance(engineInstance);
 					logger.debug("Engine instance succesfully started");
 				} catch (Exception e) {
 					logger.error("Impossible to start-up engine instance", e);
