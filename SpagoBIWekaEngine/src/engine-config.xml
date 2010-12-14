@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <ENGINE-CONFIGURATION>
 	
+	<!-- ====================================================================================== -->
+	<!--  GENERAL SETTINGS 																        --> 
+	<!-- ====================================================================================== -->
+	
+	<!-- ====================================================================================== 
+		tmpdir = base directory used as temporary storing area for generated reports. 
+		The path must be write in unix form (only with / folder separator and without 
+		any drive letter at the beginning, example: /folder/folder/folder).
+		If the path start with / it will be considered an absolute path, otherwise if it start with 
+		another letter or symbol it will be considered relative
+	    ====================================================================================== -->
+	<GENERALSETTINGS tmpdir="tmpdir"/>
+	
+	<!-- 
+	<clusterNum>35</clusterNum>
+	<clusterer>weka.clusterers.SimpleKMeans</clusterer>
+	<keys>customer_id,version</keys>
+	
+	<writeMode>INSERT</writeMode>
+	<versioning>true</versioning>
+	<versionColumnName>version</versionColumnName>
+	<version>Test2_SimpleKMeans_35</version>
+	-->
+	
+	
+	
+	
 	
 	<!-- ====================================================================================== -->
-	<!--  SSO settings 																	--> 
+	<!--  INTERNAL SETTINGS 																    --> 
 	<!-- ====================================================================================== -->
+	
+	<!-- ====================================================================================== -->
+	<!--  SSO settings 																			--> 
+	<!-- ====================================================================================== -->
+	<JNDI_THREAD_MANAGER>java:/comp/env/wm/SpagoWorkManager</JNDI_THREAD_MANAGER>
 	<INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
 	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>
 	<PASS>PASS</PASS>
@@ -24,30 +56,4 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
-	
-	
-	<!-- ====================================================================================== -->
-	<!--  General settings 																		--> 
-	<!-- ====================================================================================== -->
-	<!--  
-		tmpdir = base directory used as temporary storing area for generated reports. 
-		The path must be write in unix form (only with / folder separator and without 
-		any drive letter at the beginning, example: /folder/folder/folder).
-		If the path start with / it will be considered an absolute path, otherwise if it start with 
-		another letter or symbol it will be considered relative to the folder of the jasper report application 
-	-->
-	<!-- ====================================================================================== -->
-	
-	
-	<GENERALSETTINGS tmpdir="tmpdir"/>
-	<clusterNum>35</clusterNum>
-	<clusterer>weka.clusterers.SimpleKMeans</clusterer>
-	<keys>customer_id,version</keys>
-	
-	<writeMode>INSERT</writeMode>
-	<versioning>true</versioning>
-	<versionColumnName>version</versionColumnName>
-	<version>Test2_SimpleKMeans_35</version>
-
-
 </ENGINE-CONFIGURATION>

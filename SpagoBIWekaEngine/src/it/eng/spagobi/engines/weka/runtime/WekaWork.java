@@ -19,17 +19,24 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.weka;
+package it.eng.spagobi.engines.weka.runtime;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.util.Arrays;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import commonj.work.Work;
+
+import it.eng.spagobi.engines.weka.ParametersFiller;
+import it.eng.spagobi.engines.weka.Utils;
+import it.eng.spagobi.engines.weka.WekaEngineInstance;
+import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
+import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
+import it.eng.spagobi.engines.weka.WekaKnowledgeFlowRunner;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -37,22 +44,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class WekaEngineInstance extends RunnbleEngineInstance {
-	
-	private File file = null;	
-	private String template;
-	
-
-
-	public String getTemplate() {
-		return template;
-	}
-
-
-
-	public void setTemplate(String template) {
-		this.template = template;
-	}
+public class WekaWork implements Work {
 
 	public static final String WRITE_MODE = "writeMode"; 
 	public static final String KEYS = "keys";
@@ -64,24 +56,33 @@ public class WekaEngineInstance extends RunnbleEngineInstance {
 	public static final String WEKA_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.weka.events.handlers.WekaEventPresentationHandler";
 	
 	
-	private static transient Logger logger = Logger.getLogger(WekaEngineInstance.class);
+	private static transient Logger logger = Logger.getLogger(WekaWork.class);
 	
-	 WekaEngineInstanceMonitor knowledgeFlowStartupMonitor; 
+	File file;	
+	WekaEngineInstance engineInstance;
+	WekaEngineInstanceMonitor knowledgeFlowStartupMonitor; 
 	
-	public WekaEngineInstance(String template, Map env) {
-		this.env = env;
-		this.template = template;
-		this.knowledgeFlowStartupMonitor = new WekaEngineInstanceMonitor(env);
+	public WekaWork(WekaEngineInstance engineInstance) {
+		this.engineInstance = engineInstance;
+		this.knowledgeFlowStartupMonitor = new WekaEngineInstanceMonitor(engineInstance.getEnv());
 		try {
 			this.file = File.createTempFile("weka", null);
-			ParametersFiller.fill(new StringReader(template), new FileWriter(file), env);
+			ParametersFiller.fill(new StringReader(engineInstance.getTemplate()), new FileWriter(file), engineInstance.getEnv());
 		} catch (Throwable t) {
 			throw new WekaEngineRuntimeException("Impossible to replace parameters in template", t);
 		}		
 	}
 	
-	
-	
+	public boolean isDaemon() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void release() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void run() {
 		WekaKnowledgeFlowRunner knowledgeFlowRunner;
 		
@@ -107,7 +108,7 @@ public class WekaEngineInstance extends RunnbleEngineInstance {
 			knowledgeFlowStartupMonitor.stop();
 			logger.debug("OUT");
 		}
-    }			
+	}
 	
 	private WekaKnowledgeFlowRunner buildKnowledgeFlowRunner() {
 		Connection conn;
@@ -123,27 +124,27 @@ public class WekaEngineInstance extends RunnbleEngineInstance {
 			logger.debug("Knowledge-Flow Runner successfully created");
 			
 			knowledgeFlowRunner.loadKnowledgeFlowTemplate(file);
-			knowledgeFlowRunner.setWriteMode((String)env.get(WRITE_MODE));
+			knowledgeFlowRunner.setWriteMode((String)engineInstance.getEnv().get(WRITE_MODE));
 			logger.debug("Write mode is equal to [" + knowledgeFlowRunner.getWriteMode() + "]");
 			
-			String keys = (String)env.get(KEYS);
+			String keys = (String)engineInstance.getEnv().get(KEYS);
 			String[] keyColumnNames = keys == null? null: keys.split(",");
 			knowledgeFlowRunner.setKeyColumnNames(keyColumnNames);
 			logger.debug("Key column names are " + Arrays.toString( knowledgeFlowRunner.getKeyColumnNames() ) + "");
 			
-			String versioning = (String)env.get(VERSIONING);
+			String versioning = (String)engineInstance.getEnv().get(VERSIONING);
 			if(versioning != null && versioning.equalsIgnoreCase("true")){
 				knowledgeFlowRunner.setVersioning(true);
 				logger.debug("Versioning is enabled");
 				
 				String versionColumnNam;
-				if( (versionColumnNam = (String)env.get(VERSION_COLUMN_NAME)) != null) {
+				if( (versionColumnNam = (String)engineInstance.getEnv().get(VERSION_COLUMN_NAME)) != null) {
 					knowledgeFlowRunner.setVersionColumnName( versionColumnNam );
 					logger.debug("Version column name is equal to [" + knowledgeFlowRunner.getVersionColumnName() + "]");
 				}
 				
 				String version;
-				if( (version = (String)env.get(VERSION)) != null) {
+				if( (version = (String)engineInstance.getEnv().get(VERSION)) != null) {
 					knowledgeFlowRunner.setVersion(version);
 					logger.debug("Version is equal to [" + knowledgeFlowRunner.getVersion() + "]");
 				}
@@ -181,6 +182,7 @@ public class WekaEngineInstance extends RunnbleEngineInstance {
 	}
 	
 	public IDataSource getDataSource() {
-		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
+		return (IDataSource)engineInstance.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}	
+
 }
