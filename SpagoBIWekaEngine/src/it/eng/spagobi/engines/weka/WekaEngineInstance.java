@@ -63,6 +63,14 @@ public class WekaEngineInstance implements IEngineInstance {
 	// UTILITY METHODS
 	// -----------------------------------------------------------------------
 	
+	public Connection getOutConnection() {
+		return getConnection();
+	}
+	
+	public Connection getInConnection() {
+		return getConnection();
+	}
+	
 	public Connection getConnection() {
 		Connection conn = null;
 		try {
@@ -87,7 +95,7 @@ public class WekaEngineInstance implements IEngineInstance {
 		getEnv().put(WRITE_MODE, writeModel);
 	}
 	
-	public String[] getKeys() {
+	public String[] getKeyColumnNames() {
 		String keysValue = (String)getEnv().get(KEYS);
 		String[] keys = (keysValue == null)? null: keysValue.split(",");
 		return keys;
@@ -97,7 +105,7 @@ public class WekaEngineInstance implements IEngineInstance {
 		getEnv().put(KEYS, writeModel);
 	}
 	
-	public boolean isVerioningEnabled() {
+	public boolean isVersioningEnabled() {
 		return getVerioning() != null && getVerioning().equalsIgnoreCase("true");
 	}
 	
@@ -109,7 +117,7 @@ public class WekaEngineInstance implements IEngineInstance {
 		getEnv().put(VERSIONING, versioning);
 	}
 	
-	public String getVerionColumnName() {
+	public String getVersionColumnName() {
 		return (String)getEnv().get(VERSION_COLUMN_NAME);
 	}
 	
@@ -117,7 +125,7 @@ public class WekaEngineInstance implements IEngineInstance {
 		getEnv().put(VERSION_COLUMN_NAME, columnName);
 	}
 	
-	public String getVerion() {
+	public String getVersion() {
 		return (String)getEnv().get(VERSION);
 	}
 	
