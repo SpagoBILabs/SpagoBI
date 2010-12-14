@@ -5,16 +5,14 @@
 **/
 package it.eng.spagobi.engines.weka;
 
-import it.eng.spagobi.engines.weka.configurators.FilterConfigurator;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.engines.weka.configurators.FilterConfigurator;
+
 /**
- * @author Gioia
+ * @author Andrea Gioia
  *
  */
 public class Test {
@@ -57,6 +55,7 @@ public class Test {
 	 * @param args
 	 * @throws Exception 
 	 */
+	/*
 	public static void main(String[] args) throws Exception {
 				
 		WekaKnowledgeFlowRunner runner = new WekaKnowledgeFlowRunner();
@@ -100,7 +99,7 @@ public class Test {
 		
 		log("Knowledge flow executed successfully (at least i hope so ;-))");
 	}
-
+	*/
 	private static String[] parseKeysProp(String keysStr) {
 		if(keysStr == null) return null;
 		return keysStr.split(",");
