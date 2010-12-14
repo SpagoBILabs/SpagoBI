@@ -67,17 +67,12 @@ Sbi.widgets.ModelInstanceTree = function(){
             style: {
                 "border":"none"
             },
-			enableDD : true,
-            enableDrop: false,
-            enableDrag: true,
-            ddAppendOnly: false ,
-            ddGroup  : 'tree2tree',
 			scope : this,
 			shadow : true,
 			root : conf.rootNode, 
 	        columns:[{
 	            header:'kpi',
-	            columnId: 'weight1',
+	            columnId: 'kpi',
 	            width:200,
 	            dataIndex:'modelText',
 	            fieldType: 'text'

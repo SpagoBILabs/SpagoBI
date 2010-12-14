@@ -81,11 +81,14 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 			, activeTab: 0
 			, items: [this.manageGoalsDetailsPanel, this.manageGoals]
 		});
+		//reload after save
+		this.manageGoalsDetailsPanel.on('saved',function(){this.manageGoalsGrid.mainElementsStore.reload(); },this);
 		
 		this.tabs.on('beforetabchange', 
 			function(thisPanel, newTab, currentTab){
 				if(newTab.id=='goalPanel'){
-					if(this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==null || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==undefined || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==''){
+					if(this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==null || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==undefined || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='' || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='undefined'){
+						alert(this.manageGoalsDetailsPanel.detailFieldGrant.getValue());
 						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.goals.nogrant'), LN('sbi.generic.warning'));
 						return false;
 					}else{
@@ -96,7 +99,6 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 			, this);
 		
 		this.manageGoalsGrid.addListener('rowclick', this.sendSelectedItem, this);	
-		
 
 		this.viewport = {
 				layout: 'border'
@@ -127,8 +129,6 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 					          }
 					          ]
 		};
-
-
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){	
@@ -141,7 +141,6 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		this.manageGoalsDetailsPanel.detailFieldTo.setRawValue(rec.data.enddate);
 		this.manageGoalsDetailsPanel.detailFieldGrant.setValue(rec.data.grant.id);
 		this.manageGoalsDetailsPanel.detailFieldGrant.setRawValue(rec.data.grant.name);
+		this.manageGoals.goalId = rec.data.id;
 	}
-	
-
 });

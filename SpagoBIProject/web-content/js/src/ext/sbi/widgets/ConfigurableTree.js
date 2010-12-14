@@ -46,7 +46,7 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.ConfigurableTree = function(config) { 
 	
 	this.treeLoader = config.treeLoader;
-	
+	this.nodeCount=0;
     var c =  {
     	border: false,
 		autoWidth : true,
@@ -79,6 +79,7 @@ Sbi.widgets.ConfigurableTree = function(config) {
 
 Ext.extend(Sbi.widgets.ConfigurableTree, Ext.tree.TreePanel, {
 	 treeLoader: null
+	 ,nodeCount: null
 	
 	,initWidget: function(){
 		this.initContextMenu();
@@ -93,60 +94,32 @@ Ext.extend(Sbi.widgets.ConfigurableTree, Ext.tree.TreePanel, {
 	}
 	
 	, addNewItem : function(parent) {
-		alert(parent.id);
 		if (parent === undefined || parent == null) {
 			alert(LN('sbi.models.DDNoParentMsg'));
 			return;
 		} else {
 			parent.leaf = false;
 		}
+		var node = new Ext.tree.TreeNode( {
+			text : '...',
+	        leaf : true,
+	        count : this.nodeCount,
+	        parentCount: parent.parentCount,
+	        editable: true
+	    });
 		
-		var parentId = parent.attributes.nodeId;
+		this.fireEvent('addedNewItem',node,parent);
 
-		//if parent is newly created --> confirm
-		if(parentId == null || parentId == undefined){
-			Ext.MessageBox.confirm(
-				LN('sbi.generic.pleaseConfirm'),
-				LN('sbi.models.confirmSaveParent'),            
-	            function(btn, text) {
-	                if (btn=='yes') {
-	                	//save parent
-	                	
-	                	//this.mainTree.getLoader().load(parent);
-	                	//var newparentId = parent.attributes.modelId;
-
-	        	    	//then create child node
-	        			var node = new Ext.tree.TreeNode( {
-	        				text : '...',
-	        				leaf : true,
-	        				parentId: parentId,
-	        				toSave :false,
-	        				editable: true
-	        			});
-	        			//save parent
-	                	//this.saveParentNode(parent, node);
-	                	
-//	        			this.mainTree.render();
-//	        			if (!parent.isExpanded()) {
-//	        				parent.expand(false, /*no anim*/false);
-//	        			}
-//	        			this.mainTree.render();
-	                	
-	        			parent.appendChild(node);
-	        	
-//	        			this.mainTree.getSelectionModel().select(node);
-	        			
-	                }else{
-	                	//exit
-	                	return;
-	                }
-	            },
-	            this
-			);
-			return null;
-		}
-
+		parent.appendChild(node);
 	}	
+	
+	, removeNode : function(node) {
+		if (parent === undefined || parent == null) {
+			alert(LN('sbi.models.DDNoParentMsg'));
+			return;
+		} 
+		node.parentNode.removeChild(node, false);
+	}
 	
 	, initContextMenu : function() {
 
@@ -164,7 +137,7 @@ Ext.extend(Sbi.widgets.ConfigurableTree, Ext.tree.TreePanel, {
 						text : LN('sbi.models.remodeNode'),
 						iconCls : 'icon-remove',
 						handler : function() {
-							alert('reove');
+							this.removeNode(this.ctxNode);
 						},
 						scope : this
 					} ]
