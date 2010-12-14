@@ -25,12 +25,20 @@ package it.eng.spagobi.engines.weka.runtime;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
+import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 /**
+ * Questa classe disaccoppia l'attivita di lancio (pre & post processing) dal work effettivamente lanciato.
+ * In tal modo è possibile avere diversi runner che utilizzano lo stesso work come nel caso del motore talend
+ * dove il work utilizzato è sempre lo stesso sia per il runner Java che per quello perl 
+ * ed ha l'unica responsibilità di eseguire un comando tramite System.Ruintime.exec
+ * 
+ * In questo caso ha poco senso ma viene mantenuto per coerenza strutturale.
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
@@ -58,7 +66,7 @@ public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
     	try {
 	    	wm = new WorkManager();
 	    	wekaWork = new WekaWork(engineInstance);
-	    	wekaWorkListener = new WekaWorkListener();
+	    	wekaWorkListener = new WekaWorkListener(new WekaEngineInstanceMonitor(engineInstance.getEnv()));
 	    	wm.run(wekaWork, wekaWorkListener);
     	} catch (Throwable t) {
     		throw new RuntimeException("Impossible to execute command in a new thread", t);

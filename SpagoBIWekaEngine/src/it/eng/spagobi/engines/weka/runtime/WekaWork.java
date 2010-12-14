@@ -45,7 +45,6 @@ import commonj.work.Work;
 
 import it.eng.spagobi.engines.weka.ParametersFiller;
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
-import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
 import it.eng.spagobi.engines.weka.configurators.WekaBeanConfiguratorFactory;
 
@@ -56,15 +55,12 @@ public class WekaWork implements Work {
 
 	File file;	
 	WekaEngineInstance engineInstance;
-	WekaEngineInstanceMonitor knowledgeFlowStartupMonitor; 
-	
 	
 	private static transient Logger logger = Logger.getLogger(WekaWork.class);
 	
 	
 	public WekaWork(WekaEngineInstance engineInstance) {
 		this.engineInstance = engineInstance;
-		this.knowledgeFlowStartupMonitor = new WekaEngineInstanceMonitor(engineInstance.getEnv());
 		try {
 			this.file = File.createTempFile("weka", null);
 			ParametersFiller.fill(new StringReader(engineInstance.getTemplate()), new FileWriter(file), engineInstance.getEnv());
@@ -74,13 +70,12 @@ public class WekaWork implements Work {
 	}
 	
 	public boolean isDaemon() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public void release() {
-		// TODO Auto-generated method stub
-		
+		logger.debug("IN");
+		logger.debug("OUT");
 	}
 
 	
