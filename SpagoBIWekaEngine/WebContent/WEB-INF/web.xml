@@ -76,12 +76,12 @@ END-CAS -->
 	
     <filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/WekaServlet/*</url-pattern>
+    	<url-pattern>/WekaEngineStartServlet/*</url-pattern>
 	</filter-mapping>
 	
 	<servlet>
-        <servlet-name>WekaServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.engines.weka.WekaServlet</servlet-class>
+        <servlet-name>WekaEngineStartServlet</servlet-name>
+        <servlet-class>it.eng.spagobi.engines.weka.services.WekaEngineStartServlet</servlet-class>
     	<init-param>
             <param-name>SECURITY_ABLE</param-name>
             <param-value>FALSE</param-value>
@@ -96,13 +96,13 @@ END-CAS -->
 	</servlet>
     
     <servlet-mapping>
-        <servlet-name>WekaServlet</servlet-name>
-        <url-pattern>/WekaServlet</url-pattern>
+        <servlet-name>WekaEngineStartServlet</servlet-name>
+        <url-pattern>/WekaEngineStartServlet</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>WekaServlet</servlet-name>
-        <url-pattern>/WekaServletBackEnd</url-pattern>
+        <servlet-name>WekaEngineStartServlet</servlet-name>
+        <url-pattern>/WekaEngineStartServlet</url-pattern>
     </servlet-mapping>    
     
     <servlet-mapping>

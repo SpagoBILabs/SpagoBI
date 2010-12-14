@@ -3,7 +3,7 @@
  *	LICENSE: see COPYING file
  *
 **/
-package it.eng.spagobi.engines.weka;
+package it.eng.spagobi.engines.weka.services;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.engines.weka.WekaEngine;
+import it.eng.spagobi.engines.weka.WekaEngineInstance;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -20,12 +22,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * Process weka execution requests and returns bytes of the filled
  * reports
  */
-public class WekaServlet extends AbstractEngineStartServlet {
+public class WekaEngineStartServlet extends AbstractEngineStartServlet {
 
 	/**
 	 * Logger component
 	 */
-	private static transient Logger logger = Logger.getLogger(WekaServlet.class);
+	private static transient Logger logger = Logger.getLogger(WekaEngineStartServlet.class);
 	
 	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {
 		
