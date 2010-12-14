@@ -82,13 +82,11 @@ Sbi.chart.SpagoBIChart = function(config) {
 	
 	this.flashVars = Ext.applyIf(c, this.CHART_DEFAULT_CONFIG);
 	
-	
-	
 
 	this.flashVars.scale = 'exactfit'; 
 	this.flashParams = this.flashParams || {};
-	this.flashParams.scale = 'exactfit'; 
-	
+	this.flashParams.scale = 'exactfit';
+	this.flashVars.isIE = Ext.isIE;
 	
 	Sbi.chart.SpagoBIChart.superclass.constructor.call(this, config);
 	/*
@@ -425,7 +423,7 @@ Sbi.chart.Semaphore = Ext.extend(Sbi.chart.SpagoBIChart, {
 		return this.swf.setValue;
 	}
 
-	, onRender : function(ct, position) {
+	, onRender : function(ct, position) {		
 		Sbi.chart.SpagoBIChart.superclass.onRender.call(this, ct, position);
 	}
 	
