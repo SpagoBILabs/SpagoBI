@@ -44,12 +44,16 @@
 Ext.ns("Sbi.kpi");
 
 Sbi.kpi.ManageGoalsDetailsPanel = function(config, ref) { 
-
+	this.configurationObject={};
+	var paramsList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "GOAL_INSERT"};
+	this.configurationObject.saveGrantService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_GOALS_ACTION'
+			, baseParams: paramsList
+	});
 	var c = this.initForm(config);
+	this.addEvents();
 	
 	Sbi.kpi.ManageGoalsDetailsPanel.superclass.constructor.call(this, c);	 	
-
-
 };
 
 Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
@@ -182,6 +186,49 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
     	 }]};
 
 		return conf;
+	}
+
+	, save: function(){
+		var thisPanel = this;
+		
+		var goal = {
+			label: this.detailFieldLabel.getValue(), 
+			name: this.detailFieldName.getValue(),  
+			description: this.detailFieldDescr.getValue(),
+			startdate: this.detailFieldFrom.getValue(), 
+			enddate: this.detailFieldTo.getValue(),
+			grant: this.detailFieldGrant.getValue(), 
+			id: this.selectedGrantId
+		}
+		
+		var goalE = Ext.encode(goal);
+		
+		Ext.Ajax.request({
+			url: this.configurationObject.saveGrantService,
+			params: {'goal': goalE},
+			method: 'POST',
+			success: function(response, options) {
+				if (response !== undefined) {
+					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
+					thisPanel.fireEvent('saved');
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				}
+				thisPanel.hideMask();
+			},
+			failure: function() {
+				thisPanel.hideMask();
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: LN('sbi.generic.savingItemError'),
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
+				
+			}
+			,scope: this
+	
+		});
 	}
 });
 

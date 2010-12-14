@@ -119,7 +119,6 @@ Ext.extend(Sbi.kpi.ManageModelsTree, Sbi.widgets.TreeModelPanel, {
 		}
 		var node = new Ext.tree.AsyncTreeNode({
 	        text		: this.rootNodeText,
-	        expanded	: true,
 	        leaf		: false,
 			modelId 	: this.rootNodeId,
 			id			: this.rootNodeId,
