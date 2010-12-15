@@ -64,6 +64,7 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
     ,detailFieldFrom: null
     ,detailFieldTo: null
     ,detailFieldGrant: null
+    ,goalId: null
 	
 	,initForm: function(config){
 		var thisPanel = this;
@@ -190,15 +191,25 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 
 	, save: function(){
 		var thisPanel = this;
-		
+		if(		(this.detailFieldLabel.getValue()==null && this.detailFieldLabel.getValue()=='') &&
+				(this.detailFieldName.getValue()==null && this.detailFieldName.getValue()=='') &&
+				(this.detailFieldDescr.getValue()==null && this.detailFieldDescr.getValue()=='') &&
+				(this.detailFieldFrom.getValue()==null && this.detailFieldFrom.getValue()=='') &&
+				(this.detailFieldTo.getValue()==null && this.detailFieldTo.getValue()=='') &&
+				(this.detailFieldGrant.getValue()==null && this.detailFieldGrant.getValue()=='')
+				){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.goal.insert.all.data'), LN('sbi.generic.serviceError'));
+			return false;
+		}
+				
 		var goal = {
+			id: this.goalId,
 			label: this.detailFieldLabel.getValue(), 
 			name: this.detailFieldName.getValue(),  
 			description: this.detailFieldDescr.getValue(),
 			startdate: this.detailFieldFrom.getValue(), 
 			enddate: this.detailFieldTo.getValue(),
 			grant: this.detailFieldGrant.getValue(), 
-			id: this.selectedGrantId
 		}
 		
 		var goalE = Ext.encode(goal);
@@ -212,7 +223,7 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
 					thisPanel.fireEvent('saved');
 				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.goal.insert.all.data'));
 				}
 			},
 			failure: function() {

@@ -255,7 +255,12 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 	
 	private Goal deserializeGoal(JSONObject JSONGoal) throws Exception{
 		String name = (String) JSONGoal.opt(NAME);
-		Integer id =  JSONGoal.optInt(ID);
+		Integer id = null;
+		try {
+			id =  JSONGoal.getInt(ID);
+		} catch (JSONException e) {	
+			//the count still be null
+		}
 		String description = (String) JSONGoal.opt(DESCRIPTION);
 		String start_date = (String) JSONGoal.opt(START_DATE);
 		String end_date = (String) JSONGoal.opt(END_DATE);

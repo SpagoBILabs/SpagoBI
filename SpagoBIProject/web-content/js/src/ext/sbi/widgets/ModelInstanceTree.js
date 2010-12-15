@@ -59,7 +59,6 @@ Sbi.widgets.ModelInstanceTree = function(){
 	        autoScroll:true,
 	        title: ' ',
 			autoWidth : true,
-			height : 300,
 			layout: 'fit',
 			userArrows : true,
 			animate : true,

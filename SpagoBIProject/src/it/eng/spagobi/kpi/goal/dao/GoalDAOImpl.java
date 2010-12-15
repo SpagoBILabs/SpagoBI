@@ -62,22 +62,16 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			hibGoal.setStartDate(goal.getStartDate());
 			hibGoal.setEndDate(goal.getEndDate());
 			hibGoal.setGrantId(goal.getGrantId());
-
-			//look for preexisting one with same same label-name key
-			Query hibQuery = aSession.createQuery(" from SbiGoal s where s.name = ? ");
-			hibQuery.setString(0, goal.getName());
-
-	
-			SbiGoal exists= (SbiGoal)hibQuery.uniqueResult();
-			if(exists == null){
+			hibGoal.setGoalId(goal.getId());
+			
+			if(goal.getId()!=null){
+				aSession.update(hibGoal);					
+				tx.commit();
+			}else{
 				aSession.save(hibGoal);	
 				tx.commit();
 				goal.setId(hibGoal.getGoalId());
-			}else{
-				goal.setId(exists.getGoalId());
-				tx.commit();
 			}
-			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -215,9 +209,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			exists.setLabel(goalNode.getLabel());
 			exists.setGoal(goalNode.getGoalDescr());
 			aSession.update(exists);	
-			tx.commit();
-
-			
+			tx.commit();			
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -267,6 +259,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			while (it.hasNext()) {
 				aSession.delete((SbiGoalKpi) it.next());
 			}
+			tx.commit();
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -305,6 +298,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			aSession.save(hibSbiGoalKpi);	
 			goalKpi.setId(hibSbiGoalKpi.getGoalKpiId());
 		}
+	
 		logger.debug("OUT: goalKpi = " + goalKpi);
 
 	}
