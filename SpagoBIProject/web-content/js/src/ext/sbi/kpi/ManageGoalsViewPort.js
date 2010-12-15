@@ -89,9 +89,11 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		this.tabs.on('beforetabchange', 
 			function(thisPanel, newTab, currentTab){
 				if(newTab.id=='goalPanel'){
-					if(this.manageGoals.goalId==null){
+					if(this.manageGoalsDetailsPanel.goalId==null || this.manageGoalsDetailsPanel.goalId==''){
+						this.manageGoalsDetailsPanel.save();
 						return false;
 					}
+		
 					if(this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==null || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==undefined || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='' || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='undefined'){
 						
 						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.goals.nogrant'), LN('sbi.generic.warning'));
@@ -147,6 +149,7 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		this.manageGoalsDetailsPanel.detailFieldTo.setRawValue(rec.data.enddate);
 		this.manageGoalsDetailsPanel.detailFieldGrant.setValue(rec.data.grantid);
 		this.manageGoalsDetailsPanel.detailFieldGrant.setRawValue(rec.data.grantname);
+		this.manageGoalsDetailsPanel.goalId=rec.data.id;
 		this.manageGoals.goalId = rec.data.id;
 	}
 });

@@ -286,6 +286,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 						this.goalDetailsFormPanelGoal.setValue(node.attributes.goalDesc);
 						this.previousGoalTreeNodeSelected= node;
 					}
+					this.updateGoalDetailsKpi();
 					this.loadKpiTreeRoot();
 				}, this);
 		this.goalTreePanel.on('addedNewItem', function(node,parent){
@@ -300,6 +301,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.goalTreePanel.on('removedItem', function(node){
 			this.removeGoalNode(node);
 		} ,this);
+
 	}
 	
 	, addNewGoalNode: function(encodedNode, node, root){
@@ -471,7 +473,10 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		var goalNodeId = null;
 		var conf=this.config;
 		conf.checkbox= true;
-		this.selectedOUNode = ''+node.id;
+		if(node!=null){
+			this.selectedOUNode = ''+node.id;
+		}
+		
 		if(this.goalTreePanel!=null && this.goalsTreeDefined && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
 			goalNodeId = this.goalTreePanel.getSelectionModel().getSelectedNode().attributes.id;
 		}
@@ -508,6 +513,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 								nodeCount: 0,
 								attributes:{}
 							};
+						this.goalsTreeDefined=true;
 						root.attributes.id = goalNode.nodeId;
 						thisPanel.updateGoalRoot(root);
 						thisPanel.goalDetailsFormPanelGoal.setValue(goalNode.goalDesc);

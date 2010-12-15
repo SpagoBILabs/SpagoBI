@@ -90,6 +90,9 @@ Ext.extend(Sbi.widgets.ConfigurableTree, Ext.tree.TreePanel, {
 		//add the editor
 		var field = new Ext.form.TextField();
 		var treeEditor = new Ext.tree.TreeEditor(this,field);
+		treeEditor.on('complete', function(a,newValue,oldValue){
+			this.fireEvent('changedNodeName',newValue,oldValue);
+		},this)
 		this.on('contextmenu', this.onContextMenu, this);
 	}
 	
