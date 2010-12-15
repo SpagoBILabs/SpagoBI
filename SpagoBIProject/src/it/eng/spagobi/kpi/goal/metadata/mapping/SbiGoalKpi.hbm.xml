@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 6-dic-2010 11.29.21 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoalKpi" table="sbi_goal_kpi" catalog="spagobi">
+    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoalKpi" table="SBI_GOAL_KPI">
         <id name="goalKpiId" type="int">
             <column name="GOAL_KPI_ID" />
             <generator class="increment" />
