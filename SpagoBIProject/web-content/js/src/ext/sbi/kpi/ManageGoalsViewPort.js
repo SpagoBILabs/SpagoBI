@@ -134,6 +134,7 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){	
+		this.tabs.setActiveTab(0);//when a user select a grant we show the details tab
 		this.manageGoalsDetailsPanel.setDisabled(false);
 		var rec = this.manageGoalsGrid.rowselModel.getSelected();
 		this.manageGoalsDetailsPanel.detailFieldLabel.setValue(rec.data.label);

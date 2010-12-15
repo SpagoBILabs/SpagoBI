@@ -125,7 +125,7 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 			valueField: 'id',
 			displayField: 'name',
 			descriptionField: 'description',
-			fieldLabel: LN('sbi.grants.listTitle'),
+			fieldLabel: LN('sbi.goal.grant'),
 			store: grantStore,
 			singleSelect: true,
 			allowBlank: false,
