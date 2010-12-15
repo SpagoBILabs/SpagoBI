@@ -42,6 +42,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 	private static final String KPI_INST_CHART =  "kpiInstChartTypeId";    
 	private static final String KPI_INST_PERIODICITY =  "kpiInstPeriodicity";
 	private static final String KPI_INST_SAVE_HISTORY =  "kpiInstSaveHistory";
+	private static final String KPI_INST_ACTIVE =  "kpiInstActive";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -106,6 +107,7 @@ public class ModelInstanceNodeJSONSerializer implements Serializer {
 			result.put(STARTDATE, res.getStartDate());
 			result.put(ENDDATE, res.getEndDate());
 			result.put(MODELUUID, res.getModelUUID() );
+			result.put(KPI_INST_ACTIVE, res.isActive());
 			if(res.getChildrenNodes() != null && !res.getChildrenNodes().isEmpty()){
 				result.put(LEAF, false );
 			}else{

@@ -152,18 +152,17 @@ Sbi.widgets.ModelInstanceTree = function(){
 		    		if(attr.kpiCode !== undefined){
 		    			attrKpiCode = ' - '+attr.kpiCode;
 		    		}
-		    		if(attr.kpiInstActive !== undefined && attr.kpiInstActive){
-		    			attr.disabled = attr.kpiInstActive;
+
+		    		if(attr.kpiInstActive !== undefined && !attr.kpiInstActive){
+		    			attr.disabled = true;
 		    			attr.cls = attr.cls+' line-through';
 		    		}
-	
-					attr.checked= true;
-					
 
+					attr.checked= attr.weight1!=undefined;
+					
 		    		attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
 		    		
 		    		var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-		    		
 		    		return node;
 		        }
 	        })

@@ -123,7 +123,7 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 		this.detailFieldGrant = new Sbi.widgets.LookupField(Ext.apply( baseConfig, {
 			name: 'name',
 			valueField: 'id',
-			displayField: 'label',
+			displayField: 'name',
 			descriptionField: 'description',
 			fieldLabel: LN('sbi.grants.listTitle'),
 			store: grantStore,

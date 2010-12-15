@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 6-dic-2010 11.29.21 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy" table="sbi_goal_hierarchy" catalog="spagobi">
+        <id name="goalHierarchyId" type="int">
+            <column name="GOAL_HIERARCHY_ID" />
+            <generator class="increment" />
+        </id>
+        <many-to-one name="sbiGoalHierarchy" class="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy" fetch="select">
+            <column name="PARENT_ID" />
+        </many-to-one>
+        <property name="orgUnitId" type="int">
+            <column name="ORG_UNIT_ID" not-null="true" />
+        </property>
+        <property name="goalId" type="int">
+            <column name="GOAL_ID" not-null="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="50" not-null="true" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" length="50" not-null="true" />
+        </property>
+        <property name="goal" type="string">
+            <column name="GOAL" length="1000" not-null="true" />
+        </property>
+        <set name="sbiGoalKpis" inverse="true" lazy="true" table="sbi_goal_kpi" fetch="select">
+            <key>
+                <column name="GOAL_HIERARCHY_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.goal.metadata.SbiGoalKpi" />
+        </set>
+        <set name="sbiGoalHierarchies" inverse="true" lazy="true" table="sbi_goal_hierarchy" fetch="select">
+            <key>
+                <column name="PARENT_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy" />
+        </set>
+    </class>
+</hibernate-mapping>

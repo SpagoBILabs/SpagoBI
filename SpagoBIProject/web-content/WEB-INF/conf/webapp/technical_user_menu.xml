@@ -165,6 +165,10 @@
 				functionality="KpiManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" />
+		<ITEM	title="#menu.GoalDefinition"
+				functionality="KpiManagement"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION"
+				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/goal16.png" />
 		<ITEM	title="#menu.ResourcesDefinition"
 				functionality="KpiManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION"

@@ -15,6 +15,7 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializationException;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
 import it.eng.spagobi.kpi.model.service.ManageModelInstancesAction;
@@ -43,12 +44,15 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	
 	//Service parameter values
-	private final String GRANT_LIST = "GRANT_LIST";
-	private final String OU_LIST = "OU_LIST";
-	private final String OU_CHILDS_LIST = "OU_CHILDS_LIST";
-	private final String OU_HIERARCHY_ROOT = "OU_HIERARCHY_ROOT";
-	private final String OU_GRANT_ERESE = "OU_GRANT_ERESE";
-	private final String OU_GRANT_INSERT = "OU_GRANT_INSERT";
+	private static final String GRANT_DEF = "GRANT_DEF";
+	private static final String GRANT_LIST = "GRANT_LIST";
+	private static final String OU_LIST = "OU_LIST";
+	private static final String OU_CHILDS_LIST = "OU_CHILDS_LIST";
+	private static final String OU_HIERARCHY_ROOT = "OU_HIERARCHY_ROOT";
+	private static final String OU_GRANT_ERESE = "OU_GRANT_ERESE";
+	private static final String OU_GRANT_INSERT = "OU_GRANT_INSERT";
+	private static final String KPI_ACTIVE_CHILDS_LIST = "KPI_ACTIVE_CHILDS_LIST";
+	
 	public static final String MODEL_INSTANCE_NODES = "modelinstancenodes";
 	
 	//JSON Objects fields names
@@ -57,7 +61,10 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	
 	//PRIVATE UTILITY COLLECTION FOR GRANT NODES TO INSERT
 	private ArrayList<HashMap<Integer, Integer>> utilityGrantNodesCollection = null;
+	
+	//private HashMap<String, HashMap<String, Array>>
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doService() {
 		logger.debug("IN");
@@ -65,7 +72,12 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 
 		try {
 			String serviceType = this.getAttributeAsString(MESSAGE_DET);
-			if (serviceType != null && serviceType.equalsIgnoreCase(GRANT_LIST)) {
+			if (serviceType != null && serviceType.equalsIgnoreCase(GRANT_DEF)) {
+				logger.debug("Loading the grant..");
+				Integer grantId =  getAttributeAsInteger("grantId");
+				getGrant(grantId);
+				logger.debug("Grant loaded.");
+			}else if (serviceType != null && serviceType.equalsIgnoreCase(GRANT_LIST)) {
 				logger.debug("Loading the list of grants..");
 				getGrantsList();
 				logger.debug("List of grant loaded.");
@@ -125,6 +137,72 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				logger.debug("Adding the grant "+grantNodesJSON+"..."+grantJSON);
 				insertGrant(grantJSON, grantNodesJSON);
 				logger.debug("Added the grant.");
+
+			}else if (serviceType != null && serviceType.equalsIgnoreCase(KPI_ACTIVE_CHILDS_LIST)) {
+				Integer ouNodeId =  getAttributeAsInteger("ouNodeId");
+				Integer grantId =  getAttributeAsInteger("grantId");
+				Integer goalNodeId =  null;
+				try{
+					goalNodeId = getAttributeAsInteger("goalNodeId");
+				}catch (NumberFormatException e) {
+					goalNodeId = null;
+				}
+				String parentId = (String)getAttributeAsString("modelInstId");
+				
+				List<OrganizationalUnitNodeWithGrant> ousWithGrants = DAOFactory.getOrganizationalUnitDAO().getGrantNodes(ouNodeId, grantId);
+				List<OrganizationalUnitGrantNode> grants = new ArrayList<OrganizationalUnitGrantNode>();
+				for(int i=0; i<ousWithGrants.size(); i++){
+					grants.addAll(ousWithGrants.get(i).getGrants());
+				}
+				List<Integer> modelInstances = new ArrayList<Integer>();
+				
+				for(int i=0; i<grants.size(); i++){
+					modelInstances.add(grants.get(i).getModelInstanceNode().getModelInstanceNodeId());
+				}
+				
+				try{
+					if(parentId == null || parentId.startsWith("xnode")){
+						writeBackToClient( new JSONAcknowledge() );
+						return;
+					}
+					ModelInstance aModel = DAOFactory.getModelInstanceDAO().loadModelInstanceWithChildrenById(Integer.parseInt(parentId));
+					List<ModelInstance> children = aModel.getChildrenNodes();
+					
+					for(int i=0; i<children.size(); i++){
+						if(modelInstances.contains(children.get(i).getId())){
+							children.get(i).setActive(true);
+						}
+					}
+
+					JSONArray modelChildrenJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(children,	getLocale());
+					
+					
+					if(goalNodeId!=null){
+						List<GoalKpi> listGoalKpi = DAOFactory.getGoalDAO().getGoalKpi(goalNodeId);
+						for(int i=0; i<modelChildrenJSON.length(); i++){
+							for(int j=0; j<listGoalKpi.size(); j++){
+								if(listGoalKpi.get(j).getModelInstanceId().equals( children.get(i).getId())){
+									((JSONObject)modelChildrenJSON.get(i)).put("weight1", ""+listGoalKpi.get(j).getWeight1());
+									((JSONObject)modelChildrenJSON.get(i)).put("weight2", ""+listGoalKpi.get(j).getWeight2());
+									((JSONObject)modelChildrenJSON.get(i)).put("threshold1", ""+listGoalKpi.get(j).getThreshold1());
+									((JSONObject)modelChildrenJSON.get(i)).put("threshold2", ""+listGoalKpi.get(j).getThreshold2());
+									((JSONObject)modelChildrenJSON.get(i)).put("sign1", ""+listGoalKpi.get(j).getSign1());
+									((JSONObject)modelChildrenJSON.get(i)).put("sign2", ""+listGoalKpi.get(j).getSign2());
+									break;
+								}
+							}
+						}
+					}
+					writeBackToClient(new JSONSuccess(modelChildrenJSON));
+
+				} catch (Throwable e) {
+					logger.error("Exception occurred while retrieving model tree", e);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Exception occurred while retrieving model tree", e);
+				}
+
+
+				logger.debug("Loaded the list of ous childs of the node with id"+ouNodeId+".");
 			}else if(serviceType == null){
 				logger.debug("no service");
 				Assert.assertUnreachable("No service defined.");
@@ -134,6 +212,8 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 	}
+	
+
 	
 	public List<Integer> getModelInstances(Integer aModelId) throws EMFUserError  {
 
@@ -158,6 +238,21 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 			JSONObject grantsJSONObject = new JSONObject();
 			grantsJSONObject.put("rows", grantsJSON);
 			writeBackToClient( new JSONSuccess( grantsJSONObject ) );
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize the responce to the client", e);
+		}
+	}
+	
+	/**
+	 * Load the list of grants and serialize them in a JSOMObject. The list live in the attributes with name rows
+	 * @param grantId the id of the grant
+	 */
+	private void getGrant(Integer grantId){
+		OrganizationalUnitGrant grant = DAOFactory.getOrganizationalUnitDAO().getGrant(grantId);
+	
+		try {
+			JSONObject grantsJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( grant, null);
+			writeBackToClient( new JSONSuccess( grantsJSON ) );
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize the responce to the client", e);
 		}

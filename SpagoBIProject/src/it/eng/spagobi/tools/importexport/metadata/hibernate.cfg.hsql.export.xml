@@ -71,5 +71,9 @@
                 <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
+<!-- Kpi Goal -->
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
     </session-factory>
 </hibernate-configuration>

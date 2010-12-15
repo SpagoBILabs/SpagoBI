@@ -123,8 +123,9 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
         n.columnValues = a['id'];
       
          var checkboxConf = null;
+
 	   	 var disabled = '';
-		 if(!this.isChecked()){
+		 if(!this.isChecked() && !n.attributes.checked){
 			 disabled= 'disabled="disabled"';
 		 }
         
@@ -141,10 +142,9 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
                 "</div>"];
          for(var i = 1, len = cols.length; i < len; i++){
              c = cols[i];
-
+             
              if(c.visibility!='hidden'){
 	             if(c.fieldType == 'input'){
-
 	            	 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
 	            			 '<div class="x-tree-col-text"><input ',disabled,' type="text" id=',c.columnId,n.columnValues,'  style="width: 100%" value="',(c.renderer ? c.renderer(a[c.dataIndex], n, a) : a[c.dataIndex]),'"/><br /></div>',"</div>");
 	             }else if(c.fieldType == 'text'){
@@ -155,36 +155,35 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 	            	 checkboxConf = {};
 	            	 checkboxConf.renderTo = c.columnId+n.columnValues;
 	            	 checkboxConf.width = c.width-bw;
-
 	             }else if(c.fieldType == 'combo'){
 	            	 var selectedId = parseInt(a[c.dataIndex]);
 	                 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
 	                         '<div class="x-tree-col-text">','<select ',disabled,' id=',c.columnId,n.columnValues,' style="width: 100%">');
 	                 buf.push('<option');
-	                 if(selectedId==0){
+	                 if(selectedId==115){
 	                	 buf.push(' selected=selected');
 	                 }
-	                 buf.push('>=</option>');
+	                 buf.push(' value="115">=</option>');
 	                 buf.push('<option');
-	                 if(selectedId==1){
+	                 if(selectedId==111){
 	                	 buf.push(' selected=selected');
 	                 }
-	                 buf.push('>&lt;</option>');
+	                 buf.push(' value="111">&lt;</option>');
 	                 buf.push('<option');
-	                 if(selectedId==2){
+	                 if(selectedId==113){
 	                	 buf.push(' selected=selected');
 	                 }
-	                 buf.push('>&gt;</option>');
+	                 buf.push(' value="113">&gt;</option>');
 	                 buf.push('<option');
-	                 if(selectedId==3){
+	                 if(selectedId==112){
 	                	 buf.push(' selected=selected');
 	                 }
-	                 buf.push('>&lt;=</option>');
+	                 buf.push(' value="112">&lt;=</option>');
 	                 buf.push('<option');
-	                 if(selectedId==4){
+	                 if(selectedId==114){
 	                	 buf.push(' selected=selected');
 	                 }
-	                 buf.push('>&gt;=</option>','</select>',"</div>","</div>");
+	                 buf.push(' value="114">&gt;=</option>','</select>',"</div>","</div>");
 	    		 }
              }else{
             	 buf.push('<input type="hidden" id=',c.columnId,n.columnValues, ' style="width: 0px; float: left;" value=',a[c.dataIndex],'>',"</input>");
@@ -213,11 +212,10 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
         
         
         if(checkboxConf != null ){
-        	
-	        
 	        if(n.disabled){
 	        	checkboxConf = Ext.apply(checkboxConf,{disabled: true});
 	        }
+	        checkboxConf.checked= n.attributes.checked;
 	        this.checkbox = new Ext.form.Checkbox(checkboxConf);
 	        this.onCheckChange= function(){
 	            var checked = this.checkbox.checked;
