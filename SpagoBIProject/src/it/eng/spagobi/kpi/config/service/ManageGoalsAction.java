@@ -4,12 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -179,32 +174,6 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("Goal removed");
 		}
-
-		
-//		
-//		
-//		if (serviceType != null && serviceType.equalsIgnoreCase(OU_GOAL)) {
-//			Integer ouId =  getAttributeAsInteger("ouNode");
-//			OrganizationalUnit ou = new OrganizationalUnit(ouId, "oulabel", "ouname", "oudescription");
-//			GoalNode rootNode = new GoalNode("label"+ouId, "name"+ouId, "goal"+ouId,null, ou);
-//			rootNode.setId(ouId+1);
-//			//JSONObject goal = new JSONObject();
-//			JSONObject jo = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(rootNode,getLocale());
-//			//goal.put(ROOT_GOAL_HIERARCHY, jo);
-//			
-//			writeBackToClient(new JSONSuccess(jo));	
-//		}
-		
-//		if (serviceType != null && serviceType.equalsIgnoreCase(INSERT_GOAL_NODES)) {
-//			JSONObject JSONGoal =  getAttributeAsJSONObject("goalNode");
-//			Integer goalId =  JSONGoal.optInt(GOAL_ID);
-//			Integer ouId = JSONGoal.optInt(OU);
-//			JSONArray goals = JSONGoal.optJSONArray(GOALS);
-//			JSONArray kpis = JSONGoal.optJSONArray(KPIS);
-//			deserializeGoalNodesArray(goals, goalId, ouId);
-//			insertKpiNodesArray(kpis, goalId);
-//			writeBackToClient( new JSONAcknowledge() );
-//		}
 		if (serviceType != null && serviceType.equalsIgnoreCase(KPI_GOAL_ROOT_NODE)) {
 			logger.debug("Loading the kpi model instances linked to the goal: ");
 			Integer grantId =  getAttributeAsInteger("grantId");
@@ -306,42 +275,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 		}
 		return gn;
 	}
-	
-//	private void deserializeGoalNodesArray(JSONArray goals, Integer goalId, Integer ou) throws Exception{
-//		Map<Integer, GoalNode> goalNodeMap = new HashMap<Integer, GoalNode>();
-//		Set<Integer> fathers = new HashSet<Integer>();
-//		GoalNode root;
-//		GoalNode iterValue;
-//		Integer key;
-//		
-//		for(int i=0; i<goals.length(); i++){
-//			deserializeGoalNode(goals.getJSONObject(i),goalId,ou,goalNodeMap);
-//		}
-//		root = goalNodeMap.get(0);
-//		fathers.add(0);
-//		DAOFactory.getGoalDAO().insertGoalNode(root, null);
-//		goalNodeMap.remove(0);
-//		while(!goalNodeMap.isEmpty()){
-//			Iterator<Integer> iter = goalNodeMap.keySet().iterator();
-//			while(iter.hasNext()){
-//				key = iter.next();
-//				iterValue = goalNodeMap.get(key);
-//				if(fathers.contains(iterValue.getFatherCountId())){
-//					DAOFactory.getGoalDAO().insertGoalNode(iterValue, goalNodeMap.get(iterValue.getFatherCountId()).getId());
-//					goalNodeMap.remove(key);
-//					break;
-//				}
-//			}
-//		}
-//	}
-//	
-//	
-	
-	private void deserializeGoalNode(JSONObject goalNode, Integer goalId, Integer ou, Map<Integer, GoalNode> goalNodeMap) throws Exception{
-		Integer count =  goalNode.optInt(GOAL_NODE_COUNT);
-		GoalNode gn =deserializeGoalNode(goalNode, goalId, ou);
-		goalNodeMap.put(count, gn);
-	}
+
 	
 	private GoalNode deserializeGoalNode(JSONObject goalNode, Integer goalId, Integer ou) throws Exception{
 		String name = (String) goalNode.opt(NAME);
