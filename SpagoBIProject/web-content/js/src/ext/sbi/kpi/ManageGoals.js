@@ -593,30 +593,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	
 		});
 	}
-	
-//	,loadGoalTreeRoot: function(){
-//		var thisPanel = this;
-//		Ext.Ajax.request({
-//			url: this.configurationObject.manageGoalTreeRootService,
-//			params: {'goalId': thisPanel.goalId, 'ouId': thisPanel.ouId},
-//			method: 'POST',
-//			success: function(response, options) {
-//				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));			
-//			},
-//			failure: function() {
-//				Ext.MessageBox.show({
-//					title: LN('sbi.generic.error'),
-//					msg: LN('sbi.generic.savingItemError'),
-//					width: 150,
-//					buttons: Ext.MessageBox.OK
-//				});
-//				
-//			}
-//			,scope: this
-//	
-//		});
-//	}
-	
 
 	, save: function(){
 		this.saveGoalNodeDetails();
@@ -689,68 +665,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	
 		});
 	}
-	
-//	, visitGoalTree: function(node){
-//	
-//	var array = new Array();
-//	
-//	if(node.getUI().isChecked()){
-//		var serializedNode = {};
-//		var cols = this.goalDetailskpiPanel.columns;
-//		for(var i=0; i<cols.length; i++){
-//			var element = document.getElementById(cols[i].columnId+node.columnValues);
-//			if(element==null){
-//				serializedNode[cols[i].columnId]= '';
-//			}else{
-//				serializedNode[cols[i].columnId] = element.value;
-//			}
-//		}
-//		array.push(serializedNode);
-//	}
-//	for(var i=0; i<node.childNodes.length; i++){
-//		array = array.concat(this.visitGoalTree(node.childNodes[i]));
-//	}
-//	return array;
-//}
-//, saveGoalNode: function(goalNode){
-//	var goalNodeE =  Ext.encode(goalNode);
-//	Ext.Ajax.request({
-//		url: this.configurationObject.saveGoalService,
-//		params: {'goalNode': goalNodeE},
-//		method: 'POST',
-//		success: function(response, options) {
-//			if (response !== undefined) {
-//				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-//			} else {
-//				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
-//			}
-//		},
-//		failure: function() {
-//			Ext.MessageBox.show({
-//				title: LN('sbi.generic.error'),
-//				msg: LN('sbi.generic.savingItemError'),
-//				width: 150,
-//				buttons: Ext.MessageBox.OK
-//			});
-//		}
-//		,scope: this
-//
-//	});
-//}
-//
-//, saveBeforeOuChange: function(newN, oldN){
-//	if(this.first!=1){//on first selection we shold not save
-//		this.first=1;
-//		return true;
-//	}
-//	var goalNode={
-//		goalId: this.goalId,
-//		ou: oldN.attributes.id,
-//		goals: this.serializeGoalNode(this.goalTreePanel.getRootNode()),
-//		kpis: this.serializeKpiGoalNode(this.goalDetailskpiPanel.getRootNode())
-//	};
-//	this.saveGoalNode(goalNode);
-//}
 
 });
 
