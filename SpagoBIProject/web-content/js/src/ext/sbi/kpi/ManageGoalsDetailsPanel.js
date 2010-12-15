@@ -214,10 +214,8 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
 				}
-				thisPanel.hideMask();
 			},
 			failure: function() {
-				thisPanel.hideMask();
 				Ext.MessageBox.show({
 					title: LN('sbi.generic.error'),
 					msg: LN('sbi.generic.savingItemError'),
