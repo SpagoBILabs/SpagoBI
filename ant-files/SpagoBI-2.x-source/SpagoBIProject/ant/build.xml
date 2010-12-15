@@ -393,6 +393,20 @@
 				    	 <file name="./src/ext/sbi/kpi/ManageOUGrants.js"/>
 				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js"/>
 				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>
+				    	
+				    	
+				    	
+				    	<file name="./src/ext/sbi/kpi/ManageGoals.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
+				    	<file name="./src/ext/sbi/widgets/ColumnNodeUI.js"/>
+				    	<file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
+			    		<file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
+				    	<file name="./src/ext/sbi/widgets/SimpleTreePanel.js"/>
+				    	
+				    	
 				    </filelist>
 
 				</concat>
