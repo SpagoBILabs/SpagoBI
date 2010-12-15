@@ -160,6 +160,7 @@ Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disabilita tutti i d
 //START GOALS messages
 Sbi.locale.ln['sbi.goals.listTitle'] = 'Lista degli Obiettivi';
 Sbi.locale.ln['sbi.goals.nogrant'] = 'Selezionare un abilitazione per procedere'
+Sbi.locale.ln['sbi.goals.define.goal'] = 'Definisci l''obiettivo'
 //END GOALS messages
 
 

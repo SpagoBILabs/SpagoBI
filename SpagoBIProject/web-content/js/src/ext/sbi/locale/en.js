@@ -124,6 +124,7 @@ Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disable all descenda
 //START GOALS messages
 Sbi.locale.ln['sbi.goals.listTitle'] = 'Goals List';
 Sbi.locale.ln['sbi.goals.nogrant'] = 'You should select a grant'
+Sbi.locale.ln['sbi.goals.define.goal'] = 'Define goal'
 //END GOALS messages
 
 
