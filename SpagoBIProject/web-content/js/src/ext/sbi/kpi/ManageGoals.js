@@ -243,7 +243,8 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			goalDesc: '',
 			nodeCount: '1'
 		};
-    	this.addNewGoalNode(encodedNode, this.goalTreePanel.getRootNode());
+    	this.addNewGoalNode(encodedNode, this.goalTreePanel.getRootNode(), true);
+    	
 	}
 
 	,initGoalTreePanel: function(){
@@ -301,7 +302,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		} ,this);
 	}
 	
-	, addNewGoalNode: function(encodedNode, node){
+	, addNewGoalNode: function(encodedNode, node, root){
 		Ext.Ajax.request({
 			url: this.configurationObject.saveGoalItemService,
 			params: {'goalNode': Ext.encode(encodedNode),'goalId': this.goalId, 'ouId': this.ouId},
@@ -311,6 +312,19 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 					var goalNode = Ext.util.JSON.decode(response.responseText);
 					if(goalNode.nodeId!== undefined){
 						node.attributes.id=goalNode.nodeId;
+					}
+					
+					if(root){
+				    	var rootNode  = {
+								nodeType : 'async',
+								text : encodedNode.name,
+								id:  goalNode.nodeId,
+								goalDesc: encodedNode.goalDesc,
+								nodeCount: 0,
+								attributes:{}
+							};
+				    	rootNode.attributes.id = goalNode.nodeId;
+						this.updateGoalRoot(rootNode);
 					}
 					this.loadKpiTreeRoot();
 				} else {
@@ -338,11 +352,13 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			method: 'POST',
 			success: function(response, options) {
 				Ext.MessageBox.show({
-					title: LN('sbi.generic.error'),
-					msg: 'removed',
+					msg: LN('sbi.goals.removed'),
 					width: 150,
 					buttons: Ext.MessageBox.OK
 				});
+				if(node.id==this.goalTreePanel.getRootNode().id){
+					this.goalDetailsCardPanel.getLayout().setActiveItem(0);
+				}
 			},
 			failure: function() {
 				Ext.MessageBox.show({
@@ -519,7 +535,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	}
 	
 	,updateGoalRoot: function(root){
-		this.goalTreeRoot = root;
 		this.goalTreePanel.setRootNode(root);
 		this.goalTreePanel.nodeCount=0;
 		this.goalTreePanel.getRootNode().expand(false, /*no anim*/false);
