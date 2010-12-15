@@ -3,14 +3,11 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 6-dic-2010 11.29.21 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoal" table="sbi_goal" catalog="spagobi">
+    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoal" table="SBI_GOAL">
         <id name="goalId" type="int">
             <column name="GOAL_ID" />
             <generator class="increment" />
         </id>
-        <property name="hierarchyId" type="int">
-            <column name="HIERARCHY_ID" not-null="true" />
-        </property>
         <property name="grantId" type="int">
             <column name="GRANT_ID" not-null="true" />
         </property>
