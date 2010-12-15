@@ -36,6 +36,8 @@ import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.Periodicity;
+import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
+import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.bo.ModelExtended;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
@@ -119,6 +121,9 @@ public class JSONSerializer implements Serializer {
 		mappings.put( OrganizationalUnit.class, new OrganizationalUnitJSONSerializer());
 		mappings.put( OrganizationalUnitHierarchy.class, new OrganizationalUnitHierarchyJSONSerializer());
 		mappings.put( OrganizationalUnitNodeWithGrant.class, new OrganizationalUnitNodeWithGrantJSONSerializer());
+		
+		mappings.put( GoalNode.class, new GoalNodeJSONSerializer());
+		mappings.put( Goal.class, new GoalJSONSerializer());
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {

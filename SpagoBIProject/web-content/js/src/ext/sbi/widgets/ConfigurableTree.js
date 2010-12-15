@@ -118,6 +118,8 @@ Ext.extend(Sbi.widgets.ConfigurableTree, Ext.tree.TreePanel, {
 			alert(LN('sbi.models.DDNoParentMsg'));
 			return;
 		} 
+		this.fireEvent('removedItem',node);
+		
 		node.parentNode.removeChild(node, false);
 	}
 	

@@ -59,6 +59,7 @@ import it.eng.spagobi.kpi.config.dao.IKpiInstPeriodDAO;
 import it.eng.spagobi.kpi.config.dao.IKpiInstanceDAO;
 import it.eng.spagobi.kpi.config.dao.IMeasureUnitDAO;
 import it.eng.spagobi.kpi.config.dao.IPeriodicityDAO;
+import it.eng.spagobi.kpi.goal.dao.IGoalDAO;
 import it.eng.spagobi.kpi.model.dao.IModelDAO;
 import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
@@ -612,6 +613,15 @@ public class DAOFactory {
 	 */
 	public static IOrganizationalUnitDAO getOrganizationalUnitDAO() {
 		return (IOrganizationalUnitDAO) createDAOInstance("SbiKpiOUDAO");
+	}
+	
+	/**
+	 * Creates a DAO instance for Organizational Unit.
+	 * 
+	 * @return a DAO instance for Organizational Unit
+	 */
+	public static IGoalDAO getGoalDAO() {
+		return (IGoalDAO) createDAOInstance("GoalDAO");
 	}
 	
 	/**

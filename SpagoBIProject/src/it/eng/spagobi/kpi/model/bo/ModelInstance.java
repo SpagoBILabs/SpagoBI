@@ -21,6 +21,7 @@ public class ModelInstance implements Serializable{
 	private Date endDate;
 	private String modelUUID;
 	private String guiId = null;
+	private boolean active;
 	
 	public String getLabel() {
 		return label;
@@ -99,5 +100,13 @@ public class ModelInstance implements Serializable{
 	}
 	public void setGuiId(String guiId) {
 		this.guiId = guiId;
+	}
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
 	}	
+	
+	
 }

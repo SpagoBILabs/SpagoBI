@@ -185,6 +185,21 @@ public interface IOrganizationalUnitDAO {
 	public List<OrganizationalUnitGrantNode> getGrants(Integer kpiModelInstanceId);
 	
 	/**
+	 * Retrieves all the grant nodes associated to an ou and a grant
+	 * @param ouNodeId
+	 * @param grantId
+	 * @return the grant nodes associated to an ou and a grant
+	 */
+	public List<OrganizationalUnitNodeWithGrant> getGrantNodes(Integer ouNodeId, Integer grantId);
+	
+	/**
+	 * Retrieves the grant with id grantId
+	 * @param grantId the id of the grant
+	 * @return the grant with grantId
+	 */
+	public OrganizationalUnitGrant getGrant(Integer grantId);
+	
+	/**
 	 * Retrieves the grants associated the KPI model instance node identified by the input integer,
 	 * valid in the real time
 	 * @param kpiModelInstanceId

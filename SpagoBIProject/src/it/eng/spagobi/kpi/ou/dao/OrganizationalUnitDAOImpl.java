@@ -223,6 +223,34 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 	
+	public OrganizationalUnitGrant getGrant(Integer grantId) {
+		logger.debug("IN");
+		List<OrganizationalUnitGrant> toReturn = new ArrayList<OrganizationalUnitGrant>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitGrant s where s.id = ? ");
+			hibQuery.setInteger(0, grantId);
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				toReturn.add(toOrganizationalUnitGrant((SbiOrgUnitGrant) it.next(), aSession));
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		if(toReturn.size()>0){
+			return toReturn.get(0);
+		}else 
+			throw new SpagoBIRuntimeException("No grant found with id "+grantId);
+	}
+	
 	
 	public List<OrganizationalUnitGrantNode> getNodeGrants(Integer nodeId, Integer grantId) {
 		logger.debug("IN: nodeId = " + nodeId);
@@ -758,6 +786,32 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		return toReturn;
 	}
 	
+	public List<OrganizationalUnitNodeWithGrant> getGrantNodes(Integer nodeId, Integer grantId) {
+		logger.debug("IN: nodeId = " + nodeId + ", grantId = " + grantId);
+		List<OrganizationalUnitNodeWithGrant> toReturn = new ArrayList<OrganizationalUnitNodeWithGrant>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.nodeId = ? ");
+			hibQuery.setInteger(0, nodeId);
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				OrganizationalUnitNode node = toOrganizationalUnitNode((SbiOrgUnitNodes) it.next());
+				OrganizationalUnitNodeWithGrant nodeWithGrants = getNodeWithGrants(node, grantId, aSession);
+				toReturn.add(nodeWithGrants);
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
 	
 	public List<OrganizationalUnitGrantNode> getGrants(
 			Integer kpiModelInstanceId) {

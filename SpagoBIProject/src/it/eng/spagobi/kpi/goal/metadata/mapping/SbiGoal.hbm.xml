@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 6-dic-2010 11.29.21 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoal" table="sbi_goal" catalog="spagobi">
+        <id name="goalId" type="int">
+            <column name="GOAL_ID" />
+            <generator class="increment" />
+        </id>
+        <property name="hierarchyId" type="int">
+            <column name="HIERARCHY_ID" not-null="true" />
+        </property>
+        <property name="grantId" type="int">
+            <column name="GRANT_ID" not-null="true" />
+        </property>
+        <property name="startDate" type="date">
+            <column name="START_DATE" length="10" not-null="true" />
+        </property>
+        <property name="endDate" type="date">
+            <column name="END_DATE" length="10" not-null="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="20" not-null="true" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" length="20" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="1000" />
+        </property>
+        <one-to-one name="sbiGoalHierarchy" class="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy"></one-to-one>
+    </class>
+</hibernate-mapping>

@@ -7,6 +7,7 @@
 	<MAPPING business_type="ACTION" business_name="MANAGE_MODEL_INSTANCES_ACTION" publisher_name="ManageModelInstancesPublisher"/>
 	<MAPPING business_type="ACTION" business_name="MANAGE_RESOURCES_ACTION" publisher_name="ManageResourcesPublisher"/>
 	<MAPPING business_type="ACTION" business_name="MANAGE_OU_EMPTY_ACTION" publisher_name="ManageGrantsPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_GOALS_EMPTY_ACTION" publisher_name="ManageGoalsPublisher"/>
 	
 	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_KPIS_GUI_ACTION" publisher_name="InitManageKpisGuiPublisher"/>
 	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_THRESHOLDS_GUI_ACTION" publisher_name="InitManageThresholdsGuiPublisher"/>

@@ -94,7 +94,8 @@ Ext.extend(Sbi.kpi.ManageGoalsGrid, Sbi.widgets.ListGridPanel, {
 		                                   , 'description'
 		                                   , 'startdate'
 		                                   , 'enddate'
-		                                   , 'grant'
+		                                   , 'grantid'
+		                                   , 'grantname'
 		                                   ];
 
 		this.configurationObject.gridColItems = [
@@ -175,7 +176,8 @@ Ext.extend(Sbi.kpi.ManageGoalsGrid, Sbi.widgets.ListGridPanel, {
 				description:'',
 				startdate:'',
 				enddate:'', 
-				grant:'', 
+				grantid:'',
+				grantname:'',
 		};
 
 		var records = new Array();

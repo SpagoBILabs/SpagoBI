@@ -54,6 +54,7 @@
 		<DAO name="ObjMetacontentDAO" implementation="it.eng.spagobi.tools.objmetadata.dao.ObjMetacontentDAOHibImpl" />
 		<DAO name="KpiErrorDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiErrorDAOImpl" />
 		<DAO name="SbiKpiOUDAO" implementation="it.eng.spagobi.kpi.ou.dao.OrganizationalUnitDAOImpl" />
+		<DAO name="GoalDAO" implementation="it.eng.spagobi.kpi.goal.dao.GoalDAOImpl" />
 		
 		<DAO name="SbiUserDAO" implementation="it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl"/>
 		<DAO name="SbiAttributeDAO" implementation="it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl"/>

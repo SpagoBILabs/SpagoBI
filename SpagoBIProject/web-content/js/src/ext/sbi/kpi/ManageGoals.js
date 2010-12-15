@@ -51,9 +51,8 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 		modelId: '-1'
 	}
 	this.goalTreeRoot = {
-		text : 'root1',
+		text : 'root',
 		nodeCount: '1',
-		id: '1'
 	}
 
 	var paramsOUChildList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "OU_CHILDS_LIST"};
@@ -87,6 +86,12 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			, baseParams: paramsSaveGoals
 	});	
 	
+	var paramsEreseGoalNode = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "ERESE_GOAL_NODE"};
+	this.configurationObject.ereseGoalNodeService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_GOALS_ACTION'
+			, baseParams: paramsEreseGoalNode
+	});	
+		
 	var paramsSaveGoal = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "INSERT_GOAL_NODE"};
 	this.configurationObject.saveGoalItemService = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_GOALS_ACTION'
@@ -102,7 +107,8 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 	this.config = config;
 	this.addEvents();
 	var thisPanel = this;
-	this.initChildrens(config);
+	this.initOUPanel(config);
+	this.initGoalPanel(config);
 
 	var c = {
 			id: 'goalPanel',
@@ -128,7 +134,7 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			        	collapseMode:'mini',
 			        	autoScroll: true,
 			        	layout: 'fit',
-			        	items: [this.goalPanel]
+			        	items: [this.goalDetailsCardPanel]
 			        }
 			        ]
 	};
@@ -136,41 +142,36 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 	
 };
 
+
+
+
 Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	ouTree: null
 	,goalPanel: null
 	,goalTreePanel: null
 	,goalTreeRoot: null
+	,goalDetailsCardPanel: null
 	,goalDetailsPanel: null
 	,goalDetailsFormPanel: null
 	,goalDetailsFormPanelGoal: null
 	,goalDetailskpiPanel: null
 	,kpiTreeRoot: null
 	,goalId: null
-	,ouId: null
-	
-	,initChildrens: function(conf){
-		this.initOUPanel(conf);
-		this.initGoalPanel(conf);
-	}
-	
+	,ouId: null	
 
 	,initOUPanel: function(conf){
 		conf.rootNodeText = 'root';
 		conf.rootNodeId = this.ouId;
 		this.ouTree =new Sbi.kpi.ManageGoalsOUTree(conf, {});
-		//this.ouTree.renderTree(this.ouTree);
 		this.ouTree.doLayout();
-	//	this.doLayout();
 		this.ouTree.on('afterLayout',this.selectOUPanelRoot, this);
-	//	this.ouTree.getSelectionModel().addListener('beforeselect', this.saveBeforeOuChange, this);
 		this.ouTree.getSelectionModel().addListener('selectionchange', this.updateGoalAfterOUChange, this);
 	}
 	
 	, updateGoalAfterOUChange: function(sel, node){
 		this.ouId = node.id;
-		this.updateGoalDetailsKpi(sel, node);
 		this.updateGoalDetailsTree(sel, node);
+		this.updateGoalDetailsKpi(sel, node);
 	}
 	
 	, selectOUPanelRoot: function(tree){
@@ -210,8 +211,41 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			          }
 			          ]
     	});
+		
+		this.goalsTreeDefined = false;
+		
+		var button = new Ext.Panel({
+			buttonAlign: 'center',
+			bodyCfg: {tag:'center'},
+			bodyStyle:'padding-top: 25%; background-color:#F1F1F1;',
+			items: new Ext.Button({
+				text: LN('sbi.goals.define.goal'),
+	            handler: this.openGoalPanel,
+	            scope: this
+			})
+		});
+		
+		this.goalDetailsCardPanel = new Ext.Panel({
+		    layout:'card',
+		    activeItem: 1, 
+		    defaults: {
+		        border:false
+		    },
+		    items: [button,this.goalPanel]
+		});
 	}
 	
+	,openGoalPanel: function(){
+    	this.goalsTreeDefined = true;
+    	this.goalDetailsCardPanel.getLayout().setActiveItem(1);
+		var encodedNode = {
+			name : 'root',
+			goalDesc: '',
+			nodeCount: '1'
+		};
+    	this.addNewGoalNode(encodedNode, this.goalTreePanel.getRootNode());
+	}
+
 	,initGoalTreePanel: function(){
 		var c= {};
 		var thisPanel = this;
@@ -254,40 +288,74 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 					this.loadKpiTreeRoot();
 				}, this);
 		this.goalTreePanel.on('addedNewItem', function(node,parent){
-			var encodedNode = {
-				name : node.attributes.text,
-				goalDesc: node.attributes.goalDesc,
-				nodeCount: node.attributes.nodeCount,
-				fatherCountNode: parent.attributes.id
-			};
-
-			Ext.Ajax.request({
-				url: this.configurationObject.saveGoalItemService,
-				params: {'goalNode': Ext.encode(encodedNode),'goalId': this.goalId, 'ouId': this.ouId},
-				method: 'GET',
-				success: function(response, options) {
-					if (response !== undefined && response.responseText!== undefined) {
-						var goalNode = Ext.util.JSON.decode(response.responseText);
-						if(goalNode.nodeId!== undefined){
-							node.attributes.id=goalNode.nodeId;
-						}
-					} else {
-						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				var encodedNode = {
+					name : node.attributes.text,
+					goalDesc: node.attributes.goalDesc,
+					nodeCount: node.attributes.nodeCount,
+					fatherCountNode: parent.attributes.id
+				};
+				this.addNewGoalNode(encodedNode, node);
+			} ,this);
+		this.goalTreePanel.on('removedItem', function(node){
+			this.removeGoalNode(node);
+		} ,this);
+	}
+	
+	, addNewGoalNode: function(encodedNode, node){
+		Ext.Ajax.request({
+			url: this.configurationObject.saveGoalItemService,
+			params: {'goalNode': Ext.encode(encodedNode),'goalId': this.goalId, 'ouId': this.ouId},
+			method: 'GET',
+			success: function(response, options) {
+				if (response !== undefined && response.responseText!== undefined) {
+					var goalNode = Ext.util.JSON.decode(response.responseText);
+					if(goalNode.nodeId!== undefined){
+						node.attributes.id=goalNode.nodeId;
 					}
-				},
-				failure: function() {
-					Ext.MessageBox.show({
-						title: LN('sbi.generic.error'),
-						msg: LN('sbi.generic.savingItemError'),
-						width: 150,
-						buttons: Ext.MessageBox.OK
-					});
-					
+					this.loadKpiTreeRoot();
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
 				}
-				,scope: this
-		
-			});
-		},this);
+			},
+			failure: function() {
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: LN('sbi.generic.savingItemError'),
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
+
+			}
+			,scope: this
+
+		});
+	}
+	
+	, removeGoalNode: function(node){
+		Ext.Ajax.request({
+			url: this.configurationObject.ereseGoalNodeService,
+			params: {'id': node.attributes.id},
+			method: 'POST',
+			success: function(response, options) {
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: 'removed',
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
+			},
+			failure: function() {
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: LN('sbi.generic.savingItemError'),
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
+
+			}
+			,scope: this
+
+		});
 	}
 	
 	,initGoalDetailsPanel: function(conf){
@@ -358,7 +426,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			bodyStyle:'padding:5px 5px 0',
 			items:[	this.goalDetailsFormPanelGoal]
 		});
-		
 	}
 	
 	
@@ -373,7 +440,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 				, baseParams: paramsOUChildList
 		});	
 		
-		if(this.goalTreePanel!=null && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
+		if(this.goalTreePanel!=null && this.goalsTreeDefined && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
 			goalNodeId = this.goalTreePanel.getSelectionModel().getSelectedNode().attributes.id;
 		}
 		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode, 'goalNodeId': goalNodeId}
@@ -389,7 +456,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		var conf=this.config;
 		conf.checkbox= true;
 		this.selectedOUNode = ''+node.id;
-		if(this.goalTreePanel!=null && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
+		if(this.goalTreePanel!=null && this.goalsTreeDefined && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
 			goalNodeId = this.goalTreePanel.getSelectionModel().getSelectedNode().attributes.id;
 		}
 		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode, 'goalNodeId': goalNodeId}
@@ -415,16 +482,23 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 			success: function(response, options) {
 				if (response !== undefined && response.responseText!== undefined) {
 					var goalNode = Ext.util.JSON.decode(response.responseText);
+					
 					if(goalNode.name!== undefined){
 						var root = {
 								nodeType : 'async',
 								text : goalNode.name,
 								id:  goalNode.nodeId,
 								goalDesc: goalNode.goalDesc,
-								nodeCount: 0
+								nodeCount: 0,
+								attributes:{}
 							};
+						root.attributes.id = goalNode.nodeId;
 						thisPanel.updateGoalRoot(root);
 						thisPanel.goalDetailsFormPanelGoal.setValue(goalNode.goalDesc);
+						this.goalDetailsCardPanel.getLayout().setActiveItem(1);
+					}else{//no goalNode is defined for this ou and goal
+						this.goalsTreeDefined = false;
+						this.goalDetailsCardPanel.getLayout().setActiveItem(0);
 					}
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
@@ -449,18 +523,33 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.goalTreePanel.setRootNode(root);
 		this.goalTreePanel.nodeCount=0;
 		this.goalTreePanel.getRootNode().expand(false, /*no anim*/false);
+		this.goalTreePanel.getSelectionModel().select(this.goalTreePanel.getRootNode());
 	}	
 	
 	,updatePanel: function(grant){
 		this.selectedGrantId = grant;
-		//this.loadGoalTreeRoot();
+		if(this.ouTree.getRootNode().rendered){
+			this.ouTree.getSelectionModel().select(this.ouTree.getRootNode());
+			this.updateGoalAfterOUChange(this.ouTree.getRootNode(),this.ouTree.getRootNode());
+		}
 	}
 	
 	,loadKpiTreeRoot: function(){
 		var thisPanel = this;
 		var goalNodeId = null;
-		if(this.goalTreePanel!=null && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
+		if(this.goalTreePanel!=null && this.goalsTreeDefined && this.goalTreePanel.getSelectionModel().getSelectedNode()!=null){
 			goalNodeId = this.goalTreePanel.getSelectionModel().getSelectedNode().attributes.id;
+		}
+		try {
+			goalNodeId = parseInt(goalNodeId);
+			if(isNaN(goalNodeId)){
+				goalNodeId = parseInt(this.goalTreePanel.getSelectionModel().getSelectedNode().id);
+				if(isNaN(goalNodeId)){
+					return;
+				}
+			}
+		}catch (ee){
+			return;
 		}
 		Ext.Ajax.request({
 			url: this.configurationObject.manageGoalService,
@@ -505,80 +594,34 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		});
 	}
 	
-	,loadGoalTreeRoot: function(){
-		var thisPanel = this;
-		Ext.Ajax.request({
-			url: this.configurationObject.manageGoalTreeRootService,
-			params: {'goalId': thisPanel.goalId, 'ouId': thisPanel.ouId},
-			method: 'POST',
-			success: function(response, options) {
+//	,loadGoalTreeRoot: function(){
+//		var thisPanel = this;
+//		Ext.Ajax.request({
+//			url: this.configurationObject.manageGoalTreeRootService,
+//			params: {'goalId': thisPanel.goalId, 'ouId': thisPanel.ouId},
+//			method: 'POST',
+//			success: function(response, options) {
+//				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));			
+//			},
+//			failure: function() {
+//				Ext.MessageBox.show({
+//					title: LN('sbi.generic.error'),
+//					msg: LN('sbi.generic.savingItemError'),
+//					width: 150,
+//					buttons: Ext.MessageBox.OK
+//				});
+//				
+//			}
+//			,scope: this
+//	
+//		});
+//	}
+	
 
-			
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
-				
-			},
-			failure: function() {
-				Ext.MessageBox.show({
-					title: LN('sbi.generic.error'),
-					msg: LN('sbi.generic.savingItemError'),
-					width: 150,
-					buttons: Ext.MessageBox.OK
-				});
-				
-			}
-			,scope: this
-	
-		});
-	}
-	
-	, visitGoalTree: function(node){
-		
-		var array = new Array();
-		
-		if(node.getUI().isChecked()){
-			var serializedNode = {};
-			var cols = this.goalDetailskpiPanel.columns;
-			for(var i=0; i<cols.length; i++){
-				var element = document.getElementById(cols[i].columnId+node.columnValues);
-				if(element==null){
-					serializedNode[cols[i].columnId]= '';
-				}else{
-					serializedNode[cols[i].columnId] = element.value;
-				}
-			}
-			array.push(serializedNode);
-		}
-		for(var i=0; i<node.childNodes.length; i++){
-			array = array.concat(this.visitGoalTree(node.childNodes[i]));
-		}
-		return array;
-	}
-	
 	, save: function(){
 		this.saveGoalNodeDetails();
-//		var goalNode={
-//			goalId: this.goalId,
-//			ou: this.ouTree.getSelectionModel().getSelectedNode().attributes.id,
-//			goals: this.serializeGoalNode(this.goalTreePanel.getRootNode()),
-//			kpis: this.serializeKpiGoalNode(this.goalDetailskpiPanel.getRootNode())
-//		};
-//		this.saveGoalNode(goalNode);
 	}
-	
-	, saveBeforeOuChange: function(newN, oldN){
-		if(this.first!=1){//on first selection we shold not save
-			this.first=1;
-			return true;
-		}
-		var goalNode={
-			goalId: this.goalId,
-			ou: oldN.attributes.id,
-			goals: this.serializeGoalNode(this.goalTreePanel.getRootNode()),
-			kpis: this.serializeKpiGoalNode(this.goalDetailskpiPanel.getRootNode())
-		};
-		this.saveGoalNode(goalNode);
-	}
-	
+		
 	, serializeKpiGoalNode: function(node){
 		var toreturn = new Array();
 		if(node.getUI().isChecked()){
@@ -615,32 +658,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		return toreturn; 
 	}
 	
-	, saveGoalNode: function(goalNode){
-		var goalNodeE =  Ext.encode(goalNode);
-		Ext.Ajax.request({
-			url: this.configurationObject.saveGoalService,
-			params: {'goalNode': goalNodeE},
-			method: 'POST',
-			success: function(response, options) {
-				if (response !== undefined) {
-					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
-				}
-			},
-			failure: function() {
-				Ext.MessageBox.show({
-					title: LN('sbi.generic.error'),
-					msg: LN('sbi.generic.savingItemError'),
-					width: 150,
-					buttons: Ext.MessageBox.OK
-				});
-			}
-			,scope: this
-	
-		});
-	}
-	
 	,saveGoalNodeDetails: function(){
 		
 		var goalDetails={
@@ -672,6 +689,68 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	
 		});
 	}
+	
+//	, visitGoalTree: function(node){
+//	
+//	var array = new Array();
+//	
+//	if(node.getUI().isChecked()){
+//		var serializedNode = {};
+//		var cols = this.goalDetailskpiPanel.columns;
+//		for(var i=0; i<cols.length; i++){
+//			var element = document.getElementById(cols[i].columnId+node.columnValues);
+//			if(element==null){
+//				serializedNode[cols[i].columnId]= '';
+//			}else{
+//				serializedNode[cols[i].columnId] = element.value;
+//			}
+//		}
+//		array.push(serializedNode);
+//	}
+//	for(var i=0; i<node.childNodes.length; i++){
+//		array = array.concat(this.visitGoalTree(node.childNodes[i]));
+//	}
+//	return array;
+//}
+//, saveGoalNode: function(goalNode){
+//	var goalNodeE =  Ext.encode(goalNode);
+//	Ext.Ajax.request({
+//		url: this.configurationObject.saveGoalService,
+//		params: {'goalNode': goalNodeE},
+//		method: 'POST',
+//		success: function(response, options) {
+//			if (response !== undefined) {
+//				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
+//			} else {
+//				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+//			}
+//		},
+//		failure: function() {
+//			Ext.MessageBox.show({
+//				title: LN('sbi.generic.error'),
+//				msg: LN('sbi.generic.savingItemError'),
+//				width: 150,
+//				buttons: Ext.MessageBox.OK
+//			});
+//		}
+//		,scope: this
+//
+//	});
+//}
+//
+//, saveBeforeOuChange: function(newN, oldN){
+//	if(this.first!=1){//on first selection we shold not save
+//		this.first=1;
+//		return true;
+//	}
+//	var goalNode={
+//		goalId: this.goalId,
+//		ou: oldN.attributes.id,
+//		goals: this.serializeGoalNode(this.goalTreePanel.getRootNode()),
+//		kpis: this.serializeKpiGoalNode(this.goalDetailskpiPanel.getRootNode())
+//	};
+//	this.saveGoalNode(goalNode);
+//}
 
 });
 
