@@ -85,7 +85,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
     	IDataSet dataSet;
     	
     	dataSet = (IDataSet)getEnv().get(EngineConstants.ENV_DATASET);
-    	
+
     	if(dataSet == null) {
     		JDBCDataSet jdbcDataSet = new JDBCDataSet();
     		jdbcDataSet.setQuery(query);
@@ -101,9 +101,11 @@ public class DataMartProvider extends AbstractDataMartProvider {
     		querableBehaviour.setQueryTransformer( new DrillThroughQueryTransformer(this) );
     		    		
     		try {
+    			logger.warn("trying to load data...");
 				dataSet.loadData();
+				logger.warn("success!!");
 			} catch (Throwable e) {
-				logger.error(e);
+				logger.error("failure!!",e);
 				throw new GeoEngineException("Impossible to load data from dataset");
 			}
     		
