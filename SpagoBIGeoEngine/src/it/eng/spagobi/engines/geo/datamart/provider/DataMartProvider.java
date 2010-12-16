@@ -103,7 +103,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
     		try {
 				dataSet.loadData();
 			} catch (Throwable e) {
-				logger.error(e.getMessage());
+				logger.error(e);
 				throw new GeoEngineException("Impossible to load data from dataset");
 			}
     		

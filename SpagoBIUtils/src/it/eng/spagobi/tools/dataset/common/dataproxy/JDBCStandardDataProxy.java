@@ -112,6 +112,7 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 				resultSet = stmt.executeQuery( getStatement() );
 				
 			} catch (Throwable t) {
+				logger.error("Trovata!:",t);
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
 			
