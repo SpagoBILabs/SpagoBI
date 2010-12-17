@@ -22,11 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.weka.runtime;
 
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.StringReader;
+
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.engines.weka.ParametersFiller;
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
 import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
+import it.eng.spagobi.engines.weka.knowledgeflow.WekaKnowledgeFlow;
+import it.eng.spagobi.engines.weka.knowledgeflow.WekaKnowledgeFlowEnv;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -65,7 +72,16 @@ public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
     	logger.debug("IN");
     	try {
 	    	wm = new WorkManager();
-	    	wekaWork = new WekaWork(engineInstance);
+	    	File file = null;
+	    	try {
+	    		file = File.createTempFile("weka", null);
+				ParametersFiller.fill(new StringReader(engineInstance.getTemplate()), new FileWriter(file), engineInstance.getEnv());
+			} catch (Throwable t) {
+				throw new WekaEngineRuntimeException("Impossible to replace parameters in template", t);
+			}	
+	    	
+	    	WekaKnowledgeFlow knowledgeFlow = WekaKnowledgeFlow.load(file, new WekaKnowledgeFlowEnv(engineInstance.getEnv()));
+	    	wekaWork = new WekaWork(knowledgeFlow);
 	    	wekaWorkListener = new WekaWorkListener(new WekaEngineInstanceMonitor(engineInstance.getEnv()));
 	    	wm.run(wekaWork, wekaWorkListener);
     	} catch (Throwable t) {
