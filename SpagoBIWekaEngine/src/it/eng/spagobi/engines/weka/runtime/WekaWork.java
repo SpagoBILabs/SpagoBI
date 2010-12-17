@@ -30,15 +30,19 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import weka.core.Drawable;
 import weka.core.converters.ArffLoader;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 import weka.core.converters.DatabaseLoader;
 import weka.core.converters.DatabaseSaver;
+import weka.gui.beans.Associator;
 import weka.gui.beans.BeanConnection;
 import weka.gui.beans.BeanInstance;
 import weka.gui.beans.Loader;
 import weka.gui.beans.Saver;
+import weka.gui.beans.TextEvent;
+import weka.gui.beans.TextListener;
 import weka.gui.beans.xml.XMLBeans;
 
 import commonj.work.Work;
@@ -86,28 +90,36 @@ public class WekaWork implements Work {
 	public void run(boolean forceSetup, boolean forceBlocking) {
 		logger.debug("IN");
 		
-		loadKnowledgeFlowTemplate();
-		
-		if(forceSetup) {
-			logger.debug("Configuring loaders & savers ...");
-			setupLoaders();
-			setupSavers();
-		}		
-				
-		for(int i = 0; i < loaders.size(); i++) {
-			Loader loader = (Loader)loaders.get(i);
-			logger.debug("Start loading: " + loader );			
-			loader.startLoading();			
-		}		
-		
-		if(forceBlocking) {
-			for(int i = 0; i < savers.size(); i++) {
-				Saver saver = (Saver)savers.get(i);
-				logger.debug("Start blocking on: " + savers );			
-				saver.waitUntilFinish();			
-			}	
+		try {
+			loadKnowledgeFlowTemplate();
+			
+			if(forceSetup) {
+				logger.debug("Configuring loaders & savers ...");
+				setupLoaders();
+				setupSavers();
+				setupAssociators();
+			}		
+					
+			for(int i = 0; i < loaders.size(); i++) {
+				Loader loader = (Loader)loaders.get(i);
+				logger.debug("Start loading: " + loader );			
+				loader.startLoading();			
+			}		
+			
+			if(forceBlocking) {
+				for(int i = 0; i < savers.size(); i++) {
+					Saver saver = (Saver)savers.get(i);
+					logger.debug("Start blocking on: " + savers );			
+					saver.waitUntilFinish();			
+				}	
+			}
+			
+			
+		} catch (Throwable t) {
+			throw new WekaEngineRuntimeException("An error occurred while running work", t);
+		} finally {
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 	}
 	
 	// ----------------------------------------------------
@@ -119,14 +131,20 @@ public class WekaWork implements Work {
 	Vector connections;
 	Vector loaders;
 	Vector savers;
+	Vector associators;
 	
 	public void loadKnowledgeFlowTemplate() {
+		Vector v ;
+		XMLBeans xml;
+		
 		logger.debug("IN");
 		
 		try {
 			reset();
-			XMLBeans xml = new XMLBeans(null, beanContextSupport); 
-			Vector v     = (Vector) xml.read(file);
+			
+			xml = new XMLBeans(null, beanContextSupport); 
+			v     = (Vector) xml.read(file);
+			
 			beans        = (Vector) v.get(XMLBeans.INDEX_BEANINSTANCES);
 			connections  = (Vector) v.get(XMLBeans.INDEX_BEANCONNECTIONS);
 			
@@ -153,6 +171,17 @@ public class WekaWork implements Work {
 					savers.add(bean.getBean());
 				}	
 				
+				if (bean.getBean() instanceof Associator) {
+					weka.associations.Associator associator;
+					associator = ((Associator)bean.getBean()).getAssociator();
+					logger.debug("    - Associator [" + associator.getClass() + "]");
+					logger.debug("    - Associator is instance of drowable [" + (associator instanceof Drawable) + "]");
+						
+					associators.add(bean.getBean());
+				}	
+				
+				
+				
 				WekaBeanConfiguratorFactory.setup(bean.getBean());
 				
 				if (bean.getBean() instanceof BeanContextChild) {
@@ -173,7 +202,7 @@ public class WekaWork implements Work {
 			
 		
 		} catch(Throwable t) {
-			throw new WekaEngineRuntimeException("Impossible to parse template", t);
+			throw new WekaEngineRuntimeException("Impossible to parse template from file [" + file.getName()+ "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -185,6 +214,7 @@ public class WekaWork implements Work {
 		this.connections = new Vector();
 		this.loaders = new Vector();
 		this.savers = new Vector();
+		this.associators = new Vector();
 	}
 	
 	// ----------------------------------------------------
@@ -257,7 +287,7 @@ public class WekaWork implements Work {
 				}
 				else {				
 					// l'url del db, il nome utente e la password non sono 
-					// memorizzati nel tempalte file quindi è necessario riinserirli a
+					// memorizzati nel tempalte file quindi è necessario reinserirli a
 					// mano al termine del processo di parsing
 					/*
 					databaseSaver.setUrl(dbUrl);
@@ -276,91 +306,25 @@ public class WekaWork implements Work {
 		logger.debug("OUT");
 	}
 	
+	/**
+	 *  Setup Associator filling missing parameter values	 *
+	 */
 	
-	
-	/*
-	public void run() {
-		WekaKnowledgeFlowRunner knowledgeFlowRunner;
-		
+	public void setupAssociators() {
 		logger.debug("IN");
-				
-		try {
-			knowledgeFlowStartupMonitor.start();
-			
-			
-			knowledgeFlowRunner = buildKnowledgeFlowRunner();
-			
-			
-			try {
-				knowledgeFlowRunner.run(false, true);
-			} catch (Throwable t2) {
-				throw new WekaEngineRuntimeException("Impossible to run the Knowledge-Flow", t2);
-			}
-			
-		} catch(Throwable error) {
-			knowledgeFlowStartupMonitor.setError(error);
-		} finally {
-			file.delete();
-			knowledgeFlowStartupMonitor.stop();
-			logger.debug("OUT");
-		}
-	}
-	*/
-	
-	
-	/*
-	private WekaKnowledgeFlowRunner buildKnowledgeFlowRunner() {
-		Connection conn;
-		WekaKnowledgeFlowRunner knowledgeFlowRunner;
-		
-		logger.debug("IN");
-		
-		knowledgeFlowRunner = null;
-		
-		try {
-			conn = engineInstance.getConnection();
-			knowledgeFlowRunner = new WekaKnowledgeFlowRunner(conn, conn);
-			logger.debug("Knowledge-Flow Runner successfully created");
-			
-			knowledgeFlowRunner.loadKnowledgeFlowTemplate(file);
-			knowledgeFlowRunner.setWriteMode( engineInstance.getWriteMode() );
-			logger.debug("Write mode is equal to [" + knowledgeFlowRunner.getWriteMode() + "]");
-			
-			knowledgeFlowRunner.setKeyColumnNames( engineInstance.getKeys() );
-			logger.debug("Key column names are " + Arrays.toString( knowledgeFlowRunner.getKeyColumnNames() ) + "");
-			
-			if( engineInstance.isVerioningEnabled() ){
-				knowledgeFlowRunner.setVersioning(true);
-				logger.debug("Versioning is enabled");
-				
-				if( engineInstance.getVerionColumnName() != null) {
-					knowledgeFlowRunner.setVersionColumnName( engineInstance.getVerionColumnName() );
-					logger.debug("Version column name is equal to [" + knowledgeFlowRunner.getVersionColumnName() + "]");
+		for(int i = 0; i < associators.size(); i++) {
+			Associator associator = (Associator)associators.get(i);
+			TextListener listener = new TextListener() {
+				public void acceptText(TextEvent e) {
+					logger.debug(e.getText());
 				}
-				
-				if( engineInstance.getVerion() != null) {
-					knowledgeFlowRunner.setVersion(engineInstance.getVerion());
-					logger.debug("Version is equal to [" + knowledgeFlowRunner.getVersion() + "]");
-				}
-			} else {
-				logger.debug("Versioning is not enabled");
-			}
-			
-			knowledgeFlowRunner.setupSavers();
-			logger.debug("Savers successfully initializated");
-			knowledgeFlowRunner.setupLoaders();
-			logger.debug("Loaders successfully initializated");
-			
-			logger.debug( "\n" + Utils.getLoderDesc(knowledgeFlowRunner.getLoaders()) );
-			logger.debug( "\n" + Utils.getSaverDesc(knowledgeFlowRunner.getSavers()) );
-			
-		} catch(Throwable t) {
-			throw new WekaEngineRuntimeException("Impossible to instatiate the Knowledge-Flow Runner]", t);
-		} finally {
-			logger.debug("OUT");
+			};
+			associator.addTextListener(listener);
 		}
 		
-		return knowledgeFlowRunner;	
+		logger.debug("OUT");
 	}
-	*/
+	
+	
+
 }
