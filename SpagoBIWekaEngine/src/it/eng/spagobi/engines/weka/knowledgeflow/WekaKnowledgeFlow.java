@@ -23,7 +23,6 @@ package it.eng.spagobi.engines.weka.knowledgeflow;
 
 import java.beans.beancontext.BeanContextChild;
 import java.beans.beancontext.BeanContextSupport;
-import java.io.File;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -60,12 +59,10 @@ public class WekaKnowledgeFlow {
 	private static transient Logger logger = Logger.getLogger(WekaKnowledgeFlow.class);
 	
 	WekaKnowledgeFlowEnv env;
-	File file;	
 	
-	public WekaKnowledgeFlow(File file, WekaKnowledgeFlowEnv env) {
+	public WekaKnowledgeFlow(String template, WekaKnowledgeFlowEnv env) {
 		this.env = env;
-		this.file = file;
-		this.load();
+		this.load(template);
 	}
 	
 	public void run(boolean forceSetup, boolean forceBlocking) {
@@ -188,7 +185,7 @@ public class WekaKnowledgeFlow {
 		this.associators = new Vector();
 	}
 	
-	private void load() {
+	private void load(String template) {
 		Vector v ;
 		XMLBeans xml;
 		
@@ -198,7 +195,7 @@ public class WekaKnowledgeFlow {
 			reset();
 			
 			xml = new XMLBeans(null, beanContextSupport); 
-			v     = (Vector) xml.read(file);
+			v     = (Vector) xml.read(template);
 			
 			beans        = (Vector) v.get(XMLBeans.INDEX_BEANINSTANCES);
 			connections  = (Vector) v.get(XMLBeans.INDEX_BEANCONNECTIONS);
@@ -257,13 +254,13 @@ public class WekaKnowledgeFlow {
 			
 		
 		} catch(Throwable t) {
-			throw new WekaEngineRuntimeException("Impossible to parse template from file [" + file.getName()+ "]", t);
+			throw new WekaEngineRuntimeException("Impossible to parse template [" + template + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-	public static WekaKnowledgeFlow load(File file, WekaKnowledgeFlowEnv env) {
-		return new WekaKnowledgeFlow(file, env);
+	public static WekaKnowledgeFlow load(String template, WekaKnowledgeFlowEnv env) {
+		return new WekaKnowledgeFlow(template, env);
 	}
 }
