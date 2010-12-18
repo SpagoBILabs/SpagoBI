@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.weka.runtime;
 
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
@@ -58,29 +60,29 @@ public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
 	}
 	
 	public void run(WekaEngineInstance engineInstance) {
-		Assert.assertNotNull(engineInstance, "Parameter [engineInstance]cannot be null");
+		WekaKnowledgeFlow knowledgeFlow;
+		WekaKnowledgeFlowEnv knowledgeFlowEnv;
+		WekaEngineInstanceMonitor wekaEngineInstanceMonitor;
 		
 		WorkManager wm;
     	WekaWork wekaWork;
     	WekaWorkListener wekaWorkListener;
-    	
+    	   	
     	logger.debug("IN");
     	try {
+    		Assert.assertNotNull(engineInstance, "Parameter [engineInstance] cannot be null");
+    		
+    		// wrap ...
+    		knowledgeFlowEnv = new WekaKnowledgeFlowEnv(engineInstance.getEnv());
+    		knowledgeFlow = WekaKnowledgeFlow.load(engineInstance.getTemplate(), knowledgeFlowEnv);
+    		wekaEngineInstanceMonitor = new WekaEngineInstanceMonitor(engineInstance.getEnv());
+    		
+    		knowledgeFlowEnv.setOutputFile(new File("C:\\ProgramFiles\\apache-tomcat-6.0.18\\resources\\weka\\outputfiles\\pippo.txt"));
+    		
+    		// ...and run
 	    	wm = new WorkManager();
-	    	
-	    	/*
-	    	File file = null;
-	       	try {
-	    		file = File.createTempFile("weka", null);
-				ParametersFiller.fill(new StringReader(engineInstance.getTemplate()), new FileWriter(file), engineInstance.getEnv());
-	    	} catch (Throwable t) {
-				throw new WekaEngineRuntimeException("Impossible to replace parameters in template", t);
-			}	
-			*/
-	    	
-	    	WekaKnowledgeFlow knowledgeFlow = WekaKnowledgeFlow.load(engineInstance.getTemplate(), new WekaKnowledgeFlowEnv(engineInstance.getEnv()));
 	    	wekaWork = new WekaWork(knowledgeFlow);
-	    	wekaWorkListener = new WekaWorkListener(new WekaEngineInstanceMonitor(engineInstance.getEnv()));
+	    	wekaWorkListener = new WekaWorkListener( wekaEngineInstanceMonitor );
 	    	wm.run(wekaWork, wekaWorkListener);
     	} catch (Throwable t) {
     		throw new RuntimeException("Impossible to execute command in a new thread", t);

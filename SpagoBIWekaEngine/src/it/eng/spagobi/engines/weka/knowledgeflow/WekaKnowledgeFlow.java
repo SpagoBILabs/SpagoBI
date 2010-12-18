@@ -23,6 +23,8 @@ package it.eng.spagobi.engines.weka.knowledgeflow;
 
 import java.beans.beancontext.BeanContextChild;
 import java.beans.beancontext.BeanContextSupport;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -166,7 +168,14 @@ public class WekaKnowledgeFlow {
 			Associator associator = (Associator)associators.get(i);
 			TextListener listener = new TextListener() {
 				public void acceptText(TextEvent e) {
-					logger.debug(e.getText());
+					try {
+						Writer writer = new FileWriter(env.getOutputFile(), true);
+						writer.write(e.getText());
+						writer.flush();
+						writer.close();
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to save output text on file [" + env.getOutputFile() + "]");
+					}
 				}
 			};
 			associator.addTextListener(listener);

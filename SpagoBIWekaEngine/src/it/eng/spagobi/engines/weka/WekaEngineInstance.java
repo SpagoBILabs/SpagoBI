@@ -94,6 +94,11 @@ public class WekaEngineInstance implements IEngineInstance {
 		// TODO Auto-generated method stub
 	}
 	
+	
+	/**
+	 * 
+	 * @deprecated move this to StringUtilities in sbiutils project
+	 */
 	public static String replaceParameters(String template, Map params)  {
 		
 		String result = new String(template);

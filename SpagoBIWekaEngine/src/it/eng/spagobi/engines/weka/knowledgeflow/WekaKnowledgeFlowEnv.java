@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.weka.knowledgeflow;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class WekaKnowledgeFlowEnv {
 	public static final String VERSIONING = "versioning";
 	public static final String VERSION_COLUMN_NAME = "versionColumnName";
 	public static final String VERSION = "version";
+	public static final String OUTPUT_FILE = "ouptutFile";
 	
 	public WekaKnowledgeFlowEnv(Map env) {
 		this.env = env;
@@ -121,8 +123,16 @@ public class WekaKnowledgeFlowEnv {
 		return (String)getParameter(VERSION);
 	}
 	
-	public void setgetVerion(String version) {
+	public void setVerion(String version) {
 		getEnv().put(VERSION, version);
+	}
+	
+	public File getOutputFile() {
+		return (File)getParameter(OUTPUT_FILE);
+	}
+	
+	public void setOutputFile(File file) {
+		getEnv().put(OUTPUT_FILE, file);
 	}
 	
 	private Map getEnv() {
