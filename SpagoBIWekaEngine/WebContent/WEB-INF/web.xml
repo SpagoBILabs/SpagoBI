@@ -1,78 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app id="SpagoBIWekaEngine">
-    <display-name>SpagoBIWekaEngine</display-name>
-    <description>
-        This application is a portlet. It can not be used outside a portal.
+
+<web-app id="SpagoBIWekaEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    
+	<display-name>SpagoBIWekaEngine</display-name>
+	<description>
+		Spago BI - Weka Engine
 	</description>
 	
-<!-- START-CAS 	
-<filter>
-  <filter-name>CAS Authentication Filter</filter-name>
-  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-  <init-param>
-    <param-name>casServerLoginUrl</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
-  </init-param>    
-</filter>
+	
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									   -->
+	<!--  ============================================================================ -->
+	
+	<!-- START-CAS 	
+	<filter>
+	  <filter-name>CAS Authentication Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+	  <init-param>
+	    <param-name>casServerLoginUrl</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>serverName</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
+	  </init-param>    
+	</filter>
 
-<filter>
-  <filter-name>CAS Validation Filter</filter-name>
-  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-  <init-param>
-    <param-name>casServerUrlPrefix</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
-  </init-param>
-  <init-param>
-    <param-name>serverName</param-name>
-    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
-  </init-param>
-  <init-param>
-    <param-name>proxyReceptorUrl</param-name>
-    <param-value>/proxyCallback</param-value>
-  </init-param> 
-  <init-param>
-		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIWekaEngine/proxyCallback</param-value>
-  </init-param>  
-</filter>
+	<filter>
+	  <filter-name>CAS Validation Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+	  <init-param>
+	    <param-name>casServerUrlPrefix</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>serverName</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>proxyReceptorUrl</param-name>
+	    <param-value>/proxyCallback</param-value>
+	  </init-param> 
+	  <init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIWekaEngine/proxyCallback</param-value>
+	  </init-param>  
+	</filter>
 
-<filter>
-  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-</filter>
-END-CAS -->
+	<filter>
+	  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	END-CAS -->
 	
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
 	</filter> 
 	
-<!-- START-CAS 	
-   <filter-mapping>
-    <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping> 
+	<!--  ============================================================================ -->
+	<!--  FILTER MAPPINGS						 									   -->
+	<!--  ============================================================================ -->
+	
+	<!-- START-CAS 	
+   	<filter-mapping>
+    	<filter-name>CAS Authentication Filter</filter-name>
+    	<url-pattern>/*</url-pattern>
+  	</filter-mapping> 
     	
-   <filter-mapping>
-    <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping> 
+   	<filter-mapping>
+    	<filter-name>CAS Validation Filter</filter-name>
+    	<url-pattern>/*</url-pattern>
+  	</filter-mapping> 
  
-   <filter-mapping>
-    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping> 
+   	<filter-mapping>
+    	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    	<url-pattern>/*</url-pattern>
+  	</filter-mapping> 
 
-  <filter-mapping>
+  	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
-  </filter-mapping>
-END-CAS -->
+  	</filter-mapping>
+	END-CAS -->
 	
     <filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
@@ -84,6 +94,12 @@ END-CAS -->
     	<url-pattern>/DownloadOutputFileServlet/*</url-pattern>
 	</filter-mapping>
 	
+	
+	
+	<!--  ============================================================================ -->
+	<!--  SERVLETS								 									   -->
+	<!--  ============================================================================ -->
+  	
 	<servlet>
         <servlet-name>WekaEngineStartServlet</servlet-name>
         <servlet-class>it.eng.spagobi.engines.weka.services.initializers.WekaEngineStartServlet</servlet-class>
@@ -109,6 +125,12 @@ END-CAS -->
 		</servlet-class>
 	</servlet>
     
+    
+    <!--  ============================================================================ -->
+	<!--  SERVLET MAPPINGS						 									   -->
+	<!--  ============================================================================ -->
+    
+    
     <servlet-mapping>
         <servlet-name>WekaEngineStartServlet</servlet-name>
         <url-pattern>/WekaEngineStartServlet</url-pattern>
@@ -124,24 +146,31 @@ END-CAS -->
 		<url-pattern>/WekaServletTest</url-pattern>
 	</servlet-mapping>
     
+    
+    
+    <!--  ============================================================================ -->
+	<!--  GENERAL SETTINGS						 									   -->
+	<!--  ============================================================================ -->    
+    
+    
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     
-	  <error-page>
-	  	<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/html/error.html</location>
-	  </error-page>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
 		 
-	  <error-page>
+	<error-page>
 	  	<error-code>404</error-code>
 	  	<location>/html/error.html</location>
-	  </error-page>
+	</error-page>
 	 
-	  <error-page>
-	  	<error-code>500</error-code>
+	<error-page>
+	 	<error-code>500</error-code>
 	  	<location>/html/error.html</location>
-	  </error-page>
+	</error-page>
     
     <!--
     <resource-ref>
