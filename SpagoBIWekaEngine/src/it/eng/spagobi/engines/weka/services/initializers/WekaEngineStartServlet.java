@@ -3,7 +3,7 @@
  *	LICENSE: see COPYING file
  *
 **/
-package it.eng.spagobi.engines.weka.services;
+package it.eng.spagobi.engines.weka.services.initializers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
