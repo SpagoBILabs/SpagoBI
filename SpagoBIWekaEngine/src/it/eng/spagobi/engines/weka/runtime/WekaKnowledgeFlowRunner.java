@@ -79,7 +79,7 @@ public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
     		wekaEngineInstanceMonitor = new WekaEngineInstanceMonitor(engineInstance.getEnv());
     		
     		WekaEngine.getConfig().getEngineOutputFilesDir();
-    		File outputFile = new File(WekaEngine.getConfig().getEngineOutputFilesDir(), "pippo.txt");
+    		File outputFile = new File(WekaEngine.getConfig().getEngineOutputFilesDir(), "out" + System.currentTimeMillis() + ".txt");
     		logger.debug("Outputfile set to [" + outputFile + "]");
     		knowledgeFlowEnv.setOutputFile( outputFile );
     		

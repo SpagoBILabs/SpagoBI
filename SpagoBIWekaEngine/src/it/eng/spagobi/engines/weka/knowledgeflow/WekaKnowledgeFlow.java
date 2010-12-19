@@ -171,10 +171,18 @@ public class WekaKnowledgeFlow {
 				public void acceptText(TextEvent e) {
 					try {
 						synchronized(this) {
+							
 							Writer writer = new FileWriter(env.getOutputFile(), true);
-							writer.write(e.getText());
+							writer.write( e.getText().replaceAll("\n", "\r\n"));							
 							writer.flush();
 							writer.close();
+							/*
+							FileOutputStream outputStream = new FileOutputStream(env.getOutputFile(), true);
+							//outputStream.write(e.getText().getBytes("US-ASCII"));
+							outputStream.write(e.getText().getBytes("UTF-8"));
+							outputStream.flush();
+							outputStream.close();
+							*/
 						}
 					} catch (Throwable t) {
 						logger.error(t);

@@ -79,9 +79,23 @@ END-CAS -->
     	<url-pattern>/WekaEngineStartServlet/*</url-pattern>
 	</filter-mapping>
 	
+	<filter-mapping>
+    	<filter-name>SpagoBIAccessFilter</filter-name>
+    	<url-pattern>/DownloadOutputFileServlet/*</url-pattern>
+	</filter-mapping>
+	
 	<servlet>
         <servlet-name>WekaEngineStartServlet</servlet-name>
-        <servlet-class>it.eng.spagobi.engines.weka.services.WekaEngineStartServlet</servlet-class>
+        <servlet-class>it.eng.spagobi.engines.weka.services.initializers.WekaEngineStartServlet</servlet-class>
+    	<init-param>
+            <param-name>SECURITY_ABLE</param-name>
+            <param-value>FALSE</param-value>
+        </init-param>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>DownloadOutputFileServlet</servlet-name>
+        <servlet-class>it.eng.spagobi.engines.weka.services.core.DownloadOutputFileServlet</servlet-class>
     	<init-param>
             <param-name>SECURITY_ABLE</param-name>
             <param-value>FALSE</param-value>
@@ -101,8 +115,8 @@ END-CAS -->
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>WekaEngineStartServlet</servlet-name>
-        <url-pattern>/WekaEngineStartServlet</url-pattern>
+        <servlet-name>DownloadOutputFileServlet</servlet-name>
+        <url-pattern>/DownloadOutputFileServlet</url-pattern>
     </servlet-mapping>    
     
     <servlet-mapping>
@@ -111,12 +125,7 @@ END-CAS -->
 	</servlet-mapping>
     
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.htm</welcome-file>
         <welcome-file>index.jsp</welcome-file>
-        <welcome-file>default.html</welcome-file>
-        <welcome-file>default.htm</welcome-file>
-        <welcome-file>default.jsp</welcome-file>
     </welcome-file-list>
     
 	  <error-page>

@@ -72,6 +72,7 @@ public class WekaEngineConfig {
 		} else {
 			resourceDir = new File(getWebappRootDir(), "resources");
 		}
+		resourceDir = new File(resourceDir, "weka");
 		resourceDir.mkdirs();
 		
 		return resourceDir;
