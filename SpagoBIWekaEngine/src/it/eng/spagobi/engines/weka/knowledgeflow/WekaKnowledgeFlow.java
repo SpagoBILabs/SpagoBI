@@ -164,17 +164,21 @@ public class WekaKnowledgeFlow {
 	
 	public void setupAssociators() {
 		logger.debug("IN");
+		env.setParameter("operation-output", env.getOutputFile());
 		for(int i = 0; i < associators.size(); i++) {
 			Associator associator = (Associator)associators.get(i);
 			TextListener listener = new TextListener() {
 				public void acceptText(TextEvent e) {
 					try {
-						Writer writer = new FileWriter(env.getOutputFile(), true);
-						writer.write(e.getText());
-						writer.flush();
-						writer.close();
+						synchronized(this) {
+							Writer writer = new FileWriter(env.getOutputFile(), true);
+							writer.write(e.getText());
+							writer.flush();
+							writer.close();
+						}
 					} catch (Throwable t) {
-						throw new RuntimeException("Impossible to save output text on file [" + env.getOutputFile() + "]");
+						logger.error(t);
+						throw new RuntimeException("Impossible to save output text on file [" + env.getOutputFile() + "]", t);
 					}
 				}
 			};

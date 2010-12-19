@@ -25,23 +25,26 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.services.common.EnginConf;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class WekaEngine {
-	private static EnginConf engineConfig;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(WekaEngine.class);
 	
     
-    private static void initEngine() {
-    	if(engineConfig == null) {
-    		engineConfig = EnginConf.getInstance();   			
-    	}
-	}
+    // init engine
+    private static WekaEngineConfig engineConfig;
+    
+    static {
+    	engineConfig = WekaEngineConfig.getInstance();
+    }
+    
+    public static WekaEngineConfig getConfig() {
+    	return engineConfig;
+    }
+    // init engine
     
 	/**
 	 * Creates the instance.
@@ -54,7 +57,6 @@ public class WekaEngine {
 	public static WekaEngineInstance createInstance(String template, Map env) {
 		WekaEngineInstance wekaEngineInstance = null;
 		logger.debug("IN");
-		initEngine();
 		wekaEngineInstance = new WekaEngineInstance(template, env);
 		logger.debug("OUT");
 		return wekaEngineInstance;	

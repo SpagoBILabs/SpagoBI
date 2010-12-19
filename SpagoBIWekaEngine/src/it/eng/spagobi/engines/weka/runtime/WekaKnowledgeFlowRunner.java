@@ -26,6 +26,7 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.engines.weka.WekaEngine;
 import it.eng.spagobi.engines.weka.WekaEngineInstance;
 import it.eng.spagobi.engines.weka.WekaEngineInstanceMonitor;
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
@@ -77,7 +78,12 @@ public class WekaKnowledgeFlowRunner implements IEngineInstanceRunner {
     		knowledgeFlow = WekaKnowledgeFlow.load(engineInstance.getTemplate(), knowledgeFlowEnv);
     		wekaEngineInstanceMonitor = new WekaEngineInstanceMonitor(engineInstance.getEnv());
     		
-    		knowledgeFlowEnv.setOutputFile(new File("C:\\ProgramFiles\\apache-tomcat-6.0.18\\resources\\weka\\outputfiles\\pippo.txt"));
+    		WekaEngine.getConfig().getEngineOutputFilesDir();
+    		File outputFile = new File(WekaEngine.getConfig().getEngineOutputFilesDir(), "pippo.txt");
+    		logger.debug("Outputfile set to [" + outputFile + "]");
+    		knowledgeFlowEnv.setOutputFile( outputFile );
+    		
+    		//knowledgeFlowEnv.setOutputFile(new File("C:\\ProgramFiles\\apache-tomcat-6.0.18\\resources\\weka\\outputfiles\\pippo.txt"));
     		
     		// ...and run
 	    	wm = new WorkManager();

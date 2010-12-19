@@ -40,7 +40,7 @@ public class WekaKnowledgeFlowEnv {
 	public static final String VERSIONING = "versioning";
 	public static final String VERSION_COLUMN_NAME = "versionColumnName";
 	public static final String VERSION = "version";
-	public static final String OUTPUT_FILE = "ouptutFile";
+	public static final String OUTPUT_FILE = "outputFile";
 	
 	public WekaKnowledgeFlowEnv(Map env) {
 		this.env = env;
@@ -55,6 +55,10 @@ public class WekaKnowledgeFlowEnv {
 	
 	public Object getParameter(String parameterName) {
 		return getParameter(parameterName, null);
+	}
+	
+	public void setParameter(String parameterName, Object parameterValue) {
+		getEnv().put(parameterName, parameterValue);
 	}
 	
 	public Connection getOutConnection() {

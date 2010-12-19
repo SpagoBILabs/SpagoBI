@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.weka;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,9 +42,6 @@ public class WekaEngineInstanceMonitor {
 	String eventId;
 	Throwable error;
 	
-	public static final String WEKA_ROLES_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.weka.events.handlers.WekaRolesHandler";
-	public static final String WEKA_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.weka.events.handlers.WekaEventPresentationHandler";
-	
 	private static transient Logger logger = Logger.getLogger(WekaEngineInstanceMonitor.class);
 	
 	public WekaEngineInstanceMonitor(Map env) {
@@ -53,7 +51,8 @@ public class WekaEngineInstanceMonitor {
 	public void start() {
 		
 		try {
-			eventId = getEventServiceProxy().fireEvent(getStartEventDescription(), getStartEventParameters(), WEKA_ROLES_HANDLER_CLASS_NAME, WEKA_PRESENTAION_HANDLER_CLASS_NAME);
+			eventId = getEventServiceProxy().fireEvent(getStartEventDescription(), getStartEventParameters(), 
+					WekaEngine.getConfig().getRolesHandler(), WekaEngine.getConfig().getPresentationHandler());
 		} catch (Exception e) {
 			throw new WekaEngineRuntimeException("Impossible to create start event");
 		}
@@ -67,7 +66,8 @@ public class WekaEngineInstanceMonitor {
 			getAuditServiceProxy().notifyServiceEndEvent();
 		}
 		
-		getEventServiceProxy().fireEvent(getEndEventDescription(), getEndEventParameters(), WEKA_ROLES_HANDLER_CLASS_NAME, WEKA_PRESENTAION_HANDLER_CLASS_NAME);
+		getEventServiceProxy().fireEvent(getEndEventDescription(), getEndEventParameters(), 
+				WekaEngine.getConfig().getRolesHandler(), WekaEngine.getConfig().getPresentationHandler());
 	}
 	
 	
@@ -134,7 +134,10 @@ public class WekaEngineInstanceMonitor {
 					&& !key.equalsIgnoreCase("SPAGOBI_AUDIT_ID")
 					&& !key.equalsIgnoreCase("SPAGOBI_AUDIT_ID")
 					&& !key.equalsIgnoreCase("DATASET")
-					&& !key.equalsIgnoreCase("DATASOURCE")) {
+					&& !key.equalsIgnoreCase("DATASOURCE")
+					&& !key.equalsIgnoreCase("outputFile")
+					&& !key.equalsIgnoreCase("operation-output")					
+					) {
 				Object valueObj = env.get(key);
 				parametersList += "<li>" + key + " = " + (valueObj != null ? valueObj.toString() : "") + "</li>";
 			}
@@ -144,7 +147,7 @@ public class WekaEngineInstanceMonitor {
 		return parametersList;
 	}
 	
-	private Map getStartEventParameters() {
+	private Map<String, String> getStartEventParameters() {
 		Map startEventParams = new HashMap();				
 		startEventParams.put(EventServiceProxy.EVENT_TYPE, EventServiceProxy.DOCUMENT_EXECUTION_START);
 		startEventParams.put("document", env.get("DOCUMENT_ID"));
@@ -152,16 +155,44 @@ public class WekaEngineInstanceMonitor {
 		return startEventParams;
 	}
 	
-	private Map getEndEventParameters() {
-		Map endEventParams = new HashMap();				
-		endEventParams.put(EventServiceProxy.EVENT_TYPE, EventServiceProxy.DOCUMENT_EXECUTION_END);
-		endEventParams.put("document", env.get("DOCUMENT_ID"));
-		endEventParams.put(EventServiceProxy.START_EVENT_ID, eventId);
-		if( isExecutionFailed() ) {
-			endEventParams.put("operation-result", "failure");
-		} else {
-			endEventParams.put("operation-result", "success");
+	private Map<String, String> getEndEventParameters() {
+		Map<String, String> endEventParams;
+
+		logger.debug("IN");
+		
+		endEventParams = new HashMap<String, String>();	
+		try {
+			endEventParams.put(EventServiceProxy.EVENT_TYPE, EventServiceProxy.DOCUMENT_EXECUTION_END);
+			logger.debug("end event parametr [" + EventServiceProxy.EVENT_TYPE + "] is equals to [" + EventServiceProxy.DOCUMENT_EXECUTION_END+ "]");
+			
+			endEventParams.put("document", (String)env.get("DOCUMENT_ID"));
+			logger.debug("end event parametr [" + "document" + "] is equals to [" + (String)env.get("DOCUMENT_ID") + "]");
+			
+			endEventParams.put(EventServiceProxy.START_EVENT_ID, eventId);
+			logger.debug("end event parametr [" + EventServiceProxy.START_EVENT_ID + "] is equals to [" + eventId + "]");
+			
+			
+			if(env.get("operation-output") != null){
+				File outputFile = (File)env.get("operation-output");
+				endEventParams.put("operation-output", outputFile.getName());
+			}
+			logger.debug("end event parametr [" + "operation-output" + "] is equals to [" + endEventParams.get("operation-output") + "]");
+			
+			
+			if( isExecutionFailed() ) {
+				endEventParams.put("operation-result", "failure");
+			} else {
+				endEventParams.put("operation-result", "success");
+			}
+			logger.debug("end event parametr [" + "operation-result" + "] is equals to [" + endEventParams.get(endEventParams) + "]");
+			
+			
+		} catch(Throwable t) {
+			throw new WekaEngineRuntimeException("Impossible to initialize end event parameters map", t);
+		} finally {
+			logger.debug("OUT");
 		}
+		
 		return endEventParams;
 	}
 	
