@@ -22,12 +22,6 @@
 
 package weka.gui.beans;
 
-import weka.associations.Apriori;
-import weka.core.Instances;
-import weka.core.OptionHandler;
-import weka.core.Utils;
-import weka.gui.Logger;
-
 import java.awt.BorderLayout;
 import java.beans.EventSetDescriptor;
 import java.io.Serializable;
@@ -36,6 +30,12 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+
+import weka.associations.Apriori;
+import weka.core.Instances;
+import weka.core.OptionHandler;
+import weka.core.Utils;
+import weka.gui.Logger;
 
 /**
  * Bean that wraps around weka.associations
@@ -500,6 +500,7 @@ public class Associator
     }
   }  
   
+ 
   /**
    * Returns true if. at this time, the bean is busy with some
    * (i.e. perhaps a worker thread is performing some calculation).
