@@ -167,8 +167,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 							}
 						}
 					}
-					%>
+					%>					
 					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class='portlet-form-field-label'>Output File</td>
+				<td class='portlet-section-subheader'>
+					<p style='margin:5px'>
+				<%
+					String outputFile = (String) moduleResponse.getAttribute("operation-output");
+					if(outputFile != null && startEventIdStr != null && result != null && result.equalsIgnoreCase("success")) {
+					//String downloadUrl = "http://localhost:8080/SpagoBIWekaEngine/DownloadOutputFileServlet?outputFileName=" + outputFile;
+					String downloadUrl = (String) moduleResponse.getAttribute("engineBaseUrl");
+					downloadUrl += "/DownloadOutputFileServlet?outputFileName=" + outputFile;
+				%>				
+					<a href=<%=downloadUrl %> >	<%=outputFile %> </a>	
+				<% 
+					} else {
+				%>
+					Not defined
+				<%} %>
 				</td>
 			</tr>
 		</table>
