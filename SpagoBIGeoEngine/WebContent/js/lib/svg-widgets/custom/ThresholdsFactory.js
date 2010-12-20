@@ -73,10 +73,12 @@ ThresholdsFactory.getPercTrasholds = function( measure, params ) {
 			var ranges = params.ranges;
 		  
       results.thresholds[0] = measure.lower_bound;
-		   
+      //alert(typeof measure.lower_bound)
 			for(var j = 0; j < ranges.length-1; j++) {
-				var groupSize = (range / 100.0) * ranges[j];
-				results.thresholds[j+1] = results.thresholds[j] + groupSize;
+
+				var groupSize = parseFloat(range / 100.0) * parseFloat(ranges[j]);
+				results.thresholds[j+1] = parseFloat(results.thresholds[j]) + parseFloat(groupSize);
+				
 			}
 			
 			results.thresholds[ ranges.length ] = measure.upper_bound;	
