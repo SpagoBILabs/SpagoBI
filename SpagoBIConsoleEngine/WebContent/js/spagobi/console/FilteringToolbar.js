@@ -72,7 +72,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
     
 	services: null
 	, store: null
-	, cbStores: null
+	, filterStores: null
 	, filters: null
 
 	
@@ -105,14 +105,15 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	 //defines fields depending from operator type
 	 , createFilterField: function(operator, header, dataIndex){
 		   if (operator === 'EQUALS_TO') {
-			   this.cbStores = this.cbStores || {}; 
+			   //single value
+			   this.filterStores = this.filterStores || {}; 
 			   var s = new Ext.data.JsonStore({
 				   fields:['name', 'value', 'description'],
 		           data: []
 			   });
-			   this.cbStores[dataIndex] = s;
+			   this.filterStores[dataIndex] = s;
 			 
-			   //this.store.on('load', this.reloadComboStore.createDelegate(this, [dataIndex]), this);
+			   //this.store.on('load', this.reloadFilterStore.createDelegate(this, [dataIndex]), this);
 		     
 			   var combDefaultConfig = {
 					   width: 130,
@@ -145,24 +146,81 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 
 			   this.addText("    " + header + "  ");
 			   this.addField(cb);	 
-	     } else {
+			   
+	     }else if (operator === 'IN') {
+	    	 //multivalue
+	    	 this.filterStores = this.filterStores || {};	    	 
+	    	 var smLookup = new Ext.grid.CheckboxSelectionModel( {singleSelect: false } );
+	    	 var cmLookup =  new Ext.grid.ColumnModel([
+		    	                                          new Ext.grid.RowNumberer(),		    	                                          
+						                    		      {header: "Data", dataIndex: 'value', width: 75},
+						                    		      smLookup
+						                    		    ]);
+	    	 var baseConfig = {
+	    			     width: 130
+				       , name : dataIndex
+				       , emptyText:'...'
+					   , allowBlank: true
+					   , cm: cmLookup
+					   , sm: smLookup
+					};
+	    	
+	    	 var s = new Ext.ux.data.PagingJsonStore({	  
+	    	//var s = new Ext.ux.data.PagingStore({	   
+				   fields:['name', 'value', 'description'],
+		           data: [],
+		           lastOptions: {params: {start: 0, limit: 20}}
+			   });
+	    	
+			 this.filterStores[dataIndex] = s;
+			
+	    	 var lk = new Sbi.console.LookupField(Ext.apply(baseConfig, {
+				  	  store: s
+					, params: {}
+					, singleSelect: false
+					, displayField: 'value'
+					, valueField: 'value'
+					, listeners: {
+							   'select': {
+							   		fn: function(values) {							   			
+							   			var exp =  new Array();
+										var field = dataIndex;
+										
+										for(var val in values){ 
+											if (val !== '...'){
+												exp.push(val);
+											}else{
+												exp =  new Array();
+											}
+										}										
+										this.onFilterSelect(field, exp);	  
+									},
+									scope: this
+								}				     					
+						   }
+			}));
+	    	 
+	    	this.addText("    " + header + "  ");
+			this.addField(lk);	
+			
+	     }else {
 	    	 Sbi.Msg.showWarning('Filter operator type [' + operator + '] not supported');
 	     }
 	  
 	 }
 	   
-	 , reloadComboStores: function() {
-		for(var cs in this.cbStores) {
-			this.reloadComboStore(cs);
+	 , reloadFilterStores: function() {
+		for(var fs in this.filterStores) {
+			this.reloadFilterStore(fs);
 		}
 		this.store.filterPlugin.applyFilters();
 	}
 	    
-	 , reloadComboStore: function(dataIdx) {
+	 , reloadFilterStore: function(dataIdx) {
 		 var distinctValues; 
 		 var data;
       
-		 var s = this.cbStores[dataIdx];
+		 var s = this.filterStores[dataIdx];
 		
 		 if(!s) {
 		   Sbi.msg.showError('Impossible to refresh filter associated to column [' + dataIdx + ']');
@@ -175,35 +233,38 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		 data = [];
 	   
 		 //define the empty (for reset) element
-	   	var firstRow = {
-	      name: '...'
-		  , value: 'emptyEl'
+	   	 var firstRow = {
+	        name: '...'
+		  , value: '...'
 		  , description: ''
-	   	};
-	   	data.push(firstRow);
+	   	 };
+	    	data.push(firstRow);
       
-	   	for(var i = 0, l = distinctValues.length; i < l; i++) {
+	     for(var i = 0, l = distinctValues.length; i < l; i++) {
 		   var row = {
 			  name: distinctValues[i]
-			  , value: distinctValues[i]
-			  , description: distinctValues[i]
+		    , value: distinctValues[i]
+		    , description: distinctValues[i]
 		   };
 		   data.push(row);
-	   	}
-	   
-	   	// replace previous records with the new one
-	   	s.loadData(data, false);
-	   	
-	   	//this.store.filterPlugin.applyFilters();
+	   	 }
+
+	   	 // replace previous records with the new one
+	   	 s.loadData(data, false);	   	 
 	}
    
 	 //adds the single filter or delete if it's the reset field
 	 , onFilterSelect: function(f, exp) { 
 		 if(this.fireEvent('beforefilterselect', this, f, exp) !== false){	
-			 if (exp === 'emptyEl'){
+			 if (exp === '...' || exp.length == 0){
 				   this.store.filterPlugin.removeFilter(f);
 			 }else{
-			   this.store.filterPlugin.addFilter(f, exp);
+			   if (!Ext.isArray(exp)){
+				   var arExp =  new Array();
+				   arExp.push(exp);
+				   exp = arExp;
+			   }
+			   this.store.filterPlugin.addFilter(f, exp );
 			 }
 			 this.store.filterPlugin.applyFilters();
 		 }

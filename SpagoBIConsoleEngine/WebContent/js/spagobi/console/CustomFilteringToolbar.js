@@ -109,14 +109,14 @@ Ext.extend(Sbi.console.CustomFilteringToolbar, Sbi.console.FilteringToolbar, {
 	    			   this.createFilterField(this.filterBar.defaults.operator,  meta.fields[i].header, store.getFieldNameByAlias(meta.fields[i].header));
 	    		   }
 	    	   } 
-	    		this.store.on('load', this.reloadComboStores, this);
+	    		this.store.on('load', this.reloadFilterStores, this);
 	      	} else if(this.filterBar.type === this.CUSTOM_FILTERBAR){
 	        	for(i = 0; i < meta.fields.length; i++) { 		           
 	        		 if (meta.fields[i].header &&  meta.fields[i].header !== '' && this.isConfiguratedFilter(meta.fields[i].header)){         		     	
 	                  this.createFilterField(this.getFilterOperator(meta.fields[i].header), this.getColumnText(meta.fields[i].header),  store.getFieldNameByAlias(meta.fields[i].header));  	                  
 	            	}        		  
 	        	} 
-	        	this.store.on('load', this.reloadComboStores, this);
+	        	this.store.on('load', this.reloadFilterStores, this);
 	      	} else {
 	      		Sbi.Msg.showError('Toolbar type [' + this.filterBar.type + '] is not supported');
 	      	}	

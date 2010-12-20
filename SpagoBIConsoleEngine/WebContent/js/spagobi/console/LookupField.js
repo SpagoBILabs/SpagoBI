@@ -56,15 +56,32 @@ Sbi.console.LookupField = function(config) {
 	if(config.cm){
 	    this.cm = config.cm;
     }
+	
+	if(config.sm){
+	    this.sm = config.sm;
+    }
+	
 	if(config.valueField){
 	    this.valueFieldName = config.valueField;
     }
 	
-	//alert('config: ' + config.toSource());
 	if(config.descField && config.descField !== ''){
 	    this.displayFieldName = config.descField;
     }else{
-    	 this.displayFieldName = config.valueField;
+    	 this.displayFieldName = config.valueField || '';
+    }
+	
+	//displayField and valueField are yet setted only with the filtering management
+	if(config.displayField && config.displayField !== ''){
+    	 this.displayField = config.displayField || '';
+    }
+	
+	if(config.valueField && config.valueField !== ''){
+   	 this.valueField = config.valueField || '';
+   }
+	
+	if(config.loadStore){
+	    this.loadStore = config.loadStore;
     }
 	
 	this.store.on('metachange', function( store, meta ) {
@@ -106,7 +123,7 @@ Sbi.console.LookupField = function(config) {
 		}, this);
 	}, this);
 	
-	
+
 };
 
 Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
@@ -127,14 +144,15 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     // oggetto (value: description, *)
     , xvalue: null
     // oggetto (value: description, *)
-    , xselection: null
+    , xselection: {} //null
     , xdirty: false
-    
+    , xTempValue: null
     , singleSelect: true
     
     , paging: true
     , start: 0 
     , limit: 20
+    , loadStore: null
     
 	// SUB-COMPONENTS MEMBERS
 	, store: null
@@ -203,14 +221,14 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     // private methods
     , initWin: function() {
     	if(!this.cm){
-		this.cm = new Ext.grid.ColumnModel([
-		   new Ext.grid.RowNumberer(),
-	       {
-	       	  header: "Data",
-	          dataIndex: 'data',
-	          width: 75
-	       }
-	    ]);
+			this.cm = new Ext.grid.ColumnModel([
+			   new Ext.grid.RowNumberer(),
+		       {
+		       	  header: "Data",
+		          dataIndex: 'data',
+		          width: 75
+		       }
+		    ]);
     	}
 		
 		var pagingBar = new Ext.PagingToolbar({
@@ -245,13 +263,14 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
 		if(this.drawFilterToolbar){
 			this.filteringToolbar = new Sbi.console.FilteringToolbar({store: this.store});
 		}
-		
-		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
+		if (!this.sm){
+			this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
+    	}
 		this.sm.on('rowselect', this.onSelect, this);
 		this.sm.on('rowdeselect', this.onDeselect, this);
-		
+
 		if(this.drawFilterToolbar){
-			this.grid = new Ext.grid.GridPanel({
+			this.gridLookup = new Ext.grid.GridPanel({
 				store: this.store
 	   	     	, cm: this.cm
 	   	     	, sm: this.sm
@@ -268,7 +287,7 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
 		        , bbar: pagingBar
 			});
 		}else{
-			this.grid = new Ext.grid.GridPanel({
+			this.gridLookup = new Ext.grid.GridPanel({
 				store: this.store
 	   	     	, cm: this.cm
 	   	     	, sm: this.sm
@@ -292,15 +311,15 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
             height      : 300,
             closeAction :'hide',
             plain       : true,
-            items       : [this.grid]
+            items       : [this.gridLookup]
 		});
 	}
     
     , updateMeta: function(meta) {
-    	if(this.grid){			
+    	if(this.gridLookup){			
 			meta.fields[0] = new Ext.grid.RowNumberer();
 			meta.fields[ meta.fields.length ] = this.sm;
-			this.grid.getColumnModel().setConfig(meta.fields);
+			this.gridLookup.getColumnModel().setConfig(meta.fields);
 			//sets the correct displayField
 			for(i = 0; i < meta.fields.length; i++) {
 				if (meta.fields[i].header == this.valueFieldName){
@@ -337,15 +356,16 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     }
     
     , applySelection: function() {
-    	this.resetSelection();
+    	//this.resetSelection();
     	
-    	if(this.grid) {    		    		
+    	if(this.gridLookup) {    		    		
 			var selectedRecs = [];
-			this.grid.getStore().each(function(rec){
+			this.gridLookup.getStore().each(function(rec){
 		        if(this.xselection[ rec.data[this.valueField]] !== undefined){
 		        	selectedRecs.push(rec);
 		        }
 		    }, this);
+			
 			if(selectedRecs.length>0){
 				this.sm.selectRecords(selectedRecs);
 			}
@@ -370,22 +390,25 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     }
     
 	, onLookUp: function() {
-		this.clean();
 		this.resetSelection();
+		this.clean();		
 		this.win.show(this);
+		
 		var p = Ext.apply({}, {
-				start: this.start
-			  , limit: this.limit
+			start: this.start
+		  , limit: this.limit
 		});
 		this.store.load({params: p});
 	}
 	
 	, onOk: function() {
 		this.setValue(this.xselection);
-		this.win.hide();		
+		this.fireEvent('select', this.xselection);
+		this.win.hide();			
 	}
 	
-	, onCancel: function() {
-		this.win.hide();
+	, onCancel: function() {			
+		this.resetSelection();
+		this.win.hide();		
 	}
 });
