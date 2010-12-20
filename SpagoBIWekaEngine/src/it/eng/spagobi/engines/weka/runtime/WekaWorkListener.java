@@ -64,7 +64,7 @@ public class WekaWorkListener implements WorkListener {
     	
     	try {
 			workException = event.getException();
-			wekaWork = (WekaWork) event.getWorkItem().getResult();
+			//wekaWork = (WekaWork) event.getWorkItem().getResult();
 			
 			if (workException != null) {
 				wekaEngineInstanceMonitor.setError(workException);
@@ -72,7 +72,8 @@ public class WekaWorkListener implements WorkListener {
 			
 			wekaEngineInstanceMonitor.stop();
     	} catch (Throwable t) {
-			throw new RuntimeException("An error occurred while handling process completed event");
+    		logger.error(t);
+			throw new RuntimeException("An error occurred while handling process completed event", t);
 		} finally {
     		logger.debug("OUT");
     	}
