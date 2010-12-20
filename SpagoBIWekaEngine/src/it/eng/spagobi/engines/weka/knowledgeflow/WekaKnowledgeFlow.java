@@ -82,6 +82,7 @@ public class WekaKnowledgeFlow {
 				setupAssociators();
 			}		
 					
+			
 			for(int i = 0; i < loaders.size(); i++) {
 				Loader loader = (Loader)loaders.get(i);
 				logger.debug("Start loading: " + loader );			
@@ -99,7 +100,7 @@ public class WekaKnowledgeFlow {
 					for(int i = 0; i < associators.size(); i++) {
 						Associator associator = (Associator)associators.get(i);
 						logger.debug("Start blocking on: " + associator );			
-						//associator.waitUntilFinish();			
+						associator.waitUntilFinish();			
 					}	
 				}
 			}
