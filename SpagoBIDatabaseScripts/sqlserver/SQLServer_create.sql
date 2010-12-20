@@ -249,7 +249,7 @@ CREATE TABLE SBI_EVENTS_LOG (
 	ID                  INTEGER IDENTITY(1, 1) NOT NULL,
 	USER_EVENT          VARCHAR(40) NOT NULL,
 	EVENT_DATE          DATETIME  NOT NULL,
-	DESCR               VARCHAR(4000) NOT NULL,
+	DESCR               VARCHAR(10000) NOT NULL,
 	PARAMS              VARCHAR(1000),
 	HANDLER 	          VARCHAR(400) NOT NULL DEFAULT 'it.eng.spabi.events.handlers.DefaultEventPresentationHandler',
   CONSTRAINT PK_SBI_EVENTS_LOG  PRIMARY KEY(ID)

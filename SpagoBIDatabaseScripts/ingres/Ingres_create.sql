@@ -232,7 +232,7 @@ Create table SBI_EVENTS_LOG (
 	ID Integer NOT NULL with default next value for SBI_EVENTS_LOG_SEQ,
 	USER_EVENT Varchar(40) NOT NULL,
 	EVENT_DATE TIMESTAMP NOT NULL,
-	DESCR Varchar(4000) NOT NULL,
+	DESCR Varchar(10000) NOT NULL,
 	PARAMS Varchar(1000),
 	HANDLER Varchar(400) Default 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler' NOT NULL,
 Primary Key (ID)
