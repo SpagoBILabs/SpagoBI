@@ -52,15 +52,19 @@ import weka.gui.Logger;
  * @see TrainingSetListener
  * @see DataSourceListener
  */
-public class Associator
-  extends JPanel
-  implements BeanCommon, Visible, 
-	     WekaWrapper, EventConstraints,
-	     Serializable, UserRequestAcceptor,
-             DataSourceListener,
-	     TrainingSetListener {
+public class Associator 
+	extends 
+		JPanel
+	implements 
+		BeanCommon, 
+		Visible, 
+	    WekaWrapper, 
+	    EventConstraints,
+	    Serializable, 
+	    UserRequestAcceptor,
+        DataSourceListener,
+	    TrainingSetListener {
 
-  /** for serialization */
   private static final long serialVersionUID = -7843500322130210057L;
 
   protected BeanVisual m_visual = 
@@ -98,6 +102,9 @@ public class Associator
   private weka.associations.Associator m_Associator = new Apriori();
 
   private transient Logger m_log = null;
+  
+  private static transient org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Associator.class);
+  
 
   /**
    * Global info (if it exists) for the wrapped classifier
@@ -323,8 +330,10 @@ public class Associator
   }
 
 
-  private void buildAssociations(Instances data) 
-    throws Exception {
+  boolean neverUsed = true;
+  
+  private void buildAssociations(Instances data) throws Exception {
+	neverUsed = false;
     m_Associator.buildAssociations(data);
   }
 
@@ -500,7 +509,48 @@ public class Associator
     }
   }  
   
- 
+  
+  /**
+   * Wait until finish.
+   */
+  
+  
+  
+  public void waitUntilFinish() {
+	  logger.debug("IN");
+	  
+	  logger.debug("Status begin: "+ m_state);
+	  
+	  if(neverUsed) {
+		  while(m_state != this.BUILDING_MODEL) {
+			  try {
+				    logger.debug("Status " + m_state);
+			        Thread.currentThread().sleep(1000);
+			        //logger.debug("Status Dopo di Sleep: "+status);
+			  } catch (InterruptedException e) {
+				  logger.debug(e);
+				  e.printStackTrace();
+			  }
+			  
+		  }	  
+	  }
+	  
+	  while(m_state != this.IDLE) {
+		  try {
+			    logger.debug("Status: "+ m_state);
+		        Thread.currentThread().sleep(1000);
+		        //logger.debug("Status Dopo di Sleep: "+status);
+		  } catch (InterruptedException e) {
+			  logger.debug(e);
+			  e.printStackTrace();
+		  }
+		  
+	  }	  
+	  
+	  logger.debug("Status end: "+ m_state);
+	  logger.debug("OUT");
+  }
+  
   /**
    * Returns true if. at this time, the bean is busy with some
    * (i.e. perhaps a worker thread is performing some calculation).
