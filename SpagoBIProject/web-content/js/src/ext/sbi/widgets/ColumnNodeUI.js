@@ -160,6 +160,11 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 	                 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
 	                         '<div class="x-tree-col-text">','<select ',disabled,' id=',c.columnId,n.columnValues,' style="width: 100%">');
 	                 buf.push('<option');
+	                 if(selectedId==110){
+	                	 buf.push(' selected=selected');
+	                 }
+	                 buf.push(' value="110"> </option>');
+	                 buf.push('<option');
 	                 if(selectedId==115){
 	                	 buf.push(' selected=selected');
 	                 }

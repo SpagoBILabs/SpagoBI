@@ -104,6 +104,14 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 			, baseParams: paramsSaveGoalDetails
 	});	
 	
+	var paramsGoalName = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "UPDATE_GOAL_NAME"};
+	this.configurationObject.manageGoalNameService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_GOALS_ACTION'
+			, baseParams: paramsGoalName
+	});	
+	
+	
+	
 	this.config = config;
 	this.addEvents();
 	var thisPanel = this;
@@ -301,6 +309,9 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.goalTreePanel.on('removedItem', function(node){
 			this.removeGoalNode(node);
 		} ,this);
+		this.goalTreePanel.on('textchange', function(node, text){
+			this.updateGoalName(node,text);
+		} ,this);
 
 	}
 	
@@ -482,10 +493,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		}
 		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode, 'goalNodeId': goalNodeId}
 		this.goalDetailskpiPanel.loader.baseParams = conf.treeLoaderBaseParameters;
-		if(this.kpiTreeRoot.modelId!='-1'){//the root is initialized
-			this.goalDetailskpiPanel.setRootNode(this.kpiTreeRoot);
-			this.goalDetailskpiPanel.getRootNode().expand(false, /*no anim*/false);
-		}
 	}
 	
 	,updateGoalDetailsKpiRoot: function(root){
@@ -534,6 +541,29 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 					buttons: Ext.MessageBox.OK
 				});
 				
+			}
+			,scope: this
+	
+		});
+	}
+	
+	,updateGoalName: function(node, name){
+		Ext.Ajax.request({
+			url: this.configurationObject.manageGoalNameService,
+			params: {'goalId': node.attributes.id, 'newName': name},
+			method: 'POST',
+			success: function(response, options) {
+				if (response == undefined) {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				}
+			},
+			failure: function() {
+				Ext.MessageBox.show({
+					title: LN('sbi.generic.error'),
+					msg: LN('sbi.generic.savingItemError'),
+					width: 150,
+					buttons: Ext.MessageBox.OK
+				});
 			}
 			,scope: this
 	
@@ -656,7 +686,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	}
 	
 	,saveGoalNodeDetails: function(){
-		
+		var thisPanel = this;
 		var goalDetails={
 			goalNode: this.serializeGoalNode(this.goalTreePanel.getSelectionModel().getSelectedNode())[0],
 			kpis: this.serializeKpiGoalNode(this.goalDetailskpiPanel.getRootNode())

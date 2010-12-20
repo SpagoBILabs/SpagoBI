@@ -114,58 +114,68 @@ Ext.extend(Sbi.kpi.ManageGoalsGrid, Sbi.widgets.ListGridPanel, {
 	
 	
 	, deleteSelectedItem: function(itemId) {
-	
-		Ext.MessageBox.confirm(
-				LN('sbi.generic.pleaseConfirm'),
-				LN('sbi.generic.confirmDelete'),            
-				function(btn, text) {
-					if (btn=='yes') {
-						if (itemId != null) {	
-							Ext.Ajax.request({
-								url: this.services['deleteItemService'],
-								params: {'goalId': itemId},
-								method: 'GET',
-								success: function(response, options) {
-									if (response !== undefined) {
-										var deleteRow = this.rowselModel.getSelected();
-										this.mainElementsStore.remove(deleteRow);
-										this.mainElementsStore.commitChanges();
-										if(this.mainElementsStore.getCount()>0){
-											this.rowselModel.selectRow(0);
-										}else{
-											this.addNewItem();
+		var deleteRow = this.rowselModel.getSelected();
+		if(deleteRow.data.id.length==0){
+			this.mainElementsStore.remove(deleteRow);
+			this.mainElementsStore.commitChanges();
+			if(this.mainElementsStore.getCount()>0){
+				this.rowselModel.selectRow(0);
+			}else{
+				this.addNewItem();
+			}
+		}else{
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.generic.confirmDelete'),            
+					function(btn, text) {
+						if (btn=='yes') {
+							if (itemId != null) {	
+								Ext.Ajax.request({
+									url: this.services['deleteItemService'],
+									params: {'goalId': itemId},
+									method: 'GET',
+									success: function(response, options) {
+										if (response !== undefined) {
+											var deleteRow = this.rowselModel.getSelected();
+											this.mainElementsStore.remove(deleteRow);
+											this.mainElementsStore.commitChanges();
+											if(this.mainElementsStore.getCount()>0){
+												this.rowselModel.selectRow(0);
+											}else{
+												this.addNewItem();
+											}
+											Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
+										} else {
+											Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 										}
-										Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
-									} else {
-										Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+									},
+									failure: function() {
+										Ext.MessageBox.show({
+											title: LN('sbi.generic.error'),
+											msg: LN('sbi.generic.deletingItemError'),
+											width: 150,
+											buttons: Ext.MessageBox.OK
+										});
 									}
-								},
-								failure: function() {
-									Ext.MessageBox.show({
-										title: LN('sbi.generic.error'),
-										msg: LN('sbi.generic.deletingItemError'),
-										width: 150,
-										buttons: Ext.MessageBox.OK
-									});
-								}
-								,scope: this
-	
-							});
-						} else {
-							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+									,scope: this
+		
+								});
+							} else {
+								Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
+							}
 						}
-					}
-				},
-				this
-		);
+					},
+					this
+			);
+		}
 	}
 	
 	, addRecord: function(rec){
 		this.mainElementsStore.add(rec);
 		this.rowselModel.selectLastRow();
-		this.fireEvent('rowclick', rec, this);
+		this.fireEvent('newItem', rec, this);
 		//reference component is viewport
-		this.referencedCmp.setActiveTab(0);
+		this.referencedCmp.tabs.setActiveTab(0);
 	}
 	
 	, addNewItem : function(){

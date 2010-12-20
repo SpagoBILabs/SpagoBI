@@ -52,7 +52,7 @@ Sbi.kpi.ManageGoalsDetailsPanel = function(config, ref) {
 	});
 	var c = this.initForm(config);
 	this.addEvents();
-	
+	this.referencedCmp = ref;
 	Sbi.kpi.ManageGoalsDetailsPanel.superclass.constructor.call(this, c);	 	
 };
 
@@ -191,14 +191,14 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 
 	, save: function(){
 		var thisPanel = this;
-		if(		(this.detailFieldLabel.getValue()==null && this.detailFieldLabel.getValue()=='') &&
-				(this.detailFieldName.getValue()==null && this.detailFieldName.getValue()=='') &&
-				(this.detailFieldDescr.getValue()==null && this.detailFieldDescr.getValue()=='') &&
-				(this.detailFieldFrom.getValue()==null && this.detailFieldFrom.getValue()=='') &&
-				(this.detailFieldTo.getValue()==null && this.detailFieldTo.getValue()=='') &&
-				(this.detailFieldGrant.getValue()==null && this.detailFieldGrant.getValue()=='')
+		if(		(this.detailFieldLabel.getValue()==null || this.detailFieldLabel.getValue()=='') ||
+				(this.detailFieldName.getValue()==null || this.detailFieldName.getValue()=='') ||
+				(this.detailFieldDescr.getValue()==null || this.detailFieldDescr.getValue()=='') ||
+				(this.detailFieldFrom.getValue()==null || this.detailFieldFrom.getValue()=='') ||
+				(this.detailFieldTo.getValue()==null || this.detailFieldTo.getValue()=='') ||
+				(this.detailFieldGrant.getValue()==null || this.detailFieldGrant.getValue()=='')
 				){
-			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.goal.insert.all.data'), LN('sbi.generic.serviceError'));
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.goal.insert.all.data'), LN('sbi.goal.insert.all.data'));
 			return false;
 		}
 				
@@ -238,6 +238,7 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 			,scope: this
 	
 		});
+		return true;
 	}
 });
 
