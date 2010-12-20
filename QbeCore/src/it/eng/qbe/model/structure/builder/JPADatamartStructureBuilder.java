@@ -229,7 +229,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		return subEntities;
 	}
 	
-	// controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
+	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
 	private void addCalculatedFields(DataMartEntity dataMartEntity) {
 		List calculatedFileds;
 		DataMartCalculatedField calculatedField;
@@ -243,7 +243,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		}
 	}
 	
-	// controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
+	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
 	private void addSubEntities(DataMartEntity dataMartEntity, List subEntities, int recursionLevel) {
 		
 		Iterator it = subEntities.iterator();
@@ -259,7 +259,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		}
 	}
 
-	// controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!	
+	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!	
 	private void addSubEntity (DataMartEntity parentEntity, DataMartEntity subEntity, int recursionLevel){
 
 		DataMartEntity dataMartEntity;				
