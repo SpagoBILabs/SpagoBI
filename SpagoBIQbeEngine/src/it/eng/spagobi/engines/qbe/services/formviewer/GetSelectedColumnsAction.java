@@ -77,7 +77,7 @@ public class GetSelectedColumnsAction extends AbstractQbeEngineAction {
 				fieldType = FIELD_TYPE_ALL;
 			}
 			
-			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+			query = getEngineInstance().getActiveQuery();
 			Assert.assertNotNull(query, "Impossible to get any query from catalogue");
 			
 			selectFields = null;
