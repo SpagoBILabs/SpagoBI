@@ -39,6 +39,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 	private static final String GOAL_ERESE = "GOAL_ERESE";
 	private static final String GOAL_INSERT = "GOAL_INSERT";
 	private static final String GOAL_NODE_CHILD = "GOAL_NODE_CHILD";
+	private static final String UPDATE_GOAL_NAME = "UPDATE_GOAL_NAME";
 	private static final String KPI_GOAL_ROOT_NODE = "KPI_GOAL_ROOT_NODE";
 	private static final String INSERT_GOAL_NODE = "INSERT_GOAL_NODE";
 	private static final String ERESE_GOAL_NODE = "ERESE_GOAL_NODE";
@@ -161,6 +162,21 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			}
 			logger.debug("Added the goal details");
 		}
+		if (serviceType != null && serviceType.equalsIgnoreCase(UPDATE_GOAL_NAME)) {
+			logger.debug("Updating the name of the goal with id:");
+			Integer goalNode =  getAttributeAsInteger("goalId");
+			logger.debug("id:"+goalNode);
+			String goalName =  getAttributeAsString("newName");
+			
+			DAOFactory.getGoalDAO().updateGoalName(goalNode, goalName);
+			try{
+				writeBackToClient(new JSONAcknowledge());
+			} catch (IOException e){
+				logger.debug("Error sending the response after the erese of the goal node");
+				throw new SpagoBIServiceException(SERVICE_NAME, "Error sending the response after the erese of the goal node",e);
+			}
+			logger.debug("Goal name updated");
+		}
 		if (serviceType != null && serviceType.equalsIgnoreCase(ERESE_GOAL_NODE)) {
 			logger.debug("Removing the goal node with id:");
 			Integer goalNode =  getAttributeAsInteger("id");
@@ -191,10 +207,18 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 						if(listGoalKpi.get(i).getModelInstanceId().equals( mi.getId())){
 							modelInstanceJSON.put("weight1", ""+listGoalKpi.get(i).getWeight1());
 							modelInstanceJSON.put("weight2", ""+listGoalKpi.get(i).getWeight2());
-							modelInstanceJSON.put("threshold1", ""+listGoalKpi.get(i).getThreshold1());
-							modelInstanceJSON.put("threshold2", ""+listGoalKpi.get(i).getThreshold2());
 							modelInstanceJSON.put("sign1", ""+listGoalKpi.get(i).getSign1());
+							if(listGoalKpi.get(i).getSign1()==110){
+								modelInstanceJSON.put("threshold1", "");
+							}else{
+								modelInstanceJSON.put("threshold1", ""+listGoalKpi.get(i).getThreshold1());
+							}
 							modelInstanceJSON.put("sign2", ""+listGoalKpi.get(i).getSign2());
+							if(listGoalKpi.get(i).getSign2()==110){
+								modelInstanceJSON.put("threshold2", "");
+							}else{
+								modelInstanceJSON.put("threshold2", ""+listGoalKpi.get(i).getThreshold2());
+							}
 							break;
 						}
 					}
@@ -309,11 +333,17 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 	}
 	
 	private GoalKpi deserializeKpiNode(JSONObject JSONGoal, Integer goalNodeId) throws Exception{
+		Double threshold1 = null;
+		Double threshold2 = null;
 		Integer modelInstance = JSONGoal.optInt(MODELINSTID);
 		Double weight1 = JSONGoal.optDouble(WEIGHT1);
 		Double weight2 = JSONGoal.optDouble(WEIGHT2);
-		Double threshold1 = JSONGoal.optDouble(THRESHOLD1);
-		Double threshold2 =JSONGoal.optDouble(THRESHOLD2);
+		if(JSONGoal.optString(THRESHOLD1)==null || JSONGoal.optString(THRESHOLD1).length()!=0){
+			threshold1 = JSONGoal.optDouble(THRESHOLD1);
+		}
+		if(JSONGoal.optString(THRESHOLD2)==null || JSONGoal.optString(THRESHOLD2).length()!=0){
+			threshold2 = JSONGoal.optDouble(THRESHOLD2);
+		}
 		Integer sign1 = JSONGoal.optInt(SIGN1);
 		Integer sign2 = JSONGoal.optInt(SIGN2);
 		Integer id =  JSONGoal.optInt(ID);

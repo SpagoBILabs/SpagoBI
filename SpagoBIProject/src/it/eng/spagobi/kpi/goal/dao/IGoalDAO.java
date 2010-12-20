@@ -61,6 +61,13 @@ public interface IGoalDAO {
 	public void updateGoalNode(GoalNode goalNode);
 	
 	/**
+	 * Update a goal node
+	 * @param goalId the id of the goal
+	 * @param newName the new name of the goal
+	 */
+	public void updateGoalName(Integer goalId, String newName);
+	
+	/**
 	 * Insert a list of goal kpi model instances
 	 * @param goalKpis the list to add
 	 * @param goalNodeId the id of the goal node linked to the kpi model instances
