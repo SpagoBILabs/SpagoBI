@@ -79,7 +79,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 	
 	private boolean closeLink = false;
-
+	private SVGMapLoader svgMapLoader;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(InteractiveMapRenderer.class);
@@ -93,6 +93,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	
 	public void init(Object conf) throws GeoEngineException {
 		super.init(conf);
+		svgMapLoader = new SVGMapLoader();
 		InteractiveMapRendererConfigurator.configure( this, getConf() );
 	}
 	
@@ -167,7 +168,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		// load master map
 		try {
 			loadMasterMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadMasterMap");
-			masterMap = SVGMapLoader.loadMapAsDocument(getMasterMapFile(true));
+			masterMap = svgMapLoader.loadMapAsDocument(getMasterMapFile(true));
 		} catch (IOException e) {
 			GeoEngineException geoException;
 			logger.error("Impossible to load map from file: " + getMasterMapFile(true));
@@ -353,7 +354,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	
 		targetMap = mapProvider.getSVGMapDOMDocument();		
 		try {
-			masterMap = SVGMapLoader.loadMapAsDocument(getMasterMapFile(false));
+			masterMap = svgMapLoader.loadMapAsDocument(getMasterMapFile(false));
 		} catch (IOException e) {
 			GeoEngineException geoException;
 			logger.error("Impossible to load map from file: " + getMasterMapFile(true));
