@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.geo.map.utils;
 
+import it.eng.spagobi.engines.geo.map.provider.SOMapProvider;
 import it.eng.spagobi.services.content.bo.Content;
 
 import java.io.File;
@@ -34,9 +35,11 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
 import sun.misc.BASE64Decoder;
+import sun.rmi.runtime.Log;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,18 +49,20 @@ import sun.misc.BASE64Decoder;
  */
 public class SVGMapLoader {
 	
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(SVGMapLoader.class);
+	
 	private static final BASE64Decoder DECODER = new BASE64Decoder();
 	
 	
 	/** The document factory. */
-	private static SAXSVGDocumentFactory documentFactory;
+	private SAXSVGDocumentFactory documentFactory;
 	
+	private String parser = XMLResourceDescriptor.getXMLParserClassName();
 	/** The xml input factory. */
 	private static XMLInputFactory xmlInputFactory;
 	
 	static {
-		String parser = XMLResourceDescriptor.getXMLParserClassName();
-		documentFactory = new SAXSVGDocumentFactory(parser);
 		xmlInputFactory = XMLInputFactory.newInstance();
 		xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,Boolean.TRUE);
 		xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES,Boolean.FALSE);     
@@ -74,18 +79,18 @@ public class SVGMapLoader {
 	 * 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static SVGDocument loadMapAsDocument(File file) throws IOException {
+	public SVGDocument loadMapAsDocument(File file) throws IOException {
 		String url;		
 		url = file.toURI().toURL().toString();
 		return loadMapAsDocument(url);
 	}
 	
 	
-	public static SVGDocument loadMapAsDocument(Content map) throws IOException {
+	public SVGDocument loadMapAsDocument(Content map) throws IOException {
 		String mapContent;
 		
 		mapContent = new String( DECODER.decodeBuffer(map.getContent()) );
-		
+		documentFactory = new SAXSVGDocumentFactory(parser);
 		return (SVGDocument)documentFactory.createDocument( null, new StringReader(mapContent) );
 	}
 	
@@ -98,8 +103,16 @@ public class SVGMapLoader {
 	 * 
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static SVGDocument loadMapAsDocument(String url) throws IOException {
-	    return (SVGDocument)documentFactory.createDocument(url);
+	public SVGDocument loadMapAsDocument(String url) throws IOException {
+		logger.debug(url);
+		SVGDocument svgDoc = null;
+		try{
+			documentFactory = new SAXSVGDocumentFactory(parser);
+			svgDoc = (SVGDocument)documentFactory.createDocument(url);
+		}catch (Throwable e) {
+			logger.error(e);
+		}
+	    return svgDoc;
 	}
 	
 	/**

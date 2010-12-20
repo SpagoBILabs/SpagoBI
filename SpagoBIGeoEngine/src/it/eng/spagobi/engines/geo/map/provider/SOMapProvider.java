@@ -47,7 +47,7 @@ public class SOMapProvider extends AbstractMapProvider {
 
 	/** The map catalogue service proxy. */
 	private MapCatalogueAccessUtils mapCatalogueServiceProxy;
-	
+	private SVGMapLoader svgMapLoader;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(SOMapProvider.class);
@@ -65,6 +65,7 @@ public class SOMapProvider extends AbstractMapProvider {
 	 */
 	public void init(Object conf) throws GeoEngineException {
 		super.init(conf);
+		svgMapLoader = new SVGMapLoader();
 		SOMapProviderConfigurator.configure( this, getConf() );
 	}
 	
@@ -86,7 +87,7 @@ public class SOMapProvider extends AbstractMapProvider {
 		
 		try {
 			
-			svgDocument = SVGMapLoader.loadMapAsDocument(map);
+			svgDocument = svgMapLoader.loadMapAsDocument(map);
 		} catch (IOException e) {
 			logger.error("Impossible to load map from map catalogue");
 			throw new GeoEngineException("Impossible to load map from map catalogue", e);
