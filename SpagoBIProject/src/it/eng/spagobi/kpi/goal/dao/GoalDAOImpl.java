@@ -62,9 +62,9 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			hibGoal.setStartDate(goal.getStartDate());
 			hibGoal.setEndDate(goal.getEndDate());
 			hibGoal.setGrantId(goal.getGrantId());
-			hibGoal.setGoalId(goal.getId());
 			
 			if(goal.getId()!=null){
+				hibGoal.setGoalId(goal.getId());
 				aSession.update(hibGoal);					
 				tx.commit();
 			}else{
@@ -195,6 +195,25 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 		logger.debug("OUT: Goal Node removed successfully.");
 	}
 	
+	public void updateGoalName(Integer goalId, String newName){
+		logger.debug("IN: goalNodeId = " + goalId);
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiGoalHierarchy hibGrantNode = (SbiGoalHierarchy) aSession.load(SbiGoalHierarchy.class, goalId);
+			hibGrantNode.setName(newName);
+			aSession.update(hibGrantNode);
+
+			tx.commit();
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: Goal Node removed successfully.");
+	}
+	
 	public void updateGoalNode(GoalNode goalNode) {
 		logger.debug("IN: goalNode = " + goalNode);
 		Session aSession = null;
@@ -274,9 +293,13 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 		//hibSbiGoalKpi.setGoalKpiId(goalKpi.getId());
 		hibSbiGoalKpi.setKpiInstanceId(goalKpi.getModelInstanceId());
 		hibSbiGoalKpi.setSbiGoalHierarchy(goalNodel);
-		hibSbiGoalKpi.setThreshold1(goalKpi.getThreshold1());
+		if(goalKpi.getThreshold1()!=null){
+			hibSbiGoalKpi.setThreshold1(goalKpi.getThreshold1());
+		}
 		hibSbiGoalKpi.setThreshold1sign(goalKpi.getSign1());
-		hibSbiGoalKpi.setThreshold2(goalKpi.getThreshold2());
+		if(goalKpi.getThreshold2()!=null){
+			hibSbiGoalKpi.setThreshold2(goalKpi.getThreshold2());
+		}
 		hibSbiGoalKpi.setThreshold2sign(goalKpi.getSign2());
 		hibSbiGoalKpi.setWeight1(goalKpi.getWeight1());
 		hibSbiGoalKpi.setWeight2(goalKpi.getWeight2());
