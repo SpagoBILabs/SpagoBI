@@ -811,8 +811,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			//set the filter for view only active items (default)
 			var tmpName = this.store.getFieldNameByAlias(inlineActionColumnConfig.checkColumn);
 			if (tmpName !== undefined){
-				if (this.store.filterPlugin.getFilter(tmpName) === undefined) {
-					this.store.filterPlugin.addFilter (tmpName, this.ACTIVE_VALUE);
+				if (this.store.filterPlugin.getFilter(tmpName) === undefined) {					
+					var tmpValue = new Array();
+					tmpValue.push(this.ACTIVE_VALUE );
+					this.store.filterPlugin.addFilter (tmpName, tmpValue);
 				}
 			}
 						

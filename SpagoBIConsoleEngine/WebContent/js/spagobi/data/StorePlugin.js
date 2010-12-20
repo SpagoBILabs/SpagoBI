@@ -75,12 +75,11 @@ Ext.extend(Sbi.console.StorePlugin, Ext.util.Observable, {
     , filters: null
    
     // public methods
-    
-    , removeFilter: function(fieldName) {
+	, removeFilter: function(fieldName) {
 		delete this.filters[fieldName];
 	}
 
-    , addFilter: function(fieldName, filter) {
+    , addFilter: function(fieldName, filter) {	
 		this.filters[fieldName] = filter;
 	}
 
@@ -98,16 +97,45 @@ Ext.extend(Sbi.console.StorePlugin, Ext.util.Observable, {
        if (this.store.getSortState() !== undefined){
       		this.store.sort(this.store.getSortState().field, this.store.getSortState().direction);
        }
-      	
-	   //apply the filters
+
+       /*
+        * Apply the filters.
+        * The filters object is a multidimensional array (ie: filters=[<col1>:[<val1>, <val2>],
+        *							   					              [<col2>:[<val3>, <val4>]])
+        * In the application of filters each filter column works in AND condition with filters of others columns, 
+        * while works in OR condition with all its values. 
+        * (In the example the filter of col1 is in AND with the filter on col2; BUT to satisfy the col1 is necessary 
+        *  at least one between val1 and val2.)
+        * So, this method uses three flags to manage this situation:
+        *  - isVisible: defines if the record matches the current condition
+        *  - isVisibilePrec: defines the visibility of the previous condition
+        *  - isVisibileRet: defines the real value returned
+        */
+      
 	   this.store.filterBy(function(record,id){		
-		   for(var f in this.filters){ 
-			   if(record.data[f] != this.filters[f]) return false;              
-	       }
-	       return true;
+		   var isVisible = false; //flag for single condition (multivalue)
+		   var isVisiblePrec = true;
+		   var isVisibleRet = true;
+		   for(var f in this.filters){ 	// cycles on all filters
+			   var tmpValues = this.filters[f];
+			   for(var val in tmpValues){  		//cycles on the single value for each condition (logical OR case)
+				   if (tmpValues[val] !== undefined){
+					   if(record.data[f] === tmpValues[val]) {						
+						   //return true;  						   
+						   isVisible = true;
+					   }	
+				   }
+			   }
+			   
+			   isVisibleRet = (isVisible && isVisiblePrec);
+			   isVisiblePrec =  isVisible;
+			   isVisible = false; //reset value
+		   }
+		   //return false;				   
+		   return isVisibleRet;
 	   }, this);
 	   
-	   this.fireEvent('filterschange', this.store, this.filtrs);
+	   this.fireEvent('filterschange', this.store, this.filters);
 	       	    
    }
    
