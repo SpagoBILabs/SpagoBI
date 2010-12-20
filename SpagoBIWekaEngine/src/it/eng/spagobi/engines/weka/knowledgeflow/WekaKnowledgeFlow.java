@@ -45,7 +45,6 @@ import weka.gui.beans.TextListener;
 import weka.gui.beans.xml.XMLBeans;
 
 import it.eng.spagobi.engines.weka.WekaEngineRuntimeException;
-import it.eng.spagobi.engines.weka.configurators.WekaBeanConfiguratorFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -64,6 +63,11 @@ public class WekaKnowledgeFlow {
 	
 	public WekaKnowledgeFlow(String template, WekaKnowledgeFlowEnv env) {
 		this.env = env;
+		template = template.replaceAll("<object class=\"weka.core.SelectedTag\" name=\"metricType\">0</object>", "");
+		template = template.replaceAll("<object class=\"weka.core.SelectedTag\" name=\"missingValues\">0</object>", "");
+		template = template.replaceAll("<object class=\"weka.core.SelectedTag\" name=\"negation\">0</object>", "");
+		template = template.replaceAll("<object class=\"weka.core.SelectedTag\" name=\"valuesOutput\">0</object>", "");
+
 		this.load(template);
 	}
 	
@@ -90,6 +94,14 @@ public class WekaKnowledgeFlow {
 					logger.debug("Start blocking on: " + savers );			
 					saver.waitUntilFinish();			
 				}	
+				
+				if(savers.size() == 0) {
+					for(int i = 0; i < associators.size(); i++) {
+						Associator associator = (Associator)associators.get(i);
+						logger.debug("Start blocking on: " + associator );			
+						//associator.waitUntilFinish();			
+					}	
+				}
 			}
 			
 			
@@ -255,7 +267,7 @@ public class WekaKnowledgeFlow {
 				
 				
 				
-				WekaBeanConfiguratorFactory.setup(bean.getBean());
+				//WekaBeanConfiguratorFactory.setup(bean.getBean());
 				
 				if (bean.getBean() instanceof BeanContextChild) {
 					logger.debug("    - BeanContextChild" );
