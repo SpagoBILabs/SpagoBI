@@ -77,11 +77,9 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 			} else {
 				logger.debug("Loading active query");
 				query = getEngineInstance().getActiveQuery();
-				/*
 				logger.warn("Active query not available");
 				logger.debug("Loading first query from catalogue");
 				query = getEngineInstance().getQueryCatalogue().getFirstQuery();
-				*/
 				Assert.assertNotNull(query, "Query catalogue is empty");
 			}
 			logger.debug("Query [" + query.getId() + "] succesfully loaded");
