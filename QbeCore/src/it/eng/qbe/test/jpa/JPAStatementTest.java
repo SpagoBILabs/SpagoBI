@@ -5,6 +5,7 @@ package it.eng.qbe.test.jpa;
 
 import it.eng.qbe.datasource.jpa.DBConnection;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.export.JPQLToSqlQueryRewriter;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.jpa.JPQLStatement;
@@ -70,7 +71,9 @@ public class JPAStatementTest {
 		queryTest.addSelectFiled("it.eng.spagobi.jpa.SbiExtRole:descr", null, "descr", true, true, false, null, null);
 	
 		JPQLStatement stmt = new JPQLStatement(jpaDS, queryTest);
-		stmt.prepare();
+		//stmt.prepare();
+		JPQLToSqlQueryRewriter jpqlRew = new JPQLToSqlQueryRewriter(em);
+		jpqlRew.rewrite(stmt.getQueryString());
 		
 		em.close();
 		

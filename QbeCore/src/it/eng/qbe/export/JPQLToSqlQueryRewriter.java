@@ -67,8 +67,10 @@ public class JPQLToSqlQueryRewriter {
 		String sqlQuery = null;		
 		logger.debug("rewrite: JPQL query to convert: " + query);		
 		
-		
-		Query jpaQuery = entityManager.createQuery(query);
+		//create jpql query
+		//Query jpaQuery = entityManager.createQuery(query);
+		//create sql query
+		Query test = entityManager.createNativeQuery(query);
 		/*
 
 		SessionFactory sessFact = entityManager.getEntityManagerFactory();
@@ -120,6 +122,8 @@ public class JPQLToSqlQueryRewriter {
 		trans.compile(new HashMap(), false);
 		sqlQuery = trans.getSQLString();
 		*/
+		
+
 		logger.debug("rewrite: generated SQL query: " + sqlQuery);		
 		
 		return sqlQuery;
