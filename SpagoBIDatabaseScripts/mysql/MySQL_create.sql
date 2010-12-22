@@ -299,7 +299,7 @@ CREATE TABLE SBI_EVENTS_LOG (
 	ID                  INTEGER NOT NULL AUTO_INCREMENT,
 	USER_EVENT                 VARCHAR(40) NOT NULL,
 	EVENT_DATE          TIMESTAMP DEFAULT NOW() NOT NULL,
-	DESCR                VARCHAR(10000) NOT NULL,
+	DESCR                TEXT NOT NULL,
 	PARAMS              VARCHAR(1000),
 	HANDLER 	VARCHAR(400) NOT NULL DEFAULT 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler',
               PRIMARY KEY(ID)
