@@ -58,6 +58,8 @@ import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -104,7 +106,13 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 		ParameterUse paruse = parusedao.loadByParameterIdandRole(parId, roleName);
 		Integer manInp = paruse.getManualInput();
 		if(manInp.intValue()==1) {
-			String message = PortletUtilities.getMessage("scheduler.fillparmanually", "component_scheduler_messages");
+			String message = "";
+			try{
+				message = PortletUtilities.getMessage("scheduler.fillparmanually", "component_scheduler_messages");
+			}catch (Exception e) {
+				IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+				message = msgBuilder.getMessage("scheduler.fillparmanually","component_scheduler_messages");
+			}
 			response.setAttribute(SpagoBIConstants.MESSAGE_INFO, message);
 		} else {
 			list = loadSpagoList(request, response, parId, roleName);
