@@ -7,7 +7,7 @@
         <id name="resourceId" type="integer">
             <column name="RESOURCE_ID" />
             <generator class="native">
-            	<param name="sequence">sbi_resources</param>
+            	<param name="sequence">RESOURCES_SEQ</param>
             </generator>
         </id>
         <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" >
