@@ -269,7 +269,14 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 					//nothing
 					model.setDescription(null);
 				}
-				String labelKey = obj.getString("label");
+			
+				
+				String labelKey ;
+				try{
+					labelKey = obj.getString("label");
+				}catch(Throwable t){
+					labelKey = java.util.UUID.randomUUID().toString();
+				}
 				model.setLabel(labelKey);
 				if(!labels.containsKey(labelKey)){
 					labels.put(labelKey, model);
@@ -349,6 +356,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			//loads all nodes guiid with type error
 			
 			respObj.put(model.getGuiId(), "OK");
+			respObj.put("label", model.getLabel());
 			
 			if(model.getParentId() != null){
 				//look up for its id: if null --> newly created node
