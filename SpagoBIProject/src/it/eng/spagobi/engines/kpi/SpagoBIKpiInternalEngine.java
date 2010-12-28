@@ -880,7 +880,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		ouList = new ArrayList<OrganizationalUnitGrantNode>();
 		ouWarning = null;
 		//looks up for OU grants
-		logger.error("this is hierarchy:"+paramLabelHierarchy);
+		logger.debug("this is hierarchy:"+paramLabelHierarchy);
 		List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsValidByDate(miId, dateOfKPI);
 		if(grants != null){
 			for(int i = 0; i<grants.size(); i++){				
