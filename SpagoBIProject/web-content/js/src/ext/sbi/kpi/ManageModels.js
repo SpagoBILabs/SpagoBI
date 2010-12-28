@@ -96,7 +96,6 @@ Sbi.kpi.ManageModels = function(config, ref) {
 
 	 }, this);
 	 this.mainTree.on('nodedrop', function(e, newNode){
-
 		 e.tree.getSelectionModel().select(e.dropNode[0]);
 		 this.selectNode(null);
 
@@ -386,6 +385,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined && content !== null){
 	      				var hasErrors = false;
+	      				//alert(content.toSource());
 	      				for (var key in content) {
 		      				  var value = content[key];
 		      				  var nodeSel = this.mainTree.getNodeById(key);
@@ -399,6 +399,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      				  }else{
 		      					  nodeSel.attributes.error = false; 
 		      					  nodeSel.attributes.modelId = value; 
+		      					  nodeSel.attributes.label = content['label'];
+		      					this.detailFieldLabel.setValue(content['label']);
+		      					this.detailFieldLabel.show();
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  this.fireEvent('parentsave-complete', nodeSel);
 		      				  }
@@ -469,6 +472,11 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      				  }else{
 		      					  nodeSel.attributes.error = false; 
 		      					  nodeSel.attributes.modelId = value; 
+		      					  
+		      					  nodeSel.attributes.label = content['label'];
+			      					this.detailFieldLabel.setValue(content['label']);
+			      					this.detailFieldLabel.show();
+			      					
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  
 		      					  //completes child node instanciation
@@ -741,20 +749,29 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 					   return false;
 				   }
 				   var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
-				   var recDomain = this.typesStore.getAt(idxNodeType);	
+				   var recDomain = this.typesStore.getAt(idxNodeType);
+/*				   var codeTxt = r.get('code');
+				   if(codeTxt != null && codeTxt.length >12){
+					   codeTxt = codeTxt.substring(0,12)+'.';
+				   }
+				   var nameTxt = r.get('name');
+				   if(nameTxt != null && nameTxt.length >12){
+					   nameTxt = nameTxt.substring(0,12)+'.';
+				   }
+				   var text = codeTxt+' - '+nameTxt;*/
 				   var newNode = this.mainTree.getLoader().createNode({
 					   kpi: r.get('name')
 					   , kpiId: r.get('id')
-					   , text: '... - ...'
+					   , text: r.get('code')+' - '+r.get('name')
 					   , parentId: e.target.attributes.modelId
 					   , type: recDomain.get('typeCd')
 					   , typeId: recDomain.get('typeId')
 					   , typeDescr: recDomain.get('typeDs')
 					   , leaf: false
-					   , code: '...'
-					   , name: '...'
+					   , code: r.get('code')
+					   , name: r.get('name')
 				   });
-				   
+				   //this.detailFieldLabel.disable();
 				   // create node from record data
 				   e.dropNode.push(newNode);
 				   this.fireEvent('nodedrop', newNode);
