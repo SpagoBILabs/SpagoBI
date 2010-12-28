@@ -95,9 +95,15 @@ Sbi.kpi.ManageModels = function(config, ref) {
 		   }
 
 	 }, this);
+	 
 	 this.mainTree.on('nodedrop', function(e, newNode){
-		 e.tree.getSelectionModel().select(e.dropNode[0]);
-		 this.selectNode(null);
+		 //e.tree.getSelectionModel().select();
+		 //this.selectNode(null);
+		 for(i =0 ; i< e.dropNode.length; i++){
+			 //alert(e.dropNode[i].text);	
+				var size = this.nodesToSave.length;
+				this.nodesToSave[size] = e.dropNode[i];
+		 }
 
 	 }, this);
 
@@ -774,6 +780,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				   //this.detailFieldLabel.disable();
 				   // create node from record data
 				   e.dropNode.push(newNode);
+				   newNode.select();
 				   this.fireEvent('nodedrop', newNode);
 			   }
 		    
