@@ -693,8 +693,13 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						kVal = new KpiValue();
 						kVal.setValueDescr(ouWarning);	
 						kVal.setKpiInstanceId(kpiI.getKpiInstanceId());
-						kVal.setBeginDate(dateOfKPI);
-						kVal.setEndDate(dateOfKPI);	
+			            if(dateIntervalFrom!=null && dateIntervalTo!=null){
+			            	kVal.setBeginDate(dateIntervalFrom);
+			            	kVal.setEndDate(dateIntervalTo);
+		                } else{
+		                	kVal.setBeginDate(dateOfKPI);
+		                	kVal.setEndDate(dateOfKPI);						
+		                }
 						kVal.setValue(null);
 					}else{
 						kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
@@ -703,7 +708,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 					}	
 
 				}
-				if(ouList != null && !ouList.isEmpty()){
+/*				if(ouList != null && !ouList.isEmpty()){
 					for(int i = 0; i<ouList.size(); i++){
 
 						OrganizationalUnitGrantNode grantNode = ouList.get(i);
@@ -717,7 +722,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				}else{
 					kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modI.getModelInstanceNodeId());
 					kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modI.getModelInstanceNodeId());
-				}
+				}*/
 
 			}
 		} 	
@@ -761,9 +766,14 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 				value = new KpiValue();
 				value.setValueDescr(ouWarning);	
 				value.setKpiInstanceId(kpiI.getKpiInstanceId());
-				value.setBeginDate(dateOfKPI);
-				value.setEndDate(dateOfKPI);	
-				value.setValue(null);
+	            if(dateIntervalFrom!=null && dateIntervalTo!=null){
+	            	value.setBeginDate(dateIntervalFrom);
+	            	value.setEndDate(dateIntervalTo);
+                } else{
+					value.setBeginDate(dateOfKPI);
+					value.setEndDate(dateOfKPI);						
+                }
+	            value.setValue(null);
 			}else{
 				value = getValueDependingOnBehaviour(kpiI, miId, r,alreadyExistent , null);//standard behaviour	
 				
@@ -870,19 +880,22 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		ouList = new ArrayList<OrganizationalUnitGrantNode>();
 		ouWarning = null;
 		//looks up for OU grants
+		logger.error("this is hierarchy:"+paramLabelHierarchy);
 		List<OrganizationalUnitGrantNode> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsValidByDate(miId, dateOfKPI);
 		if(grants != null){
 			for(int i = 0; i<grants.size(); i++){				
 				OrganizationalUnitGrantNode grantNode = grants.get(i);
 				OrganizationalUnitGrant grant = grantNode.getGrant();				
 				OrganizationalUnitHierarchy hier = grant.getHierarchy();
-
 				if(paramLabelOU == null){
 					//scheduling mode 
 					if(executionModalityScheduler){
 						//than all OU valid by date are filling
-						ouList.add(grantNode);
-						ouWarning = null;
+						if(hier.getLabel().equalsIgnoreCase(paramLabelHierarchy)){
+							ouList.add(grantNode);
+							ouWarning = null;
+						}
+
 					}else{
 						ouWarning = "Warning: kpi needed ParKpiOU parameter.";
 					}	
@@ -899,7 +912,6 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 						break;
 					}
 				}
-
 
 			}
 		}
@@ -1041,13 +1053,14 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		//if(dataSet.hasBehaviour( QuerableBehaviour.class.getName()) ) {
 		if(dataSet!=null){
 			Kpi kpi = DAOFactory.getKpiDAO().loadKpiById(kpiInst.getKpi());
-			kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modelInstanceId);
+			
 			if(behaviour.equalsIgnoreCase("timeIntervalDefault") || behaviour.equalsIgnoreCase("timeIntervalForceRecalculation")){
 				if(dateIntervalFrom!=null && dateIntervalTo!=null){
 					kVal.setBeginDate(dateIntervalFrom);
 					kVal.setEndDate(dateIntervalTo);
 				}
 			}
+			kVal = recursiveGetKpiValueFromKpiRel(kpi,dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), modelInstanceId);
 			kVal = getKpiValueFromDataset(dataSet,temp,kVal,dateOfKPI,kVal.getEndDate(), true, modelInstanceId);
 		}
 		logger.debug("OUT");
@@ -1059,6 +1072,7 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 		logger.debug("IN");
 		Date begD = dateOfKPI;
 		Date endDate = null;
+		logger.debug("behaviour: -"+behaviour+"-");
 		kVal.setBeginDate(begD);
 		logger.debug("Setted the KpiValue begin Date:"+begD);
 		if(endKpiValueDate!=null){
