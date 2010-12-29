@@ -151,9 +151,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		state = {};
 		for(p in this.fields) {
+	
 			var field = this.fields[p];
 			var value = field.getValue();
+			field.focus();
 			state[field.name] = value;
+
 			var rawValue = field.getRawValue();
 			if (rawValue !== undefined) {
 				// TODO to improve: the value of the field should be an object with actual value and its description
