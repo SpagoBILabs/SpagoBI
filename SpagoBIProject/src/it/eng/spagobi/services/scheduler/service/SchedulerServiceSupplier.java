@@ -44,6 +44,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.xml.JobSchedulingDataProcessor.MisfireInstructionRule;
 import org.safehaus.uuid.UUIDGenerator;
 
 
@@ -542,6 +543,7 @@ public class SchedulerServiceSupplier {
 			    trigger.setJobGroup(jobGroup);
 			    trigger.setJobDataMap(jdm);
 			    trigger.setVolatility(false);    
+			    trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
 				// check if the trigger already exists 
 				boolean exists = false;
 				Trigger[] jobTrgs = scheduler.getTriggersOfJob(jobName, jobGroup);
