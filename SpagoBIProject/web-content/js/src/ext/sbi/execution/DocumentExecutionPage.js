@@ -768,7 +768,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 					// save parameters into session
 					// if type is QBE inform user that will lose configurations
 					if(executionInstance.document.typeCode == 'DATAMART'){
-
+						if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
+							
 							Ext.MessageBox.confirm(
     						    LN('sbi.generic.warning'),
             					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
@@ -782,7 +783,13 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
             					},
             					this
 								);
-					
+							}else{
+								//user who cannot build qbe queries
+								Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
+								this.southPanel.collapse();
+								this.northPanel.collapse();
+								this.refreshExecution();
+							}
 					} // it 's not a qbe
 					else {
 						Sbi.execution.SessionParametersManager.saveState(this.parametersPanel);
