@@ -770,6 +770,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 					if(executionInstance.document.typeCode == 'DATAMART'){
 						if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
 							
+							
 							Ext.MessageBox.confirm(
     						    LN('sbi.generic.warning'),
             					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
