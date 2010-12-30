@@ -69,6 +69,8 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 		String endTime = (String) request.getAttribute(END_TIME);
 		String prefix1 = (request.getAttribute(PREFIX1) != null)?(String) request.getAttribute(PREFIX1)+"_": "";
 		String prefix2 = (request.getAttribute(PREFIX2) != null)?(String) request.getAttribute(PREFIX2)+"_": "";
+		//String prefix1 = (request.getAttribute(PREFIX1) != null)?(String) request.getAttribute(PREFIX1): "";
+		//String prefix2 = (request.getAttribute(PREFIX2) != null)?(String) request.getAttribute(PREFIX2): "";
 
 		// build begin Date			
 
@@ -116,11 +118,12 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 			// get all files that has to be zipped
 			Vector filesToZip = searchDateFiles(dir, begin, end, prefix1 + prefix2);
 			if (filesToZip.size() == 0){
-				throw new Exception ("Warning: Files not found with these parameters: <p><br>" +
+				/*throw new Exception ("Warning: Files not found with these parameters: <p><br>" +
 									 " <b>Directory:</b> " + dir + "<p>" +
 									 " <b>Begin date:</b> " + begin + "<p>" + 
 									 " <b>End date:</b> " + end + "<p>" + 
-									 " <b>Prefix:</b> " + prefix1 + prefix2 );
+									 " <b>Prefix:</b> " + prefix1 + prefix2 ); */
+				throw new Exception ("Warning: Missing files in specified interval!");
 			}
 
 			Date today=(new Date());
@@ -342,7 +345,7 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 			File[] files=getSortedArray(dir, prefix);
 
 			if (files == null){
-				throw new SpagoBIServiceException(SERVICE_NAME, "Missing file in specified interval");
+				throw new SpagoBIServiceException(SERVICE_NAME, "Missing files in specified interval");
 			}
 
 			// cycle on all files
