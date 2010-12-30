@@ -539,14 +539,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			  , URL: url
 			}); 
 			
-			if(this.logsWin === null) {
+			//if(this.logsWin === null) {
 				this.logsWin = new Sbi.console.DownloadLogsWindow({
 				serviceName: 'DOWNLOAD_ZIP' 
 				, action: action
-				});
-				
-				
-			}
+				});							
+			//}
 			
 			this.logsWin.on('checked', function(win, record) {	
 				this.logsWin.downloadLogs(action, record, null, params);
