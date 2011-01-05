@@ -207,7 +207,7 @@ public class UserUtilities {
     public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
     	logger.debug("IN");
 	try {
-	    String username = (String) ((UserProfile)userProfile).getUserId();
+	    String username = (String) ((UserProfile)userProfile).getUserName();
 	    logger.debug("username: " + username);
 	    Collection roleStrs = ((UserProfile)userProfile).getRolesForUse();
 	    Iterator roleIter = roleStrs.iterator();
