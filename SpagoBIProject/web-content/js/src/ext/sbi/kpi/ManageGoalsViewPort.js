@@ -91,14 +91,15 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		this.tabs.on('beforetabchange', 
 			function(thisPanel, newTab, currentTab){
 				if(newTab.id=='goalPanel'){
+				
 					if(this.manageGoalsDetailsPanel.goalId==null || this.manageGoalsDetailsPanel.goalId==''){
-						if(this.newGoalGridLine){
-							this.manageGoalsGrid.rowselModel.selectLastRow();
-							this.sendSelectedItem();
-						}else{
+//						if(this.newGoalGridLine){
+//							this.manageGoalsGrid.rowselModel.selectLastRow();
+//							this.sendSelectedItem();
+//						}else{
 							Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.goals.nogoal'), LN('sbi.generic.warning'));
 							return false;
-						}
+//						}
 					}
 					
 					if(this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==null || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()==undefined || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='' || this.manageGoalsDetailsPanel.detailFieldGrant.getValue()=='undefined'){
