@@ -191,6 +191,11 @@ public class NotifyStartAction extends AbstractConsoleEngineAction {
 			try {
 				stmt.executeUpdate(); 
 			} catch (SQLException e) {
+			    logger.error("Query parameter [pid] is equals to [" + pidParam + "]");
+			    logger.error("Query parameter [resourceIdParam] is equals to [" + resourceIdParam + "]");
+			    logger.error("Query parameter [idServiceParam] is equals to [" + idServiceParam + "]"); 
+			    logger.error("Query parameter [sysDate] is equals to [" + sysDate + "]"); 
+			    logger.error("Query parameter [idServiceInstanceParam] is equals to [" + idServiceInstanceParam + "]"); 
 				throw new ConsoleEngineRuntimeException("Impossible to execute statement [" + stmt.toString() + "]", e);
 			}
 			logger.debug("Statement [" + stmt.toString() + "] has been  succesfully executed");
