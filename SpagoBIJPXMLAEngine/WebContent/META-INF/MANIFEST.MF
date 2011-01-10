@@ -4,5 +4,5 @@ Created-By: 1.4.2_02-b03 (Sun Microsystems Inc.)
 
 Name: SpagoBIJPXMLAEngine.war
 Implementation-Title: SpagoBIJPXMLAEngine
-Implementation-Version: 2.6.0
+Implementation-Version: 2.7.0
 
