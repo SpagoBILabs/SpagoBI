@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIAccessibilityEngine.war
 Implementation-Title: SpagoBIAccessibilityEngine
-Implementation-Version: 2.6.0 
+Implementation-Version: 2.7.0 
 
