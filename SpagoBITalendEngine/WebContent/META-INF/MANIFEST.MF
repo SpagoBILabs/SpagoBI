@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBITalendEngine.war
 Implementation-Title: SpagoBITalendEngine
-Implementation-Version: 2.6.0 (Compatible with TOS 3.0.4)
+Implementation-Version: 2.7.0 (Compatible with TOS 3.0.4)
 
