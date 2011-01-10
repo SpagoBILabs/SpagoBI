@@ -4,5 +4,5 @@ Created-By: 1.5.0_14-b03 (Sun Microsystems Inc.)
 
 Name: SpagoBIGeoReportEngine.war
 Implementation-Title: SpagoBIGeoReportEngine
-Implementation-Version: 2.6.0
+Implementation-Version: 2.7.0
 
