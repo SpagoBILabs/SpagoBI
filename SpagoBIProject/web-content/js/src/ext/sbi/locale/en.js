@@ -522,3 +522,4 @@ Ext.Msg.buttonText.no = 'No';
 //===================================================================
 Sbi.locale.ln['sbi.generic.from'] = 'Start date';
 Sbi.locale.ln['sbi.generic.to'] = 'End date';
+

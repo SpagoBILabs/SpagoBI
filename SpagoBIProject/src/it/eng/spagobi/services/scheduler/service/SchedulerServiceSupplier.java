@@ -535,6 +535,7 @@ public class SchedulerServiceSupplier {
 				trigger.setName(triggerName);
 				trigger.setDescription(triggerDescription);
 				trigger.setGroup(triggerGroup);
+				
 				trigger.setStartTime(startDate);
 				if(endDate!=null) {
 					trigger.setEndTime(endDate);
@@ -543,7 +544,7 @@ public class SchedulerServiceSupplier {
 			    trigger.setJobGroup(jobGroup);
 			    trigger.setJobDataMap(jdm);
 			    trigger.setVolatility(false);    
-			    trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+			    //trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
 				// check if the trigger already exists 
 				boolean exists = false;
 				Trigger[] jobTrgs = scheduler.getTriggersOfJob(jobName, jobGroup);

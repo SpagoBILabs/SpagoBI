@@ -59,11 +59,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	//formUrlPars.put("PAGE", "TriggerManagementPage");
 	//formUrlPars.put("MESSAGEDET", SpagoBIConstants.MESSAGE_SAVE_SCHEDULE);
 	//formUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "true");
-	String formUrl = urlBuilder.getUrl(request, formUrlPars);   
+	String formUrl = urlBuilder.getUrl(request, formUrlPars);  
+	String origStartStr = triggerInfo.getStartDate();
+	
+	String origStartTime = triggerInfo.getStartTime();
+
+	SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy hh:mm");
+	Date dd = sdf.parse(origStartStr+" "+origStartTime);
+	long origTime = dd.getTime();
+	String message = msgBuilder.getMessage("scheduler.reschedule.date.alert", "component_scheduler_messages", request);
 
 %>
-
-
 
 <!-- ********************** SCRIPT FOR DOJO **************************** -->
 
@@ -105,10 +111,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <script>
 
+
+
 	function saveCall() {
-		chronStr = getRepetitionString();	
-		$('chronstring').value=chronStr;
-		document.getElementById('triggerdetailform').submit();
+		var form = document.getElementById('triggerdetailform');
+		var origDt = <%= origTime%>;
+		var newDt = form.startdate.value;
+		var newTm = form.starttime.value;
+		if(newTm.indexOf('+') != -1){
+			newTm = newTm.substr(0, newTm.indexOf('+'));
+		}
+
+		var str = newDt+' '+ newTm;
+		var newTimestamp = Date.parseDate(str, 'd/m/Y g:i:s');
+		var oldDate = new Date(origDt);
+		var answer = true;
+		if(newTimestamp.getElapsed(oldDate) == 0){
+			answer = confirm('<%= message%>');
+
+		}
+		if(answer){
+			return;
+
+		}else{
+			chronStr = getRepetitionString();	
+			$('chronstring').value=chronStr;
+			document.getElementById('triggerdetailform').submit();
+		}
 	}
 
     function getRepetitionString() {
