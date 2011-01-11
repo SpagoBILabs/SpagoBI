@@ -16,10 +16,10 @@
   <ACTION name="MANAGE_MODEL_INSTANCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelInstancesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
-   <ACTION name="MANAGE_OUS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageOUsAction" scope="REQUEST">
+   <ACTION name="MANAGE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.ManageOUsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
-   <ACTION name="MANAGE_GOALS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageGoalsAction" scope="REQUEST">
+   <ACTION name="MANAGE_GOALS_ACTION" class="it.eng.spagobi.kpi.goal.service.ManageGoalsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
   <ACTION name="MANAGE_OU_EMPTY_ACTION" class="it.eng.spago.dispatching.action.EmptyAction"  scope="REQUEST">

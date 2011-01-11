@@ -1,4 +1,4 @@
-package it.eng.spagobi.kpi.config.service;
+package it.eng.spagobi.kpi.ou.service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
