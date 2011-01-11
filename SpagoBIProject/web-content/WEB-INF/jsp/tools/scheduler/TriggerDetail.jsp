@@ -125,19 +125,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		var str = newDt+' '+ newTm;
 		var newTimestamp = Date.parseDate(str, 'd/m/Y g:i:s');
 		var oldDate = new Date(origDt);
-		var answer = true;
+		var answer = false;
 		if(newTimestamp.getElapsed(oldDate) == 0){
 			answer = confirm('<%= message%>');
-
+			if(!answer){			
+				chronStr = getRepetitionString();	
+				$('chronstring').value=chronStr;
+				document.getElementById('triggerdetailform').submit();
+				return;
+			}else{			
+				return;
+			}
 		}
-		if(answer){
-			return;
-
-		}else{
-			chronStr = getRepetitionString();	
-			$('chronstring').value=chronStr;
-			document.getElementById('triggerdetailform').submit();
-		}
+		chronStr = getRepetitionString();	
+		$('chronstring').value=chronStr;
+		document.getElementById('triggerdetailform').submit();
 	}
 
     function getRepetitionString() {
