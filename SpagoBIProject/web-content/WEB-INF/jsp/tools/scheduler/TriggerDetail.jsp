@@ -126,7 +126,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		var newTimestamp = Date.parseDate(str, 'd/m/Y g:i:s');
 		var oldDate = new Date(origDt);
 		var answer = false;
-		if(newTimestamp.getElapsed(oldDate) == 0){
+		//current date
+		var currentDt = new Date();
+		if(newTimestamp.getElapsed(oldDate) == 0 || newTimestamp < currentDt ){
 			answer = confirm('<%= message%>');
 			if(!answer){			
 				chronStr = getRepetitionString();	
