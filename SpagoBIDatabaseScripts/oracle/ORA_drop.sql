@@ -51,6 +51,9 @@ drop sequence SBI_OBJ_METACONTENTS_SEQ;
 drop sequence SBI_CONFIG_SEQ;                                                   
 drop sequence SBI_KPI_MODEL_ATTR_VAL_SEQ;                                       
 drop sequence SBI_KPI_MODEL_ATTR_SEQ; 
+drop sequence SBI_GOAL_SEQ;
+drop sequence SBI_GOAL_HIERARCHY_SEQ; 
+drop sequence SBI_GOAL_KPI_SEQ;
 
 drop table SBI_KPI_DOCUMENTS cascade constraints;                               
 drop table SBI_UDP cascade constraints;                                         
@@ -133,3 +136,9 @@ drop table SBI_USER cascade constraints;
 drop table SBI_ATTRIBUTE cascade constraints;                                   
 drop table SBI_USER_ATTRIBUTES cascade constraints;                             
 drop table SBI_EXT_USER_ROLES cascade constraints;  
+drop table SBI_GOAL cascade constraints;  
+drop table SBI_GOAL_HIERARCHY cascade constraints;  
+drop table SBI_GOAL_KPI cascade constraints;  
+
+
+      

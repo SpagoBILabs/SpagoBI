@@ -84,4 +84,8 @@ DROP TABLE SBI_CONFIG CASCADE ;
 DROP TABLE SBI_UDP_VALUE CASCADE ;
 DROP TABLE SBI_UDP CASCADE ;
 
+drop table SBI_GOAL cascade constraints;  
+drop table SBI_GOAL_HIERARCHY cascade constraints;  
+drop table SBI_GOAL_KPI cascade constraints;  
+
 
