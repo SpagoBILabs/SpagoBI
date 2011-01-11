@@ -523,3 +523,8 @@ Ext.Msg.buttonText.no = 'No';
 //===================================================================
 Sbi.locale.ln['sbi.generic.from'] = 'Data inizio';
 Sbi.locale.ln['sbi.generic.to'] = 'Data fine';
+
+//===================================================================
+//MESSAGE FOR SCHEDULER
+//===================================================================
+Sbi.locale.ln['sbi.scheduler.alert'] = 'Attenzione! Inserire una nuova data-ora di inizio schedulazione successiva a quella attuale, per evitare la rischedulazione.';
