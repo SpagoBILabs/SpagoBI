@@ -21,10 +21,10 @@
             <column name="WEIGHT2" precision="22" scale="0" not-null="true" />
         </property>
         <property name="threshold1" type="double">
-            <column name="THRESHOLD1" precision="22" scale="0" not-null="true" />
+            <column name="THRESHOLD1" precision="22" scale="0"/>
         </property>
         <property name="threshold2" type="double">
-            <column name="THRESHOLD2" precision="22" scale="0" not-null="true" />
+            <column name="THRESHOLD2" precision="22" scale="0"/>
         </property>
         <property name="threshold1sign" type="int">
             <column name="THRESHOLD1SIGN" not-null="true" />

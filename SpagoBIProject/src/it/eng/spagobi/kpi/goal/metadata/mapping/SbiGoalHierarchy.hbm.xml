@@ -21,10 +21,10 @@
             <column name="NAME" length="50" not-null="true" />
         </property>
         <property name="label" type="string">
-            <column name="LABEL" length="50" not-null="true" />
+            <column name="LABEL" length="50" />
         </property>
         <property name="goal" type="string">
-            <column name="GOAL" length="1000" not-null="true" />
+            <column name="GOAL" length="1000"/>
         </property>
         <set name="sbiGoalKpis" inverse="true" lazy="true" table="sbi_goal_kpi" fetch="select">
             <key>
