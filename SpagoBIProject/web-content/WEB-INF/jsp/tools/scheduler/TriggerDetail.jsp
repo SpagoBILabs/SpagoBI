@@ -65,8 +65,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String origStartTime = triggerInfo.getStartTime();
 
 	SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy hh:mm");
-	Date dd = sdf.parse(origStartStr+" "+origStartTime);
-	long origTime = dd.getTime();
+	long origTime = 0;
+	if(origStartStr != null && !origStartStr.trim().equals("")){
+		Date dd = sdf.parse(origStartStr+" "+origStartTime);
+		origTime = dd.getTime();
+	}
 	String message = msgBuilder.getMessage("scheduler.reschedule.date.alert", "component_scheduler_messages", request);
 
 %>
@@ -116,27 +119,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	function saveCall() {
 		var form = document.getElementById('triggerdetailform');
 		var origDt = <%= origTime%>;
-		var newDt = form.startdate.value;
-		var newTm = form.starttime.value;
-		if(newTm.indexOf('+') != -1){
-			newTm = newTm.substr(0, newTm.indexOf('+'));
-		}
-
-		var str = newDt+' '+ newTm;
-		var newTimestamp = Date.parseDate(str, 'd/m/Y g:i:s');
-		var oldDate = new Date(origDt);
-		var answer = false;
-		//current date
-		var currentDt = new Date();
-		if(newTimestamp.getElapsed(oldDate) == 0 || newTimestamp < currentDt ){
-			answer = confirm('<%= message%>');
-			if(!answer){			
-				chronStr = getRepetitionString();	
-				$('chronstring').value=chronStr;
-				document.getElementById('triggerdetailform').submit();
-				return;
-			}else{			
-				return;
+		if(origDt != 0){
+			var newDt = form.startdate.value;
+			var newTm = form.starttime.value;
+			if(newTm.indexOf('+') != -1){
+				newTm = newTm.substr(0, newTm.indexOf('+'));
+			}
+	
+			var str = newDt+' '+ newTm;
+			var newTimestamp = Date.parseDate(str, 'd/m/Y g:i:s');
+			var oldDate = new Date(origDt);
+			
+			var answer = false;
+			//current date
+			var currentDt = new Date();
+			if(newTimestamp.getElapsed(oldDate) == 0 || newTimestamp < currentDt ){
+				answer = confirm('<%= message%>');
+				if(!answer){			
+					chronStr = getRepetitionString();	
+					$('chronstring').value=chronStr;
+					document.getElementById('triggerdetailform').submit();
+					return;
+				}else{			
+					return;
+				}
 			}
 		}
 		chronStr = getRepetitionString();	
