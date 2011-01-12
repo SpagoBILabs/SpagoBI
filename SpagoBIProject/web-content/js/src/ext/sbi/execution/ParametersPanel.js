@@ -148,6 +148,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, getFormState: function() {
 		var state;
+		//to avoid synchronization problem
 		
 		state = {};
 		for(p in this.fields) {
@@ -155,6 +156,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var value = field.getValue();
 			state[field.name] = value;
 			var rawValue = field.getRawValue();
+			if(value == "" && rawValue != ""){
+				state[field.name] = rawValue;
+			}
+			
+			
 			if (rawValue !== undefined) {
 				// TODO to improve: the value of the field should be an object with actual value and its description
 				// Conflicts with other parameters are avoided since the parameter url name max lenght is 20
@@ -249,6 +255,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var nonTransientField = 0;
 		for(var i = 0; i < parameters.length; i++) {
 			var field = this.createField( executionInstance, parameters[i] );
+
 			if(parameters[i].valuesCount !== undefined && parameters[i].valuesCount == 1) {
 				field.isTransient = true;
 				field.setValue(parameters[i].value);
@@ -330,7 +337,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 						field.getEl().addClass('x-form-dependent-field');                         
 					}		
 					//alert(f.getName() + ' get focus');
-				}, this, {delay:250});
+				}, this
+				, {delay:250}
+				);
 				
 				field.on('blur', function(f){
 					//alert(f.getName() + ' lose focus');
@@ -440,11 +449,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			    , mode : 'local'
 			    , listeners: {
 			    	'select': {
-			       		fn: function(){}
+			       		fn: function(){	
+						}
 			       		, scope: this
-			    	}
-			    }
+			    	}			    
+			}
 			}));
+			
+			
 			
 		} else if(p.selectionType === 'LIST' || p.selectionType ===  'CHECK_LIST') {
 			
@@ -473,8 +485,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				baseConfig.format = Sbi.config.localizedDateFormat;
 				field = new Ext.form.DateField(baseConfig);
 				
-				
-				
 			} else if(p.type === 'NUMBER') {
 				field = new Ext.form.NumberField(baseConfig);
 			} else {
@@ -487,7 +497,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		return field;
 	}
-	
+
 	, createStore: function() {
 		var store;
 		
