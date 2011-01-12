@@ -431,8 +431,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    		}
 	  				var content = Ext.util.JSON.decode( response.responseText );
 	  				action.setBoundColumnValue(r, content.pid);
-	  				this.waitWin.stop('Proecess started succesfully');
-					action.toggle(r);	
+	  				//this.waitWin.stop('Proecess started succesfully');
+					//action.toggle(r);	
 					if (params.stmt){
 						params.pid = content.pid;
 						//calls the update action (if there's a stmt definition)
@@ -453,6 +453,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 					    	, scope: this     
 					    });
 					}
+					this.waitWin.stop('Process started succesfully');
+					action.toggle(r);
 		    	}
 		    	, failure: function(response, options) {
 		    		Sbi.exception.ExceptionHandler.onServiceRequestFailure(response, options);
