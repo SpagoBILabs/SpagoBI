@@ -26,6 +26,12 @@
           height:20px !important;
           width:20px !important;
     }
+    
+     .select {
+          background-image:url(/SpagoBIGeoReportEngine/img/cursor.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
       
     .drawpoint {
           background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_point_off.png) !important;
