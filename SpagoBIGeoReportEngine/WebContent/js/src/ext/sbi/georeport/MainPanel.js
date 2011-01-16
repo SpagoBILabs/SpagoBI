@@ -91,6 +91,7 @@ Sbi.georeport.MainPanel = function(config) {
 		, businessId: this.businessId
 		, geoId: this.geoId
 	};
+	
 	if(this.targetLayerConf.url) {
 		params.featureSourceType = 'wfs';
 		params.featureSource = this.targetLayerConf.url;
@@ -104,12 +105,6 @@ Sbi.georeport.MainPanel = function(config) {
 		, baseParams: params
 	});
 	
-	
-	
-	
-	//this.addEvents('customEvents');
-		
-		
 	this.initMap();
 	this.initMapPanel();
 	this.initControlPanel();
@@ -331,11 +326,15 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');
 		}
 		
+		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
 		this.analysisLayerSelectControl.activate();
 		
 		
 	}
+	
+	
+	
 	
 	, initProportionalSymbolsAnalysis: function() {
 	
@@ -348,19 +347,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 				})
 		});
 
-		this.map.addLayer(this.targetLayer);
-        this.analysisLayerSelectControl = new OpenLayers.Control.SelectFeature(this.targetLayer, {} );
-
-        this.targetLayer.events.register("featureselected", this, function(o) { 
-			//alert('select -> ' + this.getInfo(o.feature));
-			this.onTargetFeatureSelect(o.feature);
-		}); 
-        
-        this.targetLayer.events.register("featureunselected", this, function(o) { 
-			//alert('unselect -> ' + this.getInfo(o.feature));
-			this.onTargetFeatureUnselect(o.feature);
-		}); 
-		
+		this.map.addLayer(this.targetLayer);		
 	}
 	
 	, initChoroplethAnalysis: function() {
@@ -381,122 +368,74 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
      
     
     	this.map.addLayer(this.targetLayer);                                    
-    	this.analysisLayerSelectControl = new OpenLayers.Control.SelectFeature(this.targetLayer, {});
-        
+	}
+	
+	
+	// --------------------------------------------------------------------------------------------------
+	// SELECTION Control
+	// --------------------------------------------------------------------------------------------------
+	
+	, initAnalysislayerSelectControl: function() {
+		this.analysisLayerSelectControl = new OpenLayers.Control.SelectFeature(
+        		this.targetLayer
+        		, {
+        			multiple: true
+        			, toggle: true
+        			, box: true
+        		}
+        );
+
+		this.featureHandler = new OpenLayers.Handler.Feature(
+				this, this.targetLayer, {click: this.onTargetFeatureClick}
+	    );
+		
         this.targetLayer.events.register("featureselected", this, function(o) { 
-			//alert('select -> ' + this.getInfo(o.feature));
 			this.onTargetFeatureSelect(o.feature);
 		}); 
         
         this.targetLayer.events.register("featureunselected", this, function(o) { 
-			//alert('unselect -> ' + this.getInfo(o.feature));
 			this.onTargetFeatureUnselect(o.feature);
 		}); 
 	}
 	
+	, onTargetFeatureClick: function(event) {
+		alert('fetaure click');
+		if(!this.toolbar.selectMode){
+			var m = '';
+			for(p in event) m+= p + "\n";
+			alert(m);
+		}
+	}
+	
+	
 	, onTargetFeatureSelect: function(feature) {
+		alert('fetaure select');
 		this.selectedFeature = feature;
 		
 		if(!Ext.isArray( this.detailDocumentConf )) {
 			this.detailDocumentConf = [this.detailDocumentConf];
 		}
-		
-		var content = "<div style='font-size:.8em'>" + this.getInfo(feature);
-		
-		var params;
-        
-		for(var i = 0, l = this.detailDocumentConf.length; i < l; i++) {
-
-			params = Ext.apply({}, this.detailDocumentConf[i].staticParams);
-			for(p in this.detailDocumentConf[i].dynamicParams) {
-				var attrName = this.detailDocumentConf[i].dynamicParams[p];
-				params[p] = feature.attributes[attrName];
-			}
-			
-			//alert(params.toSource());
-			
-	        var execDetailFn = "execDoc(";
-	        execDetailFn += '"' + this.detailDocumentConf[i].label + '",'; // documentLabel
-	        execDetailFn += '"' + this.role + '",'; // execution role
-	        execDetailFn += Ext.util.JSON.encode(params) + ','; // parameters
-	        execDetailFn += this.detailDocumentConf[i].displayToolbar + ','; // displayToolbar
-	        execDetailFn += this.detailDocumentConf[i].displaySliders + ','; // displaySliders
-	        execDetailFn += '"' + this.detailDocumentConf[i].label + '"'; // frameId
-	        execDetailFn += ")";
-	       
-	        this.detailDocumentConf[i].text = this.detailDocumentConf[i].text || 'Details';
-	        
-	        var link = '';
-	        link += '<center>';
-	        link += '<font size="1" face="Verdana">';
-	        link += '<a href="#" onclick=\'Ext.getCmp("' + this.mapPanel.getId() + '").setActiveTab("infotable");';
-	        link += 'Ext.getCmp("infotable").body.dom.innerHTML=';
-	        link += execDetailFn + '\';>';
-	        link += this.detailDocumentConf[i].text + '</a></font></center>';
-        
-	        content += link;
-		}
-
-        params = Ext.apply({}, this.inlineDocumentConf.staticParams);
-		for(p in this.inlineDocumentConf.dynamicParams) {
-			var attrName = this.inlineDocumentConf.dynamicParams[p];
-			params[p] = feature.attributes[attrName];
+		if(!this.toolbar.selectMode){
+			this.openPopup( this.selectedFeature );
 		}
 		
 		
-       
-        
-        content += execDoc(
-        		this.inlineDocumentConf.label, 
-        		this.role, 
-        		params, 
-        		this.inlineDocumentConf.displayToolbar, 
-        		this.inlineDocumentConf.displaySliders, 
-        		this.inlineDocumentConf.label,
-        		'300'
-        );
-       
-        popup = new OpenLayers.Popup.FramedCloud("chicken", 
-                feature.geometry.getBounds().getCenterLonLat(),
-                null,
-                content,
-                null, 
-                true, 
-                function(evt) {
-        			this.analysisLayerSelectControl.unselect(this.selectedFeature);    
-                }.createDelegate(this, [])
-        );
-        
-        feature.popup = popup;
-        this.map.addPopup(popup);
 	}
 	
 	, onTargetFeatureUnselect: function(feature) {
-		this.map.removePopup(feature.popup);
-        feature.popup.destroy();
-        feature.popup = null;
+		if(feature.popup){
+			this.map.removePopup(feature.popup);
+			feature.popup.destroy();
+			feature.popup = null;
+		}
         var infoPanel = Ext.getCmp('infotable');
         if(infoPanel.body){
         	infoPanel.body.dom.innerHTML = '';
         }
 	}
 	
-	, getInfo: function(feature) {
-		//alert(feature.attributes.toSource());
-		var info = "";
-	    for(var i=0; i<this.featureInfo.length; i++){
-	    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
-	    } 
-	    return info;
-	}
-	
-	
-	
-	
-	
+	// --------------------------------------------------------------------------------------------------
 
-	
-	
 	, initMapPanel: function() {
 		
 		var mapPanelConf = {
@@ -510,6 +449,8 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		
 		if(this.toolbarConf.enabled) {
 			this.toolbarConf.map = this.map;
+			this.toolbarConf.analysisLayerSelectControl = this.analysisLayerSelectControl;
+			this.toolbarConf.featureHandler = this.featureHandler;
 			this.toolbar = new Sbi.georeport.Toolbar(this.toolbarConf);
 			mapPanelConf.tbar = this.toolbar;
 		}
@@ -801,6 +742,131 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		    scope: this
 		 });
 		 winWmsForm.show();
-	  }
+	}
 	
+	
+	// ==========================================================================================
+	//	Utility methods used to create contextual popup win
+	// ==========================================================================================
+	
+	, openPopup: function(feature) {
+		var content = '';
+		content += this.getFeatureInfoHtmlFragment(feature);
+		content += this.getDetailDocHtmlFragment(feature);
+		content += this.getInlineDocHtmlFragment(feature);
+
+        popup = new OpenLayers.Popup.FramedCloud("chicken", 
+                feature.geometry.getBounds().getCenterLonLat(),
+                null,
+                content,
+                null, 
+                true, 
+                function(evt) {
+        			this.analysisLayerSelectControl.unselect(feature);    
+                }.createDelegate(this, [])
+        );
+        
+        feature.popup = popup;
+        this.map.addPopup(popup);
+	}
+	
+	
+	// -----------------------------
+	// Feature info part
+	// -----------------------------
+	
+	, getFeatureInfoHtmlFragment: function(feature) {
+		var info = "<div style='font-size:.8em'>";
+	    for(var i=0; i<this.featureInfo.length; i++){
+	    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
+	    } 
+	    info += "</div>"
+	    return info;
+	}
+	
+	// -----------------------------
+	// Detail part
+	// -----------------------------
+	
+	, getDetailDocHtmlFragment: function(feature) {
+		var content  = '';
+		
+		for(var i = 0, l = this.detailDocumentConf.length; i < l; i++) {
+			var params = this.getDetailDocParams(this.detailDocumentConf[i], feature);
+			      
+	        var execDetailFn =  this.getDetailDocExecFn(this.detailDocumentConf[i], params);
+	       
+	        this.detailDocumentConf[i].text = this.detailDocumentConf[i].text || 'Details';
+	        
+	        var link = this.getDetailDocExecLink(this.detailDocumentConf[i], execDetailFn);
+	        
+	        content += link;
+		}
+		
+		return content;
+	}
+	
+	, getDetailDocParams: function(detailDocumentConf, feature) {
+		var params;
+		
+		params = Ext.apply({}, detailDocumentConf.staticParams);
+		for(p in detailDocumentConf.dynamicParams) {
+			var attrName = detailDocumentConf.dynamicParams[p];
+			params[p] = feature.attributes[attrName];
+		}
+		
+		return params;
+	}
+	
+	, getDetailDocExecFn: function(detailDocumentConf, detailDocParams) {
+		var execDetailFn = "execDoc(";
+        execDetailFn += '"' + detailDocumentConf.label + '",'; // documentLabel
+        execDetailFn += '"' + this.role + '",'; // execution role
+        execDetailFn += Ext.util.JSON.encode( detailDocParams ) + ','; // parameters
+        execDetailFn += detailDocumentConf.displayToolbar + ','; // displayToolbar
+        execDetailFn += detailDocumentConf.displaySliders + ','; // displaySliders
+        execDetailFn += '"' + detailDocumentConf.label + '"'; // frameId
+        execDetailFn += ")";
+        
+        return execDetailFn;
+	} 
+	
+	, getDetailDocExecLink: function(detailDocumentConf, detailDocFn) {
+		var link = '';
+        
+		link += '<center>';
+        link += '<font size="1" face="Verdana">';
+        link += '<a href="#" onclick=\'Ext.getCmp("' + this.mapPanel.getId() + '").setActiveTab("infotable");';
+        link += 'Ext.getCmp("infotable").body.dom.innerHTML=';
+        link += detailDocFn + '\';>';
+        link += detailDocumentConf.text + '</a></font></center>';
+        
+        return link;
+	}
+	
+	// -----------------------------
+	// Inline doc part
+	// -----------------------------
+	
+	, getInlineDocHtmlFragment: function(feature) {
+		var content = '';
+		
+		var params = Ext.apply({}, this.inlineDocumentConf.staticParams);
+		for(p in this.inlineDocumentConf.dynamicParams) {
+			var attrName = this.inlineDocumentConf.dynamicParams[p];
+			params[p] = feature.attributes[attrName];
+		}
+		
+        content += execDoc(
+        		this.inlineDocumentConf.label, 
+        		this.role, 
+        		params, 
+        		this.inlineDocumentConf.displayToolbar, 
+        		this.inlineDocumentConf.displaySliders, 
+        		this.inlineDocumentConf.label,
+        		'300'
+        );
+        
+        return content;
+	}
 });

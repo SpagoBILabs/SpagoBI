@@ -145,6 +145,7 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 		}
 		    
 		if(this.mouseButtonGroupEnabled === true) {
+						
 			this.addControl(
 				new OpenLayers.Control.ZoomBox({
 					title: 'Zoom in: click in the map or use the left mouse button and drag to create a rectangle'
@@ -173,6 +174,23 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 		            toggleGroup: 'map'
 		        }
 		    );
+			
+			var btn = this.addControl(
+				this.analysisLayerSelectControl
+				, {
+					iconCls: 'select', 
+					toggleGroup: 'map',
+					tooltip: "Select fetaure: keep the right mouse button pressed in order to draw the selctiona area"
+			});
+			
+			btn.on('toggle', function(btn, pressed ) {
+				this.selectMode = pressed;
+				if(!pressed) {
+					this.featureHandler.activate();
+				} else {
+					this.featureHandler.deactivate();
+				}
+			}, this);
 		         
 			this.addSeparator();
 		}
