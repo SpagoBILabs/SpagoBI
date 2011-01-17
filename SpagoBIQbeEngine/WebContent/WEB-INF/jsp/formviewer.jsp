@@ -120,9 +120,14 @@ end DOCTYPE declaration --%>
         	Ext.QuickTips.init();
 
 			var template = <%= qbeEngineInstance.getFormState().getConf().toString() %>;
-        	
-	        var formEnginePanel = new Sbi.formviewer.FormEnginePanel(template, {region: 'center'});
-           	var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
+			var formValues = null;
+			
+			<%if( qbeEngineInstance.getFormState().getFormStateValues()!=null){%>
+				formValues = <%= qbeEngineInstance.getFormState().getFormStateValues().toString() %>;
+			<%}%>
+
+			var formEnginePanel = new Sbi.formviewer.FormEnginePanel(template, {region: 'center'}, formValues);
+	        var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
            	
       	});
       	

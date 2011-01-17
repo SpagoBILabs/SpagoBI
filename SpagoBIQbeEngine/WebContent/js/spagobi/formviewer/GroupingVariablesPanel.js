@@ -137,5 +137,17 @@ Ext.extend(Sbi.formviewer.GroupingVariablesPanel, Ext.form.FormPanel, {
 		}
 		return state;
 	}
+		
+	, setFormState: function(values) {
+		for(var j in values){
+			for (var i = 0; i < this.combos.length; i++) {
+				var aCombo = this.combos[i];
+				if(j == aCombo.name){
+					aCombo.setValue(values[j]);
+					break;
+				}
+			}
+		}
+	}
   	
 });

@@ -31,6 +31,7 @@ import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.qbe.SmartFilterAnalysisState;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -63,6 +64,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
     public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	QbeEngineInstance qbeEngineInstance = null;
     	QbeEngineAnalysisState analysisState;
+    	SmartFilterAnalysisState analysisFormState = null;
     	Locale locale;
     	
     	
@@ -107,6 +109,9 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 				throw serviceException;
 			}
 			logger.debug("Engine instance succesfully created");
+		
+			qbeEngineInstance.setAnalysisMetadata( getAnalysisMetadata() );
+	
 			
 			// initializes form state, in not already initialized (starting a new form definition)
 			FormState formState = qbeEngineInstance.getFormState();
@@ -116,6 +121,16 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 				formState.setConf(new JSONObject());
 				qbeEngineInstance.setFormState(formState);
 			}
+			//Integer subObjectId = getAttributeAsInteger("subobjectId");
+			
+			
+			//get the form values saved (if the user has loaded a subobject)
+			analysisFormState = new SmartFilterAnalysisState();
+			analysisFormState.load( getAnalysisStateRowData() );
+			formState.setFormStateValues(analysisFormState.getFormValues());
+			
+			//save the map id-->field name
+			formState.setIdNameMap();
 			
 			qbeEngineInstance.getEnv().put("TEMPLATE", getTemplateAsSourceBean());
 			String docId = this.getAttributeAsString("formDocumentId");

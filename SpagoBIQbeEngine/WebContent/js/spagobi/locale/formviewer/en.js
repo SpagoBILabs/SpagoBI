@@ -6,6 +6,7 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'DATA BROWSER';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Execute';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save Form';
 
 //===================================================================
 //FILTERS PANEL

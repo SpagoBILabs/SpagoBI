@@ -34,6 +34,9 @@
 <script type="text/javascript" src='../js/spagobi/formviewer/DynamicFiltersPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/DynamicFilter.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/GroupingVariablesPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/qbe/SaveWindow.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formviewer/SaveFormValueSubObject.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/formviewer/DataStorePanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formviewer/ResultsPage.js'/></script>

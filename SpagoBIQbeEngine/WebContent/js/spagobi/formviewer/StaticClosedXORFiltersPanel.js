@@ -83,6 +83,7 @@ Ext.extend(Sbi.formviewer.StaticClosedXORFiltersPanel, Ext.form.FormPanel, {
 		
 		this.items = {
             xtype: 'fieldset',
+            id: aStaticClosedXORFiltersGroup.id,
             title: aStaticClosedXORFiltersGroup.title,
             autoHeight: true,
             autoWidth: true,
@@ -126,5 +127,18 @@ Ext.extend(Sbi.formviewer.StaticClosedXORFiltersPanel, Ext.form.FormPanel, {
 		var state = this.getForm().getValues();
 		return state;
 	}
+
+	, setFormState: function(selectedValue) {
+		if(this.items!=null && this.items.items[0]!=null && this.items.items[0].items!=null && this.items.items[0].items.items!=null){
+			for(var i=0; i<this.items.items[0].items.items.length;i++){
+				if(this.items.items[0].items.items[i].inputValue == selectedValue){
+					this.items.items[0].items.items[i].setValue(true);
+					break;
+				}
+			}
+		}
+	}
+	
+	
 	
 });

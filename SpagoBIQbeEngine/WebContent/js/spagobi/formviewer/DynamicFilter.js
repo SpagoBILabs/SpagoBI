@@ -199,6 +199,11 @@ Ext.extend(Sbi.formviewer.DynamicFilter, Ext.form.FormPanel, {
 		return state;
 	}
 	
+	, setFormState: function(value) {	
+		var field = this.combo.setValue(value.field);
+		this.getForm().setValues(value);
+	}
+	
     , isValid: function(){
         if(this.combo.getValue() === '') {
         	return true;

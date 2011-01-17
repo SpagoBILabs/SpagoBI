@@ -46,7 +46,7 @@
 
 Ext.ns("Sbi.formviewer");
 
-Sbi.formviewer.FormViewerPage = function(template, config) {
+Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 	
 	var defaultSettings = {
 		// set default values here
@@ -55,6 +55,12 @@ Sbi.formviewer.FormViewerPage = function(template, config) {
 		, autoScroll: true
 		//, bodyStyle: 'padding:30px'
 	};
+	
+	this.services = this.services || new Array();	
+	this.services['getMeta'] = this.services['getMeta'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_ANALYSIS_META_ACTION'
+		, baseParams: params
+	});
 	
 	if (Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.formViewerPage) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.formViewerPage);
@@ -69,6 +75,16 @@ Sbi.formviewer.FormViewerPage = function(template, config) {
 	this.toolbar = new Ext.Toolbar({
 		items: [
 		    '->'
+		    , {
+		    	text: LN('sbi.formviewer.formviewerpage.save'),
+				handler: function() {
+		    		this.validateForm(function() {
+		    			this.showSaveWindow();
+		    		}, this);
+		    	},
+				scope: this
+		    },
+		    '|'
 		    , {
 				text: LN('sbi.formviewer.formviewerpage.execute'),
 				handler: function() {
@@ -90,6 +106,10 @@ Sbi.formviewer.FormViewerPage = function(template, config) {
 	// constructor
     Sbi.formviewer.FormViewerPage.superclass.constructor.call(this, c);
 
+    if(formValues!=null){
+    	this.on('render',function(){this.setFormState(formValues)},this);
+    }
+    
 };
 
 Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
@@ -99,7 +119,7 @@ Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
     , staticOpenFiltersPanel: null
     , dynamicFiltersPanel: null
     , groupingVariablesPanel: null
-   
+    , saveFormStateValuesWindow: null
     // private methods
     , init: function(template) {
 		this.items = [];
@@ -172,5 +192,72 @@ Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
 		}
 		return state;
 	}
+
+	//set the saved values in the form
+	, setFormState: function(state) {
+		if (this.staticClosedFiltersPanel !== null && state.staticClosedFilters!=null) {
+			this.staticClosedFiltersPanel.setFormState(state.staticClosedFilters);
+		}
+		if (this.staticOpenFiltersPanel !== null && state.staticOpenFilters!=null) {
+			this.staticOpenFiltersPanel.setFormState(state.staticOpenFilters);
+		}
+		if (this.dynamicFiltersPanel !== null && state.dynamicFilters!=null) {
+			this.dynamicFiltersPanel.setFormState(state.dynamicFilters);
+		}
+		if (this.groupingVariablesPanel !== null && state.groupingVariables!=null) {
+			this.groupingVariablesPanel.setFormState(state.groupingVariables);
+		}
+	}
+	
+	//shows the save window
+    , showSaveWindow: function(){
+        var nameMeta = "";
+        var descriptionMeta = "";
+        var scopeMeta = "";
+        
+	    if(this.saveFormStateValuesWindow == null) {
+	    	this.saveFormStateValuesWindow = new Sbi.widgets.SaveWindow({
+	    		title: LN('sbi.qbe.queryeditor.savequery')
+	    		, descriptionFieldVisible: true
+	    		, scopeFieldVisible: true
+	    	});
+	    	
+		      //getting meta informations 
+	       	Ext.Ajax.request({
+				url:  this.services['getMeta'],
+				callback: function(options, success, response) {
+       				if(success) {
+       					if(response !== undefined && response.responseText !== undefined ) {
+		      			    var content = Ext.util.JSON.decode( response.responseText );
+		      			  
+    		      			if (content !== undefined) {      		      					                   			 
+    		      				nameMeta = content.name;                      
+    		      				descriptionMeta = content.description; 
+    		      				scopeMeta = (content.scope);    		                   
+    		      				this.saveFormStateValuesWindow.setFormState({ name: nameMeta
+                                	    		, description: descriptionMeta
+                                	    		, scope: scopeMeta
+                                	    	  });   				      			
+    		      			} 
+    		      		} else {
+    		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+    		      		}
+       				}
+       			},
+       			scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure		
+	       	});  
+	    	
+
+	    	this.saveFormStateValuesWindow.on('save', this.saveFormValues, this);
+		}
+	    this.saveFormStateValuesWindow.show();
+	}
   	
+  	//saves the form fields values
+    , saveFormValues: function(win, subObjectParams){
+    	var formState = this.getFormState();
+    	Sbi.formviewer.SaveFormValueSubObject.saveSubObject(formState, subObjectParams, this);
+    }
+    
 });
