@@ -129,8 +129,34 @@ Ext.extend(Sbi.formviewer.StaticClosedFiltersPanel, Ext.Panel, {
 				state.onOffFilters[aOnOffFilter.id] = aOnOffFilter.getFormState();
 			}
 		}
-
 		return state;
+	}
+	
+	, setFormState: function(values) {
+		var XORFilters = values.xorFilters;
+		for(var j in XORFilters){
+			if (this.xorFilters !== null) {
+				for (var i = 0; i < this.xorFilters.length; i++) {
+					var aXORFilter = this.xorFilters[i];
+					if(j==aXORFilter.items.items[0].id){
+						aXORFilter.setFormState(XORFilters[j]);
+						break;
+					}
+				}
+			}
+		}
+		var onOffFilters = values.onOffFilters;
+		for(var j in onOffFilters){
+			if (this.onOffFilters !== null) {
+				for (var i = 0; i < this.onOffFilters.length; i++) {
+					var aOnOffFilter = this.onOffFilters[i];
+					if(j==aOnOffFilter.items.items[0].id){
+						aOnOffFilter.setFormState(onOffFilters[j]);
+						break;
+					}
+				}
+			}
+		}
 	}
   	
 });

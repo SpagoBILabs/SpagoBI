@@ -118,6 +118,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 	}
 
 	, createField: function( openFilter ) {
+		
 		var field;
 		
 		var baseConfig = {
@@ -205,6 +206,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 			// state[aCombo.name] = aCombo.getValuesList(); // it does not work
 			// in Ext 3.2.1
 			var concatenatedValues = aCombo.getValue();
+			
 			if (concatenatedValues == '') {
 				state[aCombo.name] = [];
 			} else {
@@ -227,4 +229,16 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 		return errors;
 	}
   	
+	, setFormState: function(staticOpenFilters) {
+		for(var j in staticOpenFilters){
+			for (var i = 0; i < this.combos.length; i++) {
+				var aCombo = this.combos[i];
+				if(aCombo.name==j){
+					aCombo.setValue(staticOpenFilters[j]);
+					break;
+				}
+			}	
+		}
+	}
+	
 });

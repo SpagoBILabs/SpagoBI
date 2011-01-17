@@ -100,6 +100,16 @@ Ext.extend(Sbi.formviewer.DynamicFiltersPanel, Ext.Panel, {
 		return state;
 	}
 
+	, setFormState: function(fields) {
+		for(var j in fields){
+			for(var i = 0; i < this.dynamicFilters.length; i++) {
+				var aDynamicFilter = this.dynamicFilters[i];
+				if(aDynamicFilter.id == j){
+					aDynamicFilter.setFormState(fields[j]);
+				}
+			}
+		}
+	}
 	
 	, getErrors: function() {
 		var errors = new Array();
