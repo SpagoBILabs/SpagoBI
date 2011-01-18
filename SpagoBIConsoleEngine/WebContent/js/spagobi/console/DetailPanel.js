@@ -99,7 +99,6 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
     
     , initDetailPages: function(pagesConfig) {
 		this.pages = new Array();
-		
 		var detailPage = null;		
 		for(var i = 0, l = pagesConfig.length; i < l; i++) {
 		  var conf = pagesConfig[i];
@@ -107,6 +106,13 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 		  conf.storeManager = pagesConfig.storeManager;
 		  detailPage = new Sbi.console.DetailPage(conf);
 		  this.pages.push(detailPage);
+		  //actives only the first tab dataset
+		  var s = conf.storeManager.getStore(detailPage.getStore().getDsLabel());
+		  if (i===0){
+			  s.stopped = false;
+		  }else{
+			  s.stopped = true;
+		  }		  
 		}
 	}
 
@@ -115,8 +121,31 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
       		activeTab: 0
       		, items: this.pages
       	});
-		
-		this.tabPanel.on('tabchange', function( tabPanel, tab ) {
+
+		this.tabPanel.on('tabchange',function (tabPanel, tab) {
+			
+			if (tabPanel !== undefined && tab !== undefined && this.activePage != undefined){
+				for(var i = 0, l = this.pages.length; i < l; i++) {
+					  var tmpPage =  this.pages[i];
+					  var s = tmpPage.getStore();
+					  //loads only the first tab dataset
+					  if (tmpPage.getStore().getDsLabel() === this.activePage.getStore().getDsLabel()){
+						  s.stopped = true;						 
+					  }else if (tmpPage.getStore().getDsLabel() === tab.getStore().getDsLabel()){
+						  s.stopped = false;
+						  
+						  //force refresh data
+						  s.load({
+								params: {}, 
+								callback: function(){this.ready = true;}, 
+								scope: s, 
+								add: false
+							});
+							
+					  }						  
+					}
+				
+			}
 			this.activePage = tab;
 		}, this );
 	}

@@ -120,7 +120,8 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 			}
 		}
 
-		if(this.store.proxy) {
+		//if(this.store.proxy) {
+		if( !this.store.ready &&  this.store.proxy && ! this.store.proxy.getConnection().isLoading()){
 			this.store.load({
 				params: {}, 
 				callback: function(){this.store.ready = true;}, 
@@ -128,6 +129,7 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 				add: false
 			});
 		}
+
 		
 		this.chart = null;
 		if(this.store.ready === true) {
@@ -143,7 +145,6 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 		}
 		
 		this.chart = this.createChart(this.widgetConfig);
-
 		
 		this.items.each( function(item) {
 			this.items.remove(item);
@@ -184,7 +185,7 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 		} else {
 			Sbi.Msg.showError('Chart type [' + chartType + '] not supported by [ChartWidget]');
 		}
-			
+		
 		return chart;
 	}
 	

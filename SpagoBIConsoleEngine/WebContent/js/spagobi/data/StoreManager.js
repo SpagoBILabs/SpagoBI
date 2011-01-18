@@ -117,6 +117,21 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		 
 	}
 	
+	, forceRefresh: function(){
+		for(var i = 0, l = this.stores.length; i < l; i++) {
+			var s = this.getStore(i);
+			if (s !== undefined && s.dsLabel !== undefined && s.dsLabel !== 'testStore' && !s.stopped){
+				s.load({
+					params: s.pagingParams || {},
+					callback: function(){this.ready = true;}, 
+					scope: s, 
+					add: false
+				});
+			}
+		}
+	}
+	
+	
 	//  -- private methods ---------------------------------------------------------
     
     , init: function(c) {
@@ -161,6 +176,7 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		testStore.storeType = 'ext';
 		
 		this.addStore(testStore);
+		
 	}
     
     
