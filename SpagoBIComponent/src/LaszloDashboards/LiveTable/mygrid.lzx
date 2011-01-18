@@ -1,0 +1,850 @@
+	<library>
+
+<class name="mycolumnheader" extends="basecomponent">
+
+ <attribute name="textAlign" type="string" value="center"/>
+ <attribute name="textFontsize" value="10"/>
+ <attribute name="columnDataPath" type="string" value=""/>
+ <attribute name="textSize" value="0"/>
+ <attribute name="bckColor" value="0x1f2264"/>
+ <attribute name="gradient" value="0"/>
+
+<method name="clearArrow">
+
+       this.arrowUP.setVisible(false);
+       this.arrowDOWN.setVisible(false);
+       
+</method>
+
+<method event="onclick">
+	
+   var columnSortpath = this.getAttribute("columnDataPath");
+
+   if (parent.parent.parent.getAttribute("columnSortpath") == columnSortpath){ 
+
+     var cso = parent.parent.parent.getAttribute("columnSortorder");
+
+     if (cso=="ascending"){
+
+       parent.parent.parent.setAttribute("columnSortorder","descending");
+       this.arrowUP.setVisible(false);
+       this.arrowDOWN.setVisible(true);
+
+
+
+     } else {
+
+       parent.parent.parent.setAttribute("columnSortorder","ascending");
+       this.arrowUP.setVisible(true);
+       this.arrowDOWN.setVisible(false);
+     }
+
+   } else { 
+
+       parent.parent.parent.setAttribute("columnSortpath",columnSortpath);
+       parent.parent.parent.setAttribute("columnSortorder","ascending");
+       this.arrowUP.setVisible(true);
+   }
+</method>
+
+
+   <method event="onwidth">
+
+	var PH = this.getHeight();
+	var PW = this.getWidth();
+	
+	var dH = PH*0.25;
+	var dW = PW*0.20;
+	var offsetX = PW*0.10;
+	var offsetY = PH*0.10;
+
+
+	if (PW &gt; (dH+2*offsetX)) {
+
+
+	    arrowUP.setHeight(dH);		
+	    arrowUP.setWidth(arrowUP.getHeight());
+
+	    arrowUP.setY(PH-arrowUP.getHeight()-offsetY);
+	    arrowUP.setX(PW-arrowUP.getWidth()-offsetX);
+
+
+	    arrowDOWN.setHeight(dH);		
+	    arrowDOWN.setWidth(arrowDOWN.getHeight());
+
+	    arrowDOWN.setY(PH-arrowDOWN.getHeight()-offsetY);
+	    arrowDOWN.setX(PW-arrowDOWN.getWidth()-offsetX);
+
+	} else {
+
+	    arrowUP.setWidth(dW);	   
+	    arrowUP.setHeight(arrowUP.getWidth());	
+   
+	    arrowUP.setY(PH-arrowUP.getHeight()-offsetY);
+	    arrowUP.setX(PW-arrowUP.getWidth()-offsetX);
+
+          
+	    arrowDOWN.setWidth(dW);	   
+	    arrowDOWN.setHeight(arrowDOWN.getWidth());	
+   
+	    arrowDOWN.setY(PH-arrowDOWN.getHeight()-offsetY);
+	    arrowDOWN.setX(PW-arrowDOWN.getWidth()-offsetX);
+
+	}
+
+   </method> 
+
+
+ <drawview name="arrowUP" visible="false" >
+ 
+   <method event="oninit">
+
+	var PH = parent.getHeight();
+	var PW = parent.getWidth();
+	
+	var dH = PH*0.25;
+	var dW = PW*0.20;
+	var offsetX = PW*0.10;
+	var offsetY = PH*0.10;
+
+	if (PW &gt; (dH+2*offsetX)){
+
+	    this.setHeight(dH);		
+	    this.setWidth(this.getHeight());
+
+	    this.setY(PH-this.getHeight()-offsetY);
+	    this.setX(PW-this.getWidth()-offsetX);
+
+	} else {
+
+	    this.setWidth(dW);	   
+	    this.setHeight(this.getWidth());	
+   
+	    this.setY(PH-this.getHeight()-offsetY);
+	    this.setX(PW-this.getWidth()-offsetX);
+
+	}
+
+   </method> 
+
+ 
+   <method event="onwidth">
+
+	    this.clear();
+	    this.bringToFront();
+            this.beginPath();
+	    this.moveTo(0,getHeight());
+            this.lineTo(getWidth()/2, 0);
+            this.lineTo(getWidth(), getHeight());
+	    this.lineTo(0,getHeight());
+            this.closePath();
+            
+       	    this.strokeStyle = 0x000000;
+            this.lineWidth = 1;
+            this.stroke();
+
+            this.fillStyle = 0xffffff;
+            this.globalAlpha = 1;
+            this.fill();
+	  
+   </method> 
+
+
+ </drawview> 
+
+
+ <drawview name="arrowDOWN" visible="false">
+
+
+   <method event="oninit">
+
+	var PH = parent.getHeight();
+	var PW = parent.getWidth();
+	
+	var dH = PH*0.25;
+	var dW = PW*0.20;
+	var offsetX = PW*0.10;
+	var offsetY = PH*0.10;
+
+	if (PW &gt; (dH+2*offsetX)){
+
+	    this.setHeight(dH);		
+	    this.setWidth(this.getHeight());
+
+	    this.setY(PH-this.getHeight()-offsetY);
+	    this.setX(PW-this.getWidth()-offsetX);
+
+	} else {
+
+	    this.setWidth(dW);	   
+	    this.setHeight(this.getWidth());	
+   
+	    this.setY(PH-this.getHeight()-offsetY);
+	    this.setX(PW-this.getWidth()-offsetX);
+
+	}
+
+   </method> 
+
+
+
+   <method event="onwidth">
+
+	    this.clear();
+	    this.bringToFront();
+            this.beginPath();
+	    this.moveTo(0,0);
+            this.lineTo(getWidth()/2, getHeight());
+            this.lineTo(getWidth(),0);
+	    this.lineTo(0,0);
+            this.closePath();
+            
+       	    this.strokeStyle = 0x000000;
+            this.lineWidth = 1;
+            this.stroke();
+
+            this.fillStyle = 0xffffff;
+            this.globalAlpha = 1;
+            this.fill();
+	  
+   </method> 
+
+</drawview> 
+
+
+ <drawview name="dw" height = "100%" width = "100%" >
+
+  <method name="setBackground" event="onwidth">
+
+           var color=parent.getAttribute("bckColor");
+  	    this.clear();
+
+             this.moveTo(0, 0);	    
+            this.beginPath();
+
+             this.lineTo(getWidth(), 0);
+             this.lineTo(getWidth(), getHeight());
+             this.lineTo(0, getHeight());
+	     this.lineTo(0, 0);
+            this.closePath();
+
+	if (color!=-1){
+
+            this.fillStyle = parent.getAttribute("bckColor");
+            this.globalAlpha = 1;
+            this.fill();
+    
+            var g = this.createLinearGradient(0,0,this.getWidth(),this.getHeight());
+            this.globalAlpha = 0;
+            g.addColorStop(0, 0x000000);
+            this.globalAlpha = parent.getAttribute("gradient");
+            g.addColorStop(1, 0xffffff);
+            this.fillStyle = g;
+            this.fill();
+
+	}
+
+       	    this.strokeStyle = 0xcdcdcd;
+            this.lineWidth = 1;
+            this.stroke();
+
+
+           var pw = this.getAttribute("width");
+	   var tw = parent.getAttribute("textSize");
+
+
+<![CDATA[
+		
+
+	   if ((tw > pw)&&(pw!=0)) {
+
+	     cellText.setAttribute("width",pw-1);
+	     cellText.setAttribute("align","right");
+
+	   } else {
+	  	
+	     cellText.setAttribute("width",tw);
+	     cellText.setAttribute("align","center");
+
+
+           }
+   ]]>
+
+  </method> 
+
+
+    <text name="cellText"  
+	  resize="true"
+	  fgcolor="white"
+	  align = "center"
+	  valign="middle" 
+	  text="${classroot.text}"
+	  fontstyle="bold"
+	  height="${parent.height/2}"
+	  fontsize="${classroot.textFontsize}">
+
+
+         <method event="onwidth" >
+
+	   this.setHeight(this.getTextHeight()+6);
+
+	  <![CDATA[
+	   if ((parent.parent.getAttribute("textSize")==0)&&(this.getAttribute("width")>4)&&(this.getAttribute("width")!=100)) {
+	    
+		  parent.parent.setAttribute("textSize",this.getAttribute("width"));
+	   }	   
+
+	  ]]>
+           this.init();
+     
+ 	 </method>
+	  
+    </text>
+
+    <view width="10" height="${parent.height}" 
+      x="${parent.width-this.width}" 
+      onmousedown="dragger.apply()"
+      onmouseup="dragger.remove()"
+      cursor="movecursor"
+      >
+	
+     <dragstate name="dragger" drag_axis="x" drag_min_x="20" >
+
+	<method event="onx">
+
+	  var pw = this.getAttribute("x")+this.getWidth();
+
+	if (pw &gt; this.getAttribute("drag_min_x")){
+
+	  parent.parent.setAttribute("width", pw);
+	  	 
+	  parent.parent.parent.resizeColumn(classroot.getAttribute("name"),pw);
+
+	} 
+
+        </method>
+
+
+     </dragstate>
+
+
+    </view>
+
+
+</drawview>
+
+
+
+</class>
+
+
+<class name="mycolumn" extends="basecomponent" >
+
+
+ <attribute name="columnDataPath" type="string" value="name()"/>
+  
+ <attribute name="textAlign" type="string" value="right"/>
+ <attribute name="textMargin" value="5"/>
+ <attribute name="textFontsize" value="32"/>
+
+ <attribute name="columnWidth" value="100"/>
+ <attribute name="cellHeight" value="40"/>
+ <attribute name="cellBorderSize" value="0"/>
+ 
+ <attribute name="rowsSpacing" value="5"/>
+
+ <attribute name="columnSortpath" type="string" value="@xLabel"/>
+ <attribute name="columnSortorder" type="string" value="ascending"/>
+
+ <attribute name="bckColor" value="0x1f2264"/>
+
+ <attribute name="gradientBackground" value="0"/>
+
+ <attribute name="gradientCells" value="0"/>
+
+ <view id="replicationParent"> <!-- questa view non deve subire alcun tipo di resize in constraints o %-->
+
+   <view height="${classroot.cellHeight}" width="${classroot.columnWidth}">
+
+
+
+   <datapath xpath="Dataset:/rows/*" sortpath="${parent.parent.columnSortpath}"  sortorder="${parent.parent.columnSortorder}" spacing="${parent.parent.rowsSpacing}" replication="resize"/>
+  
+  <drawview name="dw"
+	 x = "${classroot.cellBorderSize}" 
+         y = "${classroot.cellBorderSize}"
+	 height = "${parent.height-2*classroot.cellBorderSize}" 
+	 width = "${parent.width-2*classroot.cellBorderSize}" 
+	 onclick = "selector.select(this)" 
+         onmouseover = "selectionMask.setVisible(true)" 
+	 onmouseout = "selectionMask.setVisible(false)" 
+	 >
+
+   <method event="onwidth">
+
+	    var color = parent.parent.parent.getAttribute("bckColor");
+ 
+
+	    this.clear();
+	    this.moveTo(0, 0);
+            this.beginPath();
+           
+            this.lineTo(getWidth()-1, 0);
+            this.lineTo(getWidth()-1, getHeight()-1);
+            this.lineTo(0, getHeight()-1);
+	    this.lineTo(0, 0);
+            this.closePath();
+
+	if (color!=-1){
+
+	    this.fillStyle = color;
+            this.globalAlpha = 1; 
+            this.fill(); 
+
+            var g = this.createLinearGradient(0,0,this.getWidth(),this.getHeight());
+            this.globalAlpha = 0;
+            g.addColorStop(0, 0x000000);
+            this.globalAlpha = parent.parent.parent.getAttribute("gradient");
+            g.addColorStop(1, 0xffffff);
+            this.fillStyle = g;
+            this.fill();
+
+	}
+       	    this.strokeStyle = 0x000000;
+            this.lineWidth = 1;
+            this.stroke();
+
+	    
+
+  </method> 
+
+
+
+	<text id="cellText"  
+	  fontsize="${classroot.textFontsize}"
+	  resize="true"
+	  align = "center"
+	  fontstyle="bold"
+	  valign="middle" 	
+	  datapath="${classroot.columnDataPath}"
+	  height="${parent.height/2}"
+	  oninit="this.setXScroll(-1),this.setYScroll(-1)"
+		  >
+
+         <attribute name="parentwidth" value="${parent.width}"/>
+	 <method event="onwidth" >
+	
+           this.setHeight(this.getTextHeight()+6);
+	   
+	   var pw = parent.getAttribute("width");
+	   var tw = this.getAttribute("width");
+	
+	<![CDATA[
+	   if ((tw > pw)&&(pw!=0)) {
+
+	     this.setAttribute("width",pw-1);
+	     this.setAttribute("align","right");
+
+	   } else {
+
+
+           }
+
+   	]]>
+
+           this.init();
+     
+ 	 </method>
+
+
+ 	 <method event="onparentwidth">
+
+	   var pw = this.getAttribute("parentwidth");
+	   var tw = this.getAttribute("width");
+	
+	<![CDATA[
+	   if ((tw > pw)&&(pw!=0)) {
+
+	     this.setAttribute("width",pw-1);
+	     this.setAttribute("align","right");
+
+	   } else {
+
+
+           }
+
+   	]]>
+           this.init();
+        </method>
+
+	</text>
+
+	
+
+
+	  
+    <drawview name="selectionMask" width="100%" height="100%" bgcolor="0xdedff1" opacity="0.5" visible="false"/>
+
+</drawview>
+
+    
+ 
+  </view> 
+
+ </view> 
+
+ <!-- METHODS --> 
+
+
+
+
+
+
+ </class>
+   
+
+ <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx --> 
+
+
+<class name="mygrid" extends="basecomponent">
+
+ <!-- GRID ATTRIBUTES -->
+<attribute name="gridBodyMargin" value="0"/>
+
+<attribute name="gridBodyColumnsSpacing" value="0"/>
+
+<attribute name="gridBodyRowsSpacing" value="0"/>
+
+
+<attribute name="columnWidth" value="50"/>
+
+<attribute name="columnsNumber" value="0"/>
+
+<attribute name="columnsHeaderHeight" value="0"/>
+
+<attribute name="columnsHeaderMargin" value="0"/>
+
+
+<attribute name="columnsHeaderBGcolor" value="0x1f2264"/>
+
+<attribute name="columnsHeaderXColBGcolor" value="0x1f2264"/>
+
+<attribute name="columnsBodyXColBGcolor" value="0xffbbff"/>
+
+<attribute name="columnsBodyBGcolor" value="0xffffff"/>
+
+<attribute name="headerBGcolor" value="0xffffff"/>
+
+<attribute name="bodyBGcolor" value="0xffffff"/>
+
+<attribute name="gradient" value="0"/>
+
+
+<attribute name="resizeColumsWitdhTo" type="string" value="columns"/>
+
+<attribute name="rowsNumber" value="3"/>
+
+<attribute name="columnSortpath" type="string" value="@line1"/>
+
+<attribute name="columnSortorder" type="string" value="ascending"/>
+
+
+<attribute name="cellFontSize" value="30"/>
+
+<attribute name="headerFontSize" value="20"/>
+
+<attribute name="scrollbarH" value="true"/>
+
+<attribute name="scrollbarV" value="true"/>
+
+ <simplelayout axis="y"/>
+
+ <!-- BODY //////////////////////////////////////////////////////////////////////////////////////////////// -->
+	
+<view clip="true" width="100%" height="100%" id="column">
+
+<attribute name="xScroll" value="0"/>
+<attribute name="yScroll" value="0"/>
+
+ <simplelayout axis="y"/>
+
+ <drawview clip="true" x="${clipper.x}" width="${parent.width}" 
+	   height="${classroot.columnsHeaderHeight*parent.parent.height/100}" 
+	   id="columnsHeader">
+
+     <method event="oninit">
+	var totalWidth=0;
+	
+     </method> 
+
+     <method name="resizeColumn" args="headerID,width">
+
+	var totalWidth=0;
+	
+	for (var i in clipper.subviews){
+		
+	  if (clipper.subviews[i].getAttribute("name") == headerID) {
+	
+	     clipper.subviews[i].setAttribute("columnWidth",width);
+	    
+	  }
+	
+	totalWidth=totalWidth+clipper.subviews[i].getAttribute("columnWidth");
+
+
+ 	}
+	
+	if (totalWidth &gt; parent.getWidth()) {
+
+	  this.setWidth(totalWidth);	 
+
+	}
+
+	
+	
+     </method> 
+
+    <simplelayout axis="x" spacing="${classroot.gridBodyColumnsSpacing}"/>
+
+    <attribute name="bckColor" value="${parent.parent.headerBGcolor}"/>
+     <attribute name="gradientOpacity" value="${parent.parent.gradientBackground}"/>
+     <method event="ongradientOpacity">
+	this.setBackground();
+     </method>
+
+     <method name="setBackground" event="onbckColor">
+	  
+	    this.clear();
+   	    this.beginPath();
+            this.lineTo(getWidth(), 0);
+            this.lineTo(getWidth(), getHeight());
+            this.lineTo(0, getHeight());
+	    this.lineTo(0, 0);
+            this.closePath();
+
+  	    this.fillStyle =  this.getAttribute("bckColor");
+            this.globalAlpha = 1;
+            this.fill();
+           
+            var g = this.createLinearGradient(0,0,getWidth(), getHeight())
+            this.globalAlpha = 0;
+            g.addColorStop(0, 0x000000);
+            this.globalAlpha = this.getAttribute("gradientOpacity");
+            g.addColorStop(1, 0xffffff);
+            this.fillStyle = g;
+            this.fill();         
+
+            this.strokeStyle = 0x000000;
+            this.lineWidth = 0;
+            this.stroke();
+
+
+    </method>
+
+
+ </drawview>
+
+ <drawview clip="true" width="${parent.width}" height="${parent.height-classroot.columnsHeaderHeight*parent.height/100}" id="columnsBody" >
+
+  <view clip="true"  id="clipper" y="${column.yScroll}" x="${column.xScroll}">
+
+    <simplelayout axis="x" spacing="${classroot.gridBodyColumnsSpacing}"/>
+
+  </view> 
+
+    <attribute name="bckColor" value="${parent.parent.bodyBGcolor}"/>
+    <attribute name="gradientOpacity" value="${parent.parent.gradientBackground}"/>
+     <method event="ongradientOpacity">
+
+	this.setBackground();
+
+     </method>
+
+     <method name="setBackground" event="onbckColor">
+
+            this.clear();
+	    this.beginPath();
+            this.lineTo(getWidth(), 0);
+            this.lineTo(getWidth(), getHeight());
+            this.lineTo(0, getHeight());
+	    this.lineTo(0, 0);
+            this.closePath();
+
+            this.fillStyle = this.getAttribute("bckColor");
+            this.globalAlpha = 1;
+            this.fill();
+            
+            var g = this.createLinearGradient(0,0,getWidth(), getHeight())
+            this.globalAlpha = 0;
+            g.addColorStop(0, 0x000000);
+            this.globalAlpha = this.getAttribute("gradientOpacity");
+            g.addColorStop(1, 0xffffff);
+            this.fillStyle = g;
+            this.fill();
+
+            this.strokeStyle = 0x000000;
+            this.lineWidth = 2;
+            this.stroke();
+
+
+    </method>
+
+  <vscrollbar id="sbV" usemousewheel="true" visible="false">  
+	<method event="onscrollable">
+	 var showSBH = parent.parent.parent.getAttribute("scrollbarV");
+	  if (showSBH =="true") {
+		   if (scrollable) this.setVisible(true);
+		   else this.setVisible(false);
+	  }
+
+        </method>
+
+  </vscrollbar>
+
+  <hscrollbar id="sbH" visible="false">
+
+	<method event="onscrollable">
+	 var showSBV = parent.parent.parent.getAttribute("scrollbarH");
+	 if (showSBV =="true") {
+	   if (scrollable) this.setVisible(true);
+	   else this.setVisible(false);
+	 }
+        </method>
+  </hscrollbar> 
+
+ </drawview>
+
+  
+
+</view>
+
+
+
+ <!-- METHODS -->
+
+
+<method name="columnAdd" args="ID,columnName,columnDataPath">
+
+
+if (this.getAttribute("resizeColumsWitdhTo") == "columns") {
+
+ var columnWidthLocal = columnsBody.getAttribute("width")/this.getAttribute("columnsNumber");
+ 
+} else {
+
+ var columnWidthLocal = 100;
+
+}
+
+var cHdH = columnsHeader.height-2*this.getAttribute("columnsHeaderMargin");
+var cHdM = this.getAttribute("columnsHeaderMargin");
+var gbrs = this.getAttribute("gridBodyRowsSpacing");
+var clH = (columnsBody.getAttribute("height")-gbrs*(this.getAttribute("rowsNumber")-1))/this.getAttribute("rowsNumber");
+
+var hfs = this.getAttribute("headerFontSize");
+var cfs = this.getAttribute("cellFontSize");
+
+var color; 
+
+var gradOpac = this.getAttribute("gradientCells");
+
+if (ID==1) {
+
+      color = this.getAttribute("columnsHeaderXColBGcolor");
+
+} else {
+
+      color = this.getAttribute("columnsHeaderBGcolor");
+
+}
+
+
+new mycolumnheader(columnsHeader, {name:"C"+ID,
+				  text:columnName, 
+				  columnDataPath:columnDataPath,
+			          height:cHdH, 
+			          width:columnWidthLocal,  
+				  y:cHdM,
+				  textFontsize:hfs,
+				  bckColor:color,
+				  gradient:gradOpac
+			          });
+if (ID==1) {
+
+      color = this.getAttribute("columnsBodyXColBGcolor");
+
+} else {
+
+      color = this.getAttribute("columnsBodyBGcolor");
+
+}
+
+var my = new mycolumn(clipper,{name:"C"+ID,
+				text:columnName, 
+				columnDataPath:columnDataPath,
+				columnWidth:columnWidthLocal,
+				textFontsize:cfs,
+				cellHeight:clH,
+				rowsSpacing:gbrs,
+				columnSortpath:"${parent.columnSortpath}",
+				bckColor:color,
+				gradient:gradOpac
+  			       });
+
+
+	
+
+
+ clipper.setHeight(my.getHeight()+(this.getAttribute("rowsNumber")-1)*gbrs);
+
+
+</method>
+
+
+
+<method name="columnDelete" args="columnName">
+
+
+ if (this.getAttribute("columnsNumber")==0){
+
+   return;
+
+ } else {
+  
+  clipper[columnName].destroy();
+
+  this.setAttribute("columnsNumber", (this.getAttribute("columnsNumber")-1)); 
+ }
+
+
+</method>
+
+
+<method event="oncolumnSortorder" >
+
+
+ var csp = this.getAttribute("columnSortpath");
+ for (var i in clipper.subviews){
+	
+  clipper.subviews[i].setAttribute("columnSortpath",csp);
+  clipper.subviews[i].setAttribute("columnSortorder",this.getAttribute("columnSortorder"));
+	
+ }
+
+ for (var i in columnsHeader.subviews){
+	
+  if (columnsHeader.subviews[i].getAttribute("columnSortpath")!=csp) {
+	
+	columnsHeader.subviews[i].clearArrow();
+
+  }
+	
+ }
+
+
+
+
+</method>
+
+ </class>
+</library>

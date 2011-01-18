@@ -1,0 +1,180 @@
+<canvas debug="false" width="100%" height="100%" > 
+
+<include href="mygrid.lzx"/>
+
+ <resource name="movecursor" src="HCursor.swf"/>
+	
+<silverstyle id="silvercolors"/>
+<greenstyle id="greencolors"/>
+<bluestyle id="bluecolors"/>
+<goldstyle id="goldcolors"/>
+<whitestyle id="whitecolors"/>
+<purplestyle id="purplecolors"/>
+
+
+<dataset type="http" name="Dataset" src=""/> 
+
+
+<script>
+
+	var displayWidth = typeof(global.paramWidth)!="undefined" ?parseInt(global.paramWidth):300;  
+  
+	var displayHeight = typeof(global.paramHeight)!="undefined" ?parseInt(global.paramHeight):180;
+
+	var xLabelAttributeName = typeof(global.xColName)!="undefined" ? global.xColName:"xLabel";
+	
+	var refresh = typeof(global.refreshRate)!="undefined" ? parseInt(global.refreshRate):15000;
+
+	var rows = typeof(global.rowsNumber)!="undefined" ?parseInt(global.rowsNumber):5;
+	var rowsInterSpacing = typeof(global.rowsSpacing)!="undefined" ?parseInt(global.rowsSpacing):0;
+
+	var columnsHeaderHeight = typeof(global.headerHeight)!="undefined" ?parseInt(global.headerHeight):20;   
+
+	var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl:"http://localhost:8080/openlaszlo/OpenLaszloEngineDash";  
+
+	var headerBGcolor = typeof(global.headBGColor)!="undefined" ? parseInt(global.headBGColor):"0xffffff";
+
+	var columnsHeaderBGcolor = typeof(global.colHeadBGColor)!="undefined" ? parseInt(global.colHeadBGColor):"0x140f7e";  
+	
+	var columnsHeaderXColBGcolor = typeof(global.xColHeadBGColor)!="undefined" ? parseInt(global.xColHeadBGColor):"0x140f7e";  
+
+	var columnsBodyXColBGcolor= typeof(global.xColBGColor)!="undefined" ? parseInt(global.xColBGColor):"0xf2f4c5";  
+
+	var columnsBodyBGcolor= typeof(global.colBGColor)!="undefined" ? parseInt(global.colBGColor):"-1";  
+
+	var bodyBGcolor= typeof(global.BGColor)!="undefined" ? parseInt(global.BGColor):"0xffffff";  
+
+	var gradientBackground= typeof(global.gradOpacityBck)!="undefined" ? parseFloat(global.gradOpacityBck):0.5;  
+
+	var gradientCells= typeof(global.gradOpacityCell)!="undefined" ? parseFloat(global.gradOpacityCell):0.3;  
+
+	var scrollbarV = typeof(global.vertScrollbar)!="undefined" ? global.vertScrollbar:"true";
+
+	var scrollbarH = typeof(global.horizScrollbar)!="undefined" ? global.horizScrollbar:"true";  
+
+	var cellFontSize= typeof(global.fontSizeCell)!="undefined" ? parseInt(global.fontSizeCell):12;  
+	
+	var headerFontSize= typeof(global.fontSizeHeader)!="undefined" ? parseInt(global.fontSizeHeader):12;  
+
+
+  Dataset.setSrc(dataurlParam);
+
+  var isSetup=true;
+  var columnsNumber = 0;
+  var count = 0;
+
+</script>
+
+
+
+
+<view clip="true" id = "display">
+
+   <mygrid id="datagrid" x="5" y="5" width="${parent.width-10}" height="${parent.height-10}"/>  
+
+
+<method event="oninit">
+
+  this.setWidth(displayWidth);
+  this.setHeight(displayHeight);
+  whitecolors.setAttribute("isdefault",true);
+
+  datagrid.setAttribute("rowsNumber",rows);  
+  datagrid.setAttribute("gridBodyRowsSpacing",rowsInterSpacing);  
+
+  datagrid.setAttribute("columnsHeaderHeight",columnsHeaderHeight);  
+
+  datagrid.setAttribute("headerBGcolor",headerBGcolor);  
+  datagrid.setAttribute("columnsHeaderBGcolor",columnsHeaderBGcolor);  
+  datagrid.setAttribute("columnsHeaderXColBGcolor",columnsHeaderXColBGcolor);  
+
+  datagrid.setAttribute("columnsBodyXColBGcolor",columnsBodyXColBGcolor);  
+  datagrid.setAttribute("columnsBodyBGcolor",columnsBodyBGcolor);  
+  datagrid.setAttribute("bodyBGcolor",bodyBGcolor); 
+
+  datagrid.setAttribute("gradientCells",gradientCells); 
+  datagrid.setAttribute("gradientBackground",gradientBackground); 
+
+  datagrid.setAttribute("scrollbarH",scrollbarH);
+
+  datagrid.setAttribute("scrollbarV",scrollbarV); 
+
+  datagrid.setAttribute("cellFontSize",cellFontSize); 
+  datagrid.setAttribute("headerFontSize",headerFontSize); 
+
+
+
+</method> 
+ 
+
+ 
+
+
+</view>
+
+
+<datapointer name="dp" xpath="Dataset:/rows/row[1]">
+ <method event="ondata">
+
+
+  if (isSetup){
+
+   var attributesMap = this.getNodeAttributes();
+   var ID = 1;
+
+   for (var attributeName in attributesMap){  
+    
+     
+     columnsNumber = columnsNumber + 1; 
+	
+   }
+
+    datagrid.setAttribute("columnsNumber",columnsNumber);
+    
+
+   
+   if (xLabelAttributeName!="undefined"){   
+
+      
+      datagrid.columnAdd(ID,xLabelAttributeName,"@"+xLabelAttributeName);
+		
+   } 
+ 
+ 
+   for (var attributeName in attributesMap){  
+    ID = ID+1;
+
+    if (attributeName != xLabelAttributeName){
+     
+      datagrid.columnAdd(ID,attributeName ,"@"+attributeName );
+		
+    } 
+ 
+   }
+
+  isSetup=false;
+ }
+</method>
+
+</datapointer>
+   
+   
+
+
+
+
+<method name="timer">
+
+ this.fadeDelegate = new LzDelegate( this, "start" );
+  LzTimer.addTimer( this.fadeDelegate, refresh );
+</method>
+
+
+<method name="start" event="oninit">
+
+ Dataset.doRequest();
+ this.timer();
+ 
+</method>
+
+</canvas>

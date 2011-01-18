@@ -1,0 +1,346 @@
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>SpagoBI - Table Dashboard</title>
+
+	<style>
+		body,td,a,p,.h{font-family:arial,sans-serif;
+				   font-size:12; }
+		p {text-align: justify}
+
+	</style>
+	<meta>
+</head>
+
+<body bgcolor="#ffffff" text="#000000">
+ 
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+ <tr>
+  <td colspan="3">
+   <font size="+1" >SpagoBI - Table<font>
+  </td>
+ </tr>
+
+ <tr>
+  <td colspan="3" align="center">
+   <img src="table.jpg">
+  </td>
+ </tr>
+
+
+
+
+ <tr valign="center">
+  <td align="center" width="10%">
+    <font size="+1" >
+    <b>Parameters</b>
+    </font>
+  </td>
+  <td align="center" width="50%">
+   <font size="+1" >
+    <b>Description</b>
+   </font>
+  </td>
+  <td align="center" width="20%">
+   <font size="+1" >
+    <b>Default</b>
+   </font>
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramWidth</b>
+  </td>
+  <td>
+    Set the table width
+   </td>
+  <td align="center" >
+    300
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>paramHeight</b>
+  </td>
+  <td>
+    Set the table height
+  </td>
+  <td align="center" >
+   180    
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>xColName</b>
+  </td>
+  <td>
+    Name of the label that identifies a special column from the dataset. This will be the first column on the left and it will be possible to assign it a different background color.
+  </td>
+  <td align="center" >
+    xLabel
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>refreshRate</b>
+  </td>
+  <td>
+    Set the delay between two consecutive data requests to server
+  </td>
+  <td align="center" >
+    15000
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>rowsNumber</b>
+  </td>
+  <td>
+    Set the number of visible rows on the table
+  </td>
+  <td align="center" >
+    5
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>rowsSpacing</b>
+  </td>
+  <td>
+    Set the space between two rows
+  </td>
+  <td align="center" >
+    0
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>headerHeight</b>
+  </td>
+  <td>
+    Select the percentage of table for header 
+  </td>
+  <td align="center" >
+    20
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>dataurl</b>
+  </td>
+  <td>
+    Specify the URL of the servlet that returns data
+  </td>
+  <td align="center" >
+    http://localhost:8080/openlaszlo/OpenLaszloEngineDash
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>xColHeadBGcolor</b>
+  </td>
+  <td>
+    Set the background color for the header of the column identified by <b>xColName</b>. If -1, this cell will be transparent
+  </td>
+  <td align="center" >
+    0x140f7e
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td>
+     <b>colHeadBGcolor</b>
+  </td>
+  <td>
+    Set the background color for the header of all the columns but the one identified by <b>xColName</b>. If -1, these cells will be transparent
+  </td>
+  <td align="center" >
+    0x140f7e
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>headBGColor</b>
+  </td>
+  <td>
+    Set the background color for header. This will be visible if <b>colHeader</b> or <b>xColHeader</b> are -1
+  </td>
+  <td align="center" >
+    0xffffff
+  </td>
+ </tr>
+
+ <tr valign="center">
+   <td align="center">
+     <b>xColBGColor</b>
+  </td>
+  <td>
+    Set the background color for the cells of the column identified by <b>xColName</b>. If -1, this cell will be transparent
+  </td>
+  <td align="center" >
+    0xf2f4c5
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>colBGColor</b>
+  </td>
+  <td>
+    Set the background color for the cells of all the columns but the one identified by <b>xColName</b>. If -1, these cells will be transparent
+  </td>
+  <td align="center" >
+    -1
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>BGColor</b>
+  </td>
+   <td>
+    Set the background color for cells. This will be visible if <b>colBGColor</b> or <b>xColBGColor</b> are -1
+  </td>
+  <td align="center" >
+    0xffffff
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>gradOpacityBck</b>
+  </td>
+  <td>
+    Set the opacity parameter for background gradients
+  </td>
+  <td align="center" >
+    0.5
+  </td>
+ </tr>
+
+<tr valign="center">
+  <td align="center">
+     <b>gradOpacityCell</b>
+  </td>
+  <td>
+    Set the opacity parameter for cells gradients
+  </td>
+  <td align="center" >
+    0.3
+  </td>
+ </tr>
+
+
+ <tr valign="center">
+  <td align="center">
+     <b>vertScrollBar</b>
+  </td>
+  <td>
+    Set the vertical ScrollBar visible if required
+  </td>
+  <td align="center" >
+    true
+  </td>
+ </tr>
+
+ <tr valign="center">
+  <td align="center">
+     <b>horizScrollBar</b>
+  </td>
+  <td>
+    Set the horizontal ScrollBar visible if required
+  </td>
+  <td align="center" >
+    true
+  </td>
+ </tr>
+ 
+ <tr valign="center">
+  <td align="center">
+     <b>fontSizeCell</b>
+  </td>
+   <td>
+    Set the fontsize for cells
+  </td>
+  <td align="center" >
+    12
+  </td>
+ </tr>
+
+ <tr valign="center">
+   <td align="center">
+     <b>fontSizeHeader</b>
+  </td>
+  <td>
+    Set the fontsize for headers
+  </td>
+  <td align="center" >
+    12
+  </td>
+ </tr>
+
+</table>
+
+<table cellpadding="0" cellspacing="10" border="0" width="100%">
+
+  <th colspan="2">
+    How to feed this movie
+  </th>
+
+  <tr>
+    <td width="10%">
+      <b>Using a script</b>
+    </td>
+    <td>
+      The script must return a String like: &quot;&lt;rows&gt;&lt;row <i>{<b>xColName</b> parameter}</i>='<i>{literal value}</i>' <i>{cell 1 label}</i>='<i>{numeric value}</i>' <i>{cell 2 label}</i>='<i>{numeric value}</i>' ... /&gt;&lt;/rows&gt;&quot;.<br/>
+      Script example (assuming that the <b>xColName</b> parameter is &quot;Store&quot;):<br/>
+      <em>
+        StringBuffer buf = new StringBuffer();<br/>
+	buf.append('&lt;rows&gt;');<br/>
+	buf.append('&lt;row Store=\'Store1\'  Sales=\' ');<br/>
+	float perm1 =</em> ... [numeric value calculation]<em><br/>
+	buf.append(perm1);<br/>
+	buf.append('\' /&gt;');<br/>
+	buf.append('&lt;row Store=\'Store2\'  Sales=\' ');<br/>
+	float perm2 =</em> ... [numeric value calculation]<em><br/>
+	buf.append(perm2);<br/>
+	buf.append('\' /&gt;');<br/>
+	buf.append('&lt;row Store=\'Store3\'  Sales=\' ');<br/>
+	float perm3 =</em> ... [numeric value calculation]<em><br/>
+	buf.append(perm3);<br/>
+	buf.append('\' /&gt;');<br/>
+	buf.append('&lt;/rows&gt;');<br/>
+	return buf;
+      </em>
+    </td>    
+  </tr>
+  
+  <tr>
+    <td>
+      <b>Using a query</b>
+    </td>
+    <td>
+      The query can return many rows. Each row must have an attribute with the key represented by the <b>xColName</b> parameter and with a literal value (this will be the label of the table row dataset and it will appear in the first column) and other attributes: for each row attribute, the key is considered as the column label, the value (that must be a numeric value) is considered as the current cell value:<br/>
+      select <i>{something representing the row dataset}</i> as <i>{<b>xColName</b> parameter}</i>, <i>{something 1}</i>, <i>{something 2}</i> ... from <i>{table}</i> .... <br/>
+      Query example (assuming that the <b>xColName</b> parameter is &quot;Store&quot;):<br/>
+      <em>
+      select store_name as Store, store_sales as Sales from stores where Store in ('Store1','Store2','Store3')
+      </em>
+    </td>    
+  </tr>
+  
+</table>
+
+</body>
+</html>

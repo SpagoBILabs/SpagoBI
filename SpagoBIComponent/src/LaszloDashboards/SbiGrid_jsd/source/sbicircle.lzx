@@ -1,0 +1,104 @@
+
+<library>
+
+      
+    <class name="sbicircle" extends="basecomponent">
+        
+        <attribute name="circlecolor" value="green"/>
+        <attribute name="r" value="20"/>
+        <attribute name="tooltiptext" type="expression" value="${null}" />
+        <attribute name="drawarea" type="expression" value="${new LzDrawView()}"/>
+        <attribute name="tooltip" type="expression" value="${null}"/>
+        <attribute name="tooltipborder" type="expression" value="${null}"/>
+        <attribute name="backgroundColorTooltip" value="0xf8e496" />
+               
+        <view name="drawareawrapper" onmouseover="this.parent.showTooltip()"  onmouseout="this.parent.hideTooltip()" />
+
+        <method name="draw" args="celldrawview">
+            <![CDATA[
+            drawarea.clear();
+            drawarea.beginPath();
+            drawarea.moveTo(x+r, y);
+            var a = Math.tan(22.5 * Math.PI/180);
+            for(var angle = 45; angle<=360; angle += 45) {
+                var endx = r*Math.cos(angle*Math.PI/180);
+                var endy = r*Math.sin(angle*Math.PI/180);
+                var cx = endx + r*a*Math.cos((angle-90)*Math.PI/180);
+                var cy = endy + r*a*Math.sin((angle-90)*Math.PI/180);
+                drawarea.quadraticCurveTo(cx+x, cy+y, endx+x, endy+y);
+            }
+            var g = drawarea.createRadialGradient(x-r, y-r, 8, x+(2*r), y+(2*r), 0)
+            drawarea.globalAlpha = 1;
+            g.addColorStop(0, 0xffffff);
+            drawarea.globalAlpha = 1;
+            g.addColorStop(1, this.circlecolor);
+            drawarea.fillStyle = g;
+            drawarea.fill();
+            drawarea.globalAlpha = 1;
+            drawarea.linewidth= 1;
+            drawarea.stroke();
+            drawarea.sendInFrontOf(celldrawview)
+            
+            
+            this.drawareawrapper.setX(-r);
+            this.drawareawrapper.setY(-r);
+            this.drawareawrapper.setWidth(r*2);
+            this.drawareawrapper.setHeight(r*2);
+            
+            ]]>
+        </method>
+
+        <method name="clear">
+            <![CDATA[ 
+            drawarea.clear();
+            ]]>
+        </method>
+        
+        
+        <method name="showTooltip">
+            <![CDATA[ 
+            if( (this.tooltiptext!= null) & (this.tooltiptext != "") ) {
+                var tooltipview = new LzText();
+                tooltipview.clearText();
+                tooltipview.setText(this.tooltiptext);
+                lengthtooltip = tooltipview.getTextWidth() + 10;
+                tooltipview.setWidth(lengthtooltip);
+                tooltipview.setHeight(20);
+                tooltipview.setY(this.y - (r/2));
+                tooltipview.setBGColor(parseInt(backgroundColorTooltip));
+                positionx = this.x + this.r + 10;
+                if( (positionx + lengthtooltip) > canvas.dashboardArea.getWidth() ) {
+                  positionx = this.x - this.r - 10 - lengthtooltip;
+                }
+                tooltipview.setX(positionx);
+                tooltipview.setVisible(true);
+                
+                var bordertooltipview = new LzView();
+                bordertooltipview.setWidth(tooltipview.getWidth() + 2);
+                bordertooltipview.setHeight(tooltipview.getHeight() + 2);
+                bordertooltipview.setY(tooltipview.y - 1);
+                bordertooltipview.setX(tooltipview.x - 1);
+                bordertooltipview.setVisible(true);
+                bordertooltipview.setBGColor(parseInt("0"));
+                
+                tooltipview.sendInFrontOf(bordertooltipview)
+                
+                this.tooltip = tooltipview;
+                this.tooltipborder = bordertooltipview;
+            }
+            ]]>
+        </method>
+        
+        <method name="hideTooltip">
+            <![CDATA[ 
+            if(this.tooltip!=null) {
+              this.tooltip.setVisible(false);
+              this.tooltipborder.setVisible(false);
+            }
+            ]]>
+        </method>
+
+    </class>
+
+
+</library>

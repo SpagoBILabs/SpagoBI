@@ -1,0 +1,187 @@
+
+
+
+<library>
+       
+    <include href="sbicircle.lzx"/>   
+    <include href="sbitextlink.lzx"/>  
+       
+    <class name="sbicell" extends="basecomponent">
+        
+        
+        <attribute name="hasupperborder" value="true"/>
+        <attribute name="hasbottomborder" value="true"/>
+        <attribute name="containstext" value="true"/>
+        <attribute name="containslight" value="false"/>
+        <attribute name="url" type="string" value="0"/>
+        <attribute name="celltext" value="0"/>
+        <attribute name="lightcolor" value="green"/>
+        <attribute name="lightray" value="30"/>
+        <attribute name="drawarea" value="${new LzDrawView()}"/>
+        <attribute name="circle" value="${new sbicircle()}"/>
+        <attribute name="textview" value="${new LzText()}"/>
+        <attribute name="textlink" value="${new sbitextlink()}"/>
+        <attribute name="parentcolumn" />
+        <attribute name="bold" value="false" />
+        <attribute name="textsize" value="11" />
+        <attribute name="textcolor" type="string" value="#000000" />
+        <attribute name="backgroundColor" type="string" value="0" />
+        <attribute name="colorLinkOver" value="yellow" />
+        <attribute name="tooltiptext" type="expression" value="${null}" />
+        <attribute name="backgroundColorTooltip" value="0xf8e496" />
+        
+
+        
+         <method name="draw">
+            <![CDATA[ 
+            drawarea.setAttribute("clip", "true");
+            drawarea.setAttribute("x", this.x);
+            drawarea.setAttribute("y", this.y);
+            drawarea.setAttribute("height", this.height);
+            drawarea.setAttribute("width", this.width);            
+           
+             // FILL THE BACKGROUND 
+            if(this.backgroundColor!="0") {
+                drawarea.rect(1, 1, this.width-1, this.height-1);
+                drawarea.fillStyle = this.backgroundColor;
+                drawarea.fill();
+            }
+           
+            if(this.hasupperborder == "true") {
+                drawarea.moveTo(0, 0);
+                drawarea.lineTo(this.width, 0);      
+            } 
+            if(this.hasbottomborder == "true") {
+                drawarea.moveTo(0, this.height - 1);
+                drawarea.lineTo(this.width, this.height - 1);      
+            } 
+            drawarea.strokeStyle = 0xdddddd;
+            drawarea.stroke();
+            
+            if(this.containstext == "true") {
+                var textPre = "";
+                var textPost = "";
+                var textPre = "<font color=\""+this.textcolor+"\" size=\""+this.textsize+"\" >";
+                var textPost = "";
+                if(this.bold) {
+                    textPre = textPre + "<b>";
+                    textPost = textPost + "</b>";
+                }
+                textPost = textPost + "</font>";
+
+
+
+                /* ***** PREVIOUS CODE (WITHOUT MULTILINE)
+                textview.setText(textPre + this.celltext + textPost);
+                var widthtextview = textview.getTextWidth();
+                var heighttextview = textview.getTextHeight();
+                var xpositiontext = (drawarea.getAttribute("width")-widthtextview) / 2;
+                var ypositiontext = (drawarea.getAttribute("height")-heighttextview) / 2;
+                textview.setAttribute("x", drawarea.getAttribute("x") + xpositiontext );
+                textview.setAttribute("y", drawarea.getAttribute("y") + ypositiontext );
+                textview.setAttribute("font", "Arial" );
+                if(this.url != "0") { 
+                  detaillink.setAttribute("x", drawarea.getAttribute("x") + xpositiontext + textview.getTextWidth() + 10);
+                  detaillink.setAttribute("y", drawarea.getAttribute("y") + ypositiontext + 5 );
+                  detaillink.setAttribute("url", this.url);
+                  detaillink.draw(drawarea);
+                }
+                ***** PREVIOUS CODE (WITHOUT MULTILINE)  */
+                
+                
+                
+               
+                
+                var tmptext = new LzText();
+                tmptext.setAttribute("font", "Arial" );
+                tmptext.setText(textPre + this.celltext + textPost);
+                var widthText = tmptext.getTextWidth();
+                var heightText = tmptext.getTextHeight();
+                tmptext.clearText();  
+                var posxlink = 0;   
+                var posylink = 0;         
+               
+                if(widthText < drawarea.getAttribute("width") ) {
+                    if(this.url == "0") { 
+                        textview.setAttribute("font", "Arial" );
+                        textview.setText(textPre + this.celltext + textPost);
+                        var widthtextview = textview.getTextWidth();
+                        textview.setAttribute("width", widthtextview );
+                        var heighttextview = textview.getTextHeight();
+                        var xpositiontext = (drawarea.getAttribute("width")-widthtextview) / 2;
+                        var ypositiontext = (drawarea.getAttribute("height")-heighttextview) / 2;
+                        textview.setAttribute("x", drawarea.getAttribute("x") + xpositiontext );
+                        textview.setAttribute("y", drawarea.getAttribute("y") + ypositiontext );
+                        if(heighttextview > 16) {
+                            textview.setAttribute("height", heighttextview);
+                        }
+                    } else {
+                        textlink.setAttribute("font", "Arial" );
+                        textlink.setText(textPre + this.celltext + textPost);
+                        var widthtextview = textlink.getTextWidth();
+                        textlink.setAttribute("width", widthtextview );
+                        var heighttextview = textlink.getTextHeight();
+                        var xpositiontext = (drawarea.getAttribute("width")-widthtextview) / 2;
+                        var ypositiontext = (drawarea.getAttribute("height")-heighttextview) / 2;
+                        textlink.setAttribute("x", drawarea.getAttribute("x") + xpositiontext );
+                        textlink.setAttribute("y", drawarea.getAttribute("y") + ypositiontext );
+                        if(heighttextview > 16) {
+                            textlink.setAttribute("height", heighttextview);
+                        }
+                        textlink.setAttribute("url", this.url);
+                    }    
+                } else {
+                    if(this.url == "0") { 
+                        textview.setMultiline(true);
+                        textview.setAttribute("font", "Arial" );
+                        textview.setAttribute("x", drawarea.getAttribute("x") + 5 );
+                        var ypositiontext = (drawarea.getAttribute("height")-heightText) / 2;
+                        textview.setAttribute("y", drawarea.getAttribute("y") + ypositiontext );
+                        textview.setAttribute("width", drawarea.getAttribute("width") - 10 );
+                        textview.setText(textPre + this.celltext + textPost);
+                        var newHeight = textview.getTextHeight();
+                        textview.setAttribute("height", newHeight + 10 );
+                    } else {
+                        textlink.setMultiline(true);
+                        textlink.setAttribute("font", "Arial" );
+                        textlink.setAttribute("x", drawarea.getAttribute("x") + 5 );
+                        var ypositiontext = (drawarea.getAttribute("height")-heightText) / 2;
+                        textlink.setAttribute("y", drawarea.getAttribute("y") + ypositiontext );
+                        textlink.setAttribute("width", drawarea.getAttribute("width") - 10 );
+                        textlink.setText(textPre + this.celltext + textPost);
+                        var newHeight = textlink.getTextHeight();
+                        textlink.setAttribute("height", newHeight + 10 );
+                        textlink.setAttribute("url", this.url);
+                    }
+                }
+              
+
+            } 
+            if(this.containslight == "true") {
+                var xcenterposition = drawarea.getAttribute("x") + (drawarea.getAttribute("width") / 2);
+                var ycenterposition = drawarea.getAttribute("y") + (drawarea.getAttribute("height") / 2);
+                circle.setAttribute("x", xcenterposition);
+                circle.setAttribute("y", ycenterposition);
+                circle.setAttribute("circlecolor", this.lightcolor);
+                circle.setAttribute("r", parseInt(this.lightray));
+                circle.setAttribute("tooltiptext", tooltiptext);
+                circle.setAttribute("backgroundColorTooltip", backgroundColorTooltip);
+                circle.draw(drawarea);
+            } 
+            ]]>
+        </method> 
+
+
+         <method name="clear">
+            <![CDATA[ 
+            drawarea.clear();
+            textview.clearText();
+            circle.clear();
+            detaillink.clear();
+            ]]>
+        </method>
+        
+    </class>
+
+
+</library>

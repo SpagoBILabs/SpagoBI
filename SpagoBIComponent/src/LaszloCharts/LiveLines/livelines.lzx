@@ -1,0 +1,888 @@
+<canvas debug="false" width="100%" height="100%"> 
+ 
+
+	<script src="json.js"/>
+ 	
+	<script>
+	<![CDATA[ 
+		
+		// -- utils functions -------------------------------------------------------------
+		var jsonParserOptions = {
+			errorHandler: function(msg, index) {
+					Debug.write('Error[' + index + ']: ' + msg);
+			}
+		}
+		
+		var apply = function(o, c, defaults){
+		    if(defaults){
+		        // no "this" reference for friendly out of scope calls
+		        Sbi.sdk.apply(o, defaults);
+		    }
+		    if(o && c && typeof(c) == 'object'){
+		        for(var p in c){
+		            o[p] = c[p];
+		        }
+		    }
+		    return o;
+		};
+		
+		var decode = function(jsonStr) {
+			var json, c;
+			
+			Debug.write("decode IN: " + jsonStr);
+			//var regExp = new RegExp('[|]','g');
+			//global.fields = global.fields.replace(regExp, '"');
+			
+			json = '';
+			for(var i = 0, l = jsonStr.length; i < l; i++) {
+				c = jsonStr.charAt(i);
+				if(c == '|') c = '"';
+				json += c;
+			}
+			
+			Debug.write("decode OUT: " + json);
+			
+			json = JSON.parse(json, jsonParserOptions);
+			
+			return json;
+		}
+		
+		// -- core ----------------------------------------------------------------------
+		
+		global.title = global.title || 'Livelines';
+		Debug.write("title: " + title);
+		
+		global.rangeMinValue = global.rangeMinValue || 0;
+		Debug.write("rangeMinValue: " + rangeMinValue);
+		
+		global.rangeMaxValue = global.rangeMaxValue || 200;
+		Debug.write("rangeMaxValue: " + rangeMaxValue);
+		
+		
+		global.domainValues = global.domainValues || null; // ['01/02/2010', '15/02/2010', '28/02/210'];
+        if(global.domainValues !== null) {
+            global.domainValues = decode(global.domainValues); 
+        }		
+		Debug.write("domainValues: " + domainValues);
+		
+		
+		global.domainValueNumber = global.domainValueNumber || 5;
+		Debug.write("domainValueNumber: " + domainValueNumber);
+		
+		global.stepY = global.stepY || 20;
+		Debug.write("stepY: " + stepY);
+		
+		// -- style ----------------------------------------------------------------------
+		
+		// Style to use in rendering text fields appearing inside the view; 
+		// valid values are plain, bold , italic, or bolditalic.
+		global.fontDefault = {name: "serif", color: "black", size: 8, style: "plain"};
+		
+		
+		global.stylesDefault =	{
+		
+			title: { text: title, visible: true,  align: "center", valign: "top", font: apply(global.fontDefault, {size: 16, style: "bold"}) }
+			
+			, border: {color: "black", size: "0"}
+			
+			// A numeric value that specifies the spacing around 
+			// the edges of the chart's plot area
+			, padding: {top: 30, right: 50, bottom: 0, left: 50}
+			
+			, plot: {
+				//width: 300
+				//, height: 400
+				//, widthScale: .5
+				//, heightScale: .5
+				//, valign: 'center'
+				//, halign: 'center'
+			}
+			, legend: {
+				text: 'Legenda'
+				, active: false
+				, valign: 'top'
+				, halign: 'right'
+			}
+		}
+		
+		global.styles = global.styles || '{}';
+		global.styles = decode(global.styles);	
+		global.styles = apply(stylesDefault, global.styles);
+		
+		// -- private ----------------------------------------------------------------------
+		var colors = [0xf92525, 0x17e512, 0xbe4ce3, 0x5420ff, 0xf442ff, 0xfb7819, 0x006600, 0x99FF00,0xFFFF00, 0xFF9966, 0x19fbee, 0xe570ad, 0xfd0c23, 0x4618de];
+	    var isSetup = true;
+	    
+	    flash.external.ExternalInterface.addCallback("loadData", null, loadData);
+	    function loadData(data) {
+            canvas.chart.load(data);
+        };
+    ]]>
+	</script>  
+
+
+	<drawview name="chart"> 
+		
+		<text name="title"></text>
+		<!-- text x="40" name="debug">Debug</text -->
+		<drawview name="plot">
+			<handler name="onclick">
+				canvas.chart.legendWindow.setAttribute("visible",true);
+				canvas.chart.legendButton.setAttribute("visible",false);
+			</handler>	
+		</drawview> 
+		
+		<!-- test 
+		<button name="testBtn" text="test">
+			<handler name="onclick">
+				canvas.chart.loadPointA();
+				Debug.write("click");
+			</handler>	
+		</button>-->
+		
+		<!--  =================================================================== -->
+		<!--  Legend Button														  -->
+		<!--  =================================================================== -->
+		<button name="legendButton" text="Legend">
+			
+			<method name="init">
+				super.init(); 
+				Debug.write("styles.legend.active: " + styles.legend.active);
+				if(styles.legend.active === false) {
+					canvas.chart.legendWindow.setAttribute("visible",false);
+					this.setAttribute("visible", false);
+					Debug.write("Legend Active: " + false);
+				}
+				
+			</method>
+			
+			<handler name="onclick">
+				canvas.chart.legendWindow.setAttribute("visible",true);
+				this.setAttribute("visible", false);
+			</handler>	
+			
+		</button>
+		
+		<!--  =================================================================== -->
+		<!--  Legend Window														  -->
+		<!--  =================================================================== -->
+		<window name="legendWindow">
+			
+			<attribute name="y" value="10"/>
+			<attribute name="x" value="0"/>
+			<attribute name="height" value="100"/>
+			<attribute name="width" value="300"/>
+			<attribute name="title" value="Legend"/>
+			<attribute name="resizable" value="true"/>
+			<attribute name="closeable" value="true"/>
+			<attribute name="align" value="center"/>
+
+			<wrappinglayout axis="y" spacing="10"/>  
+			
+			<method name="addItem" args="lineName, color, ID, numElem">
+			<![CDATA[ 		
+				var numRowsCol = 4;		//the number of rows in the legend at the begin with the standard dimensions
+				var numColumns =  parseInt(numElem) / numRowsCol;  
+				var elemColumn = parseInt((ID-1) / numRowsCol);
+				var widthColumn = parseInt(this.width / numColumns);
+		 		var startX = elemColumn * widthColumn;
+				
+				Debug.write("this.width: " + this.width);
+				Debug.write("ID: " + ID-1);
+				Debug.write("numColumns: " + numColumns);
+				Debug.write("elemColumn: " + elemColumn);
+				Debug.write("widthColumn: " + widthColumn);
+				Debug.write("startX: " + startX);
+				
+				var legIt = new lz.LegendItem(this,{name:"legend"+ID});
+				legIt.drawItem(lineName, color, startX);		
+				this.setVisible(false);
+				
+				]]>
+			</method>
+		
+			<handler name="onvisible">
+				Debug.write("LegendWindow: onvisible: " + visible);
+				if(styles.legend.active === true) {
+					canvas.chart.legendButton.setAttribute("visible", !visible);
+				}
+			</handler>
+		
+		</window>
+
+  		<method name="render">
+  		<![CDATA[ 
+  			Debug.write("render IN");
+  			Debug.write("canvas.width: " + canvas.width);
+  			Debug.write("canvas.height: " + canvas.height);
+  			
+  			styles.plot = styles.plot || {};
+  			var chartHeight = styles.plot.height || canvas.height;
+  			var chartWidth = styles.plot.width || canvas.width;
+  			  			
+  			chartHeight = chartHeight > canvas.height? canvas.height: chartHeight;
+  			chartWidth = chartWidth > canvas.width? canvas.width: chartWidth;
+  			
+  			if(styles.plot.heightScale && styles.plot.heightScale < 1) {
+  				chartHeight = chartHeight * styles.plot.heightScale;
+  			}
+  			
+  			if(styles.plot.widthScale && styles.plot.widthScale < 1) {
+  				chartWidth = chartWidth * styles.plot.widthScale;
+  			}
+  			
+  			var chartX;
+  			var chartY;
+  			
+  			if(styles.plot.halign === 'left') {
+  				chartX = 0;
+  			} else if(styles.plot.halign === 'right') {
+  				chartX = (canvas.width - chartWidth);
+  			} else {
+  				chartX = (canvas.width - chartWidth)/2;
+  			}
+  			
+  			if(styles.plot.valign === 'top') {
+  				chartY = 0;
+  			} else if(styles.plot.valign === 'bottom') {
+  				chartY = (canvas.height - chartHeight);
+  			} else {
+  				chartY = (canvas.height - chartHeight)/2;
+  			}
+  			
+			
+			this.setAttribute('x', chartX);
+			this.setAttribute('y', chartY);
+			this.setAttribute('width', chartWidth);
+			this.setAttribute('height', chartHeight);
+  			
+  			// -- render title --------------------------------------------------------
+						
+			if(styles.title.visible) {			
+				this.title.setAttribute('x', 0);
+				this.title.setAttribute('y', 0);
+				this.title.setAttribute('width', chartWidth);
+				this.title.setAttribute('height', styles.title.font.size + 6);
+				
+				this.title.setAttribute('font', styles.title.font.name);
+				this.title.setAttribute('fontsize', styles.title.font.size);
+				this.title.setAttribute('fontstyle', styles.title.font.style);
+				this.title.setAttribute('fgcolor', styles.title.font.color);
+				this.title.setAttribute('align', styles.title.align);
+				this.title.setAttribute('valign', styles.title.valign);
+				this.title.setAttribute('text', styles.title.text);
+			}
+			
+			// -- render plot --------------------------------------------------------
+			
+  			var range, vLineNumber, hLineNumber;  
+			var xAxisHeight = 20;
+			var plotAreaX = styles.padding.left;
+			var plotAreaY = styles.padding.top;
+			var plotAreaWidth = chartWidth - styles.padding.right - styles.padding.left;
+			var plotAreaHeight = chartHeight - styles.padding.top - styles.padding.bottom - xAxisHeight;
+			if(styles.legend.valign == 'bottom') {
+				plotAreaHeight -=  this.legendButton.height; 
+			}
+			
+			Debug.write("plotAreaX: " + plotAreaX);
+			Debug.write("plotAreaY: " + plotAreaY);
+			Debug.write("plotAreaWidth: " + plotAreaWidth);
+			Debug.write("plotAreaHeight: " + plotAreaHeight);
+			
+	        this.plot.setAttribute('x', plotAreaX);
+			this.plot.setAttribute('y', plotAreaY);
+			this.plot.setAttribute('width', plotAreaWidth);
+			this.plot.setAttribute('height', plotAreaHeight);
+			
+			if(styles.legend.active) {
+				this.legendButton.setAttribute("text", styles.legend.text);
+				var x, y;
+				if(styles.legend.valign == 'top') {
+					y = 0;
+				} else {
+				 	y = plotAreaY + plotAreaHeight + xAxisHeight;
+				}
+				
+				Debug.write("styles.legend.halign: " + styles.legend.halign);
+				if(styles.legend.halign == 'left') {
+					x = 0;
+				} else if(styles.legend.halign == 'right') {
+				 	x = chartWidth - this.legendButton.width;
+				} else { // center
+					x = plotAreaX + (plotAreaWidth/2)-(this.legendButton.width/2);
+				}
+				
+				this.legendButton.setX(x);
+				this.legendButton.setY(y);
+				this.legendWindow.setAttribute("visible", false);				
+			}
+			
+			domainValueNumber = (domainValues != null)? domainValues.length: domainValueNumber;
+			domainValueNumber = domainValueNumber || 10;
+			Debug.write("domainValueNumber: " + domainValueNumber);
+			vLineNumber = domainValueNumber;
+			
+			range = rangeMaxValue - rangeMinValue ;
+			Debug.write("range: " + range);
+			
+			hLineNumber = range/stepY;
+			Debug.write("hLineNumber: " + hLineNumber);
+			
+			var background = new lz.Background(this.plot, {
+				name : "chartBackground",
+				fillColor: "0xBBBDDD",
+				enableGradient: true,
+				gradientLbColor: "0x000000",
+				gradientLbGlobalAlpha: 0,
+				gradientUbColor: "0xffffff",
+				gradientUbGlobalAlpha: 0.5,
+				borderColor: "0xAAACCC",
+				borderWidth: 3
+			});
+			
+			
+			var grid = new lz.Grid(this.plot, {
+				name : "chartGrid", 
+				vLineNumber: vLineNumber-1,
+				hLineNumber: hLineNumber
+			});	
+	
+			var axis = new lz.Axis(this.plot, {
+				name : "chartAxis",
+				domainValues: domainValues,
+				domainMajorTickVisible: true,
+				domainMajorTickNumber: vLineNumber,
+				domainMinorTickVisible: false,
+				rangeMinValue: rangeMinValue,
+				rangeMaxValue: rangeMaxValue,
+				rangeMajorTickNumber: hLineNumber,
+				rangeMinorTickVisible: false				
+			});
+		
+			Debug.write("render OUT");	
+		]]>
+		</method>
+
+
+	
+	
+	
+	<method name="getColor" args="colorIndex">
+	<![CDATA[ 
+		var color;
+		if(colorIndex < colors.length) {
+			color = colors[colorIndex];
+		} else {
+			color = 0xCCCBBB;
+		}
+		return color;
+	]]>
+    </method>
+	
+	
+	<method name="load" args="attributeMap" >
+	<![CDATA[ 
+		if (isSetup == true) {
+			this.initSeries(attributeMap);
+			isSetup = false;
+		}
+		
+		for ( var attributeName in attributeMap ) {
+			var attributeValue = parseFloat(attributeMap[attributeName]);
+			var series = canvas.chart.plot[attributeName];
+			series.addDataPoint(attributeValue);
+		}
+	]]>
+	</method>
+	
+	
+	<method name="initSeries" args="attributeMap" >
+	<![CDATA[ 
+		var seriesId = 0;
+		//defines number of elements 
+		var numElems = 0;
+		for ( var attributeName in attributeMap ) {
+			numElems ++;
+		}
+		Debug.write("numElems: " + numElems);
+		for ( var attributeName in attributeMap ) {
+			var color = canvas.chart.getColor(seriesId++);
+			var series = new lz.DataSeries(canvas.chart.plot, {
+				name : attributeName, 
+				dataPointNumber : domainValueNumber, 
+				minDataValue: rangeMinValue, 
+				maxDataValue: rangeMaxValue,
+				color: color
+			});
+			 
+			canvas.chart.legendWindow.addItem(attributeName, color, seriesId, numElems);
+		}
+	]]>
+	</method>
+	
+	
+	
+	
+	
+	<method name="loadPointA">
+		Debug.write("loadPointA");	
+        this.load({
+			Effort_Index: 55
+			, Competitiveness: 98
+			, Cost_Optimization: 35
+			, Health: 68
+			, value_a: 0
+			, value_b: 12
+			, value_c: 45
+			, value_d: 78
+			, value_e: 82
+			, value_f: 34
+			, value_g: 72
+			, value_h: 87
+			//, xLabel: 'wundabar1'
+		});
+    </method>  
+    
+    <method name="loadPointB">
+    	Debug.write("loadPointB");	
+        this.load({
+			Effort_Index: 40
+			, Competitiveness: 78
+			, Cost_Optimization: 10
+			, Health: 89
+			//, xLabel: 'wundabar2'
+		});
+    </method>  
+	
+
+
+    <method name="start" event="oninit">
+		Debug.write("start IN");	
+		
+        canvas.chart.render();
+
+		Debug.write("start OUT");	
+    </method>
+
+    
+ </drawview>
+
+
+
+
+<class name="DataSeries" extends="drawview">
+	
+	<attribute name="x" value="0"/>
+	<attribute name="y" value="0"/>
+	<attribute name="width" value="100%"/>
+	<attribute name="height" value="100%"/>
+	
+	<attribute name="data" value="undefined"/>
+	<attribute name="dataPointNumber" value="3"/>
+	<attribute name="minDataValue" value="0"/>
+	<attribute name="maxDataValue" value="200"/>
+	
+	<attribute name="color" value="0xCCCFFF"/>
+	
+	<method name="init">
+		super.init(); 
+		data = [];  
+	</method>
+
+
+
+  	<method name="addDataPoint" args="dataValue">	
+  	<![CDATA[ 
+		Debug.write("addDataPoint " + dataValue + " to " + this.name);
+		
+		var dataRange = maxDataValue - minDataValue;
+		var dataGap = this.width/(dataPointNumber-1);
+		
+		var r = this.height/dataRange;
+		
+		//canvas.chart.debug.setAttribute('text', data.length + ' = ' + dataPointNumber + ' -> ' + (data.length >= dataPointNumber));
+		if(data.length >= dataPointNumber) {
+			//canvas.chart.debug.setAttribute('text', '-> 1');
+			data = [];			
+			//canvas.chart.debug.setAttribute('text', '-> 2');
+			this.clear();
+			//canvas.chart.debug.setAttribute('text', '-> 3');
+			this.beginPath();
+			//canvas.chart.debug.setAttribute('text', '-> 4');
+			//canvas.chart.debug.setAttribute('text', data.length + ' = ' + dataPointNumber  + ' [CLEAR]');
+		}
+		
+		data.push(dataValue);
+		
+		if(data.length > 1) {
+			var dataPointIndex = data.length - 2;
+			var dataPoint1 = {};
+			dataPoint1.x = dataPointIndex * dataGap;
+			dataPoint1.y = this.height - (data[dataPointIndex] * r);
+			
+			var dataPointIndex = data.length - 1;
+			var dataPoint2 = {};
+			dataPoint2.x = dataPointIndex * dataGap;
+			dataPoint2.y = this.height - (data[dataPointIndex] * r);
+		
+			this.moveTo(dataPoint1.x, dataPoint1.y);
+			this.lineTo(dataPoint2.x, dataPoint2.y);
+        	this.strokeStyle = color;
+        	this.lineWidth = 4;
+        	this.stroke();
+		}
+	]]>	
+	</method>
+</class>
+
+
+
+
+
+
+
+<class name="Label" extends="drawview">
+	<text name="textContent" resize="true">
+		label
+	</text>
+	 
+	<method name="render" args="txt">
+    <![CDATA[ 
+    	//this.textContent.setAttribute('text', txt);  
+        this.textContent.setAttribute('x', 0);
+        this.textContent.setAttribute('y', 0);
+        
+        this.textContent.setAttribute('fontsize', 10);
+        this.textContent.setAttribute('strokeStyle', '0x000000');
+        this.textContent.setAttribute('fgcolor', '0x000000');
+        
+        this.setAttribute('rotation', 45);
+        this.setAttribute('height', textContent.height);
+        this.setAttribute('width', textContent.width);
+    ]]>
+    </method>
+
+</class>
+
+
+<!--  =================================================================== -->
+<!--  Axis															  	  -->
+<!--  =================================================================== -->
+<class name="Axis" extends="drawview">
+	
+	
+	<attribute name="x" value="0"/>
+	<attribute name="y" value="0"/>
+	<attribute name="width" value="100%"/>
+	<attribute name="height" value="100%"/>
+	
+	<attribute name="domainValues" value="undefined"/>
+	<attribute name="domainMajorTickNumber" value="24"/>
+	<attribute name="domainMajorTicVisible" value="true"/>
+	<attribute name="domainMinorTickVisible" value="false"/>
+	
+	<attribute name="rangeMinValue" value="0"/>
+	<attribute name="rangeMaxValue" value="200"/>
+	<attribute name="rangeMajorTickNumber" value="20"/>
+	<attribute name="rangeMinorTickVisible" value="true"/>
+	
+	
+	
+	
+	<method name="init">
+    	super.init(); 
+		this.render(); 
+	</method>
+	
+	<method name="render">
+		Debug.write("Axis.render IN");
+	    
+	   	this.renderRangeAxis();
+	   	this.renderDomainAxis();
+	    
+	    Debug.write("Axis.render OUT");
+	</method>
+	
+	<method name="renderRangeAxis">
+	<![CDATA[
+		
+		Debug.write("Axis.renderRangeAxis IN");
+			
+		this.beginPath();  
+		this.moveTo(0,0);
+		this.lineTo(0, this.height);	
+		this.closePath();  
+		
+		this.strokeStyle = '0x000000';
+	    this.lineWidth = 2;
+	    this.stroke();
+	    
+	    var range = rangeMaxValue - rangeMinValue;
+	    var majorInterval = range/rangeMajorTickNumber;
+	    var majorGap = this.height/rangeMajorTickNumber;
+	    
+	    var posY = 0;
+	    for (var i = 0; i < rangeMajorTickNumber; i++){
+	    	var txt = rangeMaxValue - (i*majorInterval);
+			var label = new LzText(this ,{name : "xlabel"+i, align:"center"});
+			
+		
+			label.setAttribute("fontsize", 10);
+			label.setColor(0x000000);
+			label.setText(txt);
+			
+			label.setX(-1*(label.width + 5));					
+			label.setY(posY - (label.height/2));
+			
+			this.beginPath(); 
+			this.moveTo(0,posY);
+			this.lineTo(-3, posY);
+			this.closePath(); 
+			
+			this.strokeStyle = '0x000000';
+	    	this.lineWidth = 4;
+	    	this.stroke();
+			
+			
+			posY = posY+majorGap;
+	    }
+	    
+		Debug.write("Axis.renderRangeAxis OUT");
+	
+	]]>
+	</method>
+
+	<method name="renderDomainAxis" >
+	<![CDATA[
+		
+		Debug.write("Axis.renderDomainAxis IN");
+	      
+	    this.beginPath();  
+		this.moveTo(0,this.height);
+		this.lineTo(this.width, this.height);	
+		this.closePath();  
+		
+		this.strokeStyle = '0x000000';
+	    this.lineWidth = 2;
+	    this.stroke();
+			 
+	    Debug.write("domainValues: " + domainValues);
+	    Debug.write("domainValues.length: " + domainValues.length);
+		Debug.write("domainValues[0]: " + domainValues[0]);
+		if(domainValues != null) {
+			domainMajorTickNumber = domainValues.length;
+		}
+		var stepOnAxis = width/(domainMajorTickNumber-1);
+
+		
+		var posX = 0;
+
+		for (var i = 0; i < domainMajorTickNumber; i++){
+			
+			var txt = (domainValues != null)? domainValues[i]: i;
+			var label = new LzText(this ,{name : "xlabel"+i, align:"center"});
+			
+			
+			//var label = new lz.Label(canvas.chart, {x: this.x + posX-10, y: this.y + this.height + 5});
+			//label.render(txt);
+			
+			
+			label.setAttribute("fontsize", 10);
+			label.setColor(0x000000);
+			label.setText(txt);
+			
+			label.setX(posX-(label.width/2));					
+			label.setY(this.height + 5);
+			
+			this.beginPath(); 
+			this.moveTo(posX,this.height);
+			this.lineTo(posX, this.height+3);
+			this.closePath(); 
+			
+			this.strokeStyle = '0x000000';
+	    	this.lineWidth = 4;
+	    	this.stroke();
+			
+			
+			posX = posX+stepOnAxis;
+		}
+		
+		Debug.write("Axis.renderDomainAxis OUT");
+	
+	]]>			
+	</method>
+</class>
+
+
+
+
+<!--  =================================================================== -->
+<!--  Chart Grid													  	  -->
+<!--  =================================================================== -->
+<class name="Grid" extends="drawview">
+
+	<attribute name="x" value="0"/>
+	<attribute name="y" value="0"/>
+	<attribute name="width" value="100%"/>
+	<attribute name="height" value="100%"/>
+	
+	<attribute name="hLineNumber" value="20"/>
+	<attribute name="vLineNumber" value="24"/>
+	
+	<attribute name="borderVisible" value="true"/>
+	<attribute name="borderColor" value="0x000000"/>
+	<attribute name="borderWidth" value="1"/>
+	
+	
+	<method name="init">
+    	super.init();  
+    	this.render(); 
+	</method>
+	
+	<method name="render">
+		Debug.write("Grid.render IN");
+	    
+	    Debug.write("hLineNumber: " + hLineNumber);	
+	    Debug.write("vLineNumber: " + vLineNumber);	
+	    
+	    if(hLineNumber > 0) this.renderHLines();
+	    if(vLineNumber > 0)  this.renderVLines();
+	    
+	    if(borderVisible){
+	    	this.strokeStyle = borderColor;
+	    	this.lineWidth = borderWidth;
+	    	this.stroke();
+	    }
+	    
+	    Debug.write("Grid.render OUT");
+	</method>
+	
+	<method name="renderHLines">
+	<![CDATA[
+		// The distance between two adjacent gridLineY
+		var hLineGap;  
+		
+		Debug.write("Grid.renderHLines IN");
+			
+		hLineGap = this.height/hLineNumber;
+			
+		var posY = this.height-hLineGap;
+		
+		for (var i = 0; i < hLineNumber ; i++){	
+			moveTo(0,posY);
+			lineTo(this.width, posY);	
+			posY -= hLineGap;
+		}
+
+		Debug.write("Grid.renderHLines OUT");
+	
+	]]>
+	</method>
+
+	<method name="renderVLines" >
+	<![CDATA[
+		// The distance between two adjacent gridLineY
+		var vLineGap;  
+		
+		Debug.write("Grid.renderVLines IN");
+			
+		vLineGap = this.width/vLineNumber;
+			
+		var posX = vLineGap;	
+		for (var i = 0; i < vLineNumber ; i++){	
+			moveTo(posX, 0);
+			lineTo(posX, this.height);		
+			posX += vLineGap;
+		}
+
+		Debug.write("Grid.renderVLines OUT");
+	
+	]]>			
+	</method>
+</class>
+
+<!--  =================================================================== -->
+<!--  Chart Background													  -->
+<!--  =================================================================== -->
+<class name="Background" extends="drawview">
+
+	<attribute name="x" value="0"/>
+	<attribute name="y" value="0"/>
+	<attribute name="width" value="100%"/>
+	<attribute name="height" value="100%"/>
+	
+	<attribute name="fillColor" value="0xffffff"/>
+	<attribute name="enableGradient" value="false"/>
+	<attribute name="gradientLbColor" value="0x000000"/>
+	<attribute name="gradientLbGlobalAlpha" value="0"/>
+	<attribute name="gradientUbColor" value="0xffffff"/>
+	<attribute name="gradientUbGlobalAlpha" value="0.5"/>
+	
+	<attribute name="borderColor" value="0x000000"/>
+	<attribute name="borderWidth" value="1"/>
+
+	<method name="init">
+            super.init(); 
+            this.render();
+	</method>
+
+	<method name="render">
+		
+		// rectangle
+		if(borderColor) {
+			this.beginPath();
+			this.rect(0, 0, this.width, this.height);
+			this.closePath();
+		    this.strokeStyle = this.borderColor;
+		    this.lineWidth = this.borderWidth;
+		    this.stroke();
+	    }
+
+		// fill
+		if(this.fillStyle) {
+			this.fillStyle = this.fillColor;
+	    	this.fill();
+	    }
+		
+		
+		// gradient		
+		if(this.enableGradient == true) {
+	        var g = this.createLinearGradient(0, 0, this.width, this.height);
+	      	this.globalAlpha = this.gradientLbGlobalAlpha;;
+		    g.addColorStop(0, this.gradientLbColor);
+	      	this.globalAlpha = this.gradientUbGlobalAlpha;
+		    g.addColorStop(1, this.gradientUbColor);
+	      	this.fillStyle = g;
+	       	this.fill();
+       	}
+	</method>
+</class>
+
+
+<class name="LegendItem" extends="drawview">
+	
+	 <method name="init">
+       	     super.init();   
+	 </method>
+		
+	 <method name="drawItem" args="lineName, color, startColumn">
+       	 //this.moveTo(10,10);
+	     //this.lineTo(20,10);
+	     
+	     this.moveTo(startColumn,10);
+	     this.lineTo(startColumn+10,10);
+					
+       	 this.strokeStyle = color;
+         this.lineWidth = 4;
+         this.stroke();
+	     //var txt = new LzText(this,{x:50,text:lineName});	     
+	     var txt = new LzText(this,{x:startColumn + 15, text:lineName});
+	 </method>
+		
+</class>
+
+
+
+
+</canvas>

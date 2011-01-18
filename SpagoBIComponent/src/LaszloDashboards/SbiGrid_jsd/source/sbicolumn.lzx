@@ -1,0 +1,94 @@
+
+
+
+<library>
+       
+    <include href="sbicell.lzx"/>   
+       
+    <class name="sbicolumn" extends="basecomponent">
+        
+        <attribute name="cells" type="expression" value="${new Array()}"/>
+        <attribute name="hasrightborder" value="true"/>
+        <attribute name="hasleftborder" value="true"/>
+        <attribute name="drawarea" value="${new LzDrawView()}"/>
+        <attribute name="parenttable" />
+        
+        
+        
+        
+        
+        <method name="addCell" args="cell">
+            cells[cells.length] = cell;
+        </method>
+                    
+    
+        
+        
+        
+        
+        
+        <method name="draw"> 
+            <![CDATA[
+            drawarea.setAttribute("clip", "true");
+            drawarea.setAttribute("x", this.x);
+            drawarea.setAttribute("y", this.y);
+            drawarea.setAttribute("height", this.height);
+            drawarea.setAttribute("width", this.width);    
+            if(this.hasrightborder == "true") {
+                drawarea.moveTo(this.width, 0);
+                drawarea.lineTo(this.width, this.height);      
+            } 
+            if(this.hasleftborder == "true") {
+                drawarea.moveTo(0, 0);
+                drawarea.lineTo(0, this.height);      
+            } 
+            drawarea.strokeStyle = 0xdddddd;
+            drawarea.stroke();
+            var deltay = this.height / cells.length;
+            var heightFirstRow = deltay;
+            if(this.parenttable.heightFirstRow!=0) {
+              deltay = (this.height - parenttable.heightFirstRow) / (cells.length - 1);
+              heightFirstRow = parenttable.heightFirstRow;
+            } 
+            var currentyposition = 0;
+            for(var i=0; i < cells.length; i++) {
+                var sbicellobj = cells[i];
+                sbicellobj.setAttribute("x", this.x);
+                sbicellobj.setAttribute("y", this.y + currentyposition);
+                sbicellobj.setAttribute("width", this.width);
+                if(i==0) {
+                    sbicellobj.setAttribute("hasupperborder", "false");
+                    sbicellobj.setAttribute("height", heightFirstRow);
+                    currentyposition = currentyposition + heightFirstRow;
+                } else {
+                    sbicellobj.setAttribute("hasupperborder", "true");
+                    sbicellobj.setAttribute("height", deltay);
+                    currentyposition = currentyposition + deltay;
+                } 
+                sbicellobj.setAttribute("hasbottomborder", "false");
+                sbicellobj.draw();
+            }
+            ]]>
+        </method>   
+              
+    
+    
+    
+    
+        <method name="clear">
+            <![CDATA[     
+            drawarea.clear();
+            for(var i=0; i < cells.length; i++) {
+                var sbicell = cells[i];
+                sbicell.clear();
+            }
+            cells = new Array();
+            ]]>
+        </method>
+    
+    
+    
+    </class>
+
+
+</library>
