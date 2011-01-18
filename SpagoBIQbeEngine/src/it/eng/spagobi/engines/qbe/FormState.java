@@ -185,12 +185,13 @@ public class FormState extends EngineAnalysisState {
 	}
 
 	/**
-	 * Get the form state passed from the js and changes the ids of the fields
-	 * of the form with the names
+	 * Get the form state of the subobject and changes the names of the fields
+	 * of the form with the ids
 	 * @param formState the values of the form
 	 * @return the values of the form but with the name of the fields instead of the ids
 	 */
 	private JSONObject parseValues(JSONObject formState){
+		JSONObject formStructure = getConf();
 		JSONObject parsedForm = new JSONObject();
 		Map<String, String> nameIdMap = getNameIdMap();
 		JSONObject newDynamicFilters, newStaticOpenFilters, newStaticClosedFilters, newStaticClosedFiltersAnd, newStaticClosedFiltersXor;
@@ -201,7 +202,9 @@ public class FormState extends EngineAnalysisState {
 				parsedForm.put("staticOpenFilters", newStaticOpenFilters);
 			}
 			JSONObject dynamicFilters = formState.optJSONObject("dynamicFilters");
+			filterAdmissibleValues(dynamicFilters, formStructure.getJSONArray("dynamicFilters"), "dynamicFilters");
 			newDynamicFilters = getPropertyNames(dynamicFilters, nameIdMap,"dynamicFilters");
+			
 			if(newDynamicFilters!=null){
 				parsedForm.put("dynamicFilters", newDynamicFilters);
 			}
@@ -226,6 +229,9 @@ public class FormState extends EngineAnalysisState {
 			}		
 
 			JSONObject groupingVariables = formState.optJSONObject("groupingVariables");
+			filterAdmissibleGroups(groupingVariables, formStructure.getJSONArray("groupingVariables"));
+			//filterAdmissibleArrayValues(valuesJSONArray, admissibleJSONArray, "id");
+			
 			parsedForm.put("groupingVariables", groupingVariables);
 			
 		}catch (Exception e){
@@ -255,4 +261,63 @@ public class FormState extends EngineAnalysisState {
 		}
 		return null;
 	}
+	
+	/**
+	 * Filter the values of the subobject. It removes the selected field value if the form is changed and the values
+	 * are not consistent with the new configuration.
+	 * @param valuesJSON the selected values of the subobject
+	 * @param admissibleJSON the admissible values
+	 * @param prefix
+	 * @throws JSONException
+	 */
+	private void filterAdmissibleValues(JSONObject valuesJSON, JSONArray admissibleJSON, String prefix) throws JSONException{
+
+		for(int y=0; y<admissibleJSON.length(); y++){
+			Iterator<String> keyIter = valuesJSON.keys();
+			while(keyIter.hasNext()){
+				String key = keyIter.next();
+				if(key.equals(prefix+admissibleJSON.getJSONObject(y).getString("title"))){
+					if(!filterAdmissibleValues(valuesJSON.getJSONObject(key).getString("field"), admissibleJSON.getJSONObject(y).getJSONArray("admissibleFields"))){
+						valuesJSON.remove(key);
+					}
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * Filter the group fields of the subobject. It removes the selected field value if the form is changed and the values
+	 * are not consistent with the new configuration.
+	 * @param valuesJSON the selected values of the subobject
+	 * @param admissibleJSON the admissible values
+	 * @throws JSONException
+	 */
+	private void filterAdmissibleGroups(JSONObject valuesJSON, JSONArray admissibleJSON) throws JSONException{
+
+		for(int y=0; y<admissibleJSON.length(); y++){
+			Iterator<String> keyIter = valuesJSON.keys();
+			while(keyIter.hasNext()){
+				String key = keyIter.next();
+				if(key.equals(admissibleJSON.getJSONObject(y).getString("id"))){
+					if(!filterAdmissibleValues(valuesJSON.getString(key), admissibleJSON.getJSONObject(y).getJSONArray("admissibleFields"))){
+						valuesJSON.remove(key);
+					}
+				}
+			}
+
+		}
+	}
+	
+	
+	private boolean filterAdmissibleValues(String JSNONValue, JSONArray admissibleJSON) throws JSONException{
+		for(int y=0; y<admissibleJSON.length(); y++){
+			if(admissibleJSON.getJSONObject(y).getString("field").equals(JSNONValue)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 }
