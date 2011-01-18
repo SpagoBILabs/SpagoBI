@@ -89,7 +89,7 @@ Ext.extend(Sbi.formviewer.StaticClosedOnOffFiltersPanel, Ext.form.FormPanel, {
 			this.items = {
 		            xtype: 'fieldset',
 		            title: aStaticClosedOnOffFiltersGroup.title,
-		            id: aStaticClosedOnOffFiltersGroup.id,
+		            name: aStaticClosedOnOffFiltersGroup.id,
 		            autoHeight: true,
 		            autoWidth: true,
 		            defaultType: 'checkbox',

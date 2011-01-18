@@ -83,7 +83,7 @@ Ext.extend(Sbi.formviewer.StaticClosedXORFiltersPanel, Ext.form.FormPanel, {
 		
 		this.items = {
             xtype: 'fieldset',
-            id: aStaticClosedXORFiltersGroup.id,
+            name: aStaticClosedXORFiltersGroup.id,
             title: aStaticClosedXORFiltersGroup.title,
             autoHeight: true,
             autoWidth: true,
