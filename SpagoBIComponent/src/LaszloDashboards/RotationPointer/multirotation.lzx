@@ -1,0 +1,719 @@
+<?xml version="1.0"?>
+
+<canvas debug="false" width="100%" height="100%">
+	
+  <include href="incubator/ulink.lzx"/>
+  <include href="incubator/tooltip/tooltip.lzx"/>
+
+ <dataset type="http" name="data" src=""/>  
+
+  <script>
+	var appHeight = typeof(global.paramHeight)!="undefined" ? parseInt(global.paramHeight) : 300;
+	var appWidth = typeof(global.paramWidth)!="undefined" ? parseInt(global.paramWidth) : 300;		
+    var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl : "http://localhost:8080/openlaszlo/OpenLaszloEngineDash"; 
+	var xLabelAttributeName = typeof(global.xLabel)!="undefined" ? global.xLabel : "xLabel";	
+	var valueAttributeName1 = typeof(global.value1)!="undefined" ? global.value1 : "";
+	var valueAttributeName2 = typeof(global.value2)!="undefined" ? global.value2 : "";	
+	var valueAttributeName3 = typeof(global.value3)!="undefined" ? global.value3 : "";	
+	var valueAttributeName4 = typeof(global.value4)!="undefined" ? global.value4 : "";	
+	var valueAttributeName5 = typeof(global.value5)!="undefined" ? global.value5 : "";		
+	var xSerieAttributeName = typeof(global.serie)!="undefined" ? global.serie : "serie";
+	var min = typeof(global.minValue)!="undefined" ? parseInt(global.minValue) : 100;	
+    var low = typeof(global.lowValue)!="undefined" ? parseInt(global.lowValue) : 295;
+    var high = typeof(global.highValue)!="undefined" ? parseInt(global.highValue) : 340;
+    var max = typeof(global.maxValue)!="undefined" ? parseInt(global.maxValue) : 400;
+	var arc1Color = typeof(global.colorArc1)!="undefined" ? global.colorArc1 : 0x9cff00;
+	var arc2Color = typeof(global.colorArc2)!="undefined" ? global.colorArc2 : 0xfff999;
+	var arc3Color = typeof(global.colorArc3)!="undefined" ? global.colorArc3 : 0xff5454;
+	var refRate = typeof(global.refreshRate)!="undefined" ? parseInt(global.refreshRate) : 15000;
+	var numDiv = typeof(global.numOfDivisions)!="undefined" ? global.numOfDivisions : 10;
+	var appMargin = typeof(global.windowMargin)!="undefined" ? parseInt(global.windowMargin) : 10;
+	var heightMargin = typeof(global.winHeightMargin)!="undefined" ? parseInt(global.winHeightMargin) : 10;
+	var withMainDiv=typeof(global.showMainDiv)!="undefined" ? global.showMainDiv : true;
+	var withSecDiv=typeof(global.showSecDiv)!="undefined" ? global.showSecDiv : true;	
+	var withMainText=typeof(global.showMainText)!="undefined" ? global.showMainText : true;
+	var withSecText=typeof(global.showSecText)!="undefined" ? global.showSecText : true; 
+	
+	var nNeedles = typeof(global.numNeedles)!="undefined" ? parseInt(global.numNeedles) : 1;
+	var needle1Color = typeof(global.colorNeedle1)!="undefined" ? global.colorNeedle1 : "red";
+	var needle2Color = typeof(global.colorNeedle2)!="undefined" ? global.colorNeedle2 : "green";
+	var needle3Color = typeof(global.colorNeedle3)!="undefined" ? global.colorNeedle3 : "blue";
+	var needle4Color = typeof(global.colorNeedle4)!="undefined" ? global.colorNeedle4 : "aqua";
+	var needle5Color = typeof(global.colorNeedle5)!="undefined" ? global.colorNeedle5 : "purple";
+	var serieTitleColor = typeof(global.colorTitleSerie)!="undefined" ? global.colorTitleSerie : "blue";
+	var serieTitleSize = typeof(global.sizeTitleSerie)!="undefined" ? global.sizeTitleSerie : "12";
+	var serieTitleFont = typeof(global.fontTitleSerie)!="undefined" ? global.fontTitleSerie : "Arial";
+	var viewTitle = typeof(global.displayTitleBar)!="undefined" ? global.displayTitleBar : "false";
+	var titleText= typeof(global.title)!="undefined" ? global.title : "";
+	var titleColor= typeof(global.colorTitle)!="undefined" ? global.colorTitle : "purple";
+	var titleSize = typeof(global.sizeTitle)!="undefined" ? global.sizeTitle : "14";
+	var titleFont = typeof(global.fontTitle)!="undefined" ? global.fontTitle : "Arial";
+	
+	var ismultichart = typeof(global.multichart)!="undefined" ? global.multichart : "false";
+	var recNum = typeof(global.recNumber)!="undefined" ? parseInt(global.recNumber) : 0;
+	var viewLegend = typeof(global.legend)!="undefined" ? global.legend : "true";
+	var linkUrl = typeof(global.drillUrl)!="undefined" ? global.drillUrl : "";
+	
+
+	<!--layout -->
+	var fontSize1=1/15;
+	var fontSize2=1/25;
+	var textPositionRate1 = 8/10;
+	var textPositionRate2 = 11/13; 
+	var radialGradientRate=3/4;
+	var rectangleHeightRate = 1/4;	
+	var innerArcRate=3/4;
+	var lineSize1Rate = 1/40;
+	var lineSize2Rate = 1/80;
+	var lineLenght1Rate = 1/10;
+	var lineLenght2Rate = 1/11;
+	var innerSphereRate = 1/14;
+	var agoHeightRate = 1/30;
+	var agoWidthRate = 3/4;
+	var agoColor = 0xff0000;
+	var arcInnerColor = 0xcccccc;
+	var text1Color = 0x0000ff;	
+	var text2Color = 0x0000ff;
+	var heightRate = 1/4;
+
+	<!--Set dataset -->
+	var dataset = canvas.datasets.data;
+    dataset.setQueryType("POST");
+    dataset.setSrc(dataurlParam); 
+ 	var actualang = -1;  
+	var centerX = 0;
+	var centerY = 0;
+
+  </script>  
+  
+  <class name="ago" extends="drawview" >
+		<method name="setAgo" args="width,height,color"> 					    
+			this.moveTo(0,0);
+			this.beginPath();
+			this.lineTo(0,height/4);
+			this.lineTo(width,height/4);
+			this.lineTo(width,-height/4);
+			this.lineTo(0,-height/4);
+			this.closePath();				
+
+			this.fillStyle = 0x000000;
+	        this.globalAlpha = 1; 		
+	        this.fill();
+	
+			this.strokeStyle = color;
+	        this.lineWidth = height/8;
+	        this.stroke();		
+		</method>
+  </class>
+  
+  <class name="legendItem" extends="drawview">
+		 <method name="init">
+        	     super.init();   
+		 </method>
+
+		 <method name="drawItem" args="lineName,color">
+        	 this.moveTo(10,10);
+		     this.lineTo(20,10);
+			
+             this.strokeStyle = color;
+             this.lineWidth = 4;
+             this.stroke();
+
+		     var txt = new LzText(this,{x:40,text:lineName,fontstyle:"bold"});     
+		 </method>
+	</class>
+	
+  <drawview name="display">
+    
+  	<method name="showDisplay" args="min,low,high,max"> 
+	     var radiusByWidth = (appWidth-2*appMargin)/2;
+	     var radiusByHeight = (appHeight-2*appMargin)/(1+rectangleHeightRate);
+	     
+	     Debug.write("appHeight: " + appHeight);
+	     Debug.write("appWidth: " + appWidth);
+	
+		 var radius = 0;
+		 centerX = 0;
+		 centerY = 0;
+
+	    if (radiusByWidth &lt;  radiusByHeight) {
+			radius = radiusByWidth;
+	    } else {
+			radius = radiusByHeight;
+ 		}
+
+		<!-- radius = radiusByWidth; -->
+ 		<!-- sets height and width of view componenet -->
+ 		this.setWidth(appWidth);
+ 		if (viewLegend == "false"){	
+			this.setHeight(appHeight-radius+(appMargin*2));
+		}
+		else{
+			this.setHeight(appHeight);
+		}
+		
+	<!-- ORIG 
+		centerY = (appHeight-2*appMargin)-radius/4+appMargin;
+		centerX = (appWidth-2*appMargin)/2+appMargin;
+		-->
+		<!-- defines the centerY coordinate: if ther'is a title it adds the height margins -->
+		if (viewTitle != undefined &amp;&amp; viewTitle == "true")
+			centerY = appHeight-radius+heightMargin;
+		else
+			centerY = appHeight-radius+appMargin;
+		
+		centerX = (appWidth-2*appMargin)/2+appMargin;
+		
+		Debug.write("heightMargin: " + heightMargin);
+		Debug.write("centerY: " + centerY);
+	    Debug.write("centerX: " + centerX);
+	
+		this.rotDisplay.setX(centerX);
+		this.rotDisplay.setY(centerY);
+		
+		this.rotDisplay.createNeedles();
+		
+		for (i=0; i &lt; nNeedles; i++){
+			agoColor = this.getColor("colorNeedle"+(i+1)+"");
+			this.rotDisplay["ago_"+i].setAgo(-radius*agoWidthRate,radius*agoHeightRate,agoColor);
+			
+			if (viewLegend == "true" ){				
+				var valuePar = canvas.display.getValuePar("valueAttributeName"+(i+1)+"");
+				canvas.dvLegend.addItem(valuePar,agoColor,i, radius);
+				canvas.dvLegend.setVisible(true);
+			}
+			else
+				canvas.dvLegend.setVisible(false);
+		}
+		var deltaDiv = (max-min)/numDiv;
+
+		ang = 0;
+
+
+		if (withMainDiv) {
+			canvas.display.mainDiv.showDiv(centerX,centerY,radius,radius*lineLenght1Rate,lineSize1Rate*radius);
+		}
+
+		if (withSecDiv) {	
+   			canvas.display.secondaryDiv.showDiv(centerX,centerY,radius,radius*lineLenght2Rate,lineSize2Rate*radius);
+		}
+
+		if (withMainText) {
+			canvas.display.mainText.showText(centerX,centerY,radius*textPositionRate1,deltaDiv,fontSize1*radius);
+		}
+
+		if (withSecText) {
+			canvas.display.secondaryText.showText(centerX,centerY,radius*textPositionRate2,deltaDiv,fontSize2*radius);
+		}   
+			
+		var angLow = (low-min)*Math.PI/(max-min);
+		var angHigh = (high-min)*Math.PI/(max-min);
+
+<!-- 
+		Debug.write(angLow*180/Math.PI);
+		Debug.write(angHigh*180/Math.PI);
+-->
+		<!-- setting general title  -->
+		Debug.write("viewTitle: " + viewTitle );
+		if (viewTitle != undefined &amp;&amp; viewTitle == "true"){
+			var titleX = centerX - (titleText.length*3.5);
+			var titleY = centerY-(radius+(titleSize*4));
+			if (10 &lt; titleY) titleY = 10;
+			new LzText(this,
+						{name:"title"
+						 ,text:titleText
+						 ,font:titleFont
+						 ,fontsize:titleSize 
+						 ,fgcolor:titleColor
+						 ,fontstyle:"bold"
+						 ,selectable:false
+						 ,y:titleY
+						 ,x:titleX
+						 });
+		}
+		
+		<!-- setting title serie -->
+		Debug.write("linkUrl: -" + linkUrl +"-");
+		if (linkUrl == undefined || linkUrl == ""){
+			new LzText(this,
+						{name:"titleSerie"
+						 ,font:serieTitleFont
+						 ,fontsize:serieTitleSize 
+						 ,fgcolor:serieTitleColor
+						 ,fontstyle:"bold"
+						 ,selectable:false
+						 ,text:""
+						 ,y:centerY-(radius+(serieTitleSize*2))});
+		}
+		else{		 <!-- ORIG
+			new lz.ulink(this,
+						{name:"titleSerie" 
+						 ,href:linkUrl
+						 ,target:"_self"
+						 ,y:centerY-(radius+(serieTitleSize*2))
+						 ,font:serieTitleFont
+						 ,fontsize:serieTitleSize 
+						 ,color:serieTitleColor
+						 ,text:""
+						 ,fontstyle:"bold"});
+						  -->
+						  Debug.write("prima di creazione di lz text");
+						  <![CDATA[
+						 new LzText(this,
+						{name:"titleSerie"
+						 ,multiline:true
+						 ,font:serieTitleFont
+						 ,fontsize:serieTitleSize 
+						 ,fgcolor:serieTitleColor
+						 ,fontstyle:"bold"
+						 ,text: ""
+						 //,text:"<a href='http://www.google.com' target='_self' ><u>ciccia</u></a>"						
+						 ,y:centerY-(radius+(serieTitleSize*2))
+						 });						 
+						 ]]>
+						
+		}
+			
+		<!--  setting arcs -->
+		this.setArc(centerX,centerY,radius,0,angLow,arc1Color);
+		this.setArc(centerX,centerY,radius,angLow,angHigh,arc2Color);
+		this.setArc(centerX,centerY,radius,angHigh,Math.PI,arc3Color);
+	
+		this.rotDisplay.sphere.setSphere(centerX,centerY,radius*innerSphereRate);
+		this.rotDisplay.createAnimators();
+	
+		<!--this.shadow.showShadow(centerX,centerY,radius);-->	
+    </method>
+	
+	<method name="setArc" args="centerX,centerY,radius,angStart,angStop,color"> 
+		var arcStartX = centerX-radius*Math.cos(angStart);
+		var arcStartY = centerY-radius*Math.sin(angStart);
+
+		angStart = (Math.PI-angStart); 
+		angStop = (Math.PI-angStop);
+
+		var arcIntoX = centerX-radius*Math.cos((angStop-angStart));
+		var arcIntoY = centerY-radius*Math.sin((angStop-angStart));
+
+		this.moveTo(centerX,centerY);
+		this.beginPath();
+		this.lineTo(arcStartX,arcStartY);
+		this.arc(centerX,centerY,radius,angStart,angStop,false);
+		this.lineTo(centerX,centerY);
+		this.closePath();
+
+        this.fillStyle = color;
+        this.globalAlpha = 0.5; 		
+        this.fill();
+        
+        <!-- this.strokeStyle = 0xffff00;
+        this.lineWidth = 5;
+        this.stroke();-->
+		   <!-- 
+		var g = this.createRadialGradient(centerX-radius*radialGradientRate,centerY-radius*radialGradientRate, .7, centerX+radius*radialGradientRate, centerX+radius*radialGradientRate, 0)
+        this.globalAlpha = 0; 
+        g.addColorStop(0, 0x000000);
+        this.globalAlpha = 0.7;
+        g.addColorStop(1, 0xffffff);
+        this.fillStyle = g;
+        this.fill();
+                  -->
+        this.strokeStyle = 0x000000; 
+        this.lineWidth = 2;
+        this.stroke();
+	</method>
+	
+    <method name="getColor" args="colorDefinition">
+		var color;
+		switch (colorDefinition){
+			case "colorNeedle1": color=needle1Color;
+					break;
+			case "colorNeedle2": color = needle2Color;
+					break;
+			case "colorNeedle3": color = needle3Color;
+					break;
+			case "colorNeedle4": color = needle4Color;
+					break;
+			case "colorNeedle5": color= needle5Color;
+					break;
+		}		
+		if (color=="undefined") return "red";
+		else return color;
+    </method>
+    
+    <method name="getValuePar" args="valueDefinition">
+		var valuePar;
+		switch (valueDefinition){
+			case "valueAttributeName1": valuePar=valueAttributeName1;
+					break;
+			case "valueAttributeName2": valuePar = valueAttributeName2;
+					break;
+			case "valueAttributeName3": valuePar = valueAttributeName3;
+					break;
+			case "valueAttributeName4": valuePar = valueAttributeName4;
+					break;
+			case "valueAttributeName5": valuePar= valueAttributeName5;
+					break;
+		}		
+		if (valuePar=="undefined") return "value";
+		else return valuePar;
+    </method>
+    
+
+<!-- ***CANVAS.DISPLAY.SHADOW*********************************************************************-->
+	<drawview name="shadow">	        
+		<method name="showShadow" args="centerX,centerY,radius"> 
+
+			this.beginPath();
+			this.moveTo(centerX-radius,centerY);
+			this.lineTo(centerX-radius,centerY+radius*rectangleHeightRate);
+			this.lineTo(centerX+radius,centerY+radius*rectangleHeightRate);
+			this.lineTo(centerX+radius,centerY);
+			this.closePath();
+
+			this.fillStyle = 0x000000;
+	        this.globalAlpha = 1; 		
+	        this.fill();
+               
+			var g = this.createRadialGradient(centerX-radius,centerY, .7, centerX+radius, centerY+radius*rectangleHeightRate, 0)
+	        this.globalAlpha = 0; 
+	        g.addColorStop(0, 0x000000);
+	        this.globalAlpha = 1;
+	        g.addColorStop(1, 0xffffff);
+	        this.fillStyle = g;
+	        this.fill();
+	
+	        this.strokeStyle = 0xffffff;
+	        this.lineWidth = 5;
+	        this.stroke();
+
+	        this.strokeStyle = 0xffffff;
+	        this.lineWidth = 2;
+	        this.stroke();
+		</method>
+
+		<handler name="onclick">
+			this.setVisible(false);
+		</handler>
+	</drawview>	        
+
+
+
+<!-- ***CANVAS.DISPLAY.mainDiv*********************************************************************-->
+	<drawview name="mainDiv">	        
+		<method name="showDiv" args="centerX,centerY,radius, length, size"> 
+
+		   ang = 0;
+
+			for (var i = 0; i &lt; numDiv+1; i++) {
+		
+					var startX = centerX-(radius-length)*Math.cos(ang);
+					var startY = centerY-(radius-length)*Math.sin(ang);
+					var stopX = centerX-radius*Math.cos(ang);
+					var stopY = centerY-radius*Math.sin(ang);
+					
+					this.moveTo(startX,startY);
+					this.lineTo(stopX,stopY);
+					this.moveTo(startX,startY);
+					
+			    	this.strokeStyle = 0x000000;
+			        this.lineWidth = size;
+					this.globalAlpha = 1; 
+			        this.stroke();
+		
+			  	 	ang = ang+Math.PI/numDiv;		
+			}
+		</method > 
+	</drawview> <!-- **mainDiv*****************************************************************************-->
+
+<!-- **mainText*****************************************************************************-->
+	<drawview name="mainText">
+		<method name="showText" args="centerX,centerY, text, deltaDiv, fontSize">
+
+		   ang = 0;
+		   label=min;
+
+			for (var i = 0; i &lt; numDiv+1; i++) {
+		
+					var textX = centerX-text*Math.cos(ang);
+					var textY = centerY-text*Math.sin(ang);
+		
+					var txt = new LzText(this);
+					txt.setAttribute("fontsize",fontSize);
+					txt.setColor(text2Color);
+					txt.setAttribute("immediateparent",this);
+					txt.setText(label);
+					
+					txt.setWidth(fontSize*3);
+					txt.setHeight(fontSize*3);
+		
+					txt.setX(textX-fontSize);					
+					txt.setY(textY-fontSize);
+		
+				   	ang = ang+Math.PI/numDiv;
+					label=label+deltaDiv;
+			}
+
+		</method > 
+	</drawview> <!-- **CANVAS.DISPLAY.mainText************************************************************-->
+
+<!-- **CANVAS.DISPLAY.secondaryDiv******************************************************************-->
+
+	<drawview name="secondaryDiv">
+		<method name="showDiv" args="centerX,centerY,radius, length, size"> 
+
+		   ang = Math.PI/numDiv/2;
+
+			for (var i = 0; i &lt; numDiv; i++) {
+		
+				var startX = centerX-(radius-length)*Math.cos(ang);
+				var startY = centerY-(radius-length)*Math.sin(ang);
+				var stopX = centerX-radius*Math.cos(ang);
+				var stopY = centerY-radius*Math.sin(ang);
+				
+				this.moveTo(startX,startY);
+				this.lineTo(stopX,stopY);
+				this.moveTo(startX,startY);
+				
+   		    	this.strokeStyle = 0x000000;
+		        this.lineWidth = size;
+				this.globalAlpha = 1; 
+		        this.stroke();
+				 
+				ang = ang+Math.PI/numDiv;
+		
+			}
+		
+		</method > 
+	</drawview> <!-- **CANVAS.DISPLAY.secondaryDiv************************************************************-->
+
+
+
+<!-- **CANVAS.DISPLAY.secondaryText**************************************************************-->
+
+	<drawview name="secondaryText">
+		<method name="showText" args="centerX,centerY,text,deltaDiv,fontSize">
+
+		   ang = Math.PI/numDiv/2;
+		   label = min+deltaDiv/2;
+
+			for (var i = 0; i &lt; numDiv; i++) {
+		
+					var textX = centerX-text*Math.cos(ang);
+					var textY = centerY-text*Math.sin(ang);
+		
+					var txt = new LzText(this);
+					txt.setAttribute("fontsize",fontSize);
+					txt.setColor(text2Color);
+					txt.setAttribute("immediateparent",this);
+					txt.setText(label);
+					
+					txt.setWidth(fontSize*3);
+					txt.setHeight(fontSize*3);
+		
+					txt.setX(textX-fontSize);					
+					txt.setY(textY-fontSize);
+			
+					ang = ang+Math.PI/numDiv;
+					label=label+deltaDiv;
+			}			
+		</method > 
+	</drawview> <!-- **CANVAS.DISPLAY.secondaryText*********************************************************-->
+
+
+<!-- **CANVAS.DISPLAY.rotDisplay******************************************************************************-->	
+	<view name="rotDisplay" height="100">
+
+	    <animatorgroup name="needlesGroup" process="sequential" start="false" />
+		 
+	    <method name="createAnimators">				 
+			  for (var i=0; i &lt; nNeedles; i++){
+			  
+				  var anm = new LzAnimator(this.needlesGroup,
+	 							{start:false
+	 							,name:"rot_"+i
+	 							,attribute: "rotation"	 							
+	 							,duration : 3000	 						 								 						
+	 							,target: canvas.display.rotDisplay["ago_"+i]}); 	
+			  }
+		</method>
+		 
+		 
+	    <method name="changeang" args="ang,idx" >		
+			this.needlesGroup["rot_"+idx].setTo(ang);   
+	    </method>
+	
+		<method name="createNeedles" args=""> 
+	 	   for (var i=0; i &lt; nNeedles; i++){			 	   
+	 	   		new lz.ago(this, {name: "ago_"+i}) 				 	   	
+	 	   }
+		</method>
+				
+	<!-- **CANVAS.DISPLAY.rotDisplay.SPHERE***********************************************************************-->
+		<drawview name="sphere">	        
+			<method name="setSphere" args="centerX,centerY,radius"> 
+			   	this.setArc(0,0,radius,0,2*Math.PI,0xffffff);
+			</method>
+	
+			<method name="setArc" args="centerX,centerY,radius,angStart,angStop,color"> 
+				
+				var arcStartX = centerX-radius*Math.cos(angStart);
+				var arcStartY = centerY-radius*Math.sin(angStart);
+	
+				angStart =(Math.PI-angStart); 
+				angStop = (Math.PI-angStop);
+	
+				var arcIntoX = centerX-radius*Math.cos((angStop-angStart));
+				var arcIntoY = centerY-radius*Math.sin((angStop-angStart));
+	
+				
+				this.beginPath();
+				this.arc(centerX,centerY,radius,angStart,angStop,false);
+				this.lineTo(centerX,centerY);
+				this.closePath();
+		
+		        this.fillStyle = color;
+		        this.globalAlpha = 1; 		
+		        this.fill();
+		             <!-- 
+		        this.strokeStyle = 0x000000;
+		        this.lineWidth = 5;
+		        this.stroke();
+					  
+				var g = this.createRadialGradient(centerX-radius,centerY-radius, 0.5, centerX+radius, centerX+radius, 0)
+	    		this.globalAlpha = 0; 
+	    		g.addColorStop(0, 0x000000);
+	    		this.globalAlpha = 1;
+	    		g.addColorStop(1, 0xffffff);
+	    		this.fillStyle = g;
+	    		this.fill();
+	                  -->
+	    		this.strokeStyle = 0x000000;
+	    		this.lineWidth = 2;
+	    		this.stroke();
+	   		
+			</method>
+		</drawview> <!--**CANVAS.DISPLAY.rotDisplay.SPHERE******************************************************-->
+	
+	</view> <!-- **CANVAS.DISPLAY.rotDisplay*************************************************************************-->
+
+	<datapointer id="rotationresponse" xpath="data:/rows[0]">
+	  	<handler name="ondata">
+	  	<![CDATA[
+	  		if (rotationresponse.getNodeCount() >= recNum){
+		  		for (var j = 0; j < rotationresponse.getNodeCount(); j++) {
+			  		rotationresponse.selectChild(0);
+		  		 	if (recNum > 0 ){	  		 	
+			  		 	for (k=0; k < recNum; k++){
+			  		 		rotationresponse.selectNext(); 
+			  		 	}
+			  		}
+			  		
+			  	 	var serieName = rotationresponse.getNodeAttribute(xSerieAttributeName);			       	
+				    if (serieName == undefined || serieName == "undefined")
+				       	 serieName = rotationresponse.getNodeAttribute(xSerieAttributeName.toUpperCase());
+				       	 
+				    if (serieName != undefined && serieName != "undefined" && serieName != ""){	
+				    	Debug.write("serieName: -" + serieName + "-");
+				  		// defines needles
+			  		 	 for (var i = 0; i < nNeedles; i++) {
+					   		 var valuePar = canvas.display.getValuePar("valueAttributeName"+(i+1)+"");
+					       	 var rotation = rotationresponse.getNodeAttribute(valuePar);
+					       	 canvas.display.changeRotation(rotation, i);  	
+						     var newX = centerX - (serieName.length*3);
+						      	 	      	 	
+						     if (linkUrl == undefined || linkUrl == ""){
+					      	 	// updating titleSerie 				      	 	
+						       	 canvas.display.titleSerie.setAttribute("text",serieName);	 						      
+						    }
+					      	else{
+					      	 //  updating linkurl					      	
+					      	 	if (linkUrl.indexOf("$F{") > -1){
+					      	 		var lastFieldIdx = 0;
+					      	 		var tmpUrl = linkUrl;	
+					      	 		while (lastFieldIdx > -1){
+					      	 			var idxStart = 	tmpUrl.indexOf("$F{")+3;					
+					      	 			var idxEnd = tmpUrl.indexOf("}");	
+						      	 		var nameField = tmpUrl.substr(idxStart, (idxEnd-idxStart));				      	 		
+						      	 		var valueField = rotationresponse.getNodeAttribute(nameField);
+						      	 		if (valueField != undefined && valueField != ""){
+						      	 			var tmpPar = "$F{" + nameField + "}";
+							      	 		linkUrl = linkUrl.replace(tmpPar, valueField);
+							      	 		tmpUrl = linkUrl.substr(linkUrl.indexOf("&")+1);
+						      	 			lastFieldIdx = tmpUrl.indexOf("$F{");	
+						      	 		}			
+						      	 		else	    
+						      	 			lastFieldIdx = -1;	     	 						      	 
+						      	 	}
+						      	 	linkUrl = "<a href=\"" + linkUrl + "\" target=\"_self\">";
+									linkUrl +=  "<u>"+serieName+"</u></a>"
+																									
+									// orig: canvas.display.titleSerie.setAttribute("href", linkUrl);										      	 	
+					      	 		canvas.display.titleSerie.setAttribute("text",linkUrl);	 
+					      	 		//canvas.display.titleSerie.setAttribute("onclick", lz.Browser.loadURL(linkUrl,'_self'));	
+					      	 	} 
+					      	 }
+					      	 canvas.display.titleSerie.setAttribute("x", newX); 
+						 }
+					}				 
+		  		}
+	  		}            		  
+	  		canvas.display.rotDisplay.needlesGroup.doStart(); 
+	  		]]>
+	  	</handler>
+	</datapointer>
+
+	<method name="changeRotation" args="rotation, idx">
+		var isNegRot = "false";
+		
+		if (min &lt; 0) isNegRot = "true" ;
+		
+		Debug.write("rotation1: " + rotation + " - isNegRot: " + isNegRot);
+			       	 	
+	    <!--  orig rotation = rotation*180/(max-min); -->
+	    
+			if (isNegRot == "false")
+				rotation = rotation*180/(max-min);
+			else{
+				var round = (((max-min)/100)*45);
+				Debug.write("round: " +(max-min) + " - "+ round);
+				rotation = rotation*180/(max-min)+90;  	
+				<!--rotation = (rotation*Math.PI	/(max-min))*180;	-->
+				
+				Debug.write("case 1: " + rotation*Math.PI);	
+			}
+			
+		Debug.write("rotation2: " + rotation);
+		
+	    if(actualang==-1) {
+	        actualang = rotation;
+	        canvas.display.rotDisplay.changeang(rotation, idx);
+	     } else {
+	        canvas.display.rotDisplay.changeang(rotation, idx);
+	     }
+	</method>  
+	    
+	<handler name="oninit">
+	        canvas.display.showDisplay(min,low,high,max);
+	        dataset.doRequest();
+	        <!-- canvas.display.timer();-->
+	</handler>
+	
+ </drawview> <!-- **CANVAS.DISPLAY**************************************************************-->
+ 
+ <!-- **CANVAS.dvLegend"*********************************************************-->
+ <view name="dvLegend">
+ 	<wrappinglayout axis="y" spacing="10"/>
+ 	
+ 	<method name="addItem" args="lineName,color,idx, radius">
+ 			this.setAttribute("width", radius*2);
+ 			this.setAttribute("height", 100); 
+			this.setX(centerX-radius);
+			this.setY(centerY+10);
+			
+			var legIt = new lz.legendItem(this,{name:"legend"+idx});
+			legIt.drawItem(lineName,color);	
+	</method>
+ </view> <!-- **CANVAS.dvLegend"*********************************************************-->
+
+</canvas>

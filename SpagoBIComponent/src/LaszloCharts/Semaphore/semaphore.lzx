@@ -1,0 +1,328 @@
+<canvas debug="false" width="100%" height="100%" >
+
+<script src="json.js"/>
+ 	
+	<script>
+	<![CDATA[ 
+		
+		// -- utils functions -------------------------------------------------------------
+		var jsonParserOptions = {
+			errorHandler: function(msg, index) {
+					Debug.write('Error[' + index + ']: ' + msg);
+			}
+		}
+		
+		var apply = function(o, c, defaults){
+		    if(defaults){
+		        // no "this" reference for friendly out of scope calls
+		        Sbi.sdk.apply(o, defaults);
+		    }
+		    if(o && c && typeof(c) == 'object'){
+		        for(var p in c){
+		            o[p] = c[p];
+		        }
+		    }
+		    return o;
+		};
+		
+		var decode = function(jsonStr) {
+			var json, c;
+			
+			//Debug.write("decode IN: " + jsonStr);
+			//var regExp = new RegExp('[|]','g');
+			//global.fields = global.fields.replace(regExp, '"');
+			
+			json = '';
+			for(var i = 0, l = jsonStr.length; i < l; i++) {
+				c = jsonStr.charAt(i);
+				if(c == '|') c = '"';
+				json += c;
+			}
+			
+			//Debug.write("decode OUT: " + json);
+			
+			json = JSON.parse(json, jsonParserOptions);
+			
+			return json;
+		}
+		
+		// -- core ----------------------------------------------------------------------
+		global.paramWidth = global.paramWidth || 50;
+		Debug.write("paramWidth: " + paramWidth);
+		
+		global.paramHeight = global.paramHeight || 50;
+		Debug.write("paramHeight: " + paramHeight);
+		
+		global.margin = global.margin || 10;
+		Debug.write("margin: " + margin);
+		
+		global.title = global.title || 'Semaphore';
+		Debug.write("title: " + title);
+		
+		global.header = global.header || 'Errors';
+		Debug.write("header: " + header);
+		
+		global.rangeMinValue = global.rangeMinValue || 0;
+		Debug.write("rangeMinValue: " + rangeMinValue);
+		
+		global.rangeMaxValue = global.rangeMaxValue || 200;
+		Debug.write("rangeMaxValue: " + rangeMaxValue);
+
+		global.rangeFirstInterval = global.rangeFirstInterval || 50;
+		Debug.write("rangeFirstInterval: " + rangeFirstInterval);
+		
+		global.rangeSecondInterval = global.rangeSecondInterval || 100;
+		Debug.write("rangeSecondInterval: " + rangeSecondInterval);
+				
+		global.value = global.value || null; 
+		Debug.write("value: " + value);
+		
+		global.orientation = global.orientation || "vertical"; //vertical / horizontal
+		Debug.write("orientation: " + orientation);
+
+		global.color = global.color || "white";
+		Debug.write("color: " + color);
+
+		global.isIE = global.isIE;
+		Debug.write("isIE: " + isIE);
+		
+		// -- style ----------------------------------------------------------------------
+		
+		// Style to use in rendering text fields appearing inside the view; 
+		// valid values are plain, bold , italic, or bolditalic.
+		global.fontDefault = {name: "serif", color: "black", size: 8, style: "plain"};
+		
+		global.stylesDefault =	{
+		
+			title: { text: title, visible: true,  align: "center", valign: "top", font: apply(global.fontDefault, {"name":"serif", size: 18, style: "bold"}) }
+			
+			, header: { text: header, visible: true,  align: "center", font: apply(global.fontDefault, {"name":"serif", size: 15, style: "bold"}) }
+			
+			, headerValue: { visible: true,  align: "center", font:  {name: "serif", color: "black", size: 10, style: "plain"}}
+			
+			, border: {color: "black", size: "0"}
+			
+			// A numeric value that specifies the spacing around 
+			// the edges of the chart's plot area
+			, padding: {top: 10, right: 0, bottom: 3, left: 10}
+
+		}
+		global.styles = global.styles || '{}';
+		global.styles = decode(global.styles);	
+		global.styles = apply(stylesDefault, global.styles);
+	
+		// -- private ----------------------------------------------------------------------
+		//var dataset = canvas.datasets.data;
+		
+		flash.external.ExternalInterface.addCallback("setValue", null, setValue);
+		function setValue(value) {
+			Debug.write("value: " + value);
+			
+			var v =  null;
+			var descValue = null;
+			
+			//the value of element is in format 'value|valueDesc'. If valueDesc is valorized its visualized as the description values.
+			//Ie: '23,4|23,4%' set the value of the widget at 23,4 while into the description is visualized '23,4%'.
+			if (value.indexOf('|') > -1){
+				v =  value.substr(0,value.indexOf('|') );
+				descValue =  value.substr(value.indexOf('|')+1 );
+			}else{
+				v = value;
+				descValue =  v;
+			}
+            canvas.chart.setValue(v); 
+            
+            if(styles.header.visible) {			
+		        //sets the value of the infocontainer
+		        //canvas.display.infoContainer.headerValue.setAttribute("text",v);
+		        canvas.chart.infoContainer.headerValue.setAttribute('text', descValue); 		        
+			}           
+        };
+	]]>
+</script>
+
+<drawview name="chart"> 
+		<text name="title"></text>
+		<drawview name="infoContainer" strokeStyle="0xAAAAAA" lineWidth="1">
+			<wrappinglayout axis="x" spacing="5"/>
+  			<text name="header" fontsize="12" multiline="true"></text>
+  			<text name="headerValue" fontsize="18"></text>
+  		</drawview>
+        
+        <method name="render"><![CDATA[
+            this.clear();
+            // sets height and width of view componenet	 		
+            
+			var chartWidth = parseFloat(paramWidth) + parseFloat(styles.padding.right) + parseFloat(styles.padding.left);
+  			var chartHeight = parseFloat(paramHeight) + parseFloat(styles.padding.top) + parseFloat(styles.padding.bottom);
+  			
+  			this.setAttribute('width', chartWidth);
+	 		this.setAttribute('height', chartHeight);     
+        
+        	var rectangleHeightRate = 1/4;	        
+	        var radiusByWidth = (paramWidth-2*margin)/2;
+		    var radiusByHeight = (paramHeight-2*margin)/(1+rectangleHeightRate);		    		     		
+			var radius = 0;			
+	        var xCircle = 0;
+        	var yCircle = 0;
+
+		    if (radiusByWidth <  radiusByHeight) {
+				radius = radiusByWidth;
+		    } else {
+				radius = radiusByHeight;
+	 		}
+	 		
+	 		xCircle = (paramWidth-2*margin)/2+margin;
+	 		xCircle = xCircle + styles.padding.left;
+	 		Debug.write("xCircle: " + xCircle);
+	 		
+	 		if (styles.title.visible) {
+				yCircle = paramHeight-radius+(margin*2);
+			}
+			else {
+				//yCircle = paramHeight-radius+margin;
+				yCircle = paramHeight-radius;
+			}
+			
+			var colored = false; // specify that a circle is yet colored
+            for (i=0; i<3; i++){    
+            	color = 'white';   
+            	//defining color on the real field's value     	
+            	if (value == null || value > rangeMaxValue || value < rangeMinValue)	{
+            		color = 'white';
+            	}else if (i == 0 && value <= rangeMaxValue && value > rangeSecondInterval ){
+            		color = 'red';            		
+            	}else if (i == 1 && value <= rangeSecondInterval && value > rangeFirstInterval ){
+            		color = 'yellow';            		
+            	}else if (i == 2 && value <= rangeFirstInterval && value >= rangeMinValue ){
+            		color = 'green';            		
+            	}
+            	
+            	//draws the single circle	
+            	this.drawCircle(xCircle, yCircle, radius, color);
+            	if (orientation == "vertical")
+            		yCircle = yCircle + (radius*2);
+            	else 
+            		xCircle = xCircle + (radius*2);
+            }
+            
+            // -- render title --------------------------------------------------------
+            Debug.write("styles.title.visible: " + styles.title.visible);
+            
+			if(styles.title.visible) {			
+				this.title.setAttribute('x', margin);
+				this.title.setAttribute('y', 1);
+				this.title.setAttribute('width', chartWidth);
+				this.title.setAttribute('height', styles.title.font.size + 3);
+				
+				this.title.setAttribute('font', styles.title.font.name);
+				this.title.setAttribute('fontsize', styles.title.font.size);
+				this.title.setAttribute('fontstyle', styles.title.font.style);
+				this.title.setAttribute('fgcolor', styles.title.font.color);
+				this.title.setAttribute('align', styles.title.align);
+				this.title.setAttribute('valign', styles.title.valign);
+				this.title.setAttribute('text', styles.title.text);
+				this.title.setAttribute('multiline', true);
+			}
+			
+			// -- render header --------------------------------------------------------
+			
+			// info containers ....
+			if(styles.header.visible) {
+				var yOffset	= yCircle + 10;			
+	  			yOffset += parseFloat(styles.padding.top);		
+				yOffset -= parseFloat(styles.padding.bottom);	
+							
+				Debug.write ('isIE: ' + isIE);
+				if (isIE !== undefined && isIE === 'true') {
+				//	yOffset = yOffset - 5;
+					yOffset = yOffset - 10;
+				} else if (isIE !== undefined && isIE === 'false') {
+					yOffset = yOffset - 15;
+				}					
+	  			Debug.write("yOffset: " + yOffset);
+  			
+				//var containerHeight = 10 +  parseFloat(styles.header.font.size) + parseFloat(styles.headerValue.font.size);
+				var containerHeight = 10 +  parseFloat(styles.header.font.size) + parseFloat(styles.headerValue.font.size);
+	  			
+	  			this.infoContainer.setAttribute('x', margin);
+				this.infoContainer.setAttribute('y',yOffset);
+				this.infoContainer.setAttribute('height', containerHeight);
+				this.infoContainer.setAttribute('width', chartWidth );
+					
+				this.infoContainer.rect(0, 0, this.infoContainer.width, this.infoContainer.height);	
+  				this.infoContainer.stroke("this.infoContainer.height: " + containerHeight);
+  				
+				this.infoContainer.header.setAttribute('y', 0);		
+				this.infoContainer.header.setAttribute('font', styles.header.font.name);
+				this.infoContainer.header.setAttribute('fontsize', styles.header.font.size);
+				this.infoContainer.header.setAttribute('fontstyle', styles.header.font.style);
+				this.infoContainer.header.setAttribute('fgcolor', styles.header.font.color);
+				//this.infoContainer.header.setAttribute('align', styles.header.align);
+				this.infoContainer.header.setAttribute('align', 'center');
+				this.infoContainer.header.setAttribute('text', styles.header.text);
+				//this.infoContainer.header.setAttribute('multiline', true);
+				
+				this.infoContainer.headerValue.setAttribute('y', this.infoContainer.header.fontsize);
+				this.infoContainer.headerValue.setAttribute('font', styles.headerValue.font.name);
+				this.infoContainer.headerValue.setAttribute('fontsize', styles.headerValue.font.size);
+				this.infoContainer.headerValue.setAttribute('fontstyle', styles.headerValue.font.style);
+				this.infoContainer.headerValue.setAttribute('fgcolor', styles.headerValue.font.color);
+				//this.infoContainer.headerValue.setAttribute('align', styles.headerValue.align);
+				this.infoContainer.headerValue.setAttribute('align', 'center');		
+				this.infoContainer.headerValue.setAttribute('valign', 'bottom');		
+				//this.infoContainer.headerValue.setAttribute('text', value); 
+			}
+			
+        ]]></method>
+        
+        <method name="drawCircle" args="startX, startY, radius, color">
+        <![CDATA[			        
+          //  this.clear();
+            this.beginPath();
+            this.moveTo(startX+radius, startY);
+            var a = Math.tan(22.5 * Math.PI/180);
+            for (var angle = 45; angle<=360; angle += 45) {
+                // endpoint:
+                var endx = radius*Math.cos(angle*Math.PI/180);
+                var endy = radius*Math.sin(angle*Math.PI/180);
+                // control:
+                // (angle-90 is used to give the correct sign)
+                var cx =endx + radius*a*Math.cos((angle-90)*Math.PI/180);
+                var cy =endy + radius*a*Math.sin((angle-90)*Math.PI/180);
+                this.quadraticCurveTo(cx+startX, cy+startY, endx+startX, endy+startY);
+            }
+          
+            var g = this.createLinearGradient(0, 0, startX+radius, startY+radius)
+            this.globalAlpha = 1;
+            g.addColorStop(0, color);
+            //g.addColorStop(1, color);
+            this.fillStyle = g;
+            this.fill()
+            this.linewidth= 5;
+            this.stroke();
+        
+        ]]></method>
+
+	    
+	    <handler name="oninit">
+            super.init(); 
+            this.render();
+		</handler>
+	    
+	    <method name="setValue" args="v">
+	  		<![CDATA[ 
+	  			Debug.write("chart.setValue IN");
+	  			Debug.write("setValue - v: " + v);
+	  			value = v;
+	  			this.render();
+	  			Debug.write("chart.setValue OUT");
+	  		]]>
+  		</method>
+  		
+ </drawview>
+
+	
+
+     
+</canvas>

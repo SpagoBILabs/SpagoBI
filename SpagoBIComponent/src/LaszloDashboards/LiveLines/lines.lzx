@@ -1,0 +1,771 @@
+<canvas debug="false" width="100%" height="100%"> 
+
+  <dataset type="http" name="sourceDataSet" src=""/>   
+
+  <script>
+
+	var appHeight = typeof(global.paramHeight)!="undefined" ? parseInt(global.paramHeight) : 300;
+
+	var appWidth = typeof(global.paramWidth)!="undefined" ? parseInt(global.paramWidth) :500;	
+
+        var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl : "http://localhost:8080/openlaszlo/OpenLaszloEngineDash";
+
+        var xValueAttributeName = typeof(global.xColName)!="undefined" ? global.attributeNameForXValue : "xLabel";
+
+	var refRate = typeof(global.refreshRate)!="undefined" ? parseInt(global.refreshRate) : 15000;
+
+	var timeStart = typeof(global.timeStartValue)!="undefined" ? parseInt(global.timeStartValue) : "undefined";	
+
+        var timeStop = typeof(global.timeStopValue)!="undefined" ? parseInt(global.timeStopValue) : "undefined";
+	
+	var timeGridStep  = typeof(global.timeGridStepValue)!="undefined" ? parseInt(global.timeGridStepValue) : "0:01";
+
+        var stepNum = typeof(global.stepNumValue)!="undefined" ? parseInt(global.stepNumValue) : 10; 
+	
+	var xLabel = typeof(global.xLabelValue)!="undefined" ? parseInt(global.xLabelValue) : "Time";
+
+	var yLabel = typeof(global.yLabelValue)!="undefined" ? parseInt(global.yLabelValue) : "";
+
+	var minY = typeof(global.minYValue)!="undefined" ? parseInt(global.minYValue) : 0;	
+    
+	var maxY = typeof(global.maxYValue)!="undefined" ? parseInt(global.maxYValue) : 200;
+	
+	var stepY  = typeof(global.stepYValue)!="undefined" ? parseInt(global.stepYValue) : 25;
+
+	var displayMargin = typeof(global.margin)!="undefined" ? parseInt(global.margin) : 20;
+	
+	var colorLine1 = typeof(global.line1Color)!="undefined" ? parseInt(global.line1Color) : 0xf92525;
+
+	var colorLine2 = typeof(global.line2Color)!="undefined" ? parseInt(global.line2Color) : 0x17e512;
+
+	var colorLine3 = typeof(global.line3Color)!="undefined" ? parseInt(global.line3Color) : 0xbe4ce3;
+
+	var colorLine4 = typeof(global.line4Color)!="undefined" ? parseInt(global.line4Color) : 0x5420ff;
+
+	var colorLine5 = typeof(global.line5Color)!="undefined" ? parseInt(global.line5Color) : 0xf442ff;
+
+	var colorLine6 = typeof(global.line6Color)!="undefined" ? parseInt(global.line6Color) : 0xfb7819;
+
+	var colorLine7 = typeof(global.line7Color)!="undefined" ? parseInt(global.line7Color) : 0x19fbee;
+
+	var colorLine8 = typeof(global.line8Color)!="undefined" ? parseInt(global.line8Color) : 0xe570ad;
+
+	var colorLine9 = typeof(global.line9Color)!="undefined" ? parseInt(global.line9Color) : 0xfd0c23;
+
+	var colorLine10 = typeof(global.line10Color)!="undefined" ? parseInt(global.line10Color) : 0x4618de;
+
+	var minX;
+	var maxX;
+	var gridStepX;
+	var stepX;
+	var xRange;
+	var setStart = false;	
+	var xAxisLenght = 0;
+	var yAxisLenght = 0;
+	var xMarkerMargin = 0;
+	var yMarkerMargin = 0;
+	
+
+
+
+	<!--Optional Parameters-->
+
+	var backgroundColor = typeof(global.colorBackground)!="undefined" ? parseInt(global.colorBackground) : 0xfff9c9;
+	
+	<!--Set dataset-->
+
+
+
+	var dataset = canvas.datasets.sourceDataSet;
+
+        dataset.setQueryType("POST");
+        dataset.setSrc(dataurlParam);  	
+        var actualang = -1;  
+
+        var isSetup = true;
+	var tempData;
+
+	var startX; 
+        var stopX; 
+
+	var stopY = 0;	
+        var startY = 0;
+	
+	var lineID = 0;
+	
+  </script>  
+
+<!-- **CANVAS.DISPLAY**************************************************************-->
+
+  <drawview name="display"> 
+
+  	<method name="showDisplay">
+
+
+
+				
+		<!--Define chart dimensions-->
+	   	 this.setWidth(appWidth);
+	  	 this.setHeight(appHeight);
+
+		Debug.write("this.getWidth"+this.getWidth());
+		Debug.write("this.getHeight"+this.getHeight());
+
+		xMarkerMargin = 30;
+		yMarkerMargin = 30;
+	
+			
+
+	        xAxisLenght = (appWidth-2*displayMargin-xMarkerMargin);
+	        yAxisLenght = (appHeight-2*displayMargin-yMarkerMargin);
+
+		<!--draw chart-->
+		this.drawChart(displayMargin,displayMargin);
+
+		<!--axis label-->
+		this.xAxis.showXAxis();
+		this.yAxis.showYAxis();
+
+		<!--show grid-->
+		this.xGrid.showXGrid();
+		this.yGrid.showYGrid();
+	
+
+
+	</method>
+
+
+
+  <drawview name="xAxis"> 
+	<method name="showXAxis" >
+
+		var fontSize = 10;
+
+		var numDivX = xRange/gridStepX;
+
+		var stepOnAxis = xAxisLenght/numDivX;
+
+		Debug.write("Divisione intera? "+ numDivX);
+
+		var temp = minX
+		var hours = Math.floor(temp/60);
+		var minutes = temp-(hours*60);
+
+		while (hours &gt; 23) {
+			hours=hours-24;
+		}
+
+		if (hours &lt; 10) label = "0"+hours;
+		else label = hours;
+
+		if (minutes &lt; 10) label = label+":0"+minutes;
+		else label = label+":"+minutes;
+
+		var posX = yMarkerMargin+displayMargin;
+
+		for (var c = 0; c &lt; numDivX +1; c++){
+			
+			var txt = new LzText(canvas.display.xAxis,{name : "text"+c});
+
+			txt.setAttribute("fontsize",fontSize);
+			txt.setColor(0x000000);
+			txt.setText(label);
+			txt.setWidth(3*fontSize);
+			txt.setHeight(3*fontSize);
+		
+			txt.setX(posX-fontSize);					
+			txt.setY(displayMargin+yAxisLenght);
+
+			temp = temp + gridStepX;
+			hours = Math.floor(temp/60);
+			minutes = temp-(hours*60);
+			
+			while (hours &gt; 23) {
+				hours=hours-24;
+			}
+
+			if (hours &lt; 10) label = "0"+hours;
+			else label = hours;
+
+			if (minutes &lt; 10) label = label+":0"+minutes;
+			else label = label+":"+minutes;
+
+			posX = posX+stepOnAxis;
+
+		}
+		
+	</method>
+	
+	<method name="setText">
+
+
+		var numDivX = xRange/gridStepX;
+
+		var temp = minX;
+		var hours = Math.floor(temp/60);
+		var minutes = temp-(hours*60);
+			
+			while (hours &gt; 23) {
+				hours=hours-24;
+			}
+
+			if (hours &lt; 10) label = "0"+hours;
+			else label = hours;
+
+			if (minutes &lt; 10) label = label+":0"+minutes;
+			else label = label+":"+minutes;
+
+
+		for (var c = 0; c &lt; numDivX +1; c++){
+			
+			canvas.display.xAxis["text"+c].setText(label);
+		
+			temp = temp + gridStepX;
+			hours = Math.floor(temp/60);
+			minutes = temp-(hours*60);
+
+			while (hours &gt; 23) {
+				hours=hours-24;
+			}	
+
+			if (hours &lt; 10) label = "0"+hours;
+			else label = hours;
+
+			if (minutes &lt; 10) label = label+":0"+minutes;
+			else label = label+":"+minutes;
+
+
+		}
+	
+
+	</method>
+
+  </drawview>
+
+  <drawview name="yAxis"> 
+		<method name="showYAxis" >
+
+		var fontSize = 10;
+
+		var numDivY = (maxY-minY)/stepY;
+		var stepOnAxis = yAxisLenght/numDivY;
+		
+		var label = minY;
+		var posY = displayMargin+yAxisLenght;
+
+		for (var c = 0; c &lt; numDivY+1 ; c++){
+			
+			var txt = new LzText(canvas.display.yAxis,{name : "text"+c, align:"left"});
+
+			txt.setAttribute("fontsize",fontSize);
+			txt.setColor("red");
+			txt.setText(label);
+			txt.setWidth(3*fontSize);
+			txt.setHeight(3*fontSize);
+				
+			txt.setX(displayMargin);					
+
+			txt.setY(posY-fontSize);
+
+			label = label+stepY;
+			posY = posY-stepOnAxis;
+
+		}
+		
+	</method>
+  </drawview>
+
+  <drawview name="xGrid"> 
+	<method name="showXGrid" >
+
+		var numDivY = (maxY-minY)/stepY;
+		var stepOnAxis = yAxisLenght/numDivY;
+		
+		var posY = displayMargin+yAxisLenght-stepOnAxis;
+
+		for (var c = 0; c &lt; numDivY ; c++){
+
+			moveTo(displayMargin+xMarkerMargin,posY);
+			lineTo(displayMargin+xMarkerMargin+xAxisLenght,posY);	
+
+			posY = posY-stepOnAxis;
+
+			
+
+		}
+
+	        this.strokeStyle = 0x000000;
+	        this.lineWidth = 1;
+	        this.stroke();
+		
+	</method>
+
+	
+  </drawview>
+
+<drawview name="yGrid"> 
+		<method name="showYGrid" >
+
+		var numDivX = xRange/gridStepX;
+
+		var stepOnAxis = xAxisLenght/numDivX;
+
+		var posX = displayMargin+xMarkerMargin+stepOnAxis;
+
+		for (var c = 0; c &lt; numDivX ; c++){
+			
+			moveTo(posX,displayMargin);
+			lineTo(posX,displayMargin+yAxisLenght);	
+			
+			posX = posX+stepOnAxis;
+
+		}
+
+	        this.strokeStyle = 0x000000;
+	        this.lineWidth = 1;
+	        this.stroke();
+		
+	</method>
+</drawview>
+
+
+	<!-- **Creare il rettangolo con gli assi e le lebel************-->
+	<method name="drawChart" args="x0,y0">
+		
+
+		<!-- **rectangle************-->
+		this.beginPath();
+		this.rect(x0+xMarkerMargin,y0,xAxisLenght,yAxisLenght);
+		this.closePath();
+ 		
+           
+	        this.strokeStyle = backgroundColor;
+	        this.lineWidth = 5;
+	        this.stroke();
+
+		this.fillStyle = 0xfff999;
+	        this.globalAlpha = 3; 		
+	        this.fill();
+
+	<!-- g = this.createLinearGradient(x0+xAxisLenght/2,y0+yAxisLenght/2,x0+xAxisLenght/2,y0+yAxisLenght/2)-->
+
+                var g = this.createLinearGradient(x0,y0,x0+xAxisLenght,y0+yAxisLenght)
+            	this.globalAlpha = 0;
+	        g.addColorStop(0, 0x000000);
+        	this.globalAlpha = 0.5;
+	        g.addColorStop(1, 0xffffff);
+        	this.fillStyle = g;
+        	this.fill();
+
+
+		<!-- **axis************-->	
+		this.beginPath();
+		this.moveTo(x0+xMarkerMargin,y0+yAxisLenght);
+		this.lineTo(x0+xAxisLenght+xMarkerMargin,y0+yAxisLenght);
+		this.moveTo(x0+xMarkerMargin,y0+yAxisLenght);
+		this.lineTo(x0+xMarkerMargin,y0);
+		this.closePath();
+
+	        this.strokeStyle = 0x000000;
+	        this.lineWidth = 5;
+	        this.stroke();
+
+
+
+
+	</method>
+
+
+
+
+
+	
+
+    <datapointer id="dpProcess" xpath="sourceDataSet:/rows/row[1]">
+	<method event="ondata" >
+
+	   var lineName;
+	   var group;
+	   var record;
+	   var child;
+	   var xValue;
+	  
+	   
+	   var color;
+
+	   var rows;
+	   var row;
+
+           duplicate_Main_pointer = this.dupePointer();
+
+	   var attributesMap = duplicate_Main_pointer.getNodeAttributes();
+
+	   
+    	   lineID = 0;
+	   for ( var attributeName in attributesMap ) {
+
+		   lineID=lineID+1;
+
+		   if (attributeName==xValueAttributeName){
+			
+			xValue = duplicate_Main_pointer.getNodeAttribute(attributeName);
+
+		   } else {
+
+			stopY = parseFloat(duplicate_Main_pointer.getNodeAttribute(attributeName));
+			color = canvas.display.getColor("colorLine"+lineID);	
+
+			if (isSetup) {
+
+				lineName = attributeName;
+				startY = stopY;
+						
+				new line(canvas.display,{name : "line"+lineID, color : color, lineName:lineName, yValue:stopY});
+
+				legend.addItem(lineName,color,lineID);
+				
+
+
+			} else {
+
+				startY=	parseFloat(canvas.display["line"+lineID].getAttribute("yValue"));
+				canvas.display["line"+lineID].setAttribute("yValue",stopY);			
+
+				canvas.display["line"+lineID].drawLine(color);
+			}
+
+		   }
+
+	    } 
+
+	    if (isSetup) isSetup=false;	
+
+	</method>
+   </datapointer>
+
+
+  
+      <method name="refresh" >
+				
+	if (stopX+stepX &gt; maxX){
+		
+		minX = minX+xRange;
+		maxX = maxX+xRange;
+			
+		startX = minX;
+		stopX = startX+stepX;		
+	
+		for (var i=1; i&lt;lineID+1; i++){
+
+			canvas.display["line"+i].clear();
+			canvas.display["line"+i].beginPath();
+		}
+
+		canvas.display.xAxis.setText();
+
+	} else {
+	
+		startX = stopX;
+		stopX = stopX+stepX;
+	
+	}
+	
+	
+       	dataset.doRequest();
+       	canvas.display.timer();
+
+     </method>
+
+
+
+
+
+    <method name="timer">
+
+
+        this.fadeDelegate = new LzDelegate( this, "refresh" );
+   	LzTimer.addTimer( this.fadeDelegate, refRate ); 	
+
+    </method>  
+
+    <method name="initTimer">
+
+        this.fadeDelegate = new LzDelegate( this, "refresh" );
+   	LzTimer.addTimer( this.fadeDelegate, 5000 ); 	
+
+    </method>  
+
+
+
+    <method name="start" event="oninit">
+	
+	  canvas.display.setInitParameters();
+          canvas.display.showDisplay();
+
+          tempData = new LzDataElement("tempData"); 
+
+          dataset.doRequest();
+
+          canvas.display.initTimer();
+
+    </method>
+
+
+
+
+    <method name="getColor" args="colorDefinition">
+
+	var color;
+
+	switch (colorDefinition){
+	case "colorLine1": color=colorLine1;
+			break;
+	case "colorLine2": color = colorLine2;
+			break;
+	case "colorLine3": color = colorLine3;
+			break;
+	case "colorLine4": color = colorLine4;
+			break;
+	case "colorLine5": color= colorLine5;
+			break;
+	case "colorLine6": color= colorLine6;
+			break;
+	case "colorLine7": color= colorLine7;
+			break;
+	case "colorLine8": color= colorLine8;
+			break;
+	case "colorLine9": color= colorLine9;
+			break;
+	case "colorLine10": color= colorLine10;
+	}
+
+		
+	if (color=="undefined") return Oxffffff;
+
+	else return color;
+
+    </method>
+
+
+    <method name="setInitParameters">
+
+	stepX = refRate/60000; <!--minutes-->
+	
+	if (timeGridStep=="undefined") {
+
+		gridStepX = stepX;
+	}
+	else {
+		temp = timeGridStep.split(":") 
+		timeGridStepHour = parseInt(temp[0]);
+		timeGridStepMinute = parseInt(temp[1]);
+		gridStepX = timeGridStepHour*60+timeGridStepMinute;
+	}
+
+
+
+
+	if (timeStart=="undefined") {
+		
+		minX = getNow();
+				
+	}
+	else {
+		temp = timeStart.split(":") 
+		timeStartHour = parseInt(temp[0]);
+		timeStartMinute = parseInt(temp[1]);
+		minX = timeStartMinute+timeStartHour*60;
+	}
+
+	
+	if (timeStop == "undefined") {
+		
+		maxX = minX+gridStepX * stepNum; 
+		
+	}
+	else {
+		
+		temp = timeStop.split(":") 
+		timeStopHour = parseInt(temp[0]);
+		timeStopMinute = parseInt(temp[1]);
+		maxX = timeStopHour*60+timeStopMinute;
+		if (maxX &lt; minX) maxX = maxX+24*60;
+	}
+
+	xRange = maxX-minX;
+
+
+	if (setStart) {
+		var now = this.getNow();
+		<![CDATA[
+		    if ((now < maxX )&&(now > minX )) {
+			startX = now-stepX;
+		    } else {
+			startX = minX-stepX;
+		    }]]>
+	
+	} else {
+	
+		startX = minX-stepX;
+
+	}
+
+        	stopX = startX+stepX;
+
+    </method>
+
+    <method name="getNow">
+
+	d = new Date();
+	nowHour = d.getHours();
+	nowMinute = d.getMinutes();
+	Debug.write(nowHour+":"+nowMinute);
+	return (nowHour*60+nowMinute); 
+   
+    </method>
+
+
+
+
+
+
+
+
+
+     
+ </drawview> <!-- **CANVAS.DISPLAY**************************************************************-->
+
+<window name="legend"  y="10" height="100" width="250" title="Legend" resizable="true" closeable="true" align="center">
+
+
+	<wrappinglayout axis="y" spacing="10"/>
+	
+	
+		<method name="addItem" args="lineName,color,ID">
+
+			this.setX(displayMargin+yMarkerMargin+xAxisLenght/2-this.getWidth()/2);
+			
+			var legIt = new legendItem(this,{name:"legend"+ID});
+			legIt.drawItem(lineName,color);		
+
+			this.setVisible(false);
+		
+		 </method>
+
+<method event="onvisible">
+	
+	if (!this.getAttribute(visible)) canvas.showLegendWindow.setVisible(true);
+</method>
+
+</window>
+
+
+
+
+
+
+<button name="showLegendWindow" text="Legend">
+	<method event="oninit">
+		this.setVisible(false);
+		this.setX(displayMargin+yMarkerMargin+xAxisLenght/2-this.getWidth()/2);
+		
+		this.setY(displayMargin+xMarkerMargin+yAxisLenght-this.getHeight()/2);
+
+
+	</method>
+	<method event="onclick">
+		
+		canvas.legend.setVisible(true);
+		this.setVisible(false);
+		
+
+	</method>	
+</button>
+
+
+
+
+
+
+
+
+
+<class name="line" extends="drawview">
+
+	<attribute name="yValue" value="0"/>
+
+	<method event="onyValue">
+		
+		Debug.write(this.getAttribute("yValue"));
+
+
+	</method>
+
+	<method name="init">
+
+            super.init();   
+
+	</method>
+
+
+
+  	<method name="drawLine" args="colorI">	
+	
+
+
+		var startXonDisplay = (startX-minX)*xAxisLenght/xRange+xMarkerMargin+displayMargin;
+
+		var stopXonDisplay =   (stopX-minX)*xAxisLenght/xRange+xMarkerMargin+displayMargin;
+		
+
+		var startYonDisplay = displayMargin + yAxisLenght-(startY * yAxisLenght)/(maxY-minY);
+		var stopYonDisplay = displayMargin + yAxisLenght-(stopY * yAxisLenght)/(maxY-minY);
+			      
+		this.moveTo(startXonDisplay,startYonDisplay);
+		this.lineTo(stopXonDisplay,stopYonDisplay);
+
+
+	        this.strokeStyle = colorI;
+	        this.lineWidth = 4;
+	        this.stroke();
+
+		
+	</method>
+
+    </class>
+
+	<class name="legendItem" extends="drawview">
+	
+		 <method name="init">
+        	     super.init();   
+	
+		 </method>
+
+		 <method name="drawItem" args="lineName,color">
+        	     this.moveTo(10,10);
+		     this.lineTo(20,10);
+			
+         	     this.strokeStyle = color;
+	             this.lineWidth = 4;
+	             this.stroke();
+
+		     var txt = new LzText(this,{x:50,text:lineName});
+		     
+		 </method>
+
+	</class>
+
+
+</canvas>
+
+
+		
+		
+		
+		
+
+	        
+	        
+
+		
+		
