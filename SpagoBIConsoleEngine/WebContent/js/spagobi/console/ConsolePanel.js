@@ -89,7 +89,7 @@ Sbi.console.ConsolePanel = function(config) {
 	if (summaryPanelConfig !== undefined){
 		summaryPanelConfig.storeManager = this.storeManager;
 		this.initSummaryPanel(summaryPanelConfig);
-		items.push(this.summaryPanel);
+		items.push(this.summaryPanel);		
 	}
 	
 	if (detailPanelConfig !== undefined){
@@ -149,6 +149,8 @@ Sbi.console.ConsolePanel = function(config) {
 			this.detailPanel.pages[i].gridPanel.on('unlock', this.onShow, this);
 		}
 	}
+	
+	//this.refreshData();
 
 };
 
@@ -202,13 +204,11 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 	
 	//stop all datastore of the hidden console 
 	, onHide: function(){
-	//	alert('ConsolePanel: sono in onHide');
 		this.storeManager.stopRefresh(true);
 	}
 	
 	//active all datastore of the active console
 	, onShow: function(datasetConfig){
-//		alert('ConsolePanel: sono in onShow');
 		this.storeManager.stopRefresh(false);
 	}
 	
@@ -216,6 +216,10 @@ Ext.extend(Sbi.console.ConsolePanel, Ext.Panel, {
 		onhostmessage(this.exportConsole, this, false, 'export');
 		onhostmessage(this.onHide, this, false, 'hide');
 		onhostmessage(this.onShow, this, false, 'show'); 
+	}
+	
+	, refreshData: function(){
+		this.storeManager.forceRefresh();
 	}
 	
 	/*
