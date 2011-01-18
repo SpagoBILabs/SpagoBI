@@ -138,7 +138,7 @@ Ext.extend(Sbi.formviewer.StaticClosedFiltersPanel, Ext.Panel, {
 			if (this.xorFilters !== null) {
 				for (var i = 0; i < this.xorFilters.length; i++) {
 					var aXORFilter = this.xorFilters[i];
-					if(j==aXORFilter.items.items[0].id){
+					if(j==aXORFilter.items.items[0].name){
 						aXORFilter.setFormState(XORFilters[j]);
 						break;
 					}
@@ -150,7 +150,7 @@ Ext.extend(Sbi.formviewer.StaticClosedFiltersPanel, Ext.Panel, {
 			if (this.onOffFilters !== null) {
 				for (var i = 0; i < this.onOffFilters.length; i++) {
 					var aOnOffFilter = this.onOffFilters[i];
-					if(j==aOnOffFilter.items.items[0].id){
+					if(j==aOnOffFilter.items.items[0].name){
 						aOnOffFilter.setFormState(onOffFilters[j]);
 						break;
 					}
