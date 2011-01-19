@@ -16,6 +16,8 @@ Sbi.widgets.ColumnTree = Ext.extend(Ext.tree.TreePanel, {
     lines : true,
     borderWidth : Ext.isBorderBox ? 0 : 2, // the combined left/right border for each cell
     cls : 'x-column-tree',
+    autoHeight: true,
+    height: 'true',
 
     onRender : function(){
         Ext.tree.ColumnTree.superclass.onRender.apply(this, arguments);
