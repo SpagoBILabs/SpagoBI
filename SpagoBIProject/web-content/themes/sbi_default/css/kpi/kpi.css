@@ -100,7 +100,7 @@
     overflow:hidden;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
-    padding:3px 3px 3px 5px;
+    padding:1px 3px 1px 5px;
     white-space: nowrap;
     font:normal 11px arial, tahoma, helvetica, sans-serif;
 }
