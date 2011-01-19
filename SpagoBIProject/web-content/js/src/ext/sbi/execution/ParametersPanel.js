@@ -295,10 +295,15 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			// set focus on first field
 			// this is a work-around for this problem on IE: very often, the manual input field is not editable;
 			// in order to let it be editable, you should click on input label, or above + TAB button
-			this.columns[0].items.get(0).on('render', function(theField) {
-				theField.focus();
-				theField.clearInvalid();
-			}, this);
+			var firstItem = this.columns[0].items.get(0);
+			var itemParameter = firstItem.behindParameter;
+			// CONTROLLARE SE VA ANCORA BENE!!!
+			if (itemParameter.typeCode == 'MAN_IN') {
+				firstItem.on('render', function(theField) {
+					theField.focus();
+					theField.clearInvalid();
+				}, this);
+			}
 		}
 		
 		// Help message on Parameters Panel.
@@ -431,7 +436,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return true;
 			}, this);
 			
-			store.load(/*{params: param}*/);
+			//store.load(/*{params: param}*/); // CONTROLLARE CON ANDREA PERCHé CARICAVA SUBITO!!!!!!
 			
 			field = new Ext.form.ComboBox(Ext.apply(baseConfig, {
 				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}</div></tpl>'
@@ -446,7 +451,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			    , triggerAction: 'all'
 			    , selectOnFocus:true
 			    , autoLoad: false
-			    , mode : 'local'
+			    //, mode : 'local' // CONTROLLARE CON ANDREA PERCHé ERA LOCAL!!!!!!
 			    , listeners: {
 			    	'select': {
 			       		fn: function(){	

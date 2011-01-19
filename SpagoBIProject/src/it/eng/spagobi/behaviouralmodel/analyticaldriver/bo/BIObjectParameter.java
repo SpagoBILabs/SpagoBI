@@ -23,6 +23,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -81,8 +82,6 @@ public class BIObjectParameter implements Serializable {
 	
 	/* transient flag. set to true for parameters buil on the fly */
 	private boolean transientParmeters = false;
-	
-	private String lovResult;
 	
 	// default value is false; when the parameter values are set and they are correct, this field must be set to true
 	private boolean hasValidValues = false;
@@ -240,6 +239,18 @@ public class BIObjectParameter implements Serializable {
 	 * @param parameterValues The parameterValues to set.
 	 */
 	public void setParameterValues(List parameterValues) {
+		if (parameterValues == null) {
+			System.out.println("***************** parametri impostati a null!!!");
+		} else {
+			StringBuffer buffer = new StringBuffer();
+			Iterator it = parameterValues.iterator();
+			while (it.hasNext()) {
+				buffer.append(it.next().toString() + ", ");
+			}
+
+			System.out.println("***************** parametri impostati a: " + buffer.toString());
+		}
+		
 		this.parameterValues = parameterValues;
 	}
 	
@@ -370,24 +381,6 @@ public class BIObjectParameter implements Serializable {
 	}
 	
 	/**
-	 * Gets the lov result.
-	 * 
-	 * @return the lov result
-	 */
-	public String getLovResult() {
-		return lovResult;
-	}
-	
-	/**
-	 * Sets the lov result.
-	 * 
-	 * @param lovResult the new lov result
-	 */
-	public void setLovResult(String lovResult) {
-		this.lovResult = lovResult;
-	}
-	
-	/**
 	 * Checks for valid values.
 	 * 
 	 * @return true, if successful
@@ -442,7 +435,6 @@ public class BIObjectParameter implements Serializable {
 		toReturn.setIterative(isIterative);
 		toReturn.setTransientParmeters(transientParmeters);
 		toReturn.setHasValidValues(hasValidValues);
-		toReturn.setLovResult(lovResult);
 		toReturn.setBiObjectID(biObjectID);
 		toReturn.setId(id);
 		toReturn.setModifiable(modifiable);

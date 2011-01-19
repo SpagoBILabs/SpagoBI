@@ -37,6 +37,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
@@ -55,6 +56,8 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.CacheSingleton;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -159,22 +162,7 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			
 			ExecutionInstance executionInstance =  getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			
-			if("COMBOBOX".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
-				List lovs = getLOV( biparam );
-				setValuesCount( lovs == null? 0: lovs.size() );
-				if(getValuesCount() == 1) {
-					SourceBean lovSB = (SourceBean)lovs.get(0);
-					value = getValueFromLov(biparam, lovSB);
-				}
-			}
-			
-			if("LIST".equalsIgnoreCase(selectionType)
-					|| "CHECK_LIST".equalsIgnoreCase(selectionType)) {
-				setValuesCount( -1 ); // it means that we don't know the lov size
-			}
-			
 			ParameterUse biParameterExecModality;
-			
 			try {
 				// load parameter use ...
 				IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
@@ -208,9 +196,23 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 				}
 			}
 			
+			if("COMBOBOX".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+				List lovs = getLOV( biparam, biParameterExecDependencies, executionInstance);
+				setValuesCount( lovs == null? 0: lovs.size() );
+				if(getValuesCount() == 1) {
+					SourceBean lovSB = (SourceBean)lovs.get(0);
+					value = getValueFromLov(biparam, lovSB);
+				}
+			}
+			
+			if("LIST".equalsIgnoreCase(selectionType)
+					|| "CHECK_LIST".equalsIgnoreCase(selectionType)) {
+				setValuesCount( -1 ); // it means that we don't know the lov size
+			}
+			
 		}
 		
-		private  String getValueFromLov(BIObjectParameter biObjectParameter, SourceBean lovSB) {
+		private String getValueFromLov(BIObjectParameter biObjectParameter, SourceBean lovSB) {
 			String value = null;
 			ILovDetail lovProvDet = null;
 			try {
@@ -228,22 +230,15 @@ public class GetParametersForExecutionAction  extends AbstractSpagoBIAction {
 			return value;
 		}
 		
-		private List getLOV(BIObjectParameter biObjectParameter){
+		private List getLOV(BIObjectParameter biObjectParameter, List<ObjParuse> dependencies, ExecutionInstance executionInstance){
 			List rows = null;
 			String lovResult = null;
-			ILovDetail lovProvDet = null;
 			try {
-				Parameter par = biObjectParameter.getParameter();
-				ModalitiesValue lov = par.getModalityValue();
-				// build the ILovDetail object associated to the lov
-				String lovProv = lov.getLovProvider();
-				lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 				// get the result of the lov
 				IEngUserProfile profile = getUserProfile();
-				lovResult = biObjectParameter.getLovResult();
-				if ((lovResult == null) || (lovResult.trim().equals(""))) {
-					lovResult = lovProvDet.getLovResult(profile);
-				}
+				
+				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+				lovResult = executionCacheManager.getLovResult(profile, biObjectParameter, executionInstance, true);
 				
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);		

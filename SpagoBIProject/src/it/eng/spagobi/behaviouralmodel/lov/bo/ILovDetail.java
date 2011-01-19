@@ -23,6 +23,8 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -47,17 +49,27 @@ public interface ILovDetail extends Serializable {
 	 * @throws SourceBeanException the source bean exception
 	 */
 	public void loadFromXML (String dataDefinition) throws SourceBeanException;
-	
+
 	/**
-	 * Returns the result of the lov using a user profile to fill the lov profile attribute.
+	 * Returns the result of the lov for a given user and for a particular
+	 * execution instance with the given dependencies (optional).
 	 * 
-	 * @param profile the profile of the user
+	 * @param profile
+	 *            the profile of the user
+	 * @param dependencies
+	 *            the dependencies to be considered for the lov. It may be null,
+	 *            since when testing a lov, there is no correlation.
+	 * @param executionInstance
+	 *            the execution instance object, that contains the BIObject
+	 *            being executed. It may be null, since when testing a lov,
+	 *            there is no execution instance.
 	 * 
 	 * @return the string result of the lov
 	 * 
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
-	public String getLovResult(IEngUserProfile profile) throws Exception;
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	
 	/**
 	 * Checks if the lov requires one or more profile attributes.

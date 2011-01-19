@@ -32,6 +32,7 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.tools.scheduler.jobs.ExecuteBIDocumentJob;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +52,8 @@ public class ExecutionController {
 	
 	
 	/**
-	 * Direct execution.
+	 * Check if the document can be executed (all parameters must be filled).
+	 * It is used in scheduler (see {@link ExecuteBIDocumentJob}).
 	 * 
 	 * @return true, if successful
 	 */
@@ -94,6 +96,13 @@ public class ExecutionController {
         		continue;
         	}
 
+        	/*
+        	 * This part checks if the LOV is single value; this is not necessary because
+        	 * there are 3 different ways to assign values to a parameter:
+        	 * 1. define the values when defining schedule;
+        	 * 2. load a parameter's modality;
+        	 * 3. execute e groovy function (for temporal parameters).
+        	 * If a parameter is single value, then the option 2 should be activated.
         	if(biParameter.getLovResult() == null) continue;
         	LovResultHandler lovResultHandler;
 			try {
@@ -102,6 +111,7 @@ public class ExecutionController {
 			} catch (SourceBeanException e) {
 				continue;
 			}
+			*/
         	
 		}
 		

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 
 import java.util.List;
 
@@ -33,10 +34,11 @@ public interface IJavaClassLov {
 	 * Gets the values formatted into an xml structure.
 	 * 
 	 * @param profile a user profile used to fill attributes required by the query
+	 * @param executionInstance the execution instance
 	 * 
 	 * @return the xml string of the values
 	 */
-	public String getValues(IEngUserProfile profile);
+	public String getValues(IEngUserProfile profile, ExecutionInstance executionInstance);
 	
 	
 	/**

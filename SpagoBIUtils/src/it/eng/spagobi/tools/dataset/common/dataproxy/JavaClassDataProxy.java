@@ -32,7 +32,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassUtils;
 import it.eng.spagobi.tools.dataset.bo.IJavaClassDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -64,7 +64,6 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 		String result = null;				
 		IDataStore dataStore = null;
 		IJavaClassDataSet javaClass;
-		JavaClassDetail javaClassDetail =new JavaClassDetail();
 		try {
 			javaClass = (IJavaClassDataSet) Class.forName( className ).newInstance();
 
@@ -82,10 +81,10 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 			
 			result = javaClass.getValues( getProfile(), getParameters());
 			result = result.trim();
-			boolean toconvert = javaClassDetail.checkSintax(result);
+			boolean toconvert = JavaClassUtils.checkSintax(result);
 			// check if the result must be converted into the right xml sintax
 			if(toconvert) { 
-				result = javaClassDetail.convertResult(result);
+				result = JavaClassUtils.convertResult(result);
 			}
 			dataStore = dataReader.read(result);
 		} catch (InstantiationException e) {

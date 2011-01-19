@@ -25,5 +25,5 @@ public interface CacheInterface {
 
 	void put(String code,String obj);
 	String get(String code);
-	boolean isPresent(String code);
+	boolean contains(String code);
 }

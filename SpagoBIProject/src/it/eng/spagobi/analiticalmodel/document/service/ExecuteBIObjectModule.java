@@ -195,9 +195,9 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 					.equalsIgnoreCase(SpagoBIConstants.RECOVER_EXECUTION_FROM_CROSS_NAVIGATION)) {
 				recoverExecutionFromCrossNavigationHandler(request, response);
 			}
-			else if (messageExec.equalsIgnoreCase(SpagoBIConstants.SELECT_ALL)) {
-				selectAllValueForPar(request, response);
-			}
+//			else if (messageExec.equalsIgnoreCase(SpagoBIConstants.SELECT_ALL)) {
+//				selectAllValueForPar(request, response);
+//			}
 			else if (messageExec.equalsIgnoreCase(SpagoBIConstants.DESELECT_ALL)) {
 				selectNoneValueForPar(request, response);
 			}
@@ -1320,6 +1320,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 	 * @param response
 	 *            The response SourceBean
 	 */
+	/*
 	private void selectAllValueForPar(SourceBean request, SourceBean response)
 	throws Exception {
 		logger.debug("IN");
@@ -1351,13 +1352,6 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 				found=true;
 			}
 		}
-
-		/*Integer parId=currbiObjPar.getParID();
-
-		IParameterDAO pardao = DAOFactory.getParameterDAO();
-		Parameter par = pardao.loadForExecutionByParameterIDandRoleName(parId, roleName);
-		ModalitiesValue modVal = par.getModalityValue();*/
-		
 		
 		ModalitiesValue modVal = currbiObjPar.getParameter().getModalityValue();
 		// get the lov provider
@@ -1399,6 +1393,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 
 		/////////////////////////////////////
 	}
+	*/
 
 	
 	private SourceBean filterForParametersCorrelation(SourceBean rowsSourceBean, BIObjectParameter currbiObjPar, String roleName, SourceBean request) throws Exception {

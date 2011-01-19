@@ -27,6 +27,8 @@ import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
@@ -39,7 +41,7 @@ import java.util.List;
  * Defines the <code>JavaClassDetail</code> objects. This object is used to store 
  * JavaClass Wizard detail information.
  */
-public class JavaClassDetail implements ILovDetail {
+public class JavaClassDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
 	/**
 	 * name of the class which return the data
@@ -135,17 +137,11 @@ public class JavaClassDetail implements ILovDetail {
 	}
 	
 	/**
-	 * Returns the result of the lov using a user profile to fill the lov profile attribute.
-	 * 
-	 * @param profile the profile of the user
-	 * 
-	 * @return the string result of the lov
-	 * 
-	 * @throws Exception the exception
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
 		IJavaClassLov javaClassLov = createClassInstance();
-		String result = javaClassLov.getValues(profile);
+		String result = javaClassLov.getValues(profile, executionInstance);
 		result = result.trim();
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
@@ -162,26 +158,7 @@ public class JavaClassDetail implements ILovDetail {
 	 * @throws EMFUserError 
 	 */
 	public boolean checkSintax(String result) throws EMFUserError {
-		boolean toconvert = false;
-		try{
-			SourceBean source = SourceBean.fromXMLString(result);
-			if(!source.getName().equalsIgnoreCase("ROWS")) {
-				toconvert = true;
-			} else {
-				List rowsList = source.getAttributeAsList(DataRow.ROW_TAG);
-				if( (rowsList==null) || (rowsList.size()==0) ) {
-					toconvert = true;
-				}
-			}
-			
-		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
-					              "checkSintax", "the result of the java class lov is not formatted " +
-					              "with the right structure so it will be wrapped inside an xml envelope");
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9219);
-			throw userError;
-		}
-		return toconvert;
+		return JavaClassUtils.checkSintax(result);
 	}
 	
 	/**
@@ -256,11 +233,7 @@ public class JavaClassDetail implements ILovDetail {
 	 * @return the xml structure of the result 
 	 */
 	public String convertResult(String result) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<ROWS>");
-		sb.append("<ROW VALUE=\"" + result +"\"/>");
-		sb.append("</ROWS>");
-		return sb.toString();
+		return JavaClassUtils.convertResult(result);
 	}
 	
 	/**

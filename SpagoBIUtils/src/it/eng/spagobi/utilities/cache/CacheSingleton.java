@@ -60,7 +60,7 @@ public class CacheSingleton implements CacheInterface{
 	}
 
 
-	public boolean isPresent(String code){
+	public boolean contains(String code){
 		Element el=null;
 		if (cache!=null){
 			try {

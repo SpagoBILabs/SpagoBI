@@ -51,8 +51,11 @@ import it.eng.spago.util.QueryExecutor;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -472,6 +475,119 @@ public class DelegatedBasicListService {
 				return false;
 			} else return true;
 		} else return true;
+	}
+	
+	
+	/**
+	 * Filters the list with a list of filtering values.
+	 * 
+	 * @param list The list to be filtered
+	 * @param valuesfilter The list of filtering values
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter The column to be filtered
+	 * @param typeFilter The type of the filter
+	 * @param errorHandler The EMFErrorHandler object, in which errors are stored if they occurs
+	 * 
+	 * @return the filtered list
+	 */
+	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter, 
+						String typeFilter) {
+		
+		
+		List newList = new ArrayList();
+		
+		if ((valuesfilter == null) || (valuesfilter.length ==0)) {
+			return list;
+		}
+		
+		if (StringUtilities.isEmpty(columnfilter)) {
+			return list;
+		}
+		if (StringUtilities.isEmpty(typeFilter)) {
+			return list;
+		}
+		
+		if (StringUtilities.isEmpty(valuetypefilter)) {
+			return list;
+		}
+		
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+
+			Assert.assertUnreachable("filterList with a list of filtering values: the filter type " + typeFilter + " is not applicable for multi-values filtering.");
+		}
+
+		// controls the correctness of the filtering conditions
+		//boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		//if (!filterConditionsAreCorrect) return list;
+
+		
+		Iterator iterRow = list.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			for(int i = 0; i < valuesfilter.length; i++) {
+				String valuefilter = valuesfilter[i];
+				try {
+					if (valuefilter != null && !valuefilter.equals(""))
+						doesRowSatisfyCondition = 
+							doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+					else doesRowSatisfyCondition = true;
+				} catch (EMFValidationError error) {
+					error.printStackTrace();
+					return list;
+				}
+				if (doesRowSatisfyCondition) break;
+			}
+			if (doesRowSatisfyCondition) newList.add(row);
+		}
+	
+		return newList;
+	}
+	
+	
+	public static List filterList(List list, String valuefilter,
+			String valuetypefilter, String columnfilter, String typeFilter) {
+
+		List newList = new ArrayList();
+
+		Assert.assertTrue(!StringUtilities.isEmpty(valuefilter),
+				"the value filter is not set");
+
+		if (StringUtilities.isEmpty(columnfilter)) {
+			return list;
+		}
+		if (StringUtilities.isEmpty(typeFilter)) {
+			return list;
+		}
+
+		if (StringUtilities.isEmpty(valuetypefilter)) {
+			return list;
+		}
+
+		// controls the correctness of the filtering conditions
+		// boolean filterConditionsAreCorrect =
+		// verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		// if (!filterConditionsAreCorrect) return list;
+
+		Iterator iterRow = list.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			try {
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row,
+						valuefilter, valuetypefilter, columnfilter, typeFilter);
+			} catch (EMFValidationError error) {
+				error.printStackTrace();
+				return list;
+			}
+			if (doesRowSatisfyCondition)
+				newList.add(row);
+		}
+
+		return newList;
 	}
 	
 	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter, String columnfilter, 

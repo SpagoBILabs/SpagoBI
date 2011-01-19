@@ -799,8 +799,8 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 	logger.debug("descriptionColName="+descriptionColName);
 	
 	try {
-	    String result = fixlistDet.getLovResult(profile);
-	    resultSB = SourceBean.fromXMLString(result);
+//	    String result = fixlistDet.getLovResult(profile);
+//	    resultSB = SourceBean.fromXMLString(result);
 	    if (!resultSB.getName().equalsIgnoreCase("ROWS")) {
 		throw new Exception("The fix list is empty");
 	    } else if (resultSB.getAttributeAsList(DataRow.ROW_TAG).size() == 0) {
@@ -834,8 +834,8 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 	descriptionColName = scriptDetail.getDescriptionColumnName();
 	logger.debug("descriptionColName="+descriptionColName);
 	try {
-	    String result = scriptDetail.getLovResult(profile);
-	    resultSB = SourceBean.fromXMLString(result);
+//	    String result = scriptDetail.getLovResult(profile);
+//	    resultSB = SourceBean.fromXMLString(result);
 	} catch (Exception e) {
 	    logger.error("Error while executing the script lov", e);
 	    String stacktrace = e.toString();
@@ -867,8 +867,8 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 	try {
 	    String javaClassName = javaClassDetail.getJavaClassName();
 	    IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-	    String result = javaClassLov.getValues(profile);
-	    resultSB = SourceBean.fromXMLString(result);
+//	    String result = javaClassLov.getValues(profile);
+//	    resultSB = SourceBean.fromXMLString(result);
 	} catch (Exception e) {
 	    logger.error("Error while executing the java class lov", e);
 	    String stacktrace = e.toString();

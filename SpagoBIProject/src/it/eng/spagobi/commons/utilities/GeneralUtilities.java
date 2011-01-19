@@ -181,6 +181,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * 
 	 * @return the lov map result
 	 */
+	/*
 	public static String getLovMapResult(Map lovs) {
 		logger.debug("IN");
 		String toReturn = "<DATA>";
@@ -205,6 +206,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT:" + toReturn);
 		return toReturn;
 	}
+	*/
 
 	/**
 	 * Gets the lov result.
@@ -215,6 +217,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * 
 	 * @throws Exception the exception
 	 */
+	/*
 	public static String getLovResult(String lovLabel) throws Exception {
 		logger.debug("IN");
 		IModalitiesValueDAO lovDAO = DAOFactory.getModalitiesValueDAO();
@@ -223,6 +226,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT:" + toReturn);
 		return toReturn;
 	}
+	*/
 
 	/**
 	 * Gets the lov result.
@@ -234,6 +238,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 * 
 	 * @throws Exception the exception
 	 */
+	/*
 	public static String getLovResult(String lovLabel, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		IModalitiesValueDAO lovDAO = DAOFactory.getModalitiesValueDAO();
@@ -242,7 +247,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT" + toReturn);
 		return toReturn;
 	}
+	*/
 
+	/*
 	private static String getLovResult(ModalitiesValue lov, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		if (profile == null) {
@@ -250,9 +257,11 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		}
 		String dataProv = lov.getLovProvider();
 		ILovDetail lovDetail = LovDetailFactory.getLovFromXML(dataProv);
-		logger.debug("OUT:" + lovDetail.getLovResult(profile));
-		return lovDetail.getLovResult(profile);
+		String lovResult = lovDetail.getLovResult(profile, null, null);
+		logger.debug("OUT:" + lovResult);
+		return lovResult;
 	}
+	*/
 
 
 
