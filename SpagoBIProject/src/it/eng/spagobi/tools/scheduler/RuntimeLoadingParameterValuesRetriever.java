@@ -96,7 +96,7 @@ public class RuntimeLoadingParameterValuesRetriever extends
 			// get from the request the type of lov
 			ILovDetail lovDetail = LovDetailFactory.getLovFromXML(looProvider);
 			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userIndentifierToBeUsed);
-			String result = lovDetail.getLovResult(profile);
+			String result = lovDetail.getLovResult(profile, null, null);
 			SourceBean rowsSourceBean = SourceBean.fromXMLString(result);
 			List rows = null;
 			if(rowsSourceBean != null) {

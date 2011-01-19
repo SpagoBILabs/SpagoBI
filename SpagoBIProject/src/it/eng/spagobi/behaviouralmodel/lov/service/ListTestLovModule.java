@@ -122,7 +122,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 		} else if(typeLov.equalsIgnoreCase("FIXED_LIST")) {
 			FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
 			try{
-				String result = fixlistDet.getLovResult(profile);
+				String result = fixlistDet.getLovResult(profile, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(result);
 				colNames = findFirstRowAttributes(rowsSourceBean);
 				if(!rowsSourceBean.getName().equalsIgnoreCase("ROWS")) {
@@ -142,7 +142,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 		} else if(typeLov.equalsIgnoreCase("SCRIPT")) {
 			ScriptDetail scriptDetail = ScriptDetail.fromXML(looProvider);
 			try{
-				String result = scriptDetail.getLovResult(profile);
+				String result = scriptDetail.getLovResult(profile, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(result);
 				colNames = findFirstRowAttributes(rowsSourceBean);
 			} catch (Exception e) {
@@ -159,7 +159,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 			try{		
 				String javaClassName = javaClassDetail.getJavaClassName();
 				IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-	    		String result = javaClassLov.getValues(profile);
+	    		String result = javaClassLov.getValues(profile, null);
         		rowsSourceBean = SourceBean.fromXMLString(result);
         		colNames = findFirstRowAttributes(rowsSourceBean);
 			} catch (Exception e) {
@@ -277,7 +277,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 			Connection conn = dsUtil.getConnection(requestContainer,datasource); 
 			dataConnection = dsUtil.getDataConnection(conn);
 
-			sqlCommand = dataConnection.createSelectCommand(statement);
+			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
 			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult
 					.getDataObject();

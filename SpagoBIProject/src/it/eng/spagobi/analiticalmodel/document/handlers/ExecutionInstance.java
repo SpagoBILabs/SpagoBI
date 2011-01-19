@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -34,7 +33,11 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
@@ -55,10 +58,10 @@ import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.CacheSingleton;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -80,7 +83,6 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import java.io.Serializable;
 
 /**
  * This class represents a document execution instance.
@@ -185,37 +187,19 @@ public class ExecutionInstance implements Serializable{
 				ModalitiesValue paruse = par.getModalityValue();
 				if (!paruse.getITypeCd().equals("MAN_IN") && paruse.getSelectionType().equals("COMBOBOX")) {	// load values only if not a lookup						
 					try {
-						String lovResult = aBIObjectParameter.getLovResult();
-						if(lovResult == null) {
-							String userID=(String)((UserProfile)this.userProfile).getUserId();
-							CacheInterface cache=CacheSingleton.getInstance();
-							String lovProv = paruse.getLovProvider();
-							logger.info("User id : " + userID + "; lov provider : " + lovProv);
-							ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
-							if (lovProv != null && cache.isPresent(userID + lovProv) && (lovProvDet instanceof QueryDetail)){
-								logger.info("Retrieving lov result from cache...");
-								// lov provider is present, so read the DATA in cache
-								lovResult = (String) cache.get(userID + lovProv);
-								logger.debug(lovResult);
-							} else {
-								logger.info("Getting lov result ...");
-								lovResult = lovProvDet.getLovResult(this.userProfile);
-								logger.debug(lovResult);
-								// insert the data in cache
-								if (lovProv != null && lovResult != null) 
-									cache.put(userID + lovProv, lovResult);								
-							}
+						String lovProv = paruse.getLovProvider();
+						ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+						String lovResult = executionCacheManager.getLovResult(this.userProfile, aBIObjectParameter, null, true);
 
-							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-							aBIObjectParameter.setLovResult(lovResult);
-							// if the lov is single value and the parameter value is not set, the parameter value 
-							// is the lov result
-							if(lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
-								aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
-								aBIObjectParameter.setHasValidValues(true);
-								aBIObjectParameter.setTransientParmeters(true);
-							}
-						}        	       
+						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+						// if the lov is single value and the parameter value is not set, the parameter value 
+						// is the lov result
+						if(lovResultHandler.isSingleValue() && aBIObjectParameter.getParameterValues() == null) {
+							aBIObjectParameter.setParameterValues(lovResultHandler.getValues(lovProvDet.getValueColumnName()));
+							aBIObjectParameter.setHasValidValues(true);
+							aBIObjectParameter.setTransientParmeters(true);
+						}
 					} catch (Exception e) {
 						logger.error(e);
 						continue;
@@ -267,6 +251,10 @@ public class ExecutionInstance implements Serializable{
 				logger.error("The biparameter with label = ['" + biParameter.getLabel() + "'] and url name = ['" + biParameter.getParameterUrlName() + "'] has no parameter associated. ");
 				continue;
 			}
+			/*
+			 * The following lines were commented because there should be not need to check if 
+			 * the parameter is single-value, since if it is single-value then it is transient (see initBIParameters method)
+			 *
 			if (biParameter.getLovResult() == null) continue;
 			LovResultHandler lovResultHandler;
 			try {
@@ -275,6 +263,7 @@ public class ExecutionInstance implements Serializable{
 			} catch (SourceBeanException e) {
 				continue;
 			}
+			*/
 		}
 		if (countHidePar == biParameters.size())
 			return true;
@@ -398,7 +387,12 @@ public class ExecutionInstance implements Serializable{
 		while (iterParams.hasNext()) {
 			BIObjectParameter biparam = (BIObjectParameter) iterParams.next();
 			if (pendingDelete != null && !pendingDelete.trim().equals("")) {
-				if (isSingleValue(biparam) || biparam.isTransientParmeters())
+				/*
+				 * The following line was commented because there should be not need to check if 
+				 * the parameter is single-value, since if it is single-value then it is transient (see initBIParameters method)
+				 */
+				//if (isSingleValue(biparam) || biparam.isTransientParmeters())
+				if (biparam.isTransientParmeters())
 					continue;
 				biparam.setParameterValues(null);
 				biparam.setParameterValuesDescription(null);
@@ -544,6 +538,8 @@ public class ExecutionInstance implements Serializable{
 	 * 
 	 * @return true, if is single value
 	 */
+	/*
+	 * This shouldn't be useful anymore
 	private boolean isSingleValue(BIObjectParameter biparam) {
 		logger.debug("IN");
 		boolean isSingleValue = false;
@@ -557,6 +553,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return isSingleValue;
 	}
+	*/
 
 	public List getParametersErrors() throws Exception {
 		logger.debug("IN");
@@ -699,46 +696,66 @@ public class ExecutionInstance implements Serializable{
 	private List getValidationErrorsOnValues(BIObjectParameter biparam) throws Exception {
 		logger.debug("IN");
 		String biparamLabel = biparam.getLabel();
-		List toReturn = new ArrayList();
 
+		// outputType parameter is not validated
 		String urlName = biparam.getParameterUrlName();
 		if ("outputType".equals(urlName)) {
 			logger.debug("Parameter is outputType parameter, it is not validated");
-			return toReturn;
+			return new ArrayList();
 		}
 
-		// get lov
+		// manual inputs are not validated
 		ModalitiesValue lov = biparam.getParameter().getModalityValue();
 		if (lov.getITypeCd().equals("MAN_IN")) {
 			logger.debug("Modality in use for biparameter [" + biparamLabel + "] is manual input");
-			return toReturn;
+			return new ArrayList();
 		}
-
-		List parameterValuesDescription = new ArrayList();
+		
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 		// get lov result
-		String lovResult = biparam.getLovResult();
+		String lovResult = null;
+		List toReturn = null;
+		if (lovProvDet instanceof QueryDetail) {
+			toReturn = getValidationErrorsOnValuesForQueries((QueryDetail) lovProvDet, biparam);
+		} else {
+			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+			lovResult = executionCacheManager.getLovResult(this.userProfile, biparam, this, true);
+			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, biparam, lovProvDet);
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam) throws Exception {
+		List toReturn = null;
+		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		// if query is not in cache, do not execute it as it is!!!
+		String lovResult = executionCacheManager.getLovResult(this.userProfile, biparam, this, false);
 		if (lovResult == null) {
-			// get from cache, if available
-			String userID=(String)((UserProfile)this.userProfile).getUserId();
-			CacheInterface cache = CacheSingleton.getInstance();
-			logger.info("User id : " + userID + "; lov provider : " + lovProv);
-			if (lovProv != null && cache.isPresent(userID + lovProv) && (lovProvDet instanceof QueryDetail)){
-				logger.info("Retrieving lov result from cache...");
-				// lov provider is present, so read the DATA in cache
-				lovResult = (String) cache.get(userID + lovProv);
-				logger.debug(lovResult);
+			// lov is not in cache: we must validate values
+			toReturn = queryDetail.validateValues(this.userProfile, biparam);
+		} else {
+			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, biparam, queryDetail);
+			if (toReturn.isEmpty()) {
+				// values are ok, this should be most often the case
 			} else {
-				logger.info("Getting lov result ...");
-				lovResult = lovProvDet.getLovResult(this.userProfile);
-				logger.debug(lovResult);
-				// insert the data in cache
-				if (lovProv != null && lovResult != null) 
-					cache.put(userID + lovProv, lovResult);								
+				// if there are dependencies, we should not consider them since they are not mandatory
+				List<ObjParuse> dependencies = this.getDependencies(biparam);
+				if (!dependencies.isEmpty()) {
+					toReturn = queryDetail.validateValues(this.userProfile, biparam);
+				}
 			}
 		}
+		return toReturn;
+	}
+	
+	private List getValidationErrorsOnValuesByLovResult(String lovResult, BIObjectParameter biparam, ILovDetail lovProvDet) throws Exception {
+		logger.debug("IN");
+		List toReturn = new ArrayList();
+		List parameterValuesDescription = new ArrayList();
 		// get lov result handler
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List values = biparam.getParameterValues();
@@ -749,8 +766,7 @@ public class ExecutionInstance implements Serializable{
 				String val = values.get(i).toString();
 				if(val.equalsIgnoreCase("%")){
 					value = "%";
-				}
-				else {
+				} else {
 					value = URLDecoder.decode(val, "UTF-8");
 				}
 				String description = null;
@@ -905,6 +921,32 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 	}
 
+	public ILovDetail getLovDetail(BIObjectParameter parameter) {
+		Parameter par = parameter.getParameter();
+		ModalitiesValue lov = par.getModalityValue();
+		// build the ILovDetail object associated to the lov
+		String lovProv = lov.getLovProvider();
+		ILovDetail lovProvDet = null;
+		try {
+			lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get lov detail associated to input BIObjectParameter", e);
+		}
+		return lovProvDet;
+	}
+	
+	public List<ObjParuse> getDependencies(BIObjectParameter parameter) {
+		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
+		try {
+			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
+			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(parameter.getParID(), executionRole);
+			IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
+			biParameterExecDependencies.addAll(objParuseDAO.loadObjParuse(parameter.getId(), biParameterExecModality.getUseID()));
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to get dependencies", e);
+		}
+		return biParameterExecDependencies;
+	}
 
 	public String getExecutionUrl(Locale locale) {
 		logger.debug("IN");

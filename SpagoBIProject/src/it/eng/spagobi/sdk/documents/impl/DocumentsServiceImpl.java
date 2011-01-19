@@ -125,21 +125,17 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			if (paruse.getITypeCd().equals("MAN_IN")) {
 				logger.debug("Document parameter is manual input. An empty HashMap will be returned.");
 			} else {
-				String lovResult = biParameter.getLovResult();
-				if (lovResult == null) {
-					String lovprov = paruse.getLovProvider();
-					ILovDetail lovDetail = LovDetailFactory.getLovFromXML(lovprov);
-					lovResult = lovDetail.getLovResult(profile);
-					LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
-					biParameter.setLovResult(lovResult);
-					List rows = lovResultHandler.getRows();
-					Iterator it = rows.iterator();
-					while (it.hasNext()) {
-						SourceBean row = (SourceBean) it.next();
-						String value = (String) row.getAttribute(lovDetail.getValueColumnName());
-						String description = (String) row.getAttribute(lovDetail.getDescriptionColumnName());
-						values.put(value, description);
-					}
+				String lovprov = paruse.getLovProvider();
+				ILovDetail lovDetail = LovDetailFactory.getLovFromXML(lovprov);
+				String lovResult = lovDetail.getLovResult(profile, null, null);
+				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
+				List rows = lovResultHandler.getRows();
+				Iterator it = rows.iterator();
+				while (it.hasNext()) {
+					SourceBean row = (SourceBean) it.next();
+					String value = (String) row.getAttribute(lovDetail.getValueColumnName());
+					String description = (String) row.getAttribute(lovDetail.getDescriptionColumnName());
+					values.put(value, description);
 				}
 			}
 		} catch(NonExecutableDocumentException e) {

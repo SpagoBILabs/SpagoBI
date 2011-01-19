@@ -266,17 +266,17 @@ public class ParametersGeneratorTag extends TagSupport {
 	public boolean isSingleValue(BIObjectParameter biparam) {
 		logger.debug("IN");
 		boolean isSingleValue = false;
-		try {
-			logger.debug("biparam.getLovResult():"+biparam.getLovResult());
-			if (biparam.getLovResult()!=null){
-				LovResultHandler lovResultHandler = new LovResultHandler(biparam.getLovResult());
-				if (lovResultHandler.isSingleValue())
-					isSingleValue = true;		
-			}
-		} catch (SourceBeanException e) {
-			logger.warn("SourceBeanException",e);
-		}
-		logger.debug("OUT");
+//		try {
+//			logger.debug("biparam.getLovResult():"+biparam.getLovResult());
+//			if (biparam.getLovResult()!=null){
+//				LovResultHandler lovResultHandler = new LovResultHandler(biparam.getLovResult());
+//				if (lovResultHandler.isSingleValue())
+//					isSingleValue = true;		
+//			}
+//		} catch (SourceBeanException e) {
+//			logger.warn("SourceBeanException",e);
+//		}
+//		logger.debug("OUT");
 		return isSingleValue;
 	}
 
@@ -1153,10 +1153,11 @@ public class ParametersGeneratorTag extends TagSupport {
 			ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 			// get the result of the lov
 			IEngUserProfile profile = getProfile();
-			String lovResult = biparam.getLovResult();
-			if ((lovResult == null) || (lovResult.trim().equals(""))) {
-				lovResult = lovProvDet.getLovResult(profile);
-			}
+//			String lovResult = biparam.getLovResult();
+//			if ((lovResult == null) || (lovResult.trim().equals(""))) {
+//				lovResult = lovProvDet.getLovResult(profile);
+//			}
+			String lovResult = "";
 
 			Integer biparId = biparam.getId();
 			String biparIdStr = biparId.toString();

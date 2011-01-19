@@ -28,6 +28,8 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
@@ -44,7 +46,7 @@ import org.apache.log4j.Logger;
  * Defines the <code>ScriptDetail</code> objects. This object is used to store 
  * Script Wizard detail information.
  */
-public class ScriptDetail  implements ILovDetail  {
+public class ScriptDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
 	static private Logger logger = Logger.getLogger(ScriptDetail.class);
 
@@ -164,15 +166,9 @@ public class ScriptDetail  implements ILovDetail  {
 
 
 	/**
-	 * Returns the result of the lov using a user profile to fill the lov profile attribute.
-	 * 
-	 * @param profile the profile of the user
-	 * 
-	 * @return the string result of the lov
-	 * 
-	 * @throws Exception the exception
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline

@@ -185,7 +185,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 //			}
 			valColName = fixlistDet.getValueColumnName();
 			try{
-				String result = fixlistDet.getLovResult(profile);
+				String result = fixlistDet.getLovResult(profile, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(result);
 				if(!rowsSourceBean.getName().equalsIgnoreCase("ROWS")) {
 					throw new Exception("The fix list is empty");
@@ -210,7 +210,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 //			}
 			valColName = scriptDetail.getValueColumnName();
 			try{
-				String result = scriptDetail.getLovResult(profile);
+				String result = scriptDetail.getLovResult(profile, null, null);
 				rowsSourceBean = SourceBean.fromXMLString(result);
 			} catch (Exception e) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
@@ -232,7 +232,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 			try{		
 				String javaClassName = javaClassDetail.getJavaClassName();
 				IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-	    		String result = javaClassLov.getValues(profile);
+	    		String result = javaClassLov.getValues(profile, null);
         		rowsSourceBean = SourceBean.fromXMLString(result);
 			} catch (Exception e) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
