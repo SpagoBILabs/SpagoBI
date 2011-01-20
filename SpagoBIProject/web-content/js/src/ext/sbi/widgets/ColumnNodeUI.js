@@ -86,7 +86,7 @@ Sbi.widgets.ColumnTree = Ext.extend(Ext.tree.TreePanel, {
                  cls:'x-tree-hd x-grid3-td-name ',
                  cn: {
                      cls:'x-tree-hd-text',
-                     html: 'Soglia',
+                     html: LN('sbi.goals.threshold'),
                      style: 'text-align:center'
                  },
                  style:'width:'+(cols[5].width+cols[6].width+cols[7].width+cols[8].width-this.borderWidth)+'px;'

@@ -165,6 +165,10 @@ Sbi.locale.ln['sbi.goals.removed'] = 'Goal rimosso con successo';
 Sbi.locale.ln['sbi.goal.grant'] = 'Abilitazione';
 Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Inserire i campi obbligatori';
 Sbi.locale.ln['sbi.goals.nogoal'] = 'Salvare l\'obiettivo prima di procedere';
+Sbi.locale.ln['sbi.goals.weight1'] = 'Peso 1';
+Sbi.locale.ln['sbi.goals.weight2'] = 'Peso 2';
+Sbi.locale.ln['sbi.goals.threshold'] = 'Soglia';
+
 //END GOALS messages
 
 
