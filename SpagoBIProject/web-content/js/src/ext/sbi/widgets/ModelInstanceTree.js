@@ -89,13 +89,13 @@ Sbi.widgets.ModelInstanceTree = function(){
 	            dataIndex:'checked',
 	            fieldType: 'checkbox'
 	        },{
-	            header:'Peso 1',
+	            header: LN('sbi.goals.weight1'),
 	            columnId: 'weight1',
 	            width:70,
 	            dataIndex:'weight1',
 	            fieldType: 'input'
 	        },{
-	            header:'Peso 2',
+	            header: LN('sbi.goals.weight2'),
 	            columnId: 'weight2',
 	            width:70,
 	            dataIndex:'weight2',

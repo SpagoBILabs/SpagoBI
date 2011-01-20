@@ -129,6 +129,9 @@ Sbi.locale.ln['sbi.goals.define.goal'] = 'Define goal'
 Sbi.locale.ln['sbi.goals.removed'] = 'Goal successfully removed'
 Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
 Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insert the required fields'	
+Sbi.locale.ln['sbi.goals.weight1'] = 'Weight 1';
+Sbi.locale.ln['sbi.goals.weight2'] = 'Weight 2';
+Sbi.locale.ln['sbi.goals.threshold'] = 'Threshold';
 	
 //END GOALS messages
 
