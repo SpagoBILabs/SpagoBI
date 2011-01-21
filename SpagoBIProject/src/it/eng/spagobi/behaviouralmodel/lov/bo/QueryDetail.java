@@ -25,6 +25,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.Utils;
 import it.eng.spago.dbaccess.sql.DataConnection;
+import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.dbaccess.sql.SQLCommand;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
@@ -74,6 +75,8 @@ public class QueryDetail  implements ILovDetail  {
 	static Random random = new Random();
 
 	private static String ALIAS_DELIMITER = null;
+	private static String VALUE_ALIAS = "VALUE";
+	private static String DESCRIPTION_ALIAS = "DESCRIPTION";
 	
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
 	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
@@ -613,14 +616,18 @@ public class QueryDetail  implements ILovDetail  {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}
 		
+		// START converting the SourceBean into a string and then into SourceBean again:
+		// this a necessary work-around (workaround, work around) because the getFilteredSourceBeanAttribute is not able to filter on numbers!!!
+		// By making this conversion, the information on data type is lost and every attribute becomes a String
 		String xml = result.toXML(false);
 		result = SourceBean.fromXMLString(xml);
+		// END converting the SourceBean into a string and then into SourceBean again:
 		
 		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			String description = null;
 			String aValue = it.next();
-			Object obj = result.getFilteredSourceBeanAttribute("ROW", "VALUE", aValue);
+			Object obj = result.getFilteredSourceBeanAttribute(DataRow.ROW_TAG, VALUE_ALIAS, aValue);
 			if (obj == null) {
 				// value was not found!!
 				logger.error("Parameter '" + biparam.getLabel() + "' cannot assume value '" + aValue + "'" +
@@ -636,11 +643,11 @@ public class QueryDetail  implements ILovDetail  {
 				// value was found, retrieve description
 				if (obj instanceof SourceBean) {
 					SourceBean sb = (SourceBean) obj;
-					Object descriptionObj = sb.getAttribute("DESCRIPTION");
+					Object descriptionObj = sb.getAttribute(DESCRIPTION_ALIAS);
 					description = descriptionObj != null ? descriptionObj.toString() : null;
 				} else {
 					List l = (List) obj;
-					Object descriptionObj = ((SourceBean) l.get(0)).getAttribute("DESCRIPTION");
+					Object descriptionObj = ((SourceBean) l.get(0)).getAttribute(DESCRIPTION_ALIAS);
 					description = descriptionObj != null ? descriptionObj.toString() : null;
 				}
 			}
@@ -658,8 +665,8 @@ public class QueryDetail  implements ILovDetail  {
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("SELECT ");
-		buffer.append(getColumnSQLName(this.valueColumnName) + " AS VALUE, ");
-		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS DESCRIPTION ");
+		buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
+		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
 		buffer.append("FROM (");
 		buffer.append(statement);
 		buffer.append(") " +  getRandomAlias(8) + " WHERE ");
