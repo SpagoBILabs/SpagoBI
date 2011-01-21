@@ -612,6 +612,10 @@ public class QueryDetail  implements ILovDetail  {
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}
+		
+		String xml = result.toXML(false);
+		result = SourceBean.fromXMLString(xml);
+		
 		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			String description = null;
