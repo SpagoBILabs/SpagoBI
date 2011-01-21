@@ -141,7 +141,10 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 	 */
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
 		IJavaClassLov javaClassLov = createClassInstance();
-		String result = javaClassLov.getValues(profile, executionInstance);
+		if (javaClassLov instanceof AbstractJavaClassLov) {
+			((AbstractJavaClassLov) javaClassLov).setExecutionInstance(executionInstance);
+		}
+		String result = javaClassLov.getValues(profile);
 		result = result.trim();
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);

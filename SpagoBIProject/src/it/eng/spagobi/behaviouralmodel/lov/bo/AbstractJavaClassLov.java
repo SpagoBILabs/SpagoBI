@@ -19,30 +19,20 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 
-import java.util.List;
+public class AbstractJavaClassLov {
 
+	protected ExecutionInstance executionInstance;
 
-public interface IJavaClassLov {
+	public ExecutionInstance getExecutionInstance() {
+		return executionInstance;
+	}
 
-	/**
-	 * Gets the values formatted into an xml structure.
-	 * 
-	 * @param profile a user profile used to fill attributes required by the query
-	 * 
-	 * @return the xml string of the values
-	 */
-	public String getValues(IEngUserProfile profile);
+	public void setExecutionInstance(ExecutionInstance executionInstance) {
+		this.executionInstance = executionInstance;
+	}
 	
-	
-	/**
-	 * Gets the list of profile attribute names required by the class.
-	 * 
-	 * @return the list of profile attribute names
-	 */
-	public List getNamesOfProfileAttributeRequired();
 }

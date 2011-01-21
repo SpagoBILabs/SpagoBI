@@ -159,7 +159,7 @@ public class ListTestLovModule extends AbstractBasicListModule {
 			try{		
 				String javaClassName = javaClassDetail.getJavaClassName();
 				IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-	    		String result = javaClassLov.getValues(profile, null);
+	    		String result = javaClassLov.getValues(profile);
         		rowsSourceBean = SourceBean.fromXMLString(result);
         		colNames = findFirstRowAttributes(rowsSourceBean);
 			} catch (Exception e) {
