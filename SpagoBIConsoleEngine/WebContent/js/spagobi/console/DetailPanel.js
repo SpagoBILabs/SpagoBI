@@ -108,11 +108,13 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 		  this.pages.push(detailPage);
 		  //actives only the first tab dataset
 		  var s = conf.storeManager.getStore(detailPage.getStore().getDsLabel());
-		  if (i===0){
-			  s.stopped = false;
-		  }else{
-			  s.stopped = true;
-		  }		  
+		  if (s !== undefined){
+			  if (i===0){
+				  s.stopped = false;
+			  }else{
+				  s.stopped = true;
+			  }		  
+		  }
 		}
 	}
 
