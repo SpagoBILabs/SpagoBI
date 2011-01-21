@@ -78,20 +78,29 @@ public class LovResultCacheManager {
 		List<ObjParuse> dependencies = executionInstance.getDependencies(parameter);
 		
 		String lovResult = null;
-		String cacheKey = getCacheKey(profile, lovDefinition, dependencies, executionInstance);
-		logger.info("Cache key : " + cacheKey);
-		if (cache.contains(cacheKey)) {
-			logger.info("Retrieving lov result from cache...");
-			// lov provider is present, so read the DATA in cache
-			lovResult = cache.get(cacheKey);
-			logger.debug(lovResult);
-		} else if (retrieveIfNotcached) {
-			logger.info("Executing lov to get result ...");
+		
+		if (lovDefinition instanceof QueryDetail) {
+			// queries are cached
+			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, executionInstance);
+			logger.info("Cache key : " + cacheKey);
+			if (cache.contains(cacheKey)) {
+				logger.info("Retrieving lov result from cache...");
+				// lov provider is present, so read the DATA in cache
+				lovResult = cache.get(cacheKey);
+				logger.debug(lovResult);
+			} else if (retrieveIfNotcached) {
+				logger.info("Executing lov to get result ...");
+				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance);
+				logger.debug(lovResult);
+				// insert the data in cache
+				if (lovResult != null) 
+					cache.put(cacheKey, lovResult);
+			}
+		} else {
+			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
+			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
 			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance);
 			logger.debug(lovResult);
-			// insert the data in cache
-			if (lovResult != null) 
-				cache.put(cacheKey, lovResult);
 		}
 		
 		logger.debug("OUT");
