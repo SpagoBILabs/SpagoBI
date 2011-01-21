@@ -397,8 +397,12 @@ public class QueryDetail  implements ILovDetail  {
 	
 	private void validateDate(String value) {
 		String dateFormat = GeneralUtilities.getServerDateFormat();
-		if (!GenericValidator.isDate(value, dateFormat, true)) {
-			throw new SecurityException("Input value " + value + " is not a valid date according to the date format " + dateFormat);
+		String timestampFormat = GeneralUtilities.getServerTimeStampFormat();
+		if (!GenericValidator.isDate(value, dateFormat, true)
+				&& !GenericValidator.isDate(value, timestampFormat, true)) {
+			throw new SecurityException("Input value " + value
+					+ " is not a valid date according to the date format "
+					+ dateFormat + " or timestamp format " + timestampFormat);
 		}
 	}
 

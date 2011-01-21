@@ -239,18 +239,6 @@ public class BIObjectParameter implements Serializable {
 	 * @param parameterValues The parameterValues to set.
 	 */
 	public void setParameterValues(List parameterValues) {
-		if (parameterValues == null) {
-			System.out.println("***************** parametri impostati a null!!!");
-		} else {
-			StringBuffer buffer = new StringBuffer();
-			Iterator it = parameterValues.iterator();
-			while (it.hasNext()) {
-				buffer.append(it.next().toString() + ", ");
-			}
-
-			System.out.println("***************** parametri impostati a: " + buffer.toString());
-		}
-		
 		this.parameterValues = parameterValues;
 	}
 	
