@@ -232,7 +232,7 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 			try{		
 				String javaClassName = javaClassDetail.getJavaClassName();
 				IJavaClassLov javaClassLov = (IJavaClassLov) Class.forName(javaClassName).newInstance();
-	    		String result = javaClassLov.getValues(profile, null);
+	    		String result = javaClassLov.getValues(profile);
         		rowsSourceBean = SourceBean.fromXMLString(result);
 			} catch (Exception e) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
