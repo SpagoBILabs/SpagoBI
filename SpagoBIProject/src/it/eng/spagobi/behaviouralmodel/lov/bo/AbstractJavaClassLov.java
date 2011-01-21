@@ -23,7 +23,7 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 
-public class AbstractJavaClassLov {
+public abstract class AbstractJavaClassLov implements IJavaClassLov {
 
 	protected ExecutionInstance executionInstance;
 
