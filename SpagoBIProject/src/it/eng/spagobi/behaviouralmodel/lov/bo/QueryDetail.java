@@ -432,7 +432,7 @@ public class QueryDetail  implements ILovDetail  {
 		} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
 			ALIAS_DELIMITER = ""; // TODO check it!!!!
 		} else {
-			ALIAS_DELIMITER = "\""; // TODO mmmmmmmmm.........
+			throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
 		}
 	}
 	
