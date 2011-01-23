@@ -190,7 +190,7 @@ public class ExecutionInstance implements Serializable{
 						String lovProv = paruse.getLovProvider();
 						ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
 						LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-						String lovResult = executionCacheManager.getLovResult(this.userProfile, aBIObjectParameter, null, true);
+						String lovResult = executionCacheManager.getLovResult(this.userProfile, aBIObjectParameter, this, true);
 
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 						// if the lov is single value and the parameter value is not set, the parameter value 
