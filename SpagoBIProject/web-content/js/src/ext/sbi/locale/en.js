@@ -6,6 +6,7 @@ Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Root';
 
 Sbi.locale.ln['sbi.general.yes'] = 'Yes';
 Sbi.locale.ln['sbi.general.No'] = 'No';
+Sbi.locale.ln['sbi.general.close'] = 'Close';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
@@ -513,6 +514,9 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informations on SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
+
+
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
