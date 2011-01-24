@@ -45,8 +45,11 @@ import it.eng.spagobi.services.datasource.service.DataSourceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -452,11 +455,22 @@ public class QueryDetail  implements ILovDetail  {
 					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y %h:%i:%s') ";
 				}
 			}else if( dialect.equalsIgnoreCase(DIALECT_HSQL)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = date;
-				}else{
-					toReturn = "'"+date+"'";
+				try {
+					DateFormat df;
+					if (date.startsWith("'") && date.endsWith("'")) {
+						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					}else{
+						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+					
+					Date myDate = df.parse(date);
+					df = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn =  "'"+df.format(myDate)+"'";
+
+				} catch (Exception e) {
+					toReturn = "'" +date+ "'";
 				}
+
 			}else if( dialect.equalsIgnoreCase(DIALECT_INGRES)){
 				if (date.startsWith("'") && date.endsWith("'")) {
 					toReturn = " STR_TO_DATE("+date+",'%d/%m/%Y') ";
