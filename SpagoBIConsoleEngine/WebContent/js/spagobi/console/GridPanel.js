@@ -232,7 +232,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     			}, this);
     	//	}
       		this.promptWin.show();
-      		this.promptWin.on('hide', function() {
+      		//this.promptWin.on('hide', function() {
+      		this.promptWin.on('close', function() {
       			this.fireEvent('unlock', this);
       			}, this);
       	}
@@ -395,6 +396,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 	
 		var callback = function(params){ 	
+			//alert('params: ' + params.toSource());
 			//split the array values in a single string
 			for(p in params) { 
 				var tmpPar = params[p];
@@ -696,6 +698,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			if( (typeof fields[i]) === 'string') {
 				fields[i] = {name: fields[i]};
 			}
+			//alert('typeof fields[i]: ' + typeof fields[i].toSource());
+			/*
+			if( (typeof fields[i]) === 'number') {
+				fields[i].renderer  =  Sbi.locale.formatters['int'];
+			}
+			*/
 			if (this.columnId !== undefined && this.columnId === fields[i].header ){
 				fields[i].hidden = true;
 			}
