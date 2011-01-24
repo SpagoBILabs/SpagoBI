@@ -6,6 +6,7 @@ Sbi.locale.ln['Documents']  = 'Documenti';
 
 Sbi.locale.ln['sbi.general.yes'] = 'Si';
 Sbi.locale.ln['sbi.general.No'] = 'No';
+Sbi.locale.ln['sbi.general.close'] = 'Chiudi';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Generico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Radice Generica';
@@ -514,6 +515,8 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informazioni su SpagoBI';
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='Il valore della colonna';
 Sbi.locale.ln['sbi.lookup.asA'] = 'inteso come';
 
+
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================

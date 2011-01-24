@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
 <script type="text/javascript" src="<%=linkProtoEff%>"></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/" + locale.getLanguage() + ".js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
 <link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
 <link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
 
@@ -271,8 +273,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			   else if (isParameter)
 			   	   disabledParam="";
 		%>
-			<input class='portlet-form-input-field' type="text" name="JNDI" 
-				   size="50" value="<%= StringEscapeUtils.escapeHtml(jndi) %>" maxlength="50" <%= disabledJndi %>/>
+			<input id="jndiNameForm" class='portlet-form-input-field' type="text" name="JNDI" 
+				   size="50" style="float:left" value="<%= StringEscapeUtils.escapeHtml(jndi) %>" maxlength="50" <%= disabledJndi %>/>
+			<a href="#"> 
+			<img id="show-btn" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/info22.png", currTheme)%>'/>
+			</a>
+			
+			<div class='.x-window-dlg ext-mb-info' type="text" name="JNDI" 
+				   size="2" maxlength="50" style="float:left"/>
 	   </div>
 	   <div class='div_detail_label'>
 			<span class='portlet-form-field-label'>	
@@ -347,6 +355,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 <!--</div>  background -->
 	
 	<script>
+	
+	
+	Ext.onReady(function(){
+	    var win;
+	    var button = Ext.get('show-btn');
+
+	    button.on('click', function(){
+	        // create the window on the first click and reuse on subsequent clicks
+	        if(!win){
+	        	
+	        	var p = new Ext.Panel({
+	        		bodyStyle: 'background-color: white;',
+	        		html:LN('sbi.datasource.jndiname.info')
+	        	})
+	        	
+	            win = new Ext.Window({
+	                layout:'fit',
+	                bodyStyle: 'background-color: white;',
+	                width:300,
+	                height:150,
+	                closeAction:'hide',
+	                plain: true,
+	                items: [p],
+					//html:LN('sbi.datasource.jndiname.info'),
+	                buttons: [{
+	                    text: 'Close',
+	                    handler: function(){
+	                        win.hide();
+	                    }
+	                }]
+	            });
+	        }
+	        win.show(this);
+	    });
+	});
+	
 	
 	function isDsFormChanged () {
 	
