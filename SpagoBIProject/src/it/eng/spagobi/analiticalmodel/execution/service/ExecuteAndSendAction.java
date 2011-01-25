@@ -280,6 +280,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    	Transport.send(msg);
 	    	retCode = OK;
 	    }else{
+	    	logger.error("Error while executing and sending object "+ errorHandler.getStackTrace());
 	    	retCode = ERROR;
 	    }
 
