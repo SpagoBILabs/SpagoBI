@@ -114,6 +114,7 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 	String format = (formatSB == null) ? "DD-MM-YYYY" : (String) formatSB.getAttribute("format");
 	pars.put("dateformat", format);
 	pars = addBIParameters(biobj, pars);
+	pars = addBIParameterDescriptions(biobj, pars);
 	logger.debug("OUT");
 	return pars;
     }

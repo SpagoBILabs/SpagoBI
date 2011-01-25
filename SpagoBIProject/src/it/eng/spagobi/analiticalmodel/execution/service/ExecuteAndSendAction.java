@@ -33,6 +33,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -41,9 +42,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -165,8 +170,12 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    // create the execution controller
 	    ExecutionController execCtrl = new ExecutionController();
 	    execCtrl.setBiObject(biobj);
+	    
 	    // fill parameters
 	    execCtrl.refreshParameters(biobj, queryStr);
+	    
+	    //set the description of the biobject parameters
+	    setParametersDescription(biobj.getBiObjectParameters(), params);
 	    
 	    // exec the document only if all its parameters are filled
 	    // Why???? if a parameter is not mandatory and the user did not fill it????
@@ -336,4 +345,44 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	}
 
     }
+    /**
+     * Add the description to the BIObjectparameters
+     * @param BIObjectParameters
+     * @param attributes
+     */
+    public void setParametersDescription(List<BIObjectParameter> BIObjectParameters, List<SourceBeanAttribute> attributes){
+    	Map<String,String> parameterNameDescriptionMap = new HashMap<String, String>();
+    	//we create a map: parameter name, parameter description
+    	for(int i=0; i<attributes.size(); i++){
+    		SourceBeanAttribute sba= attributes.get(i);
+    		//the name of parameter in the request with the description is parametername+  field_visible_description
+    		int descriptionPosition=sba.getKey().indexOf("field_visible_description");
+    		if(descriptionPosition>0){
+    			parameterNameDescriptionMap.put(sba.getKey().substring(0,descriptionPosition-1),(String)sba.getValue());
+    		}
+    	}
+    	for(int i=0; i<BIObjectParameters.size(); i++){
+    		String bobjName = BIObjectParameters.get(i).getParameterUrlName();
+    		String value = parameterNameDescriptionMap.get(bobjName);
+    		if(value!=null){
+    			BIObjectParameters.get(i).setParameterValuesDescription(parseDescriptionString(value));
+    		}
+    	}
+    }
+    
+    /**
+     * Parse a string with the description of the parameter and return a list with description..
+     * This transformation is necessary because the multivalues parameters
+     * @param s the string with the description
+     * @return the list of descriptions
+     */
+    public List<String> parseDescriptionString(String s){
+    	List<String> descriptions = new ArrayList<String>();
+    	StringTokenizer stk = new StringTokenizer(s, ";");
+    	while(stk.hasMoreTokens()){
+    		descriptions.add(stk.nextToken());
+    	}
+    	return descriptions;
+    }
+    
 }

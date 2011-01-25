@@ -23,10 +23,13 @@ package it.eng.spagobi.engines.drivers.geo;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
@@ -203,6 +206,7 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 	    logger.debug("Add " + DOCUMENT_LABEL + " parameter: " + documentlabel);
 
 	    pars = addBIParameters(biobj, pars);
+	    pars = addBIParameterDescriptions(biobj, pars);
 	} catch (Exception e) {
 	    logger.error("Error while recovering execution parameter map: \n" + e);
 	}

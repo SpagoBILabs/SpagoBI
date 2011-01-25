@@ -137,6 +137,7 @@ public class JasperReportDriver extends AbstractDriver implements IEngineDriver 
 
 	pars = addBISubreports(biobj, pars);
 	pars = addBIParameters(biobj, pars);
+	pars = addBIParameterDescriptions(biobj, pars);
 
 	
 	logger.debug("OUT");

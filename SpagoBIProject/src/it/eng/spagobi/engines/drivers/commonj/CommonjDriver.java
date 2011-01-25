@@ -130,6 +130,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 		pars.put("document", documentId);
 		logger.debug("Add document parameter:"+documentId);
 		pars = addBIParameters(biobj, pars);
+		pars = addBIParameterDescriptions(biobj, pars);
 		logger.debug("OUT");
 		return pars;
 	} 
