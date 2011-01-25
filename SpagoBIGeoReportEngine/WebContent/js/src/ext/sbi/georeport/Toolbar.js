@@ -164,6 +164,7 @@ Ext.extend(Sbi.georeport.Toolbar, mapfish.widgets.toolbar.Toolbar, {
 		            toggleGroup: 'map'
 		        }
 		    );
+			this.featureHandler.activate();
 		          
 			this.addControl(
 				new OpenLayers.Control.DragPan({
