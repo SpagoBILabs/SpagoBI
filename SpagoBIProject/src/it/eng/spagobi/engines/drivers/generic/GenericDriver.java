@@ -167,6 +167,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			logger.debug("Add document parameter:" + documentId);
 	        
 			pars = addBIParameters(biobj, pars);
+			pars = addBIParameterDescriptions(biobj, pars);
         
 		} catch (Exception e) {
 		    logger.error("Error while recovering execution parameter map: \n" + e);

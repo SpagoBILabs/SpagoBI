@@ -107,6 +107,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 		pars.put("dateformat", format);
 
 		pars = addBIParameters(biobj, pars);
+		pars = addBIParameterDescriptions(biobj, pars);
 
 		logger.debug("OUT");
 		return pars;

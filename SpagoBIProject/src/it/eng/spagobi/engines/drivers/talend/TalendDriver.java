@@ -34,9 +34,14 @@ package it.eng.spagobi.engines.drivers.talend;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -118,6 +123,7 @@ public class TalendDriver extends AbstractDriver implements IEngineDriver {
 		pars.put("document", documentId);
 		logger.debug("Add document parameter:"+documentId);
 		pars = addBIParameters(biobj, pars);
+		pars = addBIParameterDescriptions(biobj, pars);
 		logger.debug("OUT");
 		return pars;
 	} 
