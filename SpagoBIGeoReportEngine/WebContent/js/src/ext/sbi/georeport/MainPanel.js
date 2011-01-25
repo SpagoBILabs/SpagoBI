@@ -398,40 +398,27 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		}); 
 	}
 	
-	, onTargetFeatureClick: function(event) {
-		alert('fetaure click');
+	, onTargetFeatureClick: function(feature) {
+		if(!Ext.isArray( this.detailDocumentConf )) {
+			this.detailDocumentConf = [this.detailDocumentConf];
+		}
+		
 		if(!this.toolbar.selectMode){
-			var m = '';
-			for(p in event) m+= p + "\n";
-			alert(m);
+			this.openPopup(feature);
 		}
 	}
 	
 	
 	, onTargetFeatureSelect: function(feature) {
-		alert('fetaure select');
-		this.selectedFeature = feature;
-		
-		if(!Ext.isArray( this.detailDocumentConf )) {
-			this.detailDocumentConf = [this.detailDocumentConf];
-		}
-		if(!this.toolbar.selectMode){
-			this.openPopup( this.selectedFeature );
-		}
-		
-		
+		if(this.toolbar.selectMode){
+			
+		}	
 	}
 	
 	, onTargetFeatureUnselect: function(feature) {
-		if(feature.popup){
-			this.map.removePopup(feature.popup);
-			feature.popup.destroy();
-			feature.popup = null;
+		if(this.toolbar.selectMode){
+			
 		}
-        var infoPanel = Ext.getCmp('infotable');
-        if(infoPanel.body){
-        	infoPanel.body.dom.innerHTML = '';
-        }
 	}
 	
 	// --------------------------------------------------------------------------------------------------
@@ -755,19 +742,33 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		content += this.getDetailDocHtmlFragment(feature);
 		content += this.getInlineDocHtmlFragment(feature);
 
+		var onPopupCloseFn = function(evt) {
+			this.closePopup(feature);
+        }.createDelegate(this, []);
+        
         popup = new OpenLayers.Popup.FramedCloud("chicken", 
                 feature.geometry.getBounds().getCenterLonLat(),
                 null,
                 content,
                 null, 
                 true, 
-                function(evt) {
-        			this.analysisLayerSelectControl.unselect(feature);    
-                }.createDelegate(this, [])
+                onPopupCloseFn
         );
         
         feature.popup = popup;
         this.map.addPopup(popup);
+	}
+	
+	, closePopup: function(feature) {
+		if(feature.popup){
+			this.map.removePopup(feature.popup);
+			feature.popup.destroy();
+			feature.popup = null;
+		}
+        var infoPanel = Ext.getCmp('infotable');
+        if(infoPanel.body){
+        	infoPanel.body.dom.innerHTML = '';
+        }
 	}
 	
 	

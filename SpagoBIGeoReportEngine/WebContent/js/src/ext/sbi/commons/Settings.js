@@ -9,7 +9,7 @@ Sbi.settings.georeport = {
 	   		, analysisPanelEnabled: true
 	   		, measurePanelEnabled: true
 	   		, legendPanelEnabled: true
-	   		, logoPanelEnabled: true
+	   		, logoPanelEnabled: false
 	   		, earthPanelEnabled: false
 	  	} 
 	 
