@@ -23,13 +23,10 @@ package it.eng.spagobi.engines.drivers.qbe;
 
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -43,9 +40,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -206,6 +201,7 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 					
 			appendRequestParameter(parameters, "document", biObject.getId().toString());
 			appendAnalyticalDriversToRequestParameters(biObject, parameters);
+			addBIParameterDescriptions(biObject, parameters);
 		} finally {
 			logger.debug("OUT");
 		}

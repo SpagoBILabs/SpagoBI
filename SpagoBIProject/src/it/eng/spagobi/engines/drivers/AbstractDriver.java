@@ -88,6 +88,7 @@ public class AbstractDriver {
     		     */
     		    description = parValuesEncoder.encodeDescription(biobjPar);
     		    pars.put(biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX, description);
+    		    logger.debug("Add description:"+biobjPar.getParameterUrlName()+DESCRIPTION_SUFFIX+"/"+description);
     		} catch (Exception e) {
     		    logger.debug("OUT");
     		    logger.warn("Error while processing a BIParameter.. getting the description", e);
