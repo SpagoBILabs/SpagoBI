@@ -85,7 +85,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jdt.internal.compiler.AbstractAnnotationProcessorManager;
 
 /**
  * 
@@ -372,7 +371,6 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			this.dateOfKPI = new Date();
 			this.parametersObject = readParameters(obj.getBiObjectParameters());
 			addBIParameterDescriptions(obj, this.parametersObject);
-			
 			
 			if(!parametersObject.containsKey("ParKpiDate")){
 				String dateForDataset = getDateForDataset(dateOfKPI);	
