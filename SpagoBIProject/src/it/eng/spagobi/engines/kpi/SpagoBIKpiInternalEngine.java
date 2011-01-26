@@ -43,6 +43,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.InternalEngineIFace;
+import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.kpi.bo.KpiLine;
 import it.eng.spagobi.engines.kpi.bo.KpiLineVisibilityOptions;
@@ -84,6 +85,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.internal.compiler.AbstractAnnotationProcessorManager;
 
 /**
  * 
@@ -91,7 +93,7 @@ import org.apache.log4j.Logger;
  * 
  */
 
-public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
+public class SpagoBIKpiInternalEngine extends AbstractDriver implements InternalEngineIFace {
 
 	private static transient Logger logger = Logger.getLogger(SpagoBIKpiInternalEngine.class);
 
@@ -369,6 +371,9 @@ public class SpagoBIKpiInternalEngine implements InternalEngineIFace {
 			// Date for which we want to see the KpiValues
 			this.dateOfKPI = new Date();
 			this.parametersObject = readParameters(obj.getBiObjectParameters());
+			addBIParameterDescriptions(obj, this.parametersObject);
+			
+			
 			if(!parametersObject.containsKey("ParKpiDate")){
 				String dateForDataset = getDateForDataset(dateOfKPI);	
 				parametersObject.put("ParKpiDate", dateForDataset);

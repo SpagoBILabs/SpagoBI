@@ -214,6 +214,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 					
 			appendRequestParameter(parameters, "document", biObject.getId().toString());
 			appendAnalyticalDriversToRequestParameters(biObject, parameters);
+			addBIParameterDescriptions(biObject, parameters);
 		} finally {
 			logger.debug("OUT");
 		}
