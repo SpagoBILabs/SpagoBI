@@ -26,6 +26,9 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -68,6 +71,7 @@ public class ExecuteDataSetAction extends AbstractConsoleEngineAction {
 		
 		
 		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.ExecuteDataSetAction.service");
 		
 		try {
 			super.service(request,response);
@@ -86,8 +90,9 @@ public class ExecuteDataSetAction extends AbstractConsoleEngineAction {
 				throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetLabel + "]", t);
 			}
 			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
-				
+			Monitor monitorLD =MonitorFactory.start("SpagoBI_Console.ExecuteDataSetAction.service.LoadData");	
 			dataSet.loadData();
+			monitorLD.stop();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 					
@@ -109,6 +114,7 @@ public class ExecuteDataSetAction extends AbstractConsoleEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}

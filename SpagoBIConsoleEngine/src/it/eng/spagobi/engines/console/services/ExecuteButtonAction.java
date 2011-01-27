@@ -28,6 +28,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
@@ -67,6 +70,7 @@ public class ExecuteButtonAction extends AbstractConsoleEngineAction {
 		String callback;
 		
 		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.ExecuteButtonAction.service");
 		
 		try {
 			super.service(request,response);
@@ -90,6 +94,7 @@ public class ExecuteButtonAction extends AbstractConsoleEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}
