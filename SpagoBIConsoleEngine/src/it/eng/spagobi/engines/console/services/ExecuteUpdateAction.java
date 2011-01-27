@@ -41,6 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import utilities.DataSourceUtilities;
 
 
@@ -74,7 +77,8 @@ public class ExecuteUpdateAction extends AbstractConsoleEngineAction {
 		String callback;
 
 		logger.debug("IN");
-		
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.ExecuteUpdateAction.service");	
+				
 		try {
 			super.service(request,response);
 			consoleEngineInstance = getConsoleEngineInstance();
@@ -110,6 +114,7 @@ public class ExecuteUpdateAction extends AbstractConsoleEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}

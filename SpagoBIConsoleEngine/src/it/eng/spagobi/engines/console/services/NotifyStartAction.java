@@ -43,6 +43,9 @@ import java.text.SimpleDateFormat;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 
 
 
@@ -90,6 +93,8 @@ public class NotifyStartAction extends AbstractConsoleEngineAction {
 		
 
 		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.NotifyStartAction.service");	
+
 		conn = null;
 		stmt = null;
 		try {
@@ -213,6 +218,7 @@ public class NotifyStartAction extends AbstractConsoleEngineAction {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
 			releaseResources(conn, stmt, null);
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}

@@ -27,6 +27,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -77,6 +80,7 @@ public class GetErrorListAction extends AbstractConsoleEngineAction {
 		
 		
 		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.GetErrorListAction.service");	
 		
 		try {
 			super.service(request,response);
@@ -109,8 +113,10 @@ public class GetErrorListAction extends AbstractConsoleEngineAction {
 			params.put("id", rowId);
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfile((UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			Monitor monitorLD =MonitorFactory.start("SpagoBI_Console.GetErrorListAction.service.LoadData");	
 			
 			dataSet.loadData();
+			monitorLD.stop();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 					
@@ -141,6 +147,7 @@ public class GetErrorListAction extends AbstractConsoleEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}

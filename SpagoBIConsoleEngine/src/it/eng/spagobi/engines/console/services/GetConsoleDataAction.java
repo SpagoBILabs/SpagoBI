@@ -44,6 +44,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 
 
 
@@ -72,6 +75,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 		IDataStore dataStore;
 		
 		logger.debug("IN");
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.GetConsoleDataAction.service");	
 		
 		try {
 			super.service(request,response);
@@ -98,11 +102,13 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			//gets the max number of rows for the table
 			String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
 			int rowLimit = (strRowLimit == null)? 0 : Integer.parseInt(strRowLimit);
+			Monitor monitorLD =MonitorFactory.start("SpagoBI_Console.GetConsoleDataAction.service.LoadData");
 			if (rowLimit > 0){
 				dataSet.loadData(-1, -1, rowLimit);
 			}else{
 				dataSet.loadData();
 			}
+			monitorLD.stop();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 			
@@ -142,6 +148,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}

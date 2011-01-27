@@ -31,6 +31,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import java.util.Locale;
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 
 /**
  * Entry point action.
@@ -51,11 +54,11 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
     public static transient Logger logger = Logger.getLogger(ConsoleEngineStartAction.class);
     
     private static final String ENGINE_NAME = "SpagoBIConsoleEngine";
-    private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/console.jsp";
 	
 
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)  {
-		logger.debug("IN");		
+		logger.debug("IN");	
+		Monitor monitor =MonitorFactory.start("SpagoBI_Console.ConsoleEngineStartAction.service");
 		Locale locale;
 		DataSetServiceProxy proxyDS = null;
 		ConsoleEngineInstance consoleEngineInstance = null;
@@ -124,6 +127,7 @@ public class ConsoleEngineStartAction extends AbstractEngineStartAction {
 			
 			throw serviceException;
 		} finally {
+			monitor.stop();
 			logger.debug("OUT");
 		}
 	}
