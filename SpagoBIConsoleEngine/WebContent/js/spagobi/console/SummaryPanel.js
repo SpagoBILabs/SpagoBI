@@ -71,9 +71,19 @@ Sbi.console.SummaryPanel = function(config) {
 		widgetPanelConfig.storeManager = this.storeManager;
 		widgetPanelConfig.items = [];
 		
+		var datasets = [];
+		var isComposite = false;
+		
+		//test
+		/*
+		var d = new Date();
+		var start = d.getTime();
+		alert('start: ' + start);
+		*/
 		for(var i = 0, l1 = config.charts.length ; i < l1; i++) {
 			if(config.charts[i].widgetConfig.type === 'chart.composite') {
 				//composite widget
+				isComposite = true;
 				
 				//sets the general style of the table 
 				widgetPanelConfig.layoutConfig = config.layoutManagerConfig.layoutConfig || {};
@@ -125,7 +135,7 @@ Sbi.console.SummaryPanel = function(config) {
 							configSubChart.dataset = defaultDataset;
 						}
 					}
-					
+					datasets[configSubChart.dataset] = configSubChart.dataset ;
 					
 					//sets the WIDTH of single element; the order for getting values are: single widget, single panel, table
 					if (configSubChart.width === undefined){
@@ -173,17 +183,20 @@ Sbi.console.SummaryPanel = function(config) {
 					compositeWidgetPanelConfig.height = (componentHeight > configSubChart.height)? componentHeight : configSubChart.height;	
 					compositeWidgetPanelConfig.linkableDoc = config.charts[i].linkableDoc;
 					compositeWidgetPanelConfig.executionContext = widgetPanelConfig.executionContext;
-					
 					compositeWidgetPanelConfig.items.push(new Sbi.console.ChartWidget(configSubChart));
 				}
 				var compositeWidgetPanel = new Sbi.console.WidgetPanel(compositeWidgetPanelConfig);
+
 				widgetPanelConfig.items.push(compositeWidgetPanel);
-				
+
 			} else {
 				//simple widget
+				datasets[config.charts[i].dataset] = config.charts[i].dataset;
 				widgetPanelConfig.items.push(new Sbi.console.ChartWidget(config.charts[i]));
+
 			}
 		}		
+		
 		widgetPanelConfig.autoScroll = {};
 		widgetPanelConfig.autoScroll = true;
 		var widgetPanel = new Sbi.console.WidgetPanel(widgetPanelConfig);
@@ -194,20 +207,101 @@ Sbi.console.SummaryPanel = function(config) {
 			
 		// constructor
 		Sbi.console.SummaryPanel.superclass.constructor.call(this, c);			
+		 
+		//add task: checks if all widgets have the isSWFReady setted to true. In this case force the refresh of datasets
+		var task = {};
+		
+			task = {
+					run: function(){
+				//		alert('run function');
+						var allWidgetsReady = false;
+						if (!isComposite){							
+							//each panel could contains more charts					
+							for (var k=0, l3 = widgetPanelConfig.items.length; k < l3; k++){
+								var tmpWidget = widgetPanelConfig.items[k].chart;
+								for (var x=0, l4 = tmpWidget.items.length; x < l4; x++){
+									var tmpChart = tmpWidget.items.get(x);
+									
+									if (tmpChart !== null && tmpChart !== undefined && !tmpChart.isSwfReady ){							
+										allWidgetsReady = false;
+										break;
+									}else {								
+										allWidgetsReady = true;								
+									}
+									
+								}
+								
+								if (!allWidgetsReady){
+									break;
+								}
+							}
+						} else{								
+							//each panel could contains more charts 
+							for (var k=0, l3 = widgetPanelConfig.items.length; k < l3; k++){
+								
+								for (p = 0; p < widgetPanelConfig.items[k].items.length; p++){
+									var tmpWidget = widgetPanelConfig.items[k].items.get(p).chart;
+									for (var x=0, l4 = tmpWidget.items.length; x < l4; x++){
+										var tmpChart = tmpWidget.items.get(x);
+										
+										if (tmpChart !== null && tmpChart !== undefined && !tmpChart.isSwfReady ){							
+											allWidgetsReady = false;
+											break;
+										}else {								
+											allWidgetsReady = true;								
+										}										
+									}
+									
+									if (!allWidgetsReady){
+										break;
+									}
+								}
+								if (!allWidgetsReady){
+									break;
+								}
+							}								
+						}
+						if (allWidgetsReady && k == l3  ) {
+							/*
+							var d2 = new Date();
+							var end = d2.getTime();
+							alert('end: ' + end);
+							var diff = end - start;
+							alert(' - diff: ' + diff);
+							*/
+							if ( widgetPanelConfig.storeManager !== null && widgetPanelConfig.storeManager !== undefined){	
+								for (ds in datasets){
+									//sets the single store as refreshable 
+									var tmpStore = widgetPanelConfig.storeManager.getStore(ds);
+									
+									if (tmpStore !== undefined){										
+										tmpStore.stopped = false;
+									}
+								}								
+								widgetPanelConfig.storeManager.forceRefresh();
+								//stops the task
+								Ext.TaskMgr.stop(task);
+							}
+						}
+							
+					},
+					interval: 10 //milliseconds
+				};
+			
+				//starts the task
+				Ext.TaskMgr.start(task);
 };
+		
 
 Ext.extend(Sbi.console.SummaryPanel, Ext.Panel, {
     
     services: null
-    
    
     //  -- public methods ---------------------------------------------------------
     
     
     
     //  -- private methods ---------------------------------------------------------
-    
-    
-    
+	
     
 });

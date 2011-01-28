@@ -117,10 +117,13 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		 
 	}
 	
+	//refresh All stores of the store manager managed
 	, forceRefresh: function(){
+	//	alert('*** forceRefresh called! ');
 		for(var i = 0, l = this.stores.length; i < l; i++) {
 			var s = this.getStore(i);
-			if (s !== undefined && s.dsLabel !== undefined && s.dsLabel !== 'testStore' && !s.stopped){
+			//s.stopped = false; 
+			if (s !== undefined && s.dsLabel !== undefined && s.dsLabel !== 'testStore' && !s.stopped){				
 				s.load({
 					params: s.pagingParams || {},
 					callback: function(){this.ready = true;}, 
@@ -130,6 +133,7 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 			}
 		}
 	}
+
 	
 	
 	//  -- private methods ---------------------------------------------------------
@@ -152,6 +156,10 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
 		
 			s.ready = c[i].ready || false;
 			s.storeType = 'sbi';
+			
+			//to optimize the execution time, the store is created with the stopped property to false, so it's loaded
+			//when the component (widget or grid) is viewed. 
+			s.stopped = true;
 			
 			this.addStore(s);
 		}

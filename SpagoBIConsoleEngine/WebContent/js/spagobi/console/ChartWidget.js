@@ -58,6 +58,7 @@ Sbi.console.ChartWidget = function(config) {
 	            , yField: 'visits'
 	        }
 		};	
+		
 		if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.chartWidget) {
 			defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.chartWidget);
 		}
@@ -86,6 +87,7 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 	
 	, widgetConfig: null
 	, chart: null
+	, parentContainer: null
 	
 	, YUI_CHART_LINE: 'chart.ext.line'
 	, YUI_CHART_BAR: 'chart.ext.bar'
@@ -120,8 +122,12 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 			}
 		}
 
+		
 		//if(this.store.proxy) {
-		if( !this.store.ready &&  this.store.proxy && ! this.store.proxy.getConnection().isLoading()){
+		//if( !this.store.ready &&  this.store.proxy && !this.store.proxy.getConnection().isLoading()){		
+		if( !this.store.ready &&  this.store.proxy ){
+			//since the store is loaded with the stopped property setted to false, the ready property is forced to true:
+			this.store.ready = true;			
 			this.store.load({
 				params: {}, 
 				callback: function(){this.store.ready = true;}, 
@@ -143,7 +149,7 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 		if(this.chart == null) {
 			this.store.un('load', this.initChart, this);
 		}
-		
+
 		this.chart = this.createChart(this.widgetConfig);
 		
 		this.items.each( function(item) {
@@ -185,6 +191,8 @@ Ext.extend(Sbi.console.ChartWidget, Sbi.console.Widget, {
 		} else {
 			Sbi.Msg.showError('Chart type [' + chartType + '] not supported by [ChartWidget]');
 		}
+		
+		//chart.addListener('refresh', this.refreshStore , this);
 		
 		return chart;
 	}

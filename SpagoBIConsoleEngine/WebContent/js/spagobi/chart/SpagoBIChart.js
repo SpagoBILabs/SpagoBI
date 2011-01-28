@@ -69,6 +69,12 @@ Sbi.chart.SpagoBIChart = function(config) {
 	
 	// encode
 	var c = Ext.apply({}, config);
+
+	if (c.storeManager){
+		this.storeManager = c.storeManager;
+		delete c.storeManager;
+	}
+	
 	if(c.ownerCt) {
 		delete c.ownerCt;
 	}
@@ -87,7 +93,7 @@ Sbi.chart.SpagoBIChart = function(config) {
 	this.flashParams = this.flashParams || {};
 	this.flashParams.scale = 'exactfit';
 	this.flashVars.isIE = Ext.isIE;
-	
+
 	Sbi.chart.SpagoBIChart.superclass.constructor.call(this, config);
 	/*
 	if(c.xtype === 'chart.sbi.livelines') {
@@ -102,9 +108,11 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
 	, storeMeta: null
 	, bindStoreBeforeSwfInit: null
 	, url: null
+	, isLastWidget: null
 	
 	// if it is good for ext chart it is also good for us :)
-	, disableCaching: Ext.isIE || Ext.isOpera
+	//, disableCaching: Ext.isIE || Ext.isOpera
+	, disableCaching: false //the cache is ever active
     , disableCacheParam: '_dc'
 	
 	
@@ -129,7 +137,7 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
     		'beforerefresh'
     		, 'refresh'
     	);
-    	
+
     	this.autoScroll = true;  	
 	}
 	
@@ -210,7 +218,7 @@ Ext.extend(Sbi.chart.SpagoBIChart, Ext.FlashComponent, {
 	, onStoreMetaChange: function(s, m) {
 		this.storeMeta = m;
 	}
-    
+	
 });
 
 Sbi.chart.SpagoBIChart.CHART_BASE_URL =  '/SpagoBIConsoleEngine/swf/spagobichart/';
@@ -420,7 +428,8 @@ Sbi.chart.Semaphore = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 		
 	, isSwfReady: function() {
-		return this.swf.setValue;
+		//return this.swf.setValue;
+		return !!this.swf.setValue;
 	}
 
 	, onRender : function(ct, position) {		
@@ -445,4 +454,5 @@ Sbi.chart.Semaphore = Ext.extend(Sbi.chart.SpagoBIChart, {
 	}
 });
 Ext.reg('chart.sbi.semaphore', Sbi.chart.Semaphore);
+
 
