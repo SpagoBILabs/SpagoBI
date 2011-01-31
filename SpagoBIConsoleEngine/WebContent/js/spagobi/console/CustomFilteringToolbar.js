@@ -76,7 +76,9 @@ Sbi.console.CustomFilteringToolbar = function(config) {
 		Sbi.console.CustomFilteringToolbar.superclass.constructor.call(this, c);
 		
 		//adds events		
-		this.store.on('metachange', this.onMetaChange, this);
+		if (this.store !== undefined){
+			this.store.on('metachange', this.onMetaChange, this);
+		}
 };
 
 Ext.extend(Sbi.console.CustomFilteringToolbar, Sbi.console.FilteringToolbar, {  

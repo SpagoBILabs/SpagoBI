@@ -82,28 +82,29 @@ Sbi.console.GridPanel = function(config) {
 		this.initFilterBar(filterConfig);
 		this.initPagingBar();
 		
+		if (this.store !== undefined){
+			this.store.pagingParams = {
+				start: this.start
+				, limit: this.limit
+				, paginator: this.pagingBar
+			};
 		
-		this.store.pagingParams = {
-			start: this.start
-			, limit: this.limit
-			, paginator: this.pagingBar
-		};
 		
-		this.pagingBar.refresh.hide();
-		this.pagingBar.on('change', function() {
-			this.store.pagingParams.start = this.pagingBar.cursor;
-		}, this);
-		
-		this.filterBar.on('beforefilterselect', function() {
-			this.pagingBar.moveFirst();
-		}, this);
-		
-		if(this.store.filterPlugin) {
-			this.store.filterPlugin.on('filterschange', function(s, f) {
-				this.pagingBar.onLoad(this.store, [], {params: this.store.pagingParams || {}});
+			this.pagingBar.refresh.hide();
+			this.pagingBar.on('change', function() {
+				this.store.pagingParams.start = this.pagingBar.cursor;
 			}, this);
+			
+			this.filterBar.on('beforefilterselect', function() {
+				this.pagingBar.moveFirst();
+			}, this);
+			
+			if(this.store.filterPlugin) {
+				this.store.filterPlugin.on('filterschange', function(s, f) {
+					this.pagingBar.onLoad(this.store, [], {params: this.store.pagingParams || {}});
+				}, this);
+			}
 		}
-		
 
 		var c = Ext.apply(c, {
 			store: this.store
@@ -597,10 +598,14 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     
 	, initStore: function() {
 		this.store = this.storeManager.getStore(this.storeId);
-		this.store.remoteSort = false;  //local type		
-		this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
-		this.store.on('load', this.onLoad, this);
-		this.store.on('metachange', this.onMetaChange, this);
+		if (this.store === undefined) {
+			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
+		}else{
+			this.store.remoteSort = false;  //local type		
+			this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
+			this.store.on('load', this.onLoad, this);
+			this.store.on('metachange', this.onMetaChange, this);
+		}
 	}
 
 	, initColumnModel: function() {
@@ -698,12 +703,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			if( (typeof fields[i]) === 'string') {
 				fields[i] = {name: fields[i]};
 			}
-			//alert('typeof fields[i]: ' + typeof fields[i].toSource());
-			/*
-			if( (typeof fields[i]) === 'number') {
-				fields[i].renderer  =  Sbi.locale.formatters['int'];
-			}
-			*/
+			
 			if (this.columnId !== undefined && this.columnId === fields[i].header ){
 				fields[i].hidden = true;
 			}
@@ -724,6 +724,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    tmpMeta.fields[i] = Ext.apply(tmpMeta.fields[i], t);
 			if(tmpMeta.fields[i].type) {
 				var t = tmpMeta.fields[i].type;	
+				//alert('t: ' + t);
 				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[t];			   
 			}
 			   
