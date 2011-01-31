@@ -210,7 +210,7 @@ Sbi.console.SummaryPanel = function(config) {
 		 
 		//add task: checks if all widgets have the isSWFReady setted to true. In this case force the refresh of datasets
 		var task = {};
-		
+		 
 			task = {
 					run: function(){
 				//		alert('run function');
@@ -219,6 +219,7 @@ Sbi.console.SummaryPanel = function(config) {
 							//each panel could contains more charts					
 							for (var k=0, l3 = widgetPanelConfig.items.length; k < l3; k++){
 								var tmpWidget = widgetPanelConfig.items[k].chart;
+								if (tmpWidget === undefined) break;
 								for (var x=0, l4 = tmpWidget.items.length; x < l4; x++){
 									var tmpChart = tmpWidget.items.get(x);
 									
@@ -241,6 +242,7 @@ Sbi.console.SummaryPanel = function(config) {
 								
 								for (p = 0; p < widgetPanelConfig.items[k].items.length; p++){
 									var tmpWidget = widgetPanelConfig.items[k].items.get(p).chart;
+									if (tmpWidget === undefined || tmpWidget === null) break;
 									for (var x=0, l4 = tmpWidget.items.length; x < l4; x++){
 										var tmpChart = tmpWidget.items.get(x);
 										
@@ -260,7 +262,7 @@ Sbi.console.SummaryPanel = function(config) {
 									break;
 								}
 							}								
-						}
+						} 
 						if (allWidgetsReady && k == l3  ) {
 							/*
 							var d2 = new Date();
