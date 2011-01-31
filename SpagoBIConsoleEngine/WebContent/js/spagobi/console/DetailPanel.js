@@ -98,6 +98,7 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
     //  -- private methods ---------------------------------------------------------
     
     , initDetailPages: function(pagesConfig) {
+    	
 		this.pages = new Array();
 		var detailPage = null;		
 		for(var i = 0, l = pagesConfig.length; i < l; i++) {
@@ -107,7 +108,8 @@ Ext.extend(Sbi.console.DetailPanel, Ext.Panel, {
 		  detailPage = new Sbi.console.DetailPage(conf);
 		  this.pages.push(detailPage);
 		  //actives only the first tab dataset
-		  var s = conf.storeManager.getStore(detailPage.getStore().getDsLabel());
+		  //var s = conf.storeManager.getStore(detailPage.getStore().getDsLabel());
+		  var s = conf.storeManager.getStore(conf.table.dataset);
 		  if (s !== undefined){
 			  if (i===0){
 				  s.stopped = false;
