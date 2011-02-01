@@ -306,6 +306,9 @@ public class ExecuteBIDocumentJob implements Job {
 						logger.info("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
 						long start = System.currentTimeMillis();
 						byte[] response = executionProxy.exec(profile, "SCHEDULATION", null);
+						if (response == null || response.length == 0) {
+							logger.debug("Document executed without any response");
+						}
 						String retCT = executionProxy.getReturnedContentType();
 						String fileextension = executionProxy.getFileExtensionFromContType(retCT);
 						long end = System.currentTimeMillis();			
