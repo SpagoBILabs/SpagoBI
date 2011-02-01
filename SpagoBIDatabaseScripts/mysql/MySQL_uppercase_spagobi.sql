@@ -81,8 +81,6 @@ ALTER TABLE `sbi_kpi_inst_period` RENAME `SBI_KPI_INST_PERIOD`;
 ALTER TABLE `sbi_kpi_instance` RENAME `SBI_KPI_INSTANCE`;
 ALTER TABLE `sbi_kpi_instance_history` RENAME `SBI_KPI_INSTANCE_HISTORY`;
 ALTER TABLE `sbi_kpi_model` RENAME `SBI_KPI_MODEL`;
-ALTER TABLE `sbi_kpi_model_attr` RENAME `SBI_KPI_MODEL_ATTR`;
-ALTER TABLE `sbi_kpi_model_attr_val` RENAME `SBI_KPI_MODEL_ATTR_VAL`;
 ALTER TABLE `sbi_kpi_model_inst` RENAME `SBI_KPI_MODEL_INST`;
 ALTER TABLE `sbi_kpi_model_resources` RENAME `SBI_KPI_MODEL_RESOURCES`;
 ALTER TABLE `sbi_kpi_periodicity` RENAME `SBI_KPI_PERIODICITY`;
@@ -127,5 +125,6 @@ ALTER TABLE `sbi_user_attributes` RENAME `SBI_USER_ATTRIBUTES`;
 ALTER TABLE `sbi_user_func` RENAME `SBI_USER_FUNC`;
 ALTER TABLE `sbi_viewpoints` RENAME `SBI_VIEWPOINTS`;
 
+select concat('rename table ', table_name, ' to ' , lower(table_name) , ';') from information_schema.tables where table_schema = 'your_schema_name';
 
 
