@@ -24,4 +24,20 @@
 	return yearStr;
 	]]>
 	</FORMULA>
+	<FORMULA name="getCurrentDate" description="#scheduler.formulas.getCurrentDate">
+	<![CDATA[
+	Date now = new Date();
+  String DATE_FORMAT = "dd/MM/yyyy";
+  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
+  return sdf.format(now);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTime" description="#scheduler.formulas.getCurrentDateTime">
+	<![CDATA[
+	Date now = new Date();
+  String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
+  return sdf.format(now);
+	]]>
+	</FORMULA>
 </FORMULAS>
