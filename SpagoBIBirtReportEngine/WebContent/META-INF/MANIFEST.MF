@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIBirtReportEngine.war
 Implementation-Title: SpagoBIBirtReportEngine
-Implementation-Version: 2.7  (Included Birt: 2.6)
+Implementation-Version: 2.8  (Included Birt: 2.6.1)
 
