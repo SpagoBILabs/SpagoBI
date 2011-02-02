@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/dom4j.jar"/>
 	<classpathentry kind="lib" path="E:/progetti/SpagoBI/SpagoBI-DEMO/lib/servlet-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-log-2.6.2.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
