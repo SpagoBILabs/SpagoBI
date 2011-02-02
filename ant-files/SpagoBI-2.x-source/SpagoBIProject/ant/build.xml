@@ -114,7 +114,32 @@
         <copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" />
         
   </target>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   CREAZIONE JAR							                                    -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
+	  <path id="svnant.classpath">
+		<fileset dir="../../ant/antsvn-lib">
+		  <include name="**/*.jar"/>
+		</fileset>
+	  </path>
 
+	  <target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+	  	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+
+	    <svn>
+            <wcVersion path="${src}" prefix="svn."/>
+        </svn>
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi-core-${project.version}.jar"  >
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
+			<include name="it/**/*" />
+		</fileset>
+
+			<manifest>
+				<attribute name="Implementation-Version" value="${svn.revision.max}" />
+			</manifest>
+		</jar>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+	</target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -297,8 +322,8 @@
 			    	 <file name="./src/ext/sbi/decorator/LoadMask.js"/>
 
 			    	 <file name="./src/ext/sbi/commons/Format.js"/>
-					 <file name="./src/ext/sbi/commons/JSON.js"/>
-			    	 <file name="./src/ext/sbi/commons/Session.js"/>
+				 <file name="./src/ext/sbi/commons/JSON.js"/>
+				 <file name="./src/ext/sbi/commons/Session.js"/>
 
 			    	 <file name="./src/ext/sbi/browser/SearchField.js"/>
 			    	 <file name="./src/ext/sbi/browser/Toolbar.js"/>
@@ -365,6 +390,7 @@
 				    	 <file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
 				    	 <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
 				    	 <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
+					 <file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
 
 				    	 <file name="./src/ext/sbi/udp/ManageUdp.js"/>
 				    	 <file name="./src/ext/sbi/udp/ManageUdpValues.js"/>				    	
@@ -392,18 +418,19 @@
 				    	 <file name="./src/ext/sbi/kpi/ManageKpiWindow.js"/>				    	
 				    	 <file name="./src/ext/sbi/kpi/ManageOUGrants.js"/>
 				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js"/>
-				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>  	
-			    	
-						 <file name="./src/ext/sbi/widgets/ColumnNodeUI.js"/>
-				    	 <file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
-			    		 <file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
-				    	 <file name="./src/ext/sbi/widgets/SimpleTreePanel.js"/>
-				    	 <file name="./src/ext/sbi/kpi/ManageGoals.js"/>
-				    	 <file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js"/>
-				    	 <file name="./src/ext/sbi/kpi/ManageGoalsGrid.js"/>
-				    	 <file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>	
-				    	 <file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
-				    	
+				    	 <file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js"/>
+
+				    	<file name="./src/ext/sbi/widgets/ColumnNodeUI.js"/>
+				    	<file name="./src/ext/sbi/widgets/ConfigurableTree.js"/>
+			    		<file name="./src/ext/sbi/widgets/ModelInstanceTree.js"/>
+				    	<file name="./src/ext/sbi/widgets/SimpleTreePanel.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoals.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js"/>
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>	
+				    	<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
+
+
 				    </filelist>
 
 				</concat>
@@ -464,7 +491,7 @@
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   CREAZIONE WAR                                                                -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
-	<target name="create.war" depends="init,copy.artifacts" >
+	<target name="create.war" depends="init,jar" >
         
         <antcall target="${sso}" />
         <antcall target="${specific.ant.task}" />
