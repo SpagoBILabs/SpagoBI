@@ -3,8 +3,8 @@
 	<name>SpagoBIJasperReportEngine</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtils</project>
 		<project>SpagoBIElisaSecurityProvider</project>
+		<project>SpagoBIUtils</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
