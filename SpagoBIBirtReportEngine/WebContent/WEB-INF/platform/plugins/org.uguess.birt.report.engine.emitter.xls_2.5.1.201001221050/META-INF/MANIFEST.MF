@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.core.runtime,org.uguess.birt.report.engine
+ .common
+Bundle-Vendor: Uguess.org
+Eclipse-LazyStart: true
+Bundle-ClassPath: xls-emitter.jar,lib/poi-3.5-FINAL-20090928.jar,lib/c
+ ommons-jexl-1.1.jar,lib/commons-logging-1.1.1.jar
+Bundle-Version: 2.5.1.201001221050
+Bundle-Localization: plugin
+Bundle-Name: Xls Emitter Plug-in for BIRT
+Bundle-Activator: org.uguess.birt.report.engine.emitter.xls.XlsPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.uguess.birt.report.engine.emitter.xls; single
+ ton:=true
+
+
