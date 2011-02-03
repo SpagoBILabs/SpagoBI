@@ -3,10 +3,7 @@
     <wb-module deploy-name="SpagoBIJasperReportEngine">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/JavaSource"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIElisaSecurityProvider/SpagoBIElisaSecurityProvider">
+<dependent-module archiveName="SpagoBIUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="build/classes"/>
