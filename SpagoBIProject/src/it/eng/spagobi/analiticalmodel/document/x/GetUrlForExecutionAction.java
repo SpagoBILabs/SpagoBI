@@ -176,7 +176,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			Locale locale = this.getLocale();
 			
 			List errors = null;
-			if (executionInstance.getBIObject().getBiObjectTypeCode().equalsIgnoreCase("DATAMART")) {
+			//if (executionInstance.getBIObject().getBiObjectTypeCode().equalsIgnoreCase("DATAMART")) {
 				// parameters are applied to datamarts' subobjects, so you must validate them
 				JSONObject executionInstanceJSON = this.getAttributeAsJSONObject( PARAMETERS );
 				executionInstance.refreshParametersValues(executionInstanceJSON, false);
@@ -185,7 +185,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				} catch (Exception e) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 				}
-			}
+			//}
 
 			if ( errors != null && errors.size() > 0) {
 				// there are errors on parameters validation, send errors' descriptions to the client
