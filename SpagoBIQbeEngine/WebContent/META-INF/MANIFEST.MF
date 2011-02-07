@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIQbeEngine.war
 Implementation-Title: SpagoBIQbeEngine
-Implementation-Version: 2.7.0
+Implementation-Version: 2.8.0
 
