@@ -828,6 +828,8 @@ public class DatabaseSaver
       }
   	  if(versioning)
 		insert.append(", '" + version + "'");
+  	  else
+  		insert.append(", 'undefined'");
       insert.append(" )");
       logger.debug(insert);
       //System.out.println(insert.toString());
