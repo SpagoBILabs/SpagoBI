@@ -130,9 +130,9 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 			var param = this.promptables[i]; 
 			var tmpParamConfig = null;
 			var tmpField = null;
-			//defining label (its variable)
+			//defining label (it's variable)
 			for(p in param) {    		
-        		if (p !== 'values' && p !== 'scope'){
+        		if (p !== 'values' && p !== 'scope' && p !== 'defaultValue'){
         			tmpLabel = param[p];
         			tmpName = p;
         		}
@@ -170,25 +170,32 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
     			index = f.substr(0, f.indexOf('__'));
     		}
     		//when the field is visible and the value is yet empty checks the default value
-    		if (this.fieldMap[f].isVisible() && state[index] === undefined || state[index] === null || 
-    			state[index] === '' ){
-	    		if ((this.fieldMap[f].getValue() === undefined || this.fieldMap[f].getValue() === null || 
-	    			 this.fieldMap[f].getValue() == '') && this.fieldMap[f].defaultValue !== undefined){
-	    			state[index] = this.fieldMap[f].defaultValue;
+    		//if (this.fieldMap[f].isVisible() && state[index] === undefined || state[index] === null || state[index] === '' ){
+    		if (this.fieldMap[f].isVisible() && state[index] === undefined || state[index] === null ){
+    			
+    			var tmpField = this.fieldMap[f];
+    			var tmpFieldValue = tmpField.getValue();
+    			var tmpDefaultValue = tmpField.defaultValue;    	
+    			//if (tmpDefaultValue === undefined || tmpDefaultValue === null || tmpDefaultValue == '' ){
+    			if (tmpDefaultValue === undefined || tmpDefaultValue === null  ){
+					tmpDefaultValue = (tmpFieldValue !== null)?tmpFieldValue.defaultValue:'' ;
+				} 
+    			if ((tmpFieldValue === undefined || tmpFieldValue === null || tmpFieldValue == '') && 
+    				 tmpDefaultValue !== undefined){
+   	    			state[index] = tmpDefaultValue.trim();
+   	    		}else {    		
+	    			//the field is correctly valorized:
+	    			if (tmpField.getXTypes().indexOf('/datefield') >= 0){
+	    				//if it's a date: sets its format
+	    				state[index] = Sbi.console.commons.Format.date(tmpFieldValue , this.dateFormat);
+	    			}else{	
+	    				//sets the current value
+	    				state[index] = tmpFieldValue;
+	    			}
 	    		}
-	    		else {    			
-	    			if (this.fieldMap[f].getXTypes().indexOf('/datefield') >= 0){
-	    				state[index] = Sbi.console.commons.Format.date(this.fieldMap[f].getValue() , this.dateFormat);
-	    				
-	    			}else{
-	    				state[index] = this.fieldMap[f].getValue();
-	    			}    			
-	    			//state[f] = this.fieldMap[f].getValue();
-	    		}
-    		}
-    		
+    		}    		
     	}
-    	
+    	//alert('state: ' + state.toSource());
     	return state;
     }
     
@@ -224,11 +231,12 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 		
 	}
 	
-	, createTextField: function(label, name){
+	, createTextField: function(label, name, param){
 		var field = new Ext.form.TextField({
   		  fieldLabel: label 
   		  	  , name: name
-	          , width: 250    	     
+	          , width: 250 
+	          , defaultValue: param.defaultValue 
 	        });
 		return field;
 	}
@@ -241,6 +249,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 		  , name: name
           , width: 250  
           , format: param.values.format || 'd/m/Y'
+          , defaultValue: param.defaultValue 
         });
 		
 		return field;
@@ -257,7 +266,6 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 		if (param.values.datasetLabel){    				
 			tmpStore.load();
 		}
-		
 		var field = new Ext.form.ComboBox({
 		    fieldLabel: label || param.title,
 		    name: name,
@@ -269,15 +277,23 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 	        typeAhead: true,
 	        emptyText:'Select ...',
 	        selectOnFocus:true,
-	        triggerAction: 'all'
+	        triggerAction: 'all',
+	        defaultValue: param.defaultValue 
 		 });        		 
 		
 		return field;
 	}
 	
 	, createCheckListField: function(label, name, param){
+		var smLookup = new Ext.grid.CheckboxSelectionModel( {singleSelect: false } );
+		var cmLookup =  new Ext.grid.ColumnModel([
+    	                                          new Ext.grid.RowNumberer(),		    	                                          
+				                    		      {header: "Data", dataIndex: 'value', width: 75},
+				                    		      smLookup
+				                    		    ]);
 		var tmpStore = null; 
 		tmpStore = this.createStore(param.values);
+		
 		
 		tmpStore.on('beforeload', function(store, o) {
 			var p = Sbi.commons.JSON.encode(this.getFormState());
@@ -290,18 +306,21 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 			       fieldLabel: label || param.title
 				  // , name : p.id
 				   , name : name
-				  // , id: name
 				   , width: 250
+				   , sm: smLookup
+				   , cm: cmLookup
 				   , allowBlank: !p.mandatory
 				   , valueField: (param.values.valueField)?param.values.valueField:'code'
-				   , descField: (param.values.descField)?param.values.descField:''
+				   , descField: (param.values.descField)?param.values.descField:''		
+				   //, displayField: (param.values.descField)?param.values.valueField:'value'
+				   , defaultValue: param.defaultValue
 				};
-		
 		var field = new Sbi.console.LookupField(Ext.apply(baseConfig, {
 			  	  store: tmpStore
 				//, params: params
 				, params: {}
 				, singleSelect: false
+				
 		}));	 
 		
 		return field;
@@ -326,6 +345,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 				   , allowBlank: !p.mandatory
 				   , valueField: (param.values.valueField)?param.values.valueField:'code'
 				   , descField: (param.values.descField)?param.values.descField:''
+				   , defaultValue: param.defaultValue
 				};
 		
 		var field = new Sbi.console.LookupField(Ext.apply(baseConfig, {
@@ -357,7 +377,10 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 		                 inputValue: idRadio
 			            };
 			options.push(tmpField);
-			//adds all sub parameters			
+			//adds all sub parameters		
+			if (tmpParamConfig.defaultValue === undefined || tmpParamConfig.defaultValue === null){
+				tmpParamConfig.defaultValue =  param.defaultValue;
+			}
 			var tmpParam = this.createParameterField(label, idRadio, tmpParamConfig);
 			tmpParam.setVisible(false) ;			
 			options.push(tmpParam);			
@@ -373,7 +396,8 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 	    	    border: false,
 	    	    defaultType: 'radio', // each item will be a radio button
 	    	    columns: 2,
-	    	    items: options
+	    	    items: options,
+	    	    defaultValue: param.defaultValue
 	    	});
 
 			radioField.addListener('change', this.changeRadioField , this);
@@ -386,7 +410,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 		var tmpField = null;
 		if (param.values === undefined || param.values.type == 'text'){        			
 			//default is a textarea
-			tmpField = this.createTextField(label, name);        		          		
+			tmpField = this.createTextField(label, name, param);        		          		
 		}else if (param.values.type == 'data'){  
 			//data
 			tmpField = this.createDataField(label, name, param);   
@@ -420,6 +444,7 @@ Ext.extend(Sbi.console.PromptablesWindow, Ext.Window, {
 			var tmpFieldId =  tmpField.name || tmpField.id;
 			if (tmpFieldId == radio.getItemId()){				
 				tmpField.setVisible(true);
+				//tmpField.setValue(''); //resets the field value to '' (system default)
 		//		tmpField.doLayout();
 			}else if (tmpFieldId.substr(0, tmpFieldId.indexOf('__')) === currentRadioId ){
 				//disables others fields of the group

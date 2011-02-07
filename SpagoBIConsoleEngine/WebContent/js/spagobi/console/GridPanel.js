@@ -723,8 +723,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var t = Ext.apply({}, this.columnConfig[tmpMeta.fields[i].header] || {},  this.columnDefaultConfig);
 		    tmpMeta.fields[i] = Ext.apply(tmpMeta.fields[i], t);
 			if(tmpMeta.fields[i].type) {
-				var t = tmpMeta.fields[i].type;	
-				//alert('t: ' + t);
+				var t = tmpMeta.fields[i].type;					
 				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[t];			   
 			}
 			   

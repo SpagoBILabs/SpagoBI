@@ -352,7 +352,9 @@ Ext.extend(Sbi.console.LookupField, Ext.form.TriggerField, {
     , onDeselect: function(sm, rowIndex, record) {
     	if( this.xselection[ record.data[this.displayField]] ) {
     		delete this.xselection[ record.data[this.displayField]];
-    	}    	
+    	}else if( this.xselection[ record.data[this.valueField]] ) {
+    		delete this.xselection[ record.data[this.valueField]];
+    	}   	
     }
     
     , applySelection: function() {
