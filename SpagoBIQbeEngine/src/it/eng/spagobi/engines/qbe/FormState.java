@@ -21,9 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.FormStateLoaderFactory;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.IFormStateLoader;
@@ -31,11 +38,6 @@ import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -235,6 +237,8 @@ public class FormState extends EngineAnalysisState {
 			parsedForm.put("groupingVariables", groupingVariables);
 			
 		}catch (Exception e){
+			// TODO mai affossare un'eccezione altrimenti si perde poi un 
+			// sacco di tempo per capire cosa è andato storto (FAIL-FAST!)
 			logger.debug("Error getting the map id-->name of the form fields",e);
 			return formState;
 		}
@@ -271,18 +275,23 @@ public class FormState extends EngineAnalysisState {
 	 * @throws JSONException
 	 */
 	private void filterAdmissibleValues(JSONObject valuesJSON, JSONArray admissibleJSON, String prefix) throws JSONException{
-
+		List<String> deprecatedValues = new ArrayList<String>();
+		// non si possono cancellare elementi da una lista su cui si sta iterando
 		for(int y=0; y<admissibleJSON.length(); y++){
 			Iterator<String> keyIter = valuesJSON.keys();
 			while(keyIter.hasNext()){
 				String key = keyIter.next();
 				if(key.equals(prefix+admissibleJSON.getJSONObject(y).getString("title"))){
 					if(!filterAdmissibleValues(valuesJSON.getJSONObject(key).getString("field"), admissibleJSON.getJSONObject(y).getJSONArray("admissibleFields"))){
-						valuesJSON.remove(key);
+						deprecatedValues.add(key);
+						logger.debug("field [" + key + "] does not exist anymore in the form");
 					}
 				}
 			}
-
+		}
+		
+		for(int i = 0; i < deprecatedValues.size(); i++) {
+			valuesJSON.remove(deprecatedValues.get(i));
 		}
 	}
 
