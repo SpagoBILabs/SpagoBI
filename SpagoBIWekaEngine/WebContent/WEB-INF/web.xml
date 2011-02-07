@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <web-app id="SpagoBIWekaEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     
 	<display-name>SpagoBIWekaEngine</display-name>
@@ -86,7 +85,7 @@
 	
     <filter-mapping>
     	<filter-name>SpagoBIAccessFilter</filter-name>
-    	<url-pattern>/WekaEngineStartServlet/*</url-pattern>
+    	<url-pattern>/WekaServlet/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -133,7 +132,7 @@
     
     <servlet-mapping>
         <servlet-name>WekaEngineStartServlet</servlet-name>
-        <url-pattern>/WekaEngineStartServlet</url-pattern>
+        <url-pattern>/WekaServlet</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
