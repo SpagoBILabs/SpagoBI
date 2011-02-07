@@ -548,7 +548,7 @@ public class DatabaseConnection implements Serializable {
         if (m_checkForUpperCaseNames == true) {
         	query += " " + tableName.toUpperCase();        	
 		} else {
-			query += " " + tableName.toUpperCase();
+			query += " " + tableName;
 		}
         ResultSet resultSet = stmt.executeQuery(query);
         
