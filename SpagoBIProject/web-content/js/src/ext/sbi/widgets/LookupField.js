@@ -201,7 +201,7 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	    ]);
     	}
 		
-		var pagingBar = new Ext.PagingToolbar({
+		var pagingBar = new Sbi.widgets.PagingToolbar({
 	        pageSize: this.limit,
 	        store: this.store,
 	        displayInfo: true,
@@ -318,7 +318,7 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
     }
     
     , applySelection: function() {
-    	this.resetSelection();
+    	//this.resetSelection();
     	
     	if(this.grid) {    		    		
 			var selectedRecs = [];
