@@ -72,8 +72,8 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <target name="compile" depends="sbi.utils.update" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-    <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" 
-    	executable="/usr/local/jdk1.6.0_13/bin/javac" fork="yes">
+    <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
+    	<!--executable="/usr/local/jdk1.6.0_13/bin/javac" fork="yes"-->
       <classpath refid="web.classpath"/>
     </javac> 
   </target>
