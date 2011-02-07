@@ -436,7 +436,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return true;
 			}, this);
 			
-			//store.load(/*{params: param}*/); // CONTROLLARE CON ANDREA PERCHé CARICAVA SUBITO!!!!!!
+			/*
+			 * The following store.load() instruction should not be necessary: the parameter's values are loaded when combobox is expanded
+			 */
+			//store.load(/*{params: param}*/);
 			
 			field = new Ext.form.ComboBox(Ext.apply(baseConfig, {
 				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}</div></tpl>'
@@ -451,7 +454,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			    , triggerAction: 'all'
 			    , selectOnFocus:true
 			    , autoLoad: false
-			    //, mode : 'local' // CONTROLLARE CON ANDREA PERCHé ERA LOCAL!!!!!!
+				/*
+				 * The following "mode : 'local'" instruction should not be necessary: the parameter's values are loaded from remote server
+				 */
+			    //, mode : 'local'
 			    , listeners: {
 			    	'select': {
 			       		fn: function(){	
