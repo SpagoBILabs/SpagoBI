@@ -168,8 +168,8 @@ public class FormState extends EngineAnalysisState {
 					JSONArray staticClosedFilters = formState.optJSONArray("staticClosedFilters");
 					fillMaps(staticClosedFilters, idNameMap, nameIdMap, "id", "title","staticClosedFilters");
 				}
-		}catch (Exception e){
-			logger.debug("Error getting the map id-->name of the form fields",e);
+		}catch (JSONException e){
+			logger.error("Error getting the map id-->name of the form fields",e);
 		}
 		setProperty(ID_NAME_MAP, idNameMap);
 		setProperty(NAME_ID_MAP, nameIdMap);
@@ -236,10 +236,8 @@ public class FormState extends EngineAnalysisState {
 			
 			parsedForm.put("groupingVariables", groupingVariables);
 			
-		}catch (Exception e){
-			// TODO mai affossare un'eccezione altrimenti si perde poi un 
-			// sacco di tempo per capire cosa è andato storto (FAIL-FAST!)
-			logger.debug("Error getting the map id-->name of the form fields",e);
+		}catch (JSONException e){
+			logger.error("Error getting the map id-->name of the form fields",e);
 			return formState;
 		}
 		return parsedForm;
@@ -276,7 +274,7 @@ public class FormState extends EngineAnalysisState {
 	 */
 	private void filterAdmissibleValues(JSONObject valuesJSON, JSONArray admissibleJSON, String prefix) throws JSONException{
 		List<String> deprecatedValues = new ArrayList<String>();
-		// non si possono cancellare elementi da una lista su cui si sta iterando
+
 		for(int y=0; y<admissibleJSON.length(); y++){
 			Iterator<String> keyIter = valuesJSON.keys();
 			while(keyIter.hasNext()){
@@ -303,18 +301,22 @@ public class FormState extends EngineAnalysisState {
 	 * @throws JSONException
 	 */
 	private void filterAdmissibleGroups(JSONObject valuesJSON, JSONArray admissibleJSON) throws JSONException{
-
+		List<String> deprecatedValues = new ArrayList<String>();
+		
 		for(int y=0; y<admissibleJSON.length(); y++){
 			Iterator<String> keyIter = valuesJSON.keys();
 			while(keyIter.hasNext()){
 				String key = keyIter.next();
 				if(key.equals(admissibleJSON.getJSONObject(y).getString("id"))){
 					if(!filterAdmissibleValues(valuesJSON.getString(key), admissibleJSON.getJSONObject(y).getJSONArray("admissibleFields"))){
-						valuesJSON.remove(key);
+						deprecatedValues.add(key);
+						logger.debug("field [" + key + "] does not exist anymore in the form");
 					}
 				}
 			}
-
+		}
+		for(int i = 0; i < deprecatedValues.size(); i++) {
+			valuesJSON.remove(deprecatedValues.get(i));
 		}
 	}
 	
