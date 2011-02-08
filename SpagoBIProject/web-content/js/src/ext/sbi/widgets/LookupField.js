@@ -200,35 +200,66 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 	       }
 	    ]);
     	}
-		
-		var pagingBar = new Sbi.widgets.PagingToolbar({
-	        pageSize: this.limit,
-	        store: this.store,
-	        displayInfo: true,
-	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
-	        emptyMsg: "No topics to display",
-	        
-	        items:[
-	               '->'
-	               , {
-	            	   text: LN('sbi.lookup.Annulla')
-	            	   , listeners: {
-		           			'click': {
-		                  		fn: this.onCancel,
-		                  		scope: this
-		                	} 
-	               		}
-	               } , {
-	            	   text: LN('sbi.lookup.Confirm')
-	            	   , listeners: {
-		           			'click': {
-		                  		fn: this.onOk,
-		                  		scope: this
-		                	} 
-	               		}
-	               }
-	        ]
-	    });
+    	var pagingBar = null;
+    	if(!this.drawFilterToolbar){
+    		pagingBar = new Ext.PagingToolbar({
+    	        pageSize: this.limit,
+    	        store: this.store,
+    	        displayInfo: true,
+    	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
+    	        emptyMsg: "No topics to display",
+    	        
+    	        items:[
+    	               '->'
+    	               , {
+    	            	   text: LN('sbi.lookup.Annulla')
+    	            	   , listeners: {
+    		           			'click': {
+    		                  		fn: this.onCancel,
+    		                  		scope: this
+    		                	} 
+    	               		}
+    	               } , {
+    	            	   text: LN('sbi.lookup.Confirm')
+    	            	   , listeners: {
+    		           			'click': {
+    		                  		fn: this.onOk,
+    		                  		scope: this
+    		                	} 
+    	               		}
+    	               }
+    	        ]
+    	    });
+    	}else{
+    		pagingBar = new Sbi.widgets.PagingToolbar({
+    	        pageSize: this.limit,
+    	        store: this.store,
+    	        displayInfo: true,
+    	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
+    	        emptyMsg: "No topics to display",
+    	        
+    	        items:[
+    	               '->'
+    	               , {
+    	            	   text: LN('sbi.lookup.Annulla')
+    	            	   , listeners: {
+    		           			'click': {
+    		                  		fn: this.onCancel,
+    		                  		scope: this
+    		                	} 
+    	               		}
+    	               } , {
+    	            	   text: LN('sbi.lookup.Confirm')
+    	            	   , listeners: {
+    		           			'click': {
+    		                  		fn: this.onOk,
+    		                  		scope: this
+    		                	} 
+    	               		}
+    	               }
+    	        ]
+    	    });
+    	}
 		
 		if(this.drawFilterToolbar){
 			this.filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
@@ -318,7 +349,9 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
     }
     
     , applySelection: function() {
-    	//this.resetSelection();
+    	if(!this.drawFilterToolbar){
+    		this.resetSelection();
+    	}
     	
     	if(this.grid) {    		    		
 			var selectedRecs = [];
