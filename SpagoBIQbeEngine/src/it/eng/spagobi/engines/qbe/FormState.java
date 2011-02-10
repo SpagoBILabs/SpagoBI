@@ -168,7 +168,7 @@ public class FormState extends EngineAnalysisState {
 					JSONArray staticClosedFilters = formState.optJSONArray("staticClosedFilters");
 					fillMaps(staticClosedFilters, idNameMap, nameIdMap, "id", "title","staticClosedFilters");
 				}
-		}catch (JSONException e){
+		}catch (Exception e){
 			logger.error("Error getting the map id-->name of the form fields",e);
 		}
 		setProperty(ID_NAME_MAP, idNameMap);
@@ -193,54 +193,61 @@ public class FormState extends EngineAnalysisState {
 	 * @return the values of the form but with the name of the fields instead of the ids
 	 */
 	private JSONObject parseValues(JSONObject formState){
-		JSONObject formStructure = getConf();
-		JSONObject parsedForm = new JSONObject();
-		Map<String, String> nameIdMap = getNameIdMap();
-		JSONObject newDynamicFilters, newStaticOpenFilters, newStaticClosedFilters, newStaticClosedFiltersAnd, newStaticClosedFiltersXor;
-		try{
-			JSONObject staticOpenFilters = formState.optJSONObject("staticOpenFilters");
-			newStaticOpenFilters = getPropertyNames(staticOpenFilters, nameIdMap, "staticOpenFilters");
-			if(newStaticOpenFilters!=null){
-				parsedForm.put("staticOpenFilters", newStaticOpenFilters);
-			}
-			JSONObject dynamicFilters = formState.optJSONObject("dynamicFilters");
-			filterAdmissibleValues(dynamicFilters, formStructure.getJSONArray("dynamicFilters"), "dynamicFilters");
-			newDynamicFilters = getPropertyNames(dynamicFilters, nameIdMap,"dynamicFilters");
-			
-			if(newDynamicFilters!=null){
-				parsedForm.put("dynamicFilters", newDynamicFilters);
-			}
-			JSONObject staticClosedFilters = formState.optJSONObject("staticClosedFilters");
-			if(staticClosedFilters!=null){
-				JSONObject staticClosedFiltersAnd = staticClosedFilters.optJSONObject("onOffFilters");
-				JSONObject staticClosedFiltersXor = staticClosedFilters.optJSONObject("xorFilters");
-				newStaticClosedFiltersAnd = getPropertyNames(staticClosedFiltersAnd, nameIdMap, "onOffFilters");
-				newStaticClosedFiltersXor = getPropertyNames(staticClosedFiltersXor, nameIdMap, "xorFilters");
-				
-				newStaticClosedFilters= new JSONObject();
-				if(newStaticClosedFilters!=null){
-					parsedForm.put("staticClosedFilters", newStaticClosedFilters);
-				}
-				
-				if(newStaticClosedFiltersAnd!=null){
-					newStaticClosedFilters.put("onOffFilters", newStaticClosedFiltersAnd);
-				}
-				if(newStaticClosedFiltersXor!=null){
-					newStaticClosedFilters.put("xorFilters", newStaticClosedFiltersXor);
-				}
-			}		
 
-			JSONObject groupingVariables = formState.optJSONObject("groupingVariables");
-			filterAdmissibleGroups(groupingVariables, formStructure.getJSONArray("groupingVariables"));
-			//filterAdmissibleArrayValues(valuesJSONArray, admissibleJSONArray, "id");
-			
-			parsedForm.put("groupingVariables", groupingVariables);
-			
-		}catch (JSONException e){
-			logger.error("Error getting the map id-->name of the form fields",e);
-			return formState;
+		if(formState!=null){
+		
+			JSONObject formStructure = getConf();
+			JSONObject parsedForm = new JSONObject();
+			Map<String, String> nameIdMap = getNameIdMap();
+			logger.debug("formStateValues: "+formState);
+			logger.debug("formState: "+getProperty( FORM_STATE ));
+			logger.debug("nameIdMap: "+nameIdMap);
+			JSONObject newDynamicFilters, newStaticOpenFilters, newStaticClosedFilters, newStaticClosedFiltersAnd, newStaticClosedFiltersXor;
+			try{
+				JSONObject staticOpenFilters = formState.optJSONObject("staticOpenFilters");
+				newStaticOpenFilters = getPropertyNames(staticOpenFilters, nameIdMap, "staticOpenFilters");
+				if(newStaticOpenFilters!=null){
+					parsedForm.put("staticOpenFilters", newStaticOpenFilters);
+				}
+				JSONObject dynamicFilters = formState.optJSONObject("dynamicFilters");
+				filterAdmissibleValues(dynamicFilters, formStructure.getJSONArray("dynamicFilters"), "dynamicFilters");
+				newDynamicFilters = getPropertyNames(dynamicFilters, nameIdMap,"dynamicFilters");
+				
+				if(newDynamicFilters!=null){
+					parsedForm.put("dynamicFilters", newDynamicFilters);
+				}
+				JSONObject staticClosedFilters = formState.optJSONObject("staticClosedFilters");
+				if(staticClosedFilters!=null){
+					JSONObject staticClosedFiltersAnd = staticClosedFilters.optJSONObject("onOffFilters");
+					JSONObject staticClosedFiltersXor = staticClosedFilters.optJSONObject("xorFilters");
+					newStaticClosedFiltersAnd = getPropertyNames(staticClosedFiltersAnd, nameIdMap, "onOffFilters");
+					newStaticClosedFiltersXor = getPropertyNames(staticClosedFiltersXor, nameIdMap, "xorFilters");
+					
+					newStaticClosedFilters= new JSONObject();
+					if(newStaticClosedFilters!=null){
+						parsedForm.put("staticClosedFilters", newStaticClosedFilters);
+					}
+					
+					if(newStaticClosedFiltersAnd!=null){
+						newStaticClosedFilters.put("onOffFilters", newStaticClosedFiltersAnd);
+					}
+					if(newStaticClosedFiltersXor!=null){
+						newStaticClosedFilters.put("xorFilters", newStaticClosedFiltersXor);
+					}
+				}		
+	
+				JSONObject groupingVariables = formState.optJSONObject("groupingVariables");
+				filterAdmissibleGroups(groupingVariables, formStructure.getJSONArray("groupingVariables"));
+				
+				parsedForm.put("groupingVariables", groupingVariables);
+				
+			}catch (Exception e){
+				logger.error("Error getting the map id-->name of the form fields",e);
+				return formState;
+			}
+			return parsedForm;
 		}
-		return parsedForm;
+		return formState;
 	}
 	
 
