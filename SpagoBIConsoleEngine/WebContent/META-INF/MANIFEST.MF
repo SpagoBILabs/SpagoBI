@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: SpagoBIConsoleEngine.war
 Implementation-Title: SpagoBIConsoleEngine
-Implementation-Version: 2.7.0 
+Implementation-Version: 2.8.0 
 
