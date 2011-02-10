@@ -1,4 +1,5 @@
 /**
+
  * SpagoBI - The Business Intelligence Free Platform
  *
  * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
@@ -73,7 +74,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	services: null
 	, store: null
 	, filterStores: null
-	, filters: null
+	//, filters: null
+	, cbFilters: null
+
 
 	
 	// -- public methods -----------------------------------------------------------------
@@ -107,6 +110,7 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		   if (operator === 'EQUALS_TO') {
 			   //single value
 			   this.filterStores = this.filterStores || {}; 
+			   this.cbFilters = this.cbFilters || {};
 			   var s = new Ext.data.JsonStore({
 				   fields:['name', 'value', 'description'],
 		           data: []
@@ -122,7 +126,9 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 				       typeAhead: true,
 				       triggerAction: 'all',
 				       emptyText:'...',
-				       selectOnFocus:true,
+				       //selectOnFocus:true,
+				       selectOnFocus:false,
+				       validateOnBlur: false,
 				       mode: 'local'
 			   };
 			   
@@ -136,16 +142,18 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 						   		fn: function(combo, record, index) {
 									var field = combo.index;
 									var exp = record.get(combo.valueField);									
-									this.onFilterSelect(field, exp);	  
+									this.onFilterSelect(field, exp);	
 								},
 								scope: this
-							}				     					
+							}
 					   }
 			       	})
 			   );	
 
 			   this.addText("    " + header + "  ");
-			   this.addField(cb);	 
+			   this.addField(cb);	
+			   //adds the combo field to a temporary array to manage the workaround on the opening on each refresh
+			   this.cbFilters[dataIndex] = cb;
 			   
 	     }else if (operator === 'IN') {
 	    	 //multivalue
@@ -251,6 +259,13 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 
 	   	 // replace previous records with the new one
 	   	 s.loadData(data, false);	   	 
+	   	 
+	   	 //WORKAROUND: when the user selects an item from the combo and stay on it, this combo is opened on each refresh.
+	   	 //This workaround force the closure of the combo.
+	   	 var cb = this.cbFilters[dataIdx];
+	   	 if (cb){
+	   		 cb.collapse();
+	   	 }
 	}
    
 	 //adds the single filter or delete if it's the reset field
