@@ -129,7 +129,7 @@
 	    <svn>
             <wcVersion path="${src}" prefix="svn."/>
         </svn>
-		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi-core-${project.version}.jar"  >
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar"  >
 		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
 			<include name="it/**/*" />
 		</fileset>
@@ -488,25 +488,36 @@
   <target name="sso.no_sso"  >
 	</target>	
   	
-  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-  <!--   CREAZIONE WAR                                                                -->
-  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
-	<target name="create.war" depends="init,jar" >
-        
-        <antcall target="${sso}" />
-        <antcall target="${specific.ant.task}" />
-        <antcall target="${modality}" />
-        <antcall target="${ext.deploy}" />
-        
-	      <mkdir dir="${dist}"/>
-	      <delete file="${dist}/${war_name}" />
-	      <war warfile="${dist}/${war_name}" 
-	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
-	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
-	           basedir="${build}/${webapp_name}"/>
+
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target>
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   CREAZIONE WAR                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+		<target name="create.war" depends="init,jar" >
+	        
+	        <antcall target="${sso}" />
+	        <antcall target="${specific.ant.task}" />
+	        <antcall target="${modality}" />
+	        <antcall target="${ext.deploy}" />
+			<antcall target="upgrade.mf" />
+	        
+		      <mkdir dir="${dist}"/>
+		      <delete file="${dist}/${war_name}" />
+		      <war warfile="${dist}/${war_name}" 
+		           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+		           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+		           basedir="${build}/${webapp_name}"/>
 
 
-	</target>
+		</target>
 
   <target name="javadoc">    
     <javadoc packagenames="*"
