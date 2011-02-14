@@ -300,11 +300,15 @@
   			yOffset -= 10
  			
  			Debug.write ('isIE: ' + isIE);
+ 			/*
 			if (isIE !== undefined && isIE === 'true') {
 				yOffset = yOffset - 15;
 			} else if (isIE !== undefined && isIE === 'false') {
 			//	yOffset = yOffset - 4;
 			}					
+			*/
+			//next setting is necessary to align the semaphore's value text with the speedometer's value text (without others spaces added)
+			yOffset = yOffset - 15;
   			Debug.write("yOffset: " + yOffset);
  			
   			

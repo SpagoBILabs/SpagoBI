@@ -234,12 +234,16 @@
 				yOffset -= parseFloat(styles.padding.bottom);	
 							
 				Debug.write ('isIE: ' + isIE);
+				/*
 				if (isIE !== undefined && isIE === 'true') {
 				//	yOffset = yOffset - 5;
-					yOffset = yOffset - 10;
+					yOffset = yOffset - 15;
 				} else if (isIE !== undefined && isIE === 'false') {
 					yOffset = yOffset - 15;
 				}					
+				*/
+				//next setting is necessary to align the semaphore's value text with the speedometer's value text (without others spaces added)
+				yOffset = yOffset - 15;
 	  			Debug.write("yOffset: " + yOffset);
   			
 				//var containerHeight = 10 +  parseFloat(styles.header.font.size) + parseFloat(styles.headerValue.font.size);
