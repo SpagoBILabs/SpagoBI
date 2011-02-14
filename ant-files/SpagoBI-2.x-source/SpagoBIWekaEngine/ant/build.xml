@@ -96,7 +96,18 @@
     </copy>
             <copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" />
   </target>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   CREAZIONE JAR							                                    -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
 
+	  <target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.weka-${project.version}.jar"  >
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
+			<include name="it/**/*" />
+		</fileset>
+		</jar>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+	</target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -145,7 +156,7 @@
 			</replaceregexp>
 	  </target>
 	
-	<target name="create.war" depends="init,copy.artifacts" >
+	<target name="create.war" depends="init,jar" >
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
 		<antcall target="upgrade.mf" />
