@@ -131,10 +131,20 @@
   <target name="sso.no_sso"  >
   </target>	
 	
-	<target name="create.war" depends="init,copy.artifacts" >
-	<antcall target="${sso}" />
-	<antcall target="${specific.ant.task}" />
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target>
 	
+	<target name="create.war" depends="init,copy.artifacts" >
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="upgrade.mf" />
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
 	      <war warfile="${dist}/${war_name}" 
