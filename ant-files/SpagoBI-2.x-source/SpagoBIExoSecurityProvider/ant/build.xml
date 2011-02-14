@@ -51,11 +51,20 @@
    </exec>
    	<property prefix="svn" file="${src}/svn.properties"/>	 
   </target>
-
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${src}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target> 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   COMPILAZIONE							                                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <target name="compile"  description="compile the source" >
+  	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
     <javac srcdir="${src}" destdir="${build}" debug="on">
       <classpath refid="jar.classpath"/>

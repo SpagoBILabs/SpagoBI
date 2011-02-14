@@ -134,7 +134,15 @@
 		
   <target name="sso.no_sso"  >
   </target>	
-  
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target>
 	
 	  <target name="jpalo_ssl.no_ssl"  >
 			<replace file="${build}/${webapp_name}/WEB-INF/classes/deploy_it.properties">
@@ -198,6 +206,7 @@
 		<antcall target="url" />
 		<antcall target="datasource_mondrian" />
 		<antcall target="url_mondrian" />
+		<antcall target="upgrade.mf" />
 		
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
