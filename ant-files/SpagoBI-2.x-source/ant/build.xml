@@ -434,8 +434,8 @@
     <ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>  
     <ant dir="../SpagoBIJPXMLAEngine/ant" target="javadoc"/>
   	<ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
-   <!-- <ant dir="../SpagoBICommonJEngine/ant" target="javadoc"/>
-    <ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/> -->
+   <ant dir="../SpagoBICommonJEngine/ant" target="javadoc"/>
+    <ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/> 
   </target>
 
   <target name="package.all" >
@@ -452,8 +452,8 @@
         <ant dir="../SpagoBIDatabaseScripts" target="package"/>  
   		  <ant dir="../SpagoBIJPXMLAEngine/ant" target="package"/> 
   	    <ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
-  	   <!-- <ant dir="../SpagoBICommonJEngine/ant" target="package"/>
-  	    <ant dir="../SpagoBIConsoleEngine/ant" target="package"/> -->                                                                                                              
+  	    <ant dir="../SpagoBICommonJEngine/ant" target="package"/>
+  	    <ant dir="../SpagoBIConsoleEngine/ant" target="package"/>                                                                                                           
   </target>
  
  <target name="package.all.src" depends="clean.all">
