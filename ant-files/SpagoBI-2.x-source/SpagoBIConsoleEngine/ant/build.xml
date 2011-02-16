@@ -101,9 +101,11 @@
 		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.console-${project.version}.jar"  >
 		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
 			<include name="it/**/*" />
+			<include name="utilities/**/*" />
 		</fileset>
 		</jar>
 		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+	  	<delete dir="${build}/${webapp_name}/WEB-INF/classes/utilities"/>
 	</target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
