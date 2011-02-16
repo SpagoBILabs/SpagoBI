@@ -117,19 +117,43 @@ public class OrganizationalUnitHierarchy {
     }
     
     @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((company == null) ? 0 : company.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrganizationalUnitHierarchy other = (OrganizationalUnitHierarchy) obj;
+		if (company == null) {
+			if (other.company != null)
+				return false;
+		} else if (!company.equals(other.company))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "OrganizationalUnitHierarchy [id=" + id + ", label=" + label
 				+ ", name=" + name + ", description=" + description
 				+ ", target=" + target + ", company=" + company + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		return result;
-	}
 
 	public boolean deepEquals(Object obj) {
 		if (this == obj)
@@ -167,23 +191,6 @@ public class OrganizationalUnitHierarchy {
 		return true;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OrganizationalUnitHierarchy other = (OrganizationalUnitHierarchy) obj;
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		return true;
-	}
-    
-    
+
 
 }
