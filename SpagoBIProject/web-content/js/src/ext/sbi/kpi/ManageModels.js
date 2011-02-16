@@ -882,6 +882,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				return;
 			}
 			
+			if(node.attributes.modelId === undefined || node.attributes.modelId == null || node.attributes.modelId ==''){
+				this.mainTree.getSelectionModel().clearSelections(false);
+				this.nodesToSave.remove(node);
+				node.remove();
+				
+				return;
+			}
+			
 			Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm'),
 					LN('sbi.generic.confirmDelete'),            
