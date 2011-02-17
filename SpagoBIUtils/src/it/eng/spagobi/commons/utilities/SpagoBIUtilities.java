@@ -370,6 +370,7 @@ public class SpagoBIUtilities {
 			Object profileattrName = it.next();
 			Object profileattrValue = profile.getUserAttribute(profileattrName.toString());
 			profileattrs.put(profileattrName, profileattrValue);
+			logger.info("Add new Attribute:"+profileattrName.toString()+"/"+profileattrValue);
 		}
 		logger.debug("OUT");
 		return profileattrs;
