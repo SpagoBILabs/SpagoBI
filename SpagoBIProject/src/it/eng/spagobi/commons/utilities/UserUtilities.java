@@ -161,10 +161,11 @@ public class UserUtilities {
     }
     public static IEngUserProfile getUserProfile(String userId) throws Exception {
     	logger.debug("IN.userId="+userId);
-	
+    	if (userId==null) return null;
 	    ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 	    try {
 		SpagoBIUserProfile user = supplier.createUserProfile(userId);
+		if (user==null) return null;
 		user.setFunctions(readFunctionality(user.getRoles()));
 		return new UserProfile(user);
 	    } catch (Exception e) {

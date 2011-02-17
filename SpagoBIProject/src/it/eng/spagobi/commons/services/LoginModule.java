@@ -208,7 +208,8 @@ public class LoginModule extends AbstractHttpModule {
 			}	
 
 		}
-
+		
+		
 		ISecurityServiceSupplier supplier=SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 		// If SSO is not active, check username and password, i.e. performs the authentication;
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make 
@@ -227,6 +228,7 @@ public class LoginModule extends AbstractHttpModule {
 				logger.error("Reading user information... ERROR");
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
+			userId="topo";
 			//getting security type: if it's internal (SpagoBI) active pwd management and checks
 			boolean isInternalSecurity = ("true".equalsIgnoreCase((String)request.getAttribute("isInternalSecurity")))?true:false;
 			logger.debug("isInternalSecurity: " + isInternalSecurity);
@@ -238,7 +240,9 @@ public class LoginModule extends AbstractHttpModule {
 				//check user's role: if he's admin it doesn't apply checks on password
 				SourceBean adminPatternSB = (SourceBean) serverConfig.getAttribute("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				String strAdminPatter = (String) adminPatternSB.getCharacters();
-				List lstRoles = userDao.loadSbiUserRolesById(user.getId());
+				int sbiUserId=-1;
+				if (user!=null)sbiUserId=user.getId();
+				List lstRoles = userDao.loadSbiUserRolesById(sbiUserId);
 				boolean isAdminUser = false;
 
 				for (int i=0; i<lstRoles.size(); i++){
@@ -268,11 +272,12 @@ public class LoginModule extends AbstractHttpModule {
 					logger.info("The pwd is active!");
 					//update lastAccessDate on db with current date
 					try{
-						user.setDtLastAccess(new Date());
-						userDao.updateSbiUser(user, user.getId());
+						if (user!=null){
+							user.setDtLastAccess(new Date());
+							userDao.updateSbiUser(user, user.getId());
+						}
 					}catch(Exception e){
 						logger.error("Error while update user's dtLastAccess: " + e);
-						e.printStackTrace();
 					}
 				}
 			}
@@ -338,6 +343,7 @@ public class LoginModule extends AbstractHttpModule {
 	private boolean checkPwd(SbiUser user) throws Exception{
 		logger.debug ("IN");
 		boolean toReturn = false;
+		if (user==null) return toReturn;
 		Date currentDate = new Date();
 
 		//gets the active controls to applicate:
