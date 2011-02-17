@@ -264,6 +264,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		            this
 				);
 		}else{
+			this.manageModelInstances.cleanAllUnsavedNodes();	    
 			var analyzedRec = this.recordAnalyze(rec);
 			
 			this.displayTree(analyzedRec);
