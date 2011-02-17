@@ -182,7 +182,20 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					for(int i=0; i<modelNodesDD.size(); i++){
 						ModelInstance mi = modelNodesDD.get(i);
 						String guidToSkip = mi.getGuiId();
-						idsToRemove.add(guidToSkip);
+						//if already present in modified nodes...
+						for(int k =0; k< nodesToSaveJSON.length(); k++){
+							JSONObject objMod = nodesToSaveJSON.getJSONObject(k);
+							String guiId = "";
+							try{
+								guiId = objMod.getString("id");
+							}catch(Throwable t){
+								logger.debug("Dropped node guiid doesn't exist"); 
+							}
+							if(guiId.equals(guidToSkip)){
+								idsToRemove.add(guidToSkip);
+							}
+						}
+						
 					}
 					modelNodes = deserializeJSONArray(nodesToSaveJSON, idsToRemove);
 
@@ -190,13 +203,15 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					//save DD nodes
 					if(rootObj != null){						
 						root = deserializeJSONObjectDD(rootObj, new ArrayList<ModelInstance>());	
-						//if(root.getId() == null){
-							//adds no nodes to save/search
-							modelNodesDD.add(root);
-						//}
+						modelNodesDD.add(root);
 					}
 					if(modelNodesDD != null && !modelNodesDD.isEmpty()){
-						response = recursiveStart(modelNodesDD, root, response);
+						if(!isTreeStructureOfDDNodes(droppedNodesToSaveJSON)){
+							response = saveModelNodeInstances(modelNodesDD);
+						}else{
+							response = recursiveStart(modelNodesDD, root, response);
+						}
+						
 					}
 					try{
 						if( rootObj.getBoolean("toSave")){
@@ -207,7 +222,6 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						logger.debug("Root node is not modified");
 					}
 					response = saveModelNodeInstances(modelNodes);
-					//System.out.println(response);
 					writeBackToClient(new JSONSuccess(response));
 
 				} catch (Exception e) {
@@ -437,6 +451,20 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 
 	}
+	
+	private boolean isTreeStructureOfDDNodes(JSONArray ddnodes){
+		for(int i =0;i<ddnodes.length(); i++){
+
+			JSONObject obj = (JSONObject)ddnodes.optJSONObject(i);
+			try{
+				obj.get("children");
+				return true;
+			}catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
+	}
 	private ModelInstance setProgressiveOnDuplicate(ModelInstance modelInst) throws EMFUserError{
 		String name = modelInst.getName();
 		Integer howManyExistent = DAOFactory.getModelInstanceDAO().getExistentRootsByName(name);
@@ -657,7 +685,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 			JSONObject obj = (JSONObject)rows.get(i);
 			ModelInstance modelInst = deserializeJSONObjectDD(obj, toReturn);
-
+			toReturn.add(modelInst);
 		}	
 		return toReturn;
 	}
