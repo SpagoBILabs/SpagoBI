@@ -48,7 +48,9 @@ public class InternalSecurityServiceSupplierImpl implements
 
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		logger.debug("IN - userId: " + userId);
-
+		
+		if (userId==null) return null;
+		
 		// get request container
 		RequestContainer reqCont = RequestContainer.getRequestContainer();
 		// get user name
