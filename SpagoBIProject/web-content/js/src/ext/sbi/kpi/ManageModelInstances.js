@@ -1132,11 +1132,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		    * dropNode - Drop node(s) provided by the source OR you can supply node(s) to be inserted by setting them on this object.
 		    * cancel - Set this to true to cancel the drop.
 		    */
-	 
+	// e.target.appendChild(e.dropNode);
 		   // e.data.selections is the array of selected records
 		if(!Ext.isArray(e.data.selections)) {	
 			   //simulates drag&drop but copies the node
-
+			   
 			   var importSub = this.referencedCmp.manageModelsTree.importCheck;
 
 			   var copiedNode ;
@@ -1155,6 +1155,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 			   e.cancel = true;
 			   //if parents have same depth --> enable kind of drop else forbid
 			   if(this.checkNodeParent(copiedNode, e.dropNode.parentNode, e.target)){
+
 				   //check that nodes don't go under uncles 
 				   copiedNode.attributes.toSave = true;
 				   copiedNode.attributes.parentId = parentNode.attributes.modelInstId;
@@ -1162,12 +1163,15 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 				   if(importSub){
 					   copiedNode.expand(true);
 				   }
+
+				   parentNode.leaf=false;
 				   parentNode.appendChild(copiedNode);	
-			       
+
 			       var ddLength = this.droppedSubtreeToSave.length;
 
 			       this.droppedSubtreeToSave[ddLength] = copiedNode;
 			       this.referencedCmp.manageModelsTree.importCheck.setValue(false);
+
 			   }else{
 				   alert(LN('sbi.modelinstances.DDHierarchy'));
 			   }		   
