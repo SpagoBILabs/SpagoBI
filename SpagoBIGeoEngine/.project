@@ -3,7 +3,6 @@
 	<name>SpagoBIGeoEngine</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoWeb</project>
 		<project>SpagoBIUtils</project>
 	</projects>
 	<buildSpec>
