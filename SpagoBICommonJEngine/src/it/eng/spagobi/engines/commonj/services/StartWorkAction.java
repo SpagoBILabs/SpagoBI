@@ -91,7 +91,6 @@ public class StartWorkAction extends AbstractEngineAction {
 	private ContentServiceProxy contentProxy;
 	String documentId;
 	String documentLabel;
-	private String userUniqueIdentifier;
 	private static final BASE64Decoder DECODER = new BASE64Decoder();
 	String userId=null;
 	HttpSession session = null;
@@ -145,7 +144,6 @@ public class StartWorkAction extends AbstractEngineAction {
 		else{
 			logger.warn("could not retrieve document id, check for label");
 
-			Object document_label=null;
 			Object document_labelO=request.getAttribute("DOCUMENT_LABEL");
 			documentLabel=null;
 			if(document_labelO!=null){
@@ -218,14 +216,8 @@ public class StartWorkAction extends AbstractEngineAction {
 				return;				
 			} 
 
-
 			// calculate process Id
-			String pId = null;
-
-			pId = work.calculatePId();					
-
-
-
+			String pId =  work.calculatePId();					
 			logger.debug("process Id is "+pId);
 			work.setSbiParametersMap(parameters);
 
@@ -237,7 +229,6 @@ public class StartWorkAction extends AbstractEngineAction {
 				return;				
 
 			}
-
 
 			// call Work configurqations's configure method
 			try{
