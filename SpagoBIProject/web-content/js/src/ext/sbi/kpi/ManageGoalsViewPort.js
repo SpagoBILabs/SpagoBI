@@ -51,6 +51,13 @@ Sbi.kpi.ManageGoalsViewPort = function(config) {
 		serviceName: 'MANAGE_OUS_ACTION'
 			, baseParams: paramsList
 	});
+	
+	this.manageGoalsDetailsPanelConfig.manageGrantDefinitionService = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_OUS_ACTION'
+			, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "OU_HIERARCHY_AND_ROOT"}
+	});
+	
+	
 
 	//DRAW center element
 	this.manageGoals = new Sbi.kpi.ManageGoals(config, this);
@@ -114,7 +121,7 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.goals.nogrant'), LN('sbi.generic.warning'));
 						return false;
 					}else{
-						this.manageGoals.updatePanel(this.manageGoalsDetailsPanel.detailFieldGrant.getValue());
+						this.getGrant(this.manageGoalsDetailsPanel.detailFieldGrant.getValue());
 					}
 				}
 			}
@@ -174,5 +181,26 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		this.manageGoalsDetailsPanel.detailFieldGrant.setRawValue(rec.data.grantname);
 		this.manageGoalsDetailsPanel.goalId=rec.data.id;
 		this.manageGoals.goalId = rec.data.id;
+	}
+	
+	
+	, getGrant: function(grantId){
+		Ext.Ajax.request({
+			url: this.manageGoalsDetailsPanelConfig.manageGrantDefinitionService,
+			params: {'grantId': grantId},
+			method: 'GET',
+			success: function(response, options) {
+				if (response !== undefined && response.responseText!== undefined) {
+					var grantNode = Ext.util.JSON.decode(response.responseText);
+					var ouRootId = grantNode.ouRootId;
+					var ouRootName = grantNode.ouRootName;
+					this.manageGoals.updatePanel(grantId,ouRootName,ouRootId);
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
+				}
+			}
+			,scope: this
+
+		});
 	}
 });

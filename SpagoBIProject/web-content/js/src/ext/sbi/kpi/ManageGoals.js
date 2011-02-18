@@ -46,6 +46,7 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.ManageGoals = function(config, ref) { 
 	this.ouId = '1';
 	this.selectedGrantId = '-2';
+
 	this.kpiTreeRoot ={
 		text : 'root',
 		modelId: '-1'
@@ -165,6 +166,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 	,goalDetailskpiPanel: null
 	,kpiTreeRoot: null
 	,goalId: null
+	,ouHierarchyId: null
 	,ouId: null	
 
 	,initOUPanel: function(conf){
@@ -577,8 +579,22 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		this.goalTreePanel.getSelectionModel().select(this.goalTreePanel.getRootNode());
 	}	
 	
-	,updatePanel: function(grant){
+	,updatePanel: function(grant,ouRootName,ouId){
+
 		this.selectedGrantId = grant;
+		this.ouId = ouId;
+		
+		this.ouTreeRoot = {
+			id: this.ouId,
+			text: ouRootName
+		}	
+		
+		var treeLoaderBaseParameters = {'grantId': this.selectedGrantId};
+		this.ouTree.loader.baseParams = treeLoaderBaseParameters;
+		
+		this.ouTree.setRootNode(this.ouTreeRoot);
+		this.ouTree.getRootNode().expand(false, /*no anim*/false);
+		
 		if(this.ouTree.getRootNode().rendered){
 			this.ouTree.getSelectionModel().select(this.ouTree.getRootNode());
 			this.updateGoalAfterOUChange(this.ouTree.getRootNode(),this.ouTree.getRootNode());
@@ -625,6 +641,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 							sign1: kpiInstRoot.sign1,
 							sign2: kpiInstRoot.sign2, 
 							threshold2: kpiInstRoot.threshold2,
+							kpiInstActive: kpiInstRoot.kpiInstActive
 						}
 						
 					thisPanel.updateGoalDetailsKpiRoot(root);
