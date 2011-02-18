@@ -179,6 +179,7 @@ Ext.extend(Sbi.kpi.ManageGoalsGrid, Sbi.widgets.ListGridPanel, {
 	}
 	
 	, addNewItem : function(){
+
 		var record = {
 				id:'', 
 				label: '', 

@@ -85,7 +85,15 @@ Ext.extend(Sbi.kpi.ManageGoalsViewPort, Ext.Viewport, {
 		});
 		//reload after save
 		this.manageGoalsDetailsPanel.on('saved',function(){
-			this.manageGoalsGrid.mainElementsStore.reload(); 
+			this.manageGoalsGrid.mainElementsStore.reload();
+			this.manageGoalsGrid.getView().refresh();
+			this.manageGoalsGrid.getView().on('refresh', function(){	
+				var n = this.manageGoalsGrid.getStore().getCount();
+				this.manageGoalsGrid.getView().focusRow(n - 1);
+				this.manageGoalsGrid.rowselModel.selectLastRow();
+				this.manageGoalsGrid.fireEvent('newItem');
+				}, this);
+
 		},this);
 		
 		this.tabs.on('beforetabchange', 
