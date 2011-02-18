@@ -775,6 +775,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 					   , typeDescr: recDomain.get('typeDs')
 					   , leaf: false
 					   , code: r.get('code')
+					   , description: r.get('description')
 					   , name: r.get('name')
 				   });
 				   //this.detailFieldLabel.disable();
