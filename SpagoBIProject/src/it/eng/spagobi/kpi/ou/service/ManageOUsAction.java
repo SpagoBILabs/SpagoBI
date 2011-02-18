@@ -70,6 +70,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	private static final String OU_LIST = "OU_LIST";
 	private static final String OU_CHILDS_LIST = "OU_CHILDS_LIST";
 	private static final String OU_HIERARCHY_ROOT = "OU_HIERARCHY_ROOT";
+	private static final String OU_HIERARCHY_AND_ROOT = "OU_HIERARCHY_AND_ROOT";
 	private static final String OU_GRANT_ERESE = "OU_GRANT_ERESE";
 	private static final String OU_GRANT_INSERT = "OU_GRANT_INSERT";
 	private static final String KPI_ACTIVE_CHILDS_LIST = "KPI_ACTIVE_CHILDS_LIST";
@@ -123,6 +124,26 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				}
 				getOUChildrenNodes(nodeId, grantId);
 				logger.debug("Loaded the list of ous childs of the node with id"+nodeId+".");
+			}else if (serviceType != null && serviceType.equalsIgnoreCase(OU_HIERARCHY_AND_ROOT)) {
+				
+				logger.debug("Loading the grant..");
+				Integer grantId =  getAttributeAsInteger("grantId");
+				OrganizationalUnitGrant grant = DAOFactory.getOrganizationalUnitDAO().getGrant(grantId);
+				logger.debug("Grant loaded.");
+
+				Integer hierarchyId = grant.getHierarchy().getId();
+				OrganizationalUnitNode ou = DAOFactory.getOrganizationalUnitDAO().getRootNode(hierarchyId);
+				
+				try {
+					JSONObject hierarchyWithRoot = new JSONObject();
+					hierarchyWithRoot.put("ouRootName",ou.getOu().getName());
+					hierarchyWithRoot.put("ouRootId",ou.getNodeId());
+					writeBackToClient( new JSONSuccess( hierarchyWithRoot ) );
+				} catch (Exception e) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize the responce to the client", e);
+				}
+
+				logger.debug("Loaded ou root of grant with id"+grantId);
 			}else if (serviceType != null && serviceType.equalsIgnoreCase(OU_HIERARCHY_ROOT)) {
 				Integer hierarchyId = getAttributeAsInteger("hierarchyId");
 				Integer modelInstanceId = getAttributeAsInteger("modelInstanceId");
