@@ -10,6 +10,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/commons/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/qbe/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/formbuilder/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/formviewer/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
 
@@ -93,6 +94,21 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/formbuilder/editor/grouping/VariableEditorPanel.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/formbuilder/TestTemplate.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formviewer/FormViewerPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/StaticClosedFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/StaticClosedXORFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/StaticClosedOnOffFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/StaticOpenFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/DynamicFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/DynamicFilter.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/GroupingVariablesPanel.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/formviewer/SaveFormValueSubObject.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/DataStorePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/ResultsPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/CrosstabPage.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formviewer/FormEnginePanel.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/formtemplate/DocumentTemplateBuilder.js'/></script>
 
