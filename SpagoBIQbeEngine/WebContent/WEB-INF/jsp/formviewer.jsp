@@ -82,7 +82,7 @@ end DOCTYPE declaration --%>
 
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
-		<%@include file="commons/includeSbiFormViewerJS.jspf"%>
+		<%@include file="commons/includeSbiQbeJS.jspf"%>
 	</head>
 	
 	<body>

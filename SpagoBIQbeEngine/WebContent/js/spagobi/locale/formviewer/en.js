@@ -5,8 +5,13 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //VIEWER PANEL
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'DATA BROWSER';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Execute';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save Form';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Show master-detail tables';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Submit the form and show results into master-detail tables';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save form';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Save form state for next executions';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Show crosstab';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Submit the form and show results into a cross-table';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
 
 //===================================================================
 //FILTERS PANEL

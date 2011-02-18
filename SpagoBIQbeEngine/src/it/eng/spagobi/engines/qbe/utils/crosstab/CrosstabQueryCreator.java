@@ -31,6 +31,8 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * Creates the crosstab query 
@@ -40,24 +42,31 @@ import java.util.List;
  */
 public class CrosstabQueryCreator {
 
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(CrosstabQueryCreator.class);
 	
-	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery) throws Exception {
-		StringBuffer toReturn = new StringBuffer();
+    public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count"; 
+    
+	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery) {
+		logger.debug("IN");
+		StringBuffer buffer = new StringBuffer();
 		
 		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
 		
-		putSelectClause(toReturn, crosstabDefinition, baseQuery, baseQuerySelectedFields);
+		putSelectClause(buffer, crosstabDefinition, baseQuery, baseQuerySelectedFields);
 		
-		toReturn.append(" FROM TEMPORARY_TABLE ");
+		buffer.append(" FROM TEMPORARY_TABLE ");
 		
-		putGroupByClause(toReturn, crosstabDefinition, baseQuery, baseQuerySelectedFields);
-
-		return toReturn.toString();
+		putGroupByClause(buffer, crosstabDefinition, baseQuery, baseQuerySelectedFields);
+		
+		String toReturn = buffer.toString();
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
 	}
 	
 	private static void putSelectClause(StringBuffer toReturn,
 			CrosstabDefinition crosstabDefinition, Query baseQuery, List baseQuerySelectedFields) {
-		
+		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
 		List<CrosstabDefinition.Measure> measures = crosstabDefinition.getMeasures(); 
@@ -85,23 +94,33 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Measure> measuresIt = measures.iterator();
 		while (measuresIt.hasNext()) {
 			CrosstabDefinition.Measure aMeasure = measuresIt.next();
-			String alias = getSQLAlias(aMeasure, baseQuery, baseQuerySelectedFields);
 			IAggregationFunction function = aMeasure.getAggregationFunction();
-			if (function != AggregationFunctions.NONE_FUNCTION) {
-				toReturn.append(function.apply(alias));
+			String alias = getSQLAlias(aMeasure, baseQuery, baseQuerySelectedFields);
+			if (alias == null) {
+				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
+					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
+				} else {
+					logger.error("Alias " + aMeasure.getAlias() + " not found on the base query!!!!");
+					throw new RuntimeException("Alias " + aMeasure.getAlias() + " not found on the base query!!!!");
+				}
 			} else {
-				toReturn.append(alias);
+				if (function != AggregationFunctions.NONE_FUNCTION) {
+					toReturn.append(function.apply(alias));
+				} else {
+					toReturn.append(alias);
+				}
 			}
 			if (measuresIt.hasNext()) {
 				toReturn.append(", ");
 			}
 		}
 
+		logger.debug("OUT");
 	}
 	
 	private static void putGroupByClause(StringBuffer toReturn,
 			CrosstabDefinition crosstabDefinition, Query baseQuery, List baseQuerySelectedFields) {
-		
+		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
 		
@@ -133,10 +152,12 @@ public class CrosstabQueryCreator {
 				toReturn.append(", ");
 			}
 		}
+		logger.debug("OUT");
 		
 	}
 	
 	private static String getSQLAlias(CrosstabDefinition.CrosstabElement element, Query baseQuery, List baseQuerySelectedFields) {
+		logger.debug("IN");
 		String toReturn = null;
 		
 		List qbeQueryFields = baseQuery.getSelectFields(true);
@@ -149,9 +170,12 @@ public class CrosstabQueryCreator {
 			}
 		}
 		
-		String[] sqlField = (String[]) baseQuerySelectedFields.get(index);
-		toReturn = sqlField[1] != null ? sqlField[1] : sqlField[0];
+		if (index > -1) {
+			String[] sqlField = (String[]) baseQuerySelectedFields.get(index);
+			toReturn = sqlField[1] != null ? sqlField[1] : sqlField[0];
+		}
 		
+		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 

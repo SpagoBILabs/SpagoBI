@@ -6,8 +6,13 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //VIEWER PANEL
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'DATA BROWER';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Esegui';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Salva il Form';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Vedi tabelle di sintesi-dettaglio';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Mostra risultati del form usando le tabelle di sintesi e di dettaglio';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Salva il form';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Salva lo stato del form per esecuzioni successive';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Vedi crosstab';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Mostra risultati del form usando una tabella a campi incrociati';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
 
 //===================================================================
 //FILTERS PANEL

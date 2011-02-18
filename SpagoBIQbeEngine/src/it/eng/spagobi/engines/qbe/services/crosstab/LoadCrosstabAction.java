@@ -32,6 +32,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
+import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
@@ -87,6 +89,9 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeCrosstabQueryAction.totalTime");
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
+			String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
+			logger.debug("Form state retrieved as a string: " + jsonEncodedFormState);
+			
 			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
 			crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
@@ -98,6 +103,25 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			// retrieving first QbE query and setting it as active query
 			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+			
+			if (jsonEncodedFormState != null) {
+				logger.debug("Making a deep copy of the original query...");
+				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale())).toString();
+				Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDatamartModel());
+				logger.debug("Deep copy of the original query produced");
+				JSONObject formState = new JSONObject(jsonEncodedFormState);
+				logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
+				JSONObject template = (JSONObject) getEngineInstance().getFormState().getConf();
+				logger.debug("Form viewer template retrieved.");
+				
+				FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();
+				formViewerQueryTransformer.setFormState(formState);
+				formViewerQueryTransformer.setTemplate(template);
+				logger.debug("Applying Form Viewer query transformation...");
+				query = formViewerQueryTransformer.execTransformation(copy);
+				logger.debug("Applying Form Viewer query transformation...");
+			}
+			
 			getEngineInstance().setActiveQuery(query);
 			
 			statement = getEngineInstance().getStatment();	

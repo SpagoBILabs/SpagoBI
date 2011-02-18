@@ -68,7 +68,7 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	// add events
-    this.addEvents('submit');
+    this.addEvents('submit', 'crosstabrequired');
 	
 	this.init(template);
 	
@@ -77,6 +77,7 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		    '->'
 		    , {
 		    	text: LN('sbi.formviewer.formviewerpage.save'),
+		    	tooltip: LN('sbi.formviewer.formviewerpage.save.tooltip'),
 				handler: function() {
 		    		this.validateForm(function() {
 		    			this.showSaveWindow();
@@ -84,13 +85,26 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		    	},
 				scope: this
 		    },
-		    '|'
+		    '-'
 		    , {
 				text: LN('sbi.formviewer.formviewerpage.execute'),
+				tooltip: LN('sbi.formviewer.formviewerpage.execute.tooltip'),
 				handler: function() {
 		    		this.validateForm(function() {
 		    			var state = this.getFormState();
 		    			this.fireEvent('submit', state);
+		    		}, this);
+		    	},
+				scope: this
+		    },
+		    '-'
+		    , {
+				text: LN('sbi.formviewer.formviewerpage.designcrosstab'),
+				tooltip: LN('sbi.formviewer.formviewerpage.designcrosstab.tooltip'),
+				handler: function() {
+		    		this.validateForm(function() {
+		    			var state = this.getFormState();
+		    			this.fireEvent('crosstabrequired', state);
 		    		}, this);
 		    	},
 				scope: this

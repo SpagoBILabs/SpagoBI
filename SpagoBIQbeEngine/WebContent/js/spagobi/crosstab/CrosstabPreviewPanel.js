@@ -70,11 +70,17 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
       		border: false,
       		id: 'CrosstabPreviewPanel'
     	});
-	this.calculatedFields = config.crosstabTemplate.calculatedFields;
+	
+	this.calculatedFields = new Array();
+	if (config.crosstabTemplate !== undefined && config.crosstabTemplate.calculatedFields !== undefined) {
+		this.calculatedFields = config.crosstabTemplate.calculatedFields;
+	}
 	
 	// constructor
     Sbi.crosstab.CrosstabPreviewPanel.superclass.constructor.call(this, c);
 	
+    this.addEvents('beforeload');
+    
 };
 
 Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
@@ -83,20 +89,24 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, crosstab: null
 	, calculatedFields: null
 	, loadMask: null
+	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	
 		, load: function(crosstabDefinition) {
-			this.showMask();
 			var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);
-			this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);
-
+			this.requestParameters = {
+				crosstabDefinition: crosstabDefinitionEncoded
+			}
+			if (this.fireEvent('beforeload', this, this.requestParameters) !== false) { // this permits other objects 
+																						// to modify the crosstab requestParameters
+				this.showMask();
+				this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);
+			}
 		}
 
 		, loadCrosstabAjaxRequest: function(crosstabDefinitionEncoded){
 			Ext.Ajax.request({
 		        url: this.services['loadCrosstab'],
-		        params: {
-						crosstabDefinition: crosstabDefinitionEncoded
-				},
+		        params: this.requestParameters,
 		        success : function(response, opts) {
 	        		this.hideMask();
 		  			this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
@@ -106,7 +116,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 					this.hideMask();
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
 				}      
-			})
+			});
 		}
 			
 	, refreshCrossTab: function(crosstab){

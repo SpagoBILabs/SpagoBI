@@ -72,6 +72,7 @@ Sbi.formviewer.FormEnginePanel = function(template, config, formValues) {
 	
 	this.initFormViewerPage(template, c.formViewerPageConfig || {},formValues);
 	this.initResultsPage(c.resultsPageConfig || {});
+	this.initCrosstabPage(c.crosstabPageConfig || {});
 	
 	c = Ext.apply(c, {
 		closable: false
@@ -79,7 +80,7 @@ Sbi.formviewer.FormEnginePanel = function(template, config, formValues) {
 		, activeItem: 0
 		, hideMode: !Ext.isIE ? 'nosize' : 'display'
 		, layout: 'card'
-		, items: [this.formViewerPage, this.resultsPage]
+		, items: [this.formViewerPage, this.resultsPage, this.crosstabPage]
 	});
 	
 	
@@ -102,21 +103,32 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     
     , initFormViewerPage: function(template, config, formValues) {
 		this.formViewerPage = new Sbi.formviewer.FormViewerPage(template, config, formValues);
-		this.formViewerPage.on('submit', this.moveToNextPage, this);
+		this.formViewerPage.on('submit', this.moveToResultsPage, this);
+		this.formViewerPage.on('crosstabrequired', this.moveToCrosstabPage, this);
 	}
 
 	, initResultsPage: function(config) {
 		this.resultsPage = new Sbi.formviewer.ResultsPage(config);
-		this.resultsPage.on('edit', this.moveToPreviousPage, this);
+		this.resultsPage.on('edit', this.moveToFormPage, this);
+	}
+	
+	, initCrosstabPage: function(config) {
+		this.crosstabPage = new Sbi.formviewer.CrosstabPage(config);
+		this.crosstabPage.on('edit', this.moveToFormPage, this);
 	}
 
-    , moveToNextPage: function(formState) {
+    , moveToCrosstabPage: function(formState) {
+    	this.getLayout().setActiveItem( 2 );
+    	this.crosstabPage.setFormState(formState);
+	}
+	
+    , moveToResultsPage: function(formState) {
     	this.getLayout().setActiveItem( 1 );
     	this.resultsPage.setFormState(formState);
     	this.resultsPage.loadResults(formState.groupingVariables);
 	}
     
-    , moveToPreviousPage: function() {
+    , moveToFormPage: function() {
     	this.getLayout().setActiveItem( 0 );
 	}
 	
