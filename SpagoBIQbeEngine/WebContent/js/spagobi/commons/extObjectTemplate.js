@@ -69,7 +69,6 @@ Sbi.xxx.Xxxx = function(config) {
 		
 		this.addEvents('customEvents');
 		
-		
 		this.initThis(c.westConfig || {});
 		this.initThat(c.westConfig || {});
 	
@@ -80,8 +79,7 @@ Sbi.xxx.Xxxx = function(config) {
 
 		// constructor
 		Sbi.xxx.Xxxx.superclass.constructor.call(this, c);
-    
-    this.addEvents();
+
 };
 
 Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
