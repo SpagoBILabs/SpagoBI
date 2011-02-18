@@ -61,9 +61,9 @@ Sbi.widgets.ConfigurableTree = function(config) {
 		loader: this.treeLoader,
 
 		preloadTree : this.preloadTree,
-		enableDD : true,
+		enableDD : false,
         enableDrop: false,
-        enableDrag: true,
+        enableDrag: false,
         ddAppendOnly: false ,
         ddGroup  : 'tree2tree',
 		scope : this,
