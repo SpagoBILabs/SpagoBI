@@ -31,6 +31,9 @@
 		'Powered-By': 'Ext'
 	};
 	Ext.BLANK_IMAGE_URL = '../js/lib/ext-3.2.1/resources/images/default/s.gif';
+	Ext.Ajax.on('requestexception', function(conn, response, options) {
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+	}, this);
 </script>
 
 <%-- Include SuperBoxSelect code --%>
