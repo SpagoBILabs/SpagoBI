@@ -68,6 +68,7 @@ Sbi.widgets.ModelInstanceTree = function(){
             },
 			scope : this,
 			shadow : true,
+			enableDD: false,
 			root : conf.rootNode, 
 	        columns:[{
 	            header:'kpi',
