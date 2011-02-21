@@ -30,6 +30,7 @@ package it.eng.spagobi.commons.utilities;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -206,7 +207,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT:" + toReturn);
 		return toReturn;
 	}
-	*/
+	 */
 
 	/**
 	 * Gets the lov result.
@@ -226,7 +227,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT:" + toReturn);
 		return toReturn;
 	}
-	*/
+	 */
 
 	/**
 	 * Gets the lov result.
@@ -247,7 +248,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT" + toReturn);
 		return toReturn;
 	}
-	*/
+	 */
 
 	/*
 	private static String getLovResult(ModalitiesValue lov, IEngUserProfile profile) throws Exception {
@@ -261,7 +262,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT:" + lovResult);
 		return lovResult;
 	}
-	*/
+	 */
 
 
 
@@ -322,7 +323,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		return url;
 	}   
 
-	
+
 	/**
 	 * Returns true if the SSO is enabled (SPAGOBI_SSO.ACTIVE in spagobi_SSO.xml equals true ignoring the case), false otherwise
 	 * @return true if the SSO is enabled (SPAGOBI_SSO.ACTIVE in spagobi_SSO.xml equals true ignoring the case), false otherwise
@@ -758,19 +759,19 @@ public class GeneralUtilities extends SpagoBIUtilities{
 					// encoding value
 					try {
 						value = URLEncoder.encode(value, "UTF-8");
-						
+
 						// put all + to space!  that is because 
 						// otherwise %2B (encoding of plus) and + (substitution of white space in an url) 
 						//will otherwise be interpreted in the same way
 						// and when using exporter I would no more be able to distinguish + from ' '
 						//value = value.replaceAll(Pattern.quote("+") , " "); 
-						
+
 					} catch (UnsupportedEncodingException e) {
 						logger.warn("UTF-8 encoding is not supported!!!", e);
 						logger.warn("Using system encoding...");
 						value = URLEncoder.encode(value);
 					}
-					
+
 					buffer.append(key + "=" + value);
 					if (iterKeys.hasNext()) {
 						buffer.append("&");
@@ -808,7 +809,16 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		while (st.hasMoreTokens()){
 			parameterToken = st.nextToken();
 			parameterName = parameterToken.substring(0, parameterToken.indexOf("="));
-			parameterValue = parameterToken.substring(parameterToken.indexOf("=") + 1);
+			String parameterValueEncoded = parameterToken.substring(parameterToken.indexOf("=") + 1);
+
+			// do the decode
+			try {
+				parameterValue = URLDecoder.decode(parameterValueEncoded, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				logger.error("Error in decoding parameter "+parameterName+ "; use preceding value "+parameterValueEncoded, e);
+				parameterValue = parameterValueEncoded;
+			}
+
 			// if is already present create a list
 			if(toReturn.keySet().contains(parameterName)){
 				Object prevValue=toReturn.get(parameterName).toString();
