@@ -208,6 +208,8 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    }
 	    String smtphost = (String) mailProfSB.getAttribute("smtphost");
 	    String smtpport = (String) mailProfSB.getAttribute("smtpport");
+	    logger.warn(smtphost+" "+smtpport);
+	    
 	    int smptPort=25;
 	    
 	    if ((smtphost == null) || smtphost.trim().equals("")) throw new Exception("Smtp host not configured");
@@ -228,6 +230,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    props.put("mail.smtp.host", smtphost);
 	    props.put("mail.smtp.port", smptPort);
 	    props.put("mail.smtp.auth", "true");
+	    logger.warn("properties: mail.smtp.host:"+smtphost+" mail.smtp.port:"+smtpport);
 	    // create autheticator object
 	    Authenticator auth = new SMTPAuthenticator(login, pass);
 	    // open session
