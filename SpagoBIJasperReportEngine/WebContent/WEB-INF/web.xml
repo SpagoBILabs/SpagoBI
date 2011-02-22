@@ -116,10 +116,19 @@
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
   	
+  	<!-- 
 	<servlet>
 		<servlet-name>JasperReportServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.engines.jasperreport.JasperReportServlet
+		</servlet-class>
+	</servlet>
+	 -->
+	 
+	 <servlet>
+		<servlet-name>JasperReportServlet</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.engines.jasperreport.services.JasperReportEngineStartAction
 		</servlet-class>
 	</servlet>
 	
@@ -130,10 +139,19 @@
 		</servlet-class>
 	</servlet>
 
+	<!-- 
 	<servlet>
 		<servlet-name>JRImageServlet</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.engines.jasperreport.JRImageServlet
+		</servlet-class>
+	</servlet>
+	-->
+	
+	<servlet>
+		<servlet-name>JRImageServlet</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.engines.jasperreport.services.JRImageServlet
 		</servlet-class>
 	</servlet>
 	
