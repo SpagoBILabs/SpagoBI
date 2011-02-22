@@ -819,11 +819,11 @@ public class GeneralUtilities extends SpagoBIUtilities{
 				parameterValue = parameterValueEncoded;
 			}
 			catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
-				logger.error("Error in decoding parameter, illegal argument for "+parameterName+ "; use preceding value "+parameterValueEncoded, e);
+				logger.warn("Error in decoding parameter, illegal argument for "+parameterName+ " (probably value % is present); use preceding value "+parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
-			catch (Exception e) { // can happen when in document composition a '%' char is given
-				logger.warn("Generic Error in decoding parameter "+parameterName+ " (probably value % is present); use preceding value "+parameterValueEncoded);
+			catch (Exception e) { 
+				logger.warn("Generic Error in decoding parameter "+parameterName+ " ; use preceding value "+parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
