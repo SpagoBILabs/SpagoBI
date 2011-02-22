@@ -83,7 +83,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	Ext.apply(this, config);
 	
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
-	this.fontSize = 12;
+	this.fontSize = 10;
 	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
     this.rowHeader = new Array();
     this.build(this.rowHeadersDefinition, 0, this.rowHeader, false);
@@ -141,7 +141,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     ,columnHeaderPanel: null // An array. Every entry contains a Panel wich items are the columnHeader. i.e: columnHeaderPanel[0]= new Ext.Panel(...items :  columnHeader[0]), columnHeaderPanel[1]= new Ext.Panel(...items :  columnHeader[1])
     ,table: null //the external table with 2 rows and 2 columns. It contains emptypanelTopLeft, columnHeaderPanel, rowHeaderPanel, datapanel
     ,checkBoxWindow: null //window with the checkBoxs for hide or show a column/line
-	,columnWidth: 100
+	,columnWidth: 80
 	,rowHeight: 25
 	,entriesPanel : null
 	,crossTabCFWizard: null

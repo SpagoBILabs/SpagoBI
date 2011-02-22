@@ -132,9 +132,9 @@ Ext.extend(Sbi.crosstab.core.HeaderEntry, Ext.Panel, {
 	name: null, // name of the node (displayed in the table)
 	thisDimension: null, //see the component description
 	leafsNumber: null,
-	columnWidth: 100,
+	columnWidth: 80,
 	rowHeight: 25,
-	fontSize: 12
+	fontSize: 10
 	
 	//update the fields and the visualization of the panel
 	,update : function(){
