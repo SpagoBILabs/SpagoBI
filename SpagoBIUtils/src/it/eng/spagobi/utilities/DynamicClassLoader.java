@@ -117,7 +117,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				}
 			}
 
-			try {
+//			try {
 				if (res == null) 
 					return super.findSystemClass(className);
 
@@ -127,10 +127,10 @@ public class DynamicClassLoader extends URLClassLoader {
 
 				if (resolve) 
 					resolveClass(classToReturn);
-			} catch (Throwable ex) {
-				logger.warn(ex);
-				throw new ClassNotFoundException("Impossible to load class " + className, ex);
-			}
+//			} catch (Throwable ex) {
+//				logger.error(ex);
+//				throw new ClassNotFoundException("Impossible to load class " + className, ex);
+//			}
 		}
 		return classToReturn;
 	}
