@@ -91,18 +91,18 @@
     </copy>
             <copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" />
   </target>
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   CREAZIONE JAR							                                    -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
-
-	<!--target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
-		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.jasper-${project.version}.jar"  >
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	  <!--   CREAZIONE JAR							                                    -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
+	
+	<target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.geo-${project.version}.jar"  >
 		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
 			<include name="it/**/*" />
 		</fileset>
 		</jar>
 		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
-	</target-->
+	</target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -119,11 +119,9 @@
                           
   </target>
 
- <target name="liferay.tomcat">  
-  
-                          
+ <target name="liferay.tomcat">                            
   </target>
-
+    
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->	
@@ -139,10 +137,10 @@
 				 <replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>		
 			</replace>
 			
-	</target>
-	
+  </target>
+		
   <target name="sso.no_sso"  >
-	</target>	
+  </target>	
 	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
 	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -152,10 +150,10 @@
 				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
 			</replaceregexp>
 	  </target>
-	<target name="create.war" depends="init,copy.artifacts" >
-	      <antcall target="${sso}" />
-		    <antcall target="${specific.ant.task}" />
-			<antcall target="upgrade.mf" />
+	<target name="create.war" depends="init,jar" >
+	<antcall target="${sso}" />
+	<antcall target="${specific.ant.task}" />
+		<antcall target="upgrade.mf" />
 	      <mkdir dir="${dist}"/>
 	      <delete file="${dist}/${war_name}" />
 	      <war warfile="${dist}/${war_name}" 

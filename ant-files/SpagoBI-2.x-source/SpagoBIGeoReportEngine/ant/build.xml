@@ -95,14 +95,14 @@
   <!--   CREAZIONE JAR							                                    -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
 
-	<target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+	<!--target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
 		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.georeport-${project.version}.jar"  >
 		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
 			<include name="it/**/*" />
 		</fileset>
 		</jar>
 		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
-	</target>
+	</target-->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -152,7 +152,7 @@
 			</replaceregexp>
 	  </target>
 	
-	<target name="create.war" depends="init,jar" >
+	<target name="create.war" depends="init,copy.artifacts" >
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
 		<antcall target="upgrade.mf" />
