@@ -1,3 +1,5 @@
+alter table sbi_org_unit modify column NAME varchar(200);
+
 CREATE TABLE SBI_GOAL (
   GOAL_ID       INTEGER NOT NULL AUTO_INCREMENT,
   GRANT_ID      INTEGER NOT NULL,

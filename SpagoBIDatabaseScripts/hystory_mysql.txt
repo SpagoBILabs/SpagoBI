@@ -547,7 +547,8 @@ ALTER TABLE SBI_MENU ADD COLUMN EXT_APP_URL VARCHAR(1000);
 ALTER TABLE SBI_EVENTS_LOG MODIFY COLUMN DESCR TEXT;
 
 COMMIT;    
-
+--Monica 10/01/2011: error in OU name filed too short
+alter table sbi_org_unit modify column NAME varchar(200);
 
 --Alberto 11/01/2011: goal scripts
 

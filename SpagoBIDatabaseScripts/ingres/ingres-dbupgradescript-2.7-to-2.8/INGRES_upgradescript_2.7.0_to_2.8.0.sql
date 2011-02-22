@@ -1,3 +1,5 @@
+alter table sbi_org_unit alter column NAME varchar(200)
+;\p\g
 CREATE SEQUENCE SBI_GOAL_SEQ
 ;\p\g
 CREATE TABLE SBI_GOAL (
