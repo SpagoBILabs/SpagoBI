@@ -13,6 +13,7 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Salva lo stato de
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Vedi crosstab';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Mostra risultati del form usando una tabella a campi incrociati';
 Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Conteggio';
 
 //===================================================================
 //FILTERS PANEL

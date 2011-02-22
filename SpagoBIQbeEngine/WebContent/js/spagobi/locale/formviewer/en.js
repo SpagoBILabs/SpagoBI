@@ -12,6 +12,7 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Save form state f
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Show crosstab';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Submit the form and show results into a cross-table';
 Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Records count';
 
 //===================================================================
 //FILTERS PANEL
