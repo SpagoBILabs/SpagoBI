@@ -97,6 +97,8 @@ public class CrosstabQueryCreator {
 			IAggregationFunction function = aMeasure.getAggregationFunction();
 			String alias = getSQLAlias(aMeasure, baseQuery, baseQuerySelectedFields);
 			if (alias == null) {
+				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
+				// is automatically added inside query fields, therefore the alias is not found on base query selected fields
 				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
 					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
 				} else {

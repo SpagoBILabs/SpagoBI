@@ -125,7 +125,7 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
 		this.crosstabDesignerPanel.westRegionPanel.store.add(
 				new Ext.data.Record({
 					id: 'qbe_smartfilter_count'
-					, alias: 'Records'
+					, alias: LN('sbi.formviewer.crosstabpage.countfield')
 					, funct: 'COUNT'
 					, iconCls: 'measure'
 					, nature: 'measure'
