@@ -228,7 +228,6 @@ public class LoginModule extends AbstractHttpModule {
 				logger.error("Reading user information... ERROR");
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
-			userId="topo";
 			//getting security type: if it's internal (SpagoBI) active pwd management and checks
 			boolean isInternalSecurity = ("true".equalsIgnoreCase((String)request.getAttribute("isInternalSecurity")))?true:false;
 			logger.debug("isInternalSecurity: " + isInternalSecurity);
