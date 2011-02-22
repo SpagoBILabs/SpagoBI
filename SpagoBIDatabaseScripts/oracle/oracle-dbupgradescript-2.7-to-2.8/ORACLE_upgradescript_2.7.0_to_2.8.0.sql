@@ -1,3 +1,5 @@
+alter table sbi_org_unit modify NAME varchar2(200)
+/
 CREATE TABLE SBI_GOAL (
   GOAL_ID       INTEGER NOT NULL,
   GRANT_ID      INTEGER NOT NULL,
