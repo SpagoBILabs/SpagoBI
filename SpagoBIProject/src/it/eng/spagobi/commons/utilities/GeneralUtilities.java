@@ -815,7 +815,15 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			try {
 				parameterValue = URLDecoder.decode(parameterValueEncoded, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
-				logger.error("Error in decoding parameter "+parameterName+ "; use preceding value "+parameterValueEncoded, e);
+				logger.error("Error in decoding parameter: UTF 8 not supported "+parameterName+ "; use preceding value "+parameterValueEncoded, e);
+				parameterValue = parameterValueEncoded;
+			}
+			catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
+				logger.error("Error in decoding parameter, illegal argument for "+parameterName+ "; use preceding value "+parameterValueEncoded, e);
+				parameterValue = parameterValueEncoded;
+			}
+			catch (Exception e) { // can happen when in document composition a '%' char is given
+				logger.warn("Generic Error in decoding parameter "+parameterName+ " (probably value % is present); use preceding value "+parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
