@@ -39,6 +39,9 @@ public class JRImageServlet extends HttpServlet {
 		response.setDateHeader("Expires", date.getTime());
 		//response.setHeader("Expires", "Sat, 6 May 2010 12:00:00 GMT");	
 		response.setHeader("Cache-Control: max-age", "600");
+		
+		response.setContentType("image/png");
+		response.setHeader("Content-Type", "image/png");
 
 		String mapName = request.getParameter("mapname");
 		Map imagesMap = (Map)session.getAttribute(mapName);
