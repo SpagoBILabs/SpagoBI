@@ -173,7 +173,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			JasperPrint jasperPrint = null;
 			if( getDataSet() != null) {
 				logger.debug("... using dataset [" + getDataSet().getName() + "]");
+				getDataSet().setParamsMap(getEnv());
 				getDataSet().loadData();
+				for(int i = 0; i < getDataSet().getDataStore().getMetaData().getFieldCount(); i++) {
+					logger.debug("Dataset column [" + (i+1) + "] name is equal to [" + getDataSet().getDataStore().getMetaData().getFieldName(i) + "]");
+				}
+				
+				
 				JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( getDataSet().getDataStore() );
 				jasperPrint = JasperFillManager.fillReport(report, getEnv(), dataSource);
 			} else {
