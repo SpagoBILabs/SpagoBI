@@ -198,7 +198,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
 				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
 				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, getImageMap());		    	
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "NewJRImageServlet?SBI_EXECUTION_ID="+getId()+"&image=");				
+				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "JRImageServlet?SBI_EXECUTION_ID="+getId()+"&image=");				
 			} else if (outputType.equalsIgnoreCase("txt")) {
 				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT,new Integer(100));
 				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH,new Integer(100));
