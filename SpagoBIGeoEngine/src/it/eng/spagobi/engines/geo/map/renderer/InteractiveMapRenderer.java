@@ -569,7 +569,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			num_group = trasholdCalculationPercParams.length - 1;			
 		} else if ( measure.getTresholdCalculatorType().equalsIgnoreCase("static") ) {
 			String[] trasholdsArray = getTresholdsArray( selectedKpiName );
-			trash_kpi_array = new Number[trasholdsArray.length+1];
+			trash_kpi_array = new Number[trasholdsArray.length];
 			for(int j = 0; j < trasholdsArray.length; j++) {
 				trash_kpi_array[j] = new Double( trasholdsArray[j] );
 			}
@@ -577,18 +577,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			//setQuantileTrasholds(kpi_names[i]);
 		}
 
-		if(num_group == null) {
-			logger.warn("Num-Group should not be nul, put zero by default");
-			num_group = Integer.valueOf(0);
+		if(num_group == null) { // static case, num_group is calculated from bounds
+			num_group = new Integer(trash_kpi_array.length-1);
 		}
 
 		if(measure.getColurCalculatorType().equalsIgnoreCase("static"))  {
 			col_kpi_array = getColoursArray( selectedKpiName ); 
 		} else if(measure.getColurCalculatorType().equalsIgnoreCase("gradient") || measure.getColurCalculatorType().equalsIgnoreCase("grad"))  {
-			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group.intValue());	
-
+			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);	
 		} else {
-			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group.intValue());	
+			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);	
 		}
 		logger.debug( Arrays.toString( col_kpi_array ) );
 
