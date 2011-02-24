@@ -209,7 +209,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>NewJRImageServlet</servlet-name>
-		<url-pattern>/NewJRImageServlet</url-pattern>
+		<url-pattern>/JRImageServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
