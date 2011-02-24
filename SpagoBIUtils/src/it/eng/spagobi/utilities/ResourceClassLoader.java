@@ -31,56 +31,35 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
  **/
 package it.eng.spagobi.utilities;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class ResourceClassLoader extends ClassLoader {
 
-	private ClassLoader parentCL = null;
-	private String resourcePath=null;
+	protected  ClassLoader parentClassLoader;
+	protected  File resourceRootFolder;
 
-	/**
-	 * Instantiates a new dynamic class loader.
-	 * 
-	 * @param jarFileName the jar file name
-	 * @param cl the cl
-	 */
-
-	public ResourceClassLoader(String path,ClassLoader cl) {		
-		super(cl);
-		resourcePath=path;
+	public ResourceClassLoader(String resourceRootFolderPath,ClassLoader parentClassLoader) {		
+		this(new File(resourceRootFolderPath), parentClassLoader);
 	}
-
-
-
-
-	public String getResourcePath() {
-		return resourcePath;
+	
+	public ResourceClassLoader(File resourceRootFolder, ClassLoader parentClassLoader) {	
+		super(parentClassLoader);
+		this.resourceRootFolder = resourceRootFolder;
+		
+		if(!this.resourceRootFolder.exists()) throw new RuntimeException("Root folder [" + this.resourceRootFolder + "] does not exist");
+		if(!this.resourceRootFolder.isDirectory()) throw new RuntimeException("Root folder [" + this.resourceRootFolder + "] is a file not a folder");
 	}
-
-	public void setResourcePath(String resourcePath) {
-		this.resourcePath = resourcePath;
-	}
-
-
 
 	
 	@Override
-	public InputStream getResourceAsStream(String name) {
-		String resourceFile = resourcePath + name;		
-		File file=new File(resourceFile);
-		FileInputStream fis=null;
+	public InputStream getResourceAsStream(String resourceFileName) {
+		File resourceFile = new File(resourceRootFolder, resourceFileName);
+		FileInputStream fis;
 		try {
-			fis = new FileInputStream(file);
+			fis = new FileInputStream(resourceFile);
 		} catch (FileNotFoundException e) {
 			return null;
 		}

@@ -46,6 +46,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -73,6 +74,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	private EventServiceProxy eventProxy;
 	private DataSourceServiceProxy datasourceProxy;
 	private DataSetServiceProxy datasetProxy;
+	private DocumentExecuteServiceProxy documentExecuteProxy;
 
 	IDataSource dataSource;
 	IDataSet dataSet;
@@ -368,6 +370,16 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		}
 
 		return datasetProxy;
+	}
+	
+	
+	public DocumentExecuteServiceProxy getDocumentExecuteServiceProxy() {
+		if (documentExecuteProxy == null) {
+			documentExecuteProxy = new DocumentExecuteServiceProxy(getUserIdentifier(),
+					getHttpSession());
+		}
+
+		return documentExecuteProxy;
 	}
 
 	public Map getEnv() {
