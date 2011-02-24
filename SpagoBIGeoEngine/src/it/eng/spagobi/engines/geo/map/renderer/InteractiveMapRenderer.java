@@ -77,44 +77,44 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
  */
 public class InteractiveMapRenderer extends AbstractMapRenderer {
 
-	
+
 	private boolean closeLink = false;
 	private SVGMapLoader svgMapLoader;
-	
+
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(InteractiveMapRenderer.class);
-	
-	
-	
+	public static transient Logger logger = Logger.getLogger(InteractiveMapRenderer.class);
+
+
+
 	public InteractiveMapRenderer() {
 		super();
 	}
-	
-	
+
+
 	public void init(Object conf) throws GeoEngineException {
 		super.init(conf);
 		svgMapLoader = new SVGMapLoader();
 		InteractiveMapRendererConfigurator.configure( this, getConf() );
 	}
-	
-	
+
+
 	public File renderMap(IMapProvider mapProvider, 
 			IDataMartProvider datamartProvider) throws GeoEngineException {
 		return renderMap(mapProvider, datamartProvider, GeoEngineConstants.DSVG);
 	}
 
 	public File renderMap(IMapProvider mapProvider, 
-						  IDataMartProvider datamartProvider,
-						  String outputFormat) throws GeoEngineException {
-		
+			IDataMartProvider datamartProvider,
+			String outputFormat) throws GeoEngineException {
+
 		Monitor totalTimeMonitor = null;
 		Monitor totalTimePerFormatMonitor = null;
-		
+
 		try {
-			
+
 			totalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.totalTime");
 			totalTimePerFormatMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap." + outputFormat + ".totalTime");
-			
+
 			if(outputFormat.equalsIgnoreCase(GeoEngineConstants.SVG)) {
 				return renderSVGMap(mapProvider, datamartProvider);
 			}else if(outputFormat.equalsIgnoreCase(GeoEngineConstants.DSVG)) {
@@ -128,11 +128,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			if(totalTimePerFormatMonitor != null) totalTimePerFormatMonitor.stop();
 			if(totalTimeMonitor != null) totalTimeMonitor.stop();			
 		}
-		
-		
+
+
 		return renderDSVGMap(mapProvider, datamartProvider, true);
 	}
-	
+
 	/**
 	 * Render dsvg map.
 	 * 
@@ -145,9 +145,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @throws GeoEngineException the geo engine exception
 	 */
 	private File renderDSVGMap(IMapProvider mapProvider, 
-							   IDataMartProvider datamartProvider, 
-							   boolean includeScript) throws GeoEngineException {
-		
+			IDataMartProvider datamartProvider, 
+			boolean includeScript) throws GeoEngineException {
+
 		SVGDocument targetMap;
 		SVGDocument masterMap = null;
 		File tmpMap;
@@ -156,7 +156,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		Monitor loadMasterMapTotalTimeMonitor = null;
 		Monitor loadTargetMapTotalTimeMonitor = null;
 		Monitor margeAndDecorateMapTotalTimeMonitor = null;
-		
+
 		// load datamart
 		try {
 			loadDataMartTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadDatamart");
@@ -164,7 +164,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		} finally {
 			if(loadDataMartTotalTimeMonitor != null) loadDataMartTotalTimeMonitor.stop();
 		}
-		
+
 		// load master map
 		try {
 			loadMasterMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadMasterMap");
@@ -179,7 +179,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		} finally {
 			if(loadMasterMapTotalTimeMonitor != null) loadMasterMapTotalTimeMonitor.stop();
 		}
-		
+
 		// load target map
 		try {
 			loadTargetMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadTargetMap");
@@ -187,87 +187,88 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}finally {
 			if(loadTargetMapTotalTimeMonitor != null) loadTargetMapTotalTimeMonitor.stop();
 		}
-		
+
 		// marge and decorate map
 		try {
-			
+
 			margeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.margeAndDecorateMap");
-			
+
 			addData(targetMap, dataMart);
 			addLink(targetMap, dataMart);
-			
-			
+
+
 			SVGMapMerger.margeMap(targetMap, masterMap, null, "targetMap");
-			
+
 			if( includeScript ) {
 				includeScripts(masterMap);
 			} else {
 				importScripts(masterMap);
 			}
-			
-			
+
+
 			setMainMapDimension(masterMap, targetMap);
-			
-		    Element scriptInit = masterMap.getElementById("init");	    
-		    Node scriptText = scriptInit.getFirstChild();
-		   
-		    JSONObject conf = new JSONObject();	    
-		    
-		    JSONArray measures;
+
+			Element scriptInit = masterMap.getElementById("init");	    
+			Node scriptText = scriptInit.getFirstChild();
+
+			JSONObject conf = new JSONObject();	    
+
+			JSONArray measures;
 			try {
 				measures = getMeasuresConfigurationScript(dataMart);
-			    String selectedMeasureName = getSelectedMeasureName();
-			    logger.debug("Selected measure [" + selectedMeasureName + "]");
-			    int selectedMeasureIndexIndex = -1;
-			    for(int i = 0; i < measures.length(); i++) {
-			    	JSONObject measure = (JSONObject)measures.get(i);
-			    	logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure [" + (String)measure.get("name") + "]");
-			    	if(selectedMeasureName.equalsIgnoreCase( (String)measure.get("name"))) {
-			    		logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure [" + (String)measure.get("name") + "]");
-			    		selectedMeasureIndexIndex = i;
-			    		break;
-			    	}
-			    }
-			    logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
-			    conf.put("selected_measure_index", selectedMeasureIndexIndex);
-			    conf.put("measures", measures);
-			    
-			    JSONArray layers =  getLayersConfigurationScript(targetMap); 
-			    String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
-			    int targetLayerIndex = -1;
-			    for(int i = 0; i < layers.length(); i++) {
-			    	JSONObject layer = (JSONObject)layers.get(i);
-			    	
-			    	if(targetLayer.equals( layer.get("name"))) {
-			    		targetLayerIndex = i;
-			    		break;
-			    	}
-			    }
-			    conf.put("target_layer_index", targetLayerIndex);
-			    conf.put("layers", layers);
-			    			      
-			    
-			    JSONObject guiSettings =  getGUIConfigurationScript();
-			    guiSettings.put("includeChartLayer", getLayer("grafici")!=null);
-			    guiSettings.put("includeValuesLayer", getLayer("valori")!=null);
-			    conf.put("gui_settings", guiSettings);
-			    
-			    String execId = (String)this.getEnv().get("SBI_EXECUTION_ID");
-			    conf.put("execId", execId);
-			    
-			    JSONObject localeJSON =  new JSONObject();
-			    Locale locale = (Locale) this.getEnv().get(EngineConstants.ENV_LOCALE);
-			    logger.debug("Current environment locale is: " + locale);
-			    if (locale == null) {
-			    	logger.debug("Using default english locale");
-			    	locale = Locale.ENGLISH;
-			    }
-			    localeJSON.put("language", locale.getLanguage());
-			    localeJSON.put("country", locale.getCountry());
-			    DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
-			    localeJSON.put("decimalSeparator", new Character(dfs.getDecimalSeparator()).toString());
-			    localeJSON.put("groupingSeparator", new Character(dfs.getGroupingSeparator()).toString());
-			    conf.put("locale", localeJSON);
+				String selectedMeasureName = getSelectedMeasureName();
+				logger.debug("Selected measure [" + selectedMeasureName + "]");
+				int selectedMeasureIndexIndex = -1;
+				for(int i = 0; i < measures.length(); i++) {
+					JSONObject measure = (JSONObject)measures.get(i);
+					logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure [" + (String)measure.get("name") + "]");
+					String nm = (String)measure.get("name");
+					if(selectedMeasureName.equalsIgnoreCase( nm)) {
+						logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure [" + (String)measure.get("name") + "]");
+						selectedMeasureIndexIndex = i;
+						break;
+					}
+				}
+				logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
+				conf.put("selected_measure_index", selectedMeasureIndexIndex);
+				conf.put("measures", measures);
+
+				JSONArray layers =  getLayersConfigurationScript(targetMap); 
+				String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
+				int targetLayerIndex = -1;
+				for(int i = 0; i < layers.length(); i++) {
+					JSONObject layer = (JSONObject)layers.get(i);
+
+					if(targetLayer.equals( layer.get("name"))) {
+						targetLayerIndex = i;
+						break;
+					}
+				}
+				conf.put("target_layer_index", targetLayerIndex);
+				conf.put("layers", layers);
+
+
+				JSONObject guiSettings =  getGUIConfigurationScript();
+				guiSettings.put("includeChartLayer", getLayer("grafici")!=null);
+				guiSettings.put("includeValuesLayer", getLayer("valori")!=null);
+				conf.put("gui_settings", guiSettings);
+
+				String execId = (String)this.getEnv().get("SBI_EXECUTION_ID");
+				conf.put("execId", execId);
+
+				JSONObject localeJSON =  new JSONObject();
+				Locale locale = (Locale) this.getEnv().get(EngineConstants.ENV_LOCALE);
+				logger.debug("Current environment locale is: " + locale);
+				if (locale == null) {
+					logger.debug("Using default english locale");
+					locale = Locale.ENGLISH;
+				}
+				localeJSON.put("language", locale.getLanguage());
+				localeJSON.put("country", locale.getCountry());
+				DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
+				localeJSON.put("decimalSeparator", new Character(dfs.getDecimalSeparator()).toString());
+				localeJSON.put("groupingSeparator", new Character(dfs.getGroupingSeparator()).toString());
+				conf.put("locale", localeJSON);
 			} catch (JSONException e1) {
 				GeoEngineException geoException;
 				logger.error("Impossible to create sbi.geo.conf", e1);
@@ -276,10 +277,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				geoException.setDescription(description);
 				throw  geoException;
 			}
-			
-		    scriptText.setNodeValue( "sbi = {};\n sbi.geo = {};\n sbi.geo.conf = " + conf.toString() );
-		    
-			
+
+			scriptText.setNodeValue( "sbi = {};\n sbi.geo = {};\n sbi.geo.conf = " + conf.toString() );
+
+
 			try {
 				tmpMap = getTempFile();
 			} catch (IOException e) {
@@ -330,7 +331,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		return tmpMap;
 	}
-	
+
 	/**
 	 * Render svg map.
 	 * 
@@ -343,15 +344,15 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	private File renderSVGMap(IMapProvider mapProvider, 
 			IDataMartProvider datamartProvider) throws GeoEngineException {
-		
+
 		SVGDocument targetMap;
 		SVGDocument masterMap;
-		
+
 		DataMart datamart;
-		
+
 		datamart = (DataMart)datamartProvider.getDataMart();
-		
-	
+
+
 		targetMap = mapProvider.getSVGMapDOMDocument();		
 		try {
 			masterMap = svgMapLoader.loadMapAsDocument(getMasterMapFile(false));
@@ -363,14 +364,14 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			geoException.setDescription(description);
 			throw  geoException;
 		}
-		
+
 		decorateMap(masterMap, targetMap, datamart);
-		
+
 		SVGMapMerger.margeMap(targetMap, masterMap, null, "targetMap");
-		
+
 		setMainMapDimension(masterMap, targetMap);
 		//setMainMapBkgRectDimension(masterMap, targetMap);	 
-		
+
 		File tmpMap;
 		try {
 			tmpMap = getTempFile();
@@ -401,10 +402,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			geoException.setDescription(description);
 			throw  geoException;
 		}
-		
+
 		return tmpMap;
 	}
-	
+
 	/**
 	 * Decorate map.
 	 * 
@@ -413,7 +414,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param datamart the datamart
 	 */
 	private void decorateMap(SVGDocument masterMap, SVGDocument targetMap, DataMart datamart) {
-		
+
 		IDataStore dataStore = datamart.getDataStore();
 		IDataStoreMetaData dataStoreMeta = dataStore.getMetaData();
 		List measureFieldsMeta = dataStoreMeta.findFieldMeta("ROLE", "MEASURE");
@@ -422,11 +423,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			IFieldMetaData filedMeta = (IFieldMetaData)measureFieldsMeta.get(i);
 			kpiNames[i] = filedMeta.getName();
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		//int selectedKpiIndex = dataStoreMeta.getFieldIndex( getSelectedMeasureName() );
 		String selectedKpiName = getSelectedMeasureName(); //kpiNames[selectedKpiIndex];
 		Measure measure  = getMeasure( selectedKpiName );
@@ -442,76 +443,76 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		String[] col_kpi_array = null;
 		Number[] trash_kpi_array = null;
 		Number[] kpi_ordered_values = null;
-		
-		
-		
-		
+
+
+
+
 		dataStore.sortRecords( dataStoreMeta.getFieldIndex(selectedKpiName) );
 		List orderedKpiValuesSet = dataStore.getFieldValues( dataStoreMeta.getFieldIndex(selectedKpiName) );
 		//Set orderedKpiValuesSet = datamart.getOrderedKpiValuesSet( selectedKpiName );
 		kpi_ordered_values = (Number[])orderedKpiValuesSet.toArray(new Number[0]);
-    	
-		
-				
-		if( measure.getTresholdLb() == null 
-    			|| measure.getTresholdLb().trim().equalsIgnoreCase("")
-    			|| measure.getTresholdLb().equalsIgnoreCase("none") ) {
-			lb_value = null;
-    	} else {
-    		lb_value = Double.parseDouble( measure.getTresholdLb() );
-    	}
-		
-		if( measure.getTresholdUb() == null 
-    			|| measure.getTresholdUb().trim().equalsIgnoreCase("")
-    			|| measure.getTresholdUb().equalsIgnoreCase("none") ) {
-			ub_value = null;
-    	} else {
-    		ub_value = Double.parseDouble( measure.getTresholdUb() );
-    	}
-		
-		lb_color = measure.getColurOutboundCol();
-    	ub_color = measure.getColurOutboundCol();
-    	null_values_color = measure.getColurNullCol();
-    	
-	    
-    	String numGroupAttr = measure.getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
-    	if( numGroupAttr != null ) {
-    		num_group = Integer.parseInt( numGroupAttr );
-    		trasholdCalculationUniformParams = num_group;
-    	}
-    	
-    	colorRangeCalculationGradParams = measure.getColurCalculatorParameters().getProperty("BASE_COLOR");
-    	
 
-    	
-    	
-    	//////////////////////////////////////////////////////////////////////////
-    	// SetTrashHolds
-    	///////////////
-    	if(lb_value == null) {
-   			lb_value = kpi_ordered_values[0];
-   		}
-   		if(ub_value == null) {
-   			ub_value = kpi_ordered_values[kpi_ordered_values.length-1];
-   		}
-   		
-   		if(lb_value.doubleValue() > ub_value.doubleValue()) {
-   			Number t = lb_value;
-   			ub_value = lb_value;
-   			lb_value = t;
-   		}
-   		
-   		if(ub_value.doubleValue() < kpi_ordered_values[0].doubleValue() || lb_value.doubleValue() >  kpi_ordered_values[kpi_ordered_values.length-1].doubleValue()) {
-   			lb_value = kpi_ordered_values[0];
-   			ub_value = kpi_ordered_values[kpi_ordered_values.length-1];
-   		}
-		
-		
-		
+
+
+		if( measure.getTresholdLb() == null 
+				|| measure.getTresholdLb().trim().equalsIgnoreCase("")
+				|| measure.getTresholdLb().equalsIgnoreCase("none") ) {
+			lb_value = null;
+		} else {
+			lb_value = Double.parseDouble( measure.getTresholdLb() );
+		}
+
+		if( measure.getTresholdUb() == null 
+				|| measure.getTresholdUb().trim().equalsIgnoreCase("")
+				|| measure.getTresholdUb().equalsIgnoreCase("none") ) {
+			ub_value = null;
+		} else {
+			ub_value = Double.parseDouble( measure.getTresholdUb() );
+		}
+
+		lb_color = measure.getColurOutboundCol();
+		ub_color = measure.getColurOutboundCol();
+		null_values_color = measure.getColurNullCol();
+
+
+		String numGroupAttr = measure.getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
+		if( numGroupAttr != null ) {
+			num_group = Integer.parseInt( numGroupAttr );
+			trasholdCalculationUniformParams = num_group;
+		}
+
+		colorRangeCalculationGradParams = measure.getColurCalculatorParameters().getProperty("BASE_COLOR");
+
+
+
+
+		//////////////////////////////////////////////////////////////////////////
+		// SetTrashHolds
+		///////////////
+		if(lb_value == null) {
+			lb_value = kpi_ordered_values[0];
+		}
+		if(ub_value == null) {
+			ub_value = kpi_ordered_values[kpi_ordered_values.length-1];
+		}
+
+		if(lb_value.doubleValue() > ub_value.doubleValue()) {
+			Number t = lb_value;
+			ub_value = lb_value;
+			lb_value = t;
+		}
+
+		if(ub_value.doubleValue() < kpi_ordered_values[0].doubleValue() || lb_value.doubleValue() >  kpi_ordered_values[kpi_ordered_values.length-1].doubleValue()) {
+			lb_value = kpi_ordered_values[0];
+			ub_value = kpi_ordered_values[kpi_ordered_values.length-1];
+		}
+
+
+
 		if( measure.getTresholdCalculatorType().equalsIgnoreCase("quantile") ) {			
-			
+
 			trash_kpi_array = new Number[num_group + 1];
-			
+
 			int diff_value_num = 0;	
 			int start_index = -1;	
 			if(kpi_ordered_values[0].doubleValue() >= lb_value.doubleValue() && kpi_ordered_values[kpi_ordered_values.length-1].doubleValue() <= ub_value.doubleValue()) {
@@ -519,29 +520,29 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				start_index = 0;
 			} else {
 				for(int j = 0; j < kpi_ordered_values.length; j++) {						
-		   			if(kpi_ordered_values[j].doubleValue() >= lb_value.doubleValue() && kpi_ordered_values[j].doubleValue() <= ub_value.doubleValue()) {
-		   				start_index = (start_index == -1?j:start_index);
-		   				diff_value_num++;
-		   			}
-	   			}
-	   		}
-	   		
-	   		
+					if(kpi_ordered_values[j].doubleValue() >= lb_value.doubleValue() && kpi_ordered_values[j].doubleValue() <= ub_value.doubleValue()) {
+						start_index = (start_index == -1?j:start_index);
+						diff_value_num++;
+					}
+				}
+			}
+
+
 			if(diff_value_num < num_group) num_group = diff_value_num;
 			int blockSize = (int)Math.floor( diff_value_num / num_group );
-		
+
 			trash_kpi_array[0] = lb_value;
 			for(int j = 1; j < num_group; j++){
 				trash_kpi_array[j] = kpi_ordered_values[start_index + (j*blockSize)];
 			}
 			trash_kpi_array[num_group] = ub_value;
-			
+
 		} else if ( measure.getTresholdCalculatorType().equalsIgnoreCase("perc") ) {
 			double range = ub_value.doubleValue() - lb_value.doubleValue();
-			
+
 			trasholdCalculationPercParams = getTresholdsArray(measure.getColumnId());
 			trash_kpi_array = new Number[trasholdCalculationPercParams.length + 1];
-			
+
 			trash_kpi_array[0] = lb_value;
 			for(int j = 0; j < trasholdCalculationPercParams.length; j++) {
 				double groupSize = (range / 100.0) * Double.parseDouble(trasholdCalculationPercParams[j]);
@@ -556,10 +557,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			for(int j = 0; j < trasholdCalculationPercParams.length; j++) {
 				trasholdCalculationPercParams[j] = "" + perc;
 			}
-			
+
 			double range = ub_value.doubleValue() - lb_value.doubleValue();
 			trash_kpi_array[0] = lb_value;
-			
+
 			for(int j = 0; j < trash_kpi_array.length-2; j++) {
 				double groupSize = (range / 100.0) * Double.parseDouble(trasholdCalculationPercParams[j]);
 				trash_kpi_array[j+1] = trash_kpi_array[j].doubleValue() + groupSize;
@@ -568,115 +569,120 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			num_group = trasholdCalculationPercParams.length - 1;			
 		} else if ( measure.getTresholdCalculatorType().equalsIgnoreCase("static") ) {
 			String[] trasholdsArray = getTresholdsArray( selectedKpiName );
-			trash_kpi_array = new Number[trasholdsArray.length];
-	    	for(int j = 0; j < trasholdsArray.length; j++) {
-	    		trash_kpi_array[j] = new Double( trasholdsArray[j] );
-	    	}
-	    } else {
+			trash_kpi_array = new Number[trasholdsArray.length+1];
+			for(int j = 0; j < trasholdsArray.length; j++) {
+				trash_kpi_array[j] = new Double( trasholdsArray[j] );
+			}
+		} else {
 			//setQuantileTrasholds(kpi_names[i]);
 		}
-	    
-	 
+
+		if(num_group == null) {
+			logger.warn("Num-Group should not be nul, put zero by default");
+			num_group = Integer.valueOf(0);
+		}
+
 		if(measure.getColurCalculatorType().equalsIgnoreCase("static"))  {
 			col_kpi_array = getColoursArray( selectedKpiName ); 
-		} else if(measure.getColurCalculatorType().equalsIgnoreCase("gradient"))  {
-			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);	
+		} else if(measure.getColurCalculatorType().equalsIgnoreCase("gradient") || measure.getColurCalculatorType().equalsIgnoreCase("grad"))  {
+			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group.intValue());	
+
 		} else {
-			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);	
+			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group.intValue());	
 		}
 		logger.debug( Arrays.toString( col_kpi_array ) );
-		
-		
-		
+
+
+
 		Element targetLayer = targetMap.getElementById(datamart.getTargetFeatureName());
-		
+
 		NodeList nodeList = targetLayer.getChildNodes();
-	    for(int i = 0; i < nodeList.getLength(); i++){
-	    	Node childNode = (Node)nodeList.item(i);
-	    	if(childNode instanceof Element) {
-	    		SVGElement child = (SVGElement)childNode;
-	    		
-	    		String childId = child.getId();
-	        	String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
-	        	
-	        	IRecord record = dataStore.getRecordByID( column_id );
-	        	
-	        	
-	        	//Map attributes = (Map)datamart.getAttributeseById(column_id);
-	        	
-	    		
-	        	String targetColor = null;
-	        	Number kpyValue = null;
-	        	if(record != null) {
-	        		IField field = record.getFieldAt( dataStoreMeta.getFieldIndex(selectedKpiName) );	
-	        		String kpyValueAttr = "" + field.getValue();
-	    			//String kpyValueAttr = (String)attributes.get( selectedKpiName );	
-	    			if(kpyValueAttr == null) {
-	    				targetColor = null_values_color;
-	    			} else {
-	    				kpyValue = Double.parseDouble(kpyValueAttr);
-	    				
-	    				if(kpyValue.doubleValue() < lb_value.doubleValue()) {
-	    					targetColor = lb_color;
-	    				} else if(kpyValue.doubleValue() > ub_value.doubleValue()) {
-	    					targetColor = ub_color;
-	    				} else if(kpyValue.doubleValue() == ub_value.doubleValue()) {
-	    					targetColor = col_kpi_array[trash_kpi_array.length-2];
-	    				} else  {
-	    					for (int j = 0; j < trash_kpi_array.length-1; j++) {
-	    						if (kpyValue.doubleValue() >= trash_kpi_array[j].doubleValue() && kpyValue.doubleValue() <  trash_kpi_array[j+1].doubleValue()) {
-	    							targetColor = col_kpi_array[j];
-	    							break;
-	    						} 
-	    					}
-	    				}
-	    			}
-	    		}
-	        	
-	        	if(targetColor != null) {
-	        		if(child.getNodeName().equals("path")
-	                    || child.getNodeName().equals("polygon") 
-	                        || child.getNodeName().equals("ellipse")
-	                        || child.getNodeName().equals("circle")
-	                        || child.getNodeName().equals("rect") 
-	                    ) {
-	        			
-	        			child.setAttribute("fill", targetColor );
-	        		} else if(child.getNodeName().equals("line")
-	        				|| child.getNodeName().equals("polyline")
-	        				) {
-	        			child.setAttribute("stroke", targetColor );
-	        		}
-	        		
-	        		String opacity = measure.getColurCalculatorParameters().getProperty("opacity");
-	        		if(opacity != null) {
-	        			child.setAttribute("opacity", opacity );
-	        		}
-	        
-	        		
-	        	}
-	    		
-	    	} 
-	    }
-	    
-	    // add label
-	    //Map values = datamart.getValues();
-	    //Iterator it = values.keySet().iterator();
-	    Iterator it = dataStore.iterator();
-	    while(it.hasNext()) {
-	    	IRecord record = (IRecord)it.next();
-	    	IField field = null;
-	    	
-	    	field = record.getFieldAt( dataStoreMeta.getIdFieldIndex() );
-	    	String id = (String)field.getValue();
-	    	//String id = (String)it.next();
-	    	
-	    	
-	    	
-	    	//Map kpiValueMap = (Map)values.get(id);
-	    	
-	    	String centroideId = "centroidi_" + datamart.getTargetFeatureName() + "_"  + id;
-	    	Element centroide = targetMap.getElementById( centroideId );
+		for(int i = 0; i < nodeList.getLength(); i++){
+			Node childNode = (Node)nodeList.item(i);
+			if(childNode instanceof Element) {
+				SVGElement child = (SVGElement)childNode;
+
+				String childId = child.getId();
+				String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+
+				IRecord record = dataStore.getRecordByID( column_id );
+
+
+				//Map attributes = (Map)datamart.getAttributeseById(column_id);
+
+
+				String targetColor = null;
+				Number kpyValue = null;
+				if(record != null) {
+					IField field = record.getFieldAt( dataStoreMeta.getFieldIndex(selectedKpiName) );	
+					String kpyValueAttr = "" + field.getValue();
+					//String kpyValueAttr = (String)attributes.get( selectedKpiName );	
+					if(kpyValueAttr == null) {
+						targetColor = null_values_color;
+					} else {
+						kpyValue = Double.parseDouble(kpyValueAttr);
+
+						if(kpyValue.doubleValue() < lb_value.doubleValue()) {
+							targetColor = lb_color;
+						} else if(kpyValue.doubleValue() > ub_value.doubleValue()) {
+							targetColor = ub_color;
+						} else if(kpyValue.doubleValue() == ub_value.doubleValue()) {
+							targetColor = col_kpi_array[trash_kpi_array.length-2];
+						} else  {
+							for (int j = 0; j < trash_kpi_array.length-1; j++) {
+								if (kpyValue.doubleValue() >= trash_kpi_array[j].doubleValue() && kpyValue.doubleValue() <  trash_kpi_array[j+1].doubleValue()) {
+									targetColor = col_kpi_array[j];
+									break;
+								} 
+							}
+						}
+					}
+				}
+
+				if(targetColor != null) {
+					if(child.getNodeName().equals("path")
+							|| child.getNodeName().equals("polygon") 
+							|| child.getNodeName().equals("ellipse")
+							|| child.getNodeName().equals("circle")
+							|| child.getNodeName().equals("rect") 
+					) {
+
+						child.setAttribute("fill", targetColor );
+					} else if(child.getNodeName().equals("line")
+							|| child.getNodeName().equals("polyline")
+					) {
+						child.setAttribute("stroke", targetColor );
+					}
+
+					String opacity = measure.getColurCalculatorParameters().getProperty("opacity");
+					if(opacity != null) {
+						child.setAttribute("opacity", opacity );
+					}
+
+
+				}
+
+			} 
+		}
+
+		// add label
+		//Map values = datamart.getValues();
+		//Iterator it = values.keySet().iterator();
+		Iterator it = dataStore.iterator();
+		while(it.hasNext()) {
+			IRecord record = (IRecord)it.next();
+			IField field = null;
+
+			field = record.getFieldAt( dataStoreMeta.getIdFieldIndex() );
+			String id = (String)field.getValue();
+			//String id = (String)it.next();
+
+
+
+			//Map kpiValueMap = (Map)values.get(id);
+
+			String centroideId = "centroidi_" + datamart.getTargetFeatureName() + "_"  + id;
+			Element centroide = targetMap.getElementById( centroideId );
 			if( centroide != null ) {
 				List fields = record.getFields();
 				int line = 0;
@@ -685,17 +691,17 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				boolean isFirst = true;
 				for(int i = 0; i < fields.size(); i++) {
 					if(i == dataStoreMeta.getIdFieldIndex()) continue;
-					
+
 					field = (IField)fields.get(i);
 					String fieldName = dataStoreMeta.getFieldName(i);
 					//String tmpKpiName = (String)kpiValueIterator.next();
-					
-					
+
+
 					Measure kpi  = getMeasure( fieldName );
 					String kpiValue = "" + field.getValue();
 					labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy")+ ") scale(40)");
 					labelGroup.setAttribute("display", "inherit");
-					
+
 					Element label = masterMap.createElement("text");
 					label.setAttribute("x", "0");
 					label.setAttribute("y", "" + ( (line++ )* 16) );
@@ -705,7 +711,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					label.setAttribute("font-style", isFirst? "normal": "italic");
 					label.setAttribute("fill", "black");
 					isFirst = false;
-					
+
 					String kpiValueString = null;
 					if(kpi.getPattern() != null) {
 						String pattern = kpi.getPattern();
@@ -714,63 +720,63 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					} else {
 						kpiValueString = kpiValue != null? kpiValue: "?";
 					}
-					
+
 					if(!kpiValueString.equalsIgnoreCase("?") && kpi.getUnit() != null) {
 						String unit = kpi.getUnit();
 						kpiValueString = kpiValueString + unit;
 					}
-					
-					
+
+
 					Node labelText = masterMap.createTextNode(kpiValueString);
 					label.appendChild(labelText);
-					
+
 					labelGroup.appendChild(label);
 				}
-				
+
 				if(labelGroup != null) {
 					Element valuesLayer = masterMap.getElementById("values");
 					valuesLayer.appendChild(labelGroup);
 				}				
 			}
-	    }
-	    
-	   
-	    
-	    // add legend
-	    Element windowBackground = masterMap.createElement("rect");
-	    windowBackground.setAttribute("width", "241");
-	    windowBackground.setAttribute("height", "200");
-	    windowBackground.setAttribute("fill", "#fffce6");
-	    windowBackground.setAttribute("stroke", "dimgray");
-	    windowBackground.setAttribute("stroke-width", "1");
-	    windowBackground.setAttribute("display", "inherit");
-	    
-	    Element windowTitleBar = masterMap.createElement("rect");
-	    windowTitleBar.setAttribute("width", "241");
-	    windowTitleBar.setAttribute("height", "17");
-	    windowTitleBar.setAttribute("fill", "steelblue");
-	    windowTitleBar.setAttribute("stroke", "dimgray");
-	    windowTitleBar.setAttribute("stroke-width", "1.5");
-	    windowTitleBar.setAttribute("display", "inherit");
-	    
-	    Element windowTitle = masterMap.createElement("text");
-	    windowTitle.setAttribute("x", "3");
-	    windowTitle.setAttribute("y", "14");
-	    windowTitle.setAttribute("font-family", "Arial,Helvetica");
-	    windowTitle.setAttribute("font-size", "14px");
-	    windowTitle.setAttribute("fill", "white");
-	    windowTitle.setAttribute("startOffset", "0");	    
-	    Node windowTitleText = masterMap.createTextNode("Legenda");
-	    windowTitle.appendChild(windowTitleText);
-	    
-	    Element windowBody = masterMap.createElement("g");
-	    for(int i = 0; i < col_kpi_array.length; i++) {
-	    	Double lb = trash_kpi_array[i].doubleValue();
-	    	Double ub = trash_kpi_array[i + 1].doubleValue();
-	    	String color = col_kpi_array[i];
-	    	
-	    	String lbValueString = null;
-	    	String ubValueString = null;
+		}
+
+
+
+		// add legend
+		Element windowBackground = masterMap.createElement("rect");
+		windowBackground.setAttribute("width", "241");
+		windowBackground.setAttribute("height", "200");
+		windowBackground.setAttribute("fill", "#fffce6");
+		windowBackground.setAttribute("stroke", "dimgray");
+		windowBackground.setAttribute("stroke-width", "1");
+		windowBackground.setAttribute("display", "inherit");
+
+		Element windowTitleBar = masterMap.createElement("rect");
+		windowTitleBar.setAttribute("width", "241");
+		windowTitleBar.setAttribute("height", "17");
+		windowTitleBar.setAttribute("fill", "steelblue");
+		windowTitleBar.setAttribute("stroke", "dimgray");
+		windowTitleBar.setAttribute("stroke-width", "1.5");
+		windowTitleBar.setAttribute("display", "inherit");
+
+		Element windowTitle = masterMap.createElement("text");
+		windowTitle.setAttribute("x", "3");
+		windowTitle.setAttribute("y", "14");
+		windowTitle.setAttribute("font-family", "Arial,Helvetica");
+		windowTitle.setAttribute("font-size", "14px");
+		windowTitle.setAttribute("fill", "white");
+		windowTitle.setAttribute("startOffset", "0");	    
+		Node windowTitleText = masterMap.createTextNode("Legenda");
+		windowTitle.appendChild(windowTitleText);
+
+		Element windowBody = masterMap.createElement("g");
+		for(int i = 0; i < col_kpi_array.length; i++) {
+			Double lb = trash_kpi_array[i].doubleValue();
+			Double ub = trash_kpi_array[i + 1] != null ? trash_kpi_array[i + 1].doubleValue() : null;
+			String color = col_kpi_array[i];
+
+			String lbValueString = null;
+			String ubValueString = null;
 			if(measure.getPattern() != null) {
 				String pattern = measure.getPattern();
 				DecimalFormat df = new DecimalFormat( pattern );
@@ -780,119 +786,119 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				lbValueString = lb != null? lb.toString(): "?";
 				ubValueString = ub != null? ub.toString(): "?";
 			}
-			
+
 			if(!lb.toString().equalsIgnoreCase("?") && measure.getUnit() != null) {
 				String unit = measure.getUnit();
 				lbValueString = lbValueString + unit;
 			}
-			
-			if(!ub.toString().equalsIgnoreCase("?") && measure.getUnit() != null) {
+
+			if(ub!= null && !ub.toString().equalsIgnoreCase("?") && measure.getUnit() != null) {
 				String unit = measure.getUnit();
 				ubValueString = ubValueString + unit;
 			}
-	    	
-	    	Element colorBox = masterMap.createElement("rect");
-	    	int offset = 35 + (25 * i);
-	    	colorBox.setAttribute("x", "30");
-	    	colorBox.setAttribute("y", "" + offset);
-	    	colorBox.setAttribute("width", "30");
-	    	colorBox.setAttribute("height", "20");
-	    	colorBox.setAttribute("fill", color);
-	    	colorBox.setAttribute("stroke", "dimgray");
-	    	
-	    	offset = 50 + (25 * i);
-	    	Element labelBox = masterMap.createElement("text");
-	    	labelBox.setAttribute("x", "70");
-	    	labelBox.setAttribute("y", "" + offset);
-	    	labelBox.setAttribute("font-family", "Arial,Helvetica");
-	    	labelBox.setAttribute("font-size", "14px");
-	    	labelBox.setAttribute("fill", "dimgray");
-	    	labelBox.setAttribute("startOffset", "0");	    
-		    Node labelBoxText = masterMap.createTextNode(lbValueString + " - " + ubValueString);
-		    labelBox.appendChild(labelBoxText);
-		    
-	    	windowBody.appendChild(colorBox);
-	    	windowBody.appendChild(labelBox);
-	    }
-	    
-	    Element legend = masterMap.getElementById("legend");
-	    legend.appendChild(windowBackground);
-	    legend.appendChild(windowTitleBar);
-	    legend.appendChild(windowTitle);
-	    legend.appendChild(windowBody);
-	    
-	    // add labels
-	    Node labelText;
-	    Element label;
-	    
-	    ILabelProducer labelProducer;
-	    
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("header-left");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("header-center");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("header-right");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("footer-left");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("footer-center");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
-	    
-	    labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
-	    if(labelProducer != null) {
-		    label = masterMap.getElementById("footer-right");	    
-		    labelText = masterMap.createTextNode( labelProducer.getLabel() );
-		    label.appendChild(labelText);
-	    }
+
+			Element colorBox = masterMap.createElement("rect");
+			int offset = 35 + (25 * i);
+			colorBox.setAttribute("x", "30");
+			colorBox.setAttribute("y", "" + offset);
+			colorBox.setAttribute("width", "30");
+			colorBox.setAttribute("height", "20");
+			colorBox.setAttribute("fill", color);
+			colorBox.setAttribute("stroke", "dimgray");
+
+			offset = 50 + (25 * i);
+			Element labelBox = masterMap.createElement("text");
+			labelBox.setAttribute("x", "70");
+			labelBox.setAttribute("y", "" + offset);
+			labelBox.setAttribute("font-family", "Arial,Helvetica");
+			labelBox.setAttribute("font-size", "14px");
+			labelBox.setAttribute("fill", "dimgray");
+			labelBox.setAttribute("startOffset", "0");	    
+			Node labelBoxText = masterMap.createTextNode(lbValueString + " - " + ubValueString);
+			labelBox.appendChild(labelBoxText);
+
+			windowBody.appendChild(colorBox);
+			windowBody.appendChild(labelBox);
+		}
+
+		Element legend = masterMap.getElementById("legend");
+		legend.appendChild(windowBackground);
+		legend.appendChild(windowTitleBar);
+		legend.appendChild(windowTitle);
+		legend.appendChild(windowBody);
+
+		// add labels
+		Node labelText;
+		Element label;
+
+		ILabelProducer labelProducer;
+
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("header-left");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("header-center");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("header-right");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("footer-left");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("footer-center");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
+
+		labelProducer = (ILabelProducer)getGuiSettings().getLabelProducers().get("header-left");
+		if(labelProducer != null) {
+			label = masterMap.getElementById("footer-right");	    
+			labelText = masterMap.createTextNode( labelProducer.getLabel() );
+			label.appendChild(labelText);
+		}
 	}	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
 
 
 
 	/** The Constant R. */
 	private static final int R = 0;
-	
+
 	/** The Constant G. */
 	private static final int G = 1;
-	
+
 	/** The Constant B. */
 	private static final int B = 2;
-	
+
 	/** The Constant BASE_COLOR. */
 	private static final String BASE_COLOR = "#";
-	
+
 	/**
 	 * Gets the gradient colour range.
 	 * 
@@ -909,17 +915,17 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		int new_gA;
 		int new_bA;
 		String shade;
-		
-		
+
+
 		//if(!colurCalculatorType.equalsIgnoreCase("gradient")) return new String[]{"#FF0000","#00FF00","#FF00FF","#0000FF","#F0F0F0"};
-    	
- 
+
+
 
 		A[R] = Integer.parseInt( base_color.substring(1,3), 16 );
 		A[G] = Integer.parseInt( base_color.substring(3,5), 16 );
 		A[B] = Integer.parseInt( base_color.substring(5), 16 );
-		
-		
+
+
 		System.arraycopy(A, 0, RGB, 0, 3);
 		Arrays.sort( RGB );
 		for(int i = 0; i < A.length; i++) {
@@ -931,7 +937,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				Grad[i] = (220 - A[i]) / (num_group- 1);
 			}
 		}
-		
+
 		String[] colorRangeArray = new String[num_group];
 		for(int i = 0; i < num_group; i++) {
 			new_rA = A[R] + Grad[R] * i;
@@ -941,21 +947,21 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			String gA = Integer.toHexString(new_gA);
 			String bA = Integer.toHexString(new_bA);
 			shade = "#" 
-					+ (rA.length() == 1?"0":"") + rA
-					+ (gA.length() == 1?"0":"") + gA
-					+ (bA.length() == 1?"0":"") + bA;
+				+ (rA.length() == 1?"0":"") + rA
+				+ (gA.length() == 1?"0":"") + gA
+				+ (bA.length() == 1?"0":"") + bA;
 			colorRangeArray[i] = shade;
 		}
 		List colorRangeList = Arrays.asList( colorRangeArray );
 		Collections.reverse( colorRangeList );
 		colorRangeArray = (String[])colorRangeList.toArray(new String[0]);
-	
-		
-		
+
+
+
 		return colorRangeArray;
 	}
-	
-	
+
+
 	/**
 	 * Adds the data.
 	 * 
@@ -963,148 +969,148 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param datamart the datamart
 	 */
 	private void addData(SVGDocument map, DataMart datamart) {
-		
+
 		IDataStore dataStore = datamart.getDataStore();
-		
+
 		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());
-		
+
 		NodeList nodeList = targetLayer.getChildNodes();
-	    for(int i = 0; i < nodeList.getLength(); i++){
-	    	Node childNode = (Node)nodeList.item(i);
-	    	if(childNode instanceof Element) {
-	    		SVGElement child = (SVGElement)childNode;
-	    		String childId = child.getId();
-	    		String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
-	    		
-	    		
-	    		IRecord record = dataStore.getRecordByID( column_id );
-	    		if(record == null) {
-	    			logger.warn("No data available for feature [" + column_id +"]");
-	    			continue;
-	    		}
-	    		List fields = record.getFields();
-	    		for(int j = 0; j < fields.size(); j++) {
-	    			if(j == dataStore.getMetaData().getIdFieldIndex() ) {
-	    				continue;
-	    			}
-	    			IField field = (IField)fields.get(j);
-	    			child.setAttribute("attrib:" + dataStore.getMetaData().getFieldName(j), "" + field.getValue());
-	    		}
-	    		child.setAttribute("attrib:nome", child.getAttribute("id"));
-	    		
-	    	} 
-	    }
+		for(int i = 0; i < nodeList.getLength(); i++){
+			Node childNode = (Node)nodeList.item(i);
+			if(childNode instanceof Element) {
+				SVGElement child = (SVGElement)childNode;
+				String childId = child.getId();
+				String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+
+
+				IRecord record = dataStore.getRecordByID( column_id );
+				if(record == null) {
+					logger.warn("No data available for feature [" + column_id +"]");
+					continue;
+				}
+				List fields = record.getFields();
+				for(int j = 0; j < fields.size(); j++) {
+					if(j == dataStore.getMetaData().getIdFieldIndex() ) {
+						continue;
+					}
+					IField field = (IField)fields.get(j);
+					child.setAttribute("attrib:" + dataStore.getMetaData().getFieldName(j), "" + field.getValue());
+				}
+				child.setAttribute("attrib:nome", child.getAttribute("id"));
+
+			} 
+		}
 	}
 
-	
-	
-	
+
+
+
 	private void addLink(SVGDocument map, DataMart datamart) {	
-		
+
 		IDataStore dataStore;
 		IDataStoreMetaData dataStoreMeta;
 		List list;
 		IFieldMetaData filedMeta;
-		
+
 		dataStore = datamart.getDataStore();
 		Assert.assertNotNull(dataStore, "DataStore cannot be null");
-		
+
 		dataStoreMeta = dataStore.getMetaData();
 		Assert.assertNotNull(dataStore, "DataStoreMeta cannot be null");
-		
+
 		list = dataStoreMeta.findFieldMeta("ROLE", "CROSSNAVLINK");
 		logger.debug("Number of links per feature is equals to [" + list.size() +"]");
 		if(list.size() == 0) {
 			return;
 		} 
 		filedMeta = (IFieldMetaData)list.get(0);
-		
+
 		Element targetLayer = map.getElementById(datamart.getTargetFeatureName());		
 		NodeList nodeList = targetLayer.getChildNodes();
 		Map mapLink = null;
 		List lstLink = new ArrayList();
-	    for(int i = 0; i < nodeList.getLength(); i++){
-	    	Node childNode= (Node)nodeList.item(i);
-	    	try{
-		    	if(childNode instanceof Element) {
-		    		SVGElement childOrig =(SVGElement)childNode;	    		
-		    		String childId = childOrig.getId();
-		    		String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");	    		
-		    		
-		    		IRecord record = dataStore.getRecordByID( column_id );
-		    		if(record == null) {
-		    			logger.warn("No data available for feature [" + column_id + "]");
-		    			continue;
-		    		}
-		    		
-		    		IField filed = record.getFieldAt( dataStoreMeta.getFieldIndex( filedMeta.getName()) );
-		    		
-		    		String link = "" + filed.getValue();
-		    		 
-		    		if (link != null) {
-		    			mapLink = new HashMap();
-		    			mapLink.put("column_id",column_id);
-		    			mapLink.put("path", childOrig);
-		    			mapLink.put("link", link);		    			
-		    			lstLink.add(mapLink);		    			
-		    		}
-		    	}
-	    	}catch (Exception e){
-	    		e.printStackTrace();
-	    	}
-	    }
-	    
-	    //adds href links	    
-	    for (int j=0; j<lstLink.size(); j++){	
-	    	Map tmpMap = (Map)lstLink.get(j);
+		for(int i = 0; i < nodeList.getLength(); i++){
+			Node childNode= (Node)nodeList.item(i);
+			try{
+				if(childNode instanceof Element) {
+					SVGElement childOrig =(SVGElement)childNode;	    		
+					String childId = childOrig.getId();
+					String column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");	    		
+
+					IRecord record = dataStore.getRecordByID( column_id );
+					if(record == null) {
+						logger.warn("No data available for feature [" + column_id + "]");
+						continue;
+					}
+
+					IField filed = record.getFieldAt( dataStoreMeta.getFieldIndex( filedMeta.getName()) );
+
+					String link = "" + filed.getValue();
+
+					if (link != null) {
+						mapLink = new HashMap();
+						mapLink.put("column_id",column_id);
+						mapLink.put("path", childOrig);
+						mapLink.put("link", link);		    			
+						lstLink.add(mapLink);		    			
+					}
+				}
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+
+		//adds href links	    
+		for (int j=0; j<lstLink.size(); j++){	
+			Map tmpMap = (Map)lstLink.get(j);
 			Element linkElement = map.createElement("a");
 			String pippo = (String)tmpMap.get("link");
 			linkElement.setAttribute("xlink:href", (String)tmpMap.get("link"));
 			linkElement.setAttribute("target", "_parent");
 			linkElement.appendChild((Element)tmpMap.get("path"));
-	    	targetLayer.appendChild(linkElement);
-		    Node lf = map.createTextNode("\n");
-		    targetLayer.appendChild(lf);		    
-	    }	    
-	    
-	    //deletes duplicate path
-	    boolean isNew = false;
-	    for(int i = 0; i < nodeList.getLength(); i++){
-	    	Node childNode= (Node)nodeList.item(i);	
-	    	SVGElement childOrig = null;
-	    	if(childNode instanceof SVGElement) {
-	    		try{
-	    			childOrig = (SVGElement)childNode;
-	    		}catch(ClassCastException e){
-					
-	    			logger.debug("DynamicMapRenderer :: addLinK : Element Generic", e);
+			targetLayer.appendChild(linkElement);
+			Node lf = map.createTextNode("\n");
+			targetLayer.appendChild(lf);		    
+		}	    
 
-	    		}
-	    		String childId = "";
-	    		String column_id = "";
-	    		if (childOrig != null){
-		    		childId = childOrig.getId();	    		
-		    		column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
-	    		}
-	    		Iterator it = lstLink.iterator();
-	    		isNew = false;
-	    		while(it.hasNext()) {
-	    			String tmpMapVal = (String)((Map)it.next()).get("column_id");
-	    			if (column_id.equals(tmpMapVal)){
-	    				isNew = true;
-	    				break;
-	    			}
-		    	}
-	    		if (isNew && childOrig != null)
-	    			map.removeChild(childOrig);
-	    	}
-	    }
-	    
+		//deletes duplicate path
+		boolean isNew = false;
+		for(int i = 0; i < nodeList.getLength(); i++){
+			Node childNode= (Node)nodeList.item(i);	
+			SVGElement childOrig = null;
+			if(childNode instanceof SVGElement) {
+				try{
+					childOrig = (SVGElement)childNode;
+				}catch(ClassCastException e){
+
+					logger.debug("DynamicMapRenderer :: addLinK : Element Generic", e);
+
+				}
+				String childId = "";
+				String column_id = "";
+				if (childOrig != null){
+					childId = childOrig.getId();	    		
+					column_id = childId.replaceAll(datamart.getTargetFeatureName() + "_", "");
+				}
+				Iterator it = lstLink.iterator();
+				isNew = false;
+				while(it.hasNext()) {
+					String tmpMapVal = (String)((Map)it.next()).get("column_id");
+					if (column_id.equals(tmpMapVal)){
+						isNew = true;
+						break;
+					}
+				}
+				if (isNew && childOrig != null)
+					map.removeChild(childOrig);
+			}
+		}
+
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Include scripts.
 	 * 
@@ -1112,34 +1118,34 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	private void includeScripts(SVGDocument doc) {
 		Element scriptInit = doc.getElementById("included_scripts");	    
-	    Node scriptText = scriptInit.getFirstChild();
-	    StringBuffer buffer = new StringBuffer();
-	    includeScript(buffer, "helper_functions.js");
-	    includeScript(buffer, "timer.js");
-	    includeScript(buffer, "mapApp.js");
-	    includeScript(buffer, "timer.js");
-	    includeScript(buffer, "slider.js");
-	    includeScript(buffer, "button.js");
-	    includeScript(buffer, "Window.js");
-	    includeScript(buffer, "checkbox_and_radiobutton.js");
-	    includeScript(buffer, "navigation.js");
-	    includeScript(buffer, "tabgroup.js");
-	    includeScript(buffer, "colourPicker.js");
-	    
-	    includeScript(buffer, "custom/Utils.js");
-	    includeScript(buffer, "custom/BarChart.js");
-	    includeScript(buffer, "custom/NavigationWindow.js");
-	    includeScript(buffer, "custom/LayersWindow.js");
-	    includeScript(buffer, "custom/ThematicWindow.js");
-	    includeScript(buffer, "custom/DetailsWindow.js");
-	    includeScript(buffer, "custom/LegendWindow.js");
-	    includeScript(buffer, "custom/ColourPickerWindow.js");
-	    includeScript(buffer, "custom/ThresholdsFactory.js");
-	    includeScript(buffer, "custom/ColourRangesFactory.js");
-	    
-	    scriptText.setNodeValue(buffer.toString());
+		Node scriptText = scriptInit.getFirstChild();
+		StringBuffer buffer = new StringBuffer();
+		includeScript(buffer, "helper_functions.js");
+		includeScript(buffer, "timer.js");
+		includeScript(buffer, "mapApp.js");
+		includeScript(buffer, "timer.js");
+		includeScript(buffer, "slider.js");
+		includeScript(buffer, "button.js");
+		includeScript(buffer, "Window.js");
+		includeScript(buffer, "checkbox_and_radiobutton.js");
+		includeScript(buffer, "navigation.js");
+		includeScript(buffer, "tabgroup.js");
+		includeScript(buffer, "colourPicker.js");
+
+		includeScript(buffer, "custom/Utils.js");
+		includeScript(buffer, "custom/BarChart.js");
+		includeScript(buffer, "custom/NavigationWindow.js");
+		includeScript(buffer, "custom/LayersWindow.js");
+		includeScript(buffer, "custom/ThematicWindow.js");
+		includeScript(buffer, "custom/DetailsWindow.js");
+		includeScript(buffer, "custom/LegendWindow.js");
+		includeScript(buffer, "custom/ColourPickerWindow.js");
+		includeScript(buffer, "custom/ThresholdsFactory.js");
+		includeScript(buffer, "custom/ColourRangesFactory.js");
+
+		scriptText.setNodeValue(buffer.toString());
 	}
-	
+
 	/**
 	 * Import scripts.
 	 * 
@@ -1147,30 +1153,30 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	private void importScripts(SVGDocument doc) {
 		importScipt(doc, "helper_functions.js");
-	    importScipt(doc, "timer.js");
-	    importScipt(doc, "mapApp.js");
-	    importScipt(doc, "timer.js");
-	    importScipt(doc, "slider.js");
-	    importScipt(doc, "button.js");
-	    importScipt(doc, "Window.js");
-	    importScipt(doc, "checkbox_and_radiobutton.js");
-	    importScipt(doc, "navigation.js");
-	    importScipt(doc, "tabgroup.js");
-	    importScipt(doc, "colourPicker.js");
-	    
-	    importScipt(doc, "custom/Utils.js");
-	    importScipt(doc, "custom/BarChart.js");
-	    importScipt(doc, "custom/NavigationWindow.js");
-	    importScipt(doc, "custom/LayersWindow.js");
-	    importScipt(doc, "custom/ThematicWindow.js");
-	    importScipt(doc, "custom/DetailsWindow.js");
-	    importScipt(doc, "custom/LegendWindow.js");
-	    importScipt(doc, "custom/ColourPickerWindow.js");
-	    importScipt(doc, "custom/ThresholdsFactory.js");
-	    importScipt(doc, "custom/ColourRangesFactory.js");
-	    
+		importScipt(doc, "timer.js");
+		importScipt(doc, "mapApp.js");
+		importScipt(doc, "timer.js");
+		importScipt(doc, "slider.js");
+		importScipt(doc, "button.js");
+		importScipt(doc, "Window.js");
+		importScipt(doc, "checkbox_and_radiobutton.js");
+		importScipt(doc, "navigation.js");
+		importScipt(doc, "tabgroup.js");
+		importScipt(doc, "colourPicker.js");
+
+		importScipt(doc, "custom/Utils.js");
+		importScipt(doc, "custom/BarChart.js");
+		importScipt(doc, "custom/NavigationWindow.js");
+		importScipt(doc, "custom/LayersWindow.js");
+		importScipt(doc, "custom/ThematicWindow.js");
+		importScipt(doc, "custom/DetailsWindow.js");
+		importScipt(doc, "custom/LegendWindow.js");
+		importScipt(doc, "custom/ColourPickerWindow.js");
+		importScipt(doc, "custom/ThresholdsFactory.js");
+		importScipt(doc, "custom/ColourRangesFactory.js");
+
 	}
-	
+
 	/**
 	 * Include script.
 	 * 
@@ -1179,11 +1185,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	private void includeScript(StringBuffer buffer, String scriptName) {
 		//File file = new File("D:/Documenti/Prototipi/Test/exo-portal-1.1.4-SpagoBI-2.0/webapps/SpagoBIGeoEngine/js/lib/svg-widgets/" + scriptName);
-		
+
 		try {
 			URL scriptUrl = new URL((String)getEnv().get(GeoEngineConstants.ENV_ABSOLUTE_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
 			//URL scriptUrl = new URL("http://localhost:8080/SpagoBIGeoEngine" + "/js/lib/svg-widgets/" + scriptName);
-			
+
 			BufferedReader reader = new BufferedReader( new InputStreamReader( scriptUrl.openStream() ) );
 			String line = null;
 			while ( (line = reader.readLine()) != null) {
@@ -1197,19 +1203,19 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	private void importScipt(SVGDocument map, String scriptName) {
 		Element script = map.createElement("script");
-	    script.setAttribute("type", "text/ecmascript");
-	    script.setAttribute("xlink:href",(String)getEnv().get(GeoEngineConstants.ENV_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
-	    Element importsBlock = map.getElementById("imported_scripts");
-	    importsBlock.appendChild(script);
-	    Node lf = map.createTextNode("\n");
-	    importsBlock.appendChild(lf);
+		script.setAttribute("type", "text/ecmascript");
+		script.setAttribute("xlink:href",(String)getEnv().get(GeoEngineConstants.ENV_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
+		Element importsBlock = map.getElementById("imported_scripts");
+		importsBlock.appendChild(script);
+		Node lf = map.createTextNode("\n");
+		importsBlock.appendChild(lf);
 	}
-	
-	
+
+
 	public void setMainMapDimension(SVGDocument masterMap, SVGDocument targetMap) {
 		String viewBox;
 		String[] chunks;
@@ -1217,36 +1223,36 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		double heigth;
 		double mainMapHeight;
 		Element mainMapBlock;
-		
+
 		logger.debug("IN");
-		
+
 		try {
 			Assert.assertNotNull(masterMap, "Input parameter [masterMap] cannot be null");
 			Assert.assertNotNull(targetMap, "Input parameter [targetMap] cannot be null");
-			
+
 			viewBox = null;
 			try {
 				viewBox = targetMap.getRootElement().getAttribute("viewBox");
 			} catch(Throwable t) {
 				MapRenderingException e = new MapRenderingException("Impossible to read attribute [viewBox] from target map's root node");
 				e.addHint("add to the svg map root tag the attribute [viewbox] with the following value: ]" +
-						"0 0 W D] (where W and H are respectively your map width and height)");
+				"0 0 W D] (where W and H are respectively your map width and height)");
 				throw e;
 			}
 			if(StringUtilities.isEmpty(viewBox)) {
 				MapRenderingException e = new MapRenderingException("Impossible to read attribute [viewBox] from target map's root node");
 				e.addHint("add to the svg map root tag the attribute [viewbox] with the following value: [" +
-						"0 0 W D] (where W and H are respectively your map width and height)");
+				"0 0 W D] (where W and H are respectively your map width and height)");
 				throw e;
 			}
 			logger.debug("Target map vieBox is equal to [" + viewBox + "]");
 			chunks = viewBox.trim().split(" ");
 			Assert.assertTrue(chunks.length ==  4, "Attribute [viewBox] of  target ma is malformed: expected format is [x y width height]");
-			
+
 			width = Double.parseDouble(chunks[2]);
 			heigth = Double.parseDouble(chunks[3]);
 			mainMapHeight = 1100 *(heigth/width);
-			
+
 			mainMapBlock = masterMap.getElementById("mainMap");
 			mainMapBlock.setAttribute("viewBox", viewBox);
 			masterMap.getRootElement().setAttribute("viewBox", 0 + " " + 0 + " 1100 " + mainMapHeight);
@@ -1257,7 +1263,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Sets the main map bkg rect dimension.
 	 * 
@@ -1277,7 +1283,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		mapBackgroundRect.setAttribute("width", width);
 		mapBackgroundRect.setAttribute("height", height);
 	}
-	
+
 	/**
 	 * Gets the measures configuration script.
 	 * 
@@ -1287,122 +1293,122 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @throws JSONException 
 	 */
 	public JSONArray getMeasuresConfigurationScript(DataMart datamart) throws JSONException {
-		
+
 		JSONArray measures;
-		
+
 		IDataStore dataStore;
 		IDataStoreMetaData dataStoreMeta;
 		List measureFieldsMeta;
 		String[] measureNames;
-		
+
 		measures = new JSONArray();
-		
+
 		dataStore = datamart.getDataStore();
 		dataStoreMeta = dataStore.getMetaData();
-		
+
 		measureFieldsMeta = dataStoreMeta.findFieldMeta("ROLE", "MEASURE");
 		measureNames = new String[ measureFieldsMeta.size() ];
 		for(int i = 0; i < measureNames.length; i++) {
 			IFieldMetaData filedMeta = (IFieldMetaData)measureFieldsMeta.get(i);
 			measureNames[i] = filedMeta.getName();
 		}
-	    
-	       
-	    for(int i = 0; i < measureNames.length; i++) {
-	    	JSONObject measure = new JSONObject();
-	    	measure.put("name", measureNames[i]);
-	    	measure.put("description", getMeasure(measureNames[i]).getDescription());
-	    	measure.put("colour", getMeasure(measureNames[i]).getColour());
-	    	
-	    	JSONArray orderedValues = new JSONArray();
-	    	dataStore.sortRecords( dataStoreMeta.getFieldIndex(measureNames[i]) );
+
+
+		for(int i = 0; i < measureNames.length; i++) {
+			JSONObject measure = new JSONObject();
+			measure.put("name", measureNames[i]);
+			measure.put("description", getMeasure(measureNames[i]).getDescription());
+			measure.put("colour", getMeasure(measureNames[i]).getColour());
+
+			JSONArray orderedValues = new JSONArray();
+			dataStore.sortRecords( dataStoreMeta.getFieldIndex(measureNames[i]) );
 			List orderedKpiValuesSet = dataStore.getFieldValues( dataStoreMeta.getFieldIndex(measureNames[i]) );
-	    	Iterator it = orderedKpiValuesSet.iterator();
-	    	while(it.hasNext()) {
-	    		orderedValues.put( it.next() );	   		
-	    	}
-	    	measure.put("ordered_values", orderedValues);
-	    	
-	    	if( getMeasure(measureNames[i]).getTresholdLb() == null 
-	    			|| getMeasure(measureNames[i]).getTresholdLb().trim().equalsIgnoreCase("")
-	    			|| getMeasure(measureNames[i]).getTresholdLb().equalsIgnoreCase("none") ) {
-	    		measure.put("lower_bound", "none");
-	    	} else {
-	    		measure.put("lower_bound", getMeasure(measureNames[i]).getTresholdLb());
-	    	}
-	    	
-	    	if( getMeasure(measureNames[i]).getTresholdUb() == null 
-	    			|| getMeasure(measureNames[i]).getTresholdUb().trim().equalsIgnoreCase("")
-	    			|| getMeasure(measureNames[i]).getTresholdUb().equalsIgnoreCase("none") ) {
-	    		measure.put("upper_bound", "none");
-	    	} else {
-	    		measure.put("upper_bound", getMeasure(measureNames[i]).getTresholdUb());
-	    	}
-	    	
-	    	measure.put("lower_bound_colour", getMeasure(measureNames[i]).getColurOutboundCol());
-	    	measure.put("upper_bound_colour", getMeasure(measureNames[i]).getColurOutboundCol());
-	    	measure.put("no_value_color", getMeasure(measureNames[i]).getColurNullCol());
-	    	
-	    	JSONObject thresholdCalculatorConf = new JSONObject();
-	    	thresholdCalculatorConf.put("type", getMeasure(measureNames[i]).getTresholdCalculatorType());
-	    	JSONObject thresholdCalculatorParams = new JSONObject();
-	    	if(getMeasure(measureNames[i]).getTresholdCalculatorType().equalsIgnoreCase("static") 
-	    			|| getMeasure(measureNames[i]).getTresholdCalculatorType().equalsIgnoreCase("perc")) {
-		    	
-	    		String[] values = getTresholdsArray(getMeasure(measureNames[i]).getColumnId());
-	    		JSONArray ranges = new JSONArray();
-	    	
-		    	for(int j = 0; j < values.length; j++) {
-		    		ranges.put( values[j] );
-		    	}	    	
-		    	thresholdCalculatorParams.put("ranges", ranges);
-	    	} else {
-	    		String value = getMeasure(measureNames[i]).getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
-	    		thresholdCalculatorParams.put("num_group", Integer.parseInt(value));
-	    	}
-	    	
-	    	thresholdCalculatorConf.put("params", thresholdCalculatorParams);
-	    	measure.put("threshold_calculator_conf", thresholdCalculatorConf);
-	    	
-	    	
-	    	
-	    	JSONObject colourCalculatorConf = new JSONObject();
-	    	colourCalculatorConf.put("type", getMeasure(measureNames[i]).getColurCalculatorType());
-	    	JSONObject colourCalculatorParams = new JSONObject();
-	    	if(getMeasure(measureNames[i]).getColurCalculatorType().equalsIgnoreCase("gradient") 
-	    			|| getMeasure(measureNames[i]).getColurCalculatorType().equalsIgnoreCase("grad")) {
-		    	
-	    		String colour = getMeasure(measureNames[i]).getColurCalculatorParameters().getProperty("BASE_COLOR");
-	    		colourCalculatorParams.put("colour", colour);
-	    	} else {
-	    		String[] values = getColoursArray(getMeasure(measureNames[i]).getColumnId());
-	    		JSONArray ranges = new JSONArray();
-	    	
-		    	for(int j = 0; j < values.length; j++) {
-		    		ranges.put( values[j] );
-		    	}	    	
-		    	colourCalculatorParams.put("ranges", ranges);
-	    	}
-	    	
-	    	String opacity = getMeasure(measureNames[i]).getColurCalculatorParameters().getProperty("opacity");
-    		if(opacity != null) {
-    			colourCalculatorParams.put("opacity", opacity);
-    		}
-	    	
-	    	colourCalculatorConf.put("params", colourCalculatorParams);
-	    	measure.put("colourrange_calculator_conf", colourCalculatorConf);
-	    	
-	    	
-	    	
-	    	measures.put( measure );
-	    }    
-	   
-	    return measures;
+			Iterator it = orderedKpiValuesSet.iterator();
+			while(it.hasNext()) {
+				orderedValues.put( it.next() );	   		
+			}
+			measure.put("ordered_values", orderedValues);
+
+			if( getMeasure(measureNames[i]).getTresholdLb() == null 
+					|| getMeasure(measureNames[i]).getTresholdLb().trim().equalsIgnoreCase("")
+					|| getMeasure(measureNames[i]).getTresholdLb().equalsIgnoreCase("none") ) {
+				measure.put("lower_bound", "none");
+			} else {
+				measure.put("lower_bound", getMeasure(measureNames[i]).getTresholdLb());
+			}
+
+			if( getMeasure(measureNames[i]).getTresholdUb() == null 
+					|| getMeasure(measureNames[i]).getTresholdUb().trim().equalsIgnoreCase("")
+					|| getMeasure(measureNames[i]).getTresholdUb().equalsIgnoreCase("none") ) {
+				measure.put("upper_bound", "none");
+			} else {
+				measure.put("upper_bound", getMeasure(measureNames[i]).getTresholdUb());
+			}
+
+			measure.put("lower_bound_colour", getMeasure(measureNames[i]).getColurOutboundCol());
+			measure.put("upper_bound_colour", getMeasure(measureNames[i]).getColurOutboundCol());
+			measure.put("no_value_color", getMeasure(measureNames[i]).getColurNullCol());
+
+			JSONObject thresholdCalculatorConf = new JSONObject();
+			thresholdCalculatorConf.put("type", getMeasure(measureNames[i]).getTresholdCalculatorType());
+			JSONObject thresholdCalculatorParams = new JSONObject();
+			if(getMeasure(measureNames[i]).getTresholdCalculatorType().equalsIgnoreCase("static") 
+					|| getMeasure(measureNames[i]).getTresholdCalculatorType().equalsIgnoreCase("perc")) {
+
+				String[] values = getTresholdsArray(getMeasure(measureNames[i]).getColumnId());
+				JSONArray ranges = new JSONArray();
+
+				for(int j = 0; j < values.length; j++) {
+					ranges.put( values[j] );
+				}	    	
+				thresholdCalculatorParams.put("ranges", ranges);
+			} else {
+				String value = getMeasure(measureNames[i]).getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
+				thresholdCalculatorParams.put("num_group", Integer.parseInt(value));
+			}
+
+			thresholdCalculatorConf.put("params", thresholdCalculatorParams);
+			measure.put("threshold_calculator_conf", thresholdCalculatorConf);
+
+
+
+			JSONObject colourCalculatorConf = new JSONObject();
+			colourCalculatorConf.put("type", getMeasure(measureNames[i]).getColurCalculatorType());
+			JSONObject colourCalculatorParams = new JSONObject();
+			if(getMeasure(measureNames[i]).getColurCalculatorType().equalsIgnoreCase("gradient") 
+					|| getMeasure(measureNames[i]).getColurCalculatorType().equalsIgnoreCase("grad")) {
+
+				String colour = getMeasure(measureNames[i]).getColurCalculatorParameters().getProperty("BASE_COLOR");
+				colourCalculatorParams.put("colour", colour);
+			} else {
+				String[] values = getColoursArray(getMeasure(measureNames[i]).getColumnId());
+				JSONArray ranges = new JSONArray();
+
+				for(int j = 0; j < values.length; j++) {
+					ranges.put( values[j] );
+				}	    	
+				colourCalculatorParams.put("ranges", ranges);
+			}
+
+			String opacity = getMeasure(measureNames[i]).getColurCalculatorParameters().getProperty("opacity");
+			if(opacity != null) {
+				colourCalculatorParams.put("opacity", opacity);
+			}
+
+			colourCalculatorConf.put("params", colourCalculatorParams);
+			measure.put("colourrange_calculator_conf", colourCalculatorConf);
+
+
+
+			measures.put( measure );
+		}    
+
+		return measures;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Gets the layers configuration script.
 	 * 
@@ -1414,38 +1420,38 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	public JSONArray getLayersConfigurationScript(SVGDocument doc) throws JSONException {
 		JSONArray layers;
-		
+
 		String[] layerNames;
 		int targetLayerIndex = 0;
-	    boolean includeChartLayer = false;
-	    boolean includeValuesLayer = false;
-		
+		boolean includeChartLayer = false;
+		boolean includeValuesLayer = false;
+
 		layers = new JSONArray();
-		
-		
+
+
 		layerNames = getLayerNames();
-	    for(int i = 0; i < layerNames.length; i++) {	
-	    	if(doc.getElementById(layerNames[i]) != null
-	    			|| layerNames[i].equalsIgnoreCase("grafici")
-	    			|| layerNames[i].equalsIgnoreCase("valori")) {
-	    		JSONObject layer = new JSONObject();
-	    		layer.put("name", layerNames[i]);
-	    		if(layerNames[i].equalsIgnoreCase("grafici")) {
-	    			layer.put("description","Grafici");
-	    		} else if(layerNames[i].equalsIgnoreCase("valori")) {
-	    			layer.put("description","Valori");
-	    		} else {
-	    			layer.put("description", getLayer(layerNames[i]).getDescription());
-	    		}
-	    		
-	    		layers.put( layer );
-	    	}
-	    }	    
-	  
-	    return layers;
+		for(int i = 0; i < layerNames.length; i++) {	
+			if(doc.getElementById(layerNames[i]) != null
+					|| layerNames[i].equalsIgnoreCase("grafici")
+					|| layerNames[i].equalsIgnoreCase("valori")) {
+				JSONObject layer = new JSONObject();
+				layer.put("name", layerNames[i]);
+				if(layerNames[i].equalsIgnoreCase("grafici")) {
+					layer.put("description","Grafici");
+				} else if(layerNames[i].equalsIgnoreCase("valori")) {
+					layer.put("description","Valori");
+				} else {
+					layer.put("description", getLayer(layerNames[i]).getDescription());
+				}
+
+				layers.put( layer );
+			}
+		}	    
+
+		return layers;
 	}
-	
-	
+
+
 	/**
 	 * Gets the master map file.
 	 * 
@@ -1462,7 +1468,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}
 		return file;
 	}
-	
+
 	/**
 	 * Gets the temporary file.
 	 * 
@@ -1478,7 +1484,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		if(geoEngineConf != null) {
 			tempDirName = (String)geoEngineConf.getAttribute("tempDir");
 		}
-		
+
 		if(tempDirName != null) {
 			logger.debug("temp directory path configured: " + tempDirName);
 			if(tempDirName.startsWith("./")) {
@@ -1503,12 +1509,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			result = File.createTempFile("SpagoBIGeoEngine_", "_tmpMap.svg", tempDir);
 			logger.debug("temp file successfully created: " + result);
 		}
-		
-		
-		
+
+
+
 		return result;
 	}
-	
+
 	/**
 	 * Gets the gUI configuration script.
 	 * 
@@ -1518,7 +1524,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	public JSONObject getGUIConfigurationScript() throws JSONException {
 		JSONObject guiSettings;
 		String pVal = null;
-		
+
 		pVal =(String)getEnv().get(GeoEngineConstants.ENV_IS_WINDOWS_ACTIVE);
 		boolean activeWindow = pVal==null || pVal.equalsIgnoreCase("TRUE");
 		if(!activeWindow) {
@@ -1529,19 +1535,19 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			getGuiSettings().getMeasureWindowSettings().put("visible", Boolean.FALSE);
 			getGuiSettings().navigationWindowSettings.put("visible", Boolean.FALSE);
 		}
-		
-		
+
+
 		guiSettings = getGuiSettings().toJSON();
-		
+
 		if( getEnv().get(GeoEngineConstants.ENV_IS_DAFAULT_DRILL_NAV) != null ) {
 			pVal =(String)getEnv().get(GeoEngineConstants.ENV_IS_DAFAULT_DRILL_NAV);
 			boolean defaultDrillNav = pVal==null||pVal.equalsIgnoreCase("TRUE");
 			guiSettings.put("defaultDrillNav", defaultDrillNav);
 		}
-		
-		
-		
+
+
+
 		return	guiSettings;
 	}
 
- }
+}
