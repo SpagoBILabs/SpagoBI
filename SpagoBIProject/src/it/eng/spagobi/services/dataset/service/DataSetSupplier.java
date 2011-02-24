@@ -24,7 +24,6 @@ package it.eng.spagobi.services.dataset.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
@@ -49,16 +48,12 @@ public class DataSetSupplier {
 		
     	SpagoBiDataSet datasetConfig = null;
     	BIObject obj;
-    	Integer dataSetId;
-    	Engine engine;
     	IDataSet dataSet;
     	
     	logger.debug("IN");
 		
 		logger.debug("Requested the datasource associated to document [" + documentId + "]");
-	
-		
-		
+
 		if (documentId == null) {
 		    return null;
 		}
@@ -67,19 +62,19 @@ public class DataSetSupplier {
 		try {
 		    obj = DAOFactory.getBIObjectDAO().loadBIObjectById( Integer.valueOf(documentId) );
 		    if (obj == null) {
-				logger.error("The object with id " + documentId + " deoes not exist on database.");
+				logger.warn("The object with id " + documentId + " deoes not exist on database.");
 				return null;
 		    }
 		    
 		    
 	    	if (obj.getDataSetId() == null) {
-	    		logger.error("Dataset is not configured neither for document nor for its engine.");
+	    		logger.warn("Dataset is not configured for this document:"+documentId);
 	    		return null;
 	    	}
 	    	
 	    	dataSet = DAOFactory.getDataSetDAO().loadDataSetByID( obj.getDataSetId() );
 		    if (dataSet == null) {
-				logger.error("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
+				logger.warn("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
 				return null;
 		    }
 		    
