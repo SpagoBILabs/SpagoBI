@@ -497,3 +497,9 @@ Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir paramètres enregistrés';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir Interrogations QbE';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de spécifier le pool des connexions configurées dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
+//===================================================================
+//MESSAGE BOX BUTTONS
+//===================================================================
+Sbi.locale.ln['sbi.generic.from'] = 'Date de début';
+Sbi.locale.ln['sbi.generic.to'] = 'Date de fin';
+
