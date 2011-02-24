@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -139,6 +140,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("JasperReportRunner.service");
 		String prefixDirTemplate= null;
+		Connection connection = null;
 		try {		
 			Assert.assertNotNull(exporter, "exporter cannot be null");
 			
@@ -184,8 +186,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				jasperPrint = JasperFillManager.fillReport(report, getEnv(), dataSource);
 			} else {
 				logger.debug("... using datasource [" + getDataSource().getLabel() + "]");
-				Connection conn = getConnection();
-				jasperPrint = JasperFillManager.fillReport(report, getEnv(), conn);
+				connection = getConnection();
+				jasperPrint = JasperFillManager.fillReport(report, getEnv(), connection);
 			}
 			
 			monitorFillingReport.stop();
@@ -218,12 +220,23 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		} catch(Throwable e) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", e);
 		} finally {
-			File tmpDir = getCacheDir(prefixDirTemplate);
-			String[] files = tmpDir.list();
-			if (files.length == 0){
-				SpagoBIAccessUtils util = new SpagoBIAccessUtils();
-				util.deleteDirectory(tmpDir);
-				logger.debug("Delating temporary directory: " + tmpDir);
+			try {			
+				if (connection != null && !connection.isClosed()) {
+					connection.close();
+				}
+			} catch (SQLException sqle) {
+				logger.error("Error closing connection",sqle);
+			}
+			try {
+				File tmpDir = getCacheDir(prefixDirTemplate);
+				String[] files = tmpDir.list();
+				if (files.length == 0){
+					SpagoBIAccessUtils util = new SpagoBIAccessUtils();
+					util.deleteDirectory(tmpDir);
+					logger.debug("Delating temporary directory: " + tmpDir);
+				}
+			} catch (Throwable t) {
+				logger.error("Error while deleting cache dir content", t);
 			}
 			monitor.stop();
 			logger.debug("OUT");
