@@ -83,7 +83,6 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.ResourceClassLoader;
@@ -174,9 +173,6 @@ public class JasperReportRunner {
 
 		//ContentServiceProxy contentProxy=new ContentServiceProxy(userId,session);
 		ContentServiceProxy contentProxy=new ContentServiceProxy(userUniqueIdentifier,session);
-
-		//DataSetWsServiceProxy dataSetProxy=new DataSetWsServiceProxy(userId,session);
-		DataSetServiceProxy dataSetProxy=new DataSetServiceProxy(userUniqueIdentifier,session);
 
 		try {								
 			String tmpDirectory = System.getProperty("java.io.tmpdir");

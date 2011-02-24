@@ -323,6 +323,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	
 	
 	void setupLocale() {
+		logger.debug("IN");
 		Locale locale;
 		String language;
 		String country;
@@ -339,6 +340,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			getEnv().put("REPORT_LOCALE", locale);
 
 			if(!template.isPropertiesLoaded()){
+				logger.debug("Properties are loaded");
 				File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
 
 				ClassLoader previous = Thread.currentThread().getContextClassLoader();
@@ -347,10 +349,11 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					resourceBoundle = PropertyResourceBundle.getBundle("messages", locale, dcl);
 					getEnv().put("REPORT_RESOURCE_BUNDLE", resourceBoundle);
 				} catch (Exception e) {
-					logger.error("could not find properties message");
+					logger.warn("could not find properties message",e);
 				}				
 			}
 		}
+		logger.debug("OUT");
 	}
 
 	Map adaptReportParams(JasperReport report) {
