@@ -113,6 +113,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	}	
 	
 	public void runReport(File file)  {
+		logger.debug("IN");
 		OutputStream out;
 		
 		out = null;
@@ -122,6 +123,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		} catch (Throwable t1) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", t1);
 		} finally {
+			logger.debug("OUT");
 			try {
 				if(out != null) {
 					out.flush();
@@ -133,20 +135,10 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		}		
 	}
 	
-	public void runReport(OutputStream out)  {
-		Monitor monitor;
-		
-		
-		String prefixDirTemplate;
-		File[] compiledSubreports;
-		
+	private void runReport(OutputStream out)  {
 		logger.debug("IN");
-		
-		monitor = MonitorFactory.start("JasperReportRunner.service");
-
-		compiledSubreports = null;
-		prefixDirTemplate = null;
-		
+		Monitor monitor = MonitorFactory.start("JasperReportRunner.service");
+		String prefixDirTemplate= null;
 		try {		
 			Assert.assertNotNull(exporter, "exporter cannot be null");
 			
@@ -169,7 +161,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			
 
 			Monitor monitorSubReport = MonitorFactory.start("JasperReportRunner.compileSubReport");
-			compiledSubreports = compileSubreports();
+			File[] compiledSubreports = compileSubreports();
 			monitorSubReport.stop();		
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(new URL[]{getCacheDir(prefixDirTemplate).toURL()}, previous);
@@ -193,8 +185,6 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			monitorFillingReport.stop();
 			logger.debug("Report filled succesfully");
 
-			
-			
 			logger.debug("Exporting report ...");
 			Monitor monitorExportReport =MonitorFactory.start("JasperReportRunner.ExportReport");
 			
@@ -231,6 +221,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			}
 			monitor.stop();
 			logger.debug("OUT");
+			
 		}
 
 	}
