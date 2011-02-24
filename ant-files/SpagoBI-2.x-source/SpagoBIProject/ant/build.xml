@@ -127,18 +127,18 @@
 	  	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
 
 	    <svn>
-            <wcVersion path="${src}" prefix="svn."/>
-        </svn>
+          <wcVersion path="${src}" prefix="svn."/>
+      </svn>
 		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar"  >
-		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
-			<include name="it/**/*" />
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes/it/eng/spagobi">
+			<include name="**/*" />
 		</fileset>
 
 			<manifest>
 				<attribute name="Implementation-Version" value="${svn.revision.max}" />
 			</manifest>
 		</jar>
-		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it/eng/spagobi"/>
 	</target>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
