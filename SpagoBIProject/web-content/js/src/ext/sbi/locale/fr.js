@@ -11,11 +11,7 @@ Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Generic Root';
 Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Generic Node';
 Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Generic Root';
-Sbi.locale.ln['sbidomains.nm.user'] = 'User';
-Sbi.locale.ln['sbidomains.nm.admin'] = 'Administrator';
-Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developer';
-Sbi.locale.ln['sbidomains.nm.test_role'] = 'Test User';
-Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
+Sbi.locale.ln['sbidomains.nm.admin'] = 'Administrateur';
 
 Sbi.locale.ln['sbi.general.No']                       = 'Non';
 Sbi.locale.ln['sbi.general.yes']                      = 'Oui';
@@ -384,17 +380,13 @@ Sbi.locale.ln['sbi.roles.save'] = 'Save';
 Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Save into Personal Folder';
 Sbi.locale.ln['sbi.roles.saveMeta'] = 'Save Metadata';
 Sbi.locale.ln['sbi.roles.saveRemember'] = 'Save Remember Me';
-Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Save Customized Views';
 Sbi.locale.ln['sbi.roles.see'] = 'See';
 Sbi.locale.ln['sbi.roles.seeMeta'] = 'View Metadata';
 Sbi.locale.ln['sbi.roles.seeNotes'] = 'View Notes';
 Sbi.locale.ln['sbi.roles.seeSnapshot'] = 'View Snapshots';
-Sbi.locale.ln['sbi.roles.seeSubobj'] = 'View Customized Views';
-Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'View Saved Parameters';
 Sbi.locale.ln['sbi.roles.sendMail'] = 'Send Mail';
 Sbi.locale.ln['sbi.roles.send'] = 'Send';
 Sbi.locale.ln['sbi.roles.build'] = 'Build';
-Sbi.locale.ln['sbi.roles.buildQbe'] = 'Build QBE';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Name';
 Sbi.locale.ln['sbi.roles.headerDescr'] = 'Description';
 Sbi.locale.ln['sbi.roles.headerCode'] = 'Code';
@@ -481,4 +473,27 @@ Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No Threshold and/or Kpi Instance sele
 Ext.Msg.buttonText.yes = 'Oui'; 
 Ext.Msg.buttonText.no = 'Non';
 
+Sbi.locale.ln['sbi.general.close'] = 'Fermer';
+Sbi.locale.ln['sbidomains.nm.user'] = 'Utilisateur';
+Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developpeur';
+Sbi.locale.ln['sbidomains.nm.test_role'] = 'Testeur';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrateur du Modèle';
+//START GOALS messages
+Sbi.locale.ln['sbi.goals.listTitle'] = 'Liste des Buts';
+Sbi.locale.ln['sbi.goals.nogrant'] = 'Sélectionner un grant'
+Sbi.locale.ln['sbi.goals.nogoal'] = 'Enregistrer le but avant de procéder'
+Sbi.locale.ln['sbi.goals.define.goal'] = 'Définir un but'
+Sbi.locale.ln['sbi.goals.removed'] = 'But effacé correctement'
+Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
+Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insérer les champs requis'   
+Sbi.locale.ln['sbi.goals.weight1'] = 'Poid 1';
+Sbi.locale.ln['sbi.goals.weight2'] = 'Poid 2';
+Sbi.locale.ln['sbi.goals.threshold'] = 'Seuils';
+   
+//END GOALS messages
+Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Enregistrer les Vues Customizées';
+Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Voir Vues Customizées';
+Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir paramètres enregistrés';
+Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir Interrogations QbE';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de spécifier le pool des connexions configurées dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 

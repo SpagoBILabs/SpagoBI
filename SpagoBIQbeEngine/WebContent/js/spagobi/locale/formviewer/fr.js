@@ -5,7 +5,6 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //VIEWER PANEL
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'NAVIGATEUR DONN\u00C9ES';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Executer';
 
 //===================================================================
 //FILTERS PANEL
@@ -33,3 +32,12 @@ Sbi.locale.ln['sbi.formviewer.dynamicfilter.validation.missingvalue'] = 'Valeur 
 //RESULTS PAGE
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.resultspage.backtoform'] = 'Retour au formulaire';
+
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Montrer tables master-detail';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Envoyer la forme et montrer les résultats dans les tables master-detail';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Enregistrer la forme';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Enregistrer l\'état de la forme pour les prochaines executions';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Montrer crosstab';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Envoyer la forme et montrer les résultats dans une cross-table';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
+Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Compte des Records';
