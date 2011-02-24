@@ -54,6 +54,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -380,7 +381,7 @@ public class QueryDetail  implements ILovDetail  {
 			validateNumber(value);
 			return value;
 		} else if (parameterType.equals(SpagoBIConstants.STRING_TYPE_FILTER)) {
-			return "'" + escapeQuotes(value) + "'";
+			return "'" + escapeString(value) + "'";
 		} else if (parameterType.equals(SpagoBIConstants.DATE_TYPE_FILTER)) {
 			validateDate(value);
 			String dialect = getDataSourceDialect();
@@ -439,14 +440,14 @@ public class QueryDetail  implements ILovDetail  {
 		}
 	}
 	
-	private String escapeQuotes(String value) {
+	private String escapeString(String value) {
 		if (value == null) return null;
-		return value.replace("'", "''");
+		return StringEscapeUtils.escapeSql(value);
 	}
 	
 	private String composeStringToDt(String dialect, String date){
 		String toReturn = "";
-		date = escapeQuotes(date); // for security reasons
+		date = escapeString(date); // for security reasons
 		if(dialect!=null){
 			if( dialect.equalsIgnoreCase(DIALECT_MYSQL)){
 				if (date.startsWith("'") && date.endsWith("'")) {
@@ -581,7 +582,7 @@ public class QueryDetail  implements ILovDetail  {
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
 			Connection conn = dsUtil.getConnection(profile,dataSource); 
 			dataConnection = dsUtil.getDataConnection(conn);
-			sqlCommand = dataConnection.createSelectCommand(statement, true);
+			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
 	        ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			SourceBean result = scrollableDataResult.getSourceBean();
@@ -622,7 +623,7 @@ public class QueryDetail  implements ILovDetail  {
 			DataSourceUtilities dsUtil = new DataSourceUtilities();
 			Connection conn = dsUtil.getConnection(profile,dataSource); 
 			dataConnection = dsUtil.getDataConnection(conn);
-			sqlCommand = dataConnection.createSelectCommand(statement, true);
+			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
 	        ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			result = scrollableDataResult.getSourceBean();
