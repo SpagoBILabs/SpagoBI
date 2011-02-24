@@ -352,6 +352,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			if(!template.isPropertiesLoaded()){
 				logger.debug("Properties are loaded");
 				File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
+				
+				logger.debug("Root dir of ResourceClassLoader has been set to [" + resourceDir.getAbsolutePath() + "]");
 
 				ClassLoader previous = Thread.currentThread().getContextClassLoader();
 				ResourceClassLoader dcl = new ResourceClassLoader(resourceDir.getAbsolutePath(), previous);

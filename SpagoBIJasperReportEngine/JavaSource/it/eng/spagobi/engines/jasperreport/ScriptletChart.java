@@ -32,8 +32,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpSession;
-
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
 import net.sf.jasperreports.engine.fill.JRFillParameter;
@@ -42,6 +40,7 @@ import net.sf.jasperreports.engine.fill.JRFillVariable;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 
 /**
  * @author Giulio Gavardi
@@ -66,13 +65,8 @@ public class ScriptletChart extends JRDefaultScriptlet {
 
 			HashMap parametersMap=(HashMap)this.getParameterValue("REPORT_PARAMETERS_MAP");
 
-
-			String userId=(String)parametersMap.get("SBI_USERID");
-
-			logger.debug("user id is "+userId);
-
-			HttpSession session=(HttpSession)parametersMap.get("SBI_HTTP_SESSION");
-
+			DocumentExecuteServiceProxy proxy=(DocumentExecuteServiceProxy)parametersMap.get(EngineConstants.ENV_DOCUMENT_EXECUTE_SERVICE_PROXY);
+			logger.debug("DocumentExecuteServiceProxy is equal to [" + proxy + "]");
 			HashMap chartParameters=new HashMap();
 
 			// Get all defined variables wich start with prefix sbichart,
@@ -123,7 +117,7 @@ public class ScriptletChart extends JRDefaultScriptlet {
 						}
 
 						logger.debug("execute chart with lable "+labelValue);
-						DocumentExecuteServiceProxy proxy=new DocumentExecuteServiceProxy(userId,session);
+						
 						logger.debug("Calling Service");
 						byte[] image=proxy.executeChart(labelValue, chartParameters);
 						logger.debug("Back from Service");
@@ -169,7 +163,6 @@ public class ScriptletChart extends JRDefaultScriptlet {
 									}
 								}
 
-								DocumentExecuteServiceProxy proxy=new DocumentExecuteServiceProxy(userId,session);
 								logger.debug("Calling Service");
 								byte[] image=proxy.executeChart(labelValue, chartParameters);
 								logger.debug("Back from Service");

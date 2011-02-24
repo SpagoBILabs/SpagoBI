@@ -31,6 +31,7 @@ import it.eng.spagobi.engines.jasperreport.JasperReportEngineTemplate;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
@@ -81,6 +82,9 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         		servletIOManager.getEnv().put(OUTPUT_TYPE, outputType);
         		logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value [" + servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
         	}
+        	
+        	// this proxy is used by ScriptletChart to execute and embed external chart into report
+        	servletIOManager.getEnv().put(EngineConstants.ENV_DOCUMENT_EXECUTE_SERVICE_PROXY, servletIOManager.getDocumentExecuteServiceProxy());
         	
         	servletIOManager.auditServiceStartEvent();
         	
