@@ -477,30 +477,30 @@ Sbi.locale.ln['sbi.general.close'] = 'Fermer';
 Sbi.locale.ln['sbidomains.nm.user'] = 'Utilisateur';
 Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developpeur';
 Sbi.locale.ln['sbidomains.nm.test_role'] = 'Testeur';
-Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrateur du Mod\u00e8le';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrateur du Modèle';
 //START GOALS messages
 Sbi.locale.ln['sbi.goals.listTitle'] = 'Liste des Buts';
-Sbi.locale.ln['sbi.goals.nogrant'] = 'S\u00e9lectionner un grant'
-Sbi.locale.ln['sbi.goals.nogoal'] = 'Enregistrer le but avant de proc\u00e9der'
-Sbi.locale.ln['sbi.goals.define.goal'] = 'D\u00e9finir un but'
-Sbi.locale.ln['sbi.goals.removed'] = 'But effac\u00e9 correctement'
+Sbi.locale.ln['sbi.goals.nogrant'] = 'Sélectionner un grant'
+Sbi.locale.ln['sbi.goals.nogoal'] = 'Enregistrer le but avant de procéder'
+Sbi.locale.ln['sbi.goals.define.goal'] = 'Définir un but'
+Sbi.locale.ln['sbi.goals.removed'] = 'But effacé correctement'
 Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
-Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Ins\u00e9rer les champs requis'   
+Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insérer les champs requis'   
 Sbi.locale.ln['sbi.goals.weight1'] = 'Poid 1';
 Sbi.locale.ln['sbi.goals.weight2'] = 'Poid 2';
 Sbi.locale.ln['sbi.goals.threshold'] = 'Seuils';
    
 //END GOALS messages
-Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Enregistrer les Vues Customiz\u00e9es';
-Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Voir Vues Customiz\u00e9es';
-Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir param\u00e8tres enregistr\u00e9s';
+Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Enregistrer les Vues Customizées';
+Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Voir Vues Customizées';
+Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir paramètres enregistrés';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir Interrogations QbE';
-Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de sp\u00e9cifier le pool des connexions configur\u00e9es dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de spécifier le pool des connexions configurées dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
 
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Sbi.locale.ln['sbi.generic.from'] = 'Date de d\u00e9but';
+Sbi.locale.ln['sbi.generic.from'] = 'Date de début';
 Sbi.locale.ln['sbi.generic.to'] = 'Date de fin';
 
