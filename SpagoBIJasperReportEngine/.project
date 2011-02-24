@@ -4,6 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>SpagoBIUtils</project>
+		<project>SpagoBIElisaSecurityProvider</project>
+		<project>SpagoBICustomDatasets</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
