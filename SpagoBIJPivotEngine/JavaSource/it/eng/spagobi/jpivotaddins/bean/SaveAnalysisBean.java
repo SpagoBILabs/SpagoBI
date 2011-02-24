@@ -61,16 +61,6 @@ public class SaveAnalysisBean extends ComponentSupport {
 			this.analysisDescription = null;
 			return;
 		}
-		if (analysisDescription.indexOf("/") != -1 || analysisDescription.indexOf("\\") != -1) {
-			logger.error("Analysis name contains file path separators.");
-	    	String msg = EngineMessageBundle.getMessage("error.analysis.description.contains.separators", locale);
-			throw new FormatException(msg);
-		}
-		if (analysisDescription.indexOf("<") != -1 || analysisDescription.indexOf(">") != -1 || analysisDescription.indexOf("&lt;") != -1 || analysisDescription.indexOf("&gt;") != -1) {
-			logger.error("Analysis name contains invalid characters.");
-	    	String msg = EngineMessageBundle.getMessage("error.analysis.description.invalid.characters", locale);
-			throw new FormatException(msg);
-		}
 		this.analysisDescription = analysisDescription;
 	}
 
@@ -94,16 +84,6 @@ public class SaveAnalysisBean extends ComponentSupport {
 	    if (analysisName == null || analysisName.trim().equals("")) {
 	    	logger.error("Analysis name missing.");
 	    	String msg = EngineMessageBundle.getMessage("error.analysis.name.missing", locale);
-			throw new FormatException(msg);
-		}
-		if (analysisName.indexOf("/") != -1 || analysisName.indexOf("\\") != -1) {
-			logger.error("Analysis name contains file path separators.");
-	    	String msg = EngineMessageBundle.getMessage("error.analysis.name.contains.separators", locale);
-			throw new FormatException(msg);
-		}
-		if (analysisName.indexOf("<") != -1 || analysisName.indexOf(">") != -1 || analysisName.indexOf("&lt;") != -1 || analysisName.indexOf("&gt;") != -1) {
-			logger.error("Analysis name contains invalid characters.");
-	    	String msg = EngineMessageBundle.getMessage("error.analysis.name.invalid.characters", locale);
 			throw new FormatException(msg);
 		}
 		// save the current analisys name if the recoveryAnalysisName variable
