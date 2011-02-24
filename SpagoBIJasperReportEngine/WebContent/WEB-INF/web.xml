@@ -100,18 +100,6 @@
 		<url-pattern>/JasperReportServletBackEnd/*</url-pattern>
 	</filter-mapping>	
 	
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/JasperReportEngineStartAction/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/JasperReportEngineStartActionBackEnd/*</url-pattern>
-	</filter-mapping>
-
-
-
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
 	<!--  ============================================================================ -->
@@ -123,6 +111,13 @@
 			it.eng.spagobi.engines.jasperreport.JasperReportServlet
 		</servlet-class>
 	</servlet>
+	
+		<servlet>
+		<servlet-name>JRImageServlet</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.engines.jasperreport.JRImageServlet
+		</servlet-class>
+	</servlet>
 	 -->
 	 
 	 <servlet>
@@ -131,36 +126,14 @@
 			it.eng.spagobi.engines.jasperreport.services.JasperReportEngineStartAction
 		</servlet-class>
 	</servlet>
-	
+
 	<servlet>
-		<servlet-name>JasperReportEngineStartAction</servlet-name>
+		<servlet-name>JRImageServlet</servlet-name>
 		<servlet-class>
-			it.eng.spagobi.engines.jasperreport.services.JasperReportEngineStartAction
+			it.eng.spagobi.engines.jasperreport.services.JRImageServlet
 		</servlet-class>
 	</servlet>
 
-	<!-- 
-	<servlet>
-		<servlet-name>JRImageServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.engines.jasperreport.JRImageServlet
-		</servlet-class>
-	</servlet>
-	-->
-	
-	<servlet>
-		<servlet-name>JRImageServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.engines.jasperreport.services.JRImageServlet
-		</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>NewJRImageServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.engines.jasperreport.services.JRImageServlet
-		</servlet-class>
-	</servlet>
 
 	<servlet>
 		<servlet-name>SpagoBIDrillServlet</servlet-name>
@@ -191,26 +164,13 @@
 		<servlet-name>JasperReportServlet</servlet-name>
 		<url-pattern>/JasperReportServletBackEnd</url-pattern>
 	</servlet-mapping>	
-	
-	<servlet-mapping>
-		<servlet-name>JasperReportEngineStartAction</servlet-name>
-		<url-pattern>/JasperReportEngineStartAction</url-pattern>
-	</servlet-mapping>	
-	
-	<servlet-mapping>
-		<servlet-name>JasperReportEngineStartAction</servlet-name>
-		<url-pattern>/JasperReportServletBackEnd</url-pattern>
-	</servlet-mapping>	
+
 
 	<servlet-mapping>
 		<servlet-name>JRImageServlet</servlet-name>
 		<url-pattern>/JRImageServlet</url-pattern>
 	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>NewJRImageServlet</servlet-name>
-		<url-pattern>/JRImageServlet</url-pattern>
-	</servlet-mapping>
+
 
 	<servlet-mapping>
 		<servlet-name>SpagoBIDrillServlet</servlet-name>
