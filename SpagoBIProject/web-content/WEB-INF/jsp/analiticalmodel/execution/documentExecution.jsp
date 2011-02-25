@@ -140,14 +140,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<%
 	if (obj == null) {
 		%>
-		var object = {
-			id: undefined,
-			label: undefined,
-			name: undefined,
-			typeCode: undefined,
-			refreshSeconds: undefined,
-			exporters: undefined
-		};
+		var object = undefined;
 		<%
 	} else {
 		%>
@@ -183,19 +176,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	Ext.onReady(function(){
 		Ext.QuickTips.init();
-		var executionPanel = new Sbi.execution.ExecutionPanel(config, object);
-		var viewport = new Ext.Viewport({
-			layout: 'border'
-			, items: [
-			    {
-			       region: 'center',
-			       layout: 'fit',
-			       items: [executionPanel]
-			    }
-			]
-
-		});
-		executionPanel.execute();
+		if (object === undefined) {
+        	Ext.MessageBox.show({
+           		title: 'Error'
+           		, msg: 'Required document was not found or you cannot see it'
+           		, buttons: Ext.MessageBox.OK     
+           		, icon: Ext.MessageBox.ERROR
+           		, modal: false
+       		});
+		} else {
+			var executionPanel = new Sbi.execution.ExecutionPanel(config, object);
+			var viewport = new Ext.Viewport({
+				layout: 'border'
+				, items: [
+				    {
+				       region: 'center',
+				       layout: 'fit',
+				       items: [executionPanel]
+				    }
+				]
+	
+			});
+			executionPanel.execute();
+		}
 	});
     
     </script>
