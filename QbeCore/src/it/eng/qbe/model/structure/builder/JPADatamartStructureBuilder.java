@@ -29,24 +29,25 @@ import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.internal.helper.DatabaseField;
-import org.eclipse.persistence.jpa.JpaEntityManager;
-import org.eclipse.persistence.mappings.DatabaseMapping;
-import org.eclipse.persistence.mappings.DirectToFieldMapping;
-import org.eclipse.persistence.mappings.ManyToOneMapping;
+
+
+
+
+
 
 
 /**
@@ -58,7 +59,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 
 	private JPADataSource dataSource;	
 	private EntityManager entityManager;
-	private EntityType entityType;
+
 	
 	
 
@@ -82,7 +83,8 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		List datamartNames;
 		String datamartName;
 		Metamodel classMetadata;
-			
+		
+		logger.debug("Building the data mart structure..");
 		dataMartStructure = new DataMartModelStructure();	
 		
 		datamartNames = getDataSource().getDatamartNames();
@@ -90,7 +92,6 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		for(int i = 0; i < datamartNames.size(); i++) {
 			datamartName = (String)datamartNames.get(i);
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
-			//EntityManagerFactory emf = getDataSource().getEntityManagerFactory(datamartName);
 			setEntityManager(getDataSource().getEntityManager());
 			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
 			
@@ -98,15 +99,17 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 			dataMartStructure.setCalculatedFields(calculatedFields);
 			
 			classMetadata = getEntityManager().getMetamodel();
-						
+							
+			
+			logger.debug("Loading "+classMetadata.getEntities().size()+" Entities..");
 			for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
-				setEntityType((EntityType)it.next());	
-				logger.debug("Entity: " + getEntityType());
-				String entityTypeName =  getEntityType().getJavaType().getName();
+				EntityType et = (EntityType)it.next();	
+				logger.debug("Entity: " + et);
+				String entityTypeName =  et.getJavaType().getName();
 				addEntity(dataMartStructure, datamartName, entityTypeName);		
 			}			
 		}
-
+		logger.debug("Data mart structure built..");
 		return dataMartStructure;
 	}
 	
@@ -116,7 +119,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		DataMartEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
 		
 		
-		addKeyFields(dataMartEntity);		
+		//addKeyFields(dataMartEntity);		
 		List subEntities = addNormalFields(dataMartEntity);
 		
 		addCalculatedFields(dataMartEntity);
@@ -132,105 +135,70 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 				  
 		return entityName;
 	}
-	 
-	/**
-	 * This method adds the key fields to the datamart entry structure
-	 * @param dataMartEntity:  the datamart structure to complete
-	 */
-	private void addKeyFields(DataMartEntity dataMartEntity) {
-		List identifierPropertyNames = new ArrayList();
-		String[] propertyClass = null;
-		String[] type  = null;
-		int[] scale  = null;
-		int[] precision = null;
-		
-		
-		ClassDescriptor cd = getEntityManager().unwrap(JpaEntityManager.class).getServerSession().getDescriptor(getEntityType().getJavaType());
-		
-		int numKeyFields = cd.getPrimaryKeyFields().size();
-		type  = new String[numKeyFields];
-		scale  = new int[numKeyFields];
-		precision = new int[numKeyFields];
-		propertyClass = new String[numKeyFields];
-		
-		if (numKeyFields == 1){
-			SingularAttribute keyAttr = getEntityType().getId(getEntityType().getIdType().getJavaType());
-			DatabaseMapping dmp = cd.getMappingForAttributeName( keyAttr.getName());
-			identifierPropertyNames.add(keyAttr.getName());
-			
-			propertyClass[0] = dmp.getAttributeClassification().getName();
-			type[0] = dmp.getField().getTypeName();		
-			scale[0] = dmp.getField().getScale();
-			precision[0] = dmp.getField().getPrecision();
-			
-		}else{
-			int i=0;
-			for(Iterator it =  getEntityType().getIdClassAttributes().iterator(); it.hasNext(); ) {
-				SingularAttribute keyAttr = (SingularAttribute)it.next();
-				DatabaseMapping dmp = cd.getMappingForAttributeName( keyAttr.getName());
-				identifierPropertyNames.add(keyAttr.getName());
-				
-				propertyClass[i] = dmp.getField().getName();
-				type[i] = dmp.getField().getTypeName();		
-				scale[i] = dmp.getField().getScale();
-				precision[i] = dmp.getField().getPrecision();
-				i++;
-			}	
-		}
-		
-		for (int j = 0; j < identifierPropertyNames.size(); j++) {
-			String fieldName = (String)identifierPropertyNames.get(j);					
-			DataMartField dataMartField = dataMartEntity.addKeyField(fieldName);
-			dataMartField.setType(type[j]);
-			dataMartField.setPrecision(precision[j]);
-			dataMartField.setLength(scale[j]);
-		}
-		
-	}
-	
+
 	/**
 	 * This method adds the normal fields to the datamart entry structure
 	 * @param dataMartEntity:  the datamart structure to complete
 	 */
 	public List addNormalFields(DataMartEntity dataMartEntity) {		
-
+		logger.debug("Adding the field "+dataMartEntity.getName());
 		String[] propertyNames;
 		List subEntities = new ArrayList();			
-
-		ClassDescriptor cd = getEntityManager().unwrap(JpaEntityManager.class).getServerSession().getDescriptor(getEntityType().getJavaType());
-		Vector<DatabaseMapping> dbMaps = cd.getMappings();
+		EntityType thisEntityType = null;
 		
-		for (int i=0, l=dbMaps.size(); i<l; i++){
-			DatabaseMapping fieldMap = dbMaps.get(i);			
-			if (fieldMap instanceof DirectToFieldMapping){ // field normal or table key		
-				if (!fieldMap.isPrimaryKeyMapping()){
-					DatabaseField field = fieldMap.getField();						
-					String type = field.getTypeName();
-					int scale = field.getScale();
-					int precision = field.getPrecision();
+		Metamodel classMetadata = getEntityManager().getMetamodel();
+		
+		for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
+			EntityType et = (EntityType)it.next();
+			if(et.getJavaType().getName().equals(dataMartEntity.getType())){
+				thisEntityType = et;
+				break;
+			}
+		}	
+		
+		if(thisEntityType==null){
+			return new ArrayList();
+		}
+		
+		Set<Attribute> attributes = thisEntityType.getAttributes();
+		Iterator<Attribute> attributesIt = attributes.iterator();
+		
+		
+		while(attributesIt.hasNext()){
+			Attribute a = attributesIt.next();
+			String n = a.getName();
+			Member m = a.getJavaMember();
+			Class c = a.getJavaType();
 
-					DataMartField datamartField = dataMartEntity.addNormalField(fieldMap.getAttributeName());
-					datamartField.setType(type);
-					datamartField.setPrecision(precision);
-					datamartField.setLength(scale);
-					
-				}else {
-					logger.debug("It's a key already loaded!");
+			if(a.getPersistentAttributeType().equals(PersistentAttributeType.BASIC)){		
+				String type = c.getName();
+				
+				// TODO: SCALE E PREC
+				int scale = 0;
+				int precision = 0;
+
+				DataMartField datamartField = dataMartEntity.addNormalField( a.getName());
+				datamartField.setType(type);
+				datamartField.setPrecision(precision);
+				datamartField.setLength(scale);
+			}else {
+				if(a.getPersistentAttributeType().equals(PersistentAttributeType.MANY_TO_ONE)){
+					String entityType = c.getName();
+					String columnName = a.getName();
+					String entityName =  a.getName();
+			 		DataMartEntity subentity = new DataMartEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
+			 		subEntities.add(subentity);		
 				}
-			}else if (fieldMap instanceof ManyToOneMapping){ // fk	
-				String entityType = ((ManyToOneMapping) fieldMap).getReferenceClassName();
-				String columnName = fieldMap.getReferenceDescriptor().getCacheKeyType().name();
-				String entityName = fieldMap.getReferenceDescriptor().getAlias();
-		 		DataMartEntity subentity = new DataMartEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
-		 		subEntities.add(subentity);	
 			}
 		}
-	
+		
+		logger.debug("Field "+dataMartEntity.getName()+" added");
 		return subEntities;
 	}
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
 	private void addCalculatedFields(DataMartEntity dataMartEntity) {
+		logger.debug("Adding the calculated field "+dataMartEntity.getName());
 		List calculatedFileds;
 		DataMartCalculatedField calculatedField;
 		
@@ -241,6 +209,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 				dataMartEntity.addCalculatedField(calculatedField);
 			}
 		}
+		logger.debug("Added the calculated field "+dataMartEntity.getName());
 	}
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
@@ -261,16 +230,17 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!	
 	private void addSubEntity (DataMartEntity parentEntity, DataMartEntity subEntity, int recursionLevel){
-
+		logger.debug("Adding the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());
 		DataMartEntity dataMartEntity;				
 		
 		//String entityName = getEntityNameFromEntityType(entityType);		
 		dataMartEntity = parentEntity.addSubEntity(subEntity.getName(), subEntity.getRole(), subEntity.getType());
 		
-		addKeyFields(dataMartEntity);			
+		//addKeyFields(dataMartEntity);			
 		List subEntities = addNormalFields(dataMartEntity);		
 		addCalculatedFields(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, recursionLevel);
+		logger.debug("Added the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());
 	}
 	
 	/**
@@ -285,20 +255,6 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 */
 	public void setDataSource(JPADataSource dataSource) {
 		this.dataSource = dataSource;
-	}
-
-	/**
-	 * @return the entityType
-	 */
-	public EntityType getEntityType() {
-		return entityType;
-	}
-
-	/**
-	 * @param entityType the entityType to set
-	 */
-	public void setEntityType(EntityType entityType) {
-		this.entityType = entityType;
 	}
 
 	/**

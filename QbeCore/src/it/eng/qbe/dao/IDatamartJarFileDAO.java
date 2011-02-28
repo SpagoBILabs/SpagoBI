@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.dao;
 
+import java.io.IOException;
+
 import it.eng.qbe.bo.DatamartJarFile;
 
 // TODO: Auto-generated Javadoc
@@ -46,4 +48,13 @@ public interface IDatamartJarFileDAO {
 	 * @param jarFile the jar file
 	 */
 	void saveDatamartJarFile(String datamartName, DatamartJarFile jarFile);
+	
+	/**
+	 * Check if the datamart contains the resource META-INF/persistence.xml
+	 * If so the datamart contains a JPA mapping
+	 * @param datamartName the name of the datamrt
+	 * @return true if the mapping in the jar is a JPA mapping
+	 * @throws IOException
+	 */
+	boolean isAJPADatamartJarFile(String datamartName) throws IOException;
 }

@@ -43,6 +43,7 @@ import org.hibernate.mapping.Table;
 
 import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.datasource.AbstractDataSource;
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.io.IDataMartModelRetriever;
 import it.eng.qbe.statment.IStatement;

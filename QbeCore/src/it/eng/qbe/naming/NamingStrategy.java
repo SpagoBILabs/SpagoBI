@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.naming;
 
-import it.eng.qbe.datasource.hibernate.DBConnection;
+import it.eng.qbe.datasource.DBConnection;
 
 import java.util.List;
 
