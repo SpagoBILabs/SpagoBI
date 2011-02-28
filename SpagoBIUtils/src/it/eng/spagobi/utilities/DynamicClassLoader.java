@@ -36,8 +36,11 @@ package it.eng.spagobi.utilities;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -135,7 +138,66 @@ public class DynamicClassLoader extends URLClassLoader {
 		return classToReturn;
 	}
 
+    /**
+     * Returns an input stream for reading the specified resource. 
+     * We overwrite the parent method for get class from the datamart.jar file
+     * @param The resource name 
+     * @return An input stream for reading the resource, or null if the resource could not be found
+     */
+	public synchronized InputStream getResourceAsStream(String className)  {
 
+		ZipFile zipFile = null;
+		BufferedInputStream bis = null;
+		try {
+			zipFile = new ZipFile(jar);
+			ZipEntry zipEntry = zipFile.getEntry(className);
+			bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+		} catch (Exception ex) {
+			logger.warn("className: " +  className + " Exception: "+ ex);
+		} 
 
-
+		return bis;
+	}
+	
+    /**
+     * Finds the resource with the given name. A resource is some data (images, audio, text, etc) 
+     * that can be accessed by class code in a way that is independent of the location of the code.
+     * The name of a resource is a '/'-separated path name that identifies the resource. 
+     * We overwrite the parent method for the persistence.xml from the datamart.jar file
+     * @param The resource name 
+     * @return An enumeration of URL objects for the resource. If no resources could be found, 
+     * the enumeration will be empty. Resources that the class loader doesn't have access to will not be in the enumeration. 
+     */
+	public Enumeration<URL> getResources(String descriptorPath)  throws IOException{
+		
+		if(descriptorPath.equals("META-INF/persistence.xml")){
+			//load the persistence.xml from the jar file
+			try{
+				String s = jar.getAbsolutePath().replace(File.separatorChar, '/');		
+				final URL jarUrl = new URL("jar","",-1,"file:/"+s+"!/META-INF/persistence.xml");
+				//build the enumeration with only the URL with the location of the persistence.xml
+				return new Enumeration<URL>() {
+					private int position = 0;
+					
+					public boolean hasMoreElements() {
+						return position>=0;
+					}
+					
+					public URL nextElement() {
+						if(position<0)
+							throw new NoSuchElementException();
+						position --;
+						return jarUrl;
+					}
+				};
+			}catch (Exception e) {
+				logger.error("Error loading the "+descriptorPath+" from the jar file "+jar.getAbsolutePath(),e);
+				logger.error("Use the default loader..");
+				return super.getResources(descriptorPath);
+			}
+		}else{
+			return super.getResources(descriptorPath);
+		}
+	}
+	
 }
