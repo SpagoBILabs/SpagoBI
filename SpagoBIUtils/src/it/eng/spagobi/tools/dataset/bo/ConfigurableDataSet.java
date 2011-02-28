@@ -5,6 +5,7 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -25,6 +26,8 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	IDataReader dataReader;
 	IDataProxy dataProxy;
 	IDataStore dataStore;
+	protected boolean abortOnOverflow;	
+	protected Map bindings;
 
 	Object query;	
 
@@ -148,6 +151,14 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 
 	public void setUserProfile(IEngUserProfile userProfile) {
 		this.userProfile = userProfile;
+	}
+	
+	public void setAbortOnOverflow(boolean abortOnOverflow) {
+		this.abortOnOverflow = abortOnOverflow;
+	}
+	
+	public void addBinding(String bindingName, Object bindingValue) {
+		bindings.put(bindingName, bindingValue);
 	}
 
 }

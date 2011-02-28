@@ -87,6 +87,10 @@ public interface IDataSet {
 	
 	boolean hasDataStoreTransformer() ;
 	void removeDataStoreTransformer() ;
+	
+	void setAbortOnOverflow(boolean abortOnOverflow);
+	void addBinding(String bindingName, Object bindingValue);
+	
 	void setDataStoreTransformer(IDataStoreTransformer transformer);
 	IDataStoreTransformer getDataStoreTransformer();
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
