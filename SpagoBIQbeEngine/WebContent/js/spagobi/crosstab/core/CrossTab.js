@@ -78,12 +78,16 @@
 Ext.ns("Sbi.crosstab.core");
 
 Sbi.crosstab.core.CrossTab = function(config) {
-    this.calculatedFields = new Array();
     
-	Ext.apply(this, config);
-	
+	var defaultSettings = {};
+	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.crossTab) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.crossTab);
+	}
+	defaultSettings = Ext.apply(defaultSettings, config);
+	Ext.apply(this, defaultSettings);
+
+	this.calculatedFields = new Array();
 	this.manageDegenerateCrosstab(this.rowHeadersDefinition, this.columnHeadersDefinition);
-	this.fontSize = 10;
 	this.entries = new Sbi.crosstab.core.CrossTabData(this.entries);
     this.rowHeader = new Array();
     this.build(this.rowHeadersDefinition, 0, this.rowHeader, false);
@@ -143,6 +147,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     ,checkBoxWindow: null //window with the checkBoxs for hide or show a column/line
 	,columnWidth: 80
 	,rowHeight: 25
+	,fontSize: 10
 	,entriesPanel : null
 	,crossTabCFWizard: null
 	,clickMenu: null
@@ -1160,7 +1165,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    , '<div id="{divId}" class="x-panel crosstab-table-cells crosstab-table-cells-{celltype}" ' // the crosstab-table-cells class is needed as itemSelector
     	    , ' style="height: '+(this.rowHeight-2+ieOffset)+'px; width:'+(this.columnWidth-2)+'px; float:left;" >'
     	    , '  <div class="x-panel-bwrap"> '
-    	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+'">'
+    	    , '    <div style="width:'+(this.columnWidth-2)+'px; overflow:hidden; padding-top:'+(this.rowHeight-4-this.fontSize)/2+';font-size:'+this.fontSize+';">'
     	    , '    {[this.format(values.name, values.datatype, values.format)]}'
     	    , '    </div> '
     	    , '  </div>'

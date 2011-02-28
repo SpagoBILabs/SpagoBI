@@ -57,7 +57,12 @@ Ext.ns("Sbi.crosstab.core");
 
 Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level, width, height, type) {
 	this.backgroundImg = "../img/crosstab/headerbackground.gif";
+	
 	var c ={};
+	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.crossTab) {
+		c = Ext.apply(c, Sbi.settings.qbe.crossTab);
+	}
+	Ext.apply(this, c);
 	this.level = level;
 	this.horizontal = horizontal;
 	this.thisDimension = thisDimension;
@@ -84,7 +89,8 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 				height: h,
 				hideMode: 'offsets',
 				html: this.getBackground(h+'px',(this.fontSize+(h/2))+'px'),
-				bodyCssClass: 'x-grid3-header crosstab-table-headers' 
+				bodyCssClass: 'x-grid3-header crosstab-table-headers' ,
+				bodyStyle: 'font-size:'+ this.fontSize
 		};
 	}else{
 		c = {
@@ -92,7 +98,8 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 				height: this.thisDimension*this.rowHeight,
 				hideMode: 'offsets',
 				html: this.getBackground('105%',((this.thisDimension*h+this.fontSize)/2)+'px'),
-				bodyCssClass: 'x-grid3-header crosstab-table-headers'
+				bodyCssClass: 'x-grid3-header crosstab-table-headers',
+				bodyStyle: 'font-size:'+ this.fontSize
 			};	
 	}
 	
