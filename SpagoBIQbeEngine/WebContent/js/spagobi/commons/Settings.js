@@ -64,6 +64,12 @@ Sbi.settings.qbe = {
 			enableTreeContextMenu: true
 		}
 		
+		, crossTab: {
+			 columnWidth: 80
+			, rowHeight: 25
+			, fontSize: 10
+		}
+		
 };
 
 Sbi.settings.formviewer = {
