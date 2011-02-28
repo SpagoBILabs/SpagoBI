@@ -55,6 +55,8 @@ public class CmdExecWork extends SpagoBIWork {
 	static private Logger logger = Logger.getLogger(CmdExecWork.class);
 	/** the process aunche*/
 	Process process = null;
+	/** the flag for automatic instance ID (external creation) */
+	static final String INSTANCE_AUTO="INSTANCE=AUTO";
 
 	public boolean isDaemon() {
 		return false;
@@ -87,6 +89,8 @@ public class CmdExecWork extends SpagoBIWork {
 	public int execCommand() throws InterruptedException, IOException {
 		logger.debug("IN");
 		File directoryExec = null;
+		boolean isInstanceAuto = false;
+		
 		if(commandEnvironment != null) {
 			directoryExec = new File(commandEnvironment);
 			logger.info("commandEnvironment="+commandEnvironment);
@@ -107,8 +111,9 @@ public class CmdExecWork extends SpagoBIWork {
 
 		// add command parameters
 		for (Iterator iterator = cmdParameters.iterator(); iterator.hasNext();) {
-			String par = (String) iterator.next();			
+			String par = (String) iterator.next();		
 			command += par + " ";
+			isInstanceAuto = (par.toUpperCase().indexOf(INSTANCE_AUTO) > -1)?true:false;
 		}
 
 
@@ -123,9 +128,11 @@ public class CmdExecWork extends SpagoBIWork {
 			}
 		}
 
-		// add pid to command
-		String pidStr = "instance="+pid;
-		command += pidStr;
+		// add pid to command if it's non defined as 'AUTO' definition
+		if (!isInstanceAuto){
+			String pidStr = "instance="+pid;
+			command += pidStr;
+		}
 		
 
     	if(isRunning()){
