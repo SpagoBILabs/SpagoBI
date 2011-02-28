@@ -20,6 +20,7 @@
  **/
 package it.eng.qbe.datasource.jpa;
 
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 
 import javax.persistence.EntityManager;

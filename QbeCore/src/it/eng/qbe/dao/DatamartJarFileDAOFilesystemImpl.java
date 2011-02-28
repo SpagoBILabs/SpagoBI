@@ -21,6 +21,9 @@
 package it.eng.qbe.dao;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import it.eng.qbe.bo.DatamartJarFile;
 
@@ -51,6 +54,14 @@ public class DatamartJarFileDAOFilesystemImpl implements IDatamartJarFileDAO {
 
 		return jarFile;
 	}
+	
+	public boolean isAJPADatamartJarFile(String datamartName) throws IOException{
+		DatamartJarFile jarFile = loadDatamartJarFile(datamartName);
+		ZipFile zipFile = new ZipFile(jarFile.getFile());
+		ZipEntry ze = zipFile.getEntry("META-INF/persistence.xml");
+		return ze!=null;
+	}
+	
 
 	public void saveDatamartJarFile(String datamartName, DatamartJarFile jarFile) {
 		

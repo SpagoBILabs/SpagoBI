@@ -21,6 +21,7 @@
 package it.eng.qbe.datasource;
 
 import java.util.List;
+import java.util.Map;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
@@ -45,6 +46,8 @@ public abstract class AbstractDataSource implements IDataSource {
 	private DatamartProperties properties = null;	
 	private DataMartModelAccessModality dataMartModelAccessModality;
 	private DataMartModelStructure dataMartModelStructure = null;
+	private DBConnection connection = null;
+	private Map dblinkMap = null;
     
 	public DataMartModelStructure getDataMartModelStructure() {
 		IDataMartStructureBuilder builder;
@@ -124,6 +127,43 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	public void setProperties(DatamartProperties properties) {
 		this.properties = properties;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.datasource.IJPADataSource#getConnection()
+	 */
+	public DBConnection getConnection() {
+		return connection;
+	}
+
+
+	/**
+	 * Sets the connection.
+	 * 
+	 * @param connection the new connection
+	 */
+	public void setConnection(DBConnection connection) {
+		this.connection = connection;
+	}
+	
+
+	/**
+	 * Gets the dblink map.
+	 * 
+	 * @return the dblink map
+	 */
+	public Map getDblinkMap() {
+		return dblinkMap;
+	}
+
+
+	/**
+	 * Sets the dblink map.
+	 * 
+	 * @param dblinkMap the new dblink map
+	 */
+	public void setDblinkMap(Map dblinkMap) {
+		this.dblinkMap = dblinkMap;
 	}
 	
 }

@@ -31,6 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.DBConnection;
 
 
 /**

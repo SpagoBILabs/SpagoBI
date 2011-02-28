@@ -3,12 +3,12 @@
  */
 package it.eng.qbe.test.jpa;
 
-import it.eng.qbe.datasource.jpa.DBConnection;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.export.JPQLToSqlQueryRewriter;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.jpa.JPQLStatement;
+import it.eng.qbe.statment.jpql.JPQLDataSet;
+import it.eng.qbe.statment.jpql.JPQLStatement;
 
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class JPAStatementTest {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		
 		//test for jpa
@@ -41,21 +41,7 @@ public class JPAStatementTest {
 		jpaDS.setDatamartNames(ar);
 		
 		jpaDS.setDataMartModelAccessModality(new DataMartModelAccessModality());
-		try{
-			jpaDS.getEntityManager().getTransaction().begin();
 
-			java.sql.Connection sqlConn = jpaDS.getEntityManager().unwrap(java.sql.Connection.class);
-			if (sqlConn != null) {
-				DBConnection conn = new DBConnection();
-				DatabaseMetaData dbMeta  = sqlConn.getMetaData();
-				conn.setDialect(dbMeta.getDatabaseProductName());
-				conn.setUrl(dbMeta.getURL());
-				conn.setUsername(dbMeta.getUserName());
-				conn.setDriverClass(dbMeta.getDriverName());
-			}
-		}catch (Exception e){
-			System.out.println("Error: " + e.getLocalizedMessage());
-		}
 		
 		//fine forzature
 		
@@ -71,9 +57,9 @@ public class JPAStatementTest {
 		queryTest.addSelectFiled("it.eng.spagobi.jpa.SbiExtRole:descr", null, "descr", true, true, false, null, null);
 	
 		JPQLStatement stmt = new JPQLStatement(jpaDS, queryTest);
-		//stmt.prepare();
-		JPQLToSqlQueryRewriter jpqlRew = new JPQLToSqlQueryRewriter(em);
-		jpqlRew.rewrite(stmt.getQueryString());
+		stmt.prepare();
+		JPQLDataSet jpqlds = new JPQLDataSet(stmt);
+		jpqlds.loadData();
 		
 		em.close();
 		

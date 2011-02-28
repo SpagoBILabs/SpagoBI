@@ -40,17 +40,23 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -628,6 +634,7 @@ public class HQLStatement extends AbstractStatement {
 	
 	private String getValueBounded(String operandValueToBound, String type) {
 		String boundedValue = operandValueToBound;
+		Date operandValueToBoundDate = null;
 		if (type.equalsIgnoreCase("String") || type.equalsIgnoreCase("character")) {
 			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes 
 			if (operandValueToBound.startsWith("'") && operandValueToBound.endsWith("'")) {
@@ -639,10 +646,27 @@ public class HQLStatement extends AbstractStatement {
 		} else if(type.equalsIgnoreCase("timestamp") || type.equalsIgnoreCase("date")){
 
 			String dbDialect = ((IHibernateDataSource)getDataSource()).getConnection().getDialect();
-			String format = "MM/dd/yyyy";
-			SimpleDateFormat f = new SimpleDateFormat();
-			f.applyPattern(format);
-			boundedValue = composeStringToDt(dbDialect,operandValueToBound);
+			
+			//Parse the date given by the user: from the locale of the user to the italian tyme
+			Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
+			String ln = l.getLanguage();
+			String userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT."+ln);
+			if(userDfString==null){
+				userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.en");
+			}
+			
+			DateFormat df = new SimpleDateFormat(userDfString);		
+
+			try{
+				operandValueToBoundDate = df.parse(operandValueToBound);
+			} catch (ParseException e) {
+				logger.error("Error parsing the date "+operandValueToBound);
+				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDfString);
+			}
+			
+			String dbDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.it");
+			df = new SimpleDateFormat(dbDfString);		
+			boundedValue = composeStringToDt(dbDialect,df.format(operandValueToBoundDate));
 		}
 		return boundedValue;
 	}
@@ -663,10 +687,20 @@ public class HQLStatement extends AbstractStatement {
 					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y %h:%i:%s') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = date;
-				}else{
-					toReturn = "'"+date+"'";
+				try {
+					DateFormat df;
+					if (date.startsWith("'") && date.endsWith("'")) {
+						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					}else{
+						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+					
+					Date myDate = df.parse(date);
+					df = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn =  "'"+df.format(myDate)+"'";
+
+				} catch (Exception e) {
+					toReturn = "'" +date+ "'";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
 				if (date.startsWith("'") && date.endsWith("'")) {
@@ -852,195 +886,6 @@ public class HQLStatement extends AbstractStatement {
 		}
 		return freshExpr;
 	}
-	
-	
-	/*
-	private String buildUserProvidedWhereField(WhereField whereField, Query query, Map entityAliasesMaps) {
-		
-		String whereClauseElement;
-		Map targetQueryEntityAliasesMap;
-		String leftHandValue;
-		String rightHandValue;
-		DataMartField datamartField;
-		DataMartEntity rootEntity;
-		String queryName;
-		String rootEntityAlias;
-		
-		
-		logger.debug("IN");
-		
-		try {
-			whereClauseElement = "";
-			leftHandValue = "";
-			rightHandValue = "";
-		
-			targetQueryEntityAliasesMap = (Map)entityAliasesMaps.get(query.getId());
-			Assert.assertNotNull(targetQueryEntityAliasesMap, "Entity aliasses map for query [" + query.getId() + "] cannot be null in order to execute method [buildUserProvidedWhereField]");
-			
-			
-			// build left-hand value
-			logger.debug("processing where element left-hand field value ...");
-			
-			logger.debug("where left-hand field unique name [" + whereField.getUniqueName() + "]");
-			
-			datamartField = getDataMartModel().getDataMartModelStructure().getField(whereField.getUniqueName());
-			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + whereField.getOperand().toString() + "]");
-			queryName = datamartField.getQueryName();
-			logger.debug("where left-hand field query name [" + queryName + "]");
-			
-			rootEntity = datamartField.getParent().getRoot(); 
-			logger.debug("where left-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-			
-			if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
-				logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-				rootEntityAlias = getNextAlias(entityAliasesMaps);
-				logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-				targetQueryEntityAliasesMap.put(rootEntity.getUniqueName(), rootEntityAlias);
-			}
-			rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );		
-			logger.debug("where left-hand field root entity alias [" + rootEntityAlias + "]");
-			
-			leftHandValue = rootEntityAlias + "." + queryName;
-			logger.debug("where element left-hand field value [" + leftHandValue + "]");
-			
-			
-			// build right-hand value
-			logger.debug("processing where element right-hand field value ...");
-			
-			if(OPERAND_TYPE_FIELD.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_FIELD + "]");
-				
-				logger.debug("where right-hand field unique name [" + whereField.getOperand().toString() + "]");
-				
-				datamartField = getDataMartModel().getDataMartModelStructure().getField( whereField.getOperand().toString() );
-				Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + whereField.getOperand().toString() + "]");
-				queryName = datamartField.getQueryName();
-				logger.debug("where right-hand field query name [" + queryName + "]");
-				
-				rootEntity = datamartField.getParent().getRoot(); 
-				logger.debug("where right-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-				
-				if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
-					logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-					rootEntityAlias = getNextAlias(entityAliasesMaps);
-					logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-					targetQueryEntityAliasesMap.put(rootEntity.getUniqueName(), rootEntityAlias);
-				}
-				rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );
-				logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
-				
-				rightHandValue = rootEntityAlias + "." + queryName;
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-				
-			} else if(OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				String operand;
-				String[] chunks;
-				String parentQueryId;
-				String fieldName;
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_FIELD + "]");
-				
-				// it comes directly from the client side GUI. It is a composition of the parent query id and filed name, 
-				// separated by a space
-				operand = whereField.getOperand().toString();
-				logger.debug("operand  is equals to [" + operand + "]");
-				
-				chunks = operand.split(" ");
-				Assert.assertTrue(chunks.length >= 2, "Operand [" + chunks.toString() + "]does not contains enougth informations in order to resolve the reference to parent field");
-				
-				parentQueryId = chunks[0];
-				logger.debug("where right-hand field belonging query [" + parentQueryId + "]");
-				fieldName = chunks[1];
-				logger.debug("where right-hand field unique name [" + fieldName + "]");
-	
-				datamartField = getDataMartModel().getDataMartModelStructure().getField( fieldName );
-				Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + fieldName + "]");
-				
-				queryName = datamartField.getQueryName();
-				logger.debug("where right-hand field query name [" + queryName + "]");
-				
-				rootEntity = datamartField.getParent().getRoot();
-				logger.debug("where right-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-				
-				Map parentEntityAliases = (Map)entityAliasesMaps.get(parentQueryId);
-				if(parentEntityAliases != null) {
-					if(!parentEntityAliases.containsKey(rootEntity.getUniqueName())) {
-						Assert.assertUnreachable("Filter [" + whereField.getUniqueName() + "] of subquery [" + query.getId() + "] refers to a non " +
-								"existing parent query [" + parentQueryId+ "] entity [" + rootEntity.getUniqueName() + "]");
-					}
-					rootEntityAlias = (String)parentEntityAliases.get( rootEntity.getUniqueName() );
-				} else {
-					rootEntityAlias = "unresoved_alias";
-					logger.warn("Impossible to get aliases map for parent query [" + parentQueryId +"]. Probably the parent query ha not been compiled yet");					
-					logger.warn("Query [" + query.getId() +"] refers entities of its parent query [" + parentQueryId +"] so the generated statement wont be executable until the parent query will be compiled");					
-				}
-				logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
-				
-				rightHandValue = rootEntityAlias + "." + queryName;
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-				
-			} else if(OPERAND_TYPE_STATIC.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_STATIC + "]");
-				
-				if (whereField.isFree()) {
-					// get last value first (the last value edited by the user)
-					rightHandValue = whereField.getLastValue();
-				} else {
-					rightHandValue = whereField.getOperand().toString();
-				}
-				
-				logger.debug("where right-hand field value [" + rightHandValue + "]");
-				
-				logger.debug("where right-hand field type [" + datamartField.getType() + "]");
-				
-				if(datamartField.getType().equalsIgnoreCase("String")) {
-					if( !( whereField.IN.equalsIgnoreCase( whereField.getOperator() ) 
-							|| whereField.IN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.NOT_IN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.BETWEEN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.NOT_BETWEEN.equalsIgnoreCase( whereField.getOperator() ) 
-					)) {
-						rightHandValue = "'" + rightHandValue + "'";
-					} else {
-						String[] items = rightHandValue.split(",");
-						rightHandValue = "";
-						for(int i = 0; i < items.length; i++) {
-							rightHandValue += (i==0?"":",") + "'" + items[i] + "'";
-						}					
-					}
-				}
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-			} else if(OPERAND_TYPE_SUBQUERY.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				String subqueryId;
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_SUBQUERY + "]");
-				
-				subqueryId = (String)whereField.getOperand();
-				logger.debug("Referenced subquery [" + subqueryId + "]");
-				
-				rightHandValue = "Q{" + subqueryId + "}";
-				rightHandValue = "( " + rightHandValue + ")";
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-			} else {
-				Assert.assertUnreachable("Unrecognized filter type: " + whereField.getOperandType());
-			}		
-			
-			IConditionalOperator conditionalOperator = null;
-			conditionalOperator = (IConditionalOperator)conditionalOperators.get( whereField.getOperator() );
-			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
-			
-			
-			whereClauseElement = conditionalOperator.apply(leftHandValue, rightHandValue);
-			logger.debug("where element value [" + whereClauseElement + "]");
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		
-		return  whereClauseElement;
-	}
-	*/
 	
 	private String buildUserProvidedWhereClause(ExpressionNode filterExp, Query query, Map entityAliasesMaps) {
 		String str = "";

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.jpa.DBConnection;
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.statment.IStatement;
 
 import java.io.File;
@@ -139,7 +139,7 @@ public class JPADataSource extends AbstractJPADataSource {
 		}	
 		
 		factory = Persistence.createEntityManagerFactory( getDatamartName() );
-		System.out.println("Factory created: " + factory);
+		
 	}
 	
 	

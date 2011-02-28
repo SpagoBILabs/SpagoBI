@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -39,6 +40,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 public class QueryCatalogue {
 	
 	Map queries;
+	String firstQueryId;
 	
 	private long counter;
 	
@@ -52,6 +54,7 @@ public class QueryCatalogue {
     
 	public QueryCatalogue(long counterOffset) {
 		this.queries = new HashMap();
+		this.firstQueryId = null;
 		this.counter = counterOffset;
 		logger.debug("Query's id counter has been initialized to [" + this.counter + "]");
 	}
@@ -144,8 +147,36 @@ public class QueryCatalogue {
 	
 
 	public Query getFirstQuery() {
-		//String queryId = (String) queries.keySet().iterator().next();
+		/*
 		Query query = (Query) getAllQueries(false).iterator().next();
+		return query;
+		*/
+		//Query firstQuery;
+		
+		logger.debug("IN");
+		/*
+		firstQuery = null;
+		if(firstQueryId != null) {
+			firstQuery = (Query)queries.get(firstQueryId);
+		} else {
+			firstQuery = null;
+		}
+		*/
+		Query query;
+		Set<String> sortedSet = new TreeSet<String>( queries.keySet() ); 
+	
+		query = null;
+		if(sortedSet.size() > 0) {
+			String queryId = sortedSet.iterator().next();
+			query = (Query)queries.get(queryId);
+			//logger.debug("TEST METHOD:First query id is equal to [" + query.getId() + "; " + query.getName() +"]");
+		}
+		
+		
+		logger.debug("First query id is equal to [" + query.getId() + "; " + query.getName() +"]");
+		
+		logger.debug("OUT");
+		
 		return query;
 	}
 	
@@ -201,6 +232,12 @@ public class QueryCatalogue {
 				logger.debug("Adding subquery [" + subquery.getId() + "] of query [" + query.getId() + "]");	
 				addQuery(subquery);
 				logger.debug("Subquery [" + subquery.getId() + "] of query [" + query.getId() + "] has been added succesfully");
+			}
+			
+			if(firstQueryId == null) { 
+				logger.debug("First query of catalogue is [" + query.getId() + "; " + query.getName() +"]");
+				firstQueryId = query.getId(); 
+				logger.debug("First query set [" + firstQueryId + "]");
 			}
 		} finally {
 			logger.debug("OUT");

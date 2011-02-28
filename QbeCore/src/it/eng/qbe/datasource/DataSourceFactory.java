@@ -26,10 +26,13 @@ import java.util.Map;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.hibernate.AbstractHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.BasicHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.CompositeHibernateDataSource;
-import it.eng.qbe.datasource.hibernate.DBConnection;
+import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 
 /**
  * The Class DataSourceFactory.
@@ -53,14 +56,24 @@ public class DataSourceFactory {
 	public static IDataSource buildDataSource(String dataSourceName, 
 			String datamartName, List datamartNames,  Map dblinkMap, 
 			DBConnection connection) {
+		//Check if the datamart contains a JPA or a Hibernate mapping
+		AbstractDataSource dataSource = null;
+		boolean isJPA = false;
+		try {
+			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartName);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error loading the datamart.jar ", e);
+		}
+		if(isJPA){
+			dataSource = new JPADataSource(dataSourceName);
+		}else{
+			if(datamartNames.size() == 1) {
+				dataSource = new BasicHibernateDataSource(dataSourceName);
+			} else {
+				dataSource = new CompositeHibernateDataSource(dataSourceName);
+			} 
+		}
 		
-		AbstractHibernateDataSource dataSource = null;
-		
-		if(datamartNames.size() == 1) {
-			dataSource = new BasicHibernateDataSource(dataSourceName);
-		} else {
-			dataSource = new CompositeHibernateDataSource(dataSourceName);
-		} 
 		
 		initDataSource(dataSource, datamartName, datamartNames, dblinkMap, connection);
 		return dataSource;
@@ -77,7 +90,7 @@ public class DataSourceFactory {
 	 * @param dblinkMap the dblink map
 	 * @param connection the connection
 	 */
-	private static void initDataSource(AbstractHibernateDataSource dataSource,
+	private static void initDataSource(AbstractDataSource dataSource,
 			String datamartName, 
 			List datamartNames, 
 			Map dblinkMap, 

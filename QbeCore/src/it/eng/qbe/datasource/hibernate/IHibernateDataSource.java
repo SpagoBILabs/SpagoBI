@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.hibernate;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 
 /**

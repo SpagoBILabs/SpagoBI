@@ -23,22 +23,22 @@ package it.eng.qbe.statment;
 
 import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.jpa.JPQLDataSet;
-import it.eng.qbe.statment.jpa.JPQLStatement;
+import it.eng.qbe.statment.jpql.JPQLDataSet;
+import it.eng.qbe.statment.jpql.JPQLStatement;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class QbeDatasetFactory {
-	IDataSet createDataSet(IStatement statement) {
+	public static IDataSet createDataSet(IStatement statement) {
 		IDataSet dataSet;
 		
 		dataSet = null;
 		if(statement instanceof HQLStatement) {
-			dataSet = new HQLDataSet( statement );
+			dataSet = new HQLDataSet( (HQLStatement)statement );
 		} else if(statement instanceof JPQLStatement) {
-			dataSet = new JPQLDataSet( statement );
+			dataSet = new JPQLDataSet( (JPQLStatement)statement );
 		} else {
 			throw new RuntimeException("Impossible to create dataset from a statement of type [" + statement.getClass().getName() + "]");
 		}
