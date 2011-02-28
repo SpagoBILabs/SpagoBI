@@ -7,21 +7,18 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.IStatement;
+import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
-import it.eng.qbe.statment.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -31,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +56,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		Integer maxSize = null;
 		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		HQLDataSet dataSet = null;
+		IDataSet dataSet = null;
 		JSONDataWriter serializer;
 		LookupStoreJSONSerializer serializer2;
 		JSONObject filtersJSON = null;
@@ -91,9 +87,9 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+		//	String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+		//	logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			start = getAttributeAsInteger( START );
 			limit = getAttributeAsInteger( LIMIT );
@@ -106,7 +102,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new HQLDataSet(statement);
+				dataSet = QbeDatasetFactory.createDataSet(statement);
 				dataSet.setAbortOnOverflow(true);
 				
 				Map userAttributes = new HashMap();

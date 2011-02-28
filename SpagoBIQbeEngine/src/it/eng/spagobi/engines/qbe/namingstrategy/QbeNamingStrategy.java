@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.namingstrategy;
 
-import it.eng.qbe.datasource.hibernate.DBConnection;
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.naming.NamingStrategy;
 
 import java.util.List;

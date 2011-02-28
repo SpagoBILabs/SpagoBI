@@ -73,9 +73,9 @@ public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 				statement.setParameters( getEnv() );
 				
 				hqlQueryStr = statement.getQueryString();
-				sqlQueryStr = ((HQLStatement)statement).getSqlQueryString();
+				//sqlQueryStr = ((HQLStatement)statement).getSqlQueryString();
 				logger.debug("Validating query (HQL): [" +  hqlQueryStr+ "]");
-				logger.debug("Validating query (SQL): [" + sqlQueryStr + "]");
+				//logger.debug("Validating query (SQL): [" + sqlQueryStr + "]");
 				
 				try {
 					//statement.execute(0, 1, 1, true);

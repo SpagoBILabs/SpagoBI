@@ -28,9 +28,11 @@
 	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/> 
 	
 	<!-- limit of the cross tab cells number -->
-	<QBE-CROSSTAB-CELLS-LIMIT value="2000" isBlocking="false"/> 
+	<QBE-CROSSTAB-CELLS-LIMIT value="40" isBlocking="true"/> 
 	
 	<QBE_TEMPORARY_TABLE enabled="true" prefix="TMPSBIQBE_" suffix="" />
+
+	<QBE-DATE-FORMAT it="dd/MM/yyyy" es="dd/MM/yyyy" fr="dd/MM/yyyy" en="MM/dd/yyyy" database="yyyy-MM-dd" extJsFormat="d/m/Y" />
 	
 		
 	<TEMPLATE-BUILDER>
