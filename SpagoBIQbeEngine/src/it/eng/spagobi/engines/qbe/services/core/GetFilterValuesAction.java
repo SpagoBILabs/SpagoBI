@@ -43,12 +43,12 @@ import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
+import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -94,7 +94,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		String lookupQuery;
 		
 		IDataStore dataStore = null;
-		HQLDataSet dataSet = null;
+		IDataSet dataSet = null;
 		JSONDataWriter dataSetWriter;
 		Query query = null;
 		IStatement statement = null;
@@ -152,13 +152,13 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+			//String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new HQLDataSet(statement);
+				dataSet = QbeDatasetFactory.createDataSet(statement);
 				dataSet.setAbortOnOverflow(true);
 				
 				Map userAttributes = new HashMap();

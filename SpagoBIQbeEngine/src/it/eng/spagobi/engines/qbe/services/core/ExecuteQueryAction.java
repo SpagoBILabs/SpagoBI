@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -34,16 +35,19 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statment.AbstractJPADataSet;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
+import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -70,7 +74,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
     
 	
 	public void service(SourceBean request, SourceBean response)  {				
-				
+//		(Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);		
+
 		
 		String queryId = null;
 		Integer limit = null;
@@ -78,7 +83,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Integer maxSize = null;
 		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		HQLDataSet dataSet = null;
+		IDataSet dataSet = null;
 		JSONDataWriter dataSetWriter;
 		
 		Query query = null;
@@ -134,17 +139,17 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+			//String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+		//	logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
+			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 			
 			
 			try {
 				logger.debug("Executing query ...");
-				dataSet = new HQLDataSet(statement);
+				dataSet = QbeDatasetFactory.createDataSet(statement);
 				dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 				
 				Map userAttributes = new HashMap();
@@ -184,7 +189,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
-				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
+		//		auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 			
 			//gridDataFeed = buildGridDataFeed(results, resultNumber.intValue());	

@@ -27,8 +27,8 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.hibernate.DBConnection;
 import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;

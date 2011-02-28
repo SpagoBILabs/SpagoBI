@@ -40,7 +40,6 @@ import org.json.JSONObject;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.Exporter;
 import it.eng.qbe.export.Field;
-import it.eng.qbe.export.FormViewerTemplateBuilder;
 import it.eng.qbe.export.HqlToSqlQueryRewriter;
 import it.eng.qbe.export.ReportRunner;
 import it.eng.qbe.export.SQLFieldsReader;
@@ -48,22 +47,13 @@ import it.eng.qbe.export.TemplateBuilder;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
+import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction;
-import it.eng.spagobi.engines.qbe.tree.ExtJsQbeTreeBuilder;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeQueryEntityFilter;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -190,13 +180,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					if (!isFormEngineInstance) {
 						// case of standard QBE
 						
-						HQLDataSet dataSet = null;
+						IDataSet dataSet = null;
 						
 						Integer limit = 0;
 						Integer start = 0;
 						Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();	
 						boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-						dataSet = new HQLDataSet(statement);
+						dataSet = QbeDatasetFactory.createDataSet(statement);
 						dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 						
 						Map userAttributes = new HashMap();

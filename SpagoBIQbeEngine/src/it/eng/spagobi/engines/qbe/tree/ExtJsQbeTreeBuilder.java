@@ -163,7 +163,7 @@ public class ExtJsQbeTreeBuilder  {
 			writer = new PrintWriter(new CharArrayWriter());
 		}
 		addEntityNodes(nodes, datamartName);
-		System.out.println("File saved: " + file.getAbsoluteFile());
+//		System.out.println("File saved: " + file.getAbsoluteFile());
 		writer.flush();
 		writer.close();
 		return nodes;

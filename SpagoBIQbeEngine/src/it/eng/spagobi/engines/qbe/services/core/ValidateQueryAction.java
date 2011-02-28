@@ -28,10 +28,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
+import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -58,11 +58,11 @@ public class ValidateQueryAction extends AbstractQbeEngineAction {
 			IStatement statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+		//	String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			logger.debug("Validating query (HQL): [" +  hqlQuery+ "]");
-			logger.debug("Validating query (SQL): [" + sqlQuery + "]");
+		//	logger.debug("Validating query (SQL): [" + sqlQuery + "]");
 			try {
-				HQLDataSet dataSet = new HQLDataSet(statement);
+				IDataSet dataSet = QbeDatasetFactory.createDataSet(statement);
 				
 				Map userAttributes = new HashMap();
 				UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);

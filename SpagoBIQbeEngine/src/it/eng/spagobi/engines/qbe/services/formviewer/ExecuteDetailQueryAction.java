@@ -32,7 +32,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
-import it.eng.qbe.datasource.hibernate.DBConnection;
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
