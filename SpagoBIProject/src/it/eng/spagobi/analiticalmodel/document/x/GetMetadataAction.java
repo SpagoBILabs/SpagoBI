@@ -39,7 +39,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
@@ -95,7 +94,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 				metaSubObjName.setDataTypeCode("GENERAL_META");
 				ObjMetacontent metaContentSubObjName = new ObjMetacontent();
 				SubObject subobj = DAOFactory.getSubObjectDAO().getSubObject(subObjectId);
-				metaContentSubObjName.setContent(StringEscapeUtils.escapeHtml(subobj.getName()).getBytes());
+				metaContentSubObjName.setContent(subobj.getName().getBytes());
 				ObjMetaDataAndContent metaAndContentSubObjName = new ObjMetaDataAndContent();
 				metaAndContentSubObjName.setMeta(metaSubObjName);
 				metaAndContentSubObjName.setMetacontent(metaContentSubObjName);

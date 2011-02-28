@@ -21,15 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.chiron.serializer;
 
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONObject;
-
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
 /**
  * @author Zerbetto Davide
@@ -59,8 +58,8 @@ public class SubObjectsJSONSerializer implements Serializer {
 			SubObject subObject = (SubObject) o;
 			result = new JSONObject();
 			result.put(ID, subObject.getId() );
-			result.put(NAME, StringEscapeUtils.escapeHtml(subObject.getName()) );
-			result.put(DESCRIPTION, StringEscapeUtils.escapeHtml(subObject.getDescription()) );
+			result.put(NAME, subObject.getName() );
+			result.put(DESCRIPTION, subObject.getDescription() );
 			result.put(OWNER, subObject.getOwner() );
 			Date creationDate = subObject.getCreationDate();
 			String creationDateStr = dateFormat.format(creationDate);
