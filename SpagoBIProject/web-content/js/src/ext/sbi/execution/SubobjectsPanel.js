@@ -120,8 +120,8 @@ Sbi.execution.SubobjectsPanel = function(config, doc) {
     
     var columns = [
        {id: "id", header: "Id", sortable: true, dataIndex: 'id',  hidden: true}
-       , {header: LN('sbi.execution.subobjects.name'), sortable: true, dataIndex: 'name'}
-       , {header: LN('sbi.execution.subobjects.description'), sortable: true, dataIndex: 'description'}
+       , {header: LN('sbi.execution.subobjects.name'), sortable: true, dataIndex: 'name', renderer: Ext.util.Format.htmlEncode}
+       , {header: LN('sbi.execution.subobjects.description'), sortable: true, dataIndex: 'description', renderer: Ext.util.Format.htmlEncode}
        , {header: LN('sbi.execution.subobjects.owner'), sortable: true, dataIndex: 'owner'}
        , {header: LN('sbi.execution.subobjects.creationDate'), sortable: true, dataIndex: 'creationDate', renderer: Ext.util.Format.dateRenderer(Sbi.config.localizedDateFormat)} 
        , {header: LN('sbi.execution.subobjects.lastModificationDate'), sortable: true, dataIndex: 'lastModificationDate', renderer: Ext.util.Format.dateRenderer(Sbi.config.localizedDateFormat)} 

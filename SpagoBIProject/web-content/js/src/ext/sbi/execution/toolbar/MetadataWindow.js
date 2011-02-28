@@ -204,7 +204,8 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
                 header : LN('sbi.execution.metadata.metavalue'),
                 width : 540,
                 sortable : true,
-                dataIndex : 'meta_content'
+                dataIndex : 'meta_content',
+                renderer: Ext.util.Format.htmlEncode
             } ],
             viewConfig : {
                 forceFit : true,
