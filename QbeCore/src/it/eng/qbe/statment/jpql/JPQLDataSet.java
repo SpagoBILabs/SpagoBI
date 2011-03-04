@@ -38,6 +38,8 @@ import org.eclipse.persistence.internal.expressions.FunctionExpression;
 import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.expressions.LogicalExpression;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
+import org.hibernate.ScrollableResults;
+import org.hibernate.ejb.HibernateQuery;
 
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
@@ -72,6 +74,45 @@ public class JPQLDataSet extends AbstractJPADataSet {
 		loadDataEclipseLink(offset, fetchSize, maxResults, entityManager);
 	
 	}
+	
+	private void loadWithDataHibernate(int offset, int fetchSize, int maxResults, EntityManager entityManager) throws EMFUserError, EMFInternalError {
+
+		HibernateQuery jpqlQuery;
+		boolean overflow = false;
+		int resultNumber;
+		
+		jpqlQuery = (HibernateQuery)entityManager.createQuery( statement.getQueryString() );
+		resultNumber =getResultNumber(jpqlQuery, entityManager);
+		logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
+		overflow = (maxResults > 0) && (resultNumber >= maxResults);
+
+		ScrollableResults sr = jpqlQuery.getHibernateQuery().scroll();
+		sr.last();
+		resultNumber =  sr.getRowNumber();
+		sr.first();
+		
+		List result = null;
+
+		if (overflow && abortOnOverflow) {
+			// does not execute query
+			result = new ArrayList();
+		} else {
+			offset = offset < 0 ? 0 : offset;
+			if(maxResults > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, maxResults): maxResults;
+			}
+			
+			logger.debug("Executing query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
+			jpqlQuery.setFirstResult(offset).setMaxResults(fetchSize);			
+			result = jpqlQuery.getResultList();
+			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
+		}	
+
+		dataStore = toDataStore(result);
+		dataStore.getMetaData().setProperty("resultNumber", resultNumber);		
+	}
+	
+	
 	
 	private void loadDataEclipseLink(int offset, int fetchSize, int maxResults, EntityManager entityManager) throws EMFUserError, EMFInternalError {
 
