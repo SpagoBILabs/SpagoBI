@@ -47,32 +47,7 @@ public class JPADataSource extends AbstractJPADataSource {
 	/** The class loader extended. */
 	private boolean classLoaderExtended = false;	
 	
-	/**
-	 * Instantiates a new basic jpa data source.
-	 * 
-	 * @param dataSourceName the data source name
-	 * @param datamartName the datamart name
-	 * @param datamartNames the datamart names
-	 * @param dblinkMap the dblink map
-	 * @param connection the connection
-	 */
-	private JPADataSource(String dataSourceName, 
-						  String datamartName, 
-						  List datamartNames, 
-				  		  Map dblinkMap, 
-				 		  DBConnection connection) {
-		
-		setName( dataSourceName );
-		setType( JPA_DS_TYPE );
-		
-		setDatamartName(datamartName);		
-		setDatamartNames(datamartNames);
-		setConnection(connection);	
-		
-		setProperties( DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( datamartName ) );
-		
-		//this.alreadyAddedView = new ArrayList();		
-	}
+
 	
 	
 	/**

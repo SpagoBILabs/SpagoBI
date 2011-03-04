@@ -58,8 +58,6 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 		File datamartFile = null;
 		
 		try{
-			//IDataMartModelRetriever dataMartModelRetriever = QbeCoreSettings.getInstance().getDataMartModelRetriever();
-			//datamartJarFile = dataMartModelRetriever.getDatamartJarFile(datamartName);
 			DatamartJarFile datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 			datamartFile = datamartJarFile.getFile() ;
 		}catch (Exception e) {
