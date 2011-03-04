@@ -78,18 +78,6 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 						, datamartName );
 			}
 			
-			/*
-			Map x = getDataSource().getSessionFactory(datamartName).getAllClassMetadata();
-			for (Iterator it = x.values().iterator(); it.hasNext(); ) {
-				SingleTableEntityPersister y = (SingleTableEntityPersister)it.next();
-				System.out.println(y.getName() + " -> " + y.getTableName());
-				for (int j = 0; j < y.getPropertyNames().length; j++) {
-					System.out.println(" " + y.getPropertyNames()[j] + " -> " +
-					(y.getPropertyColumnNames(j).length > 0?
-					y.getPropertyColumnNames(j)[0]: ""));
-				}
-			}
-			*/
 			
 			Map calculatedFields = DAOFactory.getCalculatedFieldsDAO().loadCalculatedFields(datamartName);
 			dataMartStructure.setCalculatedFields(calculatedFields);
