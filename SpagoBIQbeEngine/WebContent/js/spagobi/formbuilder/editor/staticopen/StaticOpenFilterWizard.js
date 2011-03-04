@@ -129,11 +129,12 @@ Ext.extend(Sbi.formbuilder.StaticOpenFilterWizard, Ext.Window, {
 	    Ext.form.Field.prototype.msgTarget = 'side';
 	    this.openFilterForm = new Ext.form.FormPanel({
 	        frame: true,
+	        monitorValid:true,
 	        bodyStyle: 'padding:5px 5px 0',
 	        items: [this.filterName, this.filterEntity, this.filterOperatorCombo, this.maxSelectionNumber, 
 	                this.queryDetails],
 	        buttons: [
-	            {text: LN('sbi.formbuilder.staticopenfilterwizard.buttons.apply'), handler: this.apply, scope: this}
+	            {text: LN('sbi.formbuilder.staticopenfilterwizard.buttons.apply'),formBind:true, handler: this.apply, scope: this}
 	            , {text: LN('sbi.formbuilder.staticopenfilterwizard.buttons.cancel'), handler: function () {this.close();}, scope: this}
 	        ]
 	    });

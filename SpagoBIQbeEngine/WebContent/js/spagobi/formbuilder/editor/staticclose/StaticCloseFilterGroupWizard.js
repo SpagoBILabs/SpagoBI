@@ -313,6 +313,7 @@ Ext.extend(Sbi.formbuilder.StaticCloseFilterGroupWizard, Ext.Window, {
     	items.push(fieldSet);
     	
     	this.formPanel = new Ext.form.FormPanel({
+    		monitorValid:true,
     		frame:true,
     		labelWidth: 80,
     		defaults: {
@@ -323,6 +324,7 @@ Ext.extend(Sbi.formbuilder.StaticCloseFilterGroupWizard, Ext.Window, {
     	    items: items,
     	    buttons: [{
     			text: LN('sbi.formbuilder.staticclosefiltergroupwizard.buttons.apply'),
+    			formBind:true,
     		    handler: function(){
     	    		this.fireEvent('apply', this, this.getTarget(), this.getFormState());
                 	this.hide();
