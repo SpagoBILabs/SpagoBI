@@ -148,7 +148,7 @@ Ext.extend(Sbi.formbuilder.DynamicFilterGroupWizard, Ext.Window, {
 		this.filterName = new Ext.form.TextField({
 			id: 'title',
 			name: 'title',
-			allowBlank: true, 
+			allowBlank: false, 
 			inputType: 'text',
 			maxLength: 100,
 			width: 250,
@@ -186,6 +186,7 @@ Ext.extend(Sbi.formbuilder.DynamicFilterGroupWizard, Ext.Window, {
     	
     	this.formPanel = new Ext.form.FormPanel({
     		frame:true,
+    		monitorValid:true,
     		labelWidth: 80,
     		defaults: {
     			width: 225
@@ -195,6 +196,7 @@ Ext.extend(Sbi.formbuilder.DynamicFilterGroupWizard, Ext.Window, {
     	    items: items,
     	    buttons: [{
     			text: LN('sbi.formbuilder.dynamicfiltergroupwizard.buttons.apply'),
+    			formBind:true,
     		    handler: function(){
     	    		this.fireEvent('apply', this, this.getTarget(), this.getFormState());
                 	this.hide();
