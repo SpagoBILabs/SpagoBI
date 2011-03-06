@@ -59,13 +59,7 @@
 			
 		<CONFIG></CONFIG>
 	</ACTION>
-	
-	<ACTION name="CREATE_VIEW_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.core.CreateViewAction"  
-			scope="REQUEST">
-			
-		<CONFIG></CONFIG>
-	</ACTION>
+
 	
 
 

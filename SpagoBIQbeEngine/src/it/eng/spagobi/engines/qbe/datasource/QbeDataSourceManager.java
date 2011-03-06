@@ -105,7 +105,6 @@ public class QbeDataSourceManager implements DataSourceManager {
 			getDataSourceCache().addDataSource(dataSourceName, dataSource);
 		} else if(dataSource instanceof CompositeHibernateDataSource) {
 			CompositeHibernateDataSource compositeHibernateDataSource = (CompositeHibernateDataSource)dataSource;
-			compositeHibernateDataSource.refreshDatamartViews();
 		}
 		
 		return dataSource;
