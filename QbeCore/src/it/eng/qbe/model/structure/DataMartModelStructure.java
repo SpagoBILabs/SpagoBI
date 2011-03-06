@@ -27,95 +27,59 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class DataMartModelStructure {
 	
 	
-	long id = 0;
-	
-	Map rootEntities;
-	
-	Map fields; // uniqueName -> field
-	
-	Map cfields; // entity uniqueName -> fields' list
-	
-	public Map getCalculatedFields() {
-		return cfields;
-	}
-	
-	public List getCalculatedFieldsByEntity(String entityName) {
-		List result;
-		
-		result = new ArrayList();
-		if(cfields.containsKey(entityName)) {
-			result.addAll( (List)cfields.get(entityName) );
-		}
-		
-		return result;
-	}
-
-	public void setCalculatedFields(Map calculatedFields) {
-		this.cfields = calculatedFields;
-	}
-	
-	public void addCalculatedField(String entityName, DataMartCalculatedField calculatedFiled) {
-		List cfiledsOnTargetEntity;
-		if(!cfields.containsKey(entityName)) {
-			cfields.put(entityName, new ArrayList());
-		}
-		cfiledsOnTargetEntity = (List)cfields.get(entityName);	
-		List toRemove = new ArrayList();
-		for(int i = 0; i < cfiledsOnTargetEntity.size(); i++) {
-			DataMartCalculatedField f = (DataMartCalculatedField)cfiledsOnTargetEntity.get(i);
-			if(f.getName().equals(calculatedFiled.getName())) {
-				toRemove.add(f);
-			}
-		}
-		for(int i = 0; i < toRemove.size(); i++) {
-			cfiledsOnTargetEntity.remove(toRemove.get(i));
-		}
-		cfiledsOnTargetEntity.add(calculatedFiled);
-	}
-	
-	public void removeCalculatedFiield(String entityName, DataMartCalculatedField calculatedFiled) {
-		List cfiledsOnTargetEntity;
-		
-		cfiledsOnTargetEntity = (List)cfields.get(entityName);	
-		if(cfiledsOnTargetEntity != null) {
-			cfiledsOnTargetEntity.remove(calculatedFiled);
-		}
-	}
-	
-
-
-
-
-
-
-	Map entities;
+	protected long id;	
+	protected Map<String, Map<String,DataMartEntity>> rootEntities;	// datamartName->(entityUniqueName->entity)
+	protected Map<String, DataMartEntity> entities; //entityUniqueName->entity
+	protected Map<String, DataMartField> fields; // uniqueName -> field	
+	protected Map<String, List<DataMartCalculatedField>> calculatedFields; // entity uniqueName -> fields' list
 	
 	
+	// =========================================================================
+	// COSTRUCTORS 
+	// =========================================================================
 	
 	/**
-	 * Instantiates a new data mart model structure.
+	 * Instantiate a new empty DataMartModelStructure object
 	 */
 	public DataMartModelStructure() {
-		rootEntities = new HashMap();
-		fields = new HashMap();
-		cfields = new  HashMap();
-		entities = new HashMap();
+		id = 0;
+		rootEntities = new HashMap<String, Map<String,DataMartEntity>>();
+		entities = new HashMap<String, DataMartEntity>();
+		fields = new HashMap<String, DataMartField>();
+		calculatedFields = new  HashMap<String, List<DataMartCalculatedField>>();
+		
 	}
 	
+	
+	// =========================================================================
+	// ACCESORS 
+	// =========================================================================
+	
 	/**
-	 * Adds the root entity.
+	 * Gets the next id.
 	 * 
-	 * @param name the name
-	 * @param path the path
-	 * @param role the role
-	 * @param type the type
+	 * @return the next id
+	 */
+	public long getNextId() {
+		return ++id;
+	}
+	
+	// Root Entities -----------------------------------------------------------
+	
+	/**
+	 * Create a new entity and add it to the root entities of the specified datamart
 	 * 
-	 * @return the data mart entity
+	 * @param name the name of the datamart to which the new entity will be added
+	 * @param path the path of the new entity
+	 * @param role the role of the new entity
+	 * @param type the type of the new entity
+	 * 
+	 * @return the new entity added to the datamart
 	 */
 	public DataMartEntity addRootEntity(String datamartName, String name, String path, String role, String type) {
 		DataMartEntity entity = new DataMartEntity(name, path, role, type, this);
@@ -123,15 +87,12 @@ public class DataMartModelStructure {
 		return entity;
 	}
 	
-	/**
-	 * Adds the root entity.
-	 * 
-	 * @param entity the entity
-	 */
 	private void addRootEntity(String datamartName, DataMartEntity entity) {
-		HashMap datamartRootEntities = (HashMap) rootEntities.get(datamartName);
+		Map<String, DataMartEntity> datamartRootEntities;
+		
+		datamartRootEntities = rootEntities.get(datamartName);
 		if (datamartRootEntities == null) {
-			datamartRootEntities = new HashMap();
+			datamartRootEntities = new HashMap<String, DataMartEntity>();
 			rootEntities.put(datamartName, datamartRootEntities);
 		}
 		datamartRootEntities.put(entity.getUniqueName(), entity);
@@ -140,14 +101,15 @@ public class DataMartModelStructure {
 	
 	
 	/**
-	 * Gets the root entity.
+	 * Gets a root entity by name from the specified datamart.
 	 * 
-	 * @param entityName the entity name
+	 * @param datamartName the name of the target datamart 
+	 * @param entityName the name of the entity to look for
 	 * 
-	 * @return the root entity
+	 * @return the searched root entity
 	 */
 	public DataMartEntity getRootEntity(String datamartName, String entityName) {
-		HashMap datamartRootEntities = (HashMap) rootEntities.get(datamartName);
+		Map<String, DataMartEntity> datamartRootEntities = rootEntities.get(datamartName);
 		return datamartRootEntities == null ? null : (DataMartEntity)datamartRootEntities.get(entityName);
 	}
 	
@@ -161,7 +123,7 @@ public class DataMartModelStructure {
 			return null;
 		}
 		DataMartEntity toReturn = null;
-		Iterator keysIt = rootEntities.keySet().iterator();
+		Iterator<String> keysIt = rootEntities.keySet().iterator();
 		while (keysIt.hasNext()) {
 			String datamartName = (String) keysIt.next();
 			DataMartEntity rootEntity = getRootEntity(entity, datamartName);
@@ -174,17 +136,22 @@ public class DataMartModelStructure {
 	}
 	
 	/**
-	 * Gets the root entity relevant to the input entity in the datamart specified in input
-	 * @param entity
-	 * @return the root entity relevant to the input entity in the datamart specified in input
+	 * Gets the root entity relevant to the input entity in the datamart 
+	 * specified in input
+	 * 
+	 * @param the target entity 
+	 * @param the name of the target datamart
+	 * 
+	 * @return the root entity relevant to the input entity in the datamart 
+	 * specified in input
 	 */
 	public DataMartEntity getRootEntity(DataMartEntity entity, String datamartName) {
 		if (entity == null) {
 			return null;
 		}
 		DataMartEntity toReturn = null;
-		List rootEntities = getRootEntities(datamartName);
-		Iterator rootEntitiesIt = rootEntities.iterator();
+		List<DataMartEntity> rootEntities = getRootEntities(datamartName);
+		Iterator<DataMartEntity> rootEntitiesIt = rootEntities.iterator();
 		while (rootEntitiesIt.hasNext()) {
 			DataMartEntity rootEntity = (DataMartEntity) rootEntitiesIt.next();
 			if (entity.getType().equals(rootEntity.getType())) {
@@ -196,30 +163,34 @@ public class DataMartModelStructure {
 	}
 	
 	/**
-	 * Gets the root entity iterator.
+	 * Gets the root entity iterator for the target datamart.
 	 * 
-	 * @param datamartName the datamart name
+	 * @param datamartName the name of the target datamart
 	 * 
-	 * @return the root entity iterator
+	 * @return the root entities iterator
 	 */
-	public Iterator getRootEntityIterator(String datamartName) {
+	public Iterator<DataMartEntity> getRootEntityIterator(String datamartName) {
 		return getRootEntities(datamartName).iterator();
 	}
 	
 	/**
 	 * Gets the root entities.
 	 * 
-	 * @param datamartName the datamart name
+	 * @param datamartName datamartName the name of the target datamart
 	 * 
 	 * @return the root entities
 	 */
-	public List getRootEntities(String datamartName) {
-		List list = new ArrayList();
-		HashMap datamartRootEntities = (HashMap) rootEntities.get(datamartName);
+	public List<DataMartEntity> getRootEntities(String datamartName) {
+		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
+		Map<String, DataMartEntity> datamartRootEntities;
+		
+		list = new ArrayList<DataMartEntity>();
+		datamartRootEntities = rootEntities.get(datamartName);
+		
 		if (datamartRootEntities != null) {
-			Iterator it = datamartRootEntities.keySet().iterator();
+			Iterator<String> it = datamartRootEntities.keySet().iterator();
 			while(it.hasNext()) {
-				String entityName = (String)it.next();
+				String entityName = it.next();
 				// TODO replace with this ...
 				//list.add( entities.get(entityName).getCopy() );
 				list.add( datamartRootEntities.get(entityName) );
@@ -227,7 +198,10 @@ public class DataMartModelStructure {
 		}
 		return list;
 	}	
-		
+	
+
+	// Entities -----------------------------------------------------------
+
 	/**
 	 * Adds the entity.
 	 * 
@@ -248,6 +222,8 @@ public class DataMartModelStructure {
 		DataMartEntity entity = (DataMartEntity)entities.get(entityUniqueName);
 		return entity;
 	}
+	
+	// Fields -----------------------------------------------------------
 	
 	/**
 	 * Adds the field.
@@ -270,40 +246,52 @@ public class DataMartModelStructure {
 		return field;
 	}
 	
+	// Calculated Fields ----------------------------------------------------
 	
-	
-	
-	/**
-	 * Gets the next id.
-	 * 
-	 * @return the next id
-	 */
-	public long getNextId() {
-		return ++id;
+	public Map<String, List<DataMartCalculatedField>> getCalculatedFields() {
+		return calculatedFields;
 	}
 	
-	
-	
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	/*
-	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		String key = null;
-		for(Iterator it = rootEntities.keySet().iterator(); it.hasNext();) {
-			key = (String)it.next();
-			DataMartEntity o = (DataMartEntity)rootEntities.get(key);
-			buffer.append("\n------------------------------------\n");
-			if(o == null)
-				buffer.append(key + " --> NULL\n");
-			else
-				buffer.append(o.toString() + "\n");
+	public List<DataMartCalculatedField> getCalculatedFieldsByEntity(String entityName) {
+		List<DataMartCalculatedField> result;
+		
+		result = new ArrayList<DataMartCalculatedField>();
+		if(calculatedFields.containsKey(entityName)) {
+			result.addAll( calculatedFields.get(entityName) );
 		}
-		return buffer.toString();
+		
+		return result;
 	}
-	*/ 
+
+	public void setCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
+		this.calculatedFields = calculatedFields;
+	}
+	
+	public void addCalculatedField(String entityName, DataMartCalculatedField calculatedFiled) {
+		List<DataMartCalculatedField> calculatedFiledsOnTargetEntity;
+		if(!calculatedFields.containsKey(entityName)) {
+			calculatedFields.put(entityName, new ArrayList<DataMartCalculatedField>());
+		}
+		calculatedFiledsOnTargetEntity = calculatedFields.get(entityName);	
+		List<DataMartCalculatedField> toRemove = new ArrayList<DataMartCalculatedField>();
+		for(int i = 0; i < calculatedFiledsOnTargetEntity.size(); i++) {
+			DataMartCalculatedField f = (DataMartCalculatedField)calculatedFiledsOnTargetEntity.get(i);
+			if(f.getName().equals(calculatedFiled.getName())) {
+				toRemove.add(f);
+			}
+		}
+		for(int i = 0; i < toRemove.size(); i++) {
+			calculatedFiledsOnTargetEntity.remove(toRemove.get(i));
+		}
+		calculatedFiledsOnTargetEntity.add(calculatedFiled);
+	}
+	
+	public void removeCalculatedFiield(String entityName, DataMartCalculatedField calculatedFiled) {
+		List<DataMartCalculatedField> calculatedFieldsOnTargetEntity;
+		
+		calculatedFieldsOnTargetEntity = calculatedFields.get(entityName);	
+		if(calculatedFieldsOnTargetEntity != null) {
+			calculatedFieldsOnTargetEntity.remove(calculatedFiled);
+		}
+	}
 }
