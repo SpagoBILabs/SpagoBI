@@ -20,8 +20,6 @@
  **/
 package it.eng.qbe.model.structure;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,17 +33,22 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
  */
 public class DataMartEntity extends AbstractDataMartItem {
 	
-	private DataMartEntity root;	
+	protected DataMartEntity root;	
 	
-	private String path;		
-	private String role;	
-	private String type;	
+	protected String path;		
+	protected String role;	
+	protected String type;	
 	
-	private Map fields;	
-	private Map calculatedFields;	
-	private Map subEntities;
+	protected Map<String,DataMartField> fields;	
+	protected Map<String, DataMartCalculatedField> calculatedFields;	
+	protected Map<String,DataMartEntity> subEntities;
 	
-		
+
+	// =========================================================================
+	// COSTRUCTORS 
+	// =========================================================================
+	
+	
 	public DataMartEntity(String name, String path, String role, String type,
 			DataMartModelStructure structure) {
 		
@@ -58,10 +61,15 @@ public class DataMartEntity extends AbstractDataMartItem {
 		setType( type );
 		
 		setParent(null);
-		this.fields = new HashMap();
-		this.calculatedFields = new HashMap();
-		this.subEntities = new HashMap();
+		this.fields = new HashMap<String,DataMartField>();
+		this.calculatedFields = new HashMap<String, DataMartCalculatedField>();
+		this.subEntities = new HashMap<String,DataMartEntity>();
 	}
+	
+	// =========================================================================
+	// ACCESORS 
+	// =========================================================================
+	
 	
 	public String getUniqueName() {
 		String uniqueName = "";
@@ -144,31 +152,37 @@ public class DataMartEntity extends AbstractDataMartItem {
 		
 	}
 	
-	public List getCalculatedFields() {
-		List list = new ArrayList();
+	public List<DataMartCalculatedField>  getCalculatedFields() {
+		List<DataMartCalculatedField> list;
+		
+		list = new ArrayList<DataMartCalculatedField>();
 		String key = null;
-		for(Iterator it = calculatedFields.keySet().iterator(); it.hasNext(); ) {
-			key = (String)it.next();
+		for(Iterator<String> it = calculatedFields.keySet().iterator(); it.hasNext(); ) {
+			key = it.next();
 			list.add(calculatedFields.get(key));			
 		}
+		
 		return list;
 	}	
 	
-	public List getAllFields() {
-		List list = new ArrayList();
+	public List<DataMartField> getAllFields() {
+		List<DataMartField> list;
+		
+		list = new ArrayList<DataMartField>();
 		String key = null;
-		for(Iterator it = fields.keySet().iterator(); it.hasNext(); ) {
-			key = (String)it.next();
+		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
+			key = it.next();
 			list.add(fields.get(key));			
 		}
+		
 		return list;
 	}	
 	
 	
-	private List getFieldsByType(boolean isKey) {
-		List list = new ArrayList();
+	private List<DataMartField> getFieldsByType(boolean isKey) {
+		List<DataMartField> list = new ArrayList<DataMartField>();
 		String key = null;
-		for(Iterator it = fields.keySet().iterator(); it.hasNext(); ) {
+		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
 			DataMartField field = (DataMartField)fields.get(key);
 			if(field.isKey() == isKey) {
@@ -179,22 +193,22 @@ public class DataMartEntity extends AbstractDataMartItem {
 	}
 	
 	
-	public List getKeyFields() {
+	public List<DataMartField> getKeyFields() {
 		return getFieldsByType(true);
 	}
 	
 	
-	public Iterator getKeyFieldIterator() {
+	public Iterator<DataMartField> getKeyFieldIterator() {
 		return getKeyFields().iterator();
 	}
 	
 	
-	public List getNormalFields() {
+	public List<DataMartField> getNormalFields() {
 		return getFieldsByType(false);
 	}
 	
 	
-	public Iterator getNormalFieldIterator() {
+	public Iterator<DataMartField> getNormalFieldIterator() {
 		return getNormalFields().iterator();
 	}	
 	
@@ -227,20 +241,20 @@ public class DataMartEntity extends AbstractDataMartItem {
 	}
 	
 	
-	public List getSubEntities() {
-		List list = new ArrayList();
+	public List<DataMartEntity> getSubEntities() {
+		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
 		String key = null;
-		for(Iterator it = subEntities.keySet().iterator(); it.hasNext(); ) {
-			key = (String)it.next();
+		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
+			key = it.next();
 			list.add(subEntities.get(key));			
 		}
 		return list;
 	}
 	
-	public List getAllSubEntities() {
-		List list = new ArrayList();
+	public List<DataMartEntity> getAllSubEntities() {
+		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
 		String key = null;
-		for(Iterator it = subEntities.keySet().iterator(); it.hasNext(); ) {
+		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
 			DataMartEntity entity = (DataMartEntity)subEntities.get(key);
 			list.add(entity);
@@ -250,10 +264,10 @@ public class DataMartEntity extends AbstractDataMartItem {
 	}
 	
 	
-	public List getAllSubEntities(String entityName) {
-		List list = new ArrayList();
+	public List<DataMartEntity> getAllSubEntities(String entityName) {
+		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
 		String key = null;
-		for(Iterator it = subEntities.keySet().iterator(); it.hasNext(); ) {
+		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
 			DataMartEntity entity = (DataMartEntity)subEntities.get(key);
 			if(entity.getName().equalsIgnoreCase(entityName)) {
@@ -265,14 +279,14 @@ public class DataMartEntity extends AbstractDataMartItem {
 		return list;
 	}
 	
-	public List getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
-		List list = new ArrayList();
-		List entities = getAllSubEntities(entityName);
+	public List<DataMartField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
+		List<DataMartField> list = new ArrayList<DataMartField>();
+		List<DataMartEntity> entities = getAllSubEntities(entityName);
 		for(int i = 0; i < entities.size(); i++) {
-			DataMartEntity entity = (DataMartEntity)entities.get(i);
-			List fields = entity.getAllFields();
+			DataMartEntity entity = entities.get(i);
+			List<DataMartField> fields = entity.getAllFields();
 			for(int j = 0; j < fields.size(); j++) {
-				DataMartField field = (DataMartField)fields.get(j);
+				DataMartField field = fields.get(j);
 				if(field.getName().endsWith("." + fieldName)) {
 					list.add(field);
 				}
@@ -294,14 +308,14 @@ public class DataMartEntity extends AbstractDataMartItem {
 		
 		buffer.append(line + "\n");
 		String key = null;
-		for(Iterator it = fields.keySet().iterator(); it.hasNext(); ) {
-			key = (String)it.next();
+		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
+			key = it.next();
 			Object o = fields.get(key);
 			buffer.append(" - " + (o==null? "NULL": o.toString()) + "\n");
 		}
 		
-		for(Iterator it = subEntities.keySet().iterator(); it.hasNext();) {
-			key = (String)it.next();
+		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext();) {
+			key = it.next();
 			Object o = subEntities.get(key);
 			buffer.append(" + " + (o==null? "NULL": o.toString()));
 		}
