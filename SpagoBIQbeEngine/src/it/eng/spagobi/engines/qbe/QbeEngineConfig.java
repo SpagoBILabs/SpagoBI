@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.model.io.IDataMartModelRetriever;
-import it.eng.qbe.model.io.LocalFileSystemDataMartModelRetriever;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -94,26 +93,6 @@ public class QbeEngineConfig {
 		} 
 				
 		return qbeDataMartDir;		
-	}
-	
-	public IDataMartModelRetriever getDataMartModelRetriever() {		
-		IDataMartModelRetriever dataMartModelRetriever = null;
-		
-		String property = getProperty( QBE_DATAMART_RETRIVER );
-		if(property != null) {
-			try {
-				dataMartModelRetriever = (IDataMartModelRetriever)Class.forName( property ).newInstance();
-				if(dataMartModelRetriever instanceof LocalFileSystemDataMartModelRetriever) {
-					LocalFileSystemDataMartModelRetriever localFileSystemDataMartModelRetriever = (LocalFileSystemDataMartModelRetriever)dataMartModelRetriever;
-					localFileSystemDataMartModelRetriever.setContextDir(getQbeDataMartDir());
-				}
-			} catch (Exception e) {
-				logger.warn("Impossible to instatiate the specified datamartRetriver class [" + property + "]", e);
-			}
-			
-		}
-		
-		return dataMartModelRetriever;
 	}
 	
 	// engine settings

@@ -49,13 +49,7 @@ public class QbeEngine {
     		
     		if( (o = engineConfig.getQbeDataMartDir()) != null) {
     			QbeCoreSettings.getInstance().setQbeDataMartDir( (File)o );
-    		}
-    			
-    			
-    		if( (o = engineConfig.getDataMartModelRetriever()) != null) {
-    			QbeCoreSettings.getInstance().setDataMartModelRetriever( (IDataMartModelRetriever)o );
-    		}
-    			
+    		}    			
     	}
 	}
     
