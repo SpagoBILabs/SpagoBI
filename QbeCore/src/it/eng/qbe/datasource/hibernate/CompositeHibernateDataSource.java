@@ -43,13 +43,8 @@ import it.eng.qbe.datasource.DBConnection;
  */
 public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 	
-	
-	
-	
-		
 	/** memebers */
-	private boolean classLoaderExtended = false;	
-	private List alreadyAddedView = null;	
+	private boolean classLoaderExtended = false;		
 	private Map configurationMap = new HashMap();	
 	private Map sessionFactoryMap = new HashMap();	
 	private Configuration compositeConfiguration = null;	
@@ -93,9 +88,7 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 		
 		setConnection(connection);
 		
-		setProperties();
-
-		this.alreadyAddedView = new ArrayList();		
+		setProperties();		
 	}
 	
 	private void setProperties() {
@@ -116,7 +109,6 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 	public CompositeHibernateDataSource(String dataSourceName) {
 		setName( dataSourceName );
 		setType( COMPOSITE_HIBERNATE_DS_TYPE );
-		alreadyAddedView = new ArrayList();
 	}
 	
 	
@@ -202,7 +194,6 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 		compositeConfiguration = buildEmptyConfiguration();
 		
 		addDatamarts();
-		addSharedViews();
 		addDbLinks();	
 		
 		compositeSessionFactory = compositeConfiguration.buildSessionFactory();
@@ -253,104 +244,10 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 			throw new RuntimeException("Cannot add datamart", t);
 		}
 		
-		addViews(dmName);
-		
 		sf = cfg.buildSessionFactory();
 		sessionFactoryMap.put(dmName, sf);		
 	}
 	
-	/**
-	 * Adds the views.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addViews(String datamartName) {
-		return addViews(datamartName, datamartName);
-	}
-	
-	/**
-	 * Adds the views.
-	 * 
-	 * @param datamartName the datamart name
-	 * @param configurationName the configuration name
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addViews(String datamartName, String configurationName) {		
-		boolean result = false;
-		
-		List viewNames = getViewNames(datamartName);
-		if(viewNames.size() > 0) {
-			for(int i = 0; i < viewNames.size(); i++) {
-				String viewName = (String)viewNames.get(i);
-				result = (result || addView(datamartName, viewName, configurationName));
-			}
-		}
-		
-		return result;
-	}	
-	
-	/**
-	 * Adds the view.
-	 * 
-	 * @param datamartName the datamart name
-	 * @param viewName the view name
-	 * @param configurationName the configuration name
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addView(String datamartName, String viewName, String configurationName) {
-		
-		boolean result = false;
-		
-		Configuration cfg = null;
-		File viewJarFile = null;
-		
-		viewJarFile = getViewJarFile(datamartName,viewName);
-		if(viewJarFile == null) return false;
-		
-		cfg = (Configuration)configurationMap.get(configurationName);
-		if(cfg == null) {
-			cfg = buildEmptyConfiguration();
-			configurationMap.put(configurationName, cfg);
-		}
-		
-		if (!(alreadyAddedView.contains(viewJarFile.getAbsolutePath()))){ 
-			updateCurrentClassLoader(viewJarFile);
-			cfg.addJar(viewJarFile);
-			compositeConfiguration.addJar(viewJarFile);
-			alreadyAddedView.add(viewJarFile.getAbsolutePath());
-			result = true;
-		}
-		
-		return result;
-	}
-	
-	
-	/**
-	 * Adds the shared views.
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addSharedViews() {
-		String sharedViewsName = "Views";
-		
-		Configuration cfg = null;
-		SessionFactory sf = null;
-		boolean configurationHasChanged = false;
-		
-		configurationHasChanged = addViews(getDatamartName(), sharedViewsName);
-		
-		if(configurationHasChanged) {
-			cfg = (Configuration)configurationMap.get(sharedViewsName);		
-			sf = cfg.buildSessionFactory();	
-			sessionFactoryMap.put(sharedViewsName, sf);	
-		}
-		
-		return configurationHasChanged;
-	}
 	
 	
 	/**
@@ -394,87 +291,9 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#refreshDatamartViews()
-	 */
-	public void refreshDatamartViews() {
-		if(compositeConfiguration == null) {
-			initHibernate();
-			return;
-		}
-		
-		boolean compositeConfigurationHasChanged = false;
-		boolean datamartConfigurationHasChanged = false;
-		Configuration cfg = null;
-		SessionFactory sf = null;
-		
-		for(int i = 0; i < getDatamartNames().size(); i++) {
-			String datamartName = (String)getDatamartNames().get(i);
-			datamartConfigurationHasChanged = addViews(datamartName);
-			if(datamartConfigurationHasChanged) {
-				cfg = (Configuration)configurationMap.get(datamartName);
-				sf = cfg.buildSessionFactory();
-				sessionFactoryMap.put(datamartName, sf);
-			}
-			compositeConfigurationHasChanged = (compositeConfigurationHasChanged || datamartConfigurationHasChanged);
-		}
-		
-		if(compositeConfigurationHasChanged) {
-			
-			compositeSessionFactory = compositeConfiguration.buildSessionFactory();
-		}
-	}
+
 	
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#refreshSharedViews()
-	 */
-	public void refreshSharedViews() {
-		boolean configurationHasChanged = false;
-		String sharedViewsConfiguration = "Views";
-		
-		Configuration cfg = null;
-		SessionFactory sf = null;
-		
-		if(compositeConfiguration == null) {
-			initHibernate();
-			return;
-		}
-		
-		configurationHasChanged = addViews(getDatamartName(), sharedViewsConfiguration);
-				
-		if(configurationHasChanged) {
-			cfg = (Configuration)configurationMap.get(sharedViewsConfiguration);
-			sf = cfg.buildSessionFactory();	
-			sessionFactoryMap.put(sharedViewsConfiguration, sf);	
-			compositeSessionFactory = compositeConfiguration.buildSessionFactory();
-		}		
-	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#refreshSharedView(java.lang.String)
-	 */
-	public void refreshSharedView(String sharedViewName) {
-		boolean configurationHasChanged = false;
-		String sharedViewsConfiguration = "Views";
-		
-		Configuration cfg = null;
-		SessionFactory sf = null;
-		
-		if(compositeConfiguration == null) {
-			initHibernate();
-			return;
-		}
-		
-		configurationHasChanged = addView(getDatamartName(), sharedViewName, sharedViewsConfiguration);
-				
-		if(configurationHasChanged) {
-			cfg = (Configuration)configurationMap.get(sharedViewsConfiguration);
-			sf = cfg.buildSessionFactory();	
-			sessionFactoryMap.put(sharedViewsConfiguration, sf);	
-			compositeSessionFactory = compositeConfiguration.buildSessionFactory();
-		}	
-	}
+
 	
 	
 	/* (non-Javadoc)
@@ -484,7 +303,6 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 		compositeConfiguration = null;
 		compositeSessionFactory = null;
 		classLoaderExtended = false;
-		alreadyAddedView = new ArrayList();	
 		configurationMap = new HashMap();	
 		sessionFactoryMap = new HashMap();	
 	}

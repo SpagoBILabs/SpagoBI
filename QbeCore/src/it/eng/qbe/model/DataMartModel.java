@@ -67,11 +67,6 @@ public class DataMartModel implements IDataMartModel {
 	}
 	
 	
-	public void addView(String name, Query query) throws Exception {	
-		getDataSource().addView(null, null, null, null, null);
-	}
-	
-	
 	
 	//////////////////////////////////////////////////////////////////////////
 	/// Access metohds

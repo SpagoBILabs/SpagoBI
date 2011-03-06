@@ -32,23 +32,23 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 
-public class LocalFileSystemDataMartModelRetriever implements IDataMartModelRetriever {
+public class CopyOfLocalFileSystemDataMartModelRetriever implements IDataMartModelRetriever {
 
 	private File datamartsDir;
 	
 	private static final String DATAMART_JAR_FILE_NAME = "datamart.jar";
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(LocalFileSystemDataMartModelRetriever.class);
+    private static transient Logger logger = Logger.getLogger(CopyOfLocalFileSystemDataMartModelRetriever.class);
 	
 	
 	
 	
-	public LocalFileSystemDataMartModelRetriever() {
+	public CopyOfLocalFileSystemDataMartModelRetriever() {
 		setContextDir(null);
 	}
 	
-	public LocalFileSystemDataMartModelRetriever(File contextDir) {
+	public CopyOfLocalFileSystemDataMartModelRetriever(File contextDir) {
 		setContextDir(contextDir);
 	}
 	
