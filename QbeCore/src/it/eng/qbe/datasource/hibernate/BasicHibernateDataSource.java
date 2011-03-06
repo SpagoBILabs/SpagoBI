@@ -160,72 +160,10 @@ public class BasicHibernateDataSource extends AbstractHibernateDataSource  {
 			t.printStackTrace();
 		}
 		
-		addViews();
-		
-		
 		sessionFactory = configuration.buildSessionFactory();
 		
-		/*
-		try {
-			sessionFactory = configuration.buildSessionFactory();
-			logger.info("Hibernate session factory built succesfully");
-		} catch(Throwable t) {
-			logger.info("Hibernate session factory built with some errors");
-		}
-		*/
 	}
-	
-	/**
-	 * Adds the views.
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addViews() {		
-		boolean result = false;
-		
-		List viewNames = getViewNames( getDatamartName() );
-		if(viewNames.size() > 0) {
-			for(int i = 0; i < viewNames.size(); i++) {
-				String viewName = (String)viewNames.get(i);
-				result = addView(viewName) && result;
-			}
-		}
-		
-		return result;
-	}	
-	
-	/**
-	 * Adds the view.
-	 * 
-	 * @param viewName the view name
-	 * 
-	 * @return true, if successful
-	 */
-	private boolean addView(String viewName) {
-		
-		boolean result = false;
-		
-		File viewJarFile = null;
-		
-		viewJarFile = getViewJarFile(getDatamartName(), viewName);
-		if(viewJarFile == null) {
-			return false;
-		}
-		
-		if(configuration == null) {
-			configuration = buildEmptyConfiguration();
-		}		
-		
-		if (!(alreadyAddedView.contains(viewJarFile.getAbsolutePath()))){ 
-			updateCurrentClassLoader(viewJarFile);
-			configuration.addJar(viewJarFile);
-			alreadyAddedView.add(viewJarFile.getAbsolutePath());
-			result = true;
-		}
-		
-		return result;
-	}
-	
+
 	
 	/**
 	 * Adds the db links.

@@ -67,47 +67,6 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 		//return datamartJarFile;
 		return datamartFile;
 	}
-	
-	/**
-	 * Gets the view names.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the view names
-	 */
-	protected List getViewNames(String datamartName) {
-		List viewNames = null;
-		IDataMartModelRetriever dataMartModelRetriever;
-		try {
-			dataMartModelRetriever = QbeCoreSettings.getInstance().getDataMartModelRetriever();
-			viewNames = dataMartModelRetriever.getViewNames(datamartName);
-		} catch (Exception e) {
-			logger.error(DataMartModel.class, e);
-		}		
-		
-		return viewNames;
-	}
-	
-	/**
-	 * Gets the view jar file.
-	 * 
-	 * @param datamartName the datamart name
-	 * @param viewName the view name
-	 * 
-	 * @return the view jar file
-	 */
-	protected File getViewJarFile(String datamartName, String viewName){
-		File viewJarFile = null;
-		
-		try{
-			IDataMartModelRetriever dataMartModelRetriever = QbeCoreSettings.getInstance().getDataMartModelRetriever();
-			viewJarFile =  dataMartModelRetriever.getViewJarFile(datamartName, viewName);
-		}catch (Exception e) {
-			logger.error(DataMartModel.class, e);
-		}
-		
-		return viewJarFile;
-	}
 
 	
 	

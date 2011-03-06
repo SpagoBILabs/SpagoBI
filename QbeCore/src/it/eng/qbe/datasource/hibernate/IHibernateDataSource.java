@@ -36,9 +36,5 @@ public interface IHibernateDataSource extends IDataSource {
 	SessionFactory getSessionFactory();
 	SessionFactory getSessionFactory(String dmName);
 
-	
-	void refreshDatamartViews();	
-	void refreshSharedViews();	
-	void refreshSharedView(String sharedViewName);
 	void refresh();		
 }

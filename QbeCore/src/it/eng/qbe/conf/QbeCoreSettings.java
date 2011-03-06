@@ -22,21 +22,18 @@ package it.eng.qbe.conf;
 
 import java.io.File;
 
-import it.eng.qbe.model.io.IDataMartModelRetriever;
 import it.eng.qbe.model.io.IQueryPersister;
-import it.eng.qbe.model.io.LocalFileSystemDataMartModelRetriever;
 import it.eng.qbe.utility.IDBSpaceChecker;
 import it.eng.spago.configuration.ConfigSingleton;
 
 
 /**
  * 
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class QbeCoreSettings {
 	
 	private File qbeDataMartDir;
-	private IDataMartModelRetriever dataMartModelRetriever;
 	
 	/** The query persister. */
 	private IQueryPersister queryPersister = null;
@@ -68,7 +65,6 @@ public class QbeCoreSettings {
 	
 	private QbeCoreSettings() {	
 		setQbeDataMartDir( new File("resources/datamarts") );
-		setDataMartModelRetriever( new LocalFileSystemDataMartModelRetriever( getQbeDataMartDir() ) );
 	}
 	
 	
@@ -81,15 +77,6 @@ public class QbeCoreSettings {
 		this.qbeDataMartDir = qbeDataMartDir;
 	}
 	
-	
-	public IDataMartModelRetriever getDataMartModelRetriever() throws Exception {		
-		return dataMartModelRetriever;
-	}
-	
-	
-	public void setDataMartModelRetriever(IDataMartModelRetriever dataMartModelRetriever) {
-		this.dataMartModelRetriever = dataMartModelRetriever;
-	}
 	
 	public IQueryPersister getQueryPersister() throws Exception{
 		if(queryPersister == null) {

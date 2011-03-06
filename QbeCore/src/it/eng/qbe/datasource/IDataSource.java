@@ -54,11 +54,5 @@ public interface IDataSource {
 	
 	String getDatamartName();
 	List getDatamartNames();
-	
-	/**
-	 * 
-	 * @deprecated
-	 * 
-	 */
-	void addView(String name, IStatement statement, List columnNames, List columnAlias, List columnHibernateTypes);
+
 }
