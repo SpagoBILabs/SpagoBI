@@ -26,8 +26,6 @@ import java.util.Map;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.hibernate.BasicHibernateDataSource;
-import it.eng.qbe.datasource.hibernate.CompositeHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;

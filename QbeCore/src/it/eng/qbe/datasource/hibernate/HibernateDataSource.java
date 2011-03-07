@@ -61,7 +61,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	protected Map dblinkMap;
 	protected DBConnection connection;
 	
-	private static transient Logger logger = Logger.getLogger(AbstractHibernateDataSource.class);
+	private static transient Logger logger = Logger.getLogger(HibernateDataSource.class);
 
 
 	
