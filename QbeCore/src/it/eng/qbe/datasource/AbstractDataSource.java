@@ -42,6 +42,8 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected String datamartName = null;
 	// if it is a multi jar qbe
 	protected List datamartNames = null;
+	
+	
 	private int type;
 	private DatamartProperties properties = null;	
 	private DataMartModelAccessModality dataMartModelAccessModality;

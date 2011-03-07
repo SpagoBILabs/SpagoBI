@@ -42,7 +42,7 @@ public class StatementFactory {
 		} else if (dataSource instanceof JPADataSource) {
 			statement = new JPQLStatement((JPADataSource)dataSource, query);
 		} else {
-			throw new RuntimeException("Impossible to create statement from a datasource of type [" + dataSource.getType() + "]");
+			throw new RuntimeException("Impossible to create statement from a datasource of type [" + dataSource.getClass().getName() + "]");
 		}
 		
 		return statement;

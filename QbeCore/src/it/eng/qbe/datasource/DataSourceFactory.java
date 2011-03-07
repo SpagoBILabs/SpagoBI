@@ -28,6 +28,7 @@ import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.hibernate.BasicHibernateDataSource;
 import it.eng.qbe.datasource.hibernate.CompositeHibernateDataSource;
+import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -54,24 +55,43 @@ public class DataSourceFactory {
 	 * @return the idata source
 	 */
 	public static IDataSource buildDataSource(String dataSourceName, 
-			String datamartName, List datamartNames,  Map dblinkMap, 
+			String datamartName, List<String> datamartNames,  Map dblinkMap, 
 			DBConnection connection) {
-		//Check if the datamart contains a JPA or a Hibernate mapping
+		
 		AbstractDataSource dataSource = null;
 		boolean isJPA = false;
+		
 		try {
-			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartName);
+			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartNames.get(0));
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error loading the datamart.jar ", e);
+			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + datamartNames.get(0) + "]", e);
 		}
+		if(datamartNames.size() > 1) {
+			for(int i = 1; i < datamartNames.size(); i++) {
+				boolean b;
+				try {
+					b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartNames.get(0));
+				} catch (Exception e) {
+					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + datamartNames.get(i) + "]", e);
+				}
+				if(isJPA != b) {
+					throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
+				}
+			}
+		}
+		
+		
 		if(isJPA){
 			dataSource = new JPADataSource(dataSourceName);
-		}else{
+		} else {
+			dataSource = new HibernateDataSource(dataSourceName);
+			/*
 			if(datamartNames.size() == 1) {
 				dataSource = new BasicHibernateDataSource(dataSourceName);
 			} else {
 				dataSource = new CompositeHibernateDataSource(dataSourceName);
 			} 
+			*/
 		}
 		
 		

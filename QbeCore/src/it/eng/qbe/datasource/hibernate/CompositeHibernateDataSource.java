@@ -80,7 +80,7 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 	private CompositeHibernateDataSource(String dataSourceName, String datamartName, List datamartNames, Map dblinkMap, DBConnection connection) {
 		
 		setName( dataSourceName );
-		setType(COMPOSITE_HIBERNATE_DS_TYPE);
+	
 		
 		setDatamartName(datamartName);		
 		setDatamartNames(datamartNames);
@@ -108,7 +108,6 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 	 */
 	public CompositeHibernateDataSource(String dataSourceName) {
 		setName( dataSourceName );
-		setType( COMPOSITE_HIBERNATE_DS_TYPE );
 	}
 	
 	
@@ -305,6 +304,21 @@ public class CompositeHibernateDataSource extends AbstractHibernateDataSource  {
 		classLoaderExtended = false;
 		configurationMap = new HashMap();	
 		sessionFactoryMap = new HashMap();	
+	}
+
+	public void open() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isOpen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void close() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

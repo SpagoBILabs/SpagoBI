@@ -20,6 +20,7 @@
  **/
 package it.eng.qbe.datasource.hibernate;
 
+import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
@@ -28,28 +29,169 @@ import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.utility.IDBSpaceChecker;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.sql.Connection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Table;
 
 
-public abstract class AbstractHibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
+public class HibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
 
-	protected Map dblinkMap = null;
-	protected DBConnection connection = null;
+	protected boolean classLoaderExtended = false;		
+	
+	protected Configuration compositeConfiguration;	
+	protected SessionFactory compositeSessionFactory;
+	
+	protected Map<String, Configuration> configurationMap = new HashMap<String, Configuration>();	
+	protected Map<String, SessionFactory> sessionFactoryMap = new HashMap<String, SessionFactory>();	
+	
+	protected Map dblinkMap;
+	protected DBConnection connection;
 	
 	private static transient Logger logger = Logger.getLogger(AbstractHibernateDataSource.class);
 
+
+	
+	/**
+	 * Instantiates a new composite hibernate data source.
+	 */
+	public HibernateDataSource(String dataSourceName, String datamartName, List datamartNames, DBConnection connection) {
+		this(dataSourceName, datamartName, datamartNames, new HashMap(), connection);
+	}
+		
+	/**
+	 * Instantiates a new composite hibernate data source.
+	 */
+	private HibernateDataSource(String dataSourceName, String datamartName, List datamartNames, Map dblinkMap, DBConnection connection) {
+		
+		setName( dataSourceName );
+		
+		
+		setDatamartName(datamartName);		
+		setDatamartNames(datamartNames);
+		setDblinkMap(dblinkMap);
+		
+		setConnection(connection);
+		
+		setProperties();		
+	}
+
+	/**
+	 * Instantiates a new composite hibernate data source.
+	 * 
+	 * @param dataSourceName the data source name
+	 */
+	public HibernateDataSource(String dataSourceName) {
+		setName( dataSourceName );
+	}
+	
+	public boolean isCompositeDataSource() {
+		return getDatamartNames().size() > 1;
+	}
+	
+	
+	public void setProperties() {
+		
+		DatamartProperties properties = new DatamartProperties();
+		Iterator<String> it = datamartNames.iterator();
+		while (it.hasNext()) {
+			String datamartName = it.next();
+			properties.addDatamartProperties(DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( datamartName ));
+		}
+		setProperties( properties );
+	}
+	
+	public synchronized void open() {
+		logger.debug("IN");
+		
+		try {
+			if(!isOpen()) {
+				compositeConfiguration = buildEmptyConfiguration();
+				
+				addDatamarts();
+				
+				if(isCompositeDataSource()) {
+					addDbLinks();	
+					compositeSessionFactory = compositeConfiguration.buildSessionFactory();
+				} else {
+					compositeSessionFactory = sessionFactoryMap.get(getDatamartNames().get(0));
+				}
+				
+				classLoaderExtended = true;
+			}
+		} catch (Throwable t){
+			throw new SpagoBIRuntimeException("Impossible to open connection", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public boolean isOpen() {
+		return compositeSessionFactory != null && compositeConfiguration != null;
+	}
+	
+	public void close() {
+		compositeSessionFactory = null;
+		compositeConfiguration = null;
+		configurationMap = new HashMap<String, Configuration>();	
+		sessionFactoryMap = new HashMap<String, SessionFactory>();
+		//classLoaderExtended = false;
+	}
+		
+	
+	protected void addDatamarts() {
+		
+		for(int i = 0; i < getDatamartNames().size(); i++) {
+			String dmName = (String)getDatamartNames().get(i);
+			addDatamart(dmName, !classLoaderExtended);		
+		}	
+		classLoaderExtended = true;
+	}
+	
+	private void addDatamart(String dmName, boolean extendClassLoader) {
+		Configuration cfg = null;	
+		SessionFactory sf = null;
+		File jarFile = null;
+		
+		jarFile = getDatamartJarFile(dmName);
+		if(jarFile == null) return;
+		
+		cfg = buildEmptyConfiguration();
+		configurationMap.put(dmName, cfg);
+		
+		if (extendClassLoader){
+			updateCurrentClassLoader(jarFile);
+		}	
+		
+		cfg.addJar(jarFile);
+		
+		try {
+			compositeConfiguration.addJar(jarFile);
+		} catch (Throwable t) {
+			throw new RuntimeException("Cannot add datamart", t);
+		}
+		
+		sf = cfg.buildSessionFactory();
+		sessionFactoryMap.put(dmName, sf);		
+	}
+	
+	
+	
+	
+	
 	protected Configuration buildEmptyConfiguration() {
 		Configuration cfg = null;
 		
@@ -73,16 +215,46 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 	}	
 
 	
-	
-	
-	
-	/**
-	 * Gets the datamart jar file.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the datamart jar file
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.datasource.IHibernateDataSource#getConfiguration()
 	 */
+	public Configuration getConfiguration() {
+		if(isOpen() == false) {
+			open();
+		}
+		return compositeConfiguration;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory()
+	 */
+	public SessionFactory getSessionFactory() {
+		if(isOpen() == false) {
+			open();
+		}
+		return compositeSessionFactory;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang.String)
+	 */
+	public SessionFactory getSessionFactory(String dmName) {
+		if(compositeSessionFactory == null) open();
+		return (SessionFactory)sessionFactoryMap.get(dmName);
+	}	
+	
+	
+	public Configuration getConfiguration(String dmName) {
+		if(compositeConfiguration == null) open();
+		return (Configuration)configurationMap.get(dmName);
+	}
+	
+	
+	
+	
+	
+	
+	
 	protected File getDatamartJarFile(String datamartName){
 		File datamartJarFile = null;
 		
@@ -95,17 +267,7 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 		return datamartJarFile;
 	}
 
-	/**
-	 * Load formula file.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the file
-	 */
-	protected File loadFormulaFile(String datamartName) {
-		String formulaFile = getDatamartJarFile( datamartName ).getParent() + "/formula.xml";
-		return new File(formulaFile);
-	}
+	
 	
 	/**
 	 * Update current class loader.
@@ -226,13 +388,7 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 	}
 
 		
-	/**
-	 * Adds the db link.
-	 * 
-	 * @param dmName the dm name
-	 * @param srcCfg the src cfg
-	 * @param dstCfg the dst cfg
-	 */
+
 	protected void addDbLink(String dmName, Configuration srcCfg, Configuration dstCfg) {
 		
 		String dbLink = null;
@@ -254,4 +410,33 @@ public abstract class AbstractHibernateDataSource extends AbstractDataSource imp
 		}
 		
 	}
+
+	
+	private void addDbLinks() {
+		Configuration cfg = null;
+		
+		for(int i = 0; i < getDatamartNames().size(); i++) {
+			String dmName = (String)getDatamartNames().get(i);
+			cfg = (Configuration)configurationMap.get(dmName);
+			addDbLink(dmName, cfg, compositeConfiguration);
+		}
+	}
+	
+	/**
+	 * Load formula file.
+	 * 
+	 * @param datamartName the datamart name
+	 * 
+	 * @return the file
+	 */
+	protected File loadFormulaFile(String datamartName) {
+		String formulaFile = getDatamartJarFile( datamartName ).getParent() + "/formula.xml";
+		return new File(formulaFile);
+	}
+	
+	private File loadFormulaFile() {		
+		return loadFormulaFile( (String)getDatamartNames().get(0) );
+	}
+
+	
 }

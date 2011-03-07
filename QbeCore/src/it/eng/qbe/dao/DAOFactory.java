@@ -36,10 +36,6 @@ public class DAOFactory {
 	}
 	
 
-	public static IViewJarFileDAO getViewJarFileDAO() {
-		File datamartsDir = QbeCoreSettings.getInstance().getQbeDataMartDir();
-		return new ViewJarFileDAOFilesystemImpl(datamartsDir);
-	}
 	
 	public static IDatamartPropertiesDAO getDatamartPropertiesDAO() {
 		return new DatamartPropertiesDAOFilesystemImpl();
@@ -53,6 +49,4 @@ public class DAOFactory {
 		File datamartsDir = QbeCoreSettings.getInstance().getQbeDataMartDir();
 		return new CalculatedFieldsDAOFilesystemImpl(datamartsDir);
 	}
-	
-	
 }

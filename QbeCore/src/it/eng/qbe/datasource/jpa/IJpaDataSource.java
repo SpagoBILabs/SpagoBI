@@ -32,15 +32,9 @@ import javax.persistence.EntityManagerFactory;
  */
 public interface IJpaDataSource  extends IDataSource {
 	DBConnection getConnection();
-	//Configuration getConfiguration();	
 	EntityManager getEntityManager();
 	EntityManagerFactory getEntityManagerFactory();
 	EntityManagerFactory getEntityManagerFactory(String dmName);
 
-/*	
-	void refreshDatamartViews();	
-	void refreshSharedViews();	
-	void refreshSharedView(String sharedViewName);
-	void refresh();
-*/		
+		
 }

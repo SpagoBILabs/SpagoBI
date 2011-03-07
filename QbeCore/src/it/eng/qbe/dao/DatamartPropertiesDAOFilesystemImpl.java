@@ -20,10 +20,9 @@
  **/
 package it.eng.qbe.dao;
 
-import it.eng.qbe.bo.DatamartJarFile;
 import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.bo.ViewJarFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -47,24 +46,15 @@ public class DatamartPropertiesDAOFilesystemImpl implements
 	public DatamartProperties loadDatamartProperties(String datamartName) {
 		Properties properties = null;
 		
-		DatamartJarFile datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
+		File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 		//File dmJarFile = datamartJarFile
 		if(datamartJarFile == null) return new DatamartProperties();
 		
 		JarFile jf = null;
 		try {
-			jf = new JarFile( datamartJarFile.getFile() );
+			jf = new JarFile( datamartJarFile );
 			properties = loadQbePropertiesFormJarFile(jf);
 			
-			List viewNames = DAOFactory.getViewJarFileDAO().loadViewNames(datamartName);
-			Iterator it = viewNames.iterator();
-			while(it.hasNext()) {
-				String viewName = (String)it.next();
-				ViewJarFile viewJarFile =  DAOFactory.getViewJarFileDAO().loadViewJarFile(datamartName, viewName);
-				jf = new JarFile( viewJarFile.getFile() );
-				Properties tmpProps = loadQbePropertiesFormJarFile(jf);
-				properties.putAll(tmpProps);
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return new DatamartProperties();
