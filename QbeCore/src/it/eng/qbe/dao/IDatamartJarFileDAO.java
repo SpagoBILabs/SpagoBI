@@ -20,9 +20,8 @@
  **/
 package it.eng.qbe.dao;
 
+import java.io.File;
 import java.io.IOException;
-
-import it.eng.qbe.bo.DatamartJarFile;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,7 +38,7 @@ public interface IDatamartJarFileDAO {
 	 * 
 	 * @return the datamart jar file
 	 */
-	DatamartJarFile loadDatamartJarFile(String datamartName) ;
+	File loadDatamartJarFile(String datamartName) ;
 	
 	/**
 	 * Save datamart jar file.
@@ -47,7 +46,7 @@ public interface IDatamartJarFileDAO {
 	 * @param datamartName the datamart name
 	 * @param jarFile the jar file
 	 */
-	void saveDatamartJarFile(String datamartName, DatamartJarFile jarFile);
+	void saveDatamartJarFile(String datamartName, File jarFile);
 	
 	/**
 	 * Check if the datamart contains the resource META-INF/persistence.xml

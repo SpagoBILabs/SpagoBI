@@ -28,6 +28,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class DAOException extends SpagoBIRuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public DAOException(String message) {
 		super(message);
 	}

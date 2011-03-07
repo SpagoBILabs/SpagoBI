@@ -57,15 +57,8 @@ public class JPADataSource extends AbstractJPADataSource {
 	 */
 	public JPADataSource(String dataSourceName) {
 		setName( dataSourceName );
-		setType( JPA_DS_TYPE );
 	}
 	
-	
-	public void addView(String name, IStatement statement, List columnNames,
-			List columnAlias, List columnHibernateTypes) {
-		// non implementare questo metodo tanto è deprecato
-		
-	}
 	
 	public void createEntityManager(String name){
 		factory = Persistence.createEntityManagerFactory(name);
@@ -84,7 +77,7 @@ public class JPADataSource extends AbstractJPADataSource {
 	 */
 	public EntityManagerFactory getEntityManagerFactory() {
 		if(factory == null) {
-			initJPA();
+			open();
 		}
 		return factory;
 	}	
@@ -94,16 +87,13 @@ public class JPADataSource extends AbstractJPADataSource {
 	 */
 	public EntityManager getEntityManager() {
 		if(factory == null) {
-			initJPA();
+			open();
 		}
 		return factory.createEntityManager();
 	}
 	
 
-	/**
-	 * Inits the jpa.
-	 */
-	private void initJPA() {
+	public void open() {
 		File jarFile = null;
 		
 		jarFile = getDatamartJarFile( getDatamartName() );
@@ -117,5 +107,11 @@ public class JPADataSource extends AbstractJPADataSource {
 		
 	}
 	
+	public boolean isOpen() {
+		return factory != null;
+	}
 	
+	public void close() {
+		factory = null;
+	}
 }

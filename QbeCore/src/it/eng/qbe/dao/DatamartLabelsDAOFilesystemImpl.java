@@ -20,10 +20,10 @@
  **/
 package it.eng.qbe.dao;
 
-import it.eng.qbe.bo.DatamartJarFile;
 import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.ViewJarFile;
 
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -55,26 +55,15 @@ public class DatamartLabelsDAOFilesystemImpl implements IDatamartLabelsDAO {
 	public DatamartLabels loadDatamartLabels(String datamartName, Locale locale) {
 		Properties properties = null;
 		
-		DatamartJarFile datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
+		File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 		if(datamartJarFile == null) {
 			return new DatamartLabels();
 		}		
 		
 		JarFile jf;
 		try {
-			jf = new JarFile( datamartJarFile.getFile() );		
-			
+			jf = new JarFile( datamartJarFile );			
 			properties = getLabelProperties(jf, locale);
-					
-			List viewNames = DAOFactory.getViewJarFileDAO().loadViewNames(datamartName);
-			Iterator it = viewNames.iterator();
-			while(it.hasNext()) {
-				String viewName = (String)it.next();
-				ViewJarFile viewJarFile =  DAOFactory.getViewJarFileDAO().loadViewJarFile(datamartName, viewName);
-				jf = new JarFile( viewJarFile.getFile() );
-				Properties tmpProps = getLabelProperties(jf, locale);
-				properties.putAll(tmpProps);
-			}		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

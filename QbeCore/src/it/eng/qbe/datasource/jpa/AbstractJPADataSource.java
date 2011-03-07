@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.bo.DatamartJarFile;
 import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
@@ -58,8 +57,8 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 		File datamartFile = null;
 		
 		try{
-			DatamartJarFile datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
-			datamartFile = datamartJarFile.getFile() ;
+			File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
+			datamartFile = datamartJarFile ;
 		}catch (Exception e) {
 			logger.error(DataMartModel.class, e);
 		}
@@ -164,9 +163,5 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 		}
 	}
 
-
-
-
-	
 
 }

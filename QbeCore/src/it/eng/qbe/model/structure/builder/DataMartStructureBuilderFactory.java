@@ -40,7 +40,7 @@ public class DataMartStructureBuilderFactory {
 		} else if (dataSource instanceof JPADataSource) {
 			builder = new JPADatamartStructureBuilder((JPADataSource)dataSource);
 		} else {
-			throw new RuntimeException("Impossible to load datamart structure from a datasource of type [" + dataSource.getType() + "]");
+			throw new RuntimeException("Impossible to load datamart structure from a datasource of type [" + dataSource.getClass().getName() + "]");
 		}
 		
 		

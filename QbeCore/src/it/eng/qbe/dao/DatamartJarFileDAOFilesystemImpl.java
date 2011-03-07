@@ -21,53 +21,37 @@
 package it.eng.qbe.dao;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import it.eng.qbe.bo.DatamartJarFile;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia
  */
 public class DatamartJarFileDAOFilesystemImpl implements IDatamartJarFileDAO {
 
+	protected File datamartsDir;
 	
-	private File datamartsDir;
-	
+	// ============================================================
+	// COSTRUCTORS
+	// ============================================================
 	
 	public DatamartJarFileDAOFilesystemImpl(File datamartsDir) {
+		Assert.assertNotNull(datamartsDir, "Parameter [datamartsDir] cannot be null");
+		if(!datamartsDir.exists()) {
+			throw new DAOException("Folder [" + datamartsDir.getName() + "] does not exist.");
+		}
+		if(!datamartsDir.isDirectory()) {
+			throw new DAOException("File [" + datamartsDir.getName() + "] is not a folder.");
+		}
 		this.setDatamartsDir(datamartsDir);
 	}
 	
-	public DatamartJarFile loadDatamartJarFile(String datamartName) {
-		DatamartJarFile jarFile = null;
-		File targetDatamartDir = null;
-		File datamartJarFile = null;
-		
-		targetDatamartDir = new File(getDatamartsDir(), datamartName);
-		datamartJarFile = new File(targetDatamartDir, "datamart.jar");
-		
-		if (datamartJarFile.exists()) {
-			jarFile = new DatamartJarFile(datamartJarFile);
-		}
-
-		return jarFile;
-	}
+	// ============================================================
+	// ACCESSORS
+	// ============================================================
 	
-	public boolean isAJPADatamartJarFile(String datamartName) throws IOException{
-		DatamartJarFile jarFile = loadDatamartJarFile(datamartName);
-		ZipFile zipFile = new ZipFile(jarFile.getFile());
-		ZipEntry ze = zipFile.getEntry("META-INF/persistence.xml");
-		return ze!=null;
-	}
-	
-
-	public void saveDatamartJarFile(String datamartName, DatamartJarFile jarFile) {
-		
-	}
-	
-
 	private File getDatamartsDir() {
 		return datamartsDir;
 	}
@@ -76,5 +60,48 @@ public class DatamartJarFileDAOFilesystemImpl implements IDatamartJarFileDAO {
 	private void setDatamartsDir(File datamartsDir) {
 		this.datamartsDir = datamartsDir;
 	}
+	
+	// ============================================================
+	// DAO (load & save)
+	// ============================================================
+	
+	public File loadDatamartJarFile(String datamartName) {
+		File targetDatamartDir;
+		File datamartJarFile;
+		
+		targetDatamartDir = new File(getDatamartsDir(), datamartName);		
+		datamartJarFile = new File(targetDatamartDir, "datamart.jar");
+		
+		if (!datamartJarFile.exists()) {
+			throw new DAOException("Impossible to load datamart [" + datamartName + "]. The associated mapping file [" + datamartJarFile + "] does not exist");
+		}
+		
+		return datamartJarFile;
+	}
+	
+	public void saveDatamartJarFile(String datamartName, File jarFile) {
+		
+	}
+
+	public boolean isAJPADatamartJarFile(String datamartName) {
+		File jarFile = loadDatamartJarFile(datamartName);
+		ZipFile zipFile;
+		ZipEntry zipEntry;
+		
+		jarFile = loadDatamartJarFile(datamartName);
+		try {
+			zipFile = new ZipFile(jarFile);
+		} catch (Throwable t) {
+			throw new DAOException("Impossible to read jar file [" + jarFile + "]");
+		} 
+		
+		zipEntry = zipFile.getEntry("META-INF/persistence.xml");
+		
+		return zipEntry!=null;
+	}
+	
+
+	
+
 
 }

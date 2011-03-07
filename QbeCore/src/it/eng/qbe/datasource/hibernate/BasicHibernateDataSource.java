@@ -90,7 +90,7 @@ public class BasicHibernateDataSource extends AbstractHibernateDataSource  {
 									DBConnection connection) {
 		
 		setName( dataSourceName );
-		setType( HIBERNATE_DS_TYPE );
+		//setType( HIBERNATE_DS_TYPE );
 		
 		setDatamartName(datamartName);		
 		setDatamartNames(datamartNames);
@@ -108,7 +108,7 @@ public class BasicHibernateDataSource extends AbstractHibernateDataSource  {
 	 */
 	public BasicHibernateDataSource(String dataSourceName) {
 		setName( dataSourceName );
-		setType( HIBERNATE_DS_TYPE );
+		//setType( HIBERNATE_DS_TYPE );
 		alreadyAddedView = new ArrayList();
 	}	
 	
@@ -223,6 +223,21 @@ public class BasicHibernateDataSource extends AbstractHibernateDataSource  {
 	 */
 	public void refreshSharedViews() {
 		refreshDatamartViews();
+	}
+
+	public void open() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isOpen() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void close() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

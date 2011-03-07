@@ -21,6 +21,7 @@
 package it.eng.qbe.datasource;
 
 import java.util.List;
+import java.util.Properties;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
@@ -33,26 +34,21 @@ import it.eng.qbe.statment.IStatement;
  */
 public interface IDataSource {
 	
-	int HIBERNATE_DS_TYPE = 1;
-	int COMPOSITE_HIBERNATE_DS_TYPE = 2;
-	int JPA_DS_TYPE = 3;
-	int COMPOSITE_JPA_DS_TYPE = 4;
+	String getName();
+	String getDatamartName();
+	List<String> getDatamartNames();
 	
 	DataMartModelStructure getDataMartModelStructure();
-	IStatement createStatement(Query query);
-	
 	DataMartModelAccessModality getDataMartModelAccessModality();
 	void setDataMartModelAccessModality(DataMartModelAccessModality dataMartModelAccessModality) ;
 	
+	void open();
+	//void open(Properties connectionProperties);
+	boolean isOpen();
+	void close();
 	
-		
+	IStatement createStatement(Query query);
 
-	String getName();
-	int getType();
 	DatamartProperties getProperties();
 	void setProperties(DatamartProperties properties);
-	
-	String getDatamartName();
-	List getDatamartNames();
-
 }
