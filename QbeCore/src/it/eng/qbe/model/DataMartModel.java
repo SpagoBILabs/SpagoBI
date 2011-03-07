@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.hibernate.BasicHibernateDataSource;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
@@ -104,7 +103,7 @@ public class DataMartModel implements IDataMartModel {
 		return dataSource;
 	}
 
-	public void setDataSource(BasicHibernateDataSource dataSource) {
+	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 	
