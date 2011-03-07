@@ -29,7 +29,6 @@ import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DataSourceFactory;
 import it.eng.qbe.datasource.DataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.hibernate.CompositeHibernateDataSource;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 
@@ -103,9 +102,7 @@ public class QbeDataSourceManager implements DataSourceManager {
 		if (dataSource == null) {
 			dataSource = DataSourceFactory.buildDataSource(dataSourceName, dataMartName, dataMartNames, dblinkMap, connection);
 			getDataSourceCache().addDataSource(dataSourceName, dataSource);
-		} else if(dataSource instanceof CompositeHibernateDataSource) {
-			CompositeHibernateDataSource compositeHibernateDataSource = (CompositeHibernateDataSource)dataSource;
-		}
+		} 
 		
 		return dataSource;
 	}
