@@ -20,11 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
@@ -34,6 +29,11 @@ import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * This action is responsible to retrieve the first query contained into the catalog.
@@ -63,7 +63,7 @@ public class GetFirstQueryAction extends AbstractQbeEngineAction {
 			QueryCatalogue queryCatalogue = engineInstance.getQueryCatalogue();
 			Query query = queryCatalogue.getFirstQuery();
 			// serialize query
-			JSONObject queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+			JSONObject queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale());
 			
 			try {
 				writeBackToClient( new JSONSuccess(queryJSON) );

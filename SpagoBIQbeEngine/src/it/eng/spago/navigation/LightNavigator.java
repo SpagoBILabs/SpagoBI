@@ -20,10 +20,10 @@
  **/
 package it.eng.spago.navigation;
 
-import java.util.ArrayList;
-
 import it.eng.spago.base.Constants;
 import it.eng.spago.tracing.TracerSingleton;
+
+import java.util.ArrayList;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -23,8 +23,7 @@ package it.eng.spagobi.engines.qbe.tree;
 import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.cache.QbeCacheManager;
-import it.eng.qbe.commons.serializer.json.JSONSerializer;
-import it.eng.qbe.model.IDataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
@@ -57,7 +56,7 @@ public class ExtJsQbeTreeBuilder  {
 	private QbeTreeFilter qbeTreeFilter;
 	
 	
-	private IDataMartModel datamartModel;	
+	private IDataSource dataSource;	
 	
 	private Locale locale;
 	
@@ -76,7 +75,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 	/**
 	 * 
-	 * @param datamartModel
+	 * @param dataSource
 	 * @param locale can be null. In that case label.properties will be loaded (if exists)
 	 * @return
 	 */
@@ -92,10 +91,10 @@ public class ExtJsQbeTreeBuilder  {
 	}
 	*/
 	
-	public JSONArray getQbeTree(IDataMartModel datamartModel, Locale locale, String datamartName)  {			
-		setDatamartModel(datamartModel);
+	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName)  {			
+		setDatamartModel(dataSource);
 		setLocale(locale);
-		setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDatamartModel() , getLocale() ) );
+		setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
 		if( getDatamartLabels() == null) {
 			setDatamartLabels( new DatamartLabels() );
 		}
@@ -179,8 +178,8 @@ public class ExtJsQbeTreeBuilder  {
 	public void addEntityNodes(JSONArray nodes, String datamartName) {
 		int nodeCounter = 0;
 		
-		List entities = getDatamartModel().getDataMartModelStructure().getRootEntities(datamartName);
-		entities = qbeTreeFilter.filterEntities(getDatamartModel(), entities);
+		List entities = getDataSource().getDataMartModelStructure().getRootEntities(datamartName);
+		entities = qbeTreeFilter.filterEntities(getDataSource(), entities);
 		
 		Iterator it = entities.iterator();
 		while(it.hasNext()) {
@@ -219,7 +218,7 @@ public class ExtJsQbeTreeBuilder  {
 								  DataMartEntity entity,
 								  int recursionLevel) {		
 		
-		DatamartProperties datamartProperties = datamartModel.getDataSource().getProperties();	
+		DatamartProperties datamartProperties = dataSource.getDataMartProperties();	
 		String iconCls = datamartProperties.getEntityIconClass( entity );			
 		String label = geEntityLabel( entity );
 		String londDescription = QueryJSONSerializer.getEntityLongDescription( entity , getDatamartLabels());
@@ -267,7 +266,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		// add key fields
 		List keyFields = entity.getKeyFields();
-		keyFields = qbeTreeFilter.filterFields(getDatamartModel(), keyFields);
+		keyFields = qbeTreeFilter.filterFields(getDataSource(), keyFields);
 		
 		Iterator keyFieldIterator = keyFields.iterator();
 		while (keyFieldIterator.hasNext() ) {
@@ -281,7 +280,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		// add normal fields
 		List normalFields = entity.getNormalFields();
-		normalFields = qbeTreeFilter.filterFields(getDatamartModel(), normalFields);
+		normalFields = qbeTreeFilter.filterFields(getDataSource(), normalFields);
 		
 		Iterator normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext() ) {
@@ -294,7 +293,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		// add calculated fields
 		List calculatedFields = entity.getCalculatedFields();
-		normalFields = qbeTreeFilter.filterFields(getDatamartModel(), normalFields);
+		normalFields = qbeTreeFilter.filterFields(getDataSource(), normalFields);
 		
 		Iterator calculatedFieldIterator = calculatedFields.iterator();
 		while (calculatedFieldIterator.hasNext() ) {
@@ -323,7 +322,7 @@ public class ExtJsQbeTreeBuilder  {
 	public  JSONObject getFieldNode(DataMartEntity parentEntity,
 							 DataMartField field) {
 		
-		DatamartProperties datamartProperties = datamartModel.getDataSource().getProperties();
+		DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = datamartProperties.getFieldIconClass( field );		
 		String fieldLabel = geFieldLabel( field );
 		String longDescription = QueryJSONSerializer.getFieldLongDescription( field, getDatamartLabels() );
@@ -358,7 +357,7 @@ public class ExtJsQbeTreeBuilder  {
 	
 	public  JSONObject getCalculatedFieldNode(DataMartEntity parentEntity, DataMartCalculatedField field) {
 
-		DatamartProperties datamartProperties = datamartModel.getDataSource().getProperties();
+		DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = "calculation";;//datamartProperties.getFieldIconClass( field );		
 		String fieldLabel = geFieldLabel( field );
 		String fieldTooltip = geFieldTooltip( field );
@@ -470,7 +469,7 @@ public class ExtJsQbeTreeBuilder  {
 								   int recursionLevel ) {
 		
 		List subEntities = entity.getSubEntities();
-		subEntities = qbeTreeFilter.filterEntities(getDatamartModel(), subEntities);
+		subEntities = qbeTreeFilter.filterEntities(getDataSource(), subEntities);
 		
 	
 		Iterator subEntitiesIterator = subEntities.iterator();
@@ -500,17 +499,17 @@ public class ExtJsQbeTreeBuilder  {
 	 * 
 	 * @return the datamart model
 	 */
-	protected IDataMartModel getDatamartModel() {
-		return datamartModel;
+	protected IDataSource getDataSource() {
+		return dataSource;
 	}
 
 	/**
 	 * Sets the datamart model.
 	 * 
-	 * @param datamartModel the new datamart model
+	 * @param dataSource the new datamart model
 	 */
-	protected void setDatamartModel(IDataMartModel datamartModel) {
-		this.datamartModel = datamartModel;
+	protected void setDatamartModel(IDataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 

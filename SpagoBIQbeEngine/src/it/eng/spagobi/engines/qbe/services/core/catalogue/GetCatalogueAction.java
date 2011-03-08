@@ -20,14 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
@@ -38,6 +30,14 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -114,7 +114,7 @@ public class GetCatalogueAction extends AbstractQbeEngineAction {
 	
 	// @TODO create a general purpose serializer not dependant on the datamartModel
 	private JSONObject serializeQuery(Query query) throws SerializationException {
-		return (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+		return (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale());
 	}
 
 	private JSONObject serializeMeta(QueryMeta meta) throws JSONException {

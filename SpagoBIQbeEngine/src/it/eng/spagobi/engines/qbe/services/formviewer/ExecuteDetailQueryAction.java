@@ -20,17 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
@@ -56,6 +45,17 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 import it.eng.spagobi.utilities.sql.SqlUtils;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 
 /**
@@ -133,8 +133,8 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			// ... query transformation goes here	
 			
 			logger.debug("Making a deep copy of the original query...");
-			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale())).toString();
-			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDatamartModel());
+			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale())).toString();
+			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
 			logger.debug("Deep copy of the original query produced");
 			
 			String jsonEncodedFormState = getAttributeAsString( FORM_STATE );
@@ -202,7 +202,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				
 				dataSet = new JDBCStandardDataSet();
 				//Session session = getDatamartModel().getDataSource().getSessionFactory().openSession();
-				DBConnection connection = ((IHibernateDataSource)getDatamartModel().getDataSource()).getConnection();
+				DBConnection connection = ((IHibernateDataSource)getDataSource()).getConnection();
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());
 				dataSource.setHibDialectName(connection.getDialect());

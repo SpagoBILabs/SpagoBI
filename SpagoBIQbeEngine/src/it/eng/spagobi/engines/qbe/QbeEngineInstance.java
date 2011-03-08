@@ -21,15 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.DataMartModel;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
@@ -43,13 +38,17 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class QbeEngineInstance extends AbstractEngineInstance {
 	
-	DataMartModel datamartModel;		
+	IDataSource dataSource;		
 	QueryCatalogue queryCatalogue;
 	String activeQueryId;
 	QbeTemplate template;
@@ -91,15 +90,15 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		connection.setUrl( ds.getUrl() );
 		connection.setUsername( ds.getUser() );			
 		
-		IDataSource dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), template.getDbLinkMap(),  connection);
+		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), template.getDbLinkMap(),  connection);
 				
-		datamartModel = new DataMartModel(dataSource);
-		datamartModel.setDataMartProperties( env ); 
+		
+		dataSource.setProperties( env ); 
 		
 		if(template.getDatamartModelAccessModality() != null) {
 			
 			if(template.getDatamartModelAccessModality().getRecursiveFiltering() == null) {
-				String recursiveFilteringAttr = (String)dataSource.getProperties().getProperty(DataMartModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				String recursiveFilteringAttr = (String)dataSource.getDataMartProperties().getProperty(DataMartModelAccessModality.ATTR_RECURSIVE_FILTERING);
 				if(!StringUtilities.isEmpty(recursiveFilteringAttr)) {
 					if("disabled".equalsIgnoreCase(recursiveFilteringAttr)) {
 						template.getDatamartModelAccessModality().setRecursiveFiltering( Boolean.FALSE );
@@ -111,15 +110,14 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 				}
 			}
 			
-			datamartModel.setDataMartModelAccessModality( template.getDatamartModelAccessModality() );
+			dataSource.setDataMartModelAccessModality( template.getDatamartModelAccessModality() );
 		}
-		datamartModel.setName(datamartModel.getDataSource().getDatamartName());
-		datamartModel.setDescription(datamartModel.getDataSource().getDatamartName());
-	
+		
+		
 		
 		if( template.getProperty("query") != null ) {
 			try {
-				QbeEngineAnalysisState analysisState = new QbeEngineAnalysisState( datamartModel );
+				QbeEngineAnalysisState analysisState = new QbeEngineAnalysisState( dataSource );
 				// TODO set the encoding
 				analysisState.load( template.getProperty("query").toString().getBytes() );
 				setAnalysisState( analysisState );
@@ -178,7 +176,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	
 	public IEngineAnalysisState getAnalysisState() {
 		QbeEngineAnalysisState analysisState = null;
-		analysisState= new QbeEngineAnalysisState( datamartModel );
+		analysisState= new QbeEngineAnalysisState( dataSource );
 		analysisState.setCatalogue( this.getQueryCatalogue() );
 		if (this.getCrosstabDefinition() != null) {
 			analysisState.setCrosstabDefinition( this.getCrosstabDefinition() );
@@ -197,16 +195,16 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	}
 	
 
-	public DataMartModel getDatamartModel() {
-		return datamartModel;
+	public IDataSource getDataSource() {
+		return dataSource;
 	}
 	
 	public QbeTemplate getTemplate() {
 		return template;
 	}
 
-	public void setDatamartModel(DataMartModel datamartModel) {
-		this.datamartModel = datamartModel;
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
 	}	
 	
 	
@@ -232,7 +230,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 	public void setActiveQuery(Query query) {
 		setActiveQueryId(query.getId());
-		this.statment = getDatamartModel().createStatement( query );
+		this.statment = getDataSource().createStatement( query );
 	}
 	
 	public void setActiveQuery(String queryId) {
@@ -241,7 +239,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		query = getQueryCatalogue().getQuery( queryId );
 		if(query != null) {
 			setActiveQueryId(query.getId());
-			this.statment = getDatamartModel().createStatement( query );
+			this.statment = getDataSource().createStatement( query );
 		}
 	}
 	

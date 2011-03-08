@@ -20,10 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.datasource;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DataSourceFactory;
@@ -31,6 +27,10 @@ import it.eng.qbe.datasource.DataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -20,16 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
@@ -42,6 +32,16 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 
 /**
@@ -78,15 +78,15 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			Assert.assertNotNull(calculatedFieldsDAO, "Impossible to retrive a valid instance of CalculatedFieldsDAO");
 			
 			
-			dataMartName = getDatamartModel().getName();
+			dataMartName = getDataSource().getName();
 			logger.debug("DataMart name [" + dataMartName +"]");
 			Assert.assertNotNull(dataMartName, "Datamart name cannot be null in order to execute " + this.getActionName() + " service");
 			
 			
-			calculatedFields = getDatamartModel().getDataMartModelStructure().getCalculatedFields();
+			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");
 			
-			List datamartsName = getDatamartModel().getDataSource().getDatamartNames();
+			List datamartsName = getDataSource().getDatamartNames();
 			if (datamartsName.size() == 1) {
 				String datamartName = (String) datamartsName.get(0);
 				logger.debug("Saving calculated fields into datamart [" + datamartName + "] ...");
@@ -95,7 +95,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			} else {
 				for (int i = 0; i < datamartsName.size(); i++) {
 					String datamartName = (String) datamartsName.get(i);
-					Map datamartCalcultedField = getCalculatedFieldsForDatamart(getDatamartModel().getDataMartModelStructure(), calculatedFields, datamartName);
+					Map datamartCalcultedField = getCalculatedFieldsForDatamart(getDataSource().getDataMartModelStructure(), calculatedFields, datamartName);
 					logger.debug("Saving calculated fields into datamart [" + datamartName + "]...");
 					calculatedFieldsDAO.saveCalculatedFields(datamartName, datamartCalcultedField);
 					logger.debug("Calculated fileds saved succesfully into datamart [" + datamartName + "].");

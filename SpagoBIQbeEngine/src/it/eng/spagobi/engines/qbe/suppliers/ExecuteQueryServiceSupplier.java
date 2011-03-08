@@ -21,12 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.suppliers;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDatasetFactory;
@@ -38,6 +32,12 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -58,7 +58,7 @@ public class ExecuteQueryServiceSupplier {
     }
     
     public static void execute(QbeEngineInstance engineInstance, Query query) {
-    	IStatement statement = engineInstance.getDatamartModel().createStatement( query );
+    	IStatement statement = engineInstance.getDataSource().createStatement( query );
     	execute(engineInstance, statement);
     }
     

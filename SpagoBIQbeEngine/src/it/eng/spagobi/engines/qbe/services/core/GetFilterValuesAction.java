@@ -22,22 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.core;
 
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.catalogue.QueryCatalogue;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -56,6 +43,19 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * @authors 
@@ -147,7 +147,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				
 			}
 			
-			statement = getDatamartModel().createStatement( query );
+			statement = getDataSource().createStatement( query );
 			
 			statement.setParameters( getEnv() );
 			
@@ -234,9 +234,9 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		
 		if (queryRootEntity) {
 			logger.debug("Must use query root entity. Looking for select and order fields...");
-			DataMartModel model = this.getDatamartModel();
+			IDataSource model = getDataSource();
 			DataMartModelStructure structure = model.getDataMartModelStructure();
-			DatamartProperties props = model.getProperties();
+			DatamartProperties props = model.getDataMartProperties();
 			DataMartField selectField = structure.getField(entityId);
 			DataMartField orderField = null;
 			if (orderEntity != null && !orderEntity.equals("")) {

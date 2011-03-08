@@ -20,11 +20,28 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
+import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statment.IStatement;
+import it.eng.qbe.statment.QbeDatasetFactory;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -34,27 +51,6 @@ import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
-import it.eng.qbe.query.DataMartSelectField;
-import it.eng.qbe.query.HavingField;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.statment.AbstractJPADataSet;
-import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDatasetFactory;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
 
 /**

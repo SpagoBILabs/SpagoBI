@@ -21,13 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
+import it.eng.qbe.conf.QbeCoreSettings;
+
 import java.io.File;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import it.eng.qbe.conf.QbeCoreSettings;
-import it.eng.qbe.model.io.IDataMartModelRetriever;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

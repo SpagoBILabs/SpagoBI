@@ -20,12 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.DataMartEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartEntity;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,7 +46,7 @@ public class QbeTreeBlackListEntityFilter extends ComposableQbeTreeEntityFilter{
 		this.setBlackList( blackList );
 	}
 	
-	public List filter(IDataMartModel datamartModel, List entities) {
+	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		DataMartEntity entity;
 

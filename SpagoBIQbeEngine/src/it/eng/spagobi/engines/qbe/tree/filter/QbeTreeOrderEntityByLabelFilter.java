@@ -20,17 +20,17 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
+import it.eng.qbe.bo.DatamartLabels;
+import it.eng.qbe.cache.QbeCacheManager;
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.DataMartEntity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.cache.QbeCacheManager;
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartEntity;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,10 +57,10 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.qbe.tree.filter.ComposableQbeTreeEntityFilter#filter(it.eng.qbe.model.IDataMartModel, java.util.List)
 	 */
-	public List filter(IDataMartModel datamartModel, List entities) {
+	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		
-		ComparableEntitiesList comparableEntities = new ComparableEntitiesList(datamartModel, locale);
+		ComparableEntitiesList comparableEntities = new ComparableEntitiesList(dataSource, locale);
 		comparableEntities.addEntities( entities );
 		list = comparableEntities.getEntitiesOrderedByLabel();
 		
@@ -76,19 +76,19 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		private List list;
 		
 		/** The datamart model. */
-		private IDataMartModel datamartModel;
+		private IDataSource dataSource;
 		private DatamartLabels datamartLabels;
 		
 		/**
 		 * Instantiates a new comparable entities list.
 		 * 
-		 * @param datamartModel the datamart model
+		 * @param dataSource the datamart model
 		 */
-		ComparableEntitiesList(IDataMartModel datamartModel, Locale locale) {
+		ComparableEntitiesList(IDataSource dataSource, Locale locale) {
 			
 			list = new ArrayList();
-			this.datamartModel = datamartModel;
-			setDatamartLabels( QbeCacheManager.getInstance().getLabels( datamartModel , locale ) );
+			this.dataSource = dataSource;
+			setDatamartLabels( QbeCacheManager.getInstance().getLabels( dataSource , locale ) );
 			if( getDatamartLabels() == null) {
 				setDatamartLabels( new DatamartLabels() );
 			}

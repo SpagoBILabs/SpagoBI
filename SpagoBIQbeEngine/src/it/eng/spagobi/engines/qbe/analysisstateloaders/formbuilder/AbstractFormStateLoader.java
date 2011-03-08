@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder;
 
-import org.json.JSONObject;
-
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
+import org.json.JSONObject;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)

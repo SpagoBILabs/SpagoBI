@@ -20,12 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
+import it.eng.qbe.bo.DatamartProperties;
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.DataMartEntity;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartEntity;
 
 /**
  * The Class QbeTreeAccessModalityEntityFilter.
@@ -50,7 +50,7 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 		super(parentFilter);
 	}
 	
-	public List filter(IDataMartModel datamartModel, List entities) {
+	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		DataMartEntity entity;
 		
@@ -58,7 +58,7 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 		
 		for(int i = 0; i < entities.size(); i++) {
 			entity = (DataMartEntity)entities.get(i);
-			if( isEntityVisible(datamartModel, entity)) {
+			if( isEntityVisible(dataSource, entity)) {
 				list.add(entity);
 			}
 		}
@@ -74,11 +74,11 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 	 * 
 	 * @return true, if is entity visible
 	 */
-	private boolean isEntityVisible(IDataMartModel datamartModel, DataMartEntity entity) {
-		DatamartProperties qbeProperties = datamartModel.getDataSource().getProperties();
+	private boolean isEntityVisible(IDataSource dataSource, DataMartEntity entity) {
+		DatamartProperties qbeProperties = dataSource.getDataMartProperties();
 		
 		if( !qbeProperties.isEntityVisible( entity ) ) return false;
-		if( !datamartModel.getDataMartModelAccessModality().isEntityAccessible( entity ) ) return false;
+		if( !dataSource.getDataMartModelAccessModality().isEntityAccessible( entity ) ) return false;
 		return true;
 	}	
 }

@@ -20,13 +20,13 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
+import it.eng.qbe.bo.DatamartProperties;
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.DataMartEntity;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartEntity;
 
 /**
  * The Class QbeTreeAccessModalityFieldFilter.
@@ -56,9 +56,9 @@ public class QbeTreeOrderEntityFilter extends ComposableQbeTreeEntityFilter {
 	}
 	
 	
-	public List filter(IDataMartModel datamartModel, List fields) {
+	public List filter(IDataSource dataSource, List fields) {
 		
-		final DatamartProperties properties = datamartModel.getDataSource().getProperties();
+		final DatamartProperties properties = dataSource.getDataMartProperties();
 				
 		
 		Collections.sort(fields, new Comparator() {

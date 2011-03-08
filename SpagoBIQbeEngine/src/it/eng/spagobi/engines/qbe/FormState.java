@@ -21,6 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
+import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.FormStateLoaderFactory;
+import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.IFormStateLoader;
+import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,13 +38,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.FormStateLoaderFactory;
-import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.IFormStateLoader;
-import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)

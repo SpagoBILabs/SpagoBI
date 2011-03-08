@@ -20,13 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
        
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
@@ -43,6 +36,13 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 /**
  * 
@@ -109,14 +109,14 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			
 			datamartName = getAttributeAsString(DATAMART_NAME);
 			if (datamartName != null) {
-				nodes = qbeBuilder.getQbeTree(getDatamartModel(), getLocale(), datamartName);			
+				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName);			
 			} else {
 				nodes = new JSONArray();
-				List datamartsNames = getEngineInstance().getDatamartModel().getDataSource().getDatamartNames();
+				List datamartsNames = getEngineInstance().getDataSource().getDatamartNames();
 				Iterator it = datamartsNames.iterator();
 				while (it.hasNext()) {
 					String aDatamartName = (String) it.next();
-					JSONArray temp = qbeBuilder.getQbeTree(getDatamartModel(), getLocale(), aDatamartName);
+					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), aDatamartName);
 					for (int i = 0; i < temp.length(); i++) {
 						Object object = temp.get(i);
 						nodes.put(object);

@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import java.util.List;
+import it.eng.qbe.datasource.IDataSource;
 
-import it.eng.qbe.model.IDataMartModel;
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,13 +52,13 @@ public class QbeTreeFilter {
 	/**
 	 * Filter entities.
 	 * 
-	 * @param datamartModel the datamart model
+	 * @param dataSource the datamart model
 	 * @param entities the entities
 	 * 
 	 * @return the list
 	 */
-	public List filterEntities(IDataMartModel datamartModel, List entities) {
-		return getEntityFilter().filterEntities(datamartModel, entities);
+	public List filterEntities(IDataSource dataSource, List entities) {
+		return getEntityFilter().filterEntities(dataSource, entities);
 	}
 	
 	/**
@@ -69,8 +69,8 @@ public class QbeTreeFilter {
 	 * 
 	 * @return the list
 	 */
-	public List filterFields(IDataMartModel datamartModel, List fields) {
-		return getFieldFilter().filterFields(datamartModel, fields);
+	public List filterFields(IDataSource dataSource, List fields) {
+		return getFieldFilter().filterFields(dataSource, fields);
 	}
 
 	/**

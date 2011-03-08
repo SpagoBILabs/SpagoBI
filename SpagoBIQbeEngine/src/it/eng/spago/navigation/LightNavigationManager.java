@@ -20,14 +20,14 @@
  **/
 package it.eng.spago.navigation;
 
+import it.eng.spago.base.Constants;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.tracing.TracerSingleton;
+
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.tracing.TracerSingleton;
 
 // TODO: Auto-generated Javadoc
 /**

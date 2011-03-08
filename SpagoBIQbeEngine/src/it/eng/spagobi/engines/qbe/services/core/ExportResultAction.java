@@ -20,23 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.hibernate.Session;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.Exporter;
 import it.eng.qbe.export.Field;
@@ -62,6 +45,21 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.mime.MimeUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.hibernate.Session;
 
 
 
@@ -116,7 +114,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			session = ((IHibernateDataSource)getEngineInstance().getDatamartModel().getDataSource()).getSessionFactory().openSession();	
+			session = ((IHibernateDataSource)getEngineInstance().getDataSource()).getSessionFactory().openSession();	
 			
 			fileExtension = MimeUtils.getFileExtension( mimeType );
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
@@ -134,7 +132,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				Assert.assertNotNull(responseType, "Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");		
 				Assert.assertTrue( RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType), "[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
 				
-				statement = getEngineInstance().getDatamartModel().createStatement( getEngineInstance().getActiveQuery() );		
+				statement = getEngineInstance().getDataSource().createStatement( getEngineInstance().getActiveQuery() );		
 				//logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 				
 				statement.setParameters( getEnv() );

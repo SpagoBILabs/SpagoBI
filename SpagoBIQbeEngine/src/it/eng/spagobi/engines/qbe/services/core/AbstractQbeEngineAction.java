@@ -20,13 +20,13 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import org.apache.log4j.Logger;
-
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+
+import org.apache.log4j.Logger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,22 +44,22 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
     	return (QbeEngineInstance)getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
     }
     
-	public DataMartModel getDatamartModel() {
+	public IDataSource getDataSource() {
 		QbeEngineInstance qbeEngineInstance  = null;
     	qbeEngineInstance = getEngineInstance();
     	if(qbeEngineInstance == null) {
     		return null;
     	}
-    	return qbeEngineInstance.getDatamartModel();
+    	return qbeEngineInstance.getDataSource();
 	}
 
-	public void setDatamartModel(DataMartModel datamartModel) {
+	public void setDataSource(IDataSource dataSource) {
 		QbeEngineInstance qbeEngineInstance  = null;
     	qbeEngineInstance = getEngineInstance();
     	if(qbeEngineInstance == null) {
     		return;
     	}
-    	qbeEngineInstance.setDatamartModel(datamartModel);
+    	qbeEngineInstance.setDataSource(dataSource);
 	}
 	
 	
