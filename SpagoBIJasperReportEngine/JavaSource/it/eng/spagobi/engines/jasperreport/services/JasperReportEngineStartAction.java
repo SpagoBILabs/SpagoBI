@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngine;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineInstance;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineTemplate;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
@@ -94,8 +95,9 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         	
         	File reportOutputDir = JasperReportEngine.getConfig().getReportOutputDir();
         	File reportFile = File.createTempFile("report", "." + outputType, reportOutputDir);
+        	DataSetServiceProxy proxyDataset = servletIOManager.getDataSetServiceProxy();
         	
-        	engineInstance = JasperReportEngine.createInstance( template, servletIOManager.getEnv() );
+        	engineInstance = JasperReportEngine.createInstance( template, servletIOManager.getEnv() , proxyDataset);
         	engineInstance.setId(servletIOManager.getParameterAsString("SBI_EXECUTION_ID"));
         	servletIOManager.getHttpSession().setAttribute(engineInstance.getId(), engineInstance);
         	
