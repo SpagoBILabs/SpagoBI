@@ -1,9 +1,9 @@
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.model.LookupStoreJSONSerializer;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.qbe.statment.hibernate.HQLStatement;
