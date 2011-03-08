@@ -20,14 +20,14 @@
  **/
 package it.eng.qbe.datasource;
 
-import java.util.List;
-import java.util.Properties;
-
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia
@@ -49,6 +49,9 @@ public interface IDataSource {
 	
 	IStatement createStatement(Query query);
 
-	DatamartProperties getProperties();
-	void setProperties(DatamartProperties properties);
+	DatamartProperties getDataMartProperties();
+	void setDataMartProperties(DatamartProperties properties);
+	
+	void setProperties(Map properties);
+	Map getProperties();
 }

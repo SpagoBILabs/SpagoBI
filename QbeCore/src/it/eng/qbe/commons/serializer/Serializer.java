@@ -21,17 +21,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.commons.serializer;
 
-import java.util.Locale;
-
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
+
+import java.util.Locale;
 
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface Serializer {
-	public Object serialize(Query q, DataMartModel m, Locale locale) throws SerializationException;
+	public Object serialize(Query query, IDataSource dataSource, Locale locale) throws SerializationException;
 	public Object serialize(CrosstabDefinition cd) throws SerializationException;
 }

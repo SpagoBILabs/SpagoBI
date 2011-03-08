@@ -20,17 +20,13 @@
  **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.model.io.IDataMartModelRetriever;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 
 import java.io.File;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -60,7 +56,7 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 			File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 			datamartFile = datamartJarFile ;
 		}catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to get mapping file of datamart [" + datamartName + "]", e);
 		}
 		
 		//return datamartJarFile;
@@ -131,7 +127,7 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 			}
 			
 		} catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to update current class loader", e);
 		}
 		
 		logger.debug("Jar file [" + jarFile.getName()  + "] already loaded: " + wasAlreadyLoaded);
@@ -159,7 +155,7 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 			}
 			
 		} catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to update current class loader", e);
 		}
 	}
 

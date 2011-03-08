@@ -20,6 +20,9 @@
  **/
 package it.eng.qbe.catalogue;
 
+import it.eng.qbe.query.Query;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,9 +32,6 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-
-import it.eng.qbe.query.Query;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 
 /**

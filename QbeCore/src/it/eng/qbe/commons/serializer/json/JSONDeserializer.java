@@ -25,7 +25,7 @@ import it.eng.qbe.commons.serializer.Deserializer;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
 import it.eng.qbe.crosstab.serializer.json.CrosstabJSONDeserializer;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
 
@@ -39,7 +39,7 @@ public class JSONDeserializer implements Deserializer {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(JSONDeserializer.class);
 
-	public Query deserializeQuery(Object o, DataMartModel m)
+	public Query deserializeQuery(Object o, IDataSource m)
 			throws SerializationException {
 		logger.debug("IN");
 		QueryJSONDeserializer d = new QueryJSONDeserializer();

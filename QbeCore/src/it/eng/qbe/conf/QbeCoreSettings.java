@@ -20,11 +20,10 @@
  **/
 package it.eng.qbe.conf;
 
-import java.io.File;
-
-import it.eng.qbe.model.io.IQueryPersister;
 import it.eng.qbe.utility.IDBSpaceChecker;
 import it.eng.spago.configuration.ConfigSingleton;
+
+import java.io.File;
 
 
 /**
@@ -34,9 +33,6 @@ import it.eng.spago.configuration.ConfigSingleton;
 public class QbeCoreSettings {
 	
 	private File qbeDataMartDir;
-	
-	/** The query persister. */
-	private IQueryPersister queryPersister = null;
 	
 	/** The space checker enabled. */
 	private Boolean spaceCheckerEnabled = null;
@@ -76,19 +72,7 @@ public class QbeCoreSettings {
 	public void setQbeDataMartDir(File qbeDataMartDir) {
 		this.qbeDataMartDir = qbeDataMartDir;
 	}
-	
-	
-	public IQueryPersister getQueryPersister() throws Exception{
-		if(queryPersister == null) {
-			String queryPersisterClass = (String)ConfigSingleton.getInstance().getAttribute("QBE.QUERY-PERSISTER.className");
-			queryPersister = (IQueryPersister)Class.forName(queryPersisterClass).newInstance();
-		}
-		return queryPersister;
-	}
-	
-	public void setQueryPersister(IQueryPersister QueryPersister) {
-		this.queryPersister = queryPersister;
-	}
+
 	
 	public boolean isSpaceCheckerEnabled() {
 		if(spaceCheckerEnabled == null) {

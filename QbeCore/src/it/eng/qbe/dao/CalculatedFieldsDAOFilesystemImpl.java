@@ -20,6 +20,10 @@
  **/
 package it.eng.qbe.dao;
 
+import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,10 +45,6 @@ import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 
 /**

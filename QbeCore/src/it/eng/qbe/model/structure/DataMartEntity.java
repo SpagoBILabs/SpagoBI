@@ -20,13 +20,13 @@
  **/
 package it.eng.qbe.model.structure;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import it.eng.spagobi.commons.utilities.StringUtilities;
 
 /**
  * @author Andrea Gioia

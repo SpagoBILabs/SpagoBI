@@ -25,7 +25,7 @@ import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.commons.serializer.Serializer;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
 import it.eng.qbe.crosstab.serializer.json.CrosstabJSONSerializer;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 
@@ -41,11 +41,11 @@ public class JSONSerializer implements Serializer {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(JSONSerializer.class);
 
-	public Object serialize(Query q, DataMartModel m, Locale locale)
+	public Object serialize(Query query, IDataSource dataSource, Locale locale)
 			throws SerializationException {
 		logger.debug("IN");
 		QueryJSONSerializer s = new QueryJSONSerializer();
-		Object object = s.serialize(q, m, locale);
+		Object object = s.serialize(query, dataSource, locale);
 		logger.debug("OUT");
 		return object;
 	}

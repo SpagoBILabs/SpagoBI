@@ -21,13 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.statment.IStatement;
+import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -57,6 +53,7 @@ public class JPADataSource extends AbstractJPADataSource {
 	 */
 	public JPADataSource(String dataSourceName) {
 		setName( dataSourceName );
+		dataMartModelAccessModality = new DataMartModelAccessModality();
 	}
 	
 	

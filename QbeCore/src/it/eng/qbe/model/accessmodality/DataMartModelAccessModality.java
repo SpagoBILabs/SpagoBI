@@ -21,6 +21,14 @@
 package it.eng.qbe.model.accessmodality;
 
 
+import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.query.Filter;
+import it.eng.qbe.utility.StringUtils;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,14 +41,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
-
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.query.Filter;
-import it.eng.qbe.utility.StringUtils;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 
 // TODO: Auto-generated Javadoc
 /**

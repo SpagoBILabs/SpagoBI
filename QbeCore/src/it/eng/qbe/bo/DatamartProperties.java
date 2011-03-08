@@ -20,18 +20,16 @@
  **/
 package it.eng.qbe.bo;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.DataMartField;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.model.IDataMartModel;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class DatamartProperties.
  * 
@@ -39,7 +37,6 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
  */
 public class DatamartProperties {
 
-	/** The qbe properties. */
 	private Map qbeProperties = null;
 	
 	
@@ -73,8 +70,8 @@ public class DatamartProperties {
 		qbeProperties = properties;
 	}
 
-	public DatamartProperties(IDataMartModel dm) {
-		qbeProperties = dm.getDataMartProperties();
+	public DatamartProperties(IDataSource dataSource) {
+		qbeProperties = dataSource.getProperties();
 	}
 	
 	public void addDatamartProperties(DatamartProperties datamartProperties) {
@@ -250,7 +247,7 @@ public class DatamartProperties {
 	 * @param datamartModel The datamart model: it is required in order to retrieve the input field's root entity
 	 * @return the format to be applied to the input field
 	 */
-	public String getFormat(DataMartField field, DataMartModel datamartModel) {
+	public String getFormat(DataMartField field, IDataSource dataSource) {
 		String toReturn = null;
 		
 		// try first with entity unique name
@@ -258,7 +255,7 @@ public class DatamartProperties {
 		if (toReturn == null) {
 			// then try with relevant field on first level entity 
 			DataMartField rootField = null;
-			DataMartEntity rootEntity = datamartModel.getDataMartModelStructure().getRootEntity(field.getParent());
+			DataMartEntity rootEntity = dataSource.getDataMartModelStructure().getRootEntity(field.getParent());
 			List fields = rootEntity.getAllFields();
 			Iterator it = fields.iterator();
 			while (it.hasNext()) {

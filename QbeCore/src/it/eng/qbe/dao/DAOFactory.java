@@ -20,9 +20,9 @@
  **/
 package it.eng.qbe.dao;
 
-import java.io.File;
-
 import it.eng.qbe.conf.QbeCoreSettings;
+
+import java.io.File;
 
 
 /**

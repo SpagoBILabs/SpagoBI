@@ -20,10 +20,10 @@
  **/
 package it.eng.qbe.statment;
 
-import java.util.Map;
-
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
+
+import java.util.Map;
 
 // TODO: Auto-generated Javadoc
 /**

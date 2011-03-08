@@ -25,7 +25,7 @@ import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.query.CalculatedSelectField;
@@ -59,7 +59,7 @@ public class QueryJSONSerializer {
     public static transient Logger logger = Logger.getLogger(QueryJSONSerializer.class);
     
     
-	public Object serialize(Query query, DataMartModel datamartModel, Locale locale) throws SerializationException {
+	public Object serialize(Query query, IDataSource dataSource, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
 		JSONArray recordsJOSN;
@@ -74,22 +74,22 @@ public class QueryJSONSerializer {
 		
 		Assert.assertNotNull(query, "Query cannot be null");
 		Assert.assertNotNull(query.getId(), "Query id cannot be null");
-		Assert.assertNotNull(datamartModel, "DataMartModel cannot be null");
+		Assert.assertNotNull(dataSource, "DataMartModel cannot be null");
 		
 		try {
 			
 			
-			recordsJOSN = serializeFields(query, datamartModel, locale);			
-			filtersJSON = serializeFilters(query, datamartModel, locale);
+			recordsJOSN = serializeFields(query, dataSource, locale);			
+			filtersJSON = serializeFilters(query, dataSource, locale);
 			filterExpJOSN = encodeFilterExp( query.getWhereClauseStructure() );
-			havingsJSON = serializeHavings(query, datamartModel, locale);
+			havingsJSON = serializeHavings(query, dataSource, locale);
 			
 			subqueriesJSON = new JSONArray();
 			subqueriesIterator = query.getSubqueryIds().iterator();		
 			while(subqueriesIterator.hasNext()) {
 				String id = (String)subqueriesIterator.next();
 				subquery = query.getSubquery(id);
-				subqueryJSON = (JSONObject)serialize(subquery, datamartModel, locale);
+				subqueryJSON = (JSONObject)serialize(subquery, dataSource, locale);
 				subqueriesJSON.put(subqueryJSON);
 			} 
 			
@@ -131,7 +131,7 @@ public class QueryJSONSerializer {
 	  "visible" : "si"
 	 }
 	 */
-	private JSONArray serializeFields(Query query, DataMartModel datamartModel, Locale locale) throws SerializationException {
+	private JSONArray serializeFields(Query query, IDataSource dataSource, Locale locale) throws SerializationException {
 		JSONArray result;
 		
 		List fields;
@@ -148,7 +148,7 @@ public class QueryJSONSerializer {
 		try {
 			datamartLabels = null;
 			if(locale != null) {
-				datamartLabels =  QbeCacheManager.getInstance().getLabels( datamartModel , locale );
+				datamartLabels =  QbeCacheManager.getInstance().getLabels( dataSource , locale );
 			}
 			
 			fields = query.getSelectFields(false);
@@ -177,7 +177,7 @@ public class QueryJSONSerializer {
 						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.DATAMART_FIELD);
 						
 						fieldUniqueName = dataMartSelectField.getUniqueName();
-						datamartField = datamartModel.getDataMartModelStructure().getField( fieldUniqueName );
+						datamartField = dataSource.getDataMartModelStructure().getField( fieldUniqueName );
 						Assert.assertNotNull(datamartField, "A filed named [" + fieldUniqueName + "] does not exist in the datamart model");
 						
 						fieldJSON.put(QuerySerializationConstants.FIELD_ID, datamartField.getUniqueName());
@@ -208,7 +208,7 @@ public class QueryJSONSerializer {
 						fieldJSON.put(QuerySerializationConstants.FIELD_ORDER, dataMartSelectField.getOrderType());
 						fieldJSON.put(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION, dataMartSelectField.getFunction().getName());
 						
-						DatamartProperties datamartProperties = datamartModel.getDataSource().getProperties();
+						DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 						String iconCls = datamartProperties.getFieldIconClass( datamartField );	
 						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, iconCls);
 						
@@ -343,7 +343,7 @@ public class QueryJSONSerializer {
 	  "type"  : "Static Value"
 	  }
 	 */
-	private JSONArray serializeFilters(Query query, DataMartModel datamartModel, Locale locale) throws SerializationException {
+	private JSONArray serializeFilters(Query query, IDataSource datamartModel, Locale locale) throws SerializationException {
 		JSONArray filtersJOSN = new JSONArray();
 		
 		List filters;
@@ -487,7 +487,7 @@ public class QueryJSONSerializer {
 		return filtersJOSN;
 	}
 	
-	private JSONArray serializeHavings(Query query, DataMartModel datamartModel, Locale locale) throws SerializationException {
+	private JSONArray serializeHavings(Query query, IDataSource dataSource, Locale locale) throws SerializationException {
 		JSONArray havingsJSON = new JSONArray();
 		
 		List havings;
@@ -505,7 +505,7 @@ public class QueryJSONSerializer {
 		
 		datamartLabels = null;
 		if(locale != null) {
-			datamartLabels =  QbeCacheManager.getInstance().getLabels( datamartModel , locale );
+			datamartLabels =  QbeCacheManager.getInstance().getLabels( dataSource , locale );
 		}
 		
 		it = havings.iterator();
@@ -529,7 +529,7 @@ public class QueryJSONSerializer {
 						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, description);						
 					}else{
 					
-						datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
+						datamartField = dataSource.getDataMartModelStructure().getField( operand.values[0] );
 						
 						String labelF, labelE;
 						labelE = null;
@@ -561,7 +561,7 @@ public class QueryJSONSerializer {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
-					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
+					datamartField = dataSource.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
@@ -583,7 +583,7 @@ public class QueryJSONSerializer {
 				operand = filter.getRightOperand();
 				havingJSON.put(QuerySerializationConstants.FILTER_RO_VALUE, JSONUtils.asJSONArray(operand.values));
 				if(operand.type.equalsIgnoreCase("Field Content")) {
-					datamartField = datamartModel.getDataMartModelStructure().getField( operand.values[0] );
+					datamartField = dataSource.getDataMartModelStructure().getField( operand.values[0] );
 					
 					String labelF, labelE;
 					labelE = null;
@@ -612,7 +612,7 @@ public class QueryJSONSerializer {
 					String[] chunks = operand.values[0].split(" ");
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
-					datamartField = datamartModel.getDataMartModelStructure().getField( fieldName );
+					datamartField = dataSource.getDataMartModelStructure().getField( fieldName );
 					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);

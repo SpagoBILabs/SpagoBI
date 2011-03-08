@@ -20,6 +20,14 @@
  **/
 package it.eng.qbe.model.structure.builder;
 
+import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,14 +43,6 @@ import org.hibernate.type.CollectionType;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
-
-import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

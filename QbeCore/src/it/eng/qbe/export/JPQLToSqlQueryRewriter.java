@@ -21,7 +21,6 @@
 package it.eng.qbe.export;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 

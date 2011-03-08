@@ -20,25 +20,21 @@
  **/
 package it.eng.qbe.utility;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Encoder;
-
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.model.io.IDataMartModelRetriever;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
 
 
 // TODO: Auto-generated Javadoc
@@ -51,36 +47,6 @@ public class Utils {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(Utils.class);
 	
-	
-	/**
-	 * Gets the data mart model retriever.
-	 * 
-	 * @return the data mart model retriever
-	 * 
-	 * @throws Exception the exception
-	 */
-	public static IDataMartModelRetriever getDataMartModelRetriever() throws Exception {		
-		String dataMartModelRetrieverClassName = (String)ConfigSingleton.getInstance().getAttribute("QBE.DATA-MART-MODEL-RETRIEVER.className");
-		IDataMartModelRetriever dataMartModelRetriever = (IDataMartModelRetriever)Class.forName(dataMartModelRetrieverClassName).newInstance();
-		return dataMartModelRetriever;
-	}
-	
-	/**
-	 * Gets the view jar files.
-	 * 
-	 * @param dataSource the data source
-	 * 
-	 * @return the view jar files
-	 */
-	public static List getViewJarFiles(IHibernateDataSource dataSource){
-		try{
-			IDataMartModelRetriever dataMartModelRetriever = getDataMartModelRetriever();
-			return dataMartModelRetriever.getViewJarFiles(dataSource.getName());
-		}catch (Exception e) {
-			logger.error("Impossible to get views jar file", e);
-			return null;
-		}
-	}
 	
 	
 	/**

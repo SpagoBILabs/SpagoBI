@@ -20,11 +20,11 @@
  **/
 package it.eng.qbe.statment;
 
-import java.util.Map;
-import java.util.Set;
-
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The Interface IStatement.
