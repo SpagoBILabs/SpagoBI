@@ -21,6 +21,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.jasperreport;
 
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
+import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.ResourceClassLoader;
+import it.eng.spagobi.utilities.SpagoBIAccessUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +58,7 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
@@ -44,12 +68,15 @@ import java.util.zip.ZipEntry;
 
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JRDesignDataset;
+import net.sf.jasperreports.engine.design.JRDesignQuery;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
@@ -61,27 +88,6 @@ import sun.misc.BASE64Decoder;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSource;
-import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.DynamicClassLoader;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.ResourceClassLoader;
-import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
-import it.eng.spagobi.utilities.engines.AuditServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -97,7 +103,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	File libDir;
 	File workingDir;
 	
-
+	DataSetServiceProxy dsProxy;
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String JS_DIR = "JS_dir";
 	public static final String JS_EXT_ZIP = ".zip";
@@ -105,12 +111,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	private static transient Logger logger = Logger.getLogger(JasperReportEngineInstance.class);
 	
 	
-	public JasperReportEngineInstance(JasperReportEngineTemplate template, Map env) {
+	public JasperReportEngineInstance(JasperReportEngineTemplate template, Map env, DataSetServiceProxy dsProxy) {
 		super( env );	
 		Assert.assertNotNull(env, "[env] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
 		this.template = template;
 		Assert.assertNotNull(env, "[template] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
 		imageMap = new HashMap();
+		this.dsProxy = dsProxy;
 	}	
 	
 	public void runReport(File file)  {
@@ -152,9 +159,45 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			logger.debug("prefixDirTemplate:"+prefixDirTemplate);
 			InputStream is = template.open( getCacheDir(prefixDirTemplate) );
 
+			
+			JasperDesign  jasperDesign = JRXmlLoader.load(is);
+			// get datasets
+			List<JRDesignDataset> datasets = jasperDesign.getDatasetsList();
+
+			for (int h =0; h< datasets.size(); h++){
+				JRDesignDataset designDataset = datasets.get(h);
+
+				boolean isMain = designDataset.isMainDataset();
+
+				
+				//get document's dataset
+				IDataSet dataset = this.dsProxy.getDataSetByLabel(designDataset.getName());
+				
+				if (dataset != null) {
+					//remove it to replace it if found on SpagoBI
+					jasperDesign.removeDataset(designDataset);
+					
+				    String query = (String)dataset.getQuery();
+				    JRDesignDataset replacedDataset = new JRDesignDataset(isMain);
+				    replacedDataset.setName(dataset.getLabel());
+				    
+				    for(int y=0; y< designDataset.getFieldsList().size(); y++){
+				    	JRField field = (JRField)designDataset.getFieldsList().get(y);
+				    	replacedDataset.addField(field);
+				    }
+				    JRDesignQuery jrQuery = new JRDesignQuery();
+				    jrQuery.setText(query);
+				    replacedDataset.setQuery(jrQuery);
+
+				    jasperDesign.addDataset(replacedDataset);
+
+				}
+
+			}
+
 			logger.debug("Compiling template file ...");
 			Monitor monitorCompileTemplate =MonitorFactory.start("JasperReportRunner.compileTemplate");
-			JasperReport report  = JasperCompileManager.compileReport(is);	
+			JasperReport report  = JasperCompileManager.compileReport(jasperDesign);	
 			monitorCompileTemplate.stop();
 			logger.debug("Template file compiled  succesfully");
 
@@ -609,6 +652,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					}
 					
 					JasperDesign  jasperDesign = JRXmlLoader.load(is);
+					
 					//the following instruction is necessary because the above instruction cleans variable 'is'
 					is = new java.io.ByteArrayInputStream(templateContent);
 					

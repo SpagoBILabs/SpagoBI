@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.jasperreport;
 
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -52,10 +54,10 @@ public class JasperReportEngine {
 	 * 
 	 * @return the geo report engine instance
 	 */
-	public static JasperReportEngineInstance createInstance(JasperReportEngineTemplate template, Map env) {
+	public static JasperReportEngineInstance createInstance(JasperReportEngineTemplate template, Map env, DataSetServiceProxy dsProxy) {
 		JasperReportEngineInstance engineInstance = null;
 		logger.debug("IN");
-		engineInstance = new JasperReportEngineInstance(template, env);
+		engineInstance = new JasperReportEngineInstance(template, env, dsProxy);
 		
 		if(JasperReportEngine.getConfig().isVirtualizationEbabled() == true) {
     		engineInstance.setVirtualizationEnabled( true );
