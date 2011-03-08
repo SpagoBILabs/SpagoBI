@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.conf;
 
-import it.eng.qbe.utility.IDBSpaceChecker;
 import it.eng.spago.configuration.ConfigSingleton;
 
 import java.io.File;
@@ -33,12 +32,7 @@ import java.io.File;
 public class QbeCoreSettings {
 	
 	private File qbeDataMartDir;
-	
-	/** The space checker enabled. */
-	private Boolean spaceCheckerEnabled = null;
-	
-	/** The db space checker. */
-	private IDBSpaceChecker dbSpaceChecker = null;
+
 	
 	/** The free space lb limit. */
 	private Long freeSpaceLbLimit = null;
@@ -73,45 +67,6 @@ public class QbeCoreSettings {
 		this.qbeDataMartDir = qbeDataMartDir;
 	}
 
-	
-	public boolean isSpaceCheckerEnabled() {
-		if(spaceCheckerEnabled == null) {
-			String makeCheck =(String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CHECK-SPACE-BEFORE-CREATEVIEW.check");
-			spaceCheckerEnabled = new Boolean(makeCheck.trim().equalsIgnoreCase("true"));
-		}
-		return spaceCheckerEnabled.booleanValue();
-	}
-	
-	
-	public void setSpaceCheckerEnabled(boolean spaceCheckerEnabled) {
-		this.spaceCheckerEnabled = new Boolean(spaceCheckerEnabled);
-	}
-
-	public IDBSpaceChecker getDbSpaceChecker() {
-		if(dbSpaceChecker == null) {
-			String className = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CHECK-SPACE-BEFORE-CREATEVIEW.checkerClass");
-			try {
-				dbSpaceChecker = (IDBSpaceChecker)Class.forName(className).newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return dbSpaceChecker;
-	}
-
-
-	/**
-	 * Sets the database space checker.
-	 * 
-	 * @param dbSpaceChecker the new database space checker
-	 */
-	public void setDbSpaceChecker(IDBSpaceChecker dbSpaceChecker) {
-		this.dbSpaceChecker = dbSpaceChecker;
-	}
 
 	/**
 	 * Gets the free space lb limit.
