@@ -20,8 +20,10 @@
  **/
 package it.eng.qbe.model.structure;
 
+import java.util.Map;
+
 /**
- * The Interface IDataMartItem.
+ * All objects in a DataMartModelStructure implement this interface 
  * 
  * @author Andrea Gioia
  */
@@ -37,4 +39,7 @@ public interface IDataMartItem {
 	
 	String getName();
 	void setName(String name);
+	
+	Map<String,Object> getProperties();
+	void setProperties(Map<String,Object> properties);
 }
