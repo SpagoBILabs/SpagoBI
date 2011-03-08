@@ -24,10 +24,8 @@ package it.eng.qbe.cache;
 import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.model.IDataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -53,17 +51,17 @@ public class QbeCacheManager {
 	}
 	
 	
-	public void putLabels(IDataMartModel datamartModel, DatamartLabels labels, Locale locale) {
-		cache.putLabels(datamartModel, labels, locale);
+	public void putLabels(IDataSource dataSource, DatamartLabels labels, Locale locale) {
+		cache.putLabels(dataSource, labels, locale);
 	}
 	
-	public DatamartLabels getLabels(IDataMartModel datamartModel, Locale locale) {
+	public DatamartLabels getLabels(IDataSource dataSource, Locale locale) {
 		DatamartLabels labels;
 		
-		labels = cache.getLabels(datamartModel, locale);
+		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
 			labels = new DatamartLabels();
-			List datamartsName = datamartModel.getDataSource().getDatamartNames();
+			List datamartsName = dataSource.getDatamartNames();
 			Iterator it = datamartsName.iterator();
 			while (it.hasNext()) {
 				String datamartName = (String) it.next();
@@ -73,22 +71,22 @@ public class QbeCacheManager {
 				}
 				labels.addDatamartLabels(aDatamartLabels);
 			}
-			cache.putLabels(datamartModel, labels, locale);
+			cache.putLabels(dataSource, labels, locale);
 		}
 		
 		return labels;
 	}
 	
-	public void putProperties(IDataMartModel datamartModel, DatamartProperties properties) {
-		cache.putProperties(datamartModel, properties);
+	public void putProperties(IDataSource dataSource, DatamartProperties properties) {
+		cache.putProperties(dataSource, properties);
 	}
 	
-	public DatamartProperties getProperties(IDataMartModel datamartModel) {
+	public DatamartProperties getProperties(IDataSource dataSource) {
 		DatamartProperties properties;
 		
-		properties = cache.getProperties(datamartModel);
+		properties = cache.getProperties(dataSource);
 		if( properties == null ) {
-			properties = DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( datamartModel.getName() ); 
+			properties = DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( dataSource.getDatamartName() ); 
 		}
 		
 		return properties;

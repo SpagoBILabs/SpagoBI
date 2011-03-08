@@ -20,9 +20,6 @@
  **/
 package it.eng.qbe.datasource;
 
-import java.util.List;
-import java.util.Map;
-
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -31,6 +28,10 @@ import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.StatementFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia
@@ -43,14 +44,25 @@ public abstract class AbstractDataSource implements IDataSource {
 	// if it is a multi jar qbe
 	protected List datamartNames = null;
 	
+	// TODO move this to datamartStructure (maybe?)
+	// qbe.properties (entity-base properties)
+	protected DatamartProperties dataMartProperties;
+	// labels.properties (role-base properties)
+	protected Map properties;
 	
-	private int type;
-	private DatamartProperties properties = null;	
-	private DataMartModelAccessModality dataMartModelAccessModality;
-	private DataMartModelStructure dataMartModelStructure = null;
-	private DBConnection connection = null;
-	private Map dblinkMap = null;
+	protected DataMartModelAccessModality dataMartModelAccessModality;
+	protected DataMartModelStructure dataMartModelStructure;
+	protected DBConnection connection;
+	protected Map dblinkMap;
     
+	public Map getProperties() {
+		return properties;
+	}
+	
+	public void setProperties(Map properties) {
+		this.properties = properties;
+	}
+	
 	public DataMartModelStructure getDataMartModelStructure() {
 		IDataMartStructureBuilder builder;
 		if(dataMartModelStructure == null) {			
@@ -114,21 +126,14 @@ public abstract class AbstractDataSource implements IDataSource {
 	public void setDatamartNames(List datamartNames) {
 		this.datamartNames = datamartNames;
 	}
-	
-	protected void setType(int type) {
-		this.type = type;
-	}
 
-	public int getType() {
-		return type;
+	
+	public DatamartProperties getDataMartProperties() {
+		return dataMartProperties;
 	}
 	
-	public DatamartProperties getProperties() {
-		return properties;
-	}
-	
-	public void setProperties(DatamartProperties properties) {
-		this.properties = properties;
+	public void setDataMartProperties(DatamartProperties properties) {
+		this.dataMartProperties = properties;
 	}
 	
 	/* (non-Javadoc)

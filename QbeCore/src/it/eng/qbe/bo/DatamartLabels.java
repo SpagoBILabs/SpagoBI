@@ -24,7 +24,6 @@ import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
-
 import java.util.Properties;
 
 // TODO: Auto-generated Javadoc

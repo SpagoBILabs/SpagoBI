@@ -23,7 +23,7 @@ package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
@@ -49,7 +49,7 @@ public class QueryJSONDeserializer {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONDeserializer.class);
     
-	public Query deserialize(Object o, DataMartModel datamartModel) throws SerializationException {
+	public Query deserialize(Object o, IDataSource dataSource) throws SerializationException {
 		Query query;
 		JSONObject queryJSON = null;
 		JSONArray fieldsJSON = null;
@@ -101,15 +101,15 @@ public class QueryJSONDeserializer {
 				throw new SerializationException("An error occurred while deserializing query: " + queryJSON.toString(), e);
 			}
 			
-			deserializeFields(fieldsJSON, datamartModel, query);
-			deserializeFilters(filtersJSON, datamartModel, query);
-			deserializeExpression(expressionJSON, datamartModel, query);
-			deserializeHavings(havingsJSON, datamartModel, query);
+			deserializeFields(fieldsJSON, dataSource, query);
+			deserializeFilters(filtersJSON, dataSource, query);
+			deserializeExpression(expressionJSON, dataSource, query);
+			deserializeHavings(havingsJSON, dataSource, query);
 			
 			
 			for(int i = 0; i < subqueriesJSON.length(); i++) {
 				try {
-					subquery = deserialize(subqueriesJSON.get(i), datamartModel);
+					subquery = deserialize(subqueriesJSON.get(i), dataSource);
 				} catch (JSONException e) {
 					throw new SerializationException("An error occurred while deserializing subquery number [" + (i+1) + "]: " + subqueriesJSON.toString(), e);
 				}
@@ -123,7 +123,7 @@ public class QueryJSONDeserializer {
 		return query;
 	}
 	
-	private void deserializeFields(JSONArray fieldsJSON, DataMartModel datamartModel, Query query) throws SerializationException {
+	private void deserializeFields(JSONArray fieldsJSON, IDataSource dataSource, Query query) throws SerializationException {
 		JSONObject fieldJSON;
 		DataMartField field;
 		String alias;
@@ -146,7 +146,7 @@ public class QueryJSONDeserializer {
 		
 		try {
 			
-			DatamartProperties props = datamartModel.getProperties();
+			DatamartProperties props = dataSource.getDataMartProperties();
 			
 			logger.debug("Query [" + query.getId() + "] have [" + fieldsJSON.length() + "] to deserialize");			
 			for(int i = 0; i < fieldsJSON.length(); i++) {		
@@ -164,7 +164,7 @@ public class QueryJSONDeserializer {
 						fieldUniqueName = fieldJSON.getString(QuerySerializationConstants.FIELD_ID);
 						Assert.assertNotNull(fieldUniqueName, "Field name connot be null");
 					
-						field = datamartModel.getDataMartModelStructure().getField(fieldUniqueName);
+						field = dataSource.getDataMartModelStructure().getField(fieldUniqueName);
 						Assert.assertNotNull(field, "Inpossible to retrive from datamart-structure a fild named " + fieldUniqueName + ". Please check select clause: " + fieldsJSON.toString());
 						if(StringUtilities.isEmpty(alias)) alias = "Column_" + (i+1);
 						
@@ -173,7 +173,7 @@ public class QueryJSONDeserializer {
 						funct = fieldJSON.getString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
 							
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
-							pattern = props.getFormat(field, datamartModel);
+							pattern = props.getFormat(field, dataSource);
 						} else {
 							pattern = null;
 						}
@@ -211,7 +211,7 @@ public class QueryJSONDeserializer {
 	}
 	
 	
-	private void deserializeFilters(JSONArray filtersJOSN, DataMartModel datamartModel, Query query) throws SerializationException {
+	private void deserializeFilters(JSONArray filtersJOSN, IDataSource dataSource, Query query) throws SerializationException {
 		
 		JSONObject filterJSON;
 				
@@ -284,7 +284,7 @@ public class QueryJSONDeserializer {
 	}
 	
 	
-	private void deserializeHavings(JSONArray havingsJOSN, DataMartModel datamartModel, Query query) throws SerializationException {
+	private void deserializeHavings(JSONArray havingsJOSN, IDataSource dataSource, Query query) throws SerializationException {
 		
 		JSONObject havingJSON;
 		DataMartField field;
@@ -437,7 +437,7 @@ public class QueryJSONDeserializer {
 	
 	
 	
-	private void deserializeExpression(JSONObject expressionJOSN, DataMartModel datamartModel, Query query) throws SerializationException {
+	private void deserializeExpression(JSONObject expressionJOSN, IDataSource dataSource, Query query) throws SerializationException {
 		ExpressionNode filterExp;
 		
 		// start recursion

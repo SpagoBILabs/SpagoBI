@@ -23,8 +23,7 @@ package it.eng.qbe.cache;
 
 import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.model.IDataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -59,29 +58,29 @@ public class QbeCache {
 		cache.put(resourceName, resource);
 	}
 	
-	public void putLabels(IDataMartModel datamartModel, DatamartLabels labels, Locale locale) {
-		String resourceName = datamartModel.getName() + ":" + "labels";
+	public void putLabels(IDataSource dataSource, DatamartLabels labels, Locale locale) {
+		String resourceName = dataSource.getDatamartName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}
 		putResource(resourceName, labels);
 	}
 	
-	public DatamartLabels getLabels(IDataMartModel datamartModel, Locale locale) {
-		String resourceName = datamartModel.getName() + ":" + "labels";
+	public DatamartLabels getLabels(IDataSource dataSource, Locale locale) {
+		String resourceName = dataSource.getDatamartName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}
 		return (DatamartLabels)getResource(resourceName);
 	}
 	
-	public void putProperties(IDataMartModel datamartModel, DatamartProperties properties) {
-		String resourceName = datamartModel.getName() + ":" + "properties";		
+	public void putProperties(IDataSource dataSource, DatamartProperties properties) {
+		String resourceName = dataSource.getDatamartName() + ":" + "properties";		
 		putResource(resourceName, properties);
 	}
 	
-	public DatamartProperties getProperties(IDataMartModel datamartModel) {
-		String resourceName = datamartModel.getName() + ":" + "properties";
+	public DatamartProperties getProperties(IDataSource dataSource) {
+		String resourceName = dataSource.getDatamartName() + ":" + "properties";
 		return (DatamartProperties)getResource(resourceName);
 	}
 }

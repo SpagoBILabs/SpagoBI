@@ -21,18 +21,15 @@
 package it.eng.qbe.datasource.hibernate;
 
 import it.eng.qbe.bo.DatamartProperties;
-import it.eng.qbe.conf.QbeCoreSettings;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.model.DataMartModel;
-import it.eng.qbe.utility.IDBSpaceChecker;
+import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,30 +61,6 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	private static transient Logger logger = Logger.getLogger(HibernateDataSource.class);
 
 
-	
-	/**
-	 * Instantiates a new composite hibernate data source.
-	 */
-	public HibernateDataSource(String dataSourceName, String datamartName, List datamartNames, DBConnection connection) {
-		this(dataSourceName, datamartName, datamartNames, new HashMap(), connection);
-	}
-		
-	/**
-	 * Instantiates a new composite hibernate data source.
-	 */
-	private HibernateDataSource(String dataSourceName, String datamartName, List datamartNames, Map dblinkMap, DBConnection connection) {
-		
-		setName( dataSourceName );
-		
-		
-		setDatamartName(datamartName);		
-		setDatamartNames(datamartNames);
-		setDblinkMap(dblinkMap);
-		
-		setConnection(connection);
-		
-		setProperties();		
-	}
 
 	/**
 	 * Instantiates a new composite hibernate data source.
@@ -96,22 +69,11 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	 */
 	public HibernateDataSource(String dataSourceName) {
 		setName( dataSourceName );
+		dataMartModelAccessModality = new DataMartModelAccessModality();
 	}
 	
 	public boolean isCompositeDataSource() {
 		return getDatamartNames().size() > 1;
-	}
-	
-	
-	public void setProperties() {
-		
-		DatamartProperties properties = new DatamartProperties();
-		Iterator<String> it = datamartNames.iterator();
-		while (it.hasNext()) {
-			String datamartName = it.next();
-			properties.addDatamartProperties(DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( datamartName ));
-		}
-		setProperties( properties );
 	}
 	
 	public synchronized void open() {
@@ -261,7 +223,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		try{
 			datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 		}catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to find mapping file for datamart [" + datamartName + "]", e);
 		}
 		
 		return datamartJarFile;
@@ -319,7 +281,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 			}
 			
 		} catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to update current clas loader", e);
 		}
 		
 		logger.debug("Jar file [" + jarFile.getName()  + "] already loaded: " + wasAlreadyLoaded);
@@ -345,7 +307,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 			}
 			
 		} catch (Exception e) {
-			logger.error(DataMartModel.class, e);
+			logger.error("Impossible to update current clas loader", e);
 		}
 	}
 

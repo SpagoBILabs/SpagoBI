@@ -21,6 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.statment.jpql;
 
+import it.eng.qbe.datasource.jpa.IJpaDataSource;
+import it.eng.qbe.statment.AbstractJPADataSet;
+import it.eng.qbe.statment.hibernate.HQLDataSet;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,20 +43,11 @@ import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.internal.expressions.CollectionExpression;
 import org.eclipse.persistence.internal.expressions.ConstantExpression;
 import org.eclipse.persistence.internal.expressions.FunctionExpression;
-import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.expressions.LogicalExpression;
+import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.hibernate.ScrollableResults;
 import org.hibernate.ejb.HibernateQuery;
-
-
-import it.eng.qbe.datasource.jpa.IJpaDataSource;
-import it.eng.qbe.statment.AbstractJPADataSet;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 
 /**

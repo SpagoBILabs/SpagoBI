@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.export;
 
+import it.businesslogic.ireport.export.JRTxtExporter;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -44,8 +46,6 @@ import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 
 import org.apache.log4j.Logger;
-
-import it.businesslogic.ireport.export.JRTxtExporter;
 
 // TODO: Auto-generated Javadoc
 /**

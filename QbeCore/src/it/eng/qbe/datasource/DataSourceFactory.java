@@ -20,17 +20,15 @@
  **/
 package it.eng.qbe.datasource;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
-import it.eng.qbe.datasource.jpa.AbstractJPADataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -120,7 +118,7 @@ public class DataSourceFactory {
 		
 		dataSource.setDblinkMap(dblinkMap);		
 		
-		dataSource.setProperties( getProperties(datamartNames) );
+		dataSource.setDataMartProperties( getProperties(datamartNames) );
 	}
 	
 	private static DatamartProperties getProperties(List datamartNames) {

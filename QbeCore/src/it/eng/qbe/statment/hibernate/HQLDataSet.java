@@ -21,13 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.statment.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
-
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.statment.AbstractJPADataSet;
 import it.eng.spago.error.EMFInternalError;
@@ -36,6 +29,13 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 
 
 /**
