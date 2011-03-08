@@ -4,8 +4,6 @@ import it.eng.qbe.model.LookupStoreJSONSerializer;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.qbe.statment.hibernate.HQLStatement;
@@ -24,7 +22,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -82,7 +79,7 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 				filtersJSON = getAttributeAsJSONObject( FILTERS );
 			}
 			query = buildQuery(entityId, filtersJSON);
-			statement = getDatamartModel().createStatement( query );
+			statement = getDataSource().createStatement( query );
 			
 			statement.setParameters( getEnv() );
 			

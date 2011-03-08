@@ -20,10 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.initializers;
 
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
@@ -32,6 +28,10 @@ import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -85,7 +85,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), getEnv() );
+				qbeEngineInstance = QbeEngine.createInstance( getTemplateAsSourceBean(), getEnv() );
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -111,7 +111,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			if( getAnalysisStateRowData() != null ) {
 				logger.debug("Loading subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] ...");
 				try {
-					analysisState = new QbeEngineAnalysisState( qbeEngineInstance.getDatamartModel() );
+					analysisState = new QbeEngineAnalysisState( qbeEngineInstance.getDataSource() );
 					analysisState.load( getAnalysisStateRowData() );
 					qbeEngineInstance.setAnalysisState( analysisState );
 				} catch(Throwable t) {

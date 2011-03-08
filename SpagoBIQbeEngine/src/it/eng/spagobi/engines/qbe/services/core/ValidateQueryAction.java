@@ -20,13 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
@@ -35,6 +28,13 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * This action is responsible validate current query.

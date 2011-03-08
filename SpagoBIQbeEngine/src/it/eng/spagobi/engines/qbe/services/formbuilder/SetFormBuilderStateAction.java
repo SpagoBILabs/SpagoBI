@@ -24,20 +24,14 @@ package it.eng.spagobi.engines.qbe.services.formbuilder;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
-import it.eng.spagobi.engines.qbe.template.QbeTemplate;
-import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**

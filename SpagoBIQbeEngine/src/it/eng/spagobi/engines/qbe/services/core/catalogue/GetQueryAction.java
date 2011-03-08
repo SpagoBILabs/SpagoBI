@@ -20,15 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
@@ -39,6 +30,15 @@ import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * 
@@ -107,7 +107,7 @@ public class GetQueryAction extends AbstractQbeEngineAction {
 			Iterator<Query> it = queries.iterator();
 			while(it.hasNext()) {
 				Query query = it.next();
-				queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale());
+				queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale());
 				resultsJSON.put(queryJSON);
 			}
 			

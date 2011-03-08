@@ -24,7 +24,7 @@ package it.eng.spagobi.engines.qbe;
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
@@ -49,7 +49,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	// property name
 	public static final String CATALOGUE = "CATALOGUE";
 	public static final String CROSSTAB_DEFINITION = "CROSSTAB_DEFINITION";
-	public static final String DATAMART_MODEL = "DATAMART_MODEL";
+	public static final String DATASOURCE = "DATAMART_MODEL";
 	
 	public static final String CURRENT_VERSION = "7";
 	
@@ -58,9 +58,9 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	
 	
 	
-	public QbeEngineAnalysisState( DataMartModel datamartModel ) {
+	public QbeEngineAnalysisState( IDataSource dataSource ) {
 		super( );
-		setDatamartModel( datamartModel );
+		setDataSource( dataSource );
 	}
 
 	public void load(byte[] rowData) throws SpagoBIEngineException {
@@ -149,7 +149,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
-				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDatamartModel());
+				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
 								
 				catalogue.addQuery(query);
 			}
@@ -175,7 +175,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			Iterator it = queries.iterator();
 			while(it.hasNext()) {
 				query = (Query)it.next();
-				queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDatamartModel(), null);
+				queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
 				queriesJSON.put( queryJSON );
 			}
 			
@@ -187,12 +187,12 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		setProperty( CATALOGUE, catalogueJSON );
 	}
 
-	public DataMartModel getDatamartModel() {
-		return (DataMartModel)getProperty( DATAMART_MODEL );
+	public IDataSource getDataSource() {
+		return (IDataSource)getProperty( DATASOURCE );
 	}
 
-	public void setDatamartModel(DataMartModel datamartModel) {
-		setProperty( DATAMART_MODEL, datamartModel );
+	public void setDataSource(IDataSource dataSource) {
+		setProperty( DATASOURCE, dataSource );
 	}
 
 	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {

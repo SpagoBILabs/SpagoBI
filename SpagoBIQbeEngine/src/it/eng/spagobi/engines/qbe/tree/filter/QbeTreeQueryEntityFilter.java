@@ -20,12 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import java.util.List;
-import java.util.Set;
-
-import it.eng.qbe.model.IDataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
+
+import java.util.List;
+import java.util.Set;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -49,13 +49,13 @@ public class QbeTreeQueryEntityFilter extends QbeTreeWhiteListEntityFilter {
 		this.setQuery( query );
 	}
 	
-	public List filter(IDataMartModel datamartModel, List entities) {
+	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
 		
-		IStatement statement = datamartModel.createStatement(getQuery());
+		IStatement statement = dataSource.createStatement(getQuery());
 		Set whiteList = statement.getSelectedEntities();
 		setWhiteList(whiteList);
-		list = super.filter(datamartModel, entities);
+		list = super.filter(dataSource, entities);
 		return list;
 	}
 	

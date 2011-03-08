@@ -20,12 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
@@ -39,6 +33,12 @@ import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 
 /**
  * This action is responsible to Persist the current working query represented by
@@ -105,7 +105,7 @@ public class SaveQueryAction extends AbstractQbeEngineAction {
 			
 			Query query = null;
 			try {
-				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(jsonEncodedQuery, getEngineInstance().getDatamartModel());
+				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(jsonEncodedQuery, getEngineInstance().getDataSource());
 				//query = QueryEncoder.decode(queryRecords, queryFilters, queryFilterExp, getDatamartModel());
 			} catch (SerializationException e) {
 				String message = "Impossible to decode query string comming from client";

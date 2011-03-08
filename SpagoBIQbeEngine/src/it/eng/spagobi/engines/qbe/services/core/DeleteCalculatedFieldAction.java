@@ -20,11 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
@@ -33,6 +28,11 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 
 /**
@@ -74,7 +74,7 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 			
 			DataMartCalculatedField calculatedField = deserialize(fieldJSON);
 			
-			DataMartEntity parentEntity = getDatamartModel().getDataMartModelStructure().getEntity(parentEntityUniqueName);
+			DataMartEntity parentEntity = getDataSource().getDataMartModelStructure().getEntity(parentEntityUniqueName);
 			calculatedField.setParent(parentEntity);
 			parentEntity.deleteCalculatedField(calculatedField.getUniqueName());
 			

@@ -20,20 +20,19 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * This action  validate queries stored in current catalogues.
@@ -69,7 +68,7 @@ public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 				query = (Query)it.next();
 				logger.debug("Validating query [" + query.getName() +"] ...");
 				
-				statement = getEngineInstance().getDatamartModel().createStatement( query );
+				statement = getEngineInstance().getDataSource().createStatement( query );
 				statement.setParameters( getEnv() );
 				
 				hqlQueryStr = statement.getQueryString();

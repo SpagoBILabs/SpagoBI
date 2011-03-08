@@ -20,11 +20,11 @@
  **/
 package it.eng.spagobi.engines.qbe.template;
 
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spagobi.utilities.assertion.Assert;
 
 
 /**

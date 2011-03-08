@@ -106,8 +106,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			if (jsonEncodedFormState != null) {
 				logger.debug("Making a deep copy of the original query...");
-				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDatamartModel(), getLocale())).toString();
-				Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDatamartModel());
+				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale())).toString();
+				Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
 				logger.debug("Deep copy of the original query produced");
 				JSONObject formState = new JSONObject(jsonEncodedFormState);
 				logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
@@ -131,7 +131,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			
-			DBConnection connection = ((IHibernateDataSource)getDatamartModel().getDataSource()).getConnection();
+			DBConnection connection = ((IHibernateDataSource)getDataSource()).getConnection();
 			DataSource dataSource = getDataSource(connection);
 			
 			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);

@@ -21,30 +21,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.services.formbuilder;
 		
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 import it.eng.qbe.cache.QbeCacheManager;
-import it.eng.qbe.model.DataMartModel;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.tree.ExtJsQbeTreeBuilder;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeOrderEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeOrderFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeQueryEntityFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -64,7 +55,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 	public void service(SourceBean request, SourceBean response) {				
 	
 		String fieldId;
-		DataMartModel model;
+		IDataSource dataSource;
 		DataMartModelStructure structure;
 		DataMartField field;
 		DataMartEntity parentEntity;
@@ -82,8 +73,8 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			model = this.getDatamartModel();
-			structure = model.getDataMartModelStructure();
+			dataSource = getDataSource();
+			structure = dataSource.getDataMartModelStructure();
 			field = structure.getField(fieldId);
 			parentEntity = field.getParent();
 			fields = parentEntity.getAllFields();
@@ -94,7 +85,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 				DataMartField aField = (DataMartField) it.next();
 				JSONObject aJSONField = new JSONObject();
 				aJSONField.put("id", aField.getUniqueName());
-				String name = QbeCacheManager.getInstance().getLabels( getDatamartModel() , getLocale() ).getLabel(aField);
+				String name = QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ).getLabel(aField);
 				if (name == null || name.trim().equals("")) 
 					name = aField.getName();
 				aJSONField.put("name", name);

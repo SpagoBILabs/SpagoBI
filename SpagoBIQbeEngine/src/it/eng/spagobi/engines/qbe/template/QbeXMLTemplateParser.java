@@ -20,6 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.template;
 
+import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,12 +33,6 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 
 /**

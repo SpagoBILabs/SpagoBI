@@ -20,6 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.template;
 
+import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,9 +32,6 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
-import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
 
 
 /**

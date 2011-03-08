@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import java.util.List;
+import it.eng.qbe.datasource.IDataSource;
 
-import it.eng.qbe.model.IDataMartModel;
+import java.util.List;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,13 +54,13 @@ public abstract class ComposableQbeTreeEntityFilter implements IQbeTreeEntityFil
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.qbe.tree.filter.IQbeTreeEntityFilter#filterEntities(it.eng.qbe.model.IDataMartModel, java.util.List)
 	 */
-	public List filterEntities(IDataMartModel datamartModel, List entities) {
+	public List filterEntities(IDataSource dataSource, List entities) {
 		
 		if( getParentFilter() != null) {
-			entities = getParentFilter().filterEntities(datamartModel, entities);
+			entities = getParentFilter().filterEntities(dataSource, entities);
 		}
 		
-		return filter( datamartModel, entities );
+		return filter( dataSource, entities );
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public abstract class ComposableQbeTreeEntityFilter implements IQbeTreeEntityFil
 	 * 
 	 * @return the list
 	 */
-	public abstract List filter(IDataMartModel datamartModel, List fields);
+	public abstract List filter(IDataSource dataSource, List fields);
 
 	/**
 	 * Gets the parent filter.

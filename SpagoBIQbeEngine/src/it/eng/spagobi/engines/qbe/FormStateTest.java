@@ -4,7 +4,6 @@ import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.FormStateLoad
 import it.eng.spagobi.engines.qbe.analysisstateloaders.formbuilder.IFormStateLoader;
 import it.eng.spagobi.engines.qbe.template.QbeJSONTemplateParser;
 
-
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;

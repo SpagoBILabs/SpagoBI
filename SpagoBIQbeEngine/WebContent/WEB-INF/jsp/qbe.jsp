@@ -66,7 +66,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiSpagoController;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	List datamartNames = qbeEngineInstance.getDatamartModel().getDataSource().getDatamartNames();
+	List datamartNames = qbeEngineInstance.getDataSource().getDatamartNames();
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	

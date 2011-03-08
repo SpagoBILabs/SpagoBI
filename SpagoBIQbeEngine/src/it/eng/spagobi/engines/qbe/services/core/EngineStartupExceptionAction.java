@@ -21,16 +21,16 @@
 package it.eng.spagobi.engines.qbe.services.core;
 
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 
 /**
  * 
