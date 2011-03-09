@@ -23,8 +23,8 @@ package it.eng.qbe.statment;
 
 import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.jpql.JPQLDataSet;
-import it.eng.qbe.statment.jpql.JPQLStatement;
+import it.eng.qbe.statment.jpa.JPQLDataSet;
+import it.eng.qbe.statment.jpa.JPQLStatement;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**

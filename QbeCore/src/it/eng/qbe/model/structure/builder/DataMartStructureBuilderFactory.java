@@ -23,6 +23,8 @@ package it.eng.qbe.model.structure.builder;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.model.structure.builder.hibernate.HibernateDatamartStructureBuilder;
+import it.eng.qbe.model.structure.builder.jpa.JPADatamartStructureBuilder;
 
 
 /**
