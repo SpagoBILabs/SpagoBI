@@ -56,7 +56,7 @@ Sbi.kpi.ManageAddModelPanel = function(config) {
 	var windowPanel = {
 		layout: 'column'
 		, height      : 400
-		, autoScroll: true
+		, autoScroll: false
 		, scope: this
 		, items: [
 	         {
