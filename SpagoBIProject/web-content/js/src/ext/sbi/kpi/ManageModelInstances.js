@@ -153,6 +153,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	        	 minLength:1,
 	             fieldLabel:LN('sbi.generic.label'),
 	             allowBlank: false,
+	             enableKeyEvents: true,
 	             //validationEvent:true,
 	             name: 'label'
 	         });	  
@@ -162,6 +163,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	        	 minLength:1,
 	             fieldLabel: LN('sbi.generic.name'),
 	             allowBlank: false,
+	             enableKeyEvents: true,
 	             //validationEvent:true,
 	             name: 'name'
 	         });
@@ -171,6 +173,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
+	             enableKeyEvents: true,
 	             fieldLabel: LN('sbi.generic.descr'),
 	             //validationEvent:true,
 	             name: 'description'
@@ -259,6 +262,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	 	   this.srcModelCode = new Ext.form.TextField({
 	             readOnly: true,
+	             
 	             fieldLabel: LN('sbi.generic.code'),
 	             style: '{  color: #ffffff; border: 1px solid white; font-style: italic;}',
 	             name: 'srccode'
@@ -266,6 +270,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	 	   this.srcModelDescr = new Ext.form.TextArea({
 	 		   	 readOnly: true,
+	 		   	
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
@@ -276,6 +281,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	 	     this.srcModelType = new Ext.form.TextField({
 	 		   	 readOnly: true,
+	 		   	
 	 		   	style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodetype'),
 	             name: 'srctype'
@@ -283,6 +289,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		 	 this.srcModelTypeDescr = new Ext.form.TextField({
 	             readOnly: true,
+	             
 	             style: '{  color: #ffffff; border: 1px solid #fff; font-style: italic;}',
 	             fieldLabel: LN('sbi.generic.nodedescr'),
 	             name: 'srctypeDescr'
@@ -340,8 +347,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 											}, this);
 		this.thrWin.show();
 	}
-	, editNodeAttribute: function(field, newVal, oldVal) {	
-		//alert('edit field='+field.toSource()+' newVal='+newVal+' oldVal='+oldVal);
+	, editNodeAttribute: function(field, event) {	
 		if( this.selectedNodeToEdit === undefined ||  this.selectedNodeToEdit === null){
 			this.selectedNodeToEdit = this.mainTree.getSelectionModel().getSelectedNode();
 		}
@@ -349,11 +355,11 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			var fName = field.name;
-			//alert(field.toSource());
-			node.attributes[fName] = newVal;
+
+			node.attributes[fName] = field.getValue();
 			if(fName == 'name'){
 				var rec = this.referencedCmp.modelInstancesGrid.getSelectionModel().getSelected();
-				rec.data.name = newVal;
+				rec.data.name = field.getValue();
 				this.referencedCmp.modelInstancesGrid.mainElementsStore.commitChanges();
 				this.referencedCmp.modelInstancesGrid.getView().refresh();
 				var val = node.attributes.text;
@@ -364,7 +370,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 					name = val.substr(aPosition + 3);
 					code = val.substr(0, aPosition);
 					if (field.getName() == 'name') {
-						name = newVal;
+						name = field.getValue();
 					} 
 				}
 				var text = code + " - " + name;
@@ -434,6 +440,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
  	    this.kpiName = new Ext.form.TextField({
  	    	 columnWidth: .75,
  	    	 id: 'kpinameField',
+ 	    	 enableKeyEvents: true,
              fieldLabel:LN('sbi.generic.kpi'),
              style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic}',
              readOnly: true,
@@ -471,12 +478,14 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		this.kpiWeight = new Ext.form.NumberField({
             readOnly: false,
+            enableKeyEvents: true,
             fieldLabel: LN('sbi.kpis.weight'),
             name: 'kpiInstWeight'
         });
 		
 		this.kpiTarget = new Ext.form.NumberField({
             readOnly: false,
+            enableKeyEvents: true,
             fieldLabel: LN('sbi.modelinstances.target'),
             name: 'kpiInstTarget'
         });
@@ -559,6 +568,7 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		//alternate if uuid
 		this.kpiLabel = new Ext.form.TextField({
              readOnly: false,
+             enableKeyEvents: true,
              fieldLabel: LN('sbi.generic.label'),
              name: 'modelUuid'
          });
@@ -955,23 +965,23 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 		/* form fields editing */
 		this.detailFieldName.addListener('focus', this.selectNode, this);
-		this.detailFieldName.addListener('change', this.editNodeAttribute, this);
+		this.detailFieldName.addListener('keyup', this.editNodeAttribute, this);
 
 		this.detailFieldDescr.addListener('focus', this.selectNode, this);
-		this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
+		this.detailFieldDescr.addListener('keyup', this.editNodeAttribute, this);
 
 		this.detailFieldLabel.addListener('focus', this.selectNode, this);
-		this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
+		this.detailFieldLabel.addListener('keyup', this.editNodeAttribute, this);
 		
 		this.kpiThreshold.addListener('focus', this.selectNode, this);
 		this.kpiThreshold.addListener('change', this.editNodeAttribute, this);
 		this.kpiThreshold.addListener('changeThr', this.editThreshold, this);
 		
 		this.kpiTarget.addListener('focus', this.selectNode, this);
-		this.kpiTarget.addListener('change', this.editNodeAttribute, this);
+		this.kpiTarget.addListener('keyup', this.editNodeAttribute, this);
 		
 		this.kpiWeight.addListener('focus', this.selectNode, this);
-		this.kpiWeight.addListener('change', this.editNodeAttribute, this);
+		this.kpiWeight.addListener('keyup', this.editNodeAttribute, this);
 		
 		this.kpiChartType.addListener('focus', this.selectNode, this);
 		this.kpiChartType.addListener('change', this.editNodeAttribute, this);
@@ -980,13 +990,13 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 		this.kpiPeriodicity.addListener('change', this.editNodeAttribute, this);
 		
 		this.kpiName.addListener('focus', this.selectNode, this);
-		this.kpiName.addListener('change', this.editNodeAttribute, this);
+		this.kpiName.addListener('keyup', this.editNodeAttribute, this);
 		
 		this.kpiLabel.addListener('focus', this.selectNode, this);
-		this.kpiLabel.addListener('change', this.editNodeAttribute, this);
+		this.kpiLabel.addListener('keyup', this.editNodeAttribute, this);
 		
 		this.kpiSaveHistory.addListener('focus', this.selectNode, this);
-		this.kpiSaveHistory.addListener('change', this.editNodeAttribute, this);
+		this.kpiSaveHistory.addListener('keyup', this.editNodeAttribute, this);
 
 		this.kpiRestoreDefaultBtn.addListener('click', this.selectNode, this);
 		this.kpiClearBtn.addListener('click', this.selectNode, this);
