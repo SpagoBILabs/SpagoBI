@@ -22,6 +22,8 @@ package it.eng.qbe.model.structure.builder;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
+import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;

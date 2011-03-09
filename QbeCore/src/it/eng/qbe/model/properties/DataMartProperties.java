@@ -19,14 +19,12 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.model.structure.builder;
-
-import it.eng.qbe.model.structure.IDataMartObject;
+package it.eng.qbe.model.properties;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public interface IDataMartStructurePropertiesInitializer {
-	void addProperties(IDataMartObject item);
+public class DataMartProperties {
+
 }

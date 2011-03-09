@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.model.structure.builder;
+package it.eng.qbe.model.properties.initializer;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
