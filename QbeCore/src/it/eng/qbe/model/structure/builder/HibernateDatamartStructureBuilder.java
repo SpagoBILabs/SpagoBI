@@ -50,12 +50,12 @@ import org.hibernate.type.Type;
 public class HibernateDatamartStructureBuilder implements IDataMartStructureBuilder {
 	
 	private IHibernateDataSource dataSource;	
-
+	IDataMartStructurePropertiesInitializer propertiesInitializer;
+	
 	public HibernateDatamartStructureBuilder(IHibernateDataSource dataSource) {
-		if(dataSource== null) {
-			throw new IllegalArgumentException("DataSource parameter cannot be null");
-		}
+		Assert.assertNotNull(dataSource, "Parameter [dataSource] cannot be null");
 		setDataSource( dataSource );
+		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
 	}
 	
 	public DataMartModelStructure build() {
@@ -66,6 +66,8 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		Map classMetadata;
 			
 		dataMartStructure = new DataMartModelStructure();	
+		dataMartStructure.setName( getDataSource().getDatamartName() );
+		propertiesInitializer.addProperties(dataMartStructure);
 		
 		datamartNames = getDataSource().getDatamartNames();
 		for(int i = 0; i < datamartNames.size(); i++) {
@@ -97,11 +99,14 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 
 		String entityName = getEntityNameFromEntityType(entityType);		
 		DataMartEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
-				
+		propertiesInitializer.addProperties(dataMartEntity);
+		
 		addKeyFields(dataMartEntity);		
 		List subEntities = addNormalFields(dataMartEntity);	
 		addCalculatedFields(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, 0);
+		
+		
 	}
 	
 	private void addCalculatedFields(DataMartEntity dataMartEntity) {
@@ -113,6 +118,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 			for(int i = 0; i < calculatedFileds.size(); i++) {
 				calculatedField = (DataMartCalculatedField)calculatedFileds.get(i);
 				dataMartEntity.addCalculatedField(calculatedField);
+				propertiesInitializer.addProperties(calculatedField);
 			}
 		}
 	}
@@ -143,12 +149,14 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 		//String entityName = getEntityNameFromEntityType(entityType);		
 		dataMartEntity = parentEntity.addSubEntity(subEntity.getName(), subEntity.getRole(), subEntity.getType());
-		
+		propertiesInitializer.addProperties(dataMartEntity);
 		
 		addKeyFields(dataMartEntity);			
 		List subEntities = addNormalFields(dataMartEntity);		
 		addCalculatedFields(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, recursionLevel);
+		
+		
 	}
 	
 	private void addKeyFields(DataMartEntity dataMartEntity) {
@@ -203,13 +211,9 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 						propertyClass[j] = subPropertyClass.getName();
 						type[j] = subPropertyTypes[j].getName();
 					}
-				}	
-				
-				
-			
-				
+				}		
+		
 		} else {
-			
 				propertyClass = new String[1];
 				type = new String[1];
 				scale = new int[1];
@@ -238,6 +242,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 			dataMartField.setType(type[j]);
 			dataMartField.setPrecision(precision[j]);
 			dataMartField.setLength(scale[j]);
+			propertiesInitializer.addProperties(dataMartField);
 		}
 	}
 	
@@ -309,7 +314,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 				datamartField.setType(type);
 				datamartField.setPrecision(precision);
 				datamartField.setLength(scale);
-		 		
+				propertiesInitializer.addProperties(datamartField);
 			}
 		 }
 		

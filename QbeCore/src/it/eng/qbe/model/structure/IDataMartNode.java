@@ -20,26 +20,19 @@
  **/
 package it.eng.qbe.model.structure;
 
-import java.util.Map;
 
 /**
- * All objects in a DataMartModelStructure implement this interface 
+ * All nodes of a DataMartModelStructure (i.e. entities & fields) implement this interface 
  * 
  * @author Andrea Gioia
  */
-public interface IDataMartItem {
+public interface IDataMartNode extends IDataMartObject{
 	
 	DataMartModelStructure getStructure();
 	
 	DataMartEntity getParent();
 	void setParent(DataMartEntity parent);
-	
-	long getId();
+
 	String getUniqueName();
-	
-	String getName();
-	void setName(String name);
-	
-	Map<String,Object> getProperties();
-	void setProperties(Map<String,Object> properties);
+
 }

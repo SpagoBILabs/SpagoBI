@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource.hibernate;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.DBConnection;
@@ -33,7 +32,6 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -384,13 +382,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		}
 	}
 	
-	/**
-	 * Load formula file.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the file
-	 */
+	
 	protected File loadFormulaFile(String datamartName) {
 		String formulaFile = getDatamartJarFile( datamartName ).getParent() + "/formula.xml";
 		return new File(formulaFile);

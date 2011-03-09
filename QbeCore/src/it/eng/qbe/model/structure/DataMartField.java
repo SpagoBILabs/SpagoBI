@@ -24,7 +24,7 @@ package it.eng.qbe.model.structure;
 /**
  * @author Andrea Gioia
  */
-public class DataMartField extends AbstractDataMartItem {
+public class DataMartField extends AbstractDataMartNode {
 		
 	private boolean key;
 	private String type;
@@ -37,13 +37,15 @@ public class DataMartField extends AbstractDataMartItem {
 		// in order to let subclass in this package to relax constraints imposed by the public constructor
 		// DataMartField(String name, DataMartEntity parent). Ex. DataMartCalculatedField
 		// can be created by themself without a pre-existing parent entity.
+		initProperties();
 	}
 	
 	public DataMartField(String name, DataMartEntity parent) {
 		setStructure(parent.getStructure());
 		setId( getStructure().getNextId() );		
 		setName(name);
-		setParent(parent) ;		
+		setParent(parent);
+		initProperties();		
 	}
 
 	public String getUniqueName() {

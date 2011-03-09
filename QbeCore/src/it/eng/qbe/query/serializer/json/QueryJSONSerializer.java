@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
@@ -208,8 +207,8 @@ public class QueryJSONSerializer {
 						fieldJSON.put(QuerySerializationConstants.FIELD_ORDER, dataMartSelectField.getOrderType());
 						fieldJSON.put(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION, dataMartSelectField.getFunction().getName());
 						
-						DatamartProperties datamartProperties = dataSource.getDataMartProperties();
-						String iconCls = datamartProperties.getFieldIconClass( datamartField );	
+						//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
+						String iconCls = datamartField.getPropertyAsString("type");	
 						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, iconCls);
 						
 						// if an aggregation function is defined or if the field is declared as "measure" into property file,

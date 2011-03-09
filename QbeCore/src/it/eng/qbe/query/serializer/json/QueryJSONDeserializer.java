@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query.serializer.json;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartField;
@@ -146,7 +145,6 @@ public class QueryJSONDeserializer {
 		
 		try {
 			
-			DatamartProperties props = dataSource.getDataMartProperties();
 			
 			logger.debug("Query [" + query.getId() + "] have [" + fieldsJSON.length() + "] to deserialize");			
 			for(int i = 0; i < fieldsJSON.length(); i++) {		
@@ -173,7 +171,7 @@ public class QueryJSONDeserializer {
 						funct = fieldJSON.getString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
 							
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
-							pattern = props.getFormat(field, dataSource);
+							pattern = field.getPropertyAsString("format");
 						} else {
 							pattern = null;
 						}

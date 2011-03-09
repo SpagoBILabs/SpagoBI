@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * @author Andrea Gioia
  */
-public class DataMartEntity extends AbstractDataMartItem {
+public class DataMartEntity extends AbstractDataMartNode {
 	
 	protected DataMartEntity root;	
 	
@@ -64,6 +64,8 @@ public class DataMartEntity extends AbstractDataMartItem {
 		this.fields = new HashMap<String,DataMartField>();
 		this.calculatedFields = new HashMap<String, DataMartCalculatedField>();
 		this.subEntities = new HashMap<String,DataMartEntity>();
+		
+		initProperties();
 	}
 	
 	// =========================================================================

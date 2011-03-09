@@ -33,6 +33,7 @@ public class DataMartCalculatedField extends DataMartField {
 		setType(type);
 		setExpression(expression);
 		this.inLine = false;
+		initProperties();
 	}
 	
 	public DataMartCalculatedField(String name, String type, String expression, boolean inLine) {

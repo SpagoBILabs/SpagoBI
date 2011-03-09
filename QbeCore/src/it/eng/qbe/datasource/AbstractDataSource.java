@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
@@ -29,7 +28,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.StatementFactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,30 +42,18 @@ public abstract class AbstractDataSource implements IDataSource {
 	// if it is a multi jar qbe
 	protected List datamartNames = null;
 	
-	// TODO move this to datamartStructure (maybe?)
-	// qbe.properties (entity-base properties)
-	protected DatamartProperties dataMartProperties;
-	// labels.properties (role-base properties)
-	protected Map properties;
 	
 	protected DataMartModelAccessModality dataMartModelAccessModality;
 	protected DataMartModelStructure dataMartModelStructure;
 	protected DBConnection connection;
 	protected Map dblinkMap;
-    
-	public Map getProperties() {
-		return properties;
-	}
-	
-	public void setProperties(Map properties) {
-		this.properties = properties;
-	}
+
 	
 	public DataMartModelStructure getDataMartModelStructure() {
-		IDataMartStructureBuilder builder;
+		IDataMartStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
-			builder = DataMartStructureBuilderFactory.getDataMartStructureBuilder(this);
-			dataMartModelStructure = builder.build();
+			structureBuilder = DataMartStructureBuilderFactory.getDataMartStructureBuilder(this);
+			dataMartModelStructure = structureBuilder.build();
 		}
 		
 		return dataMartModelStructure;
@@ -127,14 +113,6 @@ public abstract class AbstractDataSource implements IDataSource {
 		this.datamartNames = datamartNames;
 	}
 
-	
-	public DatamartProperties getDataMartProperties() {
-		return dataMartProperties;
-	}
-	
-	public void setDataMartProperties(DatamartProperties properties) {
-		this.dataMartProperties = properties;
-	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.IJPADataSource#getConnection()
