@@ -189,11 +189,13 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 	 	   this.detailFieldName = new Ext.form.TextField({
 	             fieldLabel: LN('sbi.generic.name'),
+	             enableKeyEvents: true,
 	             name: 'name'
 	         });
 	 			  
 	 	   this.detailFieldCode = new Ext.form.TextField({
 	             fieldLabel:LN('sbi.generic.code'),
+	             enableKeyEvents: true,
 	             name: 'code'
 	         });  
 	 		   
@@ -201,12 +203,14 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	          	 maxLength:400,
 	       	     width : 250,
 	             height : 80,
+	             enableKeyEvents: true,
 	             fieldLabel: LN('sbi.generic.descr'),
 	             name: 'description'
 	         });
 	 	 		   
 	 	   this.detailFieldLabel = new Ext.form.TextField({
 	             fieldLabel:LN('sbi.generic.label'),
+	             enableKeyEvents: true,
 	             name: 'label'
 	         });	  
 	 	 	 			  
@@ -216,6 +220,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	 		   	 id: 'model-detailFieldKpi',
 	             fieldLabel: LN('sbi.generic.kpi'),
 	             readOnly: true,
+	             enableKeyEvents: true,
 	             width: 30,
 	             style: '{ color: #74B75C; border: 1px solid #74B75C; font-style: italic;}',
 	             name: 'kpi'
@@ -531,7 +536,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		});
 		
     }
-	,editNode : function(field, newVal, oldVal) {
+	,editNode : function(field, event) {
+
 		var node = this.selectedNodeToEdit;
 		if (node !== undefined) {
 			var val = node.text;
@@ -542,9 +548,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				name = val.substr(aPosition + 3);
 				code = val.substr(0, aPosition);
 				if (field.getName() == 'name') {
-					name = newVal;
+					name = field.getValue();
 				} else if (field.getName() == 'code') {
-					code = newVal;
+					code = field.getValue();
 				}
 			}
 			var text = code + " - " + name;
@@ -563,15 +569,15 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 			}
 		}
 	}
-	, editNodeAttribute: function(field, newVal, oldVal) {
+	, editNodeAttribute: function(field, event) {
 		var node = this.selectedNodeToEdit;
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			var fName = field.name;
 			if(fName == 'description'){
-				node.attributes.description = newVal;
+				node.attributes.description = field.getValue();
 			}else if(fName == 'label'){
-				node.attributes.label = newVal;
+				node.attributes.label = field.getValue();
 			}
 		}
 	}
@@ -657,22 +663,22 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 
 			/* form fields editing */
 			this.detailFieldName.addListener('focus', this.selectNode, this);
-			this.detailFieldName.addListener('change', this.editNode, this);
+			this.detailFieldName.addListener('keyup', this.editNode, this);
 
 			this.detailFieldCode.addListener('focus', this.selectNode, this);
-			this.detailFieldCode.addListener('change', this.editNode, this);
+			this.detailFieldCode.addListener('keyup', this.editNode, this);
 
 			this.detailFieldDescr.addListener('focus', this.selectNode, this);
-			this.detailFieldDescr.addListener('change', this.editNodeAttribute, this);
+			this.detailFieldDescr.addListener('keyup', this.editNodeAttribute, this);
 
 			this.detailFieldLabel.addListener('focus', this.selectNode, this);
-			this.detailFieldLabel.addListener('change', this.editNodeAttribute, this);
+			this.detailFieldLabel.addListener('keyup', this.editNodeAttribute, this);
 			
 			this.detailFieldNodeType.addListener('focus', this.selectNode, this);
 			this.detailFieldNodeType.addListener('select', this.setDomainType, this);			
 			
 			this.detailFieldKpi.addListener('focus', this.selectNode, this);
-			this.detailFieldKpi.addListener('change', this.editNodeAttribute, this);			
+			this.detailFieldKpi.addListener('keyup', this.editNodeAttribute, this);			
 			
 			// udp mylisteners
 			this.udpValueGrid.addListener('click', this.selectNode, this);
