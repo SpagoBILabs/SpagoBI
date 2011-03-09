@@ -23,6 +23,8 @@ package it.eng.qbe.model.properties.initializer;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.model.properties.DataMartProperties;
+import it.eng.qbe.model.properties.DataMartProperty;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
@@ -45,107 +47,6 @@ import java.util.Properties;
  */
 public class HibernateDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
 	
-	public enum DataMartStructureProperty {
-		RECURSIVE_FILTERING		("recursiveFiltering", false, true, "enabled");
-
-		private final String name;
-		private final boolean inherited;   
-		private final boolean optional;   
-		private final String defaultValue;   
-		
-		DataMartStructureProperty(String name, boolean inherited, boolean optional, String defaultValue) {
-	        this.name = name;
-	        this.inherited = inherited;
-	        this.optional = optional;
-	        this.defaultValue = defaultValue;
-	    }
-
-		public String getName() {
-			return name;
-		}
-
-		public boolean isInehrited() {
-			return inherited;
-		}
-		
-		public boolean isOptional() {
-			return optional;
-		}
-
-		public String getDefaultValue() {
-			return defaultValue;
-		}
-	}
-	
-	
-	public enum DataMartEntityProperty {
-		VISIBLE		("visible", false, true, "true"),
-	    TYPE   		("type", false, true, "dimension"),
-	    POSITION   	("position", false, true, "" + Integer.MAX_VALUE);
-
-		private final String name;
-		private final boolean inherited;   
-		private final boolean optional;   
-		private final String defaultValue;   
-		
-		DataMartEntityProperty(String name, boolean inherited, boolean optional, String defaultValue) {
-	        this.name = name;
-	        this.inherited = inherited;
-	        this.optional = optional;
-	        this.defaultValue = defaultValue;
-	    }
-
-		public String getName() {
-			return name;
-		}
-
-		public boolean isInehrited() {
-			return inherited;
-		}
-		
-		public boolean isOptional() {
-			return optional;
-		}
-
-		public String getDefaultValue() {
-			return defaultValue;
-		}
-	}
-	
-	public enum DataMartFieldProperty {
-		VISIBLE		("visible", false, true, "true"),
-	    TYPE   		("type", false, true, "attribute"),
-	    POSITION   	("position", false, true, "" + Integer.MAX_VALUE),
-		FORMAT   	("format", false, true, null);
-		
-		private final String name;
-		private final boolean inherited;   
-		private final boolean optional;   
-		private final String defaultValue;   
-		
-		DataMartFieldProperty(String name, boolean inherited, boolean optional, String defaultValue) {
-	        this.name = name;
-	        this.inherited = inherited;
-	        this.optional = optional;
-	        this.defaultValue = defaultValue;
-	    }
-
-		public String getName() {
-			return name;
-		}
-
-		public boolean isInehrited() {
-			return inherited;
-		}
-		
-		public boolean isOptional() {
-			return optional;
-		}
-
-		public String getDefaultValue() {
-			return defaultValue;
-		}
-	}
 	
 	IHibernateDataSource dataSource;
 	Map properties;
@@ -176,10 +77,11 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 	}
 	
 	private void addDataMartModelProperties(DataMartModelStructure item) {
+		DataMartProperty property;
 		String propertyValue;
 		
-		for (DataMartEntityProperty property : DataMartEntityProperty.values()) {
-			
+		for (int i = 0; i < DataMartProperties.globalProperties.length; i++) {
+			property = DataMartProperties.globalProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
@@ -187,7 +89,7 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 				if(property.isOptional() == false) {
 					throw new SpagoBIRuntimeException("Impossible to initialize property [" + property.getName() + "] of structure [" + item.getName() + "]");
 				}
-				propertyValue = property.defaultValue;
+				propertyValue = property.getDefaultValue();
 			} 
 			
 			item.getProperties().put(property.getName(), propertyValue);
@@ -195,10 +97,11 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 	}
 
 	protected void addDataMartEntityProperties(DataMartEntity item) {
+		DataMartProperty property;
 		String propertyValue;
 		
-		for (DataMartEntityProperty property : DataMartEntityProperty.values()) {
-			
+		for (int i = 0; i < DataMartProperties.entityProperties.length; i++) {
+			property = DataMartProperties.entityProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
@@ -206,11 +109,11 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 				if(property.isOptional() == false) {
 					throw new SpagoBIRuntimeException("Impossible to initialize property [" + property.getName() + "] of entity [" + item.getUniqueName() + "]");
 				}
-				propertyValue = property.defaultValue;
+				propertyValue = property.getDefaultValue();
 			} 
 			
 			// property not set + property default value not set
-			if(propertyValue == null && property.isInehrited()) {
+			if(propertyValue == null && property.isInherited()) {
 				propertyValue = getInheritedProperty(item, property.getName());
 			}
 			
@@ -219,8 +122,11 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 	}
 	
 	protected void addDataMartFieldProperties(DataMartField item) {
+		DataMartProperty property;
 		String propertyValue;
-		for (DataMartFieldProperty property : DataMartFieldProperty.values()) {
+		
+		for (int i = 0; i < DataMartProperties.fieldProperties.length; i++) {
+			property = DataMartProperties.fieldProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
@@ -228,11 +134,11 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 				if(property.isOptional() == false) {
 					throw new SpagoBIRuntimeException("Impossible to initialize property [" + property.getName() + "] of field [" + item.getUniqueName() + "]");
 				}
-				propertyValue = property.defaultValue;
+				propertyValue = property.getDefaultValue();
 			}
 			
 			// property not set + property default value not set
-			if(propertyValue == null && property.isInehrited()) {
+			if(propertyValue == null && property.isInherited()) {
 				propertyValue = getInheritedProperty(item, property.getName());
 			}
 			
