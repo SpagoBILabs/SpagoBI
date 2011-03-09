@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.dao;
 
-import it.eng.qbe.bo.DatamartLabels;
+import it.eng.qbe.model.i18n.DatamartLabels;
 
 import java.util.Locale;
 
