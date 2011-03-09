@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.dao;
 
-import it.eng.qbe.bo.DatamartProperties;
+import java.util.Properties;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,7 +37,7 @@ public interface IDatamartPropertiesDAO {
 	 * 
 	 * @return the datamart properties
 	 */
-	DatamartProperties loadDatamartProperties(String datamartName);
+	Properties loadDatamartProperties(String datamartName);
 	
 	/**
 	 * Save datamart properties.
@@ -45,5 +45,5 @@ public interface IDatamartPropertiesDAO {
 	 * @param datamartName the datamart name
 	 * @param datamartProperties the datamart properties
 	 */
-	void saveDatamartProperties(String datamartName, DatamartProperties datamartProperties);
+	void saveDatamartProperties(String datamartName, Properties datamartProperties);
 }

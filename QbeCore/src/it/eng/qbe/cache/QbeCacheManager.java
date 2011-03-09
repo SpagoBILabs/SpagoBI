@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.cache;
 
 import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.IDataSource;
 
@@ -76,19 +75,5 @@ public class QbeCacheManager {
 		
 		return labels;
 	}
-	
-	public void putProperties(IDataSource dataSource, DatamartProperties properties) {
-		cache.putProperties(dataSource, properties);
-	}
-	
-	public DatamartProperties getProperties(IDataSource dataSource) {
-		DatamartProperties properties;
-		
-		properties = cache.getProperties(dataSource);
-		if( properties == null ) {
-			properties = DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( dataSource.getDatamartName() ); 
-		}
-		
-		return properties;
-	}
+
 }

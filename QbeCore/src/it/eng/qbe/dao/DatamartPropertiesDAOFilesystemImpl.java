@@ -20,8 +20,6 @@
  **/
 package it.eng.qbe.dao;
 
-import it.eng.qbe.bo.DatamartProperties;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -34,31 +32,27 @@ import java.util.zip.ZipEntry;
  * 
  * @author Andrea Gioia
  */
-public class DatamartPropertiesDAOFilesystemImpl implements
-		IDatamartPropertiesDAO {
+public class DatamartPropertiesDAOFilesystemImpl implements IDatamartPropertiesDAO {
 	
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#loadDatamartProperties(java.lang.String)
 	 */
-	public DatamartProperties loadDatamartProperties(String datamartName) {
-		Properties properties = null;
+	public Properties loadDatamartProperties(String datamartName) {
+		Properties properties;
 		
 		File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
-		//File dmJarFile = datamartJarFile
-		if(datamartJarFile == null) return new DatamartProperties();
 		
 		JarFile jf = null;
 		try {
 			jf = new JarFile( datamartJarFile );
 			properties = loadQbePropertiesFormJarFile(jf);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new DatamartProperties();
+			return new Properties();
 		}				
 		
-		return new DatamartProperties( properties );	
+		return properties;	
 	}
 	
 	/**
@@ -90,8 +84,7 @@ public class DatamartPropertiesDAOFilesystemImpl implements
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveDatamartProperties(java.lang.String, it.eng.qbe.bo.DatamartProperties)
 	 */
-	public void saveDatamartProperties(String datamartName,
-			DatamartProperties datamartProperties) {
+	public void saveDatamartProperties(String datamartName, Properties datamartProperties) {
 
 	}
 }

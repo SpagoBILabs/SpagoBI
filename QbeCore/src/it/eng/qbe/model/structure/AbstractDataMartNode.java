@@ -21,18 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
-import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public abstract class AbstractDataMartItem implements IDataMartItem {
+public abstract class AbstractDataMartNode extends AbstractDataMartObject implements IDataMartNode {
 	
 	protected DataMartModelStructure structure;
 	protected DataMartEntity parent;	
-	protected long id;	
-	protected String name;
-	protected Map<String,Object> properties;
+	
+	
 	
 	public DataMartModelStructure getStructure() {
 		return structure;
@@ -50,27 +48,9 @@ public abstract class AbstractDataMartItem implements IDataMartItem {
 		this.parent = parent;
 	}
 	
-	public long getId() {
-		return id;
-	}
 	
-	protected void setId(long id) {
-		this.id = id;
-	}
 	
-	public String getName() {
-		return name;
-	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
 	
-	public Map<String,Object> getProperties() {
-		return properties;
-	}
 	
-	public void setProperties(Map<String,Object> properties) {
-		this.properties = properties;
-	}
 }

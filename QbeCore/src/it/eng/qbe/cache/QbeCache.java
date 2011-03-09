@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.cache;
 
 import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
 
 import java.util.HashMap;
@@ -72,15 +71,5 @@ public class QbeCache {
 			resourceName += "_" + locale.getLanguage();
 		}
 		return (DatamartLabels)getResource(resourceName);
-	}
-	
-	public void putProperties(IDataSource dataSource, DatamartProperties properties) {
-		String resourceName = dataSource.getDatamartName() + ":" + "properties";		
-		putResource(resourceName, properties);
-	}
-	
-	public DatamartProperties getProperties(IDataSource dataSource) {
-		String resourceName = dataSource.getDatamartName() + ":" + "properties";
-		return (DatamartProperties)getResource(resourceName);
 	}
 }

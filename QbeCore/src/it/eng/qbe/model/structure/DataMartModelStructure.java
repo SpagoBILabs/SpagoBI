@@ -29,10 +29,10 @@ import java.util.Map;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class DataMartModelStructure {
+public class DataMartModelStructure extends AbstractDataMartObject {
 	
 	
-	protected long id;	
+	protected long nextId;	
 	protected Map<String, Map<String,DataMartEntity>> rootEntities;	// datamartName->(entityUniqueName->entity)
 	protected Map<String, DataMartEntity> entities; //entityUniqueName->entity
 	protected Map<String, DataMartField> fields; // uniqueName -> field	
@@ -47,11 +47,14 @@ public class DataMartModelStructure {
 	 * Instantiate a new empty DataMartModelStructure object
 	 */
 	public DataMartModelStructure() {
-		id = 0;
+		nextId = 0;
+		id = getNextId();
+		name = "Generic Datamart";
 		rootEntities = new HashMap<String, Map<String,DataMartEntity>>();
 		entities = new HashMap<String, DataMartEntity>();
 		fields = new HashMap<String, DataMartField>();
 		calculatedFields = new  HashMap<String, List<DataMartCalculatedField>>();
+		initProperties();
 		
 	}
 	
@@ -66,7 +69,7 @@ public class DataMartModelStructure {
 	 * @return the next id
 	 */
 	public long getNextId() {
-		return ++id;
+		return nextId++;
 	}
 	
 	// Root Entities -----------------------------------------------------------
@@ -125,7 +128,7 @@ public class DataMartModelStructure {
 		DataMartEntity toReturn = null;
 		Iterator<String> keysIt = rootEntities.keySet().iterator();
 		while (keysIt.hasNext()) {
-			String datamartName = (String) keysIt.next();
+			String datamartName = keysIt.next();
 			DataMartEntity rootEntity = getRootEntity(entity, datamartName);
 			if (rootEntity != null) {
 				toReturn = rootEntity;
