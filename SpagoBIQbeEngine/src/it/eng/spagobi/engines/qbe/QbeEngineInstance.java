@@ -93,12 +93,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), template.getDbLinkMap(),  connection);
 				
 		
-		dataSource.setProperties( env ); 
-		
 		if(template.getDatamartModelAccessModality() != null) {
 			
 			if(template.getDatamartModelAccessModality().getRecursiveFiltering() == null) {
-				String recursiveFilteringAttr = (String)dataSource.getDataMartProperties().getProperty(DataMartModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				String recursiveFilteringAttr = dataSource.getDataMartModelStructure().getPropertyAsString(DataMartModelAccessModality.ATTR_RECURSIVE_FILTERING);
 				if(!StringUtilities.isEmpty(recursiveFilteringAttr)) {
 					if("disabled".equalsIgnoreCase(recursiveFilteringAttr)) {
 						template.getDatamartModelAccessModality().setRecursiveFiltering( Boolean.FALSE );

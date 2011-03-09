@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.core;
 
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
@@ -236,7 +235,6 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			logger.debug("Must use query root entity. Looking for select and order fields...");
 			IDataSource model = getDataSource();
 			DataMartModelStructure structure = model.getDataMartModelStructure();
-			DatamartProperties props = model.getDataMartProperties();
 			DataMartField selectField = structure.getField(entityId);
 			DataMartField orderField = null;
 			if (orderEntity != null && !orderEntity.equals("")) {
@@ -252,7 +250,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				DataMartField aField = (DataMartField) it.next();
 				if (aField.getName().equals(selectField.getName())) {
 					entityId = aField.getUniqueName();
-					entityPattern = props.getFormat(aField, model);
+					entityPattern = aField.getPropertyAsString("format");
 					break;
 				}
 			}
@@ -263,7 +261,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 					DataMartField aField = (DataMartField) it.next();
 					if (aField.getName().equals(orderField.getName())) {
 						orderEntity = aField.getUniqueName();
-						orderEntityPattern = props.getFormat(aField, model);
+						orderEntityPattern = aField.getPropertyAsString("format");
 						break;
 					}
 				}
