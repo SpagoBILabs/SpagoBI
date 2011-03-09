@@ -63,7 +63,6 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 		
 		ICalculatedFieldsDAO calculatedFieldsDAO;
-		String dataMartName;
 		Map calculatedFields;
 				
 		logger.debug("IN");
@@ -76,12 +75,6 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 						
 			calculatedFieldsDAO = DAOFactory.getCalculatedFieldsDAO();
 			Assert.assertNotNull(calculatedFieldsDAO, "Impossible to retrive a valid instance of CalculatedFieldsDAO");
-			
-			
-			dataMartName = getDataSource().getName();
-			logger.debug("DataMart name [" + dataMartName +"]");
-			Assert.assertNotNull(dataMartName, "Datamart name cannot be null in order to execute " + this.getActionName() + " service");
-			
 			
 			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");

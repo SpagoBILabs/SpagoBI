@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.tree;
 
-import it.eng.qbe.bo.DatamartLabels;
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.i18n.DatamartLabels;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
