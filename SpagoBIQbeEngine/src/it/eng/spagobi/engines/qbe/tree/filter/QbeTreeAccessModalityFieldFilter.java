@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartField;
 
@@ -79,9 +78,9 @@ public class QbeTreeAccessModalityFieldFilter extends ComposableQbeTreeFieldFilt
 	 * @return true, if is field visible
 	 */
 	private boolean isFieldVisible(IDataSource dataSource, DataMartField field) {
-		DatamartProperties qbeProperties = dataSource.getDataMartProperties();
+		//DatamartProperties qbeProperties = dataSource.getDataMartProperties();
 		
-		if( !qbeProperties.isFieldVisible( field ) ) return false;
+		if( !field.getPropertyAsBoolean("visible") ) return false;
 		if( !dataSource.getDataMartModelAccessModality().isFieldAccessible( field ) )return false;
 		return true;
 	}

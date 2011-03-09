@@ -21,7 +21,6 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.bo.DatamartLabels;
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
@@ -72,24 +71,6 @@ public class ExtJsQbeTreeBuilder  {
 		setQbeTreeFilter( qbeTreeFilter );
 	}	
 	
-		
-	/**
-	 * 
-	 * @param dataSource
-	 * @param locale can be null. In that case label.properties will be loaded (if exists)
-	 * @return
-	 */
-	/*
-	public List getQbeTrees(IDataMartModel datamartModel, Locale locale)  {			
-		setDatamartModel(datamartModel);
-		setLocale(locale);
-		setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDatamartModel() , getLocale() ) );
-		if( getDatamartLabels() == null) {
-			setDatamartLabels( new DatamartLabels() );
-		}
-		return buildQbeTreeList();
-	}
-	*/
 	
 	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName)  {			
 		setDatamartModel(dataSource);
@@ -162,7 +143,6 @@ public class ExtJsQbeTreeBuilder  {
 			writer = new PrintWriter(new CharArrayWriter());
 		}
 		addEntityNodes(nodes, datamartName);
-//		System.out.println("File saved: " + file.getAbsoluteFile());
 		writer.flush();
 		writer.close();
 		return nodes;
@@ -218,8 +198,8 @@ public class ExtJsQbeTreeBuilder  {
 								  DataMartEntity entity,
 								  int recursionLevel) {		
 		
-		DatamartProperties datamartProperties = dataSource.getDataMartProperties();	
-		String iconCls = datamartProperties.getEntityIconClass( entity );			
+		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();	
+		String iconCls = entity.getPropertyAsString("type");			
 		String label = geEntityLabel( entity );
 		String londDescription = QueryJSONSerializer.getEntityLongDescription( entity , getDatamartLabels());
 		String tooltip = geEntityTooltip( entity );
@@ -322,8 +302,8 @@ public class ExtJsQbeTreeBuilder  {
 	public  JSONObject getFieldNode(DataMartEntity parentEntity,
 							 DataMartField field) {
 		
-		DatamartProperties datamartProperties = dataSource.getDataMartProperties();
-		String iconCls = datamartProperties.getFieldIconClass( field );		
+		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
+		String iconCls = field.getPropertyAsString("type");		
 		String fieldLabel = geFieldLabel( field );
 		String longDescription = QueryJSONSerializer.getFieldLongDescription( field, getDatamartLabels() );
 		String fieldTooltip = geFieldTooltip( field );
@@ -357,7 +337,6 @@ public class ExtJsQbeTreeBuilder  {
 	
 	public  JSONObject getCalculatedFieldNode(DataMartEntity parentEntity, DataMartCalculatedField field) {
 
-		DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = "calculation";;//datamartProperties.getFieldIconClass( field );		
 		String fieldLabel = geFieldLabel( field );
 		String fieldTooltip = geFieldTooltip( field );

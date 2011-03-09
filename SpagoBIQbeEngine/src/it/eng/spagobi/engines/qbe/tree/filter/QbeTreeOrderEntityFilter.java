@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 
@@ -58,9 +57,6 @@ public class QbeTreeOrderEntityFilter extends ComposableQbeTreeEntityFilter {
 	
 	public List filter(IDataSource dataSource, List fields) {
 		
-		final DatamartProperties properties = dataSource.getDataMartProperties();
-				
-		
 		Collections.sort(fields, new Comparator() {
 		    public int compare(Object o1, Object o2) {
 		    	DataMartEntity f1, f2;
@@ -69,7 +65,7 @@ public class QbeTreeOrderEntityFilter extends ComposableQbeTreeEntityFilter {
 		    	
 		    	f1 = (DataMartEntity)o1;
 		    	f2 = (DataMartEntity)o2;
-		    	
+		    	/*
 		    	p1 = properties.getProperty(f1, "position");
 		    	p2 = properties.getProperty(f2, "position");
 		    	
@@ -84,8 +80,14 @@ public class QbeTreeOrderEntityFilter extends ComposableQbeTreeEntityFilter {
 		    	} catch(Throwable t) {
 		    		i2 = Integer.MAX_VALUE;
 		    	}
+		    	*/
+		    	//Assert.assertTrue(i1 == f1.getPropertyAsInt("position"), "Position attribute of entity [" + f1.getName() + "]");
+		    	//Assert.assertTrue(i2 == f2.getPropertyAsInt("position"), "Position attribute of entity [" + f2.getName() + "]");
 		    	
-		        return (i1 < i2 ? -1 :
+		    	i1 = f1.getPropertyAsInt("position");
+		    	i2 = f2.getPropertyAsInt("position");
+		        
+		    	return (i1 < i2 ? -1 :
 		                (i1 == i2 ? 0 : 1));
 		    }
 		});

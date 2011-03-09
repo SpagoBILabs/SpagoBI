@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartField;
 
@@ -58,9 +57,6 @@ public class QbeTreeOrderFieldFilter extends ComposableQbeTreeFieldFilter {
 	
 	public List filter(IDataSource dataSource, List fields) {
 		
-		final DatamartProperties properties = dataSource.getDataMartProperties();
-				
-		
 		Collections.sort(fields, new Comparator() {
 		    public int compare(Object o1, Object o2) {
 		    	DataMartField f1, f2;
@@ -70,20 +66,9 @@ public class QbeTreeOrderFieldFilter extends ComposableQbeTreeFieldFilter {
 		    	f1 = (DataMartField)o1;
 		    	f2 = (DataMartField)o2;
 		    	
-		    	p1 = properties.getProperty(f1, "position");
-		    	p2 = properties.getProperty(f2, "position");
-		    	
-		    	try {
-		    		i1 = Integer.parseInt(p1);
-		    	} catch(Throwable t) {
-		    		i1 = Integer.MAX_VALUE;
-		    	}
-		    	
-		    	try {
-		    		i2 = Integer.parseInt(p2);
-		    	} catch(Throwable t) {
-		    		i2 = Integer.MAX_VALUE;
-		    	}
+		    	i1 = f1.getPropertyAsInt("position");
+		    	i2 = f2.getPropertyAsInt("position");
+		        
 		    	
 		        return (i1 < i2 ? -1 :
 		                (i1 == i2 ? 0 : 1));

@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import it.eng.qbe.bo.DatamartProperties;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 
@@ -75,9 +74,9 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 	 * @return true, if is entity visible
 	 */
 	private boolean isEntityVisible(IDataSource dataSource, DataMartEntity entity) {
-		DatamartProperties qbeProperties = dataSource.getDataMartProperties();
+		//DatamartProperties qbeProperties = dataSource.getDataMartProperties();
 		
-		if( !qbeProperties.isEntityVisible( entity ) ) return false;
+		if( !entity.getPropertyAsBoolean("visible") ) return false;
 		if( !dataSource.getDataMartModelAccessModality().isEntityAccessible( entity ) ) return false;
 		return true;
 	}	
