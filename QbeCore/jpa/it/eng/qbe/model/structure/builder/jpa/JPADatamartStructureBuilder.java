@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.model.structure.builder;
+package it.eng.qbe.model.structure.builder.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.jpa.JPADataSource;
@@ -27,6 +27,7 @@ import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.lang.reflect.Member;

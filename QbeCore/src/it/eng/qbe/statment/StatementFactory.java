@@ -26,7 +26,7 @@ import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.jpql.JPQLStatement;
+import it.eng.qbe.statment.jpa.JPQLStatement;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

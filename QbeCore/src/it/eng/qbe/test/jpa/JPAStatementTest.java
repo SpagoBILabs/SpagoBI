@@ -6,8 +6,8 @@ package it.eng.qbe.test.jpa;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.jpql.JPQLDataSet;
-import it.eng.qbe.statment.jpql.JPQLStatement;
+import it.eng.qbe.statment.jpa.JPQLDataSet;
+import it.eng.qbe.statment.jpa.JPQLStatement;
 
 import java.util.ArrayList;
 import java.util.List;
