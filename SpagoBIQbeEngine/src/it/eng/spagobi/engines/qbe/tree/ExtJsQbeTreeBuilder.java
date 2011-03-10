@@ -104,25 +104,7 @@ public class ExtJsQbeTreeBuilder  {
 		return tooltip != null ? tooltip : "";
 	}
 	
-	/**
-	 * Builds the qbe tree list.
-	 * 
-	 * @return the list
-	 */
-	/*
-	private List buildQbeTreeList()  {	
-		List list = new ArrayList();
-		
-		List dmNames = datamartModel.getDataSource().getDatamartNames();		
-		for(int i = 0; i < dmNames.size(); i++) {
-			String dmName = (String)dmNames.get(i);
-			JSONArray tree = buildQbeTree(dmName);
-			list.add(tree);
-			
-		}	
-		return list;
-	}
-	 */
+
 	
 	public PrintWriter writer;
 	
