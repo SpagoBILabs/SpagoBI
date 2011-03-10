@@ -20,9 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
 
-import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.datasource.configuration.ICalculatedFieldsDAO;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
