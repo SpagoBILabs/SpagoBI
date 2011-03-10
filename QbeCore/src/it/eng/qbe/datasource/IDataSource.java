@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.datasource;
 
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
@@ -33,7 +35,7 @@ import java.util.List;
 public interface IDataSource {
 	
 	String getName();
-	List<FileDataSourceConfiguration> getConfigurations();
+	List<IDataSourceConfiguration> getConfigurations();
 	
 	
 	DataMartModelStructure getDataMartModelStructure();

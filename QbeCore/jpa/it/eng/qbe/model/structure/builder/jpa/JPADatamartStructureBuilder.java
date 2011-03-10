@@ -22,7 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.structure.builder.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
@@ -80,7 +81,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 */
 	public DataMartModelStructure build() {
 		DataMartModelStructure dataMartStructure;
-		List<FileDataSourceConfiguration> configurations;
+		List<IDataSourceConfiguration> configurations;
 		String datamartName;
 		Metamodel classMetadata;
 		
@@ -95,7 +96,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 			setEntityManager(getDataSource().getEntityManager());
 			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
 			
-			Map calculatedFields = DAOFactory.getCalculatedFieldsDAO().loadCalculatedFields(datamartName);
+			Map calculatedFields = configurations.get(i).getCalculatedFields();
 			dataMartStructure.setCalculatedFields(calculatedFields);
 			
 			classMetadata = getEntityManager().getMetamodel();

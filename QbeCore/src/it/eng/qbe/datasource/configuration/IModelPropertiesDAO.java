@@ -18,32 +18,28 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
 
 import java.util.Properties;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DatamartPropertiesDAO.
  * 
  * @author Andrea Gioia
  */
-public interface IDatamartPropertiesDAO {
+public interface IModelPropertiesDAO {
 	
 	/**
-	 * Load datamart properties.
+	 * Load model properties.
 	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the datamart properties
+	 * @return the model properties
 	 */
-	Properties loadDatamartProperties(String datamartName);
+	Properties loadModelProperties();
 	
 	/**
-	 * Save datamart properties.
-	 * 
-	 * @param datamartName the datamart name
-	 * @param datamartProperties the datamart properties
+	 * Save model properties.
+	 *
+	 * @param properties the model properties
 	 */
-	void saveDatamartProperties(String datamartName, Properties datamartProperties);
+	void saveModelProperties(Properties properties);
 }

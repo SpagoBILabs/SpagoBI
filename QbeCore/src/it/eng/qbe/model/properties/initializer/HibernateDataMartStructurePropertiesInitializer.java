@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.properties.initializer;
 
-import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.DataMartProperties;
 import it.eng.qbe.model.properties.DataMartProperty;
@@ -59,10 +59,10 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 	
 	protected void loadProperties(IHibernateDataSource dataSource) {
 		properties = new HashMap();
-		Iterator<FileDataSourceConfiguration> it = dataSource.getConfigurations().iterator();
+		Iterator<IDataSourceConfiguration> it = dataSource.getConfigurations().iterator();
 		while (it.hasNext()) {
-			FileDataSourceConfiguration configuration = it.next();
-			Properties props = DAOFactory.getDatamartPropertiesDAO().loadDatamartProperties( configuration.getModelName() );
+			IDataSourceConfiguration configuration = it.next();
+			Properties props = configuration.getModelProperties();
 			properties.putAll(props);
 		}
 	}

@@ -21,7 +21,8 @@
 package it.eng.qbe.model.structure.builder.hibernate;
 
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
@@ -65,7 +66,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 	public DataMartModelStructure build() {
 		
 		DataMartModelStructure dataMartStructure;
-		List<FileDataSourceConfiguration> configurations;
+		List<IDataSourceConfiguration> configurations;
 		String datamartName;
 		Map classMetadata;
 			
@@ -85,7 +86,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 			}
 			
 			
-			Map calculatedFields = DAOFactory.getCalculatedFieldsDAO().loadCalculatedFields(datamartName);
+			Map calculatedFields = configurations.get(i).getCalculatedFields();
 			dataMartStructure.setCalculatedFields(calculatedFields);
 			
 			classMetadata = sf.getAllClassMetadata();

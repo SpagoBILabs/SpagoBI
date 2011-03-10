@@ -18,36 +18,18 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.DatamartLabels;
+import it.eng.qbe.model.structure.DataMartCalculatedField;
 
-import java.util.Locale;
+import java.util.List;
+import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface DatamartLabelsDAO.
- * 
  * @author Andrea Gioia
  */
-public interface IDatamartLabelsDAO {
+public interface ICalculatedFieldsDAO {	
 	
-	/**
-	 * Load datamart labels.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the datamart labels
-	 */
-	DatamartLabels loadDatamartLabels(String datamartName);
-	
-	/**
-	 * Load datamart labels.
-	 * 
-	 * @param datamartName the datamart name
-	 * @param locale the locale
-	 * 
-	 * @return the datamart labels
-	 */
-	DatamartLabels loadDatamartLabels(String datamartName, Locale locale);
+	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();		
+	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
 }

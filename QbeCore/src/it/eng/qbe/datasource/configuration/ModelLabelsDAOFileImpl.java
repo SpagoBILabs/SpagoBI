@@ -18,9 +18,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.DatamartLabels;
+import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.model.i18n.ModelLabels;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,38 +36,40 @@ import org.apache.log4j.Logger;
  * 
  * @author Andrea Gioia
  */
-public class DatamartLabelsDAOFilesystemImpl implements IDatamartLabelsDAO {
+public class ModelLabelsDAOFileImpl implements IModelLabelsDAO {
 	
-
+	File modelJarFile;
+	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(DatamartLabelsDAOFilesystemImpl.class);
+    public static transient Logger logger = Logger.getLogger(ModelLabelsDAOFileImpl.class);
     
-	
+    public ModelLabelsDAOFileImpl(File file) {
+    	modelJarFile = file;
+    }
     
     
-	public DatamartLabels loadDatamartLabels(String datamartName) {
-		return loadDatamartLabels(datamartName, null);
+	public ModelLabels loadDatamartLabels() {
+		return loadDatamartLabels(null);
 	}
 
 	
-	public DatamartLabels loadDatamartLabels(String datamartName, Locale locale) {
+	public ModelLabels loadDatamartLabels(Locale locale) {
 		Properties properties = null;
 		
-		File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
-		if(datamartJarFile == null) {
-			return new DatamartLabels();
+		if(modelJarFile == null) {
+			return new ModelLabels();
 		}		
 		
 		JarFile jf;
 		try {
-			jf = new JarFile( datamartJarFile );			
+			jf = new JarFile( modelJarFile );			
 			properties = getLabelProperties(jf, locale);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return new DatamartLabels(properties);
+		return new ModelLabels(properties);
 	}
 	
 	/**

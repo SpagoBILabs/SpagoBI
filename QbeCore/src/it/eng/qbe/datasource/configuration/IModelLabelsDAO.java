@@ -18,16 +18,33 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
 
-import java.util.Map;
+import it.eng.qbe.model.i18n.ModelLabels;
 
+import java.util.Locale;
+
+// TODO: Auto-generated Javadoc
 /**
+ * The Interface DatamartLabelsDAO.
+ * 
  * @author Andrea Gioia
  */
-public interface ICalculatedFieldsDAO {	
+public interface IModelLabelsDAO {
 	
-	Map loadCalculatedFields(String datamartName);
-		
-	void saveCalculatedFields(String datamartName, Map calculatedFields);
+	/**
+	 * Load model labels.
+	 * 
+	 * @return the datamart labels
+	 */
+	ModelLabels loadDatamartLabels();
+	
+	/**
+	 * Load model labels.
+	 *
+	 * @param locale the locale
+	 * 
+	 * @return the datamart labels
+	 */
+	ModelLabels loadDatamartLabels(Locale locale);
 }
