@@ -27,11 +27,11 @@ import it.eng.spagobi.engines.jasperreport.datasource.JRSpagoBIDataStoreDataSour
 import it.eng.spagobi.engines.jasperreport.exporters.JRImageExporterParameter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -68,7 +68,6 @@ import java.util.zip.ZipEntry;
 
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -76,10 +75,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JRDesignDataset;
-import net.sf.jasperreports.engine.design.JRDesignQuery;
+import net.sf.jasperreports.engine.design.JRDesignDatasetRun;
+import net.sf.jasperreports.engine.design.JRDesignExpression;
+import net.sf.jasperreports.engine.design.JRDesignParameter;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
+import net.sf.jasperreports.engine.fill.JRFillDataset;
+import net.sf.jasperreports.engine.fill.JRFillDatasetRun;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
@@ -103,7 +106,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	File libDir;
 	File workingDir;
 	
-	DataSetServiceProxy dsProxy;
+	private DataSetServiceProxy dsProxy;
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String JS_DIR = "JS_dir";
 	public static final String JS_EXT_ZIP = ".zip";
@@ -159,45 +162,42 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			logger.debug("prefixDirTemplate:"+prefixDirTemplate);
 			InputStream is = template.open( getCacheDir(prefixDirTemplate) );
 
-			
+			logger.debug("Getting Jasper Design from template file ...");
 			JasperDesign  jasperDesign = JRXmlLoader.load(is);
+			
 			// get datasets
 			List<JRDesignDataset> datasets = jasperDesign.getDatasetsList();
 
 			for (int h =0; h< datasets.size(); h++){
 				JRDesignDataset designDataset = datasets.get(h);
-
-				boolean isMain = designDataset.isMainDataset();
-
-				
+				String datasetName = designDataset.getName();
 				//get document's dataset
-				IDataSet dataset = this.dsProxy.getDataSetByLabel(designDataset.getName());
+				IDataSet dataset = this.dsProxy.getDataSetByLabel(datasetName);
 				
 				if (dataset != null) {
-					//remove it to replace it if found on SpagoBI
-					jasperDesign.removeDataset(designDataset);
-					
-				    String query = (String)dataset.getQuery();
-				    JRDesignDataset replacedDataset = new JRDesignDataset(isMain);
-				    replacedDataset.setName(dataset.getLabel());
-				    
-				    for(int y=0; y< designDataset.getFieldsList().size(); y++){
-				    	JRField field = (JRField)designDataset.getFieldsList().get(y);
-				    	replacedDataset.addField(field);
+					logger.debug("Found SpagoBI dataset "+datasetName);
+					//get parameter of type JRDataSource
+				    for(int y=0; y< jasperDesign.getParametersList().size(); y++){
+				    	JRParameter parameter = (JRParameter)jasperDesign.getParametersList().get(y);
+				    	String paramName = parameter.getName();
+				    	if(parameter.getValueClassName().equals("net.sf.jasperreports.engine.JRDataSource")&& paramName.equals(datasetName)){//&& parameter.getName().equals(dataset.getLabel()
+				    		//set dataset query value
+				    		dataset.loadData();
+				    		IDataStore dstore = dataset.getDataStore();
+							JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( dstore );
+				    		
+				    		getEnv().put(paramName, dataSource);
+				    		logger.debug("set parameter"+ paramName+" value");
+				    	}
 				    }
-				    JRDesignQuery jrQuery = new JRDesignQuery();
-				    jrQuery.setText(query);
-				    replacedDataset.setQuery(jrQuery);
-
-				    jasperDesign.addDataset(replacedDataset);
-
 				}
-
 			}
 
 			logger.debug("Compiling template file ...");
 			Monitor monitorCompileTemplate =MonitorFactory.start("JasperReportRunner.compileTemplate");
 			JasperReport report  = JasperCompileManager.compileReport(jasperDesign);	
+	
+			
 			monitorCompileTemplate.stop();
 			logger.debug("Template file compiled  succesfully");
 
@@ -223,7 +223,6 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				for(int i = 0; i < getDataSet().getDataStore().getMetaData().getFieldCount(); i++) {
 					logger.debug("Dataset column [" + (i+1) + "] name is equal to [" + getDataSet().getDataStore().getMetaData().getFieldName(i) + "]");
 				}
-				
 				
 				JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( getDataSet().getDataStore() );
 				jasperPrint = JasperFillManager.fillReport(report, getEnv(), dataSource);
@@ -288,7 +287,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	}
 
-	
+
 	
 	private static final String JR_PROPERTY_COMPILE_DIR = "jasper.reports.compile.temp";
 	private static final String JR_PROPERTY_CLASSPATH = "jasper.reports.compile.class.path";
