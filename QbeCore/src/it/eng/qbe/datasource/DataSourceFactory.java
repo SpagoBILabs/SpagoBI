@@ -41,38 +41,17 @@ public class DataSourceFactory {
 	
 
 
-	public static IDataSource buildDataSource(String driverName, String dataSourceName, List<IDataSourceConfiguration> configurations) {
+	public static IDataSource buildDataSource(String driverName, String dataSourceName, IDataSourceConfiguration configuration) {
 		
 		AbstractDataSource dataSource = null;
 		
-		
-		/*
-        boolean isJPA = false;
-		try {
-			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(0) + "]", e);
-		}
-		if(configurations.size() > 1) {
-			for(int i = 1; i < configurations.size(); i++) {
-				boolean b;
-				try {
-					b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(i) + "]", e);
-				}
-				if(isJPA != b) {
-					throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
-				}
-			}
-		}
-		*/
+	
 		
 		
 		if(driverName.equalsIgnoreCase("jpa")){
-			dataSource = new JPADataSource(dataSourceName, configurations);
+			dataSource = new JPADataSource(dataSourceName, configuration);
 		} else {
-			dataSource = new HibernateDataSource(dataSourceName, configurations);
+			dataSource = new HibernateDataSource(dataSourceName, configuration);
 		}
 		
 		

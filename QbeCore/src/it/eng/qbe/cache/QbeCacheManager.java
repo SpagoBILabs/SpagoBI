@@ -61,17 +61,9 @@ public class QbeCacheManager {
 		
 		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
-			labels = new ModelLabels();
-			List<IDataSourceConfiguration> configurations = dataSource.getConfigurations();
-			Iterator<IDataSourceConfiguration> it = configurations.iterator();
-			while (it.hasNext()) {
-				IDataSourceConfiguration configuration = it.next();
-				ModelLabels modelLabels = configuration.getModelLabels(locale);
-				if(locale != null && labels == null) {
-					modelLabels = configuration.getModelLabels();
-				}
-				labels.addDatamartLabels(modelLabels);
-			}
+			
+			labels = dataSource.getConfiguration().getModelLabels(locale);
+			
 			cache.putLabels(dataSource, labels, locale);
 		}
 		

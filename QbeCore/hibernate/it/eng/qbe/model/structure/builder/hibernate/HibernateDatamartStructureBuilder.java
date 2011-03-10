@@ -66,7 +66,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 	public DataMartModelStructure build() {
 		
 		DataMartModelStructure dataMartStructure;
-		List<IDataSourceConfiguration> configurations;
+		List<IDataSourceConfiguration> subConfigurations;
 		String datamartName;
 		Map classMetadata;
 			
@@ -74,11 +74,11 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		dataMartStructure.setName( getDataSource().getName() );
 		propertiesInitializer.addProperties(dataMartStructure);
 		
-		configurations = getDataSource().getConfigurations();
-		for(int i = 0; i < configurations.size(); i++) {
-			datamartName = configurations.get(i).getModelName();
+		subConfigurations = getDataSource().getSubConfigurations();
+		for(int i = 0; i < subConfigurations.size(); i++) {
+			datamartName = subConfigurations.get(i).getModelName();
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
-			SessionFactory sf = getDataSource().getSessionFactory(datamartName);
+			SessionFactory sf = getDataSource().getHibernateSessionFactory(datamartName);
 			if(sf == null) {
 				throw new MissingResourceException("Impossible to find the jar file associated to datamart named: [" + datamartName + "]"
 						, SessionFactory.class.getName()
@@ -86,7 +86,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 			}
 			
 			
-			Map calculatedFields = configurations.get(i).getCalculatedFields();
+			Map calculatedFields = subConfigurations.get(i).getCalculatedFields();
 			dataMartStructure.setCalculatedFields(calculatedFields);
 			
 			classMetadata = sf.getAllClassMetadata();
@@ -170,8 +170,8 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		ClassMetadata classMetadata;
 		Type identifierType;
 		
-		classMapping = getDataSource().getConfiguration().getClassMapping(dataMartEntity.getType());
-		classMetadata = getDataSource().getSessionFactory().getClassMetadata(dataMartEntity.getType());
+		classMapping = getDataSource().getHibernateConfiguration().getClassMapping(dataMartEntity.getType());
+		classMetadata = getDataSource().getHibernateSessionFactory().getClassMetadata(dataMartEntity.getType());
 		identifierType = classMetadata.getIdentifierType();
 		
 		
@@ -259,8 +259,8 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		Property property;
 		Type propertyType;	
 		
-		classMetadata = getDataSource().getSessionFactory().getClassMetadata(dataMartEntity.getType());
-		classMapping = getDataSource().getConfiguration().getClassMapping(dataMartEntity.getType());		
+		classMetadata = getDataSource().getHibernateSessionFactory().getClassMetadata(dataMartEntity.getType());
+		classMapping = getDataSource().getHibernateConfiguration().getClassMapping(dataMartEntity.getType());		
 		propertyNames = classMetadata.getPropertyNames();		
 		
 			

@@ -20,6 +20,7 @@
  **/
 package it.eng.qbe.statment.hibernate;
 
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.HqlToSqlQueryRewriter;
@@ -645,7 +646,8 @@ public class HQLStatement extends AbstractStatement {
 			}
 		} else if(type.equalsIgnoreCase("timestamp") || type.equalsIgnoreCase("date")){
 
-			String dbDialect = ((IHibernateDataSource)getDataSource()).getConnection().getDialect();
+			DBConnection connection = (DBConnection)getDataSource().getConfiguration().getModelProperties().get("connection");
+			String dbDialect = connection.getDialect();
 			
 			//Parse the date given by the user: from the locale of the user to the italian tyme
 			Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
@@ -1292,7 +1294,7 @@ public class HQLStatement extends AbstractStatement {
 		Session session = null;
 		HqlToSqlQueryRewriter queryRewriter;
 		try {
-			session = ((IHibernateDataSource)getDataSource()).getSessionFactory().openSession();
+			session = ((IHibernateDataSource)getDataSource()).getHibernateSessionFactory().openSession();
 			queryRewriter = new HqlToSqlQueryRewriter(session);
 			sqlQuery = queryRewriter.rewrite( getQueryString() );
 		} finally {

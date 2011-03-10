@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.hibernate;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
@@ -52,8 +53,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 	protected boolean classLoaderExtended = false;		
 	
-	protected Configuration compositeConfiguration;	
-	protected SessionFactory compositeSessionFactory;
+	protected Configuration compositeHibernateConfiguration;	
+	protected SessionFactory compositeHibernateSessionFactory;
 	
 	protected Map<String, Configuration> configurationMap = new HashMap<String, Configuration>();	
 	protected Map<String, SessionFactory> sessionFactoryMap = new HashMap<String, SessionFactory>();	
@@ -61,15 +62,47 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	
 	private static transient Logger logger = Logger.getLogger(HibernateDataSource.class);
 
-	public HibernateDataSource(String dataSourceName, List<IDataSourceConfiguration> configurations) {
+	public HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = new ArrayList<IDataSourceConfiguration>();
-		this.configurations.addAll(configurations);
+
+		// validate & set configuration
+		if(configuration instanceof FileDataSourceConfiguration) {
+			FileDataSourceConfiguration subConf = (FileDataSourceConfiguration)configuration;
+			CompositeDataSourceConfiguration c = new CompositeDataSourceConfiguration(subConf.getModelName());
+			c.addSubConfiguration(subConf);
+			this.configuration = c;
+		} else if(configuration instanceof CompositeDataSourceConfiguration) {
+			CompositeDataSourceConfiguration c = (CompositeDataSourceConfiguration)configuration;
+			if(c.getSubConfigurations() == null || c.getSubConfigurations().size() < 1) {
+				throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Datasource sub-configurations not defined");
+			}
+			for(int i = 0; i < c.getSubConfigurations().size(); i++) {				
+				if( !(c.getSubConfigurations().get(i) instanceof FileDataSourceConfiguration) ) {
+					throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Unable to manage sub-configuration of type [" + c.getSubConfigurations().get(i).getClass().getName() + "]");
+				}
+			}
+			this.configuration = configuration;
+		} else {
+			throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Unable to manage configuration of type [" + configuration.getClass().getName() + "]");
+		}
+		
+		
+		
+		
 	}
 
+	public List<IDataSourceConfiguration> getSubConfigurations() {
+		return ((CompositeDataSourceConfiguration)configuration).getSubConfigurations();
+	}
+	
 	public boolean isCompositeDataSource() {
-		return configurations.size() > 1;
+		boolean isComposite = false;
+		if(configuration instanceof CompositeDataSourceConfiguration) {
+			isComposite = (((CompositeDataSourceConfiguration)configuration).getSubConfigurations().size() > 1 );
+		}
+		
+		return isComposite;
 	}
 	
 	public synchronized void open() {
@@ -77,15 +110,15 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 		try {
 			if(!isOpen()) {
-				compositeConfiguration = buildEmptyConfiguration();
+				compositeHibernateConfiguration = buildEmptyConfiguration();
 				
 				addDatamarts();
 				
 				if(isCompositeDataSource()) {
 					addDbLinks();	
-					compositeSessionFactory = compositeConfiguration.buildSessionFactory();
+					compositeHibernateSessionFactory = compositeHibernateConfiguration.buildSessionFactory();
 				} else {
-					compositeSessionFactory = sessionFactoryMap.get(configurations.get(0).getModelName());
+					compositeHibernateSessionFactory = sessionFactoryMap.get(getSubConfigurations().get(0).getModelName());
 				}
 				
 				classLoaderExtended = true;
@@ -98,12 +131,12 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 	
 	public boolean isOpen() {
-		return compositeSessionFactory != null && compositeConfiguration != null;
+		return compositeHibernateSessionFactory != null && compositeHibernateConfiguration != null;
 	}
 	
 	public void close() {
-		compositeSessionFactory = null;
-		compositeConfiguration = null;
+		compositeHibernateSessionFactory = null;
+		compositeHibernateConfiguration = null;
 		configurationMap = new HashMap<String, Configuration>();	
 		sessionFactoryMap = new HashMap<String, SessionFactory>();
 		//classLoaderExtended = false;
@@ -112,9 +145,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	
 	protected void addDatamarts() {
 		
-		for(int i = 0; i < configurations.size(); i++) {
-			Assert.assertTrue(configurations.get(i) instanceof FileDataSourceConfiguration, "Impossible to read dtatamarts from configuration of type [" + configurations.get(i).getClass().getName() + "]");
-			addDatamart((FileDataSourceConfiguration)configurations.get(i), !classLoaderExtended);		
+		for(int i = 0; i < getSubConfigurations().size(); i++) {
+			addDatamart((FileDataSourceConfiguration)getSubConfigurations().get(i), !classLoaderExtended);		
 		}	
 		classLoaderExtended = true;
 	}
@@ -135,7 +167,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		cfg.addJar(configuration.getFile());
 		
 		try {
-			compositeConfiguration.addJar(configuration.getFile());
+			compositeHibernateConfiguration.addJar(configuration.getFile());
 		} catch (Throwable t) {
 			throw new RuntimeException("Cannot add datamart", t);
 		}
@@ -144,13 +176,13 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
-	public DBConnection getConnection() {
-		DBConnection connection = (DBConnection)this.getConfigurations().get(0).getDataSourceProperties().get("connection");
+	private DBConnection getConnection() {
+		DBConnection connection = (DBConnection)configuration.getDataSourceProperties().get("connection");
 		return connection;
 	}
-	
+
 	private Map getDbLinkMap() {
-		Map dbLinkMap = (Map)this.getConfigurations().get(0).getDataSourceProperties().get("dblinkMap");
+		Map dbLinkMap = (Map)configuration.getDataSourceProperties().get("dblinkMap");
 		return dbLinkMap;
 	}
 	
@@ -180,34 +212,34 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getConfiguration()
 	 */
-	public Configuration getConfiguration() {
+	public Configuration getHibernateConfiguration() {
 		if(isOpen() == false) {
 			open();
 		}
-		return compositeConfiguration;
+		return compositeHibernateConfiguration;
 	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory()
 	 */
-	public SessionFactory getSessionFactory() {
+	public SessionFactory getHibernateSessionFactory() {
 		if(isOpen() == false) {
 			open();
 		}
-		return compositeSessionFactory;
+		return compositeHibernateSessionFactory;
 	}	
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang.String)
 	 */
-	public SessionFactory getSessionFactory(String dmName) {
-		if(compositeSessionFactory == null) open();
+	public SessionFactory getHibernateSessionFactory(String dmName) {
+		if(compositeHibernateSessionFactory == null) open();
 		return (SessionFactory)sessionFactoryMap.get(dmName);
 	}	
 	
 	
 	public Configuration getConfiguration(String dmName) {
-		if(compositeConfiguration == null) open();
+		if(compositeHibernateConfiguration == null) open();
 		return (Configuration)configurationMap.get(dmName);
 	}
 	
@@ -339,10 +371,10 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	private void addDbLinks() {
 		Configuration cfg = null;
 		
-		for(int i = 0; i < configurations.size(); i++) {
-			String modelName = configurations.get(i).getModelName();
+		for(int i = 0; i < getSubConfigurations().size(); i++) {
+			String modelName = getSubConfigurations().get(i).getModelName();
 			cfg = (Configuration)configurationMap.get(modelName);
-			addDbLink(modelName, cfg, compositeConfiguration);
+			addDbLink(modelName, cfg, compositeHibernateConfiguration);
 		}
 	}
 

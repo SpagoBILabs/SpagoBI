@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -70,6 +71,10 @@ public class DataMartModelStructure extends AbstractDataMartObject {
 	 */
 	public long getNextId() {
 		return nextId++;
+	}
+	
+	public Set<String> getDataMartNames() {
+		return rootEntities.keySet();
 	}
 	
 	// Root Entities -----------------------------------------------------------
