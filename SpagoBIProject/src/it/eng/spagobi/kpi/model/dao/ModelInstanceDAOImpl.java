@@ -461,6 +461,7 @@ IModelInstanceDAO {
 
 			SbiKpiModelInst sbiKpiModelInst = (SbiKpiModelInst) aSession.load(
 					SbiKpiModelInst.class, kpiModelInstanceId);
+			
 			sbiKpiModelInst.setDescription(kpiModelInstanceDesc);
 			sbiKpiModelInst.setName(kpiModelInstanceNm);
 			sbiKpiModelInst.setLabel(kpiModelInstanceLb);
@@ -572,7 +573,7 @@ IModelInstanceDAO {
 			aSession.update(sbiKpiModelInst);
 
 			//adds or updates periodicity
-			setSbiKpiPeriodicity(aSession, value, kpiInstanceToCreate);
+			setSbiKpiPeriodicity(aSession, value, kpiInstanceToCreate, oldSbiKpiInstance);
 
 			if (deleteOldHistory && oldSbiKpiInstance != null) {
 				deleteKpiInstance(aSession, oldSbiKpiInstance
@@ -649,7 +650,7 @@ IModelInstanceDAO {
 		return sbiKpiInstance;
 	}
 	private SbiKpiInstance setSbiKpiPeriodicity(Session aSession,
-			ModelInstance value, SbiKpiInstance sbiKpiInstance) {
+			ModelInstance value, SbiKpiInstance sbiKpiInstance, SbiKpiInstance oldSbiKpiInstance) {
 		if (sbiKpiInstance != null) {
 
 			if (value.getKpiInstance().getPeriodicityId() != null) {
@@ -689,7 +690,18 @@ IModelInstanceDAO {
 				}
 				//
 			}
-		}	
+		}else{
+			if(oldSbiKpiInstance != null){
+				//delete reference to old kpi instance
+				Set InstPeriods = oldSbiKpiInstance.getSbiKpiInstPeriods();
+				for (Iterator iterator = InstPeriods.iterator(); iterator.hasNext();) {
+					SbiKpiInstPeriod sbiKpiInstPeriod = (SbiKpiInstPeriod) iterator
+					.next();
+					aSession.delete(sbiKpiInstPeriod);
+				}
+			}
+
+		}
 		return sbiKpiInstance;
 	}
 	private boolean areBothNull(Object a, Object b) {

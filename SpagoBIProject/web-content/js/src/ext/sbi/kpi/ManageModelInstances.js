@@ -645,16 +645,40 @@ Ext.extend(Sbi.kpi.ManageModelInstances, Sbi.widgets.TreeDetailForm, {
 
 	}
 	, clearKpi: function() {
-		this.kpiName.setValue('');
-		var node = this.mainTree.getSelectionModel().getSelectedNode() ;
-		if(node !== undefined && node !== null){
-			node.attributes.kpiName = '';
-			node.attributes.kpiId = '';
-			node.attributes.kpiInstId = '';
-			node.attributes.iconCls = '';
-			Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
-		}
+		//checks for periodicity:
+		var periodicityVal = this.kpiPeriodicity.getValue();
+		if(periodicityVal !== undefined && periodicityVal != null && periodicityVal != ''){
+			//if periodicity is set--> confirm and delete periodicity
+			Ext.Msg.confirm(LN('sbi.generic.confirmDelete'), LN('sbi.modelinstances.confirm.periodicity.deletion'), function(btn, text){
+			    if (btn == 'yes'){
 
+					this.kpiName.setValue('');
+					this.kpiPeriodicity.clearValue();
+					var node = this.mainTree.getSelectionModel().getSelectedNode() ;
+					if(node !== undefined && node !== null){
+						node.attributes.kpiName = '';
+						node.attributes.kpiId = '';
+						node.attributes.kpiInstId = '';
+						node.attributes.iconCls = '';
+						node.attributes.kpiInstPeriodicity ='';
+						Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
+					}
+			    }else{
+			    	return;
+			    }
+			}, this);
+
+		}else{
+			this.kpiName.setValue('');
+			var node = this.mainTree.getSelectionModel().getSelectedNode() ;
+			if(node !== undefined && node !== null){
+				node.attributes.kpiName = '';
+				node.attributes.kpiId = '';
+				node.attributes.kpiInstId = '';
+				node.attributes.iconCls = '';
+				Ext.fly(node.getUI().getIconEl() ).replaceClass('has-kpi', '');
+			}
+		}
 	}
 	, kpiFiledNotify : function() {
 		this.kpiName.getEl().highlight('#E27119');

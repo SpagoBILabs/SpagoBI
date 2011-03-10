@@ -104,6 +104,7 @@ Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleziona un nodo da cancellar
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 Sbi.locale.ln['sbi.modelinstances.code'] = 'Codice Modello';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copia tutto l\'albero';
+Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'L\'indicatore è associato ad una periodicità. Se si conferma la cancellazione verrà cancellata anche la periodicità.';
 //END List Detail messages
 
 //START kpi interface messages
