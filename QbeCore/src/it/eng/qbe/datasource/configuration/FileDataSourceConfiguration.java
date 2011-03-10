@@ -26,6 +26,7 @@ import it.eng.qbe.model.i18n.ModelLabels;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	
 	String modelName;
 	File file;
+	Map<String,Object> dataSourceProperties;
 
 	IModelPropertiesDAO modelPropertiesDAO;
 	ICalculatedFieldsDAO calculatedFieldsDAO;
@@ -47,6 +49,7 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	public FileDataSourceConfiguration(String modelName, File file) {
 		this.modelName = modelName;
 		this.file = file;
+		this.dataSourceProperties = new HashMap<String,Object>();
 		this.modelPropertiesDAO = new ModelPropertiesDAOFileImpl(file);
 		this.modelLabelsDAOFileImpl = new ModelLabelsDAOFileImpl(file);
 		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);		
@@ -78,5 +81,9 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 
 	public void setCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
 		calculatedFieldsDAO.saveCalculatedFields(calculatedFields);
+	}
+
+	public Map<String, Object> getDataSourceProperties() {
+		return dataSourceProperties;
 	}
 }
