@@ -25,6 +25,7 @@ import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -37,36 +38,26 @@ import java.util.Map;
 public class DataSourceFactory {
 	
 
-	/**
-	 * Builds the data source.
-	 * 
-	 * @param dataSourceName the data source name
-	 * @param datamartName the datamart name
-	 * @param datamartNames the datamart names
-	 * @param dblinkMap the dblink map
-	 * @param connection the connection
-	 * 
-	 * @return the idata source
-	 */
+
 	public static IDataSource buildDataSource(String dataSourceName, 
-			String datamartName, List<String> datamartNames,  Map dblinkMap, 
+			List<FileDataSourceConfiguration> configurations,  Map dblinkMap, 
 			DBConnection connection) {
 		
 		AbstractDataSource dataSource = null;
 		boolean isJPA = false;
 		
 		try {
-			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartNames.get(0));
+			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + datamartNames.get(0) + "]", e);
+			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(0) + "]", e);
 		}
-		if(datamartNames.size() > 1) {
-			for(int i = 1; i < datamartNames.size(); i++) {
+		if(configurations.size() > 1) {
+			for(int i = 1; i < configurations.size(); i++) {
 				boolean b;
 				try {
-					b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(datamartNames.get(0));
+					b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
 				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + datamartNames.get(i) + "]", e);
+					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(i) + "]", e);
 				}
 				if(isJPA != b) {
 					throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
@@ -76,47 +67,22 @@ public class DataSourceFactory {
 		
 		
 		if(isJPA){
-			dataSource = new JPADataSource(dataSourceName);
+			dataSource = new JPADataSource(dataSourceName, configurations);
 		} else {
-			dataSource = new HibernateDataSource(dataSourceName);
-			/*
-			if(datamartNames.size() == 1) {
-				dataSource = new BasicHibernateDataSource(dataSourceName);
-			} else {
-				dataSource = new CompositeHibernateDataSource(dataSourceName);
-			} 
-			*/
+			dataSource = new HibernateDataSource(dataSourceName, configurations);
 		}
 		
 		
-		initDataSource(dataSource, datamartName, datamartNames, dblinkMap, connection);
+		initDataSource(dataSource, dblinkMap, connection);
 		return dataSource;
 	}
-	
-	
-	
-	/**
-	 * Inits the data source.
-	 * 
-	 * @param dataSource the data source
-	 * @param datamartName the datamart name
-	 * @param datamartNames the datamart names
-	 * @param dblinkMap the dblink map
-	 * @param connection the connection
-	 */
+
 	private static void initDataSource(AbstractDataSource dataSource,
-			String datamartName, 
-			List datamartNames, 
 			Map dblinkMap, 
 			DBConnection connection) {
 		
-		dataSource.setDatamartName(datamartName);	
-		dataSource.setDatamartNames(datamartNames);
 		dataSource.setConnection(connection);
-		
 		dataSource.setDblinkMap(dblinkMap);		
-		
-		//dataSource.setDataMartProperties( getProperties(datamartNames) );
 	}
 	
 }

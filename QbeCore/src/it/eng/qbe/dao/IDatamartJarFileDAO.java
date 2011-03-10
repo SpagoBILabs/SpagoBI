@@ -51,9 +51,9 @@ public interface IDatamartJarFileDAO {
 	/**
 	 * Check if the datamart contains the resource META-INF/persistence.xml
 	 * If so the datamart contains a JPA mapping
-	 * @param datamartName the name of the datamrt
+	 * @param datamartFile the datamrt file
 	 * @return true if the mapping in the jar is a JPA mapping
 	 * @throws IOException
 	 */
-	boolean isAJPADatamartJarFile(String datamartName) throws IOException;
+	boolean isAJPADatamartJarFile(File datamartFile) throws IOException;
 }

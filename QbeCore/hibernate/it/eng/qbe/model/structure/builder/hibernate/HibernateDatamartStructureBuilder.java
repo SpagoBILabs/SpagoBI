@@ -21,6 +21,7 @@
 package it.eng.qbe.model.structure.builder.hibernate;
 
 import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
@@ -64,17 +65,17 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 	public DataMartModelStructure build() {
 		
 		DataMartModelStructure dataMartStructure;
-		List datamartNames;
+		List<FileDataSourceConfiguration> configurations;
 		String datamartName;
 		Map classMetadata;
 			
 		dataMartStructure = new DataMartModelStructure();	
-		dataMartStructure.setName( getDataSource().getDatamartName() );
+		dataMartStructure.setName( getDataSource().getName() );
 		propertiesInitializer.addProperties(dataMartStructure);
 		
-		datamartNames = getDataSource().getDatamartNames();
-		for(int i = 0; i < datamartNames.size(); i++) {
-			datamartName = (String)datamartNames.get(i);
+		configurations = getDataSource().getConfigurations();
+		for(int i = 0; i < configurations.size(); i++) {
+			datamartName = configurations.get(i).getModelName();
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
 			SessionFactory sf = getDataSource().getSessionFactory(datamartName);
 			if(sf == null) {

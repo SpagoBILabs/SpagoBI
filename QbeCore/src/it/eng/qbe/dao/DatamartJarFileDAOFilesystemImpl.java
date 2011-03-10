@@ -83,16 +83,14 @@ public class DatamartJarFileDAOFilesystemImpl implements IDatamartJarFileDAO {
 		
 	}
 
-	public boolean isAJPADatamartJarFile(String datamartName) {
-		File jarFile = loadDatamartJarFile(datamartName);
+	public boolean isAJPADatamartJarFile(File datamartFile) {
 		ZipFile zipFile;
 		ZipEntry zipEntry;
 		
-		jarFile = loadDatamartJarFile(datamartName);
 		try {
-			zipFile = new ZipFile(jarFile);
+			zipFile = new ZipFile(datamartFile);
 		} catch (Throwable t) {
-			throw new DAOException("Impossible to read jar file [" + jarFile + "]");
+			throw new DAOException("Impossible to read jar file [" + datamartFile + "]");
 		} 
 		
 		zipEntry = zipFile.getEntry("META-INF/persistence.xml");

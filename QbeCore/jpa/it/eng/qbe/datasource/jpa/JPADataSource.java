@@ -21,9 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,20 +46,20 @@ public class JPADataSource extends AbstractJPADataSource {
 	/** The class loader extended. */
 	private boolean classLoaderExtended = false;	
 	
-
 	
-	
-	/**
-	 * Instantiates a new basic hibernate data source.
-	 * 
-	 * @param dataSourceName the data source name
-	 */
-	public JPADataSource(String dataSourceName) {
+	public JPADataSource(String dataSourceName, FileDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
+		this.configurations = new ArrayList<FileDataSourceConfiguration>();
+		this.configurations.add(configuration);
 	}
-	
-	
+	public JPADataSource(String dataSourceName, List<FileDataSourceConfiguration> configurations) {
+		setName( dataSourceName );
+		dataMartModelAccessModality = new DataMartModelAccessModality();
+		this.configurations = configurations;
+	}
+
+
 	public void createEntityManager(String name){
 		factory = Persistence.createEntityManagerFactory(name);
 		EntityManager em = factory.createEntityManager();
@@ -93,14 +96,14 @@ public class JPADataSource extends AbstractJPADataSource {
 	public void open() {
 		File jarFile = null;
 		
-		jarFile = getDatamartJarFile( getDatamartName() );
+		jarFile = configurations.get(0).getFile();
 		if(jarFile == null) return;
 		
 		if (!classLoaderExtended){
 			updateCurrentClassLoader(jarFile);
 		}	
 		
-		factory = Persistence.createEntityManagerFactory( getDatamartName() );
+		factory = Persistence.createEntityManagerFactory( getName() );
 		
 	}
 	

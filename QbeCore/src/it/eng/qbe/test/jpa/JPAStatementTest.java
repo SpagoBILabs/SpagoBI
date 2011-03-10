@@ -3,6 +3,7 @@
  */
 package it.eng.qbe.test.jpa;
 
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
@@ -32,15 +33,7 @@ public class JPAStatementTest {
 		
 		
 		//forzature: da capire come valorizzare ed eliminarle
-		JPADataSource jpaDS = new JPADataSource("TEST_JPA");
-		jpaDS.setDatamartName("TEST_JPA");
-		List ar = new ArrayList();
-		ar.add("TEST_JPA");
-		jpaDS.setDatamartNames(ar);
-		
-		jpaDS.setDataMartModelAccessModality(new DataMartModelAccessModality());
-
-		
+		JPADataSource jpaDS = new JPADataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));	
 		//fine forzature
 		
 		//EntityManagerFactory emf = jpaDS.getEntityManagerFactory();
