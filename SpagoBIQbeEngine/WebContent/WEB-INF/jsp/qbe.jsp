@@ -32,7 +32,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.qbe.datasource.FileDataSourceConfiguration"%>
+<%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
@@ -67,7 +67,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiSpagoController;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	List<FileDataSourceConfiguration> configurations = qbeEngineInstance.getDataSource().getConfigurations();
+	List<IDataSourceConfiguration> configurations = qbeEngineInstance.getDataSource().getConfigurations();
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
@@ -164,9 +164,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	Iterator<FileDataSourceConfiguration> it = configurations.iterator();
+	      	Iterator<IDataSourceConfiguration> it = configurations.iterator();
 	      	while (it.hasNext()) {
-	      		FileDataSourceConfiguration configuration = it.next();
+	      		IDataSourceConfiguration configuration = it.next();
 	      		datamartNamesBuffer.append("'" + configuration.getModelName() + "'");
 	      		if (it.hasNext()) {
 	      			datamartNamesBuffer.append(",");

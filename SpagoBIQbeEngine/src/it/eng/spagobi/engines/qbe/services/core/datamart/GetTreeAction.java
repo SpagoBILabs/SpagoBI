@@ -20,7 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
        
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
@@ -113,10 +114,10 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName);			
 			} else {
 				nodes = new JSONArray();
-				List<FileDataSourceConfiguration> configurations = getEngineInstance().getDataSource().getConfigurations();
-				Iterator<FileDataSourceConfiguration> it = configurations.iterator();
+				List<IDataSourceConfiguration> configurations = getEngineInstance().getDataSource().getConfigurations();
+				Iterator<IDataSourceConfiguration> it = configurations.iterator();
 				while (it.hasNext()) {
-					FileDataSourceConfiguration configuration = it.next();
+					IDataSourceConfiguration configuration = it.next();
 					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), configuration.getModelName());
 					for (int i = 0; i < temp.length(); i++) {
 						Object object = temp.get(i);

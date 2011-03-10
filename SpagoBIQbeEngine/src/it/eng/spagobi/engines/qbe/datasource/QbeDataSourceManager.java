@@ -24,9 +24,9 @@ import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DataSourceFactory;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 
