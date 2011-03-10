@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
        
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
