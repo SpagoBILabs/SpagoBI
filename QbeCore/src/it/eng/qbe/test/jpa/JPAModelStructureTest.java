@@ -3,6 +3,7 @@
  */
 package it.eng.qbe.test.jpa;
 
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
@@ -33,11 +34,7 @@ public class JPAModelStructureTest {
 		
 		
 		//forzature: da capire come valorizzare ed eliminarle
-		JPADataSource jpaDS = new JPADataSource("TEST_JPA");
-		jpaDS.setDatamartName("TEST_JPA");
-		List ar = new ArrayList();
-		ar.add("TEST_JPA");
-		jpaDS.setDatamartNames(ar);
+		JPADataSource jpaDS = new JPADataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));
 		//fine forzature
 		
 		//EntityManagerFactory emf = jpaDS.getEntityManagerFactory();

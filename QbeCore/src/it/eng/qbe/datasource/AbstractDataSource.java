@@ -36,11 +36,8 @@ import java.util.Map;
  */
 public abstract class AbstractDataSource implements IDataSource {
 	
-	private String name;
-	// if it is a single jar qbe
-	protected String datamartName = null;
-	// if it is a multi jar qbe
-	protected List datamartNames = null;
+	protected String name;
+	protected List<FileDataSourceConfiguration> configurations;
 	
 	
 	protected DataMartModelAccessModality dataMartModelAccessModality;
@@ -48,7 +45,12 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected DBConnection connection;
 	protected Map dblinkMap;
 
+		
 	
+	public List<FileDataSourceConfiguration> getConfigurations() {
+		return configurations;
+	}
+
 	public DataMartModelStructure getDataMartModelStructure() {
 		IDataMartStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
@@ -78,39 +80,6 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getDatamartName()
-	 */
-	public String getDatamartName() {
-		return datamartName;
-	}
-
-	/**
-	 * Sets the datamart name.
-	 * 
-	 * @param datamartName the new datamart name
-	 */
-	public void setDatamartName(String datamartName) {
-		this.datamartName = datamartName;
-	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getDatamartNames()
-	 */
-	public List getDatamartNames() {
-		return datamartNames;
-	}
-
-
-	/**
-	 * Sets the datamart names.
-	 * 
-	 * @param datamartNames the new datamart names
-	 */
-	public void setDatamartNames(List datamartNames) {
-		this.datamartNames = datamartNames;
 	}
 
 	

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.structure.builder.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
@@ -61,8 +62,6 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	private JPADataSource dataSource;	
 	private EntityManager entityManager;
 
-	
-	
 
 	/**
 	 * Constructor
@@ -81,17 +80,17 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 */
 	public DataMartModelStructure build() {
 		DataMartModelStructure dataMartStructure;
-		List datamartNames;
+		List<FileDataSourceConfiguration> configurations;
 		String datamartName;
 		Metamodel classMetadata;
 		
 		logger.debug("Building the data mart structure..");
 		dataMartStructure = new DataMartModelStructure();	
 		
-		datamartNames = getDataSource().getDatamartNames();
+		configurations = getDataSource().getConfigurations();
 
-		for(int i = 0; i < datamartNames.size(); i++) {
-			datamartName = (String)datamartNames.get(i);
+		for(int i = 0; i < configurations.size(); i++) {
+			datamartName = configurations.get(i).getModelName();
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
 			setEntityManager(getDataSource().getEntityManager());
 			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");

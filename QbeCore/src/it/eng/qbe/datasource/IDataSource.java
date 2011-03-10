@@ -33,8 +33,8 @@ import java.util.List;
 public interface IDataSource {
 	
 	String getName();
-	String getDatamartName();
-	List<String> getDatamartNames();
+	List<FileDataSourceConfiguration> getConfigurations();
+	
 	
 	DataMartModelStructure getDataMartModelStructure();
 	DataMartModelAccessModality getDataMartModelAccessModality();

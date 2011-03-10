@@ -58,7 +58,7 @@ public class QbeCache {
 	}
 	
 	public void putLabels(IDataSource dataSource, DatamartLabels labels, Locale locale) {
-		String resourceName = dataSource.getDatamartName() + ":" + "labels";
+		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}
@@ -66,7 +66,7 @@ public class QbeCache {
 	}
 	
 	public DatamartLabels getLabels(IDataSource dataSource, Locale locale) {
-		String resourceName = dataSource.getDatamartName() + ":" + "labels";
+		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}

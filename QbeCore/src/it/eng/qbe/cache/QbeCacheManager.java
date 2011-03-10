@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.cache;
 
 import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.i18n.DatamartLabels;
 
@@ -60,13 +61,13 @@ public class QbeCacheManager {
 		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
 			labels = new DatamartLabels();
-			List datamartsName = dataSource.getDatamartNames();
-			Iterator it = datamartsName.iterator();
+			List<FileDataSourceConfiguration> datamartsName = dataSource.getConfigurations();
+			Iterator<FileDataSourceConfiguration> it = datamartsName.iterator();
 			while (it.hasNext()) {
-				String datamartName = (String) it.next();
-				DatamartLabels aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(datamartName, locale);
+				FileDataSourceConfiguration configuration = it.next();
+				DatamartLabels aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(configuration.getModelName(), locale);
 				if(locale != null && labels == null) {
-					aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(datamartName, null);
+					aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(configuration.getModelName(), null);
 				}
 				labels.addDatamartLabels(aDatamartLabels);
 			}

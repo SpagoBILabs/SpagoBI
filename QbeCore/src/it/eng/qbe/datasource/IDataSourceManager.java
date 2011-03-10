@@ -31,7 +31,7 @@ import java.util.Map;
  * 
  * @author Andrea Gioia
  */
-public interface DataSourceManager {
+public interface IDataSourceManager {
 	
 	/**
 	 * Gets the data source.
@@ -41,7 +41,7 @@ public interface DataSourceManager {
 	 * 
 	 * @return the data source
 	 */
-	IDataSource getDataSource(List dataMartNames, DBConnection connection);
+	IDataSource getDataSource(List<String> dataMartNames, DBConnection connection);
 	
 	/**
 	 * Gets the data source.
@@ -52,5 +52,5 @@ public interface DataSourceManager {
 	 * 
 	 * @return the data source
 	 */
-	IDataSource getDataSource(List dataMartNames, Map dblinkMap, DBConnection connection);
+	IDataSource getDataSource(List<String> dataMartNames, Map dblinkMap, DBConnection connection);
 }

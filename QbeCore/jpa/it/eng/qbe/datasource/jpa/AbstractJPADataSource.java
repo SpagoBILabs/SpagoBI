@@ -22,11 +22,13 @@ package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -40,31 +42,6 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 	
 	private static transient Logger logger = Logger.getLogger(AbstractJPADataSource.class);
 	
-	
-	/**
-	 * Gets the datamart jar file.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the datamart jar file
-	 */
-	protected File getDatamartJarFile(String datamartName){
-		//File datamartJarFile = null;
-		File datamartFile = null;
-		
-		try{
-			File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
-			datamartFile = datamartJarFile ;
-		}catch (Exception e) {
-			logger.error("Impossible to get mapping file of datamart [" + datamartName + "]", e);
-		}
-		
-		//return datamartJarFile;
-		return datamartFile;
-	}
-
-	
-	
 	/**
 	 * Load formula file.
 	 * 
@@ -73,7 +50,7 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 	 * @return the file
 	 */
 	protected File loadFormulaFile(String datamartName) {
-		String formulaFile = getDatamartJarFile( datamartName ).getParent() + "/formula.xml";
+		String formulaFile = configurations.get(0).getFile().getParent() + "/formula.xml";
 		return new File(formulaFile);
 	}
 	
