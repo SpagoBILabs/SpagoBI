@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource;
 
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -31,7 +30,6 @@ import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.StatementFactory;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andrea Gioia
@@ -44,8 +42,6 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	protected DataMartModelAccessModality dataMartModelAccessModality;
 	protected DataMartModelStructure dataMartModelStructure;
-	protected DBConnection connection;
-	protected Map dblinkMap;
 
 		
 	
@@ -82,44 +78,6 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IJPADataSource#getConnection()
-	 */
-	public DBConnection getConnection() {
-		return connection;
-	}
-
-
-	/**
-	 * Sets the connection.
-	 * 
-	 * @param connection the new connection
-	 */
-	public void setConnection(DBConnection connection) {
-		this.connection = connection;
-	}
-	
-
-	/**
-	 * Gets the dblink map.
-	 * 
-	 * @return the dblink map
-	 */
-	public Map getDblinkMap() {
-		return dblinkMap;
-	}
-
-
-	/**
-	 * Sets the dblink map.
-	 * 
-	 * @param dblinkMap the new dblink map
-	 */
-	public void setDblinkMap(Map dblinkMap) {
-		this.dblinkMap = dblinkMap;
 	}
 	
 }

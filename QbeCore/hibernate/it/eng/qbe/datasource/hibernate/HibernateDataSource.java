@@ -58,12 +58,10 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	protected Map<String, Configuration> configurationMap = new HashMap<String, Configuration>();	
 	protected Map<String, SessionFactory> sessionFactoryMap = new HashMap<String, SessionFactory>();	
 
-	protected Map<String,String> dblinkMap;
-	protected DBConnection connection;
 	
 	private static transient Logger logger = Logger.getLogger(HibernateDataSource.class);
 
-	public HibernateDataSource(String dataSourceName, List<FileDataSourceConfiguration> configurations) {
+	public HibernateDataSource(String dataSourceName, List<IDataSourceConfiguration> configurations) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
 		this.configurations = new ArrayList<IDataSourceConfiguration>();
@@ -146,25 +144,31 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
+	public DBConnection getConnection() {
+		DBConnection connection = (DBConnection)this.getConfigurations().get(0).getDataSourceProperties().get("connection");
+		return connection;
+	}
 	
-	
-	
+	private Map getDbLinkMap() {
+		Map dbLinkMap = (Map)this.getConfigurations().get(0).getDataSourceProperties().get("dblinkMap");
+		return dbLinkMap;
+	}
 	
 	protected Configuration buildEmptyConfiguration() {
 		Configuration cfg = null;
 		
 		cfg = new Configuration();
 		
-		if(connection.isJndiConncetion()) {
-			cfg.setProperty("hibernate.connection.datasource", connection.getJndiName());
+		if(getConnection().isJndiConncetion()) {
+			cfg.setProperty("hibernate.connection.datasource", getConnection().getJndiName());
 		} else {
-			cfg.setProperty("hibernate.connection.url", connection.getUrl());
-			cfg.setProperty("hibernate.connection.password", connection.getPassword());
-			cfg.setProperty("hibernate.connection.username", connection.getUsername());
-			cfg.setProperty("hibernate.connection.driver_class", connection.getDriverClass());
+			cfg.setProperty("hibernate.connection.url", getConnection().getUrl());
+			cfg.setProperty("hibernate.connection.password", getConnection().getPassword());
+			cfg.setProperty("hibernate.connection.username", getConnection().getUsername());
+			cfg.setProperty("hibernate.connection.driver_class", getConnection().getDriverClass());
 		}
 				
-		cfg.setProperty("hibernate.dialect", connection.getDialect());
+		cfg.setProperty("hibernate.dialect", getConnection().getDialect());
 		
 		cfg.setProperty("hibernate.cglib.use_reflection_optimizer", "true");
 		cfg.setProperty("hibernate.show_sql", "false");
@@ -308,44 +312,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 
 
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.IHibernateDataSource#getConnection()
-	 */
-	public DBConnection getConnection() {
-		return connection;
-	}
-
-
-	/**
-	 * Sets the connection.
-	 * 
-	 * @param connection the new connection
-	 */
-	public void setConnection(DBConnection connection) {
-		this.connection = connection;
-	}
-
-
-	/**
-	 * Gets the dblink map.
-	 * 
-	 * @return the dblink map
-	 */
-	public Map getDblinkMap() {
-		return dblinkMap;
-	}
-
-
-	/**
-	 * Sets the dblink map.
-	 * 
-	 * @param dblinkMap the new dblink map
-	 */
-	public void setDblinkMap(Map dblinkMap) {
-		this.dblinkMap = dblinkMap;
-	}
-
-		
+	
 
 	protected void addDbLink(String modelName, Configuration srcCfg, Configuration dstCfg) {
 		
@@ -355,7 +322,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		String targetEntityName = null;
 		Table targetTable = null;
 		
-		dbLink = dblinkMap.get(modelName);
+		dbLink = (String)getDbLinkMap().get(modelName);
 		if (dbLink != null) {
 			Iterator it = srcCfg.getClassMappings();
 			while(it.hasNext()) {
@@ -369,7 +336,6 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 	}
 
-	
 	private void addDbLinks() {
 		Configuration cfg = null;
 		
@@ -379,10 +345,5 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 			addDbLink(modelName, cfg, compositeConfiguration);
 		}
 	}
-	
-	
-	protected File loadFormulaFile(File datamartFile) {
-		String formulaFile = datamartFile.getParent() + "/formula.xml";
-		return new File(formulaFile);
-	}
+
 }

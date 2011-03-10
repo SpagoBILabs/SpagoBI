@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
+import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
@@ -48,13 +49,13 @@ public class JPADataSource extends AbstractJPADataSource {
 	private boolean classLoaderExtended = false;	
 	
 	
-	public JPADataSource(String dataSourceName, FileDataSourceConfiguration configuration) {
+	public JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
 		this.configurations = new ArrayList<IDataSourceConfiguration>();
 		this.configurations.add(configuration);
 	}
-	public JPADataSource(String dataSourceName, List<FileDataSourceConfiguration> configurations) {
+	public JPADataSource(String dataSourceName, List<IDataSourceConfiguration> configurations) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
 		this.configurations = new ArrayList<IDataSourceConfiguration>();
@@ -118,5 +119,10 @@ public class JPADataSource extends AbstractJPADataSource {
 	
 	public void close() {
 		factory = null;
+	}
+	
+	public DBConnection getConnection() {
+		DBConnection connection = (DBConnection)this.getConfigurations().get(0).getDataSourceProperties().get("connection");
+		return connection;
 	}
 }

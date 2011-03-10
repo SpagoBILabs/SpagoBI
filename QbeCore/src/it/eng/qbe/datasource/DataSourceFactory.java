@@ -22,6 +22,7 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -40,13 +41,13 @@ public class DataSourceFactory {
 	
 
 
-	public static IDataSource buildDataSource(String dataSourceName, 
-			List<FileDataSourceConfiguration> configurations,  Map dblinkMap, 
-			DBConnection connection) {
+	public static IDataSource buildDataSource(String driverName, String dataSourceName, List<IDataSourceConfiguration> configurations) {
 		
 		AbstractDataSource dataSource = null;
-		boolean isJPA = false;
 		
+		
+		/*
+        boolean isJPA = false;
 		try {
 			isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
 		} catch (Exception e) {
@@ -65,19 +66,21 @@ public class DataSourceFactory {
 				}
 			}
 		}
+		*/
 		
 		
-		if(isJPA){
+		if(driverName.equalsIgnoreCase("jpa")){
 			dataSource = new JPADataSource(dataSourceName, configurations);
 		} else {
 			dataSource = new HibernateDataSource(dataSourceName, configurations);
 		}
 		
 		
-		initDataSource(dataSource, dblinkMap, connection);
+		//initDataSource(dataSource, dblinkMap, connection);
 		return dataSource;
 	}
 
+	/*
 	private static void initDataSource(AbstractDataSource dataSource,
 			Map dblinkMap, 
 			DBConnection connection) {
@@ -85,5 +88,6 @@ public class DataSourceFactory {
 		dataSource.setConnection(connection);
 		dataSource.setDblinkMap(dblinkMap);		
 	}
+	*/
 	
 }

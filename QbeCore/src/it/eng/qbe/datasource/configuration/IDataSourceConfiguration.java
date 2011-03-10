@@ -62,5 +62,10 @@ public interface IDataSourceConfiguration {
 	ModelLabels getModelLabels();
 	ModelLabels getModelLabels(Locale locale);
 	
-	// NOTE: other methods are implementation dependent (ex. getFile for FileDataSourceConfiguration implementation)
+	/**
+	 * 
+	 * @return the properties associated to the specific data source type. The numeber and type of
+	 * these properties depend on the DataSource implementation
+	 */
+	Map<String,Object> getDataSourceProperties();
 }
