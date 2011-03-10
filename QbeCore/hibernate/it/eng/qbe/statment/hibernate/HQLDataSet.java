@@ -60,7 +60,7 @@ public class HQLDataSet extends AbstractJPADataSet {
 		boolean overflow;
 		
 		try{		
-			session = ((IHibernateDataSource)statement.getDataSource()).getSessionFactory().openSession();
+			session = ((IHibernateDataSource)statement.getDataSource()).getHibernateSessionFactory().openSession();
 			
 			// execute query
 			hibernateQuery = session.createQuery( statement.getQueryString() );	

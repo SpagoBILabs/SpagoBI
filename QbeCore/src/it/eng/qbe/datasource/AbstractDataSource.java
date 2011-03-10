@@ -37,7 +37,7 @@ import java.util.List;
 public abstract class AbstractDataSource implements IDataSource {
 	
 	protected String name;
-	protected List<IDataSourceConfiguration> configurations;
+	protected IDataSourceConfiguration configuration;
 	
 	
 	protected DataMartModelAccessModality dataMartModelAccessModality;
@@ -45,8 +45,8 @@ public abstract class AbstractDataSource implements IDataSource {
 
 		
 	
-	public List<IDataSourceConfiguration> getConfigurations() {
-		return configurations;
+	public IDataSourceConfiguration getConfiguration() {
+		return configuration;
 	}
 
 	public DataMartModelStructure getDataMartModelStructure() {

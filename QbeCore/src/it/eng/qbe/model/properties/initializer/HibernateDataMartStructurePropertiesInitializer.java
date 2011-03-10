@@ -47,25 +47,16 @@ import java.util.Properties;
  *
  */
 public class HibernateDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
-	
-	
+		
 	IHibernateDataSource dataSource;
 	Map properties;
 	
 	public HibernateDataMartStructurePropertiesInitializer(IHibernateDataSource dataSource) {
 		this.dataSource =  dataSource;
-		loadProperties(dataSource);
+		this.properties = new HashMap();
+		properties.putAll( dataSource.getConfiguration().getModelProperties() );
 	}
 	
-	protected void loadProperties(IHibernateDataSource dataSource) {
-		properties = new HashMap();
-		Iterator<IDataSourceConfiguration> it = dataSource.getConfigurations().iterator();
-		while (it.hasNext()) {
-			IDataSourceConfiguration configuration = it.next();
-			Properties props = configuration.getModelProperties();
-			properties.putAll(props);
-		}
-	}
 
 	public void addProperties(IDataMartObject item) {
 		if(item instanceof DataMartEntity) {

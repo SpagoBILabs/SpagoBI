@@ -81,35 +81,30 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 */
 	public DataMartModelStructure build() {
 		DataMartModelStructure dataMartStructure;
-		List<IDataSourceConfiguration> configurations;
 		String datamartName;
 		Metamodel classMetadata;
 		
 		logger.debug("Building the data mart structure..");
 		dataMartStructure = new DataMartModelStructure();	
 		
-		configurations = getDataSource().getConfigurations();
-
-		for(int i = 0; i < configurations.size(); i++) {
-			datamartName = configurations.get(i).getModelName();
-			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
-			setEntityManager(getDataSource().getEntityManager());
-			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
+		datamartName = getDataSource().getConfiguration().getModelName();
+		Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
+		setEntityManager(getDataSource().getEntityManager());
+		Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
 			
-			Map calculatedFields = configurations.get(i).getCalculatedFields();
-			dataMartStructure.setCalculatedFields(calculatedFields);
+		Map calculatedFields = getDataSource().getConfiguration().getCalculatedFields();
+		dataMartStructure.setCalculatedFields(calculatedFields);
 			
-			classMetadata = getEntityManager().getMetamodel();
+		classMetadata = getEntityManager().getMetamodel();
 							
 			
-			logger.debug("Loading "+classMetadata.getEntities().size()+" Entities..");
-			for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
-				EntityType et = (EntityType)it.next();	
-				logger.debug("Entity: " + et);
-				String entityTypeName =  et.getJavaType().getName();
-				addEntity(dataMartStructure, datamartName, entityTypeName);		
-			}			
-		}
+		logger.debug("Loading "+classMetadata.getEntities().size()+" Entities..");
+		for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
+			EntityType et = (EntityType)it.next();	
+			logger.debug("Entity: " + et);
+			String entityTypeName =  et.getJavaType().getName();
+			addEntity(dataMartStructure, datamartName, entityTypeName);		
+		}			
 		logger.debug("Data mart structure built..");
 		return dataMartStructure;
 	}

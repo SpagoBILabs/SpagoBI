@@ -35,7 +35,7 @@ import java.util.List;
 public interface IDataSource {
 	
 	String getName();
-	List<IDataSourceConfiguration> getConfigurations();
+	IDataSourceConfiguration getConfiguration();
 	
 	
 	DataMartModelStructure getDataMartModelStructure();

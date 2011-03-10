@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.i18n.ModelLabels;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.qbe.model.structure.DataMartModelStructure;
 
 import java.util.List;
 import java.util.Locale;

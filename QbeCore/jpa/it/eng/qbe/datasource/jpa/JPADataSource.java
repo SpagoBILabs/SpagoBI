@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
@@ -52,14 +53,24 @@ public class JPADataSource extends AbstractJPADataSource {
 	public JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = new ArrayList<IDataSourceConfiguration>();
-		this.configurations.add(configuration);
+		
+		// validate and set configuration
+		if(configuration instanceof FileDataSourceConfiguration){
+			this.configuration = configuration;
+		} else if(configuration instanceof CompositeDataSourceConfiguration){
+			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations().get(0);
+			if(subConf instanceof FileDataSourceConfiguration){
+				this.configuration  = (FileDataSourceConfiguration)subConf;
+			} else {
+				Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
+			}
+		} else {
+			Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
+		}
 	}
-	public JPADataSource(String dataSourceName, List<IDataSourceConfiguration> configurations) {
-		setName( dataSourceName );
-		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = new ArrayList<IDataSourceConfiguration>();
-		this.configurations.addAll(configurations);
+	
+	public FileDataSourceConfiguration getFileDataSourceConfiguration() {
+		return (FileDataSourceConfiguration)configuration;
 	}
 
 
@@ -96,11 +107,11 @@ public class JPADataSource extends AbstractJPADataSource {
 	}
 	
 
+
 	public void open() {
 		File jarFile = null;
 		
-		Assert.assertTrue(configurations.get(0) instanceof FileDataSourceConfiguration , "Impossible to open JPADataSource using a DatasetConfiguration of type [" + configurations.get(0).getClass().getName() + "]");
-		FileDataSourceConfiguration configuration = (FileDataSourceConfiguration)configurations.get(0);
+		FileDataSourceConfiguration configuration = getFileDataSourceConfiguration();
 		
 		jarFile = configuration.getFile();
 		if(jarFile == null) return;
@@ -122,7 +133,7 @@ public class JPADataSource extends AbstractJPADataSource {
 	}
 	
 	public DBConnection getConnection() {
-		DBConnection connection = (DBConnection)this.getConfigurations().get(0).getDataSourceProperties().get("connection");
+		DBConnection connection = (DBConnection)configuration.getDataSourceProperties().get("connection");
 		return connection;
 	}
 }

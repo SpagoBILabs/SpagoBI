@@ -20,8 +20,10 @@
  **/
 package it.eng.qbe.datasource.hibernate;
 
-import it.eng.qbe.datasource.DBConnection;
+import java.util.List;
+
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -30,8 +32,10 @@ import org.hibernate.cfg.Configuration;
  * The Interface IHibernateDataSource.
  */
 public interface IHibernateDataSource extends IDataSource {
-	DBConnection getConnection();
-	Configuration getConfiguration();	
-	SessionFactory getSessionFactory();
-	SessionFactory getSessionFactory(String dmName);	
+	
+	List<IDataSourceConfiguration> getSubConfigurations();
+	
+	Configuration getHibernateConfiguration();	
+	SessionFactory getHibernateSessionFactory();
+	SessionFactory getHibernateSessionFactory(String dmName);	
 }
