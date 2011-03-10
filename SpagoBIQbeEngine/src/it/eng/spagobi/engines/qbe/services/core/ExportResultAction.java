@@ -114,7 +114,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			session = ((IHibernateDataSource)getEngineInstance().getDataSource()).getSessionFactory().openSession();	
+			session = ((IHibernateDataSource)getEngineInstance().getDataSource()).getHibernateSessionFactory().openSession();	
 			
 			fileExtension = MimeUtils.getFileExtension( mimeType );
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);

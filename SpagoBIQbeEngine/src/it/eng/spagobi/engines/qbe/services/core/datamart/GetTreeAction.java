@@ -112,8 +112,17 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			if (datamartName != null) {
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName);			
 			} else {
-				nodes = new JSONArray();
-				List<IDataSourceConfiguration> configurations = getEngineInstance().getDataSource().getConfigurations();
+				Iterator<String> it = getDataSource().getDataMartModelStructure().getDataMartNames().iterator();
+				while (it.hasNext()) {
+					String modelName = it.next();
+					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), modelName);
+					for (int i = 0; i < temp.length(); i++) {
+						Object object = temp.get(i);
+						nodes.put(object);
+					}
+				}
+				/*
+				List<IDataSourceConfiguration> configurations = getEngineInstance().getDataSource().getConfiguration();
 				Iterator<IDataSourceConfiguration> it = configurations.iterator();
 				while (it.hasNext()) {
 					IDataSourceConfiguration configuration = it.next();
@@ -123,6 +132,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 						nodes.put(object);
 					}
 				}
+				*/
 			}
 			
 			try {
