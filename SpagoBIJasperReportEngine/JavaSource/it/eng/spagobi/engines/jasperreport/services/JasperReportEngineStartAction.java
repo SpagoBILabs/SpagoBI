@@ -69,7 +69,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         	dataSource = servletIOManager.getDataSource();
         	logger.debug("Datasource: [" + (dataSource == null? dataSource: dataSource.getLabel()) + "]");
         	if (dataSource==null){
-        		logger.warn("This document doesn't has the Data Source");
+        		logger.warn("This document doesn't have the Data Source");
         	}
         	 
         	dataSet = servletIOManager.getDataSet();
