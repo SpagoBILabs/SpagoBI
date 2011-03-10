@@ -101,6 +101,8 @@ Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Select node to delete';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 Sbi.locale.ln['sbi.modelinstances.code'] = 'Model Code';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copy all model tree';
+Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'A periodicity references this kpi. Confirming kpi deletion will delete this reference too.';
+
 //END List Detail messages
 
 //START GRANTS messages
