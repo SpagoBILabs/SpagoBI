@@ -32,7 +32,7 @@ import java.util.Properties;
  * 
  * @author Andrea Gioia
  */
-public class DatamartLabels {
+public class ModelLabels {
 	
 	/** The properties. */
 	private Properties  properties;
@@ -40,7 +40,7 @@ public class DatamartLabels {
 	/**
 	 * Instantiates a new datamart labels.
 	 */
-	public DatamartLabels() {
+	public ModelLabels() {
 		this(new Properties());
 	}	
 	
@@ -49,7 +49,7 @@ public class DatamartLabels {
 	 * 
 	 * @param properties the properties
 	 */
-	public DatamartLabels(Properties  properties) {
+	public ModelLabels(Properties  properties) {
 		setProperties(properties);
 	}	
 	
@@ -110,7 +110,7 @@ public class DatamartLabels {
 		this.properties = properties;
 	}
 	
-	public void addDatamartLabels(DatamartLabels labels) {
+	public void addDatamartLabels(ModelLabels labels) {
 		if (labels != null && labels.properties != null && !labels.properties.isEmpty()) {
 			this.properties.putAll(labels.properties);
 		}

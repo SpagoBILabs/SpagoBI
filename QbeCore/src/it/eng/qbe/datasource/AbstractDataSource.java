@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.datasource;
 
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
@@ -37,7 +39,7 @@ import java.util.Map;
 public abstract class AbstractDataSource implements IDataSource {
 	
 	protected String name;
-	protected List<FileDataSourceConfiguration> configurations;
+	protected List<IDataSourceConfiguration> configurations;
 	
 	
 	protected DataMartModelAccessModality dataMartModelAccessModality;
@@ -47,7 +49,7 @@ public abstract class AbstractDataSource implements IDataSource {
 
 		
 	
-	public List<FileDataSourceConfiguration> getConfigurations() {
+	public List<IDataSourceConfiguration> getConfigurations() {
 		return configurations;
 	}
 

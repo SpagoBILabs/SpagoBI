@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.cache;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.DatamartLabels;
+import it.eng.qbe.model.i18n.ModelLabels;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -57,7 +57,7 @@ public class QbeCache {
 		cache.put(resourceName, resource);
 	}
 	
-	public void putLabels(IDataSource dataSource, DatamartLabels labels, Locale locale) {
+	public void putLabels(IDataSource dataSource, ModelLabels labels, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
@@ -65,11 +65,11 @@ public class QbeCache {
 		putResource(resourceName, labels);
 	}
 	
-	public DatamartLabels getLabels(IDataSource dataSource, Locale locale) {
+	public ModelLabels getLabels(IDataSource dataSource, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}
-		return (DatamartLabels)getResource(resourceName);
+		return (ModelLabels)getResource(resourceName);
 	}
 }

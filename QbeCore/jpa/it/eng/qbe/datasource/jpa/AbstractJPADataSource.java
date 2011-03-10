@@ -22,7 +22,7 @@ package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 
@@ -42,17 +42,6 @@ public abstract class AbstractJPADataSource extends AbstractDataSource implement
 	
 	private static transient Logger logger = Logger.getLogger(AbstractJPADataSource.class);
 	
-	/**
-	 * Load formula file.
-	 * 
-	 * @param datamartName the datamart name
-	 * 
-	 * @return the file
-	 */
-	protected File loadFormulaFile(String datamartName) {
-		String formulaFile = configurations.get(0).getFile().getParent() + "/formula.xml";
-		return new File(formulaFile);
-	}
 	
 	/**
 	 * Update current class loader.

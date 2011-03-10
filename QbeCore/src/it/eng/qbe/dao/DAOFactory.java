@@ -21,6 +21,12 @@
 package it.eng.qbe.dao;
 
 import it.eng.qbe.conf.QbeCoreSettings;
+import it.eng.qbe.datasource.configuration.CalculatedFieldsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.ModelLabelsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.ICalculatedFieldsDAO;
+import it.eng.qbe.datasource.configuration.IModelLabelsDAO;
+import it.eng.qbe.datasource.configuration.ModelPropertiesDAOFileImpl;
+import it.eng.qbe.datasource.configuration.IModelPropertiesDAO;
 
 import java.io.File;
 
@@ -34,19 +40,5 @@ public class DAOFactory {
 		File datamartsDir = QbeCoreSettings.getInstance().getQbeDataMartDir();
 		return new DatamartJarFileDAOFilesystemImpl(datamartsDir);
 	}
-	
 
-	
-	public static IDatamartPropertiesDAO getDatamartPropertiesDAO() {
-		return new DatamartPropertiesDAOFilesystemImpl();
-	}
-	
-	public static IDatamartLabelsDAO getDatamartLabelsDAO() {
-		return new DatamartLabelsDAOFilesystemImpl();
-	}
-	
-	public static ICalculatedFieldsDAO getCalculatedFieldsDAO() {
-		File datamartsDir = QbeCoreSettings.getInstance().getQbeDataMartDir();
-		return new CalculatedFieldsDAOFilesystemImpl(datamartsDir);
-	}
 }

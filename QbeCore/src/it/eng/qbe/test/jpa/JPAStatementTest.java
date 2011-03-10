@@ -3,7 +3,7 @@
  */
 package it.eng.qbe.test.jpa;
 
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;

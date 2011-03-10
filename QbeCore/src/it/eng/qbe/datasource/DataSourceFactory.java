@@ -21,6 +21,7 @@
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;

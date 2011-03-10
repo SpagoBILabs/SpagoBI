@@ -19,9 +19,17 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.datasource;
+package it.eng.qbe.datasource.configuration;
+
+
+import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.structure.DataMartCalculatedField;
 
 import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -32,9 +40,16 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	String modelName;
 	File file;
 
+	IModelPropertiesDAO modelPropertiesDAO;
+	ICalculatedFieldsDAO calculatedFieldsDAO;
+	IModelLabelsDAO modelLabelsDAOFileImpl;
+	
 	public FileDataSourceConfiguration(String modelName, File file) {
 		this.modelName = modelName;
 		this.file = file;
+		this.modelPropertiesDAO = new ModelPropertiesDAOFileImpl(file);
+		this.modelLabelsDAOFileImpl = new ModelLabelsDAOFileImpl(file);
+		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);		
 	}
 	
 	public File getFile() {
@@ -44,5 +59,24 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	public String getModelName() {
 		return modelName;
 	}
+	
+	public Properties getModelProperties() {
+		return modelPropertiesDAO.loadModelProperties();
+	}
+	
+	public ModelLabels getModelLabels() {
+		return modelLabelsDAOFileImpl.loadDatamartLabels();
+	}
 
+	public ModelLabels getModelLabels(Locale locale) {
+		return modelLabelsDAOFileImpl.loadDatamartLabels(locale);
+	}
+
+	public Map getCalculatedFields() {
+		return calculatedFieldsDAO.loadCalculatedFields();
+	}
+
+	public void setCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
+		calculatedFieldsDAO.saveCalculatedFields(calculatedFields);
+	}
 }

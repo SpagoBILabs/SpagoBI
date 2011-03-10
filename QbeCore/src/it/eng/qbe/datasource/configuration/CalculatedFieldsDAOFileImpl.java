@@ -18,8 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.dao.DAOException;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -50,9 +51,9 @@ import org.dom4j.io.XMLWriter;
 /**
  * @author Andrea Gioia
  */
-public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
+public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
-	private File datamartsDir;
+	protected File modelJarFile;
 
 	public static final String CFIELDS_FILE_NAME = "cfields.xml";
 	public final static String ROOT_TAG = "CFIELDS";
@@ -62,16 +63,18 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 	public final static String FIELD_TAG_TYPE_ATTR = "type";
 	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
 	
-	public static transient Logger logger = Logger.getLogger(CalculatedFieldsDAOFilesystemImpl.class);
+	public static transient Logger logger = Logger.getLogger(CalculatedFieldsDAOFileImpl.class);
 	
-	public CalculatedFieldsDAOFilesystemImpl(File datamartsDir) {
-		setDatamartsDir(datamartsDir);
+	public CalculatedFieldsDAOFileImpl(File modelJarFile) {
+		this.modelJarFile = modelJarFile;
 	}
 	
 	
 	
-	public Map loadCalculatedFields(String datamartName) {
-		Map calculatedFiledsMap;
+	public Map<String, List<DataMartCalculatedField>> loadCalculatedFields() {
+		
+		Map<String, List<DataMartCalculatedField>> calculatedFiledsMap;
+		
 		File calculatedFieldsFile;
 		FileInputStream in;
 		SAXReader reader;
@@ -93,11 +96,10 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 		in = null;	
 		
 		try {
-			Assert.assertTrue(!StringUtilities.isEmpty(datamartName), "Input parameter [datamartName] cannot be null or empty");
 			
-			calculatedFiledsMap = new HashMap();
+			calculatedFiledsMap = new HashMap<String, List<DataMartCalculatedField>>();
 			
-			calculatedFieldsFile = getCalculatedFieldsFile(datamartName);
+			calculatedFieldsFile = getCalculatedFieldsFile();
 			logger.debug("Calculated fields will be loaded from file [" + calculatedFieldsFile + "]");
 			
 			if(calculatedFieldsFile != null && calculatedFieldsFile.exists()) {
@@ -147,7 +149,7 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 	
 		
 
-	public void saveCalculatedFields(String datamartName, Map calculatedFields) {
+	public void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
 		
 		File calculatedFieldsFile;
 		Iterator it;
@@ -162,10 +164,9 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 		calculatedFieldsFile = null;
 		
 		try {
-			Assert.assertTrue(!StringUtilities.isEmpty(datamartName), "Input parameter [datamartName] cannot be null or empty");
 			Assert.assertNotNull(calculatedFields, "Input parameter [calculatedFields] cannot be null");
 			
-			calculatedFieldsFile = getCalculatedFieldsFile(datamartName);
+			calculatedFieldsFile = getCalculatedFieldsFile();
 			Assert.assertNotNull(calculatedFieldsFile, "Destination file cannot be null");
 			logger.debug("Calculated fields will be saved on file [" + calculatedFieldsFile + "]");
 			
@@ -182,7 +183,7 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 			document = DocumentHelper.createDocument();
 	        root = document.addElement( ROOT_TAG );
 	        			
-			logger.debug("In datamart [" + datamartName + "] there are [" + calculatedFields.keySet() + "] entity/es that contain calculated fields" );
+			logger.debug("In the target model there are [" + calculatedFields.keySet() + "] entity/es that contain calculated fields" );
 			it = calculatedFields.keySet().iterator();
 			while(it.hasNext()) {
 				entityName = (String)it.next();
@@ -210,23 +211,15 @@ public class CalculatedFieldsDAOFilesystemImpl implements ICalculatedFieldsDAO {
 		}
 	}
 	
-	private File getCalculatedFieldsFile(String datamartName) {
+	private File getCalculatedFieldsFile() {
 		File calculatedFieldsFile = null;
-		File targetDatamartDir = null;
 		
-		targetDatamartDir = new File(getDatamartsDir(), datamartName);
-		calculatedFieldsFile = new File(targetDatamartDir, CFIELDS_FILE_NAME);
+		calculatedFieldsFile = new File(modelJarFile.getParentFile(), CFIELDS_FILE_NAME);
 		
 		return calculatedFieldsFile;
 	}
 	
-	public File getDatamartsDir() {
-		return datamartsDir;
-	}
-
-	public void setDatamartsDir(File datamartsDir) {
-		this.datamartsDir = datamartsDir;
-	}
+	
 	
 	// ------------------------------------------------------------------------------------------------------
 	// Guarded actions. see -> http://java.sun.com/docs/books/tutorial/essential/concurrency/guardmeth.html

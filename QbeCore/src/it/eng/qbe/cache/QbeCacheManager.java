@@ -22,9 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.cache;
 
 import it.eng.qbe.dao.DAOFactory;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.DatamartLabels;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.model.i18n.ModelLabels;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,25 +52,25 @@ public class QbeCacheManager {
 	}
 	
 	
-	public void putLabels(IDataSource dataSource, DatamartLabels labels, Locale locale) {
+	public void putLabels(IDataSource dataSource, ModelLabels labels, Locale locale) {
 		cache.putLabels(dataSource, labels, locale);
 	}
 	
-	public DatamartLabels getLabels(IDataSource dataSource, Locale locale) {
-		DatamartLabels labels;
+	public ModelLabels getLabels(IDataSource dataSource, Locale locale) {
+		ModelLabels labels;
 		
 		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
-			labels = new DatamartLabels();
-			List<FileDataSourceConfiguration> datamartsName = dataSource.getConfigurations();
-			Iterator<FileDataSourceConfiguration> it = datamartsName.iterator();
+			labels = new ModelLabels();
+			List<IDataSourceConfiguration> configurations = dataSource.getConfigurations();
+			Iterator<IDataSourceConfiguration> it = configurations.iterator();
 			while (it.hasNext()) {
-				FileDataSourceConfiguration configuration = it.next();
-				DatamartLabels aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(configuration.getModelName(), locale);
+				IDataSourceConfiguration configuration = it.next();
+				ModelLabels modelLabels = configuration.getModelLabels(locale);
 				if(locale != null && labels == null) {
-					aDatamartLabels = DAOFactory.getDatamartLabelsDAO().loadDatamartLabels(configuration.getModelName(), null);
+					modelLabels = configuration.getModelLabels();
 				}
-				labels.addDatamartLabels(aDatamartLabels);
+				labels.addDatamartLabels(modelLabels);
 			}
 			cache.putLabels(dataSource, labels, locale);
 		}

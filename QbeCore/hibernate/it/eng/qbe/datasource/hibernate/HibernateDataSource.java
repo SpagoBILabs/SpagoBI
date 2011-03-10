@@ -23,13 +23,16 @@ package it.eng.qbe.datasource.hibernate;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,7 +66,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	public HibernateDataSource(String dataSourceName, List<FileDataSourceConfiguration> configurations) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = configurations;
+		this.configurations = new ArrayList<IDataSourceConfiguration>();
+		this.configurations.addAll(configurations);
 	}
 
 	public boolean isCompositeDataSource() {
@@ -111,7 +115,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	protected void addDatamarts() {
 		
 		for(int i = 0; i < configurations.size(); i++) {
-			addDatamart(configurations.get(i), !classLoaderExtended);		
+			Assert.assertTrue(configurations.get(i) instanceof FileDataSourceConfiguration, "Impossible to read dtatamarts from configuration of type [" + configurations.get(i).getClass().getName() + "]");
+			addDatamart((FileDataSourceConfiguration)configurations.get(i), !classLoaderExtended);		
 		}	
 		classLoaderExtended = true;
 	}
@@ -342,7 +347,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 		
 
-	protected void addDbLink(File datamartFile, Configuration srcCfg, Configuration dstCfg) {
+	protected void addDbLink(String modelName, Configuration srcCfg, Configuration dstCfg) {
 		
 		String dbLink = null;
 		PersistentClass srcPersistentClass = null;
@@ -350,7 +355,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		String targetEntityName = null;
 		Table targetTable = null;
 		
-		dbLink = dblinkMap.get(datamartFile);
+		dbLink = dblinkMap.get(modelName);
 		if (dbLink != null) {
 			Iterator it = srcCfg.getClassMappings();
 			while(it.hasNext()) {
@@ -369,9 +374,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		Configuration cfg = null;
 		
 		for(int i = 0; i < configurations.size(); i++) {
-			File datamartFile = configurations.get(i).getFile();
-			cfg = (Configuration)configurationMap.get(datamartFile);
-			addDbLink(datamartFile, cfg, compositeConfiguration);
+			String modelName = configurations.get(i).getModelName();
+			cfg = (Configuration)configurationMap.get(modelName);
+			addDbLink(modelName, cfg, compositeConfiguration);
 		}
 	}
 	

@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.dao;
+package it.eng.qbe.datasource.configuration;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,26 +28,35 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DatamartPropertiesDAOFilesystemImpl.
+ * Implementation of IModelPropertiesDAO that read model properties from a property
+ * file named qbe.properties stored withing the jar file passed in as argument to
+ * the class costructore.
+ * 
+ * NOTE: this class does not support interface methods saveProperties. Calling it will
+ * cause an exception
  * 
  * @author Andrea Gioia
  */
-public class DatamartPropertiesDAOFilesystemImpl implements IDatamartPropertiesDAO {
+public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 	
+	File modelJarFile;
+	
+	private static final String PROPERTIES_FILE_NAME = "qbe.properties";
+	
+	public ModelPropertiesDAOFileImpl(File file) {
+		modelJarFile = file;
+	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#loadDatamartProperties(java.lang.String)
 	 */
-	public Properties loadDatamartProperties(String datamartName) {
+	public Properties loadModelProperties() {
 		Properties properties;
-		
-		File datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
 		
 		JarFile jf = null;
 		try {
-			jf = new JarFile( datamartJarFile );
+			jf = new JarFile( modelJarFile );
 			properties = loadQbePropertiesFormJarFile(jf);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -54,19 +65,12 @@ public class DatamartPropertiesDAOFilesystemImpl implements IDatamartPropertiesD
 		
 		return properties;	
 	}
-	
-	/**
-	 * Load qbe properties form jar file.
-	 * 
-	 * @param jf the jf
-	 * 
-	 * @return the properties
-	 */
-	private Properties loadQbePropertiesFormJarFile(JarFile jf){
+
+	protected Properties loadQbePropertiesFormJarFile(JarFile jf){
 		Properties prop = null;
 		
 		try{
-			ZipEntry ze = jf.getEntry("qbe.properties");
+			ZipEntry ze = jf.getEntry(PROPERTIES_FILE_NAME);
 			if (ze != null){
 				prop = new Properties();
 				prop.load(jf.getInputStream(ze));
@@ -84,7 +88,7 @@ public class DatamartPropertiesDAOFilesystemImpl implements IDatamartPropertiesD
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveDatamartProperties(java.lang.String, it.eng.qbe.bo.DatamartProperties)
 	 */
-	public void saveDatamartProperties(String datamartName, Properties datamartProperties) {
-
+	public void saveModelProperties(Properties datamartProperties) {
+		throw new SpagoBIRuntimeException("saveDatamartProperties method not supported");
 	}
 }

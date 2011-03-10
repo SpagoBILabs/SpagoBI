@@ -21,8 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,26 +39,26 @@ import javax.persistence.Persistence;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class JPADataSource extends AbstractJPADataSource {
-	/** The entity manager factory. */
+	
 	private EntityManagerFactory factory;
 	
-	/** The entity manager . */
+	
 	private EntityManagerFactory entityManager;
 	
-	/** The class loader extended. */
 	private boolean classLoaderExtended = false;	
 	
 	
 	public JPADataSource(String dataSourceName, FileDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = new ArrayList<FileDataSourceConfiguration>();
+		this.configurations = new ArrayList<IDataSourceConfiguration>();
 		this.configurations.add(configuration);
 	}
 	public JPADataSource(String dataSourceName, List<FileDataSourceConfiguration> configurations) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
-		this.configurations = configurations;
+		this.configurations = new ArrayList<IDataSourceConfiguration>();
+		this.configurations.addAll(configurations);
 	}
 
 
@@ -96,7 +98,10 @@ public class JPADataSource extends AbstractJPADataSource {
 	public void open() {
 		File jarFile = null;
 		
-		jarFile = configurations.get(0).getFile();
+		Assert.assertTrue(configurations.get(0) instanceof FileDataSourceConfiguration , "Impossible to open JPADataSource using a DatasetConfiguration of type [" + configurations.get(0).getClass().getName() + "]");
+		FileDataSourceConfiguration configuration = (FileDataSourceConfiguration)configurations.get(0);
+		
+		jarFile = configuration.getFile();
 		if(jarFile == null) return;
 		
 		if (!classLoaderExtended){
