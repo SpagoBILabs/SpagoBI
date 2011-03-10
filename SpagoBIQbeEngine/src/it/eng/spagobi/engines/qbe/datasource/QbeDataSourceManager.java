@@ -26,6 +26,7 @@ import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DataSourceFactory;
 import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.naming.NamingStrategy;
@@ -98,46 +99,51 @@ public class QbeDataSourceManager implements IDataSourceManager {
 		dataSourceName = getNamingStartegy().getDatasourceName(dataMartNames, connection);
 		
 		dataSource = getDataSourceCache().getDataSource(dataSourceName);
-
-		if (dataSource == null) {
-			List configurations = new ArrayList<FileDataSourceConfiguration>();
-			for(int i = 0; i < dataMartNames.size(); i++) {
-				File file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(i));
-				FileDataSourceConfiguration c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
-				c.getDataSourceProperties().put("dblinkMap", dblinkMap);
-				c.getDataSourceProperties().put("connection", connection);
-				configurations.add( c );
-			}
-			String driverName = isJPA(configurations)? "jpa": "hibernate";
-			dataSource = DataSourceFactory.buildDataSource(driverName,dataSourceName, configurations);
-			getDataSourceCache().addDataSource(dataSourceName, dataSource);
-		} 
 		
-		return dataSource;
-	}
-
-	public boolean isJPA(List<FileDataSourceConfiguration> configurations) {
-		boolean isJPA = false;
-			try {
-				isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
+		compositeConfiguration.getDataSourceProperties().put("dblinkMap", dblinkMap);
+		compositeConfiguration.getDataSourceProperties().put("connection", connection);
+		if (dataSource == null) {
+			boolean isJPA = false;
+			File file;
+			FileDataSourceConfiguration c;
+			
+			file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(0));
+			c = new FileDataSourceConfiguration(dataMartNames.get(0),file);
+			compositeConfiguration.addSubConfiguration(c);
+			
+			try {				
+				isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(file);
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(0) + "]", e);
+				throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
 			}
-			if(configurations.size() > 1) {
-				for(int i = 1; i < configurations.size(); i++) {
+			
+			if(dataMartNames.size() > 1) {
+				for(int i = 1; i < dataMartNames.size(); i++) {
+					file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(i));
+					c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
+					compositeConfiguration.addSubConfiguration(c);
+					
 					boolean b;
 					try {
-						b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(configurations.get(0).getFile());
+						b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(file);
 					} catch (Exception e) {
-						throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + configurations.get(i) + "]", e);
+						throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
 					}
 					if(isJPA != b) {
 						throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
 					}
 				}
 			}
-		return isJPA;
+			String driverName = isJPA? "jpa": "hibernate";
+			dataSource = DataSourceFactory.buildDataSource(driverName,dataSourceName, compositeConfiguration);
+			getDataSourceCache().addDataSource(dataSourceName, dataSource);
+		} 
+		
+		return dataSource;
 	}
+
+	
 	/**
 	 * Gets the data source cache.
 	 * 

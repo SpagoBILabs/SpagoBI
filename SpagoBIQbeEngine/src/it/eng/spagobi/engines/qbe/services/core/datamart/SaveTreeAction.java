@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
 
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
@@ -74,21 +75,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");
 			
-			List<IDataSourceConfiguration> configurations = getDataSource().getConfigurations();
-			if (configurations.size() == 1) {
-				IDataSourceConfiguration configuration =  configurations.get(0);
-				logger.debug("Saving calculated fields into datamart [" + configuration.getModelName() + "] ...");
-				configuration.setCalculatedFields(calculatedFields);
-				logger.debug("Calculated fileds saved succesfully into datamart [" + configuration.getModelName() + "].");
-			} else {
-				for (int i = 0; i < configurations.size(); i++) {
-					IDataSourceConfiguration configuration = configurations.get(i);
-					Map datamartCalcultedField = getCalculatedFieldsForDatamart(getDataSource().getDataMartModelStructure(), calculatedFields, configuration.getModelName());
-					logger.debug("Saving calculated fields into datamart [" + configuration.getModelName() + "]...");
-					configuration.setCalculatedFields(datamartCalcultedField);
-					logger.debug("Calculated fileds saved succesfully into datamart [" + configuration.getModelName() + "].");
-				}
-			}
+			getDataSource().getConfiguration().setCalculatedFields(calculatedFields);
 			
 			try {
 				writeBackToClient( new JSONAcknowledge() );
@@ -105,30 +92,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 	}
 
 
-	/**
-	 * The input map contains all the calculated fields defined into the entire datamart model structure. 
-	 * This method returns the calculated field defined for a single datamart (used in case of composite datasource, i.e. more than 1 datamart).
-	 * @param dataMartModelStructure The datamart model structure
-	 * @param calculatedFields All the calculated fields defined into the entire datamart model structure
-	 * @param datamartName The datamart for which the calculated fields should be retrieved
-	 * @return the calculated field defined for the specified datamart 
-	 */
-	private Map getCalculatedFieldsForDatamart(DataMartModelStructure dataMartModelStructure, Map calculatedFields, String datamartName) {
-		Map toReturn = new HashMap();
-		Set keys = calculatedFields.keySet();
-		Iterator keysIt = keys.iterator();
-		while (keysIt.hasNext()) {
-			String entityUniqueName = (String) keysIt.next();
-			DataMartEntity dataMartEntity = dataMartModelStructure.getEntity(entityUniqueName);
-			DataMartEntity dataMartRootEntity = dataMartEntity.getRoot();
-			List rootEntities = dataMartModelStructure.getRootEntities(datamartName);
-			if (rootEntities.contains(dataMartRootEntity)) {
-				toReturn.put(entityUniqueName, calculatedFields.get(entityUniqueName));
-			}
-		}
-		return toReturn;
-	}
-
+	
 
 
 	private DataMartCalculatedField deserialize(JSONObject fieldJSON) {

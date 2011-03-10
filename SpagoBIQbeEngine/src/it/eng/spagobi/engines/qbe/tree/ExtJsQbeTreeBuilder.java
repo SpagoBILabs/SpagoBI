@@ -67,7 +67,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * 
 	 * @param qbeTreeFilter the qbe tree filter
 	 */
-	public ExtJsQbeTreeBuilder(QbeTreeFilter qbeTreeFilter)  {		
+	public ExtJsQbeTreeBuilder(QbeTreeFilter qbeTreeFilter)  {	
 		setQbeTreeFilter( qbeTreeFilter );
 	}	
 	

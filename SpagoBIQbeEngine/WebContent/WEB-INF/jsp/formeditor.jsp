@@ -65,7 +65,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiSpagoController;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	List<IDataSourceConfiguration> configurations = qbeEngineInstance.getDataSource().getConfigurations();
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
@@ -164,10 +163,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	--%>
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	Iterator<IDataSourceConfiguration> it = configurations.iterator();
+	      	Iterator<String> it = qbeEngineInstance.getDataSource().getDataMartModelStructure().getDataMartNames().iterator();
 	      	while (it.hasNext()) {
-	      		IDataSourceConfiguration configuration = it.next();
-	      		datamartNamesBuffer.append("'" + configuration.getModelName() + "'");
+	      		datamartNamesBuffer.append("'" + it.next() + "'");
 	      		if (it.hasNext()) {
 	      			datamartNamesBuffer.append(",");
 	      		}
