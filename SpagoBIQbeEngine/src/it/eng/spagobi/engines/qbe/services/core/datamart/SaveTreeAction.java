@@ -22,6 +22,7 @@ package it.eng.spagobi.engines.qbe.services.core.datamart;
 
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.dao.ICalculatedFieldsDAO;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -79,19 +80,19 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");
 			
-			List datamartsName = getDataSource().getDatamartNames();
-			if (datamartsName.size() == 1) {
-				String datamartName = (String) datamartsName.get(0);
-				logger.debug("Saving calculated fields into datamart [" + datamartName + "] ...");
-				calculatedFieldsDAO.saveCalculatedFields(datamartName, calculatedFields);
-				logger.debug("Calculated fileds saved succesfully into datamart [" + datamartName + "].");
+			List<FileDataSourceConfiguration> configurations = getDataSource().getConfigurations();
+			if (configurations.size() == 1) {
+				FileDataSourceConfiguration configuration =  configurations.get(0);
+				logger.debug("Saving calculated fields into datamart [" + configuration.getModelName() + "] ...");
+				calculatedFieldsDAO.saveCalculatedFields(configuration.getModelName(), calculatedFields);
+				logger.debug("Calculated fileds saved succesfully into datamart [" + configuration.getModelName() + "].");
 			} else {
-				for (int i = 0; i < datamartsName.size(); i++) {
-					String datamartName = (String) datamartsName.get(i);
-					Map datamartCalcultedField = getCalculatedFieldsForDatamart(getDataSource().getDataMartModelStructure(), calculatedFields, datamartName);
-					logger.debug("Saving calculated fields into datamart [" + datamartName + "]...");
-					calculatedFieldsDAO.saveCalculatedFields(datamartName, datamartCalcultedField);
-					logger.debug("Calculated fileds saved succesfully into datamart [" + datamartName + "].");
+				for (int i = 0; i < configurations.size(); i++) {
+					FileDataSourceConfiguration configuration = configurations.get(i);
+					Map datamartCalcultedField = getCalculatedFieldsForDatamart(getDataSource().getDataMartModelStructure(), calculatedFields, configuration.getModelName());
+					logger.debug("Saving calculated fields into datamart [" + configuration.getModelName() + "]...");
+					calculatedFieldsDAO.saveCalculatedFields(configuration.getModelName(), datamartCalcultedField);
+					logger.debug("Calculated fileds saved succesfully into datamart [" + configuration.getModelName() + "].");
 				}
 			}
 			

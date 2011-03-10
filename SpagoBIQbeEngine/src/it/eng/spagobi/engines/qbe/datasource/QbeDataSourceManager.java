@@ -20,14 +20,18 @@
  **/
 package it.eng.spagobi.engines.qbe.datasource;
 
+import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DataSourceFactory;
-import it.eng.qbe.datasource.DataSourceManager;
+import it.eng.qbe.datasource.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,16 +42,13 @@ import java.util.Map;
  * 
  * @author Andrea Gioia
  */
-public class QbeDataSourceManager implements DataSourceManager {
+public class QbeDataSourceManager implements IDataSourceManager {
 	
-	/** The naming startegy. */
-	private NamingStrategy namingStartegy = null;
+	private NamingStrategy namingStartegy;
 	
-	/** The data source cache. */
-	private DataSourceCache dataSourceCache = null;
-		
-	/** The instance. */
-	private static QbeDataSourceManager instance = null;
+	private DataSourceCache dataSourceCache;
+	
+	private static QbeDataSourceManager instance;
 	
 	/**
 	 * Gets the single instance of QbeDataSourceManager.
@@ -80,27 +81,29 @@ public class QbeDataSourceManager implements DataSourceManager {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, it.eng.qbe.datasource.DBConnection)
 	 */
-	public IDataSource getDataSource(List dataMartNames, DBConnection connection) {
+	public IDataSource getDataSource(List<String> dataMartNames, DBConnection connection) {
 		return getDataSource(dataMartNames, new HashMap(), connection);
 	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, java.util.Map, it.eng.qbe.datasource.DBConnection)
 	 */
-	public IDataSource getDataSource(List dataMartNames, Map dblinkMap, DBConnection connection) {
+	public IDataSource getDataSource(List<String> dataMartNames, Map dblinkMap, DBConnection connection) {
 		
 		IDataSource dataSource = null;
 		String dataSourceName = null;
-		String dataMartName = null;
-		
-		
+	
 		dataSourceName = getNamingStartegy().getDatasourceName(dataMartNames, connection);
-		dataMartName = getNamingStartegy().getDatamartName(dataMartNames);
 		
 		dataSource = getDataSourceCache().getDataSource(dataSourceName);
 
 		if (dataSource == null) {
-			dataSource = DataSourceFactory.buildDataSource(dataSourceName, dataMartName, dataMartNames, dblinkMap, connection);
+			List<FileDataSourceConfiguration> configurations = new ArrayList<FileDataSourceConfiguration>();
+			for(int i = 0; i < dataMartNames.size(); i++) {
+				File file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(i));
+				configurations.add( new FileDataSourceConfiguration(dataMartNames.get(i),file) );
+			}
+			dataSource = DataSourceFactory.buildDataSource(dataSourceName, configurations, dblinkMap, connection);
 			getDataSourceCache().addDataSource(dataSourceName, dataSource);
 		} 
 		
