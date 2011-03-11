@@ -61,7 +61,7 @@ public class QbeCacheManager {
 		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
 			
-			labels = dataSource.getConfiguration().getModelI18NProperties(locale);
+			labels = dataSource.getConfiguration().loadModelI18NProperties(locale);
 			
 			cache.putLabels(dataSource, labels, locale);
 		}

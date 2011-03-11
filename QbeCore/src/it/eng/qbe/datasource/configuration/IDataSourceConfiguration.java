@@ -54,19 +54,19 @@ public interface IDataSourceConfiguration {
 	 * 
 	 * @return the properties associated to the model. 
 	 */
-	Properties getModelProperties();
+	Properties loadModelProperties();
 	
 	
-	Map<String, List<DataMartCalculatedField>> getCalculatedFields();
-	void setCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
+	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();
+	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
 	
-	ModelI18NProperties getModelI18NProperties();
-	ModelI18NProperties getModelI18NProperties(Locale locale);
+	ModelI18NProperties loadModelI18NProperties();
+	ModelI18NProperties loadModelI18NProperties(Locale locale);
 	
 	/**
 	 * 
 	 * @return the properties associated to the specific data source type. The numeber and type of
 	 * these properties depend on the DataSource implementation
 	 */
-	Map<String,Object> getDataSourceProperties();
+	Map<String,Object> loadDataSourceProperties();
 }

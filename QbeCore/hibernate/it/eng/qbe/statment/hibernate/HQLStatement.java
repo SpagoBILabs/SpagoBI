@@ -646,7 +646,7 @@ public class HQLStatement extends AbstractStatement {
 			}
 		} else if(type.equalsIgnoreCase("timestamp") || type.equalsIgnoreCase("date")){
 
-			DBConnection connection = (DBConnection)getDataSource().getConfiguration().getDataSourceProperties().get("connection");
+			DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			String dbDialect = connection.getDialect();
 			
 			//Parse the date given by the user: from the locale of the user to the italian tyme
