@@ -18,29 +18,18 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.naming;
+package it.eng.qbe.datasource.naming;
 
 import it.eng.qbe.datasource.DBConnection;
 
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface NamingStrategy.
  * 
  * @author Andrea Gioia
  */
 public interface NamingStrategy {
-	
-	/**
-	 * Gets the datamart name.
-	 * 
-	 * @param datamartNames the datamart names
-	 * 
-	 * @return the datamart name
-	 */
-	String getDatamartName(List datamartNames) ;	
-	
 	/**
 	 * Gets the datasource name.
 	 * 
