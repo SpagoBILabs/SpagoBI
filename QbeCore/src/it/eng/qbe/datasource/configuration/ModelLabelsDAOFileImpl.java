@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.model.i18n.ModelLabels;
 
 import java.io.File;

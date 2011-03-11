@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource.hibernate;
 
-import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
@@ -245,21 +244,6 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	
 	
 	
-	
-	
-	
-	
-	protected File getDatamartJarFile(String datamartName){
-		File datamartJarFile = null;
-		
-		try{
-			datamartJarFile = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(datamartName);
-		}catch (Exception e) {
-			logger.error("Impossible to find mapping file for datamart [" + datamartName + "]", e);
-		}
-		
-		return datamartJarFile;
-	}
 
 	
 	
