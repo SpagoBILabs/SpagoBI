@@ -19,6 +19,15 @@ Sbi.settings.execution = {
 		}
 };
 
+Sbi.settings.kpi = {
+		goalModelInstanceTreeUI: {
+			goalCustom: false
+		}
+};
+
+
+
+
 // Specific IE settings
 Ext.ns("Sbi.settings.IE");
 

@@ -210,7 +210,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					attrKpiCode = ' - '+attr.kpiCode;
 				}
 				attr.qtip = attr.modelCode+' - '+attr.name+ attrKpiCode;
-
 				var ounode = thisPanel.leftTree.getSelectionModel().getSelectedNode();
 				
 				attr.checked = false;
@@ -231,7 +230,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				thisPanel.addKPINodeListeners(node);
 				
 				node.on('append', function( tree, thisNode, childNode,index ) {
-
 					var ouChildrenToUnCheck = thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.childrenToUncheck;
 					if(ouChildrenToUnCheck!=null && ouChildrenToUnCheck.indexOf(thisNode.attributes.modelInstId)>=0){
 						childNode.getUI().toggleCheck(false);
@@ -247,6 +245,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					}
 					
 					},this);	
+				
+//				node.on('disabledchange', function( thisNode, disabled ) {
+//					thisNode.getUI().checkbox.disabled=disabled;
+//					},this);	
+				
 				
 				return node;
 			}
@@ -461,7 +464,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	
 	//add the listeners to the kpi nodes
 	, addKPINodeListeners: function(node){
-		node.on('expand', this.getSelectedOUAndUpdateKpisCheck,this);
+		var thisPanel = this; 
+		node.on('expand', function(){
+			this.deepDisableChildren(node,this.leftTree.getSelectionModel().getSelectedNode(), node.getUI().isChecked());
+			this.getSelectedOUAndUpdateKpisCheck();
+			this.deepDisableChildren(node,this.leftTree.getSelectionModel().getSelectedNode(), node.getUI().isChecked());
+			},this);
+		
 		
 		/*
 		 * When the user change the check of a kpi node
@@ -469,16 +478,18 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 		 * of the grants of the selected ou node
 		 * */
 		node.on('checkchange', function(node, checked){
-			node.suspendEvents(false);
-	
+			
 			//change to the selected node and all it's child the kpi model instance list
 			var ouNode = this.leftTree.getSelectionModel().getSelectedNode();
 			var subTreeNodes = this.getSubTreeNodes(ouNode);
+			this.deepDisableChildren(node, ouNode, checked);
+			
+			node.suspendEvents(false);
+			
 			for(var j=0; j<subTreeNodes.length; j++){
 				//Ext.fly(subTreeNodes[j].getUI().getEl()).highlight("ff0000");
 				subTreeNodes[j].getUI().removeClass('no-grant');
 				subTreeNodes[j].getUI().removeClass('grant');
-
 
 				var modelinstancenodes = subTreeNodes[j].attributes.modelinstancenodes;
 				var modelinstancenodesOfThisSession = subTreeNodes[j].attributes.modelinstancenodesOfThisSession;
@@ -505,8 +516,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					subTreeNodes[j].getUI().addClass('grant');
 					subTreeNodes[j].cls='grant';
 				}
-
-
 			}
 			node.resumeEvents();
 
@@ -523,9 +532,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 	//update the tree panel of the kpis with the grant of the selected ou 
 	,updateKpisCheck : function(node, event){
+
 		
 		var n;
 		var checkedNodes = this.rightTree.getChecked();
+		
+
+		
 		//uncheck all the kpis
 		for(var i=0; i<checkedNodes.length; i++){
 			checkedNodes[i].suspendEvents(false);
@@ -533,10 +546,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			checkedNodes[i].resumeEvents( );
 		}	
 	
-		//disable the kpis not living in the father list.
-		//If the node is the root it enables all the nodes
-		this.deepDisableCheck(this.rightTree.getRootNode(), node);
-
 		if(node.parentNode!=null){
 			//If there is no kpis for the node it copies the kpis selected for the father
 			if(node.attributes.modelinstancenodes!=null && node.attributes.modelinstancenodes.length>0){
@@ -579,6 +588,10 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				this.childrenCheck(kpinode, node, false, 'kpi');
 			}
 		}
+		
+		//disable the kpis not living in the father list.
+		//If the node is the root it enables all the nodes
+		this.deepDisableCheck(this.rightTree.getRootNode(), node);
 	}
 
 	//Set disable all the nodes of the subtree rooted in uoNode.. 
@@ -586,11 +599,6 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 	//Enables all the check boxes
 	,deepDisableCheck: function(kpiNode, uoNode){
 		var children = kpiNode.childNodes;
-		if(children!=null){
-			for(var i=0; i<children.length; i++){
-				this.deepDisableCheck(children[i],uoNode);
-			}
-		}
 	
 		if(uoNode.parentNode!=null){
 			kpiNode.getUI().checkbox.disabled=true;
@@ -598,13 +606,55 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			if(parentKpis!=null){
 				for(var i=0; i<parentKpis.length; i++){
 					if(parentKpis[i] == kpiNode.id){
-						kpiNode.getUI().checkbox.disabled=false;
+						if (kpiNode.parentNode==null || kpiNode.parentNode.getUI().isChecked()){
+							kpiNode.getUI().checkbox.disabled=false;
+						}else{//if the parent is not checked than the checkbox must be desabled and dechecked
+							uoNode.suspendEvents(false);
+							kpiNode.suspendEvents(false);
+							kpiNode.getUI().toggleCheck(false);
+							var inxI = uoNode.attributes.modelinstancenodes.indexOf(kpiNode.id);
+							if(inxI>0){
+								uoNode.attributes.modelinstancenodes.splice(inxI,1);
+							}
+							var inxJ = uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id);
+							if(inxJ>0){
+								uoNode.attributes.modelinstancenodesOfThisSession.splice(inxJ,1);
+							}
+							kpiNode.resumeEvents( );
+							uoNode.resumeEvents( );
+						}
 						break;
 					}
 				}
 			}
 		}else{//the root must have all the kpi enabled
 			kpiNode.getUI().checkbox.disabled=false;
+		}
+		
+		if(children!=null){
+			for(var i=0; i<children.length; i++){
+				this.deepDisableCheck(children[i],uoNode);
+			}
+		}
+	}
+	
+
+	,deepDisableChildren: function(kpiNode, ouNode, checked){
+		
+		var children = kpiNode.childNodes;
+		if(children!=null){
+			for(var i=0; i<children.length; i++){
+				
+				children[i].getUI().checkbox.disabled=!checked;
+				if(!checked){
+					ouNode.attributes.modelinstancenodes.remove(children[i].attributes.modelInstId);
+					children[i].getUI().toggleCheck(false);
+					children[i].disable();
+					this.deepDisableChildren(children[i],ouNode, checked);
+				}else{
+					children[i].enable();
+				}
+			}
 		}
 	}
 	
@@ -1036,7 +1086,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				}
 			}
 		}
-		
+
 		kpiNode.getUI().toggleCheck(!isToUnCK);
 		//if(uoNode.attributes.childrenToCheck === undefined){
 			uoNode.attributes.childrenToCheck = new Array();
