@@ -24,7 +24,7 @@ package it.eng.qbe.query.serializer.json;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.i18n.ModelI18NProperties;
-import it.eng.qbe.model.i18n.QbeCacheManager;
+import it.eng.qbe.model.i18n.ModelI18NPropertiesCacheManager;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.query.CalculatedSelectField;

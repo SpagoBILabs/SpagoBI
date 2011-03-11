@@ -23,7 +23,7 @@ package it.eng.qbe.datasource;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.model.i18n.ModelI18NProperties;
-import it.eng.qbe.model.i18n.QbeCacheManager;
+import it.eng.qbe.model.i18n.ModelI18NPropertiesCacheManager;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
@@ -85,7 +85,7 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	public ModelI18NProperties getModelI18NProperties(Locale locale) {
 		ModelI18NProperties properties;
-		properties = QbeCacheManager.getInstance().getLabels( this , locale );
+		properties = ModelI18NPropertiesCacheManager.getInstance().getLabels( this , locale );
 		return properties;
 	}
 	

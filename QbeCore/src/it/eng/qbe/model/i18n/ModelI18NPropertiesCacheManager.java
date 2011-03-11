@@ -22,53 +22,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.i18n;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class QbeCache {
+public class ModelI18NPropertiesCacheManager {
+	ModelI18NPropertiesCache cache;
 	
-	private Map cache;
+	public static ModelI18NPropertiesCacheManager instance;
 	
-	public static QbeCache instance;
-	
-	public static QbeCache getInstance() {
+	public static ModelI18NPropertiesCacheManager getInstance() {
 		if( instance == null ) {
-			instance = new QbeCache();
+			instance = new ModelI18NPropertiesCacheManager();
 		}
 		return instance;
 	}
 	
-	private QbeCache() {
-		cache = new HashMap();
+	private ModelI18NPropertiesCacheManager( ) {
+		cache = ModelI18NPropertiesCache.getInstance();
 	}
 	
-	public Object getResource(String resourceName) {
-		return cache.get(resourceName);
-	}
-	
-	public void putResource(String resourceName, Object resource) {
-		cache.put(resourceName, resource);
-	}
 	
 	public void putLabels(IDataSource dataSource, ModelI18NProperties labels, Locale locale) {
-		String resourceName = dataSource.getName() + ":" + "labels";
-		if(locale != null) {
-			resourceName += "_" + locale.getLanguage();
-		}
-		putResource(resourceName, labels);
+		cache.putLabels(dataSource, labels, locale);
 	}
 	
 	public ModelI18NProperties getLabels(IDataSource dataSource, Locale locale) {
-		String resourceName = dataSource.getName() + ":" + "labels";
-		if(locale != null) {
-			resourceName += "_" + locale.getLanguage();
+		ModelI18NProperties labels;
+		
+		labels = cache.getLabels(dataSource, locale);
+		if(labels == null) {
+			
+			labels = dataSource.getConfiguration().loadModelI18NProperties(locale);
+			
+			cache.putLabels(dataSource, labels, locale);
 		}
-		return (ModelI18NProperties)getResource(resourceName);
+		
+		return labels;
 	}
+
 }
