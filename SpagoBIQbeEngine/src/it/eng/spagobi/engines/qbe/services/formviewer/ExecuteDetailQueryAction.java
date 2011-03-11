@@ -202,7 +202,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				
 				dataSet = new JDBCStandardDataSet();
 				//Session session = getDatamartModel().getDataSource().getSessionFactory().openSession();
-				DBConnection connection = (DBConnection)getDataSource().getConfiguration().getDataSourceProperties().get("connection");
+				DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());
 				dataSource.setHibDialectName(connection.getDialect());

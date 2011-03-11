@@ -75,7 +75,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");
 			
-			getDataSource().getConfiguration().setCalculatedFields(calculatedFields);
+			getDataSource().getConfiguration().saveCalculatedFields(calculatedFields);
 			
 			try {
 				writeBackToClient( new JSONAcknowledge() );

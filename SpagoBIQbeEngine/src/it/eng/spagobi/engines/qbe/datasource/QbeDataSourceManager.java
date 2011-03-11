@@ -95,8 +95,8 @@ public class QbeDataSourceManager implements IDataSourceManager {
 		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
-		compositeConfiguration.getDataSourceProperties().put("dblinkMap", dblinkMap);
-		compositeConfiguration.getDataSourceProperties().put("connection", connection);
+		compositeConfiguration.loadDataSourceProperties().put("dblinkMap", dblinkMap);
+		compositeConfiguration.loadDataSourceProperties().put("connection", connection);
 		if (dataSource == null) {
 			boolean isJPA = false;
 			File file;
