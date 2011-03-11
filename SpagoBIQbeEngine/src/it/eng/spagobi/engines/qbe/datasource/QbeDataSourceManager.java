@@ -22,7 +22,6 @@ package it.eng.spagobi.engines.qbe.datasource;
 
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DriverManager;
-import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -39,7 +38,7 @@ import java.util.Map;
 /**
  * @author Andrea Gioia
  */
-public class QbeDataSourceManager implements IDataSourceManager {
+public class QbeDataSourceManager {
 	
 	private NamingStrategy namingStartegy;
 	
@@ -55,8 +54,8 @@ public class QbeDataSourceManager implements IDataSourceManager {
 	public static QbeDataSourceManager getInstance() {
 		if(instance == null) {
 			NamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
-			QbeDataSourceCache dataSourceCache = QbeDataSourceCache.getInstance();
-			instance = new QbeDataSourceManager(namingStartegy, dataSourceCache);
+			//QbeDataSourceCache dataSourceCache = QbeDataSourceCache.getInstance();
+			instance = new QbeDataSourceManager(namingStartegy/*, dataSourceCache*/);
 		}
 		
 		return instance;
@@ -68,7 +67,7 @@ public class QbeDataSourceManager implements IDataSourceManager {
 	 * @param namingStartegy the naming startegy
 	 * @param dataSourceCache the data source cache
 	 */
-	private QbeDataSourceManager(NamingStrategy namingStartegy, QbeDataSourceCache dataSourceCache) {
+	private QbeDataSourceManager(NamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
 		setNamingStartegy(namingStartegy);
 		//setDataSourceCache(dataSourceCache);
 	}
