@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.core;
 
 
-import it.eng.qbe.catalogue.QueryCatalogue;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statment.IStatement;
 import it.eng.qbe.statment.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
