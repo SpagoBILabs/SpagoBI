@@ -4,5 +4,6 @@
 <wb-resource deploy-path="/" source-path="/src"/>
         <wb-resource deploy-path="/" source-path="/jpa"/>
         <wb-resource deploy-path="/" source-path="/hibernate"/>
+        <wb-resource deploy-path="/" source-path="/serialization"/>
 </wb-module>
 </project-modules>
