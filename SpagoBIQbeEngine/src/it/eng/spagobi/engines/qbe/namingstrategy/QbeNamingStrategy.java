@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.namingstrategy;
 
 import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.naming.NamingStrategy;
+import it.eng.qbe.datasource.naming.DataSourceNamingStrategy;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Andrea Gioia
  */
-public class QbeNamingStrategy implements NamingStrategy {
+public class QbeNamingStrategy implements DataSourceNamingStrategy {
 	
 	/** The Constant DATAMART_NAME_SUFFIX. */
 	public static final String DATAMART_NAME_SUFFIX = "DM";
@@ -50,7 +50,7 @@ public class QbeNamingStrategy implements NamingStrategy {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.naming.NamingStrategy#getDatamartName(java.util.List)
 	 */
-	public String getDatamartName(List datamartNames) {
+	private String getDatamartName(List datamartNames) {
 		String datamartName = getDatamartUnqualifiedName(datamartNames);
 		return datamartName;
 	}	
@@ -99,7 +99,7 @@ public class QbeNamingStrategy implements NamingStrategy {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.naming.NamingStrategy#getDatasourceName(java.util.List, it.eng.qbe.datasource.DBConnection)
 	 */
-	public String getDatasourceName(List datamartNames, DBConnection connection) {
+	public String getDataSourceName(List datamartNames, DBConnection connection) {
 		String datasourceName = getDatasourceUnqualifiedName(datamartNames, connection);
 		return datasourceName + STRING_SEPARETOR + DATASOURCE_NAME_SUFFIX;
 	}	

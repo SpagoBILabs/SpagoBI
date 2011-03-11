@@ -25,7 +25,7 @@ import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.naming.NamingStrategy;
+import it.eng.qbe.datasource.naming.DataSourceNamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class QbeDataSourceManager {
 	
-	private NamingStrategy namingStartegy;
+	private DataSourceNamingStrategy namingStartegy;
 	
 	//private DataSourceCache dataSourceCache;
 	
@@ -53,7 +53,7 @@ public class QbeDataSourceManager {
 	 */
 	public static QbeDataSourceManager getInstance() {
 		if(instance == null) {
-			NamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
+			DataSourceNamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
 			//QbeDataSourceCache dataSourceCache = QbeDataSourceCache.getInstance();
 			instance = new QbeDataSourceManager(namingStartegy/*, dataSourceCache*/);
 		}
@@ -67,7 +67,7 @@ public class QbeDataSourceManager {
 	 * @param namingStartegy the naming startegy
 	 * @param dataSourceCache the data source cache
 	 */
-	private QbeDataSourceManager(NamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
+	private QbeDataSourceManager(DataSourceNamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
 		setNamingStartegy(namingStartegy);
 		//setDataSourceCache(dataSourceCache);
 	}
@@ -89,7 +89,7 @@ public class QbeDataSourceManager {
 		IDataSource dataSource = null;
 		String dataSourceName = null;
 	
-		dataSourceName = getNamingStartegy().getDatasourceName(dataMartNames, connection);
+		dataSourceName = getNamingStartegy().getDataSourceName(dataMartNames, connection);
 		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
@@ -149,12 +149,12 @@ public class QbeDataSourceManager {
 	}
 	*/
 
-	private NamingStrategy getNamingStartegy() {
+	private DataSourceNamingStrategy getNamingStartegy() {
 		return namingStartegy;
 	}
 	
 
-	private void setNamingStartegy(NamingStrategy namingStartegy) {
+	private void setNamingStartegy(DataSourceNamingStrategy namingStartegy) {
 		this.namingStartegy = namingStartegy;
 	}
 }
