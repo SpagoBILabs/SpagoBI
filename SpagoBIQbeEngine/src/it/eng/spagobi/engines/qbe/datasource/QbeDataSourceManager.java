@@ -23,7 +23,7 @@ package it.eng.spagobi.engines.qbe.datasource;
 import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
-import it.eng.qbe.datasource.DataSourceFactory;
+import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
@@ -34,22 +34,19 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class QbeDataSourceManager.
- * 
  * @author Andrea Gioia
  */
 public class QbeDataSourceManager implements IDataSourceManager {
 	
 	private NamingStrategy namingStartegy;
 	
-	private DataSourceCache dataSourceCache;
+	//private DataSourceCache dataSourceCache;
 	
 	private static QbeDataSourceManager instance;
 	
@@ -76,7 +73,7 @@ public class QbeDataSourceManager implements IDataSourceManager {
 	 */
 	private QbeDataSourceManager(NamingStrategy namingStartegy, DataSourceCache dataSourceCache) {
 		setNamingStartegy(namingStartegy);
-		setDataSourceCache(dataSourceCache);
+		//setDataSourceCache(dataSourceCache);
 	}
 	
 	
@@ -96,9 +93,8 @@ public class QbeDataSourceManager implements IDataSourceManager {
 		IDataSource dataSource = null;
 		String dataSourceName = null;
 	
-		// TODO move caching management to driver
 		dataSourceName = getNamingStartegy().getDatasourceName(dataMartNames, connection);
-		dataSource = getDataSourceCache().getDataSource(dataSourceName);
+		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
 		compositeConfiguration.getDataSourceProperties().put("dblinkMap", dblinkMap);
@@ -136,46 +132,30 @@ public class QbeDataSourceManager implements IDataSourceManager {
 				}
 			}
 			String driverName = isJPA? "jpa": "hibernate";
-			dataSource = DataSourceFactory.buildDataSource(driverName,dataSourceName, compositeConfiguration);
-			getDataSourceCache().addDataSource(dataSourceName, dataSource);
+			dataSource = DriverManager.getDataSource(driverName, dataSourceName, compositeConfiguration);
+			
+			//getDataSourceCache().addDataSource(dataSourceName, dataSource);
 		} 
 		
 		return dataSource;
 	}
 
-	
-	/**
-	 * Gets the data source cache.
-	 * 
-	 * @return the data source cache
-	 */
+	/*
 	private DataSourceCache getDataSourceCache() {
 		return dataSourceCache;
 	}
 
-	/**
-	 * Sets the data source cache.
-	 * 
-	 * @param dataSourceCache the new data source cache
-	 */
+	
 	private void setDataSourceCache(DataSourceCache dataSourceCache) {
 		this.dataSourceCache = dataSourceCache;
 	}
+	*/
 
-	/**
-	 * Gets the naming startegy.
-	 * 
-	 * @return the naming startegy
-	 */
 	private NamingStrategy getNamingStartegy() {
 		return namingStartegy;
 	}
+	
 
-	/**
-	 * Sets the naming startegy.
-	 * 
-	 * @param namingStartegy the new naming startegy
-	 */
 	private void setNamingStartegy(NamingStrategy namingStartegy) {
 		this.namingStartegy = namingStartegy;
 	}
