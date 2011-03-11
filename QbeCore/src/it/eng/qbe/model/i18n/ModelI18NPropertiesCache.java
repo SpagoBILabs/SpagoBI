@@ -56,7 +56,7 @@ public class ModelI18NPropertiesCache {
 		cache.put(resourceName, resource);
 	}
 	
-	public void putLabels(IDataSource dataSource, ModelI18NProperties labels, Locale locale) {
+	public void putProperties(IDataSource dataSource, ModelI18NProperties labels, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
@@ -64,7 +64,7 @@ public class ModelI18NPropertiesCache {
 		putResource(resourceName, labels);
 	}
 	
-	public ModelI18NProperties getLabels(IDataSource dataSource, Locale locale) {
+	public ModelI18NProperties getProperties(IDataSource dataSource, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
