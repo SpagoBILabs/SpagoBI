@@ -20,6 +20,7 @@
  **/
 package it.eng.qbe.dao;
 
+import it.eng.qbe.datasource.configuration.DAOException;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;

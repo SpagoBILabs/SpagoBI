@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.model.structure.builder.hibernate;
 
-import it.eng.qbe.dao.DAOFactory;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
