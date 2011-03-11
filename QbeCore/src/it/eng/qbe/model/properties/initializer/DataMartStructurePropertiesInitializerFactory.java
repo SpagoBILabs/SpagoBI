@@ -36,9 +36,9 @@ public class DataMartStructurePropertiesInitializerFactory {
 		initializer = null;
 		
 		if(dataSource instanceof IHibernateDataSource) {
-			initializer = new HibernateDataMartStructurePropertiesInitializer((IHibernateDataSource)dataSource);
+			initializer = new SimpleDataMartStructurePropertiesInitializer((IHibernateDataSource)dataSource);
 		} else if (dataSource instanceof JPADataSource) {
-			initializer = new HibernateDataMartStructurePropertiesInitializer((IHibernateDataSource)dataSource);
+			initializer = new SimpleDataMartStructurePropertiesInitializer((IHibernateDataSource)dataSource);
 		} else {
 			throw new RuntimeException("Impossible to load datamart structure from a datasource of type [" + dataSource.getClass().getName() + "]");
 		}

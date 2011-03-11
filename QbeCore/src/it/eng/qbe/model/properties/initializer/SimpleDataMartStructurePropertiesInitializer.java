@@ -46,12 +46,12 @@ import java.util.Properties;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class HibernateDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
+public class SimpleDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
 		
 	IHibernateDataSource dataSource;
 	Map properties;
 	
-	public HibernateDataMartStructurePropertiesInitializer(IHibernateDataSource dataSource) {
+	public SimpleDataMartStructurePropertiesInitializer(IHibernateDataSource dataSource) {
 		this.dataSource =  dataSource;
 		this.properties = new HashMap();
 		properties.putAll( dataSource.getConfiguration().loadModelProperties() );
