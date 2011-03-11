@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.datasource;
 
-import it.eng.qbe.dao.DatamartJarFileDAOFilesystemImpl;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DriverManager;
@@ -28,7 +27,6 @@ import it.eng.qbe.datasource.IDataSourceManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -104,27 +102,27 @@ public class QbeDataSourceManager implements IDataSourceManager {
 			File file;
 			FileDataSourceConfiguration c;
 			
-			DatamartJarFileDAOFilesystemImpl jarFileDAO = new DatamartJarFileDAOFilesystemImpl(QbeEngineConfig.getInstance().getQbeDataMartDir());
+			JarFileRetriever jarFileRetriever = new JarFileRetriever(QbeEngineConfig.getInstance().getQbeDataMartDir());
 			
-			file = jarFileDAO.loadDatamartJarFile(dataMartNames.get(0));
+			file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(0));
 			c = new FileDataSourceConfiguration(dataMartNames.get(0),file);
 			compositeConfiguration.addSubConfiguration(c);
 			
 			try {				
-				isJPA = jarFileDAO.isAJPADatamartJarFile(file);
+				isJPA = jarFileRetriever.isAJPADatamartJarFile(file);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
 			}
 			
 			if(dataMartNames.size() > 1) {
 				for(int i = 1; i < dataMartNames.size(); i++) {
-					file = jarFileDAO.loadDatamartJarFile(dataMartNames.get(i));
+					file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(i));
 					c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
 					compositeConfiguration.addSubConfiguration(c);
 					
 					boolean b;
 					try {
-						b = jarFileDAO.isAJPADatamartJarFile(file);
+						b = jarFileRetriever.isAJPADatamartJarFile(file);
 					} catch (Exception e) {
 						throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
 					}
