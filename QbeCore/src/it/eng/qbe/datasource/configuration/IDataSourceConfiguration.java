@@ -31,8 +31,10 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Classes that implement this interface act as proxy toward all the resources needed in order to create
- * a new IDataSource. Actual needed resources depend on the type of IDataSource.
+ * Classes that implement this interface act as a proxy toward all the resources needed in order to create
+ * a new IDataSource. All the methods in these class do not cache managed resources so calling them can involve 
+ * an heavy overhead due to IO. It's up to the caller to implement the proper caching system in order to minimize 
+ * the use of this interface.
  * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -56,11 +58,24 @@ public interface IDataSourceConfiguration {
 	 */
 	Properties loadModelProperties();
 	
-	
-	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();
-	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
-	
+	/**
+	 * Facility method. It is equivalent to loadModelI18NProperties(null)
+	 * 
+	 * @return the i18n properties associated to the model for the given locale
+	 */
 	ModelI18NProperties loadModelI18NProperties();
+	
+	/**
+	 * Load the properties associated to the model that are dependant to the locale (i.e. labels, tooltips).
+	 * These properties are not injected into the model because the same datasource can be used at the same 
+	 * time by different objects  with different locales. Beacuse a datasource can consume a big amount of resources
+	 * (i.e. heap space) is not praticable to create different instances of the same datasource for 
+	 * any available locale.
+	 * 
+	 * @param locale The desired locale. If null load the default properties (i.e. label.properties)
+	 * 
+	 * @return the i18n properties associated to the model for the given locale
+	 */
 	ModelI18NProperties loadModelI18NProperties(Locale locale);
 	
 	/**
@@ -69,4 +84,8 @@ public interface IDataSourceConfiguration {
 	 * these properties depend on the DataSource implementation
 	 */
 	Map<String,Object> loadDataSourceProperties();
+	
+
+	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();
+	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
 }
