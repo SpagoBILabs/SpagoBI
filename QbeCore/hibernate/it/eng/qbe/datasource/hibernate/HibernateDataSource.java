@@ -62,7 +62,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	
 	private static transient Logger logger = Logger.getLogger(HibernateDataSource.class);
 
-	public HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
+	protected HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
 		dataMartModelAccessModality = new DataMartModelAccessModality();
 

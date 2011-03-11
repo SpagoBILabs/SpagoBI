@@ -21,10 +21,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.hibernate.HibernateDriver;
+import it.eng.qbe.datasource.jpa.JPADriver;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class DriverManager {
-	// manage drivers and datasorce caching
+	private static Map<String, IDriver> drivers;
+	
+	static {
+		drivers = new HashMap<String, IDriver>();
+		drivers.put(JPADriver.DRIVER_ID, new JPADriver());
+		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
+	}
+
+	public static IDataSource getDataSource(String driverName, String dataSourceName, IDataSourceConfiguration configuration) {
+		
+		IDataSource dataSource;
+		IDriver driver;
+		
+		driver = drivers.get(driverName);
+		if(driver == null) {
+			throw new SpagoBIRuntimeException("No suitable driver for id [" + driverName + "]");
+		}
+		
+		dataSource = driver.getDataSource(dataSourceName, configuration);
+	
+		return dataSource;
+	}
 }
