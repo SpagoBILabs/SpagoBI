@@ -131,7 +131,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			
-			DBConnection connection = (DBConnection)getDataSource().getConfiguration().getModelProperties().get("connection");
+			DBConnection connection = (DBConnection)getDataSource().getConfiguration().getDataSourceProperties().get("connection");
 			DataSource dataSource = getDataSource(connection);
 			
 			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
