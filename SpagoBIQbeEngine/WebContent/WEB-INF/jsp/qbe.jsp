@@ -46,7 +46,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
-<%@page import="it.eng.qbe.crosstab.bo.CrosstabDefinition"%>
+<%@page import="it.eng.qbe.crosstab.exporter.CrosstabDefinition"%>
 <%@page import="it.eng.qbe.commons.serializer.SerializerFactory"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
