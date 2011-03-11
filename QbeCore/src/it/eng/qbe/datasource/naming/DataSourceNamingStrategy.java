@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author Andrea Gioia
  */
-public interface NamingStrategy {
+public interface DataSourceNamingStrategy {
 	/**
 	 * Gets the datasource name.
 	 * 
