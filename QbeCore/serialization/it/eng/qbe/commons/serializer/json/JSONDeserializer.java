@@ -23,7 +23,7 @@ package it.eng.qbe.commons.serializer.json;
 
 import it.eng.qbe.commons.serializer.Deserializer;
 import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.crosstab.serializer.json.CrosstabJSONDeserializer;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
