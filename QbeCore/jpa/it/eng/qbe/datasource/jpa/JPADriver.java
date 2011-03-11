@@ -28,6 +28,7 @@ import java.util.Map;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.IDriver;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.naming.SimpleDataSourceNamingStrategy;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -44,6 +45,7 @@ public class JPADriver implements IDriver {
 	
 	public static final String DRIVER_ID = "hibernate";
 	protected static final Map<String, IDataSource> cache = new HashMap<String, IDataSource>();
+	protected static final SimpleDataSourceNamingStrategy namingStrategy = new SimpleDataSourceNamingStrategy();
 	
 	public JPADriver() {
 		dataSourceCacheEnabled = true;
@@ -55,14 +57,17 @@ public class JPADriver implements IDriver {
 		return "hibernate";
 	}
 
-	public IDataSource getDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
+	public IDataSource getDataSource(IDataSourceConfiguration configuration) {
 		IDataSource dataSource;
-
+		String dataSourceName;
+		
 		if(maxDataSource > 0 && openedDataSource == maxDataSource) {
 			throw new SpagoBIRuntimeException("Maximum  number of open data sources reached");
 		}
 		
 		dataSource = null;
+		dataSourceName = namingStrategy.getDataSourceName(configuration);
+		
 		if(dataSourceCacheEnabled) {
 			dataSource = cache.containsKey(dataSourceName)? 
 						 cache.get(dataSourceName): 

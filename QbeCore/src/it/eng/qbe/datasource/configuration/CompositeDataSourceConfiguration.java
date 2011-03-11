@@ -53,6 +53,10 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		this.subConfigurations = new ArrayList<IDataSourceConfiguration>();
 	}
 	
+	public CompositeDataSourceConfiguration() {
+		this(null);
+	}
+	
 	public CompositeDataSourceConfiguration(String modelName) {
 		this.modelName = modelName;
 		this.dataSourceProperties = new HashMap<String,Object>();
@@ -62,6 +66,10 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	
 	public String getModelName() {
 		return modelName;
+	}
+	
+	public void setModelName(String modelName) {
+		this.modelName = modelName;
 	}
 
 	/* (non-Javadoc)

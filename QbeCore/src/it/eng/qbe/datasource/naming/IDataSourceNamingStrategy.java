@@ -20,15 +20,14 @@
  **/
 package it.eng.qbe.datasource.naming;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
-import java.util.List;
 
 /**
  * The Interface NamingStrategy.
  * 
  * @author Andrea Gioia
  */
-public interface DataSourceNamingStrategy {
-	String getDataSourceName(List datamartNames, DBConnection connection) ;
+public interface IDataSourceNamingStrategy {
+	String getDataSourceName(IDataSourceConfiguration configuration) ;
 }

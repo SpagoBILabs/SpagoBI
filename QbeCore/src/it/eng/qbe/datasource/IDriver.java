@@ -31,7 +31,7 @@ import java.util.List;
  */
 public interface IDriver {
 	String getName();
-	IDataSource getDataSource( String dataSourceName, IDataSourceConfiguration configuration);
+	IDataSource getDataSource( IDataSourceConfiguration configuration);
 	void setDataSourceCacheEnabled(boolean enabled);
 	boolean isDataSourceCacheEnabled();
 	void setMaxDataSource(int n);
