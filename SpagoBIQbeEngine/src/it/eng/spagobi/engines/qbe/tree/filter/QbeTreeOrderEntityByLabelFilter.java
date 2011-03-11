@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.tree.filter;
 
-import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartEntity;
