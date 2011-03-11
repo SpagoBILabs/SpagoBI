@@ -19,10 +19,9 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.cache;
+package it.eng.qbe.model.i18n;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.ModelI18NProperties;
 
 import java.util.HashMap;
 import java.util.Locale;
