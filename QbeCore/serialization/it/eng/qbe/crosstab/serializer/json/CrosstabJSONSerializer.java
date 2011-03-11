@@ -22,10 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.crosstab.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition.Column;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition.Row;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Column;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Measure;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Row;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;

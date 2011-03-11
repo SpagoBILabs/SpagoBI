@@ -19,9 +19,9 @@
  * 
  **/
 
-package it.eng.qbe.crosstab.bo;
+package it.eng.qbe.crosstab.exporter;
 
-import it.eng.qbe.crosstab.bo.CrosstabDefinition.Measure;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Measure;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
