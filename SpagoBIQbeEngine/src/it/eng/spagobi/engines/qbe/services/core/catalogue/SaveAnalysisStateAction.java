@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;

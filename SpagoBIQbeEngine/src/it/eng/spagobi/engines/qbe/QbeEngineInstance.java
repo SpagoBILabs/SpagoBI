@@ -21,12 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.catalogue.QueryCatalogue;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statment.IStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;

@@ -21,8 +21,8 @@
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
-import it.eng.qbe.crosstab.bo.CrossTab;
-import it.eng.qbe.crosstab.bo.CrosstabDefinition;
+import it.eng.qbe.crosstab.exporter.CrossTab;
+import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.Query;
