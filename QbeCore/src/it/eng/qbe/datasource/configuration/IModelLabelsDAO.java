@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 
 import java.util.Locale;
 
@@ -37,7 +37,7 @@ public interface IModelLabelsDAO {
 	 * 
 	 * @return the datamart labels
 	 */
-	ModelLabels loadDatamartLabels();
+	ModelI18NProperties loadDatamartLabels();
 	
 	/**
 	 * Load model labels.
@@ -46,5 +46,5 @@ public interface IModelLabelsDAO {
 	 * 
 	 * @return the datamart labels
 	 */
-	ModelLabels loadDatamartLabels(Locale locale);
+	ModelI18NProperties loadDatamartLabels(Locale locale);
 }

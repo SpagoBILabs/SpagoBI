@@ -24,7 +24,7 @@ package it.eng.qbe.cache;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,17 +51,17 @@ public class QbeCacheManager {
 	}
 	
 	
-	public void putLabels(IDataSource dataSource, ModelLabels labels, Locale locale) {
+	public void putLabels(IDataSource dataSource, ModelI18NProperties labels, Locale locale) {
 		cache.putLabels(dataSource, labels, locale);
 	}
 	
-	public ModelLabels getLabels(IDataSource dataSource, Locale locale) {
-		ModelLabels labels;
+	public ModelI18NProperties getLabels(IDataSource dataSource, Locale locale) {
+		ModelI18NProperties labels;
 		
 		labels = cache.getLabels(dataSource, locale);
 		if(labels == null) {
 			
-			labels = dataSource.getConfiguration().getModelLabels(locale);
+			labels = dataSource.getConfiguration().getModelI18NProperties(locale);
 			
 			cache.putLabels(dataSource, labels, locale);
 		}

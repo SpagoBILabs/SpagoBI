@@ -24,7 +24,7 @@ package it.eng.qbe.query.serializer.json;
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.query.CalculatedSelectField;
@@ -139,7 +139,7 @@ public class QueryJSONSerializer {
 		DataMartField datamartField;
 		JSONObject fieldJSON;
 		Iterator it;
-		ModelLabels datamartLabels;
+		ModelI18NProperties datamartLabels;
 		String label, longDescription;
 		
 		logger.debug("IN");
@@ -297,7 +297,7 @@ public class QueryJSONSerializer {
 		return result;
 	}	
 	
-	public static String getFieldLongDescription(DataMartField field, ModelLabels datamartLabels) {
+	public static String getFieldLongDescription(DataMartField field, ModelI18NProperties datamartLabels) {
 		String label = field.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getLabel(field);
@@ -308,7 +308,7 @@ public class QueryJSONSerializer {
 		else return getEntityLongDescription(parent, datamartLabels) + " : " + extendedLabel;
 	}
 	
-	public static String getEntityLongDescription(DataMartEntity entity, ModelLabels datamartLabels) {
+	public static String getEntityLongDescription(DataMartEntity entity, ModelI18NProperties datamartLabels) {
 		String label = entity.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getLabel(entity);
@@ -352,7 +352,7 @@ public class QueryJSONSerializer {
 		DataMartField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelLabels datamartLabels;
+		ModelI18NProperties datamartLabels;
 		DataMartField datamartField;
 		
 		filters = query.getWhereFields();
@@ -496,7 +496,7 @@ public class QueryJSONSerializer {
 		DataMartField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelLabels datamartLabels;
+		ModelI18NProperties datamartLabels;
 		DataMartField datamartField;
 		
 		havings = query.getHavingFields();

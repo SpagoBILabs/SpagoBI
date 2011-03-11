@@ -26,13 +26,11 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 
 import java.util.Properties;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DatamartLabels.
  * 
  * @author Andrea Gioia
  */
-public class ModelLabels {
+public class ModelI18NProperties {
 	
 	/** The properties. */
 	private Properties  properties;
@@ -40,7 +38,7 @@ public class ModelLabels {
 	/**
 	 * Instantiates a new datamart labels.
 	 */
-	public ModelLabels() {
+	public ModelI18NProperties() {
 		this(new Properties());
 	}	
 	
@@ -49,7 +47,7 @@ public class ModelLabels {
 	 * 
 	 * @param properties the properties
 	 */
-	public ModelLabels(Properties  properties) {
+	public ModelI18NProperties(Properties  properties) {
 		setProperties(properties);
 	}	
 	
@@ -110,7 +108,7 @@ public class ModelLabels {
 		this.properties = properties;
 	}
 	
-	public void addDatamartLabels(ModelLabels labels) {
+	public void addDatamartLabels(ModelI18NProperties labels) {
 		if (labels != null && labels.properties != null && !labels.properties.isEmpty()) {
 			this.properties.putAll(labels.properties);
 		}

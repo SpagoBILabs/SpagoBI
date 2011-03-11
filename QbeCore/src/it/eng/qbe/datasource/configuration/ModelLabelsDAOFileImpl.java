@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,16 +47,16 @@ public class ModelLabelsDAOFileImpl implements IModelLabelsDAO {
     }
     
     
-	public ModelLabels loadDatamartLabels() {
+	public ModelI18NProperties loadDatamartLabels() {
 		return loadDatamartLabels(null);
 	}
 
 	
-	public ModelLabels loadDatamartLabels(Locale locale) {
+	public ModelI18NProperties loadDatamartLabels(Locale locale) {
 		Properties properties = null;
 		
 		if(modelJarFile == null) {
-			return new ModelLabels();
+			return new ModelI18NProperties();
 		}		
 		
 		JarFile jf;
@@ -68,7 +68,7 @@ public class ModelLabelsDAOFileImpl implements IModelLabelsDAO {
 			e.printStackTrace();
 		}
 		
-		return new ModelLabels(properties);
+		return new ModelI18NProperties(properties);
 	}
 	
 	/**
