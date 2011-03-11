@@ -24,6 +24,7 @@ package it.eng.spagobi.engines.jasperreport.exporters;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,10 @@ import net.sf.jasperreports.engine.export.JRGraphics2DExporterParameter;
 public abstract class JRImageExporter implements JRExporter {
 
 	Map<JRExporterParameter, Object> parameters;
+	
+	public JRImageExporter() {
+		parameters = new HashMap<JRExporterParameter, Object>();
+	}
 	
 	public abstract void exportReport() throws JRException;
 
