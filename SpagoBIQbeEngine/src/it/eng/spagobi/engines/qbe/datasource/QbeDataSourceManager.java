@@ -96,8 +96,8 @@ public class QbeDataSourceManager implements IDataSourceManager {
 		IDataSource dataSource = null;
 		String dataSourceName = null;
 	
+		// TODO move caching management to driver
 		dataSourceName = getNamingStartegy().getDatasourceName(dataMartNames, connection);
-		
 		dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
