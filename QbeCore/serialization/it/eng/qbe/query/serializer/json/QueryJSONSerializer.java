@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query.serializer.json;
 
-import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.i18n.ModelI18NProperties;
+import it.eng.qbe.model.i18n.QbeCacheManager;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.query.CalculatedSelectField;
