@@ -201,7 +201,7 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 				
 				dataSet = new JDBCStandardDataSet();
-				DBConnection connection = (DBConnection)getDataSource().getConfiguration().getDataSourceProperties().get("connection");
+				DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());
 				dataSource.setHibDialectName(connection.getDialect());
