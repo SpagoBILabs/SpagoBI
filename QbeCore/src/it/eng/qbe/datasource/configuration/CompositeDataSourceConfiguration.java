@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -97,21 +97,21 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelLabels()
 	 */
-	public ModelLabels getModelLabels() {
-		return getModelLabels(null);
+	public ModelI18NProperties getModelI18NProperties() {
+		return getModelI18NProperties(null);
 	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelLabels(java.util.Locale)
 	 */
-	public ModelLabels getModelLabels(Locale locale) {
-		ModelLabels labels = new ModelLabels();
+	public ModelI18NProperties getModelI18NProperties(Locale locale) {
+		ModelI18NProperties labels = new ModelI18NProperties();
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
 			IDataSourceConfiguration configuration = it.next();
-			ModelLabels modelLabels = configuration.getModelLabels(locale);
+			ModelI18NProperties modelLabels = configuration.getModelI18NProperties(locale);
 			if(locale != null && labels == null) {
-				modelLabels = configuration.getModelLabels();
+				modelLabels = configuration.getModelI18NProperties();
 			}
 			labels.addDatamartLabels(modelLabels);
 		}
