@@ -30,13 +30,5 @@ import java.util.List;
  * @author Andrea Gioia
  */
 public interface DataSourceNamingStrategy {
-	/**
-	 * Gets the datasource name.
-	 * 
-	 * @param datamartNames the datamart names
-	 * @param connection the connection
-	 * 
-	 * @return the datasource name
-	 */
-	String getDatasourceName(List datamartNames, DBConnection connection) ;
+	String getDataSourceName(List datamartNames, DBConnection connection) ;
 }
