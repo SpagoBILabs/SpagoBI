@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.qbe.tree.filter;
 
 import it.eng.qbe.cache.QbeCacheManager;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.ModelLabels;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartEntity;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		
 		/** The datamart model. */
 		private IDataSource dataSource;
-		private ModelLabels datamartLabels;
+		private ModelI18NProperties datamartLabels;
 		
 		/**
 		 * Instantiates a new comparable entities list.
@@ -90,7 +90,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			this.dataSource = dataSource;
 			setDatamartLabels( QbeCacheManager.getInstance().getLabels( dataSource , locale ) );
 			if( getDatamartLabels() == null) {
-				setDatamartLabels( new ModelLabels() );
+				setDatamartLabels( new ModelI18NProperties() );
 			}
 		}
 		
@@ -159,11 +159,11 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			return toReturn;
 		}
 
-		private ModelLabels getDatamartLabels() {
+		private ModelI18NProperties getDatamartLabels() {
 			return datamartLabels;
 		}
 
-		private void setDatamartLabels(ModelLabels datamartLabels) {
+		private void setDatamartLabels(ModelI18NProperties datamartLabels) {
 			this.datamartLabels = datamartLabels;
 		}
 		
