@@ -19,6 +19,8 @@ import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
 import it.eng.spagobi.kpi.model.bo.ModelInstance;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
+import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -194,9 +196,25 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			logger.debug("Loading the kpi model instances linked to the goal: ");
 			Integer grantId =  getAttributeAsInteger("grantId");
 			Integer goalNodeId =  getAttributeAsInteger("goalNodeId");
+			Integer ouNodeId =  getAttributeAsInteger("ouNodeId");
 			logger.debug("grantId: "+grantId+", goalNodeId"+goalNodeId);
 			OrganizationalUnitGrant grant = DAOFactory.getOrganizationalUnitDAO().getGrant(grantId);
 			ModelInstance mi = grant.getModelInstance();
+			
+			List<OrganizationalUnitNodeWithGrant> ousWithGrants = DAOFactory.getOrganizationalUnitDAO().getGrantNodes(ouNodeId, grantId);
+			List<OrganizationalUnitGrantNode> grants = new ArrayList<OrganizationalUnitGrantNode>();
+			for(int i=0; i<ousWithGrants.size(); i++){
+				grants.addAll(ousWithGrants.get(i).getGrants());
+			}
+			List<Integer> modelInstances = new ArrayList<Integer>();
+			
+			for(int i=0; i<grants.size(); i++){
+				modelInstances.add(grants.get(i).getModelInstanceNode().getModelInstanceNodeId());
+			}
+			
+			if(modelInstances.contains(mi.getId())){
+				mi.setActive(true);
+			}
 			
 			try {
 				JSONObject modelInstanceJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( mi, null);

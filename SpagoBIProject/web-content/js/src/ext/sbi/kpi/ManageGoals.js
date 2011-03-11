@@ -476,6 +476,11 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		}
 		conf.treeLoaderBaseParameters = {'grantId': this.selectedGrantId, 'ouNodeId': this.selectedOUNode, 'goalNodeId': goalNodeId}
 		conf.rootNode = this.kpiTreeRoot;
+		
+		if(Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.goalModelInstanceTreeUI) {
+			Ext.apply(conf,Sbi.settings.kpi.goalModelInstanceTreeUI);
+		}
+		
 		this.goalDetailskpiPanel= new Sbi.widgets.ModelInstanceTree.createGoalModelInstanceTree(conf);
 
 		this.goalDetailskpiPanel.doLayout();
@@ -620,7 +625,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 		}
 		Ext.Ajax.request({
 			url: this.configurationObject.manageGoalService,
-			params: {'grantId': thisPanel.selectedGrantId, 'goalNodeId': goalNodeId},
+			params: {'grantId': thisPanel.selectedGrantId, 'goalNodeId': goalNodeId, 'ouNodeId': this.ouId },
 			method: 'POST',
 			success: function(response, options) {
 				if (response !== undefined && response.responseText!== undefined) {
@@ -643,7 +648,6 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 							threshold2: kpiInstRoot.threshold2,
 							kpiInstActive: kpiInstRoot.kpiInstActive
 						}
-						
 					thisPanel.updateGoalDetailsKpiRoot(root);
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));

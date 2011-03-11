@@ -131,7 +131,6 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
 			 disabled= 'disabled="disabled"';
 		 }
         
-        
         var buf = [
              '<li class="x-tree-node"><div ext:tree-node-id="',n.id,'" class="x-tree-node-el x-tree-node-leaf ', a.cls,'">',
                 '<div class="x-tree-col" style="width:',c.width-bw,'px;">',
@@ -146,7 +145,10 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
              c = cols[i];
              
              if(c.visibility!='hidden'){
-	             if(c.fieldType == 'input'){
+                 if(t.goalCustom!=null && t.goalCustom && !n.attributes.leaf){
+	            	 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
+	            			 '<div class="x-tree-col-text"> <br /></div>',"</div>");
+            	 }else if(c.fieldType == 'input'){
 	            	 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
 	            			 '<div class="x-tree-col-text"><input ',disabled,' type="text" id=',c.columnId,n.columnValues,'  style="width: 100%" value="',(c.renderer ? c.renderer(a[c.dataIndex], n, a) : a[c.dataIndex]),'"/><br /></div>',"</div>");
 	             }else if(c.fieldType == 'text'){
@@ -216,6 +218,10 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
         this.iconNode = cs[2];
         this.anchor = cs[3];
         this.textNode = cs[3].firstChild;
+              
+        if(t.goalCustom!=null && t.goalCustom && !n.attributes.leaf){
+        	n.disabled=false;
+        }
         
         
         if(checkboxConf != null ){
