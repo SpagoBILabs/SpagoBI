@@ -20,14 +20,14 @@
  **/
 package it.eng.qbe.datasource;
 
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.qbe.model.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
 
-import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Andrea Gioia
@@ -37,13 +37,12 @@ public interface IDataSource {
 	String getName();
 	IDataSourceConfiguration getConfiguration();
 	
-	
 	DataMartModelStructure getDataMartModelStructure();
 	DataMartModelAccessModality getDataMartModelAccessModality();
 	void setDataMartModelAccessModality(DataMartModelAccessModality dataMartModelAccessModality) ;
+	ModelI18NProperties getModelI18NProperties(Locale locale);
 	
 	void open();
-	//void open(Properties connectionProperties);
 	boolean isOpen();
 	void close();
 	
