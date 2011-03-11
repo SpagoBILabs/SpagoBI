@@ -142,7 +142,7 @@ public class JPADataSource extends AbstractDataSource {
 	}
 	
 	public DBConnection getConnection() {
-		DBConnection connection = (DBConnection)configuration.getDataSourceProperties().get("connection");
+		DBConnection connection = (DBConnection)configuration.loadDataSourceProperties().get("connection");
 		return connection;
 	}
 	

@@ -85,7 +85,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 			}
 			
 			
-			Map calculatedFields = subConfigurations.get(i).getCalculatedFields();
+			Map calculatedFields = subConfigurations.get(i).loadCalculatedFields();
 			dataMartStructure.setCalculatedFields(calculatedFields);
 			
 			classMetadata = sf.getAllClassMetadata();

@@ -65,27 +65,27 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 		return modelName;
 	}
 	
-	public Properties getModelProperties() {
+	public Properties loadModelProperties() {
 		return modelPropertiesDAO.loadModelProperties();
 	}
 	
-	public ModelI18NProperties getModelI18NProperties() {
+	public ModelI18NProperties loadModelI18NProperties() {
 		return modelLabelsDAOFileImpl.loadDatamartLabels();
 	}
 
-	public ModelI18NProperties getModelI18NProperties(Locale locale) {
+	public ModelI18NProperties loadModelI18NProperties(Locale locale) {
 		return modelLabelsDAOFileImpl.loadDatamartLabels(locale);
 	}
 
-	public Map getCalculatedFields() {
+	public Map loadCalculatedFields() {
 		return calculatedFieldsDAO.loadCalculatedFields();
 	}
 
-	public void setCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
+	public void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
 		calculatedFieldsDAO.saveCalculatedFields( calculatedFields );
 	}
 
-	public Map<String, Object> getDataSourceProperties() {
+	public Map<String, Object> loadDataSourceProperties() {
 		return dataSourceProperties;
 	}
 }

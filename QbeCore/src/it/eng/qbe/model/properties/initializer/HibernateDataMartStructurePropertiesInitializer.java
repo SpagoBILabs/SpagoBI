@@ -54,7 +54,7 @@ public class HibernateDataMartStructurePropertiesInitializer implements IDataMar
 	public HibernateDataMartStructurePropertiesInitializer(IHibernateDataSource dataSource) {
 		this.dataSource =  dataSource;
 		this.properties = new HashMap();
-		properties.putAll( dataSource.getConfiguration().getModelProperties() );
+		properties.putAll( dataSource.getConfiguration().loadModelProperties() );
 	}
 	
 

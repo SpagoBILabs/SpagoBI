@@ -91,7 +91,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		setEntityManager(getDataSource().getEntityManager());
 		Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
 			
-		Map calculatedFields = getDataSource().getConfiguration().getCalculatedFields();
+		Map calculatedFields = getDataSource().getConfiguration().loadCalculatedFields();
 		dataMartStructure.setCalculatedFields(calculatedFields);
 			
 		classMetadata = getEntityManager().getMetamodel();

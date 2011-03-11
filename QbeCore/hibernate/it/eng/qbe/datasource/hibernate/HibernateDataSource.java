@@ -176,12 +176,12 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 	
 	private DBConnection getConnection() {
-		DBConnection connection = (DBConnection)configuration.getDataSourceProperties().get("connection");
+		DBConnection connection = (DBConnection)configuration.loadDataSourceProperties().get("connection");
 		return connection;
 	}
 
 	private Map getDbLinkMap() {
-		Map dbLinkMap = (Map)configuration.getDataSourceProperties().get("dblinkMap");
+		Map dbLinkMap = (Map)configuration.loadDataSourceProperties().get("dblinkMap");
 		return dbLinkMap;
 	}
 	
