@@ -21,9 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.conf.QbeCoreSettings;
-
-import java.io.File;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -43,12 +40,6 @@ public class QbeEngine {
     private static void initEngine() {
     	if(engineConfig == null) {
     		engineConfig = QbeEngineConfig.getInstance();
-    			
-    		Object o;
-    		
-    		if( (o = engineConfig.getQbeDataMartDir()) != null) {
-    			QbeCoreSettings.getInstance().setQbeDataMartDir( (File)o );
-    		}    			
     	}
 	}
     
