@@ -88,7 +88,8 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			
 			list = new ArrayList();
 			this.dataSource = dataSource;
-			setDatamartLabels( QbeCacheManager.getInstance().getLabels( dataSource , locale ) );
+			//setDatamartLabels( QbeCacheManager.getInstance().getLabels( dataSource , locale ) );
+			setDatamartLabels( dataSource.getModelI18NProperties(locale) );
 			if( getDatamartLabels() == null) {
 				setDatamartLabels( new ModelI18NProperties() );
 			}

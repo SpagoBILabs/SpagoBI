@@ -75,7 +75,8 @@ public class ExtJsQbeTreeBuilder  {
 	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName)  {			
 		setDatamartModel(dataSource);
 		setLocale(locale);
-		setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
+		//setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
+		setDatamartLabels( getDataSource().getModelI18NProperties( getLocale() ) );
 		if( getDatamartLabels() == null) {
 			setDatamartLabels( new ModelI18NProperties() );
 		}
