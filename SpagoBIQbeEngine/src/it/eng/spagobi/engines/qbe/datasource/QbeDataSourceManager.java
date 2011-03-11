@@ -25,7 +25,7 @@ import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.datasource.naming.DataSourceNamingStrategy;
+import it.eng.qbe.datasource.naming.IDataSourceNamingStrategy;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class QbeDataSourceManager {
 	
-	private DataSourceNamingStrategy namingStartegy;
+	private IDataSourceNamingStrategy namingStartegy;
 	
 	//private DataSourceCache dataSourceCache;
 	
@@ -53,7 +53,7 @@ public class QbeDataSourceManager {
 	 */
 	public static QbeDataSourceManager getInstance() {
 		if(instance == null) {
-			DataSourceNamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
+			IDataSourceNamingStrategy namingStartegy = QbeEngineConfig.getInstance().getNamingStrategy();
 			//QbeDataSourceCache dataSourceCache = QbeDataSourceCache.getInstance();
 			instance = new QbeDataSourceManager(namingStartegy/*, dataSourceCache*/);
 		}
@@ -67,7 +67,7 @@ public class QbeDataSourceManager {
 	 * @param namingStartegy the naming startegy
 	 * @param dataSourceCache the data source cache
 	 */
-	private QbeDataSourceManager(DataSourceNamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
+	private QbeDataSourceManager(IDataSourceNamingStrategy namingStartegy /*, QbeDataSourceCache dataSourceCache*/) {
 		setNamingStartegy(namingStartegy);
 		//setDataSourceCache(dataSourceCache);
 	}
@@ -86,55 +86,53 @@ public class QbeDataSourceManager {
 	 */
 	public IDataSource getDataSource(List<String> dataMartNames, Map dblinkMap, DBConnection connection) {
 		
-		IDataSource dataSource = null;
-		String dataSourceName = null;
+		IDataSource dataSource;
+		String dataSourceName;
 	
-		dataSourceName = getNamingStartegy().getDataSourceName(dataMartNames, connection);
+		// = getNamingStartegy().getDataSourceName(dataMartNames, connection);
 		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
-		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(dataSourceName);
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 		compositeConfiguration.loadDataSourceProperties().put("dblinkMap", dblinkMap);
 		compositeConfiguration.loadDataSourceProperties().put("connection", connection);
-		if (dataSource == null) {
-			boolean isJPA = false;
-			File file;
-			FileDataSourceConfiguration c;
+		
+		boolean isJPA = false;
+		File file;
+		FileDataSourceConfiguration c;
 			
-			JarFileRetriever jarFileRetriever = new JarFileRetriever(QbeEngineConfig.getInstance().getQbeDataMartDir());
+		JarFileRetriever jarFileRetriever = new JarFileRetriever(QbeEngineConfig.getInstance().getQbeDataMartDir());
 			
-			file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(0));
-			c = new FileDataSourceConfiguration(dataMartNames.get(0),file);
-			compositeConfiguration.addSubConfiguration(c);
+		file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(0));
+		c = new FileDataSourceConfiguration(dataMartNames.get(0),file);
+		compositeConfiguration.addSubConfiguration(c);
 			
-			try {				
-				isJPA = jarFileRetriever.isAJPADatamartJarFile(file);
-			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
-			}
+		try {				
+			isJPA = jarFileRetriever.isAJPADatamartJarFile(file);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
+		}
 			
-			if(dataMartNames.size() > 1) {
-				for(int i = 1; i < dataMartNames.size(); i++) {
-					file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(i));
-					c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
-					compositeConfiguration.addSubConfiguration(c);
-					
-					boolean b;
-					try {
-						b = jarFileRetriever.isAJPADatamartJarFile(file);
-					} catch (Exception e) {
-						throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
-					}
-					if(isJPA != b) {
-						throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
-					}
+		if(dataMartNames.size() > 1) {
+			for(int i = 1; i < dataMartNames.size(); i++) {
+				file = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(i));
+				c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
+				compositeConfiguration.addSubConfiguration(c);
+				
+				boolean b;
+				try {
+					b = jarFileRetriever.isAJPADatamartJarFile(file);
+				} catch (Exception e) {
+					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
+				}
+				if(isJPA != b) {
+					throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
 				}
 			}
-			String driverName = isJPA? "jpa": "hibernate";
-			dataSource = DriverManager.getDataSource(driverName, dataSourceName, compositeConfiguration);
+		}
+		String driverName = isJPA? "jpa": "hibernate";
+		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration);
 			
-			//getDataSourceCache().addDataSource(dataSourceName, dataSource);
-		} 
-		
+			
 		return dataSource;
 	}
 
@@ -149,12 +147,12 @@ public class QbeDataSourceManager {
 	}
 	*/
 
-	private DataSourceNamingStrategy getNamingStartegy() {
+	private IDataSourceNamingStrategy getNamingStartegy() {
 		return namingStartegy;
 	}
 	
 
-	private void setNamingStartegy(DataSourceNamingStrategy namingStartegy) {
+	private void setNamingStartegy(IDataSourceNamingStrategy namingStartegy) {
 		this.namingStartegy = namingStartegy;
 	}
 }

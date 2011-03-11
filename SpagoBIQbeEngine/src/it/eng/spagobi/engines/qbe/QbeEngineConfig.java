@@ -20,10 +20,10 @@
  **/
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.datasource.naming.DataSourceNamingStrategy;
+import it.eng.qbe.datasource.naming.IDataSourceNamingStrategy;
+import it.eng.qbe.datasource.naming.SimpleDataSourceNamingStrategy;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.engines.qbe.namingstrategy.QbeNamingStrategy;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.file.FileUtils;
@@ -207,8 +207,8 @@ public class QbeEngineConfig {
 	 * 
 	 * @return the naming strategy
 	 */
-	public DataSourceNamingStrategy getNamingStrategy() {
-		return new QbeNamingStrategy();
+	public IDataSourceNamingStrategy getNamingStrategy() {
+		return new SimpleDataSourceNamingStrategy();
 	}
 	
 	
