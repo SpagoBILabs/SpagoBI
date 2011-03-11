@@ -33,7 +33,7 @@ public class JPAStatementTest {
 		//create jpaDataSource (entityManager)
 		
 		JPADriver driver = new JPADriver();
-		JPADataSource jpaDS = (JPADataSource)driver.getDataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));	
+		JPADataSource jpaDS = (JPADataSource)driver.getDataSource(new FileDataSourceConfiguration("TEST_JPA", null));	
 		
 		
 		

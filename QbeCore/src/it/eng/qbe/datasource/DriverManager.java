@@ -42,7 +42,7 @@ public class DriverManager {
 		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
 	}
 
-	public static IDataSource getDataSource(String driverName, String dataSourceName, IDataSourceConfiguration configuration) {
+	public static IDataSource getDataSource(String driverName, IDataSourceConfiguration configuration) {
 		
 		IDataSource dataSource;
 		IDriver driver;
@@ -52,7 +52,7 @@ public class DriverManager {
 			throw new SpagoBIRuntimeException("No suitable driver for id [" + driverName + "]");
 		}
 		
-		dataSource = driver.getDataSource(dataSourceName, configuration);
+		dataSource = driver.getDataSource(configuration);
 	
 		return dataSource;
 	}
