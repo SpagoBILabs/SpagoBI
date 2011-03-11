@@ -5,6 +5,7 @@ package it.eng.qbe.test.jpa;
 
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.jpa.JPADriver;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
 import it.eng.qbe.model.structure.DataMartModelStructure;
@@ -33,9 +34,9 @@ public class JPAModelStructureTest {
 		//create jpaDataSource (entityManager)
 		
 		
-		//forzature: da capire come valorizzare ed eliminarle
-		JPADataSource jpaDS = new JPADataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));
-		//fine forzature
+		JPADriver driver = new JPADriver();
+		JPADataSource jpaDS = (JPADataSource)driver.getDataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));
+
 		
 		//EntityManagerFactory emf = jpaDS.getEntityManagerFactory();
 		EntityManager em = jpaDS.getEntityManager();

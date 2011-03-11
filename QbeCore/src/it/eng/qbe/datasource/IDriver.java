@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
 import java.util.List;
@@ -31,5 +30,11 @@ import java.util.List;
  *
  */
 public interface IDriver {
-	public IDataSource getDataSource( String dataSourceName, List<IDataSourceConfiguration> configurations);
+	String getName();
+	IDataSource getDataSource( String dataSourceName, IDataSourceConfiguration configuration);
+	void setDataSourceCacheEnabled(boolean enabled);
+	boolean isDataSourceCacheEnabled();
+	void setMaxDataSource(int n);
+	boolean acceptDataSourceConfiguration();
+	
 }

@@ -5,6 +5,7 @@ package it.eng.qbe.test.jpa;
 
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.jpa.JPADriver;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.jpa.JPQLDataSet;
@@ -31,10 +32,10 @@ public class JPAStatementTest {
 		
 		//create jpaDataSource (entityManager)
 		
+		JPADriver driver = new JPADriver();
+		JPADataSource jpaDS = (JPADataSource)driver.getDataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));	
 		
-		//forzature: da capire come valorizzare ed eliminarle
-		JPADataSource jpaDS = new JPADataSource("TEST_JPA", new FileDataSourceConfiguration("TEST_JPA", null));	
-		//fine forzature
+		
 		
 		//EntityManagerFactory emf = jpaDS.getEntityManagerFactory();
 		EntityManager em = jpaDS.getEntityManager();
