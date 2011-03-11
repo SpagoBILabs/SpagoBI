@@ -33,7 +33,6 @@ import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.hql.QueryTranslator;
 import org.hibernate.hql.ast.ASTQueryTranslatorFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class HqlToSqlQueryRewriter.
  * 
