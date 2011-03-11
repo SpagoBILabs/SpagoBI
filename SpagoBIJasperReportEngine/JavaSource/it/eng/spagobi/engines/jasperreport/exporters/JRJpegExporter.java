@@ -88,7 +88,7 @@ public class JRJpegExporter extends JRImageExporter {
 			bytes = baos.toByteArray();
 			baos.close();
 
-			OutputStream out = (OutputStream)getParameter(JRExporterParameter.INPUT_STREAM);
+			OutputStream out = (OutputStream)getParameter(JRExporterParameter.OUTPUT_STREAM);
 			out.write(bytes);
 		} catch (Throwable t) {
 			throw new RuntimeException("Error while producing jpg image of the report", t);

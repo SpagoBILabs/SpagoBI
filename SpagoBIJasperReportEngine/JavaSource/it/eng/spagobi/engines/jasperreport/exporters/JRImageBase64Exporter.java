@@ -74,7 +74,7 @@ public class JRImageBase64Exporter extends JRImageExporter {
 			message += "</IMAGES>";
 			bytes = message.getBytes();
 			
-			OutputStream out = (OutputStream)getParameter(JRExporterParameter.INPUT_STREAM);
+			OutputStream out = (OutputStream)getParameter(JRExporterParameter.OUTPUT_STREAM);
 			out.write(bytes);
 		} catch (Throwable t) {
 			throw new RuntimeException("Error while producing byte64 encoding of the report images", t);
