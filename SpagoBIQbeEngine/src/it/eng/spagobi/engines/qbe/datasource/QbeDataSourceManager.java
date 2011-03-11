@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.datasource;
 
-import it.eng.qbe.dao.DAOFactory;
+import it.eng.qbe.dao.DatamartJarFileDAOFilesystemImpl;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.DriverManager;
@@ -104,25 +104,27 @@ public class QbeDataSourceManager implements IDataSourceManager {
 			File file;
 			FileDataSourceConfiguration c;
 			
-			file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(0));
+			DatamartJarFileDAOFilesystemImpl jarFileDAO = new DatamartJarFileDAOFilesystemImpl(QbeEngineConfig.getInstance().getQbeDataMartDir());
+			
+			file = jarFileDAO.loadDatamartJarFile(dataMartNames.get(0));
 			c = new FileDataSourceConfiguration(dataMartNames.get(0),file);
 			compositeConfiguration.addSubConfiguration(c);
 			
 			try {				
-				isJPA = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(file);
+				isJPA = jarFileDAO.isAJPADatamartJarFile(file);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
 			}
 			
 			if(dataMartNames.size() > 1) {
 				for(int i = 1; i < dataMartNames.size(); i++) {
-					file = DAOFactory.getDatamartJarFileDAO().loadDatamartJarFile(dataMartNames.get(i));
+					file = jarFileDAO.loadDatamartJarFile(dataMartNames.get(i));
 					c = new FileDataSourceConfiguration(dataMartNames.get(i),file);
 					compositeConfiguration.addSubConfiguration(c);
 					
 					boolean b;
 					try {
-						b = DAOFactory.getDatamartJarFileDAO().isAJPADatamartJarFile(file);
+						b = jarFileDAO.isAJPADatamartJarFile(file);
 					} catch (Exception e) {
 						throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
 					}
