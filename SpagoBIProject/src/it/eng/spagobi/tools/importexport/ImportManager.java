@@ -2786,9 +2786,12 @@ public class ImportManager implements IImportManager, Serializable {
 		Iterator iterOUVal = exportedSbiOrgUnitList.iterator();
 		while (iterOUVal.hasNext()) {
 			SbiOrgUnit ouVal = (SbiOrgUnit) iterOUVal.next();
-			// check if the association already exist
+			Map uniqueMap = new HashMap();
 			String label = ouVal.getLabel();
-			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnit());
+			String name = ouVal.getName();
+			uniqueMap.put("label", label);
+			uniqueMap.put("name", name);
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiOrgUnit());
 			if (existObj != null) {
 				SbiOrgUnit dsCurr = (SbiOrgUnit) existObj;
 				metaAss.insertCoupleIdOuAssociation(ouVal.getId(), dsCurr.getId());
@@ -2801,6 +2804,19 @@ public class ImportManager implements IImportManager, Serializable {
 		while (iterOUHierVal.hasNext()) {
 			SbiOrgUnitHierarchies ouHierVal = (SbiOrgUnitHierarchies) iterOUHierVal.next();
 			// check if the association already exist
+			Map uniqueMap = new HashMap();
+			String label = ouHierVal.getLabel();
+			String company = ouHierVal.getCompany();
+			uniqueMap.put("label", label);
+			uniqueMap.put("company", company);
+			Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiOrgUnitHierarchies());
+			if (existObj != null) {
+				SbiOrgUnitHierarchies dsCurr = (SbiOrgUnitHierarchies) existObj;
+				metaAss.insertCoupleIdOuHierarchyAssociation(ouHierVal.getId(), dsCurr.getId());
+				metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with "
+						+ "the same label of one exported ou hierarchy");
+			}
+			/*
 			String label = ouHierVal.getLabel();
 			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnitHierarchies());
 			if (existObj != null) {
@@ -2809,6 +2825,7 @@ public class ImportManager implements IImportManager, Serializable {
 				metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with "
 						+ "the same label of one exported ou hierarchy");
 			}
+			*/
 		}// OU node  SbiOrgUnitNodes
 		List exportedSbiOrgUnitNodeList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitNodes", null);
 		Iterator iterOUNodeVal = exportedSbiOrgUnitNodeList.iterator();

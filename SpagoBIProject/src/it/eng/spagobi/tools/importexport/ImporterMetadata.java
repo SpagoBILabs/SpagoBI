@@ -626,14 +626,23 @@ public class ImporterMetadata {
 			return hibUdp;		
 		}else if (hibObj instanceof SbiOrgUnit) {
 			//checks existence in import db
-			String label = (String) unique;
-			hql = "from SbiOrgUnit u where u.label = '" + label + "'";
+			Map uniqueMap = (Map) unique;
+			String label = (String) uniqueMap.get("label");
+			String name = (String) uniqueMap.get("name");
+			
+			hql = "from SbiOrgUnit u where u.label = '" + label  + "' and u.name = ?";
 			hqlQuery = sessionCurrDB.createQuery(hql);
+			hqlQuery.setString(0, name);
+
 			SbiOrgUnit hibOu = (SbiOrgUnit) hqlQuery.uniqueResult();
 			return hibOu;		
 		}else if (hibObj instanceof SbiOrgUnitHierarchies) {
-			String label = (String) unique;
-			hql = "from SbiOrgUnitHierarchies h where h.label = '" + label + "'";
+
+			Map uniqueMap = (Map) unique;
+			String label = (String) uniqueMap.get("label");
+			String company = (String) uniqueMap.get("company");
+			
+			hql = "from SbiOrgUnitHierarchies h where h.label = '" + label + "' and h.company = '"+company+"'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiOrgUnitHierarchies hibHier = (SbiOrgUnitHierarchies) hqlQuery.uniqueResult();
 			return hibHier;		
