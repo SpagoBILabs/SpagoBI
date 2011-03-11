@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.naming.NamingStrategy;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -213,15 +212,7 @@ public class QbeEngineConfig {
 		return new QbeNamingStrategy();
 	}
 	
-	/**
-	 * Gets the data source cache.
-	 * 
-	 * @return the data source cache
-	 */
-	public DataSourceCache getDataSourceCache() {
-		return QbeDataSourceCache.getInstance();
-	}
-
+	
 	// -- ACCESS Methods  --------------------------------------------
 	
 	public EnginConf getEngineConfig() {

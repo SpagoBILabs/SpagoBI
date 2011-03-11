@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.datasource;
 
-import it.eng.qbe.datasource.DataSourceCache;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.base.ApplicationContainer;
 
@@ -32,7 +31,7 @@ import java.util.List;
  * 
  * @author Andrea Gioia
  */
-public class QbeDataSourceCache implements DataSourceCache {
+public class QbeDataSourceCache /*implements DataSourceCache*/ {
 
 	/** The instance. */
 	private static QbeDataSourceCache instance = null;
