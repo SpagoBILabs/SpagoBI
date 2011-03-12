@@ -33,6 +33,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -57,7 +58,7 @@ public class FileDataProxy extends AbstractDataProxy {
 		throw new UnsupportedOperationException("metothd FileDataProxy not yet implemented");
 	}
 	
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		
 		IDataStore dataStore = null;
 		FileInputStream inputStream = null;
@@ -74,10 +75,8 @@ public class FileDataProxy extends AbstractDataProxy {
 			inputStream = new FileInputStream(filePath);
 			dataStore = dataReader.read( inputStream );
 		}
-		catch (Exception e) {
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9209);
-			logger.debug("File not found",e);
-			throw userError;
+		catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load dataset", t);
 		} finally {
 			if (inputStream != null) {
 				try {

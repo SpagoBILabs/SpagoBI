@@ -21,24 +21,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.exceptions;
 
-import it.eng.spago.error.EMFInternalError;
-
 public class ProfileAttributeDsException extends DatasetException {
 
+	private static final long serialVersionUID = 1L;
 	public static final String USER_MESSAGE = "Check that all following profile attributes have value: ";
 
 
-	public ProfileAttributeDsException(String severity, int code,
-			EMFInternalError e, String attributes) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + " '"+attributes+"'";
-	}
-
-	public ProfileAttributeDsException(String severity, int code,
-			Exception e, String attributes) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + " '"+attributes+"'";
-	}
+	/**
+	 * Builds a <code>SpagoBIRuntimeException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public ProfileAttributeDsException(String message) {
+    	super(message);  	
+    }
+	
+    /**
+     * Builds a <code>SpagoBIRuntimeException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public ProfileAttributeDsException(String message, Throwable ex) {
+    	super(message, ex);
+    }
 
 
 }

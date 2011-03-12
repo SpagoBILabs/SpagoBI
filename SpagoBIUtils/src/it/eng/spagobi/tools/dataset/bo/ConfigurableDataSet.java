@@ -46,7 +46,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		super(dataSetConfig);
 	}
 
-	public void loadData(int offset, int fetchSize, int maxResults) throws EMFUserError, EMFInternalError{
+	public void loadData(int offset, int fetchSize, int maxResults) {
 
 		dataProxy.setParameters(getParamsMap());
 		dataProxy.setProfile(getUserProfile());

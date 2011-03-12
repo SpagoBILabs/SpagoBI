@@ -77,7 +77,7 @@ public class JDBCStandardDataProxy extends AbstractDataProxy {
 		return load(dataReader);
 	}
 	
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		
 		IDataStore dataStore;
 		Connection connection;

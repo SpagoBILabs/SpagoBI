@@ -34,7 +34,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
  */
 public interface IDataProxy {
 	
-	IDataStore load(IDataReader dataReader) throws EMFUserError;
+	IDataStore load(IDataReader dataReader);
 	
 	// for querable dataset...
 	public String getStatement();
