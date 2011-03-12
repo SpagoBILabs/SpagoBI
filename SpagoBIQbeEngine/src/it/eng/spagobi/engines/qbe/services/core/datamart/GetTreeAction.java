@@ -112,7 +112,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			if (datamartName != null) {
 				nodes = qbeBuilder.getQbeTree(getDataSource(), getLocale(), datamartName);			
 			} else {
-				Iterator<String> it = getDataSource().getDataMartModelStructure().getDataMartNames().iterator();
+				Iterator<String> it = getDataSource().getModelStructure().getModelNames().iterator();
 				while (it.hasNext()) {
 					String modelName = it.next();
 					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), modelName);

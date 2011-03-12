@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.qbe.tree.filter;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.IStatement;
+import it.eng.qbe.statement.IStatement;
 
 import java.util.List;
 import java.util.Set;

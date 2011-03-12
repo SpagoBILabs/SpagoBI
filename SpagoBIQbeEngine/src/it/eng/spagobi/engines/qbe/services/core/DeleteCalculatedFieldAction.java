@@ -20,8 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -72,9 +72,9 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			DataMartCalculatedField calculatedField = deserialize(fieldJSON);
+			ModelCalculatedField calculatedField = deserialize(fieldJSON);
 			
-			DataMartEntity parentEntity = getDataSource().getDataMartModelStructure().getEntity(parentEntityUniqueName);
+			ModelEntity parentEntity = getDataSource().getModelStructure().getEntity(parentEntityUniqueName);
 			calculatedField.setParent(parentEntity);
 			parentEntity.deleteCalculatedField(calculatedField.getUniqueName());
 			
@@ -94,8 +94,8 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 
 
 
-	private DataMartCalculatedField deserialize(JSONObject fieldJSON) {
-		DataMartCalculatedField field;
+	private ModelCalculatedField deserialize(JSONObject fieldJSON) {
+		ModelCalculatedField field;
 		String alias;
 		String fieldType;
 		
@@ -120,7 +120,7 @@ public class DeleteCalculatedFieldAction extends AbstractQbeEngineAction {
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
 			
-			field = new DataMartCalculatedField(alias, type, expression);
+			field = new ModelCalculatedField(alias, type, expression);
 		} catch (Throwable t) {
 			throw new SpagoBIEngineServiceException(getActionName(), "impossible to deserialize calculated field [" + fieldJSON.toString() + "]", t);
 		}					

@@ -163,7 +163,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	--%>
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	Iterator<String> it = qbeEngineInstance.getDataSource().getDataMartModelStructure().getDataMartNames().iterator();
+	      	Iterator<String> it = qbeEngineInstance.getDataSource().getModelStructure().getModelNames().iterator();
 	      	while (it.hasNext()) {
 	      		datamartNamesBuffer.append("'" + it.next() + "'");
 	      		if (it.hasNext()) {
