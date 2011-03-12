@@ -22,7 +22,7 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
-import it.eng.qbe.model.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.DataMartModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.IStatement;
