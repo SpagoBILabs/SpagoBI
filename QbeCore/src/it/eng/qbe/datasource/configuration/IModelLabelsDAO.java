@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 
 import java.util.Locale;
 

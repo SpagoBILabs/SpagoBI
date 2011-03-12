@@ -24,8 +24,8 @@ package it.eng.qbe.model.properties.initializer;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.model.properties.DataMartProperties;
-import it.eng.qbe.model.properties.DataMartProperty;
+import it.eng.qbe.model.properties.ModelPropertiesMeta;
+import it.eng.qbe.model.properties.ModelProperty;
 import it.eng.qbe.model.structure.DataMartCalculatedField;
 import it.eng.qbe.model.structure.DataMartEntity;
 import it.eng.qbe.model.structure.DataMartField;
@@ -69,11 +69,11 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	private void addDataMartModelProperties(DataMartModelStructure item) {
-		DataMartProperty property;
+		ModelProperty property;
 		String propertyValue;
 		
-		for (int i = 0; i < DataMartProperties.globalProperties.length; i++) {
-			property = DataMartProperties.globalProperties[i];
+		for (int i = 0; i < ModelPropertiesMeta.globalProperties.length; i++) {
+			property = ModelPropertiesMeta.globalProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
@@ -89,11 +89,11 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 
 	protected void addDataMartEntityProperties(DataMartEntity item) {
-		DataMartProperty property;
+		ModelProperty property;
 		String propertyValue;
 		
-		for (int i = 0; i < DataMartProperties.entityProperties.length; i++) {
-			property = DataMartProperties.entityProperties[i];
+		for (int i = 0; i < ModelPropertiesMeta.entityProperties.length; i++) {
+			property = ModelPropertiesMeta.entityProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
@@ -114,11 +114,11 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	protected void addDataMartFieldProperties(DataMartField item) {
-		DataMartProperty property;
+		ModelProperty property;
 		String propertyValue;
 		
-		for (int i = 0; i < DataMartProperties.fieldProperties.length; i++) {
-			property = DataMartProperties.fieldProperties[i];
+		for (int i = 0; i < ModelPropertiesMeta.fieldProperties.length; i++) {
+			property = ModelPropertiesMeta.fieldProperties[i];
 			propertyValue = getProperty(item, property.getName());
 			
 			// property not set
