@@ -227,11 +227,11 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.numRows = numRows;
 	}
 	
-	public void loadData() throws EMFUserError, EMFInternalError {
+	public void loadData() {
 		loadData(0, -1, -1);
 	}
 	
-	public void loadData(int offset, int fetchSize, int maxResults) throws EMFUserError, EMFInternalError {
+	public void loadData(int offset, int fetchSize, int maxResults) {
 		throw new RuntimeException("Unsupported method");
 	}
 	

@@ -24,6 +24,7 @@ package it.eng.spagobi.tools.dataset.exceptions;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.List;
 
@@ -34,42 +35,38 @@ import java.util.List;
  *
  */
 
-public class DatasetException extends EMFUserError {
+public class DatasetException extends SpagoBIRuntimeException {
 
-	Throwable throwable;
-	Object additionalInfo;
-	SourceBean sourceBean; 
-	String severity;
-	String description; 
-	String category;
- // this field is filled with a message for the user
+	private static final long serialVersionUID = 1L;
+	
+	// this field is filled with a message for the user
 	String userMessage;
 	String fullMessage;
 	
-	public DatasetException(String severity, int code, List params) {
-		super(severity, code, params);
-	}
-
-	public DatasetException(String severity, int code, Exception e) {
-		super(severity, code);
-		setStackTrace(e.getStackTrace());
-		fullMessage = e.getMessage();
-		throwable = e;		
-	}
-
-	public DatasetException(String severity, int code, EMFInternalError e) {
-		super(severity, code);
-		e.getAdditionalInfo();
-		additionalInfo = e.getAdditionalInfo();
-		category =e.getCategory();
-		description = e.getDescription();
-		severity = e.getSeverity();
-		sourceBean = e.getSourceBean();
-		setStackTrace(e.getStackTrace());
-		fullMessage = e.getMessage();
-		throwable = e.getCause();		
-	}
-
+	public static final String USER_MESSAGE = "DataSet Exception";
+	
+	/**
+	 * Builds a <code>SpagoBIRuntimeException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public DatasetException(String message) {
+    	super(message);
+    	this.userMessage = USER_MESSAGE;
+    	this.fullMessage = message;    	
+    }
+	
+    /**
+     * Builds a <code>SpagoBIRuntimeException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public DatasetException(String message, Throwable ex) {
+    	super(message, ex);
+    	this.userMessage = USER_MESSAGE;
+    	this.fullMessage = message;    
+    }
 
 	public String getUserMessage() {
 		return userMessage;
@@ -78,55 +75,7 @@ public class DatasetException extends EMFUserError {
 	public void setUserMessage(String userMessage) {
 		this.userMessage = userMessage;
 	}
-
-	public Throwable getThrowable() {
-		return throwable;
-	}
-
-	public void setThrowable(Throwable throwable) {
-		this.throwable = throwable;
-	}
-
-	public Object getAdditionalInfo() {
-		return additionalInfo;
-	}
-
-	public void setAdditionalInfo(Object additionalInfo) {
-		this.additionalInfo = additionalInfo;
-	}
-
-	public SourceBean getSourceBean() {
-		return sourceBean;
-	}
-
-	public void setSourceBean(SourceBean sourceBean) {
-		this.sourceBean = sourceBean;
-	}
-
-	public String getSeverity() {
-		return severity;
-	}
-
-	public void setSeverity(String severity) {
-		this.severity = severity;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
+	
 	public String getFullMessage() {
 		return fullMessage;
 	}

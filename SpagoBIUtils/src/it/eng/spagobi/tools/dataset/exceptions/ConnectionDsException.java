@@ -21,23 +21,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.exceptions;
 
-import it.eng.spago.error.EMFInternalError;
-
 public class ConnectionDsException extends DatasetException {
 
+	private static final long serialVersionUID = 1L;
 	public static final String USER_MESSAGE = "No connection with data source ";
 	
-	public ConnectionDsException(String severity, int code,
-			EMFInternalError e, String dataSourceLabel) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + dataSourceLabel;
-	}
-
-	public ConnectionDsException(String severity, int code,
-			Exception e, String dataSourceLabel) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + dataSourceLabel;
-	}
+	/**
+	 * Builds a <code>SpagoBIRuntimeException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public ConnectionDsException(String message) {
+    	super(message);  	
+    }
+	
+    /**
+     * Builds a <code>SpagoBIRuntimeException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public ConnectionDsException(String message, Throwable ex) {
+    	super(message, ex);
+    }
 	
 	
 }

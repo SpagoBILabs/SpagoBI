@@ -32,6 +32,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 
@@ -86,7 +87,7 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 * @return the data store
 	 * @throws EMFUserError
 	 */
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		
 		IDataStore dataStore = null;
 		Object result = null;
@@ -110,9 +111,8 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 				result = (ScrollableDataResult) dataResult.getDataObject();				
 			}
 			dataStore = dataReader.read( result );
-		} catch(Exception e){
-			logger.error("Error in query Execution",e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 9221);
+		} catch(Throwable t){
+			throw new SpagoBIRuntimeException("An error occurrede while executing query [" + statement + "]", t);
 		} finally {
 			Utils.releaseResources(null, sqlCommand, dataResult);
 			logger.debug("OUT");
@@ -122,15 +122,14 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	}
 	
 	
-	private DataConnection getDataConnection(Connection con) throws EMFInternalError {
+	private DataConnection getDataConnection(Connection con) {
 		DataConnection dataCon = null;
 		try {
 			Class mapperClass = Class.forName("it.eng.spago.dbaccess.sql.mappers.OracleSQLMapper");
 			SQLMapper sqlMapper = (SQLMapper)mapperClass.newInstance();
 			dataCon = new DataConnection(con, "2.1", sqlMapper);
-		} catch(Exception e) {
-			logger.error("Error while getting Data Source " + e);
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "cannot build spago DataConnection object");
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An error occurred while instatiating object [" + DataConnection.class.getName() + "]", t);
 		}
 		return dataCon;
 	}

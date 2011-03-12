@@ -24,11 +24,13 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.scripting.ScriptManager;
 
 import java.util.Arrays;
@@ -66,7 +68,7 @@ public class ScriptDataProxy extends AbstractDataProxy {
 	}
 
 
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		logger.debug("IN");
 		String data = null;
 		IDataStore dataStore = null;
@@ -86,13 +88,8 @@ public class ScriptDataProxy extends AbstractDataProxy {
 				data = convertResult(data);
 			}
 			dataStore = dataReader.read(data);
-		} catch (SourceBeanException e) {
-			logger.error("SourceBeanException",e);
-			e.printStackTrace();
-		} catch (Exception e) {
-			logger.error("script languaga not proper");
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9216);						
-			throw userError;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load store", t);
 		}
 		logger.debug("OUT");
 

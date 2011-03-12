@@ -37,6 +37,7 @@ import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,7 +62,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		super(QuerableBehaviour.class.getName(), targetDataSet);
 	}
 
-	public String getStatement() throws EMFInternalError, EMFUserError{
+	public String getStatement() {
 		String statement;
 
 		logger.debug("IN");
@@ -89,17 +90,14 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				try{
 					HashMap attributes = getAllProfileAttributes(getTargetDataSet().getUserProfile()); // to be cancelled, now substitutution inline
 					statement = substituteProfileAttributes(statement, attributes);
-				} catch (EMFInternalError e) {
-					ProfileAttributeDsException parException= new ProfileAttributeDsException(EMFErrorSeverity.ERROR, 9221, e, "");
-					logger.error("Error in query Execution",e);
-					throw parException;				
+				} catch (Throwable e) {
+					throw new ProfileAttributeDsException("An error occurred while excuting query [" + statement + "]",e);
 				}
 			} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCStandardDataSet) {	 
 				try {
 					statement = StringUtilities.substituteProfileAttributesInString(statement, getTargetDataSet().getUserProfile() );
 				} catch (Exception e) {
 					List list = checkProfileAttributesUnfilled(statement);
-					logger.error("there are profile attributes without values");
 					String atts = "";
 					for (Iterator iterator = list.iterator(); iterator.hasNext();) {
 						String string = (String) iterator.next();
@@ -108,10 +106,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 							atts += ", ";
 						}
 					}
-					ProfileAttributeDsException parException= new ProfileAttributeDsException(EMFErrorSeverity.ERROR, 9221, e, atts);
-					throw parException;	
+					throw new ProfileAttributeDsException("The following profile attributes have no value[" + atts + "]",e);
 
-					
 				}
 			}
 
@@ -147,18 +143,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 					Map parTypeMap = getParTypeMap(getTargetDataSet());
 					statement = StringUtilities.substituteDatasetParametersInString(statement, getTargetDataSet().getParamsMap(), parTypeMap ,false );
 				}
-				catch (Exception e) {
-					if(e instanceof NumberFormatException){
-						String attribute = ((NumberFormatException)e).getMessage() + " value should be of type number";
-						ParameterDsException parException= new ParameterDsException(EMFErrorSeverity.ERROR, 9221, e, attribute);
-						throw parException;			
-					}
-					else{
-						logger.error("Errore nella valorizzazione dei parametri",e);
-						String attribute = e.getMessage();
-						ParameterDsException parException= new ParameterDsException(EMFErrorSeverity.ERROR, 9221, e, attribute);
-						throw parException;			
-					}
+				catch (Throwable e) {
+					throw new SpagoBIRuntimeException("An error occurred while settin up parameters",e);
 				}
 			}	
 
@@ -176,9 +162,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 					}
 				}
 				pars += " have no value specified";
-				ParameterDsException parException= new ParameterDsException(EMFErrorSeverity.ERROR, 
-						9221, new Exception(), pars);
-				throw parException;	
+				throw new ParameterDsException("The folowing parameters have no value [" + pars + "]");
+				
 			}
 
 

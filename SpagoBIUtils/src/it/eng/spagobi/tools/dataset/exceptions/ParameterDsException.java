@@ -21,30 +21,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.exceptions;
 
-import it.eng.spago.error.EMFInternalError;
-
 public class ParameterDsException extends DatasetException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	public static final String USER_MESSAGE = "Errors in the following parameter(s): ";
 
-
-
-	public ParameterDsException(String severity, int code,
-			EMFInternalError e, String parameters) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + parameters;
-	}
-
-	public ParameterDsException(String severity, int code,
-			EMFInternalError e) {
-		super(severity, code, e);
-	}
-
-	public ParameterDsException(String severity, int code,
-			Exception e, String parameters) {
-		super(severity, code, e);
-		userMessage = USER_MESSAGE + parameters;
-	}
-
+	/**
+	 * Builds a <code>SpagoBIRuntimeException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public ParameterDsException(String message) {
+    	super(message);  	
+    }
+	
+    /**
+     * Builds a <code>SpagoBIRuntimeException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public ParameterDsException(String message, Throwable ex) {
+    	super(message, ex);
+    }
 
 }

@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.exceptions.ConnectionDsException;
 import it.eng.spagobi.tools.dataset.exceptions.QueryDsExecutionException;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 
@@ -82,7 +83,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return load(dataReader);
 	}
 
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 
 		IDataStore dataStore = null;
 		Object result = null;
@@ -96,13 +97,10 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			conn = dataSource.toSpagoBiDataSource().readConnection(schema); 
 			dataConnection = getDataConnection(conn);
 
-		}
-		catch (Exception e) {
+		} catch (Throwable t) {
 			String dataSourceL ="''";
 			if(this.dataSource != null) dataSourceL = "'"+this.dataSource.getLabel()+"'";
-			ConnectionDsException queryException= new ConnectionDsException(EMFErrorSeverity.ERROR, 9221, e, dataSourceL);
-			logger.error("Error in data connection to data source "+dataSourceL,e);
-			throw queryException;
+			throw new ConnectionDsException("An error occurred while connecting with datasource [" + dataSourceL + "]", t);
 		}
 
 		try {
@@ -113,10 +111,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				result = (ScrollableDataResult) dataResult.getDataObject();				
 			}
 			dataStore = dataReader.read( result );
-		} catch(EMFInternalError e){
-			QueryDsExecutionException queryException= new QueryDsExecutionException(EMFErrorSeverity.ERROR, 9221, e, statement);
-			logger.error("Error in query Execution "+statement,e);
-			throw queryException;
+		} catch(Throwable t){
+			throw new QueryDsExecutionException("An error occurred while executing statement [" + statement + "]", t);
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 			logger.debug("OUT");
@@ -132,9 +128,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			Class mapperClass = Class.forName("it.eng.spago.dbaccess.sql.mappers.OracleSQLMapper");
 			SQLMapper sqlMapper = (SQLMapper)mapperClass.newInstance();
 			dataCon = new DataConnection(con, "2.1", sqlMapper);
-		} catch(Exception e) {
-			logger.error("Error while getting Data Source " + e);
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "cannot build spago DataConnection object");
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An error occurred while instatiating object [" + DataConnection.class.getName() + "]", t);
 		}
 		return dataCon;
 	}

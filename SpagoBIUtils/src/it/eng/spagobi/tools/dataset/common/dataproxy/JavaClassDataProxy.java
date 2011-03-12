@@ -36,6 +36,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassUtils;
 import it.eng.spagobi.tools.dataset.bo.IJavaClassDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -60,7 +61,7 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 		throw new UnsupportedOperationException("metothd load not yet implemented");
 	}
 
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		String result = null;				
 		IDataStore dataStore = null;
 		IJavaClassDataSet javaClass;
@@ -87,18 +88,8 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 				result = JavaClassUtils.convertResult(result);
 			}
 			dataStore = dataReader.read(result);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9217);
-			logger.debug("classe non trovata");
-			throw userError;
-		} catch (Exception e) {
-			logger.error("Error",e);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load dataset", t);
 		}
 
 		return dataStore;

@@ -32,6 +32,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -39,6 +40,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.wsconnectors.stub.IWsConnector;
 import it.eng.spagobi.tools.dataset.wsconnectors.stub.IWsConnectorServiceLocator;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -62,12 +64,12 @@ public class WebServiceDataProxy extends AbstractDataProxy {
 		this.setOperation(operation);
 	}
 
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader){
 		throw new UnsupportedOperationException("metothd load not yet implemented");
 	}
 
 
-	public IDataStore load(IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(IDataReader dataReader) {
 		IDataStore dataStore = null;
 		String resultXML="";
 		IWsConnectorServiceLocator locator = new IWsConnectorServiceLocator();   
@@ -79,37 +81,33 @@ public class WebServiceDataProxy extends AbstractDataProxy {
 			addressToCall=new URL(address);
 		}
 		catch (Exception e) {
-			logger.error("URL non valid.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 11100);
+			throw new SpagoBIRuntimeException("Invalid URL [" + address + "]", e);
 		}
 		try {
 			connector = locator.getWSDataSetService(addressToCall);
 
 		} catch (ServiceException e) {
-			logger.error("Service not avalaible");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "11200", messageBundle);
+			throw new SpagoBIRuntimeException("DataSetService not available", e);
 		}
 		
 		// Add the profile Attributes
 
 		try {
 			parameters = addProfileAtributes(parameters);
-		} catch (EMFInternalError e1) {
-			logger.error("error in resolving profile attributes");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "11100", messageBundle);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while resolving profile attributes", e);
 		}
 		
 		try {
 			resultXML=connector.readDataSet(address, parameters, operation);
 		} catch (RemoteException e) {
-			logger.error("Service not avalaible");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "11200", messageBundle);
+			throw new SpagoBIRuntimeException("DataSetService not available", e);
 		}		
 
 		try {
 			dataStore = dataReader.read(resultXML);
-		} catch (EMFInternalError e) {
-			logger.error(e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to parse responde [" + resultXML + "]", e);
 		}
 		
 		return dataStore;

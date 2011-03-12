@@ -45,9 +45,8 @@ public interface IDataSet {
 	
 	// execution ...
 	// --------------------------------------------------------------------------------------------------
-	// TODO improve dataset layer exception handling (remove ALL EMFUserError & EMFInternalError)
-	void loadData() throws EMFUserError, EMFInternalError;
-	void loadData(int offset, int fetchSize, int maxResults) throws EMFUserError, EMFInternalError;
+	void loadData();
+	void loadData(int offset, int fetchSize, int maxResults);
 	// --------------------------------------------------------------------------------------------------
     
 	IDataStore getDataStore();
