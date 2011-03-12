@@ -1,4 +1,4 @@
-package it.eng.qbe.statment;
+package it.eng.qbe.statement;
 
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;

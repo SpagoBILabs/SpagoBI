@@ -24,10 +24,10 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.HqlToSqlQueryRewriter;
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.DataMartSelectField;
@@ -39,7 +39,7 @@ import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
-import it.eng.qbe.statment.AbstractStatement;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -264,8 +264,8 @@ public class HQLStatement extends AbstractStatement {
 		AbstractSelectField selectAbstractField;
 		DataMartSelectField selectField;
 		InLineCalculatedSelectField selectInLineField;
-		DataMartEntity rootEntity;
-		DataMartField datamartField;
+		ModelEntity rootEntity;
+		ModelField datamartField;
 		String queryName;
 		String rootEntityAlias;
 		String selectClauseElement; // rootEntityAlias.queryName
@@ -300,7 +300,7 @@ public class HQLStatement extends AbstractStatement {
 						
 						logger.debug("select field unique name [" + selectField.getUniqueName() + "]");
 						
-						datamartField = getDataSource().getDataMartModelStructure().getField(selectField.getUniqueName());
+						datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
 						queryName = datamartField.getQueryName();
 						logger.debug("select field query name [" + queryName + "]");
 						
@@ -410,7 +410,7 @@ public class HQLStatement extends AbstractStatement {
 				String entityAlias = (String)entityAliases.get(entityUniqueName);
 				logger.debug("entity alias [" + entityAlias +"]");
 				
-				DataMartEntity datamartEntity =  getDataSource().getDataMartModelStructure().getEntity(entityUniqueName);
+				ModelEntity datamartEntity =  getDataSource().getModelStructure().getEntity(entityUniqueName);
 				String whereClauseElement = datamartEntity.getType() + " " + entityAlias;
 				logger.debug("where clause element [" + whereClauseElement +"]");
 				
@@ -449,8 +449,8 @@ public class HQLStatement extends AbstractStatement {
 	
 	private String buildFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
-		DataMartField datamartField;
-		DataMartEntity rootEntity;
+		ModelField datamartField;
+		ModelEntity rootEntity;
 		String queryName;
 		String rootEntityAlias;
 		Map targetQueryEntityAliasesMap;
@@ -463,7 +463,7 @@ public class HQLStatement extends AbstractStatement {
 			Assert.assertNotNull(targetQueryEntityAliasesMap, "Entity aliases map for query [" + query.getId() + "] cannot be null in order to execute method [buildUserProvidedWhereField]");
 			
 			
-			datamartField = getDataSource().getDataMartModelStructure().getField( operand.values[0] );
+			datamartField = getDataSource().getModelStructure().getField( operand.values[0] );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
 			queryName = datamartField.getQueryName();
 			logger.debug("where field query name [" + queryName + "]");
@@ -501,8 +501,8 @@ public class HQLStatement extends AbstractStatement {
 		String[] chunks;
 		String parentQueryId;
 		String fieldName;
-		DataMartField datamartField;
-		DataMartEntity rootEntity;
+		ModelField datamartField;
+		ModelEntity rootEntity;
 		String queryName;
 		String rootEntityAlias;
 		
@@ -523,7 +523,7 @@ public class HQLStatement extends AbstractStatement {
 			fieldName = chunks[1];
 			logger.debug("where right-hand field unique name [" + fieldName + "]");
 
-			datamartField = getDataSource().getDataMartModelStructure().getField( fieldName );
+			datamartField = getDataSource().getModelStructure().getField( fieldName );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + fieldName + "]");
 			
 			queryName = datamartField.getQueryName();
@@ -621,7 +621,7 @@ public class HQLStatement extends AbstractStatement {
 			}else if (OPERAND_TYPE_FIELD.equalsIgnoreCase(leadOperand.type) 
 							|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 				
-				DataMartField datamartField = getDataSource().getDataMartModelStructure().getField(leadOperand.values[0]);
+				ModelField datamartField = getDataSource().getModelStructure().getField(leadOperand.values[0]);
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
 			}
 
@@ -834,8 +834,8 @@ public class HQLStatement extends AbstractStatement {
 	
 	public String parseInLinecalculatedField(String expr, Query query, Map entityAliasesMaps){
 		List allSelectFields;
-		DataMartEntity rootEntity;
-		DataMartField datamartField;
+		ModelEntity rootEntity;
+		ModelField datamartField;
 		String queryName;
 		String rootEntityAlias;
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
@@ -854,7 +854,7 @@ public class HQLStatement extends AbstractStatement {
 			for(int i=0; i<allSelectFields.size(); i++){
 				if(allSelectFields.get(i).getClass().equals(DataMartSelectField.class) && ((DataMartSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
 					uniqueName=((DataMartSelectField)allSelectFields.get(i)).getUniqueName();
-					datamartField = getDataSource().getDataMartModelStructure().getField(uniqueName);	
+					datamartField = getDataSource().getModelStructure().getField(uniqueName);	
 					queryName = datamartField.getQueryName();
 					rootEntity = datamartField.getParent().getRoot(); 
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
@@ -995,13 +995,13 @@ public class HQLStatement extends AbstractStatement {
 		}
 		
 
-		DataMartModelStructure dataMartModelStructure = getDataSource().getDataMartModelStructure();
-		DataMartModelAccessModality dataMartModelAccessModality = getDataSource().getDataMartModelAccessModality();
+		ModelStructure dataMartModelStructure = getDataSource().getModelStructure();
+		ModelAccessModality dataMartModelAccessModality = getDataSource().getModelAccessModality();
 		
 		Iterator it = entityAliases.keySet().iterator();
 		while(it.hasNext()){
 			String entityUniqueName = (String)it.next();
-			DataMartEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
+			ModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
 			
 			// check for condition filter on this entity
 			List filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
@@ -1039,7 +1039,7 @@ public class HQLStatement extends AbstractStatement {
 				//	check for condition filter on sub entities
 				List subEntities = entity.getAllSubEntities();
 				for(int i = 0; i < subEntities.size(); i++) {
-					DataMartEntity subEntity = (DataMartEntity)subEntities.get(i);
+					ModelEntity subEntity = (ModelEntity)subEntities.get(i);
 					filters = dataMartModelAccessModality.getEntityFilterConditions(subEntity.getType());
 					for(int j = 0; j < filters.size(); j++) {
 						Filter filter = (Filter)filters.get(j);
@@ -1048,10 +1048,10 @@ public class HQLStatement extends AbstractStatement {
 						Iterator fieldIterator = fields.iterator();
 						while(fieldIterator.hasNext()) {
 							String fieldName = (String)fieldIterator.next();
-							DataMartField filed = null;
+							ModelField filed = null;
 							Iterator subEntityFields = subEntity.getAllFields().iterator();
 							while(subEntityFields.hasNext()) {
-								filed = (DataMartField)subEntityFields.next();
+								filed = (ModelField)subEntityFields.next();
 								if(filed.getQueryName().endsWith("." + fieldName)) break;
 							}
 							String entityAlias = (String)entityAliases.get(entityUniqueName);
@@ -1104,8 +1104,8 @@ public class HQLStatement extends AbstractStatement {
 			}else{
 			
 				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
-				DataMartField datamartField = getDataSource().getDataMartModelStructure().getField(groupByField.getUniqueName());
-				DataMartEntity entity = datamartField.getParent().getRoot(); 
+				ModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
+				ModelEntity entity = datamartField.getParent().getRoot(); 
 				String queryName = datamartField.getQueryName();
 				if(!entityAliases.containsKey(entity.getUniqueName())) {
 					entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
@@ -1154,8 +1154,8 @@ public class HQLStatement extends AbstractStatement {
 			
 			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
 			
-			DataMartField datamartField = getDataSource().getDataMartModelStructure().getField(selectField.getUniqueName());
-			DataMartEntity entity = datamartField.getParent().getRoot(); 
+			ModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
+			ModelEntity entity = datamartField.getParent().getRoot(); 
 			String queryName = datamartField.getQueryName();
 			if(!entityAliases.containsKey(entity.getUniqueName())) {
 				entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
@@ -1179,7 +1179,7 @@ public class HQLStatement extends AbstractStatement {
 		Map entityAliasesMaps;
 		Iterator entityUniqueNamesIterator;
 		String entityUniqueName;
-		DataMartEntity entity;
+		ModelEntity entity;
 		
 		
 		Assert.assertNotNull( getQuery(), "Input parameter 'query' cannot be null");
@@ -1205,7 +1205,7 @@ public class HQLStatement extends AbstractStatement {
 		while(entityUniqueNamesIterator.hasNext()) {
 			entityUniqueName = (String)entityUniqueNamesIterator.next();
 			//entity = getDataMartModel().getDataMartModelStructure().getRootEntity( entityUniqueName );
-			entity = getDataSource().getDataMartModelStructure().getEntity( entityUniqueName );
+			entity = getDataSource().getModelStructure().getEntity( entityUniqueName );
 			selectedEntities.add(entity);
 		}
 		

@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.model.structure.builder;
 
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelStructure;
 
 /**
  * The Interface IDataMartStructureBuilder.
@@ -28,5 +28,5 @@ import it.eng.qbe.model.structure.DataMartModelStructure;
  * @author Andrea Gioia
  */
 public interface IDataMartStructureBuilder {
-	DataMartModelStructure build();
+	ModelStructure build();
 }

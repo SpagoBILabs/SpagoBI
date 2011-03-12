@@ -26,12 +26,12 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.ModelPropertiesMeta;
 import it.eng.qbe.model.properties.ModelProperty;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
-import it.eng.qbe.model.structure.IDataMartNode;
-import it.eng.qbe.model.structure.IDataMartObject;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.IModelNode;
+import it.eng.qbe.model.structure.IModelObject;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -58,17 +58,17 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 
-	public void addProperties(IDataMartObject item) {
-		if(item instanceof DataMartEntity) {
-			addDataMartEntityProperties( (DataMartEntity)item );
-		} else if (item instanceof DataMartField) {
-			addDataMartFieldProperties( (DataMartField)item );
-		} else if (item instanceof DataMartModelStructure) {
-			addDataMartModelProperties( (DataMartModelStructure)item );
+	public void addProperties(IModelObject item) {
+		if(item instanceof ModelEntity) {
+			addDataMartEntityProperties( (ModelEntity)item );
+		} else if (item instanceof ModelField) {
+			addDataMartFieldProperties( (ModelField)item );
+		} else if (item instanceof ModelStructure) {
+			addDataMartModelProperties( (ModelStructure)item );
 		}
 	}
 	
-	private void addDataMartModelProperties(DataMartModelStructure item) {
+	private void addDataMartModelProperties(ModelStructure item) {
 		ModelProperty property;
 		String propertyValue;
 		
@@ -88,7 +88,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		}
 	}
 
-	protected void addDataMartEntityProperties(DataMartEntity item) {
+	protected void addDataMartEntityProperties(ModelEntity item) {
 		ModelProperty property;
 		String propertyValue;
 		
@@ -113,7 +113,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		}
 	}
 	
-	protected void addDataMartFieldProperties(DataMartField item) {
+	protected void addDataMartFieldProperties(ModelField item) {
 		ModelProperty property;
 		String propertyValue;
 		
@@ -139,10 +139,10 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	// TODO create method getRootItem in IDataMartItem interface and move some code there
-	protected String getInheritedProperty(DataMartEntity item, String propertyName) {
+	protected String getInheritedProperty(ModelEntity item, String propertyName) {
 		Assert.assertUnreachable("Property [" + propertyName + "] of entity [" + item.getName()+ "] cannot be inehritated");
 		String propertyValue;
-		DataMartEntity rootEntity = item.getStructure().getRootEntity(item);
+		ModelEntity rootEntity = item.getStructure().getRootEntity(item);
 		Assert.assertNotNull(rootEntity, "Impossible to find root entity of entity [" + item.getName() + "]");
 		propertyValue = getProperty(rootEntity, propertyName);
 		
@@ -150,24 +150,24 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	// TODO create method getRootItem in IDataMartItem interface and move some code there
-	protected String getInheritedProperty(DataMartField item, String propertyName) {
+	protected String getInheritedProperty(ModelField item, String propertyName) {
 		String propertyValue;
-		DataMartField rootField = null;
-		DataMartEntity rootEntity = item.getStructure().getRootEntity(item.getParent());
+		ModelField rootField = null;
+		ModelEntity rootEntity = item.getStructure().getRootEntity(item.getParent());
 		if(rootEntity == null) {
 			rootEntity = item.getStructure().getRootEntity(item.getParent());
 			Assert.assertUnreachable("rootEntity for field [" + item.getName() + "] cannot be null");
 		}
 		
 		List fields = null;
-		if(item instanceof DataMartCalculatedField) {
+		if(item instanceof ModelCalculatedField) {
 			fields = rootEntity.getCalculatedFields();
 		} else {
 			fields = rootEntity.getAllFields();
 		}
-		Iterator<DataMartField> it = fields.iterator();
+		Iterator<ModelField> it = fields.iterator();
 		while (it.hasNext()) {
-			DataMartField field = it.next();
+			ModelField field = it.next();
 			if (field.getName().equals(item.getName())) {
 				rootField = field;
 				break;
@@ -179,12 +179,12 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		return propertyValue;
 	}
 	
-	protected String getProperty(IDataMartObject item, String propertyName) {
+	protected String getProperty(IModelObject item, String propertyName) {
 		String propertyQualifiedName;
 		
 		propertyQualifiedName = null;
-		if(item instanceof IDataMartNode) {
-			propertyQualifiedName = getPropertyQualifiedName( (IDataMartNode)item, propertyName);
+		if(item instanceof IModelNode) {
+			propertyQualifiedName = getPropertyQualifiedName( (IModelNode)item, propertyName);
 		} else {
 			propertyQualifiedName = propertyName;
 		}
@@ -194,11 +194,11 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		return propertyValue;
 	}
 	
-	protected String getPropertyQualifiedName(IDataMartNode item, String propertyName) {
+	protected String getPropertyQualifiedName(IModelNode item, String propertyName) {
 		return getItemQulifier( item ) + "." + propertyName.trim();
 	}
 	
-	protected String getItemQulifier( IDataMartNode item ) {
+	protected String getItemQulifier( IModelNode item ) {
 		Assert.assertNotNull(item, "Parameter [item] cannot be null");
 		Assert.assertNotNull(item.getUniqueName(), "Item [uniqueName] cannot be null [" + item.getName() + "]");
 		return item.getUniqueName().replaceAll(":", "/");

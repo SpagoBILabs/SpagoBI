@@ -6,9 +6,9 @@ package it.eng.qbe.test.jpa;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 
@@ -42,12 +42,12 @@ public class JPAModelStructureTest {
 		EntityManager em = jpaDS.getEntityManager();
 		IDataMartStructureBuilder dmb = DataMartStructureBuilderFactory.getDataMartStructureBuilder(jpaDS);
 		//builds the jpa structure
-		DataMartModelStructure dms = dmb.build();
+		ModelStructure dms = dmb.build();
 		
 		//gets structure's informations
 		List allEntities = dms.getRootEntities("TEST_JPA");
 		for (int i=0; i< allEntities.size(); i++){
-			DataMartEntity entity = (DataMartEntity)allEntities.get(i);
+			ModelEntity entity = (ModelEntity)allEntities.get(i);
 			System.out.println("*** Entity uniqueName: " + entity.getUniqueName());
 			System.out.println("* Entity name: " + entity.getName());
 			System.out.println("* Entity uniqueType: " + entity.getUniqueType());
@@ -57,7 +57,7 @@ public class JPAModelStructureTest {
 			
 			List keyFields = entity.getKeyFields();
 			for (int k=0; k< keyFields.size(); k++){
-				DataMartField key = (DataMartField)keyFields.get(k);				
+				ModelField key = (ModelField)keyFields.get(k);				
 				System.out.println("*** key Unique Name: " + key.getUniqueName());
 				System.out.println("* key Name: " + key.getName());
 				System.out.println("* key type: " + key.getType());
@@ -67,7 +67,7 @@ public class JPAModelStructureTest {
 			
 			List fields = entity.getAllFields();
 			for (int j=0; j< fields.size(); j++){
-				DataMartField field = (DataMartField)fields.get(j);				
+				ModelField field = (ModelField)fields.get(j);				
 				System.out.println("*** Field Unique Name: " + field.getUniqueName());
 				System.out.println("* Field Name: " + field.getName());
 				System.out.println("* Field type: " + field.getType());

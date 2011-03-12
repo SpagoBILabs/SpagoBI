@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public abstract class AbstractDataMartObject implements IDataMartObject {
+public abstract class AbstractModelObject implements IModelObject {
 	
 	protected long id;	
 	protected String name;

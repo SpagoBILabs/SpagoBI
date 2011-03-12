@@ -19,30 +19,32 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.statment;
+package it.eng.qbe.statement;
 
-import it.eng.qbe.statment.hibernate.HQLDataSet;
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.jpa.JPQLDataSet;
 import it.eng.qbe.statment.jpa.JPQLStatement;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QbeDatasetFactory {
-	public static IDataSet createDataSet(IStatement statement) {
-		IDataSet dataSet;
+public class StatementFactory {
+	public static IStatement createStatement(IDataSource dataSource, Query query) {
+		IStatement statement;
 		
-		dataSet = null;
-		if(statement instanceof HQLStatement) {
-			dataSet = new HQLDataSet( (HQLStatement)statement );
-		} else if(statement instanceof JPQLStatement) {
-			dataSet = new JPQLDataSet( (JPQLStatement)statement );
+		statement = null;
+		
+		if(dataSource instanceof IHibernateDataSource) {
+			statement = new HQLStatement((IHibernateDataSource)dataSource, query);
+		} else if (dataSource instanceof JPADataSource) {
+			statement = new JPQLStatement((JPADataSource)dataSource, query);
 		} else {
-			throw new RuntimeException("Impossible to create dataset from a statement of type [" + statement.getClass().getName() + "]");
+			throw new RuntimeException("Impossible to create statement from a datasource of type [" + dataSource.getClass().getName() + "]");
 		}
 		
-		return dataSet;
+		return statement;
 	}
 }

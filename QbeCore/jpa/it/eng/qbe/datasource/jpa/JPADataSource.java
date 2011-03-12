@@ -26,7 +26,7 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -61,7 +61,7 @@ public class JPADataSource extends AbstractDataSource {
 
 	protected JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
-		dataMartModelAccessModality = new DataMartModelAccessModality();
+		dataMartModelAccessModality = new ModelAccessModality();
 		
 		// validate and set configuration
 		if(configuration instanceof FileDataSourceConfiguration){

@@ -23,7 +23,7 @@ package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
@@ -124,7 +124,7 @@ public class QueryJSONDeserializer {
 	
 	private void deserializeFields(JSONArray fieldsJSON, IDataSource dataSource, Query query) throws SerializationException {
 		JSONObject fieldJSON;
-		DataMartField field;
+		ModelField field;
 		String alias;
 		String fieldType;
 		
@@ -162,7 +162,7 @@ public class QueryJSONDeserializer {
 						fieldUniqueName = fieldJSON.getString(QuerySerializationConstants.FIELD_ID);
 						Assert.assertNotNull(fieldUniqueName, "Field name connot be null");
 					
-						field = dataSource.getDataMartModelStructure().getField(fieldUniqueName);
+						field = dataSource.getModelStructure().getField(fieldUniqueName);
 						Assert.assertNotNull(field, "Inpossible to retrive from datamart-structure a fild named " + fieldUniqueName + ". Please check select clause: " + fieldsJSON.toString());
 						if(StringUtilities.isEmpty(alias)) alias = "Column_" + (i+1);
 						
@@ -285,7 +285,7 @@ public class QueryJSONDeserializer {
 	private void deserializeHavings(JSONArray havingsJOSN, IDataSource dataSource, Query query) throws SerializationException {
 		
 		JSONObject havingJSON;
-		DataMartField field;
+		ModelField field;
 				
 		String filterId;
 		String filterDescription;

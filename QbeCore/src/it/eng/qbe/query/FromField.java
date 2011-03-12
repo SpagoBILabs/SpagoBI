@@ -21,27 +21,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query;
 
-import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.ModelEntity;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class FromField {
-	private DataMartEntity dataMartEntity;
+	private ModelEntity dataMartEntity;
 	private String alias;
 	
 	
 	
-	public FromField(DataMartEntity dataMartEntity) {
+	public FromField(ModelEntity dataMartEntity) {
 		setDataMartEntity( dataMartEntity );
 	}
 
-	public DataMartEntity getDataMartEntity() {
+	public ModelEntity getDataMartEntity() {
 		return dataMartEntity;
 	}
 
-	public void setDataMartEntity(DataMartEntity dataMartEntity) {
+	public void setDataMartEntity(ModelEntity dataMartEntity) {
 		this.dataMartEntity = dataMartEntity;
 	}
 

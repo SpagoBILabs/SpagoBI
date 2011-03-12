@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public interface IDataMartObject {
+public interface IModelObject {
 	long getId();
 	String getName();
 	void setName(String name);

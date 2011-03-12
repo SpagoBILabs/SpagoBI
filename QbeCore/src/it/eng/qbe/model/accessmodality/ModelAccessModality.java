@@ -21,8 +21,8 @@
 package it.eng.qbe.model.accessmodality;
 
 
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.base.SourceBean;
@@ -48,7 +48,7 @@ import org.xml.sax.InputSource;
  * 
  * @author Andrea Gioia
  */
-public class DataMartModelAccessModality {
+public class ModelAccessModality {
 	
 	
 	SourceBean modalitySB = null;
@@ -85,15 +85,15 @@ public class DataMartModelAccessModality {
 	
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(DataMartModelAccessModality.class);
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
 	
-	public DataMartModelAccessModality() {}
+	public ModelAccessModality() {}
 	
 	
 	
 	
-	public DataMartModelAccessModality(File file) {
+	public ModelAccessModality(File file) {
 		String recursiveFilteringAttr;
 		try {			
 			modalitySB = SourceBean.fromXMLStream(
@@ -115,7 +115,7 @@ public class DataMartModelAccessModality {
 	 * @param file the file
 	 * @param modalityName the modality name
 	 */
-	public DataMartModelAccessModality(File file, String modalityName) {
+	public ModelAccessModality(File file, String modalityName) {
 		try {			
 			SourceBean modalitiesSB = SourceBean.fromXMLStream(
 					new InputSource(new FileInputStream(file)));
@@ -139,7 +139,7 @@ public class DataMartModelAccessModality {
 	 * @param modalitiesSB the modalities sb
 	 * @param modalityName the modality name
 	 */
-	public DataMartModelAccessModality(SourceBean modalitiesSB, String modalityName) {
+	public ModelAccessModality(SourceBean modalitiesSB, String modalityName) {
 		modalitySB = getModalitySBByName(modalitiesSB, modalityName);
 		initRecursiveFiltering(modalitySB);
 		entityAccessModalityMap = buildEntityAccessModalityMap(modalitySB);
@@ -150,7 +150,7 @@ public class DataMartModelAccessModality {
 	 * 
 	 * @param modalitySB the modality sb
 	 */
-	public DataMartModelAccessModality(SourceBean modalitySB) {
+	public ModelAccessModality(SourceBean modalitySB) {
 		this.modalitySB = modalitySB;
 		initRecursiveFiltering(modalitySB);
 		entityAccessModalityMap = buildEntityAccessModalityMap(modalitySB);
@@ -243,7 +243,7 @@ public class DataMartModelAccessModality {
 	}
 
 	
-	public boolean isEntityAccessible(DataMartEntity entity) {	
+	public boolean isEntityAccessible(ModelEntity entity) {	
 		
 		// ERROR: accessibility of entities is type based: ignore the role
 		/*
@@ -267,7 +267,7 @@ public class DataMartModelAccessModality {
 	 * 
 	 * @return true, if is field accessible
 	 */
-	public boolean isFieldAccessible( DataMartField field ) {		
+	public boolean isFieldAccessible( ModelField field ) {		
 		if(entityAccessModalityMap != null && entityAccessModalityMap.containsKey( field.getParent().getType() )) {
 			EntityAccessModalitty tableAccessModalitty = (EntityAccessModalitty)entityAccessModalityMap.get( field.getParent().getType() );
 			return tableAccessModalitty.isFieldAccessible( field.getName() );

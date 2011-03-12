@@ -31,17 +31,17 @@ import java.util.Map;
 /**
  * @author Andrea Gioia
  */
-public class DataMartEntity extends AbstractDataMartNode {
+public class ModelEntity extends AbstractModelNode {
 	
-	protected DataMartEntity root;	
+	protected ModelEntity root;	
 	
 	protected String path;		
 	protected String role;	
 	protected String type;	
 	
-	protected Map<String,DataMartField> fields;	
-	protected Map<String, DataMartCalculatedField> calculatedFields;	
-	protected Map<String,DataMartEntity> subEntities;
+	protected Map<String,ModelField> fields;	
+	protected Map<String, ModelCalculatedField> calculatedFields;	
+	protected Map<String,ModelEntity> subEntities;
 	
 
 	// =========================================================================
@@ -49,8 +49,8 @@ public class DataMartEntity extends AbstractDataMartNode {
 	// =========================================================================
 	
 	
-	public DataMartEntity(String name, String path, String role, String type,
-			DataMartModelStructure structure) {
+	public ModelEntity(String name, String path, String role, String type,
+			ModelStructure structure) {
 		
 		setStructure( structure );
 		
@@ -61,9 +61,9 @@ public class DataMartEntity extends AbstractDataMartNode {
 		setType( type );
 		
 		setParent(null);
-		this.fields = new HashMap<String,DataMartField>();
-		this.calculatedFields = new HashMap<String, DataMartCalculatedField>();
-		this.subEntities = new HashMap<String,DataMartEntity>();
+		this.fields = new HashMap<String,ModelField>();
+		this.calculatedFields = new HashMap<String, ModelCalculatedField>();
+		this.subEntities = new HashMap<String,ModelEntity>();
 		
 		initProperties();
 	}
@@ -86,8 +86,8 @@ public class DataMartEntity extends AbstractDataMartNode {
 	
 	public boolean equals(Object o){
 		if ( this == o ) return true;
-		if ( !(o instanceof DataMartEntity) ) return false;
-		DataMartEntity de = (DataMartEntity)o;
+		if ( !(o instanceof ModelEntity) ) return false;
+		ModelEntity de = (ModelEntity)o;
 		return this.getUniqueName().equals( de.getUniqueName() );
 	}
 
@@ -101,37 +101,37 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}
 	
 	
-	private void addField(DataMartField field) {
+	private void addField(ModelField field) {
 		fields.put(field.getUniqueName(), field);
 		getStructure().addField(field);
 	}
 	
 	
-	private DataMartField addField(String fieldName, boolean isKey) {
+	private ModelField addField(String fieldName, boolean isKey) {
 		
-		DataMartField field = new DataMartField(fieldName, this);
+		ModelField field = new ModelField(fieldName, this);
 		field.setKey(isKey);
 		addField(field);
 		return field;
 	}
 	
 	
-	public DataMartField addNormalField(String fieldName) {
+	public ModelField addNormalField(String fieldName) {
 		return addField(fieldName, false);
 	}
 	
 	
-	public DataMartField addKeyField(String fieldName) {		
+	public ModelField addKeyField(String fieldName) {		
 		return addField(fieldName, true);
 	}
 	
 	
 	
-	public DataMartField getField(String fieldName) {
-		return (DataMartField)fields.get(fieldName);
+	public ModelField getField(String fieldName) {
+		return (ModelField)fields.get(fieldName);
 	}
 	
-	public void addCalculatedField(DataMartCalculatedField calculatedField) {
+	public void addCalculatedField(ModelCalculatedField calculatedField) {
 		// bound field to structure
 		calculatedField.setId(getStructure().getNextId());
 		calculatedField.setStructure(getStructure());
@@ -145,19 +145,19 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}	
 	
 	public void deleteCalculatedField(String fieldName) {
-		DataMartCalculatedField calculatedField;
+		ModelCalculatedField calculatedField;
 		
-		calculatedField = (DataMartCalculatedField)calculatedFields.remove(fieldName);
+		calculatedField = (ModelCalculatedField)calculatedFields.remove(fieldName);
 		if(calculatedField != null) {
 			getStructure().removeCalculatedFiield(calculatedField.getParent().getUniqueName(), calculatedField);
 		}
 		
 	}
 	
-	public List<DataMartCalculatedField>  getCalculatedFields() {
-		List<DataMartCalculatedField> list;
+	public List<ModelCalculatedField>  getCalculatedFields() {
+		List<ModelCalculatedField> list;
 		
-		list = new ArrayList<DataMartCalculatedField>();
+		list = new ArrayList<ModelCalculatedField>();
 		String key = null;
 		for(Iterator<String> it = calculatedFields.keySet().iterator(); it.hasNext(); ) {
 			key = it.next();
@@ -167,10 +167,10 @@ public class DataMartEntity extends AbstractDataMartNode {
 		return list;
 	}	
 	
-	public List<DataMartField> getAllFields() {
-		List<DataMartField> list;
+	public List<ModelField> getAllFields() {
+		List<ModelField> list;
 		
-		list = new ArrayList<DataMartField>();
+		list = new ArrayList<ModelField>();
 		String key = null;
 		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
 			key = it.next();
@@ -181,12 +181,12 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}	
 	
 	
-	private List<DataMartField> getFieldsByType(boolean isKey) {
-		List<DataMartField> list = new ArrayList<DataMartField>();
+	private List<ModelField> getFieldsByType(boolean isKey) {
+		List<ModelField> list = new ArrayList<ModelField>();
 		String key = null;
 		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
-			DataMartField field = (DataMartField)fields.get(key);
+			ModelField field = (ModelField)fields.get(key);
 			if(field.isKey() == isKey) {
 				list.add(field);		
 			}
@@ -195,26 +195,26 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}
 	
 	
-	public List<DataMartField> getKeyFields() {
+	public List<ModelField> getKeyFields() {
 		return getFieldsByType(true);
 	}
 	
 	
-	public Iterator<DataMartField> getKeyFieldIterator() {
+	public Iterator<ModelField> getKeyFieldIterator() {
 		return getKeyFields().iterator();
 	}
 	
 	
-	public List<DataMartField> getNormalFields() {
+	public List<ModelField> getNormalFields() {
 		return getFieldsByType(false);
 	}
 	
 	
-	public Iterator<DataMartField> getNormalFieldIterator() {
+	public Iterator<ModelField> getNormalFieldIterator() {
 		return getNormalFields().iterator();
 	}	
 	
-	public DataMartEntity addSubEntity(String subEntityName, String subEntityRole, String subEntityType) {
+	public ModelEntity addSubEntity(String subEntityName, String subEntityRole, String subEntityType) {
 				
 		String subEntityPath = "";
 		if(getParent() != null) {
@@ -224,7 +224,7 @@ public class DataMartEntity extends AbstractDataMartNode {
 			}
 		}
 		
-		DataMartEntity subEntity = new DataMartEntity(subEntityName, subEntityPath, subEntityRole, subEntityType, getStructure());
+		ModelEntity subEntity = new ModelEntity(subEntityName, subEntityPath, subEntityRole, subEntityType, getStructure());
 		subEntity.setParent(this);
 		
 		addSubEntity(subEntity);
@@ -232,19 +232,19 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}
 	
 	
-	private void addSubEntity(DataMartEntity entity) {
+	private void addSubEntity(ModelEntity entity) {
 		subEntities.put(entity.getUniqueName(), entity);
 		getStructure().addEntity(entity);
 	}
 	
 	
-	public DataMartEntity getSubEntity(String entityUniqueName) {
-		return (DataMartEntity)subEntities.get(entityUniqueName);
+	public ModelEntity getSubEntity(String entityUniqueName) {
+		return (ModelEntity)subEntities.get(entityUniqueName);
 	}
 	
 	
-	public List<DataMartEntity> getSubEntities() {
-		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
+	public List<ModelEntity> getSubEntities() {
+		List<ModelEntity> list = new ArrayList<ModelEntity>();
 		String key = null;
 		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
 			key = it.next();
@@ -253,12 +253,12 @@ public class DataMartEntity extends AbstractDataMartNode {
 		return list;
 	}
 	
-	public List<DataMartEntity> getAllSubEntities() {
-		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
+	public List<ModelEntity> getAllSubEntities() {
+		List<ModelEntity> list = new ArrayList<ModelEntity>();
 		String key = null;
 		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
-			DataMartEntity entity = (DataMartEntity)subEntities.get(key);
+			ModelEntity entity = (ModelEntity)subEntities.get(key);
 			list.add(entity);
 			list.addAll(entity.getAllSubEntities());
 		}
@@ -266,12 +266,12 @@ public class DataMartEntity extends AbstractDataMartNode {
 	}
 	
 	
-	public List<DataMartEntity> getAllSubEntities(String entityName) {
-		List<DataMartEntity> list = new ArrayList<DataMartEntity>();
+	public List<ModelEntity> getAllSubEntities(String entityName) {
+		List<ModelEntity> list = new ArrayList<ModelEntity>();
 		String key = null;
 		for(Iterator<String> it = subEntities.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
-			DataMartEntity entity = (DataMartEntity)subEntities.get(key);
+			ModelEntity entity = (ModelEntity)subEntities.get(key);
 			if(entity.getName().equalsIgnoreCase(entityName)) {
 				list.add(entity);
 			}
@@ -281,14 +281,14 @@ public class DataMartEntity extends AbstractDataMartNode {
 		return list;
 	}
 	
-	public List<DataMartField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
-		List<DataMartField> list = new ArrayList<DataMartField>();
-		List<DataMartEntity> entities = getAllSubEntities(entityName);
+	public List<ModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
+		List<ModelField> list = new ArrayList<ModelField>();
+		List<ModelEntity> entities = getAllSubEntities(entityName);
 		for(int i = 0; i < entities.size(); i++) {
-			DataMartEntity entity = entities.get(i);
-			List<DataMartField> fields = entity.getAllFields();
+			ModelEntity entity = entities.get(i);
+			List<ModelField> fields = entity.getAllFields();
 			for(int j = 0; j < fields.size(); j++) {
-				DataMartField field = fields.get(j);
+				ModelField field = fields.get(j);
 				if(field.getName().endsWith("." + fieldName)) {
 					list.add(field);
 				}
@@ -349,7 +349,7 @@ public class DataMartEntity extends AbstractDataMartNode {
 		this.type = type;
 	}
 
-	public DataMartEntity getRoot() {
+	public ModelEntity getRoot() {
 		if(root == null) {
 			root = this;
 			while(root.getParent() != null) {
@@ -360,7 +360,7 @@ public class DataMartEntity extends AbstractDataMartNode {
 		return root;
 	}
 
-	public void setRoot(DataMartEntity root) {
+	public void setRoot(ModelEntity root) {
 		this.root = root;
 	}
 

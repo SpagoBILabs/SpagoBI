@@ -22,9 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelStructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,7 +129,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getCalculatedFields()
 	 */
-	public Map<String, List<DataMartCalculatedField>> loadCalculatedFields() {
+	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -137,16 +137,16 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#setCalculatedFields(java.util.Map)
 	 */
-	public void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
+	public void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		
-		Iterator<List<DataMartCalculatedField>> it = calculatedFields.values().iterator();
+		Iterator<List<ModelCalculatedField>> it = calculatedFields.values().iterator();
 		if(!it.hasNext()) return; // if NO calculated fields to add return
-		DataMartModelStructure structure = it.next().get(0).getStructure();
+		ModelStructure structure = it.next().get(0).getStructure();
 		
 		Iterator<IDataSourceConfiguration> subConfigurationIterator = subConfigurations.iterator();
 		while(it.hasNext()) {
 			IDataSourceConfiguration subConfiguration = subConfigurationIterator.next();
-			Map<String, List<DataMartCalculatedField>> datamartCalcultedField = getCalculatedFieldsForDatamart(structure, subConfiguration.getModelName());
+			Map<String, List<ModelCalculatedField>> datamartCalcultedField = getCalculatedFieldsForDatamart(structure, subConfiguration.getModelName());
 
 			subConfiguration.saveCalculatedFields(datamartCalcultedField);
 		}
@@ -162,15 +162,15 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	 * @param datamartName The datamart for which the calculated fields should be retrieved
 	 * @return the calculated field defined for the specified datamart 
 	 */
-	private Map<String, List<DataMartCalculatedField>> getCalculatedFieldsForDatamart(DataMartModelStructure structure, String datamartName) {
-		Map<String, List<DataMartCalculatedField>> toReturn = new HashMap<String, List<DataMartCalculatedField>>();
-		Map<String, List<DataMartCalculatedField>> calculatedFields = structure.getCalculatedFields();
+	private Map<String, List<ModelCalculatedField>> getCalculatedFieldsForDatamart(ModelStructure structure, String datamartName) {
+		Map<String, List<ModelCalculatedField>> toReturn = new HashMap<String, List<ModelCalculatedField>>();
+		Map<String, List<ModelCalculatedField>> calculatedFields = structure.getCalculatedFields();
 		Set keys = calculatedFields.keySet();
 		Iterator keysIt = keys.iterator();
 		while (keysIt.hasNext()) {
 			String entityUniqueName = (String) keysIt.next();
-			DataMartEntity dataMartEntity = structure.getEntity(entityUniqueName);
-			DataMartEntity dataMartRootEntity = dataMartEntity.getRoot();
+			ModelEntity dataMartEntity = structure.getEntity(entityUniqueName);
+			ModelEntity dataMartRootEntity = dataMartEntity.getRoot();
 			List rootEntities = structure.getRootEntities(datamartName);
 			if (rootEntities.contains(dataMartRootEntity)) {
 				toReturn.put(entityUniqueName, calculatedFields.get(entityUniqueName));
