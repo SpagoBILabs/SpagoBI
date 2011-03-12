@@ -35,7 +35,6 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 <%@page import="it.eng.spagobi.engines.console.ConsoleEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
