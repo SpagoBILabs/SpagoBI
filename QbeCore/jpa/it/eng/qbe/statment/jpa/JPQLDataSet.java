@@ -67,14 +67,14 @@ public class JPQLDataSet extends AbstractJPADataSet {
 	}
 	
 	
-	public void loadData(int offset, int fetchSize, int maxResults) throws EMFUserError, EMFInternalError {
+	public void loadData(int offset, int fetchSize, int maxResults) {
 		EntityManager entityManager = null;
 		entityManager = ((IJpaDataSource)statement.getDataSource()).getEntityManager();
 		loadDataEclipseLink(offset, fetchSize, maxResults, entityManager);
 	
 	}
 	
-	private void loadWithDataHibernate(int offset, int fetchSize, int maxResults, EntityManager entityManager) throws EMFUserError, EMFInternalError {
+	private void loadWithDataHibernate(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
 
 		HibernateQuery jpqlQuery;
 		boolean overflow = false;
@@ -113,7 +113,7 @@ public class JPQLDataSet extends AbstractJPADataSet {
 	
 	
 	
-	private void loadDataEclipseLink(int offset, int fetchSize, int maxResults, EntityManager entityManager) throws EMFUserError, EMFInternalError {
+	private void loadDataEclipseLink(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
 
 		javax.persistence.Query jpqlQuery;
 		boolean overflow = false;
@@ -173,7 +173,7 @@ public class JPQLDataSet extends AbstractJPADataSet {
 	}
 	
 	
-	private int getResultNumber(Query jpqlQuery, EntityManager entityManager) throws EMFUserError, EMFInternalError {
+	private int getResultNumber(Query jpqlQuery, EntityManager entityManager) {
 		int resultNumber = 0;
 		try {
 			resultNumber = getResultNumberUsingInlineView(jpqlQuery,entityManager);
