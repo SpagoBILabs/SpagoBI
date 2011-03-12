@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.tree.filter;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.ModelEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +51,12 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 	
 	public List filter(IDataSource dataSource, List entities) {
 		List list = null;
-		DataMartEntity entity;
+		ModelEntity entity;
 		
 		list = new ArrayList();
 		
 		for(int i = 0; i < entities.size(); i++) {
-			entity = (DataMartEntity)entities.get(i);
+			entity = (ModelEntity)entities.get(i);
 			if( isEntityVisible(dataSource, entity)) {
 				list.add(entity);
 			}
@@ -73,11 +73,11 @@ public class QbeTreeAccessModalityEntityFilter extends ComposableQbeTreeEntityFi
 	 * 
 	 * @return true, if is entity visible
 	 */
-	private boolean isEntityVisible(IDataSource dataSource, DataMartEntity entity) {
+	private boolean isEntityVisible(IDataSource dataSource, ModelEntity entity) {
 		//DatamartProperties qbeProperties = dataSource.getDataMartProperties();
 		
 		if( !entity.getPropertyAsBoolean("visible") ) return false;
-		if( !dataSource.getDataMartModelAccessModality().isEntityAccessible( entity ) ) return false;
+		if( !dataSource.getModelAccessModality().isEntityAccessible( entity ) ) return false;
 		return true;
 	}	
 }

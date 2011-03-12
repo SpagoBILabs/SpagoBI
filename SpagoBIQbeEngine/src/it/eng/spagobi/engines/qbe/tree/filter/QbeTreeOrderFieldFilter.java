@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.tree.filter;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.structure.ModelField;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,12 +59,12 @@ public class QbeTreeOrderFieldFilter extends ComposableQbeTreeFieldFilter {
 		
 		Collections.sort(fields, new Comparator() {
 		    public int compare(Object o1, Object o2) {
-		    	DataMartField f1, f2;
+		    	ModelField f1, f2;
 		    	String p1, p2;
 		    	int i1, i2;
 		    	
-		    	f1 = (DataMartField)o1;
-		    	f2 = (DataMartField)o2;
+		    	f1 = (ModelField)o1;
+		    	f2 = (ModelField)o2;
 		    	
 		    	i1 = f1.getPropertyAsInt("position");
 		    	i2 = f2.getPropertyAsInt("position");

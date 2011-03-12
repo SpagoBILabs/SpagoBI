@@ -22,9 +22,9 @@ package it.eng.spagobi.engines.qbe.services.core.datamart;
 
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
@@ -62,7 +62,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 	
 	public void service(SourceBean request, SourceBean response)  {				
 		
-		Map<String, List<DataMartCalculatedField>> calculatedFields;
+		Map<String, List<ModelCalculatedField>> calculatedFields;
 				
 		logger.debug("IN");
 		
@@ -72,7 +72,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			calculatedFields = getDataSource().getDataMartModelStructure().getCalculatedFields();
+			calculatedFields = getDataSource().getModelStructure().getCalculatedFields();
 			Assert.assertNotNull(calculatedFields, "Calculated field map cannot be null in order to execute " + this.getActionName() + " service");
 			
 			getDataSource().getConfiguration().saveCalculatedFields(calculatedFields);
@@ -95,8 +95,8 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 	
 
 
-	private DataMartCalculatedField deserialize(JSONObject fieldJSON) {
-		DataMartCalculatedField field;
+	private ModelCalculatedField deserialize(JSONObject fieldJSON) {
+		ModelCalculatedField field;
 		String alias;
 		String fieldType;
 		
@@ -121,7 +121,7 @@ public class SaveTreeAction extends AbstractQbeEngineAction {
 			type = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_TYPE);
 			expression = fieldClaculationDescriptor.getString(QuerySerializationConstants.FIELD_EXPRESSION);
 			
-			field = new DataMartCalculatedField(alias, type, expression);
+			field = new ModelCalculatedField(alias, type, expression);
 		} catch (Throwable t) {
 			throw new SpagoBIEngineServiceException(getActionName(), "impossible to deserialize calculated field [" + fieldJSON.toString() + "]", t);
 		}					

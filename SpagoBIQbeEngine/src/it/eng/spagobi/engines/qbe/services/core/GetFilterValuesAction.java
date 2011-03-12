@@ -23,13 +23,13 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDatasetFactory;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -234,20 +234,20 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		if (queryRootEntity) {
 			logger.debug("Must use query root entity. Looking for select and order fields...");
 			IDataSource model = getDataSource();
-			DataMartModelStructure structure = model.getDataMartModelStructure();
-			DataMartField selectField = structure.getField(entityId);
-			DataMartField orderField = null;
+			ModelStructure structure = model.getModelStructure();
+			ModelField selectField = structure.getField(entityId);
+			ModelField orderField = null;
 			if (orderEntity != null && !orderEntity.equals("")) {
 				orderField = structure.getField(orderEntity);
 			}
-			DataMartEntity parentEntity = selectField.getParent();
+			ModelEntity parentEntity = selectField.getParent();
 			logger.debug("Parent entity is " + parentEntity.getUniqueName());
-			DataMartEntity rootEntity = structure.getRootEntity(parentEntity);
+			ModelEntity rootEntity = structure.getRootEntity(parentEntity);
 			logger.debug("Relevant root entity is " + rootEntity.getUniqueName());
 			List fields = rootEntity.getAllFields();
 			Iterator it = fields.iterator();
 			while (it.hasNext()) {
-				DataMartField aField = (DataMartField) it.next();
+				ModelField aField = (ModelField) it.next();
 				if (aField.getName().equals(selectField.getName())) {
 					entityId = aField.getUniqueName();
 					entityPattern = aField.getPropertyAsString("format");
@@ -258,7 +258,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			if (orderField != null) {
 				it = fields.iterator();
 				while (it.hasNext()) {
-					DataMartField aField = (DataMartField) it.next();
+					ModelField aField = (ModelField) it.next();
 					if (aField.getName().equals(orderField.getName())) {
 						orderEntity = aField.getUniqueName();
 						orderEntityPattern = aField.getPropertyAsString("format");

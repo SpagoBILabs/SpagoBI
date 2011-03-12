@@ -20,8 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -72,9 +72,9 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			DataMartCalculatedField calculatedField = deserialize(fieldJSON);
+			ModelCalculatedField calculatedField = deserialize(fieldJSON);
 			
-			DataMartEntity parentEntity = getDataSource().getDataMartModelStructure().getEntity(parentEntityUniqueName);
+			ModelEntity parentEntity = getDataSource().getModelStructure().getEntity(parentEntityUniqueName);
 			parentEntity.addCalculatedField(calculatedField);
 			
 			try {
@@ -91,8 +91,8 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		}			
 	}
 
-	private DataMartCalculatedField deserialize(JSONObject fieldJSON) {
-		DataMartCalculatedField field;
+	private ModelCalculatedField deserialize(JSONObject fieldJSON) {
+		ModelCalculatedField field;
 		String alias;
 		String fieldType;
 		
@@ -121,9 +121,9 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			String ft = fieldJSON.getString("filedType");
 			
 			if(ft.equals("calculatedField")){
-				field = new DataMartCalculatedField(alias, type, expression);
+				field = new ModelCalculatedField(alias, type, expression);
 			}else{
-				field = new DataMartCalculatedField(alias, type, expression, true);
+				field = new ModelCalculatedField(alias, type, expression, true);
 			}
 			
 			

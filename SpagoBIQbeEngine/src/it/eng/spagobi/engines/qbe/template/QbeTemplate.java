@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.template;
 
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class QbeTemplate {
 	private boolean composite;	
 	private Map dblinkMap;	
 	private List datamartNames;	
-	private DataMartModelAccessModality datamartModelAccessModality;
+	private ModelAccessModality datamartModelAccessModality;
 	private String dialect;
 	
 	private Map properties;
@@ -96,11 +96,11 @@ public class QbeTemplate {
 		return dblinkMap;
 	}
 	
-	public void setDatamartModelAccessModality(DataMartModelAccessModality datamartModelAccessModality) {
+	public void setDatamartModelAccessModality(ModelAccessModality datamartModelAccessModality) {
 		this.datamartModelAccessModality = datamartModelAccessModality;
 	}
 	
-	public DataMartModelAccessModality getDatamartModelAccessModality() {
+	public ModelAccessModality getDatamartModelAccessModality() {
 		return datamartModelAccessModality;
 	}
 	

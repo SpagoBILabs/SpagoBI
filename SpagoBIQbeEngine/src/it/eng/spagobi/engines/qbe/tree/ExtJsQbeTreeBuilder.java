@@ -21,10 +21,10 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -82,24 +82,24 @@ public class ExtJsQbeTreeBuilder  {
 		return buildQbeTree(datamartName);
 	}
 	
-	private String geEntityLabel(DataMartEntity entity) {
+	private String geEntityLabel(ModelEntity entity) {
 		String label;
 		label = getDatamartLabels().getLabel(entity);
 		return StringUtilities.isEmpty(label)? entity.getName(): label;
 	}
 	
-	private String geEntityTooltip(DataMartEntity entity) {
+	private String geEntityTooltip(ModelEntity entity) {
 		String tooltip = getDatamartLabels().getTooltip(entity);
 		return tooltip != null ? tooltip : "";
 	}
 	
-	private String geFieldLabel(DataMartField field) {
+	private String geFieldLabel(ModelField field) {
 		String label;
 		label = getDatamartLabels().getLabel(field);
 		return StringUtilities.isEmpty(label)? field.getName(): label;
 	}
 
-	private String geFieldTooltip(DataMartField field) {
+	private String geFieldTooltip(ModelField field) {
 		String tooltip = getDatamartLabels().getTooltip(field);
 		return tooltip != null ? tooltip : "";
 	}
@@ -140,12 +140,12 @@ public class ExtJsQbeTreeBuilder  {
 	public void addEntityNodes(JSONArray nodes, String datamartName) {
 		int nodeCounter = 0;
 		
-		List entities = getDataSource().getDataMartModelStructure().getRootEntities(datamartName);
+		List entities = getDataSource().getModelStructure().getRootEntities(datamartName);
 		entities = qbeTreeFilter.filterEntities(getDataSource(), entities);
 		
 		Iterator it = entities.iterator();
 		while(it.hasNext()) {
-			DataMartEntity entity = (DataMartEntity)it.next();			
+			ModelEntity entity = (ModelEntity)it.next();			
 			addEntityNode(nodes, entity, 1);
 		}
 	}
@@ -159,7 +159,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * @param recursionLevel the recursion level
 	 */
 	public void addEntityNode(JSONArray nodes, 
-							 DataMartEntity entity,
+							 ModelEntity entity,
 							 int recursionLevel) {
 		
 			
@@ -177,7 +177,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * @param recursionLevel the recursion level
 	 */
 	public void addEntityRootNode(JSONArray nodes,
-								  DataMartEntity entity,
+								  ModelEntity entity,
 								  int recursionLevel) {		
 		
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();	
@@ -222,7 +222,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * 
 	 * @return the field nodes
 	 */
-	public JSONArray getFieldNodes(DataMartEntity entity,int recursionLevel) {		
+	public JSONArray getFieldNodes(ModelEntity entity,int recursionLevel) {		
 		
 		JSONArray children = new JSONArray();
 		
@@ -232,7 +232,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		Iterator keyFieldIterator = keyFields.iterator();
 		while (keyFieldIterator.hasNext() ) {
-			DataMartField field = (DataMartField)keyFieldIterator.next();
+			ModelField field = (ModelField)keyFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -246,7 +246,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		Iterator normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext() ) {
-			DataMartField field = (DataMartField)normalFieldIterator.next();
+			ModelField field = (ModelField)normalFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -259,7 +259,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		Iterator calculatedFieldIterator = calculatedFields.iterator();
 		while (calculatedFieldIterator.hasNext() ) {
-			DataMartCalculatedField field = (DataMartCalculatedField)calculatedFieldIterator.next();
+			ModelCalculatedField field = (ModelCalculatedField)calculatedFieldIterator.next();
 			
 			JSONObject jsObject = getCalculatedFieldNode(entity, field);
 			if(jsObject != null) {
@@ -281,8 +281,8 @@ public class ExtJsQbeTreeBuilder  {
 	 * 
 	 * @return the field node
 	 */
-	public  JSONObject getFieldNode(DataMartEntity parentEntity,
-							 DataMartField field) {
+	public  JSONObject getFieldNode(ModelEntity parentEntity,
+							 ModelField field) {
 		
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");		
@@ -317,7 +317,7 @@ public class ExtJsQbeTreeBuilder  {
 		return fieldNode;
 	}
 	
-	public  JSONObject getCalculatedFieldNode(DataMartEntity parentEntity, DataMartCalculatedField field) {
+	public  JSONObject getCalculatedFieldNode(ModelEntity parentEntity, ModelCalculatedField field) {
 
 		String iconCls = "calculation";;//datamartProperties.getFieldIconClass( field );		
 		String fieldLabel = geFieldLabel( field );
@@ -374,7 +374,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * @return the int
 	 */
 	public int addCalculatedFieldNodes(IQbeTree tree, 
-			   						   DataMartEntity entity,
+			   						   ModelEntity entity,
 			   						   int parentEntityNodeId, int nodeCounter) {
 			
 		/*
@@ -425,7 +425,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * 
 	 * @return the sub entities nodes
 	 */
-	public JSONArray getSubEntitiesNodes(DataMartEntity entity,
+	public JSONArray getSubEntitiesNodes(ModelEntity entity,
 									JSONArray nodes,
 								   int recursionLevel ) {
 		
@@ -435,7 +435,7 @@ public class ExtJsQbeTreeBuilder  {
 	
 		Iterator subEntitiesIterator = subEntities.iterator();
 		while (subEntitiesIterator.hasNext()){
-			DataMartEntity subentity = (DataMartEntity)subEntitiesIterator.next();
+			ModelEntity subentity = (ModelEntity)subEntitiesIterator.next();
 			if (subentity.getType().equalsIgnoreCase( entity.getType() ) || recursionLevel > 10) {
 				// stop recursion 
 			} else {

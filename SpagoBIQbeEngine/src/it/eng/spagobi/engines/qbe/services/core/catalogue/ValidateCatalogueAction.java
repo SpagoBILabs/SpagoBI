@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.IStatement;
+import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;

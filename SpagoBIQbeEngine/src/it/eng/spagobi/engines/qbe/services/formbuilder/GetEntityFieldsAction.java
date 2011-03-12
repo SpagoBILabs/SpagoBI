@@ -22,9 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.formbuilder;
 		
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -55,10 +55,10 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 	
 		String fieldId;
 		IDataSource dataSource;
-		DataMartModelStructure structure;
-		DataMartField field;
-		DataMartEntity parentEntity;
-		DataMartEntity dimensionalEntity;
+		ModelStructure structure;
+		ModelField field;
+		ModelEntity parentEntity;
+		ModelEntity dimensionalEntity;
 		List fields;
 		JSONArray toReturn;
 		
@@ -73,7 +73,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
 			dataSource = getDataSource();
-			structure = dataSource.getDataMartModelStructure();
+			structure = dataSource.getModelStructure();
 			field = structure.getField(fieldId);
 			parentEntity = field.getParent();
 			fields = parentEntity.getAllFields();
@@ -81,7 +81,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			toReturn = new JSONArray();
 			Iterator it = fields.iterator();
 			while (it.hasNext()) {
-				DataMartField aField = (DataMartField) it.next();
+				ModelField aField = (ModelField) it.next();
 				JSONObject aJSONField = new JSONObject();
 				aJSONField.put("id", aField.getUniqueName());
 				//String name = QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ).getLabel(aField);

@@ -20,8 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.QbeDatasetFactory;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;

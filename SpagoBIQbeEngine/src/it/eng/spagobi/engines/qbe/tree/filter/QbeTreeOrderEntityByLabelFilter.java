@@ -21,8 +21,8 @@
 package it.eng.spagobi.engines.qbe.tree.filter;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.DataMartEntity;
+import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.structure.ModelEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,13 +99,13 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		 * 
 		 * @param entity the entity
 		 */
-		void addEntity(DataMartEntity entity) {
+		void addEntity(ModelEntity entity) {
 			String label = geEntityLabel( entity );	
 			EntityWrapper field = new EntityWrapper(label, entity);
 			list.add(field);
 		}
 		
-		private String geEntityLabel(DataMartEntity entity) {
+		private String geEntityLabel(ModelEntity entity) {
 			String label;
 			label = getDatamartLabels().getLabel(entity);
 			return label==null? entity.getName(): label;
@@ -122,7 +122,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			if (entities != null && entities.size() > 0) {
 				Iterator it = entities.iterator();
 				while (it.hasNext()) {
-					DataMartEntity relation = (DataMartEntity) it.next();
+					ModelEntity relation = (ModelEntity) it.next();
 					addEntity(relation);
 				}
 			}
@@ -137,7 +137,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			if (relations != null && relations.size() > 0) {
 				Iterator it = relations.iterator();
 				while (it.hasNext()) {
-					DataMartEntity entity = (DataMartEntity) it.next();
+					ModelEntity entity = (ModelEntity) it.next();
 					addEntity(entity);
 				}
 			}
@@ -176,7 +176,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 	private class EntityWrapper implements Comparable {
 		
 		/** The entity. */
-		private DataMartEntity entity;
+		private ModelEntity entity;
 		
 		/** The label. */
 		private String label;
@@ -187,7 +187,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		 * @param label the label
 		 * @param entity the entity
 		 */
-		EntityWrapper (String label, DataMartEntity entity) {
+		EntityWrapper (String label, ModelEntity entity) {
 			this.entity = entity;
 			this.label = label;
 		}
@@ -207,7 +207,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		 * 
 		 * @return the entity
 		 */
-		public DataMartEntity getEntity() {
+		public ModelEntity getEntity() {
 			return entity;
 		}
 		
@@ -216,7 +216,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		 * 
 		 * @param entity the new entity
 		 */
-		public void setEntity(DataMartEntity entity) {
+		public void setEntity(ModelEntity entity) {
 			this.entity = entity;
 		}
 		
