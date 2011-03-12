@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<web-app
-	 xmlns="http://java.sun.com/xml/ns/j2ee"
-	 version="2.4"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="SpagoBIBirtReportEngine" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>Eclipse BIRT Report Viewer</display-name>
 
@@ -179,8 +175,10 @@
 		<servlet-class>org.eclipse.birt.report.servlet.BirtEngineServlet</servlet-class>
 	</servlet>
 
+	<!-- Engine Servlet
 	@generated@
-	
+	 -->
+	 
 	<servlet-mapping>
 		<servlet-name>ViewerServlet</servlet-name>
 		<url-pattern>/frameset</url-pattern>
