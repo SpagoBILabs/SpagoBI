@@ -53,7 +53,7 @@ public class HQLDataSet extends AbstractJPADataSet {
 		
 	}
 	
-	public void loadData(int offset, int fetchSize, int maxResults) throws EMFUserError, EMFInternalError {
+	public void loadData(int offset, int fetchSize, int maxResults)  {
 		Session session = null;
 		org.hibernate.Query hibernateQuery;
 		int resultNumber;
@@ -93,7 +93,7 @@ public class HQLDataSet extends AbstractJPADataSet {
 		}		
 	}
 	
-	private int getResultNumber(org.hibernate.Query hibernateQuery, Session session) throws EMFUserError, EMFInternalError {
+	private int getResultNumber(org.hibernate.Query hibernateQuery, Session session) {
 		int resultNumber = 0;
 		try {
 			resultNumber = getResultNumberUsingInlineView(hibernateQuery, session);
