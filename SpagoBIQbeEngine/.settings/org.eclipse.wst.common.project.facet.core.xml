@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <runtime name="SpagoBI v3.0 - Tomcat v6.0 @ localhost"/>
+  <runtime name="Apache Tomcat v6.0"/>
   <fixed facet="jst.java"/>
   <fixed facet="jst.web"/>
   <installed facet="jst.web" version="2.4"/>
