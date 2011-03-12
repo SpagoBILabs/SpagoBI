@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,6 @@ import java.util.Map;
  */
 public interface ICalculatedFieldsDAO {	
 	
-	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();		
-	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
+	Map<String, List<ModelCalculatedField>> loadCalculatedFields();		
+	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }

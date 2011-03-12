@@ -20,8 +20,8 @@
  **/
 package it.eng.qbe.model.properties.i18n;
 
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
 import java.util.Properties;
@@ -51,11 +51,11 @@ public class ModelI18NProperties {
 		setProperties(properties);
 	}	
 	
-	private String getItemUniqueNameInFile( DataMartEntity entity ) {
+	private String getItemUniqueNameInFile( ModelEntity entity ) {
 		return entity.getUniqueName().replaceAll(":", "/");
 	}
 	
-	private String getItemUniqueNameInFile( DataMartField field ) {
+	private String getItemUniqueNameInFile( ModelField field ) {
 		return field.getUniqueName().replaceAll(":", "/");
 	}
 	
@@ -67,10 +67,10 @@ public class ModelI18NProperties {
 			return null;
 		}
 		
-		if( datamartItem instanceof DataMartEntity ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (DataMartEntity)datamartItem );
-		} else if( datamartItem instanceof DataMartField ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (DataMartField)datamartItem );
+		if( datamartItem instanceof ModelEntity ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelEntity)datamartItem );
+		} else if( datamartItem instanceof ModelField ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelField)datamartItem );
 		} else {
 			// fail fast
 			throw new IllegalArgumentException("[datamartItem] is an instance of class " + datamartItem.getClass().getName() + ".[datamartItem] can be only an instance of class DataMartEntity or of class DataMartField");
@@ -87,10 +87,10 @@ public class ModelI18NProperties {
 			return null;
 		}
 		
-		if( datamartItem instanceof DataMartEntity ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (DataMartEntity)datamartItem );
-		} else if( datamartItem instanceof DataMartField ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (DataMartField)datamartItem );
+		if( datamartItem instanceof ModelEntity ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelEntity)datamartItem );
+		} else if( datamartItem instanceof ModelField ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelField)datamartItem );
 		} else {
 			// fail fast
 			throw new IllegalArgumentException("[datamartItem] is an instance of class " + datamartItem.getClass().getName() + ".[datamartItem] can be only an instance of class DataMartEntity or of class DataMartField");

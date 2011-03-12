@@ -25,26 +25,26 @@ package it.eng.qbe.model.structure;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public abstract class AbstractDataMartNode extends AbstractDataMartObject implements IDataMartNode {
+public abstract class AbstractModelNode extends AbstractModelObject implements IModelNode {
 	
-	protected DataMartModelStructure structure;
-	protected DataMartEntity parent;	
+	protected ModelStructure structure;
+	protected ModelEntity parent;	
 	
 	
 	
-	public DataMartModelStructure getStructure() {
+	public ModelStructure getStructure() {
 		return structure;
 	}
 
-	protected void setStructure(DataMartModelStructure structure) {
+	protected void setStructure(ModelStructure structure) {
 		this.structure = structure;
 	}
 	
-	public DataMartEntity getParent() {
+	public ModelEntity getParent() {
 		return parent;
 	}
 	
-	public void setParent(DataMartEntity parent) {
+	public void setParent(ModelEntity parent) {
 		this.parent = parent;
 	}
 	

@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelStructure;
 
 import java.util.List;
 import java.util.Locale;
@@ -86,6 +86,6 @@ public interface IDataSourceConfiguration {
 	Map<String,Object> loadDataSourceProperties();
 	
 
-	Map<String, List<DataMartCalculatedField>> loadCalculatedFields();
-	void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields);
+	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
+	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }

@@ -24,7 +24,7 @@ package it.eng.qbe.model.structure;
 /**
  * @author Andrea Gioia
  */
-public class DataMartField extends AbstractDataMartNode {
+public class ModelField extends AbstractModelNode {
 		
 	private boolean key;
 	private String type;
@@ -33,14 +33,14 @@ public class DataMartField extends AbstractDataMartNode {
 	
 	//private String datamartName;	
 	
-	protected DataMartField() {
+	protected ModelField() {
 		// in order to let subclass in this package to relax constraints imposed by the public constructor
 		// DataMartField(String name, DataMartEntity parent). Ex. DataMartCalculatedField
 		// can be created by themself without a pre-existing parent entity.
 		initProperties();
 	}
 	
-	public DataMartField(String name, DataMartEntity parent) {
+	public ModelField(String name, ModelEntity parent) {
 		setStructure(parent.getStructure());
 		setId( getStructure().getNextId() );		
 		setName(name);
@@ -58,7 +58,7 @@ public class DataMartField extends AbstractDataMartNode {
 	public String getQueryName() {
 		String fieldName = "";
 		
-		DataMartEntity entity = getParent();
+		ModelEntity entity = getParent();
 		if(entity.getParent() != null) {
 			fieldName = toLowerCase( entity.getName() );
 			entity = entity.getParent();

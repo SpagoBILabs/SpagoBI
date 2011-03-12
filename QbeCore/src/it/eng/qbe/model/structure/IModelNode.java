@@ -26,12 +26,12 @@ package it.eng.qbe.model.structure;
  * 
  * @author Andrea Gioia
  */
-public interface IDataMartNode extends IDataMartObject{
+public interface IModelNode extends IModelObject{
 	
-	DataMartModelStructure getStructure();
+	ModelStructure getStructure();
 	
-	DataMartEntity getParent();
-	void setParent(DataMartEntity parent);
+	ModelEntity getParent();
+	void setParent(ModelEntity parent);
 
 	String getUniqueName();
 

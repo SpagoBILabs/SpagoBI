@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.structure.DataMartCalculatedField;
+import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -70,9 +70,9 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
 	
 	
-	public Map<String, List<DataMartCalculatedField>> loadCalculatedFields() {
+	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
 		
-		Map<String, List<DataMartCalculatedField>> calculatedFiledsMap;
+		Map<String, List<ModelCalculatedField>> calculatedFiledsMap;
 		
 		File calculatedFieldsFile;
 		FileInputStream in;
@@ -83,7 +83,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		String type;
 		Boolean inLineCF;
 		String expression;
-		DataMartCalculatedField calculatedField;
+		ModelCalculatedField calculatedField;
 		List calculatedFieldNodes;
 		Iterator it;
 		Node calculatedFieldNode;
@@ -96,7 +96,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		
 		try {
 			
-			calculatedFiledsMap = new HashMap<String, List<DataMartCalculatedField>>();
+			calculatedFiledsMap = new HashMap<String, List<ModelCalculatedField>>();
 			
 			calculatedFieldsFile = getCalculatedFieldsFile();
 			logger.debug("Calculated fields will be loaded from file [" + calculatedFieldsFile + "]");
@@ -116,7 +116,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 					name = calculatedFieldNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 					type = calculatedFieldNode.valueOf("@" + FIELD_TAG_TYPE_ATTR);
 					inLineCF = new Boolean(calculatedFieldNode.valueOf("@" + FIELD_TAG_IN_LINE_ATTR));					expression = calculatedFieldNode.getStringValue();
-					calculatedField = new DataMartCalculatedField(name, type, expression, inLineCF.booleanValue());
+					calculatedField = new ModelCalculatedField(name, type, expression, inLineCF.booleanValue());
 			
 					if(!calculatedFiledsMap.containsKey(entity)) {
 						calculatedFiledsMap.put(entity, new ArrayList());
@@ -148,7 +148,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	
 		
 
-	public void saveCalculatedFields(Map<String, List<DataMartCalculatedField>> calculatedFields) {
+	public void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		
 		File calculatedFieldsFile;
 		Iterator it;
@@ -156,7 +156,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		List fields;
 		Document document;
 		Element root;
-		DataMartCalculatedField field;
+		ModelCalculatedField field;
 		
 		logger.debug("IN");
 		
@@ -189,7 +189,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 				logger.debug("Serializing [" + calculatedFields.size() + "] calculated fields for entity [" + entityName + "]");
 				fields = (List)calculatedFields.get(entityName);
 				for(int i = 0; i < fields.size(); i++) {
-					field = (DataMartCalculatedField)fields.get(i);
+					field = (ModelCalculatedField)fields.get(i);
 					logger.debug("Serializing calculated field [" + field.getName() + "] for entity [" + entityName + "]");
 					root.addElement( FIELD_TAG )
 		            	.addAttribute( FIELD_TAG_ENTIY_ATTR, entityName )

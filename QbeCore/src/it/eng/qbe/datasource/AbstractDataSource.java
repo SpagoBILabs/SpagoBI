@@ -21,15 +21,15 @@
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.properties.i18n.ModelI18NPropertiesCache;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.IStatement;
-import it.eng.qbe.statment.StatementFactory;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.StatementFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -42,8 +42,8 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected String name;
 	protected IDataSourceConfiguration configuration;
 	
-	protected DataMartModelAccessModality dataMartModelAccessModality;
-	protected DataMartModelStructure dataMartModelStructure;
+	protected ModelAccessModality dataMartModelAccessModality;
+	protected ModelStructure dataMartModelStructure;
 
 		
 	
@@ -51,7 +51,7 @@ public abstract class AbstractDataSource implements IDataSource {
 		return configuration;
 	}
 
-	public DataMartModelStructure getDataMartModelStructure() {
+	public ModelStructure getModelStructure() {
 		IDataMartStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
 			structureBuilder = DataMartStructureBuilderFactory.getDataMartStructureBuilder(this);
@@ -65,12 +65,12 @@ public abstract class AbstractDataSource implements IDataSource {
 		return StatementFactory.createStatement(this, query);
 	}
 	
-	public DataMartModelAccessModality getDataMartModelAccessModality() {
+	public ModelAccessModality getModelAccessModality() {
 		return dataMartModelAccessModality;
 	}
 
 	public void setDataMartModelAccessModality(
-			DataMartModelAccessModality dataMartModelAccessModality) {
+			ModelAccessModality dataMartModelAccessModality) {
 		this.dataMartModelAccessModality = dataMartModelAccessModality;
 	}
 

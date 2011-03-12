@@ -25,10 +25,10 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -62,14 +62,14 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
 	}
 	
-	public DataMartModelStructure build() {
+	public ModelStructure build() {
 		
-		DataMartModelStructure dataMartStructure;
+		ModelStructure dataMartStructure;
 		List<IDataSourceConfiguration> subConfigurations;
 		String datamartName;
 		Map classMetadata;
 			
-		dataMartStructure = new DataMartModelStructure();	
+		dataMartStructure = new ModelStructure();	
 		dataMartStructure.setName( getDataSource().getName() );
 		propertiesInitializer.addProperties(dataMartStructure);
 		
@@ -99,10 +99,10 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		return dataMartStructure;
 	}
 
-	private void addEntity (DataMartModelStructure dataMartStructure, String datamartName, String entityType){
+	private void addEntity (ModelStructure dataMartStructure, String datamartName, String entityType){
 
 		String entityName = getEntityNameFromEntityType(entityType);		
-		DataMartEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
+		ModelEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
 		propertiesInitializer.addProperties(dataMartEntity);
 		
 		addKeyFields(dataMartEntity);		
@@ -113,25 +113,25 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 	}
 	
-	private void addCalculatedFields(DataMartEntity dataMartEntity) {
+	private void addCalculatedFields(ModelEntity dataMartEntity) {
 		List calculatedFileds;
-		DataMartCalculatedField calculatedField;
+		ModelCalculatedField calculatedField;
 		
 		calculatedFileds = dataMartEntity.getStructure().getCalculatedFieldsByEntity(dataMartEntity.getUniqueName());
 		if(calculatedFileds != null) {
 			for(int i = 0; i < calculatedFileds.size(); i++) {
-				calculatedField = (DataMartCalculatedField)calculatedFileds.get(i);
+				calculatedField = (ModelCalculatedField)calculatedFileds.get(i);
 				dataMartEntity.addCalculatedField(calculatedField);
 				propertiesInitializer.addProperties(calculatedField);
 			}
 		}
 	}
 
-	private void addSubEntities(DataMartEntity dataMartEntity, List subEntities, int recursionLevel) {
+	private void addSubEntities(ModelEntity dataMartEntity, List subEntities, int recursionLevel) {
 		
 		Iterator it = subEntities.iterator();
 		while (it.hasNext()) {
-			DataMartEntity subentity = (DataMartEntity)it.next();
+			ModelEntity subentity = (ModelEntity)it.next();
 			if (subentity.getType().equalsIgnoreCase(dataMartEntity.getType())){
 				// ciclo di periodo 0!
 			} else if(recursionLevel > 10) {
@@ -144,11 +144,11 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		}
 	}
 	
-	private void addSubEntity (DataMartEntity parentEntity,
-			DataMartEntity subEntity, 			
+	private void addSubEntity (ModelEntity parentEntity,
+			ModelEntity subEntity, 			
 			int recursionLevel){
 
-		DataMartEntity dataMartEntity;				
+		ModelEntity dataMartEntity;				
 
 		
 		//String entityName = getEntityNameFromEntityType(entityType);		
@@ -163,7 +163,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 	}
 	
-	private void addKeyFields(DataMartEntity dataMartEntity) {
+	private void addKeyFields(ModelEntity dataMartEntity) {
 		
 		PersistentClass classMapping;
 		ClassMetadata classMetadata;
@@ -242,7 +242,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 		for (int j = 0; j < identifierPropertyNames.size(); j++) {
 			String fieldName = (String)identifierPropertyNames.get(j);					
-			DataMartField dataMartField = dataMartEntity.addKeyField(fieldName);
+			ModelField dataMartField = dataMartEntity.addKeyField(fieldName);
 			dataMartField.setType(type[j]);
 			dataMartField.setPrecision(precision[j]);
 			dataMartField.setLength(scale[j]);
@@ -250,7 +250,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		}
 	}
 	
-	public List addNormalFields(DataMartEntity dataMartEntity) {
+	public List addNormalFields(ModelEntity dataMartEntity) {
 		
 		ClassMetadata classMetadata;
 		PersistentClass classMapping;
@@ -292,7 +292,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		 		
 		 		//String entityName = getEntityNameFromEntityType(entityType);
 		 		String entityName = propertyName;
-		 		DataMartEntity subentity = new DataMartEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
+		 		ModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
 		 		subEntities.add(subentity);	
 		 		
 		 	} else if (propertyType instanceof CollectionType) { // chiave interna
@@ -314,7 +314,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		 		
 			 
 					
-				DataMartField datamartField = dataMartEntity.addNormalField(propertyName);
+				ModelField datamartField = dataMartEntity.addNormalField(propertyName);
 				datamartField.setType(type);
 				datamartField.setPrecision(precision);
 				datamartField.setLength(scale);

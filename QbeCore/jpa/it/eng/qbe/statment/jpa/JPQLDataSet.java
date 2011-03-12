@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statment.jpa;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
-import it.eng.qbe.statment.AbstractJPADataSet;
+import it.eng.qbe.statement.AbstractJPADataSet;
 import it.eng.qbe.statment.hibernate.HQLDataSet;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;

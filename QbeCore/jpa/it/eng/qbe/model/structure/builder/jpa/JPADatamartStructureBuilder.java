@@ -24,10 +24,10 @@ package it.eng.qbe.model.structure.builder.jpa;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
-import it.eng.qbe.model.structure.DataMartCalculatedField;
-import it.eng.qbe.model.structure.DataMartEntity;
-import it.eng.qbe.model.structure.DataMartField;
-import it.eng.qbe.model.structure.DataMartModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -78,13 +78,13 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 * This method builds a JPA datamart structure.
 	 * @return DataMartModelStructure
 	 */
-	public DataMartModelStructure build() {
-		DataMartModelStructure dataMartStructure;
+	public ModelStructure build() {
+		ModelStructure dataMartStructure;
 		String datamartName;
 		Metamodel classMetadata;
 		
 		logger.debug("Building the data mart structure..");
-		dataMartStructure = new DataMartModelStructure();	
+		dataMartStructure = new ModelStructure();	
 		
 		datamartName = getDataSource().getConfiguration().getModelName();
 		Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
@@ -108,10 +108,10 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 		return dataMartStructure;
 	}
 	
-	private void addEntity (DataMartModelStructure dataMartStructure, String datamartName, String entityType){
+	private void addEntity (ModelStructure dataMartStructure, String datamartName, String entityType){
 
 		String entityName = getEntityNameFromEntityType(entityType);		
-		DataMartEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
+		ModelEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
 		
 		
 		//addKeyFields(dataMartEntity);		
@@ -135,7 +135,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 * This method adds the normal fields to the datamart entry structure
 	 * @param dataMartEntity:  the datamart structure to complete
 	 */
-	public List addNormalFields(DataMartEntity dataMartEntity) {		
+	public List addNormalFields(ModelEntity dataMartEntity) {		
 		logger.debug("Adding the field "+dataMartEntity.getName());
 		String[] propertyNames;
 		List subEntities = new ArrayList();			
@@ -172,7 +172,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 				int scale = 0;
 				int precision = 0;
 
-				DataMartField datamartField = dataMartEntity.addNormalField( a.getName());
+				ModelField datamartField = dataMartEntity.addNormalField( a.getName());
 				datamartField.setType(type);
 				datamartField.setPrecision(precision);
 				datamartField.setLength(scale);
@@ -181,7 +181,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 					String entityType = c.getName();
 					String columnName = a.getName();
 					String entityName =  a.getName();
-			 		DataMartEntity subentity = new DataMartEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
+			 		ModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
 			 		subEntities.add(subentity);		
 				}
 			}
@@ -192,15 +192,15 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	}
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
-	private void addCalculatedFields(DataMartEntity dataMartEntity) {
+	private void addCalculatedFields(ModelEntity dataMartEntity) {
 		logger.debug("Adding the calculated field "+dataMartEntity.getName());
 		List calculatedFileds;
-		DataMartCalculatedField calculatedField;
+		ModelCalculatedField calculatedField;
 		
 		calculatedFileds = dataMartEntity.getStructure().getCalculatedFieldsByEntity(dataMartEntity.getUniqueName()); 
 		if(calculatedFileds != null) {
 			for(int i = 0; i < calculatedFileds.size(); i++) {
-				calculatedField = (DataMartCalculatedField)calculatedFileds.get(i);
+				calculatedField = (ModelCalculatedField)calculatedFileds.get(i);
 				dataMartEntity.addCalculatedField(calculatedField);
 			}
 		}
@@ -208,11 +208,11 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	}
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate! 
-	private void addSubEntities(DataMartEntity dataMartEntity, List subEntities, int recursionLevel) {
+	private void addSubEntities(ModelEntity dataMartEntity, List subEntities, int recursionLevel) {
 		
 		Iterator it = subEntities.iterator();
 		while (it.hasNext()) {
-			DataMartEntity subentity = (DataMartEntity)it.next();
+			ModelEntity subentity = (ModelEntity)it.next();
 			if (subentity.getType().equalsIgnoreCase(dataMartEntity.getType())){
 				// ciclo di periodo 0!
 			} else if(recursionLevel > 10) {
@@ -224,9 +224,9 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	}
 
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!	
-	private void addSubEntity (DataMartEntity parentEntity, DataMartEntity subEntity, int recursionLevel){
+	private void addSubEntity (ModelEntity parentEntity, ModelEntity subEntity, int recursionLevel){
 		logger.debug("Adding the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());
-		DataMartEntity dataMartEntity;				
+		ModelEntity dataMartEntity;				
 		
 		//String entityName = getEntityNameFromEntityType(entityType);		
 		dataMartEntity = parentEntity.addSubEntity(subEntity.getName(), subEntity.getRole(), subEntity.getType());

@@ -25,7 +25,7 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.DataMartModelAccessModality;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
@@ -65,7 +65,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 	protected HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
-		dataMartModelAccessModality = new DataMartModelAccessModality();
+		dataMartModelAccessModality = new ModelAccessModality();
 
 		// validate & set configuration
 		if(configuration instanceof FileDataSourceConfiguration) {

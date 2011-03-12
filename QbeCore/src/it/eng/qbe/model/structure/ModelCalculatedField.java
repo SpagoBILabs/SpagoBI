@@ -23,12 +23,12 @@ package it.eng.qbe.model.structure;
 /**
  * @author Andrea Gioia
  */
-public class DataMartCalculatedField extends DataMartField {
+public class ModelCalculatedField extends ModelField {
 	
 	String expression;
 	boolean inLine;
 	
-	public DataMartCalculatedField(String name, String type, String expression) {
+	public ModelCalculatedField(String name, String type, String expression) {
 		setName(name);
 		setType(type);
 		setExpression(expression);
@@ -36,14 +36,14 @@ public class DataMartCalculatedField extends DataMartField {
 		initProperties();
 	}
 	
-	public DataMartCalculatedField(String name, String type, String expression, boolean inLine) {
+	public ModelCalculatedField(String name, String type, String expression, boolean inLine) {
 		setName(name);
 		setType(type);
 		setExpression(expression);
 		this.inLine = inLine;
 	}
 	
-	public DataMartCalculatedField(String name, DataMartEntity parent, String type, String expression) {
+	public ModelCalculatedField(String name, ModelEntity parent, String type, String expression) {
 		super(name, parent);
 		setType(type);
 		setExpression(expression);

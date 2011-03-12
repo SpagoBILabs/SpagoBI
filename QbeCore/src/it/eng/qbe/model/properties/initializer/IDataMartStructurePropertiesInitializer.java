@@ -21,12 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.properties.initializer;
 
-import it.eng.qbe.model.structure.IDataMartObject;
+import it.eng.qbe.model.structure.IModelObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public interface IDataMartStructurePropertiesInitializer {
-	void addProperties(IDataMartObject item);
+	void addProperties(IModelObject item);
 }
