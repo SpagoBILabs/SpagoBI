@@ -5,7 +5,7 @@
 -->
 
 <%@ page language="java"
-		 import="it.eng.spago.error.*,java.util.*,it.eng.spagobi.engines.geo.commons.excpetion.*"
+		 import="it.eng.spago.error.*,java.util.*, it.eng.spagobi.engines.geo.*"
 		 extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPage"
 		 contentType="text/html; charset=ISO-8859-1"
 		 pageEncoding="ISO-8859-1"
