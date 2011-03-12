@@ -1192,7 +1192,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		// Handle in table SbiKpiError dataset Error
 		try {
 			dataSet.loadData();
-		} catch (EMFUserError e) {
+		} catch (RuntimeException e) {
 			// Exception must be handled and recorded in table SbiKpiError, if it is a datasetexception
 
 			if(e instanceof DatasetException){
@@ -1360,7 +1360,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 		if (kpiValueToReturn == null && valueFound == true){
 			logger.error("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");
-			MissingKpiValueException missingKpiValueException = new MissingKpiValueException(EMFErrorSeverity.WARNING, 9221, new Exception(), datasetLabel);			
+			MissingKpiValueException missingKpiValueException = new MissingKpiValueException("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");			
 			DAOFactory.getKpiErrorDAO().insertKpiError(
 					missingKpiValueException, 
 					modInstId, 

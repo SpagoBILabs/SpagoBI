@@ -21,24 +21,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.kpi.exceptions;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
 
 public class MissingKpiValueException extends DatasetException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String USER_MESSAGE = "Missing 'value' column in query: ";
 
-	public MissingKpiValueException(String severity, int code,
-			EMFInternalError e, String datasetLabel) {
-		super(severity, code, e);
-		setUserMessage(USER_MESSAGE + datasetLabel);
-	}
-
-	public MissingKpiValueException(String severity, int code,
-			Exception e, String datasetLabel) {
-		super(severity, code, e);
-		setUserMessage( USER_MESSAGE + datasetLabel );
-	}
-
-
+	/**
+	 * Builds a <code>SpagoBIRuntimeException</code>.
+	 * 
+	 * @param message Text of the exception
+	 */
+    public MissingKpiValueException(String message) {
+    	super(message);  	
+    }
+	
+    /**
+     * Builds a <code>SpagoBIRuntimeException</code>.
+     * 
+     * @param message Text of the exception
+     * @param ex previous Throwable object
+     */
+    public MissingKpiValueException(String message, Throwable ex) {
+    	super(message, ex);
+    }
 }
