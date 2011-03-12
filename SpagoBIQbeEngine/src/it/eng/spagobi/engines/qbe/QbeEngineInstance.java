@@ -38,6 +38,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -90,7 +91,12 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		connection.setUrl( ds.getUrl() );
 		connection.setUsername( ds.getUser() );			
 		
-		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), template.getDbLinkMap(),  connection);
+		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+		dataSourceProperties.put("connection", connection);
+		dataSourceProperties.put("dblinkMap", template.getDbLinkMap());
+		
+		
+		dataSource = QbeDataSourceManager.getInstance().getDataSource(template.getDatamartNames(), dataSourceProperties);
 				
 		
 		if(template.getDatamartModelAccessModality() != null) {

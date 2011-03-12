@@ -32,6 +32,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,17 +76,11 @@ public class QbeDataSourceManager {
 	
 	
 	
-	/* (non-Javadoc)
-	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, it.eng.qbe.datasource.DBConnection)
-	 */
-	public IDataSource getDataSource(List<String> dataMartNames, DBConnection connection) {
-		return getDataSource(dataMartNames, new HashMap(), connection);
-	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.DataSourceManager#getDataSource(java.util.List, java.util.Map, it.eng.qbe.datasource.DBConnection)
 	 */
-	public IDataSource getDataSource(List<String> dataMartNames, Map dblinkMap, DBConnection connection) {
+	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties) {
 		
 		IDataSource dataSource;
 		
@@ -93,9 +88,13 @@ public class QbeDataSourceManager {
 		//dataSource = getDataSourceCache().getDataSource(dataSourceName);
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
-		compositeConfiguration.loadDataSourceProperties().put("dblinkMap", dblinkMap);
-		compositeConfiguration.loadDataSourceProperties().put("connection", connection);
+		Iterator<String> it = dataSourceProperties.keySet().iterator();
+		while(it.hasNext()) {
+			String propertyName = it.next();
+			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
+		}
 		
+	
 		boolean isJPA = false;
 		File modelJarFile;
 		FileDataSourceConfiguration c;
