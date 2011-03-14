@@ -43,7 +43,7 @@ public class JPADriver implements IDriver {
 	protected int maxDataSource;
 	
 	
-	public static final String DRIVER_ID = "hibernate";
+	public static final String DRIVER_ID = "jpa";
 	protected static final Map<String, IDataSource> cache = new HashMap<String, IDataSource>();
 	protected static final SimpleDataSourceNamingStrategy namingStrategy = new SimpleDataSourceNamingStrategy();
 	
