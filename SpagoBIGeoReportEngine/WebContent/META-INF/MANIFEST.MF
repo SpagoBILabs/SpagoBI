@@ -4,5 +4,5 @@ Ant-Version: Apache Ant 1.7.0
 
 Name: SpagoBIGeoReportEngine.war
 Implementation-Title: SpagoBIGeoReportEngine
-Implementation-Version: 2.8.0
+Implementation-Version: 3.0.0
 
