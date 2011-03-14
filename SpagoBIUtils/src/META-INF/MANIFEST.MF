@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: sbi.utils-2.8.0.jar
 Implementation-Title: SpagoBIUtils
-Implementation-Version: 2.8.0
+Implementation-Version: 3.0.0
 
