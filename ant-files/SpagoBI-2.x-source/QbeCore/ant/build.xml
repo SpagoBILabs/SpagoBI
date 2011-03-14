@@ -70,9 +70,14 @@
   <target name="compile"  description="compile the source" >
   	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-    <javac srcdir="${src}" destdir="${build}" debug="on">
+    <javac destdir="${build}" debug="on">
       <classpath refid="jar.classpath"/>
-    </javac> 
+	<src path="${src}"/>
+	<src path="${src.hibernate}"/>
+	<src path="${src.jpa}"/>
+	<src path="${src.serialization}"/>
+	<src path="${src.exporter}"/>
+    </javac>  
   </target>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
