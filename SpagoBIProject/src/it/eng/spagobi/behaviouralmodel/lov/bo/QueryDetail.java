@@ -314,12 +314,12 @@ public class QueryDetail  implements ILovDetail  {
 		}
 		String firstValue = (String) values.get(0);
 		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)) {
-			return getSQLValue(fatherPar, firstValue) + "%";
+			return getSQLValue(fatherPar, firstValue + "%");
 		} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
-			return "%" + getSQLValue(fatherPar, firstValue);
+			return getSQLValue(fatherPar, "%" + firstValue);
 		} else if (typeFilter
 				.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
-			return "%" + getSQLValue(fatherPar, firstValue) + "%";
+			return getSQLValue(fatherPar, "%" + firstValue + "%");
 		} else if (typeFilter
 				.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
 			if (values.size() > 1) {
