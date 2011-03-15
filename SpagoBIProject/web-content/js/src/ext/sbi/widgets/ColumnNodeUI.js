@@ -145,7 +145,7 @@ Sbi.widgets.ColumnNodeUI = Ext.extend(Ext.tree.TreeNodeUI, {
              c = cols[i];
              
              if(c.visibility!='hidden'){
-                 if(t.goalCustom!=null && t.goalCustom && !n.attributes.leaf){
+                 if(t.goalCustom!=null && t.goalCustom && (n.attributes.kpiInstId == undefined || n.attributes.kpiInstId == null || n.attributes.kpiInstId == '')){
 	            	 buf.push('<div class="x-tree-col ',(c.cls?c.cls:''),'" style="width:',c.width-bw,'px;">',
 	            			 '<div class="x-tree-col-text"> <br /></div>',"</div>");
             	 }else if(c.fieldType == 'input'){
