@@ -271,12 +271,14 @@ public class ExecuteBIDocumentJob implements Job {
 						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isSaveAsDocument() + "]");
 						
 						if(!saveInfo.isSaveAsSnapshot() && !saveInfo.isSendToDl() && !saveInfo.isSendToJavaClass()) {
-							boolean noValidDispatchTarget = true;
+							boolean noValidDispatchTarget = false;
 							if(saveInfo.isSendMail()) {
 								String[] recipients = findRecipients(saveInfo, biobj, emailDispatchDataStore);
 								if (recipients != null && recipients.length > 0) {
 									noValidDispatchTarget = false;
 									logger.debug("Found at least one target of type mail");
+								}else{
+									noValidDispatchTarget = true;
 								}
 							} 
 							
@@ -285,6 +287,8 @@ public class ExecuteBIDocumentJob implements Job {
 								if(storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
 									noValidDispatchTarget = false;
 									logger.debug("Found at least one target of type folder");
+								}else{
+									noValidDispatchTarget = true;
 								}
 							}
 							
@@ -292,7 +296,9 @@ public class ExecuteBIDocumentJob implements Job {
 								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
 								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " not executed: no valid dispatch target");
 								continue;
-							} else {
+							} else if(!saveInfo.isSaveAsDocument() && !saveInfo.isSendMail()){
+								logger.debug("There are no dispatch targets for document with label [" + documentInstanceName + "] - if not an ETL, WEKA or KPI document a dispatch target should be added");
+							}else{
 								logger.debug("There is at list one dispatch target for document with label [" + documentInstanceName + "]");
 							}
 						}
