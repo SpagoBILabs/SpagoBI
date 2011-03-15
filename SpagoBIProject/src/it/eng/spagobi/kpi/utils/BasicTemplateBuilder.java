@@ -44,6 +44,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1502,18 +1503,15 @@ public class BasicTemplateBuilder  {
 		logger.debug("IN");
 		try{
 
-			String rootPath=ConfigSingleton.getRootPath();
-			logger.debug("rootPath: "+rootPath!=null ? rootPath : "");
-			String templateDirPath=rootPath+"/WEB-INF/classes/it/eng/spagobi/kpi/utils/";
+			String templateDirPath = "it/eng/spagobi/kpi/utils/";
 			logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
 			templateDirPath+="templateKpi.jrxml";
 			logger.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
+			
 			if (templateDirPath!=null){
-				File file=new File(templateDirPath);
-				if(file!=null){
-					logger.debug("File found ");
-				}
-				FileInputStream fis=new FileInputStream(file);
+								
+			    InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath);
+	
 				if(fis!=null){
 					logger.debug("File Input Stream created");
 				}
@@ -1555,18 +1553,14 @@ public class BasicTemplateBuilder  {
 		logger.debug("IN");
 		try{
 
-			String rootPath=ConfigSingleton.getRootPath();
-			logger.debug("rootPath: "+rootPath!=null ? rootPath : "");
-			String templateDirPath=rootPath+"/WEB-INF/classes/it/eng/spagobi/kpi/utils/";
+			String templateDirPath = "it/eng/spagobi/kpi/utils/";
 			logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
-			templateDirPath+="subTemplateKpi.jrxml";
+			templateDirPath+="templateKpi.jrxml";
 			logger.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
+			
 			if (templateDirPath!=null){
-				File file=new File(templateDirPath);
-				if(file!=null){
-					logger.debug("File found ");
-				}
-				FileInputStream fis=new FileInputStream(file);
+				InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath);
+				
 				if(fis!=null){
 					logger.debug("File Input Stream created");
 				}
