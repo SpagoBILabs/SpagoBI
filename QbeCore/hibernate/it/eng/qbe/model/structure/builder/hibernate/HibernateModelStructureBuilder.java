@@ -30,7 +30,7 @@ import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
+import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -52,12 +52,12 @@ import org.hibernate.type.Type;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class HibernateDatamartStructureBuilder implements IDataMartStructureBuilder {
+public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 	
 	private IHibernateDataSource dataSource;	
 	IDataMartStructurePropertiesInitializer propertiesInitializer;
 	
-	public HibernateDatamartStructureBuilder(IHibernateDataSource dataSource) {
+	public HibernateModelStructureBuilder(IHibernateDataSource dataSource) {
 		Assert.assertNotNull(dataSource, "Parameter [dataSource] cannot be null");
 		setDataSource( dataSource );
 		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		

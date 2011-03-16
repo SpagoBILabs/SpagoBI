@@ -29,8 +29,8 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
-import it.eng.qbe.model.structure.builder.jpa.JPADatamartStructureBuilder;
+import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
+import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -231,9 +231,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	}
 
 	public IModelStructure getModelStructure() {
-		IDataMartStructureBuilder structureBuilder;
+		IModelStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
-			structureBuilder = new JPADatamartStructureBuilder(this);
+			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 		}
 		

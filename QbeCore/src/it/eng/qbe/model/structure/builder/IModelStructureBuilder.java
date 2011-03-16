@@ -27,6 +27,6 @@ import it.eng.qbe.model.structure.IModelStructure;
  * 
  * @author Andrea Gioia
  */
-public interface IDataMartStructureBuilder {
+public interface IModelStructureBuilder {
 	IModelStructure build();
 }

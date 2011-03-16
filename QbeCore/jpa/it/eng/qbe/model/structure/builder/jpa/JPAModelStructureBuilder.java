@@ -30,7 +30,7 @@ import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
+import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
 import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
 import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityEntityFilter;
@@ -59,9 +59,9 @@ import org.apache.log4j.Logger;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
+public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	
-	private static transient Logger logger = Logger.getLogger(JPADatamartStructureBuilder.class);
+	private static transient Logger logger = Logger.getLogger(JPAModelStructureBuilder.class);
 
 	private JPADataSource dataSource;	
 	private EntityManager entityManager;
@@ -72,7 +72,7 @@ public class JPADatamartStructureBuilder implements IDataMartStructureBuilder {
 	 * Constructor
 	 * @param dataSource the JPA DataSource
 	 */
-	public JPADatamartStructureBuilder(JPADataSource dataSource) {
+	public JPAModelStructureBuilder(JPADataSource dataSource) {
 		if(dataSource== null) {
 			throw new IllegalArgumentException("DataSource parameter cannot be null");
 		}
