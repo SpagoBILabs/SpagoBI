@@ -23,8 +23,6 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
-import java.util.List;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *

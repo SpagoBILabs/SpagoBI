@@ -1,5 +1,6 @@
 package it.eng.qbe.export;
 
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -25,7 +26,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class Exporter {
 	
 	/** Logger component. */
-    public static transient Logger logger = LoggerFactory.getLogger(Exporter.class);
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
+	
+    
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
 

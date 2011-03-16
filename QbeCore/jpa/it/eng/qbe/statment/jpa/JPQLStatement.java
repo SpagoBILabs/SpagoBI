@@ -24,7 +24,7 @@ package it.eng.qbe.statment.jpa;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.export.JPQLToSqlQueryRewriter;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -1170,7 +1170,7 @@ public class JPQLStatement extends AbstractStatement {
 		
 
 		IModelStructure dataMartModelStructure = getDataSource().getModelStructure();
-		ModelAccessModality dataMartModelAccessModality = getDataSource().getModelAccessModality();
+		IModelAccessModality dataMartModelAccessModality = getDataSource().getModelAccessModality();
 		
 		Iterator it = entityAliases.keySet().iterator();
 		while(it.hasNext()){

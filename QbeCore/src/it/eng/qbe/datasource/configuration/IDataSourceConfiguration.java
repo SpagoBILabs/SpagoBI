@@ -23,7 +23,6 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelStructure;
 
 import java.util.List;
 import java.util.Locale;

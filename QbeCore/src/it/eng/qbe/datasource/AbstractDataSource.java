@@ -21,12 +21,10 @@
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.properties.i18n.ModelI18NPropertiesCache;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.StatementFactory;
@@ -41,7 +39,7 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected String name;
 	protected IDataSourceConfiguration configuration;
 	
-	protected ModelAccessModality dataMartModelAccessModality;
+	protected IModelAccessModality dataMartModelAccessModality;
 	protected IModelStructure dataMartModelStructure;
 
 		
@@ -50,26 +48,17 @@ public abstract class AbstractDataSource implements IDataSource {
 		return configuration;
 	}
 
-	public IModelStructure getModelStructure() {
-		IDataMartStructureBuilder structureBuilder;
-		if(dataMartModelStructure == null) {			
-			structureBuilder = DataMartStructureBuilderFactory.getDataMartStructureBuilder(this);
-			dataMartModelStructure = structureBuilder.build();
-		}
-		
-		return dataMartModelStructure;
-	}
 	
 	public IStatement createStatement(Query query) {
 		return StatementFactory.createStatement(this, query);
 	}
 	
-	public ModelAccessModality getModelAccessModality() {
+	public IModelAccessModality getModelAccessModality() {
 		return dataMartModelAccessModality;
 	}
 
 	public void setDataMartModelAccessModality(
-			ModelAccessModality dataMartModelAccessModality) {
+			IModelAccessModality dataMartModelAccessModality) {
 		this.dataMartModelAccessModality = dataMartModelAccessModality;
 	}
 

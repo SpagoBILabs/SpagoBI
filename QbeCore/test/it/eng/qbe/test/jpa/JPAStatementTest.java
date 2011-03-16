@@ -6,13 +6,9 @@ package it.eng.qbe.test.jpa;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statment.jpa.JPQLDataSet;
 import it.eng.qbe.statment.jpa.JPQLStatement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 

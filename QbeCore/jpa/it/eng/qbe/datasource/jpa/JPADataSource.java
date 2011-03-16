@@ -26,15 +26,17 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
+import it.eng.qbe.model.structure.builder.jpa.JPADatamartStructureBuilder;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -61,7 +63,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 
 	protected JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
-		dataMartModelAccessModality = new ModelAccessModality();
+		dataMartModelAccessModality = new AbstractModelAccessModality();
 		
 		// validate and set configuration
 		if(configuration instanceof FileDataSourceConfiguration){
@@ -226,6 +228,16 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
 		}
+	}
+
+	public IModelStructure getModelStructure() {
+		IDataMartStructureBuilder structureBuilder;
+		if(dataMartModelStructure == null) {			
+			structureBuilder = new JPADatamartStructureBuilder(this);
+			dataMartModelStructure = structureBuilder.build();
+		}
+		
+		return dataMartModelStructure;
 	}
 
 }

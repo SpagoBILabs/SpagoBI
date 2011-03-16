@@ -20,9 +20,11 @@
  **/
 package it.eng.qbe.export;
 
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
+
 import javax.persistence.EntityManager;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 
 // TODO: Auto-generated Javadoc
@@ -37,7 +39,7 @@ public class JPQLToSqlQueryRewriter {
 	private EntityManager entityManager;
 	
 	/** Logger component. */
-    public static transient Logger logger = LoggerFactory.getLogger(JPQLToSqlQueryRewriter.class);
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
 	
 	/**

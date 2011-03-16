@@ -113,18 +113,18 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelLabels(java.util.Locale)
 	 */
 	public ModelI18NProperties loadModelI18NProperties(Locale locale) {
-		ModelI18NProperties labels = new ModelI18NProperties();
+		ModelI18NProperties properties = new ModelI18NProperties();
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
-			IDataSourceConfiguration configuration = it.next();
-			ModelI18NProperties modelLabels = configuration.loadModelI18NProperties(locale);
-			if(locale != null && labels == null) {
-				modelLabels = configuration.loadModelI18NProperties();
+			IDataSourceConfiguration subModelConfiguration = it.next();
+			ModelI18NProperties subModelProperties = subModelConfiguration.loadModelI18NProperties(locale);
+			if(locale != null) {
+				subModelProperties = subModelConfiguration.loadModelI18NProperties();
 			}
-			labels.addDatamartLabels(modelLabels);
+			properties.addProperties(subModelProperties);
 		}
 		
-		return labels;
+		return properties;
 	}
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getCalculatedFields()

@@ -20,8 +20,8 @@
  **/
 package it.eng.qbe.export;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +33,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Vector;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,17 +43,13 @@ import org.slf4j.Logger; import org.slf4j.LoggerFactory;
  */
 public class TemplateBuilder {
 	
-	private static transient Logger logger = LoggerFactory.getLogger(TemplateBuilder.class);
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
-	/** The query. */
 	String query;
-	
-	/** The query fields. */
 	Vector queryFields;
-	
-	/** The params. */
 	Map params;
-	
+	File baseTemplateFile;
 	
 	/** The Constant PN_BAND_WIDTH. */
 	public static final String PN_BAND_WIDTH = "bandWidth";	
@@ -162,6 +158,18 @@ public class TemplateBuilder {
 	public static final String DEFAULT_NUMBER_PATTERN = "#,##0.##";
 	
 	
+	public TemplateBuilder(String query, 
+			   Vector queryFields, 
+			   Map params, 
+			   File baseTemplateFile) {
+
+		this.query = query;
+		this.queryFields = queryFields;
+		this.params = params;
+		this.baseTemplateFile = baseTemplateFile;
+	}
+	
+	
 	/**
 	 * Gets the param value.
 	 * 
@@ -177,26 +185,6 @@ public class TemplateBuilder {
 		paramValue = (paramValue != null)? paramValue: paramDefaultValue;
 		
 		return paramValue;
-	}
-	
-	/**
-	 * Instantiates a new basic template builder.
-	 * 
-	 * @param query the query
-	 * @param queryLanguage the query language
-	 * @param queryFields the query fields
-	 * @param params the params
-	 * @param orderedFieldList the ordered field list
-	 * @param extractedEntitiesList the extracted entities list
-	 * @param formula the formula
-	 */
-	public TemplateBuilder(String query, 
-						   Vector queryFields, 
-						   Map params) {
-		
-		this.query = query;
-		this.queryFields = queryFields;
-		this.params = params;
 	}
 	
 	public String buildTemplate() {
@@ -563,12 +551,7 @@ public class TemplateBuilder {
 	private String getTemplateTemplate() {
 		StringBuffer buffer = new StringBuffer();
 		
-		SourceBean config = (SourceBean)ConfigSingleton.getInstance();		
-		SourceBean baseTemplateFileSB = (SourceBean)config.getAttribute("QBE.TEMPLATE-BUILDER.BASE-TEMPLATE");
-		String baseTemplateFileStr = null;
-		if(baseTemplateFileSB != null) baseTemplateFileStr = baseTemplateFileSB.getCharacters();
-		File baseTemplateFile = null;
-		if(baseTemplateFileStr != null) baseTemplateFile = new File(baseTemplateFileStr);
+		
 		InputStream is = null;
 		if(baseTemplateFile!=null && baseTemplateFile.exists()) {
 			try {

@@ -24,7 +24,7 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.HqlToSqlQueryRewriter;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -649,7 +649,7 @@ public class HQLStatement extends AbstractStatement {
 			DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			String dbDialect = connection.getDialect();
 			
-			//Parse the date given by the user: from the locale of the user to the italian tyme
+			//Parse the date given by the user: from the locale of the user to the italian time
 			Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
 			String ln = l.getLanguage();
 			String userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT."+ln);
@@ -996,7 +996,7 @@ public class HQLStatement extends AbstractStatement {
 		
 
 		IModelStructure dataMartModelStructure = getDataSource().getModelStructure();
-		ModelAccessModality dataMartModelAccessModality = getDataSource().getModelAccessModality();
+		IModelAccessModality dataMartModelAccessModality = getDataSource().getModelAccessModality();
 		
 		Iterator it = entityAliases.keySet().iterator();
 		while(it.hasNext()){

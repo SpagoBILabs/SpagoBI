@@ -22,16 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statment.hibernate;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.statement.AbstractJPADataSet;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
@@ -41,7 +39,7 @@ import org.hibernate.Session;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class HQLDataSet extends AbstractJPADataSet {
+public class HQLDataSet extends AbstractQbeDataSet {
 
 	
 	/** Logger component. */
@@ -146,10 +144,6 @@ public class HQLDataSet extends AbstractJPADataSet {
 		return null;
 	}
 
-	public IEngUserProfile getUserProfile() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public void setFetchSize(int l) {
 		// TODO Auto-generated method stub
@@ -161,8 +155,15 @@ public class HQLDataSet extends AbstractJPADataSet {
 		
 	}
 
-	public void setUserProfile(IEngUserProfile userProfile) {
+	public Map getUserProfileAttributes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setUserProfileAttributes(Map attributes) {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 }

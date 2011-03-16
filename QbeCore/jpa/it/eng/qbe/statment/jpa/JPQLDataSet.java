@@ -22,17 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statment.jpa;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
-import it.eng.qbe.statement.AbstractJPADataSet;
-import it.eng.qbe.statment.hibernate.HQLDataSet;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.persistence.EntityManager;
@@ -53,13 +49,13 @@ import org.hibernate.ejb.HibernateQuery;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class JPQLDataSet extends AbstractJPADataSet {
+public class JPQLDataSet extends AbstractQbeDataSet {
 
 	
 	private List resultList;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
+    public static transient Logger logger = Logger.getLogger(JPQLDataSet.class);
     
 	
 	public JPQLDataSet(JPQLStatement statement) {
@@ -272,33 +268,27 @@ public class JPQLDataSet extends AbstractJPADataSet {
 		return new ArrayList<String>();
 
 	}
-	
-	public IDataStore fetchNext() {
+
+
+	public Map getUserProfileAttributes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	public void setUserProfileAttributes(Map parameters) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	public Object getQuery() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public IEngUserProfile getUserProfile() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setFetchSize(int l) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void setQuery(Object query) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setUserProfile(IEngUserProfile userProfile) {
 		// TODO Auto-generated method stub
 		
 	}
