@@ -76,6 +76,13 @@ public class DynamicClassLoader extends URLClassLoader {
 		jar = jarFile;
 		parentCL = cl;
 	}
+	
+//	/* (non-Javadoc)
+//	 * @see java.lang.ClassLoader#loadClass(java.lang.String)
+//	 */
+//	public Class loadInnerClass(String className) throws ClassNotFoundException {
+//		return (loadClass(className, true));
+//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.ClassLoader#loadClass(java.lang.String)
@@ -84,6 +91,7 @@ public class DynamicClassLoader extends URLClassLoader {
 		return (loadClass(className, true));
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see java.lang.ClassLoader#loadClass(java.lang.String, boolean)
 	 */
@@ -138,6 +146,8 @@ public class DynamicClassLoader extends URLClassLoader {
 		return classToReturn;
 	}
 
+	
+	
     /**
      * Returns an input stream for reading the specified resource. 
      * We overwrite the parent method for get class from the datamart.jar file
@@ -145,8 +155,7 @@ public class DynamicClassLoader extends URLClassLoader {
      * @return An input stream for reading the resource, or null if the resource could not be found
      */
 	public synchronized InputStream getResourceAsStream(String className)  {
-
-		ZipFile zipFile = null;
+			ZipFile zipFile = null;
 		BufferedInputStream bis = null;
 		try {
 			zipFile = new ZipFile(jar);
@@ -154,6 +163,7 @@ public class DynamicClassLoader extends URLClassLoader {
 			bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
 		} catch (Exception ex) {
 			logger.warn("className: " +  className + " Exception: "+ ex);
+			return super.getResourceAsStream(className);
 		} 
 
 		return bis;
