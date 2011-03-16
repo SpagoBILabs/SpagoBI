@@ -22,7 +22,7 @@ package it.eng.qbe.export;
 
 import javax.persistence.EntityManager;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 
 // TODO: Auto-generated Javadoc
@@ -37,7 +37,7 @@ public class JPQLToSqlQueryRewriter {
 	private EntityManager entityManager;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(JPQLToSqlQueryRewriter.class);
+    public static transient Logger logger = LoggerFactory.getLogger(JPQLToSqlQueryRewriter.class);
 	
 	
 	/**

@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class JPADataSource extends AbstractDataSource {
+public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	private EntityManagerFactory factory;
 	
@@ -129,7 +129,7 @@ public class JPADataSource extends AbstractDataSource {
 			updateCurrentClassLoader(jarFile);
 		}	
 		
-		factory = Persistence.createEntityManagerFactory( getName() );
+		factory = Persistence.createEntityManagerFactory( getConfiguration().getModelName() );
 		
 	}
 	

@@ -27,24 +27,24 @@ package it.eng.qbe.model.structure;
  */
 public abstract class AbstractModelNode extends AbstractModelObject implements IModelNode {
 	
-	protected ModelStructure structure;
-	protected ModelEntity parent;	
+	protected IModelStructure structure;
+	protected IModelEntity parent;	
 	
 	
 	
-	public ModelStructure getStructure() {
+	public IModelStructure getStructure() {
 		return structure;
 	}
 
-	protected void setStructure(ModelStructure structure) {
+	protected void setStructure(IModelStructure structure) {
 		this.structure = structure;
 	}
 	
-	public ModelEntity getParent() {
+	public IModelEntity getParent() {
 		return parent;
 	}
 	
-	public void setParent(ModelEntity parent) {
+	public void setParent(IModelEntity parent) {
 		this.parent = parent;
 	}
 	

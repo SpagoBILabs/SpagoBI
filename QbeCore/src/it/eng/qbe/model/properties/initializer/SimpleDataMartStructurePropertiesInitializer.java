@@ -21,15 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.properties.initializer;
 
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
-import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.ModelPropertiesMeta;
 import it.eng.qbe.model.properties.ModelProperty;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
-import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.IModelNode;
 import it.eng.qbe.model.structure.IModelObject;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -40,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -48,10 +45,10 @@ import java.util.Properties;
  */
 public class SimpleDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
 		
-	IHibernateDataSource dataSource;
+	IDataSource dataSource;
 	Map properties;
 	
-	public SimpleDataMartStructurePropertiesInitializer(IHibernateDataSource dataSource) {
+	public SimpleDataMartStructurePropertiesInitializer(IDataSource dataSource) {
 		this.dataSource =  dataSource;
 		this.properties = new HashMap();
 		properties.putAll( dataSource.getConfiguration().loadModelProperties() );
@@ -59,16 +56,16 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	
 
 	public void addProperties(IModelObject item) {
-		if(item instanceof ModelEntity) {
-			addDataMartEntityProperties( (ModelEntity)item );
+		if(item instanceof IModelEntity) {
+			addDataMartEntityProperties( (IModelEntity)item );
 		} else if (item instanceof ModelField) {
 			addDataMartFieldProperties( (ModelField)item );
-		} else if (item instanceof ModelStructure) {
-			addDataMartModelProperties( (ModelStructure)item );
+		} else if (item instanceof IModelStructure) {
+			addDataMartModelProperties( (IModelStructure)item );
 		}
 	}
 	
-	private void addDataMartModelProperties(ModelStructure item) {
+	private void addDataMartModelProperties(IModelStructure item) {
 		ModelProperty property;
 		String propertyValue;
 		
@@ -88,7 +85,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		}
 	}
 
-	protected void addDataMartEntityProperties(ModelEntity item) {
+	protected void addDataMartEntityProperties(IModelEntity item) {
 		ModelProperty property;
 		String propertyValue;
 		
@@ -139,10 +136,10 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	// TODO create method getRootItem in IDataMartItem interface and move some code there
-	protected String getInheritedProperty(ModelEntity item, String propertyName) {
+	protected String getInheritedProperty(IModelEntity item, String propertyName) {
 		Assert.assertUnreachable("Property [" + propertyName + "] of entity [" + item.getName()+ "] cannot be inehritated");
 		String propertyValue;
-		ModelEntity rootEntity = item.getStructure().getRootEntity(item);
+		IModelEntity rootEntity = item.getStructure().getRootEntity(item);
 		Assert.assertNotNull(rootEntity, "Impossible to find root entity of entity [" + item.getName() + "]");
 		propertyValue = getProperty(rootEntity, propertyName);
 		
@@ -153,7 +150,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	protected String getInheritedProperty(ModelField item, String propertyName) {
 		String propertyValue;
 		ModelField rootField = null;
-		ModelEntity rootEntity = item.getStructure().getRootEntity(item.getParent());
+		IModelEntity rootEntity = item.getStructure().getRootEntity(item.getParent());
 		if(rootEntity == null) {
 			rootEntity = item.getStructure().getRootEntity(item.getParent());
 			Assert.assertUnreachable("rootEntity for field [" + item.getName() + "] cannot be null");

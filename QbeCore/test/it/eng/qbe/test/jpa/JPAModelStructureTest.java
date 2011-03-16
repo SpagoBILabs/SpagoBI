@@ -6,6 +6,7 @@ package it.eng.qbe.test.jpa;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.ModelStructure;
@@ -42,7 +43,7 @@ public class JPAModelStructureTest {
 		EntityManager em = jpaDS.getEntityManager();
 		IDataMartStructureBuilder dmb = DataMartStructureBuilderFactory.getDataMartStructureBuilder(jpaDS);
 		//builds the jpa structure
-		ModelStructure dms = dmb.build();
+		IModelStructure dms = dmb.build();
 		
 		//gets structure's informations
 		List allEntities = dms.getRootEntities("TEST_JPA");

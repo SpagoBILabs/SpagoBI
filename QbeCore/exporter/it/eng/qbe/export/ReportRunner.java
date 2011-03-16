@@ -45,7 +45,7 @@ import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -56,7 +56,7 @@ import org.apache.log4j.Logger;
 public class ReportRunner {
 	
 	/** The logger. */
-	private static transient Logger logger = Logger.getLogger(ReportRunner.class);
+	private static transient Logger logger = LoggerFactory.getLogger(ReportRunner.class);
 	
 	/**
 	 * Instantiates a new report runner.

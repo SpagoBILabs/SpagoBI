@@ -20,14 +20,15 @@
  **/
 package it.eng.qbe.model.structure.builder.hibernate;
 
-import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -62,9 +63,9 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
 	}
 	
-	public ModelStructure build() {
+	public IModelStructure build() {
 		
-		ModelStructure dataMartStructure;
+		IModelStructure dataMartStructure;
 		List<IDataSourceConfiguration> subConfigurations;
 		String datamartName;
 		Map classMetadata;
@@ -99,10 +100,10 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		return dataMartStructure;
 	}
 
-	private void addEntity (ModelStructure dataMartStructure, String datamartName, String entityType){
+	private void addEntity (IModelStructure dataMartStructure, String datamartName, String entityType){
 
 		String entityName = getEntityNameFromEntityType(entityType);		
-		ModelEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
+		IModelEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
 		propertiesInitializer.addProperties(dataMartEntity);
 		
 		addKeyFields(dataMartEntity);		
@@ -113,7 +114,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 	}
 	
-	private void addCalculatedFields(ModelEntity dataMartEntity) {
+	private void addCalculatedFields(IModelEntity dataMartEntity) {
 		List calculatedFileds;
 		ModelCalculatedField calculatedField;
 		
@@ -127,11 +128,11 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		}
 	}
 
-	private void addSubEntities(ModelEntity dataMartEntity, List subEntities, int recursionLevel) {
+	private void addSubEntities(IModelEntity dataMartEntity, List subEntities, int recursionLevel) {
 		
 		Iterator it = subEntities.iterator();
 		while (it.hasNext()) {
-			ModelEntity subentity = (ModelEntity)it.next();
+			IModelEntity subentity = (IModelEntity)it.next();
 			if (subentity.getType().equalsIgnoreCase(dataMartEntity.getType())){
 				// ciclo di periodo 0!
 			} else if(recursionLevel > 10) {
@@ -144,11 +145,11 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		}
 	}
 	
-	private void addSubEntity (ModelEntity parentEntity,
-			ModelEntity subEntity, 			
+	private void addSubEntity (IModelEntity parentEntity,
+			IModelEntity subEntity, 			
 			int recursionLevel){
 
-		ModelEntity dataMartEntity;				
+		IModelEntity dataMartEntity;				
 
 		
 		//String entityName = getEntityNameFromEntityType(entityType);		
@@ -163,7 +164,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		
 	}
 	
-	private void addKeyFields(ModelEntity dataMartEntity) {
+	private void addKeyFields(IModelEntity dataMartEntity) {
 		
 		PersistentClass classMapping;
 		ClassMetadata classMetadata;
@@ -250,7 +251,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		}
 	}
 	
-	public List addNormalFields(ModelEntity dataMartEntity) {
+	public List addNormalFields(IModelEntity dataMartEntity) {
 		
 		ClassMetadata classMetadata;
 		PersistentClass classMapping;
@@ -292,7 +293,7 @@ public class HibernateDatamartStructureBuilder implements IDataMartStructureBuil
 		 		
 		 		//String entityName = getEntityNameFromEntityType(entityType);
 		 		String entityName = propertyName;
-		 		ModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
+		 		IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
 		 		subEntities.add(subentity);	
 		 		
 		 	} else if (propertyType instanceof CollectionType) { // chiave interna
