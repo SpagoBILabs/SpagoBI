@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.template;
 
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
@@ -188,9 +187,9 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 			
 			for(int i = 0; i < modalities.size(); i++) {
 				modalitySB = (SourceBean)modalities.get(i);
-				String recursiveFilteringAttr = (String)modalitySB.getAttribute(ModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				String recursiveFilteringAttr = (String)modalitySB.getAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING);
 				if(!StringUtilities.isEmpty(recursiveFilteringAttr)) {
-					compositeModalitySB.setAttribute(ModelAccessModality.ATTR_RECURSIVE_FILTERING, recursiveFilteringAttr);
+					compositeModalitySB.setAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING, recursiveFilteringAttr);
 				}
 				List tables = modalitySB.getAttributeAsList(TAG_MODALITY_TABLE);
 				for(int j = 0; j < tables.size(); j++) {
@@ -200,7 +199,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 			}
 					
 			if(compositeModalitySB != null && compositeModalitySB.getAttribute(TAG_MODALITY_TABLE) != null) { 
-				ModelAccessModality datamartModelAccessModality = new ModelAccessModality(compositeModalitySB);
+				QbeXMLModelAccessModality datamartModelAccessModality = new QbeXMLModelAccessModality(compositeModalitySB);
 				qbeTemplate.setDatamartModelAccessModality(datamartModelAccessModality);
 			}
 			
