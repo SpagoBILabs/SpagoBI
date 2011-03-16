@@ -28,8 +28,8 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
-import it.eng.qbe.model.structure.builder.hibernate.HibernateDatamartStructureBuilder;
+import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
+import it.eng.qbe.model.structure.builder.hibernate.HibernateModelStructureBuilder;
 import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
@@ -366,9 +366,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 
 	public IModelStructure getModelStructure() {
-		IDataMartStructureBuilder structureBuilder;
+		IModelStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
-			structureBuilder = new HibernateDatamartStructureBuilder(this);
+			structureBuilder = new HibernateModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 		}
 		
