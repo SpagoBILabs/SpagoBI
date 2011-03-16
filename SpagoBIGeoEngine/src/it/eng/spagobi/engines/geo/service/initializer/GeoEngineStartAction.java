@@ -38,6 +38,7 @@ import it.eng.spagobi.engines.geo.GeoEngineException;
 import it.eng.spagobi.engines.geo.GeoEngineInstance;
 import it.eng.spagobi.engines.geo.commons.presentation.DynamicPublisher;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
@@ -262,7 +263,8 @@ public class GeoEngineStartAction extends AbstractEngineStartAction {
 		IDataSource dataSource = getDataSource();
 		IDataSet dataset = getDataSet();
 		if( dataset != null ) {
-			dataset.setUserProfile( getUserProfile() );
+			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(  getUserProfile()  ));
+			
 			dataset.setParamsMap( env );
 		}
 		

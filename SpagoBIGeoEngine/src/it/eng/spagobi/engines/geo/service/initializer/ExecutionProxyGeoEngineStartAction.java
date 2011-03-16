@@ -49,6 +49,7 @@ import it.eng.spagobi.engines.geo.map.utils.SVGMapConverter;
 import it.eng.spagobi.engines.geo.service.DrawMapAction;
 import it.eng.spagobi.engines.geo.service.DrawMapServiceException;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
@@ -457,7 +458,8 @@ public class ExecutionProxyGeoEngineStartAction extends AbstractEngineStartActio
 		IDataSource dataSource = getDataSource();
 		IDataSet dataset = getDataSet();
 		if( dataset != null ) {
-			dataset.setUserProfile( getUserProfile() );
+			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(  getUserProfile() ));
+			
 			dataset.setParamsMap( env );
 		}
 		
