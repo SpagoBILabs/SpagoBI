@@ -28,7 +28,6 @@ import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.spago.base.ApplicationContainer;
@@ -74,6 +73,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations().get(0);
 			if(subConf instanceof FileDataSourceConfiguration){
 				this.configuration  = (FileDataSourceConfiguration)subConf;
+				this.configuration.loadDataSourceProperties().putAll(configuration.loadDataSourceProperties());
 			} else {
 				Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
 			}
