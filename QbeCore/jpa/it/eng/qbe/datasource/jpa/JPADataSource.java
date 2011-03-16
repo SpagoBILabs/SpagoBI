@@ -37,6 +37,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -86,8 +88,12 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 
 
 	public void createEntityManager(String name){
-		factory = Persistence.createEntityManagerFactory(name);
+		initEntityManagerFactory(name);
 		EntityManager em = factory.createEntityManager();
+	}
+	
+	private void initEntityManagerFactory(String name){
+		factory = Persistence.createEntityManagerFactory(name, buildEmptyNotJndiConfiguration());
 	}
 
 	/* (non-Javadoc)
@@ -131,7 +137,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 			updateCurrentClassLoader(jarFile);
 		}	
 		
-		factory = Persistence.createEntityManagerFactory( getConfiguration().getModelName() );
+		initEntityManagerFactory( getConfiguration().getModelName() );
 		
 	}
 	
@@ -238,6 +244,15 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		}
 		
 		return dataMartModelStructure;
+	}
+	
+	protected Map<String,Object> buildEmptyNotJndiConfiguration() {
+		Map<String,Object> cfg = new HashMap<String,Object>();
+		cfg.put("javax.persistence.jdbc.url", getConnection().getUrl());
+		cfg.put("javax.persistence.jdbc.password", getConnection().getPassword());
+		cfg.put("javax.persistence.jdbc.user", getConnection().getUsername());
+		cfg.put("javax.persistence.jdbc.driver", getConnection().getDriverClass());
+		return cfg;
 	}
 
 }
