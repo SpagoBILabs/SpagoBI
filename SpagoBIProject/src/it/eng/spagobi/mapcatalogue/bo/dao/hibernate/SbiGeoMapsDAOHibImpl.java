@@ -413,8 +413,6 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		xmlIF.setProperty(XMLInputFactory.IS_COALESCING , Boolean.TRUE);
 
 		//create a temporary file for gets the features:
-		//String tmpdir = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "temp";
-		//create a temporary file for gets the features:
 		String javaIoTmpDir = System.getProperty("java.io.tmpdir");
 		String tmpdir = null;
 		if (javaIoTmpDir.endsWith(System.getProperty("file.separator"))) {
@@ -436,14 +434,12 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			e.printStackTrace();
 		}
 
-		//defines absolute path
-		//String pathMapFile = ConfigSingleton.getRootPath() + url;  
+ 
 		FileInputStream fisMap = null;		
 		List lstFeatures = null;
 		HashMap feature;
 
 		try {
-			//fisMap = new FileInputStream(pathMapFile);
 			fisMap = new FileInputStream(tmpFile);
 		} catch (FileNotFoundException e) {
 			logger.error("file svg not found, path " + tmpFile);
@@ -520,30 +516,5 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		return lstFeatures;
 	}
 
-
-
-
-
-
-	/**
-	 * Returns the template content
-	 * 
-	 * @param url The file url
-	 * 
-	 * @return the content
-	 */
-	private byte[] getTemplateSVG (String url)throws Exception {
-		String pathMapFile = ConfigSingleton.getRootPath() + url;  
-		FileInputStream fisMap = null;		
-		byte[] template = null;
-		try {
-			fisMap = new FileInputStream(pathMapFile);
-		} catch (FileNotFoundException e) {
-			logger.error("file svg not found, path " + pathMapFile);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notfound");
-		}
-		fisMap.read(template);
-		return template;
-	}
 
 }
