@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -50,7 +51,7 @@ public class SpagoBIWidgetInternalEngine extends SpagoBIAbstractInternalEngine {
 			
 			// get data
 			dataSet.setParamsMap(new HashMap());
-			dataSet.setUserProfile( getUserProfile() );
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( getUserProfile() ));
 			dataSet.loadData();
 			dataStore = dataSet.getDataStore();
 			Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");

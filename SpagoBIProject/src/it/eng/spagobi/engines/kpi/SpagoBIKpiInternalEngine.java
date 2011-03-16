@@ -62,6 +62,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -1182,7 +1183,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		KpiValue kpiValTemp = null;
 
 		dataSet.setParamsMap(pars);
-		dataSet.setUserProfile(profile);	
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
+		
 
 		logger.info("Load Data Set. Label="+dataSet.getLabel());
 

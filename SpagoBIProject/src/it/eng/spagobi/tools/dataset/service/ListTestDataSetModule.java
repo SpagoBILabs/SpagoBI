@@ -55,6 +55,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
@@ -155,7 +156,8 @@ public class ListTestDataSetModule extends AbstractBasicListModule  {
 		} else {
 			session.delAttribute(SpagoBIConstants.USER_PROFILE_FOR_TEST);
 		}
-		dataSet.setUserProfile(profile);
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
+		
 
 		errorHandler=getErrorHandler();
 		if(!errorHandler.isOK()){
