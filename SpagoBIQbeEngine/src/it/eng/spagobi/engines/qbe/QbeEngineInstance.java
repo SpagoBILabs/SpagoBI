@@ -24,7 +24,7 @@ package it.eng.spagobi.engines.qbe;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
@@ -32,6 +32,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
+import it.eng.spagobi.engines.qbe.template.QbeXMLModelAccessModality;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -102,7 +103,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		if(template.getDatamartModelAccessModality() != null) {
 			
 			if(template.getDatamartModelAccessModality().getRecursiveFiltering() == null) {
-				String recursiveFilteringAttr = dataSource.getModelStructure().getPropertyAsString(ModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				String recursiveFilteringAttr = dataSource.getModelStructure().getPropertyAsString(AbstractModelAccessModality.ATTR_RECURSIVE_FILTERING);
 				if(!StringUtilities.isEmpty(recursiveFilteringAttr)) {
 					if("disabled".equalsIgnoreCase(recursiveFilteringAttr)) {
 						template.getDatamartModelAccessModality().setRecursiveFiltering( Boolean.FALSE );

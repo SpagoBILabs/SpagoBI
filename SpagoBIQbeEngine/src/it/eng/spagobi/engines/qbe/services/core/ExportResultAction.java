@@ -38,6 +38,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -167,7 +168,15 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			params = new HashMap();
 			params.put("pagination", getPaginationParamVaue(mimeType) );
 			
-			templateBuilder = new TemplateBuilder(sqlQuery, extractedFields, params);
+			
+			SourceBean config = (SourceBean)ConfigSingleton.getInstance();		
+			SourceBean baseTemplateFileSB = (SourceBean)config.getAttribute("QBE.TEMPLATE-BUILDER.BASE-TEMPLATE");
+			String baseTemplateFileStr = null;
+			if(baseTemplateFileSB != null) baseTemplateFileStr = baseTemplateFileSB.getCharacters();
+			File baseTemplateFile = null;
+			if(baseTemplateFileStr != null) baseTemplateFile = new File(baseTemplateFileStr);
+			
+			templateBuilder = new TemplateBuilder(sqlQuery, extractedFields, params, baseTemplateFile);
 			templateContent = templateBuilder.buildTemplate();
 			
 			if( !"text/jrxml".equalsIgnoreCase( mimeType ) ) {
@@ -208,7 +217,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 						JDBCDataSet dataset = new JDBCDataSet();
 						IDataSource datasource = (IDataSource) this.getEnv().get( EngineConstants.ENV_DATASOURCE );
 						dataset.setDataSource(datasource);
-						dataset.setUserProfile((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+						dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 						dataset.setQuery(sqlQuery);
 						logger.debug("Executing query ...");
 						dataset.loadData();
