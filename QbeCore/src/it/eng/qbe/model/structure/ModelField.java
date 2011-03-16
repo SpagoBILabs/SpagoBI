@@ -58,7 +58,7 @@ public class ModelField extends AbstractModelNode {
 	public String getQueryName() {
 		String fieldName = "";
 		
-		ModelEntity entity = getParent();
+		IModelEntity entity = getParent();
 		if(entity.getParent() != null) {
 			fieldName = toLowerCase( entity.getName() );
 			entity = entity.getParent();

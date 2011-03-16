@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.Map;
 
 /**
@@ -36,4 +38,9 @@ public interface IModelObject {
 	void setName(String name);
 	Map<String,Object> getProperties();
 	void setProperties(Map<String,Object> properties);
+	int getPropertyAsInt(String name);
+	Object getProperty(String name);
+	String getPropertyAsString(String name);
+	boolean getPropertyAsBoolean(String name);
+
 }

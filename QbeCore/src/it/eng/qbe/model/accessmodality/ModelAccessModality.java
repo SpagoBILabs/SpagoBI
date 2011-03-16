@@ -21,7 +21,7 @@
 package it.eng.qbe.model.accessmodality;
 
 
-import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.utility.StringUtils;
@@ -243,7 +243,7 @@ public class ModelAccessModality {
 	}
 
 	
-	public boolean isEntityAccessible(ModelEntity entity) {	
+	public boolean isEntityAccessible(IModelEntity entity) {	
 		
 		// ERROR: accessibility of entities is type based: ignore the role
 		/*

@@ -28,11 +28,9 @@ package it.eng.qbe.model.structure;
  */
 public interface IModelNode extends IModelObject{
 	
-	ModelStructure getStructure();
-	
-	ModelEntity getParent();
-	void setParent(ModelEntity parent);
-
+	IModelStructure getStructure();
+	IModelEntity getParent();
+	void setParent(IModelEntity parent);
 	String getUniqueName();
 
 }

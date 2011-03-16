@@ -22,9 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.ModelStructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,7 +141,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		
 		Iterator<List<ModelCalculatedField>> it = calculatedFields.values().iterator();
 		if(!it.hasNext()) return; // if NO calculated fields to add return
-		ModelStructure structure = it.next().get(0).getStructure();
+		IModelStructure structure = it.next().get(0).getStructure();
 		
 		Iterator<IDataSourceConfiguration> subConfigurationIterator = subConfigurations.iterator();
 		while(it.hasNext()) {
@@ -162,15 +162,15 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	 * @param datamartName The datamart for which the calculated fields should be retrieved
 	 * @return the calculated field defined for the specified datamart 
 	 */
-	private Map<String, List<ModelCalculatedField>> getCalculatedFieldsForDatamart(ModelStructure structure, String datamartName) {
+	private Map<String, List<ModelCalculatedField>> getCalculatedFieldsForDatamart(IModelStructure structure, String datamartName) {
 		Map<String, List<ModelCalculatedField>> toReturn = new HashMap<String, List<ModelCalculatedField>>();
 		Map<String, List<ModelCalculatedField>> calculatedFields = structure.getCalculatedFields();
 		Set keys = calculatedFields.keySet();
 		Iterator keysIt = keys.iterator();
 		while (keysIt.hasNext()) {
 			String entityUniqueName = (String) keysIt.next();
-			ModelEntity dataMartEntity = structure.getEntity(entityUniqueName);
-			ModelEntity dataMartRootEntity = dataMartEntity.getRoot();
+			IModelEntity dataMartEntity = structure.getEntity(entityUniqueName);
+			IModelEntity dataMartRootEntity = dataMartEntity.getRoot();
 			List rootEntities = structure.getRootEntities(datamartName);
 			if (rootEntities.contains(dataMartRootEntity)) {
 				toReturn.put(entityUniqueName, calculatedFields.get(entityUniqueName));

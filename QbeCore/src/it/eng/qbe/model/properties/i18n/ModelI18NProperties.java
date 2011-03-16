@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.model.properties.i18n;
 
-import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
@@ -51,7 +51,7 @@ public class ModelI18NProperties {
 		setProperties(properties);
 	}	
 	
-	private String getItemUniqueNameInFile( ModelEntity entity ) {
+	private String getItemUniqueNameInFile( IModelEntity entity ) {
 		return entity.getUniqueName().replaceAll(":", "/");
 	}
 	
@@ -67,8 +67,8 @@ public class ModelI18NProperties {
 			return null;
 		}
 		
-		if( datamartItem instanceof ModelEntity ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelEntity)datamartItem );
+		if( datamartItem instanceof IModelEntity ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (IModelEntity)datamartItem );
 		} else if( datamartItem instanceof ModelField ) {
 			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelField)datamartItem );
 		} else {
@@ -87,8 +87,8 @@ public class ModelI18NProperties {
 			return null;
 		}
 		
-		if( datamartItem instanceof ModelEntity ) {
-			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelEntity)datamartItem );
+		if( datamartItem instanceof IModelEntity ) {
+			itemUniqueNameInFile = getItemUniqueNameInFile( (IModelEntity)datamartItem );
 		} else if( datamartItem instanceof ModelField ) {
 			itemUniqueNameInFile = getItemUniqueNameInFile( (ModelField)datamartItem );
 		} else {

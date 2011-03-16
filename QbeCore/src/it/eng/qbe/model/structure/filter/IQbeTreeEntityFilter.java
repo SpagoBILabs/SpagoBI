@@ -18,33 +18,27 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource;
+package it.eng.qbe.model.structure.filter;
 
-import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.datasource.IDataSource;
 
-import java.util.Locale;
+import java.util.List;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Andrea Gioia
+ * The Interface IQbeTreeEntityFilter.
+ * 
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public interface IDataSource {
+public interface IQbeTreeEntityFilter {
 	
-	String getName();
-	IDataSourceConfiguration getConfiguration();
-	
-	IModelStructure getModelStructure();
-	ModelAccessModality getModelAccessModality();
-	void setDataMartModelAccessModality(ModelAccessModality modelAccessModality) ;
-	ModelI18NProperties getModelI18NProperties(Locale locale);
-	
-	void open();
-	boolean isOpen();
-	void close();
-	
-	IStatement createStatement(Query query);
+	/**
+	 * Filter entities.
+	 * 
+	 * @param datamartModel the datamart model
+	 * @param entities the entities
+	 * 
+	 * @return the list
+	 */
+	List filterEntities(IDataSource dataSource, List entities);
 }

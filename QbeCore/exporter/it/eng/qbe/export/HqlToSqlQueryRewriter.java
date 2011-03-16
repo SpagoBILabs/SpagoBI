@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,7 +44,7 @@ public class HqlToSqlQueryRewriter {
 	private Session session;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(HqlToSqlQueryRewriter.class);
+    public static transient Logger logger = LoggerFactory.getLogger(HqlToSqlQueryRewriter.class);
 	
 	
 	/**

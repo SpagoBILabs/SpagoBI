@@ -24,14 +24,13 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.properties.i18n.ModelI18NPropertiesCache;
-import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.StatementFactory;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -43,7 +42,7 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected IDataSourceConfiguration configuration;
 	
 	protected ModelAccessModality dataMartModelAccessModality;
-	protected ModelStructure dataMartModelStructure;
+	protected IModelStructure dataMartModelStructure;
 
 		
 	
@@ -51,7 +50,7 @@ public abstract class AbstractDataSource implements IDataSource {
 		return configuration;
 	}
 
-	public ModelStructure getModelStructure() {
+	public IModelStructure getModelStructure() {
 		IDataMartStructureBuilder structureBuilder;
 		if(dataMartModelStructure == null) {			
 			structureBuilder = DataMartStructureBuilderFactory.getDataMartStructureBuilder(this);

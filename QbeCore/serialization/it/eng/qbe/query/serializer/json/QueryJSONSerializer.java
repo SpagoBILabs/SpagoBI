@@ -24,7 +24,7 @@ package it.eng.qbe.query.serializer.json;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
-import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;
@@ -303,18 +303,18 @@ public class QueryJSONSerializer {
 			label = datamartLabels.getLabel(field);
 		}
 		String extendedLabel = StringUtilities.isEmpty(label)? field.getName(): label;
-		ModelEntity parent = field.getParent();
+		IModelEntity parent = field.getParent();
 		if (parent == null) return extendedLabel;
 		else return getEntityLongDescription(parent, datamartLabels) + " : " + extendedLabel;
 	}
 	
-	public static String getEntityLongDescription(ModelEntity entity, ModelI18NProperties datamartLabels) {
+	public static String getEntityLongDescription(IModelEntity entity, ModelI18NProperties datamartLabels) {
 		String label = entity.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getLabel(entity);
 		}
 		String extendedLabel = StringUtilities.isEmpty(label)? entity.getName(): label;
-		ModelEntity parent = entity.getParent();
+		IModelEntity parent = entity.getParent();
 		if (parent == null) return extendedLabel;
 		else return getEntityLongDescription(parent, datamartLabels) + " / " + extendedLabel;
 	}

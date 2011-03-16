@@ -33,7 +33,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class TemplateBuilder {
 	
-	private static transient Logger logger = Logger.getLogger(TemplateBuilder.class);
+	private static transient Logger logger = LoggerFactory.getLogger(TemplateBuilder.class);
 	
 	/** The query. */
 	String query;

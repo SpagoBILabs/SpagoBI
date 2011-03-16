@@ -26,7 +26,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +36,7 @@ import org.json.JSONObject;
  */
 public class FormViewerTemplateBuilder {
 	
-	public static transient Logger logger = Logger.getLogger(FormViewerTemplateBuilder.class);
+	public static transient Logger logger = LoggerFactory.getLogger(FormViewerTemplateBuilder.class);
 	
 	/*
 	private JSONArray nodes = null;
