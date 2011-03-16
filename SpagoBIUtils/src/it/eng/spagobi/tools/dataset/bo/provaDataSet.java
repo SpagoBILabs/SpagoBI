@@ -9,7 +9,7 @@ import it.eng.spago.security.IEngUserProfile;
 public class provaDataSet implements IJavaClassDataSet {
 
 
-	public String getValues(IEngUserProfile profile, Map map) {
+	public String getValues(Map userProfileAttributes, Map parameters) {
 	
 		String result = "<ROWS>";
 		result += "<ROW VALUE=\"";

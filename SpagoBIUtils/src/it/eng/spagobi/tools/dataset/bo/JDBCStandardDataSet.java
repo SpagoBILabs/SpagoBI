@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -36,6 +38,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCStandardDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors
@@ -89,17 +92,17 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
      * Redefined for set schema name
      * 
      */
-	public void setUserProfile(IEngUserProfile userProfile)  {
-		this.userProfile = userProfile;
+	public void setUserProfileAttributes(Map userProfile)  {
+		this.userProfileParameters = userProfile;
 		if (getDataSource().checkIsMultiSchema()){
 			String schema=null;
 			try {
-				schema = (String)userProfile.getUserAttribute(getDataSource().getSchemaAttribute());
+				schema = (String)userProfile.get(getDataSource().getSchemaAttribute());
 				((JDBCStandardDataProxy)dataProxy).setSchema(schema);
 				logger.debug("Set UP Schema="+schema);
-			} catch (EMFInternalError e) {
-				logger.error("Error reading schema name in user profile");	
-			}	
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while reading schema name from user profile", t);	
+			}		
 		}
 	}
 	

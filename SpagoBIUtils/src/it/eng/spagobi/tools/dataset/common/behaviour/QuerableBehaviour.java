@@ -88,14 +88,14 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			// if script substitute profile attributes in a strict way
 			if (getTargetDataSet() instanceof ScriptDataSet) {
 				try{
-					HashMap attributes = getAllProfileAttributes(getTargetDataSet().getUserProfile()); // to be cancelled, now substitutution inline
+					Map attributes = getTargetDataSet().getUserProfileAttributes(); // to be cancelled, now substitutution inline
 					statement = substituteProfileAttributes(statement, attributes);
 				} catch (Throwable e) {
 					throw new ProfileAttributeDsException("An error occurred while excuting query [" + statement + "]",e);
 				}
 			} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCStandardDataSet) {	 
 				try {
-					statement = StringUtilities.substituteProfileAttributesInString(statement, getTargetDataSet().getUserProfile() );
+					statement = StringUtilities.substituteParametersInString(statement, getTargetDataSet().getUserProfileAttributes() );
 				} catch (Exception e) {
 					List list = checkProfileAttributesUnfilled(statement);
 					String atts = "";
@@ -182,7 +182,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 	}
 
 
-	private String substituteProfileAttributes(String script, HashMap attributes) throws EMFInternalError{
+	private String substituteProfileAttributes(String script, Map attributes) throws EMFInternalError{
 		logger.debug("IN");
 		String cleanScript=new String(script);
 		int indexSubstitution=0;
@@ -242,33 +242,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		return parTypeMap;
 	}
 
-	/**
-	 * Gets the all profile attributes. (Also present in GeneralUtilities) TODO: centralization of two methods
-	 * 
-	 * @param profile the profile
-	 * 
-	 * @return the all profile attributes
-	 * 
-	 * @throws EMFInternalError the EMF internal error
-	 */
-	public static HashMap getAllProfileAttributes(IEngUserProfile profile) throws EMFInternalError {
-		logger.debug("IN");
-		if (profile == null)
-			throw new EMFInternalError(EMFErrorSeverity.ERROR,
-			"getAllProfileAttributes method invoked with null input profile object");
-		HashMap profileattrs = new HashMap();
-		Collection profileattrsNames = profile.getUserAttributeNames();
-		if (profileattrsNames == null || profileattrsNames.size() == 0)
-			return profileattrs;
-		Iterator it = profileattrsNames.iterator();
-		while (it.hasNext()) {
-			Object profileattrName = it.next();
-			Object profileattrValue = profile.getUserAttribute(profileattrName.toString());
-			profileattrs.put(profileattrName, profileattrValue);
-		}
-		logger.debug("OUT");
-		return profileattrs;
-	}
+	
 
 
 	/** search if there are parameters unfilled and return their names

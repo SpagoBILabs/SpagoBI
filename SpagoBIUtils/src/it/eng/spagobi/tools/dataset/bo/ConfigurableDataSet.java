@@ -32,7 +32,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	Object query;	
 
 
-	IEngUserProfile userProfile;
+	Map userProfileParameters;
 
 
 	private static transient Logger logger = Logger.getLogger(ConfigurableDataSet.class);
@@ -49,7 +49,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
 		dataProxy.setParameters(getParamsMap());
-		dataProxy.setProfile(getUserProfile());
+		dataProxy.setProfile(getUserProfileAttributes());
 		
 		// check if the proxy is able to manage results pagination
 		if(dataProxy.isOffsetSupported()) {
@@ -145,12 +145,12 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		this.dataProxy = dataProxy;
 	}
 
-	public IEngUserProfile getUserProfile() {
-		return userProfile;
+	public Map getUserProfileAttributes() {
+		return userProfileParameters;
 	}
 
-	public void setUserProfile(IEngUserProfile userProfile) {
-		this.userProfile = userProfile;
+	public void setUserProfileAttributes(Map parameters) {
+		this.userProfileParameters = parameters;
 	}
 	
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
