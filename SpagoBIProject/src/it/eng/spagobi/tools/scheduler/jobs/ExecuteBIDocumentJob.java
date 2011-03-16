@@ -84,6 +84,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -96,6 +97,7 @@ import it.eng.spagobi.tools.scheduler.to.SaveInfo;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 
 public class ExecuteBIDocumentJob implements Job {
 
@@ -177,7 +179,7 @@ public class ExecuteBIDocumentJob implements Job {
 				IDataStore emailDispatchDataStore = null;
 				if (saveInfo.isUseDataSet()) {
 					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetLabel());
-					dataSet.setUserProfile(profile);
+					dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 					dataSet.loadData();
 					emailDispatchDataStore = dataSet.getDataStore();
 				}
@@ -185,7 +187,7 @@ public class ExecuteBIDocumentJob implements Job {
 				IDataStore folderDispatchDataSotre = null;
 				if (saveInfo.isUseFolderDataSet()) {
 					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetFolderLabel());
-				  	dataSet.setUserProfile(profile);
+				  	dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 					dataSet.loadData();
 					 folderDispatchDataSotre = dataSet.getDataStore();
 				}

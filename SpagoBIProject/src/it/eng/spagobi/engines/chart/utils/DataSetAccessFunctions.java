@@ -32,6 +32,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
@@ -132,7 +133,7 @@ public class DataSetAccessFunctions {
 		List colNames = new ArrayList();
 		
 		ds.setParamsMap(parameters);
-		ds.setUserProfile(profile);
+		ds.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 		ds.loadData();
 		IDataStore ids = ds.getDataStore();
 		
