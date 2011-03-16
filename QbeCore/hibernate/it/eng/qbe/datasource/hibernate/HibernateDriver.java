@@ -21,15 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.hibernate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.IDriver;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.naming.SimpleDataSourceNamingStrategy;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

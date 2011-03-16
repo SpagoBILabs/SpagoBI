@@ -25,7 +25,6 @@ import it.eng.qbe.query.Query;
 
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BasicStatement.
  * 

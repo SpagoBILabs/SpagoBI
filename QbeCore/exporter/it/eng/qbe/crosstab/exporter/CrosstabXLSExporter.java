@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.crosstab.exporter;
 
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
+
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -46,7 +48,8 @@ import org.json.JSONObject;
  */
 public class CrosstabXLSExporter {
 	
-	public static transient Logger logger = LoggerFactory.getLogger(CrosstabXLSExporter.class);
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
 	public static final String CROSSTAB_JSON_DESCENDANTS_NUMBER = "descendants_no";
 

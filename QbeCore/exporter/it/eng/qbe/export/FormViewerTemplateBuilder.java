@@ -20,13 +20,14 @@
  **/
 package it.eng.qbe.export;
 
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +36,8 @@ import org.json.JSONObject;
  * @author Davide Zerbetto
  */
 public class FormViewerTemplateBuilder {
-	
-	public static transient Logger logger = LoggerFactory.getLogger(FormViewerTemplateBuilder.class);
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
 	/*
 	private JSONArray nodes = null;

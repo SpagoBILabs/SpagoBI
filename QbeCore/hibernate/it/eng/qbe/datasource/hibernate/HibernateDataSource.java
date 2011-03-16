@@ -25,6 +25,11 @@ import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
+import it.eng.qbe.model.structure.builder.hibernate.HibernateDatamartStructureBuilder;
 import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
@@ -61,7 +66,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 	protected HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
 		setName( dataSourceName );
-		dataMartModelAccessModality = new ModelAccessModality();
+		dataMartModelAccessModality = new AbstractModelAccessModality();
 
 		// validate & set configuration
 		if(configuration instanceof FileDataSourceConfiguration) {
@@ -358,6 +363,16 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 			cfg = (Configuration)configurationMap.get(modelName);
 			addDbLink(modelName, cfg, compositeHibernateConfiguration);
 		}
+	}
+
+	public IModelStructure getModelStructure() {
+		IDataMartStructureBuilder structureBuilder;
+		if(dataMartModelStructure == null) {			
+			structureBuilder = new HibernateDatamartStructureBuilder(this);
+			dataMartModelStructure = structureBuilder.build();
+		}
+		
+		return dataMartModelStructure;
 	}
 
 }

@@ -30,7 +30,7 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 
-public abstract class AbstractJPADataSet extends AbstractDataSet {
+public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 
 	protected IStatement statement;
@@ -39,10 +39,10 @@ public abstract class AbstractJPADataSet extends AbstractDataSet {
 	protected Map bindings;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(AbstractJPADataSet.class);
+    public static transient Logger logger = Logger.getLogger(AbstractQbeDataSet.class);
     
 	
-	public AbstractJPADataSet(IStatement statement) {
+	public AbstractQbeDataSet(IStatement statement) {
 		setStatement(statement);
 		bindings = new HashMap();
 	}

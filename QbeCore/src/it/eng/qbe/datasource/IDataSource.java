@@ -21,7 +21,7 @@
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
@@ -38,8 +38,8 @@ public interface IDataSource {
 	IDataSourceConfiguration getConfiguration();
 	
 	IModelStructure getModelStructure();
-	ModelAccessModality getModelAccessModality();
-	void setDataMartModelAccessModality(ModelAccessModality modelAccessModality) ;
+	IModelAccessModality getModelAccessModality();
+	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality) ;
 	ModelI18NProperties getModelI18NProperties(Locale locale);
 	
 	void open();

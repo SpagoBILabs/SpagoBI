@@ -21,7 +21,6 @@
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;

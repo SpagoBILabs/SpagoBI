@@ -24,7 +24,6 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelStructure;
 
 import java.io.File;
 import java.util.HashMap;
@@ -70,11 +69,11 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	}
 	
 	public ModelI18NProperties loadModelI18NProperties() {
-		return modelLabelsDAOFileImpl.loadDatamartLabels();
+		return loadModelI18NProperties(null);
 	}
-
 	public ModelI18NProperties loadModelI18NProperties(Locale locale) {
-		return modelLabelsDAOFileImpl.loadDatamartLabels(locale);
+		ModelI18NProperties properties = modelLabelsDAOFileImpl.loadDatamartLabels(locale);
+		return properties;
 	}
 
 	public Map loadCalculatedFields() {

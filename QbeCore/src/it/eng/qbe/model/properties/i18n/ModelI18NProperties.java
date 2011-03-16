@@ -24,6 +24,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -32,16 +33,13 @@ import java.util.Properties;
  */
 public class ModelI18NProperties {
 	
-	/** The properties. */
 	private Properties  properties;
 	
-	/**
-	 * Instantiates a new datamart labels.
-	 */
 	public ModelI18NProperties() {
 		this(new Properties());
 	}	
 	
+
 	/**
 	 * Instantiates a new datamart labels.
 	 * 
@@ -55,9 +53,6 @@ public class ModelI18NProperties {
 		return entity.getUniqueName().replaceAll(":", "/");
 	}
 	
-	private String getItemUniqueNameInFile( ModelField field ) {
-		return field.getUniqueName().replaceAll(":", "/");
-	}
 	
 	public String getLabel(Object datamartItem) {
 		String label;
@@ -108,7 +103,14 @@ public class ModelI18NProperties {
 		this.properties = properties;
 	}
 	
-	public void addDatamartLabels(ModelI18NProperties labels) {
+
+
+	
+	private String getItemUniqueNameInFile( ModelField field ) {
+		return field.getUniqueName().replaceAll(":", "/");
+	}
+	
+	public void addProperties(ModelI18NProperties labels) {
 		if (labels != null && labels.properties != null && !labels.properties.isEmpty()) {
 			this.properties.putAll(labels.properties);
 		}

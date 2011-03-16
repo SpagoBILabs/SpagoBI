@@ -10,10 +10,10 @@ import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.DataMartStructureBuilderFactory;
 import it.eng.qbe.model.structure.builder.IDataMartStructureBuilder;
+import it.eng.qbe.model.structure.builder.jpa.JPADatamartStructureBuilder;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -41,7 +41,7 @@ public class JPAModelStructureTest {
 		
 		//EntityManagerFactory emf = jpaDS.getEntityManagerFactory();
 		EntityManager em = jpaDS.getEntityManager();
-		IDataMartStructureBuilder dmb = DataMartStructureBuilderFactory.getDataMartStructureBuilder(jpaDS);
+		IDataMartStructureBuilder dmb = new JPADatamartStructureBuilder(jpaDS);
 		//builds the jpa structure
 		IModelStructure dms = dmb.build();
 		

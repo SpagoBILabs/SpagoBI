@@ -21,6 +21,7 @@
 package it.eng.qbe.export;
 
 import it.businesslogic.ireport.export.JRTxtExporter;
+import it.eng.qbe.model.accessmodality.ModelAccessModality;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,6 +29,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Locale;
+
+import org.apache.log4j.Logger;
 
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
@@ -45,7 +48,6 @@ import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -55,8 +57,8 @@ import org.slf4j.Logger; import org.slf4j.LoggerFactory;
  */
 public class ReportRunner {
 	
-	/** The logger. */
-	private static transient Logger logger = LoggerFactory.getLogger(ReportRunner.class);
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
 	
 	/**
 	 * Instantiates a new report runner.
