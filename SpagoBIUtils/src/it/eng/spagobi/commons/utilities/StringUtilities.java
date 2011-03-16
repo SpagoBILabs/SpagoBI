@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,54 +44,54 @@ public class StringUtilities {
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 
 
-
+	public static String substituteProfileAttributesInString(String str, IEngUserProfile profile) throws Exception {
+		return substituteParametersInString(str, UserProfileUtils.getProfileAttributes(profile));
+	}
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with
 	 * the correspondent value in the string passed at input.
 	 * 
-	 * @param statement The string to be modified (tipically a query)
-	 * @param profile The IEngUserProfile object
+	 * @param str The string to be modified (tipically a query)
+	 * @param parameters The IEngUserProfile object
 	 * 
 	 * @return The statement with profile attributes replaced by their values.
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static String substituteProfileAttributesInString(String statement, IEngUserProfile profile)
-	throws Exception {
+	public static String substituteParametersInString(String str, Map parameters) throws Exception {
 		logger.debug("IN");
-		int profileAttributeStartIndex = statement.indexOf("${");
+		int profileAttributeStartIndex = str.indexOf("${");
 		if (profileAttributeStartIndex != -1) {
-			statement = substituteProfileAttributesInString(statement, profile, profileAttributeStartIndex);
+			str = substituteParametersInString(str, parameters, profileAttributeStartIndex);
 		}
 		logger.debug("OUT");
-		return statement;
+		return str;
 	}
 
 
-
+	public static String substituteProfileAttributesInString(String str, IEngUserProfile profile,	int profileAttributeStartIndex) throws Exception {
+		return substituteParametersInString(str, UserProfileUtils.getProfileAttributes(profile), profileAttributeStartIndex);
+	}
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with
 	 * the correspondent value in the string passed at input.
 	 * 
-	 * @param statement
-	 *                The string to be modified (tipically a query)
-	 * @param profile
-	 *                The IEngUserProfile object
-	 * @param profileAttributeStartIndex
-	 *                The start index for query parsing (useful for recursive
-	 *                calling)
+	 * @param statement   			The string to be modified (tipically a query)
+	 * @param parameters     		Profile attributes map 
+	 * @param parametersStartIndex  The start index for query parsing (useful for recursive calling)
+	 * 
 	 * @return The statement with profile attributes replaced by their values.
+	 * 
 	 * @throws Exception
 	 */
-	public static String substituteProfileAttributesInString(String statement, IEngUserProfile profile,
-			int profileAttributeStartIndex) throws Exception {
+	public static String substituteParametersInString(String statement, Map parameters, int parametersStartIndex) throws Exception {
 		logger.debug("IN.statement="+statement);
-		int profileAttributeEndIndex = statement.indexOf("}",profileAttributeStartIndex);
+		int profileAttributeEndIndex = statement.indexOf("}",parametersStartIndex);
 		if (profileAttributeEndIndex == -1)
 			throw new Exception("Not closed profile attribute: '}' expected.");
 		if (profileAttributeEndIndex < profileAttributeEndIndex)
 			throw new Exception("Not opened profile attribute: '${' expected.");
-		String attribute = statement.substring(profileAttributeStartIndex + 2, profileAttributeEndIndex).trim();
+		String attribute = statement.substring(parametersStartIndex + 2, profileAttributeEndIndex).trim();
 		int startConfigIndex = attribute.indexOf("(");
 		String attributeName = "";
 		String prefix = "";
@@ -126,7 +127,7 @@ public class StringUtilities {
 			logger.debug("Expected single-value attribute profile name: '" + attributeName + "'");
 		}
 
-		Object attributeValueObj = profile.getUserAttribute(attributeName);
+		Object attributeValueObj = parameters.get(attributeName);
 		if (attributeValueObj == null || attributeValueObj.toString().trim().equals(""))
 			throw new Exception("Profile attribute '" + attributeName + "' not existing.");
 
@@ -176,9 +177,9 @@ public class StringUtilities {
 		attribute = quote(attribute);
 		statement = statement.replaceAll("\\$\\{" + attribute + "\\}", replacement);
 
-		profileAttributeStartIndex = statement.indexOf("${", profileAttributeEndIndex);
-		if (profileAttributeStartIndex != -1)
-			statement = substituteProfileAttributesInString(statement, profile, profileAttributeStartIndex);
+		parametersStartIndex = statement.indexOf("${", profileAttributeEndIndex);
+		if (parametersStartIndex != -1)
+			statement = substituteParametersInString(statement, parameters, parametersStartIndex);
 		logger.debug("OUT");
 		return statement;
 	}

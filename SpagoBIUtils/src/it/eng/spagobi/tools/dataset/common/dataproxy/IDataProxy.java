@@ -59,6 +59,6 @@ public interface IDataProxy {
 	// profilation ...
 	Map getParameters();
 	void setParameters(Map parameters);
-	IEngUserProfile getProfile();
-	void setProfile(IEngUserProfile profile);
+	Map getProfile();
+	void setProfile(Map profile);
 }

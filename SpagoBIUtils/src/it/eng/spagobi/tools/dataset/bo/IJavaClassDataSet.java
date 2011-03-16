@@ -36,7 +36,7 @@ public interface IJavaClassDataSet {
 	 * 
 	 * @return the xml string of the values
 	 */
-	public String getValues(IEngUserProfile profile, Map parameters);
+	public String getValues(Map profile, Map parameters);
 	
 	
 	/**

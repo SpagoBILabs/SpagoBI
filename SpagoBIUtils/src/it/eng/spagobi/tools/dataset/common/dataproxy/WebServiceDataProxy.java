@@ -132,10 +132,10 @@ public class WebServiceDataProxy extends AbstractDataProxy {
 
 	public Map addProfileAtributes(Map mapNameValue) throws EMFInternalError{
 		if(mapNameValue==null) mapNameValue=new HashMap();
-		Set names=(Set)profile.getUserAttributeNames();
+		Set names=(Set)profile.keySet();
 		for (Iterator iterator = names.iterator(); iterator.hasNext();) {
 			String name = (String) iterator.next();
-			String value=(String)profile.getUserAttribute(name);
+			String value=(String)profile.get(name);
 			mapNameValue.put(name, value);
 		}
 		return mapNameValue;

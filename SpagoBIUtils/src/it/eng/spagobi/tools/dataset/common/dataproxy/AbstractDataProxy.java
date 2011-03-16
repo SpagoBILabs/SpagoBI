@@ -7,7 +7,7 @@ import it.eng.spago.security.IEngUserProfile;
 public abstract class AbstractDataProxy implements IDataProxy {
 
 	Map parameters;
-	IEngUserProfile profile;
+	Map profile;
 	int offset;
 	int fetchSize;
 	int maxResults;
@@ -22,11 +22,11 @@ public abstract class AbstractDataProxy implements IDataProxy {
 		this.parameters = parameters;
 	}
 
-	public IEngUserProfile getProfile() {
+	public Map getProfile() {
 		return profile;
 	}
 
-	public void setProfile(IEngUserProfile profile) {
+	public void setProfile(Map profile) {
 		this.profile = profile;
 	}
 

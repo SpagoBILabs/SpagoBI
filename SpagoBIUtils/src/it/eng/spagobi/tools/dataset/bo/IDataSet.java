@@ -40,8 +40,8 @@ public interface IDataSet {
 	// --------------------------------------------------------------------------------------------------
 	
 	// profilation ...
-	public IEngUserProfile getUserProfile();
-	public void setUserProfile(IEngUserProfile userProfile);
+	public Map getUserProfileAttributes();
+	public void setUserProfileAttributes(Map attributes);
 	
 	// execution ...
 	// --------------------------------------------------------------------------------------------------

@@ -24,6 +24,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -105,34 +106,19 @@ public class JavaClassDataProxy  extends AbstractDataProxy {
 
 
 
-	public boolean checkProfileAttribute(IJavaClassDataSet classData, IEngUserProfile profile){
+	public boolean checkProfileAttribute(IJavaClassDataSet classData, Map profile){
 		List profileAttributeNeeded=classData.getNamesOfProfileAttributeRequired();
 		if(profileAttributeNeeded==null) return true;
 		for (Iterator iterator = profileAttributeNeeded.iterator(); iterator.hasNext();) {
 			String attribute = (String) iterator.next();
 			String value=null;
-			try {
-				value=(String)profile.getUserAttribute(attribute);
-			} catch (EMFInternalError e) {
-				return false;
-			}
+			value=(String)profile.get(attribute);
 			if(value==null)return false;
 		}		
 		return true;
 	}
 
 
-
-	public HashMap addProfileAtributes(HashMap mapNameValue) throws EMFInternalError{
-		if(mapNameValue==null) mapNameValue=new HashMap();
-		Set names=(Set)profile.getUserAttributeNames();
-		for (Iterator iterator = names.iterator(); iterator.hasNext();) {
-			String name = (String) iterator.next();
-			String value=(String)profile.getUserAttribute(name);
-			mapNameValue.put(name, value);
-		}
-		return mapNameValue;
-	}
 
 
 
