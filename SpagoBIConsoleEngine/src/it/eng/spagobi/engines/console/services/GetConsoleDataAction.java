@@ -28,6 +28,7 @@ import it.eng.spagobi.engines.console.ConsoleEngineConfig;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -97,7 +98,7 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 			Map params = consoleEngineInstance.getAnalyticalDrivers();
 			dataSet.setParamsMap(params);
-			dataSet.setUserProfile((UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			//dataSet.setParamsMap(getEnv());
 			//gets the max number of rows for the table
 			String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");

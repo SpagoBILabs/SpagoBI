@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.ConsoleEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -113,7 +114,7 @@ public class GetWarningListAction extends AbstractConsoleEngineAction {
 			Map params = consoleEngineInstance.getAnalyticalDrivers();
 			params.put("id", rowId);
 			dataSet.setParamsMap(params);
-			dataSet.setUserProfile((UserProfile)consoleEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			Monitor monitorLD =MonitorFactory.start("SpagoBI_Console.GetWarningListAction.service.LoadData");	
 			dataSet.loadData();
 			monitorLD.stop();
