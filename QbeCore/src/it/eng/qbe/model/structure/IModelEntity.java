@@ -3,7 +3,7 @@ package it.eng.qbe.model.structure;
 import java.util.Iterator;
 import java.util.List;
 
-public interface IModelEntity extends IModelNode{
+public interface IModelEntity extends IModelNode, IModelObject{
 		public String getUniqueName() ;
 		public boolean equals(Object o);
 		public String getUniqueType();
