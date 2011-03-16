@@ -23,7 +23,6 @@ package it.eng.spagobi.analiticalmodel.document.x;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
@@ -38,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringBufferInputStream;
@@ -73,7 +73,7 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 	public static final String SBI_OUTPUT_TYPE = "SBI_OUTPUT_TYPE";
 
 	private static final String TEMPLATE_NAME="notesPrintedTemplate.jrxml";
-	private static final String TEMPLATE_PATH="/WEB-INF/classes/it/eng/spagobi/analiticalmodel/document/resources/";
+	private static final String TEMPLATE_PATH="it/eng/spagobi/analiticalmodel/document/resources/";
 
 	// logger component
 	private static Logger logger = Logger.getLogger(PrintNotesAction.class);
@@ -226,20 +226,19 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		try{
 
-			String rootPath=ConfigSingleton.getRootPath();
-			logger.debug("rootPath: "+rootPath!=null ? rootPath : "");
-			String templateDirPath=rootPath+TEMPLATE_PATH;
-			logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
+			//String rootPath=ConfigSingleton.getRootPath();
+			//logger.debug("rootPath: "+rootPath!=null ? rootPath : "");
+			String templateDirPath=TEMPLATE_PATH;
+			//logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
 			templateDirPath+=TEMPLATE_NAME;
 			logger.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
 			if (templateDirPath!=null){
-				File file=new File(templateDirPath);
-				if(file!=null){
-					logger.debug("File found ");
-				}
-				FileInputStream fis=new FileInputStream(file);
+			    InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath);
+
 				if(fis!=null){
 					logger.debug("File Input Stream created");
+				}else {
+					logger.warn("File Input Stream NOT created");
 				}
 				inputSource=new InputSource(fis);
 				if(inputSource!=null){
