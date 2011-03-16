@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ViewModelEntity extends AbstractModelNode implements IModelEntity{
+public class ViewModelEntity implements IModelEntity{
 
 	private QbeTreeFilter qbeTreeFilter;
 	private IDataSource dataSource;
@@ -254,6 +254,20 @@ public class ViewModelEntity extends AbstractModelNode implements IModelEntity{
 		this.wrappedModelEntity = wrappedModelEntity;
 	}
 	
+	public Object getProperty(String name) {
+		return wrappedModelEntity.getProperty(name);
+	}
 	
+	public String getPropertyAsString(String name) {
+		return wrappedModelEntity.getPropertyAsString(name);
+	}
+	
+	public boolean getPropertyAsBoolean(String name) {
+		return wrappedModelEntity.getPropertyAsBoolean(name);
+	}
+	
+	public int getPropertyAsInt(String name) {	
+		return wrappedModelEntity.getPropertyAsInt(name);
+	}
 	
 }
