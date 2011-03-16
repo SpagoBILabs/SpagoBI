@@ -20,19 +20,21 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
        
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.model.structure.ViewModelStructure;
+import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
+import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityEntityFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityFieldFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeOrderEntityFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeOrderFieldFilter;
+import it.eng.qbe.model.structure.filter.QbeTreeQueryEntityFilter;
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.tree.ExtJsQbeTreeBuilder;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.IQbeTreeFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeAccessModalityFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeOrderEntityFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeOrderFieldFilter;
-import it.eng.spagobi.engines.qbe.tree.filter.QbeTreeQueryEntityFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -104,7 +106,6 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 			logger.debug("Apply field filter [" + fieldFilter.getClass().getName() + "]");
 			
 			treeFilter = new  QbeTreeFilter(entityFilter, fieldFilter);
-			
 			
 			qbeBuilder = new ExtJsQbeTreeBuilder(treeFilter);	 
 			

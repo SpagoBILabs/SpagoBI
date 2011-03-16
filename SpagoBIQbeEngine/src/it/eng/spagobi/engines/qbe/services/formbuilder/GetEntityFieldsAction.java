@@ -22,9 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.formbuilder;
 		
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
-import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -55,10 +55,10 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 	
 		String fieldId;
 		IDataSource dataSource;
-		ModelStructure structure;
+		IModelStructure structure;
 		ModelField field;
-		ModelEntity parentEntity;
-		ModelEntity dimensionalEntity;
+		IModelEntity parentEntity;
+		IModelEntity dimensionalEntity;
 		List fields;
 		JSONArray toReturn;
 		
@@ -101,10 +101,10 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			String type = parentEntity.getType();
 			
 			// e se il nome della classe è nel package di default?
-			// TODO: mettere un metodo DataMartModelStructure che, dato una entità annidata, restituisce quella di primo livello
+			// TODO: mettere un metodo DataMartIModelStructure che, dato una entità annidata, restituisce quella di primo livello
 			String entityName = type + "::" + type.substring(type.lastIndexOf(".") + 1);
 			
-			dimensionalEntity = this.getDatamartModel().getDataMartModelStructure().getEntity(entityName);
+			dimensionalEntity = this.getDatamartModel().getDataMartIModelStructure().getEntity(entityName);
 			fields = dimensionalEntity.getAllFields();
 			
 			JSONArray toReturn = new JSONArray();

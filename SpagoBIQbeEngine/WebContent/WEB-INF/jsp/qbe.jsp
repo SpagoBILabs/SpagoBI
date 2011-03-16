@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -31,6 +32,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spago.configuration.*"%>
+<%@page import="it.eng.qbe.model.structure.IModelStructure"%>
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.qbe.datasource.configuration.IDataSourceConfiguration"%>
 <%@page import="it.eng.spagobi.engines.qbe.QbeEngineConfig"%>
@@ -163,7 +165,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	Iterator<String> it = qbeEngineInstance.getDataSource().getModelStructure().getModelNames().iterator();
+	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure();
+	      	Iterator<String> it = ms.getModelNames().iterator();
 	      	while (it.hasNext()) {
 	      		datamartNamesBuffer.append("'" + it.next() + "'");
 	      		if (it.hasNext()) {

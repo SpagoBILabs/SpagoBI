@@ -23,9 +23,9 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
-import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
@@ -234,15 +234,15 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		if (queryRootEntity) {
 			logger.debug("Must use query root entity. Looking for select and order fields...");
 			IDataSource model = getDataSource();
-			ModelStructure structure = model.getModelStructure();
+			IModelStructure structure = model.getModelStructure();
 			ModelField selectField = structure.getField(entityId);
 			ModelField orderField = null;
 			if (orderEntity != null && !orderEntity.equals("")) {
 				orderField = structure.getField(orderEntity);
 			}
-			ModelEntity parentEntity = selectField.getParent();
+			IModelEntity parentEntity = selectField.getParent();
 			logger.debug("Parent entity is " + parentEntity.getUniqueName());
-			ModelEntity rootEntity = structure.getRootEntity(parentEntity);
+			IModelEntity rootEntity = structure.getRootEntity(parentEntity);
 			logger.debug("Relevant root entity is " + rootEntity.getUniqueName());
 			List fields = rootEntity.getAllFields();
 			Iterator it = fields.iterator();
