@@ -38,6 +38,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -133,7 +134,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			Assert.assertNotNull(dataSet, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 			Map params = getConsoleEngineInstance().getAnalyticalDrivers();
 			dataSet.setParamsMap(params);
-			dataSet.setUserProfile((UserProfile)getConsoleEngineInstance().getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			dataSet.loadData();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
