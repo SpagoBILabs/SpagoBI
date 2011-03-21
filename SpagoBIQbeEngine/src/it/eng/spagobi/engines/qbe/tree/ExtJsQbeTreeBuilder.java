@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
@@ -78,7 +78,7 @@ public class ExtJsQbeTreeBuilder  {
 		//setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
 		setDatamartLabels( dataSource.getModelI18NProperties( getLocale() ) );
 		if( getDatamartLabels() == null) {
-			setDatamartLabels( new ModelProperties() );
+			setDatamartLabels( new SimpleModelProperties() );
 		}
 		return buildQbeTree(datamartName);
 	}
