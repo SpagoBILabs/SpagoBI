@@ -22,7 +22,7 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.properties.i18n.ModelI18NPropertiesCache;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
@@ -72,8 +72,8 @@ public abstract class AbstractDataSource implements IDataSource {
 	
 	
 	
-	public ModelProperties getModelI18NProperties(Locale locale) {
-		ModelProperties properties;
+	public SimpleModelProperties getModelI18NProperties(Locale locale) {
+		SimpleModelProperties properties;
 		
 		properties = ModelI18NPropertiesCache.getInstance().getProperties(this, locale);
 		if(properties == null) {			

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.properties.i18n;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -57,7 +57,7 @@ public class ModelI18NPropertiesCache {
 		cache.put(resourceName, resource);
 	}
 	
-	public void putProperties(IDataSource dataSource, ModelProperties labels, Locale locale) {
+	public void putProperties(IDataSource dataSource, SimpleModelProperties labels, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
@@ -65,11 +65,11 @@ public class ModelI18NPropertiesCache {
 		putResource(resourceName, labels);
 	}
 	
-	public ModelProperties getProperties(IDataSource dataSource, Locale locale) {
+	public SimpleModelProperties getProperties(IDataSource dataSource, Locale locale) {
 		String resourceName = dataSource.getName() + ":" + "labels";
 		if(locale != null) {
 			resourceName += "_" + locale.getLanguage();
 		}
-		return (ModelProperties)getResource(resourceName);
+		return (SimpleModelProperties)getResource(resourceName);
 	}
 }

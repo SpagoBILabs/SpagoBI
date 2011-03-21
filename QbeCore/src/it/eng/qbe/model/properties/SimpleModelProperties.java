@@ -32,19 +32,19 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ModelProperties implements IModelProperties {
+public class SimpleModelProperties implements IModelProperties {
 	Properties properties;
 	
-	public ModelProperties() {
+	public SimpleModelProperties() {
 		this(new Properties());
 	}	
 	
-	public ModelProperties(Properties  properties) {
+	public SimpleModelProperties(Properties  properties) {
 		this.properties = properties;
 	}
 	
 	
-	public void putAll(ModelProperties modelProperties) {
+	public void putAll(SimpleModelProperties modelProperties) {
 		properties.putAll(modelProperties.getProperties());
 	}
 	
