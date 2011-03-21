@@ -26,6 +26,7 @@ import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Column;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Measure;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Row;
+import it.eng.qbe.serializer.ISerializer;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;
@@ -38,19 +39,23 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabJSONSerializer {
+public class CrosstabJSONSerializer implements ISerializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabJSONSerializer.class);
     
     
-	public Object serialize(CrosstabDefinition crosstabDefinition) throws SerializationException {
+	public Object serialize(Object o) throws SerializationException {
 		JSONObject toReturn = null;
-		
-		Assert.assertNotNull(crosstabDefinition, "CrosstabDefinition cannot be null");
+		CrosstabDefinition crosstabDefinition;
+				
+		Assert.assertNotNull(o, "Input parameter cannot be null");
+		Assert.assertTrue(o instanceof CrosstabDefinition, "Unable to serialize objects of type [" + o.getClass().getName() + "]");
 		
 		try {
 			toReturn = new JSONObject();
+			
+			crosstabDefinition = (CrosstabDefinition)o;
 			
 			// config (measures on rows/columns, totals/subototals on rows/columns)
 			JSONObject config = crosstabDefinition.getConfig();
@@ -73,7 +78,7 @@ public class CrosstabJSONSerializer {
 			toReturn.put(CrosstabSerializationConstants.MEASURES, measures);
 
 		} catch (Throwable t) {
-			throw new SerializationException("An error occurred while serializing object: " + crosstabDefinition, t);
+			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
 			
 		}
@@ -126,4 +131,5 @@ public class CrosstabJSONSerializer {
 		}
 		return toReturn;
 	}
+
 }

@@ -33,5 +33,5 @@ import java.util.Locale;
  */
 public interface Serializer {
 	public Object serialize(Query query, IDataSource dataSource, Locale locale) throws SerializationException;
-	public Object serialize(CrosstabDefinition cd) throws SerializationException;
+	//public Object serialize(CrosstabDefinition cd) throws SerializationException;
 }
