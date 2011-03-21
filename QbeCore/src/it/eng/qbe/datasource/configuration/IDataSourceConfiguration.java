@@ -27,7 +27,6 @@ import it.eng.qbe.model.structure.ModelCalculatedField;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Classes that implement this interface act as a proxy toward all the resources needed in order to create

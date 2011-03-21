@@ -21,8 +21,6 @@
 package it.eng.qbe.model.structure.filter;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
-import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
 
 import java.util.List;
 

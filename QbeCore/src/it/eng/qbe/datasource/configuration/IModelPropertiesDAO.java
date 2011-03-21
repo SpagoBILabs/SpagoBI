@@ -22,8 +22,6 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.SimpleModelProperties;
 
-import java.util.Properties;
-
 /**
  * The Interface DatamartPropertiesDAO.
  * 
