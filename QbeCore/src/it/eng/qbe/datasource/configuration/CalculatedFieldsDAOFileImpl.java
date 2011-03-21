@@ -130,7 +130,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 			}
 		} catch(Throwable t){
 			if(t instanceof DAOException) throw (DAOException)t;
-			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + calculatedFieldsFile + "]");
+			throw new DAOException("An unpredicted error occurred while loading calculated fields on file [" + calculatedFieldsFile + "]", t);
 		}finally {
 			if(in != null) {
 				try {

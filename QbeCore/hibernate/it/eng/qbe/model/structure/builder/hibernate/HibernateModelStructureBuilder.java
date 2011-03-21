@@ -188,7 +188,6 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 			
 				ComponentType componentIdentifierType = (ComponentType)identifierType;	
 				String[] subPropertyNames = componentIdentifierType.getPropertyNames();
-				Property property = classMapping.getIdentifierProperty();
 				
 				
 				Type[] subPropertyTypes = componentIdentifierType.getSubtypes();

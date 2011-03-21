@@ -73,6 +73,11 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 			FileDataSourceConfiguration subConf = (FileDataSourceConfiguration)configuration;
 			CompositeDataSourceConfiguration c = new CompositeDataSourceConfiguration(subConf.getModelName());
 			c.addSubConfiguration(subConf);
+			Iterator<String> it = subConf.loadDataSourceProperties().keySet().iterator();
+			while(it.hasNext()) {
+				String propertyName = it.next();
+				c.loadDataSourceProperties().put(propertyName, subConf.loadDataSourceProperties().get(propertyName));
+			}
 			this.configuration = c;
 		} else if(configuration instanceof CompositeDataSourceConfiguration) {
 			CompositeDataSourceConfiguration c = (CompositeDataSourceConfiguration)configuration;

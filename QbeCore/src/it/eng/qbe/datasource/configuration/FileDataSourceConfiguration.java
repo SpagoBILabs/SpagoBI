@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.io.File;
@@ -45,14 +45,14 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 
 	IModelPropertiesDAO modelPropertiesDAO;
 	ICalculatedFieldsDAO calculatedFieldsDAO;
-	IModelLabelsDAO modelLabelsDAOFileImpl;
+	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
 	
 	public FileDataSourceConfiguration(String modelName, File file) {
 		this.modelName = modelName;
 		this.file = file;
 		this.dataSourceProperties = new HashMap<String,Object>();
 		this.modelPropertiesDAO = new ModelPropertiesDAOFileImpl(file);
-		this.modelLabelsDAOFileImpl = new ModelLabelsDAOFileImpl(file);
+		this.modelLabelsDAOFileImpl = new ModelI18NPropertiesDAOFileImpl(file);
 		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);		
 	}
 	
@@ -64,15 +64,15 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 		return modelName;
 	}
 	
-	public Properties loadModelProperties() {
+	public ModelProperties loadModelProperties() {
 		return modelPropertiesDAO.loadModelProperties();
 	}
 	
-	public ModelI18NProperties loadModelI18NProperties() {
+	public ModelProperties loadModelI18NProperties() {
 		return loadModelI18NProperties(null);
 	}
-	public ModelI18NProperties loadModelI18NProperties(Locale locale) {
-		ModelI18NProperties properties = modelLabelsDAOFileImpl.loadDatamartLabels(locale);
+	public ModelProperties loadModelI18NProperties(Locale locale) {
+		ModelProperties properties = modelLabelsDAOFileImpl.loadProperties(locale);
 		return properties;
 	}
 

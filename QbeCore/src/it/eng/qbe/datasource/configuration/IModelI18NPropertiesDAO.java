@@ -20,31 +20,32 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.ModelProperties;
 
 import java.util.Locale;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface DatamartLabelsDAO.
+ * The Interface IModelI18NPropertiesDAO.
  * 
  * @author Andrea Gioia
  */
-public interface IModelLabelsDAO {
+public interface IModelI18NPropertiesDAO {
 	
 	/**
-	 * Load model labels.
+	 * Load i18n properties for the default locale. Equals to loadProperties(null)
 	 * 
-	 * @return the datamart labels
+	 * @param locale the target locale
+	 * 
+	 * @return the loaded i18n properties
 	 */
-	ModelI18NProperties loadDatamartLabels();
+	ModelProperties loadProperties();
 	
 	/**
-	 * Load model labels.
+	 * Load i18n properties for the given locale.
 	 *
-	 * @param locale the locale
+	 * @param locale the target locale
 	 * 
-	 * @return the datamart labels
+	 * @return the loaded i18n properties
 	 */
-	ModelI18NProperties loadDatamartLabels(Locale locale);
+	ModelProperties loadProperties(Locale locale);
 }

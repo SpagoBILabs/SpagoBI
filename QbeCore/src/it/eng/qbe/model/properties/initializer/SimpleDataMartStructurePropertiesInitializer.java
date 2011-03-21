@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.properties.initializer;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.properties.ModelPropertiesMeta;
 import it.eng.qbe.model.properties.ModelProperty;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -46,12 +47,12 @@ import java.util.Map;
 public class SimpleDataMartStructurePropertiesInitializer implements IDataMartStructurePropertiesInitializer {
 		
 	IDataSource dataSource;
-	Map properties;
+	ModelProperties p;
+	
 	
 	public SimpleDataMartStructurePropertiesInitializer(IDataSource dataSource) {
 		this.dataSource =  dataSource;
-		this.properties = new HashMap();
-		properties.putAll( dataSource.getConfiguration().loadModelProperties() );
+		p = dataSource.getConfiguration().loadModelProperties();
 	}
 	
 
@@ -71,7 +72,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		
 		for (int i = 0; i < ModelPropertiesMeta.globalProperties.length; i++) {
 			property = ModelPropertiesMeta.globalProperties[i];
-			propertyValue = getProperty(item, property.getName());
+			propertyValue = p.getProperty(item, property.getName());
 			
 			// property not set
 			if(propertyValue == null) {
@@ -91,7 +92,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		
 		for (int i = 0; i < ModelPropertiesMeta.entityProperties.length; i++) {
 			property = ModelPropertiesMeta.entityProperties[i];
-			propertyValue = getProperty(item, property.getName());
+			propertyValue = p.getProperty(item, property.getName());
 			
 			// property not set
 			if(propertyValue == null) {
@@ -116,7 +117,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		
 		for (int i = 0; i < ModelPropertiesMeta.fieldProperties.length; i++) {
 			property = ModelPropertiesMeta.fieldProperties[i];
-			propertyValue = getProperty(item, property.getName());
+			propertyValue = p.getProperty(item, property.getName());
 			
 			// property not set
 			if(propertyValue == null) {
@@ -141,7 +142,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		String propertyValue;
 		IModelEntity rootEntity = item.getStructure().getRootEntity(item);
 		Assert.assertNotNull(rootEntity, "Impossible to find root entity of entity [" + item.getName() + "]");
-		propertyValue = getProperty(rootEntity, propertyName);
+		propertyValue = p.getProperty(rootEntity, propertyName);
 		
 		return propertyValue;
 	}
@@ -171,35 +172,12 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 			}
 		}
 		Assert.assertNotNull(rootField, "Impossible to find root field of field [" + item.getName() + "]");
-		propertyValue = getProperty(rootField, propertyName);
+		propertyValue = p.getProperty(rootField, propertyName);
 		
 		return propertyValue;
 	}
 	
-	protected String getProperty(IModelObject item, String propertyName) {
-		String propertyQualifiedName;
-		
-		propertyQualifiedName = null;
-		if(item instanceof IModelNode) {
-			propertyQualifiedName = getPropertyQualifiedName( (IModelNode)item, propertyName);
-		} else {
-			propertyQualifiedName = propertyName;
-		}
-		
-		String propertyValue = (String)properties.get( propertyQualifiedName );
-		propertyValue = StringUtilities.isNull( propertyValue )? null: propertyValue.trim();
-		return propertyValue;
-	}
-	
-	protected String getPropertyQualifiedName(IModelNode item, String propertyName) {
-		return getItemQulifier( item ) + "." + propertyName.trim();
-	}
-	
-	protected String getItemQulifier( IModelNode item ) {
-		Assert.assertNotNull(item, "Parameter [item] cannot be null");
-		Assert.assertNotNull(item.getUniqueName(), "Item [uniqueName] cannot be null [" + item.getName() + "]");
-		return item.getUniqueName().replaceAll(":", "/");
-	}
+
 	
 	
 	
