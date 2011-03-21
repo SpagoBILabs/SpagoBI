@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.statement;
 
-import it.eng.qbe.statment.hibernate.HQLDataSet;
-import it.eng.qbe.statment.hibernate.HQLStatement;
-import it.eng.qbe.statment.jpa.JPQLDataSet;
-import it.eng.qbe.statment.jpa.JPQLStatement;
+import it.eng.qbe.statement.hibernate.HQLDataSet;
+import it.eng.qbe.statement.hibernate.HQLStatement;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLStatement;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**
