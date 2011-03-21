@@ -20,8 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
-import it.eng.qbe.crosstab.exporter.CrosstabXLSExporter;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;

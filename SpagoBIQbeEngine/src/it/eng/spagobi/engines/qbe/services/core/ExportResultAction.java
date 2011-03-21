@@ -21,20 +21,19 @@
 package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.export.Exporter;
-import it.eng.qbe.export.Field;
-import it.eng.qbe.export.ReportRunner;
-import it.eng.qbe.export.SQLFieldsReader;
-import it.eng.qbe.export.TemplateBuilder;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.qbe.statement.hibernate.HQL2SQLStatementRewriter;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.query.Exporter;
+import it.eng.spagobi.engines.qbe.query.Field;
+import it.eng.spagobi.engines.qbe.query.ReportRunner;
+import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
+import it.eng.spagobi.engines.qbe.query.TemplateBuilder;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;

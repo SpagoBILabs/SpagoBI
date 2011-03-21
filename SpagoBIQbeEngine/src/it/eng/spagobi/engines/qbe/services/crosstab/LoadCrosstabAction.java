@@ -21,8 +21,6 @@
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
-import it.eng.qbe.crosstab.exporter.CrossTab;
-import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.serializer.SerializationManager;
@@ -32,6 +30,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
