@@ -492,7 +492,9 @@ public class BasicTemplateBuilder  {
 		List toReturn = new ArrayList();
 		String finalTemplate="";
 
-		logger.debug("Recovered template of templates "+templateStr);
+		logger.debug("Recovered template START ");
+		logger.debug(templateStr);
+		logger.debug("Recovered template END ");
 		if(templateStr!=null){
 			try {
 				templateBaseContent = SourceBean.fromXMLString(templateStr);
@@ -550,10 +552,13 @@ public class BasicTemplateBuilder  {
 			finalTemplate=finalTemplate.replaceAll("</"+toReplace, "</"+replaceWith);		
 		}
 		toReturn.add(finalTemplate);
-		logger.debug("Built template: "+finalTemplate);
+		logger.debug("Built template START");
+		logger.debug(finalTemplate);
+		logger.debug("Built template END");
 		
 		
 		if(subreports!=null && !subreports.isEmpty()){
+			logger.debug("There are subreports!");
 			Iterator suit = subreports.iterator();
 			while(suit.hasNext()){
 				SourceBean subTemplateContent = (SourceBean)suit.next();
@@ -1555,7 +1560,7 @@ public class BasicTemplateBuilder  {
 
 			String templateDirPath = "it/eng/spagobi/kpi/utils/";
 			logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
-			templateDirPath+="templateKpi.jrxml";
+			templateDirPath+="subTemplateKpi.jrxml";
 			logger.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
 			
 			if (templateDirPath!=null){
