@@ -39,13 +39,13 @@ import org.hibernate.hql.ast.ASTQueryTranslatorFactory;
  * 
  * @author Gioia
  */
-public class HqlToSqlQueryRewriter {
+public class HQL2SQLStatementRewriter {
 	
 	/** The session. */
 	private Session session;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(HqlToSqlQueryRewriter.class);
+    public static transient Logger logger = Logger.getLogger(HQL2SQLStatementRewriter.class);
 	
 	
 	/**
@@ -53,7 +53,7 @@ public class HqlToSqlQueryRewriter {
 	 * 
 	 * @param session the session
 	 */
-	public HqlToSqlQueryRewriter(Session session) {
+	public HQL2SQLStatementRewriter(Session session) {
 		this.session = session;
 	}
 	
