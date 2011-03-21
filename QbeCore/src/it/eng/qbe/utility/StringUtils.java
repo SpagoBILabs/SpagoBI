@@ -189,6 +189,40 @@ public class StringUtils {
 	  	return sb.toString();
 	}
 
+	/**
+	 * escape all the occurences of '. As escape char use
+	 * ' so all the ' in the original string will be replaced with '' 
+	 * 
+	 * @param the string that must be escaped
+	 * 
+	 * @return the escaped string
+	 */
+	public static String escapeQuotes(String str) {
+		return escape(str, '\'', '\'');
+	}
+	
+	/**
+	 * escape all the occurences of c. As escape char use
+	 * escapeChar so all the c in the original string will be replaced with escapeChar + c 
+	 * 
+	 * @param str the string that must be escaped
+	 * @param c the char to escape
+	 * @param escapeChar the char that will be use to escape
+	 * 
+	 * @return the escaped string
+	 */
+	public static String escape(String str, char c, char escapeChar) {
+		if (str == null) return null;
+		return str.replace("" + c, "" + escapeChar + c);
+	}
+	
+	public static boolean isBounded(String str, String boundingStr) {
+		return ( str.startsWith(boundingStr) && str.endsWith(boundingStr) );
+	}
+	
+	public static String bound(String str, String boundingStr) {
+		return boundingStr + str + boundingStr;
+	}
 	
 	/**
 	 * The main method.
