@@ -196,7 +196,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	private ArrayList<OrganizationalUnitGrantNode> ouList = new ArrayList<OrganizationalUnitGrantNode>();
 	private String ouWarning = null;
 
-	//Method usually called by the scheduler only in order to recalculate kpi values
+	//Method only called by a specific configuration of the scheduler created through the class KPIEngineJob.java
 	public void execute(RequestContainer requestContainer, SourceBean response) throws EMFUserError, SourceBeanException {
 		logger.debug("IN");
 		//setting locale, formats, profile
@@ -323,7 +323,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 
 	/**
-	 * Executes the document and populates the response.
+	 * Method used by basic execution and by the scheduler. Executes the document and populates the response.
 	 * @param requestContainer
 	 *                The <code>RequestContainer</code> object (the session
 	 *                can be retrieved from this object)
