@@ -425,7 +425,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 * 
-	 * @see it.eng.spagobi.bo.dao.ISbiGeoMapFeaturesDAO#eraseObjParuse(it.eng.spagobi.geo.bo.SbiGeoMapFeatures)
+	 * @see it.eng.spagobi.bo.dao.ISbiGeoMapFeaturesDAO#eraseMapFeatures(it.eng.spagobi.mapcatalogue.bo.GeoMapFeature)
 	 */
 	public void eraseMapFeatures(GeoMapFeature aMapFeature) throws EMFUserError {
 		Session aSession = null;
