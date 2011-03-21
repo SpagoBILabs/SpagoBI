@@ -27,11 +27,13 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
+import it.eng.spagobi.engines.dossier.bo.DossierAnalyticalDriversManager;
 import it.eng.spagobi.engines.dossier.constants.DossierConstants;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
@@ -41,6 +43,7 @@ import it.eng.spagobi.monitoring.dao.AuditManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +105,8 @@ public class ProcessOOTemplateAction implements ActionHandler {
 		    logger.debug("Dossier id variable retrived " + dossierIdStr);
 		    Integer dossierId = new Integer(dossierIdStr);
 		    BIObject dossier = DAOFactory.getBIObjectDAO().loadBIObjectById(dossierId);
+		    dossier.setBiObjectParameters(DAOFactory.getBIObjectDAO().getBIObjectParameters(dossier));
+		    setAnalyticalDriversValues(dossier, (Map) contextInstance.getVariable(DossierConstants.DOSSIER_PARAMETERS));
 		    logger.debug("Dossier variable retrived " + dossier);
 		    dossierDAO = DAOFactory.getDossierDAO();
 		    pathTmpFold = dossierDAO.init(dossier);
@@ -292,7 +297,19 @@ public class ProcessOOTemplateAction implements ActionHandler {
 
     }
 
-    private static void storeDocImages(ConfiguredBIDocument confDoc, int numPage, BIObject dossier, Long workflowProcessId) throws Exception {
+    private void setAnalyticalDriversValues(BIObject dossier, Map variable) {
+    	logger.debug("IN");
+		List parameters = dossier.getBiObjectParameters();
+		Iterator it = parameters.iterator();
+		while (it.hasNext()) {
+			BIObjectParameter aParameter = (BIObjectParameter) it.next();
+			List values = (List) variable.get(aParameter.getParameterUrlName());
+			aParameter.setParameterValues(values);
+		}
+    	logger.debug("OUT");
+	}
+
+	private static void storeDocImages(ConfiguredBIDocument confDoc, int numPage, BIObject dossier, Long workflowProcessId) throws Exception {
     logger.debug("IN");
 	try {
 	    // get label of the biobject
@@ -300,11 +317,18 @@ public class ProcessOOTemplateAction implements ActionHandler {
 	    logger.debug("using configured document / biobject label " + label);
 	    // get the map of configured parameter
 	    Map confPars = confDoc.getParameters();
-	    logger.debug("map conf doc parameters " + confPars);
+	    logger.debug("Configured static parameters: " + confPars);
+	    
 	    // load the biobject
 	    IBIObjectDAO biobjdao = DAOFactory.getBIObjectDAO();
 	    BIObject biobj = biobjdao.loadBIObjectByLabel(label);
+	    biobj.setBiObjectParameters(biobjdao.getBIObjectParameters(biobj));
 	    logger.debug("biobject loaded: " + biobj);
+	    
+	    DossierAnalyticalDriversManager adManager = new DossierAnalyticalDriversManager();
+	    adManager.fillEmptyAnalyticalDrivers(confPars, dossier, biobj);
+	    logger.debug("Parameters updated using dossier parameters: " + confPars);
+	    
 		// create the execution controller 
 		ExecutionController execCtrl = new ExecutionController();
 		execCtrl.setBiObject(biobj);

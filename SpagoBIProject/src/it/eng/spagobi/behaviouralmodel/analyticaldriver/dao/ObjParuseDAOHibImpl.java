@@ -203,30 +203,9 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// get the existing object
-			/*String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + 
-			             " and s.id.sbiParuse.useId = " + aObjParuse.getParuseId() + 
-			             " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + 
-			             " and s.id.filterOperation = '" + aObjParuse.getFilterOperation() + "'";*/
-			String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? "  + 
-            " and s.id.sbiParuse.useId = ? " +  
-            " and s.id.sbiObjParFather.objParId = ? "  + 
-            " and s.id.filterOperation = ? ";
-			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
-			hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
-			hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
-			hqlQuery.setString(3,  aObjParuse.getFilterOperation());
+
+			eraseObjParuse(aObjParuse, aSession);
 			
-			SbiObjParuse sbiObjParuse = (SbiObjParuse)hqlQuery.uniqueResult();
-			if (sbiObjParuse == null) {		
-				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
-				    "eraseObjParuse", "the ObjParuse relevant to BIObjectParameter with " +
-				    "id="+aObjParuse.getObjParId()+" and ParameterUse with " +
-				    "id="+aObjParuse.getParuseId()+" does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1045);
-			}
-			aSession.delete(sbiObjParuse);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -248,6 +227,33 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 		*/
 	}
 
+	
+	public void eraseObjParuse(ObjParuse aObjParuse, Session aSession) throws EMFUserError {
+		// get the existing object
+		/*String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = " + aObjParuse.getObjParId() + 
+		             " and s.id.sbiParuse.useId = " + aObjParuse.getParuseId() + 
+		             " and s.id.sbiObjParFather.objParId = " + aObjParuse.getObjParFatherId() + 
+		             " and s.id.filterOperation = '" + aObjParuse.getFilterOperation() + "'";*/
+		String hql = "from SbiObjParuse s where s.id.sbiObjPar.objParId = ? "  + 
+        " and s.id.sbiParuse.useId = ? " +  
+        " and s.id.sbiObjParFather.objParId = ? "  + 
+        " and s.id.filterOperation = ? ";
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setInteger(0, aObjParuse.getObjParId().intValue());
+		hqlQuery.setInteger(1, aObjParuse.getParuseId().intValue());
+		hqlQuery.setInteger(2, aObjParuse.getObjParFatherId().intValue());
+		hqlQuery.setString(3,  aObjParuse.getFilterOperation());
+		
+		SbiObjParuse sbiObjParuse = (SbiObjParuse)hqlQuery.uniqueResult();
+		if (sbiObjParuse == null) {		
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
+			    "eraseObjParuse", "the ObjParuse relevant to BIObjectParameter with " +
+			    "id="+aObjParuse.getObjParId()+" and ParameterUse with " +
+			    "id="+aObjParuse.getParuseId()+" does not exist.");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 1045);
+		}
+		aSession.delete(sbiObjParuse);
+	}
 
 	/**
 	 * Load obj paruses.

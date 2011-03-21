@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.dossier.modules;
 
+import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -33,6 +34,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -42,6 +45,13 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UploadedFile;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.container.CoreContextManager;
+import it.eng.spagobi.container.IBeanContainer;
+import it.eng.spagobi.container.SpagoBIRequestContainer;
+import it.eng.spagobi.container.SpagoBISessionContainer;
+import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
+import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
+import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.dossier.bo.DossierPresentation;
@@ -317,8 +327,8 @@ public class DossierCollaborationModule extends AbstractModule {
 
 	private void runCollaborationHandler(SourceBean request, SourceBean response) throws EMFUserError {
 		logger.debug("IN");
-		String dossierIdStr = (String) request.getAttribute(DossierConstants.DOSSIER_ID);
-		Integer dossierId = new Integer(dossierIdStr);
+//		String dossierIdStr = (String) request.getAttribute(DossierConstants.DOSSIER_ID);
+//		Integer dossierId = new Integer(dossierIdStr);
 		IDossierDAO dossierDAO = DAOFactory.getDossierDAO();
 		BIObject dossier;
 		String pathTempFolder = null;
@@ -328,13 +338,19 @@ public class DossierCollaborationModule extends AbstractModule {
 		AuditManager auditManager = AuditManager.getInstance();
 		Integer auditId = null;
 		try {
-			try {
-				dossier = DAOFactory.getBIObjectDAO().loadBIObjectById(dossierId);
+//			try {
+//				dossier = DAOFactory.getBIObjectDAO().loadBIObjectById(dossierId);
+				RequestContainer requestContainer = this.getRequestContainer();
+				SessionContainer session = requestContainer.getSessionContainer();
+				CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(session), 
+					new LightNavigatorContextRetrieverStrategy(request));
+				ExecutionInstance executionInstance = contextManager.getExecutionInstance( ExecutionInstance.class.getName() );
+				dossier = executionInstance.getBIObject();
 				pathTempFolder = dossierDAO.init(dossier);
-			} catch (EMFUserError e) {
-				logger.error("Error while recovering dossier information: " + e);
-				throw e;
-			}
+//			} catch (EMFUserError e) {
+//				logger.error("Error while recovering dossier information: " + e);
+//				throw e;
+//			}
 			IEngUserProfile profile = UserProfile.createWorkFlowUserProfile();
 		    // AUDIT
 			if (dossier != null) {
@@ -373,7 +389,8 @@ public class DossierCollaborationModule extends AbstractModule {
 			ProcessInstance processInstance = new ProcessInstance(processDefinition);
 			// get context instance and set the dossier id variable
 			ContextInstance contextInstance = processInstance.getContextInstance();
-			contextInstance.createVariable(DossierConstants.DOSSIER_ID, dossierIdStr);
+			contextInstance.createVariable(DossierConstants.DOSSIER_ID, dossier.getId().toString());
+			contextInstance.createVariable(DossierConstants.DOSSIER_PARAMETERS, getDossierParameters(dossier));
 			
 			// adding parameters for AUDIT updating
 			if (auditId != null) {
@@ -434,13 +451,22 @@ public class DossierCollaborationModule extends AbstractModule {
 	    }
 
 	}
-	
 
-	
-	
-	
-	
-	
+	private Map getDossierParameters(BIObject dossier) {
+		Map parameters = new HashMap<String, String>();
+		logger.debug("IN");
+		List biParameters = dossier.getBiObjectParameters();
+		if (biParameters != null && biParameters.size() > 0) {
+			Iterator it = biParameters.iterator();
+			while (it.hasNext()) {
+				BIObjectParameter biParameter = (BIObjectParameter) it.next();
+				parameters.put(biParameter.getParameterUrlName(), biParameter.getParameterValues());
+			}
+		}
+		logger.debug("OUT");
+		return parameters;
+	}
+
 	private void approveHandler(SourceBean request, SourceBean response) {
 		logger.debug("IN");
 		ContextInstance contextInstance = null;
