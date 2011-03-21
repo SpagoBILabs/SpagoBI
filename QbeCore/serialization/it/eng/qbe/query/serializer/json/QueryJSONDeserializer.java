@@ -29,7 +29,7 @@ import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.IQueryDeserializer;
-import it.eng.qbe.query.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
