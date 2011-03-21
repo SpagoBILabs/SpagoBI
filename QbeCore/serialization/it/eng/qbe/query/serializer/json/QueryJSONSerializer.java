@@ -35,7 +35,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.SerializationException;
-import it.eng.qbe.query.serializer.Serializer;
+import it.eng.qbe.query.serializer.IQuerySerializer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -53,7 +53,7 @@ import org.json.JSONObject;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QueryJSONSerializer implements Serializer {
+public class QueryJSONSerializer implements IQuerySerializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONSerializer.class);

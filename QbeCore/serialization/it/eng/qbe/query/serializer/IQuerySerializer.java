@@ -30,7 +30,7 @@ import java.util.Locale;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public interface Serializer {
+public interface IQuerySerializer {
 	public Object serialize(Query query, IDataSource dataSource, Locale locale) throws SerializationException;
 	//public Object serialize(CrosstabDefinition cd) throws SerializationException;
 }
