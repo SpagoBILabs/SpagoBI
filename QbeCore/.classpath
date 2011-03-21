@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="hibernate"/>
 	<classpathentry kind="src" path="serialization"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src/runtime"/>
