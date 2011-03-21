@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 
@@ -39,7 +40,7 @@ public class ModelI18NPropertiesTest extends QbeTestCase {
 	 * Test method for {@link it.eng.qbe.datasource.configuration.ModelI18NPropertiesDAOFileImpl#loadProperties()}.
 	 */
 	public void testLoadProperties() {
-		ModelProperties properties = hibernateSimpleDataSource.getModelI18NProperties(Locale.ITALY);
+		IModelProperties properties = hibernateSimpleDataSource.getModelI18NProperties(Locale.ITALY);
 		IModelEntity entity = hibernateSimpleDataSource.getModelStructure().getEntity("it.eng.spagobi.Customer//Customer");
 		this.assertNotNull("Impossible to load entity [it.eng.spagobi.Customer//Customer] from datasourve [" + hibernateSimpleDataSource.getName() + "]", entity);
 	}

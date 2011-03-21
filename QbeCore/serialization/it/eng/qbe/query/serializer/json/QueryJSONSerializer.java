@@ -23,6 +23,7 @@ package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
@@ -138,7 +139,7 @@ public class QueryJSONSerializer {
 		ModelField datamartField;
 		JSONObject fieldJSON;
 		Iterator it;
-		ModelProperties datamartLabels;
+		IModelProperties datamartLabels;
 		String label, longDescription;
 		
 		logger.debug("IN");
@@ -184,7 +185,7 @@ public class QueryJSONSerializer {
 						// localize entity name
 						label = null;
 						if(datamartLabels != null) {
-							label = datamartLabels.getLabel( datamartField.getParent() );
+							label = datamartLabels.getProperty(datamartField.getParent(), "label");
 						}
 						label = StringUtilities.isEmpty(label)? datamartField.getParent().getName(): label;
 						fieldJSON.put(QuerySerializationConstants.FIELD_ENTITY, label);
@@ -192,7 +193,7 @@ public class QueryJSONSerializer {
 						// localize field name
 						label = null;
 						if(datamartLabels != null) {
-							label = datamartLabels.getLabel( datamartField );
+							label = datamartLabels.getProperty(datamartField, "label");
 						}
 						label = StringUtilities.isEmpty(label)? datamartField.getName(): label;
 						fieldJSON.put(QuerySerializationConstants.FIELD_NAME, label);
@@ -297,10 +298,10 @@ public class QueryJSONSerializer {
 		return result;
 	}	
 	
-	public static String getFieldLongDescription(ModelField field, ModelProperties datamartLabels) {
+	public static String getFieldLongDescription(ModelField field, IModelProperties datamartLabels) {
 		String label = field.getName();
 		if (datamartLabels != null) {
-			label = datamartLabels.getLabel(field);
+			label = datamartLabels.getProperty(field, "label");
 		}
 		String extendedLabel = StringUtilities.isEmpty(label)? field.getName(): label;
 		IModelEntity parent = field.getParent();
@@ -308,10 +309,10 @@ public class QueryJSONSerializer {
 		else return getEntityLongDescription(parent, datamartLabels) + " : " + extendedLabel;
 	}
 	
-	public static String getEntityLongDescription(IModelEntity entity, ModelProperties datamartLabels) {
+	public static String getEntityLongDescription(IModelEntity entity, IModelProperties datamartLabels) {
 		String label = entity.getName();
 		if (datamartLabels != null) {
-			label = datamartLabels.getLabel(entity);
+			label = datamartLabels.getProperty(entity, "label");
 		}
 		String extendedLabel = StringUtilities.isEmpty(label)? entity.getName(): label;
 		IModelEntity parent = entity.getParent();
@@ -352,7 +353,7 @@ public class QueryJSONSerializer {
 		ModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelProperties datamartLabels;
+		IModelProperties datamartLabels;
 		ModelField datamartField;
 		
 		filters = query.getWhereFields();
@@ -388,14 +389,14 @@ public class QueryJSONSerializer {
 						String labelF, labelE;
 						labelE = null;
 						if(datamartLabels != null) {
-							labelE = datamartLabels.getLabel( datamartField.getParent() );
+							labelE = datamartLabels.getProperty(datamartField.getParent(), "label");
 						}
 						labelE = StringUtilities.isEmpty(labelE)? datamartField.getParent().getName(): labelE;
 						
 						
 						labelF = null;
 						if(datamartLabels != null) {
-							labelF = datamartLabels.getLabel( datamartField );
+							labelF = datamartLabels.getProperty(datamartField, "label");
 						}
 						labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 						
@@ -439,14 +440,14 @@ public class QueryJSONSerializer {
 					String labelF, labelE;
 					labelE = null;
 					if(datamartLabels != null) {
-						labelE = datamartLabels.getLabel( datamartField.getParent() );
+						labelE = datamartLabels.getProperty(datamartField.getParent(), "label");
 					}
 					labelE = StringUtilities.isEmpty(labelE)? datamartField.getParent().getName(): labelE;
 					
 					
 					labelF = null;
 					if(datamartLabels != null) {
-						labelF = datamartLabels.getLabel( datamartField );
+						labelF = datamartLabels.getProperty(datamartField, "label");
 					}
 					labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 					
@@ -497,7 +498,7 @@ public class QueryJSONSerializer {
 		ModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelProperties datamartLabels;
+		IModelProperties datamartLabels;
 		ModelField datamartField;
 		
 		havings = query.getHavingFields();
@@ -535,14 +536,14 @@ public class QueryJSONSerializer {
 						String labelF, labelE;
 						labelE = null;
 						if(datamartLabels != null) {
-							labelE = datamartLabels.getLabel( datamartField.getParent() );
+							labelE = datamartLabels.getProperty(datamartField.getParent(), "label");
 						}
 						labelE = StringUtilities.isEmpty(labelE)? datamartField.getParent().getName(): labelE;
 						
 						
 						labelF = null;
 						if(datamartLabels != null) {
-							labelF = datamartLabels.getLabel( datamartField );
+							labelF = datamartLabels.getProperty(datamartField, "label");
 						}
 						labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 						
@@ -589,14 +590,14 @@ public class QueryJSONSerializer {
 					String labelF, labelE;
 					labelE = null;
 					if(datamartLabels != null) {
-						labelE = datamartLabels.getLabel( datamartField.getParent() );
+						labelE = datamartLabels.getProperty(datamartField.getParent(), "label");
 					}
 					labelE = StringUtilities.isEmpty(labelE)? datamartField.getParent().getName(): labelE;
 					
 					
 					labelF = null;
 					if(datamartLabels != null) {
-						labelF = datamartLabels.getLabel( datamartField );
+						labelF = datamartLabels.getProperty(datamartField, "label");
 					}
 					labelF = StringUtilities.isEmpty(labelF)? datamartField.getName(): labelF;
 					

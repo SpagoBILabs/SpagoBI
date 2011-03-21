@@ -21,6 +21,7 @@
 package it.eng.qbe.model.structure.filter;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.filter.ComposableQbeTreeEntityFilter;
@@ -78,7 +79,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		
 		/** The datamart model. */
 		private IDataSource dataSource;
-		private ModelProperties datamartLabels;
+		private IModelProperties datamartLabels;
 		
 		/**
 		 * Instantiates a new comparable entities list.
@@ -109,7 +110,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 		
 		private String geEntityLabel(IModelEntity entity) {
 			String label;
-			label = getDatamartLabels().getLabel(entity);
+			label = getDatamartLabels().getProperty(entity, "label");
 			return label==null? entity.getName(): label;
 		}
 		
@@ -161,11 +162,11 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			return toReturn;
 		}
 
-		private ModelProperties getDatamartLabels() {
+		private IModelProperties getDatamartLabels() {
 			return datamartLabels;
 		}
 
-		private void setDatamartLabels(ModelProperties datamartLabels) {
+		private void setDatamartLabels(IModelProperties datamartLabels) {
 			this.datamartLabels = datamartLabels;
 		}
 		
