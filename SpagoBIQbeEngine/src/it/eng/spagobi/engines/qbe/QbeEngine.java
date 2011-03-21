@@ -21,6 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -48,6 +52,15 @@ public class QbeEngine {
 		QbeEngineInstance qbeEngineInstance = null;
 		logger.debug("IN");
 		initEngine();
+		
+		Locale locale = (Locale)env.get(EngineConstants.ENV_LOCALE);	
+		String language = locale.getLanguage();
+		String userDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT." + language);
+		if(userDateFormatPattern == null) userDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.en");
+		env.put("userDateFormatPattern", userDateFormatPattern);
+		String databaseDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.database");
+		env.put("databaseDateFormatPattern", databaseDateFormatPattern);
+		
 		qbeEngineInstance = new QbeEngineInstance(template, env);
 		logger.debug("OUT");
 		return qbeEngineInstance;
