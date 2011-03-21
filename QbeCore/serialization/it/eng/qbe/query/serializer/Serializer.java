@@ -2,7 +2,7 @@
 
 SpagoBI - The Business Intelligence Free Platform
 
-Copyright (C) 2005-2010 Engineering Ingegneria Informatica S.p.A.
+Copyright (C) 2005-2009 Engineering Ingegneria Informatica S.p.A.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,18 +19,18 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.serializer;
+package it.eng.qbe.query.serializer;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.SerializationException;
 
 import java.util.Locale;
 
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
-public interface IDeserializer {
-	Object deserialize(Object object) throws SerializationException;
+public interface Serializer {
+	public Object serialize(Query query, IDataSource dataSource, Locale locale) throws SerializationException;
+	//public Object serialize(CrosstabDefinition cd) throws SerializationException;
 }

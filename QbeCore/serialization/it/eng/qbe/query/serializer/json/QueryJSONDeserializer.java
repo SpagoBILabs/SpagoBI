@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query.serializer.json;
 
-import it.eng.qbe.commons.serializer.Deserializer;
-import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.ExpressionNode;
@@ -30,6 +28,8 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.serializer.Deserializer;
+import it.eng.qbe.query.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
