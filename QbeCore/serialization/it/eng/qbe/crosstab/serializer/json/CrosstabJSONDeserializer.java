@@ -26,6 +26,8 @@ import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Column;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Measure;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Row;
+import it.eng.qbe.serializer.IDeserializer;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -38,9 +40,8 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabJSONDeserializer {
+public class CrosstabJSONDeserializer implements IDeserializer {
 
-	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabJSONDeserializer.class);
     
 	public CrosstabDefinition deserialize(Object o) throws SerializationException {
