@@ -68,21 +68,16 @@ public class DossierDownloadAction extends AbstractHttpAction {
 	 		task = (String) serviceRequest.getAttribute(DossierConstants.DOSSIER_SERVICE_TASK);		
 	 		out = response.getOutputStream();
 	 		if(task.equalsIgnoreCase(DossierConstants.DOSSIER_SERVICE_TASK_GET_TEMPLATE_IMAGE)){
-	 			String pathimg = (String)serviceRequest.getAttribute(DossierConstants.DOSSIER_SERVICE_PATH_IMAGE);
-			 	if(pathimg!=null) {
-			 		if (!pathimg.startsWith("/") && !(pathimg.charAt(1) == ':')) {
-			 			String root = ConfigSingleton.getRootPath();
-			 			pathimg = root + "/" + pathimg;
-			 		}
-				 	File imgFile = new File(pathimg);
-				 	FileInputStream fis = new FileInputStream(imgFile);
-				 	byte[] content = GeneralUtilities.getByteArrayFromInputStream(fis);
-				 	out.write(content);
-				 	out.flush();
-		            fis.close();
-		            imgFile.delete();
-		            return;
-			 	} 
+	 			String logicalNameForStoring = (String)serviceRequest.getAttribute(DossierConstants.DOSSIER_SERVICE_IMAGE);
+			 	File imgFile = new File(DossierDAOHibImpl.tempBaseFolder, logicalNameForStoring + ".jpg");
+			 	preventPathTraversalAttacks(imgFile);
+			 	FileInputStream fis = new FileInputStream(imgFile);
+			 	byte[] content = GeneralUtilities.getByteArrayFromInputStream(fis);
+			 	out.write(content);
+			 	out.flush();
+	            fis.close();
+	            imgFile.delete();
+	            return;
 	 		} else if(task.equalsIgnoreCase(DossierConstants.DOSSIER_SERVICE_TASK_DOWN_FINAL_DOC)){
 	 			String activityKey = (String) serviceRequest.getAttribute(SpagoBIConstants.ACTIVITYKEY);
 	 			JbpmContext jbpmContext = null;
@@ -157,5 +152,17 @@ public class DossierDownloadAction extends AbstractHttpAction {
 	 		logger.error("Exception during execution of task " + task, e);
 	 	}
 	 }
+
+	private void preventPathTraversalAttacks(File imgFile) {
+	 	File parent = imgFile.getParentFile();
+	 	// Prevent directory traversal (path traversal) attacks
+	 	if (!parent.equals(DossierDAOHibImpl.tempBaseFolder)) {
+	 		logger.error("Trying to access the file [" + imgFile.getAbsolutePath() 
+	 	                 + "] that is not inside [" + DossierDAOHibImpl.tempBaseFolder + "]!!!");
+	 		throw new SecurityException("Trying to access the file [" 
+	 	                 + imgFile.getAbsolutePath() + "] that is not inside [" 
+	 	                 + DossierDAOHibImpl.tempBaseFolder.getAbsolutePath() + "]!!!");
+	 	}
+	}
 	
 }

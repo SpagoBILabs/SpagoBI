@@ -70,7 +70,7 @@ package it.eng.spagobi.engines.dossier.constants;
 		public static final String DOSSIER_CONFIGURED_BIOBJECT_ID = "CONFIGURED_BIOBJECT_ID";
 		public static final String DOSSIER_SERVICE_TASK = "task";
 		public static final String DOSSIER_SERVICE_TASK_GET_TEMPLATE_IMAGE = "getTemplateImage";
-		public static final String DOSSIER_SERVICE_PATH_IMAGE = "pathimg";
+		public static final String DOSSIER_SERVICE_IMAGE = "img";
 		public static final String DOSSIER_SERVICE_TASK_DOWN_FINAL_DOC = "downloadFinalDocument";
 		public static final String DOSSIER_SERVICE_TASK_DOWN_PRESENTATION_VERSION = "downloadPresentationVersion";
 		public static final String DOSSIER_SERVICE_TASK_DOWN_OOTEMPLATE = "downloadOOTemplate";

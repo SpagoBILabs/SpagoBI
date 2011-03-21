@@ -86,7 +86,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<a href="<%=recoverUrl %>">
 			<img class='header-button-image-portlet-section' 
 	      				 title='<spagobi:message key = "dossier.download" bundle="component_dossier_messages" />' 
-	      				 src='<%= urlBuilder.getResourceLink(request, "/img/dossier/download32.png")%>' 
+	      				 src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/dossier/download32.png", currTheme)%>' 
 	      				 alt='<spagobi:message key = "dossier.download"  bundle="component_dossier_messages"/>' />
 	        </a>
 		</td>
@@ -107,7 +107,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					<td class='portlet-form-field-label'>
 						<input type="image" 
 			       			   title='<spagobi:message key = "dossier.approvalBotton" bundle="component_dossier_messages" />' 
-      		 	   			   src='<%= urlBuilder.getResourceLink(request, "/img/dossier/save32.png")%>' 
+      		 	   			   src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/dossier/save32.png", currTheme)%>' 
       		 	  			   alt='<spagobi:message key = "dossier.approvalBotton"  bundle="component_dossier_messages"/>' />
 					</td>
 				</tr>
