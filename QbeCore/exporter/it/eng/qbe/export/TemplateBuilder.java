@@ -21,8 +21,6 @@
 package it.eng.qbe.export;
 
 
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +33,6 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BasicTemplateBuilder.
  * 
@@ -44,7 +41,7 @@ import org.apache.log4j.Logger;
 public class TemplateBuilder {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
+    public static transient Logger logger = Logger.getLogger(TemplateBuilder.class);
 	
 	String query;
 	Vector queryFields;

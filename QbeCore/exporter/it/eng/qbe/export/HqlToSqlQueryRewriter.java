@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.export;
 
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -46,7 +45,7 @@ public class HqlToSqlQueryRewriter {
 	private Session session;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
+    public static transient Logger logger = Logger.getLogger(HqlToSqlQueryRewriter.class);
 	
 	
 	/**

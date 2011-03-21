@@ -30,7 +30,6 @@ import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.hibernate.HibernateModelStructureBuilder;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
