@@ -22,14 +22,15 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.properties.SimpleModelProperties;
-import it.eng.qbe.model.properties.i18n.ModelI18NPropertiesCache;
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.StatementFactory;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia
@@ -42,7 +43,7 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected IModelAccessModality dataMartModelAccessModality;
 	protected IModelStructure dataMartModelStructure;
 
-		
+	protected Map<String, IModelProperties> modelPropertiesCache;	
 	
 	public IDataSourceConfiguration getConfiguration() {
 		return configuration;
@@ -70,15 +71,23 @@ public abstract class AbstractDataSource implements IDataSource {
 		this.name = name;
 	}
 	
-	
-	
-	public SimpleModelProperties getModelI18NProperties(Locale locale) {
-		SimpleModelProperties properties;
+	public IModelProperties getModelI18NProperties(Locale locale) {
+		IModelProperties properties;
 		
-		properties = ModelI18NPropertiesCache.getInstance().getProperties(this, locale);
+		if(modelPropertiesCache == null) {
+			modelPropertiesCache = new HashMap<String, IModelProperties>();
+		}
+		
+		String key = name + ":" + "labels";
+		if(locale != null) {
+			key += "_" + locale.getLanguage();
+		}
+		
+		properties = modelPropertiesCache.get(key);
+		
 		if(properties == null) {			
 			properties = getConfiguration().loadModelI18NProperties(locale);
-			ModelI18NPropertiesCache.getInstance().putProperties(this, properties, locale);
+			modelPropertiesCache.put(key, properties);
 		}
 		return properties;
 	}
