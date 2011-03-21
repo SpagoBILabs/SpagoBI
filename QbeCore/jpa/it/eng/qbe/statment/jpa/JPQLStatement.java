@@ -1457,9 +1457,9 @@ public class JPQLStatement extends AbstractStatement {
 		EntityManager em = dataSource.getEntityManager();
 		java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
 
-		JPQLToSqlQueryRewriter queryRewriter;
+		JPQL2SQLStatementRewriter queryRewriter;
 		try {
-			queryRewriter = new JPQLToSqlQueryRewriter(em);
+			queryRewriter = new JPQL2SQLStatementRewriter(em);
 			sqlQuery = queryRewriter.rewrite( getQueryString() );
 		} finally {
 			//if (em != null && em.isOpen()) em.close(); 

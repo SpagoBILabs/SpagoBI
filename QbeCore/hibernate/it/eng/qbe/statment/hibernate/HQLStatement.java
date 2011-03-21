@@ -1285,10 +1285,10 @@ public class HQLStatement extends AbstractStatement {
 	public String getSqlQueryString() {	
 		String sqlQuery = null;
 		Session session = null;
-		HqlToSqlQueryRewriter queryRewriter;
+		HQL2SQLStatementRewriter queryRewriter;
 		try {
 			session = ((IHibernateDataSource)getDataSource()).getHibernateSessionFactory().openSession();
-			queryRewriter = new HqlToSqlQueryRewriter(session);
+			queryRewriter = new HQL2SQLStatementRewriter(session);
 			sqlQuery = queryRewriter.rewrite( getQueryString() );
 		} finally {
 			if (session != null && session.isOpen()) session.close();

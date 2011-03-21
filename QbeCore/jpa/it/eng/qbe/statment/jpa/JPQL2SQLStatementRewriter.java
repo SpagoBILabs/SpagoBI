@@ -31,13 +31,13 @@ import org.apache.log4j.Logger;
  * 
  * @author Giachino
  */
-public class JPQLToSqlQueryRewriter {
+public class JPQL2SQLStatementRewriter {
 	
 	/** The entity manager. */
 	private EntityManager entityManager;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(JPQLToSqlQueryRewriter.class);
+    public static transient Logger logger = Logger.getLogger(JPQL2SQLStatementRewriter.class);
 	
 	
 	/**
@@ -45,7 +45,7 @@ public class JPQLToSqlQueryRewriter {
 	 * 
 	 * @param session the session
 	 */
-	public JPQLToSqlQueryRewriter(EntityManager em) {
+	public JPQL2SQLStatementRewriter(EntityManager em) {
 		this.entityManager = em;
 	}
 	
