@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.crosstable.serializer.json;
 
-import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.query.serializer.SerializationException;
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;

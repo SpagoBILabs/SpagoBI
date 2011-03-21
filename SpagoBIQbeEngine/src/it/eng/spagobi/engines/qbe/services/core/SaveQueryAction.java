@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.serializer.SerializationException;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
