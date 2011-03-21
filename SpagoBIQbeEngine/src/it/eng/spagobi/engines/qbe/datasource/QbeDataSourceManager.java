@@ -123,42 +123,6 @@ public class QbeDataSourceManager {
 		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration);
 		
 		return dataSource;
-		
-		/*
-		modelJarFile = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(0));
-		c = new FileDataSourceConfiguration(dataMartNames.get(0),modelJarFile);
-		compositeConfiguration.addSubConfiguration(c);
-			
-		try {				
-			isJPA = jarFileRetriever.isAJPADatamartJarFile(modelJarFile);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName()  + "]", e);
-		}
-			
-		if(dataMartNames.size() > 1) {
-			for(int i = 1; i < dataMartNames.size(); i++) {
-				modelJarFile = jarFileRetriever.loadDatamartJarFile(dataMartNames.get(i));
-				c = new FileDataSourceConfiguration(dataMartNames.get(i),modelJarFile);
-				compositeConfiguration.addSubConfiguration(c);
-				
-				boolean b;
-				try {
-					b = jarFileRetriever.isAJPADatamartJarFile(modelJarFile);
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error loading mapping file associated to datamart [" + c.getModelName() + "]", e);
-				}
-				if(isJPA != b) {
-					throw new SpagoBIRuntimeException("Impossible to create a composite datasource from different datasource type");
-				}
-			}
-		}
-		String driverName = isJPA? "jpa": "hibernate";
-		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration);
-		
-			
-			
-		return dataSource;
-		*/
 	}
 
 	/*
