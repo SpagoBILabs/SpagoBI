@@ -3,9 +3,6 @@
 <wb-module deploy-name="SpagoBIQbeEngine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="QbeCore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="SpagoBIUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>

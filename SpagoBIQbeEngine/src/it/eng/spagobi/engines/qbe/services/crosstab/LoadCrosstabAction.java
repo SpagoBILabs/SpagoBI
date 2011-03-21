@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
-import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement;

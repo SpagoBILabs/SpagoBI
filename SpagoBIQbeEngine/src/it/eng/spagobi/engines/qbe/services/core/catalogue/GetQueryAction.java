@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;

@@ -20,12 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
