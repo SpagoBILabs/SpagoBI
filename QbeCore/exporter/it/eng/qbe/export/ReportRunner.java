@@ -21,7 +21,6 @@
 package it.eng.qbe.export;
 
 import it.businesslogic.ireport.export.JRTxtExporter;
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -49,7 +48,6 @@ import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * Compile, fill and export a report template to a file or stream.
  * 
@@ -58,7 +56,7 @@ import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
 public class ReportRunner {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
+    public static transient Logger logger = Logger.getLogger(ReportRunner.class);
 	
 	/**
 	 * Instantiates a new report runner.

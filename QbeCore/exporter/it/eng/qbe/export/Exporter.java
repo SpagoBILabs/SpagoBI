@@ -1,6 +1,5 @@
 package it.eng.qbe.export;
 
-import it.eng.qbe.model.accessmodality.ModelAccessModality;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -26,7 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 public class Exporter {
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ModelAccessModality.class);
+    public static transient Logger logger = Logger.getLogger(Exporter.class);
 	
     
 	IDataStore dataStore = null;
