@@ -22,6 +22,7 @@ package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
@@ -85,7 +86,8 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			CrosstabDefinition crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
+			//CrosstabDefinition crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
+			CrosstabDefinition crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 			getEngineInstance().setCrosstabDefinition(crosstabDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();

@@ -25,6 +25,7 @@ import it.eng.qbe.crosstab.exporter.CrossTab;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
@@ -94,7 +95,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
+			//crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
+			crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 			crosstabDefinition.setCellLimit( new Integer((String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
 			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
