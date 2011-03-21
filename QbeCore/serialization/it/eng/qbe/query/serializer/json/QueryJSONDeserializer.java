@@ -28,7 +28,7 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.serializer.Deserializer;
+import it.eng.qbe.query.serializer.IQueryDeserializer;
 import it.eng.qbe.query.serializer.SerializationException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -44,7 +44,7 @@ import org.json.JSONObject;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QueryJSONDeserializer implements Deserializer {
+public class QueryJSONDeserializer implements IQueryDeserializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONDeserializer.class);

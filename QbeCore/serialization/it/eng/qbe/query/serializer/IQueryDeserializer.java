@@ -28,7 +28,7 @@ import it.eng.qbe.query.Query;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public interface Deserializer {
+public interface IQueryDeserializer {
 	public Query deserializeQuery(Object o, IDataSource m) throws SerializationException;
 	//public CrosstabDefinition deserializeCrosstabDefinition(Object o) throws SerializationException;
 }

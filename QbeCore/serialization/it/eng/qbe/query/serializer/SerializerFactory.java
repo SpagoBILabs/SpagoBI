@@ -31,8 +31,8 @@ import java.util.Map;
  */
 public class SerializerFactory {
 	
-	static Map<String, Serializer> serializerMappings;
-	static Map<String, Deserializer> deserializerMappings;
+	static Map<String, IQuerySerializer> serializerMappings;
+	static Map<String, IQueryDeserializer> deserializerMappings;
 	
 	static {
 		serializerMappings = new HashMap();
@@ -42,11 +42,11 @@ public class SerializerFactory {
 		deserializerMappings.put( "application/json", new QueryJSONDeserializer() );
 	}
 	
-	public static Serializer getSerializer(String mimeType) {
+	public static IQuerySerializer getSerializer(String mimeType) {
 		return serializerMappings.get( mimeType );
 	}
 	
-	public static Deserializer getDeserializer(String mimeType) {
+	public static IQueryDeserializer getDeserializer(String mimeType) {
 		return deserializerMappings.get( mimeType );
 	}
 }
