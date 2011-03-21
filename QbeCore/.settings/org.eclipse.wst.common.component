@@ -6,5 +6,6 @@
         <wb-resource deploy-path="/" source-path="/serialization"/>
         <wb-resource deploy-path="/" source-path="/test"/>
         <wb-resource deploy-path="/" source-path="/runtime"/>
+        <wb-resource deploy-path="/" source-path="/src/runtime"/>
 </wb-module>
 </project-modules>
