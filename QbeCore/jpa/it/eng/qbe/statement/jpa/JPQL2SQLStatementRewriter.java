@@ -1,0 +1,62 @@
+/**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
+package it.eng.qbe.statement.jpa;
+
+
+import javax.persistence.EntityManager;
+
+import org.apache.log4j.Logger;
+
+
+/**
+ * The Class HqlToSqlQueryRewriter.
+ * 
+ * @author Giachino
+ */
+public class JPQL2SQLStatementRewriter {
+	
+	/** The entity manager. */
+	private EntityManager entityManager;
+	
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(JPQL2SQLStatementRewriter.class);
+	
+	
+	/**
+	 * Instantiates a new hql to sql query rewriter.
+	 * 
+	 * @param session the session
+	 */
+	public JPQL2SQLStatementRewriter(EntityManager em) {
+		this.entityManager = em;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.export.IQueryRewriter#rewrite(java.lang.String)
+	 */
+	//TODO
+	public String rewrite(String query) {
+		return "";
+	}
+	
+	
+
+}

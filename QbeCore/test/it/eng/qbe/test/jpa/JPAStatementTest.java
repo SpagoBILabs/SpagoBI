@@ -7,8 +7,8 @@ import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statment.jpa.JPQLDataSet;
-import it.eng.qbe.statment.jpa.JPQLStatement;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLStatement;
 
 import javax.persistence.EntityManager;
 
