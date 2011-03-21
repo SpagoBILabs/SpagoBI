@@ -25,13 +25,13 @@ package it.eng.qbe.model.properties;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ModelProperty {
+public class ModelPropertyMeta {
 	protected String name;
 	protected boolean inherited;   
 	protected boolean optional;   
 	protected String defaultValue; 
 	
-	public ModelProperty(String name, boolean inherited, boolean optional, String defaultValue) {
+	public ModelPropertyMeta(String name, boolean inherited, boolean optional, String defaultValue) {
 		this.name = name;
 		this.inherited = inherited;
 		this.optional = optional;

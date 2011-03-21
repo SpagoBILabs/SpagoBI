@@ -24,7 +24,7 @@ package it.eng.qbe.model.properties.initializer;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.properties.ModelPropertiesMeta;
-import it.eng.qbe.model.properties.ModelProperty;
+import it.eng.qbe.model.properties.ModelPropertyMeta;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelNode;
 import it.eng.qbe.model.structure.IModelObject;
@@ -67,7 +67,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	private void addDataMartModelProperties(IModelStructure item) {
-		ModelProperty property;
+		ModelPropertyMeta property;
 		String propertyValue;
 		
 		for (int i = 0; i < ModelPropertiesMeta.globalProperties.length; i++) {
@@ -87,7 +87,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 
 	protected void addDataMartEntityProperties(IModelEntity item) {
-		ModelProperty property;
+		ModelPropertyMeta property;
 		String propertyValue;
 		
 		for (int i = 0; i < ModelPropertiesMeta.entityProperties.length; i++) {
@@ -112,7 +112,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	protected void addDataMartFieldProperties(ModelField item) {
-		ModelProperty property;
+		ModelPropertyMeta property;
 		String propertyValue;
 		
 		for (int i = 0; i < ModelPropertiesMeta.fieldProperties.length; i++) {

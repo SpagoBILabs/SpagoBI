@@ -30,38 +30,38 @@ import java.util.Map;
  */
 public class ModelPropertiesMeta {
 	
-	public final static ModelProperty[] globalProperties = new ModelProperty[]{
-		new ModelProperty("recursiveFiltering", false, true, "enabled")
+	public final static ModelPropertyMeta[] globalProperties = new ModelPropertyMeta[]{
+		new ModelPropertyMeta("recursiveFiltering", false, true, "enabled")
 	};
 	
-	public final static ModelProperty[] entityProperties = new ModelProperty[]{
-		new ModelProperty("visible", false, true, "true"),
-		new ModelProperty("type", false, true, "dimension"),
-		new ModelProperty("position", false, true, "" + Integer.MAX_VALUE)
+	public final static ModelPropertyMeta[] entityProperties = new ModelPropertyMeta[]{
+		new ModelPropertyMeta("visible", false, true, "true"),
+		new ModelPropertyMeta("type", false, true, "dimension"),
+		new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE)
 	};
 	
-	public final static ModelProperty[] fieldProperties = new ModelProperty[]{
-		new ModelProperty("visible", false, true, "true"),
-		new ModelProperty("type", false, true, "attribute"),
-		new ModelProperty("position", false, true, "" + Integer.MAX_VALUE),
-		new ModelProperty("format", false, true, null)
+	public final static ModelPropertyMeta[] fieldProperties = new ModelPropertyMeta[]{
+		new ModelPropertyMeta("visible", false, true, "true"),
+		new ModelPropertyMeta("type", false, true, "attribute"),
+		new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
+		new ModelPropertyMeta("format", false, true, null)
 	};
 	
-	static Map<String, ModelProperty> globalPropertiesMap;
-	static Map<String, ModelProperty> entityPropertiesMap;
-	static Map<String, ModelProperty> fieldPropertiesMap;
+	static Map<String, ModelPropertyMeta> globalPropertiesMap;
+	static Map<String, ModelPropertyMeta> entityPropertiesMap;
+	static Map<String, ModelPropertyMeta> fieldPropertiesMap;
 	
 	static {
-		globalPropertiesMap = new HashMap<String, ModelProperty>();
-		entityPropertiesMap = new HashMap<String, ModelProperty>();
-		fieldPropertiesMap = new HashMap<String, ModelProperty>();
+		globalPropertiesMap = new HashMap<String, ModelPropertyMeta>();
+		entityPropertiesMap = new HashMap<String, ModelPropertyMeta>();
+		fieldPropertiesMap = new HashMap<String, ModelPropertyMeta>();
 		
 		for(int i = 0; i < globalProperties.length; i++) globalPropertiesMap.put(globalProperties[i].getName(), globalProperties[i]);
 		for(int i = 0; i < entityProperties.length; i++) entityPropertiesMap.put(entityProperties[i].getName(), entityProperties[i]);
 		for(int i = 0; i < fieldProperties.length; i++) fieldPropertiesMap.put(fieldProperties[i].getName(), fieldProperties[i]);
 	}
 	
-	public ModelProperty getGlobalProperty(String name) {return globalPropertiesMap.get(name);}
-	public ModelProperty getEntityProperties(String name) {return entityPropertiesMap.get(name);}
-	public ModelProperty getFieldProperties(String name) {return fieldPropertiesMap.get(name);}
+	public ModelPropertyMeta getGlobalProperty(String name) {return globalPropertiesMap.get(name);}
+	public ModelPropertyMeta getEntityProperties(String name) {return entityPropertiesMap.get(name);}
+	public ModelPropertyMeta getFieldProperties(String name) {return fieldPropertiesMap.get(name);}
 }

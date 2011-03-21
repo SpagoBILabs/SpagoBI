@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.properties;
 
-import java.util.Map;
 import java.util.Properties;
 
 import it.eng.qbe.model.structure.IModelNode;
@@ -33,7 +32,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ModelProperties {
+public class ModelProperties implements IModelProperties {
 	Properties properties;
 	
 	public ModelProperties() {
