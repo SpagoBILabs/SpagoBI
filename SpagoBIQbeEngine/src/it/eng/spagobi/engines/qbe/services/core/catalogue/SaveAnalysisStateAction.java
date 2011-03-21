@@ -20,13 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import it.eng.qbe.commons.serializer.SerializerFactory;
-import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
