@@ -23,8 +23,6 @@ package it.eng.qbe.commons.serializer.json;
 
 import it.eng.qbe.commons.serializer.Deserializer;
 import it.eng.qbe.commons.serializer.SerializationException;
-import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
-import it.eng.qbe.crosstab.serializer.json.CrosstabJSONDeserializer;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
@@ -47,15 +45,4 @@ public class JSONDeserializer implements Deserializer {
 		logger.debug("OUT");
 		return query;
 	}
-
-	public CrosstabDefinition deserializeCrosstabDefinition(Object o)
-			throws SerializationException {
-		logger.debug("IN");
-		CrosstabJSONDeserializer d = new CrosstabJSONDeserializer();
-		CrosstabDefinition def = d.deserialize(o);
-		logger.debug("OUT");
-		return def;
-	}
-    
-	
 }
