@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.export;
+package it.eng.qbe.statment.hibernate;
 
 
 import java.lang.reflect.Method;
