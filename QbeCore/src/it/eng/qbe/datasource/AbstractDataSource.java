@@ -20,17 +20,26 @@
  **/
 package it.eng.qbe.datasource;
 
+import it.eng.qbe.classloader.ClassLoaderManager;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.StatementFactory;
+import it.eng.spagobi.utilities.DynamicClassLoader;
 
+import java.io.File;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia
@@ -43,7 +52,9 @@ public abstract class AbstractDataSource implements IDataSource {
 	protected IModelAccessModality dataMartModelAccessModality;
 	protected IModelStructure dataMartModelStructure;
 
-	protected Map<String, IModelProperties> modelPropertiesCache;	
+	protected Map<String, IModelProperties> modelPropertiesCache;		
+	
+	private static transient Logger logger = Logger.getLogger(AbstractDataSource.class);
 	
 	public IDataSourceConfiguration getConfiguration() {
 		return configuration;
@@ -90,6 +101,10 @@ public abstract class AbstractDataSource implements IDataSource {
 			modelPropertiesCache.put(key, properties);
 		}
 		return properties;
+	}
+	
+	protected static void updateCurrentClassLoader(File jarFile){
+		ClassLoaderManager.updateCurrentClassLoader(jarFile);
 	}
 	
 }

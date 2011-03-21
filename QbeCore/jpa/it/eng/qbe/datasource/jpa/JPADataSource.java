@@ -30,7 +30,6 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
-import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -154,87 +153,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		return connection;
 	}
 	
-	/**
-	 * Update current class loader.
-	 * 
-	 * @param jarFile the jar file
-	 */
-	protected static void updateCurrentClassLoader(File jarFile){
-		
-		boolean wasAlreadyLoaded = false;
-		ApplicationContainer container = null;
-		
-		logger.debug("IN");
-		
-		try {
-			
-			logger.debug("jar file to be loaded: " + jarFile.getAbsoluteFile());
-			
-			container = ApplicationContainer.getInstance();
-			if (container != null) {
-				ClassLoader cl = (ClassLoader) container.getAttribute("DATAMART_CLASS_LOADER");
-				if (cl != null) {
-					logger.debug("Found a cached loader of type: " + cl.getClass().getName());
-					logger.debug("Set as current loader the one previusly cached");
-					Thread.currentThread().setContextClassLoader(cl);
-				}
-			}
-			
-			JarFile jar = new JarFile(jarFile);
-			Enumeration entries = jar.entries();
-			while (entries.hasMoreElements()) {
-				JarEntry entry = (JarEntry) entries.nextElement();
-				if (entry.getName().endsWith(".class")) {
-					String entryName = entry.getName();
-					String className = entryName.substring(0, entryName.lastIndexOf(".class"));
-					className = className.replaceAll("/", ".");
-					className = className.replaceAll("\\\\", ".");
-					try {
-						logger.debug("loading class [" + className  + "]" + " with class loader [" + Thread.currentThread().getContextClassLoader().getClass().getName()+ "]");
-						Thread.currentThread().getContextClassLoader().loadClass(className);
-						wasAlreadyLoaded = true;
-						logger.debug("Class [" + className  + "] has been already loaded (?");
-						break;
-					} catch (Exception e) {
-						wasAlreadyLoaded = false;
-						logger.debug("Class [" + className  + "] hasn't be loaded yet (?)");
-						break;
-					}
-				}
-			}
-			
-		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
-		}
-		
-		logger.debug("Jar file [" + jarFile.getName()  + "] already loaded: " + wasAlreadyLoaded);
-		
-		try {
-			/*
-			 * TEMPORARY: the next instruction forcing the loading of all classes in the path...
-			 * (ie. for some qbe that have in common any classes but not all and that at the moment they aren't loaded correctly)
-			 */
-			//wasAlreadyLoaded = false;
-
-			if (!wasAlreadyLoaded) {
-				
-				ClassLoader previous = Thread.currentThread().getContextClassLoader();
-				Thread.currentThread().getContextClassLoader();
-    		    DynamicClassLoader current = new DynamicClassLoader(jarFile, previous);
-			    Thread.currentThread().setContextClassLoader(current);
-
-			    //Thread.currentThread().getContextClassLoader().loadClass("it.eng.spagobi.meta.Customer");
-			    
-				//ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURL()}, previous);				
-				//Thread.currentThread().setContextClassLoader(current);
-				
-				if (container != null) container.setAttribute("DATAMART_CLASS_LOADER", current);
-			}
-			
-		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
-		}
-	}
+	
 
 	public IModelStructure getModelStructure() {
 		IModelStructureBuilder structureBuilder;

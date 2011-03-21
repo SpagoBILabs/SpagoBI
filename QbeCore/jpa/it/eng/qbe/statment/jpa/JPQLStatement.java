@@ -40,7 +40,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -712,11 +711,8 @@ public class JPQLStatement extends AbstractStatement {
 		String toReturn = "'" +date+ "'";
 		Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
 		String ln = l.getLanguage();
-		String userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT."+ln);
-		if(userDfString==null){
-			userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.en");
-		}
-		String dbDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.database");
+		String userDfString = (String)getParameters().get("userDateFormatPattern");
+		String dbDfString = (String)getParameters().get("databaseDateFormatPattern");
 		DateFormat df = new SimpleDateFormat(userDfString);
 		try {			
 			Date operandValueToBoundDate = df.parse(date);
