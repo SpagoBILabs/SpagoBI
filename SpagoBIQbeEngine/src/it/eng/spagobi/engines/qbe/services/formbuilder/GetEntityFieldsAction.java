@@ -85,7 +85,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 				JSONObject aJSONField = new JSONObject();
 				aJSONField.put("id", aField.getUniqueName());
 				//String name = QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ).getLabel(aField);
-				String name = getDataSource().getModelI18NProperties(getLocale()).getLabel(aField);
+				String name = getDataSource().getModelI18NProperties(getLocale()).getProperty(aField, "label");
 				if (name == null || name.trim().equals("")) 
 					name = aField.getName();
 				aJSONField.put("name", name);

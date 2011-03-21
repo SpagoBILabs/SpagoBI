@@ -21,6 +21,7 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -58,7 +59,7 @@ public class ExtJsQbeTreeBuilder  {
 	
 	private Locale locale;
 	
-	private ModelProperties datamartLabels;
+	private IModelProperties datamartLabels;
 	
 
 	/**
@@ -84,23 +85,23 @@ public class ExtJsQbeTreeBuilder  {
 	
 	private String geEntityLabel(IModelEntity entity) {
 		String label;
-		label = getDatamartLabels().getLabel(entity);
+		label = getDatamartLabels().getProperty(entity, "label");
 		return StringUtilities.isEmpty(label)? entity.getName(): label;
 	}
 	
 	private String geEntityTooltip(IModelEntity entity) {
-		String tooltip = getDatamartLabels().getTooltip(entity);
+		String tooltip = getDatamartLabels().getProperty(entity, "tooltip");
 		return tooltip != null ? tooltip : "";
 	}
 	
 	private String geFieldLabel(ModelField field) {
 		String label;
-		label = getDatamartLabels().getLabel(field);
+		label = getDatamartLabels().getProperty(field, "label");
 		return StringUtilities.isEmpty(label)? field.getName(): label;
 	}
 
 	private String geFieldTooltip(ModelField field) {
-		String tooltip = getDatamartLabels().getTooltip(field);
+		String tooltip = getDatamartLabels().getProperty(field, "tooltip");
 		return tooltip != null ? tooltip : "";
 	}
 	
@@ -496,12 +497,12 @@ public class ExtJsQbeTreeBuilder  {
 	}
 
 
-	private ModelProperties getDatamartLabels() {
+	private IModelProperties getDatamartLabels() {
 		return datamartLabels;
 	}
 
 
-	private void setDatamartLabels(ModelProperties datamartLabels) {
+	private void setDatamartLabels(IModelProperties datamartLabels) {
 		this.datamartLabels = datamartLabels;
 	}
 }
