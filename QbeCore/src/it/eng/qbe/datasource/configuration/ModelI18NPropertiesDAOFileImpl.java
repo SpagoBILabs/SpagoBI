@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -49,12 +49,12 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
     }
     
     
-	public ModelProperties loadProperties() {
+	public SimpleModelProperties loadProperties() {
 		return loadProperties(null);
 	}
 
 	
-	public ModelProperties loadProperties(Locale locale) {
+	public SimpleModelProperties loadProperties(Locale locale) {
 		Properties properties;		
 		JarFile jarFile;
 		
@@ -69,7 +69,7 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
 			throw new SpagoBIRuntimeException("Impossible to load i18n properties from file [" + modelJarFile + "]", t);
 		}
 		
-		return new ModelProperties(properties);
+		return new SimpleModelProperties(properties);
 	}
 	
 	private Properties getLabelProperties(JarFile modelJarFile, Locale locale){

@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
@@ -52,8 +52,8 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#loadDatamartProperties(java.lang.String)
 	 */
-	public ModelProperties loadModelProperties() {
-		ModelProperties properties;
+	public SimpleModelProperties loadModelProperties() {
+		SimpleModelProperties properties;
 		
 		JarFile jf = null;
 		try {
@@ -61,13 +61,13 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 			properties = loadQbePropertiesFormJarFile(jf);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ModelProperties();
+			return new SimpleModelProperties();
 		}				
 		
 		return properties;	
 	}
 
-	protected ModelProperties loadQbePropertiesFormJarFile(JarFile jf){
+	protected SimpleModelProperties loadQbePropertiesFormJarFile(JarFile jf){
 		Properties prop = null;
 		
 		try{
@@ -80,16 +80,16 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 			}
 		} catch(IOException ioe){
 			ioe.printStackTrace();
-			return new ModelProperties();
+			return new SimpleModelProperties();
 		}
-		return new ModelProperties(prop);
+		return new SimpleModelProperties(prop);
 	}
 	
 	
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveDatamartProperties(java.lang.String, it.eng.qbe.bo.DatamartProperties)
 	 */
-	public void saveModelProperties(ModelProperties datamartProperties) {
+	public void saveModelProperties(SimpleModelProperties datamartProperties) {
 		throw new SpagoBIRuntimeException("saveDatamartProperties method not supported");
 	}
 }

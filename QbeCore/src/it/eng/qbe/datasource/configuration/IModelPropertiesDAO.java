@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 
 import java.util.Properties;
 
@@ -36,12 +36,12 @@ public interface IModelPropertiesDAO {
 	 * 
 	 * @return the model properties
 	 */
-	ModelProperties loadModelProperties();
+	SimpleModelProperties loadModelProperties();
 	
 	/**
 	 * Save model properties.
 	 *
 	 * @param properties the model properties
 	 */
-	void saveModelProperties(ModelProperties properties);
+	void saveModelProperties(SimpleModelProperties properties);
 }

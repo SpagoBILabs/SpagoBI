@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 
 import java.util.Locale;
 
@@ -38,7 +38,7 @@ public interface IModelI18NPropertiesDAO {
 	 * 
 	 * @return the loaded i18n properties
 	 */
-	ModelProperties loadProperties();
+	SimpleModelProperties loadProperties();
 	
 	/**
 	 * Load i18n properties for the given locale.
@@ -47,5 +47,5 @@ public interface IModelI18NPropertiesDAO {
 	 * 
 	 * @return the loaded i18n properties
 	 */
-	ModelProperties loadProperties(Locale locale);
+	SimpleModelProperties loadProperties(Locale locale);
 }

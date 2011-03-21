@@ -22,7 +22,7 @@ package it.eng.qbe.model.structure.filter;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.filter.ComposableQbeTreeEntityFilter;
 import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
@@ -93,7 +93,7 @@ public class QbeTreeOrderEntityByLabelFilter extends ComposableQbeTreeEntityFilt
 			//setDatamartLabels( QbeCacheManager.getInstance().getLabels( dataSource , locale ) );
 			setDatamartLabels( dataSource.getModelI18NProperties(locale) );
 			if( getDatamartLabels() == null) {
-				setDatamartLabels( new ModelProperties() );
+				setDatamartLabels( new SimpleModelProperties() );
 			}
 		}
 		

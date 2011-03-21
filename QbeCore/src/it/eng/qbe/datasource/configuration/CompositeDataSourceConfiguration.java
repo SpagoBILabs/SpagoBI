@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -90,12 +90,12 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelProperties()
 	 */
-	public ModelProperties loadModelProperties() {
-		ModelProperties properties = new ModelProperties();
+	public SimpleModelProperties loadModelProperties() {
+		SimpleModelProperties properties = new SimpleModelProperties();
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
 			IDataSourceConfiguration configuration = it.next();
-			ModelProperties props = configuration.loadModelProperties();
+			SimpleModelProperties props = configuration.loadModelProperties();
 			properties.putAll(props);
 		}
 		
@@ -105,19 +105,19 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelLabels()
 	 */
-	public ModelProperties loadModelI18NProperties() {
+	public SimpleModelProperties loadModelI18NProperties() {
 		return loadModelI18NProperties(null);
 	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelLabels(java.util.Locale)
 	 */
-	public ModelProperties loadModelI18NProperties(Locale locale) {
-		ModelProperties properties = new ModelProperties();
+	public SimpleModelProperties loadModelI18NProperties(Locale locale) {
+		SimpleModelProperties properties = new SimpleModelProperties();
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
 			IDataSourceConfiguration subModelConfiguration = it.next();
-			ModelProperties subModelProperties = subModelConfiguration.loadModelI18NProperties(locale);
+			SimpleModelProperties subModelProperties = subModelConfiguration.loadModelI18NProperties(locale);
 			properties.putAll(subModelProperties);
 		}
 		

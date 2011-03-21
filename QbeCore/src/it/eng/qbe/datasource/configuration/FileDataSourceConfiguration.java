@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.io.File;
@@ -64,15 +64,15 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 		return modelName;
 	}
 	
-	public ModelProperties loadModelProperties() {
+	public SimpleModelProperties loadModelProperties() {
 		return modelPropertiesDAO.loadModelProperties();
 	}
 	
-	public ModelProperties loadModelI18NProperties() {
+	public SimpleModelProperties loadModelI18NProperties() {
 		return loadModelI18NProperties(null);
 	}
-	public ModelProperties loadModelI18NProperties(Locale locale) {
-		ModelProperties properties = modelLabelsDAOFileImpl.loadProperties(locale);
+	public SimpleModelProperties loadModelI18NProperties(Locale locale) {
+		SimpleModelProperties properties = modelLabelsDAOFileImpl.loadProperties(locale);
 		return properties;
 	}
 

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.properties.ModelProperties;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 
 import java.io.File;
