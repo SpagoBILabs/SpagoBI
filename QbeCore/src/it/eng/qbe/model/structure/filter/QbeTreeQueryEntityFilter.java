@@ -23,8 +23,6 @@ package it.eng.qbe.model.structure.filter;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeWhiteListEntityFilter;
 
 import java.util.List;
 import java.util.Set;

@@ -1,14 +1,14 @@
 package it.eng.qbe.model.structure;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.filter.QbeTreeFilter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 
 public class ViewModelStructure extends AbstractModelObject implements IModelStructure {
 	
