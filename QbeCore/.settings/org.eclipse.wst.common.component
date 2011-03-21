@@ -6,6 +6,5 @@
         <wb-resource deploy-path="/" source-path="/hibernate"/>
         <wb-resource deploy-path="/" source-path="/serialization"/>
         <wb-resource deploy-path="/" source-path="/test"/>
-        <wb-resource deploy-path="/" source-path="/exporter"/>
 </wb-module>
 </project-modules>

@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="hibernate"/>
 	<classpathentry kind="src" path="serialization"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="src" path="exporter"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.6.3.jar"/>
