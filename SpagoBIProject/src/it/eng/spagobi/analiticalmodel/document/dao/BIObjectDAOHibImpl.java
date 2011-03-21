@@ -27,25 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -64,11 +45,9 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIObjectParameterDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.bo.Role;
@@ -88,6 +67,25 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 /**
  *	Defines the Hibernate implementations for all DAO methods,
@@ -800,18 +798,12 @@ IBIObjectDAO {
 				// delete parameters associated
 				Set objPars = hibBIObject.getSbiObjPars();
 				Iterator itObjPar = objPars.iterator();
+				BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
 				while (itObjPar.hasNext()) {
 					SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
-					// deletes all ObjParuse object (dependencies) of the biparameter
-					IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-					List objParuses = objParuseDAO.loadObjParuses(aSbiObjPar.getObjParId());
-					Iterator itObjParuses = objParuses.iterator();
-					while (itObjParuses.hasNext()) {
-						ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
-						objParuseDAO.eraseObjParuse(aObjParuse);
-					}
-					// deletes the biparameter
-					aSession.delete(aSbiObjPar);
+					BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+					aBIObjectParameter.setId(aSbiObjPar.getObjParId());
+					objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession);
 				}
 
 				// delete dossier temp parts eventually associated

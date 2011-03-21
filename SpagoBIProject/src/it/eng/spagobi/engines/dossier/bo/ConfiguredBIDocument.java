@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.dossier.bo;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.dao.DAOFactory;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -206,4 +209,18 @@ public String getLogicalName() {
 		toReturn.setParameters(parameters);
 		return toReturn;
 	}
+	
+	public BIObject loadBIObjectDetails() {
+		BIObject biObject;
+		try {
+			biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+			List parameters = DAOFactory.getBIObjectParameterDAO().loadBIObjectParametersById(biObject.getId());
+			biObject.setBiObjectParameters(parameters);
+		} catch (EMFUserError e) {
+			throw new RuntimeException("Cannot load details of biobject with label " + label, e);
+		}
+		return biObject;
+	}
+	
+	
 }

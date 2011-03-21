@@ -42,6 +42,7 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
+import it.eng.spagobi.engines.dossier.bo.DossierAnalyticalDriversManager;
 import it.eng.spagobi.engines.dossier.bo.WorkflowConfiguration;
 import it.eng.spagobi.engines.dossier.constants.DossierConstants;
 import it.eng.spagobi.engines.dossier.dao.DossierDAOHibImpl;
@@ -525,7 +526,10 @@ public class DossierManagementModule extends AbstractModule {
 		}
 		
 		Integer dossierId = dossierDao.getDossierId(tempFolder);
-		if (errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) dossierDao.storeTemplate(dossierId, tempFolder);
+		adjustRequiredAnalyticalDrivers(dossierId, docs);
+		if (errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) {
+			dossierDao.storeTemplate(dossierId, tempFolder);
+		}
 		
 		String saveAndGoBackStr = (String) request.getAttribute("SAVE_AND_GO_BACK");
 		boolean saveAndGoBack = saveAndGoBackStr != null && saveAndGoBackStr.trim().equalsIgnoreCase("TRUE");
@@ -538,5 +542,19 @@ public class DossierManagementModule extends AbstractModule {
 		
 		logger.debug("OUT");
 	}
-	
+
+	private void adjustRequiredAnalyticalDrivers(Integer dossierId, List docs) throws Exception {
+		logger.debug("IN");
+		DossierAnalyticalDriversManager manager = new DossierAnalyticalDriversManager();
+		List<EMFValidationError> errors = manager.adjustRequiredAnalyticalDrivers(dossierId, docs);
+		if (errors != null && errors.size() > 0) {
+			Iterator<EMFValidationError> it = errors.iterator();
+			while (it.hasNext()) {
+				this.getErrorHandler().addError(it.next());
+			}
+		}
+		
+		logger.debug("OUT");
+	}
+
 }

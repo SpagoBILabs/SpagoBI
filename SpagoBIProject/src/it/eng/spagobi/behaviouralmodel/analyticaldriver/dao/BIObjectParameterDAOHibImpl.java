@@ -32,6 +32,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -267,21 +268,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
-			SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  aBIObjectParameter.getId());
-			
-			if (hibObjPar == null) {		
-				logger.error("the BIObjectParameter with id="+aBIObjectParameter.getId()+" does not exist.");
-				throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
-			}
-			
-			aSession.delete(hibObjPar);
-			
-			Integer biobjId = hibObjPar.getSbiObject().getBiobjId();
-			
-			String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority >= " 
-				+ aBIObjectParameter.getPriority() + "and s.sbiObject.biobjId = " + biobjId;
-			Query query = aSession.createQuery(hqlUpdateShiftRight);
-			query.executeUpdate();
+			eraseBIObjectParameter(aBIObjectParameter, aSession);
 			
 			tx.commit();
 		} catch (HibernateException he) {
@@ -294,6 +281,33 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				if (aSession.isOpen()) aSession.close();
 			}
 		}
+	}
+	
+	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError {
+		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class,  aBIObjectParameter.getId());
+		
+		if (hibObjPar == null) {		
+			logger.error("the BIObjectParameter with id="+aBIObjectParameter.getId()+" does not exist.");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
+		}
+		
+		// deletes all ObjParuse object (dependencies) of the biObjectParameter
+		ObjParuseDAOHibImpl objParuseDAO = new ObjParuseDAOHibImpl();
+		List objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
+		Iterator itObjParuses = objParuses.iterator();
+		while (itObjParuses.hasNext()) {
+			ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
+			objParuseDAO.eraseObjParuse(aObjParuse, aSession);
+		}
+		
+		aSession.delete(hibObjPar);
+		
+		Integer biobjId = hibObjPar.getSbiObject().getBiobjId();
+		
+		String hqlUpdateShiftRight = "update SbiObjPar s set s.priority = (s.priority - 1) where s.priority >= " 
+			+ hibObjPar.getPriority() + "and s.sbiObject.biobjId = " + biobjId;
+		Query query = aSession.createQuery(hqlUpdateShiftRight);
+		query.executeUpdate();
 	}
 
 	/**

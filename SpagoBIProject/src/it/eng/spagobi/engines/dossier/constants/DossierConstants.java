@@ -65,6 +65,7 @@ package it.eng.spagobi.engines.dossier.constants;
 		public static final String DOSSIER_SAVED_MSG_CODE_ATTR_NAME = "DOSSIER_SAVED_MSG_CODE_ATTR_NAME";
 		
 		public static final String DOSSIER_ID = "DOSSIER_ID";
+		public static final String DOSSIER_PARAMETERS = "DOSSIER_PARAMETERS";
 		public static final String VERSION_ID = "VERSION_ID";
 		public static final String DOSSIER_CONFIGURED_BIOBJECT_ID = "CONFIGURED_BIOBJECT_ID";
 		public static final String DOSSIER_SERVICE_TASK = "task";

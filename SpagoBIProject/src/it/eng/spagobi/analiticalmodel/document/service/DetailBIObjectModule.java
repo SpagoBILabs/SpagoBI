@@ -396,7 +396,8 @@ public class DetailBIObjectModule extends AbstractModule {
 	 * @param objParFatherId The id of the BIObjectParameter object to check
 	 * @throws EMFUserError
 	 */
-	private void checkForDependancies(Integer objParFatherId) throws EMFUserError {
+	public static EMFValidationError checkForDependancies(Integer objParFatherId) throws EMFUserError {
+		EMFValidationError error = null;
 		IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
 		List objParametersCorrelated = objParuseDAO.getDependencies(objParFatherId);
 		if (objParametersCorrelated != null && objParametersCorrelated.size() > 0) {
@@ -405,9 +406,9 @@ public class DetailBIObjectModule extends AbstractModule {
 					DetailBIObjectModule.MODULE_PAGE);
 			Vector v = new Vector();
 			v.add(objParametersCorrelated.toString());
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1049, v, params);
-			errorHandler.addError(error);
+			error = new EMFValidationError(EMFErrorSeverity.ERROR, 1049, v, params);
 		}
+		return error;
 	}
 
 	/**
@@ -924,7 +925,10 @@ public class DetailBIObjectModule extends AbstractModule {
 						// it is requested to delete the visible BIObjectParameter
 						int objParId = helper.findBIObjParId(deleteBIObjectParameter);
 						Integer objParIdInt = new Integer(objParId);
-						checkForDependancies(objParIdInt);
+						EMFValidationError error = checkForDependancies(objParIdInt);
+						if (error != null) {
+							errorHandler.addError(error);
+						}
 						helper.fillResponse(initialPath);
 						// if there are some validation errors into the errorHandler does not write into DB
 						if(!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
@@ -932,17 +936,7 @@ public class DetailBIObjectModule extends AbstractModule {
 							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
 							return;
 						}
-						IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-						// deletes all the ObjParuse objects associated to this BIObjectParameter 
-						List objParuses = objParuseDAO.loadObjParuses(new Integer(objParId));
-						if (objParuses != null && objParuses.size() > 0) {
-							Iterator it = objParuses.iterator();
-							while (it.hasNext()) {
-								ObjParuse objParuse = (ObjParuse) it.next();
-								objParuseDAO.eraseObjParuse(objParuse);
-							}
-						}
-						// then deletes the BIObjectParameter
+						// deletes the BIObjectParameter
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
 						BIObjectParameter objPar = objParDAO.loadForDetailByObjParId(new Integer(objParId));
 						objParDAO.eraseBIObjectParameter(objPar);
