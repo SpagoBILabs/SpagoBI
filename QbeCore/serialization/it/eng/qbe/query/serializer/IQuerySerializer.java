@@ -23,6 +23,7 @@ package it.eng.qbe.query.serializer;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.serializer.SerializationException;
 
 import java.util.Locale;
 
