@@ -22,7 +22,6 @@
 package it.eng.qbe.crosstab.exporter;
 
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition.Measure;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -85,7 +84,7 @@ public class CrossTab {
 		String rowPath;
 		String columnPath;
 		this.config = crosstabDefinition.getConfig();
-		int cellLimit = new Integer((String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value"));
+		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; //true if the number of cell shown in the crosstab is less than the total number of cells
 		
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();

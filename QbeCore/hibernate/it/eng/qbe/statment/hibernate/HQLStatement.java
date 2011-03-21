@@ -41,7 +41,6 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.utility.StringUtils;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -650,25 +649,23 @@ public class HQLStatement extends AbstractStatement {
 			String dbDialect = connection.getDialect();
 			
 			//Parse the date given by the user: from the locale of the user to the italian time
-			Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
-			String ln = l.getLanguage();
-			String userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT."+ln);
-			if(userDfString==null){
-				userDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.en");
-			}
+			Locale locale = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
+			String language = locale.getLanguage();
+			String userDateFormatPattern = (String)getParameters().get("userDateFormatPattern");
 			
-			DateFormat df = new SimpleDateFormat(userDfString);		
+			
+			DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
 
 			try{
-				operandValueToBoundDate = df.parse(operandValueToBound);
+				operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
 			} catch (ParseException e) {
 				logger.error("Error parsing the date "+operandValueToBound);
-				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDfString);
+				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDateFormatPattern);
 			}
 			
-			String dbDfString = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.it");
-			df = new SimpleDateFormat(dbDfString);		
-			boundedValue = composeStringToDt(dbDialect,df.format(operandValueToBoundDate));
+			String databaseDataPattern =  (String)getParameters().get("databaseDateFormatPattern");
+			DateFormat databaseDataFormat = new SimpleDateFormat(databaseDataPattern);		
+			boundedValue = composeStringToDt(dbDialect,databaseDataFormat.format(operandValueToBoundDate));
 		}
 		return boundedValue;
 	}

@@ -49,6 +49,7 @@ public class CrosstabDefinition {
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
 	
+	private int cellLimit;
 	private List<Row> rows = null;
 	private List<Column> columns = null;
 	private List<Measure> measures = null;
@@ -56,6 +57,14 @@ public class CrosstabDefinition {
 	private JSONArray calculatedFields = null;
 	
 	public CrosstabDefinition() {}
+	
+	public int getCellLimit() {
+		return cellLimit;
+	}
+
+	public void setCellLimit(int cellLimit) {
+		this.cellLimit = cellLimit;
+	}
 	
 	public List<Row> getRows() {
 		return rows;

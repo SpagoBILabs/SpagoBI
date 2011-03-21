@@ -71,9 +71,5 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.3.ga.jar"/>
-	<classpathentry kind="lib" path="extLib/spago-core-2.2.0.jar"/>
-	<classpathentry kind="lib" path="extLib/spago-portlet-2.2.0.jar"/>
-	<classpathentry kind="lib" path="extLib/spago-profile-2.2.0.jar"/>
-	<classpathentry kind="lib" path="extLib/spago-web-2.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
