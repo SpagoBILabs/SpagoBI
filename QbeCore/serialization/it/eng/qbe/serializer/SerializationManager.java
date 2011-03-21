@@ -21,7 +21,7 @@
 package it.eng.qbe.serializer;
 
 
-import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.query.serializer.SerializationException;
 
 import java.util.HashMap;
 import java.util.Map;

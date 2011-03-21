@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.serializer;
 
-import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.query.serializer.SerializationException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
