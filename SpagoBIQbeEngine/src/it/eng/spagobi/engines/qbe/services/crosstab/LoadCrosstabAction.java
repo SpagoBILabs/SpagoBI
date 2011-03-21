@@ -26,7 +26,7 @@ import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;

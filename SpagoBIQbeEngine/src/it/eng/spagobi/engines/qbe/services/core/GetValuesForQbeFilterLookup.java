@@ -6,7 +6,7 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.qbe.statment.hibernate.HQLStatement;
+import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;

@@ -23,7 +23,6 @@ package it.eng.spagobi.engines.qbe.services.core;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.export.Exporter;
 import it.eng.qbe.export.Field;
-import it.eng.qbe.export.HqlToSqlQueryRewriter;
 import it.eng.qbe.export.ReportRunner;
 import it.eng.qbe.export.SQLFieldsReader;
 import it.eng.qbe.export.TemplateBuilder;
@@ -31,6 +30,7 @@ import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.statement.hibernate.HQL2SQLStatementRewriter;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -64,7 +64,6 @@ import org.hibernate.Session;
 
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ExecuteQueryAction.
  */
@@ -91,7 +90,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		IStatement statement = null;
 		Session session = null;	
 		Connection connection = null;
-		HqlToSqlQueryRewriter queryRewriter = null;
+		//HQL2SQLStatementRewriter queryRewriter = null;
 		String hqlQuery = null;
 		String sqlQuery = null;
 		SQLFieldsReader fieldsReader = null;
@@ -140,8 +139,9 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				hqlQuery = statement.getQueryString();
 				logger.debug("Executable HQL query: [" + hqlQuery + "]");
 						
-				queryRewriter = new HqlToSqlQueryRewriter( session );
-				sqlQuery = queryRewriter.rewrite(hqlQuery);
+				//queryRewriter =  new HQL2SQLStatementRewriter( session );
+				//sqlQuery = queryRewriter.rewrite(hqlQuery);
+				sqlQuery = statement.getSqlQueryString();
 			} else {
 				// case of FormEngine
 				
