@@ -26,6 +26,7 @@ import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
@@ -198,7 +199,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {
 		JSONObject crosstabDefinitionJSON = null;
 		try {
-			crosstabDefinitionJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(crosstabDefinition);
+			//crosstabDefinitionJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(crosstabDefinition);
+			crosstabDefinitionJSON = (JSONObject)SerializationManager.serialize(crosstabDefinition, "application/json");
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to serialize crosstab definition", e);
 		}
@@ -212,7 +214,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		
 		crosstabDefinitionJSON = (JSONObject)getProperty( CROSSTAB_DEFINITION );
 		try {
-			crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);
+			//crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);
+			crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 		} catch (Throwable e) {
 			throw new SpagoBIEngineRuntimeException("Impossible to deserialize crosstab definition", e);
 		}
