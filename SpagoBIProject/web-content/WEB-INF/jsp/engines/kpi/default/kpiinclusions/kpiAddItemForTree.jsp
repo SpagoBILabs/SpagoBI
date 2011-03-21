@@ -81,7 +81,7 @@ private static final String toggle_kpi_css_class = "toggleKPI";
 //Method to construct a row of the Kpi Model Tree
 public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstance,String userId,int recursionLevel, 
 		Boolean isEvenLine,HttpServletRequest httpReq,KpiLine line, StringBuffer _htmlStream,
-		KpiLineVisibilityOptions options, String currTheme, HashMap parametersMap, Resource r, Date d, String metadata_publisher_Name,String trend_publisher_Name) {
+		KpiLineVisibilityOptions options, String currTheme, HashMap parametersMap, Resource r, Date d, String metadata_publisher_Name,String trend_publisher_Name, String parsToDetailDocs) {
 	
 	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	IUrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder();
@@ -180,7 +180,7 @@ public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstan
 			
 	_htmlStream = addTrendColumn( _htmlStream,recursionLevel, requestIdentity,userId,kpiVal,r,timeRangeTo,timeRangeFrom,d, trendTitle,trendImgSrc,trend_publisher_Name);
 	
-	_htmlStream = addDocumentDetailColumn( _htmlStream, execInstance,documents,kpiVal,timeRangeFrom, timeRangeTo,d, docLinkedTitle, docImgSrc, r);
+	_htmlStream = addDocumentDetailColumn( _htmlStream, execInstance,documents,kpiVal,timeRangeFrom, timeRangeTo,d, docLinkedTitle, docImgSrc, r,parsToDetailDocs);
 
 	_htmlStream = addAlarmColumn(_htmlStream, alarm.booleanValue(), options.getDisplay_alarm().booleanValue(), alarmImgSrc,alarmTitle);
 	//END ADDING COLUMNS
@@ -197,9 +197,9 @@ public StringBuffer addItemForTree(String lineTagId,ExecutionInstance execInstan
 		   KpiLine l = (KpiLine)childIt.next();
 		   String idTemp = lineTagId+"_child"+children.indexOf(l);
 		   if (isEvenLine.booleanValue()){			   
-			   addItemForTree(idTemp,execInstance,userId,recursionLevel,Boolean.FALSE,httpReq, l,_htmlStream,options,currTheme,parametersMap,r,d,metadata_publisher_Name,trend_publisher_Name);
+			   addItemForTree(idTemp,execInstance,userId,recursionLevel,Boolean.FALSE,httpReq, l,_htmlStream,options,currTheme,parametersMap,r,d,metadata_publisher_Name,trend_publisher_Name,parsToDetailDocs);
 		   }else{
-			   addItemForTree(idTemp,execInstance,userId,recursionLevel,Boolean.TRUE,httpReq, l,_htmlStream,options,currTheme,parametersMap,r,d,metadata_publisher_Name,trend_publisher_Name);
+			   addItemForTree(idTemp,execInstance,userId,recursionLevel,Boolean.TRUE,httpReq, l,_htmlStream,options,currTheme,parametersMap,r,d,metadata_publisher_Name,trend_publisher_Name,parsToDetailDocs);
 		   }  
 	   }
    } 
@@ -329,14 +329,14 @@ private StringBuffer addTrendColumn(StringBuffer _htmlStream,int recursionLevel,
 }
 
 //Method to add the Document detail button column
-private StringBuffer addDocumentDetailColumn(StringBuffer _htmlStream, ExecutionInstance execInstance,List documents,KpiValue kpiVal,String timeRangeFrom, String timeRangeTo,Date d, String docTitle, String docImgSrc, Resource r){
+private StringBuffer addDocumentDetailColumn(StringBuffer _htmlStream, ExecutionInstance execInstance,List documents,KpiValue kpiVal,String timeRangeFrom, String timeRangeTo,Date d, String docTitle, String docImgSrc, Resource r, String parsToDetailDocs){
 	
 	if (documents!=null && !documents.isEmpty()){
 		_htmlStream.append("<td width='"+DOC_COL_W+"%'  class='"+td_css_class+"' ><div class='"+div_css_class+"'  >\n");
 		Iterator it = documents.iterator();
 		while(it.hasNext()){
 			String docLabel =(String)it.next();
-			String parameters = createParStringForCrossNavigation(execInstance, timeRangeFrom, timeRangeTo, r, kpiVal, d);		
+			String parameters = createParStringForCrossNavigation(execInstance, timeRangeFrom, timeRangeTo, r, kpiVal, d, parsToDetailDocs);		
 			String docHref="javascript:parent.execCrossNavigation(this.name,'"+docLabel+"','"+parameters+"');";
 			_htmlStream.append("<a  title='"+docLabel+"' href=\""+docHref+"\"> <img  src=\""+docImgSrc+"\" alt=\""+docLabel+"\" /></a>\n");				
 		}
@@ -426,7 +426,7 @@ private HashMap createParMapForTrendWindow(Resource r,Date d,String timeRangeFro
 }
 
 //Method that creates the parameters String for the detail document cross navigation
-private String createParStringForCrossNavigation(ExecutionInstance execInstance,String timeRangeFrom, String timeRangeTo, Resource r, KpiValue kpiVal, Date d){
+private String createParStringForCrossNavigation(ExecutionInstance execInstance,String timeRangeFrom, String timeRangeTo, Resource r, KpiValue kpiVal, Date d, String parsToDetailDocs){
 	String parameters = "";
 	
 	String executionFlowId = execInstance.getFlowId();
@@ -435,7 +435,9 @@ private String createParStringForCrossNavigation(ExecutionInstance execInstance,
 	String format = (String) formatSB.getAttribute("format");
 	SimpleDateFormat f = new SimpleDateFormat();
 	f.applyPattern(format);
-	
+	if(parsToDetailDocs!= null && parsToDetailDocs!=""){
+		parameters += parsToDetailDocs;
+	}
 	parameters +="EXECUTION_FLOW_ID="+executionFlowId;
 	parameters +="&SOURCE_EXECUTION_ID="+uuidPrincip;
 	if(kpiVal!=null){
