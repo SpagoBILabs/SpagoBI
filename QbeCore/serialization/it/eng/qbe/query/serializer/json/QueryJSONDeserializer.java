@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query.serializer.json;
 
+import it.eng.qbe.commons.serializer.Deserializer;
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.ModelField;
@@ -43,12 +44,12 @@ import org.json.JSONObject;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QueryJSONDeserializer {
+public class QueryJSONDeserializer implements Deserializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONDeserializer.class);
     
-	public Query deserialize(Object o, IDataSource dataSource) throws SerializationException {
+	public Query deserializeQuery(Object o, IDataSource dataSource) throws SerializationException {
 		Query query;
 		JSONObject queryJSON = null;
 		JSONArray fieldsJSON = null;
@@ -108,7 +109,7 @@ public class QueryJSONDeserializer {
 			
 			for(int i = 0; i < subqueriesJSON.length(); i++) {
 				try {
-					subquery = deserialize(subqueriesJSON.get(i), dataSource);
+					subquery = deserializeQuery(subqueriesJSON.get(i), dataSource);
 				} catch (JSONException e) {
 					throw new SerializationException("An error occurred while deserializing subquery number [" + (i+1) + "]: " + subqueriesJSON.toString(), e);
 				}
@@ -494,5 +495,7 @@ public class QueryJSONDeserializer {
 		
 		return str;
 	}
+
+
 	
 }

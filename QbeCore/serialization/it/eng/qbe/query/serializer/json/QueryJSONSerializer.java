@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
+import it.eng.qbe.commons.serializer.Serializer;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
@@ -52,7 +53,7 @@ import org.json.JSONObject;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class QueryJSONSerializer {
+public class QueryJSONSerializer implements Serializer {
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QueryJSONSerializer.class);

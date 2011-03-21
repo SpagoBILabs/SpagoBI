@@ -20,8 +20,8 @@
  **/
 package it.eng.qbe.commons.serializer;
 
-import it.eng.qbe.commons.serializer.json.JSONDeserializer;
-import it.eng.qbe.commons.serializer.json.JSONSerializer;
+import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
+import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +36,10 @@ public class SerializerFactory {
 	
 	static {
 		serializerMappings = new HashMap();
-		serializerMappings.put( "application/json", new JSONSerializer() );
+		serializerMappings.put( "application/json", new QueryJSONSerializer() );
 		
 		deserializerMappings = new HashMap();
-		deserializerMappings.put( "application/json", new JSONDeserializer() );
+		deserializerMappings.put( "application/json", new QueryJSONDeserializer() );
 	}
 	
 	public static Serializer getSerializer(String mimeType) {
