@@ -153,8 +153,20 @@ final String td_first_line_css_class = "kpi_first_line_td";
 		
 		<% StringBuffer _htmlStream = new StringBuffer();
 		   ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
-		   //KpiUtils k = new KpiUtils();
-		   _htmlStream = addItemForTree(id ,instance,userId,0,Boolean.FALSE,request, root,_htmlStream,options,currTheme,parMap,r,d,metadata_publisher_Name,trend_publisher_Name);%>
+		   String parsToDetailDocs = "";
+		   if(instance!=null && instance.getBIObject()!=null){
+		   List pars = instance.getBIObject().getBiObjectParameters();			
+			if(pars!=null && !pars.isEmpty()){
+				Iterator ite=pars.iterator();
+				while(ite.hasNext()){
+					BIObjectParameter p = (BIObjectParameter)ite.next();
+					String url = p.getParameterUrlName();
+					String value = p.getParameterValuesAsString();
+					parsToDetailDocs += url+"="+value+"&";
+				}		
+			}
+		   }
+		   _htmlStream = addItemForTree(id ,instance,userId,0,Boolean.FALSE,request, root,_htmlStream,options,currTheme,parMap,r,d,metadata_publisher_Name,trend_publisher_Name,parsToDetailDocs);%>
 		   
 		<%= _htmlStream%>
 			</TBODY>
