@@ -632,30 +632,27 @@ public class HQLStatement extends AbstractStatement {
 	}
 	
 	
-	private String getValueBounded(String operandValueToBound, String type) {
-		String boundedValue = operandValueToBound;
-		Date operandValueToBoundDate = null;
-		if (type.equalsIgnoreCase("String") || type.equalsIgnoreCase("character")) {
+	private String getValueBounded(String operandValueToBound, String operandType) {
+		String boundedValue;
+		Date operandValueToBoundDate;
+		
+		boundedValue = operandValueToBound;
+		
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER")) {
 			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes 
-			if (operandValueToBound.startsWith("'") && operandValueToBound.endsWith("'")) {
-				boundedValue = operandValueToBound ;
+			if ( StringUtils.isBounded(operandValueToBound, "'") ) {
+				boundedValue = operandValueToBound;
 			} else {
-				operandValueToBound = escapeQuotes(operandValueToBound);
-				boundedValue = "'" + operandValueToBound + "'";
+				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
+				StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if(type.equalsIgnoreCase("timestamp") || type.equalsIgnoreCase("date")){
+		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE")){
 
 			DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			String dbDialect = connection.getDialect();
 			
-			//Parse the date given by the user: from the locale of the user to the italian time
-			Locale locale = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
-			String language = locale.getLanguage();
 			String userDateFormatPattern = (String)getParameters().get("userDateFormatPattern");
-			
-			
 			DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		
-
 			try{
 				operandValueToBoundDate = userDataFormat.parse(operandValueToBound);
 			} catch (ParseException e) {
@@ -663,73 +660,73 @@ public class HQLStatement extends AbstractStatement {
 				throw new SpagoBIRuntimeException("Error parsing the date "+operandValueToBound+". Check the format, it should be "+userDateFormatPattern);
 			}
 			
-			String databaseDataPattern =  (String)getParameters().get("databaseDateFormatPattern");
-			DateFormat databaseDataFormat = new SimpleDateFormat(databaseDataPattern);		
-			boundedValue = composeStringToDt(dbDialect,databaseDataFormat.format(operandValueToBoundDate));
+			boundedValue = composeStringToDt(dbDialect, operandValueToBoundDate);
 		}
+		
 		return boundedValue;
 	}
 	
-	private String escapeQuotes(String value) {
-		if (value == null) return null;
-		return value.replace("'", "''");
-	}
 	
-	private String composeStringToDt(String dialect, String date){
+	
+	private String composeStringToDt(String dialect, Date date){
 		String toReturn = "";
 		
+		DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	
+		String dateStr = stagingDataFormat.format(date);
+			
 		if(dialect!=null){
+			
 			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+date+",'%d/%m/%Y %h:%i:%s') ";
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y %h:%i:%s') ";
 				}else{
-					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y %h:%i:%s') ";
+					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y %h:%i:%s') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
 				try {
 					DateFormat df;
-					if (date.startsWith("'") && date.endsWith("'")) {
+					if ( StringUtils.isBounded(dateStr, "'") ) {
 						df = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					}else{
 						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 					}
 					
-					Date myDate = df.parse(date);
+					Date myDate = df.parse(dateStr);
 					df = new SimpleDateFormat("yyyy-MM-dd");		
 					toReturn =  "'"+df.format(myDate)+"'";
 
 				} catch (Exception e) {
-					toReturn = "'" +date+ "'";
+					toReturn = "'" +dateStr+ "'";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " STR_TO_DATE("+date+",'%d/%m/%Y') ";
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+dateStr+",'%d/%m/%Y') ";
 				}else{
-					toReturn = " STR_TO_DATE('"+date+"','%d/%m/%Y') ";
+					toReturn = " STR_TO_DATE('"+dateStr+"','%d/%m/%Y') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
-					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
-					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = " TO_TIMESTAMP("+date+",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP("+dateStr+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
-					toReturn = " TO_TIMESTAMP('"+date+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+					toReturn = " TO_TIMESTAMP('"+dateStr+"','DD/MM/YYYY HH24:MI:SS.FF') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
-				if (date.startsWith("'") && date.endsWith("'")) {
-					toReturn = date;
+				if (dateStr.startsWith("'") && dateStr.endsWith("'")) {
+					toReturn = dateStr;
 				}else{
-					toReturn = "'"+date+"'";
+					toReturn = "'"+dateStr+"'";
 				}
 			}
 		}

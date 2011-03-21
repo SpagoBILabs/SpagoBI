@@ -681,24 +681,22 @@ public class JPQLStatement extends AbstractStatement {
 	
 	
 	
-	private String getValueBounded(String operandValueToBound, String type) {
+	private String getValueBounded(String operandValueToBound, String operandType) {
 		
 		String boundedValue = operandValueToBound;
-		if ((type.toLowerCase()).lastIndexOf("string") == (type.length()-("string").length()) || 
-			(type.toLowerCase()).lastIndexOf("character") == (type.length()-("character").length())){
-				
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER")) {
+			
 			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes 
-			if (operandValueToBound.startsWith("'") && operandValueToBound.endsWith("'")) {
+			if ( StringUtils.isBounded(operandValueToBound, "'") ) {
 				boundedValue = operandValueToBound ;
 			} else {
-				operandValueToBound = escapeQuotes(operandValueToBound);
-				boundedValue = "'" + operandValueToBound + "'";
+				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
+				StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if(  (type.toLowerCase()).lastIndexOf("timestamp") == (type.length()-("timestamp").length()) || 
-					(type.toLowerCase()).lastIndexOf("date") == (type.length()-("date").length()) ){
-
+		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE")){
 			boundedValue = parseDate(operandValueToBound);
 		}
+		
 		return boundedValue;
 	}
 	
@@ -709,8 +707,6 @@ public class JPQLStatement extends AbstractStatement {
 	 */
 	private String parseDate(String date){
 		String toReturn = "'" +date+ "'";
-		Locale l = (Locale)getParameters().get(EngineConstants.ENV_LOCALE);	
-		String ln = l.getLanguage();
 		String userDfString = (String)getParameters().get("userDateFormatPattern");
 		String dbDfString = (String)getParameters().get("databaseDateFormatPattern");
 		DateFormat df = new SimpleDateFormat(userDfString);
@@ -723,11 +719,6 @@ public class JPQLStatement extends AbstractStatement {
 			throw new SpagoBIRuntimeException("Error parsing the date "+date+". Check the format, it should be "+userDfString);
 		}
 		return toReturn;
-	}
-	
-	private String escapeQuotes(String value) {
-		if (value == null) return null;
-		return value.replace("'", "''");
 	}
 	
 	
