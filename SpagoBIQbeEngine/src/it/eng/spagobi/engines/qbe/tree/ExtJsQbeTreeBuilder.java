@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
@@ -58,7 +58,7 @@ public class ExtJsQbeTreeBuilder  {
 	
 	private Locale locale;
 	
-	private ModelI18NProperties datamartLabels;
+	private ModelProperties datamartLabels;
 	
 
 	/**
@@ -77,7 +77,7 @@ public class ExtJsQbeTreeBuilder  {
 		//setDatamartLabels( QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ) );
 		setDatamartLabels( dataSource.getModelI18NProperties( getLocale() ) );
 		if( getDatamartLabels() == null) {
-			setDatamartLabels( new ModelI18NProperties() );
+			setDatamartLabels( new ModelProperties() );
 		}
 		return buildQbeTree(datamartName);
 	}
@@ -496,12 +496,12 @@ public class ExtJsQbeTreeBuilder  {
 	}
 
 
-	private ModelI18NProperties getDatamartLabels() {
+	private ModelProperties getDatamartLabels() {
 		return datamartLabels;
 	}
 
 
-	private void setDatamartLabels(ModelI18NProperties datamartLabels) {
+	private void setDatamartLabels(ModelProperties datamartLabels) {
 		this.datamartLabels = datamartLabels;
 	}
 }
