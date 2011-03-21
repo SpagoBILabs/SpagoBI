@@ -24,7 +24,6 @@ import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.crosstab.exporter.CrossTab;
 import it.eng.qbe.crosstab.exporter.CrosstabDefinition;
 import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statment.hibernate.HQLStatement;

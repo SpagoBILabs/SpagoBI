@@ -20,9 +20,6 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core.datamart;
        
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.model.structure.ViewModelStructure;
 import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
 import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
 import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityEntityFilter;
@@ -42,7 +39,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

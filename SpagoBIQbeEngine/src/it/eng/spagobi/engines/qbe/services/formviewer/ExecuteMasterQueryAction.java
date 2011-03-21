@@ -22,7 +22,6 @@ package it.eng.spagobi.engines.qbe.services.formviewer;
 
 import it.eng.qbe.commons.serializer.SerializerFactory;
 import it.eng.qbe.datasource.DBConnection;
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
