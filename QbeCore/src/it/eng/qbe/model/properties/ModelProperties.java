@@ -44,17 +44,6 @@ public class ModelProperties implements IModelProperties {
 	}
 	
 	
-	// utility methods just for i18Properties
-	// TODO remove them asap
-	public String getLabel(IModelNode datamartItem) {
-		return getProperty(datamartItem, "label");
-	}
-	
-	public String getTooltip(IModelNode datamartItem) {
-		return getProperty(datamartItem, "tooltip");
-	}
-	// -----------------------------------------------
-	
 	public void putAll(ModelProperties modelProperties) {
 		properties.putAll(modelProperties.getProperties());
 	}
