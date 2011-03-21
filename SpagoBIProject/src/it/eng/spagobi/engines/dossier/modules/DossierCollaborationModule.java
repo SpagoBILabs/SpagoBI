@@ -609,8 +609,6 @@ public class DossierCollaborationModule extends AbstractModule {
 	private Map recoverImageUrls(Integer dossierId, int pageNum, Long workflowProcessId) throws Exception {
 		IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();
 		Map images = dptDAO.getImagesOfDossierPart(dossierId, pageNum, workflowProcessId);
-		 // get temp directory for the pamphlet module
-	    ConfigSingleton configSing = ConfigSingleton.getInstance();
 		File tempDir = DossierDAOHibImpl.tempBaseFolder; 
 		tempDir.mkdirs();
 		// for each image store into the temp directory and save the url useful to recover it into the map
@@ -623,9 +621,9 @@ public class DossierCollaborationModule extends AbstractModule {
 			UUID uuidObj = uuidGenerator.generateTimeBasedUUID();
 			String uuid = uuidObj.toString();
 			// TODO perche salvare su file system? tanto vale tenere in memoria le immagini, oppure scriverli sul file system e far puntare l'immagine al file
-	    	String logicalNameForStoring = uuid + logicalName + ".jpg";
+	    	String logicalNameForStoring = uuid + logicalName;
 	    	byte[] content = (byte[])images.get(logicalName);
-	    	File img = new File(tempDir, logicalNameForStoring);
+	    	File img = new File(tempDir, logicalNameForStoring + ".jpg");
 	    	FileOutputStream fos = new FileOutputStream(img);
 	    	fos.write(content);
 	    	fos.flush();
@@ -635,8 +633,8 @@ public class DossierCollaborationModule extends AbstractModule {
 	    	String recoverUrl = DossierUtilities.getDossierServiceUrl() + "&" + 
 	    						DossierConstants.DOSSIER_SERVICE_TASK + "=" +
 	    						DossierConstants.DOSSIER_SERVICE_TASK_GET_TEMPLATE_IMAGE + "&" +
-	    						DossierConstants.DOSSIER_SERVICE_PATH_IMAGE + "=" +
-	    						tempDir.getAbsolutePath() + "/" + logicalNameForStoring;
+	    						DossierConstants.DOSSIER_SERVICE_IMAGE + "=" +
+	    						logicalNameForStoring;
 	    	imageurl.put(logicalName, recoverUrl); 
 	    }
 	   return imageurl;
