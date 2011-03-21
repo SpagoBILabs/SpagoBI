@@ -22,7 +22,7 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
@@ -40,7 +40,7 @@ public interface IDataSource {
 	IModelStructure getModelStructure();
 	IModelAccessModality getModelAccessModality();
 	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality) ;
-	ModelI18NProperties getModelI18NProperties(Locale locale);
+	ModelProperties getModelI18NProperties(Locale locale);
 	
 	void open();
 	boolean isOpen();

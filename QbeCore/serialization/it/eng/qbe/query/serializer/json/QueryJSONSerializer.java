@@ -23,7 +23,7 @@ package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.commons.serializer.SerializationException;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.properties.i18n.ModelI18NProperties;
+import it.eng.qbe.model.properties.ModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelField;
 import it.eng.qbe.query.CalculatedSelectField;
@@ -138,7 +138,7 @@ public class QueryJSONSerializer {
 		ModelField datamartField;
 		JSONObject fieldJSON;
 		Iterator it;
-		ModelI18NProperties datamartLabels;
+		ModelProperties datamartLabels;
 		String label, longDescription;
 		
 		logger.debug("IN");
@@ -297,7 +297,7 @@ public class QueryJSONSerializer {
 		return result;
 	}	
 	
-	public static String getFieldLongDescription(ModelField field, ModelI18NProperties datamartLabels) {
+	public static String getFieldLongDescription(ModelField field, ModelProperties datamartLabels) {
 		String label = field.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getLabel(field);
@@ -308,7 +308,7 @@ public class QueryJSONSerializer {
 		else return getEntityLongDescription(parent, datamartLabels) + " : " + extendedLabel;
 	}
 	
-	public static String getEntityLongDescription(IModelEntity entity, ModelI18NProperties datamartLabels) {
+	public static String getEntityLongDescription(IModelEntity entity, ModelProperties datamartLabels) {
 		String label = entity.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getLabel(entity);
@@ -352,7 +352,7 @@ public class QueryJSONSerializer {
 		ModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelI18NProperties datamartLabels;
+		ModelProperties datamartLabels;
 		ModelField datamartField;
 		
 		filters = query.getWhereFields();
@@ -497,7 +497,7 @@ public class QueryJSONSerializer {
 		ModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
-		ModelI18NProperties datamartLabels;
+		ModelProperties datamartLabels;
 		ModelField datamartField;
 		
 		havings = query.getHavingFields();

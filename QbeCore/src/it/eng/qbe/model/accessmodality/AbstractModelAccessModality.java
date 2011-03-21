@@ -49,7 +49,7 @@ public class AbstractModelAccessModality implements IModelAccessModality{
 	}
 
 	public List getEntityFilterConditions(String entityName) {
-		return null;
+		return new ArrayList();
 	}
 
 	public List getEntityFilterConditions(String entityName, Properties parameters) {
