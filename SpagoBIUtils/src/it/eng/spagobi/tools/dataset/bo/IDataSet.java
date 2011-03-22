@@ -2,9 +2,6 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import java.util.Map;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -28,6 +25,15 @@ public interface IDataSet {
 	
 	String getLabel();
 	void setLabel(String label);
+	
+	Integer getCategoryId();
+	void setCategoryId(Integer categoryId);
+	
+	String getCategoryCd();
+	void setCategoryCd(String categoryCd);
+	
+	String getDsType();
+	void setDsType(String dsType);
 
 	// parametrization ....
 	// --------------------------------------------------------------------------------------------------
@@ -71,6 +77,9 @@ public interface IDataSet {
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	Integer getTransformerId();
 	void setTransformerId(Integer transformerId);
+	
+	String getTransformerCd() ;
+    void setTransformerCd(String transfomerCd);
 
 	String getPivotColumnName();
 	void setPivotColumnName(String pivotColumnName);

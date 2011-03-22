@@ -23,6 +23,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String javaClassName;
 
     private java.lang.String label;
+    
+    private Integer categoryId;
 
     private Integer transformerId;
 
@@ -74,6 +76,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String fileName,
            java.lang.String javaClassName,
            java.lang.String label,
+           Integer categoryId,
            Integer transformerId,
            java.lang.String pivotColumnName,
            java.lang.String pivotRowName,
@@ -94,6 +97,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.fileName = fileName;
            this.javaClassName = javaClassName;
            this.label = label;
+           this.categoryId = categoryId;
            this.transformerId = transformerId;
            this.pivotColumnName = pivotColumnName;
            this.pivotRowName = pivotRowName;
@@ -109,7 +113,19 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     }
 
 
-    /**
+    public Integer getCategoryId() {
+		return categoryId;
+	}
+
+
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
+
+
+	/**
      * Gets the adress value for this SpagoBiDataSet.
      * 
      * @return adress
@@ -559,6 +575,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.transformerId==null && other.getTransformerId()==null) || 
              (this.transformerId!=null &&
               this.transformerId.equals(other.getTransformerId()))) &&
+          ((this.categoryId==null && other.getCategoryId()==null) || 
+              (this.categoryId!=null &&
+               this.categoryId.equals(other.getCategoryId()))) &&
             ((this.pivotColumnName==null && other.getPivotColumnName()==null) || 
              (this.pivotColumnName!=null &&
               this.pivotColumnName.equals(other.getPivotColumnName()))) &&
@@ -624,6 +643,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getLabel() != null) {
             _hashCode += getLabel().hashCode();
+        }
+        if (getCategoryId() != null) {
+            _hashCode += getCategoryId().hashCode();
         }
         if (getTransformerId() != null) {
             _hashCode += getTransformerId().hashCode();
@@ -716,6 +738,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("label");
         elemField.setXmlName(new javax.xml.namespace.QName("", "label"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("categoryId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "categoryId"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
