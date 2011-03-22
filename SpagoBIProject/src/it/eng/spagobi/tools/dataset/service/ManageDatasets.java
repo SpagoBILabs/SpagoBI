@@ -25,11 +25,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private final String DATASETS_LIST = "DATASETS_LIST";
 	private final String DATASET_INSERT = "DATASET_INSERT";
 	private final String DATASET_DELETE = "DATASET_DELETE";
+	private final String DATASETS_FOR_KPI_LIST = "DATASETS_FOR_KPI_LIST";
+	
+	private final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 16;
+	public static Integer LIMIT_DEFAULT = 14;
 
 	@Override
 	public void doService() {
@@ -45,7 +48,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
-		if (serviceType != null && serviceType.equalsIgnoreCase(DATASETS_LIST)) {
+		
+		if (serviceType != null && serviceType.equalsIgnoreCase(DATASETS_FOR_KPI_LIST)) {
 			
 			try {		
 				
@@ -60,7 +64,34 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 
 				Integer totalItemsNum = dsDao.countDatasets();
-				List items = dsDao.loadPagedDatasetList(start,limit);
+				List items = dsDao.loadPagedSbiDatasetConfigList(start,limit);
+				logger.debug("Loaded items list");
+				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
+				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
+
+				writeBackToClient(new JSONSuccess(responseJSON));
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving items", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving items", e);
+			}
+		} else if(serviceType != null && serviceType.equalsIgnoreCase(DATASETS_LIST)) {
+			
+			try {		
+				
+				Integer start = getAttributeAsInteger( START );
+				Integer limit = getAttributeAsInteger( LIMIT );
+				
+				if(start==null){
+					start = START_DEFAULT;
+				}
+				if(limit==null){
+					limit = LIMIT_DEFAULT;
+				}
+
+				Integer totalItemsNum = dsDao.countDatasets();
+				List items = dsDao.loadPagedIDatasetList(start,limit);
 				logger.debug("Loaded items list");
 				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
@@ -77,7 +108,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_DELETE)) {
 			//TODO
 		}else if(serviceType == null){
-			//TODO
+			try {
+				List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(CATEGORY_DOMAIN_TYPE);
+				getSessionContainer().setAttribute("catTypesList", catTypesList);
+				
+			} catch (EMFUserError e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception retrieving resources types", e);
+			}
 		}
 		logger.debug("OUT");
 	}
