@@ -52,6 +52,12 @@ import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
@@ -97,11 +103,18 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SbiAlarm.class, new AlarmJSONSerializer());
 		mappings.put( SbiAlarmContact.class, new AlarmContactJSONSerializer());
 		mappings.put( ThresholdValue.class, new ThresholdValueJSONSerializer());
-		mappings.put( SbiDataSetConfig.class, new DataSetJSONSerializer());
-		mappings.put( SbiQueryDataSet.class, new DataSetJSONSerializer());
-		mappings.put( SbiJClassDataSet.class, new DataSetJSONSerializer());
-		mappings.put( SbiScriptDataSet.class, new DataSetJSONSerializer());
-		mappings.put( SbiWSDataSet.class, new DataSetJSONSerializer());
+		mappings.put( SbiDataSetConfig.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( SbiQueryDataSet.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( SbiJClassDataSet.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( SbiScriptDataSet.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( SbiWSDataSet.class, new SbiDataSetConfigJSONSerializer());
+		
+		mappings.put( IDataSet.class, new DataSetJSONSerializer());
+		mappings.put( FileDataSet.class, new DataSetJSONSerializer());
+		mappings.put( JavaClassDataSet.class, new DataSetJSONSerializer());
+		mappings.put( JDBCDataSet.class, new DataSetJSONSerializer());
+		mappings.put( ScriptDataSet.class, new DataSetJSONSerializer());
+		mappings.put( WebServiceDataSet.class, new DataSetJSONSerializer());
 		
 		mappings.put( Resource.class, new ResourceJSONSerializer());
 		mappings.put( Threshold.class, new ThresholdJSONSerializer());
