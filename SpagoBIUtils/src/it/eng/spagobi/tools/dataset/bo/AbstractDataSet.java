@@ -31,8 +31,6 @@ import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 
-
-import sun.net.www.MeteredStream;
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
  */
@@ -42,11 +40,17 @@ public abstract class AbstractDataSet implements IDataSet {
     private String name;
     private String description;
     private String label;
+    private Integer categoryId;
+    private String categoryCd;
+    
+    private String dsType;
+
     private String parameters;
     private Map paramsMap;
     private Map behaviours;
     
     private Integer transformerId;
+    private String transformerCd;
     private String pivotColumnName;
     private String pivotRowName;
     private String pivotColumnValue;
@@ -69,6 +73,7 @@ public abstract class AbstractDataSet implements IDataSet {
     	setLabel(dataSetConfig.getLabel());
     	setDescription(dataSetConfig.getDescription());
 		setLabel(dataSetConfig.getLabel());
+		setCategoryId(dataSetConfig.getCategoryId());
 		setParameters(dataSetConfig.getParameters());
 		
 		setTransformerId(dataSetConfig.getTransformerId());
@@ -96,6 +101,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setName(getName());
 		sbd.setParameters(getParameters());
 		sbd.setDescription(getDescription());
+		sbd.setCategoryId(getCategoryId());
 		
 		sbd.setTransformerId(getTransformerId());
 		sbd.setPivotColumnName(getPivotColumnName());
@@ -137,6 +143,14 @@ public abstract class AbstractDataSet implements IDataSet {
     public void setDescription(String description) {
     	this.description = description;
     }
+    
+    public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
     
     public String getParameters() {
     	return parameters;
@@ -239,5 +253,30 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public void setDsMetadata(String dsMetadata) {
 		this.dsMetadata = dsMetadata;
+	}
+	
+
+	public String getCategoryCd() {
+		return categoryCd;
+	}
+
+	public void setCategoryCd(String categoryCd) {
+		this.categoryCd = categoryCd;
+	}
+
+	public String getDsType() {
+		return dsType;
+	}
+
+	public void setDsType(String dsType) {
+		this.dsType = dsType;
+	}
+
+	public String getTransformerCd() {
+		return transformerCd;
+	}
+
+	public void setTransformerCd(String transformerCd) {
+		this.transformerCd = transformerCd;
 	}
 }
