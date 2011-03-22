@@ -67,7 +67,7 @@ Sbi.kpi.ManageKpis = function(config) {
 	this.services = new Array();
 	
 	var paramsDocList = {MESSAGE_DET: "BIOBJECTS_LIST"};
-	var paramsDatasetList = {MESSAGE_DET: "DATASETS_LIST"};
+	var paramsDatasetList = {MESSAGE_DET: "DATASETS_FOR_KPI_LIST"};
 	
 	this.services['manageDocumentsService'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'MANAGE_BIOBJECTS_ACTION'
