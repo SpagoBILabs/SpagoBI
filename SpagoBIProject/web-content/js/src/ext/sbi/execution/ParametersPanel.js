@@ -436,13 +436,38 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				return true;
 			}, this);
 			
+			//on the load event, adds an empty value for the reset at the first position ONLY if the lov doesn't return an 
+			//element with empty description
+			store.on('load', function(store, records, options) {
+				
+				var exist = false;
+				for (i =0, l= records.length; i<l; i++ ){
+					if (store.getAt(i).get('description') === '' ){
+						exist = true;
+						break;
+					}
+				}
+
+				if (!exist){
+					var emptyData = {
+							value: '',
+							label: '',
+							description:'Empty value'
+						};
+				
+					var emptyId =  store.getTotalCount()+1;
+					var r = new store.recordType(emptyData, emptyId); // create new record
+					store.insert(0, r);
+				}
+			}, this);
+			
 			/*
 			 * The following store.load() instruction should not be necessary: the parameter's values are loaded when combobox is expanded
 			 */
 			//store.load(/*{params: param}*/);
 			
 			field = new Ext.form.ComboBox(Ext.apply(baseConfig, {
-				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}</div></tpl>'
+				tpl: '<tpl for="."><div ext:qtip="{label} ({value}): {description}" class="x-combo-list-item">{label}&nbsp;</div></tpl>'
                 , editable  : true			    
 			    , forceSelection : false
 			    , store :  store
