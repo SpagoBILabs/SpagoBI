@@ -76,7 +76,11 @@ public interface IDataSetDAO {
 	
 	public List loadAllDataSets() throws EMFUserError;
 	
-	public List loadPagedDatasetList(Integer offset, Integer fetchSize)throws EMFUserError ;
+	public List loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)throws EMFUserError ;
+	
+	public List loadPagedIDatasetList(Integer offset, Integer fetchSize)throws EMFUserError ;
+	
+	public Integer countBIObjAssociated (Integer dsId) throws EMFUserError;
 	
 	public Integer countDatasets()throws EMFUserError ;
 

@@ -278,6 +278,21 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 				}
 			}
+			SbiDomains category = null;
+			if (aDataSet.getCategoryId()!= null){ 
+				Criterion aCriterion = Expression.eq("valueId",	aDataSet.getCategoryId());
+				Criteria criteria = aSession.createCriteria(SbiDomains.class);
+				criteria.add(aCriterion);
+
+				category = (SbiDomains) criteria.uniqueResult();
+
+				if (category == null){
+					logger.error("The Domain with value_id= "+aDataSet.getCategoryId()+" does not exist.");
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
+				}
+			}
+			hibDataSet.setCategory(category);
+			
 			hibDataSet.setLabel(aDataSet.getLabel());
 			hibDataSet.setTransformer(transformer);
 			hibDataSet.setPivotColumnName(aDataSet.getPivotColumnName());
@@ -288,8 +303,6 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 			hibDataSet.setDescription(aDataSet.getDescription());
 			hibDataSet.setParameters(aDataSet.getParameters());
 			hibDataSet.setDsMetadata(aDataSet.getDsMetadata());
-
-
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -399,6 +412,21 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 				}
 			}
 
+			SbiDomains category = null;
+			if (aDataSet.getCategoryId()!= null){ 
+				Criterion aCriterion = Expression.eq("valueId",	aDataSet.getCategoryId());
+				Criteria criteria = aSession.createCriteria(SbiDomains.class);
+				criteria.add(aCriterion);
+
+				category = (SbiDomains) criteria.uniqueResult();
+
+				if (category == null){
+					logger.error("The Domain with value_id= "+aDataSet.getCategoryId()+" does not exist.");
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
+				}
+			}
+			hibDataSet.setCategory(category);
+			
 			hibDataSet.setLabel(aDataSet.getLabel());
 			hibDataSet.setTransformer(transformer);
 			hibDataSet.setPivotColumnName(aDataSet.getPivotColumnName());
@@ -477,12 +505,13 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 	 */
 	public IDataSet toDataSet(SbiDataSetConfig hibDataSet) throws EMFUserError{
 		IDataSet ds = null;
-		if(hibDataSet instanceof SbiFileDataSet){
+		if(hibDataSet instanceof SbiFileDataSet){		
 			ds = new FileDataSet();
-			((FileDataSet)ds).setFileName(((SbiFileDataSet)hibDataSet).getFileName());
+			((FileDataSet)ds).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
+			ds.setDsType("File");
 		}
 
-		if(hibDataSet instanceof SbiQueryDataSet){
+		if(hibDataSet instanceof SbiQueryDataSet){			
 			ds=new JDBCDataSet();
 			((JDBCDataSet)ds).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 
@@ -492,30 +521,37 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 				IDataSource dataSource=dataSourceDao.toDataSource(sbids);
 				((JDBCDataSet)ds).setDataSource(dataSource);
 			}
+			ds.setDsType("Query");
 		}
 
-		if(hibDataSet instanceof SbiWSDataSet){
+		if(hibDataSet instanceof SbiWSDataSet){			
 			ds=new WebServiceDataSet();
 			((WebServiceDataSet)ds).setAddress(((SbiWSDataSet)hibDataSet).getAdress());
 			((WebServiceDataSet)ds).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
 			((WebServiceDataSet)ds).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
+			ds.setDsType("Web Service");
 		}
 
-		if(hibDataSet instanceof SbiScriptDataSet){
+		if(hibDataSet instanceof SbiScriptDataSet){			
 			ds=new ScriptDataSet();
 			((ScriptDataSet)ds).setScript(((SbiScriptDataSet)hibDataSet).getScript());
 			((ScriptDataSet)ds).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
+			ds.setDsType("Script");
 		}
 
-		if(hibDataSet instanceof SbiJClassDataSet){
+		if(hibDataSet instanceof SbiJClassDataSet){			
 			ds=new JavaClassDataSet();
 			((JavaClassDataSet)ds).setClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+			ds.setDsType("Java Class");
 		}
 
 		ds.setId(hibDataSet.getDsId());
 		ds.setName(hibDataSet.getName());
 		ds.setLabel(hibDataSet.getLabel());
+		ds.setCategoryId((hibDataSet.getCategory()==null)?null:hibDataSet.getCategory().getValueId());
+		ds.setCategoryCd((hibDataSet.getCategory()==null)?null:hibDataSet.getCategory().getValueCd());
 		ds.setTransformerId((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueId());
+		ds.setTransformerCd((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueCd());
 		ds.setPivotColumnName(hibDataSet.getPivotColumnName());
 		ds.setPivotRowName(hibDataSet.getPivotRowName());
 		ds.setPivotColumnValue(hibDataSet.getPivotColumnValue());
@@ -557,7 +593,6 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 			tx = aSession.beginTransaction();
 			Integer dsIdInt = Integer.valueOf(dsId);
 
-			//String hql = " from SbiObjects s where s.dataSet.dsId = "+ dsIdInt;
 			String hql = " from SbiObjects s where s.dataSet.dsId = ?";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
@@ -585,6 +620,37 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 
 	}
 
+	public Integer countBIObjAssociated (Integer dsId) throws EMFUserError{
+		logger.debug("IN");		
+		Integer resultNumber = new Integer(0); 
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			String hql = "select count(*) from SbiObjects s where s.dataSet.dsId = ? ";
+			Query aQuery = aSession.createQuery(hql);
+			aQuery.setInteger(0, dsId.intValue());
+			resultNumber = (Integer)aQuery.uniqueResult();
+			
+		} catch (HibernateException he) {
+			logger.error("Error while getting the objects associated with the data set with id " + dsId, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return resultNumber;
+
+	}
+	
 	public Integer countDatasets() throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -615,7 +681,7 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 		return resultNumber;
 	}
 
-	public List loadPagedDatasetList(Integer offset, Integer fetchSize)
+	public List loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)
 			throws EMFUserError {
 		logger.debug("IN");
 		List toReturn = null;
@@ -628,7 +694,7 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			toReturn = new ArrayList();
-			List toTransform = null;
+			List sbiDatasetConfigList = null;
 		
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
@@ -643,13 +709,8 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 			hibernateQuery.setFirstResult(offset);
 			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
 
-			toTransform = hibernateQuery.list();			
-			Iterator it = toTransform.iterator();
-
-			while (it.hasNext()) {
-				SbiDataSetConfig temp = (SbiDataSetConfig) it.next();
-				toReturn.add(temp);
-			}
+			toReturn = hibernateQuery.list();	
+			
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Resources", he);	
 			if (tx != null)
@@ -665,6 +726,64 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 		}
 		return toReturn;
 	}
+	
+	
+	public List loadPagedIDatasetList(Integer offset, Integer fetchSize)
+		throws EMFUserError {
+		
+		logger.debug("IN");
+		List toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery; 
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+		
+			String hql = "select count(*) from SbiDataSetConfig ";
+			Query hqlQuery = aSession.createQuery(hql);
+			resultNumber = (Integer)hqlQuery.uniqueResult();
+			
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery("from SbiDataSetConfig order by label");
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			List sbiDatasetConfigList = hibernateQuery.list();	
+			
+			if(sbiDatasetConfigList!=null && !sbiDatasetConfigList.isEmpty()){
+				Iterator it = sbiDatasetConfigList.iterator();
+		
+				while (it.hasNext()) {
+					SbiDataSetConfig hibDataSet = (SbiDataSetConfig) it.next();
+					IDataSet ds = toDataSet(hibDataSet);
+					toReturn.add(ds);
+				}
+			}
+			
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of Resources", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
+	}
+	
 }
 
 

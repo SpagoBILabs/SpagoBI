@@ -30,6 +30,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 public class SbiDataSetConfig {
 	private int dsId;	
 	private SbiDomains transformer = null;
+	private SbiDomains category  = null;
 	private String name=null;
 	private String description=null;
 	private String label=null;
@@ -186,6 +187,14 @@ public class SbiDataSetConfig {
 
 	public void setPivotRowName(String pivotRowName) {
 		this.pivotRowName = pivotRowName;
+	}
+
+	public SbiDomains getCategory() {
+		return category;
+	}
+
+	public void setCategory(SbiDomains category) {
+		this.category = category;
 	}
 
 	/**
