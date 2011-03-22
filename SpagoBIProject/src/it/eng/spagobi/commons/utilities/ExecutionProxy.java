@@ -59,6 +59,8 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 public class ExecutionProxy {
 
@@ -259,6 +261,9 @@ public class ExecutionProxy {
 			if (pass==null) logger.warn("Pass Ticket is null");
 			mapPars.put(SpagoBIConstants.PASS_TICKET,pass);
 
+			
+			// TODO merge with ExecutionInstance.addSystemParametersForExternalEngines for SBI_CONTEXT, locale parameters, etc...
+			
 			// set spagobi context
 			if (!mapPars.containsKey(SpagoBIConstants.SBI_CONTEXT)) {
 				String sbicontext = GeneralUtilities.getSpagoBiContext();
@@ -298,15 +303,25 @@ public class ExecutionProxy {
 			}
 
 			//set userId if it's a send mail operation (backend operation)
-			if (sendMailOperation.equals(modality))
+			if (sendMailOperation.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
+			}
+			
+			// adding SBI_EXECUTION_ID parameter
+			if (!mapPars.containsKey("SBI_EXECUTION_ID")) {
+				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+				UUID uuidObj = uuidGen.generateTimeBasedUUID();
+				String executionId = uuidObj.toString();
+				executionId = executionId.replaceAll("-", "");
+				mapPars.put("SBI_EXECUTION_ID", executionId);
+			}
 
 			// AUDIT
 			AuditManager auditManager = AuditManager.getInstance();
-			Integer executionId = auditManager.insertAudit(biObject, null, profile, "", modality != null ? modality : "");
+			Integer auditId = auditManager.insertAudit(biObject, null, profile, "", modality != null ? modality : "");
 			// adding parameters for AUDIT updating
-			if (executionId != null) {
-				mapPars.put(AuditManager.AUDIT_ID, executionId.toString());
+			if (auditId != null) {
+				mapPars.put(AuditManager.AUDIT_ID, auditId.toString());
 			}
 
 			// built the request to sent to the engine
@@ -334,7 +349,7 @@ public class ExecutionProxy {
 				returnedContentType = "application/octet-stream";
 			}
 
-			auditManager.updateAudit(executionId,null , new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
+			auditManager.updateAudit(auditId,null , new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
 			httppost.releaseConnection();
 		} catch (Exception e) {
 			logger.error("Error while executing object ", e);
