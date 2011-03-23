@@ -62,10 +62,7 @@
 	        </property>
 	        <property name="operation" type="string">
 	            <column name="OPERATION" />
-	        </property>	        
-	        <property name="executorClass" type="string">
-	            <column name="EXECUTOR_CLASS" />
-	        </property>	        
+	        </property>	           
 		</subclass> 	
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet" discriminator-value="SbiScriptDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
 	        <property name="script" type="string">
