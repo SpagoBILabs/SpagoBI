@@ -4,7 +4,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -93,17 +92,6 @@ public class DataSetJSONSerializer implements Serializer {
 				if(dataSource!=null){
 					result.put(DATA_SOURCE, dataSource.getLabel());
 				}				
-			}
-			
-			else if(ds instanceof JDBCStandardDataSet){
-				String query = ((JDBCStandardDataSet)ds).getQuery().toString();
-				if(query!=null){
-					result.put(QUERY, query);
-				}
-				IDataSource dataSource = ((JDBCStandardDataSet)ds).getDataSource();
-				if(dataSource!=null){
-					result.put(DATA_SOURCE, dataSource.getLabel());
-				}			
 			}
 
 			else if(ds instanceof WebServiceDataSet){
