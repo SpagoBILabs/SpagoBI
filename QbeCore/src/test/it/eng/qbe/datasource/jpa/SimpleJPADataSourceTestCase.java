@@ -21,25 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
-import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.DriverManager;
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.hibernate.HibernateDriver;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
