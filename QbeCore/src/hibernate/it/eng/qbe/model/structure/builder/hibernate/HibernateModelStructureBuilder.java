@@ -170,6 +170,7 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 		ClassMetadata classMetadata;
 		Type identifierType;
 		
+		getDataSource().getHibernateConfiguration().buildMappings();//must be called 
 		classMapping = getDataSource().getHibernateConfiguration().getClassMapping(dataMartEntity.getType());
 		if(classMapping == null ){
 			System.out.println("class mapping for entity [" + dataMartEntity.getType() + "] not found");
