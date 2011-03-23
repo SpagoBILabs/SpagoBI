@@ -32,6 +32,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -47,7 +48,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class JDBCDataSet extends ConfigurableDataSet {
 	
-	public static String DS_TYPE = "SbiQueryDataSet";
+public static String DS_TYPE = "SbiQueryDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(JDBCDataSet.class);
     
@@ -58,21 +59,25 @@ public class JDBCDataSet extends ConfigurableDataSet {
     public JDBCDataSet() {
 		super();
 		setDataProxy( new JDBCDataProxy() );
-		setDataReader( new JDBCDataReader() );
+		setDataReader( new JDBCStandardDataReader() );
 		addBehaviour( new QuerableBehaviour(this) );
 	}
+    
+    // cannibalization :D
+    public JDBCDataSet(JDBCDataSet jdbcDataset) {
+    	this(jdbcDataset.toSpagoBiDataSet());
+    }
     
     public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 		
 		setDataProxy( new JDBCDataProxy() );
-		setDataReader( new JDBCDataReader() );
+		setDataReader( new JDBCStandardDataReader() );
 		
 		try{
 			setDataSource( DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) );
-		}
-		catch (Exception e) {
-			throw new RuntimeException("missing right exstension", e);
+		} catch (Exception e) {
+			throw new RuntimeException("Missing right exstension", e);
 		}
 	
 		setQuery( dataSetConfig.getQuery() );
@@ -96,7 +101,7 @@ public class JDBCDataSet extends ConfigurableDataSet {
 				logger.debug("Set UP Schema="+schema);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while reading schema name from user profile", t);	
-			}	
+			}		
 		}
 	}
 	
@@ -142,5 +147,4 @@ public class JDBCDataSet extends ConfigurableDataSet {
 	public IDataSource getDataSource() {
 		return getDataProxy().getDataSource();
 	}
-	    
 }

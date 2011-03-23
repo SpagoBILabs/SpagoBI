@@ -23,57 +23,58 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
-import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCStandardDataProxy;
-import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
-import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
+import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
+import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
+import it.eng.spagobi.tools.dataset.common.datareader.JDBCDataReader;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
- * @deprecated use JDBCDataSet instead (now it is spago free)
- * 
  * @authors
- *  Andrea Gioia (andrea.gioia@eng.it)
+ * Angelo Bernabei
+ *         angelo.bernabei@eng.it
+ * Giulio Gavardi
+ *     giulio.gavardi@eng.it
+ *  Andrea Gioia
+ *         andrea.gioia@eng.it
+ *         
+ *  @deprecated
  */
-public class JDBCStandardDataSet extends ConfigurableDataSet {
+public class CopyOfJDBCDataSet extends ConfigurableDataSet {
 	
 	public static String DS_TYPE = "SbiQueryDataSet";
 	
-	private static transient Logger logger = Logger.getLogger(JDBCStandardDataSet.class);
+	private static transient Logger logger = Logger.getLogger(CopyOfJDBCDataSet.class);
     
 	
 	/**
      * Instantiates a new empty JDBC data set.
      */
-    public JDBCStandardDataSet() {
+    public CopyOfJDBCDataSet() {
 		super();
-		setDataProxy( new JDBCStandardDataProxy() );
-		setDataReader( new JDBCStandardDataReader() );
+		setDataProxy( new JDBCDataProxy() );
+		setDataReader( new JDBCDataReader() );
 		addBehaviour( new QuerableBehaviour(this) );
 	}
     
-    // cannibalization :D
-    public JDBCStandardDataSet(JDBCDataSet jdbcDataset) {
-    	this(jdbcDataset.toSpagoBiDataSet());
-    }
-    
-    public JDBCStandardDataSet(SpagoBiDataSet dataSetConfig) {
+    public CopyOfJDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 		
-		setDataProxy( new JDBCStandardDataProxy() );
-		setDataReader( new JDBCStandardDataReader() );
+		setDataProxy( new JDBCDataProxy() );
+		setDataReader( new JDBCDataReader() );
 		
 		try{
 			setDataSource( DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) );
-		} catch (Exception e) {
-			throw new RuntimeException("Missing right exstension", e);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("missing right exstension", e);
 		}
 	
 		setQuery( dataSetConfig.getQuery() );
@@ -93,11 +94,11 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
 			String schema=null;
 			try {
 				schema = (String)userProfile.get(getDataSource().getSchemaAttribute());
-				((JDBCStandardDataProxy)dataProxy).setSchema(schema);
+				((JDBCDataProxy)dataProxy).setSchema(schema);
 				logger.debug("Set UP Schema="+schema);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while reading schema name from user profile", t);	
-			}		
+			}	
 		}
 	}
 	
@@ -105,13 +106,13 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
 	
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd;
-		JDBCStandardDataProxy dataProxy;
+		JDBCDataProxy dataProxy;
 		
 		sbd = super.toSpagoBiDataSet();
 		
 		sbd.setType( DS_TYPE );
 			
-		dataProxy = (JDBCStandardDataProxy)this.getDataProxy();
+		dataProxy = (JDBCDataProxy)this.getDataProxy();
 		sbd.setDataSource(dataProxy.getDataSource().toSpagoBiDataSource());
 		if(query!=null){
 		sbd.setQuery(query.toString());
@@ -120,20 +121,20 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
 	}
 
 	
-	public JDBCStandardDataProxy getDataProxy() {
+	public JDBCDataProxy getDataProxy() {
 		IDataProxy dataProxy;
 		
 		dataProxy = super.getDataProxy();
 		
 		if(dataProxy == null) {
-			setDataProxy( new JDBCStandardDataProxy() );
+			setDataProxy( new JDBCDataProxy() );
 			dataProxy = getDataProxy();
 		}
 		
-		if(!(dataProxy instanceof  JDBCStandardDataProxy)) throw new RuntimeException("DataProxy cannot be of type [" + 
+		if(!(dataProxy instanceof  JDBCDataProxy)) throw new RuntimeException("DataProxy cannot be of type [" + 
 				dataProxy.getClass().getName() + "] in JDBCDataSet");
 		
-		return (JDBCStandardDataProxy)dataProxy;
+		return (JDBCDataProxy)dataProxy;
 	}
 	
 	public void setDataSource(IDataSource dataSource) {
