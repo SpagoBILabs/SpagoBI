@@ -131,7 +131,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 				fetchSize = (fetchSize > 0)? Math.min(fetchSize, maxResults): maxResults;
 			}
 			logger.debug("Executing query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
-			jpqlQuery.setFirstResult(offset).setMaxResults(fetchSize);			
+			jpqlQuery.setFirstResult(offset);
+			if(fetchSize > 0) {
+				jpqlQuery.setMaxResults(fetchSize);		
+			}
 			result = jpqlQuery.getResultList();
 			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}	
