@@ -21,17 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
-import it.eng.spago.dbaccess.Utils;
-import it.eng.spago.dbaccess.sql.DataConnection;
-import it.eng.spago.dbaccess.sql.SQLCommand;
-import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
-import it.eng.spago.dbaccess.sql.result.DataResult;
-import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
+
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
@@ -84,50 +82,133 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 */
 	public IDataStore load(IDataReader dataReader) {
 		
-		IDataStore dataStore = null;
-		Object result = null;
+//		IDataStore dataStore = null;
+//		Object result = null;
+//		logger.debug("IN");
+//		
+//		DataConnection dataConnection = null;
+//		SQLCommand sqlCommand = null;
+//		DataResult dataResult = null;
+//		try {
+//			if (connection == null) {
+//				throw new Exception("JDBC connection not set!!");
+//			}
+//			if (connection.isClosed()) {
+//				throw new Exception("JDBC connection is closed!!");
+//			}
+//			dataConnection = getDataConnection(connection);
+//			logger.debug("Executing statemnet ["  + statement + "]");
+//			sqlCommand = dataConnection.createSelectCommand( statement );
+//			dataResult = sqlCommand.execute();
+//			if (dataResult != null) {
+//				result = (ScrollableDataResult) dataResult.getDataObject();				
+//			}
+//			dataStore = dataReader.read( result );
+//		} catch(Throwable t){
+//			throw new SpagoBIRuntimeException("An error occurrede while executing query [" + statement + "]", t);
+//		} finally {
+//			Utils.releaseResources(null, sqlCommand, dataResult);
+//			logger.debug("OUT");
+//		}
+//		
+//		return dataStore;
+		
+		IDataStore dataStore;
+		Connection connection;
+		Statement stmt;
+		ResultSet resultSet;
+		
 		logger.debug("IN");
 		
-		DataConnection dataConnection = null;
-		SQLCommand sqlCommand = null;
-		DataResult dataResult = null;
-		try {
-			if (connection == null) {
-				throw new Exception("JDBC connection not set!!");
+		connection = null;
+		stmt = null;
+		resultSet = null;
+		
+		try {			
+			
+			try {
+				stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
-			if (connection.isClosed()) {
-				throw new Exception("JDBC connection is closed!!");
+			
+			
+	        try {
+	        	//get max size 
+	        	if(getMaxResults() > 0){
+	        		stmt.setMaxRows(getMaxResults());
+	        	}
+				resultSet = stmt.executeQuery( getStatement() );
+				
+			} catch (Throwable t) {
+				logger.error("Trovata!:",t);
+				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
-			dataConnection = getDataConnection(connection);
-			logger.debug("Executing statemnet ["  + statement + "]");
-			sqlCommand = dataConnection.createSelectCommand( statement );
-			dataResult = sqlCommand.execute();
-			if (dataResult != null) {
-				result = (ScrollableDataResult) dataResult.getDataObject();				
+			
+			dataStore = null;
+			try {
+				dataStore = dataReader.read( resultSet );
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
 			}
-			dataStore = dataReader.read( result );
-		} catch(Throwable t){
-			throw new SpagoBIRuntimeException("An error occurrede while executing query [" + statement + "]", t);
-		} finally {
-			Utils.releaseResources(null, sqlCommand, dataResult);
-			logger.debug("OUT");
+			
+			if( isCalculateResultNumberOnLoadEnabled() ) {
+				
+			}
+			
+		} finally {		
+			try {
+				releaseResources(null, stmt, resultSet);
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to release allocated resources properly", t);
+			}
 		}
 		
 		return dataStore;
 	}
 	
-	
-	private DataConnection getDataConnection(Connection con) {
-		DataConnection dataCon = null;
+	private void releaseResources(Connection connection, Statement statement, ResultSet resultSet) {
+		
+		logger.debug("IN");
+		
 		try {
-			Class mapperClass = Class.forName("it.eng.spago.dbaccess.sql.mappers.OracleSQLMapper");
-			SQLMapper sqlMapper = (SQLMapper)mapperClass.newInstance();
-			dataCon = new DataConnection(con, "2.1", sqlMapper);
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while instatiating object [" + DataConnection.class.getName() + "]", t);
+			logger.debug("Relesing resources ...");
+			if(resultSet != null) {
+				try {
+					resultSet.close();
+
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [resultSet]", e);
+				}
+				logger.debug("[resultSet] released succesfully");
+			}
+			
+			if(statement != null) {
+				try {
+					statement.close();
+					
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [statement]", e);
+				}
+				logger.debug("[statement] released succesfully");
+			}
+			
+			if(connection != null) {
+				try {
+					if (!connection.isClosed()) {
+					    connection.close();
+					}
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [connection]", e);
+				}
+				logger.debug("[connection] released succesfully");
+			}		
+			logger.debug("All resources have been released succesfully");
+		} finally {
+			logger.debug("OUT");
 		}
-		return dataCon;
 	}
+
 
 	public String getStatement() {
 		return statement;
