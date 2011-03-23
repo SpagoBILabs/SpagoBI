@@ -81,32 +81,32 @@ public class ObjectComparator {
 			BigInteger d2 = new BigInteger(obj2);
 			return rc*d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Byte.class)){
+		if(type.isAssignableFrom(Byte.class) || type.isAssignableFrom(byte.class)){
 			Byte d1 = new Byte(obj1);
 			Byte d2 = new Byte(obj2);
 			return rc* d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Float.class)){
+		if(type.isAssignableFrom(Float.class) || type.isAssignableFrom(float.class)){
 			Float d1 = new Float(obj1);
 			Float d2 = new Float(obj2);
 			return rc* d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Double.class)){
+		if(type.isAssignableFrom(Double.class) || type.isAssignableFrom(double.class)){
 			Double d1 = new Double(obj1);
 			Double d2 = new Double(obj2);
 			return rc* d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Integer.class)){
+		if(type.isAssignableFrom(Integer.class) || type.isAssignableFrom(int.class)){
 			Integer d1 = new Integer(obj1);
 			Integer d2 = new Integer(obj2);
 			return rc* d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Long.class)){
+		if(type.isAssignableFrom(Long.class) || type.isAssignableFrom(long.class)){ 
 			Long d1 = new Long(obj1);
 			Long d2 = new Long(obj2);
 			return rc* d1.compareTo(d2);
 		} 
-		if(type.isAssignableFrom(Short.class)){
+		if(type.isAssignableFrom(Short.class) || type.isAssignableFrom(short.class)){
 			Long d1 = new Long(obj1);
 			Long d2 = new Long(obj2);
 			return rc* d1.compareTo(d2);
