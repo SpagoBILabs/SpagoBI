@@ -43,8 +43,7 @@ public class DataSetFactory {
 		if ( ScriptDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
 			dataSet = new ScriptDataSet( dataSetConfig );	
 		} else if (  JDBCDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
-			//dataSet = new JDBCDataSet( dataSetConfig );
-			dataSet = new JDBCStandardDataSet( dataSetConfig );
+			dataSet = new JDBCDataSet( dataSetConfig );
 		} else if ( JavaClassDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {
 			dataSet = new JavaClassDataSet( dataSetConfig );
 		} else if ( WebServiceDataSet.DS_TYPE.equals( dataSetConfig.getType() ) ) {

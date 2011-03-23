@@ -37,12 +37,13 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
 /**
- * @deprecated 
- * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
@@ -50,15 +51,24 @@ public class JDBCDataProxy extends AbstractDataProxy {
 
 	IDataSource dataSource;
 	String statement;
-	String schema=null;
-
+	String schema;
+	
 	private static transient Logger logger = Logger.getLogger(JDBCDataProxy.class);
-
-
-	public JDBCDataProxy() {
-
+	
+	
+	public JDBCDataProxy() { }
+	
+	public JDBCDataProxy(IDataSource dataSource, String statement) {
+		setDataSource(dataSource);
+		setStatement(statement);
 	}
-
+	
+	public JDBCDataProxy(IDataSource dataSource) {
+		setDataSource(dataSource);
+		setStatement(statement);
+	}
+	
+	
 	public String getSchema() {
 		return schema;
 	}
@@ -66,73 +76,73 @@ public class JDBCDataProxy extends AbstractDataProxy {
 	public void setSchema(String schema) {
 		this.schema = schema;
 	}
-
-	public JDBCDataProxy(IDataSource dataSource, String statement) {
-		setDataSource(dataSource);
-		setStatement(statement);
-	}
-
-	public JDBCDataProxy(IDataSource dataSource) {
-		setDataSource(dataSource);
-		setStatement(statement);
-	}
-
+	
 	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
 		if(statement != null) {
 			setStatement(statement);
 		}
 		return load(dataReader);
 	}
-
+	
 	public IDataStore load(IDataReader dataReader) {
-
-		IDataStore dataStore = null;
-		Object result = null;
+		
+		IDataStore dataStore;
+		Connection connection;
+		Statement stmt;
+		ResultSet resultSet;
+		
 		logger.debug("IN");
-
-		DataConnection dataConnection = null;
-		SQLCommand sqlCommand = null;
-		DataResult dataResult = null;
-		Connection conn = null;
-		try{
-			conn = dataSource.toSpagoBiDataSource().readConnection(schema); 
-			dataConnection = getDataConnection(conn);
-
-		} catch (Throwable t) {
-			String dataSourceL ="''";
-			if(this.dataSource != null) dataSourceL = "'"+this.dataSource.getLabel()+"'";
-			throw new ConnectionDsException("An error occurred while connecting with datasource [" + dataSourceL + "]", t);
-		}
-
-		try {
-			logger.debug("Executing statemnet ["  + statement + "]");
-			sqlCommand = dataConnection.createSelectCommand( statement );
-			dataResult = sqlCommand.execute();
-			if(dataResult != null){
-				result = (ScrollableDataResult) dataResult.getDataObject();				
+		
+		connection = null;
+		stmt = null;
+		resultSet = null;
+		
+		try {			
+			try {
+				connection = getDataSource().getConnection( getSchema() );
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
-			dataStore = dataReader.read( result );
-		} catch(Throwable t){
-			throw new QueryDsExecutionException("An error occurred while executing statement [" + statement + "]", t);
-		} finally {
-			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
-			logger.debug("OUT");
+			
+			try {
+				stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+			}
+			
+			
+	        try {
+	        	//get max size 
+	        	if(getMaxResults() > 0){
+	        		stmt.setMaxRows(getMaxResults());
+	        	}
+				resultSet = stmt.executeQuery( getStatement() );
+				
+			} catch (Throwable t) {
+				logger.error("Trovata!:",t);
+				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
+			}
+			
+			dataStore = null;
+			try {
+				dataStore = dataReader.read( resultSet );
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An error occurred while parsing resultset", t);
+			}
+			
+			if( isCalculateResultNumberOnLoadEnabled() ) {
+				
+			}
+			
+		} finally {		
+			try {
+				releaseResources(connection, stmt, resultSet);
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to release allocated resources properly", t);
+			}
 		}
-
+		
 		return dataStore;
-	}
-
-
-	private DataConnection getDataConnection(Connection con) throws EMFInternalError {
-		DataConnection dataCon = null;
-		try {
-			Class mapperClass = Class.forName("it.eng.spago.dbaccess.sql.mappers.OracleSQLMapper");
-			SQLMapper sqlMapper = (SQLMapper)mapperClass.newInstance();
-			dataCon = new DataConnection(con, "2.1", sqlMapper);
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while instatiating object [" + DataConnection.class.getName() + "]", t);
-		}
-		return dataCon;
 	}
 
 	public IDataSource getDataSource() {
@@ -143,11 +153,46 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		this.dataSource = dataSource;
 	}
 
-	public String getStatement() {
-		return statement;
-	}
+	
+	private void releaseResources(Connection connection, Statement statement, ResultSet resultSet) {
+		
+		logger.debug("IN");
+		
+		try {
+			logger.debug("Relesing resources ...");
+			if(resultSet != null) {
+				try {
+					resultSet.close();
 
-	public void setStatement(String statement) {
-		this.statement = statement;
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [resultSet]", e);
+				}
+				logger.debug("[resultSet] released succesfully");
+			}
+			
+			if(statement != null) {
+				try {
+					statement.close();
+					
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [statement]", e);
+				}
+				logger.debug("[statement] released succesfully");
+			}
+			
+			if(connection != null) {
+				try {
+					if (!connection.isClosed()) {
+					    connection.close();
+					}
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [connection]", e);
+				}
+				logger.debug("[connection] released succesfully");
+			}		
+			logger.debug("All resources have been released succesfully");
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 }

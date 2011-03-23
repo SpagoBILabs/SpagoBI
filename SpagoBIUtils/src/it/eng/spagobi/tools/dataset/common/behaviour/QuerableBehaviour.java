@@ -31,7 +31,6 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
@@ -76,10 +75,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				statement = (String) ((ScriptDataSet)getTargetDataSet()).getScript();
 			} else if (getTargetDataSet() instanceof JDBCDataSet) {
 				statement = (String) ((JDBCDataSet)getTargetDataSet()).getQuery();
-			} else if (getTargetDataSet() instanceof JDBCStandardDataSet){
-				statement = (String) ((JDBCStandardDataSet)getTargetDataSet()).getQuery();			
-			}
-			else {
+			} else {
 				// maybe better to delete getQuery from IDataSet
 				statement = (String)getTargetDataSet().getQuery();
 			}
@@ -93,7 +89,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				} catch (Throwable e) {
 					throw new ProfileAttributeDsException("An error occurred while excuting query [" + statement + "]",e);
 				}
-			} else if (getTargetDataSet() instanceof JDBCDataSet || getTargetDataSet() instanceof JDBCStandardDataSet) {	 
+			} else if (getTargetDataSet() instanceof JDBCDataSet) {	 
 				try {
 					statement = StringUtilities.substituteParametersInString(statement, getTargetDataSet().getUserProfileAttributes() );
 				} catch (Exception e) {
