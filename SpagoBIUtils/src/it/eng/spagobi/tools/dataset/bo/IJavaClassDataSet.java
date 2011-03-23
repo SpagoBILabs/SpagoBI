@@ -25,8 +25,6 @@ package it.eng.spagobi.tools.dataset.bo;
 import java.util.List;
 import java.util.Map;
 
-import it.eng.spago.security.IEngUserProfile;
-
 public interface IJavaClassDataSet {
 	
 	/**

@@ -2,8 +2,6 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import java.util.Map;
 
-import it.eng.spago.security.IEngUserProfile;
-
 public abstract class AbstractDataProxy implements IDataProxy {
 
 	Map parameters;

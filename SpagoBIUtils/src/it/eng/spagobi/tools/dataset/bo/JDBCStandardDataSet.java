@@ -23,14 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
@@ -40,7 +32,13 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 /**
+ * @deprecated use JDBCDataSet instead (now it is spago free)
+ * 
  * @authors
  *  Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -62,11 +60,11 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
 	}
     
     // cannibalization :D
-    public JDBCStandardDataSet(JDBCDataSet jdbcDataset) throws EMFUserError {
+    public JDBCStandardDataSet(JDBCDataSet jdbcDataset) {
     	this(jdbcDataset.toSpagoBiDataSet());
     }
     
-    public JDBCStandardDataSet(SpagoBiDataSet dataSetConfig) throws EMFUserError {
+    public JDBCStandardDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 		
 		setDataProxy( new JDBCStandardDataProxy() );
@@ -74,11 +72,8 @@ public class JDBCStandardDataSet extends ConfigurableDataSet {
 		
 		try{
 			setDataSource( DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) );
-		}
-		catch (Exception e) {
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9212);
-			logger.debug("missing right exstension");
-			throw userError;
+		} catch (Exception e) {
+			throw new RuntimeException("Missing right exstension", e);
 		}
 	
 		setQuery( dataSetConfig.getQuery() );

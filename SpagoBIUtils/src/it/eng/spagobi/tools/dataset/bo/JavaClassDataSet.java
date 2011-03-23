@@ -1,11 +1,11 @@
 package it.eng.spagobi.tools.dataset.bo;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JavaClassDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+
+import org.apache.log4j.Logger;
 
 public class JavaClassDataSet extends ConfigurableDataSet {
 	 
