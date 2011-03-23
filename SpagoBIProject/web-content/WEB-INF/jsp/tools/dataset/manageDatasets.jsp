@@ -20,11 +20,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <%@ page import="it.eng.spagobi.commons.bo.Domain,
+				 it.eng.spagobi.tools.datasource.bo.*,
 				 java.util.ArrayList,
 				 java.util.List,
 				 org.json.JSONArray" %>
 <%
+    List dsTypesList = (List) aSessionContainer.getAttribute("dsTypesList");
     List catTypesCd = (List) aSessionContainer.getAttribute("catTypesList");
+    List dataSourceList = (List) aSessionContainer.getAttribute("dataSourceList");
+    List scriptLanguageList = (List) aSessionContainer.getAttribute("scriptLanguageList");
+	
 %>
 
 
@@ -35,6 +40,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <script type="text/javascript">
 
 	<%	
+	JSONArray dsTypesArray = new JSONArray();
+	if(dsTypesList != null){
+		for(int i=0; i< dsTypesList.size(); i++){
+			Domain domain = (Domain)dsTypesList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueCd());
+			dsTypesArray.put(temp);
+		}
+	}	
+	String dsTypes = dsTypesArray.toString();
+	dsTypes = dsTypes.replaceAll("\"","'");
 	
 	JSONArray catTypesArray = new JSONArray();
 	if(catTypesCd != null){
@@ -47,11 +63,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String catTypes = catTypesArray.toString();
 	catTypes = catTypes.replaceAll("\"","'");
+	
+	JSONArray dataSourcesArray = new JSONArray();
+	if(dataSourceList != null){
+		for(int i=0; i< dataSourceList.size(); i++){
+			DataSource datasource = (DataSource)dataSourceList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(datasource.getLabel());
+			dataSourcesArray.put(temp);
+		}
+	}	
+	String dataSourceLabels = dataSourcesArray.toString();
+	dataSourceLabels = dataSourceLabels.replaceAll("\"","'");
+	
+	JSONArray scriptLanguagesArray = new JSONArray();
+	if(scriptLanguageList != null){
+		for(int i=0; i< scriptLanguageList.size(); i++){
+			Domain domain = (Domain)scriptLanguageList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueCd());
+			scriptLanguagesArray.put(temp);
+		}
+	}	
+	String scriptTypes = scriptLanguagesArray.toString();
+	scriptTypes = scriptTypes.replaceAll("\"","'");
     
     %>
 
     var config = {};  
+    config.dsTypes = <%= dsTypes%>;
     config.catTypeCd = <%= catTypes%>;
+    config.dataSourceLabels = <%= dataSourceLabels%>;
+    config.scriptTypes = <%= scriptTypes%>;
+    
 	
 	var url = {
     	host: '<%= request.getServerName()%>'

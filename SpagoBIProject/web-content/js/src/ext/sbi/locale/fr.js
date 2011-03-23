@@ -498,9 +498,25 @@ Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir Interrogations QbE';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de sp\u00e9cifier le pool des connexions configur\u00e9es dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
 
+//Datasets
+Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilisée Par';
+Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestion des DataSets';
+Sbi.locale.ln['sbi.ds.listTitle'] = 'Liste des DataSets';
+Sbi.locale.ln['sbi.ds.catType'] = 'Categorie';
+Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'Type de DataSet';
+Sbi.locale.ln['sbi.ds.fileName'] = 'Nom du Fichier';
+Sbi.locale.ln['sbi.ds.dataSource'] = 'Source des Données';
+Sbi.locale.ln['sbi.ds.query'] = 'Query';
+Sbi.locale.ln['sbi.ds.wsAddress'] = 'Addresse du Web Service';
+Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operation du Web Service';
+Sbi.locale.ln['sbi.ds.script'] = 'Script';
+Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Langage du Script';
+Sbi.locale.ln['sbi.ds.jclassName'] = 'Nom de Classe Java';
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
 Sbi.locale.ln['sbi.generic.from'] = 'Date de d\u00e9but';
 Sbi.locale.ln['sbi.generic.to'] = 'Date de fin';
+
 

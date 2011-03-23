@@ -90,6 +90,14 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          , 'dsTypeCd'
 		                    	          , 'catTypeCd'
 		                    	          , 'usedByNDocs'
+		                    	          , 'fileName'
+		                    	          , 'query'
+		                    	          , 'dataSource'
+		                    	          , 'wsAddress'
+		                    	          , 'wsOperation'
+		                    	          , 'script'
+		                    	          , 'scriptLanguage'
+		                    	          , 'jclassName'
 		                    	          ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -99,18 +107,26 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 										  description:'',
 										  dsTypeCd:'',
 										  catTypeCd:'',
-										  usedByNDocs: 0
+										  usedByNDocs: 0,
+										  fileName:'',
+		                    	          query:'',
+		                    	          dataSource:'',
+		                    	          wsAddress:'',
+		                    	          wsOperation:'',
+		                    	          script:'',
+		                    	          scriptLanguage:'',
+		                    	          jclassName:''
 										 });
 		
 		this.configurationObject.gridColItems = [
 		                                         {id:'label',header: LN('sbi.generic.label'), width: 120, sortable: true, locked:false, dataIndex: 'label'},
 		                                         {header: LN('sbi.generic.name'), width: 120, sortable: true, dataIndex: 'name'},
 		                                         {header: LN('sbi.generic.type'), width: 50, sortable: true, dataIndex: 'dsTypeCd'},
-		                                         {header: LN('sbi.datasets.numDocs'), width: 60, sortable: true, dataIndex: 'usedByNDocs'}
+		                                         {header: LN('sbi.ds.numDocs'), width: 60, sortable: true, dataIndex: 'usedByNDocs'}
 		                                        ];
 		
-		this.configurationObject.panelTitle = LN('sbi.datasets.panelTitle');
-		this.configurationObject.listTitle = LN('sbi.datasets.listTitle');
+		this.configurationObject.panelTitle = LN('sbi.ds.panelTitle');
+		this.configurationObject.listTitle = LN('sbi.ds.listTitle');
 		
 		this.initTabItems();
     }
@@ -133,7 +149,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
  	   var detailFieldName = {
           	 maxLength:40,
         	 minLength:1,
-        	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
              allowBlank: false,
@@ -144,7 +159,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
  	   var detailFieldLabel = {
           	 maxLength:45,
         	 minLength:1,
-        	//regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.label'),
              allowBlank: false,
@@ -167,7 +181,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
         	  name: 'catTypeCd',
               store: this.catTypesStore,
               width : 120,
-              fieldLabel: LN('sbi.generic.catType'),
+              fieldLabel: LN('sbi.ds.catType'),
               displayField: 'catTypeCd',   // what the user sees in the popup
               valueField: 'catTypeCd',        // what is passed to the 'change' event
               typeAhead: true,
@@ -181,31 +195,198 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
               xtype: 'combo'
           };  
  	  //END list of detail fields
+ 	   
+ 	  this.detailTab = new Ext.Panel({
+	        title: LN('sbi.generic.details')
+	        , itemId: 'detail'
+	        , width: 430
+	        , items: {
+		   		 id: 'items-detail',   	
+	 		   	 itemId: 'items-detail',   	              
+	 		   	 columnWidth: 0.4,
+	             xtype: 'fieldset',
+	             labelWidth: 90,
+	             defaults: {width: 200, border:false},    
+	             defaultType: 'textfield',
+	             autoHeight: true,
+	             autoScroll  : true,
+	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	             border: false,
+	             style: {
+	                 "margin-left": "10px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [detailFieldId, detailFieldLabel, detailFieldName, 
+	                     detailFieldDescr, detailFieldCatType]
+	    	}
+	    });
 
- 	   this.configurationObject.tabItems = [{
-		        title: LN('sbi.generic.details')
-		        , itemId: 'detail'
-		        , width: 430
-		        , items: {
-			   		 id: 'items-detail',   	
-		 		   	 itemId: 'items-detail',   	              
-		 		   	 columnWidth: 0.4,
-		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
-		             defaultType: 'textfield',
-		             autoHeight: true,
-		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
-		             border: false,
-		             style: {
-		                 "margin-left": "10px", 
-		                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
-		             },
-		             items: [detailFieldId, detailFieldLabel, detailFieldName, 
-		                     detailFieldDescr, detailFieldCatType]
-		    	}
-		    }];
+ 	//DataSource Store types combobox
+ 	   this.dsTypesStore = new Ext.data.SimpleStore({
+	        fields: ['dsTypeCd'],
+	        data: config.dsTypes,
+	        autoLoad: false
+	    });
+ 	  
+	    this.dataSourceStore = new Ext.data.SimpleStore({
+	        fields: ['dataSource'],
+	        data: config.dataSourceLabels,
+	        autoLoad: false
+	    });
+	    
+	    this.scriptLanguagesStore = new Ext.data.SimpleStore({
+	        fields: ['scriptLanguage'],
+	        data: config.scriptTypes,
+	        autoLoad: false
+	    });
+	    
+	  //START list of Advanced fields
+	    var detailDsType =  {
+	      	    name: 'dsTypeCd',
+	            store: this.dsTypesStore,
+	            width : 120,
+	            fieldLabel: LN('sbi.ds.dsTypeCd'),
+	            displayField: 'dsTypeCd',   // what the user sees in the popup
+	            valueField: 'dsTypeCd',        // what is passed to the 'change' event
+	            typeAhead: true,
+	            forceSelection: true,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            selectOnFocus: true,
+	            editable: false,
+	            allowBlank: true,
+	            validationEvent:true,
+	            xtype: 'combo'
+	        }; 
+	    
+	    var detailFileName = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.fileName'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'fileName'
+	         };
+	    
+	    var detailDataSource =  {
+	      	    name: 'dataSource',
+	            store: this.dataSourceStore,
+	            width : 120,
+	            fieldLabel: LN('sbi.ds.dataSource'),
+	            displayField: 'dataSource',   // what the user sees in the popup
+	            valueField: 'dataSource',        // what is passed to the 'change' event
+	            typeAhead: true,
+	            forceSelection: true,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            selectOnFocus: true,
+	            editable: false,
+	            allowBlank: true,
+	            validationEvent:true,
+	            xtype: 'combo'
+	        }; 
+	    
+	    var detailQuery = {
+	             maxLength:1000,
+	             xtype: 'textarea',
+	        	 width : this.textAreaWidth,
+	             height : 150,
+	          	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.query'),
+	             validationEvent:true,
+	             name: 'query'
+	           };
+	    
+	    var detailWsAddress = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.wsAddress'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'wsAddress'
+	         };
+	    
+	    var detailWsOperation = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.wsOperation'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'wsOperation'
+	         };
+	    
+	    var detailScript = {
+	    		maxLength:1000,
+	             xtype: 'textarea',
+	        	 width : this.textAreaWidth,
+	             height : 50,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.script'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'script'
+	         };
+	    
+	    var detailScriptLanguage =  {
+	      	    name: 'scriptLanguage',
+	            store: this.scriptLanguagesStore,
+	            width : 120,
+	            fieldLabel: LN('sbi.ds.scriptLanguage'),
+	            displayField: 'scriptLanguage',   // what the user sees in the popup
+	            valueField: 'scriptLanguage',        // what is passed to the 'change' event
+	            typeAhead: true,
+	            forceSelection: true,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            selectOnFocus: true,
+	            editable: false,
+	            allowBlank: true,
+	            validationEvent:true,
+	            xtype: 'combo'
+	        }; 
+	    
+	    var detailJclassName = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.jclassName'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'jclassName'
+	         };
+	    
+ 	   
+ 	   this.configurationObject.tabItems = [this.detailTab,{
+	    	title: LN('sbi.generic.type')
+	        , itemId: 'advanced'
+	        , width: 350
+	        , items: {
+		   		 id: 'advanced-detail',   	
+	 		   	 itemId: 'advanced-detail',   	              
+	 		   	// columnWidth: 0.4,
+	             xtype: 'fieldset',
+	             scope: this,
+	             labelWidth: 90,
+	             defaults: {width: 280, border:false},    
+	             defaultType: 'textfield',
+	             autoHeight: true,
+	             autoScroll  : true,
+	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
+	             border: false,
+	             style: {
+	                 "margin-left": "10px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [detailDsType,
+	                     detailFileName, detailDataSource, 
+	                     detailQuery, detailWsAddress, 
+	                     detailWsOperation, detailScript,
+	                     detailScriptLanguage, detailJclassName ]
+	    	}			    
+	    }];
 	}
 	
     //OVERRIDING save method

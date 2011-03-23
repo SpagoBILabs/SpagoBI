@@ -6,7 +6,7 @@
 			<CONDITIONS>
 				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="DATASET_INSERT"/>
 			</CONDITIONS>
-			<FIELDS>
+			<FIELDS> 
 				<FIELD name="label" label="#SBISet.ListDataSet.columnLabel">
 					<VALIDATOR validatorName="MANDATORY"/>
 					<VALIDATOR validatorName="ALFANUMERIC"/>
@@ -20,7 +20,7 @@
 					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
 				</FIELD>	
-				<FIELD name="filename" label="FILENAME">			
+				<FIELD name="fileName" label="FILENAME">			
 					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="300"/>
 				</FIELD>
@@ -28,23 +28,22 @@
 					<VALIDATOR validatorName="XSS"/>		
 					<VALIDATOR validatorName="MAXLENGTH" arg0="30000"/>
 				</FIELD>
-				<FIELD name="datasource" label="DATASOURCE">		
-					<VALIDATOR validatorName="NUMERIC"/>
+				<FIELD name="dataSource" label="DATASOURCE">		
+					<VALIDATOR validatorName="ALFANUMERIC"/>
 				</FIELD>
-				<FIELD name="address" label="ADDRESS">		
+				<FIELD name="wsAddress" label="ADDRESS">		
 					<VALIDATOR validatorName="REGEXP"  arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
 				</FIELD>
-				<FIELD name="executorclass" label="EXECUTORCLASS">				
+				<FIELD name="wsOperation" label="EXECUTORCLASS">				
 					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
 				</FIELD>
 				<FIELD name="script" label="SCRIPT">	
 					<VALIDATOR validatorName="XSS"/>		
-					<!--  <VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\'\=\$\;\{\}\(\)\\\/])*$"/>	 --> 
 					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
 				</FIELD>	
-				<FIELD name="jclassname" label="JCLASSNAME">			
+				<FIELD name="jclassName" label="JCLASSNAME">			
 					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
 				</FIELD>	

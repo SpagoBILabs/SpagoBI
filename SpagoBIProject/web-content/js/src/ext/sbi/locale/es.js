@@ -466,6 +466,22 @@ Sbi.locale.ln['sbi.home.Info'] = 'Información sobre SpagoBI';
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='The value of the column';
 Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
 
+
+//Datasets
+Sbi.locale.ln['sbi.ds.numDocs'] = 'Used By';
+Sbi.locale.ln['sbi.ds.panelTitle'] = 'Manage DataSets';
+Sbi.locale.ln['sbi.ds.listTitle'] = 'DataSets List';
+Sbi.locale.ln['sbi.ds.catType'] = 'Category';
+Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'DataSet Type';
+Sbi.locale.ln['sbi.ds.fileName'] = 'File Name';
+Sbi.locale.ln['sbi.ds.dataSource'] = 'Data Source';
+Sbi.locale.ln['sbi.ds.query'] = 'Query';
+Sbi.locale.ln['sbi.ds.wsAddress'] = 'Web Service Address';
+Sbi.locale.ln['sbi.ds.wsOperation'] = 'Web Service Operation';
+Sbi.locale.ln['sbi.ds.script'] = 'Script';
+Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Script Language';
+Sbi.locale.ln['sbi.ds.jclassName'] = 'Java Class Name';
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
