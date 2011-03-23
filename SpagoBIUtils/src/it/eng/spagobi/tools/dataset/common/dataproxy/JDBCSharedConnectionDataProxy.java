@@ -27,9 +27,6 @@ import it.eng.spago.dbaccess.sql.SQLCommand;
 import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -70,9 +67,8 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 * @param statement The statement to be executed
 	 * @param dataReader The data reader to be used
 	 * @return the data store
-	 * @throws EMFUserError
 	 */
-	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
+	public IDataStore load(String statement, IDataReader dataReader)  {
 		if(statement != null) {
 			setStatement(statement);
 		}
@@ -85,7 +81,6 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 * 
 	 * @param dataReader The data reader to be used
 	 * @return the data store
-	 * @throws EMFUserError
 	 */
 	public IDataStore load(IDataReader dataReader) {
 		

@@ -21,15 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.bo;
 
-import org.apache.log4j.Logger;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.CsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
+
+import org.apache.log4j.Logger;
 
 /**
  * @authors
@@ -54,7 +52,7 @@ public class FileDataSet extends ConfigurableDataSet{
     	super();
     }
     
-    public FileDataSet( SpagoBiDataSet dataSetConfig ) throws EMFUserError{
+    public FileDataSet( SpagoBiDataSet dataSetConfig ) {
     	super(dataSetConfig);
     	
     	logger.debug("IN");
@@ -127,26 +125,22 @@ public class FileDataSet extends ConfigurableDataSet{
 		return getDataProxy().getFileName();		
 	}
 	
-	public void setFileName(String fileName) throws EMFUserError {
+	public void setFileName(String fileName) {
 		setFileName(fileName, true);
 	}
 	
-	public void setFileName(String fileName, boolean updateFileFormat) throws EMFUserError {
+	public void setFileName(String fileName, boolean updateFileFormat) {
 		if(fileName == null || fileName.length() == 0) {
 			throw new  IllegalArgumentException("fileName argument cannot be null or an empty string");
 		}
 		getDataProxy().setFileName(fileName);
 		
 		if( updateFileFormat ) {
-		try{	
-			setDataReader(fileName);
-		}
-		catch (Exception e) {
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9218);
-			logger.debug("missing right exstension");
-			throw userError;
-
-		}
+			try{	
+				setDataReader(fileName);
+			} catch (Exception e) {
+				throw new RuntimeException("Missing right exstension", e);
+			}
 		}
 	}
 }

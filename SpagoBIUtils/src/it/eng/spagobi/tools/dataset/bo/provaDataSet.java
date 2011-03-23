@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import it.eng.spago.security.IEngUserProfile;
-
 public class provaDataSet implements IJavaClassDataSet {
 
 

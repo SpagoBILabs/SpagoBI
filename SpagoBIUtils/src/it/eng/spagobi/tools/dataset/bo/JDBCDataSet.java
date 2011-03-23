@@ -27,10 +27,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
@@ -66,7 +62,7 @@ public class JDBCDataSet extends ConfigurableDataSet {
 		addBehaviour( new QuerableBehaviour(this) );
 	}
     
-    public JDBCDataSet(SpagoBiDataSet dataSetConfig) throws EMFUserError {
+    public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 		
 		setDataProxy( new JDBCDataProxy() );
@@ -76,9 +72,7 @@ public class JDBCDataSet extends ConfigurableDataSet {
 			setDataSource( DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) );
 		}
 		catch (Exception e) {
-			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9212);
-			logger.debug("missing right exstension");
-			throw userError;
+			throw new RuntimeException("missing right exstension", e);
 		}
 	
 		setQuery( dataSetConfig.getQuery() );

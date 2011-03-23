@@ -27,7 +27,6 @@ import it.eng.spago.dbaccess.sql.SQLCommand;
 import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
@@ -42,6 +41,8 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 /**
+ * @deprecated 
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */

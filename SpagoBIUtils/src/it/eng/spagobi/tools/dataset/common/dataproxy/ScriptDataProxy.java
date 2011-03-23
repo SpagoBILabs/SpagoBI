@@ -23,10 +23,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.dbaccess.sql.DataRow;
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
