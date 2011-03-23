@@ -28,6 +28,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private final String DATASETS_FOR_KPI_LIST = "DATASETS_FOR_KPI_LIST";
 	
 	private final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
+	private final String SCRIPT_TYPE = "SCRIPT_TYPE";
+	private final String DATA_SET_TYPE = "DATA_SET_TYPE";	
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -109,8 +111,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			//TODO
 		}else if(serviceType == null){
 			try {
+				List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DATA_SET_TYPE);
+				getSessionContainer().setAttribute("dsTypesList", dsTypesList);				
 				List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(CATEGORY_DOMAIN_TYPE);
 				getSessionContainer().setAttribute("catTypesList", catTypesList);
+				List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();			
+				getSessionContainer().setAttribute("dataSourceList", dataSourceList);
+				List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(SCRIPT_TYPE);
+				getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);
 				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);

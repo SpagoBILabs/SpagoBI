@@ -28,7 +28,6 @@ package it.eng.spagobi.tools.dataset.metadata;
  */
 public class SbiWSDataSet extends SbiDataSetConfig{
     private String adress=null;
-    private String executorClass=null;
     private String operation=null;
     
     /**
@@ -49,24 +48,6 @@ public class SbiWSDataSet extends SbiDataSetConfig{
         this.adress = adress;
     }
     
-    /**
-     * Gets the executor class.
-     * 
-     * @return the executor class
-     */
-    public String getExecutorClass() {
-        return executorClass;
-    }
-    
-    /**
-     * Sets the executor class.
-     * 
-     * @param executorClass the new executor class
-     */
-    public void setExecutorClass(String executorClass) {
-        this.executorClass = executorClass;
-    }
-	
 	/**
 	 * Gets the operation.
 	 * 

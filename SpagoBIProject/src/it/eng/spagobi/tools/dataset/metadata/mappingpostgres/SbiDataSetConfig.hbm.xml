@@ -27,7 +27,7 @@
         </property>
         <property name="dsMetadata" type="string">
             <column name="ds_metadata" />
-        </property>           
+        </property>              
          <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="TRANSFORMER_ID" not-null="false"/>
         </many-to-one>
@@ -39,7 +39,7 @@
         </property>
         <property name="pivotColumnValue" type="string">
             <column name="PIVOT_VALUE" />
-        </property>
+        </property>    
         <property name="numRows" type="boolean">
             <column name="NUM_ROWS" />
         </property>
@@ -62,10 +62,7 @@
 	        </property>
 	        <property name="operation" type="string">
 	            <column name="OPERATION" />
-	        </property>	        
-	        <property name="executorClass" type="string">
-	            <column name="EXECUTOR_CLASS" />
-	        </property>	        
+	        </property>	           
 		</subclass> 	
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet" discriminator-value="SbiScriptDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
 	        <property name="script" type="string">
@@ -73,12 +70,12 @@
 	        </property>
 	        <property name="languageScript" type="string">
 	            <column name="LANGUAGE_SCRIPT" />
-	        </property>	  
-		</subclass>   
+	        </property>	        
+		</subclass>
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet" discriminator-value="SbiJClassDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" >
 	        <property name="javaClassName" type="string">
 	            <column name="JCLASS_NAME" />
 	        </property>
-		</subclass>   				         
+		</subclass>   			         
     </class>
 </hibernate-mapping>

@@ -344,7 +344,6 @@ public class ImportUtilities {
 		if (dataset instanceof SbiWSDataSet) {
 			newDataset = new SbiWSDataSet();
 			((SbiWSDataSet) newDataset).setAdress(((SbiWSDataSet) dataset).getAdress());
-			((SbiWSDataSet) newDataset).setExecutorClass(((SbiWSDataSet) dataset).getExecutorClass());
 			((SbiWSDataSet) newDataset).setOperation(((SbiWSDataSet) dataset).getOperation());
 		}
 		if (dataset instanceof SbiScriptDataSet) {
@@ -1091,7 +1090,6 @@ public class ImportUtilities {
 				((SbiJClassDataSet)existingDataset).setJavaClassName(((SbiJClassDataSet)exportedDataset).getJavaClassName());
 			else if(existingDataset instanceof SbiWSDataSet) {
 				((SbiWSDataSet)existingDataset).setAdress(((SbiWSDataSet)exportedDataset).getAdress());
-				((SbiWSDataSet)existingDataset).setExecutorClass(((SbiWSDataSet)exportedDataset).getExecutorClass());
 				((SbiWSDataSet)existingDataset).setOperation(((SbiWSDataSet)exportedDataset).getOperation());
 			} else if (existingDataset instanceof SbiScriptDataSet) {
 				((SbiScriptDataSet)existingDataset).setScript(((SbiScriptDataSet)exportedDataset).getScript());

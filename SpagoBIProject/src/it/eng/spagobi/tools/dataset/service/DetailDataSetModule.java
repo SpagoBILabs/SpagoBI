@@ -34,7 +34,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -89,6 +88,7 @@ public class DetailDataSetModule extends AbstractModule {
 	public static final String PARAMETERS_FILLED="parametersfilled";
 	public static final String TEST_EXECUTED="testExecuted";
 	public final static String LIST_TRANSFORMER = "transformers";
+	public final static String LIST_CATEGORY = "categories";
 	public final static String DS_METADATA_XML = "dsMetadataXML";
 
 
@@ -426,6 +426,8 @@ public class DetailDataSetModule extends AbstractModule {
 			serviceResponse.setAttribute(DetailDataSetModule.DATASET, dsNew);
 			List transformers = DAOFactory.getDomainDAO().loadListDomainsByType("TRANSFORMER_TYPE");
 			serviceResponse.setAttribute(LIST_TRANSFORMER, transformers);
+			List categories = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+			serviceResponse.setAttribute(LIST_CATEGORY, categories);
 			return;
 		}
 		else if (serviceRequest.getAttribute("SUBMESSAGEDET") != null && 
@@ -433,6 +435,8 @@ public class DetailDataSetModule extends AbstractModule {
 			serviceResponse.setAttribute("loopback", "true");
 			List transformers = DAOFactory.getDomainDAO().loadListDomainsByType("TRANSFORMER_TYPE");
 			serviceResponse.setAttribute(LIST_TRANSFORMER, transformers);
+			List categories = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+			serviceResponse.setAttribute(LIST_CATEGORY, categories);
 			return;
 		} 
 
@@ -688,6 +692,14 @@ public class DetailDataSetModule extends AbstractModule {
 		String idStr = (String)serviceRequest.getAttribute("ID");
 		String name = (String)serviceRequest.getAttribute("NAME");
 		String label = (String)serviceRequest.getAttribute("LABEL");
+		
+		String categoryName = (String)serviceRequest.getAttribute("CATEGORYNAME");
+		Domain domainCategory =DAOFactory.getDomainDAO().loadDomainByCodeAndValue("CATEGORY_TYPE", categoryName);				
+		Integer categoryId = null;
+		if (domainCategory!= null){
+			categoryId = domainCategory.getValueId();
+		}
+		
 		String transformerName = (String)serviceRequest.getAttribute("TRANSFORMERNAME");
 		Domain domainTransformer =DAOFactory.getDomainDAO().loadDomainByCodeAndValue("TRANSFORMER_TYPE", transformerName);
 		Integer transformerId = null;
@@ -708,6 +720,7 @@ public class DetailDataSetModule extends AbstractModule {
 		ds.setDsId(id.intValue());
 		ds.setName(name);
 		ds.setLabel(label);
+		ds.setCategoryId(categoryId);
 		ds.setTransformerId(transformerId);
 		ds.setPivotColumnName(pivotName);
 		ds.setPivotRowName(pivotRow);
