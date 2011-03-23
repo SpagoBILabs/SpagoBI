@@ -44,7 +44,7 @@ public class QbeTestCase extends TestCase {
 	
 	protected IDataSource hibernateSimpleDataSource; 
 	
-	private static final String HIBERNATE_SIMPLE_QBE_FILE = "models/foodmart/datamart.jar";
+	private static final String HIBERNATE_SIMPLE_QBE_FILE = "resources/foodmart/datamart.jar";
 	
 	public static String CONNECTION_DIALECT = "org.hibernate.dialect.MySQLDialect";
 	public static String CONNECTION_DRIVER = "com.mysql.jdbc.Driver";
