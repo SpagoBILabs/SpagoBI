@@ -21,11 +21,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
+import java.util.List;
 import java.util.Locale;
+
+import junit.framework.Assert;
 
 import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelEntity;
+import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -33,6 +44,7 @@ import it.eng.qbe.model.structure.IModelEntity;
  */
 public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 	
+	protected String modelName;
 	protected String testEntityUniqueName;
 	
 	public void testSmoke() {
@@ -60,5 +72,52 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 		properties = dataSource.getModelI18NProperties(Locale.JAPANESE);
 		label = properties.getProperty(entity, "label");
 		assertTrue("[" + label + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(label));
+	}
+	
+	public void testTooltipLocalization() {
+		IModelProperties properties;
+		String tooltip;
+		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
+		
+		properties = dataSource.getModelI18NProperties(Locale.ITALIAN);
+		tooltip = properties.getProperty(entity, "tooltip");
+		assertTrue("[" + tooltip + "] is not equal to [" + "Customer Italiano" + "]", "Customer Italiano".equals(tooltip));
+		
+		properties = dataSource.getModelI18NProperties(Locale.ENGLISH);
+		tooltip = properties.getProperty(entity, "tooltip");
+		assertTrue("[" + tooltip + "] is not equal to [" + "Customer Inglese" + "]", "Customer Inglese".equals(tooltip));
+		
+		properties = dataSource.getModelI18NProperties(Locale.JAPANESE);
+		tooltip = properties.getProperty(entity, "tooltip");
+		assertTrue("[" + tooltip + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(tooltip));
+	}
+	
+	public void testQuery() {
+		Query query = new Query();
+		
+		IModelStructure modelStructure = dataSource.getModelStructure();
+		List entities = modelStructure.getRootEntities(modelName);
+		if(entities.size() > 0) {
+			ModelEntity entity = (ModelEntity)entities.get(0);
+			List fields = entity.getAllFields();
+			for(int i = 0; i < fields.size(); i++) {
+				ModelField field = (ModelField)fields.get(i);
+
+				query.addSelectFiled(field.getUniqueName(), null, field.getName(), true, true, false, null, null);			
+			}
+		}
+		
+		IStatement statement = dataSource.createStatement(query);
+		IDataSet datsSet = QbeDatasetFactory.createDataSet(statement);
+		
+		try {
+			datsSet.loadData();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		IDataStore dataStore = datsSet.getDataStore();
+		
+		Assert.assertTrue("Query resultset is empty", dataStore.getRecordsCount() > 0);
 	}
 }

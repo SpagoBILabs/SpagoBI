@@ -54,8 +54,10 @@ public class SimpleJPADataSourceTestCase extends AbstractDataSourceTestCase {
 	protected void setUpDataSource() {
 		IDataSourceConfiguration configuration;
 		
+		modelName = "foodmart"; 
+		
 		File file = new File(QBE_FILE);
-		configuration = new FileDataSourceConfiguration("foodmart", file);
+		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("connection", connection);
 		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
 		
