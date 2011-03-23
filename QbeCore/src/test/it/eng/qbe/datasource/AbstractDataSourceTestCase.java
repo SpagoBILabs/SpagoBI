@@ -19,57 +19,46 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.datasource.configuration;
+package it.eng.qbe.datasource;
 
-import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.properties.SimpleModelProperties;
-import it.eng.qbe.model.structure.IModelEntity;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import it.eng.qbe.AbstractQbeTestCase;
+import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelEntity;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class IntegrationTest extends QbeTestCase {
-
+public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
+	
+	protected String testEntityUniqueName;
+	
 	public void testSmoke() {
-		 assertNotNull("Impossible to build modelStructure", hibernateSimpleDataSource.getModelStructure());
+		 assertNotNull("Impossible to build modelStructure", dataSource.getModelStructure());
 	}
 	
 	public void testStructure() {
-		IModelEntity entity = hibernateSimpleDataSource.getModelStructure().getEntity("it.eng.spagobi.Customer::Customer");
-		assertNotNull("Impossible to load entity [it.eng.spagobi.Customer::Customer] from datasource [" + hibernateSimpleDataSource.getName() + "]", entity);
+		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
+		assertNotNull("Impossible to load entity [" + testEntityUniqueName + "] from datasource [" + dataSource.getName() + "]", entity);
 	}
 	
-	public void testLabelLocalzation() {
+	public void testLabelLocalization() {
 		IModelProperties properties;
 		String label;
-		IModelEntity entity = hibernateSimpleDataSource.getModelStructure().getEntity("it.eng.spagobi.Customer::Customer");
+		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
 		
-		properties = hibernateSimpleDataSource.getModelI18NProperties(Locale.ITALIAN);
+		properties = dataSource.getModelI18NProperties(Locale.ITALIAN);
 		label = properties.getProperty(entity, "label");
 		assertTrue("[" + label + "] is not equal to [" + "Customer Italiano" + "]", "Customer Italiano".equals(label));
 		
-		properties = hibernateSimpleDataSource.getModelI18NProperties(Locale.ENGLISH);
+		properties = dataSource.getModelI18NProperties(Locale.ENGLISH);
 		label = properties.getProperty(entity, "label");
 		assertTrue("[" + label + "] is not equal to [" + "Customer Inglese" + "]", "Customer Inglese".equals(label));
 		
-		properties = hibernateSimpleDataSource.getModelI18NProperties(Locale.JAPANESE);
+		properties = dataSource.getModelI18NProperties(Locale.JAPANESE);
 		label = properties.getProperty(entity, "label");
 		assertTrue("[" + label + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(label));
 	}
-
-	
-	public static void main(String[] args) throws Exception {
-		IntegrationTest testCase = new IntegrationTest();
-		testCase.setUp();
-		testCase.testStructure();
-	}
-
 }
