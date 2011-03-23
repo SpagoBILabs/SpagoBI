@@ -24,7 +24,7 @@ package it.eng.spagobi.engines.qbe.utils.temporarytable;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -161,7 +161,7 @@ public class TemporaryTableManager {
 		int endIndex = sqlStatement.indexOf(" ", beginIndex);
 		sqlStatement = sqlStatement.substring(0, beginIndex) + tableName + sqlStatement.substring(endIndex);
 		logger.debug("SQL statement is [" + sqlStatement + "]");
-		JDBCStandardDataSet dataSet = new JDBCStandardDataSet();
+		JDBCDataSet dataSet = new JDBCDataSet();
 		dataSet.setDataSource(dataSource);
 		dataSet.setQuery(sqlStatement);
 		dataSet.loadData();
