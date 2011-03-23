@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
-import java.util.List;
-import java.util.Locale;
-
-import junit.framework.Assert;
-
 import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -37,6 +32,11 @@ import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
+import java.util.List;
+import java.util.Locale;
+
+import junit.framework.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
