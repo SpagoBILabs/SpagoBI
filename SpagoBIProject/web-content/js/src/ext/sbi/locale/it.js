@@ -516,6 +516,20 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informazioni su SpagoBI';
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='Il valore della colonna';
 Sbi.locale.ln['sbi.lookup.asA'] = 'inteso come';
 
+//Datasets
+Sbi.locale.ln['sbi.ds.numDocs'] = 'Usato Da';
+Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestione DataSet';
+Sbi.locale.ln['sbi.ds.listTitle'] = 'Lista DataSet';
+Sbi.locale.ln['sbi.ds.catType'] = 'Categoria';
+Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'Tipo DataSet';
+Sbi.locale.ln['sbi.ds.fileName'] = 'Nome File';
+Sbi.locale.ln['sbi.ds.dataSource'] = 'Data Source';
+Sbi.locale.ln['sbi.ds.query'] = 'Query';
+Sbi.locale.ln['sbi.ds.wsAddress'] = 'Indirizzo Web Service';
+Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operazione Web Service';
+Sbi.locale.ln['sbi.ds.script'] = 'Script';
+Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Linguaggio Script';
+Sbi.locale.ln['sbi.ds.jclassName'] = 'Nome Classe Java';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
