@@ -190,7 +190,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
               triggerAction: 'all',
               selectOnFocus: true,
               editable: false,
-              allowBlank: false,
+              allowBlank: true,
               validationEvent:true,
               xtype: 'combo'
           };  
