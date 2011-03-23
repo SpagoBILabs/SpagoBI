@@ -72,11 +72,10 @@
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
     <javac destdir="${build}" debug="on">
       <classpath refid="jar.classpath"/>
-	<src path="${src}"/>
+	<src path="${src.runtime}"/>
 	<src path="${src.hibernate}"/>
 	<src path="${src.jpa}"/>
 	<src path="${src.serialization}"/>
-	<src path="${src.exporter}"/>
     </javac>  
   </target>
 
