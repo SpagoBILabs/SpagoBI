@@ -32,7 +32,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -88,7 +88,7 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 		Integer maxSize;
 		boolean isMaxResultsLimitBlocking;
 		IDataStore dataStore;
-		JDBCStandardDataSet dataSet;
+		JDBCDataSet dataSet;
 		JSONDataWriter dataSetWriter;
 		
 		Query query;
@@ -199,7 +199,7 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 				logger.debug("Executing query: [" + sqlQuery + "]");
 				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 				
-				dataSet = new JDBCStandardDataSet();
+				dataSet = new JDBCDataSet();
 				DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());

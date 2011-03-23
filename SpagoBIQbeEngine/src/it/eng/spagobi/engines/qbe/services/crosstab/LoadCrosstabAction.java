@@ -37,7 +37,7 @@ import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
-import it.eng.spagobi.tools.dataset.bo.JDBCStandardDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -147,7 +147,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 				String inlineSQLQuery = sqlStatement.substring(0, beginIndex) + " ( " + sqlQuery + " ) TEMP " + sqlStatement.substring(endIndex);
 				logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
 				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
-				JDBCStandardDataSet dataSet = new JDBCStandardDataSet();
+				JDBCDataSet dataSet = new JDBCDataSet();
 				dataSet.setDataSource(dataSource);
 				dataSet.setQuery(inlineSQLQuery);
 				dataSet.loadData();
