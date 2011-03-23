@@ -171,6 +171,16 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 		Type identifierType;
 		
 		classMapping = getDataSource().getHibernateConfiguration().getClassMapping(dataMartEntity.getType());
+		if(classMapping == null ){
+			System.out.println("class mapping for entity [" + dataMartEntity.getType() + "] not found");
+			Iterator<PersistentClass> it =  getDataSource().getHibernateConfiguration().getClassMappings();
+			while(it.hasNext()) {
+				PersistentClass pc = it.next();
+				System.out.println("-> [" + pc.getClass().getName() + "] not found");
+			}
+		}
+		
+		
 		classMetadata = getDataSource().getHibernateSessionFactory().getClassMetadata(dataMartEntity.getType());
 		identifierType = classMetadata.getIdentifierType();
 		

@@ -50,7 +50,6 @@
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/iReport.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jug-asl-2.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/jasperreports-2.0.5.jar"/>
@@ -70,5 +69,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.3.ga.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-3.1rc2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
