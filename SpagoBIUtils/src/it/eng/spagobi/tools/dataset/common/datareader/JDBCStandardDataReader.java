@@ -113,7 +113,13 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		logger.debug("Data readed succcesfully");
     		
     		logger.debug("resultset type [" + rs.getType() + "] (" + (rs.getType()  == rs.TYPE_FORWARD_ONLY) + ")");
-    		rs.last();
+    		if (rs.getType()  == ResultSet.TYPE_FORWARD_ONLY) {
+    			while (rs.next()) {
+    				// do nothing, just scroll result set
+    			}
+    		} else {
+    			rs.last();
+    		}
     		int resultNumber = rs.getRow();
     		dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
     		logger.debug("Reading total record numeber is equal to [" + resultNumber + "]");
