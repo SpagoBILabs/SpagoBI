@@ -26,7 +26,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
@@ -101,7 +101,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 			ModelEntity entity = (ModelEntity)entities.get(0);
 			List fields = entity.getAllFields();
 			for(int i = 0; i < fields.size(); i++) {
-				ModelField field = (ModelField)fields.get(i);
+				IModelField field = (IModelField)fields.get(i);
 
 				query.addSelectFiled(field.getUniqueName(), null, field.getName(), true, true, false, null, null);			
 			}

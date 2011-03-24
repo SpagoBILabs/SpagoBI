@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.accessmodality;
 
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class AbstractModelAccessModality implements IModelAccessModality{
 		return true;
 	}
 
-	public boolean isFieldAccessible(ModelField field) {
+	public boolean isFieldAccessible(IModelField field) {
 		return true;
 	}
 

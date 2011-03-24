@@ -36,7 +36,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	protected long nextId;	
 	protected Map<String, Map<String,IModelEntity>> rootEntities;	// modelName->(entityUniqueName->entity)
 	protected Map<String, IModelEntity> entities; //entityUniqueName->entity
-	protected Map<String, ModelField> fields; // uniqueName -> field	
+	protected Map<String, IModelField> fields; // uniqueName -> field	
 	protected Map<String, List<ModelCalculatedField>> calculatedFields; // entity uniqueName -> fields' list
 	
 	
@@ -53,7 +53,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		name = "Generic Model";
 		rootEntities = new HashMap<String, Map<String,IModelEntity>>();
 		entities = new HashMap<String, IModelEntity>();
-		fields = new HashMap<String, ModelField>();
+		fields = new HashMap<String, IModelField>();
 		calculatedFields = new  HashMap<String, List<ModelCalculatedField>>();
 		initProperties();
 		
@@ -239,7 +239,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	 * 
 	 * @param field the field
 	 */
-	public void addField(ModelField field) {
+	public void addField(IModelField field) {
 		fields.put(field.getUniqueName(), field);
 	}
 	
@@ -250,8 +250,8 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	 * 
 	 * @return the field
 	 */
-	public ModelField getField(String fieldUniqueName) {
-		ModelField field = (ModelField)fields.get(fieldUniqueName);
+	public IModelField getField(String fieldUniqueName) {
+		IModelField field = (IModelField)fields.get(fieldUniqueName);
 		return field;
 	}
 	

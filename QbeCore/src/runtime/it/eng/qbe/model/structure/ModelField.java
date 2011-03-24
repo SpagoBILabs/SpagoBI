@@ -24,7 +24,7 @@ package it.eng.qbe.model.structure;
 /**
  * @author Andrea Gioia
  */
-public class ModelField extends AbstractModelNode {
+public class ModelField extends AbstractModelNode implements IModelField {
 		
 	private boolean key;
 	private String type;

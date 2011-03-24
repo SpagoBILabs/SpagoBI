@@ -27,9 +27,9 @@ public interface IModelStructure extends IModelObject{
 
 		public IModelEntity getEntity(String entityUniqueName) ;
 
-		public void addField(ModelField field) ;
+		public void addField(IModelField field) ;
 
-		public ModelField getField(String fieldUniqueName) ;
+		public IModelField getField(String fieldUniqueName) ;
 
 		public Map<String, List<ModelCalculatedField>> getCalculatedFields() ;
 

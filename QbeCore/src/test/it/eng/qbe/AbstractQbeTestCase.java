@@ -38,7 +38,7 @@ public abstract class AbstractQbeTestCase extends TestCase {
 	public static String CONNECTION_DRIVER = "com.mysql.jdbc.Driver";
 	public static String CONNECTION_URL = "jdbc:mysql://localhost:3306/foodmart";
 	public static String CONNECTION_USER = "root";
-	public static String CONNECTION_PWD = "mysql";
+	public static String CONNECTION_PWD = "paola";
 	
 	protected void setUp() throws Exception {
 		super.setUp();

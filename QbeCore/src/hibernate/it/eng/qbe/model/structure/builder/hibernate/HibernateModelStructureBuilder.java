@@ -27,7 +27,7 @@ import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesIniti
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
@@ -253,7 +253,7 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 		
 		for (int j = 0; j < identifierPropertyNames.size(); j++) {
 			String fieldName = (String)identifierPropertyNames.get(j);					
-			ModelField dataMartField = dataMartEntity.addKeyField(fieldName);
+			IModelField dataMartField = dataMartEntity.addKeyField(fieldName);
 			dataMartField.setType(type[j]);
 			dataMartField.setPrecision(precision[j]);
 			dataMartField.setLength(scale[j]);
@@ -325,7 +325,7 @@ public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 		 		
 			 
 					
-				ModelField datamartField = dataMartEntity.addNormalField(propertyName);
+				IModelField datamartField = dataMartEntity.addNormalField(propertyName);
 				datamartField.setType(type);
 				datamartField.setPrecision(precision);
 				datamartField.setLength(scale);

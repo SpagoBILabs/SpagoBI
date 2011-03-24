@@ -39,7 +39,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	protected String role;	
 	protected String type;	
 	
-	protected Map<String,ModelField> fields;	
+	protected Map<String,IModelField> fields;	
 	protected Map<String, ModelCalculatedField> calculatedFields;	
 	protected Map<String,IModelEntity> subEntities;
 	
@@ -60,7 +60,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 		setType( type );
 		
 		setParent(null);
-		this.fields = new HashMap<String,ModelField>();
+		this.fields = new HashMap<String,IModelField>();
 		this.calculatedFields = new HashMap<String, ModelCalculatedField>();
 		this.subEntities = new HashMap<String,IModelEntity>();
 		
@@ -100,34 +100,34 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	}
 	
 	
-	private void addField(ModelField field) {
+	private void addField(IModelField field) {
 		fields.put(field.getUniqueName(), field);
 		getStructure().addField(field);
 	}
 	
 	
-	private ModelField addField(String fieldName, boolean isKey) {
+	private IModelField addField(String fieldName, boolean isKey) {
 		
-		ModelField field = new ModelField(fieldName, this);
+		IModelField field = new ModelField(fieldName, this);
 		field.setKey(isKey);
 		addField(field);
 		return field;
 	}
 	
 	
-	public ModelField addNormalField(String fieldName) {
+	public IModelField addNormalField(String fieldName) {
 		return addField(fieldName, false);
 	}
 	
 	
-	public ModelField addKeyField(String fieldName) {		
+	public IModelField addKeyField(String fieldName) {		
 		return addField(fieldName, true);
 	}
 	
 	
 	
-	public ModelField getField(String fieldName) {
-		return (ModelField)fields.get(fieldName);
+	public IModelField getField(String fieldName) {
+		return (IModelField)fields.get(fieldName);
 	}
 	
 	public void addCalculatedField(ModelCalculatedField calculatedField) {
@@ -166,10 +166,10 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 		return list;
 	}	
 	
-	public List<ModelField> getAllFields() {
-		List<ModelField> list;
+	public List<IModelField> getAllFields() {
+		List<IModelField> list;
 		
-		list = new ArrayList<ModelField>();
+		list = new ArrayList<IModelField>();
 		String key = null;
 		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
 			key = it.next();
@@ -180,12 +180,12 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	}	
 	
 	
-	private List<ModelField> getFieldsByType(boolean isKey) {
-		List<ModelField> list = new ArrayList<ModelField>();
+	private List<IModelField> getFieldsByType(boolean isKey) {
+		List<IModelField> list = new ArrayList<IModelField>();
 		String key = null;
 		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {
 			key = (String)it.next();
-			ModelField field = (ModelField)fields.get(key);
+			IModelField field = (IModelField)fields.get(key);
 			if(field.isKey() == isKey) {
 				list.add(field);		
 			}
@@ -194,22 +194,22 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	}
 	
 	
-	public List<ModelField> getKeyFields() {
+	public List<IModelField> getKeyFields() {
 		return getFieldsByType(true);
 	}
 	
 	
-	public Iterator<ModelField> getKeyFieldIterator() {
+	public Iterator<IModelField> getKeyFieldIterator() {
 		return getKeyFields().iterator();
 	}
 	
 	
-	public List<ModelField> getNormalFields() {
+	public List<IModelField> getNormalFields() {
 		return getFieldsByType(false);
 	}
 	
 	
-	public Iterator<ModelField> getNormalFieldIterator() {
+	public Iterator<IModelField> getNormalFieldIterator() {
 		return getNormalFields().iterator();
 	}	
 	
@@ -280,14 +280,14 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 		return list;
 	}
 	
-	public List<ModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
-		List<ModelField> list = new ArrayList<ModelField>();
+	public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
+		List<IModelField> list = new ArrayList<IModelField>();
 		List<IModelEntity> entities = getAllSubEntities(entityName);
 		for(int i = 0; i < entities.size(); i++) {
 			IModelEntity entity = entities.get(i);
-			List<ModelField> fields = entity.getAllFields();
+			List<IModelField> fields = entity.getAllFields();
 			for(int j = 0; j < fields.size(); j++) {
-				ModelField field = fields.get(j);
+				IModelField field = fields.get(j);
 				if(field.getName().endsWith("." + fieldName)) {
 					list.add(field);
 				}
