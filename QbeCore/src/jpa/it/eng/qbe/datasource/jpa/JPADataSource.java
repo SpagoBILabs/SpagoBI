@@ -30,16 +30,11 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
-import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -92,7 +87,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	}
 	
 	private void initEntityManagerFactory(String name){
-		factory = Persistence.createEntityManagerFactory(name, buildEmptyNotJndiConfiguration());
+		factory = Persistence.createEntityManagerFactory(name, buildEmptyConfiguration());
 	}
 
 	/* (non-Javadoc)
@@ -165,12 +160,16 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		return dataMartModelStructure;
 	}
 	
-	protected Map<String,Object> buildEmptyNotJndiConfiguration() {
+	protected Map<String,Object> buildEmptyConfiguration() {
 		Map<String,Object> cfg = new HashMap<String,Object>();
-		cfg.put("javax.persistence.jdbc.url", getConnection().getUrl());
-		cfg.put("javax.persistence.jdbc.password", getConnection().getPassword());
-		cfg.put("javax.persistence.jdbc.user", getConnection().getUsername());
-		cfg.put("javax.persistence.jdbc.driver", getConnection().getDriverClass());
+		if(getConnection().isJndiConncetion()) {
+			cfg.put("javax.persistence.nonJtaDataSource", getConnection().getJndiName());
+		} else {
+			cfg.put("javax.persistence.jdbc.url", getConnection().getUrl());
+			cfg.put("javax.persistence.jdbc.password", getConnection().getPassword());
+			cfg.put("javax.persistence.jdbc.user", getConnection().getUsername());
+			cfg.put("javax.persistence.jdbc.driver", getConnection().getDriverClass());
+		}
 		return cfg;
 	}
 
