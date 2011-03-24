@@ -82,52 +82,19 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 */
 	public IDataStore load(IDataReader dataReader) {
 		
-//		IDataStore dataStore = null;
-//		Object result = null;
-//		logger.debug("IN");
-//		
-//		DataConnection dataConnection = null;
-//		SQLCommand sqlCommand = null;
-//		DataResult dataResult = null;
-//		try {
-//			if (connection == null) {
-//				throw new Exception("JDBC connection not set!!");
-//			}
-//			if (connection.isClosed()) {
-//				throw new Exception("JDBC connection is closed!!");
-//			}
-//			dataConnection = getDataConnection(connection);
-//			logger.debug("Executing statemnet ["  + statement + "]");
-//			sqlCommand = dataConnection.createSelectCommand( statement );
-//			dataResult = sqlCommand.execute();
-//			if (dataResult != null) {
-//				result = (ScrollableDataResult) dataResult.getDataObject();				
-//			}
-//			dataStore = dataReader.read( result );
-//		} catch(Throwable t){
-//			throw new SpagoBIRuntimeException("An error occurrede while executing query [" + statement + "]", t);
-//		} finally {
-//			Utils.releaseResources(null, sqlCommand, dataResult);
-//			logger.debug("OUT");
-//		}
-//		
-//		return dataStore;
-		
 		IDataStore dataStore;
-		Connection connection;
 		Statement stmt;
 		ResultSet resultSet;
 		
 		logger.debug("IN");
 		
-		connection = null;
 		stmt = null;
 		resultSet = null;
 		
 		try {			
 			
 			try {
-				stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
