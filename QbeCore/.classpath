@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="src/serialization"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/json.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/commons-collections-3.1.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/postgresql-8.2-505.jdbc2ee.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
