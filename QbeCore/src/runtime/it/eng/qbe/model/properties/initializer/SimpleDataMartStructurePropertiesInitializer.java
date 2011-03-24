@@ -29,7 +29,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelObject;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -55,8 +55,8 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	public void addProperties(IModelObject item) {
 		if(item instanceof IModelEntity) {
 			addDataMartEntityProperties( (IModelEntity)item );
-		} else if (item instanceof ModelField) {
-			addDataMartFieldProperties( (ModelField)item );
+		} else if (item instanceof IModelField) {
+			addDataMartFieldProperties( (IModelField)item );
 		} else if (item instanceof IModelStructure) {
 			addDataMartModelProperties( (IModelStructure)item );
 		}
@@ -107,7 +107,7 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		}
 	}
 	
-	protected void addDataMartFieldProperties(ModelField item) {
+	protected void addDataMartFieldProperties(IModelField item) {
 		ModelPropertyMeta property;
 		String propertyValue;
 		
@@ -144,9 +144,9 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 	}
 	
 	// TODO create method getRootItem in IDataMartItem interface and move some code there
-	protected String getInheritedProperty(ModelField item, String propertyName) {
+	protected String getInheritedProperty(IModelField item, String propertyName) {
 		String propertyValue;
-		ModelField rootField = null;
+		IModelField rootField = null;
 		IModelEntity rootEntity = item.getStructure().getRootEntity(item.getParent());
 		if(rootEntity == null) {
 			rootEntity = item.getStructure().getRootEntity(item.getParent());
@@ -159,9 +159,9 @@ public class SimpleDataMartStructurePropertiesInitializer implements IDataMartSt
 		} else {
 			fields = rootEntity.getAllFields();
 		}
-		Iterator<ModelField> it = fields.iterator();
+		Iterator<IModelField> it = fields.iterator();
 		while (it.hasNext()) {
-			ModelField field = it.next();
+			IModelField field = it.next();
 			if (field.getName().equals(item.getName())) {
 				rootField = field;
 				break;

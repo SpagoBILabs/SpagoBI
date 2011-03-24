@@ -21,7 +21,7 @@
 package it.eng.qbe.model.structure.filter;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,12 @@ public class QbeTreeAccessModalityFieldFilter extends ComposableQbeTreeFieldFilt
 	
 	public List filter(IDataSource dataSource, List fields) {
 		List list;
-		ModelField field;
+		IModelField field;
 		
 		list = new ArrayList();
 		
 		for(int i = 0; i < fields.size(); i++) {
-			field = (ModelField)fields.get(i);
+			field = (IModelField)fields.get(i);
 			if( isFieldVisible(dataSource, field)) {
 				list.add(field);
 			}
@@ -77,7 +77,7 @@ public class QbeTreeAccessModalityFieldFilter extends ComposableQbeTreeFieldFilt
 	 * 
 	 * @return true, if is field visible
 	 */
-	private boolean isFieldVisible(IDataSource dataSource, ModelField field) {
+	private boolean isFieldVisible(IDataSource dataSource, IModelField field) {
 		//DatamartProperties qbeProperties = dataSource.getDataMartProperties();
 		
 		if( !field.getPropertyAsBoolean("visible") ) return false;

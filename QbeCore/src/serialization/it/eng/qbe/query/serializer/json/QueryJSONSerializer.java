@@ -25,7 +25,7 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ExpressionNode;
@@ -137,7 +137,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		List fields;
 		ISelectField field;
 		String fieldUniqueName;
-		ModelField datamartField;
+		IModelField datamartField;
 		JSONObject fieldJSON;
 		Iterator it;
 		IModelProperties datamartLabels;
@@ -299,7 +299,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		return result;
 	}	
 	
-	public static String getFieldLongDescription(ModelField field, IModelProperties datamartLabels) {
+	public static String getFieldLongDescription(IModelField field, IModelProperties datamartLabels) {
 		String label = field.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getProperty(field, "label");
@@ -351,11 +351,11 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		WhereField filter;
 		WhereField.Operand operand;
 		JSONObject filterJSON;
-		ModelField datamartFilter;
+		IModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
 		IModelProperties datamartLabels;
-		ModelField datamartField;
+		IModelField datamartField;
 		
 		filters = query.getWhereFields();
 		Assert.assertNotNull(filters, "Filters cannot be null");
@@ -496,11 +496,11 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		HavingField filter;
 		HavingField.Operand operand;
 		JSONObject havingJSON;
-		ModelField datamartFilter;
+		IModelField datamartFilter;
 		String fieldUniqueName;
 		Iterator it;
 		IModelProperties datamartLabels;
-		ModelField datamartField;
+		IModelField datamartField;
 		
 		havings = query.getHavingFields();
 		Assert.assertNotNull(havings, "Filters cannot be null");

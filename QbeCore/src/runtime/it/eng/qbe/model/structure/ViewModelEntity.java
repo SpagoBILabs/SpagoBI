@@ -25,11 +25,11 @@ public class ViewModelEntity implements IModelEntity{
 		
 	}
 	
-	public List<ModelField> getKeyFields() {
+	public List<IModelField> getKeyFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getKeyFields());
 	}
 	
-	public List<ModelField> getNormalFields() {
+	public List<IModelField> getNormalFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getNormalFields());
 	}
 	
@@ -100,18 +100,18 @@ public class ViewModelEntity implements IModelEntity{
 		return wrappedModelEntity.getUniqueType();
 	}
 
-	public ModelField addNormalField(String fieldName) {
+	public IModelField addNormalField(String fieldName) {
 		return wrappedModelEntity.addNormalField(fieldName);
 	}
 
-	public ModelField addKeyField(String fieldName) {
+	public IModelField addKeyField(String fieldName) {
 		return wrappedModelEntity.addKeyField(fieldName);
 	}
 
-	public ModelField getField(String fieldName) {
-		List<ModelField> list = new ArrayList<ModelField>();
-		List<ModelField> filteredList;
-		ModelField field = wrappedModelEntity.getField(fieldName);
+	public IModelField getField(String fieldName) {
+		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> filteredList;
+		IModelField field = wrappedModelEntity.getField(fieldName);
 		if(field==null){
 			return null;
 		}
@@ -132,15 +132,15 @@ public class ViewModelEntity implements IModelEntity{
 		wrappedModelEntity.deleteCalculatedField(fieldName);
 	}
 
-	public List<ModelField> getAllFields() {
+	public List<IModelField> getAllFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getAllFields());
 	}
 
-	public Iterator<ModelField> getKeyFieldIterator() {
+	public Iterator<IModelField> getKeyFieldIterator() {
 		return getKeyFields().iterator();
 	}
 
-	public Iterator<ModelField> getNormalFieldIterator() {
+	public Iterator<IModelField> getNormalFieldIterator() {
 		return getNormalFields().iterator();
 	}
 
@@ -177,7 +177,7 @@ public class ViewModelEntity implements IModelEntity{
 		return qbeTreeFilter.filterEntities(getDataSource(),wrappedModelEntity.getAllSubEntities(entityName));
 	}
 
-	public List<ModelField> getAllFieldOccurencesOnSubEntity(String entityName,
+	public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName,
 			String fieldName) {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getAllFieldOccurencesOnSubEntity(entityName, fieldName));
 	}

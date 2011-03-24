@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
@@ -125,7 +125,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 	
 	private void deserializeFields(JSONArray fieldsJSON, IDataSource dataSource, Query query) throws SerializationException {
 		JSONObject fieldJSON;
-		ModelField field;
+		IModelField field;
 		String alias;
 		String fieldType;
 		
@@ -286,7 +286,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 	private void deserializeHavings(JSONArray havingsJOSN, IDataSource dataSource, Query query) throws SerializationException {
 		
 		JSONObject havingJSON;
-		ModelField field;
+		IModelField field;
 				
 		String filterId;
 		String filterDescription;

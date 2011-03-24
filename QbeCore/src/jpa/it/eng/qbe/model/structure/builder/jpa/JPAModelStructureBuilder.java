@@ -27,7 +27,7 @@ import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesIniti
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
@@ -179,7 +179,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				int scale = 0;
 				int precision = 0;
 
-				ModelField datamartField = dataMartEntity.addNormalField( a.getName());
+				IModelField datamartField = dataMartEntity.addNormalField( a.getName());
 				datamartField.setType(type);
 				datamartField.setPrecision(precision);
 				datamartField.setLength(scale);

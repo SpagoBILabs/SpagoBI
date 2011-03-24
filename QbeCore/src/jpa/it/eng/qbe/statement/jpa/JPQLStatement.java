@@ -25,7 +25,7 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
@@ -261,7 +261,7 @@ public class JPQLStatement extends AbstractStatement {
 		DataMartSelectField selectField;
 		InLineCalculatedSelectField selectInLineField;
 		IModelEntity rootEntity;
-		ModelField datamartField;
+		IModelField datamartField;
 		String queryName;
 		String rootEntityAlias;
 		String selectClauseElement; // rootEntityAlias.queryName
@@ -494,7 +494,7 @@ public class JPQLStatement extends AbstractStatement {
 	
 	private String buildFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
-		ModelField datamartField;
+		IModelField datamartField;
 		IModelEntity rootEntity;
 		String queryName;
 		String rootEntityAlias;
@@ -546,7 +546,7 @@ public class JPQLStatement extends AbstractStatement {
 		String[] chunks;
 		String parentQueryId;
 		String fieldName;
-		ModelField datamartField;
+		IModelField datamartField;
 		IModelEntity rootEntity;
 		String queryName;
 		String rootEntityAlias;
@@ -666,7 +666,7 @@ public class JPQLStatement extends AbstractStatement {
 			}else if (OPERAND_TYPE_FIELD.equalsIgnoreCase(leadOperand.type) 
 							|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 				
-				ModelField datamartField = getDataSource().getModelStructure().getField(leadOperand.values[0]);
+				IModelField datamartField = getDataSource().getModelStructure().getField(leadOperand.values[0]);
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
 			}
 
@@ -815,7 +815,7 @@ public class JPQLStatement extends AbstractStatement {
 	public String parseInLinecalculatedField(String expr, Query query, Map entityAliasesMaps){
 		List allSelectFields;
 		IModelEntity rootEntity;
-		ModelField datamartField;
+		IModelField datamartField;
 		String queryName;
 		String rootEntityAlias;
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
@@ -1209,10 +1209,10 @@ public class JPQLStatement extends AbstractStatement {
 							Iterator fieldIterator = fields.iterator();
 							while(fieldIterator.hasNext()) {
 								String fieldName = (String)fieldIterator.next();
-								ModelField filed = null;
+								IModelField filed = null;
 								Iterator subEntityFields = subEntity.getAllFields().iterator();
 								while(subEntityFields.hasNext()) {
-									filed = (ModelField)subEntityFields.next();
+									filed = (IModelField)subEntityFields.next();
 									if(filed.getQueryName().endsWith("." + fieldName)) break;
 								}
 								String entityAlias = (String)entityAliases.get(entityUniqueName);
@@ -1265,7 +1265,7 @@ public class JPQLStatement extends AbstractStatement {
 			}else{
 			
 				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
-				ModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
+				IModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
 				IModelEntity entity = datamartField.getParent().getRoot(); 
 				String queryName = datamartField.getQueryName();
 				if(!entityAliases.containsKey(entity.getUniqueName())) {
@@ -1315,7 +1315,7 @@ public class JPQLStatement extends AbstractStatement {
 			
 			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
 			
-			ModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
+			IModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
 			IModelEntity entity = datamartField.getParent().getRoot(); 
 			String queryName = datamartField.getQueryName();
 			if(!entityAliases.containsKey(entity.getUniqueName())) {

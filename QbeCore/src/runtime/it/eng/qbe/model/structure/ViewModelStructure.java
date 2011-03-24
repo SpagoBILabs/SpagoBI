@@ -166,15 +166,15 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		return filteredList.get(0);
 	}
 
-	public void addField(ModelField field) {
+	public void addField(IModelField field) {
 		wrappedModelStructure.addField(field);
 		
 	}
 
-	public ModelField getField(String fieldUniqueName) {
-		List<ModelField> list = new ArrayList<ModelField>();
-		List<ModelField> filteredList;
-		ModelField field = wrappedModelStructure.getField(fieldUniqueName);
+	public IModelField getField(String fieldUniqueName) {
+		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> filteredList;
+		IModelField field = wrappedModelStructure.getField(fieldUniqueName);
 		if(field==null){
 			return null;
 		}

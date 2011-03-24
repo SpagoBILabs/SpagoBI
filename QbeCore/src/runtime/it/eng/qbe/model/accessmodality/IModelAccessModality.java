@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.accessmodality;
 
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,7 +45,7 @@ public interface IModelAccessModality {
 	 * 
 	 * @return true, if is field accessible
 	 */
-	boolean isFieldAccessible( ModelField field );
+	boolean isFieldAccessible( IModelField field );
 	
 	/**
 	 * Gets the entity filter conditions.
