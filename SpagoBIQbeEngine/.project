@@ -3,6 +3,7 @@
 	<name>SpagoBIQbeEngine</name>
 	<comment></comment>
 	<projects>
+		<project>QbeCore</project>
 		<project>SpagoBIUtils</project>
 	</projects>
 	<buildSpec>
