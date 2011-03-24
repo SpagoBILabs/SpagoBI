@@ -24,7 +24,7 @@ package it.eng.spagobi.engines.qbe.services.formbuilder;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -56,7 +56,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 		String fieldId;
 		IDataSource dataSource;
 		IModelStructure structure;
-		ModelField field;
+		IModelField field;
 		IModelEntity parentEntity;
 		IModelEntity dimensionalEntity;
 		List fields;
@@ -81,7 +81,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 			toReturn = new JSONArray();
 			Iterator it = fields.iterator();
 			while (it.hasNext()) {
-				ModelField aField = (ModelField) it.next();
+				IModelField aField = (IModelField) it.next();
 				JSONObject aJSONField = new JSONObject();
 				aJSONField.put("id", aField.getUniqueName());
 				//String name = QbeCacheManager.getInstance().getLabels( getDataSource() , getLocale() ).getLabel(aField);

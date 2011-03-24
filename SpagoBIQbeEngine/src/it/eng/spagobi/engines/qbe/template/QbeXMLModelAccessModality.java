@@ -23,7 +23,7 @@ package it.eng.spagobi.engines.qbe.template;
 
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.base.SourceBean;
@@ -267,7 +267,7 @@ public class QbeXMLModelAccessModality extends AbstractModelAccessModality {
 	 * 
 	 * @return true, if is field accessible
 	 */
-	public boolean isFieldAccessible( ModelField field ) {		
+	public boolean isFieldAccessible( IModelField field ) {		
 		if(entityAccessModalityMap != null && entityAccessModalityMap.containsKey( field.getParent().getType() )) {
 			EntityAccessModalitty tableAccessModalitty = (EntityAccessModalitty)entityAccessModalityMap.get( field.getParent().getType() );
 			return tableAccessModalitty.isFieldAccessible( field.getName() );

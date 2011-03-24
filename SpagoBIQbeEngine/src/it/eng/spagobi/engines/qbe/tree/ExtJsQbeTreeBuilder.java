@@ -25,7 +25,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ViewModelStructure;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
@@ -94,13 +94,13 @@ public class ExtJsQbeTreeBuilder  {
 		return tooltip != null ? tooltip : "";
 	}
 	
-	private String geFieldLabel(ModelField field) {
+	private String geFieldLabel(IModelField field) {
 		String label;
 		label = getDatamartLabels().getProperty(field, "label");
 		return StringUtilities.isEmpty(label)? field.getName(): label;
 	}
 
-	private String geFieldTooltip(ModelField field) {
+	private String geFieldTooltip(IModelField field) {
 		String tooltip = getDatamartLabels().getProperty(field, "tooltip");
 		return tooltip != null ? tooltip : "";
 	}
@@ -231,7 +231,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		Iterator keyFieldIterator = keyFields.iterator();
 		while (keyFieldIterator.hasNext() ) {
-			ModelField field = (ModelField)keyFieldIterator.next();
+			IModelField field = (IModelField)keyFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -244,7 +244,7 @@ public class ExtJsQbeTreeBuilder  {
 		
 		Iterator normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext() ) {
-			ModelField field = (ModelField)normalFieldIterator.next();
+			IModelField field = (IModelField)normalFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -279,7 +279,7 @@ public class ExtJsQbeTreeBuilder  {
 	 * @return the field node
 	 */
 	public  JSONObject getFieldNode(IModelEntity parentEntity,
-							 ModelField field) {
+							 IModelField field) {
 		
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");		
