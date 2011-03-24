@@ -471,11 +471,7 @@ public class JPQLStatement extends AbstractStatement {
 		}
 	}
 	
-	
-	public static final String OPERAND_TYPE_STATIC = "Static Value";
-	public static final String OPERAND_TYPE_SUBQUERY = "Subquery";
-	public static final String OPERAND_TYPE_FIELD = "Field Content";
-	public static final String OPERAND_TYPE_PARENT_FIELD = "Parent Field Content";
+
 	
 	
 	private String[] buildStaticOperand(Operand operand) {
