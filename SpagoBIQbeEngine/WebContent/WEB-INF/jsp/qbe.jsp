@@ -23,6 +23,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
 
+<%@page import="it.eng.qbe.serializer.SerializationManager"%>
+<%@page import="it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -48,8 +50,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
-<%@page import="it.eng.qbe.crosstab.exporter.CrosstabDefinition"%>
-<%@page import="it.eng.qbe.commons.serializer.SerializerFactory"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -184,9 +184,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	<%
 	      	CrosstabDefinition crosstabDefinition = qbeEngineInstance.getCrosstabDefinition();
 	      	JSONObject crosstabDefinitionJSON = crosstabDefinition != null ? 
-	      			(JSONObject) SerializerFactory.getSerializer("application/json").serialize(crosstabDefinition) : 
+	      			(JSONObject) SerializationManager.serialize(crosstabDefinition, "application/json") : 
 	      				new JSONObject();
 	      	%>
+	      	
+	
 	      	qbeConfig.crosstab.crosstabTemplate = <%= crosstabDefinitionJSON %>;
 	    	
 	        // javascript-side user profile object
