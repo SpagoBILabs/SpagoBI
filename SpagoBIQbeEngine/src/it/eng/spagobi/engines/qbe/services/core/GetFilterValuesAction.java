@@ -25,7 +25,7 @@ package it.eng.spagobi.engines.qbe.services.core;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.model.structure.ModelField;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
@@ -235,8 +235,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			logger.debug("Must use query root entity. Looking for select and order fields...");
 			IDataSource model = getDataSource();
 			IModelStructure structure = model.getModelStructure();
-			ModelField selectField = structure.getField(entityId);
-			ModelField orderField = null;
+			IModelField selectField = structure.getField(entityId);
+			IModelField orderField = null;
 			if (orderEntity != null && !orderEntity.equals("")) {
 				orderField = structure.getField(orderEntity);
 			}
@@ -247,7 +247,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			List fields = rootEntity.getAllFields();
 			Iterator it = fields.iterator();
 			while (it.hasNext()) {
-				ModelField aField = (ModelField) it.next();
+				IModelField aField = (IModelField) it.next();
 				if (aField.getName().equals(selectField.getName())) {
 					entityId = aField.getUniqueName();
 					entityPattern = aField.getPropertyAsString("format");
@@ -258,7 +258,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			if (orderField != null) {
 				it = fields.iterator();
 				while (it.hasNext()) {
-					ModelField aField = (ModelField) it.next();
+					IModelField aField = (IModelField) it.next();
 					if (aField.getName().equals(orderField.getName())) {
 						orderEntity = aField.getUniqueName();
 						orderEntityPattern = aField.getPropertyAsString("format");
