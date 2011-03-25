@@ -186,6 +186,11 @@ public class Query {
 		return fields;
 	}
 	
+	public void removeSelectField(int fieldIndex) {
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
+		selectFields.remove(fieldIndex);
+	}
+	
 	public ISelectField getSelectFieldByIndex(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		return (ISelectField)selectFields.get(fieldIndex);
