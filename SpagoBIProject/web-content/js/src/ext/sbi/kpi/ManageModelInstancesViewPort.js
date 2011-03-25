@@ -141,7 +141,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 	           //NB: Important trick: to render all content tabs on page load
 	           , deferredRender: false
 	           , width: 450
-	           , height: 450
+	          // , height: 560
 	           , itemId: 'tabs'
 			   , items: [this.modelInstancesTreeTab, this.resourcesTab]
 
@@ -151,14 +151,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 		this.viewport = {
 				layout: 'border'
 				, id: 'modelInstViewport00'
-				, height:560
+				//, height:560
 				, autoScroll: true
 				, items: [
 			         {
 			           id: 'modelInstancesList00',
 			           region: 'west',
 			           width: 275,
-			           height:560,
+			        //   height:560,
 			           collapseMode:'mini',
 			           autoScroll: true,
 			           split: true,
@@ -169,7 +169,7 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 			           id: 'main00',	  
 				       region: 'center',
 				       //width: 300,
-				       height:560,
+				     //  height:560,
 				       split: true,
 				       collapseMode:'mini',
 				       autoScroll: true,
@@ -179,11 +179,11 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 				        region: 'east',
 				        split: true,
 				        width: 300,
-				        height:560,
+				       // height:560,
 				        id: 'modelsTree00',
 				        collapsed:false,
 				        collapseMode:'mini',
-				        autoScroll: true,
+				        //autoScroll: true,
 				        layout:'border',
 				        defaults: {
 				            split: true
@@ -193,13 +193,14 @@ Ext.extend(Sbi.kpi.ManageModelInstancesViewPort, Ext.Viewport, {
 								{
 									region:'center',
 									collapseMode:'mini',
+									layout: 'fit',
 				                    items:[this.manageModelsTree]
 				                },{
 				                	region:'east', 
 				                	collapsed: true,
 				                	collapseMode:'mini',
 				                    width: 280,
-				                    height: 500,
+				                   // height: 560,
 				                    minSize: 100,
 				                    layout: 'fit',
 				                    autoScroll: true,

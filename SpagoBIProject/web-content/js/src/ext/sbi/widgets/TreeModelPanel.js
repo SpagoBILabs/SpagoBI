@@ -62,7 +62,7 @@ Sbi.widgets.TreeModelPanel = function(config) {
 	Sbi.widgets.TreeModelPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
+Ext.extend(Sbi.widgets.TreeModelPanel, Ext.Panel, {
 
 	gridForm : null,
 	tabs : null,
@@ -82,7 +82,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 		this.modelsTree = new Ext.tree.TreePanel( {
 			title : this.treeTitle,
 			autoWidth : true,
-			height : 450,
+			border: false,
 			layout: 'fit',
 			userArrows : true,
 			animate : true,
@@ -120,20 +120,23 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
          	 labelStyle: 'font-weight:bold; color: #3D8635;',
              name: 'importChildrenFlag'
          });
-		this.modelPanel = new Ext.form.FormPanel( {
-			frame : true,
+		this.checkboxPanel = new Ext.form.FormPanel( {
 			labelWidth: 150,  
-			autoScroll : true,
 			labelAlign : 'left',
-			width : 390,
-			//height : 510,
+			height : 30,
 			layoutConfig : {
 				animate : true,
 				activeOnTop : false
 			},
+			border: false,
 			trackResetOnLoad : true,
-			//, this.importCheck
-			items: [this.importCheck, this.modelsTree ]
+			items: [this.importCheck]
+		});
+		
+		this.modelPanel = new Ext.Panel( {
+			autoScroll : true,
+			labelAlign : 'left',
+			items: [this.checkboxPanel,this.modelsTree ]
 		});
 		
 		if(this.notDraggable !== undefined && this.notDraggable !== null && this.notDraggable == true){
@@ -141,6 +144,7 @@ Ext.extend(Sbi.widgets.TreeModelPanel, Ext.FormPanel, {
 			this.modelsTree.enableDD = false;
 		}
 		this.setListeners();
+
 	}
 
 });
