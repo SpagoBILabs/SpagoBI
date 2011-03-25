@@ -365,7 +365,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		        result += '"children":[';
 		        for(var i = 0; i < clen; i++){
 		            if (i > 0) {result += ',';}
-		            result += this.nodeToString(children[i]);
+		            result += this.filterAttributes(children[i]);
 		        }
 		        result += ']';
 		    }
@@ -375,7 +375,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
     //OVERRIDING save method
 	,save : function() {
     	var jsonStr = '[';
-    	//alert(this.nodesToSave.length);
+
 		Ext.each(this.nodesToSave, function(node, index) {
 			if(node instanceof Ext.tree.TreeNode){
 				jsonStr += this.filterAttributes(node);
@@ -539,7 +539,10 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	,editNode : function(field, event) {
 
 		var node = this.selectedNodeToEdit;
+
 		if (node !== undefined) {
+
+
 			var val = node.text;
 			var aPosition = val.indexOf(" - ");
 			var name = "";
@@ -762,15 +765,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 				   }
 				   var idxNodeType = this.typesStore.find('domainCd', 'MODEL_NODE');			
 				   var recDomain = this.typesStore.getAt(idxNodeType);
-/*				   var codeTxt = r.get('code');
-				   if(codeTxt != null && codeTxt.length >12){
-					   codeTxt = codeTxt.substring(0,12)+'.';
-				   }
-				   var nameTxt = r.get('name');
-				   if(nameTxt != null && nameTxt.length >12){
-					   nameTxt = nameTxt.substring(0,12)+'.';
-				   }
-				   var text = codeTxt+' - '+nameTxt;*/
+
 				   var newNode = this.mainTree.getLoader().createNode({
 					   kpi: r.get('name')
 					   , kpiId: r.get('id')
