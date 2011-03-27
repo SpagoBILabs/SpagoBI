@@ -66,7 +66,6 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		JSONArray filtersJSON;
 		JSONArray havingsJSON;
 		JSONObject filterExpJOSN;
-		boolean distinctClauseEnabled = false;		
 		JSONArray subqueriesJSON;
 		JSONObject subqueryJSON;
 		Iterator subqueriesIterator;
