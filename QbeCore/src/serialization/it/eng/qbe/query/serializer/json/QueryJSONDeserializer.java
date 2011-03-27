@@ -53,7 +53,6 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		Query query;
 		JSONObject queryJSON = null;
 		JSONArray fieldsJSON = null;
-		boolean distinctClauseEnabled = false;
 		JSONArray filtersJSON = null;
 		JSONArray havingsJSON = null;
 		JSONObject expressionJSON = null;
@@ -83,9 +82,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 			
 			try {
 				query.setId(queryJSON.getString(QuerySerializationConstants.ID));
-				query.setName(queryJSON.getString(QuerySerializationConstants.NAME));
-				query.setDescription(queryJSON.getString(QuerySerializationConstants.DESCRIPTION));
-				query.setDistinctClauseEnabled(queryJSON.getBoolean( QuerySerializationConstants.DISTINCT ));
+				query.setName(queryJSON.optString(QuerySerializationConstants.NAME));
+				query.setDescription(queryJSON.optString(QuerySerializationConstants.DESCRIPTION));
+				query.setDistinctClauseEnabled(queryJSON.optBoolean( QuerySerializationConstants.DISTINCT ));
 				// TODO: move this in AnalysisStateLoader class
 				try {
 					query.setNestedExpression(queryJSON.getBoolean( QuerySerializationConstants.IS_NESTED_EXPRESSION ));
@@ -167,9 +166,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						Assert.assertNotNull(field, "Inpossible to retrive from datamart-structure a fild named " + fieldUniqueName + ". Please check select clause: " + fieldsJSON.toString());
 						if(StringUtilities.isEmpty(alias)) alias = "Column_" + (i+1);
 						
-						group = fieldJSON.getString(QuerySerializationConstants.FIELD_GROUP);
-						order = fieldJSON.getString(QuerySerializationConstants.FIELD_ORDER);
-						funct = fieldJSON.getString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
+						group = fieldJSON.optString(QuerySerializationConstants.FIELD_GROUP);
+						order = fieldJSON.optString(QuerySerializationConstants.FIELD_ORDER);
+						funct = fieldJSON.optString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
 							
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
 							pattern = field.getPropertyAsString("format");
