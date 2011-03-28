@@ -512,6 +512,12 @@ Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operation du Web Service';
 Sbi.locale.ln['sbi.ds.script'] = 'Script';
 Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Langage du Script';
 Sbi.locale.ln['sbi.ds.jclassName'] = 'Nom de Classe Java';
+Sbi.locale.ln['sbi.ds.transfType'] = 'Transformation';
+Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Type de Transformation';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nom de la colonne des categories à pivoter';
+Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nom de la colonne des valeurs à pivoter';
+Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nom de la colonne à ne pas pivoter';
+Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numeration automatique des Colonnes?';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

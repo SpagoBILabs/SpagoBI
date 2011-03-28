@@ -103,7 +103,7 @@ public interface IDataSetDAO {
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertDataSet(IDataSet aDataSet) throws EMFUserError;
+	public Integer insertDataSet(IDataSet aDataSet) throws EMFUserError;
 	
 	/**
 	 * Implements the query to erase a data Set. All information needed is stored
@@ -114,6 +114,16 @@ public interface IDataSetDAO {
 	 * @throws EMFUserError If an Exception occurred
 	 */	
 	public void eraseDataSet(IDataSet aDataSet) throws EMFUserError;
+	
+	/**
+	 * Delete data set.
+	 * 
+	 * @param dsID the a data set ID
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public void deleteDataSet(Integer dsID) throws EMFUserError ;
 
 	/**
 	 * Tells if a data Set is associated to any

@@ -530,6 +530,12 @@ Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operazione Web Service';
 Sbi.locale.ln['sbi.ds.script'] = 'Script';
 Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Linguaggio Script';
 Sbi.locale.ln['sbi.ds.jclassName'] = 'Nome Classe Java';
+Sbi.locale.ln['sbi.ds.transfType'] = 'Trasformazione';
+Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Tipo di Trasformazione';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nome della colonna delle categorie da Pivotare';
+Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nome della colonna dei valori da Pivotare';
+Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nome della colonna da non Pivotare';
+Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numerazione automatica delle colonne?';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================

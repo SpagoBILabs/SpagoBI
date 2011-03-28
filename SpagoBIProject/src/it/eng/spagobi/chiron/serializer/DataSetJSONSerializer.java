@@ -7,17 +7,9 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.Locale;
-import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -48,6 +40,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String PIVOT_COL_NAME = "pivotColName";
 	private static final String PIVOT_COL_VALUE = "pivotColValue";
 	private static final String PIVOT_ROW_NAME = "pivotRowName";
+	private static final String PIVOT_IS_NUM_ROWS = "pivotIsNumRows";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -126,8 +119,9 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(TRASFORMER_TYPE_CD, ds.getTransformerCd());
 			result.put(PIVOT_COL_NAME, ds.getPivotColumnName());	
 			result.put(PIVOT_COL_VALUE, ds.getPivotColumnValue());	
-			result.put(PIVOT_ROW_NAME,ds.getPivotRowName());			
-			
+			result.put(PIVOT_ROW_NAME,ds.getPivotRowName());	
+			result.put(PIVOT_IS_NUM_ROWS,ds.isNumRows());	
+	
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

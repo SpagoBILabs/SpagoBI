@@ -66,12 +66,15 @@ Sbi.tools.ManageDatasets = function(config) {
 	
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
+	config.singleSelection = true;
 	
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.tools.ManageDatasets.superclass.constructor.call(this, c);	 
 	
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
+		this.activateDsTypeForm(null, rec, row); 
+		this.activateTransfForm(null, rec, row); 
 		this.getForm().loadRecord(rec);  
      }, this);
 };
@@ -81,6 +84,57 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	configurationObject: null
 	, gridForm:null
 	, mainElementsStore:null
+	, trasfDetail:null
+    , jClassDetail:null
+    , scriptDetail:null
+    , queryDetail:null
+    , WSDetail:null
+    , fileDetail:null
+    
+    , activateTransfForm: function(combo,record,index){
+		var transfSelected = record.get('trasfTypeCd');
+		if(transfSelected != null && transfSelected=='PIVOT_TRANSFOMER'){
+			this.trasfDetail.setVisible(true);
+		}else{
+			this.trasfDetail.setVisible(false);
+		}
+	}
+	
+	, activateDsTypeForm: function(combo,record,index){
+	
+		var dsTypeSelected = record.get('dsTypeCd');
+		if(dsTypeSelected != null && dsTypeSelected=='File'){
+			this.fileDetail.setVisible(true);
+			this.queryDetail.setVisible(false);
+			this.jClassDetail.setVisible(false);
+			this.scriptDetail.setVisible(false);
+			this.WSDetail.setVisible(false);
+		}else if (dsTypeSelected != null && dsTypeSelected=='Query'){	
+			this.fileDetail.setVisible(false);
+			this.queryDetail.setVisible(true);
+			this.jClassDetail.setVisible(false);
+			this.scriptDetail.setVisible(false);
+			this.WSDetail.setVisible(false);
+		}else if (dsTypeSelected != null && dsTypeSelected=='Java Class'){
+			this.fileDetail.setVisible(false);
+			this.queryDetail.setVisible(false);
+			this.jClassDetail.setVisible(true);
+			this.scriptDetail.setVisible(false);
+			this.WSDetail.setVisible(false);
+		}else if (dsTypeSelected != null && dsTypeSelected=='Web Service'){
+			this.fileDetail.setVisible(false);
+			this.queryDetail.setVisible(false);
+			this.jClassDetail.setVisible(false);
+			this.scriptDetail.setVisible(false);
+			this.WSDetail.setVisible(true);
+		}else if (dsTypeSelected != null && dsTypeSelected=='Script'){
+			this.fileDetail.setVisible(false);
+			this.queryDetail.setVisible(false);
+			this.jClassDetail.setVisible(false);
+			this.scriptDetail.setVisible(true);
+			this.WSDetail.setVisible(false);
+		}
+	}
 
 	,initConfigObject:function(){
 	    this.configurationObject.fields = ['id'
@@ -98,6 +152,13 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          , 'script'
 		                    	          , 'scriptLanguage'
 		                    	          , 'jclassName'
+		                    	          , 'pars'
+		                    	          , 'meta'
+		                    	          , 'trasfTypeCd'
+		                    	          , 'pivotColName'
+		                    	          , 'pivotColValue'
+		                    	          , 'pivotRowName'
+		                    	          , 'pivotIsNumRows'
 		                    	          ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -115,13 +176,20 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          wsOperation:'',
 		                    	          script:'',
 		                    	          scriptLanguage:'',
-		                    	          jclassName:''
+		                    	          jclassName:'',
+		                    	          pars:'',
+		                    	          meta:'',
+		                    	          trasfTypeCd:'',
+		                    	          pivotColName:'',
+		                    	          pivotColValue:'',
+		                    	          pivotRowName:'',
+		                    	          pivotIsNumRows:''
 										 });
 		
 		this.configurationObject.gridColItems = [
 		                                         {id:'label',header: LN('sbi.generic.label'), width: 120, sortable: true, locked:false, dataIndex: 'label'},
 		                                         {header: LN('sbi.generic.name'), width: 120, sortable: true, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.type'), width: 50, sortable: true, dataIndex: 'dsTypeCd'},
+		                                         {header: LN('sbi.generic.type'), width: 55, sortable: true, dataIndex: 'dsTypeCd'},
 		                                         {header: LN('sbi.ds.numDocs'), width: 60, sortable: true, dataIndex: 'usedByNDocs'}
 		                                        ];
 		
@@ -241,7 +309,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	    });
 	    
 	  //START list of Advanced fields
-	    var detailDsType =  {
+	    var detailDsType = new Ext.form.ComboBox({
 	      	    name: 'dsTypeCd',
 	            store: this.dsTypesStore,
 	            width : 120,
@@ -257,9 +325,10 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	            allowBlank: true,
 	            validationEvent:true,
 	            xtype: 'combo'
-	        }; 
+	        }); 
+	    detailDsType.addListener('select',this.activateDsTypeForm,this);
 	    
-	    var detailFileName = {
+	    this.detailFileName = new Ext.form.TextField({
 	          	 maxLength:40,
 	        	 minLength:1,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
@@ -267,9 +336,9 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	             allowBlank: true,
 	             validationEvent:true,
 	             name: 'fileName'
-	         };
+	         });
 	    
-	    var detailDataSource =  {
+	    this.detailDataSource = new Ext.form.ComboBox({
 	      	    name: 'dataSource',
 	            store: this.dataSourceStore,
 	            width : 120,
@@ -285,52 +354,55 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	            allowBlank: true,
 	            validationEvent:true,
 	            xtype: 'combo'
-	        }; 
+	        }); 
 	    
-	    var detailQuery = {
-	             maxLength:1000,
+	    this.detailQuery = new Ext.form.TextArea({
+	             maxLength:5000,
 	             xtype: 'textarea',
-	        	 width : this.textAreaWidth,
-	             height : 150,
+	        	 width : 150,
+	             height : 250,
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.query'),
 	             validationEvent:true,
 	             name: 'query'
-	           };
+	           });
 	    
-	    var detailWsAddress = {
+	    this.detailWsAddress = new Ext.form.TextField({
 	          	 maxLength:40,
 	        	 minLength:1,
+	        	 width : 150,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.wsAddress'),
 	             allowBlank: true,
 	             validationEvent:true,
 	             name: 'wsAddress'
-	         };
+	         });
 	    
-	    var detailWsOperation = {
+	    this.detailWsOperation = new Ext.form.TextField({
 	          	 maxLength:40,
 	        	 minLength:1,
+	        	 width : 150,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.wsOperation'),
 	             allowBlank: true,
 	             validationEvent:true,
 	             name: 'wsOperation'
-	         };
+	         });
 	    
-	    var detailScript = {
-	    		maxLength:1000,
+	    this.detailScript = new Ext.form.TextArea({
+	    		maxLength:5000,
 	             xtype: 'textarea',
 	        	 width : this.textAreaWidth,
-	             height : 50,
+	        	 width : 150,
+	             height : 220,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.script'),
 	             allowBlank: true,
 	             validationEvent:true,
 	             name: 'script'
-	         };
+	         });
 	    
-	    var detailScriptLanguage =  {
+	    this.detailScriptLanguage =  new Ext.form.ComboBox({
 	      	    name: 'scriptLanguage',
 	            store: this.scriptLanguagesStore,
 	            width : 120,
@@ -346,9 +418,9 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	            allowBlank: true,
 	            validationEvent:true,
 	            xtype: 'combo'
-	        }; 
+	        }); 
 	    
-	    var detailJclassName = {
+	    this.detailJclassName = new Ext.form.TextField({
 	          	 maxLength:40,
 	        	 minLength:1,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
@@ -356,10 +428,105 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	             allowBlank: true,
 	             validationEvent:true,
 	             name: 'jclassName'
-	         };
+	         });
 	    
- 	   
- 	   this.configurationObject.tabItems = [this.detailTab,{
+	    this.dsTypeDetail = new Ext.form.FieldSet({  	
+	            labelWidth: 90,
+	            //defaults: {width: 200, border:false},    
+	            defaultType: 'textfield',
+	            autoHeight: true,
+	            autoScroll  : true,
+	            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	            border: true,
+	            style: {
+	                "margin-left": "10px", 
+	                "margin-top": "10px", 
+	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+	            },
+	            items: [detailDsType]
+	    });
+
+	    this.queryDetail = new Ext.form.FieldSet({  	
+	            labelWidth: 90,
+	            defaults: {width: 210, border:true},    
+	            defaultType: 'textfield',
+	            autoHeight: true,
+	            autoScroll  : true,
+	            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	            border: true,
+	            style: {
+	                "margin-left": "10px", 
+	                "margin-top": "10px", 
+	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+	            },
+	            items: [this.detailDataSource, this.detailQuery]
+	    });
+	    
+	    this.jClassDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},   
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [this.detailJclassName]
+	    });
+	    
+	    this.fileDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},   
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [this.detailFileName]
+	    });
+	    
+	    this.WSDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},     
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [this.detailWsAddress, this.detailWsOperation]
+	    });
+	    
+	    this.scriptDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},     
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [this.detailScriptLanguage, this.detailScript]
+	    });
+	    
+	    this.typeTab = new Ext.Panel({
 	    	title: LN('sbi.generic.type')
 	        , itemId: 'advanced'
 	        , width: 350
@@ -370,7 +537,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	             xtype: 'fieldset',
 	             scope: this,
 	             labelWidth: 90,
-	             defaults: {width: 280, border:false},    
+	             //defaults: {width: 280, border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
@@ -380,13 +547,129 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	                 "margin-left": "10px", 
 	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	             },
-	             items: [detailDsType,
-	                     detailFileName, detailDataSource, 
-	                     detailQuery, detailWsAddress, 
-	                     detailWsOperation, detailScript,
-	                     detailScriptLanguage, detailJclassName ]
+	             items: [this.dsTypeDetail,this.jClassDetail,this.scriptDetail,
+		                 this.queryDetail,this.WSDetail,this.fileDetail]
 	    	}			    
-	    }];
+	    });
+	    
+	    this.transfTypesStore = new Ext.data.SimpleStore({
+	        fields: ['trasfTypeCd'],
+	        data: config.trasfTypes,
+	        autoLoad: false
+	    });
+	    
+	    var detailTransfType = new Ext.form.ComboBox({
+	      	    name: 'trasfTypeCd',
+	            store: this.transfTypesStore,
+	            width : 120,
+	            fieldLabel: LN('sbi.ds.trasfTypeCd'),
+	            displayField: 'trasfTypeCd',   // what the user sees in the popup
+	            valueField: 'trasfTypeCd',        // what is passed to the 'change' event
+	            typeAhead: true,
+	            forceSelection: true,
+	            mode: 'local',
+	            triggerAction: 'all',
+	            selectOnFocus: true,
+	            editable: false,
+	            allowBlank: true,
+	            validationEvent:true,
+	            xtype: 'combo'
+	        }); 
+	    detailTransfType.addListener('select',this.activateTransfForm,this);
+	    
+	    this.trasfTypeDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},     
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [detailTransfType]
+	    });
+	    
+	    var detailPivotCName = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.pivotColName'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'pivotColName'
+	         };
+	    
+	    var detailPivotCValue = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.pivotColValue'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'pivotColValue'
+	         };
+	    
+	    var detailPivotRName = {
+	          	 maxLength:40,
+	        	 minLength:1,
+	        	 regexText : LN('sbi.roles.alfanumericString'),
+	             fieldLabel: LN('sbi.ds.pivotRowName'),
+	             allowBlank: true,
+	             validationEvent:true,
+	             name: 'pivotRowName'
+	         };
+	    
+	    var detailIsNumRow = new Ext.form.Checkbox({
+            xtype: 'checkbox',
+            itemId: 'pivotIsNumRows',
+            name: 'pivotIsNumRows',
+            fieldLabel: LN('sbi.ds.pivotIsNumRows')
+         });
+	    
+	    this.trasfDetail = new Ext.form.FieldSet({  	
+            labelWidth: 90,
+            defaults: {width: 210, border:true},     
+            defaultType: 'textfield',
+            autoHeight: true,
+            autoScroll  : true,
+            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            border: true,
+            style: {
+                "margin-left": "10px", 
+                "margin-top": "10px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+            },
+            items: [detailPivotCName, detailPivotCValue, detailPivotRName, detailIsNumRow]
+	    });
+	    
+	    this.transfTab = new Ext.Panel({
+	    	title: LN('sbi.ds.transfType')
+	        , itemId: 'transf'
+	        , width: 350
+	        , items: {
+	    	     id: 'transf-detail',   	
+		   	     itemId: 'transf-detail',  	 
+	             xtype: 'fieldset',
+	             scope: this,
+	             labelWidth: 90,  
+	             defaultType: 'textfield',
+	             autoHeight: true,
+	             autoScroll  : true,
+	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
+	             border: false,
+	             style: {
+	                 "margin-left": "10px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	             },
+	             items: [this.trasfTypeDetail, this.trasfDetail]
+	    	}			    
+	    });
+ 	   
+ 	   this.configurationObject.tabItems = [this.detailTab, this.typeTab, this.transfTab];
 	}
 	
     //OVERRIDING save method
@@ -394,15 +677,30 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		var values = this.getForm().getFieldValues();
 		var idRec = values['id'];
 		var newRec;
-	
+		
 		if(idRec ==0 || idRec == null || idRec === ''){
 			newRec =new Ext.data.Record({
 					name: values['name'],
-					code: values['code'],
-			        description: values['description'],			        
-			        tablename: values['tablename'],	
-			        columnname: values['columnname'],
-			        typeCd: values['typeCd']
+					label: values['label'],
+					description: values['description'],			        
+					dsTypeCd: values['dsTypeCd'],	
+					catTypeCd: values['catTypeCd'],
+					usedByNDocs: values['usedByNDocs'],
+					fileName: values['fileName'],
+					query: values['query'],
+					dataSource: values['dataSource'],			        
+					wsAddress: values['wsAddress'],	
+					wsOperation: values['wsOperation'],
+					script: values['script'],			        
+					scriptLanguage: values['scriptLanguage'],	
+					jclassName: values['jclassName'],
+					pars: values['pars'],
+      	          	meta: values['meta'],
+      	            trasfTypeCd: values['trasfTypeCd'],
+      	            pivotColName: values['pivotColName'],
+      	            pivotColValue: values['pivotColValue'],
+      	            pivotRowName: values['pivotRowName'],
+      	            pivotIsNumRows: values['pivotIsNumRows']
 			});	  
 			
 		}else{
@@ -415,20 +713,50 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 				}			   
 	   	    }	
 			record.set('name',values['name']);
-			record.set('code',values['code']);
+			record.set('label',values['label']);
 			record.set('description',values['description']);
-			record.set('tablename',values['tablename']);
-			record.set('columnname',values['columnname']);
-			record.set('typeCd',values['typeCd']);		
+			record.set('dsTypeCd',values['dsTypeCd']);
+			record.set('catTypeCd',values['catTypeCd']);
+			record.set('usedByNDocs',values['usedByNDocs']);	
+			record.set('fileName',values['fileName']);
+			record.set('query',values['query']);
+			record.set('dataSource',values['dataSource']);
+			record.set('wsAddress',values['wsAddress']);
+			record.set('wsOperation',values['wsOperation']);
+			record.set('script',values['script']);	
+			record.set('scriptLanguage',values['scriptLanguage']);
+			record.set('jclassName',values['jclassName']);				
+			record.set('pars',values['pars']);	
+			record.set('meta',values['meta']);	
+			record.set('trasfTypeCd',values['trasfTypeCd']);	
+			record.set('pivotColName',values['pivotColName']);	
+			record.set('pivotColValue',values['pivotColValue']);	
+			record.set('pivotRowName',values['pivotRowName']);	
+			record.set('pivotIsNumRows',values['pivotIsNumRows']);	
 		}
 
         var params = {
-        	name :  values['name'],
-        	code : values['code'],
-        	description : values['description'],
-        	tablename : values['tablename'],
-        	columnname : values['columnname'],
-        	typeCd : values['typeCd']	
+        		name: values['name'],
+				label: values['label'],
+				description: values['description'],			        
+				dsTypeCd: values['dsTypeCd'],	
+				catTypeCd: values['catTypeCd'],
+				usedByNDocs: values['usedByNDocs'],
+				fileName: values['fileName'],
+				query: values['query'],
+				dataSource: values['dataSource'],			        
+				wsAddress: values['wsAddress'],	
+				wsOperation: values['wsOperation'],
+				script: values['script'],			        
+				scriptLanguage: values['scriptLanguage'],	
+				jclassName: values['jclassName'],
+				pars: values['pars'],
+  	          	meta: values['meta'],
+  	            trasfTypeCd: values['trasfTypeCd'],
+  	            pivotColName: values['pivotColName'],
+  	            pivotColValue: values['pivotColValue'],
+  	            pivotRowName: values['pivotRowName'],
+  	            pivotIsNumRows: values['pivotIsNumRows']
         };
         
         if(idRec){

@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     List catTypesCd = (List) aSessionContainer.getAttribute("catTypesList");
     List dataSourceList = (List) aSessionContainer.getAttribute("dataSourceList");
     List scriptLanguageList = (List) aSessionContainer.getAttribute("scriptLanguageList");
+    List trasfTypesList = (List) aSessionContainer.getAttribute("trasfTypesList");
 	
 %>
 
@@ -87,6 +88,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String scriptTypes = scriptLanguagesArray.toString();
 	scriptTypes = scriptTypes.replaceAll("\"","'");
+	
+	JSONArray trasfTypesArray = new JSONArray();
+	if(trasfTypesList != null){
+		for(int i=0; i< trasfTypesList.size(); i++){
+			Domain domain = (Domain)trasfTypesList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueCd());
+			trasfTypesArray.put(temp);
+		}
+	}	
+	String trasfTypes = trasfTypesArray.toString();
+	trasfTypes = trasfTypes.replaceAll("\"","'");
     
     %>
 
@@ -95,7 +108,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     config.catTypeCd = <%= catTypes%>;
     config.dataSourceLabels = <%= dataSourceLabels%>;
     config.scriptTypes = <%= scriptTypes%>;
-    
+    config.trasfTypes = <%= trasfTypes%>;    
 	
 	var url = {
     	host: '<%= request.getServerName()%>'
