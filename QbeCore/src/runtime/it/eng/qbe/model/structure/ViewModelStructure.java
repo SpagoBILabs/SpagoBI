@@ -31,15 +31,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		List<IModelEntity> iModelEntities = qbeTreeFilter.filterEntities(dataSource,wrappedModelStructure.getRootEntities(modelName));
 		List<IModelEntity> viewModelEntities = new ArrayList<IModelEntity>();
 		for(int i=0; i<iModelEntities.size(); i++){
-			ViewModelEntity vme;
-			if(iModelEntities.get(i) instanceof ViewModelEntity){
-				vme = (ViewModelEntity)iModelEntities.get(i);
-				vme.setDataSource(dataSource);
-				vme.setQbeTreeFilter(qbeTreeFilter);
-			}else{
-				vme = new ViewModelEntity(iModelEntities.get(i), dataSource, qbeTreeFilter);
-			}
-			viewModelEntities.add(vme);
+			viewModelEntities.add(toViewModelEntity(iModelEntities.get(i)));
 		}
 		return viewModelEntities;
 	}
@@ -81,15 +73,14 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		return wrappedModelStructure.getModelNames();
 	}
 
-	public IModelEntity addRootEntity(String modelName, String name,
-			String path, String role, String type) {
+	public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
 		IModelEntity entityn =  wrappedModelStructure.addRootEntity(modelName, name, path, role, type);
 		if(entityn==null){
 			return null;
 		}
-		list.add(entityn);
+		list.add(toViewModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -104,7 +95,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entityn==null){
 			return null;
 		}
-		list.add(entityn);
+		list.add(toViewModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -119,7 +110,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(entityn);
+		list.add(toViewModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -134,7 +125,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(entityn);
+		list.add(toViewModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -158,7 +149,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(entity);
+		list.add(toViewModelEntity(entity));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -234,6 +225,18 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 	public void setWrappedModelStructure(IModelStructure wrappedModelStructure) {
 		this.wrappedModelStructure = wrappedModelStructure;
 	}
+	
+	private ViewModelEntity toViewModelEntity(IModelEntity iModelEntity){
+		ViewModelEntity vme;
+		if(iModelEntity instanceof ViewModelEntity){
+			vme = (ViewModelEntity)iModelEntity;
+			vme.setDataSource(dataSource);
+			vme.setQbeTreeFilter(qbeTreeFilter);
+		}else{
+			vme = new ViewModelEntity(iModelEntity, dataSource, qbeTreeFilter);
+		}
+		return vme;
+	} 
 	
 
 }
