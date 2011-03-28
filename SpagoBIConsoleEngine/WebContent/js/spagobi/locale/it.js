@@ -71,12 +71,14 @@ Sbi.locale.ln['sbi.console.downloadlogs.initialDate'] = 'Data inizio';
 Sbi.locale.ln['sbi.console.downloadlogs.finalDate'] = 'Data fine';
 Sbi.locale.ln['sbi.console.downloadlogs.initialTime'] = 'Ora inizio';
 Sbi.locale.ln['sbi.console.downloadlogs.finalTime'] = 'Ora fine';
+Sbi.locale.ln['sbi.console.downloadlogs.path'] = 'Path';
 Sbi.locale.ln['sbi.console.downloadlogs.btnClose'] = 'Chiudi';
 Sbi.locale.ln['sbi.console.downloadlogs.btnDownload'] = 'Download';
 Sbi.locale.ln['sbi.console.downloadlogs.initialDateMandatory'] = 'Data inizio obbligatoria';
 Sbi.locale.ln['sbi.console.downloadlogs.finalDateMandatory'] = 'Data fine obbligatoria';
 Sbi.locale.ln['sbi.console.downloadlogs.initialTimeMandatory'] = 'Ora inizio obbligatoria';
 Sbi.locale.ln['sbi.console.downloadlogs.finalTimeMandatory'] = 'Ora fine obbligatoria';
+Sbi.locale.ln['sbi.console.downloadlogs.pathsMandatory'] = 'Path obbligatorio'
 Sbi.locale.ln['sbi.console.downloadlogs.rangeInvalid'] = 'Intervallo date errato';
 
 //propmtables window
