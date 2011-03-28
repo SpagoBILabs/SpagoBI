@@ -207,6 +207,11 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 				
 		cfg.setProperty("hibernate.dialect", getConnection().getDialect());
 		
+		// Ingres does not support scrollable result set
+		if ("org.hibernate.dialect.IngresDialect".equals(getConnection().getDialect())) {
+			cfg.setProperty("hibernate.jdbc.use_scrollable_resultset", "false");
+		}
+		
 		cfg.setProperty("hibernate.cglib.use_reflection_optimizer", "true");
 		cfg.setProperty("hibernate.show_sql", "false");
 		
