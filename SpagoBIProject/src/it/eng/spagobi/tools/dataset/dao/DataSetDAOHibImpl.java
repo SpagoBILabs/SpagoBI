@@ -54,6 +54,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.exception.ConstraintViolationException;
 
 public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetDAO  {
 	static private Logger logger = Logger.getLogger(DataSetDAOHibImpl.class);
@@ -319,10 +320,11 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
-	public void insertDataSet(IDataSet aDataSet) throws EMFUserError {
+	public Integer insertDataSet(IDataSet aDataSet) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -416,7 +418,7 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 			hibDataSet.setParameters(aDataSet.getParameters());
 			hibDataSet.setDsMetadata(aDataSet.getDsMetadata());
 
-			aSession.save(hibDataSet);
+			idToReturn = (Integer) aSession.save(hibDataSet);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the data Set with id " + ((aDataSet == null)?"":String.valueOf(aDataSet.getId())), he);
@@ -432,6 +434,7 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 				logger.debug("OUT");
 			}
 		}
+		return idToReturn;
 	}
 
 	/**
@@ -471,6 +474,46 @@ public class DataSetDAOHibImpl extends AbstractHibernateDAO implements IDataSetD
 		}
 
 	}
+	
+	/**
+	 * Delete data set.
+	 * 
+	 * @param dsID the a data set ID
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public void deleteDataSet(Integer dsID) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			SbiDataSetConfig hibDataSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,dsID);
+			aSession.delete(hibDataSet);
+			
+			tx.commit();			
+		}  catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Impossible to delete DataSet", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10014);
+
+		} catch (HibernateException e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Error while deleting the DataSet with id " + ((dsID == null)?"":dsID.toString()), e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			aSession.close();
+		}
+	}
+	
 
 	/**
 	 * From the hibernate DataSet at input, gives
