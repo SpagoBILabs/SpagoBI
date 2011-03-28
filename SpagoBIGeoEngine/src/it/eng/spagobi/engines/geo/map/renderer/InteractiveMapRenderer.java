@@ -218,6 +218,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				measures = getMeasuresConfigurationScript(dataMart);
 				String selectedMeasureName = getSelectedMeasureName();
 				logger.debug("Selected measure [" + selectedMeasureName + "]");
+				Assert.assertTrue(selectedMeasureName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
+				
+				
 				int selectedMeasureIndexIndex = -1;
 				for(int i = 0; i < measures.length(); i++) {
 					JSONObject measure = (JSONObject)measures.get(i);
@@ -430,6 +433,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		//int selectedKpiIndex = dataStoreMeta.getFieldIndex( getSelectedMeasureName() );
 		String selectedKpiName = getSelectedMeasureName(); //kpiNames[selectedKpiIndex];
+		Assert.assertTrue(selectedKpiName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
 		Measure measure  = getMeasure( selectedKpiName );
 		Number lb_value = null;
 		Number ub_value = null;
