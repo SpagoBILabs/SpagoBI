@@ -106,4 +106,16 @@ public interface IDomainDAO {
 	
 	public List loadListDomains() throws EMFUserError;
 	
+	/**
+	 * 
+	 * @param d
+	 * @throws EMFUserError
+	 */
+	public void saveDomain(Domain d)throws EMFUserError;
+	
+	/*
+	 * 
+	 */
+	public void updateDomain(Domain d)throws EMFUserError;
+	
 }
