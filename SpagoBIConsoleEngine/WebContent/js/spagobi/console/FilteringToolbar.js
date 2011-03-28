@@ -262,9 +262,11 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	   	 
 	   	 //WORKAROUND: when the user selects an item from the combo and stay on it, this combo is opened on each refresh.
 	   	 //This workaround force the closure of the combo.
-	   	 var cb = this.cbFilters[dataIdx];
-	   	 if (cb){
-	   		 cb.collapse();
+	   	 if (this.cbFilters !== null && this.cbFilters !== undefined){
+		   	 var cb = this.cbFilters[dataIdx];
+		   	 if (cb){
+		   		 cb.collapse();
+		   	 }
 	   	 }
 	}
    

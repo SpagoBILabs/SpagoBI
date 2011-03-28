@@ -73,9 +73,15 @@ Sbi.locale.ln['sbi.console.downloadlogs.initialDate'] = 'Initial date';
 Sbi.locale.ln['sbi.console.downloadlogs.finalDate'] = 'Final date';
 Sbi.locale.ln['sbi.console.downloadlogs.initialTime'] = 'Initial time';
 Sbi.locale.ln['sbi.console.downloadlogs.finalTime'] = 'Final time';
+Sbi.locale.ln['sbi.console.downloadlogs.path'] = 'Path';
 Sbi.locale.ln['sbi.console.downloadlogs.btnClose'] = 'Close';
 Sbi.locale.ln['sbi.console.downloadlogs.btnDownload'] = 'Download';
-
+Sbi.locale.ln['sbi.console.downloadlogs.initialDateMandatory'] = 'The start date is mandatory';
+Sbi.locale.ln['sbi.console.downloadlogs.finalDateMandatory'] = 'The final date is mandatory';
+Sbi.locale.ln['sbi.console.downloadlogs.initialTimeMandatory'] = 'The initial time is mandatory';
+Sbi.locale.ln['sbi.console.downloadlogs.finalTimeMandatory'] = 'The final time is mandatory';
+Sbi.locale.ln['sbi.console.downloadlogs.pathsMandatory'] = 'The download path is mandatory'
+Sbi.locale.ln['sbi.console.downloadlogs.rangeInvalid'] = 'Incorrect range of date'
 //propmtables window
 Sbi.locale.ln['sbi.console.promptables.btnOK'] = 'OK';
 Sbi.locale.ln['sbi.console.promptables.btnClose'] = 'Close';

@@ -183,6 +183,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		results = Ext.apply(results, parameters.staticParams);
 		var dynamicParams = parameters.dynamicParams;
 		
+		
 	    if(dynamicParams) { 
 	    	var msgErr = ""; 
 	    	for (var i = 0, l = dynamicParams.length; i < l; i++) { 
@@ -209,14 +210,14 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		                  promptables = promptables || [];
 		                  promptables.push(param);
 	                 }	                 
-	           }    
-	    	   
+	           }   
+	    		//gets metadata params (linked to dynamic params)
+		    	var metaParams = parameters.metaParams;
+			    if(metaParams) {  
+			    	results['metaParams'] = Ext.util.JSON.encode(metaParams);
+			    }
 	      	}
-	    	var metaParams = parameters.metaParams;
-		    if(metaParams) {  
-		    	results['metaParams'] = Ext.util.JSON.encode(metaParams);
-		    }
-	   
+	  
         if  (msgErr != ""){
         	Sbi.Msg.showError(msgErr, 'Service Error');
         }	
@@ -533,7 +534,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		
 	}
 	
-	, downloadLogs: function(action, r, index, options) {		
+	, downloadLogs: function(action, r, index, options) {	
 		var callback = function(params){
 			var url =  Sbi.config.spagobiServiceRegistry.getServiceUrl({serviceName: 'DOWNLOAD_ZIP'
 				     , baseParams: new Object()
@@ -548,6 +549,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				this.logsWin = new Sbi.console.DownloadLogsWindow({
 				serviceName: 'DOWNLOAD_ZIP' 
 				, action: action
+				, options: options
 				});							
 			//}
 			
@@ -723,7 +725,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var t = Ext.apply({}, this.columnConfig[tmpMeta.fields[i].header] || {},  this.columnDefaultConfig);
 		    tmpMeta.fields[i] = Ext.apply(tmpMeta.fields[i], t);
 			if(tmpMeta.fields[i].type) {
-				var t = tmpMeta.fields[i].type;					
+				var t = tmpMeta.fields[i].type;	
+				//alert('t: ' + t);
 				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[t];			   
 			}
 			   
