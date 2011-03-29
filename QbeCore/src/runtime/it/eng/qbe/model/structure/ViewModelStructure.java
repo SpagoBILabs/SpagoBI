@@ -170,7 +170,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 			return null;
 		}
 		list.add(field);
-		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
+		filteredList = qbeTreeFilter.filterFields(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
 		}
