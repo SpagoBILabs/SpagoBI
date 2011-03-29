@@ -191,6 +191,16 @@ public class Query {
 		selectFields.remove(fieldIndex);
 	}
 	
+	public void removeWhereField(int fieldIndex) {
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + whereClause.size() + ")");
+		whereClause.remove(fieldIndex);
+	}
+	
+	public void removeHavingField(int fieldIndex) {
+		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + havingClause.size() + ")");
+		havingClause.remove(fieldIndex);
+	}
+	
 	public ISelectField getSelectFieldByIndex(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		return (ISelectField)selectFields.get(fieldIndex);
