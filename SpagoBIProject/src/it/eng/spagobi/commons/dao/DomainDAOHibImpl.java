@@ -310,5 +310,15 @@ public List loadListDomains() throws EMFUserError {
 		return domains;
 	}
 
+public void saveDomain(Domain d) throws EMFUserError {
+	// TODO Auto-generated method stub
+	
+}
+
+public void updateDomain(Domain d) throws EMFUserError {
+	// TODO Auto-generated method stub
+	
+}
+
 
 }
