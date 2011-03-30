@@ -190,7 +190,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		    }
 		    Integer catTypeID = domainIds.get(catTypeCd);
 
-			if (name != null && label != null && dsType!=null) {
+			if (name != null && label != null && dsType!=null && !dsType.equals("")) {
 				
 				GuiGenericDataSet ds = new GuiGenericDataSet();
 				GuiDataSetDetail dsActiveDetail = null;
@@ -249,52 +249,53 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						ds.setDescription(description);
 					}
 					
-
-					dsActiveDetail.setDsType(dsType);
-					
-					if(meta != null){
-						dsActiveDetail.setDsMetadata(meta);
-					}
-					
-					if(pars != null){
-						dsActiveDetail.setParameters(pars);
-					}
-					
-					if(catTypeID!=null){
-						dsActiveDetail.setCategoryCd(catTypeCd);
-						dsActiveDetail.setCategoryId(catTypeID);
-					}
-					
-					if(trasfTypeCd!=null){
-					    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
-					    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
-					    if(domainsTrasf != null){
-						    for(int i=0; i< domainsTrasf.size(); i++){
-						    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+					if(dsActiveDetail!=null){
+						dsActiveDetail.setDsType(dsType);
+						
+						if(meta != null){
+							dsActiveDetail.setDsMetadata(meta);
+						}
+						
+						if(pars != null){
+							dsActiveDetail.setParameters(pars);
+						}
+						
+						if(catTypeID!=null){
+							dsActiveDetail.setCategoryCd(catTypeCd);
+							dsActiveDetail.setCategoryId(catTypeID);
+						}
+						
+						if(trasfTypeCd!=null){
+						    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
+						    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
+						    if(domainsTrasf != null){
+							    for(int i=0; i< domainsTrasf.size(); i++){
+							    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+							    }
 						    }
-					    }
-					    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-					    dsActiveDetail.setTransformerId(transformerId);
-					    dsActiveDetail.setTransformerCd(trasfTypeCd);
-						
-					    String pivotColName = getAttributeAsString(PIVOT_COL_NAME);
-						String pivotColValue = getAttributeAsString(PIVOT_COL_VALUE);
-						String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
-						Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
-						
-						if(pivotColName != null){
-							dsActiveDetail.setPivotColumnName(pivotColName);
+						    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
+						    dsActiveDetail.setTransformerId(transformerId);
+						    dsActiveDetail.setTransformerCd(trasfTypeCd);
+							
+						    String pivotColName = getAttributeAsString(PIVOT_COL_NAME);
+							String pivotColValue = getAttributeAsString(PIVOT_COL_VALUE);
+							String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
+							Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
+							
+							if(pivotColName != null){
+								dsActiveDetail.setPivotColumnName(pivotColName);
+							}
+							if(pivotColValue != null){
+								dsActiveDetail.setPivotColumnValue(pivotColValue);
+							}
+							if(pivotRowName != null){
+								dsActiveDetail.setPivotRowName(pivotRowName);
+							}	
+							if(pivotIsNumRows != null){
+								dsActiveDetail.setNumRows(pivotIsNumRows);
+							}
+							ds.setActiveDetail(dsActiveDetail);
 						}
-						if(pivotColValue != null){
-							dsActiveDetail.setPivotColumnValue(pivotColValue);
-						}
-						if(pivotRowName != null){
-							dsActiveDetail.setPivotRowName(pivotRowName);
-						}	
-						if(pivotIsNumRows != null){
-							dsActiveDetail.setNumRows(pivotIsNumRows);
-						}
-						ds.setActiveDetail(dsActiveDetail);
 					}
 
 					try {
@@ -328,7 +329,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 			}else{
 				logger.error("DataSet name, label or type are missing");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill resource name, label and type");
+				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill DataSet name, label and type");
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(ID);
