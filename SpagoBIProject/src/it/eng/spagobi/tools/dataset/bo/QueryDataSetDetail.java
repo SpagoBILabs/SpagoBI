@@ -19,17 +19,17 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.metadata;
+package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Chiara Chiarelli
  */
-public class SbiQueryDataSet extends SbiDataSetHistory{
+public class QueryDataSetDetail extends GuiDataSetDetail{
+	
     private String query=null;
-    private SbiDataSource dataSource=null;
+    private String dataSourceLabel=null;
     
     /**
      * Gets the query.
@@ -48,22 +48,14 @@ public class SbiQueryDataSet extends SbiDataSetHistory{
     public void setQuery(String query) {
         this.query = query;
     }
+
+	public String getDataSourceLabel() {
+		return dataSourceLabel;
+	}
+
+	public void setDataSourceLabel(String dataSourceLabel) {
+		this.dataSourceLabel = dataSourceLabel;
+	}
     
-    /**
-     * Gets the data source.
-     * 
-     * @return the data source
-     */
-    public SbiDataSource getDataSource() {
-        return dataSource;
-    }
-    
-    /**
-     * Sets the data source.
-     * 
-     * @param dataSource the new data source
-     */
-    public void setDataSource(SbiDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+  
 }

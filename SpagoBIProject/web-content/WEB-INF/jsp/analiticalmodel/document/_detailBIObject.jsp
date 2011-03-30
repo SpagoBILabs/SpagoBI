@@ -342,7 +342,7 @@ for (int i = 0; i < listEngines.size(); i++) {
 			if(obj.getDataSetId()!=null){
 				 currDataSetId=obj.getDataSetId();
 				 currDataSetIdValue=currDataSetId.toString();
-				 DataSet dataSet=DAOFactory.getDataSetDAO().loadDataSetByID(currDataSetId); 
+				 DataSet dataSet=DAOFactory.getDataSetDAO().loadActiveIDataSetByID(currDataSetId); 
 				 if(dataSet!=null){	
 				 	currDataSetLabel=dataSet.getLabel();
 						}

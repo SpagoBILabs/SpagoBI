@@ -474,7 +474,7 @@ function saveDocument(goBack) {
 			if(obj.getDataSetId()!=null){
 				 currDataSetId=obj.getDataSetId();
 				 currDataSetIdValue=currDataSetId.toString();
-				 IDataSet dataSet= DAOFactory.getDataSetDAO().loadDataSetByID(currDataSetId); 
+				 IDataSet dataSet= DAOFactory.getDataSetDAO().loadActiveIDataSetByID(currDataSetId); 
 				 if(dataSet!=null){	
 				 	currDataSetLabel=dataSet.getLabel();
 						}

@@ -61,7 +61,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByID(dataSetId);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dataSetId);
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not existing.");
 				return null;
@@ -84,7 +84,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		logger.debug("IN");
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
-			List dataSetList = DAOFactory.getDataSetDAO().loadAllDataSets();
+			List dataSetList = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 			toReturn = new SDKDataSet[dataSetList.size()];
 			for (int i = 0; i < dataSetList.size(); i++) {
 				IDataSet dataSet = (IDataSet) dataSetList.get(i);
@@ -116,7 +116,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			}
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByID(dataSetId);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dataSetId);
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not found.");
 				return null;

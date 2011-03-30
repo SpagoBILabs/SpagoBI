@@ -495,7 +495,7 @@ public class ExportManager implements IExportManager {
 			// Data set if present
 			Integer objDataSetId = biobj.getDataSetId();
 			if (objDataSetId != null) {
-				IDataSet dataset = dataSetDao.loadDataSetByID(objDataSetId);
+				IDataSet dataset = dataSetDao.loadActiveIDataSetByID(objDataSetId);
 				exporter.insertDataSet(dataset, session);
 			}
 			// Engine if present, and data source if engine uses data source
@@ -538,7 +538,7 @@ public class ExportManager implements IExportManager {
 						if (datasetnameSB != null) {
 							String datasetLabel = (String) datasetnameSB.getAttribute("value");
 							IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-							IDataSet dataset = datasetDao.loadDataSetByLabel(datasetLabel);
+							IDataSet dataset = datasetDao.loadActiveDataSetByLabel(datasetLabel);
 							if (dataset == null) {
 								logger.warn("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : " +
 										"the template refers to a dataset with label " + datasetLabel + " that does not exist!");

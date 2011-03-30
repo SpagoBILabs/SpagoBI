@@ -80,7 +80,7 @@ public class DataSetAccessFunctions {
 	public static String getDataSetResultFromId(IEngUserProfile profile,String dsId, Map parameters) throws Exception {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-		IDataSet ds = dsDAO.loadDataSetByID(Integer.valueOf(dsId));
+		IDataSet ds = dsDAO.loadActiveIDataSetByID(Integer.valueOf(dsId));
 	
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);
 		return result;
@@ -102,7 +102,7 @@ public class DataSetAccessFunctions {
 	public static String getDataSetResultFromLabel(IEngUserProfile profile,String label, Map parameters) throws Exception {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-		IDataSet ds = dsDAO.loadDataSetByLabel(label);
+		IDataSet ds = dsDAO.loadActiveDataSetByLabel(label);
 	
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);
 		return result;

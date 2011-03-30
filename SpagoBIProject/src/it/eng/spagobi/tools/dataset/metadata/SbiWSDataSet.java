@@ -26,7 +26,7 @@ package it.eng.spagobi.tools.dataset.metadata;
  * @author Angelo Bernabei
  *         angelo.bernabei@eng.it
  */
-public class SbiWSDataSet extends SbiDataSetConfig{
+public class SbiWSDataSet extends SbiDataSetHistory{
     private String adress=null;
     private String operation=null;
     

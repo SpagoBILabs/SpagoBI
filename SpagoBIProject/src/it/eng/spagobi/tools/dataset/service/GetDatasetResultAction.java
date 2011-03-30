@@ -98,7 +98,7 @@ public class GetDatasetResultAction extends AbstractHttpAction {
 
 			  try{
 			// if dataset needs parameter I must recover them from request
-			 IDataSet dataSet=DAOFactory.getDataSetDAO().loadDataSetByID(Integer.valueOf(dataName)); 
+			 IDataSet dataSet=DAOFactory.getDataSetDAO().loadActiveIDataSetByID(Integer.valueOf(dataName)); 
 			 if(dataSet!=null){	
 			 	Object parametersO=dataSet.getParameters();
 			 	if(parametersO!=null){

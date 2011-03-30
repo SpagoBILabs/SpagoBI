@@ -19,51 +19,51 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.metadata;
+package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Chiara Chiarelli
  */
-public class SbiQueryDataSet extends SbiDataSetHistory{
-    private String query=null;
-    private SbiDataSource dataSource=null;
+public class WSDataSetDetail extends GuiDataSetDetail{
+	
+    private String address=null;
+    private String operation=null;
     
     /**
-     * Gets the query.
+     * Gets the adress.
      * 
-     * @return the query
+     * @return the adress
      */
-    public String getQuery() {
-        return query;
+    public String getAddress() {
+        return address;
     }
     
     /**
-     * Sets the query.
+     * Sets the adress.
      * 
-     * @param query the new query
+     * @param adress the new adress
      */
-    public void setQuery(String query) {
-        this.query = query;
+    public void setAddress(String address) {
+        this.address = address;
     }
     
-    /**
-     * Gets the data source.
-     * 
-     * @return the data source
-     */
-    public SbiDataSource getDataSource() {
-        return dataSource;
-    }
+	/**
+	 * Gets the operation.
+	 * 
+	 * @return the operation
+	 */
+	public String getOperation() {
+		return operation;
+	}
+	
+	/**
+	 * Sets the operation.
+	 * 
+	 * @param operation the new operation
+	 */
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
     
-    /**
-     * Sets the data source.
-     * 
-     * @param dataSource the new data source
-     */
-    public void setDataSource(SbiDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

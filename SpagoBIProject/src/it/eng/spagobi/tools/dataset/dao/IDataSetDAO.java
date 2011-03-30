@@ -30,7 +30,10 @@ package it.eng.spagobi.tools.dataset.dao;
  */
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 
 import java.util.List;
 
@@ -39,117 +42,128 @@ import java.util.List;
  */
 public interface IDataSetDAO {
 	
-	
-	/**
-	 * Loads all detail information for a data set identified by its <code>dsID</code>.
-	 * All these information,  achived by a query to the DB, are stored
-	 * into a <code>dataset</code> object, which is returned.
-	 * 
-	 * @param dsID The id for the dataset to load
-	 * 
-	 * @return A <code>dataset</code> object containing all loaded information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public IDataSet loadDataSetByID(Integer dsID) throws EMFUserError;
-	
-	/**
-	 * Loads all detail information for data Set whose label is equal to <code>label</code>.
-	 * 
-	 * @param label The label for the data Set to load
-	 * 
-	 * @return An <code>dataset</code> object containing all loaded information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public IDataSet loadDataSetByLabel(String label) throws EMFUserError;
-	
-	/**
-	 * Loads all detail information for all data Sets. For each of them, detail
-	 * information is stored into a <code>dataset</code> object. After that, all data Sets
-	 * are stored into a <code>List</code>, which is returned.
-	 * 
-	 * @return A list containing all dataset objects
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	
-	public List loadAllDataSets() throws EMFUserError;
-	
-	public List loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)throws EMFUserError ;
-	
-	public List loadPagedIDatasetList(Integer offset, Integer fetchSize)throws EMFUserError ;
-	
-	public Integer countBIObjAssociated (Integer dsId) throws EMFUserError;
-	
-	public Integer countDatasets()throws EMFUserError ;
-
-	/**
-	 * Implements the query to modify a data Set. All information needed is stored
-	 * into the input <code>dataset</code> object.
-	 * 
-	 * @param aDataSet The object containing all modify information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	
-	public void modifyDataSet(IDataSet aDataSet) throws EMFUserError;
-	
-	/**
-	 * Implements the query to insert a data Set. All information needed is stored
-	 * into the input <code>dataset</code> object.
-	 * 
-	 * @param aDataSet The object containing all insert information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public Integer insertDataSet(IDataSet aDataSet) throws EMFUserError;
-	
-	/**
-	 * Implements the query to erase a data Set. All information needed is stored
-	 * into the input <code>dataset</code> object.
-	 * 
-	 * @param aDataSet The object containing all delete information
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */	
-	public void eraseDataSet(IDataSet aDataSet) throws EMFUserError;
-	
+	/*****************USED by new GUI******/
 	/**
 	 * Delete data set.
-	 * 
 	 * @param dsID the a data set ID
-	 * 
 	 * @throws EMFUserError the EMF user error
-	 * 
 	 */
 	public void deleteDataSet(Integer dsID) throws EMFUserError ;
-
-	/**
-	 * Tells if a data Set is associated to any
-	 * BI Engines. It is useful because a data Set cannot be deleted
-	 * if it is used by one or more BI Engines.
-	 * 
-	 * @param dsId The dataset identifier
-	 * 
-	 * @return True if the dataset is used by one or more
-	 * objects, else false
-	 * 
-	 * @throws EMFUserError If any exception occurred
-	 */
-	//public boolean hasBIEngineAssociated (String dsId) throws EMFUserError;
-
 	
 	/**
-	 * Tells if a data Set is associated to any
-	 * BI Object. It is useful because a data Set cannot be deleted
-	 * if it is used by one or more BI Objects.
-	 *
-	 * @param dsId The dataset identifier
-	 * @return True if the dataset is used by one or more 
-	 * 		    objects, else false 
-	 * @throws EMFUserError If any exception occurred 
+	 * Insert data set.
+	 * @param dataSet the a data set
+	 * @throws EMFUserError the EMF user error
+	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
+	 */
+	public Integer insertDataSet(GuiGenericDataSet dataSet) throws EMFUserError;
+	
+	/**
+	 * Restore an Older Version of the dataset
+	 * @param dsId the a data set ID
+	 * @param dsVersion the a data set Version
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) throws EMFUserError ;
+	
+	/**
+	 * Returns the Higher Version Number of a selected DS
+	 * @param dsId the a data set ID
+	 * @throws EMFUserError the EMF user error
+	 */
+	public Integer getHigherVersionNumForDS(Integer dsId) throws EMFUserError;
+	
+	/**
+	 * Modify data set.
+	 * @param aDataSet the a data set
+	 * @throws EMFUserError the EMF user error
+	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#modifyDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
+	 */
+	public void modifyDataSet(GuiGenericDataSet dataSet) throws EMFUserError;
+	
+	/**
+	 * Returns List of all existent SbiDataSetConfig elements (NO DETAIL, only name, label, descr...).
+	 * @param offset starting element
+	 * @param fetchSize number of elements to retrieve
+	 * @return List of all existent SbiDataSetConfig
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List<SbiDataSetConfig> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)
+			throws EMFUserError;
+	
+	/**
+	 * Returns List of all existent IDataSets with current active version
+	 * @param offset starting element
+	 * @param fetchSize number of elements to retrieve
+	 * @return List of all existent IDataSets with current active version
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List<GuiGenericDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize)
+		throws EMFUserError ;
+	
+	/**
+	 * Counts number of BIObj associated.
+	 * @param dsId the ds id
+	 * @return Integer, number of BIObj associated
+	 * @throws EMFUserError the EMF user error
+	 */
+	public Integer countBIObjAssociated (Integer dsId) throws EMFUserError;
+	
+	/**
+	 * Counts number of existent DataSets
+	 * @return Integer, number of existent DataSets
+	 * @throws EMFUserError the EMF user error
+	 */
+	public Integer countDatasets() throws EMFUserError ;
+	
+	/*****************USED by OLD GUI******/
+	/**
+	 * Checks for bi obj associated.
+	 * @param dsId the ds id
+	 * @return true, if checks for bi obj associated
+	 * @throws EMFUserError the EMF user error
+	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	public boolean hasBIObjAssociated (String dsId) throws EMFUserError;
-
+	
+	/*****************USED many times but not in new GUI******/
+	/**
+	 * Load data set by id.
+	 * @param dsID the ds id
+	 * @return the data set
+	 * @throws EMFUserError the EMF user error*/
+	public IDataSet loadActiveIDataSetByID(Integer dsId) throws EMFUserError;
+	
+	/**
+	 * Load data set by label.
+	 * @param label the label
+	 * @return the data set
+	 * @throws EMFUserError the EMF user error
+	 */	
+	public IDataSet loadActiveDataSetByLabel(String label) throws EMFUserError ;
+	
+	/**
+	 * Load all active data sets.
+	 * @return the list
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List loadAllActiveDataSets() throws EMFUserError;
+	
+	/**
+	 * From the hibernate DataSet as input, gives the corrispondent <code>DataSet</code> object.
+	 * 
+	 * @param hibDataSet The hybernate data set
+	 * @return The corrispondent <code>DataSet</code> object
+	 * @throws EMFUserError 
+	 */
+	public IDataSet toIDataSet(SbiDataSetHistory hibDataSet) throws EMFUserError;
+	
+	/**
+	 * From the IDataSet as input, return the corrispondent <code>GuiGenericDataSet</code> object.
+	 * 
+	 * @param iDataSet The IDataSet 
+	 * @return The corrispondent <code>GuiGenericDataSet</code> object
+	 * @throws EMFUserError 
+	 */
+	public GuiGenericDataSet toDataSet(IDataSet iDataSet) throws EMFUserError;
 }

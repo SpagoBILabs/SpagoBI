@@ -86,7 +86,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 				for (Iterator iterator = dsLabels.iterator(); iterator.hasNext();) {
 					String string = (String) iterator.next();
 					logger.debug("get dataset with label " + string);
-					IDataSet dataset = dataSetDAO.loadDataSetByLabel(string);
+					IDataSet dataset = dataSetDAO.loadActiveDataSetByLabel(string);
 					if(dataset != null){
 						logger.debug("found dataset with label " + string);
 						exporter.insertDataSet(dataset, session);
@@ -98,7 +98,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxErrors dataset
 					String labelErrors = string+"Errors";
 					logger.debug("get dataset with label " + labelErrors+" if present");
-					IDataSet datasetErrors = dataSetDAO.loadDataSetByLabel(labelErrors);
+					IDataSet datasetErrors = dataSetDAO.loadActiveDataSetByLabel(labelErrors);
 					if(datasetErrors != null){
 						logger.debug("found dataset with label " + labelErrors+"");
 						exporter.insertDataSet(datasetErrors, session);
@@ -110,7 +110,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxAlarms dataset
 					String labelAlarms = string+"Alarms";
 					logger.debug("get dataset with label " + labelAlarms+" if present");
-					IDataSet datasetAlarms = dataSetDAO.loadDataSetByLabel(labelAlarms);
+					IDataSet datasetAlarms = dataSetDAO.loadActiveDataSetByLabel(labelAlarms);
 					if(datasetAlarms != null){
 						logger.debug("found dataset with label " + labelAlarms+"");
 						exporter.insertDataSet(datasetAlarms, session);

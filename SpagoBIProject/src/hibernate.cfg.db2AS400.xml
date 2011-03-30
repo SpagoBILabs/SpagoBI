@@ -59,7 +59,8 @@
         <!-- rememberMe -->
         <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mappingmysql/SbiRememberMe.hbm.xml" />
         
-        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappingmysql/SbiDataSetConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappings/SbiDataSetConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappings/SbiDataSetHistory.hbm.xml" />
         
          <!-- KPI Engine -->
         <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingmysql/SbiKpi.hbm.xml" />

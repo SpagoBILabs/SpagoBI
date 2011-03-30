@@ -178,7 +178,7 @@ public class ExecuteBIDocumentJob implements Job {
 				//gets the dataset data about the email address
 				IDataStore emailDispatchDataStore = null;
 				if (saveInfo.isUseDataSet()) {
-					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetLabel());
+					IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(saveInfo.getDataSetLabel());
 					dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 					dataSet.loadData();
 					emailDispatchDataStore = dataSet.getDataStore();
@@ -186,7 +186,7 @@ public class ExecuteBIDocumentJob implements Job {
 				//gets the dataset data about the folder for the document save
 				IDataStore folderDispatchDataSotre = null;
 				if (saveInfo.isUseFolderDataSet()) {
-					IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(saveInfo.getDataSetFolderLabel());
+					IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(saveInfo.getDataSetFolderLabel());
 				  	dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
 					dataSet.loadData();
 					 folderDispatchDataSotre = dataSet.getDataStore();

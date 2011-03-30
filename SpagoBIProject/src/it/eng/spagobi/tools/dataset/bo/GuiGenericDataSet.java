@@ -19,20 +19,25 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.metadata;
+package it.eng.spagobi.tools.dataset.bo;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Chiara Chiarelli
  */
-public class SbiDataSetConfig {
+public class GuiGenericDataSet implements Serializable{
+
 	private int dsId;	
 	private String name=null;
 	private String description=null;
 	private String label=null;
 	
+	private GuiDataSetDetail activeDetail = null;
+	private List<GuiDataSetDetail> nonActiveDetails = null;
+
 	private String userIn=null;
 	private String userUp=null;
 	private String userDe=null;
@@ -44,7 +49,6 @@ public class SbiDataSetConfig {
 	private Date timeIn = null;
 	private Date timeUp = null;
 	private Date timeDe = null;
-    	
 	
 	/**
 	 * Gets the name.
@@ -206,4 +210,19 @@ public class SbiDataSetConfig {
 		this.timeDe = timeDe;
 	}
 	
+	public GuiDataSetDetail getActiveDetail() {
+		return activeDetail;
+	}
+
+	public void setActiveDetail(GuiDataSetDetail activeDetail) {
+		this.activeDetail = activeDetail;
+	}
+
+	public List<GuiDataSetDetail> getNonActiveDetails() {
+		return nonActiveDetails;
+	}
+
+	public void setNonActiveDetails(List<GuiDataSetDetail> nonActiveDetails) {
+		this.nonActiveDetails = nonActiveDetails;
+	}
 }

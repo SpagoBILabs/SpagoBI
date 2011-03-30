@@ -1,6 +1,6 @@
 package it.eng.spagobi.tools.dataset.metadata;
 
-public class SbiJClassDataSet extends SbiDataSetConfig {
+public class SbiJClassDataSet extends SbiDataSetHistory {
 	
 	 private String javaClassName =null;
 
