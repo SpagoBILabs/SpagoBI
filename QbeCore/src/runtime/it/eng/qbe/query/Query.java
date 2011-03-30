@@ -385,11 +385,17 @@ public class Query {
 		return subquery;
 	}
 
-	/*
-	public Query copy() {
-		return new Query(this);
+	public void clearSelectedFields(){
+		selectFields.clear();
 	}
-	*/
 	
+	public void clearWhereFields(){
+		whereClause.clear();
+		whereClauseStructure = null;
+	}
+	
+	public void clearHavingFields(){
+		havingClause.clear();
+	}
 
 }
