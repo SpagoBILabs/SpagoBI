@@ -156,7 +156,7 @@ public class DetailDataSetModule extends AbstractModule {
 	/**
 	 * Gets the detail of a data set chosen by the user from the 
 	 * data Sets list. It reaches the key from the request and asks to the DB all detail
-	 * data Set information, by calling the method <code>loadDataSetByID</code>.
+	 * data Set information, by calling the method.
 	 *   
 	 * @param key The chosen data Set id key
 	 * @param response The response Source Bean
@@ -164,7 +164,7 @@ public class DetailDataSetModule extends AbstractModule {
 	 */   
 	private void getDataSet(SourceBean request, SourceBean response) throws EMFUserError {		
 		try {		 									
-			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByID(new Integer((String)request.getAttribute("ID")));		
+			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer((String)request.getAttribute("ID")));		
 			prepareDetailDatasetPage(ds.toSpagoBiDataSet(), AdmintoolsConstants.DETAIL_MOD, response);
 
 			if (request.getAttribute("SUBMESSAGEDET") != null &&
@@ -400,7 +400,7 @@ public class DetailDataSetModule extends AbstractModule {
 				return;				
 			}
 
-			if (DAOFactory.getDataSetDAO().loadDataSetByLabel(dsNew.getLabel()) != null){
+			if (DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dsNew.getLabel()) != null){
 				HashMap params = new HashMap(); logger.error("label already exists "+dsNew.getLabel());
 				params.put(AdmintoolsConstants.PAGE, ListDataSetModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 9202, new Vector(), params );
@@ -408,15 +408,15 @@ public class DetailDataSetModule extends AbstractModule {
 				return;
 			}	
 
-			DAOFactory.getDataSetDAO().insertDataSet( DataSetFactory.getDataSet(dsNew) );   //Insert DataSet
-			IDataSet tmpDS = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsNew.getLabel());
+			//DAOFactory.getDataSetDAO().insertDataSet( DataSetFactory.getDataSet(dsNew) );   //Insert DataSet
+			IDataSet tmpDS = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dsNew.getLabel());
 			int t=tmpDS.getId();
 			dsNew.setDsId(t);
 			mod = SpagoBIConstants.DETAIL_MOD;
 			//session.setAttribute("dataset", dsNew);
 		} else {				
 			//update ds
-			DAOFactory.getDataSetDAO().modifyDataSet(DataSetFactory.getDataSet(dsNew));			
+			//DAOFactory.getDataSetDAO().modifyDataSet(DataSetFactory.getDataSet(dsNew));			
 			//session.setAttribute("dataset", dsNew);
 		}  
 
@@ -555,8 +555,7 @@ public class DetailDataSetModule extends AbstractModule {
 			}
 
 			//delete the ds
-			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetByID(new Integer(id));
-			DAOFactory.getDataSetDAO().eraseDataSet(ds);
+			DAOFactory.getDataSetDAO().deleteDataSet(new Integer(id));
 		}
 		catch (EMFUserError e){
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
@@ -838,7 +837,7 @@ public class DetailDataSetModule extends AbstractModule {
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
 			//ds.setDsId(id.intValue());
 			// check also that label does not exist already
-			if (DAOFactory.getDataSetDAO().loadDataSetByLabel(label) != null){
+			if (DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(label) != null){
 				logger.error("label already exists "+label);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, "9202", messageBundle);
 				errorHandler.addError(error);

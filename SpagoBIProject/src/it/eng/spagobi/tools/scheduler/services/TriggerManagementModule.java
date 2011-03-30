@@ -192,7 +192,7 @@ public class TriggerManagementModule extends AbstractModule {
 			}
 			List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
-			List allDatasets = DAOFactory.getDataSetDAO().loadAllDataSets();
+			List allDatasets = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 			response.setAttribute(SpagoBIConstants.DATASETS_LIST, allDatasets);
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "TriggerDetail");
 		} catch (Exception ex) {
@@ -404,7 +404,7 @@ public class TriggerManagementModule extends AbstractModule {
 			if(!this.getErrorHandler().isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
 				response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
-				List allDatasets = DAOFactory.getDataSetDAO().loadAllDataSets();
+				List allDatasets = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 				response.setAttribute(SpagoBIConstants.DATASETS_LIST, allDatasets);
 				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "TriggerDetail");
 				return;
@@ -459,7 +459,7 @@ public class TriggerManagementModule extends AbstractModule {
 			
 			List functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
-			List allDatasets = DAOFactory.getDataSetDAO().loadAllDataSets();
+			List allDatasets = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 			response.setAttribute(SpagoBIConstants.DATASETS_LIST, allDatasets);
 			sessCont.setAttribute(SpagoBIConstants.TRIGGER_INFO, ti);
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "TriggerDetail");

@@ -29,8 +29,6 @@ package it.eng.spagobi.engines.config.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.engines.config.bo.Engine;

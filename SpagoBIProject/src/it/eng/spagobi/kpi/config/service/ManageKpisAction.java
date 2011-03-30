@@ -234,7 +234,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 					}
 					if(dsLabel != null){
 						k.setDsLabel(dsLabel);
-						IDataSet ds = dsDao.loadDataSetByLabel(dsLabel);
+						IDataSet ds = dsDao.loadActiveDataSetByLabel(dsLabel);
 
 						if(ds!=null){
 							int dsId = ds.getId();
@@ -257,7 +257,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 					}	
 					if(dsLabel != null){
 						k.setDsLabel(dsLabel);
-						IDataSet ds = dsDao.loadDataSetByLabel(dsLabel);
+						IDataSet ds = dsDao.loadActiveDataSetByLabel(dsLabel);
 
 						if(ds!=null){
 							int dsId = ds.getId();
@@ -445,7 +445,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 				ArrayList <KpiRel> relations = new ArrayList <KpiRel>();
 
 				//looks up for dataset parameters				
-				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(labelDS);
+				IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(labelDS);
 				String parametersString = dataSet.getParameters();
 
 				ArrayList<String> parameters = new ArrayList<String>();

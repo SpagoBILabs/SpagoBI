@@ -53,6 +53,7 @@ import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -109,12 +110,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SbiScriptDataSet.class, new SbiDataSetConfigJSONSerializer());
 		mappings.put( SbiWSDataSet.class, new SbiDataSetConfigJSONSerializer());
 		
-		mappings.put( IDataSet.class, new DataSetJSONSerializer());
-		mappings.put( FileDataSet.class, new DataSetJSONSerializer());
-		mappings.put( JavaClassDataSet.class, new DataSetJSONSerializer());
-		mappings.put( JDBCDataSet.class, new DataSetJSONSerializer());
-		mappings.put( ScriptDataSet.class, new DataSetJSONSerializer());
-		mappings.put( WebServiceDataSet.class, new DataSetJSONSerializer());
+		mappings.put( GuiGenericDataSet.class, new DataSetJSONSerializer());
 		
 		mappings.put( Resource.class, new ResourceJSONSerializer());
 		mappings.put( Threshold.class, new ThresholdJSONSerializer());

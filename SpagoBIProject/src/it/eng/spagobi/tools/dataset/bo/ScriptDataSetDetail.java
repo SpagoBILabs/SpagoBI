@@ -19,31 +19,30 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.metadata;
-
+package it.eng.spagobi.tools.dataset.bo;
 
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Chiara Chiarelli
  */
-public class SbiFileDataSet extends SbiDataSetHistory{
-    private String fileName=null;
+public class ScriptDataSetDetail extends GuiDataSetDetail {
 
-    /**
-     * Gets the file name.
-     * 
-     * @return the file name
-     */
-    public String getFileName() {
-        return fileName;
-    }
+	private String script = null;
+	private String languageScript = null;
 
-    /**
-     * Sets the file name.
-     * 
-     * @param fileName the new file name
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+	public String getScript() {
+		return script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
+	}
+
+	public String getLanguageScript() {
+		return languageScript;
+	}
+
+	public void setLanguageScript(String languageScript) {
+		this.languageScript = languageScript;
+	}
+	
 }

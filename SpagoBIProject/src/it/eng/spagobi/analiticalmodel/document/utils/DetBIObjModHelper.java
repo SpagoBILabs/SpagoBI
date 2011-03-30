@@ -168,7 +168,7 @@ public class DetBIObjModHelper {
 		IDataSet dataset  = null;
 		if (datasetIdStr != null && !datasetIdStr.equals("")) {
 			Integer datasetIdInt = new Integer(datasetIdStr);
-			dataset = DAOFactory.getDataSetDAO().loadDataSetByID(datasetIdInt);
+			dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(datasetIdInt);
 		}
 		
 		// TRY TO LOAD ALL THE FUNCTIONALITIES ASSOCIATED (into request) TO THE BIOBEJCT
@@ -377,7 +377,7 @@ public class DetBIObjModHelper {
 	        List states = domaindao.loadListDomainsByType("STATE");
 	        List engines =  DAOFactory.getEngineDAO().loadAllEngines();
 	        List datasource =  DAOFactory.getDataSourceDAO().loadAllDataSources();
-	       List dataset=DAOFactory.getDataSetDAO().loadAllDataSets();
+	       List dataset=DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 	        // List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS, datasource);

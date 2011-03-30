@@ -180,7 +180,7 @@ public abstract class SpagoBIAbstractInternalEngine implements InternalEngineIFa
 		
 		try {
 			dataSetDAO = DAOFactory.getDataSetDAO();
-			dataSet = dataSetDAO.loadDataSetByID(getObj().getDataSetId());
+			dataSet = dataSetDAO.loadActiveIDataSetByID(getObj().getDataSetId());
 		} catch(Throwable t) {
 			throw new SpagoBIEngineRuntimeException(t);
 		}

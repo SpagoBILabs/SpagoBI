@@ -17,7 +17,7 @@
 		<DAO name="SubreportDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl"/>
  		<DAO name="ViewpointDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ViewpointDAOHimpl"/>	
  		<DAO name="DataSourceDAO" implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl"/>
- 		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOHibImpl"/>
+ 		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl"/>
  		<DAO name="BinContentDAO" implementation="it.eng.spagobi.commons.dao.BinContentDAOHibImpl"/>
  		<DAO name="ObjTemplateDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjTemplateDAOHibImpl"/>	
  		<DAO name="ObjNoteDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjNoteDAOHibImpl"/>	

@@ -1,13 +1,14 @@
 package it.eng.spagobi.chiron.serializer;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
-import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.Locale;
 
@@ -45,90 +46,90 @@ public class DataSetJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
-		if( !(o instanceof IDataSet) ) {
+		if( !(o instanceof GuiGenericDataSet) ) {
 			throw new SerializationException("DataSetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		
 		try {
-			IDataSet ds = (IDataSet)o;
+			GuiGenericDataSet ds = (GuiGenericDataSet)o;
 			result = new JSONObject();
 			
-			result.put(ID, ds.getId());
+			result.put(ID, ds.getDsId());
 			result.put(LABEL, ds.getLabel() );	
 			result.put(NAME, ds.getName() );
 			result.put(DESCRIPTION, ds.getDescription() );
-			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(new Integer(ds.getId()));
+			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(new Integer(ds.getDsId()));
 			if(numObjAssociated!=null){
 				result.put(USED_BY_N_DOCS, numObjAssociated );
 			}
 			
-			result.put(CATEGORY_TYPE_CD, ds.getCategoryCd());
+			GuiDataSetDetail dsDetail = ds.getActiveDetail();
 			
-			result.put(PARS, ds.getParameters());	
-			result.put(METADATA, ds.getDsMetadata());	
+			result.put(CATEGORY_TYPE_CD, dsDetail.getCategoryCd());
 			
-			result.put(DS_TYPE_CD, ds.getDsType());		
+			result.put(PARS, dsDetail.getParameters());	
+			result.put(METADATA, dsDetail.getDsMetadata());	
+			
+			result.put(DS_TYPE_CD, dsDetail.getDsType());		
 
-			if(ds instanceof FileDataSet){
-				String fileName = ((FileDataSet)ds).getFileName();
+			if(dsDetail instanceof FileDataSetDetail){
+				String fileName = ((FileDataSetDetail)dsDetail).getFileName();
 				if(fileName!=null){
 					result.put(FILE_NAME, fileName);				
 				}
 			}
 
-			else if(ds instanceof JDBCDataSet){
-				String query = ((JDBCDataSet)ds).getQuery().toString();
+			else if(dsDetail instanceof QueryDataSetDetail){
+				String query = ((QueryDataSetDetail)dsDetail).getQuery().toString();
 				if(query!=null){
 					result.put(QUERY, query);
 				}
-				IDataSource dataSource = ((JDBCDataSet)ds).getDataSource();
-				if(dataSource!=null){
-					result.put(DATA_SOURCE, dataSource.getLabel());
+				String dataSourceLabel = ((QueryDataSetDetail)dsDetail).getDataSourceLabel();
+				if(dataSourceLabel!=null){
+					result.put(DATA_SOURCE, dataSourceLabel);
 				}				
 			}
 
-			else if(ds instanceof WebServiceDataSet){
-				String ws_address = ((WebServiceDataSet)ds).getAddress();
+			else if(dsDetail instanceof WSDataSetDetail){
+				String ws_address = ((WSDataSetDetail)dsDetail).getAddress();
 				if(ws_address!=null){
 					result.put(WS_ADDRESS, ws_address);
 				}
-				String ws_operation = ((WebServiceDataSet)ds).getOperation();
+				String ws_operation = ((WSDataSetDetail)dsDetail).getOperation();
 				if(ws_operation!=null){
 					result.put(WS_OPERATION, ws_operation);
 				}	
 			}
 
-			else if(ds instanceof ScriptDataSet){
-				String script = ((ScriptDataSet)ds).getScript();
+			else if(dsDetail instanceof ScriptDataSetDetail){
+				String script = ((ScriptDataSetDetail)dsDetail).getScript();
 				if(script!=null){					
 					result.put(SCRIPT, script);
 				}
-				String script_language = ((ScriptDataSet)ds).getLanguageScript();
+				String script_language = ((ScriptDataSetDetail)dsDetail).getLanguageScript();
 				if(script_language!=null){
 					result.put(SCRIPT_LANGUAGE, script_language);
 				}
 			}
 
-			else if(ds instanceof JavaClassDataSet){
-				String jClass = ((JavaClassDataSet)ds).getClassName();
+			else if(dsDetail instanceof JClassDataSetDetail){
+				String jClass = ((JClassDataSetDetail)dsDetail).getJavaClassName();
 				if(jClass!=null){
 					result.put(JCLASS_NAME, jClass);
 				}
 			}
 				
-			result.put(TRASFORMER_TYPE_CD, ds.getTransformerCd());
-			result.put(PIVOT_COL_NAME, ds.getPivotColumnName());	
-			result.put(PIVOT_COL_VALUE, ds.getPivotColumnValue());	
-			result.put(PIVOT_ROW_NAME,ds.getPivotRowName());	
-			result.put(PIVOT_IS_NUM_ROWS,ds.isNumRows());	
+			result.put(TRASFORMER_TYPE_CD, dsDetail.getTransformerCd());
+			result.put(PIVOT_COL_NAME, dsDetail.getPivotColumnName());	
+			result.put(PIVOT_COL_VALUE, dsDetail.getPivotColumnValue());	
+			result.put(PIVOT_ROW_NAME,dsDetail.getPivotRowName());	
+			result.put(PIVOT_IS_NUM_ROWS,dsDetail.isNumRows());	
 	
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
 			
-		}
-		
-		return result;
+		}		
+	  return result;
 	}
-
 }

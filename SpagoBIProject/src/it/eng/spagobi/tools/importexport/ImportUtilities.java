@@ -327,39 +327,10 @@ public class ImportUtilities {
 	 */
 	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset){
 		logger.debug("IN");
-		SbiDataSetConfig newDataset = null;
-
-		if (dataset instanceof SbiFileDataSet) {
-			newDataset = new SbiFileDataSet();
-			((SbiFileDataSet) newDataset).setFileName(((SbiFileDataSet) dataset).getFileName()); 
-		}
-		if (dataset instanceof SbiJClassDataSet) {
-			newDataset = new SbiJClassDataSet();
-			((SbiJClassDataSet) newDataset).setJavaClassName(((SbiJClassDataSet) dataset).getJavaClassName()); 
-		}
-		if (dataset instanceof SbiQueryDataSet) {
-			newDataset = new SbiQueryDataSet();
-			((SbiQueryDataSet) newDataset).setQuery(((SbiQueryDataSet) dataset).getQuery());
-		}
-		if (dataset instanceof SbiWSDataSet) {
-			newDataset = new SbiWSDataSet();
-			((SbiWSDataSet) newDataset).setAdress(((SbiWSDataSet) dataset).getAdress());
-			((SbiWSDataSet) newDataset).setOperation(((SbiWSDataSet) dataset).getOperation());
-		}
-		if (dataset instanceof SbiScriptDataSet) {
-			newDataset = new SbiScriptDataSet();
-			((SbiScriptDataSet) newDataset).setScript(((SbiScriptDataSet) dataset).getScript());
-			((SbiScriptDataSet) newDataset).setLanguageScript(((SbiScriptDataSet) dataset).getLanguageScript());
-		}
-		newDataset.setPivotColumnName(dataset.getPivotColumnName());
-		newDataset.setPivotColumnValue(dataset.getPivotColumnValue());
-		newDataset.setPivotRowName(dataset.getPivotRowName());
-		newDataset.setNumRows(dataset.isNumRows());
+		SbiDataSetConfig newDataset = new SbiDataSetConfig();
 		newDataset.setLabel(dataset.getLabel());
 		newDataset.setName(dataset.getName());
 		newDataset.setDescription(dataset.getDescription());
-		newDataset.setParameters(dataset.getParameters());
-		newDataset.setDsMetadata(dataset.getDsMetadata());
 		logger.debug("OUT");
 		return newDataset;
 	}	
@@ -1075,35 +1046,10 @@ public class ImportUtilities {
 		try {
 			existingDataset = (SbiDataSetConfig) sessionCurrDB.load(SbiDataSetConfig.class, existingId);
 			// TODO sistemare il cambio di subclass
-			if ((existingDataset instanceof SbiFileDataSet && !(exportedDataset instanceof SbiFileDataSet))
-					|| (existingDataset instanceof SbiQueryDataSet && !(exportedDataset instanceof SbiQueryDataSet))
-					|| (existingDataset instanceof SbiScriptDataSet && !(exportedDataset instanceof SbiScriptDataSet))
-					|| (existingDataset instanceof SbiJClassDataSet && !(exportedDataset instanceof SbiJClassDataSet))
-					|| (existingDataset instanceof SbiWSDataSet && !(exportedDataset instanceof SbiWSDataSet))) {
-				logger.warn("Cannot change data set subclass");
-			}
-			if (existingDataset instanceof SbiFileDataSet)
-				((SbiFileDataSet)existingDataset).setFileName(((SbiFileDataSet)exportedDataset).getFileName());
-			else if(existingDataset instanceof SbiQueryDataSet)
-				((SbiQueryDataSet)existingDataset).setQuery(((SbiQueryDataSet)exportedDataset).getQuery());
-			else if(existingDataset instanceof SbiJClassDataSet)
-				((SbiJClassDataSet)existingDataset).setJavaClassName(((SbiJClassDataSet)exportedDataset).getJavaClassName());
-			else if(existingDataset instanceof SbiWSDataSet) {
-				((SbiWSDataSet)existingDataset).setAdress(((SbiWSDataSet)exportedDataset).getAdress());
-				((SbiWSDataSet)existingDataset).setOperation(((SbiWSDataSet)exportedDataset).getOperation());
-			} else if (existingDataset instanceof SbiScriptDataSet) {
-				((SbiScriptDataSet)existingDataset).setScript(((SbiScriptDataSet)exportedDataset).getScript());
-				((SbiScriptDataSet)existingDataset).setLanguageScript(((SbiScriptDataSet)exportedDataset).getLanguageScript());
-			}
+			//TODO mettere a posto con le nuove classi di dataset
 			existingDataset.setLabel(exportedDataset.getLabel());
 			existingDataset.setName(exportedDataset.getName());			
 			existingDataset.setDescription(exportedDataset.getDescription());
-			existingDataset.setParameters(exportedDataset.getParameters());
-			existingDataset.setPivotColumnName(exportedDataset.getPivotColumnName());
-			existingDataset.setPivotColumnValue(exportedDataset.getPivotColumnValue());
-			existingDataset.setPivotRowName(exportedDataset.getPivotRowName());
-			existingDataset.setNumRows(exportedDataset.isNumRows());
-			existingDataset.setDsMetadata(exportedDataset.getDsMetadata());
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1231,7 +1177,8 @@ public class ImportUtilities {
 			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			// TODO togliere il controllo che sia quello esportato sia quello esistente siano dello stesso tipo
+			// TODO Da mettere a posto con le nuove tabelle
+			/*
 			if (exportedDataset instanceof SbiQueryDataSet && dataset instanceof SbiQueryDataSet) {
 				SbiQueryDataSet queryDataSet = (SbiQueryDataSet) exportedDataset;
 				SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
@@ -1243,7 +1190,7 @@ public class ImportUtilities {
 			SbiDomains transformer = getAssociatedTransfomerType(exportedDataset, sessionCurrDB, metaAss, importer);
 			if (transformer != null) {
 				dataset.setTransformer(transformer);
-			}
+			}*/
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1252,7 +1199,8 @@ public class ImportUtilities {
 	private static SbiDomains getAssociatedTransfomerType(SbiDataSetConfig exportedDataset,
 			Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");
-		SbiDomains transformer = exportedDataset.getTransformer();
+		//TODO mettere a posto con nuove tabelle dataset
+		/*SbiDomains transformer = exportedDataset.getTransformer();
 		if (transformer == null) {
 			logger.debug("Transformer not set for exported dataset [" + exportedDataset.getLabel() + "]");
 			return null;
@@ -1262,8 +1210,9 @@ public class ImportUtilities {
 		unique.put("valuecd", typeCd);
 		unique.put("domaincd", "TRANSFORMER_TYPE");
 		SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
+		*/
 		logger.debug("OUT");
-		return existDom;
+		return null;
 	}
 
 	private static SbiDomains getAssociatedParameterType(SbiParameters exportedParameter,

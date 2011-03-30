@@ -66,7 +66,8 @@
         <!-- rememberMe -->
         <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mappingpostgres/SbiRememberMe.hbm.xml" />
         
-        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappingpostgres/SbiDataSetConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappings/SbiDataSetConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mappings/SbiDataSetHistory.hbm.xml" />
         
          <!-- KPI Engine -->
          <mapping resource="it/eng/spagobi/kpi/config/metadata/mappingpostgres/SbiKpi.hbm.xml" />
