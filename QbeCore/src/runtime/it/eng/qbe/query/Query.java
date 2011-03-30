@@ -386,16 +386,28 @@ public class Query {
 	}
 
 	public void clearSelectedFields(){
-		selectFields.clear();
+		if(selectFields!=null){
+			selectFields.clear();
+		}
 	}
 	
 	public void clearWhereFields(){
-		whereClause.clear();
+		if(whereClause!=null){
+			whereClause.clear();
+		}
+		if(whereFieldMap!=null){
+			whereFieldMap.clear();
+		}
 		whereClauseStructure = null;
 	}
 	
 	public void clearHavingFields(){
-		havingClause.clear();
+		if(havingClause!=null){
+			havingClause.clear();
+		}
+		if(havingFieldMap!=null){
+			havingFieldMap.clear();
+		}
 	}
 
 }
