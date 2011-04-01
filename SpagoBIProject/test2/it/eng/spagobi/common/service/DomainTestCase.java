@@ -17,6 +17,7 @@ public class DomainTestCase extends TestCase {
 		while(iter.hasNext()){
 			System.out.println("Elemento="+iter.next().getValueCd());
 		}
+		fail("Not yet implemented");
 	}
 
 	public void testSaveDomain() {
