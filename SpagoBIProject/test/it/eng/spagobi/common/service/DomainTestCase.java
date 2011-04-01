@@ -19,11 +19,11 @@ public class DomainTestCase extends TestCase {
 		}
 	}
 
-	public void testSaveDomain() {
+	public void saveDomain() {
 		fail("Not yet implemented");
 	}
 
-	public void testUpdateDomain() {
+	public void updateDomain() {
 		fail("Not yet implemented");
 	}
 
