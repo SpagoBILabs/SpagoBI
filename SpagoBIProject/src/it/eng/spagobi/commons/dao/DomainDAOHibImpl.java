@@ -310,15 +310,105 @@ public List loadListDomains() throws EMFUserError {
 		return domains;
 	}
 
+/**
+ * to the hibernate domain object at input, from
+ * the corrispondent <code>Domain</code> object.
+ * 
+ * @param Domain object
+ * 
+ * @return The corrispondent <code>SbiDomain</code>
+ */
+public SbiDomains fromDomain(Domain Domain){
+	SbiDomains hibDomain = new SbiDomains();
+	hibDomain.setValueCd(Domain.getValueCd());
+	hibDomain.setValueId(Domain.getValueId());
+	hibDomain.setValueNm(Domain.getValueName());
+	hibDomain.setDomainCd(Domain.getDomainCode());
+	hibDomain.setDomainNm(Domain.getDomainName());
+	hibDomain.setValueDs(Domain.getValueDescription());
+	return hibDomain;
+}
+
+/**
+ * Save domain by id.
+ * 
+ * @param id the id
+ * 
+ * @return void
+ * 
+ * @throws EMFUserError the EMF user error
+ * 
+ */
 public void saveDomain(Domain d) throws EMFUserError {
 	// TODO Auto-generated method stub
+	Domain toSave = null;
+	Session aSession = null;
+	Transaction tx = null;
+
+	try {
+		aSession = getSession();
+		tx = aSession.beginTransaction();
+	
+		Integer id = domain.getValueId();
+				
+		SbiDomains hibDomain = (SbiDomains) aSession.save(this.fromDomain(domain));
+	
+		toSave = new Domain();
+		aSession.save(toSave);
+		tx.commit();
+	
+	} catch (HibernateException he) {
+		logException(he);
+
+		if (tx != null)
+			tx.rollback();
+
+		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+	} finally {
+		if (aSession!=null){
+			if (aSession.isOpen()) aSession.close();
+		}
+	}
 	
 }
 
+/**
+ * Update domain by id.
+ * 
+ * @param id the id
+ * 
+ * @return void
+ * 
+ * @throws EMFUserError the EMF user error
+ * 
+ */
 public void updateDomain(Domain d) throws EMFUserError {
 	// TODO Auto-generated method stub
+	Session aSession = null;
+	Transaction tx = null;
+
+	try {
+		aSession = getSession();
+		tx = aSession.beginTransaction();
+		
+		aSession.update(this.fromDomain(domain));
+	
+		tx.commit();
+	
+	} catch (HibernateException he) {
+		logException(he);
+
+		if (tx != null)
+			tx.rollback();
+
+		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+	} finally {
+		if (aSession!=null){
+			if (aSession.isOpen()) aSession.close();
+		}
+	}
 	
 }
-
-
 }
