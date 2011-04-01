@@ -51,7 +51,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 		 assertNotNull("Impossible to build modelStructure", dataSource.getModelStructure());
 	}
 	
-	public void testStructure() {
+	public void __testStructure() {
 		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
 		assertNotNull("Impossible to load entity [" + testEntityUniqueName + "] from datasource [" + dataSource.getName() + "]", entity);
 	}
