@@ -42,7 +42,7 @@ import org.eclipse.persistence.internal.expressions.FunctionExpression;
 import org.eclipse.persistence.internal.expressions.LogicalExpression;
 import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
-import org.hibernate.ScrollableResults;
+import org.eclipse.persistence.queries.ReportQuery;
 //import org.hibernate.ejb.HibernateQuery;
 
 
@@ -200,7 +200,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		String sqlQueryString = qi.getDatabaseQuery().getSQLString();
 		//In qi, all the constants are substituted with ? (a place holder for the parameter)..
 		//so we shold get the parameter values with getParameters
-		List<String> queryParameters = getParameters(qi.getDatabaseQuery().getQueryMechanism().getSelectionCriteria());//((JPQLStatement)statement).getQueryParameters();
+		ReportQuery rq = (ReportQuery)qi.getDatabaseQuery();
+		List<String> whereParameters = getParameters(rq.getSelectionCriteria());//((JPQLStatement)statement).getQueryParameters();
+		List<String> havingParameters = getParameters(rq.getHavingExpression());//((JPQLStatement)statement).getQueryParameters();
+		List<String> queryParameters = whereParameters;
+		queryParameters.addAll(havingParameters);
 		logger.debug("Preparing count query");
 		EJBQueryImpl countQuery = (EJBQueryImpl)entityManager.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") temp");
 		for(int i=0; i<queryParameters.size(); i++ ){
