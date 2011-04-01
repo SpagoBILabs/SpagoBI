@@ -30,6 +30,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -45,6 +47,9 @@ public class JPADriver implements IDriver {
 	public static final String DRIVER_ID = "jpa";
 	protected static final Map<String, IDataSource> cache = new HashMap<String, IDataSource>();
 	protected static final SimpleDataSourceNamingStrategy namingStrategy = new SimpleDataSourceNamingStrategy();
+	
+	/** Logger component. */
+    public static transient Logger logger = Logger.getLogger(JPADriver.class);
 	
 	public JPADriver() {
 		dataSourceCacheEnabled = true;
@@ -68,10 +73,12 @@ public class JPADriver implements IDriver {
 		dataSourceName = namingStrategy.getDataSourceName(configuration);
 		
 		if(dataSourceCacheEnabled) {
+			logger.debug("The Data source cache is enabled");
 			dataSource = cache.containsKey(dataSourceName)? 
 						 cache.get(dataSourceName): 
 					     new JPADataSource(dataSourceName, configuration);
 		} else {
+			logger.debug("The Data source cache is not enabled");
 			dataSource = new JPADataSource(dataSourceName, configuration);
 		}
 		

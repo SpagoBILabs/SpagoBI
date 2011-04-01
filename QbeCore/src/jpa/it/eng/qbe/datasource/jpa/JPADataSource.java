@@ -57,6 +57,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
 	protected JPADataSource(String dataSourceName, IDataSourceConfiguration configuration) {
+		logger.debug("Creating a new JPADataSource");
 		setName( dataSourceName );
 		dataMartModelAccessModality = new AbstractModelAccessModality();
 		
@@ -74,6 +75,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		} else {
 			Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
 		}
+		logger.debug("Created a new JPADataSource");
 	}
 	
 	public FileDataSourceConfiguration getFileDataSourceConfiguration() {
