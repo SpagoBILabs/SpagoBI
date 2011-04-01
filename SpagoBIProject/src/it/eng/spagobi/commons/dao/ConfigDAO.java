@@ -218,7 +218,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 	 * 
 	 */
 	public void saveConfig(Config config)throws EMFUserError{
-		Domain toSave = null;
+		Config toSave = null;
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -227,9 +227,9 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 			tx = aSession.beginTransaction();
 		
 					
-			SbiDomains hibDomain = (SbiDomains) aSession.save(this.fromConfig(config));
+			SbiConfig hibDomain = (SbiConfig) aSession.save(this.fromConfig(config));
 		
-			toSave = new Domain();
+			toSave = new Config();
 			aSession.save(toSave);
 			tx.commit();
 		

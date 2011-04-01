@@ -339,7 +339,7 @@ public SbiDomains fromDomain(Domain Domain){
  * @throws EMFUserError the EMF user error
  * 
  */
-public void saveDomain(Domain d) throws EMFUserError {
+public void testSaveDomain(Domain domain) throws EMFUserError {
 	// TODO Auto-generated method stub
 	Domain toSave = null;
 	Session aSession = null;
@@ -383,7 +383,7 @@ public void saveDomain(Domain d) throws EMFUserError {
  * @throws EMFUserError the EMF user error
  * 
  */
-public void updateDomain(Domain d) throws EMFUserError {
+public void testUpdateDomain(Domain domain) throws EMFUserError {
 	// TODO Auto-generated method stub
 	Session aSession = null;
 	Transaction tx = null;
