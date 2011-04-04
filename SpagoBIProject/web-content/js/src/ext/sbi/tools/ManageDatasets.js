@@ -75,6 +75,7 @@ Sbi.tools.ManageDatasets = function(config) {
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.activateDsTypeForm(null, rec, row); 
 		this.activateTransfForm(null, rec, row); 
+		this.activateDsTestTab(this.datasetTestTab);
 		this.getForm().loadRecord(rec);  
      }, this);
 };
@@ -90,6 +91,8 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
     , queryDetail:null
     , WSDetail:null
     , fileDetail:null
+    , parsGrid:null
+    , datasetTestTab:null
     
     , activateTransfForm: function(combo,record,index){
 		var transfSelected = record.get('trasfTypeCd');
@@ -97,6 +100,16 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 			this.trasfDetail.setVisible(true);
 		}else{
 			this.trasfDetail.setVisible(false);
+		}
+	}
+
+	, activateDsTestTab: function(panel){
+		if(panel){
+			var record = this.rowselModel.getSelected();
+			if(record){		
+				 var dsParsList = record.get('pars');
+				 this.parsGrid.fillParameters(dsParsList);
+			}			
 		}
 	}
 	
@@ -668,8 +681,25 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	             items: [this.trasfTypeDetail, this.trasfDetail]
 	    	}			    
 	    });
+	    
+	    var c = {};
+	    c.pars={};
+	    this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
+	    //this.datasetTestGrid = new Sbi.tools.DataSetTestGrid(c);    
+	    
+	    this.datasetTestTab = new Ext.Panel({
+	        title: LN('sbi.ds.test')
+	        , id : 'test'
+	        , layout: 'fit'
+	        , autoScroll: false
+	        , items: [this.parsGrid]
+	        //, itemId: 'meta'
+	        , scope: this
+	    });
+	    this.datasetTestTab.addListener('activate',this.activateDsTestTab,this);
  	   
- 	   this.configurationObject.tabItems = [this.detailTab, this.typeTab, this.transfTab];
+ 	    this.configurationObject.tabItems = [this.detailTab, this.typeTab, 
+ 	                                        this.transfTab, this.datasetTestTab];
 	}
 	
     //OVERRIDING save method
