@@ -348,13 +348,9 @@ public void saveDomain(Domain domain) throws EMFUserError {
 	try {
 		aSession = getSession();
 		tx = aSession.beginTransaction();
-	
-		Integer id = domain.getValueId();
 				
-		SbiDomains hibDomain = (SbiDomains) aSession.save(this.fromDomain(domain));
+		aSession.save(this.fromDomain(domain));
 	
-		toSave = new Domain();
-		aSession.save(toSave);
 		tx.commit();
 	
 	} catch (HibernateException he) {
@@ -410,6 +406,47 @@ public void updateDomain(Domain domain) throws EMFUserError {
 		}
 	}
 	
+}
+
+/**
+ * Delete domain by id.
+ * 
+ * @param id the id
+ * 
+ * @return void
+ * 
+ * @throws EMFUserError the EMF user error
+ * 
+ */
+public void deleteTest(String codeDomain, String codeValue)  throws EMFUserError {
+	Session sess = null;
+	Transaction tx = null;
+
+	try {
+		sess = getSession();
+		tx = sess.beginTransaction();
+		
+		Criterion aCriterion = Expression.and(Expression.eq("domainCd",
+				codeDomain), Expression.eq("valueCd", codeValue));
+		Criteria criteria = sess.createCriteria(SbiDomains.class);
+		criteria.add(aCriterion);
+		SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
+		if (aSbiDomains!=null) sess.delete(aSbiDomains);
+		tx.commit();
+		
+	} catch (HibernateException he) {
+		logException(he);
+
+		if (tx != null)
+			tx.rollback();
+
+		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+	} finally {
+		if (sess!=null){
+			if (sess.isOpen()) sess.close();
+		}
+	}
 }
 
 }
