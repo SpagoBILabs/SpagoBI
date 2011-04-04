@@ -49,9 +49,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	private EntityManagerFactory factory;
 	
-	
-	private EntityManagerFactory entityManager;
-	
 	private boolean classLoaderExtended = false;	
 	
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
