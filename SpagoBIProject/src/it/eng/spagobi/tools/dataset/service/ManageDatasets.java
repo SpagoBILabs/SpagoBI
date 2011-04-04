@@ -198,43 +198,43 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				if(dsType.equalsIgnoreCase(DS_FILE)){
 					dsActiveDetail = new FileDataSetDetail();
 					String fileName = getAttributeAsString(FILE_NAME);
-					if(fileName!=null){
+					if(fileName!=null && !fileName.equals("")){
 						((FileDataSetDetail)dsActiveDetail).setFileName(fileName);
 					}
 				}else if(dsType.equalsIgnoreCase(DS_JCLASS)){
 					dsActiveDetail = new JClassDataSetDetail();
 					String jclassName = getAttributeAsString(JCLASS_NAME);
-					if(jclassName!=null){
+					if(jclassName!=null && !jclassName.equals("")){
 						((JClassDataSetDetail)dsActiveDetail).setJavaClassName(jclassName);
 					}
 				}else if(dsType.equalsIgnoreCase(DS_QUERY)){
 					dsActiveDetail = new QueryDataSetDetail();
 					String query = getAttributeAsString(QUERY);
 					String dataSourceLabel = getAttributeAsString(DATA_SOURCE);
-					if(query!=null){
+					if(query!=null && !query.equals("")){
 						((QueryDataSetDetail)dsActiveDetail).setQuery(query);
 					}
-					if(dataSourceLabel!=null){
+					if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
 						((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel);
 					}
 				}else if(dsType.equalsIgnoreCase(DS_SCRIPT)){
 					dsActiveDetail = new ScriptDataSetDetail();
 					String script = getAttributeAsString(SCRIPT);
 					String scriptLanguage = getAttributeAsString(SCRIPT_LANGUAGE);
-					if(scriptLanguage!=null){
+					if(scriptLanguage!=null && !scriptLanguage.equals("")){
 						((ScriptDataSetDetail)dsActiveDetail).setLanguageScript(scriptLanguage);
 					}
-					if(script!=null){
+					if(script!=null && !script.equals("")){
 						((ScriptDataSetDetail)dsActiveDetail).setScript(script);
 					}
 				}else if(dsType.equalsIgnoreCase(DS_WS)){
 					dsActiveDetail = new WSDataSetDetail();
 					String wsAddress = getAttributeAsString(WS_ADDRESS);
 					String wsOperation = getAttributeAsString(WS_OPERATION);
-					if(wsOperation!=null){
+					if(wsOperation!=null && !wsOperation.equals("")){
 						((WSDataSetDetail)dsActiveDetail).setOperation(wsOperation);
 					}
-					if(wsAddress!=null){
+					if(wsAddress!=null && !wsAddress.equals("")){
 						((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress);
 					}
 				}else if(dsType.equalsIgnoreCase(DS_JSON)){
@@ -245,18 +245,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					ds.setLabel(label);
 					ds.setName(name);
 					
-					if(description != null){
+					if(description != null && !description.equals("")){
 						ds.setDescription(description);
 					}
 					
 					if(dsActiveDetail!=null){
 						dsActiveDetail.setDsType(dsType);
 						
-						if(meta != null){
+						if(meta != null && !meta.equals("")){
 							dsActiveDetail.setDsMetadata(meta);
 						}
 						
-						if(pars != null){
+						if(pars != null && !pars.equals("")){
 							dsActiveDetail.setParameters(pars);
 						}
 						
@@ -265,7 +265,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							dsActiveDetail.setCategoryId(catTypeID);
 						}
 						
-						if(trasfTypeCd!=null){
+						if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
 						    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
 						    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
 						    if(domainsTrasf != null){
@@ -282,20 +282,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
 							Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
 							
-							if(pivotColName != null){
+							if(pivotColName != null && !pivotColName.equals("")){
 								dsActiveDetail.setPivotColumnName(pivotColName);
 							}
-							if(pivotColValue != null){
+							if(pivotColValue != null && !pivotColValue.equals("")){
 								dsActiveDetail.setPivotColumnValue(pivotColValue);
 							}
-							if(pivotRowName != null){
+							if(pivotRowName != null && !pivotRowName.equals("")){
 								dsActiveDetail.setPivotRowName(pivotRowName);
 							}	
 							if(pivotIsNumRows != null){
 								dsActiveDetail.setNumRows(pivotIsNumRows);
 							}
-							ds.setActiveDetail(dsActiveDetail);
 						}
+						ds.setActiveDetail(dsActiveDetail);
 					}
 
 					try {
