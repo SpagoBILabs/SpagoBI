@@ -1,5 +1,6 @@
 package it.eng.spagobi.chiron.serializer;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -9,9 +10,13 @@ import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DataSetJSONSerializer implements Serializer {
@@ -66,9 +71,44 @@ public class DataSetJSONSerializer implements Serializer {
 			GuiDataSetDetail dsDetail = ds.getActiveDetail();
 			
 			result.put(CATEGORY_TYPE_CD, dsDetail.getCategoryCd());
+
+			JSONArray parsListJSON = new JSONArray();
+			String pars = dsDetail.getParameters();
+			if(pars!=null && !pars.equals("")){
+				SourceBean source = SourceBean.fromXMLString(pars);
+				if(source!=null && source.getName().equals("PARAMETERSLIST")){
+					List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+					for(int i=0; i< rows.size(); i++){
+						SourceBean row = rows.get(i);
+						String name = (String)row.getAttribute("NAME");
+						String type = (String)row.getAttribute("TYPE");
+						JSONObject jsonPar = new JSONObject();
+						jsonPar.put("name", name);
+						jsonPar.put("type", type);
+						parsListJSON.put(jsonPar);
+					}				
+				}
+			}
+			result.put(PARS, parsListJSON);	
 			
-			result.put(PARS, dsDetail.getParameters());	
-			result.put(METADATA, dsDetail.getDsMetadata());	
+			JSONArray metaListJSON = new JSONArray();
+			String meta = dsDetail.getDsMetadata();
+			if(meta!=null && !meta.equals("")){
+				SourceBean source = SourceBean.fromXMLString(meta);
+				if(source!=null && source.getName().equals("METADATALIST")){
+					List<SourceBean> rows = source.getAttributeAsList("ROWS.ROW");
+					for(int i=0; i< rows.size(); i++){
+						SourceBean row = rows.get(i);
+						String name = (String)row.getAttribute("NAME");
+						String type = (String)row.getAttribute("TYPE");
+						JSONObject jsonMeta = new JSONObject();
+						jsonMeta.put("name", name);
+						jsonMeta.put("type", type);
+						metaListJSON.put(jsonMeta);
+					}				
+				}
+			}
+			result.put(METADATA, metaListJSON);	
 			
 			result.put(DS_TYPE_CD, dsDetail.getDsType());		
 
@@ -80,9 +120,11 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 
 			else if(dsDetail instanceof QueryDataSetDetail){
-				String query = ((QueryDataSetDetail)dsDetail).getQuery().toString();
-				if(query!=null){
-					result.put(QUERY, query);
+				if(((QueryDataSetDetail)dsDetail).getQuery()!=null){
+					String query = ((QueryDataSetDetail)dsDetail).getQuery().toString();
+					if(query!=null){
+						result.put(QUERY, query);
+					}
 				}
 				String dataSourceLabel = ((QueryDataSetDetail)dsDetail).getDataSourceLabel();
 				if(dataSourceLabel!=null){
