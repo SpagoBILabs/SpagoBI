@@ -90,7 +90,7 @@ public class DocumentCompositionExporter {
 			} else {
 				output = "JPG";
 			}
-			byte[] returnByteArray = proxy.exec(profile, "SDK", output);
+			byte[] returnByteArray = proxy.exec(profile, "EXPORT", output);
 
 			// add content retrieved to Document Container
 			logger.debug("add content retrieved to Document Container");
