@@ -101,7 +101,7 @@ public class DynamicClassLoader extends URLClassLoader {
 		try {
 			classToReturn = super.loadClass(className, resolve);
 		} catch (Exception e) {
-			logger.warn("Not found class in super.loadClass(), try to find class in JAR file");
+			logger.warn("Impossible to load class [" + className + "]");
 		}
 		if(classToReturn == null) {
 			ZipFile zipFile = null;
@@ -154,16 +154,17 @@ public class DynamicClassLoader extends URLClassLoader {
      * @param The resource name 
      * @return An input stream for reading the resource, or null if the resource could not be found
      */
-	public synchronized InputStream getResourceAsStream(String className)  {
-			ZipFile zipFile = null;
+	public synchronized InputStream getResourceAsStream(String resourceName)  {
+		
+		ZipFile zipFile = null;
 		BufferedInputStream bis = null;
 		try {
 			zipFile = new ZipFile(jar);
-			ZipEntry zipEntry = zipFile.getEntry(className);
+			ZipEntry zipEntry = zipFile.getEntry(resourceName);
 			bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
 		} catch (Exception ex) {
-			logger.warn("className: " +  className + " Exception: "+ ex);
-			return super.getResourceAsStream(className);
+			logger.warn("className: " +  resourceName + " Exception: "+ ex);
+			return super.getResourceAsStream(resourceName);
 		} 
 
 		return bis;
