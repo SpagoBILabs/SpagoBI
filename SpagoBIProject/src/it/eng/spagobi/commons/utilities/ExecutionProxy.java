@@ -67,6 +67,7 @@ public class ExecutionProxy {
 	static private Logger logger = Logger.getLogger(ExecutionProxy.class);
 	static private String backEndExtension = "BackEnd";
 	static private String sendMailOperation = "SEND_MAIL";
+	static private String  exportOperation = "EXPORT";
 
 	private BIObject biObject = null;
 
@@ -229,7 +230,6 @@ public class ExecutionProxy {
 			// build an instance of the driver
 			IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
 
-
 			// get the map of parameter to send to the engine
 			Map mapPars = aEngineDriver.getParameterMap(biObject, profile, "");
 			if (defaultOutputFormat != null && !defaultOutputFormat.trim().equals("")) {
@@ -303,7 +303,7 @@ public class ExecutionProxy {
 			}
 
 			//set userId if it's a send mail operation (backend operation)
-			if (sendMailOperation.equals(modality)) {
+			if (sendMailOperation.equals(modality) || exportOperation.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 			}
 			
