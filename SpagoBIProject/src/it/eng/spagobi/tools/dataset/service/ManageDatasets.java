@@ -294,9 +294,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							if(pivotIsNumRows != null){
 								dsActiveDetail.setNumRows(pivotIsNumRows);
 							}
-						}				
-					}
-					ds.setActiveDetail(dsActiveDetail);
+						}		
+					  ds.setActiveDetail(dsActiveDetail);
+					}			
 
 					try {
 						if(id != null && !id.equals("") && !id.equals("0")){							
