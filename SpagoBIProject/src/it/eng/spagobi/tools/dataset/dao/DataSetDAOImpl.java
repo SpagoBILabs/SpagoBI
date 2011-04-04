@@ -127,7 +127,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiDataSetHistory hibDataSet =null;
-			if(dataSet!=null){
+			if(dataSet!=null && dataSet.getActiveDetail()!=null){
 				GuiDataSetDetail dataSetActiveDetail = dataSet.getActiveDetail();
 	
 				if(dataSetActiveDetail instanceof FileDataSetDetail){
