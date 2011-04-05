@@ -679,16 +679,16 @@ public class JPQLStatement extends AbstractStatement {
 	private String getValueBounded(String operandValueToBound, String operandType) {
 		
 		String boundedValue = operandValueToBound;
-		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER")) {
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String") || operandType.equalsIgnoreCase("java.lang.Character")) {
 			
 			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes 
 			if ( StringUtils.isBounded(operandValueToBound, "'") ) {
 				boundedValue = operandValueToBound ;
 			} else {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
-				StringUtils.bound(operandValueToBound, "'");
+				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE")){
+		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
 			boundedValue = parseDate(operandValueToBound);
 		}
 		
