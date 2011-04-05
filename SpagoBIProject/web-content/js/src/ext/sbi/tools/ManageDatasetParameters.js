@@ -45,17 +45,6 @@ Ext.ns("Sbi.tools");
 
 Sbi.tools.ManageDatasetParameters = function(config) { 
 	
-	this.severityStore = config.severityStore;
-
-	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "THR_VAL_DELETE"};
-	
-	this.services = new Array();
-	
-	this.services['deleteThrValService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_THRESHOLDS_ACTION'
-		, baseParams: paramsDel
-	});
-	
 	this.typesStore = new Ext.data.SimpleStore({
         fields: ['type'],
         data: [['String'],['Number'],['Raw'],['Generic']],
@@ -170,14 +159,9 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 Ext.extend(Sbi.tools.ManageDatasetParameters, Ext.grid.EditorGridPanel, {
   
 	
-  	reader:null
-  	,currentRowRecordEdited:null
-  	,services:null
-  	,writer:null
+  	currentRowRecordEdited:null
   	,store:null
   	,userColumns:null
-  	,editor:null
-  	,userGrid:null
 
   	,loadItems: function(pars){
 		this.store.loadData(pars);

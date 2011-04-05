@@ -111,6 +111,97 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession.close();
 		}
 	}
+	
+	/**
+	 * Delete the inactive dataset version.
+	 * @param dsVerionID the a data set version ID
+	 * @throws EMFUserError the EMF user error
+	 */
+	public boolean deleteInactiveDataSetVersion(Integer dsVerionID) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		boolean deleted = false;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			if(dsVerionID!=null){
+				SbiDataSetHistory hibDataSet = (SbiDataSetHistory) aSession.load(SbiDataSetHistory.class,dsVerionID);
+				if(hibDataSet!=null && !hibDataSet.isActive()){
+					aSession.delete(hibDataSet);
+					tx.commit();	
+					deleted = true;
+				}	
+			}
+		}  catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Impossible to delete DataSet Version", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10014);
+
+		} catch (HibernateException e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Error while deleting the DataSet with varsionId " + ((dsVerionID == null)?"":dsVerionID.toString()), e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			aSession.close();
+		}
+		return deleted;
+	}
+	
+	/**
+	 * Delete all inactive dataset versions.
+	 * @param dsID the a data set fo which all old versions need to eb deleted
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void deleteAllInactiveDataSetVersions(Integer dsID) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		boolean deleted = false;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			if(dsID!=null){
+				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+				hibQuery.setBoolean(0, false);
+				hibQuery.setInteger(1, dsID);	
+				List toBeDeleted = hibQuery.list();
+				if(toBeDeleted!=null && !toBeDeleted.isEmpty()){
+					Iterator it = toBeDeleted.iterator();
+					while(it.hasNext()){
+						SbiDataSetHistory hibDataSet = (SbiDataSetHistory) it.next();
+						if(hibDataSet!=null && !hibDataSet.isActive()){
+							aSession.delete(hibDataSet);			
+						}
+					}
+					tx.commit();
+				}	
+			}					
+		}  catch (ConstraintViolationException cve) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Impossible to delete All DataSet Version", cve);
+			throw new EMFUserError(EMFErrorSeverity.WARNING, 10014);
+
+		} catch (HibernateException e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error("Error while deleting the Older Versions of DataSet with id " + ((dsID == null)?"":dsID.toString()), e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 101);
+
+		} finally {
+			aSession.close();
+		}
+	}
 
 	/**
 	 * Insert data set.
@@ -599,6 +690,27 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				while (it.hasNext()) {
 					SbiDataSetHistory hibDataSet = (SbiDataSetHistory)it.next();
 					GuiGenericDataSet ds = toDataSet(hibDataSet);
+					List<GuiDataSetDetail> oldDsVersion = new ArrayList();
+					
+					if(hibDataSet.getDsId()!=null){
+						Integer dsId = hibDataSet.getDsId().getDsId();
+						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+						hibQuery.setBoolean(0, false);
+						hibQuery.setInteger(1, dsId);	
+						
+						List<SbiDataSetHistory> olderTemplates = hibQuery.list();
+						if(olderTemplates!=null && !olderTemplates.isEmpty()){
+							Iterator it2 = olderTemplates.iterator();
+							while(it2.hasNext()){
+								SbiDataSetHistory hibOldDataSet = (SbiDataSetHistory) it2.next();
+								if(hibOldDataSet!=null && !hibOldDataSet.isActive()){
+									GuiDataSetDetail dsD = toDataSetDetail(hibOldDataSet);		
+									oldDsVersion.add(dsD);
+								}
+							}
+						}			
+					}
+					ds.setNonActiveDetails(oldDsVersion);
 					toReturn.add(ds);
 				}
 			}			
@@ -679,6 +791,66 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		ds.setActiveDetail(dsActiveDetail);
 		
 		return ds;
+	}
+	
+	public GuiDataSetDetail toDataSetDetail(SbiDataSetHistory hibDataSet) throws EMFUserError{		
+		
+		GuiDataSetDetail dsVersionDetail = null;
+		
+		if(hibDataSet instanceof SbiFileDataSet){		
+			dsVersionDetail = new FileDataSetDetail();
+			((FileDataSetDetail)dsVersionDetail).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
+			dsVersionDetail.setDsType(FILE_DS_TYPE);
+		}
+
+		if(hibDataSet instanceof SbiQueryDataSet){			
+			dsVersionDetail=new QueryDataSetDetail();
+			((QueryDataSetDetail)dsVersionDetail).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
+			SbiDataSource sbids=((SbiQueryDataSet)hibDataSet).getDataSource();
+			if(sbids!=null){
+				String dataSourceLabel = sbids.getLabel();
+				((QueryDataSetDetail)dsVersionDetail).setDataSourceLabel(dataSourceLabel);
+			}
+			dsVersionDetail.setDsType(JDBC_DS_TYPE);
+		}
+
+		if(hibDataSet instanceof SbiWSDataSet){			
+			dsVersionDetail=new WSDataSetDetail();
+			((WSDataSetDetail)dsVersionDetail).setAddress(((SbiWSDataSet)hibDataSet).getAdress());
+			((WSDataSetDetail)dsVersionDetail).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
+			dsVersionDetail.setDsType(WS_DS_TYPE);
+		}
+
+		if(hibDataSet instanceof SbiScriptDataSet){			
+			dsVersionDetail=new ScriptDataSetDetail();
+			((ScriptDataSetDetail)dsVersionDetail).setScript(((SbiScriptDataSet)hibDataSet).getScript());
+			((ScriptDataSetDetail)dsVersionDetail).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
+			dsVersionDetail.setDsType(SCRIPT_DS_TYPE);
+		}
+
+		if(hibDataSet instanceof SbiJClassDataSet){			
+			dsVersionDetail=new JClassDataSetDetail();
+			((JClassDataSetDetail)dsVersionDetail).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+			dsVersionDetail.setDsType(JCLASS_DS_TYPE);
+		}
+		
+		dsVersionDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
+		dsVersionDetail.setCategoryCd((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueCd());
+		dsVersionDetail.setTransformerId((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueId());
+		dsVersionDetail.setTransformerCd((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueCd());
+		dsVersionDetail.setPivotColumnName(hibDataSet.getPivotColumnName());
+		dsVersionDetail.setPivotRowName(hibDataSet.getPivotRowName());
+		dsVersionDetail.setPivotColumnValue(hibDataSet.getPivotColumnValue());
+		dsVersionDetail.setNumRows(hibDataSet.isNumRows());			
+		dsVersionDetail.setParameters(hibDataSet.getParameters());		
+		dsVersionDetail.setDsMetadata(hibDataSet.getDsMetadata());	
+		
+		dsVersionDetail.setUserIn(hibDataSet.getUserIn());
+		dsVersionDetail.setTimeIn(hibDataSet.getTimeIn());
+		dsVersionDetail.setVersionNum(hibDataSet.getVersionNum());
+		dsVersionDetail.setDsHId(hibDataSet.getDsHId());
+		
+		return dsVersionDetail;
 	}
 	
 	/**

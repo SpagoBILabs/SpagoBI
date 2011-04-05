@@ -76,6 +76,7 @@ Sbi.tools.ManageDatasets = function(config) {
 	this.rowselModel.addListener('rowselect',function(sm, row, rec) { 
 		this.activateDsTypeForm(null, rec, row); 
 		this.activateTransfForm(null, rec, row); 
+		this.activateDsVersionsGrid(null, rec, row);
 		this.activateDsTestTab(this.datasetTestTab);
 		this.getForm().loadRecord(rec);  
      }, this);
@@ -96,6 +97,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
     , datasetTestTab:null
     , datasetTestGrid:null
     , manageParsGrid:null
+    , manageDsVersionsGrid:null
     
     , activateTransfForm: function(combo,record,index){
 		var transfSelected = record.get('trasfTypeCd');
@@ -145,6 +147,11 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
         this.datasetTestGrid.getStore().load({params: requestParameters});
         this.datasetTestGrid.getView().refresh();
     }
+	
+	, activateDsVersionsGrid: function(combo,record,index){
+		var dsVersionsList = record.get('dsVersions');
+		this.manageDsVersionsGrid.loadItems(dsVersionsList);
+	}
 	
 	, activateDsTypeForm: function(combo,record,index){
 	
@@ -206,6 +213,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          , 'pivotColValue'
 		                    	          , 'pivotRowName'
 		                    	          , 'pivotIsNumRows'
+		                    	          , 'dsVersions'
 		                    	          ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -229,7 +237,8 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          pivotColName:'',
 		                    	          pivotColValue:'',
 		                    	          pivotRowName:'',
-		                    	          pivotIsNumRows:''
+		                    	          pivotIsNumRows:'',
+		                    	          dsVersions: []
 										 });
 		
 		this.configurationObject.gridColItems = [
@@ -250,6 +259,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		var emptyRecToAdd = this.emptyRecord;
 		this.getForm().loadRecord(emptyRecToAdd);
 		this.manageParsGrid.loadItems([]);
+		this.manageDsVersionsGrid.loadItems([]);
 	
 	    this.tabs.items.each(function(item)
 		    {		
@@ -276,6 +286,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
  	   var detailFieldName = {
           	 maxLength:40,
         	 minLength:1,
+        	 width : 200,
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
              allowBlank: false,
@@ -286,6 +297,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
  	   var detailFieldLabel = {
           	 maxLength:45,
         	 minLength:1,
+        	 width : 200,
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.label'),
              allowBlank: false,
@@ -323,6 +335,24 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
           };  
  	  //END list of detail fields
  	   
+ 	  var c ={};
+	    this.manageDsVersionsGrid = new Sbi.tools.ManageDatasetVersions(c);  
+	    
+	    this.manageDsVersionsPanel = new Ext.Panel({
+	         id : 'man-vers'
+	        , title: LN('sbi.ds.versionPanel')
+	        , layout: 'form'
+	        , autoScroll: false
+	          , style: {
+	              "margin-left": "10px", 
+	              "margin-top": "10px", 
+	              "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+	          }
+			, border: true
+	        , items: [this.manageDsVersionsGrid]
+	        , scope: this
+	    });
+ 	   
  	  this.detailTab = new Ext.Panel({
 	        title: LN('sbi.generic.details')
 	        , itemId: 'detail'
@@ -332,8 +362,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	 		   	 itemId: 'items-detail',   	              
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
-	             labelWidth: 90,
-	             defaults: {width: 200, border:false},    
+	             labelWidth: 90,   
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
@@ -344,9 +373,10 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
 	             },
 	             items: [detailFieldId, detailFieldLabel, detailFieldName, 
-	                     detailFieldDescr, detailFieldCatType]
+	                     detailFieldDescr, detailFieldCatType,this.manageDsVersionsPanel]
 	    	}
 	    });
+ 	 
 
  	//DataSource Store types combobox
  	   this.dsTypesStore = new Ext.data.SimpleStore({
@@ -753,7 +783,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
  	    });
 	    
 	    var c = {};
-	    c.pars = {};
 	    this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
 	    this.datasetTestGrid = new Sbi.tools.DataSetTestGrid(c);  
 	    

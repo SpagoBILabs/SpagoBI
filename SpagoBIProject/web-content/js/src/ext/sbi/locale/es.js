@@ -468,6 +468,12 @@ Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
 
 
 //Datasets
+Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
+Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Delete Version';
+Sbi.locale.ln['sbi.ds.restore'] = 'Restore';
+Sbi.locale.ln['sbi.ds.dateIn'] = 'Creation Date';
+Sbi.locale.ln['sbi.ds.userIn'] = 'Creation User';
+Sbi.locale.ln['sbi.ds.versionPanel'] = 'Older Dataset Versions';
 Sbi.locale.ln['sbi.ds.test'] = 'Test';
 Sbi.locale.ln['sbi.ds.fillPars'] = 'Fill in Values for all Parameters';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Used By';

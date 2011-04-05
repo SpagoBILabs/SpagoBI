@@ -517,6 +517,12 @@ Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='Il valore della colonna';
 Sbi.locale.ln['sbi.lookup.asA'] = 'inteso come';
 
 //Datasets
+Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Elimina Tutte';
+Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Elimina Versione';
+Sbi.locale.ln['sbi.ds.restore'] = 'Carica Versione';
+Sbi.locale.ln['sbi.ds.dateIn'] = 'Data di Creazione';
+Sbi.locale.ln['sbi.ds.userIn'] = 'Creatore';
+Sbi.locale.ln['sbi.ds.versionPanel'] = 'Vecchie Versioni del Dataset';
 Sbi.locale.ln['sbi.ds.test'] = 'Test';
 Sbi.locale.ln['sbi.ds.fillPars'] = 'Riempire i Valori dei Parametri';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Usato Da';

@@ -9,10 +9,9 @@ import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,6 +20,14 @@ import org.json.JSONObject;
 
 public class DataSetJSONSerializer implements Serializer {
 
+	public static final String DS_ID = "dsId";
+	public static final String VERSION_ID = "versId";
+	public static final String VERSION_NUM = "versNum";	
+	public static final String USER_IN = "userIn";
+	public static final String TYPE = "type";
+	public static final String DATE_IN = "dateIn";
+	public static final String DS_OLD_VERSIONS = "dsVersions";
+	
 	public static final String ID = "id";
 	private static final String NAME = "name";
 	private static final String DESCRIPTION = "description";
@@ -58,8 +65,8 @@ public class DataSetJSONSerializer implements Serializer {
 		try {
 			GuiGenericDataSet ds = (GuiGenericDataSet)o;
 			result = new JSONObject();
-			
-			result.put(ID, ds.getDsId());
+			Integer dsId = ds.getDsId();
+			result.put(ID, dsId);
 			result.put(LABEL, ds.getLabel() );	
 			result.put(NAME, ds.getName() );
 			result.put(DESCRIPTION, ds.getDescription() );
@@ -109,6 +116,29 @@ public class DataSetJSONSerializer implements Serializer {
 				}
 			}
 			result.put(METADATA, metaListJSON);	
+			
+			JSONArray versionsListJSON = new JSONArray();
+			List<GuiDataSetDetail> nonActiveDetails = ds.getNonActiveDetails();
+			if(nonActiveDetails!=null && !nonActiveDetails.isEmpty()){
+				Iterator it = nonActiveDetails.iterator();
+				while(it.hasNext()){
+					GuiDataSetDetail tempDetail = (GuiDataSetDetail)it.next();
+					String dsType = tempDetail.getDsType();
+					String userIn = tempDetail.getUserIn();
+					Integer dsVersionNum = tempDetail.getVersionNum();
+					Integer dsVersionId = tempDetail.getDsHId();
+					Date timeIn = tempDetail.getTimeIn();
+					JSONObject jsonOldVersion = new JSONObject();
+					jsonOldVersion.put(TYPE, dsType);
+					jsonOldVersion.put(USER_IN, userIn);
+					jsonOldVersion.put(VERSION_NUM, dsVersionNum);
+					jsonOldVersion.put(VERSION_ID, dsVersionId);
+					jsonOldVersion.put(DATE_IN, timeIn);
+					jsonOldVersion.put(DS_ID, dsId);
+					versionsListJSON.put(jsonOldVersion);
+				}
+			}
+			result.put(DS_OLD_VERSIONS, versionsListJSON);	
 			
 			result.put(DS_TYPE_CD, dsDetail.getDsType());		
 

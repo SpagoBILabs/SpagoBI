@@ -51,6 +51,20 @@ public interface IDataSetDAO {
 	public void deleteDataSet(Integer dsID) throws EMFUserError ;
 	
 	/**
+	 * Delete the inactive dataset version.
+	 * @param dsVerionID the a data set version ID
+	 * @throws EMFUserError the EMF user error
+	 */
+	public boolean deleteInactiveDataSetVersion(Integer dsVerionID) throws EMFUserError ;
+	
+	/**
+	 * Delete all inactive dataset versions.
+	 * @param dsID the a data set fo which all old versions need to eb deleted
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void deleteAllInactiveDataSetVersions(Integer dsID) throws EMFUserError ;
+	
+	/**
 	 * Insert data set.
 	 * @param dataSet the a data set
 	 * @throws EMFUserError the EMF user error

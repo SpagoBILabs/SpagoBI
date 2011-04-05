@@ -54,6 +54,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private final String DATASET_DELETE = "DATASET_DELETE";
 	private final String DATASET_TEST = "DATASET_TEST";
 	
+	private final String DATASET_VERSION_RESTORE = "DATASET_VERSION_RESTORE";
+	private final String DATASET_VERSION_DELETE = "DATASET_VERSION_DELETE";
+	private final String DATASET_ALL_VERSIONS_DELETE = "DATASET_ALL_VERSIONS_DELETE";
+	
 	private final String DATASETS_FOR_KPI_LIST = "DATASETS_FOR_KPI_LIST";
 	
 	private final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
@@ -61,6 +65,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private final String DATA_SET_TYPE = "DATA_SET_TYPE";	
 	private final String TRANSFORMER_TYPE = "TRANSFORMER_TYPE";		
 	
+	public static final String DS_ID = "dsId";
+	public static final String VERSION_ID = "versId";
+	public static final String VERSION_NUM = "versNum";
+		
 	public static final String ID = "id";
 	private static final String NAME = "name";
 	private static final String DESCRIPTION = "description";
@@ -504,6 +512,45 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				dsDao.deleteDataSet(dsID);
 				logger.debug("Dataset deleted");
+				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving dataset to delete", e);
+			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_VERSION_DELETE)) {
+			Integer dsVersionID = getAttributeAsInteger(VERSION_ID);
+			try {
+				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);
+				logger.debug("Dataset Version deleted");
+				if(deleted){
+					writeBackToClient( new JSONAcknowledge("Operation succeded") );
+				}else{
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Exception occurred while retrieving dataset Version to delete");
+				}
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving dataset to delete", e);
+			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_ALL_VERSIONS_DELETE)) {
+			Integer dsID = getAttributeAsInteger(DS_ID);
+			try {
+				dsDao.deleteAllInactiveDataSetVersions(dsID);
+				logger.debug("All Older Dataset versions deleted");
+				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+			} catch (Throwable e) {
+				logger.error("Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while retrieving dataset to delete", e);
+			}
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_VERSION_RESTORE)) {
+			Integer dsID = getAttributeAsInteger(DS_ID);
+			Integer dsVersionNum = getAttributeAsInteger(VERSION_NUM);
+			try {
+				dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+				logger.debug("Dataset Version correctly Restored");
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
