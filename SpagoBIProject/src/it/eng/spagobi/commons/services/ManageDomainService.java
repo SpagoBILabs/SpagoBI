@@ -22,6 +22,11 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class ManageDomainService extends AbstractSpagoBIAction {
 
+	/**
+	 * 
+	 */
+	 private static final long serialVersionUID = 1L;
+
 	// logger component
 	private static Logger logger = Logger.getLogger(ManageDomainService.class);
 

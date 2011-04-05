@@ -1,4 +1,4 @@
-<Context  docBase="SpagoBI" path="/SpagoBI" privileged="true" reloadable="false" >
+<Context docBase="SpagoBIProject" path="/SpagoBI" privileged="true" reloadable="true" source="org.eclipse.jst.j2ee.server:SpagoBIProject">
   		<Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
         <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
