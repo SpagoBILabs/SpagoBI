@@ -497,7 +497,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					} catch (Throwable e) {
 						logger.error(e.getMessage(), e);
 						throw new SpagoBIServiceException(SERVICE_NAME,
-								"Exception occurred while saving new resource", e);
+								"Exception occurred while Testing Dataset", e);
 					}	
 				}							
 			}else{
@@ -559,8 +559,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
 			String name = obj.getString("name");	
-			String value = obj.getString("value");	
-			h.put(name, value);
+			String value = "'"+obj.getString("value")+"'";	
+			h.put(name,value);
 		}	
 		return h;
 	}

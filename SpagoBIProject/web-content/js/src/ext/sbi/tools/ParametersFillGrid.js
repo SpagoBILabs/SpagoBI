@@ -138,25 +138,16 @@ Ext.extend(Sbi.tools.ParametersFillGrid, Ext.grid.PropertyGrid, {
 	}
 	,
 	// return array with values in grid
-	saveUdpValues:function(type){
-	     /*var arrayUdps = new Array();
-			var storeUdps = this.getStore();
-			for(var i = 0;i< storeUdps.getCount();i++){
-				var item = storeUdps.getAt(i);
+	getParametersValues: function(){
+	    var arrayPars = new Array();
+			var storePars = this.getStore();
+			var length = storePars.getCount();
+			for(var i = 0;i< length;i++){
+				var item = storePars.getAt(i);
 				var data = item.data;
-				// want to add type and family to this record
-				data.familyId = type;
-				var stop = false;
-				for ( var j = 0; j < this.parsList.length && stop == false; j++) {
-					var udpVal = config.parsList[j];
-					if(udpVal.label == data.name){
-						data.dataTypeCd = udpVal.dataTypeCd;
-						stop = true;
-					}
-				}
-				arrayUdps.push(data);
+				arrayPars.push(data);
 			}
-		return arrayUdps;*/
+		return arrayPars;
 	}
 	
 });
