@@ -88,22 +88,17 @@ Sbi.tools.ParametersFillGrid = function(config) {
 
 Ext.extend(Sbi.tools.ParametersFillGrid, Ext.grid.PropertyGrid, {
   
-	// fills value if present: if not present set defaults type in order to have right editors
 	fillParameters: function(parsList){
 
 		//	remove preceding content
 		this.store.removeAll(true);
-		// get selected kpi udp values 
 	
 		if(parsList){
-		// fill udp st if present with values associated		
 			for(i = 0; i<parsList.length;i++){
 				var singlePar = parsList[i];
-				// check if singlePar.label has a value associated for present KPI
-				// check if udo.label is present among singleParValues
+				
 				var valueToInsert = null;
 			
-				// get UDP type
 				var typeData = singlePar.type;
 				if(!typeData){
 					typeData = 'STRING';
@@ -111,7 +106,7 @@ Ext.extend(Sbi.tools.ParametersFillGrid, Ext.grid.PropertyGrid, {
 				else{
 					typeData = typeData.toUpperCase();
 				}
-				//convert value to th right type
+				//convert value to the right type
 				if(typeData == 'STRING'){
 					if(valueToInsert == null){
 						valueToInsert = '';
@@ -136,9 +131,9 @@ Ext.extend(Sbi.tools.ParametersFillGrid, Ext.grid.PropertyGrid, {
 		}
 	  this.getView().refresh();
 	}
-	,
+	
 	// return array with values in grid
-	getParametersValues: function(){
+	,getParametersValues: function(){
 	    var arrayPars = new Array();
 			var storePars = this.getStore();
 			var length = storePars.getCount();

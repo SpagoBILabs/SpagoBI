@@ -95,6 +95,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
     , parsGrid:null
     , datasetTestTab:null
     , datasetTestGrid:null
+    , manageParsGrid:null
     
     , activateTransfForm: function(combo,record,index){
 		var transfSelected = record.get('trasfTypeCd');
@@ -109,7 +110,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		if(panel){
 			var record = this.rowselModel.getSelected();
 			if(record){		
-				 var dsParsList = record.get('pars');
+				 var dsParsList = this.manageParsGrid.getParsArray();
 				 this.parsGrid.fillParameters(dsParsList);
 			}			
 		}
@@ -179,6 +180,8 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 			this.scriptDetail.setVisible(true);
 			this.WSDetail.setVisible(false);
 		}
+		var dsParsList = record.get('pars');
+		this.manageParsGrid.loadItems(dsParsList);
 	}
 
 	,initConfigObject:function(){
@@ -198,7 +201,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          , 'scriptLanguage'
 		                    	          , 'jclassName'
 		                    	          , 'pars'
-		                    	          , 'meta'
 		                    	          , 'trasfTypeCd'
 		                    	          , 'pivotColName'
 		                    	          , 'pivotColValue'
@@ -222,8 +224,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		                    	          script:'',
 		                    	          scriptLanguage:'',
 		                    	          jclassName:'',
-		                    	          pars:'',
-		                    	          meta:'',
+		                    	          pars:[],
 		                    	          trasfTypeCd:'',
 		                    	          pivotColName:'',
 		                    	          pivotColValue:'',
@@ -243,6 +244,19 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 		
 		this.initTabItems();
     }
+	
+	//OVERRIDING METHOD
+	, addNewItem : function(){		
+		var emptyRecToAdd = this.emptyRecord;
+		this.getForm().loadRecord(emptyRecToAdd);
+		this.manageParsGrid.loadItems([]);
+	
+	    this.tabs.items.each(function(item)
+		    {		
+		    	item.doLayout();
+		    });   	    
+	    this.tabs.setActiveTab(0);
+	}
 
 	,initTabItems: function(){
 
@@ -404,8 +418,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	    this.detailQuery = new Ext.form.TextArea({
 	             maxLength:5000,
 	             xtype: 'textarea',
-	        	 width : 150,
-	             height : 250,
+	             height : 180,
 	          	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.query'),
 	             validationEvent:true,
@@ -435,11 +448,10 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	         });
 	    
 	    this.detailScript = new Ext.form.TextArea({
-	    		maxLength:5000,
+	    		 maxLength:5000,
 	             xtype: 'textarea',
 	        	 width : this.textAreaWidth,
-	        	 width : 150,
-	             height : 220,
+	        	 height : 175,
 	        	 regexText : LN('sbi.roles.alfanumericString'),
 	             fieldLabel: LN('sbi.ds.script'),
 	             allowBlank: true,
@@ -476,99 +488,110 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	         });
 	    
 	    this.dsTypeDetail = new Ext.form.FieldSet({  	
-	            labelWidth: 90,
-	            //defaults: {width: 200, border:false},    
+	            labelWidth: 90, 
 	            defaultType: 'textfield',
 	            autoHeight: true,
 	            autoScroll  : true,
-	            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	            border: true,
 	            style: {
-	                "margin-left": "10px", 
-	                "margin-top": "10px", 
-	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+	                "margin-left": "60px", 
+	                "margin-top": "3px"
+	               , "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-60px" : "-63px") : "60px"  
 	            },
 	            items: [detailDsType]
 	    });
 
 	    this.queryDetail = new Ext.form.FieldSet({  	
-	            labelWidth: 90,
-	            defaults: {width: 210, border:true},    
+	            labelWidth: 80,
+	            defaults: {width: 280, border:true},    
 	            defaultType: 'textfield',
 	            autoHeight: true,
 	            autoScroll  : true,
-	            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	            border: true,
 	            style: {
-	                "margin-left": "10px", 
-	                "margin-top": "10px", 
-	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+	                "margin-left": "3px", 
+	                "margin-top": "3px", 
+	                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-3px" : "-5px") : "3px"  
 	            },
 	            items: [this.detailDataSource, this.detailQuery]
 	    });
 	    
 	    this.jClassDetail = new Ext.form.FieldSet({  	
-            labelWidth: 90,
-            defaults: {width: 210, border:true},   
+            labelWidth: 80,
+            defaults: {width: 280, border:true},     
             defaultType: 'textfield',
             autoHeight: true,
             autoScroll  : true,
-            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
             border: true,
             style: {
-                "margin-left": "10px", 
-                "margin-top": "10px", 
-                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+                "margin-left": "3px", 
+                "margin-top": "3px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-3px" : "-5px") : "3px"  
             },
             items: [this.detailJclassName]
 	    });
 	    
 	    this.fileDetail = new Ext.form.FieldSet({  	
-            labelWidth: 90,
-            defaults: {width: 210, border:true},   
+            labelWidth: 80,
+            defaults: {width: 280, border:true},      
             defaultType: 'textfield',
             autoHeight: true,
             autoScroll  : true,
-            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
             border: true,
             style: {
-                "margin-left": "10px", 
-                "margin-top": "10px", 
-                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+                "margin-left": "3px", 
+                "margin-top": "3px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-3px" : "-5px") : "3px"  
             },
             items: [this.detailFileName]
 	    });
 	    
 	    this.WSDetail = new Ext.form.FieldSet({  	
-            labelWidth: 90,
-            defaults: {width: 210, border:true},     
+            labelWidth: 80,
+            defaults: {width: 280, border:true},        
             defaultType: 'textfield',
             autoHeight: true,
             autoScroll  : true,
-            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
             border: true,
             style: {
-                "margin-left": "10px", 
-                "margin-top": "10px", 
-                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+                "margin-left": "3px", 
+                "margin-top": "3px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-3px" : "-5px") : "3px"  
             },
             items: [this.detailWsAddress, this.detailWsOperation]
 	    });
 	    
 	    this.scriptDetail = new Ext.form.FieldSet({  	
-            labelWidth: 90,
-            defaults: {width: 210, border:true},     
+            labelWidth: 80,
+            defaults: {width: 280, border:true},     
             defaultType: 'textfield',
             autoHeight: true,
             autoScroll  : true,
-            bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
             border: true,
             style: {
-                "margin-left": "10px", 
-                "margin-top": "10px", 
-                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+                "margin-left": "3px", 
+                "margin-top": "3px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-3px" : "-5px") : "3px"  
             },
             items: [this.detailScriptLanguage, this.detailScript]
+	    });
+	    
+	    var c ={};
+	    this.manageParsGrid = new Sbi.tools.ManageDatasetParameters(c);  
+	    
+	    this.manageParsPanel = new Ext.Panel({
+	         id : 'man-pars'
+	        , layout: 'form'
+	        , autoScroll: false
+	        //, bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
+            , style: {
+                "margin-left": "3px", 
+                "margin-top": "3px", 
+                "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-70px" : "-73px") : "70px"  
+            }
+			, border: true
+	        , items: [this.manageParsGrid ]
+	        , scope: this
 	    });
 	    
 	    this.typeTab = new Ext.Panel({
@@ -581,19 +604,18 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	 		   	// columnWidth: 0.4,
 	             xtype: 'fieldset',
 	             scope: this,
-	             labelWidth: 90,
-	             //defaults: {width: 280, border:false},    
+	             labelWidth: 80,
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
-	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
 	             border: false,
 	             style: {
-	                 "margin-left": "10px", 
-	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	                 "margin-left": "5px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-5px" : "-7px") : "0"  
 	             },
 	             items: [this.dsTypeDetail,this.jClassDetail,this.scriptDetail,
-		                 this.queryDetail,this.WSDetail,this.fileDetail]
+		                 this.queryDetail,this.WSDetail,this.fileDetail
+		                 ,this.manageParsPanel]
 	    	}			    
 	    });
 	    
@@ -785,8 +807,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 					script: values['script'],			        
 					scriptLanguage: values['scriptLanguage'],	
 					jclassName: values['jclassName'],
-					pars: values['pars'],
-      	          	meta: values['meta'],
       	            trasfTypeCd: values['trasfTypeCd'],
       	            pivotColName: values['pivotColName'],
       	            pivotColValue: values['pivotColValue'],
@@ -794,36 +814,6 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
       	            pivotIsNumRows: values['pivotIsNumRows']
 			});	  
 			
-		}else{
-			var record;
-			var length = this.mainElementsStore.getCount();
-			for(var i=0;i<length;i++){
-	   	        var tempRecord = this.mainElementsStore.getAt(i);
-	   	        if(tempRecord.data.id==idRec){
-	   	        	record = tempRecord;
-				}			   
-	   	    }	
-			record.set('name',values['name']);
-			record.set('label',values['label']);
-			record.set('description',values['description']);
-			record.set('dsTypeCd',values['dsTypeCd']);
-			record.set('catTypeCd',values['catTypeCd']);
-			record.set('usedByNDocs',values['usedByNDocs']);	
-			record.set('fileName',values['fileName']);
-			record.set('query',values['query']);
-			record.set('dataSource',values['dataSource']);
-			record.set('wsAddress',values['wsAddress']);
-			record.set('wsOperation',values['wsOperation']);
-			record.set('script',values['script']);	
-			record.set('scriptLanguage',values['scriptLanguage']);
-			record.set('jclassName',values['jclassName']);				
-			record.set('pars',values['pars']);	
-			record.set('meta',values['meta']);	
-			record.set('trasfTypeCd',values['trasfTypeCd']);	
-			record.set('pivotColName',values['pivotColName']);	
-			record.set('pivotColValue',values['pivotColValue']);	
-			record.set('pivotRowName',values['pivotRowName']);	
-			record.set('pivotIsNumRows',values['pivotIsNumRows']);	
 		}
 
         var params = {
@@ -841,14 +831,20 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 				script: values['script'],			        
 				scriptLanguage: values['scriptLanguage'],	
 				jclassName: values['jclassName'],
-				pars: values['pars'],
-  	          	meta: values['meta'],
   	            trasfTypeCd: values['trasfTypeCd'],
   	            pivotColName: values['pivotColName'],
   	            pivotColValue: values['pivotColValue'],
   	            pivotRowName: values['pivotRowName'],
   	            pivotIsNumRows: values['pivotIsNumRows']
         };
+        
+        var arrayPars = this.manageParsGrid.getParsArray();
+        if(arrayPars){
+        	params.pars = Ext.util.JSON.encode(arrayPars);
+        	if(newRec != null && newRec != undefined){
+            	newRec.set('pars',arrayPars);	
+  			}
+        }
         
         if(idRec){
         	params.id = idRec;
