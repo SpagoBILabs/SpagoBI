@@ -1,27 +1,57 @@
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+import it.eng.spagobi.chiron.serializer.SerializationException;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
+import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
+import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -37,6 +67,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private final String DATASETS_LIST = "DATASETS_LIST";
 	private final String DATASET_INSERT = "DATASET_INSERT";
 	private final String DATASET_DELETE = "DATASET_DELETE";
+	private final String DATASET_TEST = "DATASET_TEST";
+	
 	private final String DATASETS_FOR_KPI_LIST = "DATASETS_FOR_KPI_LIST";
 	
 	private final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
@@ -331,6 +363,147 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				logger.error("DataSet name, label or type are missing");
 				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill DataSet name, label and type");
 			}
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_TEST)) {
+			
+			String id = getAttributeAsString(ID);
+			
+			String dsTypeCd = getAttributeAsString(DS_TYPE_CD);	
+				
+			JSONArray parsJSON = getAttributeAsJSONArray(PARS);
+			String trasfTypeCd = getAttributeAsString(TRASFORMER_TYPE_CD);
+			
+			List<Domain> domainsDs = (List<Domain>)getSessionContainer().getAttribute("dsTypesList");
+			
+			String dsType = "";
+			if(domainsDs!=null && !domainsDs.isEmpty()){
+				Iterator it = domainsDs.iterator();
+				while(it.hasNext()){
+					Domain d = (Domain)it.next();
+					if(d!=null && d.getValueCd().equalsIgnoreCase(dsTypeCd)){
+						dsType = d.getValueName();
+						break;
+					}
+				}
+			}			
+
+			IDataSet ds = null;
+				
+			if ( dsType!=null && !dsType.equals("")) {
+				
+				if(dsType.equalsIgnoreCase(DS_FILE)){	
+					ds = new FileDataSet();
+					String fileName = getAttributeAsString(FILE_NAME);
+					((FileDataSet)ds).setFileName(fileName);		
+				}
+
+				if(dsType.equalsIgnoreCase(DS_QUERY)){		
+					ds=new JDBCDataSet();
+					String query = getAttributeAsString(QUERY);
+					String dataSourceLabel = getAttributeAsString(DATA_SOURCE);
+					((JDBCDataSet)ds).setQuery(query);
+					if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
+						IDataSource dataSource;
+						try {
+							dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+							if(dataSource!=null){
+								((JDBCDataSet)ds).setDataSource(dataSource);
+							}
+						} catch (EMFUserError e) {
+							logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
+							e.printStackTrace();
+						}			
+					}
+				}
+
+				if(dsType.equalsIgnoreCase(DS_WS)){	
+					ds=new WebServiceDataSet();
+					String wsAddress = getAttributeAsString(WS_ADDRESS);
+					String wsOperation = getAttributeAsString(WS_OPERATION);
+					((WebServiceDataSet)ds).setAddress(wsAddress);
+					((WebServiceDataSet)ds).setOperation(wsOperation);
+				}
+
+				if(dsType.equalsIgnoreCase(DS_SCRIPT)){	
+					ds=new ScriptDataSet();
+					String script = getAttributeAsString(SCRIPT);
+					String scriptLanguage = getAttributeAsString(SCRIPT_LANGUAGE);
+					((ScriptDataSet)ds).setScript(script);
+					((ScriptDataSet)ds).setLanguageScript(scriptLanguage);
+				}
+
+				if(dsType.equalsIgnoreCase(DS_JCLASS)){		
+					ds=new JavaClassDataSet();
+					String jclassName = getAttributeAsString(JCLASS_NAME);
+					((JavaClassDataSet)ds).setClassName(jclassName);
+				}
+				
+				if(dsType.equalsIgnoreCase(DS_JSON)){
+					//TODO
+				}
+			
+				if(ds!=null){						
+					
+					if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
+					    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
+					    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
+					    if(domainsTrasf != null){
+						    for(int i=0; i< domainsTrasf.size(); i++){
+						    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+						    }
+					    }
+					    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
+						
+					    String pivotColName = getAttributeAsString(PIVOT_COL_NAME);
+						String pivotColValue = getAttributeAsString(PIVOT_COL_VALUE);
+						String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
+						Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
+						
+						if(pivotColName != null && !pivotColName.equals("")){
+							ds.setPivotColumnName(pivotColName);
+						}
+						if(pivotColValue != null && !pivotColValue.equals("")){
+							ds.setPivotColumnValue(pivotColValue);
+						}
+						if(pivotRowName != null && !pivotRowName.equals("")){
+							ds.setPivotRowName(pivotRowName);
+						}	
+						if(pivotIsNumRows != null){
+							ds.setNumRows(pivotIsNumRows);
+						}
+						
+						ds.setTransformerId(transformerId);	
+
+						if(ds.getPivotColumnName() != null 
+								&& ds.getPivotColumnValue() != null
+								&& ds.getPivotRowName() != null){
+							ds.setDataStoreTransformer(
+									new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+						}
+					}
+
+					try {
+						HashMap h = new HashMap();
+						if(parsJSON!=null){
+							h = deserializeParsListJSONArray(parsJSON);
+						}
+						IEngUserProfile profile = getUserProfile();
+						JSONObject dataSetJSON = getDatasetTestResultList(ds, h, profile);
+
+						try {
+							writeBackToClient( new JSONSuccess( dataSetJSON ) );
+						} catch (IOException e) {
+							throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+						}
+					} catch (Throwable e) {
+						logger.error(e.getMessage(), e);
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Exception occurred while saving new resource", e);
+					}	
+				}							
+			}else{
+				logger.error("DataSet type is not existent");
+				throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(ID);
 			try {
@@ -379,5 +552,66 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		results.put("title", "Datasets");
 		results.put("rows", rows);
 		return results;
+	}
+	
+	private HashMap deserializeParsListJSONArray(JSONArray parsListJSON) throws JSONException{
+		HashMap h = new HashMap();
+		for(int i=0; i< parsListJSON.length(); i++){
+			JSONObject obj = (JSONObject)parsListJSON.get(i);
+			String name = obj.getString("name");	
+			String value = obj.getString("value");	
+			h.put(name, value);
+		}	
+		return h;
+	}
+	
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
+		logger.debug("IN");
+		JSONObject dataSetJSON = null;
+		
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
+
+		// based on lov type fill the spago list and paginator object
+		/*SourceBean rowsSourceBean = null;
+		List colNames = new ArrayList();*/
+
+		dataSet.setParamsMap(parametersFilled);		
+		try{
+			dataSet.loadData();
+			IDataStore dataStore = dataSet.getDataStore();
+			
+			try {
+				dataSetJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize( dataStore, null );
+			} catch (SerializationException e) {
+				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
+			}
+			
+
+			/*String metadataToXML=new DatasetMetadataParser().metadataToXML(ids);
+			rowsSourceBean=ids.toSourceBean();
+
+			//I must get columnNames. assumo che tutte le righe abbiano le stesse colonne
+			if(rowsSourceBean!=null){
+				List row = rowsSourceBean.getAttributeAsList("ROW");
+				if(row.size()>=1){
+					Iterator iterator = row.iterator(); 
+					SourceBean sb = (SourceBean) iterator.next();
+					List sbas = sb.getContainedAttributes();
+					for (Iterator iterator2 = sbas.iterator(); iterator2.hasNext();) {
+						SourceBeanAttribute object = (SourceBeanAttribute) iterator2.next();
+						String name = object.getKey();
+						colNames.add(name);
+						String value = (String)object.getValue();
+					}
+				}
+			}	*/	
+		}
+		catch (Exception e) {
+			logger.error("Error while executing dataset for test purpose",e);
+			return null;		
+		}
+
+		logger.debug("OUT");
+		return dataSetJSON;
 	}
 }

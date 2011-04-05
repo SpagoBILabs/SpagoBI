@@ -45,6 +45,7 @@ Ext.ns("Sbi.tools");
 
 Sbi.tools.ManageDatasets = function(config) {
 	 
+	
 	var paramsList = {MESSAGE_DET: "DATASETS_LIST"};
 	var paramsSave = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DATASET_INSERT"};
 	var paramsDel = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DATASET_DELETE"};
@@ -93,6 +94,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
     , fileDetail:null
     , parsGrid:null
     , datasetTestTab:null
+    , datasetTestGrid:null
     
     , activateTransfForm: function(combo,record,index){
 		var transfSelected = record.get('trasfTypeCd');
@@ -112,6 +114,35 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 			}			
 		}
 	}
+	
+	, test: function(button, event, service) {	
+		var values = this.getForm().getFieldValues();
+
+        var requestParameters = {		
+        		start: 0,
+        		limit: 25,
+				dsTypeCd: values['dsTypeCd'],	
+				fileName: values['fileName'],
+				query: values['query'],
+				dataSource: values['dataSource'],			        
+				wsAddress: values['wsAddress'],	
+				wsOperation: values['wsOperation'],
+				script: values['script'],			        
+				scriptLanguage: values['scriptLanguage'],	
+				jclassName: values['jclassName'],
+				pars: values['pars'],
+  	          	meta: values['meta'],
+  	            trasfTypeCd: values['trasfTypeCd'],
+  	            pivotColName: values['pivotColName'],
+  	            pivotColValue: values['pivotColValue'],
+  	            pivotRowName: values['pivotRowName'],
+  	            pivotIsNumRows: values['pivotIsNumRows']
+        };
+        
+        this.datasetTestGrid.getStore().removeAll();
+        this.datasetTestGrid.getStore().load({params: requestParameters});
+        this.datasetTestGrid.getView().refresh();
+    }
 	
 	, activateDsTypeForm: function(combo,record,index){
 	
@@ -682,18 +713,47 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	    	}			    
 	    });
 	    
+	    
+	    this.tbTestDSButton = new Ext.Toolbar.Button({
+	            text: LN('sbi.ds.test'),
+	           // iconCls: 'icon-save',
+	            width: 30,
+	            iconCls:'icon-filter',
+	            scope: this
+	    });
+	    this.tbTestDSButton.addListener('click',this.test,this);
+
+	    this.tbTestToolbar = new Ext.Toolbar({
+ 	    	buttonAlign : 'right', 	 
+ 	    	height: 25,
+ 	    	items:[this.tbTestDSButton]
+ 	    });
+	    
 	    var c = {};
-	    c.pars={};
+	    c.pars = {};
 	    this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
-	    //this.datasetTestGrid = new Sbi.tools.DataSetTestGrid(c);    
+	    this.datasetTestGrid = new Sbi.tools.DataSetTestGrid(c);  
+	    
+	    this.datasetTestPanel = new Ext.Panel({
+	         id : 'test'
+	        , layout: 'form'
+	        , autoScroll: false
+	        , tbar: this.tbTestToolbar
+	        //, bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
+			, border: true
+			, frame: true
+	        , items: [this.datasetTestGrid ]
+	        , scope: this
+	    });
 	    
 	    this.datasetTestTab = new Ext.Panel({
 	        title: LN('sbi.ds.test')
-	        , id : 'test'
-	        , layout: 'fit'
+	        , id : 'test-pars'
+	        , layout: 'form'
 	        , autoScroll: false
-	        , items: [this.parsGrid]
-	        //, itemId: 'meta'
+	        , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
+			, border: true
+	        , items: [this.parsGrid,this.datasetTestPanel ]
 	        , scope: this
 	    });
 	    this.datasetTestTab.addListener('activate',this.activateDsTestTab,this);

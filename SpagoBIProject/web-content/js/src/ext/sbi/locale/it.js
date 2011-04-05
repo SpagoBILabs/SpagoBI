@@ -517,6 +517,8 @@ Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='Il valore della colonna';
 Sbi.locale.ln['sbi.lookup.asA'] = 'inteso come';
 
 //Datasets
+Sbi.locale.ln['sbi.ds.test'] = 'Test';
+Sbi.locale.ln['sbi.ds.fillPars'] = 'Riempire i Valori dei Parametri';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Usato Da';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestione DataSet';
 Sbi.locale.ln['sbi.ds.listTitle'] = 'Lista DataSet';

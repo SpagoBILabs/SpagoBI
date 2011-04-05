@@ -468,6 +468,8 @@ Sbi.locale.ln['sbi.lookup.asA'] = 'as a';
 
 
 //Datasets
+Sbi.locale.ln['sbi.ds.test'] = 'Test';
+Sbi.locale.ln['sbi.ds.fillPars'] = 'Fill in Values for all Parameters';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Used By';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Manage DataSets';
 Sbi.locale.ln['sbi.ds.listTitle'] = 'DataSets List';

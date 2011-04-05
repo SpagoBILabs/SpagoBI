@@ -48,10 +48,12 @@ Sbi.tools.ParametersFillGrid = function(config) {
 	// create the editor grid
 	    var grid = {
 	    	xtype: 'grid',
-	        width: 380,
+	    	title:  LN('sbi.ds.fillPars'),
+	        //width: 380,
 	        autoHeight: true,
 	        source: config.pars,
 	        forceLayout: true,
+	        frame: true,
 	        deferRowRender : false,
 	        propertyNames: {
 	            tested: 'QA',

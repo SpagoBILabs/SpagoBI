@@ -1011,7 +1011,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			ds=new WebServiceDataSet();
 			((WebServiceDataSet)ds).setAddress(((SbiWSDataSet)hibDataSet).getAdress());
 			((WebServiceDataSet)ds).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
-			((WebServiceDataSet)ds).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
 		}
 
 		if(hibDataSet instanceof SbiScriptDataSet){			
