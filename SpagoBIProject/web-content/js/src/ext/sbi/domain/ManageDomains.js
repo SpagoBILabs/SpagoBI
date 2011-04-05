@@ -50,8 +50,12 @@ Sbi.domain.ManageDomains = function(config) {
 	
 	var c = Ext.apply({
 		title: 'Prova',
-		html: 'Ciao mondo'
+		layout: 'fit'
 	}, config || {});
+	
+	this.initGrid();
+	
+	c.items = [this.grid];
 	
 	// constructor
 	Sbi.domain.ManageDomains.superclass.constructor.call(this, c);
@@ -59,8 +63,73 @@ Sbi.domain.ManageDomains = function(config) {
 
 Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
     
-    // static contens and methods definitions
-   
-   
+	grid: null
+	, columnModel: null
+	, store: null
+	
     // public methods
+	, initGrid: function() {
+		
+		 var editor = new Ext.ux.grid.RowEditor({
+		        saveText: 'Update'
+		    });
+		 
+		this.initStore();
+		this.initColumnModel();
+		this.grid = new Ext.grid.GridPanel({
+	        store: this.store,
+	        cm: this.columnModel,
+	        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+	        plugins: [editor],
+	        //width: 600,
+	        height: 300,
+	        margins: '0 5 5 5',
+	        viewConfig: {
+	            forceFit: true
+	        }
+		});
+	}
+
+	, initColumnModel: function() {
+		this.columnModel =   new Ext.grid.ColumnModel([
+		   {
+			   header: 'First Name',
+		       dataIndex: 'name',
+		       width: 220,
+		       sortable: true,
+		       editor: {
+	                xtype: 'textfield',
+	                allowBlank: false
+	            }
+		    },{
+		        header: 'Email',
+		        dataIndex: 'email',
+		        width: 150,
+		        sortable: true,
+		        editor: {
+	                xtype: 'textfield',
+	                allowBlank: false
+	            }
+		    }
+		]);
+	
+	}
+	
+	, initStore: function() {
+		
+		var myData = [
+		       ['Monia', 'monia@eng.it'],
+		       ['Andrea', 'andrea@eng.it']
+		];
+		
+		this.store =  new Ext.data.ArrayStore({
+	        fields: [
+	           {name: 'name'},
+	           {name: 'email'}
+	         ]
+	     });
+		
+		 this.store.loadData(myData);
+	}
+	
 });
