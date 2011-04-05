@@ -1,7 +1,7 @@
 package it.eng.spagobi.tools.dataset.service;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
@@ -9,8 +9,6 @@ import it.eng.spagobi.chiron.serializer.SerializationException;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
-import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -29,29 +27,16 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
-import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -193,7 +178,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String dsTypeCd = getAttributeAsString(DS_TYPE_CD);
 			String catTypeCd = getAttributeAsString(CATEGORY_TYPE_CD);		
 			
-			String pars = getAttributeAsString(PARS);
+			JSONArray parsJSON = getAttributeAsJSONArray(PARS);
 			String meta = getAttributeAsString(METADATA);			
 			
 			String trasfTypeCd = getAttributeAsString(TRASFORMER_TYPE_CD);
@@ -288,8 +273,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							dsActiveDetail.setDsMetadata(meta);
 						}
 						
-						if(pars != null && !pars.equals("")){
-							dsActiveDetail.setParameters(pars);
+						if(parsJSON != null){
+							String pars;
+							try {
+								pars = deserializeParsListJSONArray(parsJSON);
+								dsActiveDetail.setParameters(pars);
+							} catch (JSONException e) {
+								logger.error("Error in deserializing parameter",e);
+								e.printStackTrace();
+							} catch (SourceBeanException e) {
+								logger.error("Source Bean Exception",e);
+								e.printStackTrace();
+							}
 						}
 						
 						if(catTypeID!=null){
@@ -484,7 +479,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					try {
 						HashMap h = new HashMap();
 						if(parsJSON!=null){
-							h = deserializeParsListJSONArray(parsJSON);
+							h = deserializeParValuesListJSONArray(parsJSON);
 						}
 						IEngUserProfile profile = getUserProfile();
 						JSONObject dataSetJSON = getDatasetTestResultList(ds, h, profile);
@@ -554,7 +549,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return results;
 	}
 	
-	private HashMap deserializeParsListJSONArray(JSONArray parsListJSON) throws JSONException{
+	private HashMap deserializeParValuesListJSONArray(JSONArray parsListJSON) throws JSONException{
 		HashMap h = new HashMap();
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
@@ -565,15 +560,30 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return h;
 	}
 	
+	private String deserializeParsListJSONArray(JSONArray parsListJSON) throws JSONException, SourceBeanException{
+		String toReturn = "";
+		SourceBean sb = new SourceBean("PARAMETERSLIST");	
+		SourceBean sb1 = new SourceBean("ROWS");
+		
+		for(int i=0; i< parsListJSON.length(); i++){
+			JSONObject obj = (JSONObject)parsListJSON.get(i);
+			String name = obj.getString("name");	
+			String type = obj.getString("type");	
+			SourceBean b = new SourceBean("ROW");
+			b.setAttribute("NAME", name);
+			b.setAttribute("TYPE", type);
+			sb1.setAttribute(b);	
+		}	
+		sb.setAttribute(sb1);
+		toReturn = sb.toXML(false);
+		return toReturn;
+	}
+	
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;
 		
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
-
-		// based on lov type fill the spago list and paginator object
-		/*SourceBean rowsSourceBean = null;
-		List colNames = new ArrayList();*/
 
 		dataSet.setParamsMap(parametersFilled);		
 		try{
@@ -585,7 +595,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} catch (SerializationException e) {
 				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
 			}
-			
 
 			/*String metadataToXML=new DatasetMetadataParser().metadataToXML(ids);
 			rowsSourceBean=ids.toSourceBean();
