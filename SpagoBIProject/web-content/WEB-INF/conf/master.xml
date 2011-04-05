@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <MASTER>
 
-<!-- IDEAS  -->
-	<CONFIGURATOR path="/WEB-INF/conf/ideas.xml" />
-	
-	
-	
 <!--  chiron -->	
 	<CONFIGURATOR path="/WEB-INF/conf/chiron/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/chiron/presentation.xml" />
@@ -19,6 +14,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/business_map.xml" />		
 	
 <!-- analiticalmodel -->
 	

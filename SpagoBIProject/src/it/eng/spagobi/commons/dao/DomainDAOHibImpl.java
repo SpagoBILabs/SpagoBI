@@ -418,7 +418,7 @@ public void updateDomain(Domain domain) throws EMFUserError {
  * @throws EMFUserError the EMF user error
  * 
  */
-public void deleteTest(String codeDomain, String codeValue)  throws EMFUserError {
+public void delete(String codeDomain, String codeValue)  throws EMFUserError {
 	Session sess = null;
 	Transaction tx = null;
 

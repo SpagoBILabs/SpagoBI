@@ -66,6 +66,9 @@
  <ACTION name="LOGIN_ACTION_WEB" class="it.eng.spagobi.commons.services.LoginActionWeb" scope="REQUEST">
  	<CONFIG/>
  </ACTION> 
+ <ACTION name="DOMAIN_ACTION" class="it.eng.spagobi.commons.services.ManageDomainService" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>  
  
 </ACTIONS>
 

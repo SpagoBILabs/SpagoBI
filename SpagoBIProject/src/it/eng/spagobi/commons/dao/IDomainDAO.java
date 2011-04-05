@@ -117,5 +117,6 @@ public interface IDomainDAO {
 	 * 
 	 */
 	public void updateDomain(Domain d)throws EMFUserError;
+	public void delete(String codeDomain, String codeValue)throws EMFUserError;
 	
 }

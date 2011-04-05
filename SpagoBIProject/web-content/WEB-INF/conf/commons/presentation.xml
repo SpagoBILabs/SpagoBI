@@ -18,5 +18,7 @@
 	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DISTRIBUTIONLIST" publisher_name="LoginSBIDistributionListPublisher"/>
 	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DISTRIBUTIONLISTUSER" publisher_name="LoginSBIDistributionListUserPublisher"/>
 	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DOCUMENTEXECUTION" publisher_name="LoginSBIDocumentExecutionPublisher"/>
+	
+	<MAPPING business_type="ACTION" business_name="DOMAIN_ACTION" publisher_name="DomainPublisher"/>
 </PRESENTATION>
 
