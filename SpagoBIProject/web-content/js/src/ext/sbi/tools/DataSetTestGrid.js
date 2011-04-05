@@ -110,7 +110,7 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 		
 		this.store.on('metachange', function( store, meta ) {
 			
-			
+			alert(store.toSource());
 			meta.fields[0] = new Ext.grid.RowNumberer();
 			this.alias2FieldMetaMap = {};
 			var fields = meta.fields;
@@ -300,7 +300,7 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 			  }
 				
 		  	}
-		    alert(meta.fields.toSource());
+		    
 		   	this.grid.getColumnModel().setConfig(meta.fields);
 		   	
 		    for(var y=1; y<this.columnsWidth.length; y++){
@@ -343,7 +343,7 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
 
-	, test: function(params) {	
+	/*, test: function(params) {	
 		
 		 Ext.Ajax.request({
 	         url: this.services['dataSetTestService'],
@@ -406,7 +406,7 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 	         ,scope: this
 	     });
 		
-	}
+	}*/
 	
 
 });

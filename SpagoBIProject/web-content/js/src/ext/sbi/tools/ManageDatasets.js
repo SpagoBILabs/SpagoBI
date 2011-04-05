@@ -130,15 +130,16 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 				script: values['script'],			        
 				scriptLanguage: values['scriptLanguage'],	
 				jclassName: values['jclassName'],
-				pars: values['pars'],
-  	          	meta: values['meta'],
   	            trasfTypeCd: values['trasfTypeCd'],
   	            pivotColName: values['pivotColName'],
   	            pivotColValue: values['pivotColValue'],
   	            pivotRowName: values['pivotRowName'],
   	            pivotIsNumRows: values['pivotIsNumRows']
         };
-        
+        arrayPars = this.parsGrid.getParametersValues();
+        if(arrayPars){
+        	requestParameters.pars = Ext.util.JSON.encode(arrayPars);
+        }
         this.datasetTestGrid.getStore().removeAll();
         this.datasetTestGrid.getStore().load({params: requestParameters});
         this.datasetTestGrid.getView().refresh();
