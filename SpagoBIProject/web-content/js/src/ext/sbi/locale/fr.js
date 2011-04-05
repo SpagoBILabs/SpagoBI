@@ -499,6 +499,12 @@ Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSou
 
 
 //Datasets
+Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Effacer Tout';
+Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Effacer Version';
+Sbi.locale.ln['sbi.ds.restore'] = 'Remplacer Currante';
+Sbi.locale.ln['sbi.ds.dateIn'] = 'Date de Creation';
+Sbi.locale.ln['sbi.ds.userIn'] = 'Creation User';
+Sbi.locale.ln['sbi.ds.versionPanel'] = 'Viellies Versions';
 Sbi.locale.ln['sbi.ds.test'] = 'Tester';
 Sbi.locale.ln['sbi.ds.fillPars'] = 'Remplir les Valeurs des Parametres';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilisée Par';
