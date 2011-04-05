@@ -499,6 +499,8 @@ Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSou
 
 
 //Datasets
+Sbi.locale.ln['sbi.ds.test'] = 'Tester';
+Sbi.locale.ln['sbi.ds.fillPars'] = 'Remplir les Valeurs des Parametres';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilisée Par';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestion des DataSets';
 Sbi.locale.ln['sbi.ds.listTitle'] = 'Liste des DataSets';

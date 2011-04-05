@@ -111,7 +111,7 @@ public class DataStoreJSONSerializer  implements Serializer {
 				recordJSON = new JSONObject();
 				recordJSON.put("id", ++recNo);
 				
-				for(int i = 0; i < metadata.getJSONArray("fields").length()-1; i++) {
+				for(int i = 0; i < metadata.getJSONArray("fields").length(); i++) {
 					field = record.getFieldAt(i);
 					recordJSON.put("column-" + (i+1), field.getValue().toString());
 				}
