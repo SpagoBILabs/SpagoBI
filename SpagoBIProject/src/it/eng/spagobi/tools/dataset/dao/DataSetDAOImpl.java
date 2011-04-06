@@ -1051,8 +1051,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);	
 			SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
-			
-			toReturn = toIDataSet(dsActiveDetail);
+			if(dsActiveDetail!=null){
+				toReturn = toIDataSet(dsActiveDetail);
+			}
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1097,9 +1098,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);	
 			SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
-			
-			toReturn = toIDataSet(dsActiveDetail);
-
+			if(dsActiveDetail!=null){
+				toReturn = toIDataSet(dsActiveDetail);
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the data set with label " + label, he);
