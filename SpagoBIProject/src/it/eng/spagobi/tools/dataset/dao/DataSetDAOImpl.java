@@ -1136,7 +1136,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toIDataSet((SbiDataSetHistory) it.next()));
+				SbiDataSetHistory temp = (SbiDataSetHistory) it.next();
+				if(temp!=null){
+					realResult.add(toIDataSet(temp));				
+				}
 			}
 			tx.commit();
 		} catch (HibernateException he) {
