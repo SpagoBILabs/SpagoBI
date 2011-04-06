@@ -11,3 +11,21 @@ Ext.override(Ext.data.Store, {
 		}
 	}
 });
+
+Ext.override(Ext.grid.PropertyStore, {
+	onUpdate : function(ds, record, type){
+    if(type == Ext.data.Record.EDIT){
+        var v = record.data.value;
+        var oldValue = record.modified.value;
+        if(this.grid.fireEvent('beforepropertychange', this.source, record.id, v, oldValue) !== false){
+            if(this.source){
+        	   this.source[record.id] = v;
+            }
+            record.commit();
+            this.grid.fireEvent('propertychange', this.source, record.id, v, oldValue);
+        }else{
+            record.reject();
+        }
+    }
+},
+});

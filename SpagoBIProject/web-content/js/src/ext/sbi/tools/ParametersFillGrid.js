@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Giulio Gavardi
+ * Authors - Chiara Chiarelli
  */
 Ext.ns("Sbi.tools");
 
@@ -49,8 +49,9 @@ Sbi.tools.ParametersFillGrid = function(config) {
 	    var grid = {
 	    	xtype: 'grid',
 	    	title:  LN('sbi.ds.fillPars'),
-	        //width: 380,
-	        autoHeight: true,
+	        width: 250,
+	        height: 110,
+	        autoScroll: true,
 	        source: config.pars,
 	        forceLayout: true,
 	        frame: true,
