@@ -366,146 +366,22 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				logger.error("DataSet name, label or type are missing");
 				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill DataSet name, label and type");
 			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_TEST)) {
-			
-			String id = getAttributeAsString(ID);
-			
-			String dsTypeCd = getAttributeAsString(DS_TYPE_CD);	
-				
-			JSONArray parsJSON = getAttributeAsJSONArray(PARS);
-			String trasfTypeCd = getAttributeAsString(TRASFORMER_TYPE_CD);
-			
-			List<Domain> domainsDs = (List<Domain>)getSessionContainer().getAttribute("dsTypesList");
-			
-			String dsType = "";
-			if(domainsDs!=null && !domainsDs.isEmpty()){
-				Iterator it = domainsDs.iterator();
-				while(it.hasNext()){
-					Domain d = (Domain)it.next();
-					if(d!=null && d.getValueCd().equalsIgnoreCase(dsTypeCd)){
-						dsType = d.getValueName();
-						break;
-					}
-				}
-			}			
-
-			IDataSet ds = null;
-				
-			if ( dsType!=null && !dsType.equals("")) {
-				
-				if(dsType.equalsIgnoreCase(DS_FILE)){	
-					ds = new FileDataSet();
-					String fileName = getAttributeAsString(FILE_NAME);
-					((FileDataSet)ds).setFileName(fileName);		
-				}
-
-				if(dsType.equalsIgnoreCase(DS_QUERY)){		
-					ds=new JDBCDataSet();
-					String query = getAttributeAsString(QUERY);
-					String dataSourceLabel = getAttributeAsString(DATA_SOURCE);
-					((JDBCDataSet)ds).setQuery(query);
-					if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
-						IDataSource dataSource;
-						try {
-							dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-							if(dataSource!=null){
-								((JDBCDataSet)ds).setDataSource(dataSource);
-							}
-						} catch (EMFUserError e) {
-							logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
-							e.printStackTrace();
-						}			
-					}
-				}
-
-				if(dsType.equalsIgnoreCase(DS_WS)){	
-					ds=new WebServiceDataSet();
-					String wsAddress = getAttributeAsString(WS_ADDRESS);
-					String wsOperation = getAttributeAsString(WS_OPERATION);
-					((WebServiceDataSet)ds).setAddress(wsAddress);
-					((WebServiceDataSet)ds).setOperation(wsOperation);
-				}
-
-				if(dsType.equalsIgnoreCase(DS_SCRIPT)){	
-					ds=new ScriptDataSet();
-					String script = getAttributeAsString(SCRIPT);
-					String scriptLanguage = getAttributeAsString(SCRIPT_LANGUAGE);
-					((ScriptDataSet)ds).setScript(script);
-					((ScriptDataSet)ds).setLanguageScript(scriptLanguage);
-				}
-
-				if(dsType.equalsIgnoreCase(DS_JCLASS)){		
-					ds=new JavaClassDataSet();
-					String jclassName = getAttributeAsString(JCLASS_NAME);
-					((JavaClassDataSet)ds).setClassName(jclassName);
-				}
-				
-				if(dsType.equalsIgnoreCase(DS_JSON)){
-					//TODO
-				}
-			
-				if(ds!=null){						
-					
-					if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
-					    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
-					    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
-					    if(domainsTrasf != null){
-						    for(int i=0; i< domainsTrasf.size(); i++){
-						    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
-						    }
-					    }
-					    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
-						
-					    String pivotColName = getAttributeAsString(PIVOT_COL_NAME);
-						String pivotColValue = getAttributeAsString(PIVOT_COL_VALUE);
-						String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
-						Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
-						
-						if(pivotColName != null && !pivotColName.equals("")){
-							ds.setPivotColumnName(pivotColName);
-						}
-						if(pivotColValue != null && !pivotColValue.equals("")){
-							ds.setPivotColumnValue(pivotColValue);
-						}
-						if(pivotRowName != null && !pivotRowName.equals("")){
-							ds.setPivotRowName(pivotRowName);
-						}	
-						if(pivotIsNumRows != null){
-							ds.setNumRows(pivotIsNumRows);
-						}
-						
-						ds.setTransformerId(transformerId);	
-
-						if(ds.getPivotColumnName() != null 
-								&& ds.getPivotColumnValue() != null
-								&& ds.getPivotRowName() != null){
-							ds.setDataStoreTransformer(
-									new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
-						}
-					}
-
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_TEST)) {			
+			try {
+				JSONObject dataSetJSON = datasetTest();
+				if(dataSetJSON!=null){
 					try {
-						HashMap h = new HashMap();
-						if(parsJSON!=null){
-							h = deserializeParValuesListJSONArray(parsJSON);
-						}
-						IEngUserProfile profile = getUserProfile();
-						JSONObject dataSetJSON = getDatasetTestResultList(ds, h, profile);
-
-						try {
-							writeBackToClient( new JSONSuccess( dataSetJSON ) );
-						} catch (IOException e) {
-							throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-						}
-					} catch (Throwable e) {
-						logger.error(e.getMessage(), e);
-						throw new SpagoBIServiceException(SERVICE_NAME,
-								"Exception occurred while Testing Dataset", e);
-					}	
-				}							
-			}else{
-				logger.error("DataSet type is not existent");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+						writeBackToClient( new JSONSuccess( dataSetJSON ) );
+					} catch (IOException e) {
+						throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+					}
+				}else{
+					throw new SpagoBIServiceException(SERVICE_NAME,"DataSet Test has errors");
+				}
+			} catch (Throwable e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while Testing Dataset", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(ID);
@@ -572,10 +448,139 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception retrieving resources types", e);
+						"Exception retrieving dataset types", e);
 			}
 		}
 		logger.debug("OUT");
+	}
+	
+	private JSONObject datasetTest() throws Exception{
+		JSONObject dataSetJSON = null;
+		
+		String id = getAttributeAsString(ID);		
+		String dsTypeCd = getAttributeAsString(DS_TYPE_CD);				
+		JSONArray parsJSON = getAttributeAsJSONArray(PARS);
+		String trasfTypeCd = getAttributeAsString(TRASFORMER_TYPE_CD);
+		
+		List<Domain> domainsDs = (List<Domain>)getSessionContainer().getAttribute("dsTypesList");
+		
+		String dsType = "";
+		if(domainsDs!=null && !domainsDs.isEmpty()){
+			Iterator it = domainsDs.iterator();
+			while(it.hasNext()){
+				Domain d = (Domain)it.next();
+				if(d!=null && d.getValueCd().equalsIgnoreCase(dsTypeCd)){
+					dsType = d.getValueName();
+					break;
+				}
+			}
+		}			
+
+		IDataSet ds = null;			
+		if ( dsType!=null && !dsType.equals("")) {
+			
+			if(dsType.equalsIgnoreCase(DS_FILE)){	
+				ds = new FileDataSet();
+				String fileName = getAttributeAsString(FILE_NAME);
+				((FileDataSet)ds).setFileName(fileName);		
+			}
+
+			if(dsType.equalsIgnoreCase(DS_QUERY)){		
+				ds=new JDBCDataSet();
+				String query = getAttributeAsString(QUERY);
+				String dataSourceLabel = getAttributeAsString(DATA_SOURCE);
+				((JDBCDataSet)ds).setQuery(query);
+				if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
+					IDataSource dataSource;
+					try {
+						dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+						if(dataSource!=null){
+							((JDBCDataSet)ds).setDataSource(dataSource);
+						}
+					} catch (EMFUserError e) {
+						logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
+						e.printStackTrace();
+					}			
+				}
+			}
+
+			if(dsType.equalsIgnoreCase(DS_WS)){	
+				ds=new WebServiceDataSet();
+				String wsAddress = getAttributeAsString(WS_ADDRESS);
+				String wsOperation = getAttributeAsString(WS_OPERATION);
+				((WebServiceDataSet)ds).setAddress(wsAddress);
+				((WebServiceDataSet)ds).setOperation(wsOperation);
+			}
+
+			if(dsType.equalsIgnoreCase(DS_SCRIPT)){	
+				ds=new ScriptDataSet();
+				String script = getAttributeAsString(SCRIPT);
+				String scriptLanguage = getAttributeAsString(SCRIPT_LANGUAGE);
+				((ScriptDataSet)ds).setScript(script);
+				((ScriptDataSet)ds).setLanguageScript(scriptLanguage);
+			}
+
+			if(dsType.equalsIgnoreCase(DS_JCLASS)){		
+				ds=new JavaClassDataSet();
+				String jclassName = getAttributeAsString(JCLASS_NAME);
+				((JavaClassDataSet)ds).setClassName(jclassName);
+			}
+			
+			if(dsType.equalsIgnoreCase(DS_JSON)){
+				//TODO
+			}
+		
+			if(ds!=null){						
+				
+				if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
+				    List<Domain> domainsTrasf = (List<Domain>)getSessionContainer().getAttribute("trasfTypesList");
+				    HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer> ();
+				    if(domainsTrasf != null){
+					    for(int i=0; i< domainsTrasf.size(); i++){
+					    	domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
+					    }
+				    }
+				    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
+					
+				    String pivotColName = getAttributeAsString(PIVOT_COL_NAME);
+					String pivotColValue = getAttributeAsString(PIVOT_COL_VALUE);
+					String pivotRowName = getAttributeAsString(PIVOT_ROW_NAME);
+					Boolean pivotIsNumRows = getAttributeAsBoolean(PIVOT_IS_NUM_ROWS);
+					
+					if(pivotColName != null && !pivotColName.equals("")){
+						ds.setPivotColumnName(pivotColName);
+					}
+					if(pivotColValue != null && !pivotColValue.equals("")){
+						ds.setPivotColumnValue(pivotColValue);
+					}
+					if(pivotRowName != null && !pivotRowName.equals("")){
+						ds.setPivotRowName(pivotRowName);
+					}	
+					if(pivotIsNumRows != null){
+						ds.setNumRows(pivotIsNumRows);
+					}
+					
+					ds.setTransformerId(transformerId);	
+
+					if(ds.getPivotColumnName() != null 
+							&& ds.getPivotColumnValue() != null
+							&& ds.getPivotRowName() != null){
+						ds.setDataStoreTransformer(
+								new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+					}
+				}
+				HashMap h = new HashMap();
+				if(parsJSON!=null){
+					h = deserializeParValuesListJSONArray(parsJSON);
+				}
+				IEngUserProfile profile = getUserProfile();
+				dataSetJSON = getDatasetTestResultList(ds, h, profile);					
+			}							
+		}else{
+			logger.error("DataSet type is not existent");
+			throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+		}
+		return dataSetJSON;
 	}
 
 	/**

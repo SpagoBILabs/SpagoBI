@@ -95,7 +95,7 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
     , fileDetail:null
     , parsGrid:null
     , datasetTestTab:null
-    , datasetTestGrid:null
+    , datasetTestGridPanel:null
     , manageParsGrid:null
     , manageDsVersionsGrid:null
     
@@ -143,9 +143,8 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
         if(arrayPars){
         	requestParameters.pars = Ext.util.JSON.encode(arrayPars);
         }
-        this.datasetTestGrid.getStore().removeAll();
-        this.datasetTestGrid.getStore().load({params: requestParameters});
-        this.datasetTestGrid.getView().refresh();
+        this.datasetTestGridPanel.execTest(requestParameters);
+        
     }
 	
 	, activateDsVersionsGrid: function(combo,record,index){
@@ -771,41 +770,45 @@ Ext.extend(Sbi.tools.ManageDatasets, Sbi.widgets.ListDetailForm, {
 	            text: LN('sbi.ds.test'),
 	           // iconCls: 'icon-save',
 	            width: 30,
+	            handler:this.test,
 	            iconCls:'icon-filter',
 	            scope: this
 	    });
-	    this.tbTestDSButton.addListener('click',this.test,this);
 
 	    this.tbTestToolbar = new Ext.Toolbar({
  	    	buttonAlign : 'right', 	 
  	    	height: 25,
+ 	    	scope:this,
  	    	items:[this.tbTestDSButton]
  	    });
 	    
 	    var c = {};
 	    this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
-	    this.datasetTestGrid = new Sbi.tools.DataSetTestGrid(c);  
+	    this.datasetTestGridPanel = new Sbi.tools.DataSetTestGrid(c);  
 	    
 	    this.datasetTestPanel = new Ext.Panel({
 	         id : 'test'
-	        , layout: 'form'
-	        , autoScroll: false
+	        , autoScroll: true
 	        , tbar: this.tbTestToolbar
-	        //, bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
-			, border: true
+	        , layout: 'fit'
+	        , title: 'Test your Data Set'
+	        , border: true
 			, frame: true
-	        , items: [this.datasetTestGrid ]
+			, width: 350
+	        , items: [this.datasetTestGridPanel ]
 	        , scope: this
 	    });
 	    
 	    this.datasetTestTab = new Ext.Panel({
 	        title: LN('sbi.ds.test')
 	        , id : 'test-pars'
-	        , layout: 'form'
+	        , layout: 'vbox'
 	        , autoScroll: false
 	        , bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;'
 			, border: true
-	        , items: [this.parsGrid,this.datasetTestPanel ]
+	        , items: [
+	                  this.parsGrid,
+	                  this.datasetTestPanel ]
 	        , scope: this
 	    });
 	    this.datasetTestTab.addListener('activate',this.activateDsTestTab,this);

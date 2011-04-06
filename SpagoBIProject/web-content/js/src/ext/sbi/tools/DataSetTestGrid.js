@@ -45,7 +45,6 @@ Ext.ns("Sbi.tools");
 
 Sbi.tools.DataSetTestGrid = function(config) { 
 	
-
 	var paramsTest = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DATASET_TEST"};
 	
 	this.services = new Array();
@@ -55,24 +54,58 @@ Sbi.tools.DataSetTestGrid = function(config) {
 		, baseParams: paramsTest
 	});
 	
-	 this.initStore();
-	 
+	this.initStore();	 
+	this.initPanel();
 
-	    // create the editor grid
-	    var grid = {
-	    	xtype: 'grid',
-	        store: this.store,
-	        layout: 'fit',
-	        //width: 400,
-	       // height: 250,
-	        cm: this.colModel
-	    };
-
-    var c = Ext.apply( {}, config, grid);
+    var c = Ext.apply( {}, config, this.grid);
+   /* var c = Ext.apply(c, { 
+		title: 'ciao davide',  
+		layout: 'fit',
+		items: [this.grid]
+	});*/
 
     // constructor
     Sbi.tools.DataSetTestGrid.superclass.constructor.call(this, c);
+    
+    this.on('columnresize', function(columnIndex, newSize ){
+//    	for(var y=0; y<this.columnsWidth.length; y++){
+//    		this.columnsWidth[y] = this.grid.getColumnModel().getColumnWidth(y);
+//    	}
+    	this.columnsWidth[columnIndex] = newSize;
+    } , this);
+    
+    
+    
+    this.on('columnmove', function(oldIndex, newIndex ){
+	
+    	//update the array of the widths
+    	for(var y=0; y<this.columnsWidth.length; y++){
+    		this.columnsWidth[y] = this.grid.getColumnModel().getColumnWidth(y);
+    	}
 
+    	
+    	//update the array of the columns positions
+    	var tempHeaders = new Array();
+    	tempHeaders.length = this.columnsPosition.length;
+    	
+    	for(var t=0; t<this.columnsPosition.length; t++){
+    		tempHeaders[t]=this.grid.getColumnModel().getColumnHeader(t);
+    	}
+    	
+    	for(var i=0; i<this.oldColumns.length; i++){
+    		for(var t=0; t<tempHeaders.length; t++){
+    			if(this.oldColumns[i]==tempHeaders[t]){
+    				this.columnsPosition[i]=t;
+    				tempHeaders[t]="";
+    				break;
+    			}
+    		}
+    	}
+    	
+		
+    } , this);
+    
+    //this.addEvents();
 };
 
 Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
@@ -81,11 +114,29 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
   	reader:null
   	,services:null
   	,colModel:null
-  	,store:null
   	,gridColItems:null
   	,editor:null
   	,userGrid:null
   	,fields: null
+  	,grid:null
+  	
+  	, baseConfig: null
+    , store: null
+	, paging: null
+	, pageSize: null
+	, pageNumber: null
+	, oldColumns: null
+	, notFirstPage : false
+	, columnsPosition : null 
+	, columnsWidth : null
+  	
+  	, execTest:  function(pars) { 
+		this.firstPage= true;
+		this.store.removeAll();
+		//this.store.baseParams = {id: query.id};
+		var requestParameters = Ext.apply({start: 0, limit: 25 }, pars || {});
+		this.store.load({params: requestParameters});
+	}
   	
   	, initStore: function() {
 		
@@ -98,19 +149,9 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 			    , reader: new Ext.data.JsonReader() 
 		 		, remoteSort: true	
 		 });
-		 
-		 this.colModel = new Ext.grid.ColumnModel([
-		   	                         			new Ext.grid.RowNumberer(), 
-		   	                         			{
-		   	                         				header: "Data",
-		   	                         				dataIndex: 'data',
-		   	                         				width: 75
-		   	                         			}
-		   	                         		]);
 		
 		this.store.on('metachange', function( store, meta ) {
 			
-			alert(store.toSource());
 			meta.fields[0] = new Ext.grid.RowNumberer();
 			this.alias2FieldMetaMap = {};
 			var fields = meta.fields;
@@ -308,13 +349,184 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 		   	}
 
 			this.firstPage = false;
-			this.getView().refresh();
 
 
 		}, this);
 		
 		this.store.on('load', this.onDataStoreLoaded, this);
 		
+	}
+  	
+  	, initPanel: function() {
+  		this.colModel = new Ext.grid.ColumnModel([
+			new Ext.grid.RowNumberer(), 
+			{
+				header: "Data",
+				dataIndex: 'data',
+				width: 75
+			}
+		]);
+		
+		this.warningMessageItem = new Ext.Toolbar.TextItem('<font color="red">' 
+				+ LN('sbi.qbe.datastorepanel.grid.beforeoverflow') 
+				//+ ' [' + Sbi.config.queryLimit.maxRecords + '] '
+				+ LN('sbi.qbe.datastorepanel.grid.afteroverflow') 
+				+ '</font>');
+		
+		
+		
+		
+		this.pagingTBar = new Ext.PagingToolbar({
+            pageSize: 25,
+            store: this.store,
+            displayInfo: true,
+            displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
+            emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
+            beforePageText: LN('sbi.qbe.datastorepanel.grid.beforepagetext'),
+            afterPageText: LN('sbi.qbe.datastorepanel.grid.afterpagetext'),
+            firstText: LN('sbi.qbe.datastorepanel.grid.firsttext'),
+            prevText: LN('sbi.qbe.datastorepanel.grid.prevtext'),
+            nextText: LN('sbi.qbe.datastorepanel.grid.nexttext'),
+            lastText: LN('sbi.qbe.datastorepanel.grid.lasttext'),
+            refreshText: LN('sbi.qbe.datastorepanel.grid.refreshtext'),
+    	    buttons: [{
+    	    	//pressed: true,
+    	    	style: "margin-left: 30px;",
+    			text: LN('sbi.qbe.datastore.refreshgrid'),
+    		    handler: function(){
+    	    	
+    	    	for(var y=1; y<this.columnsWidth.length; y++){
+    	    		this.columnsPosition[y] = y;
+    	    		this.columnsWidth[y] = 100;
+    	    	}
+    	    	
+    			var requestParameters = Ext.apply({start: 0, limit: 25 } || {});
+    			this.store.load({params: requestParameters});
+
+            	}
+            	, scope: this
+    	    }]
+
+        });
+		this.pagingTBar.on('render', function() {
+			this.pagingTBar.addItem(this.warningMessageItem);
+			this.warningMessageItem.setVisible(false);
+		}, this);
+		
+		// create the Grid
+	    this.grid = {
+	    	xtype:'grid',
+	    	store: this.store,
+	        cm: this.colModel,
+	        clicksToEdit:1,
+	        style:'padding:10px',
+	        frame: true,
+	        border:true,  	
+	        height: 150,
+	        collapsible:false,
+	        loadMask: true,
+	        viewConfig: {
+	            forceFit:false,
+	            autoFill: false,
+	            enableRowBody:true,
+	            showPreview:true
+	        },
+	        bbar: this.pagingTBar
+	    };
+	    
+	    
+	    
+	    // START CONTEXT MENU FOR EXTERNAL SERVICES INTEGRATION
+	  /*  if (this.baseConfig.externalServicesConfig && this.baseConfig.externalServicesConfig.length > 0) {
+	    	
+			// the row context menu
+		    var externalServicesMenuItems = [];
+		    for (var counter = 0; counter < this.baseConfig.externalServicesConfig.length; counter++) {
+		    	externalServicesMenuItems.push({
+		    		id: this.baseConfig.externalServicesConfig[counter].id,
+					text: this.baseConfig.externalServicesConfig[counter].description,
+					scope: this,
+					handler: function(item) {
+						var selectedRecords = new Array();
+						for (var i = 0; i < menu.selectedRecords.length; i++) {
+							var record = menu.selectedRecords[i];
+							var myRecord = this.adjustRecordHeaders(record.data);
+							selectedRecords.push(myRecord);
+						}
+						var params = {
+								"id": item.id
+								, "records": Sbi.commons.JSON.encode(selectedRecords)
+						};
+						this.callExternalService(params);
+					}
+		    	});
+		    }
+		    
+		   	var menu = 
+				new Ext.menu.Menu({
+					items: externalServicesMenuItems
+			});
+		    
+		    this.grid.on(
+				'rowcontextmenu', 
+				function(grid, rowIndex, e) {
+					var sm = grid.getSelectionModel();
+					if (!sm.isSelected(rowIndex)) {
+						sm.clearSelections();
+						sm.selectRow(rowIndex, true);
+					}
+					var records = sm.getSelections();
+					e.stopEvent();
+					menu.selectedRecords = records;
+					menu.showAt(e.getXY());
+				}
+		    );
+	    
+	    } */
+	    // END CONTEXT MENU FOR EXTERNAL SERVICES INTEGRATION
+	    
+	}
+  	
+  	, adjustRecordHeaders: function(data) {
+		var toReturn = {};
+		for (header in this.alias2FieldMetaMap) {
+			if (header !== undefined) {
+				var field = this.alias2FieldMetaMap[header];
+				toReturn[header] = data[field.name];
+			}
+		}
+		return toReturn;
+	}
+	
+	/**
+	 * This method calls the action for external services integration and shows service response.
+	 */
+	, callExternalService: function(params) {
+		Ext.MessageBox.wait('Please wait...', 'Processing');
+		Ext.Ajax.request({
+		    url: this.services['exportToExternalService'],
+		    success: function(response, options) {
+				var content = Ext.util.JSON.decode( response.responseText );
+				if (content.missingcolumns) {
+		    		Ext.Msg.show({
+	 				   title: LN('sbi.qbe.datastorepanel.externalservices.errors.title'),
+	 				   msg: LN('sbi.qbe.datastorepanel.externalservices.errors.missingcolumns') + ' ' + content.missingcolumns,
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.WARNING
+			 		});
+				} else {
+		    		Ext.Msg.show({
+	 				   title: LN('sbi.qbe.datastorepanel.externalservices.title'),
+	 				   msg: LN('sbi.qbe.datastorepanel.externalservices.serviceresponse') + ' ' + content.serviceresponse,
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.INFO
+		 			});
+				}
+			},
+		    failure: Sbi.exception.ExceptionHandler.handleFailure,
+		    scope: this,
+		    params: params
+		});
 	}
 
 	, onDataStoreLoaded: function(store) {
@@ -328,7 +540,7 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 			});
 	  	 }
 	  	 
-	  	 if (Sbi.config.queryLimit.maxRecords !== undefined && recordsNumber > Sbi.config.queryLimit.maxRecords) {
+	  	/* if (Sbi.config.queryLimit.maxRecords !== undefined && recordsNumber > Sbi.config.queryLimit.maxRecords) {
 	  		if (Sbi.config.queryLimit.isBlocking) {
 	  			Sbi.exception.ExceptionHandler.showErrorMessage(this.warningMessageItem, LN('sbi.qbe.messagewin.error.title'));
 	  		} else {
@@ -336,78 +548,12 @@ Ext.extend(Sbi.tools.DataSetTestGrid, Ext.grid.GridPanel, {
 	  		}
 	  	 } else {
 	  		this.warningMessageItem.hide();
-	  	 }
+	  	 }*/
 	}
 	
 	, onDataStoreLoadException: function(response, options) {
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
-
-	/*, test: function(params) {	
-		
-		 Ext.Ajax.request({
-	         url: this.services['dataSetTestService'],
-	         params: params,
-	         method: 'GET',
-	         success: function(response, options) {
-					if (response !== undefined) {			
-			      		if(response.responseText !== undefined) {
-
-			      			var content = Ext.util.JSON.decode( response.responseText );
-			      			this.fields = content.metaData.fields;
-			      			this.colModel = new Ext.grid.ColumnModel(this.fields);
-			      			this.store.loadData(content.rows);
-			      			this.commitChanges();
-			      			Ext.MessageBox.show({
-			      					title: LN('sbi.generic.result'),
-			                        msg: LN('sbi.generic.resultMsg'),
-			                        width: 200,
-			                        buttons: Ext.MessageBox.OK
-			                });        				 
-
-			      		} else {
-			      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
-			      		}
-					} else {
-						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.savingItemError'), LN('sbi.generic.serviceError'));
-					}
-	         },
-	         failure: function(response) {
-		      		if(response.responseText !== undefined) {
-		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			var errMessage ='';
-						for (var count = 0; count < content.errors.length; count++) {
-							var anError = content.errors[count];
-		        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
-		        				errMessage += anError.localizedMessage;
-		        			} else if (anError.message !== undefined && anError.message !== '') {
-		        				errMessage += anError.message;
-		        			}
-		        			if (count < content.errors.length - 1) {
-		        				errMessage += '<br/>';
-		        			}
-						}
-
-		                Ext.MessageBox.show({
-		                	title: LN('sbi.generic.validationError'),
-		                    msg: errMessage,
-		                    width: 400,
-		                    buttons: Ext.MessageBox.OK
-		               });
-		      		}else{
-		                Ext.MessageBox.show({
-		                	title: LN('sbi.generic.error'),
-		                    msg: LN('sbi.generic.savingItemError'),
-		                    width: 150,
-		                    buttons: Ext.MessageBox.OK
-		               });
-		      		}
-	         }
-	         ,scope: this
-	     });
-		
-	}*/
 	
-
 });
 
