@@ -56,7 +56,7 @@ public class OverlaidBarLine extends LinkableBar {
 
 	boolean stackedBarRenderer_1=false;
 	boolean stackedBarRenderer_2=false;
-	
+
 	// maps the element with the tooltip information. tip_element or freetip_element
 	HashMap<String, String> seriesTooltip=null; 
 	HashMap<String, String> categoriesTooltip=null; 
@@ -69,7 +69,7 @@ public class OverlaidBarLine extends LinkableBar {
 	public static final String STACKED_BAR_RENDERER_1 = "stacked_bar_renderer_1";
 	public static final String STACKED_BAR_RENDERER_2 = "stacked_bar_renderer_2";
 
-	
+
 	private static transient Logger logger=Logger.getLogger(OverlaidBarLine.class);
 
 
@@ -98,8 +98,8 @@ public class OverlaidBarLine extends LinkableBar {
 		categoriesNumber=0;
 
 		// one dataset for mapping left, one for mapping right
-//		datasetMap.getDatasets().put("bar", new DefaultCategoryDataset());
-//		datasetMap.getDatasets().put("line", new DefaultCategoryDataset());
+		//		datasetMap.getDatasets().put("bar", new DefaultCategoryDataset());
+		//		datasetMap.getDatasets().put("line", new DefaultCategoryDataset());
 
 		datasetMap.getDatasets().put("1-bar", new DefaultCategoryDataset());
 		datasetMap.getDatasets().put("1-line", new DefaultCategoryDataset());
@@ -176,11 +176,22 @@ public class OverlaidBarLine extends LinkableBar {
 					else{
 						if(seriesLabelsMap!=null){
 							String serieLabel = (String)seriesLabelsMap.get(nameP);
-							series.put(serieLabel, value);
-							seriesCaptions.put(serieLabel, nameP);
+							if(serieLabel == null){
+								logger.error("serie Label not found for serie with name "+nameP+ ": this may lead to errors, check if serie's name from dataset is equal to the one specified in template");
+								logger.warn("series name in template are wrongly defined, remove series naming, check template");
+								series.put(nameP, value);
+								seriesLabelsMap = null;
+							}
+							else{
+								series.put(serieLabel, value);
+								seriesCaptions.put(serieLabel, nameP);
+								int i=0;
+							}
 						}
-						else
+						else{
+							logger.debug("SERIES_LABELS not specified: insert real serie's name");
 							series.put(nameP, value);
+						}
 					}
 
 					// for now I make like if addition value is checked he seek for an attribute with name with value+name_serie
@@ -295,9 +306,9 @@ public class OverlaidBarLine extends LinkableBar {
 		{
 			additionalLabels=false;
 		}
-		
 
-		
+
+
 		if(confParameters.get("stacked_bar_renderer_1")!=null){	
 			String stacked=(String)confParameters.get("stacked_bar_renderer_1");
 			if(stacked.equalsIgnoreCase("true")){
@@ -310,7 +321,7 @@ public class OverlaidBarLine extends LinkableBar {
 				stackedBarRenderer_2=true;
 			}
 		}
-		
+
 
 
 		//reading series draw: there is specified if a serie has to be drawn as a bar or as a line.
@@ -455,8 +466,8 @@ public class OverlaidBarLine extends LinkableBar {
 			else{
 				barRenderer = new BarRenderer();
 			}
-			
-			
+
+
 			CategoryItemRenderer barRenderer2 = new BarRenderer();
 
 			if(stackedBarRenderer_2 == true){
@@ -466,7 +477,7 @@ public class OverlaidBarLine extends LinkableBar {
 				barRenderer2 = new BarRenderer();
 			}
 
-			
+
 			if(maxBarWidth!=null){
 				((BarRenderer)barRenderer).setMaximumBarWidth(maxBarWidth.doubleValue());
 				((BarRenderer)barRenderer2).setMaximumBarWidth(maxBarWidth.doubleValue());
@@ -478,12 +489,12 @@ public class OverlaidBarLine extends LinkableBar {
 				barRenderer.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
 				barRenderer.setBaseItemLabelPaint(styleValueLabels.getColor());
 
-//				barRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
-//
-//				barRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
-			
+				//				barRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+				//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
+				//
+				//				barRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+				//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
+
 				if (valueLabelsPosition.equalsIgnoreCase("inside")) {
 					barRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
 							ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
@@ -495,7 +506,7 @@ public class OverlaidBarLine extends LinkableBar {
 					barRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
 							ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
 				}
-			
+
 			}
 			else if(additionalLabels){
 				barRenderer.setToolTipGenerator(new StandardCategoryToolTipGenerator());
@@ -523,11 +534,11 @@ public class OverlaidBarLine extends LinkableBar {
 				barRenderer2.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
 				barRenderer2.setBaseItemLabelPaint(styleValueLabels.getColor());
 
-//				barRenderer2.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
-//
-//				barRenderer2.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
+				//				barRenderer2.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+				//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
+				//
+				//				barRenderer2.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+				//						ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
 
 				if (valueLabelsPosition.equalsIgnoreCase("inside")) {
 					barRenderer2.setBasePositiveItemLabelPosition(new ItemLabelPosition(
@@ -541,8 +552,8 @@ public class OverlaidBarLine extends LinkableBar {
 							ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_LEFT));
 				}
 
-				
-				
+
+
 			}
 			else if(additionalLabels){
 				barRenderer2.setBaseItemLabelGenerator(generator);
@@ -735,7 +746,7 @@ public class OverlaidBarLine extends LinkableBar {
 			}
 
 
-//			DefaultCategoryDataset datasetSecondAxis=(DefaultCategoryDataset)datasets.getDatasets().get("2");
+			//			DefaultCategoryDataset datasetSecondAxis=(DefaultCategoryDataset)datasets.getDatasets().get("2");
 
 
 			if(colorMap!=null){
