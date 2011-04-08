@@ -456,8 +456,9 @@ public class JPQLStatement extends AbstractStatement {
 					whereClause = whereClause + " "+ entityAlias+"."+name+"="+entityAlias+"."+name;
 				}else if (keyT instanceof EmbeddableType) {
 					//the key is a composed key
+					String keyName = (et.getId(Object.class)).getName();
 					SingularAttribute keyAttr = (SingularAttribute)(((EmbeddableType) keyT).getDeclaredSingularAttributes().iterator().next());
-					String name = keyAttr.getName();
+					String name = keyName+"."+keyAttr.getName();
 					if(whereClause==null || whereClause.equals("")){
 						whereClause = "WHERE ";
 					}else{

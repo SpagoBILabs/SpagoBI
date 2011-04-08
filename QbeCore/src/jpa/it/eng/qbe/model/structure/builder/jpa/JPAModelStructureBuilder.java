@@ -50,8 +50,10 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
+import javax.persistence.metamodel.EmbeddableType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
+import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
 
@@ -168,35 +170,51 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		
 		while(attributesIt.hasNext()){
 			Attribute a = attributesIt.next();
-			String n = a.getName();
-			Member m = a.getJavaMember();
-			Class c = a.getJavaType();
-
+			//normal attribute
 			if(a.getPersistentAttributeType().equals(PersistentAttributeType.BASIC)){		
-				String type = c.getName();
-				
-				// TODO: SCALE E PREC
-				int scale = 0;
-				int precision = 0;
-
-				IModelField datamartField = dataMartEntity.addNormalField( a.getName());
-				datamartField.setType(type);
-				datamartField.setPrecision(precision);
-				datamartField.setLength(scale);
-				propertiesInitializer.addProperties(datamartField);
-			}else {
+				addField(a, dataMartEntity,"");
+			}else// relation 
 				if(a.getPersistentAttributeType().equals(PersistentAttributeType.MANY_TO_ONE)){
+					Class c = a.getJavaType();
 					String entityType = c.getName();
 					String columnName = a.getName();
 					String entityName =  a.getName();
 			 		IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
 			 		subEntities.add(subentity);		
+			}else//composite key 
+				if(a.getPersistentAttributeType().equals(PersistentAttributeType.EMBEDDED)){
+				Set<Attribute> keyAttre = ((EmbeddableType)((SingularAttribute)a).getType()).getAttributes();
+				Iterator<Attribute> keyIter = keyAttre.iterator();
+				while(keyIter.hasNext()){
+					addField(keyIter.next(), dataMartEntity, a.getName()+".");	
 				}
 			}
 		}
 		
 		logger.debug("Field "+dataMartEntity.getName()+" added");
 		return subEntities;
+	}
+	
+	/**
+	 * Add an attribute to the model
+	 * @param attr the attribute
+	 * @param dataMartEntity the parent entity
+	 */
+	private void addField(Attribute attr, IModelEntity dataMartEntity, String keyPrefix){
+		String n = attr.getName();
+		Member m = attr.getJavaMember();
+		Class c = attr.getJavaType();
+		String type = c.getName();
+		
+		// TODO: SCALE E PREC
+		int scale = 0;
+		int precision = 0;
+
+		IModelField datamartField = dataMartEntity.addNormalField(keyPrefix+ attr.getName());
+		datamartField.setType(type);
+		datamartField.setPrecision(precision);
+		datamartField.setLength(scale);
+		propertiesInitializer.addProperties(datamartField);
 	}
 	
 	// TODO: controllare correttezza per jpa...se va bene generalizzare metodo sia per jpa che hibernate!
