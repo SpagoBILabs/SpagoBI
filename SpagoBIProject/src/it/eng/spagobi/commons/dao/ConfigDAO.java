@@ -24,7 +24,9 @@ package it.eng.spagobi.commons.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiConfig;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -217,74 +219,114 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 	 * @throws EMFUserError the EMF user error
 	 * 
 	 */
-	public void saveConfig(Config config)throws EMFUserError{
-		Config toSave = null;
-		Session aSession = null;
-		Transaction tx = null;
+    public void saveConfig(Config config) throws EMFUserError {
+    	// TODO Auto-generated method stub
+    	Config toSave = null;
+    	Session aSession = null;
+    	Transaction tx = null;
 
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-		
-					
-			SbiConfig hibDomain = (SbiConfig) aSession.save(this.fromConfig(config));
-		
-			toSave = new Config();
-			aSession.save(toSave);
-			tx.commit();
-		
-		} catch (HibernateException he) {
-			logException(he);
+    	try {
+    		aSession = getSession();
+    		tx = aSession.beginTransaction();
+    				
+    		aSession.save(this.fromConfig(config));
+    	
+    		tx.commit();
+    	
+    	} catch (HibernateException he) {
+    		logException(he);
 
-			if (tx != null)
-				tx.rollback();
+    		if (tx != null)
+    			tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
-		}
-	}
+    	} finally {
+    		if (aSession!=null){
+    			if (aSession.isOpen()) aSession.close();
+    		}
+    	}
+    	
+    }
 
-	/**
-	 * Update domain by id.
-	 * 
-	 * @param id the id
-	 * 
-	 * @return void
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
-	 */
-	public void updateDomain(Config config, Integer id) throws EMFUserError{
-		Session aSession = null;
-		Transaction tx = null;
+    /**
+     * Update domain by id.
+     * 
+     * @param id the id
+     * 
+     * @return void
+     * 
+     * @throws EMFUserError the EMF user error
+     * 
+     */
+    public void updateCongig(Config config) throws EMFUserError {
+    	// TODO Auto-generated method stub
+    	Session aSession = null;
+    	Transaction tx = null;
 
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			
-			aSession.update(this.fromConfig(config));
-		
-			tx.commit();
-		
-		} catch (HibernateException he) {
-			logException(he);
+    	try {
+    		aSession = getSession();
+    		tx = aSession.beginTransaction();
+    		
+    		aSession.update(this.fromConfig(config));
+    	
+    		tx.commit();
+    	
+    	} catch (HibernateException he) {
+    		logException(he);
 
-			if (tx != null)
-				tx.rollback();
+    		if (tx != null)
+    			tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
-		}
+    	} finally {
+    		if (aSession!=null){
+    			if (aSession.isOpen()) aSession.close();
+    		}
+    	}
+    	
+    }
 
-	}
+    /**
+     * Delete domain by id.
+     * 
+     * @param id the id
+     * 
+     * @return void
+     * 
+     * @throws EMFUserError the EMF user error
+     * 
+     */
+    public void delete(String codeConfig, String codeValue)  throws EMFUserError {
+    	Session sess = null;
+    	Transaction tx = null;
+
+    	try {
+    		sess = getSession();
+    		tx = sess.beginTransaction();
+    		
+    		Criterion aCriterion = Expression.and(Expression.eq("domainCd",
+    				codeConfig), Expression.eq("valueCd", codeValue));
+    		Criteria criteria = sess.createCriteria(SbiDomains.class);
+    		criteria.add(aCriterion);
+    		SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
+    		if (aSbiDomains!=null) sess.delete(aSbiDomains);
+    		tx.commit();
+    		
+    	} catch (HibernateException he) {
+    		logException(he);
+
+    		if (tx != null)
+    			tx.rollback();
+
+    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+    	} finally {
+    		if (sess!=null){
+    			if (sess.isOpen()) sess.close();
+    		}
+    	}
+    }
 
 }
-

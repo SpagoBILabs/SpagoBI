@@ -39,60 +39,77 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	
 	@Override
 	public void doService() {
-		logger.debug("IN");
 		IDomainDAO domainDao;
+		String serviceType;
+		
+		logger.debug("IN");
+		
 		try {
 			domainDao = DAOFactory.getDomainDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
 		}
-		Locale locale = getLocale();
-
-		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		
-		if (serviceType != null && serviceType.equalsIgnoreCase(DOMAIN_LIST)) {
 
-			try {				
-				List<Domain> domainList = domainDao.loadListDomains();
-				logger.debug("Loaded domain list");
-				JSONArray domainListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(domainList,locale);
-				writeBackToClient(new JSONSuccess(domainListJSON));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving domain data", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving domain data", e);
+		serviceType = this.getAttributeAsString(MESSAGE_DET);
+		logger.debug("Parameter [" + MESSAGE_DET +"] is equal to [" + serviceType + "]");
+		
+		if(serviceType != null) {
+			if (serviceType.equalsIgnoreCase(DOMAIN_LIST)) {
+				 doDomainList();
+			}else if (serviceType.equalsIgnoreCase(DOMAIN_DELETE)) {
+				doDelete();
+			}else if (serviceType.equalsIgnoreCase(DOMAIN_SAVE)) {
+				doSave();
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME,	"Unable to execute service [" + serviceType + "]");
 			}
-		}else if (serviceType != null && serviceType.equalsIgnoreCase(DOMAIN_DELETE)) {
-			try {	
-				String codeDomain =null; // da leggere da request
-				String codeValue=null;
-				domainDao.delete(codeDomain, codeValue);
-				writeBackToClient(new JSONAcknowledge("Operation succeded"));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving domain data", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving domain data", e);
-			}			
-		}else if (serviceType != null && serviceType.equalsIgnoreCase(DOMAIN_SAVE)) {
-			try {	
-				String codeDomain =null; // da leggere da request
-				String codeValue=null;
-				//domainDao.saveDomain(codeDomain, codeValue);
-				writeBackToClient(new JSONAcknowledge("Operation succeded"));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving domain data", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving domain data", e);
-			}			
 		}
 		
 		
 		logger.debug("OUT");
 
 	}
+	
+	public void doSave() {
+		try {	
+			//domainDao.saveDomain(codeDomain, codeValue);
+			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving domain data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving domain data", e);
+		}		
+	}
+	
+	public void doDelete() {
+		try {	
+			//domainDao.delete(codeDomain, codeValue);
+			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving domain data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving domain data", e);
+		}	
+	}
+	
+	public void doDomainList() {
+		try {				
+//			List<Domain> domainList = domainDao.loadListDomains();
+//			logger.debug("Loaded domain list");
+//			JSONArray domainListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(domainList,locale);
+//			writeBackToClient(new JSONSuccess(domainListJSON));
+			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving domain data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Exception occurred while retrieving domain data", e);
+		}
+	}
+	
+	
 
 }

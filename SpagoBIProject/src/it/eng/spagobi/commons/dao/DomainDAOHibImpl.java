@@ -48,7 +48,7 @@ import org.hibernate.criterion.Expression;
  * Defines the Hibernate implementations for all DAO methods,
  * for a domain.
  *
- * @author zoppello
+ * @author zoppello e Monia Spinelli
  */
 public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		IDomainDAO {
