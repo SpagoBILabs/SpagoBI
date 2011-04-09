@@ -27,6 +27,6 @@ import it.eng.qbe.model.structure.IModelObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public interface IDataMartStructurePropertiesInitializer {
+public interface IModelStructurePropertiesInitializer {
 	void addProperties(IModelObject item);
 }

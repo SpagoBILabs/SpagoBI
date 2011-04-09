@@ -44,11 +44,11 @@ public class SimpleModelProperties implements IModelProperties {
 	}
 	
 	
-	public void putAll(SimpleModelProperties modelProperties) {
+	public void putAll(IModelProperties modelProperties) {
 		properties.putAll(modelProperties.getProperties());
 	}
 	
-	protected Properties getProperties() {
+	public Properties getProperties() {
 		return properties;
 	}
 	

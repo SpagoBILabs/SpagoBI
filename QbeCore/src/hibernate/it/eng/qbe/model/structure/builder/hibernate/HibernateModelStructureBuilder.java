@@ -22,8 +22,8 @@ package it.eng.qbe.model.structure.builder.hibernate;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
-import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
+import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
+import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
@@ -55,12 +55,12 @@ import org.hibernate.type.Type;
 public class HibernateModelStructureBuilder implements IModelStructureBuilder {
 	
 	private IHibernateDataSource dataSource;	
-	IDataMartStructurePropertiesInitializer propertiesInitializer;
+	IModelStructurePropertiesInitializer propertiesInitializer;
 	
 	public HibernateModelStructureBuilder(IHibernateDataSource dataSource) {
 		Assert.assertNotNull(dataSource, "Parameter [dataSource] cannot be null");
 		setDataSource( dataSource );
-		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
+		propertiesInitializer = ModelStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);		
 	}
 	
 	public IModelStructure build() {

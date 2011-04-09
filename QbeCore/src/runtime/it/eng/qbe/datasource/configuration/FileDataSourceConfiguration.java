@@ -26,10 +26,13 @@ import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -45,6 +48,7 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 	IModelPropertiesDAO modelPropertiesDAO;
 	ICalculatedFieldsDAO calculatedFieldsDAO;
 	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
+	IViewsDAO viewsDAO;
 	
 	public FileDataSourceConfiguration(String modelName, File file) {
 		this.modelName = modelName;
@@ -52,7 +56,8 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 		this.dataSourceProperties = new HashMap<String,Object>();
 		this.modelPropertiesDAO = new ModelPropertiesDAOFileImpl(file);
 		this.modelLabelsDAOFileImpl = new ModelI18NPropertiesDAOFileImpl(file);
-		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);		
+		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);	
+		this.viewsDAO = new ViewsDAOFileImpl(file);	
 	}
 	
 	public File getFile() {
@@ -85,5 +90,12 @@ public class FileDataSourceConfiguration implements IDataSourceConfiguration {
 
 	public Map<String, Object> loadDataSourceProperties() {
 		return dataSourceProperties;
+	}
+
+	public List loadViews() {
+		List views = new ArrayList();
+		Object o =  viewsDAO.loadModelViews();
+		views.add(o);
+		return views;
 	}
 }

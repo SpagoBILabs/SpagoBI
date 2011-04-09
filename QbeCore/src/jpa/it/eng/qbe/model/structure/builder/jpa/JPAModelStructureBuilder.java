@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.structure.builder.jpa;
 
 import it.eng.qbe.datasource.jpa.JPADataSource;
-import it.eng.qbe.model.properties.initializer.DataMartStructurePropertiesInitializerFactory;
-import it.eng.qbe.model.properties.initializer.IDataMartStructurePropertiesInitializer;
+import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
+import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelEntity;
@@ -67,7 +67,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 
 	private JPADataSource dataSource;	
 	private EntityManager entityManager;
-	IDataMartStructurePropertiesInitializer propertiesInitializer;
+	IModelStructurePropertiesInitializer propertiesInitializer;
 
 
 	/**
@@ -75,11 +75,11 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	 * @param dataSource the JPA DataSource
 	 */
 	public JPAModelStructureBuilder(JPADataSource dataSource) {
-		if(dataSource== null) {
+		if(dataSource == null) {
 			throw new IllegalArgumentException("DataSource parameter cannot be null");
 		}
 		setDataSource( dataSource );
-		propertiesInitializer = DataMartStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);
+		propertiesInitializer = ModelStructurePropertiesInitializerFactory.getDataMartStructurePropertiesInitializer(dataSource);
 	}
 	
 	/**
@@ -87,35 +87,45 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	 * @return DataMartModelStructure
 	 */
 	public IModelStructure build() {
-		ModelStructure dataMartStructure;
-		String datamartName;
-		Metamodel classMetadata;
+		ModelStructure modelStructure;
+		String modelName;
+		Metamodel jpaMetamodel;
+		Set<EntityType<?>> jpaEntities;
 		
-		logger.debug("Building the data mart structure..");
-		dataMartStructure = new ModelStructure();
-
-		datamartName = getDataSource().getConfiguration().getModelName();
-		Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
-		setEntityManager(getDataSource().getEntityManager());
-		Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + datamartName + "]");
+		logger.debug("IN");
 		
-		
-		propertiesInitializer.addProperties(dataMartStructure);	
-		Map calculatedFields = getDataSource().getConfiguration().loadCalculatedFields();
-		dataMartStructure.setCalculatedFields(calculatedFields);
+		try {
+			modelStructure = new ModelStructure();
+	
+			modelName = getDataSource().getConfiguration().getModelName();
+			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
+			setEntityManager(getDataSource().getEntityManager());
+			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + modelName + "]");
 			
-		classMetadata = getEntityManager().getMetamodel();
-							
 			
-		logger.debug("Loading "+classMetadata.getEntities().size()+" Entities..");
-		for(Iterator it = classMetadata.getEntities().iterator(); it.hasNext(); ) {
-			EntityType et = (EntityType)it.next();	
-			logger.debug("Entity: " + et);
-			String entityTypeName =  et.getJavaType().getName();
-			addEntity(dataMartStructure, datamartName, entityTypeName);		
-		}			
-		logger.debug("Data mart structure built..");
-		return dataMartStructure;
+			propertiesInitializer.addProperties(modelStructure);	
+			Map calculatedFields = getDataSource().getConfiguration().loadCalculatedFields();
+			modelStructure.setCalculatedFields(calculatedFields);
+				
+			jpaMetamodel = getEntityManager().getMetamodel();		
+			jpaEntities = jpaMetamodel.getEntities();
+			logger.debug("Jpa metamodel contains ["+ jpaEntities.size() + "] entity types");
+			
+			for(EntityType<?> entityType: jpaEntities) {
+				logger.debug("Adding entity type [" + entityType + "] to model structure");
+				String entityTypeName =  entityType.getJavaType().getName();
+				addEntity(modelStructure, modelName, entityTypeName);	
+				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
+			}		
+			
+			List list = getDataSource().getConfiguration().loadViews();
+			
+			logger.info("Model structure for model [" + modelName + "] succesfully built");
+			
+			return modelStructure;
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 	
 	private void addEntity (IModelStructure dataMartStructure, String datamartName, String entityType){

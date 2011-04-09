@@ -29,10 +29,10 @@ import it.eng.qbe.datasource.jpa.JPADataSource;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class DataMartStructurePropertiesInitializerFactory { 
+public class ModelStructurePropertiesInitializerFactory { 
 	
-	public static IDataMartStructurePropertiesInitializer getDataMartStructurePropertiesInitializer(IDataSource dataSource) {
-		IDataMartStructurePropertiesInitializer initializer;
+	public static IModelStructurePropertiesInitializer getDataMartStructurePropertiesInitializer(IDataSource dataSource) {
+		IModelStructurePropertiesInitializer initializer;
 		
 		initializer = null;
 		

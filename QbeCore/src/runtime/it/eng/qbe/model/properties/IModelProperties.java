@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.properties;
 
+import java.util.Properties;
+
 import it.eng.qbe.model.structure.IModelObject;
 
 /**
@@ -29,4 +31,5 @@ import it.eng.qbe.model.structure.IModelObject;
  */
 public interface IModelProperties {
 	String getProperty(IModelObject item, String propertyName);
+	Properties getProperties();
 }

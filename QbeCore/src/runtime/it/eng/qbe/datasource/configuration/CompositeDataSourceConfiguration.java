@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -89,12 +90,12 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.IDataSourceConfiguration#getModelProperties()
 	 */
-	public SimpleModelProperties loadModelProperties() {
+	public IModelProperties loadModelProperties() {
 		SimpleModelProperties properties = new SimpleModelProperties();
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
 			IDataSourceConfiguration configuration = it.next();
-			SimpleModelProperties props = configuration.loadModelProperties();
+			IModelProperties props = configuration.loadModelProperties();
 			properties.putAll(props);
 		}
 		
@@ -116,7 +117,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		Iterator<IDataSourceConfiguration> it = subConfigurations.iterator();
 		while (it.hasNext()) {
 			IDataSourceConfiguration subModelConfiguration = it.next();
-			SimpleModelProperties subModelProperties = subModelConfiguration.loadModelI18NProperties(locale);
+			IModelProperties subModelProperties = subModelConfiguration.loadModelI18NProperties(locale);
 			properties.putAll(subModelProperties);
 		}
 		
@@ -173,6 +174,14 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 			}
 		}
 		return toReturn;
+	}
+
+	public List loadViews() {
+		List views = new ArrayList();
+		for(IDataSourceConfiguration subConfiguration: subConfigurations) {
+			views.addAll( subConfiguration.loadViews() );
+		}
+		return views;
 	}
 
 

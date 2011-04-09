@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ViewModelStructure extends AbstractModelObject implements IModelStructure {
+public class FilteredModelStructure extends AbstractModelObject implements IModelStructure {
 	
 
 	private QbeTreeFilter qbeTreeFilter;
 	private IDataSource dataSource;
 	private IModelStructure wrappedModelStructure;
 	
-	public ViewModelStructure(IModelStructure wrappedModelStructure, IDataSource dataSource, QbeTreeFilter qbeTreeFilter){
+	public FilteredModelStructure(IModelStructure wrappedModelStructure, IDataSource dataSource, QbeTreeFilter qbeTreeFilter){
 		this.qbeTreeFilter=qbeTreeFilter;
 		this.dataSource=dataSource;
-		if(wrappedModelStructure instanceof ViewModelStructure){
-			this.wrappedModelStructure = ((ViewModelStructure)wrappedModelStructure).getWrappedModelStructure();
+		if(wrappedModelStructure instanceof FilteredModelStructure){
+			this.wrappedModelStructure = ((FilteredModelStructure)wrappedModelStructure).getWrappedModelStructure();
 		}else{
 			this.wrappedModelStructure = wrappedModelStructure;
 		}
@@ -29,11 +29,11 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 	
 	public List<IModelEntity> getRootEntities(String modelName){
 		List<IModelEntity> iModelEntities = qbeTreeFilter.filterEntities(dataSource,wrappedModelStructure.getRootEntities(modelName));
-		List<IModelEntity> viewModelEntities = new ArrayList<IModelEntity>();
+		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
 		for(int i=0; i<iModelEntities.size(); i++){
-			viewModelEntities.add(toViewModelEntity(iModelEntities.get(i)));
+			filteredModelEntities.add(toFilteredModelEntity(iModelEntities.get(i)));
 		}
-		return viewModelEntities;
+		return filteredModelEntities;
 	}
 
 	public QbeTreeFilter getQbeTreeFilter() {
@@ -80,7 +80,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entityn==null){
 			return null;
 		}
-		list.add(toViewModelEntity(entityn));
+		list.add(toFilteredModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -95,7 +95,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entityn==null){
 			return null;
 		}
-		list.add(toViewModelEntity(entityn));
+		list.add(toFilteredModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -110,7 +110,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(toViewModelEntity(entityn));
+		list.add(toFilteredModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -125,7 +125,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(toViewModelEntity(entityn));
+		list.add(toFilteredModelEntity(entityn));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -149,7 +149,7 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		if(entity==null){
 			return null;
 		}
-		list.add(toViewModelEntity(entity));
+		list.add(toFilteredModelEntity(entity));
 		filteredList = qbeTreeFilter.filterEntities(dataSource,list);
 		if(filteredList==null || filteredList.size()==0){
 			return null;
@@ -226,16 +226,16 @@ public class ViewModelStructure extends AbstractModelObject implements IModelStr
 		this.wrappedModelStructure = wrappedModelStructure;
 	}
 	
-	private ViewModelEntity toViewModelEntity(IModelEntity iModelEntity){
-		ViewModelEntity vme;
-		if(iModelEntity instanceof ViewModelEntity){
-			vme = (ViewModelEntity)iModelEntity;
-			vme.setDataSource(dataSource);
-			vme.setQbeTreeFilter(qbeTreeFilter);
-		}else{
-			vme = new ViewModelEntity(iModelEntity, dataSource, qbeTreeFilter);
+	private FilteredModelEntity toFilteredModelEntity(IModelEntity modelEntity){
+		FilteredModelEntity filteredModelEntity;
+		if(modelEntity instanceof FilteredModelEntity){
+			filteredModelEntity = (FilteredModelEntity)modelEntity;
+			filteredModelEntity.setDataSource(dataSource);
+			filteredModelEntity.setQbeTreeFilter(qbeTreeFilter);
+		} else {
+			filteredModelEntity = new FilteredModelEntity(modelEntity, dataSource, qbeTreeFilter);
 		}
-		return vme;
+		return filteredModelEntity;
 	} 
 	
 
