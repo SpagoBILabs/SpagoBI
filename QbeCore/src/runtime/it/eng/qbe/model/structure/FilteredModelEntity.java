@@ -8,17 +8,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ViewModelEntity implements IModelEntity{
+public class FilteredModelEntity implements IModelEntity{
 
 	private QbeTreeFilter qbeTreeFilter;
 	private IDataSource dataSource;
 	private IModelEntity wrappedModelEntity;
 	
-	public ViewModelEntity(IModelEntity wrappedModelEntity, IDataSource dataSource, QbeTreeFilter qbeTreeFilter ) {
+	public FilteredModelEntity(IModelEntity wrappedModelEntity, IDataSource dataSource, QbeTreeFilter qbeTreeFilter ) {
 		this.qbeTreeFilter=qbeTreeFilter;
 		this.dataSource=dataSource;
-		if(wrappedModelEntity instanceof ViewModelEntity){
-			this.wrappedModelEntity = ((ViewModelEntity)wrappedModelEntity).getWrappedModelEntity();
+		if(wrappedModelEntity instanceof FilteredModelEntity){
+			this.wrappedModelEntity = ((FilteredModelEntity)wrappedModelEntity).getWrappedModelEntity();
 		}else{
 			this.wrappedModelEntity = wrappedModelEntity;
 		}
@@ -38,20 +38,20 @@ public class ViewModelEntity implements IModelEntity{
 	}
 	
 	public List<IModelEntity> getSubEntities() {
-		List<IModelEntity> iModelEntities = qbeTreeFilter.filterEntities(getDataSource(), wrappedModelEntity.getSubEntities());
-		List<IModelEntity> viewModelEntities = new ArrayList<IModelEntity>();
-		for(int i=0; i<iModelEntities.size(); i++){
-			ViewModelEntity vme;
-			if(iModelEntities.get(i) instanceof ViewModelEntity){
-				vme = (ViewModelEntity)iModelEntities.get(i);
-				vme.setDataSource(dataSource);
-				vme.setQbeTreeFilter(qbeTreeFilter);
+		List<IModelEntity> modelEntities = qbeTreeFilter.filterEntities(getDataSource(), wrappedModelEntity.getSubEntities());
+		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
+		for(int i=0; i<modelEntities.size(); i++){
+			FilteredModelEntity filteredModelEntity;
+			if(modelEntities.get(i) instanceof FilteredModelEntity){
+				filteredModelEntity = (FilteredModelEntity)modelEntities.get(i);
+				filteredModelEntity.setDataSource(dataSource);
+				filteredModelEntity.setQbeTreeFilter(qbeTreeFilter);
 			}else{
-				vme = new ViewModelEntity(iModelEntities.get(i), dataSource, qbeTreeFilter);
+				filteredModelEntity = new FilteredModelEntity(modelEntities.get(i), dataSource, qbeTreeFilter);
 			}
-			viewModelEntities.add(vme);
+			filteredModelEntities.add(filteredModelEntity);
 		}
-		return viewModelEntities;
+		return filteredModelEntities;
 	}
 
 

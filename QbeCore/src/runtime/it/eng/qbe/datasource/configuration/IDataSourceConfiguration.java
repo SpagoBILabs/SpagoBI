@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
+import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
@@ -54,14 +55,14 @@ public interface IDataSourceConfiguration {
 	 * 
 	 * @return the properties associated to the model. 
 	 */
-	SimpleModelProperties loadModelProperties();
+	IModelProperties loadModelProperties();
 	
 	/**
 	 * Facility method. It is equivalent to loadModelI18NProperties(null)
 	 * 
 	 * @return the i18n properties associated to the model for the given locale
 	 */
-	SimpleModelProperties loadModelI18NProperties();
+	IModelProperties loadModelI18NProperties();
 	
 	/**
 	 * Load the properties associated to the model that are dependant to the locale (i.e. labels, tooltips).
@@ -74,7 +75,7 @@ public interface IDataSourceConfiguration {
 	 * 
 	 * @return the i18n properties associated to the model for the given locale
 	 */
-	SimpleModelProperties loadModelI18NProperties(Locale locale);
+	IModelProperties loadModelI18NProperties(Locale locale);
 	
 	/**
 	 * 
@@ -84,6 +85,7 @@ public interface IDataSourceConfiguration {
 	Map<String,Object> loadDataSourceProperties();
 	
 
+	List loadViews();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }
