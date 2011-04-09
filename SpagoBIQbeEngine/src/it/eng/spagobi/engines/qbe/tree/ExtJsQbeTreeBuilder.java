@@ -26,7 +26,7 @@ import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.ViewModelStructure;
+import it.eng.qbe.model.structure.FilteredModelStructure;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -140,8 +140,8 @@ public class ExtJsQbeTreeBuilder  {
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName) {
 		int nodeCounter = 0;
-		ViewModelStructure viewModelStructure = new ViewModelStructure(dataSource.getModelStructure(), getDataSource(), getQbeTreeFilter());
-		List entities = viewModelStructure.getRootEntities(datamartName);
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(dataSource.getModelStructure(), getDataSource(), getQbeTreeFilter());
+		List entities = filteredModelStructure.getRootEntities(datamartName);
 		
 		Iterator it = entities.iterator();
 		while(it.hasNext()) {
