@@ -1,7 +1,7 @@
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
- * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,9 @@ package it.eng.qbe.model.structure;
 
 
 /**
- * All nodes of a DataMartModelStructure (i.e. entities & fields) implement this interface 
+ * All nodes of a IModelStructure (i.e. entities & fields) implement this interface 
  * 
- * @author Andrea Gioia
+ * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface IModelNode extends IModelObject{
 	

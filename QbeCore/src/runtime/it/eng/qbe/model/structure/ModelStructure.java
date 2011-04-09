@@ -34,6 +34,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	
 	
 	protected long nextId;	
+	
 	protected Map<String, Map<String,IModelEntity>> rootEntities;	// modelName->(entityUniqueName->entity)
 	protected Map<String, IModelEntity> entities; //entityUniqueName->entity
 	protected Map<String, IModelField> fields; // uniqueName -> field	
@@ -78,16 +79,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	}
 	
 	// Root Entities -----------------------------------------------------------
-	
-	/**
-	 * Create a new entity and add it to the root entities of the specified model
-	 * 
-	 * @param name the name of the  to which the new entity will be added
-	 * @param path the path of the new entity
-	 * @param role the role of the new entity
-	 * @param type the type of the new entity
-	 * 
-	 * @return the new entity added to the model
+
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntity(String modelName, String name, String path, String role, String type)
 	 */
 	public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type) {
 		IModelEntity entity = new ModelEntity(name, path, role, type, this);
@@ -108,32 +103,25 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	}
 	
 	
-	/**
-	 * Gets a root entity by name from the specified model.
-	 * 
-	 * @param modelName the name of the target model 
-	 * @param entityName the name of the entity to look for
-	 * 
-	 * @return the searched root entity
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(String modelName, String entityName)
 	 */
 	public IModelEntity getRootEntity(String modelName, String entityName) {
 		Map<String, IModelEntity> modelRootEntities = rootEntities.get(modelName);
 		return modelRootEntities == null ? null : (IModelEntity)modelRootEntities.get(entityName);
 	}
 	
-	/**
-	 * Gets the root entity relevant to the input entity
-	 * 
-	 * @param entity
-	 * 
-	 * @return the root entity relevant to the input entity
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(IModelEntity entity)
 	 */
 	public IModelEntity getRootEntity(IModelEntity entity) {
 		if (entity == null) {
 			return null;
 		}
 		IModelEntity toReturn = null;
-		Iterator<String> keysIt = rootEntities.keySet().iterator();
+		Iterator<String> keysIt = getModelNames().iterator();
 		while (keysIt.hasNext()) {
 			String modelName = keysIt.next();
 			IModelEntity rootEntity = getRootEntity(entity, modelName);
@@ -145,14 +133,9 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return toReturn;
 	}
 	
-	/**
-	 * Gets the root entity relevant to the input entity in the 	 * specified in input
-	 * 
-	 * @param the target entity 
-	 * @param the name of the target model
-	 * 
-	 * @return the root entity relevant to the input entity in the model 
-	 * specified in input
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntity(IModelEntity entity, String modelName) 
 	 */
 	public IModelEntity getRootEntity(IModelEntity entity, String modelName) {
 		if (entity == null) {
@@ -171,23 +154,17 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return toReturn;
 	}
 	
-	/**
-	 * Gets the root entity iterator for the target model.
-	 * 
-	 * @param modelName the name of the target model
-	 * 
-	 * @return the root entities iterator
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntityIterator(String modelName)
 	 */
 	public Iterator<IModelEntity> getRootEntityIterator(String modelName) {
 		return getRootEntities(modelName).iterator();
 	}
 	
-	/**
-	 * Gets the root entities.
-	 * 
-	 * @param modelName the name of the target model
-	 * 
-	 * @return the root entities
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getRootEntities(String modelName)
 	 */
 	public List<IModelEntity> getRootEntities(String modelName) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();
@@ -211,21 +188,17 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 
 	// Entities -----------------------------------------------------------
 
-	/**
-	 * Adds the entity.
-	 * 
-	 * @param entity the entity
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#ddEntity(IModelEntity entity) 
 	 */
 	public void addEntity(IModelEntity entity) {
 		entities.put(entity.getUniqueName(), entity);
 	}
 	
-	/**
-	 * Gets the entity.
-	 * 
-	 * @param entityUniqueName the entity unique name
-	 * 
-	 * @return the entity
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getEntity(String entityUniqueName)
 	 */
 	public IModelEntity getEntity(String entityUniqueName) {
 		IModelEntity entity = (IModelEntity)entities.get(entityUniqueName);
@@ -234,21 +207,17 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	
 	// Fields -----------------------------------------------------------
 	
-	/**
-	 * Adds the field.
-	 * 
-	 * @param field the field
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#addField(IModelField field)
 	 */
 	public void addField(IModelField field) {
 		fields.put(field.getUniqueName(), field);
 	}
 	
-	/**
-	 * Gets the field.
-	 * 
-	 * @param fieldUniqueName the field unique name
-	 * 
-	 * @return the field
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure# getField(String fieldUniqueName)
 	 */
 	public IModelField getField(String fieldUniqueName) {
 		IModelField field = (IModelField)fields.get(fieldUniqueName);
@@ -257,10 +226,18 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	
 	// Calculated Fields ----------------------------------------------------
 	
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getCalculatedFields()
+	 */
 	public Map<String, List<ModelCalculatedField>> getCalculatedFields() {
 		return calculatedFields;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#getCalculatedFieldsByEntity(String entityName)
+	 */
 	public List<ModelCalculatedField> getCalculatedFieldsByEntity(String entityName) {
 		List<ModelCalculatedField> result;
 		
@@ -272,10 +249,18 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#setCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields)
+	 */
 	public void setCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		this.calculatedFields = calculatedFields;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#addCalculatedField(String entityName, ModelCalculatedField calculatedFiled)
+	 */
 	public void addCalculatedField(String entityName, ModelCalculatedField calculatedFiled) {
 		List<ModelCalculatedField> calculatedFiledsOnTargetEntity;
 		if(!calculatedFields.containsKey(entityName)) {
@@ -295,6 +280,10 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		calculatedFiledsOnTargetEntity.add(calculatedFiled);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelStructure#removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled)
+	 */
 	public void removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled) {
 		List<ModelCalculatedField> calculatedFieldsOnTargetEntity;
 		

@@ -24,21 +24,26 @@ package it.eng.qbe.model.structure;
 import java.util.Map;
 
 /**
- * All objects in the datamart structure, even the DataMartModelStructure, extend this intrface
+ * All objects in the model structure, even the <code>IModelStructure</code>, 
+ * extend this interface
  * 
  * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public interface IModelObject {
+	
+	
 	long getId();
 	String getName();
 	void setName(String name);
-	Map<String,Object> getProperties();
+	
 	void setProperties(Map<String,Object> properties);
-	int getPropertyAsInt(String name);
+	
+	Map<String,Object> getProperties();
 	Object getProperty(String name);
 	String getPropertyAsString(String name);
 	boolean getPropertyAsBoolean(String name);
+	int getPropertyAsInt(String name);
 
 }

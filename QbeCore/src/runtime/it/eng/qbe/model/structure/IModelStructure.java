@@ -1,3 +1,23 @@
+/**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
 package it.eng.qbe.model.structure;
 
 import java.util.Iterator;
@@ -5,30 +25,135 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface IModelStructure extends IModelObject{
+/**
+ * represent the structure of the data exposed by a <code>IDataSource</code>. Because a data source can be 
+ * built also upon different data models (i.e. CompositeQbe) an <code>IModelStructure</code> can contains
+ * multiple structure, one for each model contained in the composite data source. Each structure is 
+ * represented trough a collection of tree hierarchies identified by the name of the model it maps.
+ * 
+ * 
+ * @authors
+ *  Andrea Gioia (andrea.gioia@eng.it)
+ *  Alberto Ghedin (alberto.ghedin@eng.it)
+ *
+ */
+public interface IModelStructure extends IModelObject {
 
 		public long getNextId() ;
 
+		/**
+		 * 
+		 * @return The names of all the models managed by this structure. To each model is associated
+		 * an independent collection of tree hierarchies of <code>IModelObjects</code> identified by 
+		 * the name of the model it maps.
+		 */
 		public Set<String> getModelNames() ;
+		
+		
+		// ----------------------------------
+		// Root entities
+		// ----------------------------------
 
-		public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type) ;
+		/**
+		 * Add a new root entity to the collection of tree hierarchies associated to the specified model name
+		 * 
+		 * @param modelName the name of the model to which the new entity will be added
+		 * @param name the name of the  new entity
+		 * @param path the path of the new entity
+		 * @param role the role of the new entity
+		 * @param type the type of the new entity
+		 * 
+		 * @return the new root entity added to the collection of tree hierarchies associated to the specified model name
+		 */
+		public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type);
 
-
+		/**
+		 * @param modelName the target model's name
+		 * @param entityName the target entity's name
+		 * 
+		 * @return The root entity named entityName contained in the collection of tree associated to 
+		 * the model named modelName
+		 */
 		public IModelEntity getRootEntity(String modelName, String entityName) ;
 
+		/**
+		 * Gets the root entity relevant to the input entity
+		 * 
+		 * @param entity
+		 * 
+		 * @return the root entity relevant to the input entity
+		 */
 		public IModelEntity getRootEntity(IModelEntity entity) ;
 
+		/**
+		 * Gets the root entity relevant to the input entity in the specified in input
+		 * 
+		 * @param the target entity 
+		 * @param the name of the target model
+		 * 
+		 * @return the root entity relevant to the input entity in the model 
+		 * specified in input
+		 */
 		public IModelEntity getRootEntity(IModelEntity entity, String modelName) ;
 
+		/**
+		 * Gets the root entity iterator for the target model.
+		 * 
+		 * @param modelName the name of the target model
+		 * 
+		 * @return the root entities iterator
+		 */
 		public Iterator<IModelEntity> getRootEntityIterator(String modelName) ;
 
+		/**
+		 * Gets the root entities.
+		 * 
+		 * @param modelName the name of the target model
+		 * 
+		 * @return the root entities
+		 */
 		public List<IModelEntity> getRootEntities(String modelName) ;
+		
+		
+		// ----------------------------------
+		// Entities
+		// ----------------------------------
+
+		/**
+		 * Adds the entity.
+		 * 
+		 * @param entity the entity
+		 */
 		public void addEntity(IModelEntity entity) ;
 
+		/**
+		 * Gets the entity.
+		 * 
+		 * @param entityUniqueName the entity unique name
+		 * 
+		 * @return the entity
+		 */
 		public IModelEntity getEntity(String entityUniqueName) ;
 
+		
+		// ----------------------------------
+		// Fields
+		// ----------------------------------
+		/**
+		 * Adds the field.
+		 * 
+		 * @param field the field
+		 */
 		public void addField(IModelField field) ;
-
+		
+		
+		/**
+		 * Gets the field.
+		 * 
+		 * @param fieldUniqueName the field unique name
+		 * 
+		 * @return the field
+		 */
 		public IModelField getField(String fieldUniqueName) ;
 
 		public Map<String, List<ModelCalculatedField>> getCalculatedFields() ;
