@@ -121,18 +121,12 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
 			}		
 			
-			List list = getDataSource().getConfiguration().loadViews();
+			List<JSONObject> list = getDataSource().getConfiguration().loadViews();
 			if(list.size() > 0) {
-				JSONObject viewsConf = (JSONObject)list.get(0);
-				if(viewsConf != null) {
-					JSONArray views = viewsConf.optJSONArray("views");
-					if(views != null && views.length() > 0) {
-						JSONObject view = views.getJSONObject(0);
-						ModelViewEntity viewEntity = new ModelViewEntity(view, modelName, modelStructure);
-						propertiesInitializer.addProperties(viewEntity);
-						modelStructure.addRootEntity(modelName, viewEntity);
-					}
-				}
+				JSONObject view = (JSONObject)list.get(0);
+				ModelViewEntity viewEntity = new ModelViewEntity(view, modelName, modelStructure);
+				propertiesInitializer.addProperties(viewEntity);
+				modelStructure.addRootEntity(modelName, viewEntity);
 			}
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");

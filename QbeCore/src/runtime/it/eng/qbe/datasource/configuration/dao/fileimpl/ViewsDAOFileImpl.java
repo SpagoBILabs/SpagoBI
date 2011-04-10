@@ -28,9 +28,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -54,16 +57,25 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	}
 	
 
-	public JSONObject loadModelViews() {
-		JSONObject views = null;
+	public List<JSONObject> loadModelViews() {
+		List<JSONObject> views; 
+		JSONObject viewsConfJSON = null;
+		
+		views = new ArrayList<JSONObject>();
 		
 		JarFile jarFile = null;
 		try {
 			jarFile = new JarFile( modelJarFile );
-			views = loadViewsFormJarFile(jarFile);
-		} catch (IOException e) {
+			viewsConfJSON = loadViewsFormJarFile(jarFile);
+			JSONArray viewsJSON = viewsConfJSON.optJSONArray("views");
+			if(viewsJSON != null) {
+				for(int i = 0; i < viewsJSON.length(); i++) {
+					JSONObject viewJSON = viewsJSON.getJSONObject(i);
+					views.add(viewJSON);
+				}
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
-			views = new JSONObject();;
 		}				
 		
 		return views;	
@@ -105,7 +117,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.dao.DatamartPropertiesDAO#saveModelViews()
 	 */
-	public void saveModelViews(Object views) {
+	public void saveModelViews(List<JSONObject> views) {
 		throw new SpagoBIRuntimeException("saveDatamartProperties method not supported");
 	}
 }

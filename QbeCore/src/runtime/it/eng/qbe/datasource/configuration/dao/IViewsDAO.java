@@ -20,6 +20,10 @@
  **/
 package it.eng.qbe.datasource.configuration.dao;
 
+import java.util.List;
+
+import org.json.JSONObject;
+
 import it.eng.qbe.model.properties.SimpleModelProperties;
 
 /**
@@ -34,12 +38,12 @@ public interface IViewsDAO {
 	 * 
 	 * @return the model views
 	 */
-	Object loadModelViews();
+	List<JSONObject> loadModelViews();
 	
 	/**
 	 * Save model views.
 	 *
 	 * @param properties the model views
 	 */
-	void saveModelViews(Object views);
+	void saveModelViews(List<JSONObject> views);
 }

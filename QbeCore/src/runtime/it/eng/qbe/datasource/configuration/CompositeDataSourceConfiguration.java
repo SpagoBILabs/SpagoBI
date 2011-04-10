@@ -35,6 +35,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONObject;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -176,8 +178,8 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return toReturn;
 	}
 
-	public List loadViews() {
-		List views = new ArrayList();
+	public List<JSONObject> loadViews() {
+		List<JSONObject> views = new ArrayList<JSONObject>();
 		for(IDataSourceConfiguration subConfiguration: subConfigurations) {
 			views.addAll( subConfiguration.loadViews() );
 		}
