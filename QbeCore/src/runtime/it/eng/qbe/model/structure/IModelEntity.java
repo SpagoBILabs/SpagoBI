@@ -32,6 +32,7 @@ public interface IModelEntity extends IModelNode {
 		
 		public List<IModelField> getAllFields();
 		public IModelField getField(String fieldName);
+		public List<IModelField> getFieldsByType(boolean isKey);
 		public List<IModelField> getKeyFields() ;
 		public Iterator<IModelField> getKeyFieldIterator();
 		public List<IModelField> getNormalFields();
