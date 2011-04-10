@@ -34,7 +34,7 @@ import java.io.File;
  */
 public class SimpleHibernateDataSourceTestCase extends AbstractDataSourceTestCase {
 	
-	private static final String QBE_FILE = "resources/hibernate/foodmart/datamart.jar";
+	private static final String QBE_FILE = "test-resources/hibernate/foodmart/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {

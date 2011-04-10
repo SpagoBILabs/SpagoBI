@@ -35,7 +35,7 @@ import java.io.File;
 public class SimpleJPADataSourceTestCase extends AbstractDataSourceTestCase {
 	
 	
-	private static final String QBE_FILE = "resources/jpa/foodmart/datamart.jar";
+	private static final String QBE_FILE = "test-resources/jpa/foodmart/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {

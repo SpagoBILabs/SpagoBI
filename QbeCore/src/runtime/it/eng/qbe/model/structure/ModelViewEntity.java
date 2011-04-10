@@ -48,7 +48,7 @@ public class ModelViewEntity extends ModelEntity {
 		JSONArray tables = view.optJSONArray("tables");
 		JSONArray joins = view.optJSONArray("joins");
 		String type = tables.getJSONObject(0).optString("package");
-		setType(type);
+		setType(type + "." + viewName);
 		
 		entities = new ArrayList<IModelEntity>();
 		for(int i = 0; i < tables.length(); i++) {
