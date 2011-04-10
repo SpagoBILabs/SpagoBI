@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
-import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;

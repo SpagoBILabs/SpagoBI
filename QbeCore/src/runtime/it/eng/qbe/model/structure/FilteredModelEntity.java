@@ -269,5 +269,9 @@ public class FilteredModelEntity implements IModelEntity{
 	public int getPropertyAsInt(String name) {	
 		return wrappedModelEntity.getPropertyAsInt(name);
 	}
+
+	public List<IModelField> getFieldsByType(boolean isKey) {
+		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getFieldsByType(isKey));
+	}
 	
 }

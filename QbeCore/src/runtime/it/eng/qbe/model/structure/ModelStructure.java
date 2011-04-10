@@ -90,7 +90,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		return entity;
 	}
 	
-	private void addRootEntity(String modelName, IModelEntity entity) {
+	public void addRootEntity(String modelName, IModelEntity entity) {
 		Map<String, IModelEntity> modeltRootEntities;
 		
 		modeltRootEntities = rootEntities.get(modelName);
@@ -109,6 +109,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	 */
 	public IModelEntity getRootEntity(String modelName, String entityName) {
 		Map<String, IModelEntity> modelRootEntities = rootEntities.get(modelName);
+		//Set test = modelRootEntities.keySet();
 		return modelRootEntities == null ? null : (IModelEntity)modelRootEntities.get(entityName);
 	}
 	

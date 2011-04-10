@@ -87,6 +87,10 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		}
 		return filteredList.get(0);
 	}
+	
+	public void addRootEntity(String modelName, IModelEntity entity) {
+		wrappedModelStructure.addRootEntity(modelName, entity);
+	}
 
 	public IModelEntity getRootEntity(String modelName, String entityName) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();

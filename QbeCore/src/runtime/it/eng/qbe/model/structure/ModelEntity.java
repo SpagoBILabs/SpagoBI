@@ -180,7 +180,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	}	
 	
 	
-	private List<IModelField> getFieldsByType(boolean isKey) {
+	public List<IModelField> getFieldsByType(boolean isKey) {
 		List<IModelField> list = new ArrayList<IModelField>();
 		String key = null;
 		for(Iterator<String> it = fields.keySet().iterator(); it.hasNext(); ) {

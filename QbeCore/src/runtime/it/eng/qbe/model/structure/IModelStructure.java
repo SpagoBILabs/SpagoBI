@@ -66,7 +66,8 @@ public interface IModelStructure extends IModelObject {
 		 * @return the new root entity added to the collection of tree hierarchies associated to the specified model name
 		 */
 		public IModelEntity addRootEntity(String modelName, String name, String path, String role, String type);
-
+		public void addRootEntity(String modelName, IModelEntity entity) ;
+		
 		/**
 		 * @param modelName the target model's name
 		 * @param entityName the target entity's name

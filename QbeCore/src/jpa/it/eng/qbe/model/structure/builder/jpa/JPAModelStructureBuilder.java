@@ -30,6 +30,7 @@ import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelStructure;
+import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
 import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
@@ -56,6 +57,8 @@ import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
@@ -119,19 +122,34 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			}		
 			
 			List list = getDataSource().getConfiguration().loadViews();
-			
+			if(list.size() > 0) {
+				JSONObject viewsConf = (JSONObject)list.get(0);
+				if(viewsConf != null) {
+					JSONArray views = viewsConf.optJSONArray("views");
+					if(views != null && views.length() > 0) {
+						JSONObject view = views.getJSONObject(0);
+						ModelViewEntity viewEntity = new ModelViewEntity(view, modelName, modelStructure);
+						propertiesInitializer.addProperties(viewEntity);
+						modelStructure.addRootEntity(modelName, viewEntity);
+					}
+				}
+			}
+
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			
 			return modelStructure;
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to build model structure", t);
+		
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-	private void addEntity (IModelStructure dataMartStructure, String datamartName, String entityType){
+	private void addEntity (IModelStructure modelStructure, String modelName, String entityType){
 
 		String entityName = getEntityNameFromEntityType(entityType);		
-		IModelEntity dataMartEntity = dataMartStructure.addRootEntity(datamartName, entityName, null, null, entityType);
+		IModelEntity dataMartEntity = modelStructure.addRootEntity(modelName, entityName, null, null, entityType);
 		propertiesInitializer.addProperties(dataMartEntity);
 		
 		//addKeyFields(dataMartEntity);		

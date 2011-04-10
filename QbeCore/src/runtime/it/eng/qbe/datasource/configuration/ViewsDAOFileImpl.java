@@ -77,7 +77,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 				InputStream inputStream = jarFile.getInputStream(zipEntry);
 				String viewsFileContent = getStringFromStream(inputStream);
 				inputStream.close();
-				JSONObject viewJSON = new JSONObject( viewsFileContent );
+				viewsJSON = new JSONObject( viewsFileContent );
 			} else {
 				viewsJSON = new JSONObject();
 			}
