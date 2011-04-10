@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource.configuration;
+package it.eng.qbe.datasource.configuration.dao;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 

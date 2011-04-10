@@ -18,28 +18,34 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource.configuration;
+package it.eng.qbe.datasource.configuration.dao;
 
 import it.eng.qbe.model.properties.SimpleModelProperties;
 
+import java.util.Locale;
+
 /**
- * The Interface DatamartPropertiesDAO.
+ * The Interface IModelI18NPropertiesDAO.
  * 
  * @author Andrea Gioia
  */
-public interface IModelPropertiesDAO {
+public interface IModelI18NPropertiesDAO {
 	
 	/**
-	 * Load model properties.
+	 * Load i18n properties for the default locale. Equals to loadProperties(null)
 	 * 
-	 * @return the model properties
+	 * @param locale the target locale
+	 * 
+	 * @return the loaded i18n properties
 	 */
-	SimpleModelProperties loadModelProperties();
+	SimpleModelProperties loadProperties();
 	
 	/**
-	 * Save model properties.
+	 * Load i18n properties for the given locale.
 	 *
-	 * @param properties the model properties
+	 * @param locale the target locale
+	 * 
+	 * @return the loaded i18n properties
 	 */
-	void saveModelProperties(SimpleModelProperties properties);
+	SimpleModelProperties loadProperties(Locale locale);
 }

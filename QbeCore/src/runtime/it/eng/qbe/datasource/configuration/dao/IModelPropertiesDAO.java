@@ -18,18 +18,28 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource.configuration;
+package it.eng.qbe.datasource.configuration.dao;
 
-import it.eng.qbe.model.structure.ModelCalculatedField;
-
-import java.util.List;
-import java.util.Map;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 
 /**
+ * The Interface DatamartPropertiesDAO.
+ * 
  * @author Andrea Gioia
  */
-public interface ICalculatedFieldsDAO {	
+public interface IModelPropertiesDAO {
 	
-	Map<String, List<ModelCalculatedField>> loadCalculatedFields();		
-	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
+	/**
+	 * Load model properties.
+	 * 
+	 * @return the model properties
+	 */
+	SimpleModelProperties loadModelProperties();
+	
+	/**
+	 * Save model properties.
+	 *
+	 * @param properties the model properties
+	 */
+	void saveModelProperties(SimpleModelProperties properties);
 }
