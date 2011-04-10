@@ -26,7 +26,11 @@ import it.eng.qbe.datasource.AbstractQbeTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelViewEntity;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +46,7 @@ public class ViewsJPADataSourceTestCase extends AbstractQbeTestCase {
 	
 	String modelName;
 	
-	private static final String QBE_FILE = "resources/jpa/foodmartviews/datamart.jar";
+	private static final String QBE_FILE = "test-resources/jpa/foodmartviews/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {
@@ -64,6 +68,16 @@ public class ViewsJPADataSourceTestCase extends AbstractQbeTestCase {
 		assertTrue("Views conf cannot be an insatnce of [" + views.get(0).getClass().getName()  +"]", views.get(0) instanceof JSONObject);
 		
 		IModelStructure modelStructure = dataSource.getModelStructure();
-		// ...
+		IModelEntity entity = modelStructure.getRootEntity(modelName, "it.eng.spagobi.meta.EmployeeClosure::EmployeeClosure");
+		if(entity == null) dumpRootEntities(modelStructure);
+		assertNotNull(entity);
+		assertTrue(entity instanceof ModelViewEntity);
+		List<IModelField> fields = entity.getAllFields();
+		List<IModelField> keyFields = entity.getKeyFields();
+		List<IModelField> normalFields = entity.getNormalFields();
+		assertEquals(15, fields.size());
+		assertEquals(0, keyFields.size());
+		assertEquals(15, normalFields.size());
+		assertEquals(fields.size(), keyFields.size() + normalFields.size());
 	}
 }

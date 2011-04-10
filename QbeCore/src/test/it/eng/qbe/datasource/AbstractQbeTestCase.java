@@ -21,8 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
+import java.util.List;
+import java.util.Set;
+
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelStructure;
 import junit.framework.TestCase;
 
 /**
@@ -65,5 +70,16 @@ public abstract class AbstractQbeTestCase extends TestCase {
 	protected void tearDownDataSource() {
 		dataSource.close();
 		dataSource  = null;
+	}
+	
+	protected void dumpRootEntities(IModelStructure modelStructure) {
+		Set<String> modelNames = modelStructure.getModelNames();
+		for(String modelName : modelNames) {
+			System.out.println(modelNames + " :");
+			List<IModelEntity> rootEntities = modelStructure.getRootEntities(modelName);
+			for(IModelEntity rootEntity : rootEntities) {
+				System.out.println(" - " + rootEntity.getUniqueName());
+			}
+		}
 	}
 }
