@@ -25,6 +25,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.util.ArrayList;
@@ -178,8 +179,8 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return toReturn;
 	}
 
-	public List<JSONObject> loadViews() {
-		List<JSONObject> views = new ArrayList<JSONObject>();
+	public List<IModelViewEntityDescriptor> loadViews() {
+		List<IModelViewEntityDescriptor> views = new ArrayList<IModelViewEntityDescriptor>();
 		for(IDataSourceConfiguration subConfiguration: subConfigurations) {
 			views.addAll( subConfiguration.loadViews() );
 		}

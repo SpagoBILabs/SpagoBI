@@ -25,6 +25,7 @@ import java.util.List;
 import org.json.JSONObject;
 
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 
 /**
  * The Interface IViewsDAO.
@@ -38,7 +39,7 @@ public interface IViewsDAO {
 	 * 
 	 * @return the model views
 	 */
-	List<JSONObject> loadModelViews();
+	List<IModelViewEntityDescriptor> loadModelViews();
 	
 	/**
 	 * Save model views.

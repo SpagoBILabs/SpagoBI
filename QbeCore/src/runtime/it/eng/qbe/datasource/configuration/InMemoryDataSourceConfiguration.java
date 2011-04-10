@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 	Map<Locale, IModelProperties> i18nMap;
 	
 	Map<String, Object> dataSourceProperties;
-	List<JSONObject> views;
+	List<IModelViewEntityDescriptor> views;
 	Map<String, List<ModelCalculatedField>> calculatedFields;
 	
 	public InMemoryDataSourceConfiguration(String modelName) {
@@ -80,7 +81,7 @@ public class InMemoryDataSourceConfiguration extends AbstractDataSourceConfigura
 		return dataSourceProperties;
 	}
 
-	public List<JSONObject> loadViews() {
+	public List<IModelViewEntityDescriptor> loadViews() {
 		if(views == null) views = super.loadViews();
 		return views;
 	}

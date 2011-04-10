@@ -24,6 +24,7 @@ package it.eng.qbe.model.structure.builder.jpa;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelEntity;
@@ -121,10 +122,10 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
 			}		
 			
-			List<JSONObject> list = getDataSource().getConfiguration().loadViews();
+			List<IModelViewEntityDescriptor> list = getDataSource().getConfiguration().loadViews();
 			if(list.size() > 0) {
-				JSONObject view = (JSONObject)list.get(0);
-				ModelViewEntity viewEntity = new ModelViewEntity(view, modelName, modelStructure);
+				IModelViewEntityDescriptor viewDescriptor = list.get(0);
+				ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
 				propertiesInitializer.addProperties(viewEntity);
 				modelStructure.addRootEntity(modelName, viewEntity);
 			}

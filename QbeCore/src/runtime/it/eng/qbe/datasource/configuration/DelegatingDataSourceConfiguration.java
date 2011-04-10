@@ -34,6 +34,7 @@ import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 /**
@@ -77,7 +78,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	}
 
 
-	public List<JSONObject> loadViews() {
+	public List<IModelViewEntityDescriptor> loadViews() {
 		return viewsDAO.loadModelViews();
 	}
 	

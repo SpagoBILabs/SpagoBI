@@ -24,6 +24,7 @@ package it.eng.qbe.model.structure;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,22 +41,16 @@ public class ModelViewEntity extends ModelEntity {
 	// COSTRUCTORS 
 	// =========================================================================
 
-	public ModelViewEntity(JSONObject view,  String modelName, IModelStructure structure) throws Exception{
+	public ModelViewEntity(IModelViewEntityDescriptor view,  String modelName, IModelStructure structure) throws Exception{
 		super(null, null, null, null, structure);
-		String viewName = view.optString("name");
-		setName(viewName);
-		
-		JSONArray tables = view.optJSONArray("tables");
-		JSONArray joins = view.optJSONArray("joins");
-		String type = tables.getJSONObject(0).optString("package");
-		setType(type + "." + viewName);
+	
+		setName( view.getName() );
+		setType( view.getType() );
 		
 		entities = new ArrayList<IModelEntity>();
-		for(int i = 0; i < tables.length(); i++) {
-			JSONObject table = tables.getJSONObject(i);
-			String tableName = table.optString("name");
-			String tableType = table.optString("package");
-			IModelEntity e = structure.getRootEntity(modelName, tableType + "." + tableName + "::" + tableName);
+		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
+		for(String innerEntityUniqueName : innerEntityUniqueNames) {
+			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
 			entities.add(e);
 		}
 	}
