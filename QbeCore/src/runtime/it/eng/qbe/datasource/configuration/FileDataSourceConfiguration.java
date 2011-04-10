@@ -22,14 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.configuration;
 
 
-import it.eng.qbe.datasource.configuration.dao.CalculatedFieldsDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
-import it.eng.qbe.datasource.configuration.dao.ModelI18NPropertiesDAOFileImpl;
-import it.eng.qbe.datasource.configuration.dao.ModelPropertiesDAOFileImpl;
-import it.eng.qbe.datasource.configuration.dao.ViewsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.CalculatedFieldsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelI18NPropertiesDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelPropertiesDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.ViewsDAOFileImpl;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
