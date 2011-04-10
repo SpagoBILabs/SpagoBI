@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 /**
  * Classes that implement this interface act as a proxy toward all the resources needed in order to create
  * a new IDataSource. All the methods in these class do not cache managed resources so calling them can involve 
@@ -85,7 +87,7 @@ public interface IDataSourceConfiguration {
 	Map<String,Object> loadDataSourceProperties();
 	
 
-	List loadViews();
+	List<JSONObject> loadViews();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }

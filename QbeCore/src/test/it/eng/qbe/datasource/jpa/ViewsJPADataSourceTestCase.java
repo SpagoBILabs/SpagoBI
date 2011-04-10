@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.AbstractQbeTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -30,7 +29,6 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelViewEntity;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
 
 import java.io.File;
 import java.util.List;
