@@ -18,28 +18,18 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource.configuration;
+package it.eng.qbe.datasource.configuration.dao;
 
-import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * The Interface IViewsDAO.
- * 
  * @author Andrea Gioia
  */
-public interface IViewsDAO {
+public interface ICalculatedFieldsDAO {	
 	
-	/**
-	 * Load views.
-	 * 
-	 * @return the model views
-	 */
-	Object loadModelViews();
-	
-	/**
-	 * Save model views.
-	 *
-	 * @param properties the model views
-	 */
-	void saveModelViews(Object views);
+	Map<String, List<ModelCalculatedField>> loadCalculatedFields();		
+	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }
