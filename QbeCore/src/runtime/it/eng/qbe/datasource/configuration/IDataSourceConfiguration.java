@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.util.List;
@@ -87,7 +88,7 @@ public interface IDataSourceConfiguration {
 	Map<String,Object> loadDataSourceProperties();
 	
 
-	List<JSONObject> loadViews();
+	List<IModelViewEntityDescriptor> loadViews();
 	Map<String, List<ModelCalculatedField>> loadCalculatedFields();
 	void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields);
 }

@@ -28,6 +28,7 @@ import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelViewEntity;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public class ViewsJPADataSourceTestCase extends AbstractQbeTestCase {
 		assertNotNull(views);
 		assertEquals(1, views.size());
 		assertNotNull(views.get(0));
-		assertTrue("Views conf cannot be an insatnce of [" + views.get(0).getClass().getName()  +"]", views.get(0) instanceof JSONObject);
+		assertTrue("Views conf cannot be an insatnce of [" + views.get(0).getClass().getName()  +"]", views.get(0) instanceof IModelViewEntityDescriptor);
 		
 		IModelStructure modelStructure = dataSource.getModelStructure();
 		IModelEntity entity = modelStructure.getRootEntity(modelName, "it.eng.spagobi.meta.EmployeeClosure::EmployeeClosure");

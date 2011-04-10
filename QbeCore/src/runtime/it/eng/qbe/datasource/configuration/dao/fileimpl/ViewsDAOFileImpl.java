@@ -21,6 +21,8 @@
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
+import it.eng.qbe.model.structure.ModelViewEntityDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -57,11 +59,11 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	}
 	
 
-	public List<JSONObject> loadModelViews() {
-		List<JSONObject> views; 
+	public List<IModelViewEntityDescriptor> loadModelViews() {
+		List<IModelViewEntityDescriptor> views; 
 		JSONObject viewsConfJSON = null;
 		
-		views = new ArrayList<JSONObject>();
+		views = new ArrayList<IModelViewEntityDescriptor>();
 		
 		JarFile jarFile = null;
 		try {
@@ -71,7 +73,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 			if(viewsJSON != null) {
 				for(int i = 0; i < viewsJSON.length(); i++) {
 					JSONObject viewJSON = viewsJSON.getJSONObject(i);
-					views.add(viewJSON);
+					views.add(new ModelViewEntityDescriptor(viewJSON));
 				}
 			}
 		} catch (Exception e) {

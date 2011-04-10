@@ -23,6 +23,7 @@ package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 
 import java.util.ArrayList;
@@ -69,8 +70,8 @@ public class AbstractDataSourceConfiguration implements IDataSourceConfiguration
 		return new HashMap<String, Object>();
 	}
 
-	public List<JSONObject> loadViews() {
-		return new ArrayList<JSONObject>();
+	public List<IModelViewEntityDescriptor> loadViews() {
+		return new ArrayList<IModelViewEntityDescriptor>();
 	}
 
 	public Map<String, List<ModelCalculatedField>> loadCalculatedFields() {
