@@ -241,9 +241,9 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel,
 			initStore : function() {
 
 				var myData = [
-						[ 105, 'Monia', 'monia@eng.it', 'prova', 'test',
+						[undefined, 'Monia', 'moniaATengDOTit', 'prova', 'test',
 								'provatest' ],
-						[ 106, 'Andrea', 'andrea@eng.it', 'prova', 'test',
+						[ undefined, 'Andrea', 'andreaATengDOTit', 'prova', 'test',
 								'provatest' ] ];
 				var fields = [ {
 					name : 'VALUE_ID'
@@ -267,16 +267,25 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel,
 			}
 
 			,
-			saveDomain : function(rowEditor, obj, data, rowIndex) {
+			saveDomain : function(rowEditor, obj, record, rowIndex) {
+					
+				var p = {};
+				if(record.get('VALUE_ID') != '') {
+					p.VALUE_ID = record.get('VALUE_ID');
+				}
+				
+				p.VALUE_CD = record.get('VALUE_CD');
+				p.VALUE_NM = record.get('VALUE_NM');
+				p.DOMAIN_CD = record.get('DOMAIN_CD');
+				p.DOMAIN_NM = record.get('DOMAIN_NM');
+				p.VALUE_DS = record.get('VALUE_DS');
+				
 				Ext.Ajax.request( {
 					url : this.crudServices['saveItemService'],
-					params : Ext.apply(obj, {
-						id : data.get('VALUE_ID')
-					}),
+					params : p,
 					method : 'POST',
 					success : function(response, options) {
 						alert('Salvataggio ok');
-						data.commit();
 					},
 					failure : Sbi.exception.ExceptionHandler.handleFailure,
 					scope : this

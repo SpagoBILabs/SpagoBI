@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 /*
  * Created on 20-giu-2005
  *
@@ -31,11 +31,13 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.services.ManageDomainService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -45,22 +47,25 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
 /**
- * Defines the Hibernate implementations for all DAO methods,
- * for a domain.
- *
+ * Defines the Hibernate implementations for all DAO methods, for a domain.
+ * 
  * @author zoppello e Monia Spinelli
  */
 public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		IDomainDAO {
 
+	// logger component
+	private static Logger logger = Logger.getLogger(DomainDAOHibImpl.class);
 	/**
 	 * Load list domains by type.
 	 * 
-	 * @param domainType the domain type
+	 * @param domainType
+	 *            the domain type
 	 * 
 	 * @return the list
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomainsByType(java.lang.String)
 	 */
@@ -85,7 +90,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 			List hibList = criteria.list();
 
-			
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
@@ -101,11 +105,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 		return realResult;
 
 	}
@@ -113,17 +118,21 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Load domain by code and value.
 	 * 
-	 * @param codeDomain the code domain
-	 * @param codeValue the code value
+	 * @param codeDomain
+	 *            the code domain
+	 * @param codeValue
+	 *            the code value
 	 * 
 	 * @return the domain
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 * java.lang.String)
+	 *      java.lang.String)
 	 */
-	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
+	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue)
+			throws EMFUserError {
 		/*
 		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
 		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
@@ -142,7 +151,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			criteria.add(aCriterion);
 
 			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
-			if (aSbiDomains == null) return null;
+			if (aSbiDomains == null)
+				return null;
 
 			aDomain = toDomain(aSbiDomains);
 
@@ -156,28 +166,33 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 		return aDomain;
 	}
-	
+
 	/**
 	 * Load domain by code and value.
 	 * 
-	 * @param codeDomain the code domain
-	 * @param codeValue the code value
+	 * @param codeDomain
+	 *            the code domain
+	 * @param codeValue
+	 *            the code value
 	 * 
 	 * @return the domain
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 * java.lang.String)
+	 *      java.lang.String)
 	 */
-	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
+	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain,
+			String codeValue) throws EMFUserError {
 		/*
 		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
 		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
@@ -196,7 +211,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			criteria.add(aCriterion);
 
 			aSbiDomains = (SbiDomains) criteria.uniqueResult();
-			if (aSbiDomains == null) return null;
+			if (aSbiDomains == null)
+				return null;
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -208,28 +224,30 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 		return aSbiDomains;
 	}
-	
+
 	/**
-	 * From the hibernate domain object at input, gives
-	 * the corrispondent <code>Domain</code> object.
+	 * From the hibernate domain object at input, gives the corrispondent
+	 * <code>Domain</code> object.
 	 * 
-	 * @param hibDomain The hybernate Domain object
+	 * @param hibDomain
+	 *            The hybernate Domain object
 	 * 
 	 * @return The corrispondent <code>Domain</code>
 	 */
-	public Domain toDomain(SbiDomains hibDomain){
+	public Domain toDomain(SbiDomains hibDomain) {
 		Domain aDomain = new Domain();
 		aDomain.setValueCd(hibDomain.getValueCd());
 		aDomain.setValueId(hibDomain.getValueId());
 		aDomain.setValueName(hibDomain.getValueNm());
-        aDomain.setDomainCode(hibDomain.getDomainCd());
+		aDomain.setDomainCode(hibDomain.getDomainCd());
 		aDomain.setDomainName(hibDomain.getDomainNm());
 		aDomain.setValueDescription(hibDomain.getValueDs());
 		return aDomain;
@@ -238,16 +256,18 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	/**
 	 * Load domain by id.
 	 * 
-	 * @param id the id
+	 * @param id
+	 *            the id
 	 * 
 	 * @return the domain
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainById(java.lang.Integer)
 	 */
 	public Domain loadDomainById(Integer id) throws EMFUserError {
-		
+
 		Domain toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -255,12 +275,13 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
-			SbiDomains hibDomain = (SbiDomains) aSession.load(SbiDomains.class, id);
-			
+
+			SbiDomains hibDomain = (SbiDomains) aSession.load(SbiDomains.class,
+					id);
+
 			toReturn = toDomain(hibDomain);
 			tx.commit();
-			
+
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -270,19 +291,21 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
-		
+
 		return toReturn;
 	}
 
-
-/* (non-Javadoc)
- * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
- */
-public List loadListDomains() throws EMFUserError {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
+	 */
+	public List loadListDomains() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		List domains = new ArrayList();
@@ -293,7 +316,7 @@ public List loadListDomains() throws EMFUserError {
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
-				Domain dom = toDomain((SbiDomains)it.next());
+				Domain dom = toDomain((SbiDomains) it.next());
 				domains.add(dom);
 			}
 			tx.commit();
@@ -303,150 +326,172 @@ public List loadListDomains() throws EMFUserError {
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 		return domains;
 	}
 
-/**
- * to the hibernate domain object at input, from
- * the corrispondent <code>Domain</code> object.
- * 
- * @param Domain object
- * 
- * @return The corrispondent <code>SbiDomain</code>
- */
-public SbiDomains fromDomain(Domain Domain){
-	SbiDomains hibDomain = new SbiDomains();
-	hibDomain.setValueCd(Domain.getValueCd());
-	hibDomain.setValueId(Domain.getValueId());
-	hibDomain.setValueNm(Domain.getValueName());
-	hibDomain.setDomainCd(Domain.getDomainCode());
-	hibDomain.setDomainNm(Domain.getDomainName());
-	hibDomain.setValueDs(Domain.getValueDescription());
-	return hibDomain;
-}
+	/**
+	 * to the hibernate domain object at input, from the corrispondent
+	 * <code>Domain</code> object.
+	 * 
+	 * @param Domain
+	 *            object
+	 * 
+	 * @return The corrispondent <code>SbiDomain</code>
+	 */
+	public SbiDomains fromDomain(Domain Domain) {
+		SbiDomains hibDomain = new SbiDomains();
+		hibDomain.setValueCd(Domain.getValueCd());
+		hibDomain.setValueId(Domain.getValueId());
+		hibDomain.setValueNm(Domain.getValueName());
+		hibDomain.setDomainCd(Domain.getDomainCode());
+		hibDomain.setDomainNm(Domain.getDomainName());
+		hibDomain.setValueDs(Domain.getValueDescription());
+		return hibDomain;
+	}
 
-/**
- * Save domain by id.
- * 
- * @param id the id
- * 
- * @return void
- * 
- * @throws EMFUserError the EMF user error
- * 
- */
-public void saveDomain(Domain domain) throws EMFUserError {
-	// TODO Auto-generated method stub
-	Domain toSave = null;
-	Session aSession = null;
-	Transaction tx = null;
+	/**
+	 * Save domain by id.
+	 * 
+	 * @param id
+	 *            the id
+	 * 
+	 * @return void
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * 
+	 */
+	public void saveDomain(Domain domain) throws EMFUserError {
+		
+		Domain toSave = null;
+		Session aSession = null;
+		Transaction tx = null;
 
-	try {
-		aSession = getSession();
-		tx = aSession.beginTransaction();
-				
-		aSession.save(this.fromDomain(domain));
-	
-		tx.commit();
-	
-	} catch (HibernateException he) {
-		logException(he);
+		logger.debug("IN");
+		try {
+			if (domain.getValueId() == null) {
+				logger.debug("inset new domain");
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+				SbiDomains sbiDomains = this.fromDomain(domain);
+				domain.setValueId(sbiDomains.getValueId());
+				aSession.save(sbiDomains);
 
-		if (tx != null)
-			tx.rollback();
+				tx.commit();
+			} else {
+				logger.debug("update domain");
+				this.updateDomain(domain);
+			}
 
-		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} catch (HibernateException he) {
+			logException(he);
 
-	} finally {
-		if (aSession!=null){
-			if (aSession.isOpen()) aSession.close();
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+
+	}
+
+	/**
+	 * Update domain by id.
+	 * 
+	 * @param id
+	 *            the id
+	 * 
+	 * @return void
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * 
+	 */
+	public void updateDomain(Domain domain) throws EMFUserError {
+		
+		Session aSession = null;
+		Transaction tx = null;
+		
+		logger.debug("IN");
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			aSession.update(this.fromDomain(domain));
+
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	/**
+	 * Delete domain by id.
+	 * 
+	 * @param id
+	 *            the id
+	 * 
+	 * @return void
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * 
+	 */
+	public void delete(String codeDomain, String codeValue) throws EMFUserError {
+		Session sess = null;
+		Transaction tx = null;
+
+		try {
+			sess = getSession();
+			tx = sess.beginTransaction();
+
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd",
+					codeDomain), Expression.eq("valueCd", codeValue));
+			Criteria criteria = sess.createCriteria(SbiDomains.class);
+			criteria.add(aCriterion);
+			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
+			if (aSbiDomains != null)
+				sess.delete(aSbiDomains);
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (sess != null) {
+				if (sess.isOpen())
+					sess.close();
+			}
 		}
 	}
-	
-}
-
-/**
- * Update domain by id.
- * 
- * @param id the id
- * 
- * @return void
- * 
- * @throws EMFUserError the EMF user error
- * 
- */
-public void updateDomain(Domain domain) throws EMFUserError {
-	// TODO Auto-generated method stub
-	Session aSession = null;
-	Transaction tx = null;
-
-	try {
-		aSession = getSession();
-		tx = aSession.beginTransaction();
-		
-		aSession.update(this.fromDomain(domain));
-	
-		tx.commit();
-	
-	} catch (HibernateException he) {
-		logException(he);
-
-		if (tx != null)
-			tx.rollback();
-
-		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
-	} finally {
-		if (aSession!=null){
-			if (aSession.isOpen()) aSession.close();
-		}
-	}
-	
-}
-
-/**
- * Delete domain by id.
- * 
- * @param id the id
- * 
- * @return void
- * 
- * @throws EMFUserError the EMF user error
- * 
- */
-public void delete(String codeDomain, String codeValue)  throws EMFUserError {
-	Session sess = null;
-	Transaction tx = null;
-
-	try {
-		sess = getSession();
-		tx = sess.beginTransaction();
-		
-		Criterion aCriterion = Expression.and(Expression.eq("domainCd",
-				codeDomain), Expression.eq("valueCd", codeValue));
-		Criteria criteria = sess.createCriteria(SbiDomains.class);
-		criteria.add(aCriterion);
-		SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
-		if (aSbiDomains!=null) sess.delete(aSbiDomains);
-		tx.commit();
-		
-	} catch (HibernateException he) {
-		logException(he);
-
-		if (tx != null)
-			tx.rollback();
-
-		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
-	} finally {
-		if (sess!=null){
-			if (sess.isOpen()) sess.close();
-		}
-	}
-}
 
 }
