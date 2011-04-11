@@ -17,6 +17,7 @@ import it.eng.spagobi.kpi.model.dao.IModelInstanceDAO;
 import it.eng.spagobi.kpi.model.dao.IModelResourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 
@@ -74,8 +75,16 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	
 	public void doSave() {
 		try {	
+			//Recupero le informazioni della richiesta
+			
+			//poi chiamo le set dei vari parametri dell'oggetto domain (meglio creare un metodo dedicato?)
+			
+			//Salvo su db
+			
+			
 			//domainDao.saveDomain(codeDomain, codeValue);
 			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+			//writeBackToClient(new JSONFailure(new SpagoBIServiceException(SERVICE_NAME, "Qualcosa è andato male!")));
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);
