@@ -54,7 +54,7 @@ public class HibernateDriver implements IDriver {
 	}
 	
 	public String getName() {
-		return "hibernate";
+		return DRIVER_ID;
 	}
 
 	public IDataSource getDataSource(IDataSourceConfiguration configuration) {
