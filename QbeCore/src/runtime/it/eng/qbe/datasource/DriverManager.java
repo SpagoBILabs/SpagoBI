@@ -42,7 +42,25 @@ public class DriverManager {
 		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
 	}
 
+	/**
+	 * Get the datasource for the passed driver and with the passed configuration..
+	 * If the datasource live in the cache it will not be rebuild
+	 * @param driverName name of the driver jpa/hibernate
+	 * @param configuration configuration of the datasource
+	 * @return
+	 */
 	public static IDataSource getDataSource(String driverName, IDataSourceConfiguration configuration) {
+		return getDataSource(driverName, configuration, true);
+	}
+	
+	/**
+	 * Get the datasource for the passed driver and with the passed configuration..
+	 * @param driverName name of the driver jpa/hibernate
+	 * @param configuration configuration of the datasource
+	 * @param cache if true the datasources cache will be enabled
+	 * @return
+	 */
+	public static IDataSource getDataSource(String driverName, IDataSourceConfiguration configuration, boolean cache) {
 		
 		IDataSource dataSource;
 		IDriver driver;
@@ -51,6 +69,8 @@ public class DriverManager {
 		if(driver == null) {
 			throw new SpagoBIRuntimeException("No suitable driver for id [" + driverName + "]");
 		}
+		
+		driver.setDataSourceCacheEnabled(cache);
 		
 		dataSource = driver.getDataSource(configuration);
 	
