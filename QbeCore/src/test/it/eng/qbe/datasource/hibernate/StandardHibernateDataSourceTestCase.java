@@ -51,6 +51,10 @@ public class StandardHibernateDataSourceTestCase extends AbstractDataSourceTestC
 		testEntityUniqueName = "it.eng.spagobi.Customer::Customer";
 	}
 	
+	public void testHibernateImpl() {
+		doTests();
+	}
+	
 	public void doTests() {
 		super.doTests();
 		// add custom tests here
