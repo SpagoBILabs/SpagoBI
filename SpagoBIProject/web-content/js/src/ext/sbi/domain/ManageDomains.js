@@ -285,7 +285,7 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel,
 					params : p,
 					method : 'POST',
 					success : function(response, options) {
-						alert('Salvataggio ok');
+						alert('Salvataggio ok: '+response.responseText);
 					},
 					failure : Sbi.exception.ExceptionHandler.handleFailure,
 					scope : this

@@ -375,12 +375,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		logger.debug("IN");
 		try {
 			if (domain.getValueId() == null) {
-				logger.debug("inset new domain");
+				logger.debug("insert new domain");
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 				SbiDomains sbiDomains = this.fromDomain(domain);
-				domain.setValueId(sbiDomains.getValueId());
 				aSession.save(sbiDomains);
+				domain.setValueId(sbiDomains.getValueId());
 
 				tx.commit();
 			} else {
