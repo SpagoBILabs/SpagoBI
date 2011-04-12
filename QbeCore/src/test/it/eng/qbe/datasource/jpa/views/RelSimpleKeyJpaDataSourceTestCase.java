@@ -45,11 +45,9 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ViewsJPADataSourceTestCase extends StandardJPAELinkImplDataSourceTestCase {
+public class RelSimpleKeyJpaDataSourceTestCase extends AbstractViewJpaDataSourceTestCase {
 	
-	String modelName;
-	
-	private static final String QBE_FILE = "test-resources/jpa/views/relNoKey/build/datamart.jar";
+	private static final String QBE_FILE = "test-resources/jpa/views/relSimpleKey/dist/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {
@@ -70,37 +68,5 @@ public class ViewsJPADataSourceTestCase extends StandardJPAELinkImplDataSourceTe
 	public void doTests() {
 		super.doTests();
 		// add custom tests here
-		doTestDataSourceImplementation();
-		doTestX();
-	}
-	
-	public void doTestDataSourceImplementation() {
-		assertTrue(dataSource instanceof HibernateDataSource);
-	}
-	
-	public void doTestX() {
-		try {
-			List views = dataSource.getConfiguration().loadViews();
-			assertNotNull(views);
-			assertEquals(1, views.size());
-			assertNotNull(views.get(0));
-			assertTrue("Views conf cannot be an insatnce of [" + views.get(0).getClass().getName()  +"]", views.get(0) instanceof IModelViewEntityDescriptor);
-			
-			IModelStructure modelStructure = dataSource.getModelStructure();
-			IModelEntity entity = modelStructure.getRootEntity(modelName, "it.eng.spagobi.meta.EmployeeClosure::EmployeeClosure");
-			if(entity == null) dumpRootEntities(modelStructure);
-			assertNotNull(entity);
-			assertTrue(entity instanceof ModelViewEntity);
-			List<IModelField> fields = entity.getAllFields();
-			List<IModelField> keyFields = entity.getKeyFields();
-			List<IModelField> normalFields = entity.getNormalFields();
-			assertEquals(15, fields.size());
-			assertEquals(0, keyFields.size());
-			assertEquals(15, normalFields.size());
-			assertEquals(fields.size(), keyFields.size() + normalFields.size());
-		} catch(Throwable t) {
-			t.printStackTrace();
-			fail();
-		}
 	}
 }

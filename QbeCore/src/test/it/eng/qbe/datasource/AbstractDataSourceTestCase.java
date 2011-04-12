@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -46,17 +47,23 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 	
 	protected String modelName;
 	protected String testEntityUniqueName;
-	
-	
+
 	public void doTests() {
 		doTestSmoke();
 		doTestLabelLocalization();
 		doTestTooltipLocalization();
+		doTestStructure();
 		doTestQuery();
 	}
 	
 	public void doTestSmoke() {
-		 assertNotNull("Impossible to build modelStructure", dataSource.getModelStructure());
+		try {
+			IModelStructure modelStructure = dataSource.getModelStructure();
+			assertNotNull("Impossible to build modelStructure", modelStructure);
+		} catch(Throwable t) {
+			t.printStackTrace();
+			fail();
+		}
 	}
 
 	public void doTestLabelLocalization() {
@@ -93,6 +100,20 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 		properties = dataSource.getModelI18NProperties(Locale.JAPANESE);
 		tooltip = properties.getProperty(entity, "tooltip");
 		assertTrue("[" + tooltip + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(tooltip));
+	}
+	
+	public void doTestStructure() {
+		try {
+			IModelStructure modelStructure = dataSource.getModelStructure();
+			assertNotNull(modelStructure);
+			List entities = modelStructure.getRootEntities(modelName);
+			Set<String> names = modelStructure.getModelNames();
+			assertNotNull(entities);
+			assertTrue(entities.size() > 0);
+		} catch(Throwable t) {
+			t.printStackTrace();
+			fail();
+		}
 	}
 	
 	public void doTestQuery() {
