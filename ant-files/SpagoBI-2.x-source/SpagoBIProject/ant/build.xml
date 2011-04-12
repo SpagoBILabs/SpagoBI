@@ -367,6 +367,8 @@
 			    	 <file name="./src/ext/sbi/home/Banner.js"/>
 			    	 <file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js"/>
 			    	
+			    	<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
+			    	
 			    </filelist>
 
 			</concat>

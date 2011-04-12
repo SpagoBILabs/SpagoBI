@@ -548,6 +548,7 @@ Sbi.locale.ln['sbi.ds.pivotColName'] = 'Name of Category Column to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Name of Value Column to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Name of the Column not to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Automatic Columns numeration?';
+Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Open QbE wizard';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -561,3 +562,13 @@ Ext.Msg.buttonText.no = 'No';
 Sbi.locale.ln['sbi.generic.from'] = 'Start date';
 Sbi.locale.ln['sbi.generic.to'] = 'End date';
 
+
+//===================================================================
+//MESSAGE FOR QBE DATASET BUILDER
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Qbe Dataset Builder';
+
+//===================================================================
+//DATASET - CHOOSE DATAMART
+//===================================================================
+Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';

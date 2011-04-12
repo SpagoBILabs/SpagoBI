@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/postgresql-8.2-505.jdbc2ee.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="/SpagoBIUtils/lib/jsr223.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

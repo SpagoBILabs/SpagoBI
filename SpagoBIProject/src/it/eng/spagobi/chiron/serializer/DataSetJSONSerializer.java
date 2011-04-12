@@ -6,6 +6,7 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
@@ -48,6 +49,11 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String SCRIPT = "script";
 	private static final String SCRIPT_LANGUAGE = "scriptLanguage";
 	private static final String JCLASS_NAME = "jclassName";
+	
+	private static final String QBE_DATA_SOURCE = "qbeDataSource";
+	private static final String QBE_DATAMARTS = "qbeDatamarts";
+	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
 	private static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	private static final String PIVOT_COL_NAME = "pivotColName";
@@ -160,6 +166,14 @@ public class DataSetJSONSerializer implements Serializer {
 				if(dataSourceLabel!=null){
 					result.put(DATA_SOURCE, dataSourceLabel);
 				}				
+			}
+			
+			else if(dsDetail instanceof QbeDataSetDetail) {
+				QbeDataSetDetail aQbeDataSetDetail = (QbeDataSetDetail) dsDetail;
+				result.put(QBE_SQL_QUERY, aQbeDataSetDetail.getSqlQuery());
+				result.put(QBE_JSON_QUERY, aQbeDataSetDetail.getJsonQuery());
+				result.put(QBE_DATA_SOURCE, aQbeDataSetDetail.getDataSourceLabel());
+				result.put(QBE_DATAMARTS, aQbeDataSetDetail.getDatamarts());			
 			}
 
 			else if(dsDetail instanceof WSDataSetDetail){

@@ -196,19 +196,21 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 		cfg = new Configuration();
 		
-		if(getConnection().isJndiConncetion()) {
-			cfg.setProperty("hibernate.connection.datasource", getConnection().getJndiName());
+		DBConnection connection = getConnection();
+		
+		if(connection.isJndiConncetion()) {
+			cfg.setProperty("hibernate.connection.datasource", connection.getJndiName());
 		} else {
-			cfg.setProperty("hibernate.connection.url", getConnection().getUrl());
-			cfg.setProperty("hibernate.connection.password", getConnection().getPassword());
-			cfg.setProperty("hibernate.connection.username", getConnection().getUsername());
-			cfg.setProperty("hibernate.connection.driver_class", getConnection().getDriverClass());
+			cfg.setProperty("hibernate.connection.url", connection.getUrl());
+			cfg.setProperty("hibernate.connection.password", connection.getPassword());
+			cfg.setProperty("hibernate.connection.username", connection.getUsername());
+			cfg.setProperty("hibernate.connection.driver_class", connection.getDriverClass());
 		}
 				
-		cfg.setProperty("hibernate.dialect", getConnection().getDialect());
+		cfg.setProperty("hibernate.dialect", connection.getDialect());
 		
 		// Ingres does not support scrollable result set
-		if ("org.hibernate.dialect.IngresDialect".equals(getConnection().getDialect())) {
+		if ("org.hibernate.dialect.IngresDialect".equals(connection.getDialect())) {
 			cfg.setProperty("hibernate.jdbc.use_scrollable_resultset", "false");
 		}
 		

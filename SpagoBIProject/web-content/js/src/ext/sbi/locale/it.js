@@ -544,6 +544,7 @@ Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nome della colonna delle categorie da Pi
 Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nome della colonna dei valori da Pivotare';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nome della colonna da non Pivotare';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numerazione automatica delle colonne?';
+Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Apri il wizard QbE';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI è necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
@@ -564,3 +565,13 @@ Sbi.locale.ln['sbi.generic.to'] = 'Data fine';
 //MESSAGE FOR SCHEDULER
 //===================================================================
 Sbi.locale.ln['sbi.scheduler.alert'] = 'Attenzione! Inserire una nuova data-ora di inizio schedulazione successiva a quella attuale, per evitare la rischedulazione.';
+
+//===================================================================
+//MESSAGE FOR QBE DATASET BUILDER
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Qbe Dataset Builder';
+
+//===================================================================
+//DATASET - CHOOSE DATAMART
+//===================================================================
+Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';

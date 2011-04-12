@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+
+	<ACTION name="GET_DATAMARTS_NAMES" 
+			class="it.eng.spagobi.engines.qbe.services.dataset.GetDatamartsNamesAction"  
+			scope="REQUEST">
+		<CONFIG/>
+	</ACTION>
+
+	<ACTION name="GET_SQL_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.dataset.GetSQLQueryAction"  
+			scope="REQUEST">
+		<CONFIG/>
+	</ACTION>
+
+</ACTIONS>
+

@@ -193,9 +193,24 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
     
     , setQuery: function(q) {
     	query = q;
+    	this.queryEditorPanel.setQuery(q);
     }
     
-
+	, getSQLQuery: function(callbackFn, scope) {
+		this.queryEditorPanel.getSQLQuery(callbackFn, scope);
+	}
+	
+	, getQueries: function() {
+		return this.queryEditorPanel.getQueries();
+	}
+	
+	, getQueriesCatalogue: function () {
+		var toReturn = {};
+		toReturn.catalogue = {};
+		toReturn.catalogue.queries = this.getQueries();
+		toReturn.version = Sbi.config.qbeEngineAnalysisStateVersion;
+		return toReturn;
+	}
     
     // private methods
 	, loadFirstQuery: function() {
@@ -205,8 +220,6 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	        success : function(response, opts) {
   	  			try {
   	  				var firstQuery = Ext.util.JSON.decode( response.responseText );
-  	  				
-  	  				
   	  				this.checkPromptableFilters(firstQuery);
   	  			} catch (err) {
   	  				Sbi.exception.ExceptionHandler.handleFailure();
@@ -352,4 +365,19 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		
 	}
   	
+	,
+	getParameters: function () {
+		this.queryEditorPanel.getParameters();
+	}
+	
+	,
+	setParameters: function (parameters) {
+		this.queryEditorPanel.setParameters(parameters);
+	}
+	
+	,
+	setQueriesCatalogue: function (queriesCatalogue) {
+		this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
+	}
+	
 });

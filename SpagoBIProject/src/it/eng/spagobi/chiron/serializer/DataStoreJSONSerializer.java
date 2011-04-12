@@ -87,10 +87,10 @@ public class DataStoreJSONSerializer  implements Serializer {
 			for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 				IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
 				
-				propertyRawValue = fieldMetaData.getProperty("visible");
-				if(propertyRawValue != null 
-						&& (propertyRawValue instanceof Boolean) 
-						&& ((Boolean)propertyRawValue).booleanValue() == false) {
+				Object visibleProp = fieldMetaData.getProperty("visible");
+				if(visibleProp != null 
+						&& (visibleProp instanceof Boolean) 
+						&& ((Boolean)visibleProp).booleanValue() == false) {
 					continue;
 				}
 				
