@@ -25,6 +25,7 @@ import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.hibernate.HibernateDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
 
@@ -53,9 +54,15 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
 	}
 	
-	// add Jpa Hibernate Impl specific tests here ...
+	public void doTests() {
+		super.doTests();
+		// add custom tests here
+		doTestDataSourceImplementation();
+	}
 	
-	public void testDataSourceImplementation() {
-		assertTrue(dataSource instanceof JPADataSource);
+	// add Hibernate specific tests here ...
+	
+	public void doTestDataSourceImplementation() {
+		assertTrue(dataSource instanceof HibernateDataSource);
 	}
 }

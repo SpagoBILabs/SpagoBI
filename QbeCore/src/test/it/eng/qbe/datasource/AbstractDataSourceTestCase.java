@@ -47,11 +47,19 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 	protected String modelName;
 	protected String testEntityUniqueName;
 	
-	public void testSmoke() {
+	
+	public void doTests() {
+		doTestSmoke();
+		doTestLabelLocalization();
+		doTestTooltipLocalization();
+		doTestQuery();
+	}
+	
+	public void doTestSmoke() {
 		 assertNotNull("Impossible to build modelStructure", dataSource.getModelStructure());
 	}
 
-	public void testLabelLocalization() {
+	public void doTestLabelLocalization() {
 		IModelProperties properties;
 		String label;
 		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
@@ -69,7 +77,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 		assertTrue("[" + label + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(label));
 	}
 	
-	public void testTooltipLocalization() {
+	public void doTestTooltipLocalization() {
 		IModelProperties properties;
 		String tooltip;
 		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
@@ -87,7 +95,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 		assertTrue("[" + tooltip + "] is not equal to [" + "Customer Default" + "]", "Customer Default".equals(tooltip));
 	}
 	
-	public void testQuery() {
+	public void doTestQuery() {
 		Query query = new Query();
 		
 		IModelStructure modelStructure = dataSource.getModelStructure();
