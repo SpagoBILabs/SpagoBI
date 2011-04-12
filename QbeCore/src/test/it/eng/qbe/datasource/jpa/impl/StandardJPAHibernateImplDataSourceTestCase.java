@@ -50,7 +50,7 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("connection", connection);
-		dataSource = DriverManager.getDataSource(HibernateDriver.DRIVER_ID, configuration);
+		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
 		
 		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
 	}
@@ -68,6 +68,9 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 	// add Hibernate specific tests here ...
 	
 	public void doTestDataSourceImplementation() {
-		assertTrue(dataSource instanceof HibernateDataSource);
+		assertTrue(dataSource instanceof JPADataSource);
 	}
+	
+	public void doTestLabelLocalization() {}
+	public void doTestTooltipLocalization() {}
 }
