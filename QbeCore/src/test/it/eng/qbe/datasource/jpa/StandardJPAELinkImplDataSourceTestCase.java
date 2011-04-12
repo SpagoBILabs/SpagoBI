@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.datasource.hibernate;
+package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
@@ -32,21 +32,28 @@ import java.io.File;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SimpleHibernateDataSourceTestCase extends AbstractDataSourceTestCase {
+public class StandardJPAELinkImplDataSourceTestCase extends AbstractDataSourceTestCase {
 	
-	private static final String QBE_FILE = "test-resources/hibernate/foodmart/datamart.jar";
+	
+	private static final String QBE_FILE = "test-resources/jpa/jpaImpl/eclipselink/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {
 		IDataSourceConfiguration configuration;
 		
-		modelName = "foodmart";
+		modelName = "foodmart"; 
 		
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("connection", connection);
-		dataSource = DriverManager.getDataSource(HibernateDriver.DRIVER_ID, configuration);
+		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
 		
-		testEntityUniqueName = "it.eng.spagobi.Customer::Customer";
+		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
+	}
+	
+	// add Jpa Eclipselink Impl specific tests here ...
+	
+	public void testDataSourceImplementation() {
+		assertTrue(dataSource instanceof JPADataSource);
 	}
 }

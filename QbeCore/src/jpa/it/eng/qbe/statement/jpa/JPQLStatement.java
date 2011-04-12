@@ -27,17 +27,21 @@ import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelViewEntity;
+import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -77,159 +81,16 @@ import org.apache.log4j.Logger;
  */
 public class JPQLStatement extends AbstractStatement {
 	
-	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(JPQLStatement.class);
-    
+	protected IJpaDataSource dataSource;
+	
+	private String whereClause;
+   
     public static final String DISTINCT = "DISTINCT";
 	public static final String SELECT = "SELECT";
 	public static final String FROM = "FROM";
 	
-	protected IJpaDataSource dataSource;
-	
-	public static interface IConditionalOperator {	
-		String apply(String leftHandValue, String[] rightHandValues);
-	}
-	public static Map conditionalOperators;
-	
-	private String whereClause;
-	
-	static {
-		conditionalOperators = new HashMap();
-		conditionalOperators.put(CriteriaConstants.EQUALS_TO, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.EQUALS_TO;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + "=" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_EQUALS_TO, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_EQUALS_TO;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + "!=" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.GREATER_THAN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.GREATER_THAN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + ">" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.EQUALS_OR_GREATER_THAN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.EQUALS_OR_GREATER_THAN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + ">=" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.LESS_THAN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.LESS_THAN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + "<" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.EQUALS_OR_LESS_THAN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.EQUALS_OR_LESS_THAN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				return leftHandValue + "<=" + rightHandValues[0];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.STARTS_WITH, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.STARTS_WITH;}
-			public String apply(String leftHandValue, String[] rightHandValues) {	
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = rightHandValue + "%";
-				return leftHandValue + " like '" + rightHandValue + "'";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_STARTS_WITH, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_STARTS_WITH;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = rightHandValue + "%";
-				return leftHandValue + " not like '" + rightHandValue + "'";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.ENDS_WITH, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.ENDS_WITH;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue;
-				return leftHandValue + " like '" + rightHandValue + "'";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_ENDS_WITH, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_ENDS_WITH;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue;
-				return leftHandValue + " not like '" + rightHandValue + "'";
-			}
-		});		
-		conditionalOperators.put(CriteriaConstants.CONTAINS, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.CONTAINS;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
-				String rightHandValue = rightHandValues[0].trim();
-				rightHandValue = rightHandValue.substring(1, rightHandValue.length()-1);
-				rightHandValue = "%" + rightHandValue + "%";
-				return leftHandValue + " like '" + rightHandValue + "'";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.IS_NULL, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.IS_NULL;}
-			public String apply(String leftHandValue, String[] rightHandValue) {
-				return leftHandValue + " IS NULL";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_NULL, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_NULL;}
-			public String apply(String leftHandValue, String[] rightHandValue) {
-				return leftHandValue + " IS NOT NULL";
-			}
-		});
-		
-		conditionalOperators.put(CriteriaConstants.BETWEEN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.BETWEEN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues.length == 2, "When BEETWEEN operator is used the operand must contain minValue and MaxValue");
-				return leftHandValue + " BETWEEN " + rightHandValues[0] + " AND " + rightHandValues[1];
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_BETWEEN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_BETWEEN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				Assert.assertTrue(rightHandValues != null && rightHandValues.length == 2, "When BEETWEEN operator is used the operand must contain minValue and MaxValue");
-				return leftHandValue + " NOT BETWEEN " + rightHandValues[0] + " AND " + rightHandValues[1];
-			}
-		});
-		
-		conditionalOperators.put(CriteriaConstants.IN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.IN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
-				return leftHandValue + " IN (" +  rightHandValue + ")";
-			}
-		});
-		conditionalOperators.put(CriteriaConstants.NOT_IN, new IConditionalOperator() {
-			public String getName() {return CriteriaConstants.NOT_IN;}
-			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
-				return leftHandValue + " NOT IN (" +  rightHandValue + ")";
-			}
-		});
-	}
+	public static transient Logger logger = Logger.getLogger(JPQLStatement.class);
+	    
 	
 	protected JPQLStatement(IDataSource dataSource) {
 		super(dataSource);
@@ -238,6 +99,75 @@ public class JPQLStatement extends AbstractStatement {
 	
 	public JPQLStatement(IDataSource dataSource, Query query) {
 		super(dataSource, query);
+	}
+	
+	public void prepare() {
+		String queryStr;
+		
+		// one map of entity aliases for each queries (master query + subqueries)
+		// each map is indexed by the query id
+		Map entityAliasesMaps = new HashMap();
+		
+		queryStr = compose(getQuery(), entityAliasesMaps);	
+
+		if(getParameters() != null) {
+			try {
+				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
+			}
+			
+		}	
+		
+		setQueryString(queryStr);
+		
+	}
+	
+	/*
+	 * internally used to generate the parametric statement string. Shared by the prepare method and the buildWhereClause method in order
+	 * to recursively generate subquery statement string to be embedded in the parent query.
+	 */
+	private String compose(Query query, Map entityAliasesMaps) {
+		String queryStr = null;
+		String selectClause = null;
+		whereClause = null;
+		String groupByClause = null;
+		String orderByClause = null;
+		String fromClause = null;
+		String havingClause = null;
+		
+		Assert.assertNotNull(query, "Input parameter 'query' cannot be null");
+		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
+				
+		// let's start with the query at hand
+		entityAliasesMaps.put(query.getId(), new HashMap());
+		
+		selectClause = buildSelectClause(query, entityAliasesMaps);
+		whereClause = buildWhereClause(query, entityAliasesMaps);
+		groupByClause = buildGroupByClause(query, entityAliasesMaps);
+		orderByClause = buildOrderByClause(query, entityAliasesMaps);
+		fromClause = buildFromClause(query, entityAliasesMaps);
+		havingClause = buildHavingClause(query, entityAliasesMaps);
+		 
+		queryStr = selectClause + " " + fromClause + " " + whereClause + " " +  groupByClause + " " + havingClause + " " + orderByClause;
+		
+		Set subqueryIds;
+		try {
+			subqueryIds = StringUtils.getParameters(queryStr, "Q");
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
+		}
+		
+		Iterator it = subqueryIds.iterator();
+		while(it.hasNext()) {
+			String id = (String)it.next();
+			Query subquery = query.getSubquery(id);
+			
+			String subqueryStr = compose(subquery, entityAliasesMaps);
+			queryStr = queryStr.replaceAll("Q\\{" + subquery.getId() + "\\}", subqueryStr);
+		} 
+		
+		return queryStr;
 	}
 	
 	private String getNextAlias(Map entityAliasesMaps) {
@@ -447,7 +377,8 @@ public class JPQLStatement extends AbstractStatement {
 				
 				if (keyT instanceof BasicType) {
 					//the key has only one field
-					String name = (et.getId(Object.class)).getName();
+					
+					String name = (et.getId(et.getIdType().getClass())).getName();
 					if(whereClause==null || whereClause.equals("")){
 						whereClause = "WHERE ";
 					}else{
@@ -728,7 +659,7 @@ public class JPQLStatement extends AbstractStatement {
 		
 		try {
 			IConditionalOperator conditionalOperator = null;
-			conditionalOperator = (IConditionalOperator)conditionalOperators.get( whereField.getOperator() );
+			conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( whereField.getOperator() );
 			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
 			
 			if(whereField.getLeftOperand().values[0].contains("expression")){
@@ -858,193 +789,6 @@ public class JPQLStatement extends AbstractStatement {
 		return freshExpr;
 	}
 	
-	/*
-	private String buildUserProvidedWhereField(WhereField whereField, Query query, Map entityAliasesMaps) {
-		
-		String whereClauseElement;
-		Map targetQueryEntityAliasesMap;
-		String leftHandValue;
-		String rightHandValue;
-		DataMartField datamartField;
-		DataMartEntity rootEntity;
-		String queryName;
-		String rootEntityAlias;
-		
-		
-		logger.debug("IN");
-		
-		try {
-			whereClauseElement = "";
-			leftHandValue = "";
-			rightHandValue = "";
-		
-			targetQueryEntityAliasesMap = (Map)entityAliasesMaps.get(query.getId());
-			Assert.assertNotNull(targetQueryEntityAliasesMap, "Entity aliasses map for query [" + query.getId() + "] cannot be null in order to execute method [buildUserProvidedWhereField]");
-			
-			
-			// build left-hand value
-			logger.debug("processing where element left-hand field value ...");
-			
-			logger.debug("where left-hand field unique name [" + whereField.getUniqueName() + "]");
-			
-			datamartField = getDataMartModel().getDataMartModelStructure().getField(whereField.getUniqueName());
-			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + whereField.getOperand().toString() + "]");
-			queryName = datamartField.getQueryName();
-			logger.debug("where left-hand field query name [" + queryName + "]");
-			
-			rootEntity = datamartField.getParent().getRoot(); 
-			logger.debug("where left-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-			
-			if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
-				logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-				rootEntityAlias = getNextAlias(entityAliasesMaps);
-				logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-				targetQueryEntityAliasesMap.put(rootEntity.getUniqueName(), rootEntityAlias);
-			}
-			rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );		
-			logger.debug("where left-hand field root entity alias [" + rootEntityAlias + "]");
-			
-			leftHandValue = rootEntityAlias + "." + queryName;
-			logger.debug("where element left-hand field value [" + leftHandValue + "]");
-			
-			
-			// build right-hand value
-			logger.debug("processing where element right-hand field value ...");
-			
-			if(OPERAND_TYPE_FIELD.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_FIELD + "]");
-				
-				logger.debug("where right-hand field unique name [" + whereField.getOperand().toString() + "]");
-				
-				datamartField = getDataMartModel().getDataMartModelStructure().getField( whereField.getOperand().toString() );
-				Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + whereField.getOperand().toString() + "]");
-				queryName = datamartField.getQueryName();
-				logger.debug("where right-hand field query name [" + queryName + "]");
-				
-				rootEntity = datamartField.getParent().getRoot(); 
-				logger.debug("where right-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-				
-				if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
-					logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-					rootEntityAlias = getNextAlias(entityAliasesMaps);
-					logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-					targetQueryEntityAliasesMap.put(rootEntity.getUniqueName(), rootEntityAlias);
-				}
-				rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );
-				logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
-				
-				rightHandValue = rootEntityAlias + "." + queryName;
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-				
-			} else if(OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				String operand;
-				String[] chunks;
-				String parentQueryId;
-				String fieldName;
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_FIELD + "]");
-				
-				// it comes directly from the client side GUI. It is a composition of the parent query id and filed name, 
-				// separated by a space
-				operand = whereField.getOperand().toString();
-				logger.debug("operand  is equals to [" + operand + "]");
-				
-				chunks = operand.split(" ");
-				Assert.assertTrue(chunks.length >= 2, "Operand [" + chunks.toString() + "]does not contains enougth informations in order to resolve the reference to parent field");
-				
-				parentQueryId = chunks[0];
-				logger.debug("where right-hand field belonging query [" + parentQueryId + "]");
-				fieldName = chunks[1];
-				logger.debug("where right-hand field unique name [" + fieldName + "]");
-	
-				datamartField = getDataMartModel().getDataMartModelStructure().getField( fieldName );
-				Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + fieldName + "]");
-				
-				queryName = datamartField.getQueryName();
-				logger.debug("where right-hand field query name [" + queryName + "]");
-				
-				rootEntity = datamartField.getParent().getRoot();
-				logger.debug("where right-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
-				
-				Map parentEntityAliases = (Map)entityAliasesMaps.get(parentQueryId);
-				if(parentEntityAliases != null) {
-					if(!parentEntityAliases.containsKey(rootEntity.getUniqueName())) {
-						Assert.assertUnreachable("Filter [" + whereField.getUniqueName() + "] of subquery [" + query.getId() + "] refers to a non " +
-								"existing parent query [" + parentQueryId+ "] entity [" + rootEntity.getUniqueName() + "]");
-					}
-					rootEntityAlias = (String)parentEntityAliases.get( rootEntity.getUniqueName() );
-				} else {
-					rootEntityAlias = "unresoved_alias";
-					logger.warn("Impossible to get aliases map for parent query [" + parentQueryId +"]. Probably the parent query ha not been compiled yet");					
-					logger.warn("Query [" + query.getId() +"] refers entities of its parent query [" + parentQueryId +"] so the generated statement wont be executable until the parent query will be compiled");					
-				}
-				logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
-				
-				rightHandValue = rootEntityAlias + "." + queryName;
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-				
-			} else if(OPERAND_TYPE_STATIC.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_STATIC + "]");
-				
-				if (whereField.isFree()) {
-					// get last value first (the last value edited by the user)
-					rightHandValue = whereField.getLastValue();
-				} else {
-					rightHandValue = whereField.getOperand().toString();
-				}
-				
-				logger.debug("where right-hand field value [" + rightHandValue + "]");
-				
-				logger.debug("where right-hand field type [" + datamartField.getType() + "]");
-				
-				if(datamartField.getType().equalsIgnoreCase("String")) {
-					if( !( whereField.IN.equalsIgnoreCase( whereField.getOperator() ) 
-							|| whereField.IN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.NOT_IN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.BETWEEN.equalsIgnoreCase( whereField.getOperator() )
-							|| whereField.NOT_BETWEEN.equalsIgnoreCase( whereField.getOperator() ) 
-					)) {
-						rightHandValue = "'" + rightHandValue + "'";
-					} else {
-						String[] items = rightHandValue.split(",");
-						rightHandValue = "";
-						for(int i = 0; i < items.length; i++) {
-							rightHandValue += (i==0?"":",") + "'" + items[i] + "'";
-						}					
-					}
-				}
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-			} else if(OPERAND_TYPE_SUBQUERY.equalsIgnoreCase( whereField.getOperandType() ) ) {
-				String subqueryId;
-				
-				logger.debug("where element right-hand field type [" + OPERAND_TYPE_SUBQUERY + "]");
-				
-				subqueryId = (String)whereField.getOperand();
-				logger.debug("Referenced subquery [" + subqueryId + "]");
-				
-				rightHandValue = "Q{" + subqueryId + "}";
-				rightHandValue = "( " + rightHandValue + ")";
-				logger.debug("where element right-hand field value [" + rightHandValue + "]");
-			} else {
-				Assert.assertUnreachable("Unrecognized filter type: " + whereField.getOperandType());
-			}		
-			
-			IConditionalOperator conditionalOperator = null;
-			conditionalOperator = (IConditionalOperator)conditionalOperators.get( whereField.getOperator() );
-			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
-			
-			
-			whereClauseElement = conditionalOperator.apply(leftHandValue, rightHandValue);
-			logger.debug("where element value [" + whereClauseElement + "]");
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		
-		return  whereClauseElement;
-	}
-	*/
 	
 	private String buildUserProvidedWhereClause(ExpressionNode filterExp, Query query, Map entityAliasesMaps) {
 		String str = "";
@@ -1080,7 +824,7 @@ public class JPQLStatement extends AbstractStatement {
 								
 				if(field.getLeftOperand().values[0].contains("expression")){
 					IConditionalOperator conditionalOperator = null;
-					conditionalOperator = (IConditionalOperator)conditionalOperators.get( field.getOperator() );
+					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( field.getOperator() );
 					Assert.assertNotNull(conditionalOperator, "Unsopported operator " + field.getOperator() + " used in query definition");
 
 					String havingClauseElement =  buildInLineCalculatedFieldClause(field.getOperator(), field.getLeftOperand(), field.isPromptable(), field.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
@@ -1108,7 +852,7 @@ public class JPQLStatement extends AbstractStatement {
 		
 		try {
 			IConditionalOperator conditionalOperator = null;
-			conditionalOperator = (IConditionalOperator)conditionalOperators.get( havingField.getOperator() );
+			conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( havingField.getOperator() );
 			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + havingField.getOperator() + " used in query definition");
 			
 			leftOperandElements = buildOperand(havingField.getLeftOperand(), query, entityAliasesMaps);
@@ -1236,7 +980,63 @@ public class JPQLStatement extends AbstractStatement {
 			}
 		}
 		
+		// add joins required by views
+		try {
+		Map<String, Set<String>> viewToInnerEntitiesMap = new HashMap<String, Set<String>>();
+		List<ISelectField> selectFields =  query.getSelectFields(true);
+		for(ISelectField selectField : selectFields) {
+			if(selectField.isDataMartField()){
+				DataMartSelectField dataMartSelectField = (DataMartSelectField)selectField;
+				IModelField modelField = getDataSource().getModelStructure().getField(dataMartSelectField.getUniqueName());
+				IModelEntity entity = modelField.getParent();
+				String parentViewName = entity.getPropertyAsString("parentView");
+				if(parentViewName != null) {
+					ModelViewEntity viewEntity = (ModelViewEntity)getDataSource().getModelStructure().getEntity(parentViewName);
+					if( !viewToInnerEntitiesMap.containsKey( viewEntity.getUniqueName() ) ) {
+						viewToInnerEntitiesMap.put(viewEntity.getUniqueName(), new HashSet<String>());
+					}
+					Set innerEntities = (Set)viewToInnerEntitiesMap.get( viewEntity.getUniqueName());
+					innerEntities.add(modelField.getParent().getUniqueName());
+				}
+				
+			}
+		}
 		
+		// per il momento metto le join anche se non ce n'è bisogno
+		for(String viewName : viewToInnerEntitiesMap.keySet()) {
+			ModelViewEntity view = (ModelViewEntity)getDataSource().getModelStructure().getEntity( viewName );
+			List<Join> joins = view.getJoins();
+			for(Join join : joins) {
+				IConditionalOperator conditionalOperator = null;
+				conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( CriteriaConstants.EQUALS_TO );
+				
+				String sourceEntityAlias = (String)entityAliases.get(join.getSourceEntity().getUniqueName());
+				String destinationEntityAlias = (String)entityAliases.get(join.getDestinationEntity().getUniqueName());
+				for(int i = 0; i < join.getSourceFileds().size(); i++) {
+					IModelField sourceField = join.getSourceFileds().get(i);
+					IModelField destinationField = join.getDestinationFileds().get(i);
+					String sourceFieldName = sourceField.getQueryName();
+					String destinationFieldName = destinationField.getQueryName();
+					
+					String leftHandValue = sourceEntityAlias + "." + sourceFieldName;
+					String rightHandValues = destinationEntityAlias + "." + destinationFieldName;
+					
+					String filterCondition = conditionalOperator.apply(leftHandValue, new String[]{rightHandValues});
+					
+					if(filterCondition != null) {
+						if(buffer.toString().length() > 0) {
+							buffer.append(" AND ");
+						} else {
+							buffer.append("WHERE ");
+						}
+						buffer.append(filterCondition + " ");
+					}
+				}
+			}
+		}
+		} catch(Throwable t) {
+			t.printStackTrace();
+		}
 		return buffer.toString().trim();
 	}
 	
@@ -1369,76 +1169,9 @@ public class JPQLStatement extends AbstractStatement {
 		
 		return selectedEntities;
 	}
-	/*
-	 * internally used to generate the parametric statement string. Shared by the prepare method and the buildWhereClause method in order
-	 * to recursively generate subquery statement string to be embedded in the parent query.
-	 */
-	private String compose(Query query, Map entityAliasesMaps) {
-		String queryStr = null;
-		String selectClause = null;
-		whereClause = null;
-		String groupByClause = null;
-		String orderByClause = null;
-		String fromClause = null;
-		String havingClause = null;
-		
-		Assert.assertNotNull(query, "Input parameter 'query' cannot be null");
-		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
-				
-		// let's start with the query at hand
-		entityAliasesMaps.put(query.getId(), new HashMap());
-		
-		selectClause = buildSelectClause(query, entityAliasesMaps);
-		whereClause = buildWhereClause(query, entityAliasesMaps);
-		groupByClause = buildGroupByClause(query, entityAliasesMaps);
-		orderByClause = buildOrderByClause(query, entityAliasesMaps);
-		fromClause = buildFromClause(query, entityAliasesMaps);
-		havingClause = buildHavingClause(query, entityAliasesMaps);
-		 
-		queryStr = selectClause + " " + fromClause + " " + whereClause + " " +  groupByClause + " " + havingClause + " " + orderByClause;
-		
-		Set subqueryIds;
-		try {
-			subqueryIds = StringUtils.getParameters(queryStr, "Q");
-		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
-		}
-		
-		Iterator it = subqueryIds.iterator();
-		while(it.hasNext()) {
-			String id = (String)it.next();
-			Query subquery = query.getSubquery(id);
-			
-			String subqueryStr = compose(subquery, entityAliasesMaps);
-			queryStr = queryStr.replaceAll("Q\\{" + subquery.getId() + "\\}", subqueryStr);
-		} 
-		
-		return queryStr;
-	}
 	
-	public void prepare() {
-		// TODO Auto-generated method stub
-		String queryStr;
-		
-		// one map of entity aliases for each queries (master query + subqueries)
-		// each map is indexed by the query id
-		Map entityAliasesMaps = new HashMap();
-		
-		queryStr = compose(getQuery(), entityAliasesMaps);	
-
-		
-		if(getParameters() != null) {
-			try {
-				queryStr = StringUtils.replaceParameters(queryStr.trim(), "P", getParameters());
-			} catch (IOException e) {
-				throw new SpagoBIRuntimeException("Impossible to set parameters in query", e);
-			}
-			
-		}	
-		
-		setQueryString(queryStr);
-		
-	}
+	
+	
 
 
 	public String getQueryString() {		
@@ -1450,7 +1183,6 @@ public class JPQLStatement extends AbstractStatement {
 	}
 	
 	public String getSqlQueryString() {
-		// TODO Auto-generated method stub
 		String sqlQuery = null;
 		EntityManager em = dataSource.getEntityManager();
 		java.sql.Connection connection = em.unwrap(java.sql.Connection.class);

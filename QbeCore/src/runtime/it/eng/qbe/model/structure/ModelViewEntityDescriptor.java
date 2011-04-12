@@ -23,6 +23,7 @@ package it.eng.qbe.model.structure;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -77,5 +78,83 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		}
 		
 		return pkg + "." + getName();
+	}
+
+	public List<IModelViewJoinDescriptor> getJoinDescriptors() {
+		List<IModelViewJoinDescriptor> joinDescriptors;
+		
+		joinDescriptors = new ArrayList<IModelViewJoinDescriptor>();
+		try {
+			JSONArray joinsJSON = viewJSON.optJSONArray("joins");
+			for(int i = 0; i < joinsJSON.length(); i++) {
+				JSONObject joinJSON = joinsJSON.getJSONObject(i);
+				joinDescriptors.add( new ModelViewJoinDescriptor(joinJSON) );
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to read inner joins from conf file", t);
+		}
+		
+		return joinDescriptors;
+	}
+	
+	public class ModelViewJoinDescriptor implements IModelViewJoinDescriptor {
+		
+		String sourceEntityUniqueName;
+		String destinationEntityUniqueName;
+		List<String> sourceColumns;
+		List<String> destinationColumns;
+		
+		public ModelViewJoinDescriptor(JSONObject joinJSON) {
+			try {
+				JSONObject sourceTable = joinJSON.getJSONObject("sourceTable");
+				JSONObject destinationTable = joinJSON.getJSONObject("destinationTable");
+			
+				String pkg, tableName;
+				
+				pkg = sourceTable.getString("package");
+				tableName = sourceTable.getString("name");
+				sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+				
+				pkg = destinationTable.getString("package");
+				tableName = destinationTable.getString("name");
+				destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+				
+				JSONArray sourceColumsJSON = joinJSON.optJSONArray("sourceColumns");
+				sourceColumns = deserializeColumnsArray( sourceColumsJSON );
+				
+				JSONArray destinationColumsJSON = joinJSON.optJSONArray("destinationColumns");
+				destinationColumns = deserializeColumnsArray( destinationColumsJSON );
+			} catch(Throwable t) {
+				throw new RuntimeException("Impossible to initialize ModelViewJoinDescriptor from conf object: " + joinJSON, t);
+			}
+		}
+
+		private List<String> deserializeColumnsArray(JSONArray columnsJSON) throws JSONException {
+			List<String> columns;
+			
+			columns = new ArrayList<String>();
+			for(int i = 0; i < columnsJSON.length(); i++) {
+				columns.add( columnsJSON.getString(i) );
+			}
+			return columns;
+		}
+		
+		public String getSourceEntityUniqueName() {
+			return sourceEntityUniqueName;
+		}
+
+		public String getDestinationEntityUniqueName() {
+			return destinationEntityUniqueName;
+		}
+
+		public List<String> getSourceColumns() {
+			return sourceColumns;
+		}
+
+		public List<String> getDestinationColumns() {
+			return destinationColumns;
+		}
+		
+		
 	}
 }

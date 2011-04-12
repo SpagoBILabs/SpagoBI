@@ -21,10 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +40,60 @@ import org.json.JSONObject;
 public class ModelViewEntity extends ModelEntity {
 	
 	List<IModelEntity> entities;
+	List<Join> joins;
+	
+	public class Join {
+		IModelEntity sourceEntity;
+		List <IModelField> sourceFields;
+		IModelEntity destinationEntity;
+		List <IModelField> destinationFields;
+		
+		public String getFieldUniqueName(IModelEntity parentEntity, String fieldName) {
+			if(parentEntity.getParent() == null) {
+				return parentEntity.getType() + ":" + fieldName;
+			}
+			return parentEntity.getUniqueName() + ":" + fieldName;
+		}
+		
+		public Join(IModelViewJoinDescriptor joinDescriptor, String modelName, IModelStructure structure) {
+			
+			sourceEntity = structure.getRootEntity(modelName, joinDescriptor.getSourceEntityUniqueName());
+			destinationEntity = structure.getRootEntity(modelName, joinDescriptor.getDestinationEntityUniqueName());
+			
+			sourceFields = new ArrayList<IModelField>();
+			for(String fieldName : joinDescriptor.getDestinationColumns()) {
+				String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
+				IModelField f = sourceEntity.getField(fieldUniqueName);
+				Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]", f);
+				sourceFields.add(f);
+			}
+			
+			destinationFields = new ArrayList<IModelField>();
+			for(String fieldName : joinDescriptor.getDestinationColumns()) {
+				String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
+				IModelField f = destinationEntity.getField(fieldUniqueName);
+				Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
+				destinationFields.add(f);
+			}
+			
+		}
+		
+		public IModelEntity getSourceEntity() {
+			return sourceEntity;
+		}
+		
+		public IModelEntity getDestinationEntity() {
+			return destinationEntity;
+		}
+		
+		public List<IModelField> getSourceFileds() {
+			return sourceFields;
+		}
+		
+		public List<IModelField> getDestinationFileds() {
+			return destinationFields;
+		}
+	}
 	
 	// =========================================================================
 	// COSTRUCTORS 
@@ -53,6 +111,14 @@ public class ModelViewEntity extends ModelEntity {
 			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
 			entities.add(e);
 		}
+		
+		joins = new ArrayList<Join>();
+		List<IModelViewJoinDescriptor> joinDescriptors = view.getJoinDescriptors();
+		for(IModelViewJoinDescriptor joinDescriptor : joinDescriptors) {
+			joins.add( new Join(joinDescriptor, modelName, structure) );
+		}
+		
+		
 	}
 	
 	// =========================================================================
@@ -108,5 +174,13 @@ public class ModelViewEntity extends ModelEntity {
 			fields.addAll( entity.getAllFieldOccurencesOnSubEntity(entityName, fieldName) );
 		}
 		return fields;
+	}
+
+	public List<Join> getJoins() {
+		 return joins;		
+	}
+	
+	public List<IModelEntity> getInnerEntities() {
+		 return entities;		
 	}
 }
