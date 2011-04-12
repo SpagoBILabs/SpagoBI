@@ -287,7 +287,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 	}
 
-	private void addDbLinks() {
+	protected void addDbLinks() {
 		Configuration cfg = null;
 		
 		for(int i = 0; i < getSubConfigurations().size(); i++) {

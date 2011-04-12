@@ -99,7 +99,7 @@ public abstract class AbstractDataSource implements IDataSource {
 	}
 	
 	protected static void updateCurrentClassLoader(File jarFile){
-		ClassLoaderManager.updateCurrentClassLoader(jarFile);
+		ClassLoaderManager.updateCurrentWebClassLoader(jarFile);
 	}
 	
 }
