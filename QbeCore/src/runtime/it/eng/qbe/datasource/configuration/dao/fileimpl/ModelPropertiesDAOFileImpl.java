@@ -31,6 +31,8 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.log4j.Logger;
+
 /**
  * Implementation of IModelPropertiesDAO that read model properties from a property
  * file named qbe.properties stored withing the jar file passed in as argument to
@@ -47,6 +49,8 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 	
 	private static final String PROPERTIES_FILE_NAME = "qbe.properties";
 	
+	 public static transient Logger logger = Logger.getLogger(IModelPropertiesDAO.class);
+	
 	public ModelPropertiesDAOFileImpl(File file) {
 		modelJarFile = file;
 	}
@@ -62,9 +66,18 @@ public class ModelPropertiesDAOFileImpl implements IModelPropertiesDAO {
 			jf = new JarFile( modelJarFile );
 			properties = loadQbePropertiesFormJarFile(jf);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error loadin properties",e);
 			return new SimpleModelProperties();
-		}				
+		}finally{
+			try {
+				if(jf!=null){
+					jf.close();	
+				}
+			} catch (Exception e2) {
+				logger.error("Error closing the jar file",e2);
+			}
+			
+		}			
 		
 		return properties;	
 	}
