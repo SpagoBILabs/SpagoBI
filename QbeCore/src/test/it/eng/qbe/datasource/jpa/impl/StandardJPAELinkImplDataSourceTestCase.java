@@ -53,9 +53,16 @@ public class StandardJPAELinkImplDataSourceTestCase extends AbstractDataSourceTe
 		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
 	}
 	
+	public void doTests() {
+		super.doTests();
+		
+		// add custom tests here...
+		doTestDataSourceImplementation();
+	}
+	
 	// add Jpa Eclipselink Impl specific tests here ...
 	
-	public void testDataSourceImplementation() {
+	public void doTestDataSourceImplementation() {
 		assertTrue(dataSource instanceof JPADataSource);
 	}
 }
