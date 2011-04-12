@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.datasource.AbstractQbeTestCase;
+import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
@@ -41,11 +41,11 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ViewsJPADataSourceTestCase extends AbstractQbeTestCase {
+public class ViewsJPADataSourceTestCase extends StandardJPAHibernateImplDataSourceTestCase {
 	
 	String modelName;
 	
-	private static final String QBE_FILE = "test-resources/jpa/foodmartviews/datamart.jar";
+	private static final String QBE_FILE = "test-resources/jpa/jpaViews/datamart.jar";
 	
 	@Override
 	protected void setUpDataSource() {
@@ -59,7 +59,7 @@ public class ViewsJPADataSourceTestCase extends AbstractQbeTestCase {
 		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
 	}
 	
-	public void testSmoke() throws JSONException {
+	public void testX() throws JSONException {
 		List views = dataSource.getConfiguration().loadViews();
 		assertNotNull(views);
 		assertEquals(1, views.size());

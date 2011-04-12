@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource;
 
+import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -49,12 +50,7 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 	public void testSmoke() {
 		 assertNotNull("Impossible to build modelStructure", dataSource.getModelStructure());
 	}
-	
-	public void __testStructure() {
-		IModelEntity entity = dataSource.getModelStructure().getEntity(testEntityUniqueName);
-		assertNotNull("Impossible to load entity [" + testEntityUniqueName + "] from datasource [" + dataSource.getName() + "]", entity);
-	}
-	
+
 	public void testLabelLocalization() {
 		IModelProperties properties;
 		String label;
@@ -113,10 +109,12 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 			datsSet.loadData();
 		} catch (Throwable e) {
 			e.printStackTrace();
+			fail();
 		}
 		
 		IDataStore dataStore = datsSet.getDataStore();
 		
-		Assert.assertTrue("Query resultset is empty", dataStore.getRecordsCount() > 0);
+		assertNotNull(dataStore);
+		assertTrue(dataStore.getRecordsCount() > 0);
 	}
 }

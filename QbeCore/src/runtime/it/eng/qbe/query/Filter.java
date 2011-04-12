@@ -25,7 +25,6 @@ import it.eng.qbe.utility.StringUtils;
 import java.io.IOException;
 import java.util.Set;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Filter.
  * 

@@ -128,6 +128,11 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
 				propertiesInitializer.addProperties(viewEntity);
 				modelStructure.addRootEntity(modelName, viewEntity);
+				
+				String viewEntityUniqueName = viewEntity.getUniqueName();
+				for(IModelEntity e : viewEntity.getInnerEntities()) {
+					e.getProperties().put("parentView", viewEntityUniqueName);
+				}
 			}
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");

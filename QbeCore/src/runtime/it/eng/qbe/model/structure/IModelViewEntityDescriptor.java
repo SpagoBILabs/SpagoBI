@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,4 +32,12 @@ public interface IModelViewEntityDescriptor {
 	String getName();
 	String getType();
 	Set<String> getInnerEntityUniqueNames();
+	List<IModelViewJoinDescriptor> getJoinDescriptors();
+	
+	public interface IModelViewJoinDescriptor {
+		public String getSourceEntityUniqueName();
+		public String getDestinationEntityUniqueName();
+		public List<String> getSourceColumns();
+		public List<String> getDestinationColumns();
+	}
 }
