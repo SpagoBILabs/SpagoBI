@@ -26,6 +26,7 @@ import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
+import it.eng.qbe.datasource.hibernate.HibernateDriver;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
 
@@ -49,7 +50,7 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("connection", connection);
-		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
+		dataSource = DriverManager.getDataSource(HibernateDriver.DRIVER_ID, configuration);
 		
 		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
 	}

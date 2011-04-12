@@ -378,7 +378,7 @@ public class JPQLStatement extends AbstractStatement {
 				if (keyT instanceof BasicType) {
 					//the key has only one field
 					
-					String name = (et.getId(et.getIdType().getClass())).getName();
+					String name = (et.getId(Object.class)).getName();
 					if(whereClause==null || whereClause.equals("")){
 						whereClause = "WHERE ";
 					}else{
