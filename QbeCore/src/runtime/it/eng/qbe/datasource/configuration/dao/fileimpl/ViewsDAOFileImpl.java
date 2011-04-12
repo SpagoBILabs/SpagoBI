@@ -21,6 +21,7 @@
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
+import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelViewEntityDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -53,6 +55,8 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 	File modelJarFile;
 	
 	private static final String VIEWS_FILE_NAME = "views.json";
+	
+	 public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 	
 	public ViewsDAOFileImpl(File file) {
 		modelJarFile = file;
@@ -76,6 +80,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 					views.add(new ModelViewEntityDescriptor(viewJSON));
 				}
 			}
+			jarFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}				
@@ -99,6 +104,14 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 		} catch(Exception ioe){
 			ioe.printStackTrace();
 			viewsJSON = new JSONObject();
+		}finally{
+			try {
+				if(jarFile!=null){
+					jarFile.close();
+				}
+			} catch (Exception e2) {
+				logger.error("Error closing the jar file",e2);
+			}
 		}
 		
 		return viewsJSON;

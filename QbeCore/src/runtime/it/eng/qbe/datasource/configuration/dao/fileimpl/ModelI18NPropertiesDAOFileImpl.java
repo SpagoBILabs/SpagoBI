@@ -57,7 +57,7 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
 	
 	public SimpleModelProperties loadProperties(Locale locale) {
 		Properties properties;		
-		JarFile jarFile;
+		JarFile jarFile=null;
 		
 		Assert.assertTrue(modelJarFile.exists(), "The model file [" + modelJarFile+ "] does not exist");
 		Assert.assertTrue(modelJarFile.isFile(), "The model file [" + modelJarFile+ "] is a folder");
@@ -66,9 +66,18 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
 		try {
 			jarFile = new JarFile( modelJarFile );			
 			properties = getLabelProperties(jarFile, locale);
+			
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to load i18n properties from file [" + modelJarFile + "]", t);
-		}
+		}finally{
+			try {
+				if(jarFile!=null){
+					jarFile.close();
+				}
+			} catch (Exception e2) {
+				logger.error("Error closing the jar file",e2);
+			}
+		}	
 		
 		return new SimpleModelProperties(properties);
 	}
