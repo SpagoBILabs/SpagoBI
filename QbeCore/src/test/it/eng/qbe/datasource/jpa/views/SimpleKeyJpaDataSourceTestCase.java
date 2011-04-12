@@ -58,7 +58,7 @@ public class SimpleKeyJpaDataSourceTestCase extends AbstractViewJpaDataSourceTes
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
 		configuration.loadDataSourceProperties().put("connection", connection);
-		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
+		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration, false);
 	}
 	
 	public void testQbeWithView() {

@@ -38,6 +38,7 @@ public abstract class AbstractQbeTestCase extends TestCase {
 	
 	protected DBConnection connection;
 	protected IDataSource dataSource;
+	protected ClassLoader classLoader;
 	
 	public static String CONNECTION_DIALECT = "org.hibernate.dialect.MySQLDialect";
 	public static String CONNECTION_DRIVER = "com.mysql.jdbc.Driver";
@@ -47,6 +48,8 @@ public abstract class AbstractQbeTestCase extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		classLoader = Thread.currentThread().getContextClassLoader();
 		
 		connection = new DBConnection();			
 		connection.setName( "foodmart" );
@@ -65,6 +68,8 @@ public abstract class AbstractQbeTestCase extends TestCase {
 		super.tearDown();
 		connection = null;
 		tearDownDataSource();
+		
+		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 	
 	protected void tearDownDataSource() {
