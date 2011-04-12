@@ -59,9 +59,6 @@ public abstract class AbstractViewJpaDataSourceTestCase extends AbstractDataSour
 			List<IModelField> fields = entity.getAllFields();
 			List<IModelField> keyFields = entity.getKeyFields();
 			List<IModelField> normalFields = entity.getNormalFields();
-			assertEquals(15, fields.size());
-			assertEquals(0, keyFields.size());
-			assertEquals(15, normalFields.size());
 			assertEquals(fields.size(), keyFields.size() + normalFields.size());
 		} catch(Throwable t) {
 			t.printStackTrace();
