@@ -19,12 +19,14 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.qbe.datasource.jpa;
+package it.eng.qbe.datasource.jpa.impl;
 
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.jpa.JPADriver;
 
 import java.io.File;
 
