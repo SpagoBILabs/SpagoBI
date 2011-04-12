@@ -54,6 +54,10 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		testEntityUniqueName = "it.eng.spagobi.meta.Customer::Customer";
 	}
 	
+	public void testJpaHibernateImpl() {
+		doTests();
+	}
+	
 	public void doTests() {
 		super.doTests();
 		// add custom tests here
