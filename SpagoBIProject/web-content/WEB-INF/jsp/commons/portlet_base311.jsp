@@ -196,6 +196,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%-- Ext js overrides --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-3.1.1/overrides.js")%>"></script>
 
+<%-- MIF library --%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/miframe-debug.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/mifmsg.js")%>"></script>
 
 <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/resources/images/default/s.gif")%>';

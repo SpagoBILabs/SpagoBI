@@ -116,7 +116,7 @@
 <DOMAIN valueCd="Java Class" valueNm="SbiJClassDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiJClassDataSet"/>
 <DOMAIN valueCd="Web Service" valueNm="SbiWSDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiWSDataSet"/>
 <DOMAIN valueCd="Script" valueNm="SbiScriptDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiScriptDataSet"/>
-<DOMAIN valueCd="Qbe" valueNm="SbiJsonDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiJsonDataSet"/>
+<DOMAIN valueCd="Qbe" valueNm="SbiQbeDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiQbeDataSet"/>
 <DOMAIN valueCd="Cat1" valueNm="Cat1" domainCd="CATEGORY_TYPE" domainNm="Category Type" valueDs="Cat1"/>
 <DOMAIN valueCd="Cat2" valueNm="Cat2" domainCd="CATEGORY_TYPE" domainNm="Category Type" valueDs="Cat2"/>
 </DOMAINS>

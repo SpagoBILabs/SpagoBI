@@ -19,11 +19,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
-<%@ page import="it.eng.spagobi.commons.bo.Domain,
+
+<%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
+<%@page import="it.eng.spagobi.commons.bo.Domain,
 				 it.eng.spagobi.tools.datasource.bo.*,
 				 java.util.ArrayList,
 				 java.util.List,
 				 org.json.JSONArray" %>
+<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
+<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.engines.drivers.qbe.QbeDriver"%>
+<%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+
 <%
     List dsTypesList = (List) aSessionContainer.getAttribute("dsTypesList");
     List catTypesCd = (List) aSessionContainer.getAttribute("catTypesList");
@@ -34,9 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %>
 
 
-<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
-<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
-<%@page import="org.json.JSONObject"%><script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 
@@ -100,7 +107,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String trasfTypes = trasfTypesArray.toString();
 	trasfTypes = trasfTypes.replaceAll("\"","'");
-    
+	
+	String qbeEngineBaseUrl = null;
+	StringBuffer qbeEngineBuildDatasetUrl = new StringBuffer();
+	StringBuffer qbeEngineGetDatamartsUrl = new StringBuffer();
+	List engines = DAOFactory.getEngineDAO().loadAllEngines();
+	Iterator it = engines.iterator();
+	while (it.hasNext()) {
+		Engine engine = (Engine) it.next();
+		String driver = engine.getDriverName();
+		if (driver != null && driver.equals(QbeDriver.class.getName())) {
+			qbeEngineBaseUrl = engine.getUrl();
+			qbeEngineBuildDatasetUrl.append(qbeEngineBaseUrl);
+			qbeEngineGetDatamartsUrl.append(qbeEngineBaseUrl);
+			break;
+		}
+	}
+	qbeEngineBuildDatasetUrl.append("?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION");
+	qbeEngineGetDatamartsUrl.append("?ACTION_NAME=GET_DATAMARTS_NAMES");
+	if (!GeneralUtilities.isSSOEnabled()) {
+		qbeEngineBuildDatasetUrl.append("&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier);
+		qbeEngineGetDatamartsUrl.append("&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier);
+	}
+	qbeEngineBuildDatasetUrl.append("&" + QbeDriver.PARAM_NEW_SESSION + "=TRUE");
+	qbeEngineGetDatamartsUrl.append("&" + QbeDriver.PARAM_NEW_SESSION + "=TRUE");
+	qbeEngineBuildDatasetUrl.append("&" + SpagoBIConstants.SBI_LANGUAGE + "=" + curr_language);
+	qbeEngineBuildDatasetUrl.append("&" + SpagoBIConstants.SBI_COUNTRY + "=" + curr_country);
     %>
 
     var config = {};  
@@ -122,6 +154,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
     	baseUrl: url
     });
+    
+    Sbi.config.qbeDatasetBuildUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineBuildDatasetUrl.toString()) %>';
+    Sbi.config.qbeGetDatamartsUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineGetDatamartsUrl.toString()) %>';
 
 	Ext.onReady(function(){
 		Ext.QuickTips.init();

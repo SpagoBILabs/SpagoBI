@@ -48,6 +48,14 @@ public class CrosstabJSONSerializerFactory implements ISerializerFactory{
 		
 	}
 	
+	
+	public static CrosstabJSONSerializerFactory getInstance() {
+		if (instance == null) {
+			instance = new CrosstabJSONSerializerFactory();
+		}
+		return instance;
+	}
+	
 	private CrosstabJSONSerializerFactory() {}
 
 	

@@ -46,7 +46,7 @@ public class DynamicPublisher implements PublisherDispatcherIFace {
 		logger.debug("IN");
 		String publisherName = null;
 		SourceBean serviceResponse = response.getServiceResponse();
-		publisherName = (String) serviceResponse.getAttribute("PUBLISHER_NAME");
+		publisherName = (String) serviceResponse.getAttribute(PUBLISHER_NAME);
 		logger.debug("OUT: publisherName = " + publisherName);
 		return publisherName;
 	}

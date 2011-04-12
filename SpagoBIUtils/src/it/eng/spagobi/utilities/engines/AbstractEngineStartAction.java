@@ -84,8 +84,8 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	private IDataSource dataSource;
 	private IDataSet dataSet;
 	private Locale locale;	
-	private EngineAnalysisMetadata analysisMetadata;
-	private byte[] analysisStateRowData;
+	protected EngineAnalysisMetadata analysisMetadata;
+	protected byte[] analysisStateRowData;
 	
 	private Content template;
 	
@@ -95,7 +95,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	private DataSetServiceProxy datasetProxy;
 	
 	
-	private static final BASE64Decoder DECODER = new BASE64Decoder();
+	protected static final BASE64Decoder DECODER = new BASE64Decoder();
 	
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
@@ -510,7 +510,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	   return auditProxy;
    }
    
-   private DataSourceServiceProxy getDataSourceServiceProxy() {
+   public DataSourceServiceProxy getDataSourceServiceProxy() {
 	   if(datasourceProxy == null) {
 		   datasourceProxy = new DataSourceServiceProxy( getUserIdentifier() , getHttpSession() );
 	   }	   
@@ -533,7 +533,10 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	   
 	   copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
 	   env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
-	   env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+	   // document id can be null (when using QbE for dataset definition)
+	   if (getDocumentId() != null) {
+		   env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+	   }
 	   env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 	   env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 	   env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );

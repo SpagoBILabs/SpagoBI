@@ -1,7 +1,17 @@
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.DriverManager;
+import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.DAOException;
+import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
@@ -9,6 +19,8 @@ import it.eng.spagobi.chiron.serializer.SerializationException;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -17,6 +29,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
@@ -28,15 +41,23 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -100,7 +121,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private static final String DS_JCLASS = "SbiJClassDataSet";
 	private static final String DS_QUERY = "SbiQueryDataSet";
 	private static final String DS_SCRIPT = "SbiScriptDataSet";
-	private static final String DS_JSON = "SbiJsonDataSet";
+	private static final String DS_QBE = "SbiQbeDataSet";
+	
+	private static final String QBE_DATA_SOURCE = "qbeDataSource";
+	private static final String QBE_DATAMARTS = "qbeDatamarts";
+	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
 	public static String START = "start";
 	public static String LIMIT = "limit";
@@ -242,6 +268,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
 						((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel);
 					}
+				}else if(dsType.equalsIgnoreCase(DS_QBE)){
+					dsActiveDetail = new QbeDataSetDetail();
+					String sqlQuery = getAttributeAsString(QBE_SQL_QUERY);
+					String jsonQuery = getAttributeAsString(QBE_JSON_QUERY);
+					String dataSourceLabel = getAttributeAsString(QBE_DATA_SOURCE);
+					String datamarts = getAttributeAsString(QBE_DATAMARTS);
+					((QbeDataSetDetail) dsActiveDetail).setSqlQuery(sqlQuery);
+					((QbeDataSetDetail) dsActiveDetail).setJsonQuery(jsonQuery);
+					((QbeDataSetDetail) dsActiveDetail).setDataSourceLabel(dataSourceLabel);
+					((QbeDataSetDetail) dsActiveDetail).setDatamarts(datamarts);
 				}else if(dsType.equalsIgnoreCase(DS_SCRIPT)){
 					dsActiveDetail = new ScriptDataSetDetail();
 					String script = getAttributeAsString(SCRIPT);
@@ -262,8 +298,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					if(wsAddress!=null && !wsAddress.equals("")){
 						((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress);
 					}
-				}else if(dsType.equalsIgnoreCase(DS_JSON)){
-					//TODO
 				}
 				
 				if(ds!=null){
@@ -526,8 +560,27 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				((JavaClassDataSet)ds).setClassName(jclassName);
 			}
 			
-			if(dsType.equalsIgnoreCase(DS_JSON)){
-				//TODO
+			if(dsType.equalsIgnoreCase(DS_QBE)){
+				
+				String qbeDatamarts = getAttributeAsString(QBE_DATAMARTS);
+				String dataSourceLabel = getAttributeAsString(QBE_DATA_SOURCE);
+				String jsonQuery = getAttributeAsString(QBE_JSON_QUERY);
+				
+				IDataSource dataSource = null;
+				try {
+					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				} catch (EMFUserError e) {
+					logger.error("Error while retrieving Datasource with label " + dataSourceLabel, e);
+					throw new SpagoBIServiceException(SERVICE_NAME, 
+							"Error while retrieving Datasource with label " + dataSourceLabel, e);
+				}
+				
+				it.eng.qbe.datasource.IDataSource qbeDataSource = getQbeDataSource(qbeDatamarts, dataSource);
+				QueryCatalogue catalogue = getCatalogue(jsonQuery, qbeDataSource);
+				Query query = catalogue.getFirstQuery();
+				
+				ds = QbeDatasetFactory.createDataSet(qbeDataSource.createStatement(query));
+
 			}
 		
 			if(ds!=null){						
@@ -674,5 +727,114 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		logger.debug("OUT");
 		return dataSetJSON;
+	}
+	
+	
+	public it.eng.qbe.datasource.IDataSource getQbeDataSource(String datamartName, IDataSource dataSource) {
+
+        Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+       
+        String modelName = datamartName;
+        List<String> modelNames = new ArrayList<String>();
+        modelNames.add( modelName );
+   
+        DBConnection connection = new DBConnection();
+        connection.setName( modelName );
+        Domain dialect;
+		try {
+			dialect = DAOFactory.getDomainDAO().loadDomainById(dataSource.getDialectId());
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error while loading domain with id " + dataSource.getDialectId(), e);
+		}
+        connection.setDialect( dialect.getValueCd() );           
+        connection.setJndiName( dataSource.getJndi() );           
+        connection.setDriverClass( dataSource.getDriver() );           
+        connection.setPassword( dataSource.getPwd() );
+        connection.setUrl( dataSource.getUrlConnection() );
+        connection.setUsername( dataSource.getUser() );   
+
+        dataSourceProperties.put("connection", connection);
+        dataSourceProperties.put("dblinkMap", new HashMap());
+
+	    File modelJarFile = null;
+	    List<File> modelJarFiles = new ArrayList<File>();
+	    CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
+	    compositeConfiguration.loadDataSourceProperties().putAll( dataSourceProperties);
+	    
+		SourceBean jndiBean = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String jndi = jndiBean.getCharacters();
+		String resourcePath = SpagoBIUtilities.readJndiResource(jndi);
+	    modelJarFile = new File(resourcePath+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelNames.get(0)+File.separator+"datamart.jar");
+	    modelJarFiles.add(modelJarFile);
+	    compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(modelNames.get(0), modelJarFile));
+	
+	    logger.debug("OUT: Finish to load the data source for the model names "+modelNames+"..");
+	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration);
+	}
+	
+    /**
+     * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml
+     * in the META-INF folder
+     * @param jarFile a jar file with the model definition
+     * @return jpa if the persistence provder is JPA o hibernate otherwise
+     */
+    private static String getDriverName(File jarFile){
+        logger.debug("IN: Check the driver name. Looking if "+jarFile+" is a jpa jar file..");
+        JarInputStream zis;
+        JarEntry zipEntry;
+        String dialectName;
+        boolean isJpa = false;
+           
+        try {
+            FileInputStream fis = new FileInputStream(jarFile);
+            zis = new JarInputStream(fis);
+            while((zipEntry=zis.getNextJarEntry())!=null){
+                logger.debug("Zip Entry is [" + zipEntry.getName() + "]");
+                if(zipEntry.getName().equals("META-INF/persistence.xml") ){
+                    isJpa = true;
+                    break;
+                }
+                zis.closeEntry();
+            }
+            zis.close();
+            if(isJpa){
+                dialectName = "jpa";
+            } else{
+                dialectName = "hibernate";
+            }
+        } catch (Throwable t) {
+            logger.error("Impossible to read jar file [" + jarFile + "]",t);
+            throw new DAOException("Impossible to read jar file [" + jarFile + "]");
+        }
+
+
+        logger.debug("OUT: "+jarFile+" has the dialect: "+dialectName);
+        return dialectName;
+    }
+    
+    
+	public QueryCatalogue getCatalogue(String json, it.eng.qbe.datasource.IDataSource dataSource) throws Exception {
+		QueryCatalogue catalogue;
+		JSONObject catalogueJSON;
+		JSONArray queriesJSON;
+		JSONObject queryJSON;
+		Query query;
+		
+		catalogue = new QueryCatalogue();
+		catalogueJSON = new JSONObject(json).getJSONObject("catalogue");
+		try {
+			queriesJSON = catalogueJSON.getJSONArray("queries");
+		
+			for(int i = 0; i < queriesJSON.length(); i++) {
+				queryJSON = queriesJSON.getJSONObject(i);
+				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, dataSource);
+								
+				catalogue.addQuery(query);
+			}
+		} catch (Throwable e) {
+			throw new SpagoBIEngineRuntimeException("Impossible to deserialize catalogue", e);
+		}
+		
+		return catalogue;
 	}
 }

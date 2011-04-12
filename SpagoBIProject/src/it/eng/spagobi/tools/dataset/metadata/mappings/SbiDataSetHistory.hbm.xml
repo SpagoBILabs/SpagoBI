@@ -88,11 +88,20 @@
 	        <property name="javaClassName" type="string">
 	            <column name="JCLASS_NAME" />
 	        </property>
-		</subclass>   
-		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiJsonDataSet" discriminator-value="SbiJsonDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
+		</subclass>
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiQbeDataSet" discriminator-value="SbiQbeDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
+	        <property name="sqlQuery" type="text">
+	            <column name="QUERY" />
+	        </property>
 	        <property name="jsonQuery" type="string">
 	            <column name="JSON_QUERY" />
 	        </property>
+	        <property name="datamarts" type="string">
+	            <column name="DATAMARTS" />
+	        </property>
+	        <many-to-one name="dataSource" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
+	            <column name="DATA_SOURCE_ID" not-null="false" />
+	        </many-to-one>	        
 		</subclass>                
     </class>
 </hibernate-mapping>

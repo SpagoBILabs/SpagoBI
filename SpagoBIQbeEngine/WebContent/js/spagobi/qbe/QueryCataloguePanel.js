@@ -95,6 +95,7 @@ Sbi.qbe.QueryCataloguePanel = function(config) {
 	// constructor
 	Sbi.qbe.QueryCataloguePanel.superclass.constructor.call(this, c);
     
+    this.addEvents('load');
     
 };
 
@@ -109,7 +110,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	
 	// public methods
 	
-	, load: function() {
+	, load: function() { // ma quando viene chiamato?
 		this.treeLoader.load(this.rootNode, function(){});
 	}
 
@@ -178,7 +179,6 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		var queryNode = this.tree.getNodeById(queryId);
 		
 		if(queryNode) {
-			
 			query = queryNode.props.query;
 			query.name = queryNode.text;
 			query.subqueries = [];
@@ -430,6 +430,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		});
 				
 		this.rootNode = new Ext.tree.AsyncTreeNode({
+			id			: 'root',
 	        text		: 'Queries',
 	        iconCls		: 'database',
 	        expanded	: true,
@@ -520,11 +521,12 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		if( node.childNodes && node.childNodes.length > 0 ) {
 			this.tree.getSelectionModel().select( node.childNodes[0] );
 		}
+		
+		this.fireEvent('load', this);
 	}
 	
 	, onSelect: function(sm, newnode, oldnode) {
 		var allowSelection = true;
-		
 		if(newnode.id !== this.rootNode.id) {
 			var oldquery = oldnode?  oldnode.props.query: undefined;
 			var b = this.fireEvent('beforeselect', this, newnode.props.query, oldquery);
@@ -534,6 +536,35 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 		
 		return allowSelection;
+	}
+	
+	,
+	setQueries : function (queriesCatalogue) {
+		this.clear();
+		var queries = queriesCatalogue.catalogue.queries;
+		for (var i = 0; i < queries.length; i++) {
+			var query = queries[i];
+			var root = this.tree.getRootNode();
+			var queryNode = {
+			    id: query.id
+			   	, text: query.name
+			   	, leaf: true
+			   	, attributes: {
+			 		query: query
+			 		, iconCls: 'icon-query'
+			    }
+			};
+			root.appendChild( queryNode );
+			root.expand();
+			
+			this.tree.getSelectionModel().select( root.childNodes[0] );
+		}
+	}
+	
+	,
+	clear : function () {
+		var root = this.tree.getRootNode();
+		root.removeAll(true);
 	}
 	
 });

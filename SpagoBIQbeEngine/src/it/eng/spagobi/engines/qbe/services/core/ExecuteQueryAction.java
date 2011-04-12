@@ -129,15 +129,15 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 			}
 			// promptable filters values may come with request (read-only user modality)
-			updatePromptableFiltersValue(query);
+			updatePromptableFiltersValue(query, this);
 			
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			//String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+			String sqlQuery = statement.getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-		//	logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
 			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
@@ -213,7 +213,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		
 	}
 	
-	private void updatePromptableFiltersValue(Query query) {
+	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
 		logger.debug("IN");
 		List whereFields = query.getWhereFields();
 		Iterator whereFieldsIt = whereFields.iterator();
@@ -221,7 +221,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			WhereField whereField = (WhereField) whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				// getting filter value on request
-				List promptValuesList = this.getAttributeAsList(whereField.getName());
+				List promptValuesList = action.getAttributeAsList(whereField.getName());
 				if (promptValuesList != null) {
 					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
 					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
@@ -235,7 +235,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			HavingField havingField = (HavingField) havingFieldsIt.next();
 			if (havingField.isPromptable()) {
 				// getting filter value on request
-				List promptValuesList = this.getAttributeAsList(havingField.getName());
+				List promptValuesList = action.getAttributeAsList(havingField.getName());
 				if (promptValuesList != null) {
 					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
 					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");

@@ -12,6 +12,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/formbuilder/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/formviewer/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/dataset/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
@@ -58,9 +59,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/widgets/TriggerFieldMultiButton.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'/></script>
-<script type="text/javascript" src='../js/spagobi/widgets/FilteringToolbar.js'/></script>
-<script type="text/javascript" src='../js/spagobi/widgets/PagingToolbar.js'/></script>
-<script type="text/javascript" src='../js/spagobi/widgets/LookupField.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/formbuilder/FormBuilderPage.js'/></script>
 <script type="text/javascript" src='../js/spagobi/formbuilder/FormPreviewPage.js'/></script>
@@ -131,7 +129,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDesignerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabPreviewPanel.js'/></script>
 
-
+<script type="text/javascript" src='../js/spagobi/dataset/ParametersGridPanel.js'/></script>
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION

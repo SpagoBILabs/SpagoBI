@@ -95,6 +95,10 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		serviceName: 'GET_ANALYSIS_META_ACTION'
 		, baseParams: params
 	});
+	this.services['getSQLQuery'] = this.services['getSQLQuery'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_SQL_QUERY_ACTION'
+		, baseParams: params
+	});
 		
 	this.addEvents('execute', 'save');
 		
@@ -195,6 +199,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			query.expression = this.filterGridPanel.getFiltersExpressionAsJSON();
     	}
 		return query;
+	}
+    
+    , getQueries: function() {
+    	var queries = this.queryCataloguePanel.getQueries();
+		return queries;
 	}
     
     
@@ -310,6 +319,21 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			this.saveViewWindow.on('save', function(win, formState){this.saveView(formState);}, this);
 		}
 		this.saveViewWindow.show();
+	}
+	
+	, getSQLQuery: function(callbackFn, scope) {
+    	this.applyChanges();
+    	this.queryCataloguePanel.commit(function() {
+           	Ext.Ajax.request({
+    			url: this.services['getSQLQuery'],
+    			success: function(response, options) {
+    				var responseJSON = Ext.decode(response.responseText);
+    				callbackFn.call(scope, responseJSON);
+       			},
+       			scope: this,
+    			failure: Sbi.exception.ExceptionHandler.handleFailure		
+           	});   
+		}, this);
 	}
 	
 	// --------------------------------------------------------------------------------
@@ -491,7 +515,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        	id:'save',
 	        	qtip: LN('sbi.qbe.queryeditor.centerregion.tools.save'),
 	        	hidden: (this.enableQueryTbSaveBtn == false),
-	        	handler: this.showSaveQueryWindow,
+	        	handler: c.saveButtonHandler || this.showSaveQueryWindow,
 	        	scope: this
 	        }, {
 	          id:'saveView',
@@ -569,10 +593,15 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	, initEastRegionPanel: function(c) {
 		
 		this.queryCataloguePanel = new Sbi.qbe.QueryCataloguePanel({margins: '0 5 0 0', region: 'center'});
-		this.documentParametersGridPanel = new Sbi.qbe.DocumentParametersGridPanel(
+		this.documentParametersGridPanel = c.parametersGridPanel || new Sbi.qbe.DocumentParametersGridPanel(
 				{margins: '0 0 0 0', region: 'south'}
 				, this.documentParametersStore
 		);
+		this.queryCataloguePanel.on('load', function() {
+			var message = {};
+			message.messageName = 'catalogueready';
+			sendMessage(message);
+		}, this);
 		
 		this.eastRegionPanel = new Ext.Panel({
 	        title: LN('sbi.qbe.queryeditor.eastregion.title'),
@@ -621,6 +650,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.queryCataloguePanel.on('beforeselect', function(panel, newquery, oldquery){
 			// save changes applied to old query before to move to the new selected one
 			this.applyChanges(); 
+
 			this.setQuery( newquery );
 			// required in order to be sure to have all query stored at the server side while
 			// joining a subquery to a parent query selected entity
@@ -845,5 +875,21 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     	
     	return params;
     }
+	
+	,
+	setQueriesCatalogue: function (queriesCatalogue) {
+		this.queryCataloguePanel.setQueries(queriesCatalogue);
+	}
+	
+	,
+	getParameters: function () {
+		this.documentParametersGridPanel.getParameters();
+	}
+	
+	,
+	setParameters: function (parameters) {
+		this.documentParametersGridPanel.loadItems([]);
+		this.documentParametersGridPanel.loadItems(parameters);
+	}
 		
 });

@@ -52,4 +52,7 @@
 	<!-- start Crosstab configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/crosstab/actions.xml" />
 	
+	<!-- start dataset configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/dataset/actions.xml" />
+	
 </MASTER>

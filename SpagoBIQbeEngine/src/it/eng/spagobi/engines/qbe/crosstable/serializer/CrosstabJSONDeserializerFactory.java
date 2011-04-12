@@ -47,6 +47,13 @@ public class CrosstabJSONDeserializerFactory implements IDeserializerFactory {
 		
 	}
 	
+	public static CrosstabJSONDeserializerFactory getInstance() {
+		if (instance == null) {
+			instance = new CrosstabJSONDeserializerFactory();
+		}
+		return instance;
+	}
+	
 	private CrosstabJSONDeserializerFactory() {}
 
 	public IDeserializer getDeserializer(String mimeType) {

@@ -23,5 +23,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<!-- BUILD DATASET start action -->
+	<ACTION name="BUILD_QBE_DATASET_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.BuildQbeDatasetStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

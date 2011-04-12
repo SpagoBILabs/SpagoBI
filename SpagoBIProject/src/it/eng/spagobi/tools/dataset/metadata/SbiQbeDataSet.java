@@ -19,14 +19,19 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.bo;
+package it.eng.spagobi.tools.dataset.metadata;
 
-/**
- * @author Chiara Chiarelli
- */
-public class JsonDataSetDetail extends GuiDataSetDetail {
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+
+public class SbiQbeDataSet extends SbiDataSetHistory {
+
+	private String sqlQuery = null;
 	
-	private String jsonQuery =null;
+	private String jsonQuery = null;
+	 
+	private SbiDataSource dataSource = null;
+		
+	private String datamarts = null;
 
 	public String getJsonQuery() {
 		return jsonQuery;
@@ -34,6 +39,30 @@ public class JsonDataSetDetail extends GuiDataSetDetail {
 
 	public void setJsonQuery(String jsonQuery) {
 		this.jsonQuery = jsonQuery;
+	}
+
+	public String getSqlQuery() {
+		return sqlQuery;
+	}
+
+	public void setSqlQuery(String sqlQuery) {
+		this.sqlQuery = sqlQuery;
+	}
+
+	public SbiDataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(SbiDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getDatamarts() {
+		return datamarts;
+	}
+
+	public void setDatamarts(String datamarts) {
+		this.datamarts = datamarts;
 	}
 
 }

@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
@@ -43,6 +44,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiQbeDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
@@ -74,6 +76,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public static final String SCRIPT_DS_TYPE = "Script";
 	public static final String JCLASS_DS_TYPE = "Java Class";
 	public static final String WS_DS_TYPE = "Web Service";
+	public static final String QBE_DS_TYPE = "Qbe";
 
 	/*****************USED by new GUI******/
 	/**
@@ -242,7 +245,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						hibDataSource = (SbiDataSource) criteria.uniqueResult();
 						((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
 					}				
-				}		
+				}	
+				
+				else if(dataSetActiveDetail instanceof QbeDataSetDetail){
+					hibDataSet = new SbiQbeDataSet();
+					SbiQbeDataSet hibQbeDataSet = (SbiQbeDataSet) hibDataSet;
+					QbeDataSetDetail qbeDataSet = (QbeDataSetDetail) dataSetActiveDetail;
+					hibQbeDataSet.setSqlQuery(qbeDataSet.getSqlQuery());
+					hibQbeDataSet.setJsonQuery(qbeDataSet.getJsonQuery());
+					hibQbeDataSet.setDatamarts(qbeDataSet.getDatamarts());
+					String dataSourceLabel = qbeDataSet.getDataSourceLabel();
+					Criterion labelCriterrion = Expression.eq("label", dataSourceLabel);
+					Criteria criteria = aSession.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+					hibQbeDataSet.setDataSource(hibDataSource);	
+				}
 	
 				else if(dataSetActiveDetail instanceof WSDataSetDetail){
 					hibDataSet=new SbiWSDataSet();
@@ -474,7 +492,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						hibDataSource = (SbiDataSource) criteria.uniqueResult();
 						((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
 					}				
-				}		
+				}
+				
+				else if (dsActiveDetailToSet instanceof QbeDataSetDetail) {
+					hibDataSet = new SbiQbeDataSet();
+					SbiQbeDataSet hibQbeDataSet = (SbiQbeDataSet) hibDataSet;
+					QbeDataSetDetail qbeDataSet = (QbeDataSetDetail) dsActiveDetailToSet;
+					hibQbeDataSet.setSqlQuery(qbeDataSet.getSqlQuery());
+					hibQbeDataSet.setJsonQuery(qbeDataSet.getJsonQuery());
+					hibQbeDataSet.setDatamarts(qbeDataSet.getDatamarts());
+					String dataSourceLabel = qbeDataSet.getDataSourceLabel();
+					Criterion labelCriterrion = Expression.eq("label", dataSourceLabel);
+					Criteria criteria = aSession.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+					hibQbeDataSet.setDataSource(hibDataSource);	
+				}
 	
 				else if(dsActiveDetailToSet instanceof WSDataSetDetail){
 					hibDataSet=new SbiWSDataSet();
@@ -609,7 +642,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List<SbiDataSetConfig> toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
-		Integer resultNumber;
+		Long resultNumber;
 		Query hibernateQuery; 
 		
 		try {
@@ -619,11 +652,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = (Long)hqlQuery.uniqueResult();
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
-				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+				fetchSize = (fetchSize > 0)? 
+						Math.min(fetchSize, resultNumber.intValue()) 
+						: resultNumber.intValue();
 			}
 			
 			hibernateQuery = aSession.createQuery("from SbiDataSetConfig order by label");
@@ -661,7 +696,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
-		Integer resultNumber;
+		Long resultNumber;
 		Query hibernateQuery; 
 		
 		try {
@@ -671,11 +706,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = (Long)hqlQuery.uniqueResult();
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
-				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+				fetchSize = (fetchSize > 0) ? 
+						Math.min(fetchSize, resultNumber.intValue()) 
+						: resultNumber.intValue();
 			}
 			
 			hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? " );
@@ -749,6 +786,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			dsActiveDetail.setDsType(JDBC_DS_TYPE);
 		}
+		
+		if(hibDataSet instanceof SbiQbeDataSet){			
+			dsActiveDetail = new QbeDataSetDetail();
+			QbeDataSetDetail aQbeDataSetDetail = (QbeDataSetDetail) dsActiveDetail;
+			SbiQbeDataSet qbeHibDataSet = (SbiQbeDataSet) hibDataSet;
+			aQbeDataSetDetail.setSqlQuery(qbeHibDataSet.getSqlQuery());
+			aQbeDataSetDetail.setJsonQuery(qbeHibDataSet.getJsonQuery());
+			aQbeDataSetDetail.setDatamarts(qbeHibDataSet.getDatamarts());
+			SbiDataSource sbids = qbeHibDataSet.getDataSource();
+			aQbeDataSetDetail.setDataSourceLabel(sbids.getLabel());
+			dsActiveDetail.setDsType(QBE_DS_TYPE);
+		}
 
 		if(hibDataSet instanceof SbiWSDataSet){			
 			dsActiveDetail=new WSDataSetDetail();
@@ -812,6 +861,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				((QueryDataSetDetail)dsVersionDetail).setDataSourceLabel(dataSourceLabel);
 			}
 			dsVersionDetail.setDsType(JDBC_DS_TYPE);
+		}
+		
+		if (hibDataSet instanceof SbiQbeDataSet){			
+			dsVersionDetail = new QbeDataSetDetail();
+			QbeDataSetDetail aQbeDataSetDetail = (QbeDataSetDetail) dsVersionDetail;
+			SbiQbeDataSet qbeHibDataSet = (SbiQbeDataSet) hibDataSet;
+			aQbeDataSetDetail.setSqlQuery(qbeHibDataSet.getSqlQuery());
+			aQbeDataSetDetail.setJsonQuery(qbeHibDataSet.getJsonQuery());
+			aQbeDataSetDetail.setDatamarts(qbeHibDataSet.getDatamarts());
+			SbiDataSource sbids = qbeHibDataSet.getDataSource();
+			aQbeDataSetDetail.setDataSourceLabel(sbids.getLabel());
+			dsVersionDetail.setDsType(QBE_DS_TYPE);
 		}
 
 		if(hibDataSet instanceof SbiWSDataSet){			
@@ -937,7 +998,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String hql = "select count(*) from SbiObjects s where s.dataSet.dsId = ? ";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsId.intValue());
-			resultNumber = (Integer)aQuery.uniqueResult();
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
 			
 		} catch (HibernateException he) {
 			logger.error("Error while getting the objects associated with the data set with id " + dsId, he);
@@ -962,14 +1023,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		Integer resultNumber;		
+		Long resultNumber;		
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 		
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = (Long)hqlQuery.uniqueResult();
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiDataSet", he);	
@@ -984,7 +1045,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
-		return resultNumber;
+		return new Integer(resultNumber.intValue());
 	}
 	
 	/*****************USED by OLD GUI******/

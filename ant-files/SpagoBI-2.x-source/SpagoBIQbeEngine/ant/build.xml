@@ -212,9 +212,6 @@
 		    	<file name='./spagobi/widgets/TriggerFieldMultiButton.js'/>
 
 		    	<file name='./spagobi/qbe/FilterComboBox.js'/>
-		    	<file name='./spagobi/widgets/FilteringToolbar.js'/>
-		    	<file name='./spagobi/widgets/PagingToolbar.js'/>
-		    	<file name='./spagobi/widgets/LookupField.js'/>
 
 		    	<file name='./spagobi/formbuilder/FormBuilderPage.js'/>
 		    	<file name='./spagobi/formbuilder/FormPreviewPage.js'/>
@@ -284,6 +281,8 @@
 		    	<file name='./spagobi/crosstab/CrosstabDefinitionPanel.js'/>
 		    	<file name='./spagobi/crosstab/CrosstabDesignerPanel.js'/>
 		    	<file name='./spagobi/crosstab/CrosstabPreviewPanel.js'/>
+		    	
+		    	<file name='./spagobi/dataset/ParametersGridPanel.js'/>
 		    	
 		    </filelist>
 
