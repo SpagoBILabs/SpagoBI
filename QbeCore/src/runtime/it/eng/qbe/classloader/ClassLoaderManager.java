@@ -34,15 +34,21 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class ClassLoaderManager {
+public class ClassLoaderManager{
 	
 	public static ClassLoader qbeClassLoader;
 	
 	private static transient Logger logger = Logger.getLogger(ClassLoaderManager.class);
 	
-	public static void updateCurrentClassLoader(File jarFile){
-		
-		boolean wasAlreadyLoaded = false;
+	
+	/**
+	 * Updates the class loader of the thread and sets the class loader in the
+	 * variable qbeClassLoader..
+	 * NOTE: The qbeClassLoader is static
+	 * @param jarFile
+	 * @return
+	 */
+	public static ClassLoader updateCurrentWebClassLoader(File jarFile){
 		
 		logger.debug("IN");
 		
@@ -56,6 +62,32 @@ public class ClassLoaderManager {
 				Thread.currentThread().setContextClassLoader(qbeClassLoader);
 			}
 			
+			updateCurrentClassLoader(jarFile);
+			
+		} catch (Exception e) {
+			logger.error("Impossible to update current class loader", e);
+		}
+		
+
+		
+		return qbeClassLoader;
+	}
+	
+	/**
+	 * Update the thread class loader with a dynamic class loader that
+	 * considers also the jar file
+	 * @param jarFile
+	 * @return
+	 */
+	public static ClassLoader updateCurrentClassLoader(File jarFile){
+		
+		ClassLoader cl =  Thread.currentThread().getContextClassLoader();
+		
+		boolean wasAlreadyLoaded = false;
+		
+		logger.debug("IN");
+		
+		try {			
 			JarFile jar = new JarFile(jarFile);
 			Enumeration entries = jar.entries();
 			while (entries.hasMoreElements()) {
@@ -86,24 +118,21 @@ public class ClassLoaderManager {
 		logger.debug("Jar file [" + jarFile.getName()  + "] already loaded: " + wasAlreadyLoaded);
 		
 		try {
-			/*
-			 * TEMPORARY: the next instruction forcing the loading of all classes in the path...
-			 * (ie. for some qbe that have in common any classes but not all and that at the moment they aren't loaded correctly)
-			 */
-			//wasAlreadyLoaded = false;
 
 			if (!wasAlreadyLoaded) {
 				
-				ClassLoader previous = Thread.currentThread().getContextClassLoader();
+				ClassLoader previous = cl;
 				Thread.currentThread().getContextClassLoader();
     		    DynamicClassLoader current = new DynamicClassLoader(jarFile, previous);
 			    Thread.currentThread().setContextClassLoader(current);
-
-			    qbeClassLoader = current;
+			    cl = current;
 			}
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
 		}
+		
+		return cl;
 	}
+	
 }
