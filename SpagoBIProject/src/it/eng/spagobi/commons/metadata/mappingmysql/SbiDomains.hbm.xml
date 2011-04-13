@@ -9,9 +9,12 @@
     <class name="it.eng.spagobi.commons.metadata.SbiDomains" table="SBI_DOMAINS">    
         <id name="valueId" type="integer">
             <column name="VALUE_ID" />
-            <generator class="native">
-           		<param name="sequence">sbi_domains_seq</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_domains</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <property name="domainCd" type="string">
             <column name="DOMAIN_CD" length="20" />
@@ -28,11 +31,5 @@
         <property name="valueDs" type="string">
             <column name="VALUE_DS" length="160" />
         </property>
-        <set name="sbiExporterses" inverse="true">
-            <key>
-                <column name="DOMAIN_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiExporters" />
-        </set>
     </class>
 </hibernate-mapping>
