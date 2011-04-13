@@ -92,204 +92,211 @@ Sbi.domain.ManageDomains = function(config) {
 
 };
 
-Ext.extend(Sbi.domain.ManageDomains, Ext.Panel,
-		{
+Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 
-			grid : null,
-			columnModel : null,
-			store : null,
-			gridToolbar : null,
-			Record : null,
-			editor : null
+	grid : null,
+	columnModel : null,
+	store : null,
+	gridToolbar : null,
+	Record : null,
+	editor : null
 
-			// public methods
-			,
-			initGrid : function() {
+	// public methods
+	,
+	initGrid : function() {
 
-				this.editor = new Ext.ux.grid.RowEditor( {
-					saveText : 'Update',
-					listeners : {
-						afteredit : {
-							fn : this.saveDomain,
-							scope : this
-						}
-					}
-
-				});
-
-				this.initStore();
-				this.initColumnModel();
-				this.initToolbar();
-				this.grid = new Ext.grid.GridPanel( {
-					store : this.store,
-					cm : this.columnModel,
-					tbar : this.gridToolbar,
-					sm : new Ext.grid.RowSelectionModel( {
-						singleSelect : true
-					}),
-					plugins : [ this.editor ],
-					// width: 600,
-					height : 300,
-					margins : '0 5 5 5',
-					viewConfig : {
-						forceFit : true
-					}
-				});
-			}
-
-			,
-			initToolbar : function() {
-				this.gridToolbar = new Ext.Toolbar( [ {
-					iconCls : 'icon-domain-add',
-					text : 'Add',
-					handler : function() {
-						var record = new this.Record();
-						this.editor.stopEditing();
-						this.store.insert(0, record);
-						this.grid.getView().refresh();
-						this.grid.getSelectionModel().selectRow(0);
-						this.editor.startEditing(0);
-
-						var params = {};
-
-						Ext.Ajax.request( {
-							url : this.crudServices['saveItemService'],
-							params : params,
-							// method: 'GET',
-							success : function(response, options) {
-								alert('success');
-							},
-							failure : function(response) {
-								alert('failure');
-							}
-						});
-					},
+		this.editor = new Ext.ux.grid.RowEditor( {
+			saveText : 'Update',
+			listeners : {
+				afteredit : {
+					fn : this.saveDomain,
 					scope : this
-				}, {
-					// ref: '../removeBtn',
-					iconCls : 'icon-domain-delete',
-					text : 'Delete',
-					// disabled: true,
-					handler : function() {
-						this.editor.stopEditing();
-						var s = this.grid.getSelectionModel().getSelections();
-						for ( var i = 0, r; r = s[i]; i++) {
-							this.store.remove(r);
-						}
-					},
-					scope : this
-				} ])
-			}
-
-			,
-			initColumnModel : function() {
-				this.columnModel = new Ext.grid.ColumnModel( [ {
-					header : 'VALUE ID',
-					dataIndex : 'VALUE_ID',
-					// width: 220,
-					sortable : false,
-					hidden : true
-				}, {
-					header : 'VALUE CODE',
-					dataIndex : 'VALUE_CD',
-					// width: 220,
-					sortable : true,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				}, {
-					header : 'VALUE NAME',
-					dataIndex : 'VALUE_NM',
-					// width: 150,
-					sortable : true,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				}, {
-					header : 'DOMAIN CODE',
-					dataIndex : 'DOMAIN_CD',
-					// width: 150,
-					sortable : true,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				}, {
-					header : 'DOMAIN NAME',
-					dataIndex : 'DOMAIN_NM',
-					// width: 150,
-					sortable : true,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				}, {
-					header : 'VALUE DESCRIPTION',
-					dataIndex : 'VALUE_DS',
-					// width: 150,
-					sortable : true,
-					editor : {
-						xtype : 'textfield',
-						allowBlank : false
-					}
-				} ]);
-			}
-
-			,
-			initStore : function() {
-
-				var myData = [
-						[undefined, 'Monia', 'moniaATengDOTit', 'prova', 'test',
-								'provatest' ],
-						[ undefined, 'Andrea', 'andreaATengDOTit', 'prova', 'test',
-								'provatest' ] ];
-				var fields = [ {
-					name : 'VALUE_ID'
-				}, {
-					name : 'VALUE_CD'
-				}, {
-					name : 'VALUE_NM'
-				}, {
-					name : 'DOMAIN_CD'
-				}, {
-					name : 'DOMAIN_NM'
-				}, {
-					name : 'VALUE_DS'
-				} ];
-				this.store = new Ext.data.ArrayStore( {
-					fields : fields
-				});
-
-				this.store.loadData(myData);
-				this.Record = Ext.data.Record.create(fields);
-			}
-
-			,
-			saveDomain : function(rowEditor, obj, record, rowIndex) {
-					
-				var p = {};
-				if(record.get('VALUE_ID') != '') {
-					p.VALUE_ID = record.get('VALUE_ID');
 				}
-				
-				p.VALUE_CD = record.get('VALUE_CD');
-				p.VALUE_NM = record.get('VALUE_NM');
-				p.DOMAIN_CD = record.get('DOMAIN_CD');
-				p.DOMAIN_NM = record.get('DOMAIN_NM');
-				p.VALUE_DS = record.get('VALUE_DS');
-				
-				Ext.Ajax.request( {
-					url : this.crudServices['saveItemService'],
-					params : p,
-					method : 'POST',
-					success : function(response, options) {
-						alert('Salvataggio ok: '+response.responseText);
-					},
-					failure : Sbi.exception.ExceptionHandler.handleFailure,
-					scope : this
-				});
 			}
 
 		});
+
+		this.initStore();
+		this.store.load({});
+		this.initColumnModel();
+		this.initToolbar();
+		this.grid = new Ext.grid.GridPanel( {
+			store : this.store,
+			cm : this.columnModel,
+			tbar : this.gridToolbar,
+			sm : new Ext.grid.RowSelectionModel( {
+				singleSelect : true
+			}),
+			plugins : [ this.editor ],
+			// width: 600,
+			height : 300,
+			margins : '0 5 5 5',
+			viewConfig : {
+				forceFit : true
+			}
+		});
+	}
+
+	,
+	initToolbar : function() {
+		this.gridToolbar = new Ext.Toolbar( [ {
+			iconCls : 'icon-domain-add',
+			text : 'Add',
+			handler : function() {
+				var record = new this.Record();
+				this.editor.stopEditing();
+				this.store.insert(0, record);
+				this.grid.getView().refresh();
+				this.grid.getSelectionModel().selectRow(0);
+				this.editor.startEditing(0);
+
+				/*
+				 * var params = {};
+				 * 
+				 * Ext.Ajax.request( { url : this.crudServices['saveItemService'], params :
+				 * params, // method: 'GET', success : function(response, options) {
+				 * alert('success'); }, failure : function(response) { alert('failure'); } });
+				 */
+			},
+			scope : this
+		}, {
+			// ref: '../removeBtn',
+			iconCls : 'icon-domain-delete',
+			text : 'Delete',
+			// disabled: true,
+			handler : function() {
+				this.editor.stopEditing();
+				var s = this.grid.getSelectionModel().getSelections();
+				for ( var i = 0, r; r = s[i]; i++) {
+					var params = {};
+
+					Ext.Ajax.request( {
+						url : this.crudServices['deleteItemService'],
+						params : params,
+						// method: 'GET',
+						success : function(response, options) {
+							this.store.remove(r);
+						},
+						failure : Sbi.exception.ExceptionHandler.handleFailure,
+						scope : this
+					});
+				}
+			},
+			scope : this
+		} ])
+	}
+
+	,
+	initColumnModel : function() {
+		this.columnModel = new Ext.grid.ColumnModel( [ {
+			header : 'VALUE ID',
+			dataIndex : 'VALUE_ID',
+			// width: 220,
+			sortable : false,
+			hidden : true
+		}, {
+			header : 'VALUE CODE',
+			dataIndex : 'VALUE_CD',
+			// width: 220,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false
+			}
+		}, {
+			header : 'VALUE NAME',
+			dataIndex : 'VALUE_NM',
+			// width: 150,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false
+			}
+		}, {
+			header : 'DOMAIN CODE',
+			dataIndex : 'DOMAIN_CD',
+			// width: 150,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false
+			}
+		}, {
+			header : 'DOMAIN NAME',
+			dataIndex : 'DOMAIN_NM',
+			// width: 150,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false
+			}
+		}, {
+			header : 'VALUE DESCRIPTION',
+			dataIndex : 'VALUE_DS',
+			// width: 150,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false
+			}
+		} ]);
+	}
+
+	,
+	initStore : function() {
+
+		var fields = [ {
+			name : 'VALUE_ID'
+		}, {
+			name : 'VALUE_CD'
+		}, {
+			name : 'VALUE_NM'
+		}, {
+			name : 'DOMAIN_CD'
+		}, {
+			name : 'DOMAIN_NM'
+		}, {
+			name : 'VALUE_DS'
+		} ];
+
+		this.store = new Ext.data.JsonStore( {
+
+			root : 'response',
+			idProperty : 'VALUE_ID',
+			fields : fields,
+			url : this.crudServices['manageListService']
+
+		});
+		this.Record = Ext.data.Record.create(fields);
+	}
+
+	,
+	saveDomain : function(rowEditor, obj, record, rowIndex) {
+
+		var p = {};
+		if (record.get('VALUE_ID') != '') {
+			p.VALUE_ID = record.get('VALUE_ID');
+		}
+
+		p.VALUE_CD = record.get('VALUE_CD');
+		p.VALUE_NM = record.get('VALUE_NM');
+		p.DOMAIN_CD = record.get('DOMAIN_CD');
+		p.DOMAIN_NM = record.get('DOMAIN_NM');
+		p.VALUE_DS = record.get('VALUE_DS');
+
+		Ext.Ajax.request( {
+			url : this.crudServices['saveItemService'],
+			params : p,
+			method : 'POST',
+			success : function(response, options) {
+				alert('Salvataggio ok: ' + response.responseText);
+				var jsonResponse = Ext.util.JSON.decode(response.responseText);
+				record.set('VALUE_ID', jsonResponse.VALUE_ID);
+				record.commit();
+			},
+			failure : Sbi.exception.ExceptionHandler.handleFailure,
+			scope : this
+		});
+	}
+
+});
