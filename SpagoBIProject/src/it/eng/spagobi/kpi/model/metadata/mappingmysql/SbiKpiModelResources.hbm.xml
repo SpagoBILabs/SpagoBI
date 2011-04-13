@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" table="SBI_KPI_MODEL_RESOURCES" >
         <id name="kpiModelResourcesId" type="integer">
             <column name="KPI_MODEL_RESOURCES_ID" />
- 			<generator class="native">
-            	<param name="sequence">sbi_kpi_model_resources</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_model_resources</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" >
             <column name="KPI_MODEL_INST" not-null="true" />
