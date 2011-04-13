@@ -154,26 +154,10 @@ END-LIFERAY -->
     <!-- ********************* END SECURITY CONFIGURATION ************************** --> 
 
      
-     <!-- ********************* START DATABASE CONFIGURATION ************************ -->
-     
-     <!-- SPAGOBI HIBERNATE PERSISTENCE CONFIGURATTION -->
-	 <!--  PostgresSQL -->
-	 <!--  hibernate.cfg.postgres.xml -->
-	 <!--  MySQL: Uncomment the row below and edit the file  to provide connection info -->
-	 <!--  hibernate.cfg.mysql.xml -->
-	 <!--  Oracle: Uncomment the row below and edit the file to provide connection info -->
-	 <!--  hibernate.cfg.ora.xml-->
-     <!--  Hsqldb: Uncomment the row below and edit the file to provide connection info -->
-     <!--   hibernate.cfg.hsql.xml -->
-     <!--  SqlServer: Uncomment the row below and edit the file to provide connection info -->
-     <!--   hibernate.cfg.sqlserver.xml -->
-     <!--  Ingres: Uncomment the row below and edit the file to provide connection info -->
-     <!--   hibernate.cfg.ingres.xml -->
-     
-	 <HIBERNATE-CFGFILE>hibernate.cfg.mysql.xml</HIBERNATE-CFGFILE>
+   
+	 <HIBERNATE-CFGFILE>hibernate.cfg.xml</HIBERNATE-CFGFILE>
 	
-     <!-- ********************* END DATABASE CONFIGURATION ************************ -->
-     
+  
 
      <!-- ********************* START GENERAL CONFIGURATION ************************ -->
      
