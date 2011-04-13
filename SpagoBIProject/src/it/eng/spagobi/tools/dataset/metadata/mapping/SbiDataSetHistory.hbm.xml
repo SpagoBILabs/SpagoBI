@@ -5,9 +5,12 @@
     <class name="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" table="SBI_DATA_SET_HISTORY" lazy="false">
         <id name="dsHId" type="int">
             <column name="DS_H_ID" />     
-            <generator class="native">
-           		<param name="sequence">sbi_data_set_history_seq</param>
-            </generator>     
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_data_set_history_seq</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
 		<discriminator column="OBJECT_TYPE" type="string"/>   
 		<many-to-one name="dsId" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig">
