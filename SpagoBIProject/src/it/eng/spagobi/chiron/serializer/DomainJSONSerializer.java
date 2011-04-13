@@ -32,13 +32,13 @@ import it.eng.spagobi.commons.bo.Domain;
  */
 public class DomainJSONSerializer implements Serializer {
 	
-	public static final String DOMAIN_CODE = "domainId";
-	public static final String DOMAIN_NAME = "domainCode";
+	public static final String DOMAIN_CODE = "DOMAIN_CD";
+	public static final String DOMAIN_NAME = "DOMAIN_NM";
 	
-	public static final String VALUE_ID = "valueId";
-	public static final String VALUE_CODE = "valueCode";
-	public static final String VALUE_NAME = "valueName";
-	public static final String VALUE_DECRIPTION = "valueDescription";
+	public static final String VALUE_ID = "VALUE_ID";
+	public static final String VALUE_CODE = "VALUE_CD";
+	public static final String VALUE_NAME = "VALUE_NM";
+	public static final String VALUE_DECRIPTION = "VALUE_DS";
 	
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {

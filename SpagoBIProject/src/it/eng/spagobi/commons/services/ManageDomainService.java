@@ -53,6 +53,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.paginator.basic.PaginatorIFace;
+import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
@@ -152,12 +154,22 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 
 	public void doDomainList() {
 		try {
-			// List<Domain> domainList = domainDao.loadListDomains();
-			// logger.debug("Loaded domain list");
-			// JSONArray domainListJSON = (JSONArray)
-			// SerializerFactory.getSerializer("application/json").serialize(domainList,locale);
-			// writeBackToClient(new JSONSuccess(domainListJSON));
-			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+			logger.debug("Loaded domain list");
+			//JSONArray results= (JSONArray) SerializerFactory.getSerializer("application/json").serialize( subObjectsList,null );
+
+			List<Domain> domainList = DAOFactory.getDomainDAO().loadListDomains();
+			JSONObject domainJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(domainList.get(0),this.getLocale());
+			JSONArray domainListJSON = new JSONArray();
+			domainListJSON.put(domainJSON);
+			JSONObject response = new JSONObject();
+			response.put("response", domainListJSON);
+			//SerializerFactory.getSerializer("application/json").serialize(domainList,locale);
+			writeBackToClient(new JSONSuccess(response));
+			
+			//PaginatorIFace paginator = new GenericPaginator();
+			//Alla fine di ogni iterazione inserire: paginator.addRow(rowSB);
+			//list.setPaginator(paginator);
+			//writeBackToClient(new JSONAcknowledge("Operation succeded"));
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
