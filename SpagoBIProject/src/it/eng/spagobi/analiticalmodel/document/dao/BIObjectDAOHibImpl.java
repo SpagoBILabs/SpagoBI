@@ -597,6 +597,9 @@ IBIObjectDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = new SbiObjects();
+			// add the common info
+			
+			
 			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class,	obj.getEngine().getId());
 			hibBIObject.setSbiEngines(hibEngine); 
 			hibBIObject.setDescr(obj.getDescription());
