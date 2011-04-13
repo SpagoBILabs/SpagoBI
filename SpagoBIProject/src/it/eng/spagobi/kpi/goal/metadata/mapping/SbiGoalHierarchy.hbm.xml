@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy" table="SBI_GOAL_HIERARCHY">
         <id name="goalHierarchyId" type="int">
             <column name="GOAL_HIERARCHY_ID" />
-            <generator class="increment" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_goal_hierarchy</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="sbiGoalHierarchy" class="it.eng.spagobi.kpi.goal.metadata.SbiGoalHierarchy" fetch="select">
             <column name="PARENT_ID" />

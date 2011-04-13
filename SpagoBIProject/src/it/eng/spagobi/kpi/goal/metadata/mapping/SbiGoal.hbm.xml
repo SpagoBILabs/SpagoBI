@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.kpi.goal.metadata.SbiGoal" table="SBI_GOAL">
         <id name="goalId" type="int">
             <column name="GOAL_ID" />
-            <generator class="increment" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_goals</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <property name="grantId" type="int">
             <column name="GRANT_ID" not-null="true" />
