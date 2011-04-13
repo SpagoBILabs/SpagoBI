@@ -1,0 +1,79 @@
+package it.eng.spagobi.commons.metadata;
+
+import java.util.Date;
+
+public class SbiCommonInfo implements java.io.Serializable {
+
+	private String userIn="angelo";
+	private String userUp=null;
+	private String userDe=null;
+	private String sbiVersionIn="3.0Beta";
+	private String sbiVersionUp=null;
+	private String sbiVersionDe=null;
+	private String organization=null;
+	private Date timeIn = new Date();
+	private Date timeUp = null;
+	private Date timeDe = null;
+	
+	public String getUserIn() {
+		return userIn;
+	}
+	public void setUserIn(String userIn) {
+		this.userIn = userIn;
+	}
+	public String getUserUp() {
+		return userUp;
+	}
+	public void setUserUp(String userUp) {
+		this.userUp = userUp;
+	}
+	public String getUserDe() {
+		return userDe;
+	}
+	public void setUserDe(String userDe) {
+		this.userDe = userDe;
+	}
+	public String getSbiVersionIn() {
+		return sbiVersionIn;
+	}
+	public void setSbiVersionIn(String sbiVersionIn) {
+		this.sbiVersionIn = sbiVersionIn;
+	}
+	public String getSbiVersionUp() {
+		return sbiVersionUp;
+	}
+	public void setSbiVersionUp(String sbiVersionUp) {
+		this.sbiVersionUp = sbiVersionUp;
+	}
+	public String getSbiVersionDe() {
+		return sbiVersionDe;
+	}
+	public void setSbiVersionDe(String sbiVersionDe) {
+		this.sbiVersionDe = sbiVersionDe;
+	}
+
+	public String getOrganization() {
+		return organization;
+	}
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+	public Date getTimeIn() {
+		return timeIn;
+	}
+	public void setTimeIn(Date timeIn) {
+		this.timeIn = timeIn;
+	}
+	public Date getTimeUp() {
+		return timeUp;
+	}
+	public void setTimeUp(Date timeUp) {
+		this.timeUp = timeUp;
+	}
+	public Date getTimeDe() {
+		return timeDe;
+	}
+	public void setTimeDe(Date timeDe) {
+		this.timeDe = timeDe;
+	}
+}
