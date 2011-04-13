@@ -77,7 +77,9 @@ public class UserFunctionalityDAO extends AbstractHibernateDAO implements IUserF
 		//String hql = "from SbiRolesUserFunctionality suf where suf.userFunctionality.domainCd = 'USER_FUNCTIONALITY'" + 
 		// " and suf.roleType.valueCd in ("+strRoles+")";
 		//String hql = "Select distinct suf.name from SbiUserFunctionality suf where suf.roleType.valueCd in ("+strRoles+") and suf.roleType.domainCd='ROLE_TYPE'";
-		String hql = "Select distinct suf.name from SbiUserFunctionality suf where suf.roleType.valueCd in (:ROLE_TYPES) and suf.roleType.domainCd='ROLE_TYPE'";
+		String hql = "Select distinct suf.name from SbiUserFunctionality suf left join suf.roleType rt " +
+				     "where rt.valueCd IN (:ROLE_TYPES) " +
+				     "and rt.domainCd='ROLE_TYPE'";
 		Query query = aSession.createQuery(hql);
 		query.setParameterList("ROLE_TYPES", roleTypes);
 		List userFuncList = query.list();
