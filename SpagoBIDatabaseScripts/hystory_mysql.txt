@@ -711,3 +711,11 @@ delete from SBI_DOMAINS WHERE VALUE_CD = 'Qbe' AND DOMAIN_CD = 'DATA_SET_TYPE';
 INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Qbe','SbiQbeDataSet','DATA_SET_TYPE','Data Set Type','SbiQbeDataSet');
 
 ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN DATAMARTS VARCHAR(400); 
+
+Angelo 13/04/2011
+
+CREATE TABLE `sbi_index` (
+  `sequence_name` varchar(200) NOT NULL,
+  `next_val` int(11) NOT NULL,
+  PRIMARY KEY (`sequence_name`)
+);
