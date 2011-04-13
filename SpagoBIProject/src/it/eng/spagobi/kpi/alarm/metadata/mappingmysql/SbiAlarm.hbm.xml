@@ -5,7 +5,12 @@
     <class name="it.eng.spagobi.kpi.alarm.metadata.SbiAlarm" table="SBI_ALARM">
         <id name="id" type="integer">
             <column name="ALARM_ID" />
-            <generator class="native"/>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_alarm</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" >
             <column name="DOCUMENT_ID" />
@@ -46,26 +51,10 @@
         <property name="url" type="string">
             <column name="URL" length="20" not-null="false" />
         </property>   
-        
+               
         <set name="sbiAlarmContacts" table="SBI_ALARM_DISTRIBUTION" inverse="false">
         	<key column="ALARM_ID"/>
         	<many-to-many column="ALARM_CONTACT_ID" class="it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact" />
         </set>
-    </class>
-    
-    
-<!-- 
-ALARM_ID	3	NUMBER	38
-ID_KPI_INSTANCE	3	NUMBER	38
-MODALITY_ID	3	NUMBER	38
-DOCUMENT_ID	3	NUMBER	38
-LABEL	12	VARCHAR2	50
-NAME	12	VARCHAR2	50
-DESCR	12	VARCHAR2	200
-TEXT	12	VARCHAR2	1000
-URL	12	VARCHAR2	20
-SINGLE_EVENT	1	CHAR	1
- -->    
-
-    
+    </class>   
 </hibernate-mapping>
