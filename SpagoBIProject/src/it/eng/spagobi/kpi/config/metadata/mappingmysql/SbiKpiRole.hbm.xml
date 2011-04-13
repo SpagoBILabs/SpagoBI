@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiRole" table="SBI_KPI_ROLE" >
         <id name="idKpiRole" type="integer">
             <column name="id_kpi_role" />
-            <generator class="assigned" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_role</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <many-to-one name="sbiExtRoles" class="it.eng.spagobi.commons.metadata.SbiExtRoles" >
             <column name="EXT_ROLE_ID" not-null="true" />

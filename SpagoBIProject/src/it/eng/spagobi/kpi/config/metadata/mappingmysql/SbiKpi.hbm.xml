@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpi" table="SBI_KPI" >
         <id name="kpiId" type="integer">
             <column name="KPI_ID" />
-            <generator class="native">
-            	<param name="sequence">SBI_KPI_SEQ</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
             <column name="id_kpi_parent" />
