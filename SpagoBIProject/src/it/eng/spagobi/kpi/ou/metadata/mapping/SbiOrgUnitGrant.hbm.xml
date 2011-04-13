@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant" table="SBI_ORG_UNIT_GRANT">
         <id name="id" type="integer">
             <column name="ID" />
-            <generator class="increment" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_org_unit_grant</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" fetch="select">
             <column name="KPI_MODEL_INST_NODE_ID" not-null="true" />

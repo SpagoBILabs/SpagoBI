@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit" table="SBI_ORG_UNIT">
         <id name="id" type="integer">
             <column name="ID" />
-            <generator class="increment" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_org_unit</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <property name="label" type="string">
             <column name="LABEL" length="100" not-null="true" />
