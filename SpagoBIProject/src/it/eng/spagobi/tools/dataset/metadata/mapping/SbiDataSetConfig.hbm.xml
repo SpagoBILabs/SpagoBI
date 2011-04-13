@@ -5,9 +5,12 @@
     <class name="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig" table="SBI_DATA_SET" lazy="false">
         <id name="dsId" type="int">
             <column name="DS_ID" />     
-            <generator class="native">
-           		<param name="sequence">sbi_data_set_seq</param>
-            </generator>     
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_data_set_seq</param>	
+		<param name="initial_value">1</param>	
+   </generator>                
         </id>     
         <property name="name" type="string">
             <column name="NAME" />
