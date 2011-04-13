@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.commons.metadata.SbiUserFunctionality" table="SBI_USER_FUNC">
         <id name="id" type="integer">
             <column name="USER_FUNCT_ID" />
-            <generator class="native">
-           		<param name="sequence">sbi_user_func_seq</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_user_functionality</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         
         <property name="description" type="string">
