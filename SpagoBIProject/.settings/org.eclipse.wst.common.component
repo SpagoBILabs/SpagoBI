@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
 <wb-module deploy-name="SpagoBI">
-<wb-resource deploy-path="/" source-path="/web-content"/>
-<wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/" source-path="/web-content"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test2"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/test2"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIElisaSecurityProvider/SpagoBIElisaSecurityProvider">
             <dependency-type>uses</dependency-type>
