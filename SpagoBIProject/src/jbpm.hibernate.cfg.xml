@@ -12,6 +12,10 @@
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <!-- property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property-->
     <property name="hibernate.connection.datasource">java:comp/env/jdbc/spagobi</property>
+    
+    <property name="hibernate.cache.use_second_level_cache">false</property>
+    <property name="hibernate.cache.use_query_cache">false</property>
+        
     <!--
     <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
     <property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost:9002/jbpm</property>
