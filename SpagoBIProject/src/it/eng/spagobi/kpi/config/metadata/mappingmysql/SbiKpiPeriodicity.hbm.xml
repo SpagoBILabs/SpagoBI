@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity" table="SBI_KPI_PERIODICITY" >
         <id name="idKpiPeriodicity" type="integer">
             <column name="id_kpi_periodicity" />
-            <generator class="native">
-            	<param name="sequence">SBI_KPI_PERIODICITY_SEQ</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_periodicity</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <property name="name" type="string">
             <column name="name" length="400" />

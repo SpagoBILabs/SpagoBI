@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory" table="SBI_KPI_INSTANCE_HISTORY">
         <id name="idKpiInstanceHistory" type="integer">
             <column name="id_kpi_instance_history" />
-            <generator class="native">
-            	<param name="sequence">sbi_kpi_instance_history_seq</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_instance_history</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" >
             <column name="CHART_TYPE_ID" />

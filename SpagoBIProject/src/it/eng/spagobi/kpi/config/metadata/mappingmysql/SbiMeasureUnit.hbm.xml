@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.kpi.config.metadata.SbiMeasureUnit" table="SBI_MEASURE_UNIT" >
         <id name="idMeasureUnit" type="integer">
             <column name="id_measure_unit" />
-            <generator class="native">
-            	<param name="sequence">SBI_MEASURE_UNIT_SEQ</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_kpi_measure_unit</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="scaleType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
             <column name="SCALE_TYPE_ID" not-null="true" />
