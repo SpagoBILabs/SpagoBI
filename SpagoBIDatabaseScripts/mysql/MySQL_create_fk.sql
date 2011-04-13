@@ -284,6 +284,7 @@ Alter table `SBI_KPI_DOCUMENTS` add Foreign Key (`KPI_ID`) references `SBI_KPI` 
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_PARENT_MODEL_ID`) references `SBI_KPI_MODEL` (`KPI_MODEL_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_MODEL_TYPE_ID`) references `SBI_DOMAINS` (`VALUE_ID`) on delete  restrict on update  restrict;
 Alter table `SBI_KPI_MODEL` add Foreign Key (`KPI_ID`) references `SBI_KPI` (`KPI_ID`) on delete  restrict on update  restrict;
+ALTER TABLE SBI_KPI_MODEL ADD UNIQUE INDEX UNIQUE_PAR_ID_CD(KPI_PARENT_MODEL_ID, KPI_MODEL_CD);
 
 -- INSTANCE
 
