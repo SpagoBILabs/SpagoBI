@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 15-gen-2010 17.03.17 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.commons.metadata.SbiCommonInfo" >
+        <property name="userInsert" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUpdate" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDelete" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeInsert" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUpdate" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDelete" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionDelete" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDelete" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDelete" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>
+    </class>
+</hibernate-mapping>
