@@ -36,7 +36,7 @@ public class AbstractTestHibernateDAO {
 	private static final SessionFactory sessionFactory;
 	static {
 		try {
-			String fileCfg = "hibernate.cfg.hsql.xml";
+			String fileCfg = "hibernate.cfg.xml";
 			Configuration conf = new Configuration();
 			conf = conf.configure(fileCfg);
 			sessionFactory = conf.buildSessionFactory();		
