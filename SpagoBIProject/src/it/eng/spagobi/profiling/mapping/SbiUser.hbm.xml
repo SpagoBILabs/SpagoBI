@@ -6,7 +6,12 @@
     <class name="it.eng.spagobi.profiling.bean.SbiUser" table="SBI_USER">
         <id name="id" type="int">
             <column name="ID" />
-            <generator class="increment" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_user</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <property name="userId" type="string">
             <column name="USER_ID" length="100" not-null="true" unique="true" />
