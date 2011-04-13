@@ -50,6 +50,7 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
@@ -120,13 +121,13 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	}
 
 	public void doSave() {
-		
+
 		logger.debug("IN");
-		
+
 		try {
-			
+
 			logger.debug("Save domain");
-			
+
 			Domain domain = this.setDomain();
 			DAOFactory.getDomainDAO().saveDomain(domain);
 			JSONObject response = new JSONObject();
@@ -134,8 +135,9 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save domain", e);
-		} finally  {
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to save domain", e);
+		} finally {
 			logger.debug("OUT");
 		}
 	}
@@ -155,41 +157,38 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	public void doDomainList() {
 		try {
 			logger.debug("Loaded domain list");
-			//JSONArray results= (JSONArray) SerializerFactory.getSerializer("application/json").serialize( subObjectsList,null );
 
 			List<Domain> domainList = DAOFactory.getDomainDAO().loadListDomains();
-			JSONObject domainJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(domainList.get(0),this.getLocale());
-			JSONArray domainListJSON = new JSONArray();
-			domainListJSON.put(domainJSON);
+			JSONArray domainListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(domainList,
+							this.getLocale());
 			JSONObject response = new JSONObject();
 			response.put("response", domainListJSON);
-			//SerializerFactory.getSerializer("application/json").serialize(domainList,locale);
+
 			writeBackToClient(new JSONSuccess(response));
-			
-			//PaginatorIFace paginator = new GenericPaginator();
-			//Alla fine di ogni iterazione inserire: paginator.addRow(rowSB);
-			//list.setPaginator(paginator);
-			//writeBackToClient(new JSONAcknowledge("Operation succeded"));
+
+			// PaginatorIFace paginator = new GenericPaginator();
+			// Alla fine di ogni iterazione inserire: paginator.addRow(rowSB);
+			// list.setPaginator(paginator);
+			// writeBackToClient(new JSONAcknowledge("Operation succeded"));
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Exception occurred while retrieving domain data", e);
 		}
 	}
-	
-	public Domain setDomain()
-	{
+
+	public Domain setDomain() {
 		Domain domain = new Domain();
-		
+
 		domain.setValueId(this.getAttributeAsInteger("VALUE_ID"));
 		domain.setValueCd(this.getAttributeAsString("VALUE_CD"));
 		domain.setValueName(this.getAttributeAsString("VALUE_NM"));
 		domain.setDomainCode(this.getAttributeAsString("DOMAIN_CD"));
 		domain.setDomainName(this.getAttributeAsString("DOMAIN_NM"));
 		domain.setValueDescription(this.getAttributeAsString("VALUE_DS"));
-		
+
 		return domain;
-		
+
 	}
 
 }
