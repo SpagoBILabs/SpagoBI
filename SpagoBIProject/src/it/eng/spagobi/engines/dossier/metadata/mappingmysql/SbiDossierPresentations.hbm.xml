@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.engines.dossier.metadata.SbiDossierPresentations" table="SBI_DOSSIER_PRES">
         <id name="presentationId" type="integer">
             <column name="PRESENTATION_ID" />
-            <generator class="native">
-           		<param name="sequence">SBI_DOSSIER_PRES_SEQ</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_dossier_presentations</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" >
             <column name="BIOBJ_ID" />

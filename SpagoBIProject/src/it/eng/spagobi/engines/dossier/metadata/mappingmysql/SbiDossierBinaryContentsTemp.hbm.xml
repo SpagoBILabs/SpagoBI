@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.engines.dossier.metadata.SbiDossierBinaryContentsTemp" table="SBI_DOSSIER_BIN_TEMP">
         <id name="binId" type="integer">
             <column name="BIN_ID" />
-            <generator class="native">
-           		<param name="sequence">SBI_DOSSIER_BIN_TEMP_SEQ</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_dossier_bin_contents</param>
+		<param name="initial_value">1</param>		
+   </generator>
         </id>
         <many-to-one name="sbiDossierPartsTemp" class="it.eng.spagobi.engines.dossier.metadata.SbiDossierPartsTemp">
             <column name="PART_ID" />
