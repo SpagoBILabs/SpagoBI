@@ -186,7 +186,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			aSession.update(user, userID);
+			aSession.update(user);
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
