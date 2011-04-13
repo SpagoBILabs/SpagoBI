@@ -5,9 +5,12 @@
     <class name="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" table="SBI_DATA_SOURCE" >
         <id name="dsId" type="int">
             <column name="DS_ID" />     
-            <generator class="native">
-           		<param name="sequence">sbi_data_source_seq</param>
-            </generator>  
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_data_source_seq</param>	
+		<param name="initial_value">1</param>	
+   </generator>
         </id>
         <many-to-one name="dialect" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="DIALECT_ID" not-null="true" />
