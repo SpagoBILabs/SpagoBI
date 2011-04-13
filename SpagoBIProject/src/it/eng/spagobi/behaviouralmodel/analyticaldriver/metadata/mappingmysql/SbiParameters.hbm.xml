@@ -9,9 +9,12 @@
     <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" table="SBI_PARAMETERS">
         <id name="parId" type="integer">
             <column name="par_id" />
-            <generator class="native">
-           		<param name="sequence">sbi_parameters_seq</param>
-            </generator>
+   	<generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_parameters</param>	
+		<param name="initial_value">1</param>
+   	</generator>
         </id>
         <many-to-one name="parameterType" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="par_type_id" not-null="true" />
