@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents" table="SBI_OBJ_METACONTENTS">
         <id name="objMetacontentId" type="integer">
             <column name="OBJ_METACONTENT_ID" />
-            <generator class="native">
-           		<param name="sequence">sbi_obj_metacontents_seq</param>
-            </generator>
+			   <generator class="org.hibernate.id.enhanced.TableGenerator">
+					<param name="optimizer">hilo</param>
+					<param name="table_name">sbi_index</param>
+					<param name="segment_value">sbi_obj_metacontents</param>	
+					<param name="initial_value">1</param>	
+			   </generator>              
         </id>
         <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" fetch="select">
             <column name="BIOBJ_ID" not-null="true" />
