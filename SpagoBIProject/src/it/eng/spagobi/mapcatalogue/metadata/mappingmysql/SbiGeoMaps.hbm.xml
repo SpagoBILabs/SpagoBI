@@ -6,9 +6,13 @@
     <class name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps" table="SBI_GEO_MAPS" >
         <id name="mapId" type="int">
             <column name="MAP_ID" />   
-            <generator class="native">
-           		<param name="sequence">sbi_geo_maps_seq</param>
-            </generator>
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">hilo</param>
+		<param name="table_name">sbi_index</param>
+		<param name="segment_value">sbi_geo_map</param>	
+		<param name="initial_value">1</param>	
+   </generator> 
+
         </id>
         <property name="name" type="string">
             <column name="NAME" />
