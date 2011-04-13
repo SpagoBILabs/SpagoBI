@@ -41,7 +41,7 @@ public class SbiDomains  implements java.io.Serializable {
      private String valueCd;
      private String valueNm;
      private String valueDs;
-     private Set sbiExporterses = new HashSet(0);
+//     private Set sbiExporterses = new HashSet(0);
 	
 
     // Constructors
@@ -174,7 +174,7 @@ public class SbiDomains  implements java.io.Serializable {
         this.valueDs = valueDs;
     }
 
-	public Set getSbiExporterses() {
+/*	public Set getSbiExporterses() {
 		return sbiExporterses;
 	}
 
@@ -182,6 +182,6 @@ public class SbiDomains  implements java.io.Serializable {
 		this.sbiExporterses = sbiExporterses;
 	}
 
-
+*/
 
 }
