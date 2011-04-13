@@ -6,9 +6,12 @@
     <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints" table="SBI_VIEWPOINTS">
         <id name="vpId" type="integer">
             <column name="VP_ID" />
-            <generator class="native" >
-	            <param name="sequence">sbi_viewpoints_seq</param>
-            </generator>
+   			<generator class="org.hibernate.id.enhanced.TableGenerator">
+					<param name="optimizer">hilo</param>
+					<param name="table">sbi_index</param>
+					<param name="segment_value">sbi_view_point</param>
+					<param name="initial_value">1</param>	
+   			</generator>
         </id>
         <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
             <column name="BIOBJ_ID" not-null="true" />
