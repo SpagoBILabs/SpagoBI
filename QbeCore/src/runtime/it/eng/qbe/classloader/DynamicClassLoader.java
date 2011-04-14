@@ -172,13 +172,37 @@ public class DynamicClassLoader extends URLClassLoader {
 		
 		if(bis==null) {
 			try {
+				byte[] res = null;
 				file = new JarFile(jarFile);
 				JarEntry jarEntry = file.getJarEntry(resourceName);
+				if(jarEntry == null) {
+					logger.warn("Impossible to load resource [" + resourceName + "] from jar file [" + jarFile.getAbsolutePath() + "]");
+					return super.getResourceAsStream(resourceName);
+				}
+				res = new byte[(int)jarEntry.getSize()];
 				bis = new BufferedInputStream(file.getInputStream(jarEntry));
+				bis.read(res, 0, res.length);
 			} catch (Exception ex) {
 				logger.warn("Impossible to load resource [" + resourceName + "] from jar file [" + jarFile.getAbsolutePath() + "]");
 				return super.getResourceAsStream(resourceName);
-			} 			
+			} finally {
+				if (bis!=null) {
+					try {
+						bis.close();
+					} catch (Throwable t) {
+						logger.error("Impossible to close stream used to read resource [" + resourceName + "] definition", t);
+						throw new RuntimeException("Impossible to close stream used to read resource [" + resourceName + "] definition");
+					}
+				}
+				if (file!=null) {
+					try {
+						file.close();
+					} catch (Throwable t) {
+						logger.error("Impossible to close file used to read resource [" + resourceName + "] definition", t);
+						throw new RuntimeException("Impossible to file used to read resource [" + resourceName + "] definition");
+					}
+				}
+			}		
 		}
 		return bis;
 	}
