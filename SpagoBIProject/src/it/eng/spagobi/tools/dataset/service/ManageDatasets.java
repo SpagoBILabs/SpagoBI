@@ -27,7 +27,6 @@ import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.query.serializer.json.QueryJSONDeserializer;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -35,11 +34,9 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializationException;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
@@ -57,12 +54,12 @@ import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -715,30 +712,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.loadData();
 			IDataStore dataStore = dataSet.getDataStore();
 			
-			try {
-				dataSetJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize( dataStore, null );
-			} catch (SerializationException e) {
-				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
-			}
-
-			/*String metadataToXML=new DatasetMetadataParser().metadataToXML(ids);
-			rowsSourceBean=ids.toSourceBean();
-
-			//I must get columnNames. assumo che tutte le righe abbiano le stesse colonne
-			if(rowsSourceBean!=null){
-				List row = rowsSourceBean.getAttributeAsList("ROW");
-				if(row.size()>=1){
-					Iterator iterator = row.iterator(); 
-					SourceBean sb = (SourceBean) iterator.next();
-					List sbas = sb.getContainedAttributes();
-					for (Iterator iterator2 = sbas.iterator(); iterator2.hasNext();) {
-						SourceBeanAttribute object = (SourceBeanAttribute) iterator2.next();
-						String name = object.getKey();
-						colNames.add(name);
-						String value = (String)object.getValue();
-					}
-				}
-			}	*/	
+//			try {
+//				dataSetJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize( dataStore, null );
+//			} catch (SerializationException e) {
+//				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
+//			}
+			
+			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
 		}
 		catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose",e);

@@ -33,7 +33,6 @@ if(Sbi.qbe.commons.Format){
 	}
 };
 
-
 Sbi.locale.localize = function(key) {
 	if(!Sbi.locale.ln) return key;
 	return Sbi.locale.ln[key] || key;
@@ -42,7 +41,3 @@ Sbi.locale.localize = function(key) {
 // alias
 LN = Sbi.locale.localize;
 FORMATTERS = Sbi.locale.formatters;
-
-
-
-

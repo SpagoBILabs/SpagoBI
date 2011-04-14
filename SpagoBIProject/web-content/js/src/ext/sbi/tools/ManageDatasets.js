@@ -109,7 +109,7 @@ Ext.extend(
 				fileDetail : null,
 				parsGrid : null,
 				datasetTestTab : null,
-				datasetTestGridPanel : null,
+				//datasetTestGridPanel : null,
 				manageParsGrid : null,
 				manageDsVersionsGrid : null
 
@@ -167,7 +167,16 @@ Ext.extend(
 						requestParameters.pars = Ext.util.JSON
 								.encode(arrayPars);
 					}
-					this.datasetTestGridPanel.execTest(requestParameters);
+					//this.datasetTestGridPanel.execTest(requestParameters);
+					if (this.previewWindow === undefined) {
+						this.previewWindow = new Sbi.tools.dataset.PreviewWindow({
+							modal : true
+							, width: this.getWidth() - 50
+							, height: this.getHeight() - 50
+						});
+					}
+					this.previewWindow.show();
+					this.previewWindow.load(requestParameters);
 
 				}
 
@@ -591,34 +600,6 @@ Ext.extend(
 							// icons (such as Bold, Italic, ...) in
 							// background
 							});
-					/*
-					this.qbeSQLQuery = new Ext.form.HtmlEditor({
-						// width : 150,
-						// height : 220,
-						name : 'qbeSQLQuery',
-						valueField : 'qbeSQLQuery',
-						fieldLabel : LN('sbi.ds.query'),
-						enableAlignments : false,
-						enableColors : false,
-						enableFont : false,
-						enableFontSize : false,
-						enableFormat : false,
-						enableLinks : false,
-						enableLists : false,
-						enableSourceEdit : false,
-						listeners : {
-							'render' : function(editor) {
-								var tb = editor.getToolbar();
-								tb.add(openQbeWizardButton);
-							},
-							'initialize' : {
-								fn : function() {
-									this.onFirstFocus();
-								}
-							}
-						}
-					});
-					*/
 					
 					this.qbeSQLQuery = new Ext.form.Hidden({
 						name : 'qbeSQLQuery'
@@ -1059,8 +1040,12 @@ Ext.extend(
 						items : [ this.tbTestDSButton ]
 					});
 
-					var c = {};
+					var c = {
+						tbar: this.tbTestToolbar
+					};
 					this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
+					
+					/*
 					this.datasetTestGridPanel = new Sbi.tools.DataSetTestGrid(
 							c);
 
@@ -1076,6 +1061,7 @@ Ext.extend(
 						items : [ this.datasetTestGridPanel ],
 						scope : this
 					});
+					*/
 
 					this.datasetTestTab = new Ext.Panel({
 						title : LN('sbi.ds.test'),
@@ -1085,7 +1071,7 @@ Ext.extend(
 						bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
 								: 'padding:10px 15px;',
 						border : true,
-						items : [ this.parsGrid, this.datasetTestPanel ],
+						items : [ this.parsGrid/*, this.datasetTestPanel*/],
 						scope : this
 					});
 					this.datasetTestTab.addListener('activate',

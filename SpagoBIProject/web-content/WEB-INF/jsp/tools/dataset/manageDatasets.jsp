@@ -158,6 +158,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Sbi.config.qbeDatasetBuildUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineBuildDatasetUrl.toString()) %>';
     Sbi.config.qbeGetDatamartsUrl = '<%= StringEscapeUtils.escapeJavaScript(qbeEngineGetDatamartsUrl.toString()) %>';
 
+    // for DataStorePanel.js
+    Sbi.config.queryLimit = {};
+    Sbi.config.queryLimit.maxRecords = 30000;
+    
 	Ext.onReady(function(){
 		Ext.QuickTips.init();
 		var manageDatasets = new Sbi.tools.ManageDatasets(config);

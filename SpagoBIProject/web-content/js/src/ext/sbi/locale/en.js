@@ -42,6 +42,7 @@ Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Node Description';
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Validation Error';
+Sbi.locale.ln['sbi.generic.info'] = 'Info';
 Sbi.locale.ln['sbi.generic.error'] = 'Error';
 Sbi.locale.ln['sbi.generic.error.msg'] = 'Operation failed';
 Sbi.locale.ln['sbi.generic.ok'] = 'Information';
@@ -527,7 +528,8 @@ Sbi.locale.ln['sbi.ds.restore'] = 'Restore';
 Sbi.locale.ln['sbi.ds.dateIn'] = 'Creation Date';
 Sbi.locale.ln['sbi.ds.userIn'] = 'Creation User';
 Sbi.locale.ln['sbi.ds.versionPanel'] = 'Older Dataset Versions';
-Sbi.locale.ln['sbi.ds.test'] = 'Test';
+Sbi.locale.ln['sbi.ds.test'] = 'Preview';
+Sbi.locale.ln['sbi.ds.datasetTestPanel.title'] = 'See preview';
 Sbi.locale.ln['sbi.ds.fillPars'] = 'Fill in Values for all Parameters';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Used By';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Manage DataSets';
@@ -572,3 +574,28 @@ Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Qbe Dataset Builde
 //DATASET - CHOOSE DATAMART
 //===================================================================
 Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';
+
+//===================================================================
+//DATASET - PREVIEW
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.previewwindow.title'] = 'Preview';
+
+//===================================================================
+//DATASTORE PANEL
+//===================================================================
+Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Results';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Displaying {0} - {1} of {2}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptymsg'] = 'No data to display';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptywarningmsg'] = 'Query returns no data';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'Max records number limit';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afteroverflow'] = 'exceeded';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforepagetext'] = 'Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afterpagetext'] = 'of {0}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.firsttext'] = 'First Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.prevtext'] = 'Previous Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.nexttext'] = 'Next Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.lasttext'] = 'Next Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.refreshtext'] = 'Refresh';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.button.tt.exportto'] = 'Export to';

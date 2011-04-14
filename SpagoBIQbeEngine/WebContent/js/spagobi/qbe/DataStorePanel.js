@@ -55,9 +55,9 @@ Sbi.widgets.DataStorePanel = function(config) {
 		// set default values here
 	}, config || {});
 	
-	this.services = new Array();
+	this.services = this.services || new Array();
 	var params = {};
-	this.services['loadDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.services['loadDataStore'] = this.services['loadDataStore'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'EXEC_QUERY_ACTION'
 		, baseParams: params
 	});

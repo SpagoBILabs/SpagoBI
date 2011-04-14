@@ -878,7 +878,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	
 	,
 	setQueriesCatalogue: function (queriesCatalogue) {
-		this.queryCataloguePanel.setQueries(queriesCatalogue);
+		this.queryCataloguePanel.setQueriesCatalogue(queriesCatalogue);
 	}
 	
 	,
