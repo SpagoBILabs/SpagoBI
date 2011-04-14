@@ -195,49 +195,59 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			sortable : false,
 			hidden : true
 		}, {
-			header : 'VALUE CODE',
+			header : LN('sbi.domain.managedomains.fields.valuecd'),
 			dataIndex : 'VALUE_CD',
 			// width: 220,
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				allowBlank : false
+				//allowBlank : false,
+				//maxLength : 100,
+				//maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		}, {
-			header : 'VALUE NAME',
+			header : LN('sbi.domain.managedomains.fields.valuenm'),
 			dataIndex : 'VALUE_NM',
 			// width: 150,
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				allowBlank : false
+				allowBlank : false,
+				maxLength : 40,
+				maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		}, {
-			header : 'DOMAIN CODE',
+			header : LN('sbi.domain.managedomains.fields.domaincd'),
 			dataIndex : 'DOMAIN_CD',
 			// width: 150,
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				allowBlank : false
+				allowBlank : false,
+				maxLength : 20,
+				maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		}, {
-			header : 'DOMAIN NAME',
+			header : LN('sbi.domain.managedomains.fields.domainnm'),
 			dataIndex : 'DOMAIN_NM',
 			// width: 150,
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				allowBlank : false
+				allowBlank : false,
+				maxLength : 40,
+				maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		}, {
-			header : 'VALUE DESCRIPTION',
+			header : LN('sbi.domain.managedomains.fields.valueds'),
 			dataIndex : 'VALUE_DS',
 			// width: 150,
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				allowBlank : false
+				allowBlank : false,
+				maxLength : 160,
+				maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		} ]);
 	}
