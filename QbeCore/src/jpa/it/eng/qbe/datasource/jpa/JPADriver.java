@@ -76,10 +76,10 @@ public class JPADriver implements IDriver {
 			logger.debug("The Data source cache is enabled");
 			dataSource = cache.containsKey(dataSourceName)? 
 						 cache.get(dataSourceName): 
-					     new JPADataSource(dataSourceName, configuration);
+					     new JPADataSourceWithClassLoader(dataSourceName, configuration);
 		} else {
 			logger.debug("The Data source cache is not enabled");
-			dataSource = new JPADataSource(dataSourceName, configuration);
+			dataSource = new JPADataSourceWithClassLoader(dataSourceName, configuration);
 		}
 		
 		openedDataSource++;

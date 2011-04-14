@@ -85,7 +85,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		EntityManager em = factory.createEntityManager();
 	}
 	
-	private void initEntityManagerFactory(String name){
+	protected void initEntityManagerFactory(String name){
 		factory = Persistence.createEntityManagerFactory(name, buildEmptyConfiguration());
 	}
 
