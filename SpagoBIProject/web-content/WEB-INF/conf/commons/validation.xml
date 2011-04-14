@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<VALIDATIONS>
+	<SERVICE name="DOMAIN_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST"
+					value="DOMAIN_SAVE" />
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="DOMAIN_CD" label="#domains.definitionForm.fields.domain_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20" />
+				</FIELD>
+				<FIELD name="DOMAIN_NM" label="#domains.definitionForm.fields.domain_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
+				</FIELD>
+				<FIELD name="VALUE_CD" label="#domains.definitionForm.fields.value_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="VALUE_NM" label="#domains.definitionForm.fields.value_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
+				</FIELD>
+				<FIELD name="VALUE DS" label="#domains.definitionForm.fields.value_ds">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160" />
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

@@ -599,3 +599,13 @@ Sbi.locale.ln['sbi.widgets.datastorepanel.grid.lasttext'] = 'Next Page';
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.refreshtext'] = 'Refresh';
 
 Sbi.locale.ln['sbi.widgets.datastorepanel.button.tt.exportto'] = 'Export to';
+
+//===================================================================
+//DOMAIN 
+//===================================================================
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuecd'] = 'Value code';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuenm'] = 'Value name';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Value description';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'Domain code';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Domain name';
+
