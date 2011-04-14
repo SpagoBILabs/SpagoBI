@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.classloader;
 
-import it.eng.spagobi.utilities.DynamicClassLoader;
 
 import java.io.File;
 import java.util.Enumeration;
@@ -76,10 +75,10 @@ public class ClassLoaderManager{
 	/**
 	 * Update the thread class loader with a dynamic class loader that
 	 * considers also the jar file
-	 * @param jarFile
+	 * @param file
 	 * @return
 	 */
-	public static ClassLoader updateCurrentClassLoader(File jarFile){
+	public static ClassLoader updateCurrentClassLoader(File file){
 		
 		ClassLoader cl =  Thread.currentThread().getContextClassLoader();
 		
@@ -87,9 +86,10 @@ public class ClassLoaderManager{
 		
 		logger.debug("IN");
 		
+		JarFile jarFile = null;
 		try {			
-			JarFile jar = new JarFile(jarFile);
-			Enumeration entries = jar.entries();
+			jarFile = new JarFile(file);
+			Enumeration entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry entry = (JarEntry) entries.nextElement();
 				if (entry.getName().endsWith(".class")) {
@@ -101,7 +101,7 @@ public class ClassLoaderManager{
 						logger.debug("loading class [" + className  + "]" + " with class loader [" + Thread.currentThread().getContextClassLoader().getClass().getName()+ "]");
 						Thread.currentThread().getContextClassLoader().loadClass(className);
 						wasAlreadyLoaded = true;
-						logger.debug("Class [" + className  + "] has been already loaded (?");
+						logger.debug("Class [" + className  + "] has been already loaded (?)");
 						break;
 					} catch (Exception e) {
 						wasAlreadyLoaded = false;
@@ -113,9 +113,17 @@ public class ClassLoaderManager{
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
+		} finally{
+			try {
+				if(jarFile!=null){
+					jarFile.close();
+				}
+			} catch (Exception e2) {
+				logger.error("Error closing the jar file",e2);
+			}
 		}
 		
-		logger.debug("Jar file [" + jarFile.getName()  + "] already loaded: " + wasAlreadyLoaded);
+		logger.debug("Jar file [" + file.getName()  + "] already loaded: " + wasAlreadyLoaded);
 		
 		try {
 
@@ -123,7 +131,7 @@ public class ClassLoaderManager{
 				
 				ClassLoader previous = cl;
 				Thread.currentThread().getContextClassLoader();
-    		    DynamicClassLoader current = new DynamicClassLoader(jarFile, previous);
+    		    DynamicClassLoader current = new DynamicClassLoader(file, previous);
 			    Thread.currentThread().setContextClassLoader(current);
 			    cl = current;
 			}
