@@ -160,7 +160,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     // for DataStorePanel.js
     Sbi.config.queryLimit = {};
-    Sbi.config.queryLimit.maxRecords = 30000;
+    Sbi.config.queryLimit.maxRecords = <%= GeneralUtilities.getDatasetMaxResults() %>;
     
 	Ext.onReady(function(){
 		Ext.QuickTips.init();

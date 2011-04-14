@@ -851,4 +851,16 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("OUT");
 		return toReturn;
 	}
+	
+	public static int getDatasetMaxResults() {
+		int maxResults = Integer.MAX_VALUE;
+		String maxResultsStr = (String) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATASET.maxResults");
+		if (maxResultsStr != null) {
+			maxResults = Integer.parseInt(maxResultsStr);
+		} else {
+			logger.warn("Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
+			logger.debug("Using default value that is Integer.MAX_VALUE = " + Integer.MAX_VALUE);
+		}
+		return maxResults;
+	}
 }

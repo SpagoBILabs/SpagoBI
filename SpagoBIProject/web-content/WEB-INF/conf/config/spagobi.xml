@@ -210,6 +210,10 @@ END-LIFERAY -->
      <LOOKUP numberRows = "20" />
 
 
+	<!-- Start configuration for dataset -->
+	<DATASET maxResults = "500000" />
+	<!-- end configuration for dataset -->
+
      <SPAGOBI_CONTEXT>/SpagoBI</SPAGOBI_CONTEXT>
     
      <SPAGOBI_HOST_JNDI>java://comp/env/spagobi_host_url</SPAGOBI_HOST_JNDI>
