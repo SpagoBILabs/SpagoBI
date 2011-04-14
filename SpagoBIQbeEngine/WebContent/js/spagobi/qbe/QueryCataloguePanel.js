@@ -539,25 +539,36 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	}
 	
 	,
-	setQueries : function (queriesCatalogue) {
+	setQueriesCatalogue : function (queriesCatalogue) {
 		this.clear();
 		var queries = queriesCatalogue.catalogue.queries;
 		for (var i = 0; i < queries.length; i++) {
 			var query = queries[i];
 			var root = this.tree.getRootNode();
-			var queryNode = {
-			    id: query.id
-			   	, text: query.name
-			   	, leaf: true
-			   	, attributes: {
-			 		query: query
-			 		, iconCls: 'icon-query'
-			    }
-			};
-			root.appendChild( queryNode );
-			root.expand();
-			
-			this.tree.getSelectionModel().select( root.childNodes[0] );
+			this.setQueryOnCatalogue(root, query);
+		}
+		this.tree.getSelectionModel().select( root.childNodes[0] );
+	}
+	
+	,
+	setQueryOnCatalogue: function (parentNode, query) {
+		var queryNode = {
+		    id: query.id
+		   	, text: query.name
+		   	, leaf: true
+		   	, attributes: {
+		 		query: query
+		 		, iconCls: 'icon-query'
+		    }
+		};
+		parentNode.appendChild( queryNode );
+		parentNode.expand();
+		
+		var subqueries = query.subqueries;
+		if (subqueries !== undefined && subqueries !== null && subqueries.length > 0) {
+			for (var i = 0; i < subqueries.length; i++) {
+				setQueryOnCatalogue( queryNode , subqueries[i] );
+			}
 		}
 	}
 	
