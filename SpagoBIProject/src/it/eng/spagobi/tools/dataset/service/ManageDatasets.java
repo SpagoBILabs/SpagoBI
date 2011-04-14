@@ -37,6 +37,7 @@ import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
@@ -705,11 +706,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;
 		
+		Integer start = getAttributeAsInteger( START );
+		Integer limit = getAttributeAsInteger( LIMIT );
+		
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 
 		dataSet.setParamsMap(parametersFilled);		
-		try{
-			dataSet.loadData();
+		try {
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			
 //			try {

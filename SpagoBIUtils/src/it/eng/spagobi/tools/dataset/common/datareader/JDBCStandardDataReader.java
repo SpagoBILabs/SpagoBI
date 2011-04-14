@@ -94,8 +94,9 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     			logger.debug("FetchSize not set");
     		}
     		
-    		long recCount = 0;
-    		while (rs.next() && (recCount < maxRecToParse) ) {
+    		int recCount = 0;
+    		int resultNumber = 0;
+    		while ((recCount < maxRecToParse) && rs.next()) {
     			IRecord record = new Record(dataStore);
     			for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
     				Object columnValue = rs.getObject(columnIndex);
@@ -114,13 +115,33 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		
     		logger.debug("resultset type [" + rs.getType() + "] (" + (rs.getType()  == rs.TYPE_FORWARD_ONLY) + ")");
     		if (rs.getType()  == ResultSet.TYPE_FORWARD_ONLY) {
-    			while (rs.next()) {
-    				// do nothing, just scroll result set
+//    			while (!rs.isLast()) {
+//    				rs.next();    // INFINITE LOOP ON MYSQL!!!!!
+//    			}
+    			
+//    			while (rs.next()) {
+//    								// IT DOES NOT WORK SINCE, WHEN EXECUTING rs.next() ON LAST ROW,
+//									// THEN rs.getRow() RETURNS 0, SINCE THE ROW IN NOT VALID
+//    			}
+    			
+    			int recordsCount = 0;
+    			if (recCount < maxRecToParse) {
+    				// records read where less then max records to read, therefore the resultset has been completely read
+    				recordsCount = getOffset() + recCount;
+    			} else {
+        			recordsCount = rs.getRow();
+        			while (rs.next()) {
+        				recordsCount++;
+        				// do nothing, just scroll result set
+        			}
     			}
+
+    			resultNumber = recordsCount;
     		} else {
     			rs.last();
+    			resultNumber = rs.getRow();
     		}
-    		int resultNumber = rs.getRow();
+    		
     		dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
     		logger.debug("Reading total record numeber is equal to [" + resultNumber + "]");
     	} catch (SQLException e) {
