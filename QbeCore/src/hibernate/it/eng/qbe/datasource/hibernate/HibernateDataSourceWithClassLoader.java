@@ -25,6 +25,7 @@ import it.eng.qbe.classloader.ClassLoaderManager;
 import it.eng.qbe.datasource.AbstractDataSourceWithClassLoader;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.hibernate.SessionFactory;
@@ -35,55 +36,31 @@ import org.hibernate.cfg.Configuration;
  *
  */
 
-public class HibernateDataSourceWithClassLoader extends AbstractDataSourceWithClassLoader{
+public class HibernateDataSourceWithClassLoader extends  HibernateDataSource{
 
-	public HibernateDataSourceWithClassLoader(IDataSource wrappedDataSource) {
-		super(wrappedDataSource);
-	}
-
-	public synchronized void open() {
-		//logger.debug("IN");
-		
-		HibernateDataSource wrappedHDS =  (HibernateDataSource)wrappedDataSource;
-		
-		try {
-			if(!isOpen()) {
-				wrappedHDS.compositeHibernateConfiguration = wrappedHDS.buildEmptyConfiguration();
-				
-				addDatamarts();
-				
-				if(wrappedHDS.isCompositeDataSource()) {
-					wrappedHDS.addDbLinks();	
-					wrappedHDS.compositeHibernateSessionFactory = wrappedHDS.compositeHibernateConfiguration.buildSessionFactory();
-				} else {
-					wrappedHDS.compositeHibernateSessionFactory = wrappedHDS.sessionFactoryMap.get(wrappedHDS.getSubConfigurations().get(0).getModelName());
-				}
-				
-				wrappedHDS.classLoaderExtended = true;
-			}
-		} catch (Throwable t){
-			throw new SpagoBIRuntimeException("Impossible to open connection", t);
-		} finally {
-			//logger.debug("OUT");
+	protected static ClassLoader defoutlClassLoader;
+	
+	protected ClassLoader myClassLoader;
+	
+	public HibernateDataSourceWithClassLoader(String dataSourceName, IDataSourceConfiguration configuration) {
+		super(dataSourceName, configuration);
+		if(defoutlClassLoader==null){
+			defoutlClassLoader = Thread.currentThread().getContextClassLoader();
+		}else{
+			Thread.currentThread().setContextClassLoader(defoutlClassLoader);
 		}
+		myClassLoader = defoutlClassLoader;
 	}
-	
-	private void addDatamarts() {
-		HibernateDataSource wrappedHDS =  (HibernateDataSource)wrappedDataSource;
-		for(int i = 0; i < wrappedHDS.getSubConfigurations().size(); i++) {
-			addDatamart((FileDataSourceConfiguration)wrappedHDS.getSubConfigurations().get(i), !wrappedHDS.classLoaderExtended);		
-		}	
-		wrappedHDS.classLoaderExtended = true;
-	}
-	
-	private void addDatamart(FileDataSourceConfiguration configuration, boolean extendClassLoader) {
+
+
+	@Override
+	protected void addDatamart(FileDataSourceConfiguration configuration, boolean extendClassLoader) {
 		Configuration cfg = null;	
 		SessionFactory sf = null;
-		HibernateDataSource wrappedHDS =  (HibernateDataSource)wrappedDataSource;
 		if(configuration.getFile() == null) return;
 		
-		cfg = wrappedHDS.buildEmptyConfiguration();
-		wrappedHDS.configurationMap.put(configuration.getModelName(), cfg);
+		cfg = buildEmptyConfiguration();
+		configurationMap.put(configuration.getModelName(), cfg);
 		
 		if (extendClassLoader){
 			myClassLoader = ClassLoaderManager.updateCurrentClassLoader(configuration.getFile());
@@ -92,13 +69,13 @@ public class HibernateDataSourceWithClassLoader extends AbstractDataSourceWithCl
 		cfg.addJar(configuration.getFile());
 		
 		try {
-			wrappedHDS.compositeHibernateConfiguration.addJar(configuration.getFile());
+			compositeHibernateConfiguration.addJar(configuration.getFile());
 		} catch (Throwable t) {
 			throw new RuntimeException("Cannot add datamart", t);
 		}
 		
 		sf = cfg.buildSessionFactory();
-		wrappedHDS.sessionFactoryMap.put(configuration.getModelName(), sf);		
+		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
 }

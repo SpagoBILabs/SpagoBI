@@ -156,7 +156,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		classLoaderExtended = true;
 	}
 	
-	private void addDatamart(FileDataSourceConfiguration configuration, boolean extendClassLoader) {
+	protected void addDatamart(FileDataSourceConfiguration configuration, boolean extendClassLoader) {
 		Configuration cfg = null;	
 		SessionFactory sf = null;
 		
