@@ -155,18 +155,20 @@ public class DynamicClassLoader extends URLClassLoader {
      * @return An input stream for reading the resource, or null if the resource could not be found
      */
 	public synchronized InputStream getResourceAsStream(String resourceName)  {
-		
 		ZipFile zipFile = null;
-		BufferedInputStream bis = null;
-		try {
-			zipFile = new ZipFile(jar);
-			ZipEntry zipEntry = zipFile.getEntry(resourceName);
-			bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-		} catch (Exception ex) {
-			logger.warn("className: " +  resourceName + " Exception: "+ ex);
-			return super.getResourceAsStream(resourceName);
-		} 
-
+		InputStream bis = null;
+		try{
+			bis = super.getResourceAsStream(resourceName);
+		}catch (Exception ex) {}
+		if(bis==null){
+			try {
+				zipFile = new ZipFile(jar);
+				ZipEntry zipEntry = zipFile.getEntry(resourceName);
+				bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+			} catch (Exception ex2) {
+				logger.warn("className: " +  resourceName + " Exception: "+ ex2);
+			} 
+		}
 		return bis;
 	}
 	
