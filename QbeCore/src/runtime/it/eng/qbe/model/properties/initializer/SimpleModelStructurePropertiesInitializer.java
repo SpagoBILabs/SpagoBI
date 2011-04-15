@@ -41,13 +41,13 @@ import java.util.List;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SimpleDataMartStructurePropertiesInitializer implements IModelStructurePropertiesInitializer {
+public class SimpleModelStructurePropertiesInitializer implements IModelStructurePropertiesInitializer {
 		
 	IDataSource dataSource;
 	IModelProperties modelProperties;
 	
 	
-	public SimpleDataMartStructurePropertiesInitializer(IDataSource dataSource) {
+	public SimpleModelStructurePropertiesInitializer(IDataSource dataSource) {
 		this.dataSource =  dataSource;
 		modelProperties = dataSource.getConfiguration().loadModelProperties();
 	}
