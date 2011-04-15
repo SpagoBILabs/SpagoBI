@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.statement.hibernate;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
@@ -639,7 +639,7 @@ public class HQLStatement extends AbstractStatement {
 			}
 		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
 
-			DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			String dbDialect = connection.getDialect();
 			
 			String userDateFormatPattern = (String)getParameters().get("userDateFormatPattern");

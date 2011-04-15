@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
@@ -143,8 +143,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		factory = null;
 	}
 	
-	public DBConnection getConnection() {
-		DBConnection connection = (DBConnection)configuration.loadDataSourceProperties().get("connection");
+	public ConnectionDescriptor getConnection() {
+		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
 		return connection;
 	}
 	

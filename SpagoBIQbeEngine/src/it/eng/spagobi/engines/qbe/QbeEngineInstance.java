@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
@@ -82,7 +82,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		it.eng.spagobi.tools.datasource.bo.IDataSource dataSrc = (it.eng.spagobi.tools.datasource.bo.IDataSource)env.get( EngineConstants.ENV_DATASOURCE );
 		SpagoBiDataSource ds = dataSrc.toSpagoBiDataSource();
 		
-		DBConnection connection = new DBConnection();			
+		ConnectionDescriptor connection = new ConnectionDescriptor();			
 		connection.setName( ds.getLabel() );
 		connection.setDialect( ds.getHibDialectClass() );			
 		connection.setJndiName( ds.getJndiName() );			
