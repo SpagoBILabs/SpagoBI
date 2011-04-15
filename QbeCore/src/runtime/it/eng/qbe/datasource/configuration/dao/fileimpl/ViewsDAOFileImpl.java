@@ -21,7 +21,6 @@
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
 import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
-import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelViewEntityDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;

@@ -20,12 +20,11 @@
  **/
 package it.eng.qbe.datasource.configuration.dao;
 
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
+
 import java.util.List;
 
 import org.json.JSONObject;
-
-import it.eng.qbe.model.properties.SimpleModelProperties;
-import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 
 /**
  * The Interface IViewsDAO.

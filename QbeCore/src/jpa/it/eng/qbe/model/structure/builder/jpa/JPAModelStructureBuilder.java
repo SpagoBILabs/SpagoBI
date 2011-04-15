@@ -22,24 +22,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.structure.builder.jpa;
 
 import it.eng.qbe.datasource.jpa.JPADataSource;
-import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
-import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
-import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
-import it.eng.qbe.model.structure.filter.IQbeTreeEntityFilter;
-import it.eng.qbe.model.structure.filter.IQbeTreeFieldFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityEntityFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeAccessModalityFieldFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeOrderEntityFilter;
-import it.eng.qbe.model.structure.filter.QbeTreeOrderFieldFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.lang.reflect.Member;
@@ -58,8 +51,6 @@ import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 
 /**

@@ -36,8 +36,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONObject;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *

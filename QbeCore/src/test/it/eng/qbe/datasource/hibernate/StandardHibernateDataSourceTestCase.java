@@ -25,7 +25,6 @@ import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.jpa.JPADataSource;
 
 import java.io.File;
 

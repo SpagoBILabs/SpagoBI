@@ -44,8 +44,6 @@ import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 

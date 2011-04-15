@@ -23,7 +23,6 @@ package it.eng.qbe.query.serializer.json;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;

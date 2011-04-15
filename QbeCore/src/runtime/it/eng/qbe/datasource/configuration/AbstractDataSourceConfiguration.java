@@ -33,8 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import org.json.JSONObject;
-
 /**
  * This is an abstract configuration. All the methods return an empty collection of the valid type
  * without performing any real load activity. This class can be used as a base class to implement

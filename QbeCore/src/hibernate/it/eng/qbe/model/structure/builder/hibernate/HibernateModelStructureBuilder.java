@@ -22,13 +22,13 @@ package it.eng.qbe.model.structure.builder.hibernate;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
+import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;

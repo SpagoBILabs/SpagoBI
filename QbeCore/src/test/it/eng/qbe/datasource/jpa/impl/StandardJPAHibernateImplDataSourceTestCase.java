@@ -25,8 +25,6 @@ import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.hibernate.HibernateDataSource;
-import it.eng.qbe.datasource.hibernate.HibernateDriver;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
 

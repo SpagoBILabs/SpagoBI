@@ -21,13 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe;
 
-import java.util.List;
-import java.util.Set;
-
 import it.eng.qbe.datasource.DBConnection;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
+
+import java.util.List;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 /**
