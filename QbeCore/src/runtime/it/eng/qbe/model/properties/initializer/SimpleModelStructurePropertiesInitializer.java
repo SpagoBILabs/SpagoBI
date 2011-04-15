@@ -55,15 +55,15 @@ public class SimpleModelStructurePropertiesInitializer implements IModelStructur
 
 	public void addProperties(IModelObject item) {
 		if(item instanceof IModelEntity) {
-			addDataMartEntityProperties( (IModelEntity)item );
+			addModelEntityProperties( (IModelEntity)item );
 		} else if (item instanceof IModelField) {
-			addDataMartFieldProperties( (IModelField)item );
+			addModelFieldProperties( (IModelField)item );
 		} else if (item instanceof IModelStructure) {
-			addDataMartModelProperties( (IModelStructure)item );
+			addModelProperties( (IModelStructure)item );
 		}
 	}
 	
-	private void addDataMartModelProperties(IModelStructure item) {
+	private void addModelProperties(IModelStructure item) {
 		ModelPropertyMeta property;
 		String propertyValue;
 		
@@ -83,7 +83,7 @@ public class SimpleModelStructurePropertiesInitializer implements IModelStructur
 		}
 	}
 
-	protected void addDataMartEntityProperties(IModelEntity item) {
+	protected void addModelEntityProperties(IModelEntity item) {
 		ModelPropertyMeta property;
 		String propertyValue;
 		
@@ -108,7 +108,7 @@ public class SimpleModelStructurePropertiesInitializer implements IModelStructur
 		}
 	}
 	
-	protected void addDataMartFieldProperties(IModelField item) {
+	protected void addModelFieldProperties(IModelField item) {
 		ModelPropertyMeta property;
 		String propertyValue;
 		
