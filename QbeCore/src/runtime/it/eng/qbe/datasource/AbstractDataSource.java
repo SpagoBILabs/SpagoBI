@@ -94,7 +94,10 @@ public abstract class AbstractDataSource implements IDataSource {
 		if(properties == null) {			
 			properties = getConfiguration().loadModelI18NProperties(locale);
 			modelPropertiesCache.put(key, properties);
+		} else {
+			logger.debug("i18n properties loaded form cache");
 		}
+		
 		return properties;
 	}
 	
