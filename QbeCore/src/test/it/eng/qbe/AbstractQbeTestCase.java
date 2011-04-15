@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -37,7 +37,7 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractQbeTestCase extends TestCase {
 	
-	protected DBConnection connection;
+	protected ConnectionDescriptor connection;
 	protected IDataSource dataSource;
 	protected ClassLoader classLoader;
 	
@@ -52,7 +52,7 @@ public abstract class AbstractQbeTestCase extends TestCase {
 		
 		classLoader = Thread.currentThread().getContextClassLoader();
 		
-		connection = new DBConnection();			
+		connection = new ConnectionDescriptor();			
 		connection.setName( "foodmart" );
 		connection.setDialect(CONNECTION_DIALECT );			
 		connection.setDriverClass( CONNECTION_DRIVER  );	

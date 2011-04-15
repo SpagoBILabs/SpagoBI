@@ -25,7 +25,7 @@ package it.eng.qbe.datasource;
  * 
  * @author Andrea Gioia
  */
-public class DBConnection {
+public class ConnectionDescriptor {
 	
 		// GENERAL
 	 	

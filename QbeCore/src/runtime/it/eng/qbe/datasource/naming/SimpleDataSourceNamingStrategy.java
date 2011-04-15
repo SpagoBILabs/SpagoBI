@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.naming;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 
@@ -46,7 +46,7 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
 	 * @see it.eng.qbe.naming.NamingStrategy#getDatasourceName(java.util.List, it.eng.qbe.datasource.DBConnection)
 	 */
 	public String getDataSourceName(IDataSourceConfiguration configuration) {
-		DBConnection connection = (DBConnection)configuration.loadDataSourceProperties().get("connection");
+		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
 		List<String> modelNames = new ArrayList<String>();
 		if(configuration instanceof CompositeDataSourceConfiguration){
 			CompositeDataSourceConfiguration cc = (CompositeDataSourceConfiguration)configuration;
@@ -80,7 +80,7 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
 		return name;
 	}
 	
-	private String getDatasourceUnqualifiedName(List datamartNames, DBConnection connection) {
+	private String getDatasourceUnqualifiedName(List datamartNames, ConnectionDescriptor connection) {
 		String datasourceName = getDatamartName(datamartNames);
 		if (connection.isJndiConncetion()) {
 			datasourceName += "@" + connection.getJndiName();

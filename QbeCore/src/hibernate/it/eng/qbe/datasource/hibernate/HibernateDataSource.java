@@ -21,7 +21,7 @@
 package it.eng.qbe.datasource.hibernate;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
@@ -175,8 +175,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
-	private DBConnection getConnection() {
-		DBConnection connection = (DBConnection)configuration.loadDataSourceProperties().get("connection");
+	private ConnectionDescriptor getConnection() {
+		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
 		return connection;
 	}
 
@@ -190,7 +190,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		
 		cfg = new Configuration();
 		
-		DBConnection connection = getConnection();
+		ConnectionDescriptor connection = getConnection();
 		
 		if(connection.isJndiConncetion()) {
 			cfg.setProperty("hibernate.connection.datasource", connection.getJndiName());

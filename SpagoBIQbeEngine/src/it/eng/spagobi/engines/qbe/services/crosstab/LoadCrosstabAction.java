@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
@@ -133,7 +133,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			
-			DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			DataSource dataSource = getDataSource(connection);
 			
 			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
@@ -208,7 +208,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		}	
 	}
 
-	private DataSource getDataSource(DBConnection connection) {
+	private DataSource getDataSource(ConnectionDescriptor connection) {
 		DataSource dataSource = new DataSource();
 		dataSource.setJndi(connection.getJndiName());
 		dataSource.setHibDialectName(connection.getDialect());

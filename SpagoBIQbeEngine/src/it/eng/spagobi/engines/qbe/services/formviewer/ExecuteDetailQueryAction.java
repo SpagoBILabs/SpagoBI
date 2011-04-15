@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
@@ -201,7 +201,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				
 				dataSet = new JDBCDataSet();
 				//Session session = getDatamartModel().getDataSource().getSessionFactory().openSession();
-				DBConnection connection = (DBConnection)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+				ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 				DataSource dataSource = new DataSource();
 				dataSource.setJndi(connection.getJndiName());
 				dataSource.setHibDialectName(connection.getDialect());

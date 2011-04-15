@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.datasource.jpa;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 
 import javax.persistence.EntityManager;
@@ -31,7 +31,7 @@ import javax.persistence.EntityManagerFactory;
  *
  */
 public interface IJpaDataSource  extends IDataSource {
-	DBConnection getConnection();
+	ConnectionDescriptor getConnection();
 	EntityManager getEntityManager();
 	EntityManagerFactory getEntityManagerFactory();
 	EntityManagerFactory getEntityManagerFactory(String dmName);
