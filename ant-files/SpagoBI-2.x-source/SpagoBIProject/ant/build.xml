@@ -312,7 +312,8 @@
 			<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			    <filelist  dir="${build}/${webapp_name}/js">
 			    
-			    	 <file name="./src/ext/sbi/locale/LocaleUtils.js"/>
+			    	<file name="./src/ext/sbi/commons/Format.js"/>
+			    	<file name="./src/ext/sbi/locale/LocaleUtils.js"/>
 			    	 
 			    	 <file name="./src/ext/sbi/exception/ExceptionHandler.js"/>
 			    	 
@@ -367,14 +368,13 @@
 			    	 <file name="./src/ext/sbi/home/Banner.js"/>
 			    	 <file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js"/>
 			    	
-			    	<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
-			    	
 			    </filelist>
 
 			</concat>
 
 			<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 				    <filelist  dir="${build}/${webapp_name}/js">
+				    	 <file name="./src/ext/sbi/commons/Format.js"/>
 				    	 <file name="./src/ext/sbi/locale/LocaleUtils.js"/>			    	 
 				    	 <file name="./src/ext/sbi/exception/ExceptionHandler.js"/>				    	 
 				    	 <file name="./src/ext/sbi/service/ServiceRegistry.js"/>
@@ -392,7 +392,8 @@
 				    	 <file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
 				    	 <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
 				    	 <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
-					 <file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
+					 	<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
+				    	<file name="./src/ext/sbi/widgets/DataStorePanel.js"/>
 
 				    	 <file name="./src/ext/sbi/udp/ManageUdp.js"/>
 				    	 <file name="./src/ext/sbi/udp/ManageUdpValues.js"/>				    	
@@ -432,6 +433,8 @@
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>	
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
 
+				    	<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
+				    	<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
 
 				    </filelist>
 
