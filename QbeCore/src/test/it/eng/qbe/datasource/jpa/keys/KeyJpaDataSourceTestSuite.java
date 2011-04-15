@@ -37,9 +37,9 @@ public class KeyJpaDataSourceTestSuite extends TestCase {
 		suite.addTestSuite(NoKeyJpaDataSourceTestCase.class);
 		suite.addTestSuite(SimpleKeyJpaDataSourceTestCase.class);
 		suite.addTestSuite(CompKeyJpaDataSourceTestCase.class);
-		suite.addTestSuite(RelNoKeyJpaDataSourceTestCase.class);
+		//suite.addTestSuite(RelNoKeyJpaDataSourceTestCase.class);
 		suite.addTestSuite(RelSimpleKeyJpaDataSourceTestCase.class);
-		suite.addTestSuite(RelCompKeyJpaDataSourceTestCase.class);
+		//suite.addTestSuite(RelCompKeyJpaDataSourceTestCase.class);
 		return suite;
 	}
 }

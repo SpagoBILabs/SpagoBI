@@ -34,6 +34,7 @@ package it.eng.qbe.classloader;
 
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -105,50 +106,34 @@ public class DynamicClassLoader extends URLClassLoader {
 		
 		if(classToLoad == null) {
 			JarFile file = null;
-			BufferedInputStream bis = null;
-			byte[] res = null;
+			byte[] buffer = null;
 			try {
 				file = new JarFile(jarFile);
 				JarEntry jarEntry = file.getJarEntry(className.replace('.', '/') + ".class");
-				res = new byte[(int)jarEntry.getSize()];
-				bis = new BufferedInputStream(file.getInputStream(jarEntry));
-				bis.read(res, 0, res.length);
-			} catch (Exception ex) {
-				logger.warn("className: " +  className + " Exception: "+ ex);
+				buffer = getJarEntityContent(file, jarEntry);
+			} catch (Throwable t) {
+				logger.warn("Impossible to load class [" +  className + "]",  t);
 			} finally {
-				if (bis!=null) {
-					try {
-						bis.close();
-					} catch (Throwable t) {
-						logger.error("Impossible to close stream used to read class [" + className + "] definition", t);
-						throw new RuntimeException("Impossible to close stream used to read class [" + className + "] definition");
-					}
-				}
-				if (file!=null) {
-					try {
-						file.close();
-					} catch (Throwable t) {
-						logger.error("Impossible to close file used to read class [" + className + "] definition", t);
-						throw new RuntimeException("Impossible to file used to read class [" + className + "] definition");
-					}
-				}
+				this.closeJarFile(file);
 			}
 
+			if (buffer == null) {
+				return super.findSystemClass(className);
+			}
 
-				if (res == null) {
-					return super.findSystemClass(className);
-				}
+			classToLoad = defineClass(className, buffer, 0, buffer.length);
+			if (classToLoad == null) { 
+				throw new ClassFormatError();
+			}
 
-				classToLoad = defineClass(className, res, 0, res.length);
-				if (classToLoad == null) { 
-					throw new ClassFormatError();
-				}
-
-				if (resolve) {
-					resolveClass(classToLoad);
-				}
+			if (resolve) {
+				resolveClass(classToLoad);
+			}
 
 		}
+		
+		logger.warn("Class [" + className + "] succesfully loaded");
+		
 		return classToLoad;
 	}
 
@@ -162,49 +147,85 @@ public class DynamicClassLoader extends URLClassLoader {
      */
 	public synchronized InputStream getResourceAsStream(String resourceName)  {
 		
-		JarFile file = null;
-		InputStream bis = null;
+		JarFile file;
+		InputStream resultStream;
+		
+		logger.debug("loading resource [" + resourceName + "]");
+		
+		resultStream = null;
 		try{
-			bis = super.getResourceAsStream(resourceName);
-		}catch (Exception ex) {
+			resultStream = super.getResourceAsStream(resourceName);
+		} catch (Exception ex) {
 			logger.debug("Impossible to load resource [" + resourceName + "] using parent class loader");
 		}
 		
-		if(bis==null) {
+		if(resultStream == null) {
+			
+			file = null;
+			
 			try {
-				byte[] res = null;
+				byte[] buffer = null;
+				
 				file = new JarFile(jarFile);
 				JarEntry jarEntry = file.getJarEntry(resourceName);
-				if(jarEntry == null) {
+				if(jarEntry != null){
+					buffer = getJarEntityContent(file, jarEntry);
+					resultStream = new ByteArrayInputStream (buffer);
+					logger.warn("Resource [" + resourceName + "] loaded from jar file [" + jarFile.getAbsolutePath() + "]");
+				} else {
+					resultStream = super.getResourceAsStream(resourceName);
 					logger.warn("Impossible to load resource [" + resourceName + "] from jar file [" + jarFile.getAbsolutePath() + "]");
-					return super.getResourceAsStream(resourceName);
 				}
-				res = new byte[(int)jarEntry.getSize()];
-				bis = new BufferedInputStream(file.getInputStream(jarEntry));
-				bis.read(res, 0, res.length);
-			} catch (Exception ex) {
-				logger.warn("Impossible to load resource [" + resourceName + "] from jar file [" + jarFile.getAbsolutePath() + "]");
-				return super.getResourceAsStream(resourceName);
+				
+				
+			} catch (Throwable t) {
+				resultStream = super.getResourceAsStream(resourceName);
+				logger.warn("Impossible to load resource [" + resourceName + "] from jar file [" + jarFile.getAbsolutePath() + "]", t);
 			} finally {
-				if (bis!=null) {
-					try {
-						bis.close();
-					} catch (Throwable t) {
-						logger.error("Impossible to close stream used to read resource [" + resourceName + "] definition", t);
-						throw new RuntimeException("Impossible to close stream used to read resource [" + resourceName + "] definition");
-					}
-				}
-				if (file!=null) {
-					try {
-						file.close();
-					} catch (Throwable t) {
-						logger.error("Impossible to close file used to read resource [" + resourceName + "] definition", t);
-						throw new RuntimeException("Impossible to file used to read resource [" + resourceName + "] definition");
-					}
-				}
+				closeJarFile(file);
 			}		
 		}
-		return bis;
+		return resultStream;
+	}
+	
+	private byte[] getJarEntityContent(JarFile jarFile, JarEntry jarEntry) {
+		byte[] buffer;
+		
+		buffer = null;
+		if(jarEntry != null){
+			InputStream jarInputStream = null;
+			try {
+				buffer = new byte[(int)jarEntry.getSize()];
+				jarInputStream = new BufferedInputStream( jarFile.getInputStream(jarEntry) );
+				jarInputStream.read(buffer, 0, buffer.length);
+			} catch(Throwable t) {
+				logger.warn("Impossible to read content from entry [" + jarEntry + "]", t);
+			} finally {
+				closeInputStream(jarInputStream);
+			}
+		}
+		
+		return buffer;
+	}
+	
+	private void closeJarFile(JarFile jarFile) {
+		if (jarFile != null) {
+			try {
+				jarFile.close();
+			} catch (Throwable t) {
+				throw new RuntimeException("Impossible to close file  [" + jarFile + "]");
+			}
+		}
+	}
+	
+	private void closeInputStream(InputStream inputStram) {
+		if (inputStram != null) {
+			try {
+				inputStram.close();
+			} catch (Throwable t) {
+				throw new RuntimeException("Impossible to close stream");
+			}
+		}
 	}
 	
     /**
