@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.hibernate.HibernateDataSourceWithClassLoader;
-
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelStructure;

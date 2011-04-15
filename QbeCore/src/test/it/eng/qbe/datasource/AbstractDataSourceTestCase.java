@@ -24,9 +24,9 @@ package it.eng.qbe.datasource;
 import it.eng.qbe.AbstractQbeTestCase;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelEntity;
-import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
@@ -36,8 +36,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import junit.framework.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

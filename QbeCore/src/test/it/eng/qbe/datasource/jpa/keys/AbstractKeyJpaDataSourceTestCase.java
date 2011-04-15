@@ -21,15 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa.keys;
 
-import java.util.List;
-
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
-import it.eng.qbe.datasource.jpa.impl.StandardJPAELinkImplDataSourceTestCase;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelViewEntity;
+
+import java.util.List;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

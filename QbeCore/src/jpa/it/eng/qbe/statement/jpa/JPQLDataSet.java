@@ -43,7 +43,6 @@ import org.eclipse.persistence.internal.expressions.LogicalExpression;
 import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.queries.ReportQuery;
-//import org.hibernate.ejb.HibernateQuery;
 
 
 /**

@@ -22,11 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.datasource.hibernate;
 
 import it.eng.qbe.classloader.ClassLoaderManager;
-import it.eng.qbe.datasource.AbstractDataSourceWithClassLoader;
-import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

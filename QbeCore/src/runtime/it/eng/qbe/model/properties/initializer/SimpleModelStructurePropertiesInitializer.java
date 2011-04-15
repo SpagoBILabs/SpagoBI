@@ -25,12 +25,11 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.ModelPropertiesMeta;
 import it.eng.qbe.model.properties.ModelPropertyMeta;
-import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelObject;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
-import it.eng.qbe.model.structure.IModelField;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 

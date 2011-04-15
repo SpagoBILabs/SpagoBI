@@ -24,14 +24,10 @@ package it.eng.qbe.model.structure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

@@ -21,13 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
@@ -36,6 +29,10 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

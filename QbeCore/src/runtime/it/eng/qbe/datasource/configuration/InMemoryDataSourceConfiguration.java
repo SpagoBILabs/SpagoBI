@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 /**
  * This class allow to manage the configuration in memory. Nothing is loaded. It is the caller to injects 
  * values at runtime into the configuration. 
