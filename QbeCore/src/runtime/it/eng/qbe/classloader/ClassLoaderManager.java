@@ -89,9 +89,9 @@ public class ClassLoaderManager{
 		JarFile jarFile = null;
 		try {			
 			jarFile = new JarFile(file);
-			Enumeration entries = jarFile.entries();
+			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
-				JarEntry entry = (JarEntry) entries.nextElement();
+				JarEntry entry = entries.nextElement();
 				if (entry.getName().endsWith(".class")) {
 					String entryName = entry.getName();
 					String className = entryName.substring(0, entryName.lastIndexOf(".class"));

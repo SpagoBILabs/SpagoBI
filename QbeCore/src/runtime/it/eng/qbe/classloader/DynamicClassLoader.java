@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
 
 public class DynamicClassLoader extends URLClassLoader {
 
-	private ClassLoader parentClassLoader;
+	//private ClassLoader parentClassLoader;
 	private File jarFile;
 
 	
@@ -76,14 +76,14 @@ public class DynamicClassLoader extends URLClassLoader {
 	public DynamicClassLoader(File jarFile, ClassLoader parentClassLoader) {
 		super(new URL[0], parentClassLoader);
 		this.jarFile = jarFile;
-		this.parentClassLoader = parentClassLoader;
+		//this.parentClassLoader = parentClassLoader;
 	}
 
 
 	/* (non-Javadoc)
 	 * @see java.lang.ClassLoader#loadClass(java.lang.String)
 	 */
-	public Class loadClass(String className) throws ClassNotFoundException {
+	public Class<?> loadClass(String className) throws ClassNotFoundException {
 		return (loadClass(className, true));
 	}
 
@@ -91,9 +91,9 @@ public class DynamicClassLoader extends URLClassLoader {
 	/* (non-Javadoc)
 	 * @see java.lang.ClassLoader#loadClass(java.lang.String, boolean)
 	 */
-	public synchronized Class loadClass(String className, boolean resolve) throws ClassNotFoundException {
+	public synchronized Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
 
-		Class classToLoad;
+		Class<?> classToLoad;
 		
 		classToLoad = null;
 		try {
