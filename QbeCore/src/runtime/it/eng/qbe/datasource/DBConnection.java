@@ -20,7 +20,6 @@
  **/
 package it.eng.qbe.datasource;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class DBConnection.
  * 
