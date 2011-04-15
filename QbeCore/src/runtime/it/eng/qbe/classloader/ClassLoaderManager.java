@@ -28,7 +28,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.log4j.Logger;
-import it.eng.spagobi.utilities.DynamicClassLoader;
+//import it.eng.spagobi.utilities.DynamicClassLoader;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
