@@ -22,7 +22,7 @@
 /**
  * Object name
  * 
- * ManageDomains
+ * ManageConfig
  * 
  * 
  * Public Properties
@@ -46,6 +46,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,13 +55,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
-import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-public class ManageDomainService extends AbstractSpagoBIAction {
+public class ManageConfigService extends AbstractSpagoBIAction {
 
 	/**
 	 * 
@@ -73,21 +74,21 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	// Service parameter
 	private final String MESSAGE_DET = "MESSAGE_DET";
 
-	private static final String DOMAIN_LIST = "DOMAIN_LIST";
-	private static final String DOMAIN_DELETE = "DOMAIN_DELETE";
-	private static final String DOMAIN_SAVE = "DOMAIN_SAVE";
+	private static final String CONFIG_LIST = "CONFIG_LIST";
+	private static final String CONFIG_DELETE = "CONFIG_DELETE";
+	private static final String CONFIG_SAVE = "CONFIG_SAVE";
 
 	protected IEngUserProfile profile = null;
 
 	@Override
 	public void doService() {
-		IDomainDAO domainDao;
+		IConfigDAO configDao;
 		String serviceType;
 
 		logger.debug("IN");
 
 		try {
-			domainDao = DAOFactory.getDomainDAO();
+			configDao = DAOFactory.getSbiConfigDAO();
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred");
@@ -98,11 +99,11 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 				+ serviceType + "]");
 
 		if (serviceType != null) {
-			if (serviceType.equalsIgnoreCase(DOMAIN_LIST)) {
-				doDomainList();
-			} else if (serviceType.equalsIgnoreCase(DOMAIN_DELETE)) {
+			if (serviceType.equalsIgnoreCase(CONFIG_LIST)) {
+				doConfigList();
+			} else if (serviceType.equalsIgnoreCase(CONFIG_DELETE)) {
 				doDelete();
-			} else if (serviceType.equalsIgnoreCase(DOMAIN_SAVE)) {
+			} else if (serviceType.equalsIgnoreCase(CONFIG_SAVE)) {
 				doSave();
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME,
@@ -120,17 +121,17 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 
 		try {
 
-			logger.debug("Save domain");
+			logger.debug("Save config");
 
-			Domain domain = this.setDomain();
-			DAOFactory.getDomainDAO().saveDomain(domain);
+			Config config = this.setConfig();
+			DAOFactory.getSbiConfigDAO().saveConfig(config);
 			JSONObject response = new JSONObject();
-			response.put("VALUE_ID", domain.getValueId());
+			response.put("ID", config.getId());
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Impossible to save domain", e);
+					"Impossible to save config", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -138,29 +139,28 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 
 	public void doDelete() {
 		try {
-			logger.debug("Delete domain");
-			Integer valueId = this.getAttributeAsInteger("VALUE_ID");
-			DAOFactory.getDomainDAO().delete(valueId);
+			logger.debug("Delete config");
+			Integer id = this.getAttributeAsInteger("ID");
+			DAOFactory.getSbiConfigDAO().delete(id);
 			JSONObject response = new JSONObject();
-			response.put("VALUE_ID", valueId);
+			response.put("ID", id);
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
-			logger.error("Exception occurred while retrieving domain data", e);
+			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Impossible to delete domain", e);
+					"Impossible to delete config", e);
 		}
 	}
 
-	public void doDomainList() {
+	public void doConfigList() {
 		try {
-			logger.debug("Loaded domain list");
+			logger.debug("Loaded config list");
 
-			List<Domain> domainList = DAOFactory.getDomainDAO()
-					.loadListDomains();
+			List<Config> configList = DAOFactory.getSbiConfigDAO().loadAllConfigParameters();
 
-			JSONArray domainListJSON = (JSONArray) SerializerFactory
-					.getSerializer("application/json").serialize(domainList,
+			JSONArray configListJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(configList,
 							this.getLocale());
 
 			// PaginatorIFace paginator = new GenericPaginator();
@@ -182,29 +182,30 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			// list.setPaginator(paginator);
 
 			JSONObject response = new JSONObject();
-			response.put("response", domainListJSON);
+			response.put("response", configListJSON);
 
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
-			logger.error("Exception occurred while retrieving domain data", e);
+			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Exception occurred while retrieving domain data", e);
+					"Exception occurred while retrieving config data", e);
 		}
 	}
 
-	public Domain setDomain() {
-		Domain domain = new Domain();
-		if(this.requestContainsAttribute("VALUE_ID")){
-			domain.setValueId(this.getAttributeAsInteger("VALUE_ID"));
+	public Config setConfig() {
+		Config config = new Config();
+		if(this.requestContainsAttribute("ID")){
+			config.setId(this.getAttributeAsInteger("ID"));
 		}
-		domain.setValueCd(this.getAttributeAsString("VALUE_CD"));
-		domain.setValueName(this.getAttributeAsString("VALUE_NM"));
-		domain.setDomainCode(this.getAttributeAsString("DOMAIN_CD"));
-		domain.setDomainName(this.getAttributeAsString("DOMAIN_NM"));
-		domain.setValueDescription(this.getAttributeAsString("VALUE_DS"));
+		config.setLabel(this.getAttributeAsString("LABEL"));
+		config.setName(this.getAttributeAsString("NAME"));
+		config.setDescription(this.getAttributeAsString("DESCRIPTION"));
+		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
+		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
+		config.setValueTypeId(this.getAttributeAsInteger("VALUE_TYPE"));
 
-		return domain;
+		return config;
 
 	}
 
