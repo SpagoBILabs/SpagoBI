@@ -24,11 +24,14 @@ package it.eng.spagobi.analiticalmodel.document.metadata;
 import java.util.Date;
 
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 
-public class SbiObjNotes  implements java.io.Serializable {
+public class SbiObjNotes  extends SbiHibernateModel {
 
-     private Integer objNoteId;
+
+	private Integer objNoteId;
      private SbiObjects sbiObject;
      private SbiBinContents sbiBinContents;
      private String execReq;
