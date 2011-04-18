@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.qbe.datasource.DBConnection;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -36,6 +36,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -150,6 +151,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 14;
+	
+	//filters parameters
+	public static String FILTERS = "FILTERS";
 
 	@Override
 	public void doService() {
@@ -206,9 +210,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				if(limit==null){
 					limit = LIMIT_DEFAULT;
 				}
-
 				Integer totalItemsNum = dsDao.countDatasets();
-				List<GuiGenericDataSet> items = dsDao.loadPagedDatasetList(start,limit);
+				
+				JSONObject filtersJSON = null;
+				List<GuiGenericDataSet> items = null;
+				if(this.requestContainsAttribute( FILTERS ) ) {
+					filtersJSON = getAttributeAsJSONObject( FILTERS );
+					String hsql = filterList(filtersJSON);
+					items = dsDao.loadFilteredDatasetList(hsql, start, limit);
+				}else{//not filtered
+					items = dsDao.loadPagedDatasetList(start,limit);
+				}
+
 				logger.debug("Loaded items list");
 				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
@@ -743,7 +756,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
         List<String> modelNames = new ArrayList<String>();
         modelNames.add( modelName );
    
-        DBConnection connection = new DBConnection();
+        ConnectionDescriptor connection = new ConnectionDescriptor();
         connection.setName( modelName );
         Domain dialect;
 		try {
@@ -841,5 +854,23 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		
 		return catalogue;
+	}
+	
+	private String filterList(JSONObject filtersJSON) throws JSONException {
+		logger.debug("IN");		
+		
+		String hsql= " from SbiDataSetHistory h where h.active = true ";
+		if (filtersJSON != null) {
+			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			if(typeFilter.equals("=")){
+				hsql += " and h."+columnFilter+" = '"+valuefilter+"'";
+			}else if(typeFilter.equals("like")){
+				hsql += " and h."+columnFilter+" like '%"+valuefilter+"%'";
+			}			
+		}
+		logger.debug("OUT");
+		return hsql;
 	}
 }

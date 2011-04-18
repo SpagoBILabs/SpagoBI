@@ -25,6 +25,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.kpi.config.bo.Kpi;
+import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -68,9 +70,9 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.exception.ConstraintViolationException;
 
 public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO  {
-	
+
 	static private Logger logger = Logger.getLogger(DataSetDAOImpl.class);
-	
+
 	public static final String JDBC_DS_TYPE = "Query";
 	public static final String FILE_DS_TYPE = "File";
 	public static final String SCRIPT_DS_TYPE = "Script";
@@ -91,10 +93,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiDataSetConfig hibDataSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,dsID);
 			aSession.delete(hibDataSet);
-			
+
 			tx.commit();			
 		}  catch (ConstraintViolationException cve) {
 			if (tx != null && tx.isActive()) {
@@ -114,7 +116,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession.close();
 		}
 	}
-	
+
 	/**
 	 * Delete the inactive dataset version.
 	 * @param dsVerionID the a data set version ID
@@ -128,7 +130,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			if(dsVerionID!=null){
 				SbiDataSetHistory hibDataSet = (SbiDataSetHistory) aSession.load(SbiDataSetHistory.class,dsVerionID);
 				if(hibDataSet!=null && !hibDataSet.isActive()){
@@ -156,7 +158,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return deleted;
 	}
-	
+
 	/**
 	 * Delete all inactive dataset versions.
 	 * @param dsID the a data set fo which all old versions need to eb deleted
@@ -170,7 +172,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			if(dsID!=null){
 				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
 				hibQuery.setBoolean(0, false);
@@ -223,14 +225,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			SbiDataSetHistory hibDataSet =null;
 			if(dataSet!=null && dataSet.getActiveDetail()!=null){
 				GuiDataSetDetail dataSetActiveDetail = dataSet.getActiveDetail();
-	
+
 				if(dataSetActiveDetail instanceof FileDataSetDetail){
 					hibDataSet=new SbiFileDataSet();
 					if(((FileDataSetDetail)dataSetActiveDetail).getFileName()!=null){
 						((SbiFileDataSet)hibDataSet).setFileName(((FileDataSetDetail)dataSetActiveDetail).getFileName());
 					}
 				}
-	
+
 				else if(dataSetActiveDetail instanceof QueryDataSetDetail){
 					hibDataSet=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dataSetActiveDetail).getQuery()!=null){
@@ -261,7 +263,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
 					hibQbeDataSet.setDataSource(hibDataSource);	
 				}
-	
+
 				else if(dataSetActiveDetail instanceof WSDataSetDetail){
 					hibDataSet=new SbiWSDataSet();
 					if(((WSDataSetDetail)dataSetActiveDetail).getAddress()!=null){
@@ -271,14 +273,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiWSDataSet)hibDataSet).setOperation(((WSDataSetDetail)dataSetActiveDetail).getOperation());
 					}	
 				}
-	
+
 				else if(dataSetActiveDetail instanceof JClassDataSetDetail){
 					hibDataSet=new SbiJClassDataSet();
 					if(((JClassDataSetDetail)dataSetActiveDetail).getJavaClassName()!=null){
 						((SbiJClassDataSet)hibDataSet).setJavaClassName(((JClassDataSetDetail)dataSetActiveDetail).getJavaClassName());
 					}
 				}
-	
+
 				else if(dataSetActiveDetail instanceof ScriptDataSetDetail){
 					hibDataSet=new SbiScriptDataSet();
 					if(((ScriptDataSetDetail)dataSetActiveDetail).getScript()!=null){
@@ -288,29 +290,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiScriptDataSet)hibDataSet).setLanguageScript(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript());
 					}
 				}
-	
+
 				SbiDomains transformer = null;
 				if (dataSetActiveDetail.getTransformerId() != null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dataSetActiveDetail.getTransformerId());
 					Criteria criteria = aSession.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
-	
+
 					transformer = (SbiDomains) criteria.uniqueResult();
-	
+
 					if (transformer == null){
 						logger.error("The Domain with value_id= "+dataSetActiveDetail.getTransformerId()+" does not exist.");
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 					}
 				}
-	
+
 				SbiDomains category = null;
 				if (dataSetActiveDetail.getCategoryId()!= null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dataSetActiveDetail.getCategoryId());
 					Criteria criteria = aSession.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
-	
+
 					category = (SbiDomains) criteria.uniqueResult();
-	
+
 					if (category == null){
 						logger.error("The Domain with value_id= "+dataSetActiveDetail.getCategoryId()+" does not exist.");
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
@@ -322,11 +324,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				dsConfig.setDescription(dataSet.getDescription());
 				dsConfig.setName(dataSet.getName());	
 				dsConfig.setTimeIn(currentTStamp);
-				
+
 				//TODO modificare questo campo con quello corretto
 				dsConfig.setUserIn("biadmin");	
 				hibDataSet.setUserIn("biadmin");
-				
+
 				//TODO aggiungere anche questi campi
 				/*dsConfig.setMetaVersion(metaVersion);
 				dsConfig.setOrganization(organization);
@@ -337,29 +339,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				dsConfig.setTimeUp(timeUp);
 				dsConfig.setUserDe(userDe);				
 				dsConfig.setUserUp(userUp);
-				
+
 				hibDataSet.setSbiVersionIn(sbiVersionIn);*/			
-				
+
 				hibDataSet.setVersionNum(1);
 				hibDataSet.setTimeIn(currentTStamp);		
 				hibDataSet.setActive(true);			
-				
+
 				hibDataSet.setTransformer(transformer);
 				hibDataSet.setPivotColumnName(dataSetActiveDetail.getPivotColumnName());
 				hibDataSet.setPivotRowName(dataSetActiveDetail.getPivotRowName());
 				hibDataSet.setPivotColumnValue(dataSetActiveDetail.getPivotColumnValue());
 				hibDataSet.setNumRows(dataSetActiveDetail.isNumRows());
-				
+
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dataSetActiveDetail.getParameters());
 				hibDataSet.setDsMetadata(dataSetActiveDetail.getDsMetadata());
-	
+
 				Integer dsId =(Integer) aSession.save(dsConfig);
 				dsConfig.setDsId(dsId);
 				hibDataSet.setDsId(dsConfig);
-				
+
 				aSession.save(hibDataSet);
-				
+
 				idToReturn = dsId;
 				tx.commit();
 			}
@@ -374,9 +376,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
-	  return idToReturn;
+		return idToReturn;
 	}
-	
+
 	/**
 	 * Restore an Older Version of the dataset
 	 * @param dsId the a data set ID
@@ -391,19 +393,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			if(dsId!=null && dsVersion!=null){
-				
+
 				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
 				dsActiveDetail.setActive(false);
-				
+
 				Query hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.versionNum = ? and h.dsId = ?" );
 				hibernateQuery.setInteger(0, dsVersion);
 				hibernateQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsDetail =(SbiDataSetHistory)hibernateQuery.uniqueResult();
 				dsDetail.setActive(true);
-				
+
 				aSession.update(dsActiveDetail);
 				aSession.update(dsDetail);
 				tx.commit();
@@ -420,7 +422,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the Higher Version Number of a selected DS
 	 * @param dsId the a data set ID
@@ -450,7 +452,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
-	  return toReturn;
+		return toReturn;
 	}
 
 	/**
@@ -470,14 +472,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if(dataSet!=null){
 				Integer dsId = dataSet.getDsId();
 				GuiDataSetDetail dsActiveDetailToSet = dataSet.getActiveDetail();	
-				
+
 				if(dsActiveDetailToSet instanceof FileDataSetDetail){
 					hibDataSet=new SbiFileDataSet();
 					if(((FileDataSetDetail)dsActiveDetailToSet).getFileName()!=null){
 						((SbiFileDataSet)hibDataSet).setFileName(((FileDataSetDetail)dsActiveDetailToSet).getFileName());
 					}
 				}
-	
+
 				else if(dsActiveDetailToSet instanceof QueryDataSetDetail){
 					hibDataSet=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dsActiveDetailToSet).getQuery()!=null){
@@ -508,7 +510,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
 					hibQbeDataSet.setDataSource(hibDataSource);	
 				}
-	
+
 				else if(dsActiveDetailToSet instanceof WSDataSetDetail){
 					hibDataSet=new SbiWSDataSet();
 					if(((WSDataSetDetail)dsActiveDetailToSet).getAddress()!=null){
@@ -518,14 +520,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiWSDataSet)hibDataSet).setOperation(((WSDataSetDetail)dsActiveDetailToSet).getOperation());
 					}	
 				}
-	
+
 				else if(dsActiveDetailToSet instanceof JClassDataSetDetail){
 					hibDataSet=new SbiJClassDataSet();
 					if(((JClassDataSetDetail)dsActiveDetailToSet).getJavaClassName()!=null){
 						((SbiJClassDataSet)hibDataSet).setJavaClassName(((JClassDataSetDetail)dsActiveDetailToSet).getJavaClassName());
 					}
 				}
-	
+
 				else if(dsActiveDetailToSet instanceof ScriptDataSetDetail){
 					hibDataSet=new SbiScriptDataSet();
 					if(((ScriptDataSetDetail)dsActiveDetailToSet).getScript()!=null){
@@ -535,7 +537,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiScriptDataSet)hibDataSet).setLanguageScript(((ScriptDataSetDetail)dsActiveDetailToSet).getLanguageScript());
 					}
 				}
-	
+
 				SbiDomains transformer = null;
 				if (dsActiveDetailToSet.getTransformerId() != null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dsActiveDetailToSet.getTransformerId());
@@ -547,7 +549,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 					}
 				}
-	
+
 				SbiDomains category = null;
 				if (dsActiveDetailToSet.getCategoryId()!= null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dsActiveDetailToSet.getCategoryId());
@@ -560,23 +562,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 				}
 				Date currentTStamp = new Date();
-							
+
 				hibDataSet.setTimeIn(currentTStamp);		
 				hibDataSet.setActive(true);			
-				
+
 				hibDataSet.setTransformer(transformer);
 				hibDataSet.setPivotColumnName(dsActiveDetailToSet.getPivotColumnName());
 				hibDataSet.setPivotRowName(dsActiveDetailToSet.getPivotRowName());
 				hibDataSet.setPivotColumnValue(dsActiveDetailToSet.getPivotColumnValue());
 				hibDataSet.setNumRows(dsActiveDetailToSet.isNumRows());
-				
+
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dsActiveDetailToSet.getParameters());
 				hibDataSet.setDsMetadata(dsActiveDetailToSet.getDsMetadata());
-				
+
 				//TODO modificare questo campo con quello corretto				
 				hibDataSet.setUserIn("biadmin");
-				
+
 				SbiDataSetConfig hibGenericDataSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,dsId);					
 				hibGenericDataSet.setLabel(dataSet.getLabel());
 				hibGenericDataSet.setDescription(dataSet.getDescription());
@@ -584,12 +586,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibGenericDataSet.setTimeUp(currentTStamp);
 				//TODO modificare questo campo con quello corretto				
 				hibGenericDataSet.setUserUp("biadmin");
-				
+
 				Integer currenthigherVersion = getHigherVersionNumForDS(dsId);
 				Integer newVersion = currenthigherVersion+1;
-				
+
 				hibDataSet.setVersionNum(newVersion);
-				
+
 				//TODO aggiungere anche questi campi
 				/*hibGenericDataSet.setMetaVersion(metaVersion);
 				hibGenericDataSet.setOrganization(organization);
@@ -598,22 +600,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibGenericDataSet.setSbiVersionUp(sbiVersionUp);
 				hibGenericDataSet.setTimeDe(timeDe);	
 				hibGenericDataSet.setUserDe(userDe);	
-				
+
 				hibDataSet.setSbiVersionIn(sbiVersionIn);*/			
-				
-				
-				
+
+
+
 				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
 				dsActiveDetail.setActive(false);
 				aSession.update(dsActiveDetail);
-	
+
 				aSession.update(hibGenericDataSet);
 				hibDataSet.setDsId(hibGenericDataSet);				
 				aSession.save(hibDataSet);
-	
+
 				tx.commit();
 			}
 		} catch (HibernateException he) {
@@ -628,7 +630,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns List of all existent SbiDataSetConfig elements (NO DETAIL, only name, label, descr...).
 	 * @param offset starting element
@@ -637,36 +639,36 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List<SbiDataSetConfig> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)
-			throws EMFUserError {
+	throws EMFUserError {
 		logger.debug("IN");
 		List<SbiDataSetConfig> toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 		Long resultNumber;
 		Query hibernateQuery; 
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			toReturn = new ArrayList();
-		
+
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Long)hqlQuery.uniqueResult();
-			
+
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
 				fetchSize = (fetchSize > 0)? 
 						Math.min(fetchSize, resultNumber.intValue()) 
 						: resultNumber.intValue();
 			}
-			
+
 			hibernateQuery = aSession.createQuery("from SbiDataSetConfig order by label");
 			hibernateQuery.setFirstResult(offset);
 			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
-		
+
 			toReturn = hibernateQuery.list();	
-			
+
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Resources", he);	
 			if (tx != null)
@@ -679,7 +681,85 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
-	  return toReturn;
+		return toReturn;
+	}
+
+	public List<GuiGenericDataSet> loadFilteredDatasetList(String hsql,Integer offset, Integer fetchSize) throws EMFUserError {
+		logger.debug("IN");
+		List toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		Query hibernateQuery;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = new ArrayList();
+			List toTransform = null;
+
+			String hql = "select count(*) "+hsql;
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+			}
+			
+			hibernateQuery = aSession.createQuery(hsql);
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+
+			List sbiActiveDatasetsList = hibernateQuery.list();	
+
+			if(sbiActiveDatasetsList!=null && !sbiActiveDatasetsList.isEmpty()){
+				Iterator it = sbiActiveDatasetsList.iterator();		
+				while (it.hasNext()) {
+					SbiDataSetHistory hibDataSet = (SbiDataSetHistory)it.next();
+					GuiGenericDataSet ds = toDataSet(hibDataSet);
+					List<GuiDataSetDetail> oldDsVersion = new ArrayList();
+
+					if(hibDataSet.getDsId()!=null){
+						Integer dsId = hibDataSet.getDsId().getDsId();
+						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+						hibQuery.setBoolean(0, false);
+						hibQuery.setInteger(1, dsId);	
+
+						List<SbiDataSetHistory> olderTemplates = hibQuery.list();
+						if(olderTemplates!=null && !olderTemplates.isEmpty()){
+							Iterator it2 = olderTemplates.iterator();
+							while(it2.hasNext()){
+								SbiDataSetHistory hibOldDataSet = (SbiDataSetHistory) it2.next();
+								if(hibOldDataSet!=null && !hibOldDataSet.isActive()){
+									GuiDataSetDetail dsD = toDataSetDetail(hibOldDataSet);		
+									oldDsVersion.add(dsD);
+								}
+							}
+						}			
+					}
+					ds.setNonActiveDetails(oldDsVersion);
+					toReturn.add(ds);
+				}
+			}			
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of Threshold", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return toReturn;
 	}
 	
 	/**
@@ -690,51 +770,51 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List<GuiGenericDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize)
-		throws EMFUserError {
-		
+	throws EMFUserError {
+
 		logger.debug("IN");
 		List toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
 		Long resultNumber;
 		Query hibernateQuery; 
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			toReturn = new ArrayList();
-		
+
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Long)hqlQuery.uniqueResult();
-			
+
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
 				fetchSize = (fetchSize > 0) ? 
 						Math.min(fetchSize, resultNumber.intValue()) 
 						: resultNumber.intValue();
 			}
-			
-			hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? " );
+
+			hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? order by h.dsId.name " );
 			hibernateQuery.setBoolean(0, true);
 			hibernateQuery.setFirstResult(offset);
 			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
-	
+
 			List sbiActiveDatasetsList = hibernateQuery.list();	
-			
+
 			if(sbiActiveDatasetsList!=null && !sbiActiveDatasetsList.isEmpty()){
 				Iterator it = sbiActiveDatasetsList.iterator();		
 				while (it.hasNext()) {
 					SbiDataSetHistory hibDataSet = (SbiDataSetHistory)it.next();
 					GuiGenericDataSet ds = toDataSet(hibDataSet);
 					List<GuiDataSetDetail> oldDsVersion = new ArrayList();
-					
+
 					if(hibDataSet.getDsId()!=null){
 						Integer dsId = hibDataSet.getDsId().getDsId();
 						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);	
-						
+
 						List<SbiDataSetHistory> olderTemplates = hibQuery.list();
 						if(olderTemplates!=null && !olderTemplates.isEmpty()){
 							Iterator it2 = olderTemplates.iterator();
@@ -763,17 +843,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
-	  return toReturn;
+		return toReturn;
 	}
-	
+
 	public GuiGenericDataSet toDataSet(SbiDataSetHistory hibDataSet) throws EMFUserError{		
+		logger.debug("IN");
 		GuiGenericDataSet ds = new GuiGenericDataSet();
 		GuiDataSetDetail dsActiveDetail = null;
-		
+
 		if(hibDataSet instanceof SbiFileDataSet){		
 			dsActiveDetail = new FileDataSetDetail();
 			((FileDataSetDetail)dsActiveDetail).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
 			dsActiveDetail.setDsType(FILE_DS_TYPE);
+			logger.debug("File dataset");
 		}
 
 		if(hibDataSet instanceof SbiQueryDataSet){			
@@ -785,6 +867,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel);
 			}
 			dsActiveDetail.setDsType(JDBC_DS_TYPE);
+			logger.debug("Jdbc dataset");
 		}
 		
 		if(hibDataSet instanceof SbiQbeDataSet){			
@@ -804,6 +887,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((WSDataSetDetail)dsActiveDetail).setAddress(((SbiWSDataSet)hibDataSet).getAdress());
 			((WSDataSetDetail)dsActiveDetail).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
 			dsActiveDetail.setDsType(WS_DS_TYPE);
+			logger.debug("Ws dataset");
 		}
 
 		if(hibDataSet instanceof SbiScriptDataSet){			
@@ -811,12 +895,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((ScriptDataSetDetail)dsActiveDetail).setScript(((SbiScriptDataSet)hibDataSet).getScript());
 			((ScriptDataSetDetail)dsActiveDetail).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
 			dsActiveDetail.setDsType(SCRIPT_DS_TYPE);
+			logger.debug("Script dataset");
 		}
 
 		if(hibDataSet instanceof SbiJClassDataSet){			
 			dsActiveDetail=new JClassDataSetDetail();
 			((JClassDataSetDetail)dsActiveDetail).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
 			dsActiveDetail.setDsType(JCLASS_DS_TYPE);
+			logger.debug("JClass dataset");
 		}
 
 		if(hibDataSet.getDsId()!=null){
@@ -824,8 +910,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			ds.setName(hibDataSet.getDsId().getName());
 			ds.setLabel(hibDataSet.getDsId().getLabel());
 			ds.setDescription(hibDataSet.getDsId().getDescription());	
+			ds.setMetaVersion(hibDataSet.getMetaVersion());
+			ds.setUserIn(hibDataSet.getUserIn());
+			ds.setTimeIn(new Date());
+			dsActiveDetail.setDsId(hibDataSet.getDsId().getDsId());
+
 		}
-		
+
+		dsActiveDetail.setDsHId(hibDataSet.getDsHId());
 		dsActiveDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
 		dsActiveDetail.setCategoryCd((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueCd());
 		dsActiveDetail.setTransformerId((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueId());
@@ -836,16 +928,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		dsActiveDetail.setNumRows(hibDataSet.isNumRows());			
 		dsActiveDetail.setParameters(hibDataSet.getParameters());		
 		dsActiveDetail.setDsMetadata(hibDataSet.getDsMetadata());		
+		dsActiveDetail.setUserIn(hibDataSet.getUserIn());
 
 		ds.setActiveDetail(dsActiveDetail);
-		
+
+		logger.debug("OUT");
 		return ds;
 	}
-	
+
 	public GuiDataSetDetail toDataSetDetail(SbiDataSetHistory hibDataSet) throws EMFUserError{		
-		
+
 		GuiDataSetDetail dsVersionDetail = null;
-		
+
 		if(hibDataSet instanceof SbiFileDataSet){		
 			dsVersionDetail = new FileDataSetDetail();
 			((FileDataSetDetail)dsVersionDetail).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
@@ -894,7 +988,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((JClassDataSetDetail)dsVersionDetail).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
 			dsVersionDetail.setDsType(JCLASS_DS_TYPE);
 		}
-		
+
 		dsVersionDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
 		dsVersionDetail.setCategoryCd((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueCd());
 		dsVersionDetail.setTransformerId((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueId());
@@ -905,15 +999,85 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		dsVersionDetail.setNumRows(hibDataSet.isNumRows());			
 		dsVersionDetail.setParameters(hibDataSet.getParameters());		
 		dsVersionDetail.setDsMetadata(hibDataSet.getDsMetadata());	
-		
+
 		dsVersionDetail.setUserIn(hibDataSet.getUserIn());
 		dsVersionDetail.setTimeIn(hibDataSet.getTimeIn());
 		dsVersionDetail.setVersionNum(hibDataSet.getVersionNum());
 		dsVersionDetail.setDsHId(hibDataSet.getDsHId());
-		
+
 		return dsVersionDetail;
 	}
-	
+
+
+	/** copy a dataset history
+	 * 
+	 * @param hibDataSet
+	 * @return
+	 * @throws EMFUserError
+	 */
+
+	public SbiDataSetHistory copyDataSetHistory(SbiDataSetHistory hibDataSet) throws EMFUserError{		
+
+		logger.debug("IN");
+		SbiDataSetHistory hibNew = null;
+
+		if(hibDataSet instanceof SbiFileDataSet){		
+			hibNew  = new SbiFileDataSet();
+			((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
+		}
+
+		if(hibDataSet instanceof SbiQueryDataSet){			
+			hibNew  = new SbiQueryDataSet();
+			((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
+		}
+
+		if(hibDataSet instanceof SbiWSDataSet){			
+			hibNew  = new SbiWSDataSet();
+			((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
+			((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
+		}
+
+		if(hibDataSet instanceof SbiScriptDataSet){			
+			hibNew =new SbiScriptDataSet();
+			((SbiScriptDataSet)	hibNew ).setScript(((SbiScriptDataSet)hibDataSet).getScript());
+			((SbiScriptDataSet)	hibNew ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
+
+		}
+
+		if(hibDataSet instanceof SbiJClassDataSet){			
+			hibNew =new SbiJClassDataSet();
+			((SbiJClassDataSet)	hibNew ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+		}
+
+		hibNew.setCategory(hibDataSet.getCategory());
+		hibNew.setDsMetadata(hibDataSet.getDsMetadata());
+		hibNew.setMetaVersion(hibDataSet.getMetaVersion());
+		hibNew.setParameters(hibDataSet.getParameters());
+		hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
+		hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue());
+		hibNew.setPivotRowName(hibDataSet.getPivotRowName());
+		hibNew.setSbiVersionIn(hibDataSet.getSbiVersionIn());
+		hibNew.setTimeIn(hibDataSet.getTimeIn());
+		hibNew.setTransformer(hibDataSet.getTransformer());
+		hibNew.setUserIn(hibDataSet.getUserIn());
+		hibNew.setVersionNum(hibDataSet.getVersionNum());
+
+		logger.debug("OUT");
+		return hibNew;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * From the IDataSet as input, return the corrispondent <code>GuiGenericDataSet</code> object.
 	 * 
@@ -924,7 +1088,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public GuiGenericDataSet toDataSet(IDataSet iDataSet) throws EMFUserError{		
 		GuiGenericDataSet ds = new GuiGenericDataSet();
 		GuiDataSetDetail dsActiveDetail = null;
-		
+
 		if(iDataSet instanceof FileDataSet){		
 			dsActiveDetail = new FileDataSetDetail();
 			((FileDataSetDetail)dsActiveDetail).setFileName(((FileDataSet)iDataSet).getFileName());		
@@ -966,7 +1130,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		ds.setName(iDataSet.getName());
 		ds.setLabel(iDataSet.getLabel());
 		ds.setDescription(iDataSet.getDescription());	
-		
+
+		// set detail dataset ID
 		dsActiveDetail.setTransformerId((iDataSet.getTransformerId() == null)? null:iDataSet.getTransformerId());
 		dsActiveDetail.setPivotColumnName(iDataSet.getPivotColumnName());
 		dsActiveDetail.setPivotRowName(iDataSet.getPivotRowName());
@@ -976,10 +1141,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		dsActiveDetail.setDsMetadata(iDataSet.getDsMetadata());		
 
 		ds.setActiveDetail(dsActiveDetail);
-		
+
 		return ds;
 	}
-	
+
 	/**
 	 * Counts number of BIObj associated.
 	 * @param dsId the ds id
@@ -994,12 +1159,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			String hql = "select count(*) from SbiObjects s where s.dataSet.dsId = ? ";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsId.intValue());
 			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
-			
+
 		} catch (HibernateException he) {
 			logger.error("Error while getting the objects associated with the data set with id " + dsId, he);
 			if (tx != null)
@@ -1027,7 +1192,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-		
+
 			String hql = "select count(*) from SbiDataSetConfig ";
 			Query hqlQuery = aSession.createQuery(hql);
 			resultNumber = (Long)hqlQuery.uniqueResult();
@@ -1037,7 +1202,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (tx != null)
 				tx.rollback();	
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-		
+
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -1047,7 +1212,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return new Integer(resultNumber.intValue());
 	}
-	
+
 	/*****************USED by OLD GUI******/
 	/**
 	 * Checks for bi obj associated.
@@ -1091,13 +1256,121 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return bool;
 	}
 
+
+
+	/**
+	 * Load data set by id.
+	 * @param dsID the ds id
+	 * @return the data set as genericGuiDataset
+	 * @throws EMFUserError the EMF user error
+	 */
+	public GuiGenericDataSet loadDataSetById(Integer dsId)throws EMFUserError {
+		logger.debug("IN");
+		GuiGenericDataSet toReturn = null;
+		GuiDataSetDetail detail = null;
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+			hibQueryHistory.setBoolean(0, true);
+			hibQueryHistory.setInteger(1, dsId);	
+			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
+			if(sbiDataSetHistory!=null){
+				detail = toDataSetDetail(sbiDataSetHistory);
+			}
+			toReturn = toDataSet(sbiDataSetHistory);
+
+			//			Query hibQueryConfig = aSession.createQuery("from SbiDataSetConfig h where h.dsId = ?" );
+			//			hibQueryConfig.setBoolean(0, true);
+			//			hibQueryConfig.setInteger(1, dsId);	
+			//			SbiDataSetConfig dsActiveDetail =(SbiDataSetConfig)hibQueryConfig.uniqueResult();
+			//			if(dsActiveDetail!=null){
+			//				toReturn = to)(dsActiveDetail);
+			//			}
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the data Set with id " + dsId.toString(), he);			
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Load data set by id.
+	 * @param dsLabel the ds label
+	 * @return the data set as genericGuiDataset
+	 * @throws EMFUserError the EMF user error
+	 */
+	public GuiGenericDataSet loadDataSetByLabel(String dsLabel)throws EMFUserError {
+		logger.debug("IN");
+		GuiGenericDataSet toReturn = null;
+		GuiDataSetDetail detail = null;
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h, SbiDataSetConfig d where h.active = ? and d.label = ? and d.dsId = h.dsId" );
+			hibQueryHistory.setBoolean(0, true);
+			hibQueryHistory.setString(1, dsLabel);	
+			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
+			if(sbiDataSetHistory!=null){
+				detail = toDataSetDetail(sbiDataSetHistory);
+			}
+			toReturn = toDataSet(sbiDataSetHistory);
+
+			//			Query hibQueryConfig = aSession.createQuery("from SbiDataSetConfig h where h.dsId = ?" );
+			//			hibQueryConfig.setBoolean(0, true);
+			//			hibQueryConfig.setInteger(1, dsId);	
+			//			SbiDataSetConfig dsActiveDetail =(SbiDataSetConfig)hibQueryConfig.uniqueResult();
+			//			if(dsActiveDetail!=null){
+			//				toReturn = to)(dsActiveDetail);
+			//			}
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the data Set with id " + dsLabel.toString(), he);			
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+
+
+
+
 	/*****************USED many times but not in new GUI******/
 	/**
 	 * Load data set by id.
 	 * @param dsID the ds id
 	 * @return the data set
 	 * @throws EMFUserError the EMF user error
-	  */
+	 */
 	public IDataSet loadActiveIDataSetByID(Integer dsId) throws EMFUserError {
 		logger.debug("IN");
 		IDataSet toReturn = null;
@@ -1152,9 +1425,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			criteria.add(labelCriterrion);	
 			SbiDataSetConfig hibDS = (SbiDataSetConfig) criteria.uniqueResult();
 			if (hibDS == null) return null;
-			
+
 			Integer dsId = hibDS.getDsId();
-			
+
 			Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);	
@@ -1217,7 +1490,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		logger.debug("OUT");
 		return realResult;
 	}
-	
+
 	/**
 	 * From the hibernate DataSet as input, gives the corrispondent <code>DataSet</code> object.
 	 * 
@@ -1267,13 +1540,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			ds.setLabel(hibDataSet.getDsId().getLabel());
 			ds.setDescription(hibDataSet.getDsId().getDescription());	
 		}
-		
+
 		ds.setTransformerId((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueId());
 		ds.setPivotColumnName(hibDataSet.getPivotColumnName());
 		ds.setPivotRowName(hibDataSet.getPivotRowName());
 		ds.setPivotColumnValue(hibDataSet.getPivotColumnValue());
 		ds.setNumRows(hibDataSet.isNumRows());
-			
+
 		ds.setParameters(hibDataSet.getParameters());		
 		ds.setDsMetadata(hibDataSet.getDsMetadata());		
 
@@ -1283,9 +1556,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			ds.setDataStoreTransformer(
 					new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 		}
-	  return ds;
+		return ds;
 	}
-	
+
 }
 
 
