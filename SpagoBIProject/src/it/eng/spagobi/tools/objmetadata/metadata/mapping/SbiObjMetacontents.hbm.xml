@@ -8,8 +8,7 @@
             <column name="OBJ_METACONTENT_ID" />
 			   <generator class="org.hibernate.id.enhanced.TableGenerator">
 					<param name="optimizer">hilo</param>
-					<param name="table_name">sbi_index</param>
-					<param name="segment_value">sbi_obj_metacontents</param>	
+					<param name="segment_value">SBI_OBJ_METACONTENTS</param>	
 					<param name="initial_value">1</param>	
 			   </generator>              
         </id>
