@@ -8,7 +8,6 @@
             <column name="GOAL_ID" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
 		<param name="segment_value">sbi_goals</param>
 		<param name="initial_value">1</param>		
    </generator>
