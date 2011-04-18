@@ -161,6 +161,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.ddGroup = conf.dragndropGroup;
 	this.rowselModel = conf.rowselModel;
 	this.filter = conf.filter;
+	this.filtercolumnName = conf.columnName;
 	if(conf.filterWidth !== undefined){
 		this.filterWidth = conf.filterWidth;
 	}
@@ -346,7 +347,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    	]
  	    });
  	    
- 	  // var filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
  	   var pagingBar = new Ext.PagingToolbar({
 	        pageSize: 14,
 	        store: this.mainElementsStore,
@@ -370,8 +370,9 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
           });
        }
  	  
- 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({store: this.mainElementsStore,
-	   			columnName: LN('sbi.generic.name'),
+ 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({
+ 		  		store: this.mainElementsStore,
+	   			columnName: this.filtercolumnName,
 		   		cls: 'no-pad',
 		   		width: this.filterWidth,
 		   		columnValue: this.gridColItems[0].dataIndex});
@@ -393,7 +394,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  scope: this,
 	                  title: this.listTitle,
 		              bbar: pagingBar,
-	                  tbar: this.tb,
+	                  tbar: [this.tb],
 	                  fbar : [filteringToolbar],
 	                  footerStyle:'background-color: #D0D0D0; padding: 0; margin: 0; border: 0px; empty-cells: hide; ',
 	                  enableDragDrop: true,
