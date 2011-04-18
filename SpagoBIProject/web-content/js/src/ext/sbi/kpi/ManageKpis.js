@@ -895,19 +895,8 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	},
 	 fillIsAdditive : function(row, rec) {	 
        	var isAdditive = rec.get('isAdditive');
-       //	alert(this.detailFieldIsAdditive);
        	this.detailFieldIsAdditive.setValue('isAdditive', isAdditive);
-       	
-       /*	this.detailTab.items.each(function(item){	  
-       		if(item.getItemId() == 'kpis-detail'){ 
-       			this.detailTab.each(function(item){	  
-           		   if(item.getItemId() == 'isAdditive'){
-           			   alert('dentro');
-           		   		item.setValue('isAdditive', isAdditive);
-     		        }
-              });
-       		}  
-	 	});	 */     
+       	    
 	 }
 
 	, fillKpiLinks : function(row, rec) {

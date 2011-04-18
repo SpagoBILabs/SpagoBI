@@ -77,6 +77,11 @@ Sbi.tools.ManageDatasets = function(config) {
 	this.configurationObject.getDatamartsService = Sbi.config.qbeGetDatamartsUrl;
 
 	this.initConfigObject();
+	this.configurationObject.filter = true;
+	this.configurationObject.columnName = [['dsId.label', LN('sbi.generic.label')],
+	                                       ['dsId.name', LN('sbi.generic.name')],
+	                                       ['category.valueNm', LN('sbi.ds.catType')]
+	                	                   ];
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = true;
 
@@ -1044,34 +1049,16 @@ Ext.extend(
 						tbar: this.tbTestToolbar
 					};
 					this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
-					
-					/*
-					this.datasetTestGridPanel = new Sbi.tools.DataSetTestGrid(
-							c);
-
-					this.datasetTestPanel = new Ext.Panel({
-						id : 'test',
-						autoScroll : true,
-						tbar : this.tbTestToolbar,
-						layout : 'fit',
-						title : 'Test your Data Set',
-						border : true,
-						frame : true,
-						width : 350,
-						items : [ this.datasetTestGridPanel ],
-						scope : this
-					});
-					*/
 
 					this.datasetTestTab = new Ext.Panel({
 						title : LN('sbi.ds.test'),
 						id : 'test-pars',
 						layout : 'vbox',
-						autoScroll : false,
-						bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
-								: 'padding:10px 15px;',
+						autoScroll : true,
+						bodyStyle : Ext.isIE ? 'padding:0 0 45px 35px;'
+								: 'padding:45px 25px;',
 						border : true,
-						items : [ this.parsGrid/*, this.datasetTestPanel*/],
+						items : [ this.parsGrid],
 						scope : this
 					});
 					this.datasetTestTab.addListener('activate',

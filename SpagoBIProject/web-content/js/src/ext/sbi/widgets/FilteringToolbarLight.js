@@ -50,7 +50,11 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.FilteringToolbarLight = function(config) {	
 	
 	Sbi.widgets.FilteringToolbarLight.superclass.constructor.call(this, config);
-	this.columnToSearch = config.columnName;
+	if(config.columnName){
+		this.columnsToSearch = config.columnName;
+	}else{
+		this.columnsToSearch = [['label','label']];
+	}
 	this.columnToSearchValue = config.columnValue;
 
 	this.state = this.EDITING;
@@ -73,7 +77,7 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	, filterCombo: null
 	
 	, inputField: null
-	, columnToSearch: null
+	, columnsToSearch: null
 	
 	, initComponent : function(){
 		Sbi.widgets.FilteringToolbarLight.superclass.initComponent.call(this);
@@ -83,7 +87,24 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	, onRender : function(ct, position) {
 		Sbi.widgets.FilteringToolbarLight.superclass.onRender.call(this, ct, position);
 	    
-		this.addText(this.columnToSearch);	
+		//this.addText(this.columnsToSearch);	
+		this.columnsStore = new Ext.data.SimpleStore({
+	        fields: ['value', 'label'],
+	        data : this.columnsToSearch
+	    });	    
+	    this.columnsFilterCombo = new Ext.form.ComboBox({
+	        store: this.columnsStore,
+	        width: 80,
+	        displayField:'label',
+	        valueField:'value',
+	        typeAhead: true,
+	        triggerAction: 'all',
+	        emptyText:'...',
+	        selectOnFocus:true,
+	        mode: 'local'
+	    });
+	    this.addField( this.columnsFilterCombo );   
+		
 		this.addSpacer();
 
 	    	    
@@ -134,7 +155,7 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 	, getFilterBarState: function(asObject) {
 		var filterBarState = {};
 		
-		filterBarState.columnFilter = this.columnToSearchValue;
+		filterBarState.columnFilter = this.columnsFilterCombo.getValue();
 		filterBarState.typeValueFilter = '';
 		filterBarState.typeFilter = this.filterCombo.getValue();
 		filterBarState.valueFilter = this.inputField.getValue();
@@ -146,18 +167,20 @@ Ext.extend(Sbi.widgets.FilteringToolbarLight, Ext.Toolbar, {
 		return filterBarState;
 	}
 	
-	, resetFilterBarState: function() {		
+	, resetFilterBarState: function() {	
+		this.columnsFilterCombo.reset();		
 		this.filterCombo.reset();		
 		this.inputField.reset();
 	}
 	
 	, disableEditing: function() {		
-
+		this.columnsFilterCombo.disable();		
 		this.filterCombo.disable();		
 		this.inputField.disable();
 	}
 	
-	, enableEditing: function() {		
+	, enableEditing: function() {	
+		this.columnsFilterCombo.enable();	
 		this.filterCombo.enable();		
 		this.inputField.enable();
 	}
