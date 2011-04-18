@@ -8,8 +8,7 @@
             <column name="PART_ID" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
-		<param name="segment_value">sbi_dossier_parts_temp</param>
+		<param name="segment_value">SBI_DOSSIER_TEMP</param>
 		<param name="initial_value">1</param>		
    </generator>
         </id>
