@@ -22,13 +22,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.document.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 import java.util.Date;
 
 
-public class SbiObjTemplates  implements java.io.Serializable {
+public class SbiObjTemplates  extends SbiHibernateModel {
 
-     private Integer objTempId;
+
+	private Integer objTempId;
      private SbiObjects sbiObject;
      private SbiBinContents sbiBinContents;
      private String name;
