@@ -21,14 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.datasource.jpa;
 
+import java.io.File;
+
 import it.eng.qbe.classloader.ClassLoaderManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
-
-import java.io.File;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -63,9 +63,7 @@ public class JPADataSourceWithClassLoader extends JPADataSource{
 		return super.createStatement(query);
 	}
 
-
-	
-@Override
+	@Override
 	public void open() {
 		File jarFile = null;
 		
