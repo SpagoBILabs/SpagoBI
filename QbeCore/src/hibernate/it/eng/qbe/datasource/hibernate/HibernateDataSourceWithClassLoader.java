@@ -24,6 +24,9 @@ package it.eng.qbe.datasource.hibernate;
 import it.eng.qbe.classloader.ClassLoaderManager;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.IStatement;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -73,6 +76,18 @@ public class HibernateDataSourceWithClassLoader extends  HibernateDataSource{
 		
 		sf = cfg.buildSessionFactory();
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
+	}
+	
+	@Override
+	public IModelStructure getModelStructure() {
+		Thread.currentThread().setContextClassLoader(myClassLoader);
+		return super.getModelStructure();
+	}
+
+	@Override
+	public IStatement createStatement(Query query) {
+		Thread.currentThread().setContextClassLoader(myClassLoader);
+		return super.createStatement(query);
 	}
 	
 }

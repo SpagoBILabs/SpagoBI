@@ -23,7 +23,9 @@ package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.hibernate.HibernateDriver;
+import it.eng.qbe.datasource.hibernate.HibernateDriverWithClassLoader;
 import it.eng.qbe.datasource.jpa.JPADriver;
+import it.eng.qbe.datasource.jpa.JPADriverWithClassLoader;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
@@ -40,6 +42,8 @@ public class DriverManager {
 		drivers = new HashMap<String, IDriver>();
 		drivers.put(JPADriver.DRIVER_ID, new JPADriver());
 		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
+		drivers.put(JPADriverWithClassLoader.DRIVER_ID, new JPADriverWithClassLoader());
+		drivers.put(HibernateDriverWithClassLoader.DRIVER_ID, new HibernateDriverWithClassLoader());
 	}
 
 	/**
