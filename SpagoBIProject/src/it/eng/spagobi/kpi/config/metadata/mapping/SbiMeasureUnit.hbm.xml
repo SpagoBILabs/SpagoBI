@@ -8,8 +8,7 @@
             <column name="id_measure_unit" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
-		<param name="segment_value">sbi_kpi_measure_unit</param>	
+		<param name="segment_value">SBI_MEASURE_UNIT</param>	
 		<param name="initial_value">1</param>	
    </generator>
         </id>

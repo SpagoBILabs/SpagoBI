@@ -8,8 +8,7 @@
             <column name="KPI_INST_PERIOD_ID" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
-		<param name="segment_value">sbi_kpi_inst_periodicity</param>
+		<param name="segment_value">SBI_KPI_INST_PERIOD</param>
 		<param name="initial_value">1</param>		
    </generator>
         </id>

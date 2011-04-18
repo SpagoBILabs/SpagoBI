@@ -7,8 +7,7 @@
         <id name="idKpiInstance" type="integer">
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
-		<param name="segment_value">sbi_kpi_instance</param>
+		<param name="segment_value">SBI_KPI_INSTANCE</param>
 		<param name="initial_value">1</param>		
    </generator>
         </id>
