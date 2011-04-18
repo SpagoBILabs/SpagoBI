@@ -452,7 +452,8 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		
 			String hql = "select count(*) from SbiAlarm ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiAlarm", he);	
@@ -485,7 +486,8 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		
 			String hql = "select count(*) from SbiAlarm ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {

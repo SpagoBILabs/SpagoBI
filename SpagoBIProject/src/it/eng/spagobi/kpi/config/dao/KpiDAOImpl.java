@@ -1442,7 +1442,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			String hql = "select count(*) from SbiKpi ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Kpis", he);	
@@ -1478,7 +1479,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			String hql = "select count(*) from SbiKpi ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
@@ -1903,7 +1905,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 			String hql = "select count(*) "+hsql;
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {

@@ -267,7 +267,8 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
 		
 			String hql = "select count(*) from SbiAlarmContact ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Contacts", he);	
@@ -301,7 +302,8 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
 		
 			String hql = "select count(*) from SbiAlarmContact ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {

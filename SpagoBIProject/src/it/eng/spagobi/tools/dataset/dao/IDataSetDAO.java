@@ -105,6 +105,8 @@ public interface IDataSetDAO {
 	public List<SbiDataSetConfig> loadPagedSbiDatasetConfigList(Integer offset, Integer fetchSize)
 			throws EMFUserError;
 	
+	public List<GuiGenericDataSet> loadFilteredDatasetList(String hsql,Integer offset, Integer fetchSize) throws EMFUserError;
+	
 	/**
 	 * Returns List of all existent IDataSets with current active version
 	 * @param offset starting element
@@ -157,6 +159,23 @@ public interface IDataSetDAO {
 	public IDataSet loadActiveDataSetByLabel(String label) throws EMFUserError ;
 	
 	/**
+	 * Load data set by id.
+	 * @param datasetId datasetConfig
+	 * @return the data set
+	 * @throws EMFUserError the EMF user error
+	 */	
+	public GuiGenericDataSet loadDataSetById(Integer dsId) throws EMFUserError ;
+	
+	/**
+	 * Load data set by label.
+	 * @param datasetId datasetConfig
+	 * @return the data set
+	 * @throws EMFUserError the EMF user error
+	 */	
+	public GuiGenericDataSet loadDataSetByLabel(String dsLabel) throws EMFUserError ;
+	
+	
+	/**
 	 * Load all active data sets.
 	 * @return the list
 	 * @throws EMFUserError the EMF user error
@@ -180,4 +199,7 @@ public interface IDataSetDAO {
 	 * @throws EMFUserError 
 	 */
 	public GuiGenericDataSet toDataSet(IDataSet iDataSet) throws EMFUserError;
+	
+	
+	public SbiDataSetHistory copyDataSetHistory(SbiDataSetHistory hibDataSet) throws EMFUserError;
 }

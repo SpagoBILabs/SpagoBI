@@ -426,7 +426,8 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		
 			String hql = "select count(*) from SbiUdp ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiUdp", he);	
@@ -462,7 +463,8 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		
 			String hql = "select count(*) from SbiUdp ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
