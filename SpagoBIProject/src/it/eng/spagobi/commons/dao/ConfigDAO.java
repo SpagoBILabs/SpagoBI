@@ -40,7 +40,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-
+/**
+ * Defines the Hibernate implementations for all DAO methods, for a domain.
+ * 
+ * @author Monia Spinelli
+ */
 public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 
     static private Logger logger = Logger.getLogger(ConfigDAO.class);
@@ -259,7 +263,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
      * @throws EMFUserError the EMF user error
      * 
      */
-    public void updateCongig(Config config) throws EMFUserError {
+    public void updateConfig(Config config) throws EMFUserError {
     	// TODO Auto-generated method stub
     	Session aSession = null;
     	Transaction tx = null;
@@ -298,7 +302,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
      * @throws EMFUserError the EMF user error
      * 
      */
-    public void delete(String codeConfig, String codeValue)  throws EMFUserError {
+    public void delete(Integer idConfig)  throws EMFUserError {
     	Session sess = null;
     	Transaction tx = null;
 
@@ -306,8 +310,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     		sess = getSession();
     		tx = sess.beginTransaction();
     		
-    		Criterion aCriterion = Expression.and(Expression.eq("domainCd",
-    				codeConfig), Expression.eq("valueCd", codeValue));
+    		Criterion aCriterion = Expression.eq("idconfig", idConfig);
     		Criteria criteria = sess.createCriteria(SbiDomains.class);
     		criteria.add(aCriterion);
     		SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
