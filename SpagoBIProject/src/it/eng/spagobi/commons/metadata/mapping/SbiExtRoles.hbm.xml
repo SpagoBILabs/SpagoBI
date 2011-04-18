@@ -11,8 +11,7 @@
             <column name="EXT_ROLE_ID" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
-		<param name="table_name">sbi_index</param>
-		<param name="segment_value">sbi_ext_roles</param>	
+		<param name="segment_value">SBI_EXT_ROLES</param>	
 		<param name="initial_value">1</param>	
    </generator>
         </id>
