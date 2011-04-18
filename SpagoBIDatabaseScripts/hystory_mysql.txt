@@ -714,7 +714,7 @@ ALTER TABLE SBI_DATA_SET_HISTORY ADD COLUMN DATAMARTS VARCHAR(400);
 
 Angelo 13/04/2011
 
-CREATE TABLE `sbi_index` (
+CREATE TABLE `hibernate_sequences` (
   `sequence_name` varchar(200) NOT NULL,
   `next_val` int(11) NOT NULL,
   PRIMARY KEY (`sequence_name`)
