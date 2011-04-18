@@ -374,10 +374,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 		logger.debug("IN");
 		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
 			if (domain.getValueId() == null) {
 				logger.debug("insert new domain");
-				aSession = getSession();
-				tx = aSession.beginTransaction();
+				
 				SbiDomains sbiDomains = this.fromDomain(domain);
 				aSession.save(sbiDomains);
 				domain.setValueId(sbiDomains.getValueId());
@@ -461,7 +463,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	 *             the EMF user error
 	 * 
 	 */
-	public void delete(String codeDomain, String codeValue) throws EMFUserError {
+	public void delete(Integer idDomain) throws EMFUserError {
 		Session sess = null;
 		Transaction tx = null;
 
@@ -469,8 +471,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			sess = getSession();
 			tx = sess.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd",
-					codeDomain), Expression.eq("valueCd", codeValue));
+			Criterion aCriterion = Expression.eq("valueId",idDomain);
 			Criteria criteria = sess.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
@@ -483,8 +484,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 			if (tx != null)
 				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new RuntimeException("Impossible to delete domain [" + idDomain + "]", he);
+			
 
 		} finally {
 			if (sess != null) {

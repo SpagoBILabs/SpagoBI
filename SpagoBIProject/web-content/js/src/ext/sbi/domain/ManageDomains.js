@@ -47,7 +47,7 @@
 Ext.ns("Sbi.domain");
 
 Sbi.domain.ManageDomains = function(config) {
-
+	
 	var c = Ext.apply( {
 		title : 'Domains',
 		layout : 'fit'
@@ -115,6 +115,13 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			}
 
 		});
+		
+		  var pagingToolbar = new Ext.PagingToolbar ({ 
+				  store: this.store, 
+				  pageSize:20,
+				  displayInfo :true 
+		   });
+		 
 
 		this.initStore();
 		this.store.load({});
@@ -124,6 +131,7 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			store : this.store,
 			cm : this.columnModel,
 			tbar : this.gridToolbar,
+			bbar: pagingToolbar,
 			sm : new Ext.grid.RowSelectionModel( {
 				singleSelect : true
 			}),
@@ -149,14 +157,6 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 				this.grid.getView().refresh();
 				this.grid.getSelectionModel().selectRow(0);
 				this.editor.startEditing(0);
-
-				/*
-				 * var params = {};
-				 * 
-				 * Ext.Ajax.request( { url : this.crudServices['saveItemService'], params :
-				 * params, // method: 'GET', success : function(response, options) {
-				 * alert('success'); }, failure : function(response) { alert('failure'); } });
-				 */
 			},
 			scope : this
 		}, {
@@ -168,14 +168,20 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 				this.editor.stopEditing();
 				var s = this.grid.getSelectionModel().getSelections();
 				for ( var i = 0, r; r = s[i]; i++) {
-					var params = {};
+					var params = {
+							VALUE_ID: r.get('VALUE_ID')
+							};
 
 					Ext.Ajax.request( {
 						url : this.crudServices['deleteItemService'],
 						params : params,
 						// method: 'GET',
 						success : function(response, options) {
-							this.store.remove(r);
+						 	response = Ext.util.JSON.decode( response.responseText );
+							alert(response.VALUE_ID); 
+						    var index = this.store.find( "VALUE_ID", response.VALUE_ID );
+						    var record =  this.store.getAt(  index ) ;
+						    if(record) this.store.remove(record);						    
 						},
 						failure : Sbi.exception.ExceptionHandler.handleFailure,
 						scope : this
@@ -201,9 +207,10 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			sortable : true,
 			editor : {
 				xtype : 'textfield',
-				//allowBlank : false,
-				//maxLength : 100,
-				//maxLengthText : LN('sbi.domain.managedomains.validation.maxlengthtext')
+				// allowBlank : false,
+				// maxLength : 100,
+				// maxLengthText :
+				// LN('sbi.domain.managedomains.validation.maxlengthtext')
 			}
 		}, {
 			header : LN('sbi.domain.managedomains.fields.valuenm'),
@@ -284,7 +291,7 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 	saveDomain : function(rowEditor, obj, record, rowIndex) {
 
 		var p = {};
-		if (record.get('VALUE_ID') != '') {
+		if (record.get('VALUE_ID') != undefined && record.get('VALUE_ID') != null && record.get('VALUE_ID') !== '') {
 			p.VALUE_ID = record.get('VALUE_ID');
 		}
 
@@ -308,5 +315,4 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			scope : this
 		});
 	}
-
 });
