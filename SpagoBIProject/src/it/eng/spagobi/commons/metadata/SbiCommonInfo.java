@@ -2,19 +2,25 @@ package it.eng.spagobi.commons.metadata;
 
 import java.util.Date;
 
+
 public class SbiCommonInfo implements java.io.Serializable {
 
-	private String userIn="angelo";
+	private String userIn=null;
 	private String userUp=null;
 	private String userDe=null;
-	private String sbiVersionIn="3.0Beta";
+	private String sbiVersionIn=null;
 	private String sbiVersionUp=null;
 	private String sbiVersionDe=null;
 	private String organization=null;
-	private Date timeIn = new Date();
+	private Date timeIn = null;
 	private Date timeUp = null;
 	private Date timeDe = null;
 	
+	public SbiCommonInfo(){
+		userIn="biadmin";
+		sbiVersionIn="3.0Beta";
+		timeIn = new Date();
+	}
 	public String getUserIn() {
 		return userIn;
 	}
