@@ -107,16 +107,30 @@ public interface IDomainDAO {
 	public List loadListDomains() throws EMFUserError;
 	
 	/**
+	 * Save a domain
 	 * 
-	 * @param d
-	 * @throws EMFUserError
+	 * @return Save domains
+	 * 
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void saveDomain(Domain d)throws EMFUserError;
 	
-	/*
+	/**
+	 * Update a domain
 	 * 
+	 * @return Update domains
+	 * 
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void updateDomain(Domain d)throws EMFUserError;
-	public void delete(String codeDomain, String codeValue)throws EMFUserError;
+	
+	/**
+	 * Delete a domain
+	 * 
+	 * @return Delete domains
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */	
+	public void delete(Integer idDomain) throws EMFUserError;
 	
 }

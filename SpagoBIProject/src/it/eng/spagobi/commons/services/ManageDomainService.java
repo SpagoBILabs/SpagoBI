@@ -45,6 +45,7 @@
  */
 package it.eng.spagobi.commons.services;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,9 +54,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.paginator.basic.ListIFace;
 import it.eng.spago.paginator.basic.PaginatorIFace;
+import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
@@ -84,6 +93,8 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	private static final String DOMAIN_LIST = "DOMAIN_LIST";
 	private static final String DOMAIN_DELETE = "DOMAIN_DELETE";
 	private static final String DOMAIN_SAVE = "DOMAIN_SAVE";
+
+	protected IEngUserProfile profile = null;
 
 	@Override
 	public void doService() {
@@ -144,13 +155,17 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 
 	public void doDelete() {
 		try {
-			// domainDao.delete(codeDomain, codeValue);
-			writeBackToClient(new JSONAcknowledge("Operation succeded"));
+			logger.debug("Delete domain");
+			Integer valueId = this.getAttributeAsInteger("VALUE_ID");
+			DAOFactory.getDomainDAO().delete(valueId);
+			JSONObject response = new JSONObject();
+			response.put("VALUE_ID", valueId);
+			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Exception occurred while retrieving domain data", e);
+					"Impossible to delete domain", e);
 		}
 	}
 
@@ -158,18 +173,36 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 		try {
 			logger.debug("Loaded domain list");
 
-			List<Domain> domainList = DAOFactory.getDomainDAO().loadListDomains();
-			JSONArray domainListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(domainList,
+			List<Domain> domainList = DAOFactory.getDomainDAO()
+					.loadListDomains();
+
+			JSONArray domainListJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(domainList,
 							this.getLocale());
+
+			// PaginatorIFace paginator = new GenericPaginator();
+
+			// int numRows = 20;
+			/*
+			 * try { ConfigSingleton spagoconfig =
+			 * ConfigSingleton.getInstance(); String lookupnumRows = (String)
+			 * spagoconfig.getAttribute("SPAGOBI.LOOKUP.numberRows"); if
+			 * (lookupnumRows != null) { numRows =
+			 * Integer.parseInt(lookupnumRows); } } catch (Exception e) {
+			 * numRows = 20;
+			 * logger.error("Error while recovering number rows for " +
+			 * "lookup from configuration, usign default 10", e); }
+			 */
+			// paginator.setPageSize(numRows);
+			// logger.debug("setPageSize="+numRows);
+			// ListIFace list = new GenericList();
+			// list.setPaginator(paginator);
+
 			JSONObject response = new JSONObject();
 			response.put("response", domainListJSON);
 
 			writeBackToClient(new JSONSuccess(response));
 
-			// PaginatorIFace paginator = new GenericPaginator();
-			// Alla fine di ogni iterazione inserire: paginator.addRow(rowSB);
-			// list.setPaginator(paginator);
-			// writeBackToClient(new JSONAcknowledge("Operation succeded"));
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
@@ -179,8 +212,9 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 
 	public Domain setDomain() {
 		Domain domain = new Domain();
-
-		domain.setValueId(this.getAttributeAsInteger("VALUE_ID"));
+		if(this.requestContainsAttribute("VALUE_ID")){
+			domain.setValueId(this.getAttributeAsInteger("VALUE_ID"));
+		}
 		domain.setValueCd(this.getAttributeAsString("VALUE_CD"));
 		domain.setValueName(this.getAttributeAsString("VALUE_NM"));
 		domain.setDomainCode(this.getAttributeAsString("DOMAIN_CD"));

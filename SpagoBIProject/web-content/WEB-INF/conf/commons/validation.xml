@@ -9,27 +9,27 @@
 			<FIELDS>
 				<FIELD name="DOMAIN_CD" label="#domains.definitionForm.fields.domain_cd">
 					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="20" />
 				</FIELD>
 				<FIELD name="DOMAIN_NM" label="#domains.definitionForm.fields.domain_nm">
 					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
 				</FIELD>
 				<FIELD name="VALUE_CD" label="#domains.definitionForm.fields.value_cd">
 					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
 				</FIELD>
 				<FIELD name="VALUE_NM" label="#domains.definitionForm.fields.value_nm">
 					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
 				</FIELD>
-				<FIELD name="VALUE DS" label="#domains.definitionForm.fields.value_ds">
+				<FIELD name="VALUE_DS" label="#domains.definitionForm.fields.value_ds">
 					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALFANUMERIC" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="160" />
 				</FIELD>
 			</FIELDS>

@@ -54,7 +54,8 @@ public class DomainTestCase extends TestCase {
 
 		String domCod = "Test";
 		String valueCD = "01Test";
-		dao.delete(domCod,valueCD);
+		Integer valueID = 290;
+		dao.delete(valueID);
 		System.out.println("Il domain con id 01 è stato eliminato");		
 		
 
