@@ -22,12 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.document.dao;
 
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
 
 
-public interface IObjNoteDAO {
+public interface IObjNoteDAO extends ISpagoBIDao{
 
 	/**
 	 * Save Notes for a specific execution of the biobject.

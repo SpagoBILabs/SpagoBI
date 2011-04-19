@@ -37,7 +37,7 @@ import java.util.List;
  * 
  * @author Zoppello
  */
-public interface IRoleDAO {
+public interface IRoleDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads a role identified by its

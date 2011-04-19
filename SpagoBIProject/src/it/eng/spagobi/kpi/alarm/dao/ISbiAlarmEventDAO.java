@@ -13,6 +13,7 @@ package it.eng.spagobi.kpi.alarm.dao;
 
 
 
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import org.hibernate.Session;
  * @see it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent
  * @author Enrico Cesaretti
  */
-public interface ISbiAlarmEventDAO {
+public interface ISbiAlarmEventDAO extends ISpagoBIDao{
 
     public void insert(SbiAlarmEvent item);
     

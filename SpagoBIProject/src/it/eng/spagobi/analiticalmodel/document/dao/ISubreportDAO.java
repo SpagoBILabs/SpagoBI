@@ -23,6 +23,7 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Subreport;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
  * @author Gioia
  *
  */
-public interface ISubreportDAO {
+public interface ISubreportDAO extends ISpagoBIDao{
 
 	/**
 	 * Load subreports by master rpt id.

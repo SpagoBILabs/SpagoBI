@@ -30,6 +30,7 @@ package it.eng.spagobi.tools.dataset.dao;
  */
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
@@ -40,7 +41,7 @@ import java.util.List;
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting an engine.
  */
-public interface IDataSetDAO {
+public interface IDataSetDAO extends ISpagoBIDao{
 	
 	/*****************USED by new GUI******/
 	/**

@@ -30,6 +30,7 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ import java.util.List;
  * 
  * @author Giachino
  */
-public interface IViewpointDAO {
+public interface IViewpointDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all detail information for all viewpoints. For each of them, detail

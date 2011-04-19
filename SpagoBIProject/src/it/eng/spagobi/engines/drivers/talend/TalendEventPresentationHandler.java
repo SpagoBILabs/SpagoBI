@@ -33,8 +33,10 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl;
 import it.eng.spagobi.commons.bo.Subreport;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.events.bo.EventLog;
 import it.eng.spagobi.events.handlers.IEventPresentationHandler;
@@ -60,7 +62,8 @@ public class TalendEventPresentationHandler implements IEventPresentationHandler
 		} else {
 			// it's an end process event, nothing more to do
 		}
-		BIObjectDAOHibImpl biObjectDAO = new BIObjectDAOHibImpl();
+		
+		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
 		String biobjectIdStr = (String) eventParams.get("biobjectId");
 		Integer biObjectId = new Integer(biobjectIdStr);
 		BIObject biObject = biObjectDAO.loadBIObjectById(biObjectId);

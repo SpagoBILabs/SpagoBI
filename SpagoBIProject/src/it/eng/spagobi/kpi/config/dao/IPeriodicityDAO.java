@@ -1,11 +1,12 @@
 package it.eng.spagobi.kpi.config.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.config.bo.Periodicity;
 
 import java.util.List;
 
-public interface IPeriodicityDAO {
+public interface IPeriodicityDAO extends ISpagoBIDao{
 	
 	/**
 	 * Returns the Periodicity of the referred id

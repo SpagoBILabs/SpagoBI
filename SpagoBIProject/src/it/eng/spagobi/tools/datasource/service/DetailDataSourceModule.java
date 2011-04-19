@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.datasource.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,6 +31,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -35,6 +39,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -55,7 +60,7 @@ public class DetailDataSourceModule extends AbstractModule {
 	public final static String NAME_ATTR_LIST_DIALECTS = "dialects";
 
 	private String modalita = "";
-	
+	private IEngUserProfile profile;
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
@@ -74,6 +79,12 @@ public class DetailDataSourceModule extends AbstractModule {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		String message = (String) request.getAttribute("MESSAGEDET");
 		logger.debug("begin of detail Data Source service with message =" +message);
+		RequestContainer requestContainer = this.getRequestContainer();	
+		ResponseContainer responseContainer = this.getResponseContainer();	
+		SessionContainer session = requestContainer.getSessionContainer();
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
 		EMFErrorHandler errorHandler = getErrorHandler();
 		try {
 			if (message == null) {
@@ -153,6 +164,8 @@ public class DetailDataSourceModule extends AbstractModule {
 		throws EMFUserError, SourceBeanException {
 		
 		try {
+			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
+			dao.setUserProfile(profile);
 			
 			DataSource dsNew = recoverDataSourceDetails(serviceRequest);
 			
@@ -181,15 +194,15 @@ public class DetailDataSourceModule extends AbstractModule {
 					getErrorHandler().addError(error);
 					return;
 				}	 		
-				 
-				DAOFactory.getDataSourceDAO().insertDataSource(dsNew);
+
+				dao.insertDataSource(dsNew);
 				
 				IDataSource tmpDS = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel());
 				dsNew.setDsId(tmpDS.getDsId());
 				mod = SpagoBIConstants.DETAIL_MOD; 
 			} else {				
 				//update ds
-				DAOFactory.getDataSourceDAO().modifyDataSource(dsNew);			
+				dao.modifyDataSource(dsNew);			
 			}  
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");

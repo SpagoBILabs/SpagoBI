@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.kpi.ou.dao;
 
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
@@ -32,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public interface IOrganizationalUnitDAO {
+public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 
 	/**
 	 * @return the list of OU

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.wapp.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.wapp.bo.MenuRoles;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
-public interface IMenuRolesDAO {
+public interface IMenuRolesDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all detail information for all menu compatible to the role specified

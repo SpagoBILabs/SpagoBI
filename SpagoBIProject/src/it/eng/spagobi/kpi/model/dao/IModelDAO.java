@@ -1,11 +1,12 @@
 package it.eng.spagobi.kpi.model.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.model.bo.Model;
 
 import java.util.List;
 
-public interface IModelDAO {
+public interface IModelDAO extends ISpagoBIDao{
 	
 	/**
 	 * Returns the Model without its children of the referred id

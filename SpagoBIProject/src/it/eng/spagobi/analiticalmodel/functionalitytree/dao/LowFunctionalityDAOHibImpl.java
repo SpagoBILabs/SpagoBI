@@ -49,6 +49,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
@@ -62,6 +63,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -469,7 +471,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					SbiFunctions.class, aLowFunctionality.getId());
 			// delete all roles functionality
 			
-			updateSbiCommonInfo(hibFunct);
+			updateSbiCommonInfo4Update(hibFunct);
 			
 			Set oldRoles = hibFunct.getSbiFuncRoles();
 			Iterator iterOldRoles = oldRoles.iterator();
@@ -612,7 +614,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			sbifuncrole.setId(sbifuncroleid);
 			sbifuncrole.setStateCd(devStateDomain.getValueCd());
 			
-			updateSbiCommonInfo(sbifuncrole);
+			updateSbiCommonInfo4Update(sbifuncrole);
 			
 			aSession.save(sbifuncrole);
 			functRoleToSave.add(sbifuncrole);
@@ -862,12 +864,20 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 		List biObjects = new ArrayList();
 		if (recoverBIObjects) {
-			BIObjectDAOHibImpl objDAO = new BIObjectDAOHibImpl();
-			Set hibObjFuncs = hibFunct.getSbiObjFuncs();
-			for (Iterator it = hibObjFuncs.iterator(); it.hasNext(); ) {
-				SbiObjFunc hibObjFunc = (SbiObjFunc) it.next();
-				BIObject object = objDAO.toBIObject(hibObjFunc.getId().getSbiObjects());
-				biObjects.add(object);
+
+			BIObjectDAOHibImpl objDAO = null;
+			try {
+				objDAO = (BIObjectDAOHibImpl) DAOFactory.getBIObjectDAO();
+
+				Set hibObjFuncs = hibFunct.getSbiObjFuncs();
+				for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
+					SbiObjFunc hibObjFunc = (SbiObjFunc) it.next();
+					BIObject object = objDAO.toBIObject(hibObjFunc.getId()
+							.getSbiObjects());
+					biObjects.add(object);
+				}
+			} catch (EMFUserError e) {
+				logger.error("Error", e);
 			}
 		}
 
@@ -1249,8 +1259,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			hibFunct.setProg(newProg);
 			hibUpperFunct.setProg(oldProg);
 			
-			updateSbiCommonInfo(hibFunct);
-			updateSbiCommonInfo(hibUpperFunct);
+			updateSbiCommonInfo4Update(hibFunct);
+			updateSbiCommonInfo4Update(hibUpperFunct);
 			
 			tx.commit();
 		} catch (HibernateException he) {

@@ -31,8 +31,10 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl;
 import it.eng.spagobi.commons.bo.Subreport;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.events.bo.EventLog;
@@ -111,7 +113,7 @@ public class WekaEventPresentationHandler implements IEventPresentationHandler {
 	}
 	
 	protected BIObject getDocument(String documentId) throws EMFUserError {
-		BIObjectDAOHibImpl biObjectDAO;
+		IBIObjectDAO biObjectDAO;
 		Integer biObjectId;
 		BIObject biObject;
 		
@@ -119,7 +121,8 @@ public class WekaEventPresentationHandler implements IEventPresentationHandler {
 		try {
 			Assert.assertNotNull(documentId, "Parameter [documentId] cannot be null");
 			
-			biObjectDAO = new BIObjectDAOHibImpl();
+			
+			biObjectDAO = DAOFactory.getBIObjectDAO();
 			biObjectId = new Integer(documentId);
 			biObject = biObjectDAO.loadBIObjectById(biObjectId);
 		} catch(Throwable t) {
@@ -131,7 +134,7 @@ public class WekaEventPresentationHandler implements IEventPresentationHandler {
 	}
 	
 	protected List<BIObject> getLinkedObject(BIObject document) throws EMFUserError {
-		BIObjectDAOHibImpl biObjectDAO;
+		IBIObjectDAO biObjectDAO;
 		SubreportDAOHibImpl subreportDAOHibImpl;
 		List list;
 		List biObjectList;
@@ -141,7 +144,7 @@ public class WekaEventPresentationHandler implements IEventPresentationHandler {
 		try {
 			Assert.assertNotNull(document, "Parameter [document] cannot be null");
 			
-			biObjectDAO = new BIObjectDAOHibImpl();
+			biObjectDAO = DAOFactory.getBIObjectDAO();
 			
 			subreportDAOHibImpl = new SubreportDAOHibImpl();
 			list = subreportDAOHibImpl.loadSubreportsByMasterRptId(document.getId());

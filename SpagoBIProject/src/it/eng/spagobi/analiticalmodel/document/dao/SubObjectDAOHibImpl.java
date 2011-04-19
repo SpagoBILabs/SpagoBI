@@ -363,7 +363,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			hibSub.setName(subObj.getName());
 			hibSub.setSbiBinContents(hibBinContent);
 			hibSub.setSbiObject(hibBIObject);
-			updateSbiCommonInfo(hibSub);
+			updateSbiCommonInfo4Update(hibSub);
 			aSession.save(hibSub);
 			
 			tx.commit();

@@ -4,6 +4,7 @@
 package it.eng.spagobi.mapcatalogue.bo.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @author giachino
  *
  */
-public interface ISbiGeoMapFeaturesDAO {
+public interface ISbiGeoMapFeaturesDAO extends ISpagoBIDao{
 	/**
 	 * Loads all detail information for all features compatible to the map specified
 	 * at input. For each of them, name is stored into a <code>String</code> object. 

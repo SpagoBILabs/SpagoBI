@@ -31,7 +31,7 @@ import java.util.List;
  * 
  * @author Monia Spinelli
  */
-public interface IConfigDAO {
+public interface IConfigDAO extends ISpagoBIDao{
 
 	public List loadAllConfigParameters() throws Exception;
     

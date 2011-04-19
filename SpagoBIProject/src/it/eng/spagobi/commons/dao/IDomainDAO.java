@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * Defines the interfaces for all methods needed to operate with a domain.
  */
-public interface IDomainDAO {
+public interface IDomainDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all possible domain that refer to a given domain type, storing each

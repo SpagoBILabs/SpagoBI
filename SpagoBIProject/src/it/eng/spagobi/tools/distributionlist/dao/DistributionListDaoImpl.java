@@ -27,6 +27,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -416,9 +417,16 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 		while(it.hasNext()){
 			SbiDistributionListsObjects dlo =(SbiDistributionListsObjects) it.next();
 			SbiObjects so = dlo.getSbiObjects();
-			BIObjectDAOHibImpl objDAO = new BIObjectDAOHibImpl();
-			BIObject obj = objDAO.toBIObject(so);
-			documents.add(obj);
+			BIObjectDAOHibImpl objDAO=null;
+			try {
+				objDAO = (BIObjectDAOHibImpl)DAOFactory.getBIObjectDAO();
+				BIObject obj = objDAO.toBIObject(so);
+				documents.add(obj);
+			} catch (EMFUserError e) {
+
+			}
+
+			
 		}
 
 		dl.setDocuments(documents);

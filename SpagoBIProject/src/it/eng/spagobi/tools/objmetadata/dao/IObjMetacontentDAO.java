@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.objmetadata.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.List;
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting object's metadata.
  */
-public interface IObjMetacontentDAO {
+public interface IObjMetacontentDAO extends ISpagoBIDao{
 	
 	
 	/**

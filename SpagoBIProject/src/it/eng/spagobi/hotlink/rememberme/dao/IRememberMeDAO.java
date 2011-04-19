@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.hotlink.rememberme.dao;
 
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public interface IRememberMeDAO {
+public interface IRememberMeDAO extends ISpagoBIDao{
 	
 	/**
 	 * Save remember me.

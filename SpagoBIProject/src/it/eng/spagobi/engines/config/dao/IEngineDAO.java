@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.config.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.engines.config.bo.Engine;
 
 import java.util.List;
@@ -37,7 +38,7 @@ import java.util.List;
  * 
  * @author Zoppello
  */
-public interface IEngineDAO {
+public interface IEngineDAO extends ISpagoBIDao{
 	
 	
 	/**

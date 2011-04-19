@@ -1,13 +1,14 @@
 package it.eng.spagobi.kpi.config.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.config.bo.KpiError;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiError;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
 
 import java.util.List;
 
-public interface IKpiErrorDAO {
+public interface IKpiErrorDAO extends ISpagoBIDao{
 
 
 	/**

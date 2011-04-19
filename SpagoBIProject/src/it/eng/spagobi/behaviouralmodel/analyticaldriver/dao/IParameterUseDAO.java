@@ -30,6 +30,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ import org.hibernate.Session;
  * 
  * @author zoppello
  */
-public interface IParameterUseDAO {
+public interface IParameterUseDAO extends ISpagoBIDao{
 
 
 	/**

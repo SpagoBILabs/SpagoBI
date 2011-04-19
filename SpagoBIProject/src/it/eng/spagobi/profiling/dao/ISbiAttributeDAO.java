@@ -22,13 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.profiling.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
 import java.util.HashMap;
 import java.util.List;
 
-public interface ISbiAttributeDAO {
+public interface ISbiAttributeDAO extends ISpagoBIDao{
 	
 	public List<SbiUserAttributes> loadSbiAttributesById(Integer id) throws EMFUserError;
 	

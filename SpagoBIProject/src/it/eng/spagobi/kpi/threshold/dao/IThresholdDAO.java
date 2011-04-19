@@ -1,12 +1,13 @@
 package it.eng.spagobi.kpi.threshold.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.threshold.bo.Threshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 
 import java.util.List;
 
-public interface IThresholdDAO {
+public interface IThresholdDAO extends ISpagoBIDao{
 	
 	/**
 	 * Returns the Threshold of the referred id

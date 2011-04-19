@@ -11,6 +11,7 @@ package it.eng.spagobi.kpi.alarm.dao;
  */
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.alarm.bo.AlarmContact;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 
@@ -24,7 +25,7 @@ import org.hibernate.Session;
  * @see it.eng.spagobi.kpi.alarm.bo.AlarmContact
  * @author Enrico Cesaretti
  */
-public interface ISbiAlarmContactDAO {
+public interface ISbiAlarmContactDAO extends ISpagoBIDao{
 
     public Integer insert(SbiAlarmContact item);
     

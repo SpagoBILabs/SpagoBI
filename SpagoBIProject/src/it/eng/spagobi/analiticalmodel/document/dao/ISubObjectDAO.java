@@ -24,12 +24,13 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
 import org.hibernate.Session;
 
-public interface ISubObjectDAO {
+public interface ISubObjectDAO extends ISpagoBIDao{
 
 	/**
 	 * Save a subObject of the object.

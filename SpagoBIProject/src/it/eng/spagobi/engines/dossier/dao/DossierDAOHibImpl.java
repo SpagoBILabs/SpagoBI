@@ -27,6 +27,7 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
@@ -58,7 +59,7 @@ import org.xml.sax.InputSource;
  * 
  * @author Zerbetto (davide.zerbetto@eng.it)
  */
-public class DossierDAOHibImpl implements IDossierDAO {
+public class DossierDAOHibImpl extends AbstractHibernateDAO implements IDossierDAO {
 
 	public static final String TEMPLATE_FILE_NAME = "dossierTemplate.zip";
 	public static final String DOSSIER_CONF_FILE_NAME = "dossier-config.sbidossier";

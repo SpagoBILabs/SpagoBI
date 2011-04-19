@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.distributionlist.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.bo.Email;
 
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * Defines the interfaces for all methods needed to insert, modify and delete a Distribution List
  */
-public interface IDistributionListDAO {
+public interface IDistributionListDAO extends ISpagoBIDao{
 	
 	
 	/**

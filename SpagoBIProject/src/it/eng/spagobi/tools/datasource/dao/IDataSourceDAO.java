@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.datasource.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -36,7 +37,7 @@ import java.util.List;
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting an engine.
  */
-public interface IDataSourceDAO {
+public interface IDataSourceDAO extends ISpagoBIDao{
 	
 	
 	/**

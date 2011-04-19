@@ -24,11 +24,12 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
 
-public interface IObjTemplateDAO {
+public interface IObjTemplateDAO extends ISpagoBIDao{
 
 	/**
 	 * Gets the bI object active template.

@@ -29,7 +29,7 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.error.EMFInternalError;
 
-public interface IBinContentDAO {
+public interface IBinContentDAO extends ISpagoBIDao{
 	
 	/**
 	 * Gets the bin content.

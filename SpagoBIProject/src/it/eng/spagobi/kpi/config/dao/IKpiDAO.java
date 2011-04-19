@@ -2,6 +2,7 @@ package it.eng.spagobi.kpi.config.dao;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
@@ -13,7 +14,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import java.util.Date;
 import java.util.List;
 
-public interface IKpiDAO {
+public interface IKpiDAO extends ISpagoBIDao{
 	
 	
 	public String loadKPIValueXml(Integer kpiValueId)throws EMFUserError ;
