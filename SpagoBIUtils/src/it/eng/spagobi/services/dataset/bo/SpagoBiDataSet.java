@@ -10,11 +10,17 @@ package it.eng.spagobi.services.dataset.bo;
 public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String adress;
 
+    private java.lang.Integer categoryId;
+
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource;
+
+    private java.lang.String datamarts;
 
     private java.lang.String description;
 
     private int dsId;
+
+    private java.lang.String dsMetadata;
 
     private java.lang.String executorClass;
 
@@ -22,110 +28,90 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String javaClassName;
 
+    private java.lang.String jsonQuery;
+
     private java.lang.String label;
-    
-    private Integer categoryId;
 
-    private Integer transformerId;
-
-    private java.lang.String pivotColumnName;
-
-    private java.lang.String pivotRowName;
-
-    private java.lang.String pivotColumnValue;
-
-    private boolean numRows;
+    private java.lang.String languageScript;
 
     private java.lang.String name;
+
+    private boolean numRows;
 
     private java.lang.String operation;
 
     private java.lang.String parameters;
 
-    private java.lang.String dsMetadata;
+    private java.lang.String pivotColumnName;
+
+    private java.lang.String pivotColumnValue;
+
+    private java.lang.String pivotRowName;
 
     private java.lang.String query;
 
     private java.lang.String script;
 
+    private java.lang.Integer transformerId;
+
     private java.lang.String type;
 
-    private java.lang.String languageScript;
-
-    
-    
-    /**
-	 * @return the numRows
-	 * @WARNINGS: numRows can be null so if numRows is a boolean also the value returned by this method have to be a boolean 
-	 */
-	public boolean isNumRows() {
-		return numRows;
-	}
-    
-    
-    
     public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
            java.lang.String adress,
+           java.lang.Integer categoryId,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
+           java.lang.String datamarts,
            java.lang.String description,
            int dsId,
+           java.lang.String dsMetadata,
            java.lang.String executorClass,
            java.lang.String fileName,
            java.lang.String javaClassName,
+           java.lang.String jsonQuery,
            java.lang.String label,
-           Integer categoryId,
-           Integer transformerId,
-           java.lang.String pivotColumnName,
-           java.lang.String pivotRowName,
-           java.lang.String pivotColumnValue,
-           java.lang.Boolean numRows,
+           java.lang.String languageScript,
            java.lang.String name,
+           boolean numRows,
            java.lang.String operation,
            java.lang.String parameters,
+           java.lang.String pivotColumnName,
+           java.lang.String pivotColumnValue,
+           java.lang.String pivotRowName,
            java.lang.String query,
            java.lang.String script,
-           java.lang.String type,
-           java.lang.String languageScript) {
+           java.lang.Integer transformerId,
+           java.lang.String type) {
            this.adress = adress;
+           this.categoryId = categoryId;
            this.dataSource = dataSource;
+           this.datamarts = datamarts;
            this.description = description;
            this.dsId = dsId;
+           this.dsMetadata = dsMetadata;
            this.executorClass = executorClass;
            this.fileName = fileName;
            this.javaClassName = javaClassName;
+           this.jsonQuery = jsonQuery;
            this.label = label;
-           this.categoryId = categoryId;
-           this.transformerId = transformerId;
-           this.pivotColumnName = pivotColumnName;
-           this.pivotRowName = pivotRowName;
-           this.pivotColumnValue = pivotColumnValue;
-           this.numRows = numRows;
+           this.languageScript = languageScript;
            this.name = name;
+           this.numRows = numRows;
            this.operation = operation;
            this.parameters = parameters;
+           this.pivotColumnName = pivotColumnName;
+           this.pivotColumnValue = pivotColumnValue;
+           this.pivotRowName = pivotRowName;
            this.query = query;
            this.script = script;
+           this.transformerId = transformerId;
            this.type = type;
-           this.languageScript = languageScript;
     }
 
 
-    public Integer getCategoryId() {
-		return categoryId;
-	}
-
-
-
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
-
-
-
-	/**
+    /**
      * Gets the adress value for this SpagoBiDataSet.
      * 
      * @return adress
@@ -146,6 +132,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the categoryId value for this SpagoBiDataSet.
+     * 
+     * @return categoryId
+     */
+    public java.lang.Integer getCategoryId() {
+        return categoryId;
+    }
+
+
+    /**
+     * Sets the categoryId value for this SpagoBiDataSet.
+     * 
+     * @param categoryId
+     */
+    public void setCategoryId(java.lang.Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+
+    /**
      * Gets the dataSource value for this SpagoBiDataSet.
      * 
      * @return dataSource
@@ -162,6 +168,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDataSource(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+
+    /**
+     * Gets the datamarts value for this SpagoBiDataSet.
+     * 
+     * @return datamarts
+     */
+    public java.lang.String getDatamarts() {
+        return datamarts;
+    }
+
+
+    /**
+     * Sets the datamarts value for this SpagoBiDataSet.
+     * 
+     * @param datamarts
+     */
+    public void setDatamarts(java.lang.String datamarts) {
+        this.datamarts = datamarts;
     }
 
 
@@ -202,6 +228,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDsId(int dsId) {
         this.dsId = dsId;
+    }
+
+
+    /**
+     * Gets the dsMetadata value for this SpagoBiDataSet.
+     * 
+     * @return dsMetadata
+     */
+    public java.lang.String getDsMetadata() {
+        return dsMetadata;
+    }
+
+
+    /**
+     * Sets the dsMetadata value for this SpagoBiDataSet.
+     * 
+     * @param dsMetadata
+     */
+    public void setDsMetadata(java.lang.String dsMetadata) {
+        this.dsMetadata = dsMetadata;
     }
 
 
@@ -266,6 +312,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the jsonQuery value for this SpagoBiDataSet.
+     * 
+     * @return jsonQuery
+     */
+    public java.lang.String getJsonQuery() {
+        return jsonQuery;
+    }
+
+
+    /**
+     * Sets the jsonQuery value for this SpagoBiDataSet.
+     * 
+     * @param jsonQuery
+     */
+    public void setJsonQuery(java.lang.String jsonQuery) {
+        this.jsonQuery = jsonQuery;
+    }
+
+
+    /**
      * Gets the label value for this SpagoBiDataSet.
      * 
      * @return label
@@ -286,102 +352,22 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
-     * Gets the transformerId value for this SpagoBiDataSet.
+     * Gets the languageScript value for this SpagoBiDataSet.
      * 
-     * @return transformerId
+     * @return languageScript
      */
-    public Integer getTransformerId() {
-        return transformerId;
+    public java.lang.String getLanguageScript() {
+        return languageScript;
     }
 
 
     /**
-     * Sets the transformerId value for this SpagoBiDataSet.
+     * Sets the languageScript value for this SpagoBiDataSet.
      * 
-     * @param transformerId
+     * @param languageScript
      */
-    public void setTransformerId(Integer transformerId) {
-        this.transformerId = transformerId;
-    }
-
-
-    /**
-     * Gets the pivotColumnName value for this SpagoBiDataSet.
-     * 
-     * @return pivotColumnName
-     */
-    public java.lang.String getPivotColumnName() {
-        return pivotColumnName;
-    }
-
-
-    /**
-     * Sets the pivotColumnName value for this SpagoBiDataSet.
-     * 
-     * @param pivotColumnName
-     */
-    public void setPivotColumnName(java.lang.String pivotColumnName) {
-        this.pivotColumnName = pivotColumnName;
-    }
-
-
-    /**
-     * Gets the pivotRowName value for this SpagoBiDataSet.
-     * 
-     * @return pivotRowName
-     */
-    public java.lang.String getPivotRowName() {
-        return pivotRowName;
-    }
-
-
-    /**
-     * Sets the pivotRowName value for this SpagoBiDataSet.
-     * 
-     * @param pivotRowName
-     */
-    public void setPivotRowName(java.lang.String pivotRowName) {
-        this.pivotRowName = pivotRowName;
-    }
-
-
-    /**
-     * Gets the pivotColumnValue value for this SpagoBiDataSet.
-     * 
-     * @return pivotColumnValue
-     */
-    public java.lang.String getPivotColumnValue() {
-        return pivotColumnValue;
-    }
-
-
-    /**
-     * Sets the pivotColumnValue value for this SpagoBiDataSet.
-     * 
-     * @param pivotColumnValue
-     */
-    public void setPivotColumnValue(java.lang.String pivotColumnValue) {
-        this.pivotColumnValue = pivotColumnValue;
-    }
-
-
-    /**
-     * Gets the numRows value for this SpagoBiDataSet.
-     * 
-     * @return numRows
-     */
-    public java.lang.Boolean getNumRows() {
-        return numRows;
-    }
-
-
-    /**
-     * Sets the numRows value for this SpagoBiDataSet.
-     * 
-     * @param numRows
-     */
-    public void setNumRows(java.lang.Boolean numRows) {
-        this.numRows = numRows;
+    public void setLanguageScript(java.lang.String languageScript) {
+        this.languageScript = languageScript;
     }
 
 
@@ -402,6 +388,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setName(java.lang.String name) {
         this.name = name;
+    }
+
+
+    /**
+     * Gets the numRows value for this SpagoBiDataSet.
+     * 
+     * @return numRows
+     */
+    public boolean isNumRows() {
+        return numRows;
+    }
+
+
+    /**
+     * Sets the numRows value for this SpagoBiDataSet.
+     * 
+     * @param numRows
+     */
+    public void setNumRows(boolean numRows) {
+        this.numRows = numRows;
     }
 
 
@@ -445,19 +451,67 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     }
 
 
-    public java.lang.String getDsMetadata() {
-		return dsMetadata;
-	}
+    /**
+     * Gets the pivotColumnName value for this SpagoBiDataSet.
+     * 
+     * @return pivotColumnName
+     */
+    public java.lang.String getPivotColumnName() {
+        return pivotColumnName;
+    }
 
 
+    /**
+     * Sets the pivotColumnName value for this SpagoBiDataSet.
+     * 
+     * @param pivotColumnName
+     */
+    public void setPivotColumnName(java.lang.String pivotColumnName) {
+        this.pivotColumnName = pivotColumnName;
+    }
 
-	public void setDsMetadata(java.lang.String dsMetadata) {
-		this.dsMetadata = dsMetadata;
-	}
+
+    /**
+     * Gets the pivotColumnValue value for this SpagoBiDataSet.
+     * 
+     * @return pivotColumnValue
+     */
+    public java.lang.String getPivotColumnValue() {
+        return pivotColumnValue;
+    }
 
 
+    /**
+     * Sets the pivotColumnValue value for this SpagoBiDataSet.
+     * 
+     * @param pivotColumnValue
+     */
+    public void setPivotColumnValue(java.lang.String pivotColumnValue) {
+        this.pivotColumnValue = pivotColumnValue;
+    }
 
-	/**
+
+    /**
+     * Gets the pivotRowName value for this SpagoBiDataSet.
+     * 
+     * @return pivotRowName
+     */
+    public java.lang.String getPivotRowName() {
+        return pivotRowName;
+    }
+
+
+    /**
+     * Sets the pivotRowName value for this SpagoBiDataSet.
+     * 
+     * @param pivotRowName
+     */
+    public void setPivotRowName(java.lang.String pivotRowName) {
+        this.pivotRowName = pivotRowName;
+    }
+
+
+    /**
      * Gets the query value for this SpagoBiDataSet.
      * 
      * @return query
@@ -498,6 +552,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the transformerId value for this SpagoBiDataSet.
+     * 
+     * @return transformerId
+     */
+    public java.lang.Integer getTransformerId() {
+        return transformerId;
+    }
+
+
+    /**
+     * Sets the transformerId value for this SpagoBiDataSet.
+     * 
+     * @param transformerId
+     */
+    public void setTransformerId(java.lang.Integer transformerId) {
+        this.transformerId = transformerId;
+    }
+
+
+    /**
      * Gets the type value for this SpagoBiDataSet.
      * 
      * @return type
@@ -516,28 +590,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         this.type = type;
     }
 
-
-    /**
-     * Gets the languageScript value for this SpagoBiDataSet.
-     * 
-     * @return languageScript
-     */
-    public java.lang.String getLanguageScript() {
-        return languageScript;
-    }
-
-
-    /**
-     * Sets the languageScript value for this SpagoBiDataSet.
-     * 
-     * @param languageScript
-     */
-    public void setLanguageScript(java.lang.String languageScript) {
-        this.languageScript = languageScript;
-    }
-
-	
-	
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
@@ -553,13 +605,22 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.adress==null && other.getAdress()==null) || 
              (this.adress!=null &&
               this.adress.equals(other.getAdress()))) &&
+            ((this.categoryId==null && other.getCategoryId()==null) || 
+             (this.categoryId!=null &&
+              this.categoryId.equals(other.getCategoryId()))) &&
             ((this.dataSource==null && other.getDataSource()==null) || 
              (this.dataSource!=null &&
               this.dataSource.equals(other.getDataSource()))) &&
+            ((this.datamarts==null && other.getDatamarts()==null) || 
+             (this.datamarts!=null &&
+              this.datamarts.equals(other.getDatamarts()))) &&
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
             this.dsId == other.getDsId() &&
+            ((this.dsMetadata==null && other.getDsMetadata()==null) || 
+             (this.dsMetadata!=null &&
+              this.dsMetadata.equals(other.getDsMetadata()))) &&
             ((this.executorClass==null && other.getExecutorClass()==null) || 
              (this.executorClass!=null &&
               this.executorClass.equals(other.getExecutorClass()))) &&
@@ -569,48 +630,46 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.javaClassName==null && other.getJavaClassName()==null) || 
              (this.javaClassName!=null &&
               this.javaClassName.equals(other.getJavaClassName()))) &&
+            ((this.jsonQuery==null && other.getJsonQuery()==null) || 
+             (this.jsonQuery!=null &&
+              this.jsonQuery.equals(other.getJsonQuery()))) &&
             ((this.label==null && other.getLabel()==null) || 
              (this.label!=null &&
               this.label.equals(other.getLabel()))) &&
-            ((this.transformerId==null && other.getTransformerId()==null) || 
-             (this.transformerId!=null &&
-              this.transformerId.equals(other.getTransformerId()))) &&
-          ((this.categoryId==null && other.getCategoryId()==null) || 
-              (this.categoryId!=null &&
-               this.categoryId.equals(other.getCategoryId()))) &&
-            ((this.pivotColumnName==null && other.getPivotColumnName()==null) || 
-             (this.pivotColumnName!=null &&
-              this.pivotColumnName.equals(other.getPivotColumnName()))) &&
-            ((this.pivotRowName==null && other.getPivotRowName()==null) || 
-             (this.pivotRowName!=null &&
-              this.pivotRowName.equals(other.getPivotRowName()))) &&
-            ((this.pivotColumnValue==null && other.getPivotColumnValue()==null) || 
-             (this.pivotColumnValue!=null &&
-              this.pivotColumnValue.equals(other.getPivotColumnValue()))) &&
-            (/*(this.numRows==null && other.getNumRows()==null) || 
-             (this.numRows!=null &&
-              this.numRows.equals(other.getNumRows()))*/ this.numRows == other.getNumRows()) &&
+            ((this.languageScript==null && other.getLanguageScript()==null) || 
+             (this.languageScript!=null &&
+              this.languageScript.equals(other.getLanguageScript()))) &&
             ((this.name==null && other.getName()==null) || 
              (this.name!=null &&
               this.name.equals(other.getName()))) &&
+            this.numRows == other.isNumRows() &&
             ((this.operation==null && other.getOperation()==null) || 
              (this.operation!=null &&
               this.operation.equals(other.getOperation()))) &&
             ((this.parameters==null && other.getParameters()==null) || 
              (this.parameters!=null &&
               this.parameters.equals(other.getParameters()))) &&
+            ((this.pivotColumnName==null && other.getPivotColumnName()==null) || 
+             (this.pivotColumnName!=null &&
+              this.pivotColumnName.equals(other.getPivotColumnName()))) &&
+            ((this.pivotColumnValue==null && other.getPivotColumnValue()==null) || 
+             (this.pivotColumnValue!=null &&
+              this.pivotColumnValue.equals(other.getPivotColumnValue()))) &&
+            ((this.pivotRowName==null && other.getPivotRowName()==null) || 
+             (this.pivotRowName!=null &&
+              this.pivotRowName.equals(other.getPivotRowName()))) &&
             ((this.query==null && other.getQuery()==null) || 
              (this.query!=null &&
               this.query.equals(other.getQuery()))) &&
             ((this.script==null && other.getScript()==null) || 
              (this.script!=null &&
               this.script.equals(other.getScript()))) &&
+            ((this.transformerId==null && other.getTransformerId()==null) || 
+             (this.transformerId!=null &&
+              this.transformerId.equals(other.getTransformerId()))) &&
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
-              this.type.equals(other.getType()))) &&
-            ((this.languageScript==null && other.getLanguageScript()==null) || 
-             (this.languageScript!=null &&
-              this.languageScript.equals(other.getLanguageScript())));
+              this.type.equals(other.getType())));
         __equalsCalc = null;
         return _equals;
     }
@@ -625,13 +684,22 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getAdress() != null) {
             _hashCode += getAdress().hashCode();
         }
+        if (getCategoryId() != null) {
+            _hashCode += getCategoryId().hashCode();
+        }
         if (getDataSource() != null) {
             _hashCode += getDataSource().hashCode();
+        }
+        if (getDatamarts() != null) {
+            _hashCode += getDatamarts().hashCode();
         }
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
         }
         _hashCode += getDsId();
+        if (getDsMetadata() != null) {
+            _hashCode += getDsMetadata().hashCode();
+        }
         if (getExecutorClass() != null) {
             _hashCode += getExecutorClass().hashCode();
         }
@@ -641,35 +709,33 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getJavaClassName() != null) {
             _hashCode += getJavaClassName().hashCode();
         }
+        if (getJsonQuery() != null) {
+            _hashCode += getJsonQuery().hashCode();
+        }
         if (getLabel() != null) {
             _hashCode += getLabel().hashCode();
         }
-        if (getCategoryId() != null) {
-            _hashCode += getCategoryId().hashCode();
-        }
-        if (getTransformerId() != null) {
-            _hashCode += getTransformerId().hashCode();
-        }
-        if (getPivotColumnName() != null) {
-            _hashCode += getPivotColumnName().hashCode();
-        }
-        if (getPivotRowName() != null) {
-            _hashCode += getPivotRowName().hashCode();
-        }
-        if (getPivotColumnValue() != null) {
-            _hashCode += getPivotColumnValue().hashCode();
-        }
-        if (getNumRows() != null) {
-            _hashCode += getNumRows().hashCode();
+        if (getLanguageScript() != null) {
+            _hashCode += getLanguageScript().hashCode();
         }
         if (getName() != null) {
             _hashCode += getName().hashCode();
         }
+        _hashCode += (isNumRows() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         if (getOperation() != null) {
             _hashCode += getOperation().hashCode();
         }
         if (getParameters() != null) {
             _hashCode += getParameters().hashCode();
+        }
+        if (getPivotColumnName() != null) {
+            _hashCode += getPivotColumnName().hashCode();
+        }
+        if (getPivotColumnValue() != null) {
+            _hashCode += getPivotColumnValue().hashCode();
+        }
+        if (getPivotRowName() != null) {
+            _hashCode += getPivotRowName().hashCode();
         }
         if (getQuery() != null) {
             _hashCode += getQuery().hashCode();
@@ -677,11 +743,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getScript() != null) {
             _hashCode += getScript().hashCode();
         }
+        if (getTransformerId() != null) {
+            _hashCode += getTransformerId().hashCode();
+        }
         if (getType() != null) {
             _hashCode += getType().hashCode();
-        }
-        if (getLanguageScript() != null) {
-            _hashCode += getLanguageScript().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -700,9 +766,21 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("categoryId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "categoryId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dataSource");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dataSource"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("datamarts");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "datamarts"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
@@ -716,6 +794,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "dsId"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dsMetadata");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dsMetadata"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("executorClass");
@@ -736,45 +820,21 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("jsonQuery");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "jsonQuery"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("label");
         elemField.setXmlName(new javax.xml.namespace.QName("", "label"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("categoryId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "categoryId"));
+        elemField.setFieldName("languageScript");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "languageScript"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("transformerId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "transformerId"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("pivotColumnName");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotColumnName"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("pivotRowName");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotRowName"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("pivotColumnValue");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotColumnValue"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("numRows");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "numRows"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
@@ -782,6 +842,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "name"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("numRows");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "numRows"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("operation");
@@ -792,6 +858,24 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("parameters");
         elemField.setXmlName(new javax.xml.namespace.QName("", "parameters"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("pivotColumnName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotColumnName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("pivotColumnValue");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotColumnValue"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("pivotRowName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "pivotRowName"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -808,14 +892,14 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("type");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setFieldName("transformerId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "transformerId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("languageScript");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "languageScript"));
+        elemField.setFieldName("type");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

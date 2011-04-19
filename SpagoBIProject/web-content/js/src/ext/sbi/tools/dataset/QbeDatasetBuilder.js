@@ -74,21 +74,39 @@ Sbi.tools.dataset.QbeDatasetBuilder = function(config) {
 	Sbi.tools.dataset.QbeDatasetBuilder.superclass.constructor.call(this, c);
 	
 	this.addEvents('gotqbequery');
+	
+	this.on('show', function() {
+		if (this.mustRefreshQbeView()) {
+			this.refreshQbeView();
+		}
+	}, this);
 
 };
 
 Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 	
-	title: null
-	, iframe: null
-	, qbeBaseUrl: null // base URL for SpagoBIQbeEngine web application: it must be set in the constructor's input object
-	, jsonQuery: null // query definition: it must be set in the constructor's input object
-	, qbeParameters: null // query parameters: it must be set in the constructor's input object
+	title : null
+	, iframe : null
+	, qbeBaseUrl : Sbi.config.qbeDatasetBuildUrl // base URL for
+													// SpagoBIQbeEngine web
+													// application: its default
+													// value is
+													// Sbi.config.qbeDatasetBuildUrl
+	, jsonQuery : null // query definition: it must be set in the constructor's
+						// input object
+	, qbeParameters : null // query parameters: it must be set in the
+							// constructor's input object
+	, currentDatasourceLabel : null
+	, currentDatamart : null
+	, currentDatasetId : null
+	, nextDatasourceLabel : null
+	, nextDatamart : null
+	, nextDatasetId : null
 	
 	, init: function () {
 		
 		this.iframe = new Ext.ux.ManagedIFramePanel({
-			defaultSrc: this.qbeBaseUrl
+			defaultSrc: this.getQbeViewUrl()
 	        , loadMask: {msg: 'Loading...'}
 	        , fitToParent: true
 	        , frameConfig: {
@@ -134,6 +152,43 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 		message.jsonQuery = this.jsonQuery;
 		message.qbeParameters = this.qbeParameters;
 		this.iframe.sendMessage(message); // set the query
+	}
+	
+	, setDatasourceLabel: function(datasourceLabel) {
+		this.nextDatasourceLabel = datasourceLabel;
+	}
+	
+	, setDatamart: function(datamart) {
+		this.nextDatamart = datamart;
+	}
+	
+	, setDatasetId: function(datasetId) {
+		this.nextDatasetId = datasetId;
+	}
+	
+	, getQbeViewUrl: function() {
+		var url = Sbi.config.qbeDatasetBuildUrl
+			+ '&DATASOURCE_LABEL='
+			+ this.currentDatasourceLabel
+			+ '&DATAMART_NAME=' 
+			+ this.currentDatamart;
+		return url;
+	}
+
+	, mustRefreshQbeView: function() {
+		var toReturn =
+				this.currentDatasourceLabel != this.nextDatasourceLabel
+				|| this.currentDatamart != this.nextDatamart
+				|| this.currentDatasetId != this.nextDatasetId;
+		return toReturn;
+	}
+	
+	, refreshQbeView: function() {
+		this.currentDatasourceLabel = this.nextDatasourceLabel;
+		this.currentDatamart = this.nextDatamart;
+		this.currentDatasetId = this.nextDatasetId;
+		var newUrl = this.getQbeViewUrl();
+		this.iframe.getFrame().setSrc( newUrl );
 	}
 	
 });

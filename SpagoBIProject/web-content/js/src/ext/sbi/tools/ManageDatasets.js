@@ -546,7 +546,7 @@ Ext.extend(
 						triggerAction : 'all',
 						selectOnFocus : true,
 						editable : false,
-						allowBlank : true,
+						allowBlank : false,
 						validationEvent : true,
 						xtype : 'combo'
 					});
@@ -645,6 +645,7 @@ Ext.extend(
 			    	    , typeAhead: true
 			    	    , triggerAction: 'all'
 			    	    , selectOnFocus: true
+			    	    , allowBlank: false
 			    	});
 
 					this.detailScriptLanguage = new Ext.form.ComboBox({
@@ -1207,42 +1208,7 @@ Ext.extend(
 														LN('sbi.generic.serviceError'));
 									}
 								},
-								failure : function(response) {
-									if (response.responseText !== undefined) {
-										var content = Ext.util.JSON
-												.decode(response.responseText);
-										var errMessage = '';
-										for ( var count = 0; count < content.errors.length; count++) {
-											var anError = content.errors[count];
-											if (anError.localizedMessage !== undefined
-													&& anError.localizedMessage !== '') {
-												errMessage += anError.localizedMessage;
-											} else if (anError.message !== undefined
-													&& anError.message !== '') {
-												errMessage += anError.message;
-											}
-											if (count < content.errors.length - 1) {
-												errMessage += '<br/>';
-											}
-										}
-
-										Ext.MessageBox
-												.show({
-													title : LN('sbi.generic.validationError'),
-													msg : errMessage,
-													width : 400,
-													buttons : Ext.MessageBox.OK
-												});
-									} else {
-										Ext.MessageBox
-												.show({
-													title : LN('sbi.generic.error'),
-													msg : LN('sbi.generic.savingItemError'),
-													width : 150,
-													buttons : Ext.MessageBox.OK
-												});
-									}
-								},
+								failure : Sbi.exception.ExceptionHandler.handleFailure,
 								scope : this
 							});
 				}
@@ -1263,16 +1229,33 @@ Ext.extend(
 				,
 				jsonTriggerFieldHandler : function() {
 					var values = this.getForm().getFieldValues();
-					var qbeBaseUrl = Sbi.config.qbeDatasetBuildUrl
-							+ '&DATASOURCE_LABEL='
-							+ this.detailQbeDataSource
-									.getValue()
-							+ '&DATAMART_NAME=' 
-							+ this.qbeDatamarts.getValue();
+					var datasetId = values['id'];
+					var datasourceLabel = this.detailQbeDataSource.getValue();
+					if (datasourceLabel == '') {
+						Ext.MessageBox.show({
+							title : LN('sbi.generic.error'),
+							msg : LN('sbi.tools.managedatasets.errors.missingdatasource'),
+							width : 150,
+							buttons : Ext.MessageBox.OK
+						});
+						return;
+					}
+					if (datamart == '') {
+						Ext.MessageBox.show({
+							title : LN('sbi.generic.error'),
+							msg : LN('sbi.tools.managedatasets.errors.missingdatamart'),
+							width : 150,
+							buttons : Ext.MessageBox.OK
+						});
+						return;
+					}
+					var datamart = this.qbeDatamarts.getValue();
 					if (this.qbeDataSetBuilder === undefined) {
 						this.qbeDataSetBuilder = new Sbi.tools.dataset.QbeDatasetBuilder(
 								{
-									qbeBaseUrl : qbeBaseUrl,
+									currentDatasourceLabel : datasourceLabel,
+									currentDatamart : datamart,
+									currentDatasetId : datasetId,
 									jsonQuery : this.qbeJSONQuery.getValue(),
 									qbeParameters : this.manageParsGrid.getParsArray(),
 									modal : true,
@@ -1295,6 +1278,9 @@ Ext.extend(
 									}
 								});
 					}
+					this.qbeDataSetBuilder.setDatasourceLabel( datasourceLabel );
+					this.qbeDataSetBuilder.setDatamart( datamart );
+					this.qbeDataSetBuilder.setDatasetId( datasetId );
 					this.qbeDataSetBuilder.show();
 				}
 
