@@ -1,4 +1,4 @@
-CREATE TABLE `sbi_index` (
+CREATE TABLE `hibernate_sequences` (
   `sequence_name` varchar(200) NOT NULL,
   `next_val` int(11) NOT NULL,
   PRIMARY KEY (`sequence_name`)
@@ -13,6 +13,17 @@ CREATE TABLE SBI_CHECKS (
        VALUE_1              VARCHAR(400) NULL,
        VALUE_2              VARCHAR(400) NULL,
        NAME                 VARCHAR(40) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,    
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),          
               PRIMARY KEY (CHECK_ID)
 ) ENGINE=InnoDB;
 
@@ -29,6 +40,17 @@ CREATE TABLE SBI_DOMAINS (
        DOMAIN_CD            VARCHAR(20) NULL,
        DOMAIN_NM            VARCHAR(40) NULL,
        VALUE_DS             VARCHAR(160) NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
               PRIMARY KEY (VALUE_ID)
 ) ENGINE=InnoDB;
 
@@ -56,6 +78,17 @@ CREATE TABLE SBI_ENGINES (
  	      DEFAULT_DS_ID 		INTEGER,
  	      USE_DATASET        BOOLEAN DEFAULT FALSE,
  	      USE_DATASOURCE     BOOLEAN  DEFAULT FALSE,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20), 	      
               PRIMARY KEY (ENGINE_ID)
 ) ENGINE=InnoDB;
 
@@ -83,6 +116,17 @@ CREATE TABLE SBI_EXT_ROLES (
        SEE_METADATA 				BOOLEAN DEFAULT TRUE,
        SAVE_METADATA 				BOOLEAN DEFAULT TRUE,
        BUILD_QBE_QUERY 				BOOLEAN DEFAULT TRUE,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
        UNIQUE (NAME),
        PRIMARY KEY (EXT_ROLE_ID)
        
@@ -94,6 +138,17 @@ CREATE TABLE SBI_FUNC_ROLE (
        FUNCT_ID             INTEGER NOT NULL,
        STATE_CD             VARCHAR(20) NULL,
        STATE_ID             INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
               PRIMARY KEY (FUNCT_ID, STATE_ID, ROLE_ID)
 ) ENGINE=InnoDB;
 
@@ -112,13 +167,13 @@ CREATE TABLE SBI_FUNCTIONS (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),       
+       ORGANIZATION         VARCHAR(20),     
               PRIMARY KEY (FUNCT_ID)
 ) ENGINE=InnoDB;
 
@@ -138,6 +193,17 @@ CREATE TABLE SBI_LOV (
        INPUT_TYPE_ID        INTEGER NOT NULL,
        PROFILE_ATTR         VARCHAR(20) NULL,
        NAME                 VARCHAR(40) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
               PRIMARY KEY (LOV_ID)
 ) ENGINE=InnoDB;
 
@@ -151,6 +217,17 @@ CREATE TABLE SBI_OBJ_FUNC (
        BIOBJ_ID             INTEGER NOT NULL,
        FUNCT_ID             INTEGER NOT NULL,
        PROG                 INTEGER NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
               PRIMARY KEY (BIOBJ_ID, FUNCT_ID)
 ) ENGINE=InnoDB;
 
@@ -171,13 +248,13 @@ CREATE TABLE SBI_OBJ_PAR (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),       
+       ORGANIZATION         VARCHAR(20),     
               PRIMARY KEY (OBJ_PAR_ID)
 ) ENGINE=InnoDB;
 
@@ -188,6 +265,17 @@ CREATE TABLE SBI_OBJ_STATE (
        END_DT               DATE NULL,
        START_DT             DATE NOT NULL,
        NOTE                 VARCHAR(300) NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
               PRIMARY KEY (BIOBJ_ID, STATE_ID, START_DT)
 ) ENGINE=InnoDB;
 
@@ -226,13 +314,13 @@ CREATE TABLE SBI_OBJECTS (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),       
+       ORGANIZATION         VARCHAR(20),    
               PRIMARY KEY (BIOBJ_ID)
 ) ENGINE=InnoDB;
 
@@ -241,6 +329,17 @@ CREATE TABLE SBI_OBJECTS_RATING (
 	 USER_ID VARCHAR(127) NOT NULL,
 	 OBJ_ID INTEGER NOT NULL,
 	 RATING INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20), 
 	 PRIMARY KEY (USER_ID, OBJ_ID)
 
 ) ENGINE=InnoDB; 
@@ -262,6 +361,17 @@ CREATE TABLE SBI_PARAMETERS (
        NAME                 VARCHAR(40) NOT NULL,
        FUNCTIONAL_FLAG		SMALLINT NOT NULL DEFAULT 1,
        TEMPORAL_FLAG		SMALLINT NOT NULL DEFAULT 0,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
               PRIMARY KEY (PAR_ID)
 ) ENGINE=InnoDB;
 
@@ -281,6 +391,17 @@ CREATE TABLE SBI_PARUSE (
        MAN_IN               INTEGER NOT NULL,
        SELECTION_TYPE  VARCHAR(20) DEFAULT 'LIST',
        MULTIVALUE_FLAG  INTEGER DEFAULT 0,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
               PRIMARY KEY (USE_ID)
 ) ENGINE=InnoDB;
 
@@ -295,6 +416,17 @@ CREATE TABLE SBI_PARUSE_CK (
        CHECK_ID             INTEGER NOT NULL,
        USE_ID               INTEGER NOT NULL,
        PROG                 INTEGER NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
               PRIMARY KEY (USE_ID, CHECK_ID)
 ) ENGINE=InnoDB;
 
@@ -305,12 +437,34 @@ CREATE TABLE SBI_PARUSE_DET (
        USE_ID               INTEGER NOT NULL,
        HIDDEN_FL            SMALLINT NULL,
        DEFAULT_VAL          VARCHAR(40) NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
               PRIMARY KEY (USE_ID, EXT_ROLE_ID)
 ) ENGINE=InnoDB;
 
 CREATE TABLE SBI_SUBREPORTS (
        MASTER_RPT_ID        INTEGER NOT NULL,
        SUB_RPT_ID           INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
               PRIMARY KEY (MASTER_RPT_ID, SUB_RPT_ID)
 ) ENGINE=InnoDB;
 
@@ -324,6 +478,17 @@ CREATE TABLE SBI_OBJ_PARUSE (
 	PRE_CONDITION VARCHAR(10),
     POST_CONDITION VARCHAR(10),
     LOGIC_OPERATOR VARCHAR(10),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),    
 	 PRIMARY KEY(OBJ_PAR_ID,USE_ID,OBJ_PAR_FATHER_ID,FILTER_OPERATION)
 ) ENGINE=InnoDB;
 
@@ -331,6 +496,17 @@ CREATE TABLE SBI_OBJ_PARUSE (
 CREATE TABLE SBI_EVENTS (
 	ID                  INTEGER NOT NULL ,
   USER_EVENT          VARCHAR(40) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),  
               PRIMARY KEY(ID)
 ) ENGINE=InnoDB;
 
@@ -341,12 +517,23 @@ CREATE TABLE SBI_EVENTS_LOG (
 	DESCR                TEXT NOT NULL,
 	PARAMS              VARCHAR(1000),
 	HANDLER 	VARCHAR(400) NOT NULL DEFAULT 'it.eng.spagobi.events.handlers.DefaultEventPresentationHandler',
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20), 	
               PRIMARY KEY(ID)
 ) ENGINE=InnoDB;
 
 CREATE TABLE SBI_EVENTS_ROLES (
        EVENT_ID            INTEGER NOT NULL,
-       ROLE_ID             INTEGER NOT NULL,
+       ROLE_ID             INTEGER NOT NULL,      
               PRIMARY KEY (EVENT_ID, ROLE_ID)
 ) ENGINE=InnoDB;
 
@@ -384,6 +571,17 @@ CREATE TABLE SBI_AUDIT (
 		ERROR_MESSAGE 		VARCHAR(400),
 		ERROR_CODE 			VARCHAR(20),
 		EXECUTION_MODALITY 	VARCHAR(40),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20), 		
 		PRIMARY KEY (ID)
 ) ENGINE=InnoDB;
 
@@ -405,6 +603,17 @@ CREATE TABLE SBI_GEO_MAPS (
        URL					VARCHAR(400) NULL,
        FORMAT 				VARCHAR(40) NULL,       
 	   BIN_ID               INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),   
        PRIMARY KEY (MAP_ID)
 ) ENGINE=InnoDB;
 
@@ -418,6 +627,17 @@ CREATE TABLE SBI_GEO_FEATURES (
        NAME                 VARCHAR(40) NOT NULL,
        DESCR                VARCHAR(160) NULL,
        TYPE					VARCHAR(40)  NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
        PRIMARY KEY (FEATURE_ID)
 ) ENGINE=InnoDB;
 
@@ -431,6 +651,17 @@ CREATE TABLE SBI_GEO_MAP_FEATURES (
        FEATURE_ID         INTEGER NOT NULL,
        SVG_GROUP          VARCHAR(40),
        VISIBLE_FLAG		  VARCHAR(1),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
        PRIMARY KEY (MAP_ID, FEATURE_ID)
 ) ENGINE=InnoDB;
 
@@ -447,13 +678,13 @@ CREATE TABLE SBI_VIEWPOINTS (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),    
+       ORGANIZATION         VARCHAR(20),   
         PRIMARY KEY (VP_ID)
 ) ENGINE=InnoDB;
 
@@ -479,7 +710,7 @@ CREATE TABLE SBI_DATA_SOURCE (
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),      
+       ORGANIZATION              VARCHAR(20),       
         PRIMARY KEY (DS_ID)
 ) ENGINE=InnoDB;
 
@@ -491,6 +722,17 @@ CREATE UNIQUE INDEX XAK1SBI_DATA_SOURCE ON SBI_DATA_SOURCE
 CREATE TABLE SBI_BINARY_CONTENTS (
 		BIN_ID 				INTEGER NOT NULL ,
 		BIN_CONTENT 	mediumblob NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),		
         PRIMARY KEY (BIN_ID)
 ) ENGINE=InnoDB;
 
@@ -513,13 +755,13 @@ CREATE TABLE SBI_OBJECT_TEMPLATES (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),                    
+       ORGANIZATION         VARCHAR(20),                
         PRIMARY KEY (OBJ_TEMP_ID)
 ) ENGINE=InnoDB;
 
@@ -541,13 +783,13 @@ CREATE TABLE SBI_OBJECT_NOTES (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),     
+       ORGANIZATION         VARCHAR(20),  
     PRIMARY KEY (OBJ_NOTE_ID)
 ) ENGINE=InnoDB;
 
@@ -570,13 +812,13 @@ CREATE TABLE SBI_SUBOBJECTS (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),                                      
+       ORGANIZATION         VARCHAR(20),                                     
         PRIMARY KEY (SUBOBJ_ID)
 ) ENGINE=InnoDB;
 
@@ -596,13 +838,13 @@ CREATE TABLE SBI_SNAPSHOTS (
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
        TIME_IN              TIMESTAMP NOT NULL,
-       TIME_UP              TIMESTAMP,
-       TIME_DE              TIMESTAMP,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
        SBI_VERSION_IN       VARCHAR(10),
        SBI_VERSION_UP       VARCHAR(10),
        SBI_VERSION_DE       VARCHAR(10),
        META_VERSION         VARCHAR(100),
-       ORGANIZATION              VARCHAR(20),                                      
+       ORGANIZATION         VARCHAR(20),                                     
         PRIMARY KEY (SNAP_ID)
 ) ENGINE=InnoDB;
 
@@ -614,7 +856,18 @@ CREATE UNIQUE INDEX XAK1SBI_SNAPSHOTS ON SBI_SNAPSHOTS
 CREATE TABLE SBI_USER_FUNC (
 		USER_FUNCT_ID 				INTEGER NOT NULL ,
 		NAME 	                VARCHAR(50),  
-    DESCRIPTION 	      VARCHAR(100),                               
+    DESCRIPTION 	      VARCHAR(100),  
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),    
         PRIMARY KEY (USER_FUNCT_ID)
 ) ENGINE=InnoDB;
 
@@ -625,7 +878,7 @@ CREATE UNIQUE INDEX XAK1SBI_USER_FUNC ON SBI_USER_FUNC
 
 CREATE TABLE SBI_ROLE_TYPE_USER_FUNC (
 		ROLE_TYPE_ID 				INTEGER NOT NULL,
-		USER_FUNCT_ID 	    INTEGER NOT NULL,                             
+		USER_FUNCT_ID 	    INTEGER NOT NULL,   
         PRIMARY KEY (ROLE_TYPE_ID,USER_FUNCT_ID)
 ) ENGINE=InnoDB;
 
@@ -644,6 +897,17 @@ CREATE TABLE SBI_DOSSIER_PRES (
         PROG 						INTEGER NULL,
         CREATION_DATE 				TIMESTAMP,
         APPROVED 					SMALLINT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),        
         PRIMARY KEY (PRESENTATION_ID)
 ) ENGINE=InnoDB;
 
@@ -657,6 +921,17 @@ CREATE TABLE SBI_DOSSIER_TEMP (
         WORKFLOW_PROCESS_ID 		BIGINT NOT NULL,
         BIOBJ_ID 					INTEGER NOT NULL,
         PAGE_ID 					INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
         PRIMARY KEY (PART_ID)
 ) ENGINE=InnoDB;
 
@@ -672,6 +947,17 @@ CREATE TABLE SBI_DOSSIER_BIN_TEMP (
         BIN_CONTENT 				mediumblob NOT NULL,
         TYPE 						VARCHAR(20) NOT NULL,
         CREATION_DATE 				TIMESTAMP,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
         PRIMARY KEY (BIN_ID)
 ) ENGINE=InnoDB;
 
@@ -684,6 +970,17 @@ CREATE TABLE SBI_DIST_LIST (
         DL_ID 						INTEGER NOT NULL ,
         NAME 						VARCHAR(40) NOT NULL,
         DESCR						VARCHAR(160),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
         PRIMARY KEY (DL_ID)
 ) ENGINE=InnoDB;
 
@@ -693,6 +990,17 @@ CREATE TABLE SBI_DIST_LIST_USER (
         LIST_ID 					INTEGER NOT NULL,
         USER_ID 					VARCHAR(40) NOT NULL,
         E_MAIL						VARCHAR(70) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),        
 		PRIMARY KEY (DLU_ID),
         UNIQUE (LIST_ID, USER_ID)
 ) ENGINE=InnoDB;
@@ -702,6 +1010,17 @@ CREATE TABLE SBI_DIST_LIST_OBJECTS (
         DOC_ID 						INTEGER NOT NULL,
         DL_ID 						INTEGER NOT NULL,
         XML							VARCHAR(5000) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),              
 		PRIMARY KEY (REL_ID)
 ) ENGINE=InnoDB;
 
@@ -713,6 +1032,17 @@ CREATE TABLE SBI_REMEMBER_ME (
        BIOBJ_ID         INTEGER NOT NULL,
        SUBOBJ_ID        INTEGER NULL,
        PARAMETERS       TEXT,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),          
               PRIMARY KEY (ID)
 ) ENGINE=InnoDB;
 
@@ -726,18 +1056,7 @@ CREATE TABLE SBI_DATA_SET (
 	DS_ID 		   INTEGER NOT NULL ,
 	DESCR 		   VARCHAR(160), 
 	LABEL	 	   VARCHAR(50) NOT NULL,
-	NAME	   	   VARCHAR(50) NOT NULL,   
-	USER_IN              VARCHAR(100) NOT NULL,
-    USER_UP              VARCHAR(100),
-    USER_DE              VARCHAR(100),
-    TIME_IN              TIMESTAMP NOT NULL,
-    TIME_UP              TIMESTAMP NULL DEFAULT NULL,
-    TIME_DE              TIMESTAMP NULL DEFAULT NULL,
-    SBI_VERSION_IN       VARCHAR(10),
-    SBI_VERSION_UP       VARCHAR(10),
-    SBI_VERSION_DE       VARCHAR(10),
-    META_VERSION         VARCHAR(100),
-    ORGANIZATION         VARCHAR(20),
+	NAME	   	   VARCHAR(50) NOT NULL,      
     PRIMARY KEY (DS_ID)
 ) ENGINE=InnoDB;
 
@@ -796,12 +1115,34 @@ CREATE TABLE SBI_MENU (
 		INITIAL_PATH VARCHAR(400) NULL,
 		EXT_APP_URL VARCHAR(1000) NULL,
 		PROG INTEGER NOT NULL DEFAULT 1,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
         PRIMARY KEY (MENU_ID)
 ) ENGINE=InnoDB;
 
 CREATE TABLE SBI_MENU_ROLE (
        MENU_ID INTEGER NOT NULL, 
        EXT_ROLE_ID INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),            
        PRIMARY KEY (MENU_ID, EXT_ROLE_ID)
 ) ENGINE=InnoDB;
 
@@ -811,6 +1152,17 @@ Create table `SBI_KPI_ROLE` (
 	`id_kpi_role` Int NOT NULL ,
 	`KPI_ID` Int NOT NULL,
 	`EXT_ROLE_ID` Int NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`id_kpi_role`),
  Primary Key (`id_kpi_role`)) ENGINE = InnoDB;
 
@@ -835,6 +1187,17 @@ Create table `SBI_KPI` (
 	`input_attributes` Varchar(1000),
 	`model_reference` Varchar(255),
 	`target_audience` Varchar(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`code`),
  Primary Key (`KPI_ID`)) ENGINE = InnoDB;
  
@@ -842,6 +1205,17 @@ Create table `SBI_KPI_DOCUMENTS` (
 	`ID_KPI_DOC` Int NOT NULL ,
 	`BIOBJ_ID` Int NOT NULL,
 	`KPI_ID` Int NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  Primary Key (`ID_KPI_DOC`)) ENGINE = InnoDB;
 
 Create table `SBI_MEASURE_UNIT` (
@@ -850,6 +1224,17 @@ Create table `SBI_MEASURE_UNIT` (
 	`SCALE_TYPE_ID` Int NOT NULL,
 	`SCALE_CD` Varchar(40),
 	`SCALE_NM` Varchar(400),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  Primary Key (`id_measure_unit`)) ENGINE = InnoDB;
  
 
@@ -859,6 +1244,17 @@ Create table `SBI_THRESHOLD` (
 	`name` Varchar(400),
 	`description` Varchar(1000),
 	`code` Varchar(45) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
 	UNIQUE (`code`),
  Primary Key (`THRESHOLD_ID`)) ENGINE = InnoDB;
 
@@ -874,6 +1270,17 @@ Create table `SBI_THRESHOLD_VALUE` (
 	`min_closed` BOOLEAN,
 	`max_closed` BOOLEAN,
 	`th_value` DOUBLE,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
 	UNIQUE (`label`, `THRESHOLD_ID`),
  Primary Key (`id_threshold_value`)) ENGINE = InnoDB;
 
@@ -886,6 +1293,17 @@ Create table `SBI_THRESHOLD_VALUE` (
 	`KPI_MODEL_NM` Varchar(400),
 	`KPI_MODEL_DESC` Varchar(1000),
 	`KPI_MODEL_LBL` VARCHAR(100) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
 	UNIQUE (`KPI_MODEL_LBL`),
  Primary Key (`KPI_MODEL_ID`)) ENGINE = InnoDB;
  
@@ -902,6 +1320,17 @@ Create table `SBI_KPI_PERIODICITY` (
 	`minutes` Int,
 	`chron_string` Varchar(20),
 	`start_date` TIMESTAMP,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`name`),
  Primary Key (`id_kpi_periodicity`)) ENGINE = InnoDB;
 
@@ -914,6 +1343,17 @@ Create table `SBI_KPI_INSTANCE` (
 	`weight` Double,
 	`target` Double,
 	`BEGIN_DT` Datetime,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  Primary Key (`id_kpi_instance`)) ENGINE = InnoDB;
 
 
@@ -922,6 +1362,17 @@ Create table `SBI_KPI_INST_PERIOD` (
   `KPI_INSTANCE_ID` INTEGER NOT NULL,
   `PERIODICITY_ID` INTEGER NOT NULL,
   `DEFAULT_VALUE` BOOLEAN ,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY (`KPI_INST_PERIOD_ID`)
 )
 ENGINE = InnoDB;
@@ -937,6 +1388,17 @@ Create table `SBI_KPI_INSTANCE_HISTORY` (
 	`target` Double,
 	`BEGIN_DT` Datetime,
 	`END_DT` Datetime,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
 	UNIQUE (`id_kpi_instance_history`),
  Primary Key (`id_kpi_instance_history`)) ENGINE = InnoDB;
 
@@ -952,6 +1414,17 @@ Create table `SBI_KPI_VALUE` (
 	`ORG_UNIT_ID` Int,
 	`HIERARCHY_ID` Int,
 	`COMPANY` Varchar(200),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`id_kpi_instance_value`),
  Primary Key (`id_kpi_instance_value`)) ENGINE = InnoDB;
 
@@ -966,6 +1439,17 @@ Create table `SBI_KPI_MODEL_INST` (
 	`start_date` DATETIME,
 	`end_date` DATETIME,
 	`modelUUID` VARCHAR(400),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
     UNIQUE (`label`),
  Primary Key (`KPI_MODEL_INST`)) ENGINE = InnoDB;
 
@@ -977,6 +1461,17 @@ Create table `SBI_RESOURCES` (
 	`RESOURCE_NAME` Varchar(40) NOT NULL,
 	`RESOURCE_DESCR` Varchar(400),
 	`RESOURCE_CODE` VARCHAR(45) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`RESOURCE_CODE`),
  Primary Key (`RESOURCE_ID`)) ENGINE = InnoDB;
 
@@ -984,6 +1479,17 @@ Create table `SBI_KPI_MODEL_RESOURCES` (
 	`KPI_MODEL_RESOURCES_ID` Int NOT NULL ,
 	`RESOURCE_ID` Int NOT NULL,
 	`KPI_MODEL_INST` Int NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  Primary Key (`KPI_MODEL_RESOURCES_ID`)) ENGINE = InnoDB;
 
 -- ALARM
@@ -1001,6 +1507,17 @@ Create table `SBI_ALARM` (
 	`SINGLE_EVENT` Char(1) COMMENT 'INDICA SE L''ALLARME DEVE ESSERE RIPETITIVO OPPURE NO, NEL PRIMO CASO L''UTENTE DOVRA'' SPEGNERE L''ALLARME',
 	`AUTO_DISABLED` char(1) default NULL,
 	`id_threshold_value` Int ,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`LABEL`),
  Primary Key (`ALARM_ID`)) ENGINE = InnoDB
 COMMENT = 'TABELLA DI DEFINIZIONE DEGLI ALLARMI';
@@ -1017,6 +1534,17 @@ Create table `SBI_ALARM_EVENT` (
 	`KPI_DESCRIPTION` Varchar (100),
 	`RESOURCE_ID` Int,
 	`KPI_INSTANCE_ID` Int,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  Primary Key (`ALARM_EVENT_ID`)) ENGINE = InnoDB;
 
 Create table `SBI_ALARM_CONTACT` (
@@ -1025,12 +1553,23 @@ Create table `SBI_ALARM_CONTACT` (
 	`EMAIL` Varchar(100),
 	`MOBILE` Varchar(50),
 	`RESOURCES` varchar(200) default NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
 	UNIQUE (`NAME`),
  Primary Key (`ALARM_CONTACT_ID`)) ENGINE = InnoDB;
 
 Create table SBI_ALARM_DISTRIBUTION (
 	ALARM_CONTACT_ID Int NOT NULL,
-	ALARM_ID Int NOT NULL,
+	ALARM_ID Int NOT NULL,  
  Primary Key (ALARM_CONTACT_ID,ALARM_ID)) ENGINE = InnoDB;
 
 
@@ -1052,7 +1591,18 @@ CREATE TABLE SBI_OBJ_METADATA (
     NAME 	            VARCHAR(40) NOT NULL,
     DESCRIPTION	        VARCHAR(100),  
     DATA_TYPE_ID			INTEGER NOT NULL,
-    CREATION_DATE 	    TIMESTAMP NOT NULL,    
+    CREATION_DATE 	    TIMESTAMP NOT NULL, 
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
     PRIMARY KEY (OBJ_META_ID)
 ) ENGINE=InnoDB;
 
@@ -1068,7 +1618,18 @@ CREATE TABLE SBI_OBJ_METACONTENTS (
   SUBOBJ_ID 		 INTEGER,
   BIN_ID 			 INTEGER,
   CREATION_DATE 	 TIMESTAMP NOT NULL,   
-  LAST_CHANGE_DATE   TIMESTAMP NOT NULL,   
+  LAST_CHANGE_DATE   TIMESTAMP NOT NULL,  
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
     PRIMARY KEY (OBJ_METACONTENT_ID)
 ) ENGINE=InnoDB;
 
@@ -1088,7 +1649,18 @@ CREATE TABLE SBI_CONFIG (
 	DESCRIPTION 	VARCHAR(500) NULL,
 	IS_ACTIVE 		BOOLEAN DEFAULT TRUE,
 	VALUE_CHECK 	VARCHAR(1000) NULL,
-	VALUE_TYPE_ID 	INTEGER NULL,    
+	VALUE_TYPE_ID 	INTEGER NULL, 
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  PRIMARY KEY (ID)) ENGINE=InnoDB;
 
  CREATE TABLE SBI_USER (
@@ -1100,24 +1672,68 @@ CREATE TABLE SBI_CONFIG (
 	DT_PWD_END DATETIME,
 	FLG_PWD_BLOCKED BOOLEAN,
 	DT_LAST_ACCESS DATETIME,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  PRIMARY KEY (ID)) ENGINE=InnoDB;
 
 CREATE TABLE SBI_ATTRIBUTE (
 	ATTRIBUTE_NAME VARCHAR(255) NOT NULL,
 	DESCRIPTION VARCHAR(500) NOT NULL,
 	ATTRIBUTE_ID INT NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  PRIMARY KEY (ATTRIBUTE_ID)) ENGINE=InnoDB;
 
 CREATE TABLE SBI_USER_ATTRIBUTES (
 	ID INT NOT NULL,
 	ATTRIBUTE_ID INT NOT NULL,
 	ATTRIBUTE_VALUE VARCHAR(500),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  PRIMARY KEY (ID,ATTRIBUTE_ID)) ENGINE=InnoDB;
 
 
 CREATE TABLE SBI_EXT_USER_ROLES (
 	ID INT NOT NULL,
 	EXT_ROLE_ID INT NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     	
  PRIMARY KEY (ID,EXT_ROLE_ID)) ENGINE=InnoDB;
 
 
@@ -1129,7 +1745,18 @@ CREATE TABLE SBI_UDP (
 	LABEL           VARCHAR(20) NOT NULL,
 	NAME            VARCHAR(40) NOT NULL,
 	DESCRIPTION     VARCHAR(1000) NULL,
-	IS_MULTIVALUE   BOOLEAN DEFAULT FALSE,    
+	IS_MULTIVALUE   BOOLEAN DEFAULT FALSE,   
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
  PRIMARY KEY (UDP_ID));
  
  
@@ -1144,7 +1771,18 @@ CREATE TABLE SBI_UDP_VALUE (
 	FAMILY			   VARCHAR(40) NULL,
     BEGIN_TS           TIMESTAMP NOT NULL,
     END_TS             TIMESTAMP NULL,
-    REFERENCE_ID	   INTEGER NULL,	
+    REFERENCE_ID	   INTEGER NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),         
  PRIMARY KEY (UDP_VALUE_ID));
  
  
@@ -1153,6 +1791,17 @@ CREATE TABLE SBI_UDP_VALUE (
   KPI_FATHER_ID INT(11)  NOT NULL,
   KPI_CHILD_ID INT(11)  NOT NULL,
   PARAMETER VARCHAR(100),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY (KPI_REL_ID)
 );
 
@@ -1165,6 +1814,17 @@ CREATE TABLE SBI_UDP_VALUE (
   TS_DATE TIMESTAMP ,
   LABEL_MOD_INST VARCHAR(100) ,
   PARAMETERS VARCHAR(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),       
   PRIMARY KEY (KPI_ERROR_ID)
 );
 
@@ -1174,6 +1834,17 @@ CREATE TABLE SBI_ORG_UNIT (
   LABEL            VARCHAR(100) NOT NULL,
   NAME             VARCHAR(200) NOT NULL,
   DESCRIPTION      VARCHAR(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
   UNIQUE (LABEL, NAME),
   PRIMARY KEY(ID)
 ) ENGINE=InnoDB;
@@ -1185,6 +1856,17 @@ CREATE TABLE SBI_ORG_UNIT_HIERARCHIES (
   DESCRIPTION      VARCHAR(1000),
   TARGET     VARCHAR(1000),
   COMPANY    VARCHAR(100) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   UNIQUE (LABEL, COMPANY),
   PRIMARY KEY(ID)
 ) ENGINE=InnoDB;
@@ -1195,6 +1877,17 @@ CREATE TABLE SBI_ORG_UNIT_NODES (
   HIERARCHY_ID  INTEGER NOT NULL,
   PARENT_NODE_ID INTEGER NULL,
   PATH VARCHAR(4000) NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY(NODE_ID)
 ) ENGINE=InnoDB;
 
@@ -1207,6 +1900,17 @@ CREATE TABLE SBI_ORG_UNIT_GRANT (
   LABEL            VARCHAR(200) NOT NULL,
   NAME             VARCHAR(400) NOT NULL,
   DESCRIPTION      VARCHAR(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   UNIQUE (LABEL),
   PRIMARY KEY(ID)
 ) ENGINE=InnoDB;
@@ -1215,6 +1919,17 @@ CREATE TABLE SBI_ORG_UNIT_GRANT_NODES (
   NODE_ID INTEGER NOT NULL,
   KPI_MODEL_INST_NODE_ID INTEGER NOT NULL,
   GRANT_ID INTEGER NOT NULL,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY(NODE_ID, KPI_MODEL_INST_NODE_ID, GRANT_ID)
 ) ENGINE=InnoDB;
 
@@ -1226,6 +1941,17 @@ CREATE TABLE SBI_GOAL (
   NAME          VARCHAR(20) NOT NULL,
   LABEL          VARCHAR(20) NOT NULL,
   DESCRIPTION		VARCHAR(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),     
   PRIMARY KEY (GOAL_ID)
 ) ENGINE=InnoDB;
 
@@ -1238,6 +1964,17 @@ CREATE TABLE SBI_GOAL_HIERARCHY (
   NAME              VARCHAR(50) NOT NULL,
   LABEL             VARCHAR(50),
   GOAL              VARCHAR(1000),
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY (GOAL_HIERARCHY_ID)
 ) ENGINE=InnoDB;
 
@@ -1252,6 +1989,17 @@ CREATE TABLE SBI_GOAL_KPI (
   THRESHOLD2          DOUBLE,
   THRESHOLD1SIGN      INTEGER,
   THRESHOLD2SIGN      INTEGER,
+       USER_IN              VARCHAR(100) NOT NULL,
+       USER_UP              VARCHAR(100),
+       USER_DE              VARCHAR(100),
+       TIME_IN              TIMESTAMP NOT NULL,
+       TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+       TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+       SBI_VERSION_IN       VARCHAR(10),
+       SBI_VERSION_UP       VARCHAR(10),
+       SBI_VERSION_DE       VARCHAR(10),
+       META_VERSION         VARCHAR(100),
+       ORGANIZATION         VARCHAR(20),      
   PRIMARY KEY (GOAL_KPI_ID)
 ) ENGINE=InnoDB;
 
