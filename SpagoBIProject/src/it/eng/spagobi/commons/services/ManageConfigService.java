@@ -124,6 +124,7 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.debug("Save config");
 
 			Config config = this.setConfig();
+			DAOFactory.getSbiConfigDAO().setUserProfile(profile);
 			DAOFactory.getSbiConfigDAO().saveConfig(config);
 			JSONObject response = new JSONObject();
 			response.put("ID", config.getId());

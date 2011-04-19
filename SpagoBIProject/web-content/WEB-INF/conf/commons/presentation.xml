@@ -20,5 +20,6 @@
 	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DOCUMENTEXECUTION" publisher_name="LoginSBIDocumentExecutionPublisher"/>
 	
 	<MAPPING business_type="ACTION" business_name="DOMAIN_ACTION" publisher_name="DomainPublisher"/>
+	<MAPPING business_type="ACTION" business_name="CONFIG_ACTION" publisher_name="ConfigPublisher"/>
 </PRESENTATION>
 

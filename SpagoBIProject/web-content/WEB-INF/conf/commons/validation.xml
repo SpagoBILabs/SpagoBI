@@ -35,4 +35,50 @@
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>
+	<SERVICE name="CONFIG_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST"
+					value="CONFIG_SAVE" />
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="CONFIG_CD" label="#config.definitionForm.fields.config_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="CONFIG_NM" label="#config.definitionForm.fields.config_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="VALUE_ID" label="#config.definitionForm.fields.value_id">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="VALUE_CD" label="#config.definitionForm.fields.value_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="VALUE_NM" label="#config.definitionForm.fields.value_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="VALUE_DS" label="#config.definitionForm.fields.value_ds">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="500" />
+				</FIELD>
+				<FIELD name="VALUE_CHECK" label="#config.definitionForm.fields.value_check">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000" />
+				</FIELD>
+				<FIELD name="VALUE_TYPE" label="#config.definitionForm.fields.value_type">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
 </VALIDATIONS>

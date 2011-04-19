@@ -46,7 +46,7 @@
 
 Ext.ns("Sbi.config");
 
-Sbi.domain.ManageDomains = function(config) {
+Sbi.config.ManageConfig = function(config) {
 	
 	var c = Ext.apply( {
 		title : 'Config',
@@ -195,12 +195,6 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	,
 	initColumnModel : function() {
 		this.columnModel = new Ext.grid.ColumnModel( [ {
-			header : 'ID',
-			dataIndex : 'ID',
-			// width: 220,
-			sortable : false,
-			hidden : true
-		}, {
 			header : LN('sbi.config.manageconfig.fields.label'),
 			dataIndex : 'LABEL',
 			// width: 220,
@@ -267,30 +261,30 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				maxLength : 11,
 				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
 			}
-		]);
+		}]);
 	}
 
 	,
 	initStore : function() {
 
 		var fields = [ {
-			name : 'VALUE_ID'
+			name : 'LABEL'
 		}, {
-			name : 'VALUE_CD'
+			name : 'NAME'
 		}, {
-			name : 'VALUE_NM'
+			name : 'DESCRIPTION'
 		}, {
-			name : 'DOMAIN_CD'
+			name : 'IS_ACTIVE'
 		}, {
-			name : 'DOMAIN_NM'
+			name : 'VALUE_CHECK'
 		}, {
-			name : 'VALUE_DS'
+			name : 'VALUE_TYPE'
 		} ];
 
 		this.store = new Ext.data.JsonStore( {
 
 			root : 'response',
-			idProperty : 'VALUE_ID',
+			idProperty : 'ID',
 			fields : fields,
 			url : this.crudServices['manageListService']
 
@@ -299,18 +293,19 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	}
 
 	,
-	saveDomain : function(rowEditor, obj, record, rowIndex) {
+	saveConfig : function(rowEditor, obj, record, rowIndex) {
 
 		var p = {};
-		if (record.get('VALUE_ID') != undefined && record.get('VALUE_ID') != null && record.get('VALUE_ID') !== '') {
-			p.VALUE_ID = record.get('VALUE_ID');
+		if (record.get('ID') != undefined && record.get('ID') != null && record.get('ID') !== '') {
+			p.VALUE_ID = record.get('ID');
 		}
 
-		p.VALUE_CD = record.get('VALUE_CD');
-		p.VALUE_NM = record.get('VALUE_NM');
-		p.DOMAIN_CD = record.get('DOMAIN_CD');
-		p.DOMAIN_NM = record.get('DOMAIN_NM');
-		p.VALUE_DS = record.get('VALUE_DS');
+		p.LABEL = record.get('LABEL');
+		p.NAME = record.get('NAME');
+		p.DESCRIPTION = record.get('DESCRIPTION');
+		p.IS_ACTIVE = record.get('IS_ACTIVE');
+		p.VALUE_CHECK = record.get('VALUE_CHECK');
+		p.VALUE_TYPE = record.get('VALUE_TYPE');
 
 		Ext.Ajax.request( {
 			url : this.crudServices['saveItemService'],
@@ -319,7 +314,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			success : function(response, options) {
 				alert('Salvataggio ok: ' + response.responseText);
 				var jsonResponse = Ext.util.JSON.decode(response.responseText);
-				record.set('VALUE_ID', jsonResponse.VALUE_ID);
+				record.set('ID', jsonResponse.ID);
 				record.commit();
 			},
 			failure : Sbi.exception.ExceptionHandler.handleFailure,

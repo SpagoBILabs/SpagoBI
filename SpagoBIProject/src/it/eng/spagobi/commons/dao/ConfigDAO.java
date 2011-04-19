@@ -234,7 +234,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     		tx = aSession.beginTransaction();
     				
     		aSession.save(this.fromConfig(config));
-    	
+    		updateSbiCommonInfo4Insert(this.fromConfig(config));
     		tx.commit();
     	
     	} catch (HibernateException he) {
@@ -273,7 +273,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     		tx = aSession.beginTransaction();
     		
     		aSession.update(this.fromConfig(config));
-    	
+    		updateSbiCommonInfo4Update(this.fromConfig(config));
     		tx.commit();
     	
     	} catch (HibernateException he) {

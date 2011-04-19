@@ -123,6 +123,7 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			logger.debug("Save domain");
 
 			Domain domain = this.setDomain();
+			DAOFactory.getDomainDAO().setUserProfile(profile);
 			DAOFactory.getDomainDAO().saveDomain(domain);
 			JSONObject response = new JSONObject();
 			response.put("VALUE_ID", domain.getValueId());

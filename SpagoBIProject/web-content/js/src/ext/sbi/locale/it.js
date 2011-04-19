@@ -614,3 +614,10 @@ Sbi.locale.ln['sbi.domain.managedomains.fields.valuenm'] = 'Nome valore';
 Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Descrizione valore';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'Codice Dominio';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Nome Dominio';
+
+Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Etichetta';
+Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Nome';
+Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Descrizione';
+Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Stato';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Valore check';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Tipo';
