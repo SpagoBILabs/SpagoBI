@@ -24,7 +24,7 @@ package it.eng.spagobi.commons.metadata;
 import java.util.Set;
 
 
-public class SbiUserFunctionality  implements java.io.Serializable {
+public class SbiUserFunctionality  extends SbiHibernateModel {
 
 
      private int id;

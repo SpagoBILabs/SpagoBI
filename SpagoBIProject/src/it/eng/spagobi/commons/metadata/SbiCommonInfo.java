@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class SbiCommonInfo implements java.io.Serializable {
 
+	public final static String SBI_VERSION="3.0Beta";
+	
 	private String userIn=null;
 	private String userUp=null;
 	private String userDe=null;
@@ -18,7 +20,7 @@ public class SbiCommonInfo implements java.io.Serializable {
 	
 	public SbiCommonInfo(){
 		userIn="biadmin";
-		sbiVersionIn="3.0Beta";
+		sbiVersionIn=SbiCommonInfo.SBI_VERSION;
 		timeIn = new Date();
 	}
 	public String getUserIn() {
