@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.dossier.metadata;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 import java.util.Date;
 
@@ -31,7 +32,7 @@ import java.util.Date;
  * @author zerbetto (davide.zerbetto@eng.it)
  */
 
-public class SbiDossierPresentations  implements java.io.Serializable {
+public class SbiDossierPresentations  extends SbiHibernateModel {
 
 
     // Fields    
