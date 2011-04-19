@@ -197,7 +197,7 @@ public class DetailDataSourceModule extends AbstractModule {
 
 				dao.insertDataSource(dsNew);
 				
-				IDataSource tmpDS = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel());
+				IDataSource tmpDS = dao.loadDataSourceByLabel(dsNew.getLabel());
 				dsNew.setDsId(tmpDS.getDsId());
 				mod = SpagoBIConstants.DETAIL_MOD; 
 			} else {				
