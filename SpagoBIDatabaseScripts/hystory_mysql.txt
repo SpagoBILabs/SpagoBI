@@ -719,3 +719,7 @@ CREATE TABLE `hibernate_sequences` (
   `next_val` int(11) NOT NULL,
   PRIMARY KEY (`sequence_name`)
 );
+
+Angelo 19/04/2011
+
+AGGIUNTI I CMAPI TECNICI , ESEGUIRE  UpdateTecnologyFields.sql
