@@ -241,7 +241,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 					if(ouChildrenToCheck!=null && ouChildrenToCheck.indexOf(thisNode.attributes.modelInstId)>=0){
 						childNode.getUI().toggleCheck(true);
 						thisPanel.leftTree.getSelectionModel().getSelectedNode().attributes.modelinstancenodes.push(childNode.attributes.modelInstId);
-						ouChildrenToCheck.remove(childNode.attributes.modelInstId);
+						ouChildrenToCheck= this.listRemove(ouChildrenToCheck, childNode.attributes.modelInstId);
 					}
 					
 					},this);	
@@ -508,9 +508,12 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							break;
 						}
 					}
-					ouNode.attributes.childrenToCheck.remove(node.id);
+					ouNode.attributes.childrenToCheck = this.listRemove(ouNode.attributes.childrenToCheck, node.id);
+					modelinstancenodesOfThisSession = this.listRemove(modelinstancenodesOfThisSession, node.id);
+					ouNode.attributes.childrenToUncheck.push(node.id);
 				}else{
-					ouNode.attributes.childrenToUncheck.remove(node.id);
+					
+					ouNode.attributes.childrenToUncheck = this.listRemove(ouNode.attributes.childrenToUncheck, node.id);
 					modelinstancenodes.push(node.id);
 					modelinstancenodesOfThisSession.push(node.id);
 					subTreeNodes[j].getUI().addClass('grant');
@@ -612,14 +615,11 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 							uoNode.suspendEvents(false);
 							kpiNode.suspendEvents(false);
 							kpiNode.getUI().toggleCheck(false);
-							var inxI = uoNode.attributes.modelinstancenodes.indexOf(kpiNode.id);
-							if(inxI>0){
-								uoNode.attributes.modelinstancenodes.splice(inxI,1);
-							}
-							var inxJ = uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id);
-							if(inxJ>0){
-								uoNode.attributes.modelinstancenodesOfThisSession.splice(inxJ,1);
-							}
+							
+							uoNode.attributes.modelinstancenodes = this.listRemove(uoNode.attributes.modelinstancenodes, kpiNode.id);
+							uoNode.attributes.modelinstancenodesOfThisSession = this.listRemove(uoNode.attributes.modelinstancenodesOfThisSession, kpiNode.id);
+							ouNode.attributes.childrenToUncheck.push( kpiNode.id);
+							
 							kpiNode.resumeEvents( );
 							uoNode.resumeEvents( );
 						}
@@ -647,9 +647,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				
 				children[i].getUI().checkbox.disabled=!checked;
 				if(!checked){
-					ouNode.attributes.modelinstancenodes.remove(children[i].attributes.modelInstId);
 					children[i].getUI().toggleCheck(false);
 					children[i].disable();
+
+					//remove the kpi from the list of the selected
+					ouNode.attributes.modelinstancenodes = this.listRemove(ouNode.attributes.modelinstancenodes, children[i].id);
+					ouNode.attributes.modelinstancenodesOfThisSession = this.listRemove(ouNode.attributes.modelinstancenodesOfThisSession, children[i].id);
+					ouNode.attributes.childrenToUncheck.push( children[i].id);
 					this.deepDisableChildren(children[i],ouNode, checked);
 				}else{
 					children[i].enable();
@@ -1099,14 +1103,13 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 
 		if(isToUnCK){
 			//uncheck all children to disable them for uoNode
-			if(uoNode.attributes.modelinstancenodesOfThisSession.indexOf(kpiNode.id) == -1){
-				uoNode.attributes.modelinstancenodesOfThisSession.remove(kpiNode.id);
-			}			
+			uoNode.attributes.modelinstancenodesOfThisSession = this.listRemove(uoNode.attributes.modelinstancenodesOfThisSession, kpiNode.id);
+		
 			kpiNode.attributes.checkAllChildren = false;
 			if(!kpiNode.isExpanded()){							
 				uoNode.getUI().addClass('no-grant');
 				uoNode.cls='no-grant';
-				uoNode.attributes.childrenToCheck.remove(kpiNode.id);	
+				uoNode.attributes.childrenToCheck = this.listRemove(uoNode.attributes.childrenToCheck,kpiNode.id);
 				uoNode.attributes.childrenToUncheck.push(kpiNode.id);
 			}
 		}else{
@@ -1118,11 +1121,19 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 			if(!kpiNode.isExpanded()){
 				uoNode.getUI().addClass('grant');
 				uoNode.cls='grant';
+				uoNode.attributes.childrenToUncheck = this.listRemove(uoNode.attributes.childrenToUncheck,kpiNode.id);
 				uoNode.attributes.childrenToCheck.push(kpiNode.id);
-				uoNode.attributes.childrenToUncheck.remove(kpiNode.id);
 			}
 		}
 
+	}
+	
+	, listRemove: function(list, item){
+		var inx = list.indexOf(item);
+		if(inx>0){
+			list.splice(inx,1);
+		}
+		return list;
 	}
 });
 
