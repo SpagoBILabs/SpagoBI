@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.dossier.metadata;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,7 @@ import java.util.Set;
  * @author zerbetto (davide.zerbetto@eng.it)
  */
 
-public class SbiDossierPartsTemp  implements java.io.Serializable {
+public class SbiDossierPartsTemp  extends SbiHibernateModel {
 
 
     // Fields    
