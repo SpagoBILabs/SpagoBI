@@ -35,17 +35,6 @@ import java.util.Set;
  */
 public class SbiDataSource extends SbiHibernateModel {
 
-	// Fields    
-
-	private SbiCommonInfo commonInfo=new SbiCommonInfo();
-	public SbiCommonInfo getCommonInfo() {
-		return commonInfo;
-	}
-
-	public void setCommonInfo(SbiCommonInfo commonInfo) {
-		this.commonInfo = commonInfo;
-	}
-
 	private int dsId;	
 	
 	private SbiDomains dialect;
