@@ -23,6 +23,7 @@ package it.eng.spagobi.analiticalmodel.functionalitytree.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -467,6 +468,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiFunctions hibFunct = (SbiFunctions) aSession.load(
 					SbiFunctions.class, aLowFunctionality.getId());
 			// delete all roles functionality
+			
+			updateSbiCommonInfo(hibFunct);
+			
 			Set oldRoles = hibFunct.getSbiFuncRoles();
 			Iterator iterOldRoles = oldRoles.iterator();
 			while (iterOldRoles.hasNext()) {
@@ -498,7 +502,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			hibFunct.setFunctType(functTypeDomain);
 			hibFunct.setFunctTypeCd(aLowFunctionality.getCodType());
 			hibFunct.setName(aLowFunctionality.getName());
-
+			
+			
+			
 			Integer parentId = aLowFunctionality.getParentId();
 			Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
 			Criterion parentCriterion = Expression.eq("functId", parentId);
@@ -605,6 +611,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiFuncRole sbifuncrole = new SbiFuncRole();
 			sbifuncrole.setId(sbifuncroleid);
 			sbifuncrole.setStateCd(devStateDomain.getValueCd());
+			
+			updateSbiCommonInfo(sbifuncrole);
+			
 			aSession.save(sbifuncrole);
 			functRoleToSave.add(sbifuncrole);
 		}
@@ -1220,6 +1229,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiFunctions hibFunct = (SbiFunctions) aSession.load(SbiFunctions.class, functionalityID);
+			
 			Integer oldProg = hibFunct.getProg();
 			Integer newProg = new Integer(oldProg.intValue() + 1);
 
@@ -1235,10 +1245,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				logger.error("The function with prog [" + newProg + "] does not exist.");
 				return;
 			}
-
+			
 			hibFunct.setProg(newProg);
 			hibUpperFunct.setProg(oldProg);
-
+			
+			updateSbiCommonInfo(hibFunct);
+			updateSbiCommonInfo(hibUpperFunct);
+			
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error( "HibernateException",he );
