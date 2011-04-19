@@ -23,11 +23,12 @@ package it.eng.spagobi.monitoring.metadata;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 
 import java.util.Date;
 
-public class SbiAudit implements java.io.Serializable  {
+public class SbiAudit extends SbiHibernateModel  {
 
 	//	Fields
 	private Integer id;
