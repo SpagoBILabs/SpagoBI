@@ -577,6 +577,8 @@ Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Qbe Dataset Builde
 //DATASET - CHOOSE DATAMART
 //===================================================================
 Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatamart'] = 'Seleziona un datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatasource'] = 'Seleziona un datasource';
 
 //===================================================================
 //DATASET - PREVIEW
