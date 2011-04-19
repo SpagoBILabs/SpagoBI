@@ -22,6 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.dao;
 
 
+import java.util.Date;
+
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 
 import org.apache.log4j.Logger;
@@ -46,6 +50,19 @@ public class AbstractHibernateDAO {
 	 */
 	public Session getSession(){
 		return HibernateUtil.currentSession();
+	}
+	
+
+	/**
+	 * usefull to update some property
+	 * @param obj
+	 * @return
+	 */
+	protected SbiHibernateModel updateSbiCommonInfo(SbiHibernateModel obj){
+		obj.getCommonInfo().setTimeUp(new Date());
+		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setUserUp("biadmin");
+		return obj;
 	}
 	
 	/**
