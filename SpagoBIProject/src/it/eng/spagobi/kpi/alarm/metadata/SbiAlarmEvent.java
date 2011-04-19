@@ -11,9 +11,11 @@ package it.eng.spagobi.kpi.alarm.metadata;
  */
 
 
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
 import java.util.Date;
 
-public class SbiAlarmEvent  implements java.io.Serializable {
+public class SbiAlarmEvent  extends SbiHibernateModel {
 
  	/**
      * 
