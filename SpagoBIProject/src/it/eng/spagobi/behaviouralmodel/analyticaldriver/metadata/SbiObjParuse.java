@@ -21,7 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata;
 
-public class SbiObjParuse implements java.io.Serializable {
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
+public class SbiObjParuse extends SbiHibernateModel {
 
 
 	private SbiObjParuseId id;
