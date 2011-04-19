@@ -447,7 +447,9 @@ IBIObjectDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObject.getId());
-
+			
+			updateSbiCommonInfo(hibBIObject);
+			
 			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class,	biObject.getEngine().getId());
 			hibBIObject.setSbiEngines(hibEngine);
 			SbiDataSource dSource = null;
