@@ -42,4 +42,5 @@
 <USER_FUNCTIONALITY name="ProfileManagement" description="ProfileManagement"/>
 <USER_FUNCTIONALITY name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
 <USER_FUNCTIONALITY name="DomainManagement" description="DomainManagement"/>
+<USER_FUNCTIONALITY name="ConfigManagement" description="ConfigManagement"/>
 </USER_FUNCTIONALITIES>

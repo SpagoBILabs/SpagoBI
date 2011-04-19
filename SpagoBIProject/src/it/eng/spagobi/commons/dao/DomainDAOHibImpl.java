@@ -383,7 +383,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 				SbiDomains sbiDomains = this.fromDomain(domain);
 				aSession.save(sbiDomains);
 				domain.setValueId(sbiDomains.getValueId());
-
+				updateSbiCommonInfo4Insert(sbiDomains);
 				tx.commit();
 			} else {
 				logger.debug("update domain");
@@ -431,6 +431,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			tx = aSession.beginTransaction();
 
 			aSession.update(this.fromDomain(domain));
+			updateSbiCommonInfo4Update(this.fromDomain(domain));
 
 			tx.commit();
 

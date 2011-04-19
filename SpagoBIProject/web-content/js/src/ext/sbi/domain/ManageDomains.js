@@ -195,12 +195,6 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 	,
 	initColumnModel : function() {
 		this.columnModel = new Ext.grid.ColumnModel( [ {
-			header : 'VALUE ID',
-			dataIndex : 'VALUE_ID',
-			// width: 220,
-			sortable : false,
-			hidden : true
-		}, {
 			header : LN('sbi.domain.managedomains.fields.valuecd'),
 			dataIndex : 'VALUE_CD',
 			// width: 220,

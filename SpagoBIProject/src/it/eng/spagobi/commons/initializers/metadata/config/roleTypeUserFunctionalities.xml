@@ -85,4 +85,5 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ProfileManagement" roleType="ADMIN" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="UserDefinedPropertyManagement" roleType="ADMIN" /> 
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainManagement" roleType="ADMIN" /> 
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ConfigManagement" roleType="ADMIN" /> 
 </ROLE_TYPE_USER_FUNCTIONALITIES>
