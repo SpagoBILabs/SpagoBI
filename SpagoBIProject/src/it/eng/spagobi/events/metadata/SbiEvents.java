@@ -21,11 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.events.metadata;
 
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
 /**
  * @author Gioia
  *
  */
-public class SbiEvents implements java.io.Serializable {
+public class SbiEvents extends SbiHibernateModel {
 	private Integer id;
 	private String user;
 	
