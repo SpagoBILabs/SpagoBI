@@ -122,7 +122,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 	    	buttonAlign : 'left',
 	    	items:[new Ext.Toolbar.Button({
 	            text: LN('sbi.ds.restore'),
-	            iconCls: 'icon-add',
+	            iconCls: 'icon-restore',
 	            handler: this.onRestore,
 	            width: 30,
 	            scope: this
@@ -134,7 +134,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 	            scope: this
 	        }), '-', new Ext.Toolbar.Button({
 	            text: LN('sbi.ds.clearOldVersion'),
-	            iconCls: 'icon-remove',
+	            iconCls: 'icon-clear',
 	            handler: this.onDeleteAll,
 	            width: 30,
 	            scope: this
