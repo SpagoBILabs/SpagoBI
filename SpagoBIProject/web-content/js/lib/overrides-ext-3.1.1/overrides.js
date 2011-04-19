@@ -27,5 +27,6 @@ Ext.override(Ext.grid.PropertyStore, {
             record.reject();
         }
     }
-},
+}
 });
+
