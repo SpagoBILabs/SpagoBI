@@ -23,6 +23,7 @@ Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Amministratore di modelli';
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi';
+Sbi.locale.ln['sbi.generic.clone'] = 'Clona';
 Sbi.locale.ln['sbi.generic.delete'] = 'Elimina';
 Sbi.locale.ln['sbi.generic.update'] = 'Salva';
 Sbi.locale.ln['sbi.generic.details'] = 'Dettaglio';

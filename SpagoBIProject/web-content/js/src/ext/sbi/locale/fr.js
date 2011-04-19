@@ -361,6 +361,7 @@ Sbi.locale.ln['sbi.rememberme.name']                                            
 Sbi.locale.ln['sbi.rememberme.save']                                                                      = 'Enregistrer';
 Sbi.locale.ln['sbi.rememberme.saveOk']                                                                    = 'Ex\u00E9cution enregistr\u00E9 correctement comme Favoris';
 // Profile Management
+Sbi.locale.ln['sbi.generic.clone'] = 'Copier';
 Sbi.locale.ln['sbi.attributes.add'] 																		= 'Ajouter';
 Sbi.locale.ln['sbi.attributes.delete'] 																		= 'Effacer';
 Sbi.locale.ln['sbi.attributes.title'] = 'Profil Attributes';

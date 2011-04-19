@@ -20,6 +20,7 @@ Sbi.locale.ln['sbidomains.nm.test_role'] = 'Test User';
 Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
 //START Generic messages
 //Buttons
+Sbi.locale.ln['sbi.generic.clone'] = 'Clone';
 Sbi.locale.ln['sbi.generic.add'] = 'Add';
 Sbi.locale.ln['sbi.generic.delete'] = 'Delete';
 Sbi.locale.ln['sbi.generic.update'] = 'Save';
