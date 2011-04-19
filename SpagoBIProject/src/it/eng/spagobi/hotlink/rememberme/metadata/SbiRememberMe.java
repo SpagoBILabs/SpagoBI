@@ -23,13 +23,14 @@ package it.eng.spagobi.hotlink.rememberme.metadata;
 
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 /**
  * 
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class SbiRememberMe implements java.io.Serializable  {
+public class SbiRememberMe extends SbiHibernateModel  {
 
 	//	Fields
 	private Integer id;
