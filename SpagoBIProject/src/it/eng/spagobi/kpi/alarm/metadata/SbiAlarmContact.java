@@ -12,10 +12,12 @@ package it.eng.spagobi.kpi.alarm.metadata;
 
  
 
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public class SbiAlarmContact  implements java.io.Serializable {
+public class SbiAlarmContact  extends SbiHibernateModel {
 
  	/**
      * 
