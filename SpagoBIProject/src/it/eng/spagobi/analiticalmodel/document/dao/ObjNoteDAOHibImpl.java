@@ -230,6 +230,7 @@ public class ObjNoteDAOHibImpl extends AbstractHibernateDAO implements IObjNoteD
 			hibObjNote.setExecReq(objNote.getExecReq());
 			hibObjNote.setIsPublic(objNote.getIsPublic());
 			hibObjNote.setLastChangeDate(now);
+			updateSbiCommonInfo(hibObjNote);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
