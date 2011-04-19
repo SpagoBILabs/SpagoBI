@@ -119,8 +119,7 @@ Ext.extend(
 				manageDsVersionsGrid : null,
 				newRecord: null
 
-				,
-				activateTransfForm : function(combo, record, index) {
+				,activateTransfForm : function(combo, record, index) {
 					var transfSelected = record.get('trasfTypeCd');
 					if (transfSelected != null
 							&& transfSelected == 'PIVOT_TRANSFOMER') {
@@ -130,8 +129,7 @@ Ext.extend(
 					}
 				}
 
-				,
-				activateDsTestTab : function(panel) {
+				,activateDsTestTab : function(panel) {
 					if (panel) {
 						var record = this.rowselModel.getSelected();
 						if (record) {
@@ -141,14 +139,12 @@ Ext.extend(
 						}
 					}
 				}
-				,
-				activateDsVersionsGrid : function(combo, record, index) {
+				,activateDsVersionsGrid : function(combo, record, index) {
 					var dsVersionsList = record.get('dsVersions');
 					this.manageDsVersionsGrid.loadItems(dsVersionsList);
 				}
 
-				,
-				activateDsTypeForm : function(combo, record, index) {
+				,activateDsTypeForm : function(combo, record, index) {
 
 					var dsTypeSelected = record.get('dsTypeCd');
 					if (dsTypeSelected != null && dsTypeSelected == 'File') {
@@ -158,40 +154,35 @@ Ext.extend(
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null
-							&& dsTypeSelected == 'Query') {
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Query') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(true);
 						this.jClassDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null
-							&& dsTypeSelected == 'Java Class') {
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Java Class') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(true);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null
-							&& dsTypeSelected == 'Web Service') {
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Web Service') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(true);
 						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null
-							&& dsTypeSelected == 'Script') {
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Script') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
 						this.scriptDetail.setVisible(true);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
-					} else if (dsTypeSelected != null
-							&& dsTypeSelected == 'Qbe') {
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Qbe') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
@@ -207,8 +198,7 @@ Ext.extend(
 					}
 				}
 
-				,
-				test : function(button, event, service) {
+				,test : function(button, event, service) {
 					var values = this.getForm().getFieldValues();
 
 					var requestParameters = {
@@ -249,8 +239,7 @@ Ext.extend(
 					this.previewWindow.load(requestParameters);
 				}
 
-				,
-				initConfigObject : function() {
+				,initConfigObject : function() {
 					this.configurationObject.fields = [ 'id', 'name',
 							'label', 'description', 'dsTypeCd',
 							'catTypeCd', 'usedByNDocs', 'fileName',
@@ -263,32 +252,15 @@ Ext.extend(
 							'qbeDatamarts'];
 
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
-							{
-								id : 0,
-								name : '',
-								label : '',
-								description : '',
-								dsTypeCd : '',
-								catTypeCd : '',
-								usedByNDocs : 0,
-								fileName : '',
-								query : '',
-								dataSource : '',
-								wsAddress : '',
-								wsOperation : '',
-								script : '',
-								scriptLanguage : '',
-								jclassName : '',
-								pars : [],
-								trasfTypeCd : '',
-								pivotColName : '',
-								pivotColValue : '',
-								pivotRowName : '',
-								pivotIsNumRows : '',
-								qbeSQLQuery: '',
-								qbeJSONQuery: '',
-								qbeDataSource: '',
-								qbeDatamarts: '',
+							{	id : 0,
+								name : '', label : '', description : '',
+								dsTypeCd : '', catTypeCd : '', usedByNDocs : 0,
+								fileName : '', query : '', dataSource : '',
+								wsAddress : '', wsOperation : '', script : '',
+								scriptLanguage : '', jclassName : '', pars : [],
+								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
+								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
+								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
 								dsVersions : []
 							});
 
@@ -321,10 +293,15 @@ Ext.extend(
 
 					this.initTabItems();
 				}
-
-				,
-				initTabItems : function() {
-
+				
+				,initTabItems : function() {				
+					this.initDetailTab();
+					this.initTypeTab();
+					this.initTrasfTab();
+					this.initTestTab();				
+				}
+				
+				,initDetailTab : function() {
 					// Store of the combobox
 					this.catTypesStore = new Ext.data.SimpleStore({
 						fields : [ 'catTypeCd' ],
@@ -339,32 +316,24 @@ Ext.extend(
 					};
 
 					var detailFieldName = {
-						maxLength : 40,
-						minLength : 1,
-						width : 200,
+						maxLength : 40,	minLength : 1, width : 200,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.name'),
-						allowBlank : false,
-						validationEvent : true,
+						allowBlank : false,	validationEvent : true,
 						name : 'name'
 					};
 
 					var detailFieldLabel = {
-						maxLength : 45,
-						minLength : 1,
-						width : 200,
+						maxLength : 45, minLength : 1, width : 200,
 						regexText : LN('sbi.roles.alfanumericString2'),
 						fieldLabel : LN('sbi.generic.label'),
-						allowBlank : false,
-						validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						name : 'label'
 					};
 
 					var detailFieldDescr = {
-						maxLength : 400,
 						xtype : 'textarea',
-						width : 250,
-						height : 80,
+						width : 250, height : 80, maxLength : 400,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.descr'),
 						validationEvent : true,
@@ -376,38 +345,29 @@ Ext.extend(
 						store : this.catTypesStore,
 						width : 120,
 						fieldLabel : LN('sbi.ds.catType'),
-						displayField : 'catTypeCd', // what the user sees in
-						// the popup
-						valueField : 'catTypeCd', // what is passed to the
-						// 'change' event
-						typeAhead : true,
-						forceSelection : true,
+						displayField : 'catTypeCd', 
+						valueField : 'catTypeCd', 
+						typeAhead : true, forceSelection : true,
 						mode : 'local',
 						triggerAction : 'all',
-						selectOnFocus : true,
-						editable : false,
-						allowBlank : true,
-						validationEvent : true,
+						selectOnFocus : true, editable : false,
+						allowBlank : true, validationEvent : true,
 						xtype : 'combo'
 					};
 					// END list of detail fields
 
 					var c = {};
-					this.manageDsVersionsGrid = new Sbi.tools.ManageDatasetVersions(
-							c);
+					this.manageDsVersionsGrid = new Sbi.tools.ManageDatasetVersions(c);
 
 					this.manageDsVersionsPanel = new Ext.Panel(
-							{
-								id : 'man-vers',
+							{	id : 'man-vers',
 								title : LN('sbi.ds.versionPanel'),
 								layout : 'form',
 								autoScroll : false,
 								style : {
 									"margin-left" : "10px",
 									"margin-top" : "10px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
-											: "-13px")
-											: "10px"
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px": "-13px"): "10px"
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
@@ -426,8 +386,7 @@ Ext.extend(
 									xtype : 'fieldset',
 									labelWidth : 90,
 									defaultType : 'textfield',
-									autoHeight : true,
-									autoScroll : true,
+									autoHeight : true, autoScroll : true,
 									bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
 											: 'padding:10px 15px;',
 									border : false,
@@ -437,15 +396,13 @@ Ext.extend(
 												: "-13px")
 												: "0"
 									},
-									items : [ detailFieldId,
-											detailFieldLabel,
-											detailFieldName,
-											detailFieldDescr,
-											detailFieldCatType,
-											this.manageDsVersionsPanel ]
+									items : [ detailFieldId, detailFieldLabel, detailFieldName,
+											detailFieldDescr, detailFieldCatType, this.manageDsVersionsPanel ]
 								}
 							});
-
+				}
+				
+				,initTypeTab : function() {
 					// DataSource Store types combobox
 					this.dsTypesStore = new Ext.data.SimpleStore({
 						fields : [ 'dsTypeCd' ],
@@ -475,26 +432,20 @@ Ext.extend(
 						// the popup
 						valueField : 'dsTypeCd', // what is passed to the
 						// 'change' event
-						typeAhead : true,
-						forceSelection : true,
+						typeAhead : true, forceSelection : true,
 						mode : 'local',
 						triggerAction : 'all',
-						selectOnFocus : true,
-						editable : false,
-						allowBlank : true,
-						validationEvent : true,
+						selectOnFocus : true, editable : false,
+						allowBlank : true, validationEvent : true,
 						xtype : 'combo'
 					});
-					detailDsType.addListener('select',
-							this.activateDsTypeForm, this);
+					detailDsType.addListener('select',this.activateDsTypeForm, this);
 
 					this.detailFileName = new Ext.form.TextField({
-						maxLength : 40,
-						minLength : 1,
+						maxLength : 40, minLength : 1,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.fileName'),
-						allowBlank : true,
-						validationEvent : true,
+						allowBlank : true, validationEvent : true,
 						name : 'fileName'
 					});
 
@@ -508,14 +459,11 @@ Ext.extend(
 						// popup
 						valueField : 'dataSource', // what is passed to the
 						// 'change' event
-						typeAhead : true,
-						forceSelection : true,
+						typeAhead : true, forceSelection : true,
 						mode : 'local',
 						triggerAction : 'all',
-						selectOnFocus : true,
-						editable : false,
-						allowBlank : true,
-						validationEvent : true,
+						selectOnFocus : true, editable : false,
+						allowBlank : true, validationEvent : true,
 						xtype : 'combo'
 					});
 
@@ -528,14 +476,11 @@ Ext.extend(
 						// sees in the popup
 						valueField : 'dataSource', // what is passed to the
 						// 'change' event
-						typeAhead : true,
-						forceSelection : true,
+						typeAhead : true, forceSelection : true,
 						mode : 'local',
 						triggerAction : 'all',
-						selectOnFocus : true,
-						editable : false,
-						allowBlank : false,
-						validationEvent : true,
+						selectOnFocus : true, editable : false,
+						allowBlank : false, validationEvent : true,
 						xtype : 'combo'
 					});
 
@@ -550,24 +495,19 @@ Ext.extend(
 					});
 
 					this.detailWsAddress = new Ext.form.TextField({
-						maxLength : 40,
-						minLength : 1,
+						maxLength : 40, minLength : 1,
 						width : 150,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsAddress'),
-						allowBlank : true,
-						validationEvent : true,
+						allowBlank : true, validationEvent : true,
 						name : 'wsAddress'
 					});
 
 					this.detailWsOperation = new Ext.form.TextField({
-						maxLength : 40,
-						minLength : 1,
-						width : 150,
+						maxLength : 40, minLength : 1, width : 150,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsOperation'),
-						allowBlank : true,
-						validationEvent : true,
+						allowBlank : true, validationEvent : true,
 						name : 'wsOperation'
 					});
 
@@ -578,8 +518,7 @@ Ext.extend(
 						height : 175,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.script'),
-						allowBlank : true,
-						validationEvent : true,
+						allowBlank : true, validationEvent : true,
 						name : 'script'
 					});
 
@@ -875,7 +814,9 @@ Ext.extend(
 											this.manageParsPanel ]
 								}
 							});
-
+				}
+				
+				,initTrasfTab : function() {
 					this.transfTypesStore = new Ext.data.SimpleStore({
 						fields : [ 'trasfTypeCd' ],
 						data : config.trasfTypes,
@@ -1017,7 +958,9 @@ Ext.extend(
 											this.trasfDetail ]
 								}
 							});
-
+				}
+				
+				,initTestTab : function() {
 					this.tbTestDSButton = new Ext.Toolbar.Button({
 						text : LN('sbi.ds.test'),
 						width : 30,
@@ -1033,9 +976,7 @@ Ext.extend(
 						items : [ this.tbTestDSButton ]
 					});
 
-					var c = {
-						tbar: this.tbTestToolbar
-					};
+					var c = {tbar: this.tbTestToolbar};
 					this.parsGrid = new Sbi.tools.ParametersFillGrid(c);
 
 					this.datasetTestTab = new Ext.Panel({
