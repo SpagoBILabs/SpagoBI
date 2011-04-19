@@ -23,10 +23,11 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
-public interface ISnapshotDAO {
+public interface ISnapshotDAO extends ISpagoBIDao{
 
 	/**
 	 * Save a snapshot of the object.

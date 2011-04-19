@@ -31,6 +31,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 
 
-public interface ILowFunctionalityDAO {
+public interface ILowFunctionalityDAO extends ISpagoBIDao{
 	
 	
 	/* ********* start luca changes *************** */

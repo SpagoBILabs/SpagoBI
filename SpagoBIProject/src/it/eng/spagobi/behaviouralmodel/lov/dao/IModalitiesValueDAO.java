@@ -29,6 +29,7 @@ package it.eng.spagobi.behaviouralmodel.lov.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ import java.util.List;
  * @author Zoppello
  */
 
-public interface IModalitiesValueDAO {
+public interface IModalitiesValueDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all detail information for an value identified by its <code>modalitiesValueID</code>.

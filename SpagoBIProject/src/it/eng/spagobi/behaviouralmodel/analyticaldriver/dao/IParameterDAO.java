@@ -29,6 +29,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ import java.util.List;
  * 
  * @author Zoppello
  */
-public interface IParameterDAO {
+public interface IParameterDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all detail information for a parameter identified by its

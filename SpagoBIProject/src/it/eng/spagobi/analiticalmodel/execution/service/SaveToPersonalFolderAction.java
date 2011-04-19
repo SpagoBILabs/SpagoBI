@@ -28,9 +28,11 @@ import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 
 import java.util.List;
@@ -99,7 +101,7 @@ public class SaveToPersonalFolderAction extends AbstractHttpAction {
 			}
 
 			// Load document
-			BIObjectDAOHibImpl biObjectDAOHibImpl = new BIObjectDAOHibImpl();
+			IBIObjectDAO biObjectDAOHibImpl = DAOFactory.getBIObjectDAO();
 			BIObject biObject = biObjectDAOHibImpl.loadBIObjectById(Integer.valueOf(documentIdStr));
 			if (biObject == null) {
 				logger.error("Could not load document");

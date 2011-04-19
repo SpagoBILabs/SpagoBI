@@ -1,13 +1,14 @@
 package it.eng.spagobi.kpi.threshold.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 
 import java.util.List;
 
-public interface IThresholdValueDAO {
+public interface IThresholdValueDAO extends ISpagoBIDao{
 
 	List loadThresholdValueList(Integer thresholdId,String fieldOrder, String typeOrder) throws EMFUserError;
 

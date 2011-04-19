@@ -67,7 +67,7 @@ public class DetBIObjModHelper {
 	SourceBean response = null;
 	RequestContainer reqCont = null;
 	ResponseContainer respCont = null;
-	
+	IEngUserProfile profile=null;
 	/**
 	 * Instantiates a new det bi obj mod helper.
 	 * 
@@ -80,6 +80,9 @@ public class DetBIObjModHelper {
 		this.response = response;
 		this.reqCont = reqCont;
 		this.respCont = respCont;
+		SessionContainer session = reqCont.getSessionContainer();
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
 	
 	
@@ -94,9 +97,7 @@ public class DetBIObjModHelper {
 	 */
 	public BIObject recoverBIObjectDetails(String mod) throws Exception {
 		// GET THE USER PROFILE
-		SessionContainer session = reqCont.getSessionContainer();
-		SessionContainer permanentSession = session.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
 		//String userId=(String)profile.getUserUniqueIdentifier();
 		String userId=(String)((UserProfile)profile).getUserId();
 		// GET THE INITIAL PATH 

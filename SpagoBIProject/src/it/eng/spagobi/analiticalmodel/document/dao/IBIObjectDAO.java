@@ -33,12 +33,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting 
  * a BI object.
  */
-public interface IBIObjectDAO {
+public interface IBIObjectDAO extends ISpagoBIDao{
 
 	/**
 	 * Loads all  information for the execution of a BI Object identified by its

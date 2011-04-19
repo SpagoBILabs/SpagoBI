@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.dossier.dao;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.engines.dossier.bo.DossierPresentation;
 
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public interface IDossierPresentationsDAO {
+public interface IDossierPresentationsDAO extends ISpagoBIDao{
 	
 	/**
 	 * Gets the presentation version content.

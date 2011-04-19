@@ -29,6 +29,7 @@ package it.eng.spagobi.behaviouralmodel.check.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ import java.util.List;
  * 
  * @author Zoppello
  */
-public interface ICheckDAO {
+public interface ICheckDAO extends ISpagoBIDao{
 	
 	/**
 	 * Loads all detail information for all value constraints. For each of them, detail

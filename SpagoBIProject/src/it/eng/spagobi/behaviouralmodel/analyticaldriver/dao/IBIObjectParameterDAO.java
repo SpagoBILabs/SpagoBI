@@ -30,6 +30,7 @@ package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ import java.util.List;
  * @author Zoppello
  *
  */
-public interface IBIObjectParameterDAO {
+public interface IBIObjectParameterDAO extends ISpagoBIDao{
 	
 	
 	/**

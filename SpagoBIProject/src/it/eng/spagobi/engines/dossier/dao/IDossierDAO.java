@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.dossier.dao;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
 
 import java.io.InputStream;
@@ -43,7 +44,7 @@ import java.util.List;
  * 
  * @author Zerbetto (davide.zerbetto@eng.it) 
  */
-public interface IDossierDAO {
+public interface IDossierDAO extends ISpagoBIDao{
 
 	/**
 	 * Inits the.

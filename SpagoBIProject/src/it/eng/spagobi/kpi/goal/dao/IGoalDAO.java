@@ -1,5 +1,6 @@
 package it.eng.spagobi.kpi.goal.dao;
 
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
@@ -7,7 +8,7 @@ import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
 import java.util.List;
 
 
-public interface IGoalDAO {
+public interface IGoalDAO extends ISpagoBIDao{
 	/**
 	 * Loading the list of the goals
 	 * @return

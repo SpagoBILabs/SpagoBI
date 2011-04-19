@@ -1,10 +1,11 @@
 package it.eng.spagobi.kpi.config.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 import java.util.List;
 
-public interface IKpiInstPeriodDAO {
+public interface IKpiInstPeriodDAO extends ISpagoBIDao{
 
 	/**
 	 * Load couples by Kpi Instance Id .

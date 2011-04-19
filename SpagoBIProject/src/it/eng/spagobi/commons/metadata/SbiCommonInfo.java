@@ -5,9 +5,14 @@ import java.util.Date;
 
 public class SbiCommonInfo implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public final static String SBI_VERSION="3.0Beta";
 	
-	private String userIn=null;
+	private String userIn="server";
 	private String userUp=null;
 	private String userDe=null;
 	private String sbiVersionIn=null;
@@ -19,7 +24,6 @@ public class SbiCommonInfo implements java.io.Serializable {
 	private Date timeDe = null;
 	
 	public SbiCommonInfo(){
-		userIn="biadmin";
 		sbiVersionIn=SbiCommonInfo.SBI_VERSION;
 		timeIn = new Date();
 	}

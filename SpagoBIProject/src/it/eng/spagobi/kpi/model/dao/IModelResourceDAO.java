@@ -1,12 +1,13 @@
 package it.eng.spagobi.kpi.model.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources;
 
 import java.util.List;
 
-public interface IModelResourceDAO {
+public interface IModelResourceDAO extends ISpagoBIDao{
 
 	
 	/**

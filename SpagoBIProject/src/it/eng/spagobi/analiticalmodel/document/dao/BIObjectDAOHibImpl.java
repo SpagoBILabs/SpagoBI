@@ -91,8 +91,12 @@ import org.safehaus.uuid.UUIDGenerator;
  *	Defines the Hibernate implementations for all DAO methods,
  *  for a BI Object.  
  */
-public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements
-IBIObjectDAO {
+public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjectDAO {
+
+
+
+
+
 
 	public static final String COLUMN_LABEL = "LABEL";
 	public static final String COLUMN_NAME = "NAME";
@@ -117,6 +121,8 @@ IBIObjectDAO {
 	public static final String NOT_NULL = "NOT_NULL";
 
 	static private Logger logger = Logger.getLogger(BIObjectDAOHibImpl.class);
+
+
 
 	/**
 	 * Load bi object for execution by id and role.
@@ -448,7 +454,7 @@ IBIObjectDAO {
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObject.getId());
 			
-			updateSbiCommonInfo(hibBIObject);
+			updateSbiCommonInfo4Update(hibBIObject);
 			
 			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class,	biObject.getEngine().getId());
 			hibBIObject.setSbiEngines(hibEngine);
@@ -648,6 +654,8 @@ IBIObjectDAO {
 			hibBIObject.setCreationDate(new Date());
 			hibBIObject.setCreationUser(obj.getCreationUser());
 
+			updateSbiCommonInfo4Insert(hibBIObject);
+			
 			// save biobject
 			Integer id = (Integer) aSession.save(hibBIObject);
 			// recover the saved hibernate object
@@ -662,6 +670,7 @@ IBIObjectDAO {
 				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
 				aSbiObjFuncId.setSbiObjects(hibBIObject);
 				SbiObjFunc aSbiObjFunc = new SbiObjFunc(aSbiObjFuncId);
+				updateSbiCommonInfo4Insert(aSbiObjFunc);
 				aSession.save(aSbiObjFunc);
 				hibObjFunc.add(aSbiObjFunc);
 			}
@@ -1425,7 +1434,8 @@ IBIObjectDAO {
 
 			//for every document child gets parameters and inserts these into new document composition object
 			for (int i=0; i<lstLabeldDocs.size(); i++){
-				BIObject docChild = DAOFactory.getBIObjectDAO().loadBIObjectByLabel((String)lstLabeldDocs.get(i));
+				//BIObject docChild = DAOFactory.getBIObjectDAO().loadBIObjectByLabel((String)lstLabeldDocs.get(i));
+				BIObject docChild = loadBIObjectByLabel((String)lstLabeldDocs.get(i));
 
 				if (docChild == null){
 					logger.error("Error while getting document child "+ (String)lstLabeldDocs.get(i) +" for document composition.");
@@ -1513,7 +1523,7 @@ IBIObjectDAO {
 
 			//for every document child gets parameters and inserts these into new document composition object
 			for (int i=0; i<lstLabeldDocs.size(); i++){
-				BIObject docChild = DAOFactory.getBIObjectDAO().loadBIObjectByLabel((String)lstLabeldDocs.get(i));
+				BIObject docChild = loadBIObjectByLabel((String)lstLabeldDocs.get(i));
 				if (docChild == null){
 					logger.error("Error while getting document child "+ (String)lstLabeldDocs.get(i) +" for document composition.");
 					List lstLabel = new ArrayList();

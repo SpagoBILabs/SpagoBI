@@ -22,11 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.dao;
 
 
-import java.util.Date;
-
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
+
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -42,7 +43,13 @@ import org.hibernate.Transaction;
 public class AbstractHibernateDAO {
 	
     private static transient Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
+    private String userID="";
     
+    
+    public void setUserProfile(IEngUserProfile profile){
+    	if (profile!=null) userID=(String) profile.getUserUniqueIdentifier();
+    	logger.debug("userID="+userID);    	
+    }
 	/**
 	 * Gets tre current session.
 	 * 
@@ -58,10 +65,16 @@ public class AbstractHibernateDAO {
 	 * @param obj
 	 * @return
 	 */
-	protected SbiHibernateModel updateSbiCommonInfo(SbiHibernateModel obj){
+	protected SbiHibernateModel updateSbiCommonInfo4Update(SbiHibernateModel obj){
 		obj.getCommonInfo().setTimeUp(new Date());
 		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
-		obj.getCommonInfo().setUserUp("biadmin");
+		obj.getCommonInfo().setUserUp(userID);
+		return obj;
+	}
+	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj){
+		obj.getCommonInfo().setTimeIn(new Date());
+		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setUserIn(userID);
 		return obj;
 	}
 	

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.udp.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 
@@ -35,7 +36,7 @@ import org.hibernate.Session;
  * @see it.eng.spagobi.udp.bo.Udp
  * @author Antonella Giachino
  */
-public interface IUdpDAO {
+public interface IUdpDAO extends ISpagoBIDao{
 
     public Integer insert(SbiUdp prop);
     
