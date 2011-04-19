@@ -26,6 +26,14 @@
     background-image:url('../../../img/commons/add.gif') !important;
 }
 
+.icon-clone {
+    background-image:url('../../../img/kpi/linkedDoc.gif') !important;
+}
+
+.icon-restore {
+    background-image:url('../../../img/tools/importexport/importexport16.png') !important;
+}
+
 .icon-remove {
 	background-image: url('../../../img/erase.png') !important;
 }

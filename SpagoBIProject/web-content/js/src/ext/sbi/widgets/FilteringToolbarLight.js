@@ -53,7 +53,7 @@ Sbi.widgets.FilteringToolbarLight = function(config) {
 	if(config.columnName){
 		this.columnsToSearch = config.columnName;
 	}else{
-		this.columnsToSearch = [['label','label']];
+		this.columnsToSearch = [['name','Name']];
 	}
 	this.columnToSearchValue = config.columnValue;
 

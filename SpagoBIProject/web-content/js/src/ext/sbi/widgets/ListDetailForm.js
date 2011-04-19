@@ -182,6 +182,12 @@ Sbi.widgets.ListDetailForm = function(config) {
 	}else{
 		this.singleSelection = false;
 	}
+	
+	if(conf.setCloneButton){
+		this.setCloneButton = conf.setCloneButton;
+	}else{
+		this.setCloneButton = false;
+	}
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -262,6 +268,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, tabPanelWidth: null
 	, gridWidth: null
 	, filterWidth: 405
+	, setCloneButton: null
 	
 	
 	,initWidget: function(){
@@ -334,17 +341,28 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
            , scope: this
 		   , items: this.tabItems
 		});
+ 	   
+ 	   var buttonsArray = new Array();
+	 	  buttonsArray.push(new Ext.Toolbar.Button({
+	           text: LN('sbi.generic.add'),
+	            iconCls: 'icon-add',
+	            handler: this.addNewItem,
+	            width: 30,
+	            scope: this
+	            }));
+	 	  if(this.setCloneButton){
+	 		 buttonsArray.push(new Ext.Toolbar.Button({
+	 	            text: LN('sbi.generic.clone'),
+	 	            iconCls: 'icon-clone',
+	 	            handler: this.cloneItem,
+	 	            width: 30,
+	 	            scope: this
+	 	            }));
+	 	  }
 
  	    this.tb = new Ext.Toolbar({
  	    	buttonAlign : 'right',
- 	    	items:[new Ext.Toolbar.Button({
- 	            text: LN('sbi.generic.add'),
- 	            iconCls: 'icon-add',
- 	            handler: this.addNewItem,
- 	            width: 30,
- 	            scope: this
- 	            })
- 	    	]
+ 	    	items: buttonsArray
  	    });
  	    
  	   var pagingBar = new Ext.PagingToolbar({
@@ -478,6 +496,10 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	
 	//METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
 	,save : function() {		
+		alert('Abstract Method: it needs to be overridden');
+    }
+	
+	,cloneItem: function() {		
 		alert('Abstract Method: it needs to be overridden');
     }
 

@@ -82,6 +82,7 @@ Sbi.tools.ManageDatasets = function(config) {
 	                                       ['dsId.name', LN('sbi.generic.name')],
 	                                       ['category.valueNm', LN('sbi.ds.catType')]
 	                	                   ];
+	this.configurationObject.setCloneButton = true;
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = true;
 
@@ -114,9 +115,9 @@ Ext.extend(
 				fileDetail : null,
 				parsGrid : null,
 				datasetTestTab : null,
-				//datasetTestGridPanel : null,
 				manageParsGrid : null,
-				manageDsVersionsGrid : null
+				manageDsVersionsGrid : null,
+				newRecord: null
 
 				,
 				activateTransfForm : function(combo, record, index) {
@@ -140,51 +141,6 @@ Ext.extend(
 						}
 					}
 				}
-
-				,
-				test : function(button, event, service) {
-					var values = this.getForm().getFieldValues();
-
-					var requestParameters = {
-						start : 0,
-						limit : 25,
-						dsTypeCd : values['dsTypeCd'],
-						fileName : values['fileName'],
-						query : values['query'],
-						dataSource : values['dataSource'],
-						wsAddress : values['wsAddress'],
-						wsOperation : values['wsOperation'],
-						script : values['script'],
-						scriptLanguage : values['scriptLanguage'],
-						jclassName : values['jclassName'],
-						trasfTypeCd : values['trasfTypeCd'],
-						pivotColName : values['pivotColName'],
-						pivotColValue : values['pivotColValue'],
-						pivotRowName : values['pivotRowName'],
-						pivotIsNumRows : values['pivotIsNumRows'],
-						qbeSQLQuery : values['qbeSQLQuery'],
-						qbeJSONQuery : values['qbeJSONQuery'],
-						qbeDataSource: values['qbeDataSource'],
-						qbeDatamarts: values['qbeDatamarts']
-					};
-					arrayPars = this.parsGrid.getParametersValues();
-					if (arrayPars) {
-						requestParameters.pars = Ext.util.JSON
-								.encode(arrayPars);
-					}
-					//this.datasetTestGridPanel.execTest(requestParameters);
-					if (this.previewWindow === undefined) {
-						this.previewWindow = new Sbi.tools.dataset.PreviewWindow({
-							modal : true
-							, width: this.getWidth() - 50
-							, height: this.getHeight() - 50
-						});
-					}
-					this.previewWindow.show();
-					this.previewWindow.load(requestParameters);
-
-				}
-
 				,
 				activateDsVersionsGrid : function(combo, record, index) {
 					var dsVersionsList = record.get('dsVersions');
@@ -244,7 +200,53 @@ Ext.extend(
 						this.qbeQueryDetail.setVisible(true);
 					}
 					var dsParsList = record.get('pars');
-					this.manageParsGrid.loadItems(dsParsList);
+					if(dsParsList!=null && dsParsList!= undefined){
+						this.manageParsGrid.loadItems(dsParsList);
+					}else{
+						this.manageParsGrid.loadItems([]);
+					}
+				}
+
+				,
+				test : function(button, event, service) {
+					var values = this.getForm().getFieldValues();
+
+					var requestParameters = {
+						start : 0,
+						limit : 25,
+						dsTypeCd : values['dsTypeCd'],
+						fileName : values['fileName'],
+						query : values['query'],
+						dataSource : values['dataSource'],
+						wsAddress : values['wsAddress'],
+						wsOperation : values['wsOperation'],
+						script : values['script'],
+						scriptLanguage : values['scriptLanguage'],
+						jclassName : values['jclassName'],
+						trasfTypeCd : values['trasfTypeCd'],
+						pivotColName : values['pivotColName'],
+						pivotColValue : values['pivotColValue'],
+						pivotRowName : values['pivotRowName'],
+						pivotIsNumRows : values['pivotIsNumRows'],
+						qbeSQLQuery : values['qbeSQLQuery'],
+						qbeJSONQuery : values['qbeJSONQuery'],
+						qbeDataSource: values['qbeDataSource'],
+						qbeDatamarts: values['qbeDatamarts']
+					};
+					arrayPars = this.parsGrid.getParametersValues();
+					if (arrayPars) {
+						requestParameters.pars = Ext.util.JSON
+								.encode(arrayPars);
+					}
+					if (this.previewWindow === undefined) {
+						this.previewWindow = new Sbi.tools.dataset.PreviewWindow({
+							modal : true
+							, width: this.getWidth() - 50
+							, height: this.getHeight() - 50
+						});
+					}
+					this.previewWindow.show();
+					this.previewWindow.load(requestParameters);
 				}
 
 				,
@@ -318,20 +320,6 @@ Ext.extend(
 					this.configurationObject.listTitle = LN('sbi.ds.listTitle');
 
 					this.initTabItems();
-				}
-
-				// OVERRIDING METHOD
-				,
-				addNewItem : function() {
-					var emptyRecToAdd = this.emptyRecord;
-					this.getForm().loadRecord(emptyRecToAdd);
-					this.manageParsGrid.loadItems([]);
-					this.manageDsVersionsGrid.loadItems([]);
-
-					this.tabs.items.each(function(item) {
-						item.doLayout();
-					});
-					this.tabs.setActiveTab(0);
 				}
 
 				,
@@ -1032,10 +1020,9 @@ Ext.extend(
 
 					this.tbTestDSButton = new Ext.Toolbar.Button({
 						text : LN('sbi.ds.test'),
-						// iconCls: 'icon-save',
 						width : 30,
 						handler : this.test,
-						iconCls : 'icon-filter',
+						iconCls : 'icon-execute',
 						scope : this
 					});
 
@@ -1070,15 +1057,80 @@ Ext.extend(
 							this.datasetTestTab ];
 				}
 
-				// OVERRIDING save method
+				// OVERRIDING METHOD
 				,
-				save : function() {
-					var values = this.getForm().getFieldValues();
-					var idRec = values['id'];
-					var newRec;
+				addNewItem : function() {
+					this.newRecord = this.emptyRecord;
+					this.getForm().loadRecord(this.newRecord);
+					this.manageParsGrid.loadItems([]);
+					this.manageDsVersionsGrid.loadItems([]);
 
-					if (idRec == 0 || idRec == null || idRec === '') {
-						newRec = new Ext.data.Record({
+					this.tabs.items.each(function(item) {
+						item.doLayout();
+					});
+					this.trasfDetail.setVisible(false);
+					if (this.newRecord != null
+							&& this.newRecord != undefined) {
+						this.mainElementsStore.add(this.newRecord);
+						this.rowselModel.selectLastRow(true);
+					}				
+					this.tabs.setActiveTab(0);					
+				}
+
+				,cloneItem: function() {	
+					var values = this.getForm().getFieldValues();
+					
+					this.newRecord = this.buildNewRecordToSave(values);
+					this.getForm().loadRecord(this.newRecord);
+					this.manageParsGrid.loadItems([]);
+					this.manageDsVersionsGrid.loadItems([]);
+					
+					this.tabs.items.each(function(item) {
+						item.doLayout();
+					});					
+					if (this.newRecord != null
+							&& this.newRecord != undefined) {
+						this.mainElementsStore.add(this.newRecord);
+						this.rowselModel.selectLastRow(true);
+					}
+					this.tabs.setActiveTab(0);
+			    }
+				
+				,buildNewRecordToSave: function(values){
+					var newRec = new Ext.data.Record({
+						id: 0,
+						name : values['name'],
+						label : '...',
+						usedByNDocs: 0,
+						dsVersions: [],
+						pars: [],
+						description : values['description'],
+						dsTypeCd : values['dsTypeCd'],
+						catTypeCd : values['catTypeCd'],
+						usedByNDocs : values['usedByNDocs'],
+						fileName : values['fileName'],
+						query : values['query'],
+						dataSource : values['dataSource'],
+						wsAddress : values['wsAddress'],
+						wsOperation : values['wsOperation'],
+						script : values['script'],
+						scriptLanguage : values['scriptLanguage'],
+						jclassName : values['jclassName'],
+						trasfTypeCd : values['trasfTypeCd'],
+						pivotColName : values['pivotColName'],
+						pivotColValue : values['pivotColValue'],
+						pivotRowName : values['pivotRowName'],
+						pivotIsNumRows : values['pivotIsNumRows'],
+						qbeSQLQuery : values['qbeSQLQuery'],
+						qbeJSONQuery : values['qbeJSONQuery'],
+						qbeDataSource: values['qbeDataSource'],
+						qbeDatamarts: values['qbeDatamarts']
+					});
+					return newRec;
+				}	
+				
+				,buildParamsToSendToServer: function(values){
+					var params = {
 							name : values['name'],
 							label : values['label'],
 							description : values['description'],
@@ -1102,41 +1154,68 @@ Ext.extend(
 							qbeJSONQuery : values['qbeJSONQuery'],
 							qbeDataSource: values['qbeDataSource'],
 							qbeDatamarts: values['qbeDatamarts']
-						});
+						};
+					return params;
+				}
+				
+				,updateNewRecord: function(record, values){
+					record.set('label',values['label']);
+					record.set('name',values['name']);
+					record.set('description',values['description']);
+					record.set('usedByNDocs',0);
+					record.set('dsTypeCd',values['dsTypeCd']);
+					record.set('catTypeCd',values['catTypeCd']);
+					record.set('fileName',values['fileName']);
+					record.set('query',values['query']);
+					record.set('dataSource',values['dataSource']);
+					record.set('wsAddress',values['wsAddress']);
+					record.set('wsOperation',values['wsOperation']);
+					record.set('script',values['script']);
+					record.set('scriptLanguage',values['scriptLanguage']);
+					record.set('jclassName',values['jclassName']);
+					record.set('trasfTypeCd',values['trasfTypeCd']);
+					record.set('pivotColName',values['pivotColName']);
+					record.set('pivotColValue',values['pivotColValue']);
+					record.set('pivotRowName',values['pivotRowName']);
+					record.set('pivotIsNumRows',values['pivotIsNumRows']);
+					record.set('qbeSQLQuery',values['qbeSQLQuery']);
+					record.set('qbeJSONQuery',values['qbeJSONQuery']);
+					record.set('qbeDataSource',values['qbeDataSource']);
+					record.set('qbeDatamarts',values['qbeDatamarts']);
+				}
+				
+				// OVERRIDING save method
+				,
+				save : function() {
+					var values = this.getForm().getFieldValues();
+					var idRec = values['id'];
+					var newRec;
+					var isNewRec = false;
 
+					if (idRec == 0 || idRec == null || idRec === '') {
+						//newRec = this.buildNewRecordToSave(values);
+						this.updateNewRecord(this.newRecord,values);
+						isNewRec = true;
+					}else{
+						var record;
+						var length = this.mainElementsStore.getCount();
+						for(var i=0;i<length;i++){
+				   	        var tempRecord = this.mainElementsStore.getAt(i);
+				   	        if(tempRecord.data.id==idRec){
+				   	        	record = tempRecord;
+							}			   
+				   	    }	
+						this.updateNewRecord(record,values);
 					}
 
-					var params = {
-						name : values['name'],
-						label : values['label'],
-						description : values['description'],
-						dsTypeCd : values['dsTypeCd'],
-						catTypeCd : values['catTypeCd'],
-						usedByNDocs : values['usedByNDocs'],
-						fileName : values['fileName'],
-						query : values['query'],
-						dataSource : values['dataSource'],
-						wsAddress : values['wsAddress'],
-						wsOperation : values['wsOperation'],
-						script : values['script'],
-						scriptLanguage : values['scriptLanguage'],
-						jclassName : values['jclassName'],
-						trasfTypeCd : values['trasfTypeCd'],
-						pivotColName : values['pivotColName'],
-						pivotColValue : values['pivotColValue'],
-						pivotRowName : values['pivotRowName'],
-						pivotIsNumRows : values['pivotIsNumRows'],
-						qbeSQLQuery : values['qbeSQLQuery'],
-						qbeJSONQuery : values['qbeJSONQuery'],
-						qbeDataSource: values['qbeDataSource'],
-						qbeDatamarts: values['qbeDatamarts']
-					};
+					var params = this.buildParamsToSendToServer(values);
 
 					var arrayPars = this.manageParsGrid.getParsArray();
 					if (arrayPars) {
 						params.pars = Ext.util.JSON.encode(arrayPars);
-						if (newRec != null && newRec != undefined) {
-							newRec.set('pars', arrayPars);
+						if (isNewRec) {
+							//newRec.set('pars', arrayPars);
+							this.newRecord.set('pars',arrayPars);
 						}
 					}
 
@@ -1166,24 +1245,32 @@ Ext.extend(
 											} else {
 												var itemId = content.id;
 
-												if (newRec != null
-														&& newRec != undefined
+												if (isNewRec
 														&& itemId != null
 														&& itemId !== '') {
-													newRec
-															.set('id',
-																	itemId);
-													this.mainElementsStore
-															.add(newRec);
+		
+													if(this.newRecord != null && this.newRecord != undefined){
+														//this.newRecord.set('id',itemId);
+														var modifRec = this.mainElementsStore.getModifiedRecords()[0];
+														//getById(0);
+														if(modifRec!=null && modifRec!=undefined){
+															modifRec.set('id',itemId);
+															//this.newRecord.set('label',values['label']);
+															//alert(modifRec.toSource());
+															modifRec.commit();
+														}
+													}
+													/*else{
+														alert('else');
+														newRec.set('id',itemId);
+														this.mainElementsStore.add(newRec);
+													}*/
 												}
-												this.mainElementsStore
-														.commitChanges();
-												if (newRec != null
-														&& newRec != undefined
+												this.mainElementsStore.commitChanges();
+												if (isNewRec
 														&& itemId != null
 														&& itemId !== '') {
-													this.rowselModel
-															.selectLastRow(true);
+													this.rowselModel.selectLastRow(true);
 												}
 
 												Ext.MessageBox

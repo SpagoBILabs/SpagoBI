@@ -48,6 +48,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <script type="text/javascript">
 
 	<%	
+	JSONArray empty = new JSONArray();
+	empty.put("");
+	
 	JSONArray dsTypesArray = new JSONArray();
 	if(dsTypesList != null){
 		for(int i=0; i< dsTypesList.size(); i++){
@@ -61,6 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	dsTypes = dsTypes.replaceAll("\"","'");
 	
 	JSONArray catTypesArray = new JSONArray();
+	catTypesArray.put(empty);
 	if(catTypesCd != null){
 		for(int i=0; i< catTypesCd.size(); i++){
 			Domain domain = (Domain)catTypesCd.get(i);
@@ -97,6 +101,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	scriptTypes = scriptTypes.replaceAll("\"","'");
 	
 	JSONArray trasfTypesArray = new JSONArray();
+	trasfTypesArray.put(empty);
 	if(trasfTypesList != null){
 		for(int i=0; i< trasfTypesList.size(); i++){
 			Domain domain = (Domain)trasfTypesList.get(i);
