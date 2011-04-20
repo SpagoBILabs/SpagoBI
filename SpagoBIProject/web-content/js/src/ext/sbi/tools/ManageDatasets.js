@@ -1001,7 +1001,18 @@ Ext.extend(
 				// OVERRIDING METHOD
 				,
 				addNewItem : function() {
-					this.newRecord = this.emptyRecord;
+					this.newRecord = new Ext.data.Record(
+							{	id : 0,
+								name : '', label : '', description : '',
+								dsTypeCd : '', catTypeCd : '', usedByNDocs : 0,
+								fileName : '', query : '', dataSource : '',
+								wsAddress : '', wsOperation : '', script : '',
+								scriptLanguage : '', jclassName : '', pars : [],
+								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
+								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
+								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
+								dsVersions : []
+							});
 					this.getForm().loadRecord(this.newRecord);
 					this.manageParsGrid.loadItems([]);
 					this.manageDsVersionsGrid.loadItems([]);
