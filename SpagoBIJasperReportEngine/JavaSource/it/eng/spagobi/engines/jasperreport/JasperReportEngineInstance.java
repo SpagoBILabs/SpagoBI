@@ -66,6 +66,8 @@ import java.util.ResourceBundle;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -75,17 +77,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JRDesignDataset;
-import net.sf.jasperreports.engine.design.JRDesignDatasetRun;
-import net.sf.jasperreports.engine.design.JRDesignExpression;
-import net.sf.jasperreports.engine.design.JRDesignParameter;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-import net.sf.jasperreports.engine.fill.JRFillDataset;
-import net.sf.jasperreports.engine.fill.JRFillDatasetRun;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 import sun.misc.BASE64Decoder;
 
@@ -93,14 +92,15 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @authors
+ * Andrea Gioia (andrea.gioia@eng.it)
+ * Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	JasperReportEngineTemplate template;
 	String outputType;
 	JRExporter exporter;
-	Map imageMap;
 	boolean virtualizationEnabled;
 	JRVirtualizer virtualizer;
 	File libDir;
@@ -119,18 +119,17 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		Assert.assertNotNull(env, "[env] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
 		this.template = template;
 		Assert.assertNotNull(env, "[template] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
-		imageMap = new HashMap();
 		this.dsProxy = dsProxy;
 	}	
 	
-	public void runReport(File file)  {
+	public void runReport(File file, HttpServletRequest httpServletRequest)  {
 		logger.debug("IN");
 		OutputStream out;
 		
 		out = null;
 		try {
 			out = new FileOutputStream(file);
-			runReport(out);
+			runReport(out, httpServletRequest);
 		} catch (Throwable t1) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", t1);
 		} finally {
@@ -146,7 +145,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		}		
 	}
 	
-	private void runReport(OutputStream out)  {
+	private void runReport(OutputStream out, HttpServletRequest httpServletRequest)  {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("JasperReportRunner.service");
 		String prefixDirTemplate= null;
@@ -241,8 +240,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			if (outputType.equalsIgnoreCase("html")) {
 				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
 				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, getImageMap());		    	
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "JRImageServlet?SBI_EXECUTION_ID="+getId()+"&image=");				
+				HashMap m_imagesMap = new HashMap();
+				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+				UUID uuid_local = uuidGen.generateTimeBasedUUID();
+				String mapName = uuid_local.toString();
+				httpServletRequest.getSession().setAttribute(mapName, m_imagesMap);
+				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, m_imagesMap);	
+				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "JRImageServlet?mapname="+mapName+"&image=");		
 			} else if (outputType.equalsIgnoreCase("txt")) {
 				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT,new Integer(100));
 				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH,new Integer(100));
@@ -686,14 +690,6 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		}
 		
 		return files;
-	}
-	
-	public Map getImageMap() {
-		return imageMap;
-	}
-
-	public void setImageMap(Map imageMap) {
-		this.imageMap = imageMap;
 	}
 	
 	public boolean isVirtualizationEnabled() {
