@@ -6,6 +6,7 @@
 		<project>SpagoBIUtils</project>
 		<project>SpagoBIElisaSecurityProvider</project>
 		<project>SpagoBICustomDatasets</project>
+		<project>QbeCore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
