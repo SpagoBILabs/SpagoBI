@@ -274,7 +274,9 @@ public class DataStore implements IDataStore {
 			xml += "<ROW ";			
 			for(int j = 0; j < getMetaData().getFieldCount(); j++){
 				IField field = record.getFieldAt(j);
-				xml += getMetaData().getFieldName(j) +"=\"" + field.getValue() + "\" ";
+				IFieldMetaData fieldMetaData = getMetaData().getFieldMeta(j);
+				String fieldHeader = fieldMetaData.getAlias() != null? fieldMetaData.getAlias(): fieldMetaData.getName();
+				xml += fieldHeader +"=\"" + field.getValue() + "\" ";
 			}			
 			xml += " />";
 			
