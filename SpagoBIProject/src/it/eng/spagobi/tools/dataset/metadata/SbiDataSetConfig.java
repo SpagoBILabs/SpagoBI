@@ -21,29 +21,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.metadata;
 
-import java.util.Date;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
 /**
  * @author Angelo Bernabei
  *         angelo.bernabei@eng.it
  */
-public class SbiDataSetConfig {
+public class SbiDataSetConfig extends SbiHibernateModel{
 	private int dsId;	
 	private String name=null;
 	private String description=null;
 	private String label=null;
-	
-	private String userIn=null;
-	private String userUp=null;
-	private String userDe=null;
-	private String sbiVersionIn=null;
-	private String sbiVersionUp=null;
-	private String sbiVersionDe=null;
-	private String metaVersion=null;
-	private String organization=null;
-	private Date timeIn = null;
-	private Date timeUp = null;
-	private Date timeDe = null;
     	
 	
 	/**
@@ -117,93 +105,4 @@ public class SbiDataSetConfig {
 	public void setDsId(int dsId) {
 		this.dsId = dsId;
 	}
-
-	public String getUserIn() {
-		return userIn;
-	}
-
-	public void setUserIn(String userIn) {
-		this.userIn = userIn;
-	}
-
-	public String getUserUp() {
-		return userUp;
-	}
-
-	public void setUserUp(String userUp) {
-		this.userUp = userUp;
-	}
-
-	public String getUserDe() {
-		return userDe;
-	}
-
-	public void setUserDe(String userDe) {
-		this.userDe = userDe;
-	}
-
-	public String getSbiVersionIn() {
-		return sbiVersionIn;
-	}
-
-	public void setSbiVersionIn(String sbiVersionIn) {
-		this.sbiVersionIn = sbiVersionIn;
-	}
-
-	public String getSbiVersionUp() {
-		return sbiVersionUp;
-	}
-
-	public void setSbiVersionUp(String sbiVersionUp) {
-		this.sbiVersionUp = sbiVersionUp;
-	}
-
-	public String getSbiVersionDe() {
-		return sbiVersionDe;
-	}
-
-	public void setSbiVersionDe(String sbiVersionDe) {
-		this.sbiVersionDe = sbiVersionDe;
-	}
-
-	public String getMetaVersion() {
-		return metaVersion;
-	}
-
-	public void setMetaVersion(String metaVersion) {
-		this.metaVersion = metaVersion;
-	}
-
-	public String getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
-
-	public Date getTimeIn() {
-		return timeIn;
-	}
-
-	public void setTimeIn(Date timeIn) {
-		this.timeIn = timeIn;
-	}
-
-	public Date getTimeUp() {
-		return timeUp;
-	}
-
-	public void setTimeUp(Date timeUp) {
-		this.timeUp = timeUp;
-	}
-
-	public Date getTimeDe() {
-		return timeDe;
-	}
-
-	public void setTimeDe(Date timeDe) {
-		this.timeDe = timeDe;
-	}
-	
 }

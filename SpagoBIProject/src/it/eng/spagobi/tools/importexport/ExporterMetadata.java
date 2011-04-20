@@ -471,10 +471,8 @@ public class ExporterMetadata {
 				dsConfig.setLabel(dataSet.getLabel());
 				dsConfig.setDescription(dataSet.getDescription());
 				dsConfig.setName(dataSet.getName());	
-				dsConfig.setTimeIn(currentTStamp);
 				
 				//TODO modificare questo campo con quello corretto
-				dsConfig.setUserIn("biadmin");	
 				hibDataSet.setUserIn("biadmin");
 				
 				//TODO aggiungere anche questi campi
@@ -506,7 +504,7 @@ public class ExporterMetadata {
 	
 				Integer dsId =(Integer) session.save(dsConfig);
 				dsConfig.setDsId(dsId);
-				hibDataSet.setDsId(dsConfig);
+				hibDataSet.setSbiDsConfig(dsConfig);
 				
 				session.save(hibDataSet);
 				

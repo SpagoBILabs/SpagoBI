@@ -31,7 +31,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 public class SbiDataSetHistory {
 	private int dsHId;	
 	private boolean active = true;
-	private SbiDataSetConfig dsId =null;
+	private SbiDataSetConfig sbiDsConfig =null;
 	private int versionNum;
 
 	private SbiDomains category  = null;
@@ -73,12 +73,12 @@ public class SbiDataSetHistory {
 		this.dsHId = dsHId;
 	}
 
-	public SbiDataSetConfig getDsId() {
-		return dsId;
+	public SbiDataSetConfig getSbiDsConfig() {
+		return sbiDsConfig;
 	}
 
-	public void setDsId(SbiDataSetConfig dsId) {
-		this.dsId = dsId;
+	public void setSbiDsConfig(SbiDataSetConfig sbiDsConfig) {
+		this.sbiDsConfig = sbiDsConfig;
 	}
 
 	public String getUserIn() {
