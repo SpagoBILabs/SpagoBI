@@ -156,6 +156,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 	        width: 350,
 	        height: 200,
 	        frame: true,
+	        autoscroll: true,
 	        //clicksToEdit: 2,
 	        tbar: tb
 	    };
