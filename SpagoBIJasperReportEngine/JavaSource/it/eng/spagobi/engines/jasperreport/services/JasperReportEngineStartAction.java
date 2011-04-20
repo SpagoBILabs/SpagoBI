@@ -37,7 +37,9 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @authors
+ * Andrea Gioia (andrea.gioia@eng.it)
+ * Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 	
@@ -106,7 +108,7 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
         	
         	
         	
-        	engineInstance.runReport(reportFile);
+        	engineInstance.runReport(reportFile, servletIOManager.getRequest());
         	
         	   
         	servletIOManager.writeBackToClient(200, reportFile, true, "report." + outputType, JasperReportEngine.getConfig().getMIMEType(outputType));
