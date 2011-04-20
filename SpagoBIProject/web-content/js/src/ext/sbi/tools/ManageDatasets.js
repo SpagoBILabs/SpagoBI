@@ -221,7 +221,11 @@ Ext.extend(
 						qbeSQLQuery : values['qbeSQLQuery'],
 						qbeJSONQuery : values['qbeJSONQuery'],
 						qbeDataSource: values['qbeDataSource'],
-						qbeDatamarts: values['qbeDatamarts']
+						qbeDatamarts: values['qbeDatamarts'],
+						userIn: values['userIn'],
+						dateIn: values['dateIn'],
+						versNum: values['versNum'],
+						versId: values['versId']
 					};
 					arrayPars = this.parsGrid.getParametersValues();
 					if (arrayPars) {
@@ -249,7 +253,7 @@ Ext.extend(
 							'pivotColName', 'pivotColValue',
 							'pivotRowName', 'pivotIsNumRows', 'dsVersions',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
-							'qbeDatamarts'];
+							'qbeDatamarts',	'userIn','dateIn','versNum','versId'];
 
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 							{	id : 0,
@@ -261,7 +265,7 @@ Ext.extend(
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
-								dsVersions : []
+								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:''
 							});
 
 					this.configurationObject.gridColItems = [ {
@@ -314,6 +318,26 @@ Ext.extend(
 						name : 'id',
 						hidden : true
 					};
+					
+					var detailFieldUserIn = {
+							name : 'userIn',
+							hidden : true
+						};
+					
+					var detailFieldDateIn = {
+							name : 'dateIn',
+							hidden : true
+						};
+					
+					var detailFieldVersNum = {
+							name : 'versNum',
+							hidden : true
+						};
+					
+					var detailFieldVersId = {
+							name : 'versId',
+							hidden : true
+						};
 
 					var detailFieldName = {
 						maxLength : 40,	minLength : 1, width : 200,
@@ -363,7 +387,7 @@ Ext.extend(
 							{	id : 'man-vers',
 								title : LN('sbi.ds.versionPanel'),
 								layout : 'form',
-								autoScroll : false,
+								autoScroll : true,
 								style : {
 									"margin-left" : "10px",
 									"margin-top" : "10px",
@@ -396,8 +420,11 @@ Ext.extend(
 												: "-13px")
 												: "0"
 									},
-									items : [ detailFieldId, detailFieldLabel, detailFieldName,
-											detailFieldDescr, detailFieldCatType, this.manageDsVersionsPanel ]
+									items : [ 
+									        detailFieldLabel, detailFieldName,
+											detailFieldDescr, detailFieldCatType, this.manageDsVersionsPanel ,
+											detailFieldUserIn,detailFieldDateIn,detailFieldVersNum,detailFieldVersId,detailFieldId
+											]
 								}
 							});
 				}
@@ -1011,7 +1038,11 @@ Ext.extend(
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
-								dsVersions : []
+								dsVersions : [],
+								userIn: '',
+								dateIn: '',
+								versNum: 2,
+								versId: 0
 							});
 					this.getForm().loadRecord(this.newRecord);
 					this.manageParsGrid.loadItems([]);
@@ -1076,7 +1107,11 @@ Ext.extend(
 						qbeSQLQuery : values['qbeSQLQuery'],
 						qbeJSONQuery : values['qbeJSONQuery'],
 						qbeDataSource: values['qbeDataSource'],
-						qbeDatamarts: values['qbeDatamarts']
+						qbeDatamarts: values['qbeDatamarts'],
+						userIn: values['userIn'],
+						dateIn: values['dateIn'],
+						versNum: values['versNum'],
+						versId: values['versId']
 					});
 					return newRec;
 				}	
@@ -1105,7 +1140,11 @@ Ext.extend(
 							qbeSQLQuery : values['qbeSQLQuery'],
 							qbeJSONQuery : values['qbeJSONQuery'],
 							qbeDataSource: values['qbeDataSource'],
-							qbeDatamarts: values['qbeDatamarts']
+							qbeDatamarts: values['qbeDatamarts'],
+							userIn: values['userIn'],
+							dateIn: values['dateIn'],
+							versNum: values['versNum'],
+							versId: values['versId']
 						};
 					return params;
 				}
@@ -1134,6 +1173,10 @@ Ext.extend(
 					record.set('qbeJSONQuery',values['qbeJSONQuery']);
 					record.set('qbeDataSource',values['qbeDataSource']);
 					record.set('qbeDatamarts',values['qbeDatamarts']);
+					record.set('userIn',values['userIn']);
+					record.set('dateIn',values['dateIn']);
+					record.set('versNum',values['versNum']);
+					record.set('versId',values['versId']);
 				}
 				
 				// OVERRIDING save method
@@ -1142,22 +1185,32 @@ Ext.extend(
 					var values = this.getForm().getFieldValues();
 					var idRec = values['id'];
 					var newRec;
+					var newDsVersion;
 					var isNewRec = false;
 
 					if (idRec == 0 || idRec == null || idRec === '') {
-						//newRec = this.buildNewRecordToSave(values);
 						this.updateNewRecord(this.newRecord,values);
 						isNewRec = true;
 					}else{
 						var record;
+						var oldType;
 						var length = this.mainElementsStore.getCount();
 						for(var i=0;i<length;i++){
 				   	        var tempRecord = this.mainElementsStore.getAt(i);
 				   	        if(tempRecord.data.id==idRec){
 				   	        	record = tempRecord;
+				   	        	oldType = record.get('dsTypeCd');
 							}			   
 				   	    }	
 						this.updateNewRecord(record,values);
+						newDsVersion = new Ext.data.Record(
+								{	dsId: values['id'],
+									dateIn : values['dateIn'],
+									userIn : values['userIn'],
+									versId : values['versId'],
+									type : oldType, 
+									versNum : values['versNum']
+								});
 					}
 
 					var params = this.buildParamsToSendToServer(values);
@@ -1166,7 +1219,6 @@ Ext.extend(
 					if (arrayPars) {
 						params.pars = Ext.util.JSON.encode(arrayPars);
 						if (isNewRec) {
-							//newRec.set('pars', arrayPars);
 							this.newRecord.set('pars',arrayPars);
 						}
 					}
@@ -1202,21 +1254,19 @@ Ext.extend(
 														&& itemId !== '') {
 		
 													if(this.newRecord != null && this.newRecord != undefined){
-														//this.newRecord.set('id',itemId);
+														
 														var modifRec = this.mainElementsStore.getModifiedRecords()[0];
-														//getById(0);
+													
 														if(modifRec!=null && modifRec!=undefined){
 															modifRec.set('id',itemId);
-															//this.newRecord.set('label',values['label']);
-															//alert(modifRec.toSource());
 															modifRec.commit();
 														}
 													}
-													/*else{
-														alert('else');
-														newRec.set('id',itemId);
-														this.mainElementsStore.add(newRec);
-													}*/
+												}else{
+													if(newDsVersion!= null && newDsVersion != undefined){
+														this.manageDsVersionsGrid.getStore().addSorted(newDsVersion);
+														this.manageDsVersionsGrid.getStore().commitChanges();
+													}
 												}
 												this.mainElementsStore.commitChanges();
 												if (isNewRec

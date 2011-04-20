@@ -143,7 +143,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 				} catch (Throwable e) {
 					logger.error(e.getMessage(), e);
-					throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while saving new resource", e);
+					throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while saving new dataset", e);
 				}
 			}else{
 				logger.error("DataSet name, label or type are missing");

@@ -916,6 +916,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		dsActiveDetail.setParameters(hibDataSet.getParameters());		
 		dsActiveDetail.setDsMetadata(hibDataSet.getDsMetadata());		
 		dsActiveDetail.setUserIn(hibDataSet.getUserIn());
+		dsActiveDetail.setTimeIn(hibDataSet.getTimeIn());
+		dsActiveDetail.setVersionNum(hibDataSet.getVersionNum());
+		dsActiveDetail.setSbiVersionIn(hibDataSet.getSbiVersionIn());
+		dsActiveDetail.setDsHId(hibDataSet.getDsHId());
 
 		ds.setActiveDetail(dsActiveDetail);
 
@@ -990,6 +994,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		dsVersionDetail.setUserIn(hibDataSet.getUserIn());
 		dsVersionDetail.setTimeIn(hibDataSet.getTimeIn());
 		dsVersionDetail.setVersionNum(hibDataSet.getVersionNum());
+		dsVersionDetail.setSbiVersionIn(hibDataSet.getSbiVersionIn());
 		dsVersionDetail.setDsHId(hibDataSet.getDsHId());
 
 		return dsVersionDetail;
@@ -1043,26 +1048,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue());
 		hibNew.setPivotRowName(hibDataSet.getPivotRowName());
-		hibNew.setSbiVersionIn(hibDataSet.getSbiVersionIn());
-		hibNew.setTimeIn(hibDataSet.getTimeIn());
 		hibNew.setTransformer(hibDataSet.getTransformer());
+		hibNew.setSbiVersionIn(hibDataSet.getSbiVersionIn());
 		hibNew.setUserIn(hibDataSet.getUserIn());
+		hibNew.setTimeIn(hibDataSet.getTimeIn());
 		hibNew.setVersionNum(hibDataSet.getVersionNum());
+		hibNew.setDsHId(hibDataSet.getDsHId());
 
 		logger.debug("OUT");
 		return hibNew;
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 
 	/**

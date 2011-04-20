@@ -146,7 +146,12 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(DS_OLD_VERSIONS, versionsListJSON);	
 			
-			result.put(DS_TYPE_CD, dsDetail.getDsType());		
+			result.put(DS_TYPE_CD, dsDetail.getDsType());	
+			
+			result.put(USER_IN, dsDetail.getUserIn());
+			result.put(VERSION_NUM, dsDetail.getVersionNum());
+			result.put(VERSION_ID, dsDetail.getDsHId());
+			result.put(DATE_IN, dsDetail.getTimeIn());
 
 			if(dsDetail instanceof FileDataSetDetail){
 				String fileName = ((FileDataSetDetail)dsDetail).getFileName();
