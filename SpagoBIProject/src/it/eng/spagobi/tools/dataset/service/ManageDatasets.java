@@ -93,8 +93,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		IDataSetDAO dsDao;
+		IEngUserProfile profile = getUserProfile();
 		try {
 			dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(profile);
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

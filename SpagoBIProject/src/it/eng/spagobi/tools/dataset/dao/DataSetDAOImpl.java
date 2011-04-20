@@ -25,8 +25,6 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.kpi.config.bo.Kpi;
-import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -174,7 +172,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			tx = aSession.beginTransaction();
 
 			if(dsID!=null){
-				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 				hibQuery.setBoolean(0, false);
 				hibQuery.setInteger(1, dsID);	
 				List toBeDeleted = hibQuery.list();
@@ -323,27 +321,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				dsConfig.setLabel(dataSet.getLabel());
 				dsConfig.setDescription(dataSet.getDescription());
 				dsConfig.setName(dataSet.getName());	
-				dsConfig.setTimeIn(currentTStamp);
+				updateSbiCommonInfo4Insert(dsConfig);
 
-				//TODO modificare questo campo con quello corretto
-				dsConfig.setUserIn("biadmin");	
-				hibDataSet.setUserIn("biadmin");
-
-				//TODO aggiungere anche questi campi
-				/*dsConfig.setMetaVersion(metaVersion);
-				dsConfig.setOrganization(organization);
-				dsConfig.setSbiVersionDe(sbiVersionDe);
-				dsConfig.setSbiVersionIn(sbiVersionIn);
-				dsConfig.setSbiVersionUp(sbiVersionUp);
-				dsConfig.setTimeDe(timeDe);			
-				dsConfig.setTimeUp(timeUp);
-				dsConfig.setUserDe(userDe);				
-				dsConfig.setUserUp(userUp);
-
-				hibDataSet.setSbiVersionIn(sbiVersionIn);*/			
-
+				String userIn = dsConfig.getCommonInfo().getUserIn();
+				String sbiVersionIn = dsConfig.getCommonInfo().getSbiVersionIn();
+				hibDataSet.setUserIn(userIn);
+				hibDataSet.setSbiVersionIn(sbiVersionIn);		
 				hibDataSet.setVersionNum(1);
-				hibDataSet.setTimeIn(currentTStamp);		
+				hibDataSet.setTimeIn(currentTStamp);	
+				
 				hibDataSet.setActive(true);			
 
 				hibDataSet.setTransformer(transformer);
@@ -358,7 +344,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				Integer dsId =(Integer) aSession.save(dsConfig);
 				dsConfig.setDsId(dsId);
-				hibDataSet.setDsId(dsConfig);
+				hibDataSet.setSbiDsConfig(dsConfig);
 
 				aSession.save(hibDataSet);
 
@@ -394,17 +380,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			tx = aSession.beginTransaction();
 			if(dsId!=null && dsVersion!=null){
 
-				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
 				dsActiveDetail.setActive(false);
 
-				Query hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.versionNum = ? and h.dsId = ?" );
+				Query hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.versionNum = ? and h.sbiDsConfig = ?" );
 				hibernateQuery.setInteger(0, dsVersion);
 				hibernateQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsDetail =(SbiDataSetHistory)hibernateQuery.uniqueResult();
 				dsDetail.setActive(true);
+				
+				if(dsActiveDetail.getSbiDsConfig()!=null){
+					SbiDataSetConfig hibDs = dsActiveDetail.getSbiDsConfig();
+					updateSbiCommonInfo4Update(hibDs);
+					aSession.update(hibDs);
+				}
+				
+				if(dsDetail.getSbiDsConfig()!=null){
+					SbiDataSetConfig hibDs = dsDetail.getSbiDsConfig();
+					updateSbiCommonInfo4Update(hibDs);
+					aSession.update(hibDs);
+				}
 
 				aSession.update(dsActiveDetail);
 				aSession.update(dsDetail);
@@ -437,7 +435,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			if(dsId!=null){			
-				Query hibQuery = aSession.createQuery("select max(h.versionNum) from SbiDataSetHistory h where h.dsId = ?" );
+				Query hibQuery = aSession.createQuery("select max(h.versionNum) from SbiDataSetHistory h where h.sbiDsConfig = ?" );
 				hibQuery.setInteger(0, dsId);	
 				toReturn =(Integer)hibQuery.uniqueResult();
 			}
@@ -576,36 +574,24 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setParameters(dsActiveDetailToSet.getParameters());
 				hibDataSet.setDsMetadata(dsActiveDetailToSet.getDsMetadata());
 
-				//TODO modificare questo campo con quello corretto				
-				hibDataSet.setUserIn("biadmin");
-
 				SbiDataSetConfig hibGenericDataSet = (SbiDataSetConfig) aSession.load(SbiDataSetConfig.class,dsId);					
 				hibGenericDataSet.setLabel(dataSet.getLabel());
 				hibGenericDataSet.setDescription(dataSet.getDescription());
 				hibGenericDataSet.setName(dataSet.getName());	
-				hibGenericDataSet.setTimeUp(currentTStamp);
-				//TODO modificare questo campo con quello corretto				
-				hibGenericDataSet.setUserUp("biadmin");
+				
+				updateSbiCommonInfo4Update(hibGenericDataSet);
+
+				String userUp = hibGenericDataSet.getCommonInfo().getUserUp();
+				String sbiVersionUp = hibGenericDataSet.getCommonInfo().getSbiVersionUp();
+				hibDataSet.setUserIn(userUp);
+				hibDataSet.setSbiVersionIn(sbiVersionUp);	
+				hibDataSet.setTimeIn(currentTStamp);
 
 				Integer currenthigherVersion = getHigherVersionNumForDS(dsId);
 				Integer newVersion = currenthigherVersion+1;
-
 				hibDataSet.setVersionNum(newVersion);
 
-				//TODO aggiungere anche questi campi
-				/*hibGenericDataSet.setMetaVersion(metaVersion);
-				hibGenericDataSet.setOrganization(organization);
-				hibGenericDataSet.setSbiVersionDe(sbiVersionDe);
-				hibGenericDataSet.setSbiVersionIn(sbiVersionIn);
-				hibGenericDataSet.setSbiVersionUp(sbiVersionUp);
-				hibGenericDataSet.setTimeDe(timeDe);	
-				hibGenericDataSet.setUserDe(userDe);	
-
-				hibDataSet.setSbiVersionIn(sbiVersionIn);*/			
-
-
-
-				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+				Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
@@ -613,7 +599,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				aSession.update(dsActiveDetail);
 
 				aSession.update(hibGenericDataSet);
-				hibDataSet.setDsId(hibGenericDataSet);				
+				hibDataSet.setSbiDsConfig(hibGenericDataSet);				
 				aSession.save(hibDataSet);
 
 				tx.commit();
@@ -721,9 +707,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					GuiGenericDataSet ds = toDataSet(hibDataSet);
 					List<GuiDataSetDetail> oldDsVersion = new ArrayList();
 
-					if(hibDataSet.getDsId()!=null){
-						Integer dsId = hibDataSet.getDsId().getDsId();
-						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+					if(hibDataSet.getSbiDsConfig()!=null){
+						Integer dsId = hibDataSet.getSbiDsConfig().getDsId();
+						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);	
 
@@ -795,7 +781,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						: resultNumber.intValue();
 			}
 
-			hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? order by h.dsId.name " );
+			hibernateQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? order by h.sbiDsConfig.name " );
 			hibernateQuery.setBoolean(0, true);
 			hibernateQuery.setFirstResult(offset);
 			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
@@ -809,9 +795,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					GuiGenericDataSet ds = toDataSet(hibDataSet);
 					List<GuiDataSetDetail> oldDsVersion = new ArrayList();
 
-					if(hibDataSet.getDsId()!=null){
-						Integer dsId = hibDataSet.getDsId().getDsId();
-						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+					if(hibDataSet.getSbiDsConfig()!=null){
+						Integer dsId = hibDataSet.getSbiDsConfig().getDsId();
+						Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);	
 
@@ -905,15 +891,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.debug("JClass dataset");
 		}
 
-		if(hibDataSet.getDsId()!=null){
-			ds.setDsId(hibDataSet.getDsId().getDsId());
-			ds.setName(hibDataSet.getDsId().getName());
-			ds.setLabel(hibDataSet.getDsId().getLabel());
-			ds.setDescription(hibDataSet.getDsId().getDescription());	
+		if(hibDataSet.getSbiDsConfig()!=null){
+			ds.setDsId(hibDataSet.getSbiDsConfig().getDsId());
+			ds.setName(hibDataSet.getSbiDsConfig().getName());
+			ds.setLabel(hibDataSet.getSbiDsConfig().getLabel());
+			ds.setDescription(hibDataSet.getSbiDsConfig().getDescription());	
 			ds.setMetaVersion(hibDataSet.getMetaVersion());
 			ds.setUserIn(hibDataSet.getUserIn());
 			ds.setTimeIn(new Date());
-			dsActiveDetail.setDsId(hibDataSet.getDsId().getDsId());
+			dsActiveDetail.setDsId(hibDataSet.getSbiDsConfig().getDsId());
 
 		}
 
@@ -1276,7 +1262,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 			hibQueryHistory.setBoolean(0, true);
 			hibQueryHistory.setInteger(1, dsId);	
 			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
@@ -1327,7 +1313,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h, SbiDataSetConfig d where h.active = ? and d.label = ? and d.dsId = h.dsId" );
+			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h, SbiDataSetConfig d where h.active = ? and d.label = ? and d.dsId = h.sbiDsConfig" );
 			hibQueryHistory.setBoolean(0, true);
 			hibQueryHistory.setString(1, dsLabel);	
 			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
@@ -1381,7 +1367,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+			Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);	
 			SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
@@ -1428,7 +1414,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Integer dsId = hibDS.getDsId();
 
-			Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.dsId = ?" );
+			Query hibQuery = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, dsId);	
 			SbiDataSetHistory dsActiveDetail =(SbiDataSetHistory)hibQuery.uniqueResult();
@@ -1534,11 +1520,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((JavaClassDataSet)ds).setClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
 		}
 
-		if(hibDataSet.getDsId()!=null){
-			ds.setId(hibDataSet.getDsId().getDsId());
-			ds.setName(hibDataSet.getDsId().getName());
-			ds.setLabel(hibDataSet.getDsId().getLabel());
-			ds.setDescription(hibDataSet.getDsId().getDescription());	
+		if(hibDataSet.getSbiDsConfig()!=null){
+			ds.setId(hibDataSet.getSbiDsConfig().getDsId());
+			ds.setName(hibDataSet.getSbiDsConfig().getName());
+			ds.setLabel(hibDataSet.getSbiDsConfig().getLabel());
+			ds.setDescription(hibDataSet.getSbiDsConfig().getDescription());	
 		}
 
 		ds.setTransformerId((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueId());

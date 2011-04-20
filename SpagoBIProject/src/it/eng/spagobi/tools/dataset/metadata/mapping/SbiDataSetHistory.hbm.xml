@@ -12,7 +12,7 @@
    </generator>
         </id>
 		<discriminator column="OBJECT_TYPE" type="string"/>   
-		<many-to-one name="dsId" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig">
+		<many-to-one name="sbiDsConfig" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig">
             <column name="DS_ID" not-null="false"/>
         </many-to-one>   
         <property name="active" type="boolean">
