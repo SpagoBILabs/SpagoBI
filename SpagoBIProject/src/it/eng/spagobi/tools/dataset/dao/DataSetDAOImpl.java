@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -1091,6 +1092,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			dsActiveDetail.setDsType(JDBC_DS_TYPE);
 		}
+		
+		if(iDataSet instanceof QbeDataSet){			
+			dsActiveDetail = new QbeDataSetDetail();
+			QbeDataSetDetail aQbeDataSetDetail = (QbeDataSetDetail) dsActiveDetail;
+			QbeDataSet aQbeDataSet = (QbeDataSet) iDataSet;
+			aQbeDataSetDetail.setJsonQuery(aQbeDataSet.getJsonQuery());
+			aQbeDataSetDetail.setDatamarts(aQbeDataSet.getDatamarts());
+			IDataSource iDataSource = aQbeDataSet.getDataSource();
+			if (iDataSource!=null){
+				String dataSourceLabel = iDataSource.getLabel();
+				aQbeDataSetDetail.setDataSourceLabel(dataSourceLabel);
+			}
+			dsActiveDetail.setDsType(QBE_DS_TYPE);
+		}
 
 		if(iDataSet instanceof WebServiceDataSet){			
 			dsActiveDetail=new WSDataSetDetail();
@@ -1518,6 +1533,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		if(hibDataSet instanceof SbiJClassDataSet){			
 			ds=new JavaClassDataSet();
 			((JavaClassDataSet)ds).setClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+		}
+		
+		if (hibDataSet instanceof SbiQbeDataSet) {			
+			ds = new QbeDataSet();
+			SbiQbeDataSet aSbiQbeDataSet = (SbiQbeDataSet) hibDataSet;
+			QbeDataSet qbeDataset = (QbeDataSet) ds;
+			qbeDataset.setJsonQuery(aSbiQbeDataSet.getJsonQuery());
+			qbeDataset.setDatamarts(aSbiQbeDataSet.getDatamarts());
+			
+			SbiDataSource sbids = aSbiQbeDataSet.getDataSource();
+			DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+			IDataSource dataSource = dataSourceDao.toDataSource(sbids);
+			qbeDataset.setDataSource(dataSource);
+			
 		}
 
 		if(hibDataSet.getSbiDsConfig()!=null){

@@ -883,7 +883,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	
 	,
 	getParameters: function () {
-		this.documentParametersGridPanel.getParameters();
+		return this.documentParametersGridPanel.getParameters();
 	}
 	
 	,
