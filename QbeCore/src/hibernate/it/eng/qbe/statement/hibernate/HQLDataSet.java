@@ -65,7 +65,10 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			session = ((IHibernateDataSource)statement.getDataSource()).getHibernateSessionFactory().openSession();
 			
 			Query query = this.statement.getQuery();
-			this.updateParameters(query, this.getParamsMap());
+			Map params = this.getParamsMap();
+			if (params != null && !params.isEmpty()) {
+				this.updateParameters(query, params);
+			}
 			
 			// execute query
 			hibernateQuery = session.createQuery( statement.getQueryString() );
@@ -181,11 +184,13 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			WhereField whereField = (WhereField) whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				String key = getParameterKey(whereField.getRightOperand().values[0]);
-				String parameterValues = (String) parameters.get(key);
-				if (parameterValues != null) {
-					String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
-					whereField.getRightOperand().lastValues = promptValues;
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+						whereField.getRightOperand().lastValues = promptValues;
+					}
 				}
 			}
 		}
@@ -195,11 +200,13 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			HavingField havingField = (HavingField) havingFieldsIt.next();
 			if (havingField.isPromptable()) {
 				String key = getParameterKey(havingField.getRightOperand().values[0]);
-				String parameterValues = (String) parameters.get(key);
-				if (parameterValues != null) {
-					String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
-					havingField.getRightOperand().lastValues = promptValues; 
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+						havingField.getRightOperand().lastValues = promptValues; 
+					}
 				}
 			}
 		}

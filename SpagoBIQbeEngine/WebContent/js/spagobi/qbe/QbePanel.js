@@ -204,14 +204,6 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		return this.queryEditorPanel.getQueries();
 	}
 	
-	, getQueriesCatalogue: function () {
-		var toReturn = {};
-		toReturn.catalogue = {};
-		toReturn.catalogue.queries = this.getQueries();
-		toReturn.version = Sbi.config.qbeEngineAnalysisStateVersion;
-		return toReturn;
-	}
-    
     // private methods
 	, loadFirstQuery: function() {
 		Ext.Ajax.request({
@@ -367,12 +359,20 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
   	
 	,
 	getParameters: function () {
-		this.queryEditorPanel.getParameters();
+		return this.queryEditorPanel.getParameters();
 	}
 	
 	,
 	setParameters: function (parameters) {
 		this.queryEditorPanel.setParameters(parameters);
+	}
+	
+	, getQueriesCatalogue: function () {
+		var toReturn = {};
+		toReturn.catalogue = {};
+		toReturn.catalogue.queries = this.getQueries();
+		toReturn.version = Sbi.config.qbeEngineAnalysisStateVersion;
+		return toReturn;
 	}
 	
 	,
