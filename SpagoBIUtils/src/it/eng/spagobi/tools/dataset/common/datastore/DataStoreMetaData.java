@@ -128,7 +128,8 @@ public class DataStoreMetaData implements IDataStoreMetaData {
 	public void addFiedMeta(IFieldMetaData fieldMetaData) {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
-		name2IndexMap.put(fieldMetaData.getName().toUpperCase(), fieldIndex);
+		String fieldKey = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
+		name2IndexMap.put(fieldKey.toUpperCase(), fieldIndex);
 	}
 
 	public String toString() {
