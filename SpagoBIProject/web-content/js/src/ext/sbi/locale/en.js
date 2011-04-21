@@ -616,6 +616,6 @@ Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Domain name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Label';
 Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Description';
-Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'State';
+Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Active';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Value check';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Type';

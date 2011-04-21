@@ -177,8 +177,7 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 						params : params,
 						// method: 'GET',
 						success : function(response, options) {
-						 	response = Ext.util.JSON.decode( response.responseText );
-							alert(response.VALUE_ID); 
+						 	response = Ext.util.JSON.decode( response.responseText ); 
 						    var index = this.store.find( "VALUE_ID", response.VALUE_ID );
 						    var record =  this.store.getAt(  index ) ;
 						    if(record) this.store.remove(record);						    
@@ -300,7 +299,6 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			params : p,
 			method : 'POST',
 			success : function(response, options) {
-				alert('Salvataggio ok: ' + response.responseText);
 				var jsonResponse = Ext.util.JSON.decode(response.responseText);
 				record.set('VALUE_ID', jsonResponse.VALUE_ID);
 				record.commit();

@@ -228,14 +228,24 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     	Config toSave = null;
     	Session aSession = null;
     	Transaction tx = null;
-
+   	
     	try {
     		aSession = getSession();
     		tx = aSession.beginTransaction();
-    				
-    		aSession.save(this.fromConfig(config));
-    		updateSbiCommonInfo4Insert(this.fromConfig(config));
-    		tx.commit();
+    		
+    		if (config.getId() == null) {
+    			logger.debug("insert new config");	
+    			
+    			SbiConfig sbiConfig = this.fromConfig(config);
+	    		aSession.save(sbiConfig);
+	    		config.setId(sbiConfig.getId());
+	    		updateSbiCommonInfo4Insert(sbiConfig);
+	    		tx.commit();
+    		}
+    		else{
+    			logger.debug("update config");
+    			this.updateConfig(config);
+    		}
     	
     	} catch (HibernateException he) {
     		logException(he);
