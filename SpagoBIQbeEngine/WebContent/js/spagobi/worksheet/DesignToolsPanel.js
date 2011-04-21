@@ -41,9 +41,9 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.DesignToolsPanel = function(config) { 
+Sbi.worksheet.DesignToolsPanel = function(config) { 
 
 	this.initPanels();
 	var c ={
@@ -53,19 +53,19 @@ Sbi.adhoc.DesignToolsPanel = function(config) {
             },
             items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	}
-	Sbi.adhoc.DesignToolsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.DesignToolsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.DesignToolsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.DesignToolsPanel, Ext.Panel, {
 	designToolsFieldsPanel: null,
 	designToolsPallettePanel: null,
 	designToolsLayoutPanel: null,
 
 	initPanels: function(){
-		this.designToolsFieldsPanel = new Sbi.adhoc.DesignToolsFieldsPanel();
-		this.designToolsPallettePanel = new Sbi.adhoc.DesignToolsPallettePanel();
-		this.designToolsLayoutPanel = new Sbi.adhoc.DesignToolsLayoutPanel();
+		this.designToolsFieldsPanel = new Sbi.worksheet.DesignToolsFieldsPanel();
+		this.designToolsPallettePanel = new Sbi.worksheet.DesignToolsPallettePanel();
+		this.designToolsLayoutPanel = new Sbi.worksheet.DesignToolsLayoutPanel();
 		this.designToolsFieldsPanel.flex = 1;
 		this.designToolsPallettePanel.flex = 1;
 		this.designToolsLayoutPanel.flex = 1;

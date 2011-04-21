@@ -41,15 +41,15 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.DesignToolsPallettePanel = function(config) { 
+Sbi.worksheet.DesignToolsPallettePanel = function(config) { 
 
 	var c ={
 			html: 'ciao'
 	}
-	Sbi.adhoc.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.DesignToolsPallettePanel, Ext.Panel, {});
+Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {});

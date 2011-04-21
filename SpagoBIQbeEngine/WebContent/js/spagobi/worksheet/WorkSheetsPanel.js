@@ -41,9 +41,9 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.WorkSheetsPanel = function(config) { 
+Sbi.worksheet.WorkSheetsPanel = function(config) { 
 
 	this.initPanels();
 	var c ={
@@ -73,16 +73,16 @@ Sbi.adhoc.WorkSheetsPanel = function(config) {
 	}; 
 		
 	c=	Ext.apply({}, config || {}, c);
-	Sbi.adhoc.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.WorkSheetsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.WorkSheetsPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
 
 	initPanels: function(){
-		this.designToolsPanel = new Sbi.adhoc.DesignToolsPanel();
-		this.sheetsContainerPanel = new Sbi.adhoc.SheetsContainerPanel();
+		this.designToolsPanel = new Sbi.worksheet.DesignToolsPanel();
+		this.sheetsContainerPanel = new Sbi.worksheet.SheetsContainerPanel();
 	}
 });

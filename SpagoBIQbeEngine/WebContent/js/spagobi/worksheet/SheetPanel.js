@@ -41,9 +41,9 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.SheetPanel = function(config) { 
+Sbi.worksheet.SheetPanel = function(config) { 
 
 	this.initPanels();
 	
@@ -56,11 +56,11 @@ Sbi.adhoc.SheetPanel = function(config) {
 	}
 	
 	c = Ext.apply(config,c);
-	Sbi.adhoc.SheetPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.SheetPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.SheetPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	titlePanel: null,
 	contentPanel: null,
 	footerPanel: null,
@@ -68,9 +68,9 @@ Ext.extend(Sbi.adhoc.SheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		
-		this.titlePanel = new Sbi.adhoc.SheetTitlePanel({title: true, img:true});
+		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({title: true, img:true});
 		this.contentPanel = new Ext.Panel();
-		this.footerPanel  = new Sbi.adhoc.SheetTitlePanel({title: true});
+		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({title: true});
 		
 		this.titlePanel.flex = 1;
 		this.contentPanel.flex = 4;
