@@ -185,6 +185,19 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='js/spagobi/dataset/ParametersGridPanel.js'/></script>
 
+
+
+
+<script type="text/javascript" src='js/spagobi/worksheet/SheetsContainerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsPallettePanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsLayoutPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsFieldsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/SheetPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/SheetTitlePanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/WorkSheetsPanel.js'/></script>
+	                                                         WorkSheetsPanel(
+
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
@@ -255,24 +268,10 @@ END-PRODUCTION -->
 	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
-	
-	        	var parametersStore = new Sbi.qbe.DocumentParametersStore({});
-	        	var parametersInfo = [];	        	
-	        	parametersStore.loadData(parametersInfo);
-	        	
-	       		qbeConfig.documentParametersStore = parametersStore;
-
-	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
-	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
-	       		qbeConfig.displayCrosstabDesignerPanel = Sbi.user.isPowerUser;
-	       		qbeConfig.displayFormBuilderPanel = false;
-	       		
-	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
-	           	var viewport = new Ext.Viewport(qbe);  
+	        	var workSheetPanel = new Sbi.adhoc.WorkSheetsPanel({});
+	           	var viewport = new Ext.Viewport(workSheetPanel);  
 	           	
-	           		qbe.queryEditorPanel.selectGridPanel.dropTarget = new Sbi.qbe.SelectGridDropTarget(qbe.queryEditorPanel.selectGridPanel); 
-	           		qbe.queryEditorPanel.filterGridPanel.dropTarget = new Sbi.qbe.FilterGridDropTarget(qbe.queryEditorPanel.filterGridPanel);
-	           		qbe.queryEditorPanel.havingGridPanel.dropTarget = new Sbi.qbe.HavingGridDropTarget(qbe.queryEditorPanel.havingGridPanel);
+	           		
 
 	         	
 	           	
