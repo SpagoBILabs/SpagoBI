@@ -191,11 +191,11 @@
 			title="#menu.Configuration">
 		<ITEM	title="#menu.Domain"
 				functionality="DomainManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=FUNCTIONALITIES_OPERATION"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
 		<ITEM	title="#menu.Config"
 				functionality="ConfigManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CONFIG_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
 	</ITEM>
 

@@ -35,10 +35,11 @@ public class ConfigJSONSerializer implements Serializer {
 	public static final String CONFIG_CODE = "CONFIG_CD";
 	public static final String CONFIG_NAME = "CONFIG_NM";
 	
-	public static final String VALUE_ID = "VALUE_ID";
-	public static final String VALUE_CODE = "VALUE_CD";
-	public static final String VALUE_NAME = "VALUE_NM";
-	public static final String VALUE_DECRIPTION = "VALUE_DS";
+	public static final String VALUE_ID = "ID";
+	public static final String VALUE_CODE = "LABEL";
+	public static final String VALUE_NAME = "NAME";
+	public static final String VALUE_DECRIPTION = "DESCRIPTION";
+	public static final String IS_ACTIVE = "IS_ACTIVE";
 	public static final String VALUE_CHECK = "VALUE_CHECK";
 	public static final String VALUE_TYPE = "VALUE_TYPE";
 	
@@ -60,6 +61,7 @@ public class ConfigJSONSerializer implements Serializer {
 			result.put(VALUE_CODE, config.getLabel()); // REPORT
 			result.put(VALUE_NAME, config.getName()); // ex. Report
 			result.put(VALUE_DECRIPTION, config.getDescription()); // Basic business intelligence objects type
+			result.put(IS_ACTIVE, config.isActive());
 			result.put(VALUE_CHECK, config.getValueCheck());
 			result.put(VALUE_TYPE, config.getValueTypeId());
 		} catch (Throwable t) {
