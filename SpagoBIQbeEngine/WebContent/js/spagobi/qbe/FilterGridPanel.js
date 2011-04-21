@@ -582,7 +582,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		          
 		       }
 			   , hideable: true
-		       , hidden: true
+		       , hidden: (this.enableRowRemoveBtn === false)
 		       , width: 50
 		    }, this.columns['deleteButton'] || {}));
 		    
