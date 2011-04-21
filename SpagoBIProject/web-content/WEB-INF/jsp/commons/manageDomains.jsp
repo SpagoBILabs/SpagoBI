@@ -19,27 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
-<%@ page import="it.eng.spagobi.commons.bo.Domain,
-				 java.util.ArrayList,
-				 java.util.List,
-				 org.json.JSONArray" %>
-<%
-    List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
-    List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
-	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
-	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
-	List udpListCd = (List) aSessionContainer.getAttribute("udpKpiList");
-
-	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
-
-%>
-
-
-<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
-<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
-<%@page import="org.json.JSONObject"%>
-
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 
@@ -60,15 +39,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	Ext.onReady(function(){
 		Ext.QuickTips.init();
-		//var manageKpis = new Sbi.kpi.ManageKpis(config);
-		var manageKpis = new Sbi.domain.ManageDomains({});
+
+		var manageDomains = new Sbi.domain.ManageDomains({});
 		var viewport = new Ext.Viewport({
 			layout: 'border'
 			, items: [
 			    {
 			       region: 'center',
 			       layout: 'fit',
-			       items: [manageKpis]
+			       items: [manageDomains]
 			    }
 			]
 	

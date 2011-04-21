@@ -42,33 +42,27 @@
 					value="CONFIG_SAVE" />
 			</CONDITIONS>
 			<FIELDS>
-				<FIELD name="CONFIG_CD" label="#config.definitionForm.fields.config_cd">
-					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
-				</FIELD>
-				<FIELD name="CONFIG_NM" label="#config.definitionForm.fields.config_nm">
-					<VALIDATOR validatorName="MANDATORY" />
-					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
-					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
-				</FIELD>
-				<FIELD name="VALUE_ID" label="#config.definitionForm.fields.value_id">
+				<FIELD name="ID" label="#config.definitionForm.fields.id">
 					<VALIDATOR validatorName="NUMERIC"/>
 				</FIELD>
-				<FIELD name="VALUE_CD" label="#config.definitionForm.fields.value_cd">
+				<FIELD name="LABEL" label="#config.definitionForm.fields.label">
 					<VALIDATOR validatorName="MANDATORY" />
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
 				</FIELD>
-				<FIELD name="VALUE_NM" label="#config.definitionForm.fields.value_nm">
+				<FIELD name="NAME" label="#config.definitionForm.fields.name">
 					<VALIDATOR validatorName="MANDATORY" />
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
 				</FIELD>
-				<FIELD name="VALUE_DS" label="#config.definitionForm.fields.value_ds">
+				<FIELD name="DESCRIPTION" label="#config.definitionForm.fields.description">
 					<VALIDATOR validatorName="MANDATORY" />
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="500" />
+				</FIELD>
+				<FIELD name="IS_ACTIVE" label="#config.definitionForm.fields.isactive">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="BOOLEAN" />
 				</FIELD>
 				<FIELD name="VALUE_CHECK" label="#config.definitionForm.fields.value_check">
 					<VALIDATOR validatorName="MANDATORY" />

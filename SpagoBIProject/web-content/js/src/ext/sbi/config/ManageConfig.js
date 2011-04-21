@@ -268,6 +268,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	initStore : function() {
 
 		var fields = [ {
+			name : 'ID'
+		}, {
 			name : 'LABEL'
 		}, {
 			name : 'NAME'
@@ -295,17 +297,21 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	,
 	saveConfig : function(rowEditor, obj, record, rowIndex) {
 
-		var p = {};
+		/*var p = {};
 		if (record.get('ID') != undefined && record.get('ID') != null && record.get('ID') !== '') {
 			p.VALUE_ID = record.get('ID');
 		}
-
+		
 		p.LABEL = record.get('LABEL');
 		p.NAME = record.get('NAME');
 		p.DESCRIPTION = record.get('DESCRIPTION');
 		p.IS_ACTIVE = record.get('IS_ACTIVE');
 		p.VALUE_CHECK = record.get('VALUE_CHECK');
-		p.VALUE_TYPE = record.get('VALUE_TYPE');
+		p.VALUE_TYPE = record.get('VALUE_TYPE');*/
+		var p = Ext.apply({},record.data);
+		if (record.get('ID') == undefined || record.get('ID') == null || record.get('ID') == '') {
+			delete p.ID;
+		}
 
 		Ext.Ajax.request( {
 			url : this.crudServices['saveItemService'],

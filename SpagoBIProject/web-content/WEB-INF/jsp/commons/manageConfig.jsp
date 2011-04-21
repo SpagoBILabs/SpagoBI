@@ -19,31 +19,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
-<%@ page import="it.eng.spagobi.commons.bo.Config,
-				 java.util.ArrayList,
-				 java.util.List,
-				 org.json.JSONArray" %>
+
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="org.json.JSONArray"%>
+<%@page import="it.eng.spagobi.chiron.serializer.SerializerFactory"%>
+<%@page import="it.eng.spagobi.commons.bo.Domain"%>
+
 <%
-    List thrTypesCd = (List) aSessionContainer.getAttribute("thrTypesList");
-    List thrSeverityTypesCd = (List) aSessionContainer.getAttribute("thrSeverityTypes");
-	List kpiTypesCd = (List) aSessionContainer.getAttribute("kpiTypesList");
-	List measureTypesCd = (List) aSessionContainer.getAttribute("measureTypesList");
-	List udpListCd = (List) aSessionContainer.getAttribute("udpKpiList");
-
-	List metricScaleTypesCd = (List) aSessionContainer.getAttribute("metricScaleTypesList");
-
+	List <Domain> domains = DAOFactory.getDomainDAO().loadListDomainsByType("PAR_TYPE");
+	Iterator <Domain> it = domains.iterator();
+	while(it.hasNext()){
+		Domain domain = it.next();
+		String i18nName = domain.getTranslatedValueName(locale);
+		String i18nDS = domain.getTranslatedValueDescription(locale);
+		domain.setValueName(i18nName);
+		domain.setValueDescription(i18nDS);
+	}
+    JSONArray domainsJson = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(domains, locale); 
 %>
-
-
-<%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
-<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
-<%@page import="org.json.JSONObject"%>
-
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 
-
+	var domains = <%=domainsJson.toString()%>;
 	
 	var url = {
     	host: '<%= request.getServerName()%>'
@@ -60,15 +57,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	Ext.onReady(function(){
 		Ext.QuickTips.init();
-		//var manageKpis = new Sbi.kpi.ManageKpis(config);
-		var manageKpis = new Sbi.config.ManageConfig({});
+		var manageConfig = new Sbi.config.ManageConfig({});
 		var viewport = new Ext.Viewport({
 			layout: 'border'
 			, items: [
 			    {
 			       region: 'center',
 			       layout: 'fit',
-			       items: [manageKpis]
+			       items: [manageConfig]
 			    }
 			]
 	

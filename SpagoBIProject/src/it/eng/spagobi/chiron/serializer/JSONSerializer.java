@@ -29,6 +29,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.x.GetParametersForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -87,6 +88,7 @@ public class JSONSerializer implements Serializer {
 	public JSONSerializer() {
 		mappings = new HashMap();
 		mappings.put( Domain.class, new DomainJSONSerializer() );
+		mappings.put( Config.class, new ConfigJSONSerializer() );
 		mappings.put( Engine.class, new EngineJSONSerializer() );
 		mappings.put( Role.class, new RoleJSONSerializer() );
 		mappings.put( BIObject.class, new DocumentsJSONSerializer() );

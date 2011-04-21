@@ -158,10 +158,9 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		try {
 			logger.debug("Loaded config list");
 
-			List<Config> configList = DAOFactory.getSbiConfigDAO().loadAllConfigParameters();
+			List <Config> configList = DAOFactory.getSbiConfigDAO().loadAllConfigParameters();
 
-			JSONArray configListJSON = (JSONArray) SerializerFactory
-					.getSerializer("application/json").serialize(configList,
+			JSONArray configListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(configList,
 							this.getLocale());
 
 			// PaginatorIFace paginator = new GenericPaginator();
@@ -199,9 +198,9 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		if(this.requestContainsAttribute("ID")){
 			config.setId(this.getAttributeAsInteger("ID"));
 		}
-		config.setLabel(this.getAttributeAsString("LABEL"));
-		config.setName(this.getAttributeAsString("NAME"));
-		config.setDescription(this.getAttributeAsString("DESCRIPTION"));
+		config.setLabel(this.getAttributeAsString("VALUE_CD"));
+		config.setName(this.getAttributeAsString("VALUE_NM"));
+		config.setDescription(this.getAttributeAsString("VALUE_DS"));
 		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
 		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
 		config.setValueTypeId(this.getAttributeAsInteger("VALUE_TYPE"));
