@@ -200,8 +200,8 @@ public class JSONDataWriter implements IDataWriter {
 							&& ((Boolean)propertyRawValue).booleanValue() == false) {
 						continue;
 					}
-										
-					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( fieldMetaData.getName() ) );
+					String key = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
+					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( key ) );
 					
 					
 					
