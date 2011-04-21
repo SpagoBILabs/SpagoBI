@@ -65,7 +65,6 @@
 					<VALIDATOR validatorName="BOOLEAN" />
 				</FIELD>
 				<FIELD name="VALUE_CHECK" label="#config.definitionForm.fields.value_check">
-					<VALIDATOR validatorName="MANDATORY" />
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="1000" />
 				</FIELD>

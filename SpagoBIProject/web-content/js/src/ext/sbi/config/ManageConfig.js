@@ -168,24 +168,30 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				this.editor.stopEditing();
 				var s = this.grid.getSelectionModel().getSelections();
 				for ( var i = 0, r; r = s[i]; i++) {
-					var params = {
-							VALUE_ID: r.get('ID')
-							};
+					var id = r.get('ID');
+					if(id != undefined && id != null){
+						var params = {
+								ID: r.get('ID')
+						};
 
-					Ext.Ajax.request( {
-						url : this.crudServices['deleteItemService'],
-						params : params,
-						// method: 'GET',
-						success : function(response, options) {
-						 	response = Ext.util.JSON.decode( response.responseText );
-							alert(response.VALUE_ID); 
-						    var index = this.store.find( "ID", response.ID );
-						    var record =  this.store.getAt(  index ) ;
-						    if(record) this.store.remove(record);						    
-						},
-						failure : Sbi.exception.ExceptionHandler.handleFailure,
-						scope : this
-					});
+						Ext.Ajax.request( {
+							url : this.crudServices['deleteItemService'],
+							params : params,
+							// method: 'GET',
+							success : function(response, options) {
+							 	response = Ext.util.JSON.decode( response.responseText );
+							    var index = this.store.find( "ID", response.ID );
+							    var record =  this.store.getAt(  index ) ;
+							    if(record) this.store.remove(record);						    
+							},
+							failure : Sbi.exception.ExceptionHandler.handleFailure,
+							scope : this
+						});
+					}
+					else{
+						this.store.remove(r);
+					}
+						
 				}
 			},
 			scope : this
@@ -229,15 +235,13 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
 			}
 		}, {
+			xtype: 'booleancolumn',
 			header : LN('sbi.config.manageconfig.fields.isactive'),
 			dataIndex : 'IS_ACTIVE',
-			// width: 150,
-			sortable : true,
+			trueText: LN('sbi.general.yes'),
+            falseText: LN('sbi.general.No'),
 			editor : {
-				xtype : 'field',
-				allowBlank : false,
-				maxLength : 1,
-				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
+				xtype : 'checkbox'
 			}
 		}, {
 			header : LN('sbi.config.manageconfig.fields.valuecheck'),
@@ -318,7 +322,6 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			params : p,
 			method : 'POST',
 			success : function(response, options) {
-				alert('Salvataggio ok: ' + response.responseText);
 				var jsonResponse = Ext.util.JSON.decode(response.responseText);
 				record.set('ID', jsonResponse.ID);
 				record.commit();
