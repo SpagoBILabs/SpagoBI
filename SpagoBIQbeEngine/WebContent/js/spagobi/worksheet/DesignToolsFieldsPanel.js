@@ -41,18 +41,18 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.DesignToolsFieldsPanel = function(config) { 
+Sbi.worksheet.DesignToolsFieldsPanel = function(config) { 
 
 	var c ={
 			html: 'ciao'
 	}
-	Sbi.adhoc.DesignToolsFieldsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.DesignToolsFieldsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.DesignToolsFieldsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.DesignToolsFieldsPanel, Ext.Panel, {
 	
 //    var myData = {
 //    		records : [

@@ -42,9 +42,9 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.adhoc");
+Ext.ns("Sbi.worksheet");
 
-Sbi.adhoc.SheetTitlePanel = function(config) { 
+Sbi.worksheet.SheetTitlePanel = function(config) { 
 
 	this.config = config;
 	var formItems = [];
@@ -76,11 +76,11 @@ Sbi.adhoc.SheetTitlePanel = function(config) {
             items: formItems
         }]
 	}
-	Sbi.adhoc.SheetTitlePanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.adhoc.SheetTitlePanel, Ext.FormPanel, {
+Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	loadImageCombo: null,
 	loadImageFileBrows: null,
 	titleField: null,
