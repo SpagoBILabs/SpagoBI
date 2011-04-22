@@ -235,18 +235,29 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 	, createFilterPanel: function(aRow) {
 		var item = new Ext.Panel({
 			id: 'designsheetfilterspanel_' + aRow.data.alias
-			, html: aRow.data.alias
-			, tools: [{
-				id: 'close'
-				, handler: this.closeHandler.createDelegate(this, [aRow], true)
-				, scope: this
-			}]
-			//html: this.template.apply([aRow.data.alias])
+            , layout: {
+                type:'column'
+            }
+			, style:'padding:5px 5px 5px 5px'
+       		, items: [{
+       			html: aRow.data.alias
+       		}, new Ext.Button({
+       		    template: new Ext.Template(
+       		         '<div class="smallBtn">',
+       		             '<div class="delete-icon"></div>',
+       		             '<div class="btnText"></div>',
+       		         '</div>')
+       		     , buttonSelector: '.delete-icon'
+       		  	 , iconCls: 'delete-icon'
+       		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
+       		     , handler: this.closeHandler.createDelegate(this, [aRow], true)
+       		     , scope: this
+       		})]
 		});
 		return item;
 	}
 	
-	, closeHandler: function (event, toolEl, panel, tc, aRow) {
+	, closeHandler: function (button, event, aRow) {
 		this.removeFilter(aRow);
 	}
 	

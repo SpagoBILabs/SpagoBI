@@ -20,3 +20,8 @@ Extended tool-sprites with 2 additional icons ('list' and 'tree')
 .x-tool-list-over {
     background-position:-15px -345px;
 }
+
+.delete-icon {
+	background-image:url(../images/gray/tabs/tab-close.gif);
+	background-repeat:no-repeat;
+}
