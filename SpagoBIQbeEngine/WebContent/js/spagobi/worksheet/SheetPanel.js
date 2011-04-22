@@ -52,7 +52,7 @@ Sbi.worksheet.SheetPanel = function(config) {
                 type:'vbox',
                 align:'stretch'
             },
-            items:[this.titlePanel, this.contentPanel, this.footerPanel]
+            items:[this.titlePanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	}
 	
 	c = Ext.apply(config,c);
@@ -62,6 +62,7 @@ Sbi.worksheet.SheetPanel = function(config) {
 
 Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	titlePanel: null,
+	filtersPanel: null,
 	contentPanel: null,
 	footerPanel: null,
 	
@@ -69,6 +70,10 @@ Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	initPanels: function(){
 		
 		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({title: true, img:true});
+		this.filtersPanel = new Sbi.worksheet.DesignSheetFiltersPanel({
+			style:'padding:5px 15px 0'
+			, ddGroup: 'worksheetDesignerDDGroup'
+		});
 		this.contentPanel = new Ext.Panel();
 		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({title: true});
 		
