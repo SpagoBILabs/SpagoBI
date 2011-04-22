@@ -132,7 +132,7 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
-			ddGroup: 'worksheetDesignerDDGroup'
+			ddGroup: this.ddGroup
 			, onFieldDrop: this.onFieldDrop
 		});
 	}
@@ -144,7 +144,7 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 		} else {
 			Ext.Msg.show({
 			   title: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.title'),
-			   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.msg'),
+			   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.unknownsource'),
 			   buttons: Ext.Msg.OK,
 			   icon: Ext.MessageBox.WARNING
 			});
