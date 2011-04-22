@@ -30,6 +30,7 @@ package it.eng.spagobi.commons.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.services.ManageDomainService;
 
@@ -377,19 +378,28 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
-			if (domain.getValueId() == null) {
+			Criterion domainCriterrion = Expression.eq("valueCd",domain.getValueCd());
+			Criteria domainCriteria = aSession.createCriteria(SbiDomains.class);
+			domainCriteria.add(domainCriterrion);
+			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();	
+			
+			if (hibDomains == null) {
 				logger.debug("insert new domain");
 				
-				SbiDomains sbiDomains = this.fromDomain(domain);
-				aSession.save(sbiDomains);
-				domain.setValueId(sbiDomains.getValueId());
-				updateSbiCommonInfo4Insert(sbiDomains);
-				tx.commit();
-			} else {
+				hibDomains = this.fromDomain(domain);
+				updateSbiCommonInfo4Insert(hibDomains);
+				aSession.save(hibDomains);
+			}else{
 				logger.debug("update domain");
-				this.updateDomain(domain);
+				hibDomains.setValueCd(domain.getValueCd());
+				hibDomains.setValueId(domain.getValueId());
+				hibDomains.setValueNm(domain.getValueName());
+				hibDomains.setDomainCd(domain.getDomainCode());
+				hibDomains.setDomainNm(domain.getDomainName());
+				hibDomains.setValueDs(domain.getValueDescription());
+				updateSbiCommonInfo4Update(hibDomains);
 			}
-
+			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -408,49 +418,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
-	/**
-	 * Update domain by id.
-	 * 
-	 * @param id
-	 *            the id
-	 * 
-	 * @return void
-	 * 
-	 * @throws EMFUserError
-	 *             the EMF user error
-	 * 
-	 */
-	public void updateDomain(Domain domain) throws EMFUserError {
-		
-		Session aSession = null;
-		Transaction tx = null;
-		
-		logger.debug("IN");
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
 
-			aSession.update(this.fromDomain(domain));
-			updateSbiCommonInfo4Update(this.fromDomain(domain));
-
-			tx.commit();
-
-		} catch (HibernateException he) {
-			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-		}
-		logger.debug("OUT");
-	}
 
 	/**
 	 * Delete domain by id.

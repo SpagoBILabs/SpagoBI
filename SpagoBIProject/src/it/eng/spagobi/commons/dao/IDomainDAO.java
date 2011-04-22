@@ -114,15 +114,7 @@ public interface IDomainDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void saveDomain(Domain d)throws EMFUserError;
-	
-	/**
-	 * Update a domain
-	 * 
-	 * @return Update domains
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public void updateDomain(Domain d)throws EMFUserError;
+
 	
 	/**
 	 * Delete a domain

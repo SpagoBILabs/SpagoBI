@@ -50,15 +50,7 @@ public interface IConfigDAO extends ISpagoBIDao{
 	 */
 	public void saveConfig(Config c)throws EMFUserError;
 	
-	/**
-	 * Update a config
-	 * 
-	 * @return Update config
-	 * 
-	 * @throws EMFUserError If an Exception occurred
-	 */
-	public void updateConfig(Config c)throws EMFUserError;
-	
+
 	/**
 	 * Delete a domain
 	 * 

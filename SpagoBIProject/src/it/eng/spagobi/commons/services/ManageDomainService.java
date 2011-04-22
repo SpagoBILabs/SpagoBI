@@ -77,17 +77,19 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	private static final String DOMAIN_DELETE = "DOMAIN_DELETE";
 	private static final String DOMAIN_SAVE = "DOMAIN_SAVE";
 
-	protected IEngUserProfile profile = null;
-
+	private IEngUserProfile profile = null;
+	private IDomainDAO domainDao=null;
 	@Override
 	public void doService() {
-		IDomainDAO domainDao;
-		String serviceType;
+		
+		String serviceType=null;
+		profile=getUserProfile();
 
 		logger.debug("IN");
 
 		try {
 			domainDao = DAOFactory.getDomainDAO();
+			domainDao.setUserProfile(profile);
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred");
@@ -123,8 +125,7 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			logger.debug("Save domain");
 
 			Domain domain = this.setDomain();
-			DAOFactory.getDomainDAO().setUserProfile(profile);
-			DAOFactory.getDomainDAO().saveDomain(domain);
+			domainDao.saveDomain(domain);
 			JSONObject response = new JSONObject();
 			response.put("VALUE_ID", domain.getValueId());
 			writeBackToClient(new JSONSuccess(response));
@@ -141,7 +142,7 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 		try {
 			logger.debug("Delete domain");
 			Integer valueId = this.getAttributeAsInteger("VALUE_ID");
-			DAOFactory.getDomainDAO().delete(valueId);
+			domainDao.delete(valueId);
 			JSONObject response = new JSONObject();
 			response.put("VALUE_ID", valueId);
 			writeBackToClient(new JSONSuccess(response));
@@ -157,31 +158,11 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 		try {
 			logger.debug("Loaded domain list");
 
-			List<Domain> domainList = DAOFactory.getDomainDAO()
-					.loadListDomains();
+			List<Domain> domainList = domainDao.loadListDomains();
 
 			JSONArray domainListJSON = (JSONArray) SerializerFactory
 					.getSerializer("application/json").serialize(domainList,
 							this.getLocale());
-
-			// PaginatorIFace paginator = new GenericPaginator();
-
-			// int numRows = 20;
-			/*
-			 * try { ConfigSingleton spagoconfig =
-			 * ConfigSingleton.getInstance(); String lookupnumRows = (String)
-			 * spagoconfig.getAttribute("SPAGOBI.LOOKUP.numberRows"); if
-			 * (lookupnumRows != null) { numRows =
-			 * Integer.parseInt(lookupnumRows); } } catch (Exception e) {
-			 * numRows = 20;
-			 * logger.error("Error while recovering number rows for " +
-			 * "lookup from configuration, usign default 10", e); }
-			 */
-			// paginator.setPageSize(numRows);
-			// logger.debug("setPageSize="+numRows);
-			// ListIFace list = new GenericList();
-			// list.setPaginator(paginator);
-
 			JSONObject response = new JSONObject();
 			response.put("response", domainListJSON);
 
