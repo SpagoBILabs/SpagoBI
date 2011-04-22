@@ -63,7 +63,12 @@ Ext.extend(Sbi.worksheet.DesignToolsPanel, Ext.Panel, {
 	designToolsLayoutPanel: null,
 
 	initPanels: function(){
-		this.designToolsFieldsPanel = new Sbi.worksheet.DesignToolsFieldsPanel();
+		this.designToolsFieldsPanel = new Sbi.worksheet.DesignToolsFieldsPanel({
+	        gridConfig: {
+				ddGroup: 'worksheetDesignerDDGroup'
+	        	, type: 'queryFieldsPanel'
+	        }
+		});
 		this.designToolsPallettePanel = new Sbi.worksheet.DesignToolsPallettePanel();
 		this.designToolsLayoutPanel = new Sbi.worksheet.DesignToolsLayoutPanel();
 		this.designToolsFieldsPanel.flex = 1;

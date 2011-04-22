@@ -195,7 +195,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
-			if (this.store.getById(aRow.data.id) !== undefined) {
+			if (this.store.find('id', aRow.data.id) !== undefined) {
 				Ext.Msg.show({
 					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),

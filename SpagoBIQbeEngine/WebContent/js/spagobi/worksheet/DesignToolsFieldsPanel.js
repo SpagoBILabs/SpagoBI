@@ -45,141 +45,124 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.DesignToolsFieldsPanel = function(config) { 
 
-	var c ={
-			html: 'ciao'
+	var defaultSettings = {
+		title: LN('sbi.worksheet.designtoolsfieldspanel.title')
+	};
+		
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsFieldsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsFieldsPanel);
 	}
+		
+	var c = Ext.apply(defaultSettings, config || {});
+		
+	Ext.apply(this, c);
+		
+	
+	this.services = this.services || new Array();	
+//	this.services['getQueryFields'] = this.services['getQueryFields'] || Sbi.config.serviceRegistry.getServiceUrl({
+//		serviceName: 'GET_QUERY_FIELDS_ACTION'
+//		, baseParams: new Object()
+//	});
+	
+	this.initGrid(c.gridConfig || {});
+	
+	c = Ext.apply(c, {
+		title: this.title,
+		border: true,
+		bodyStyle:'padding:3px',
+      	layout: 'fit',   
+      	items: [this.grid],
+      	tools: [{
+		    id:'gear',
+		    qtip: LN('sbi.worksheet.designtoolsfieldspanel.refresh'),
+		    handler: function(){
+      			this.refresh();
+		    }
+		    , scope: this
+      	}]
+	});
+
+	// constructor	
 	Sbi.worksheet.DesignToolsFieldsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
 Ext.extend(Sbi.worksheet.DesignToolsFieldsPanel, Ext.Panel, {
 	
-//    var myData = {
-//    		records : [
-//    			{ name : "Rec 0"},
-//    			{ name : "Rec 1"},
-//    			{ name : "Rec 2"},
-//    			{ name : "Rec 3"},
-//    			{ name : "Rec 4"},
-//    			{ name : "Rec 5"},
-//    			{ name : "Rec 6"},
-//    			{ name : "Rec 7"},
-//    			{ name : "Rec 8"},
-//    			{ name : "Rec 9"}
-//    		]
-//    	};
-//
-//
-//    	// Generic fields array to use in both store defs.
-//    	var fields = [
-//    		{name: 'name', mapping : 'name'}
-//    	];
-//
-//        // create the data store
-//        var firstGridStore = new Ext.data.JsonStore({
-//            	fields : fields,
-//    		data   : myData,
-//    		root   : 'records'
-//        });
-//
-//
-//    	// Column Model shortcut array
-//    	var cols = [
-//    		{ id : 'name', header: "Record Name", width: 160, sortable: true, dataIndex: 'name'},
-//    		{header: "column1", width: 50, sortable: true, dataIndex: 'column1'},
-//    		{header: "column2", width: 50, sortable: true, dataIndex: 'column2'}
-//    	];
-//
-//    	// declare the source Grid
-//        var firstGrid = new Ext.grid.GridPanel({
-//    	ddGroup          : 'secondGridDDGroup',
-//            store            : firstGridStore,
-//            columns          : cols,
-//    	enableDragDrop   : true,
-//            stripeRows       : true,
-//            autoExpandColumn : 'name',
-//            title            : 'First Grid'
-//        });
-//
-//        var secondGridStore = new Ext.data.JsonStore({
-//            fields : fields,
-//    		root   : 'records'
-//        });
-//
-//        // create the destination Grid
-//        var secondGrid = new Ext.grid.GridPanel({
-//    	ddGroup          : 'firstGridDDGroup',
-//            store            : secondGridStore,
-//            columns          : cols,
-//    	enableDragDrop   : true,
-//            stripeRows       : true,
-//            autoExpandColumn : 'name',
-//            title            : 'Second Grid'
-//        });
-//
-//
-//    	//Simple 'border layout' panel to house both grids
-//    	var displayPanel = new Ext.Panel({
-//    		width        : 650,
-//    		height       : 300,
-//    		layout       : 'hbox',
-//    		renderTo     : 'panel',
-//    		defaults     : { flex : 1 }, //auto stretch
-//    		layoutConfig : { align : 'stretch' },
-//    		items        : [
-//    			firstGrid,
-//    			secondGrid
-//    		],
-//    		bbar    : [
-//    			'->', // Fill
-//    			{
-//    				text    : 'Reset both grids',
-//    				handler : function() {
-//    					//refresh source grid
-//    					firstGridStore.loadData(myData);
-//
-//    					//purge destination grid
-//    					secondGridStore.removeAll();
-//    				}
-//    			}
-//    		]
-//    	});
-//
-//    	// used to add records to the destination stores
-//    	var blankRecord =  Ext.data.Record.create(fields);
-//
-//            /****
-//            * Setup Drop Targets
-//            ***/
-//            // This will make sure we only drop to the  view scroller element
-//            var firstGridDropTargetEl =  firstGrid.getView().scroller.dom;
-//            var firstGridDropTarget = new Ext.dd.DropTarget(firstGridDropTargetEl, {
-//                    ddGroup    : 'firstGridDDGroup',
-//                    notifyDrop : function(ddSource, e, data){
-//                            var records =  ddSource.dragData.selections;
-//                            Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-//                            firstGrid.store.add(records);
-//                            firstGrid.store.sort('name', 'ASC');
-//                            return true
-//                    }
-//            });
-//
-//
-//            // This will make sure we only drop to the view scroller element
-//            var secondGridDropTargetEl = secondGrid.getView().scroller.dom;
-//            var secondGridDropTarget = new Ext.dd.DropTarget(secondGridDropTargetEl, {
-//                    ddGroup    : 'secondGridDDGroup',
-//                    notifyDrop : function(ddSource, e, data){
-//                            var records =  ddSource.dragData.selections;
-//                            Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-//                            secondGrid.store.add(records);
-//                            secondGrid.store.sort('name', 'ASC');
-//                            return true
-//                    }
-//            });
-//	
-//	
-//	
-	
-	
+    services: null
+    , grid: null
+    , store: null
+    , myData: [
+       ['uno','ID','none','field','attribute'],
+       ['due','NOME','none','field','attribute'],
+       ['tre','COGNOME','none','field','attribute'],
+       ['quattro','MISURA','SUM','field','measure']
+    ]
+   
+   
+    // public methods
+    
+//    , refresh: function() {
+//		this.store.load();
+//	}
+    
+    // private
+    
+    , initGrid: function(c) {
+		
+		this.store = new Ext.data.SimpleStore({
+			fields: [
+			   {name: 'id'},
+			   {name: 'alias'},
+			   {name: 'funct'},
+			   {name: 'iconCls'},
+			   {name: 'nature'}
+			],
+			data: this.myData
+		});
+		
+		/*
+		this.store = new Ext.data.JsonStore({
+			root: 'results'
+			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+			, url: this.services['getQueryFields']
+		}); 
+		
+		
+		this.store.on('loadexception', function(store, options, response, e){
+			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		}, this);
+		*/
+		
+        this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
+        		// margin auto in order to have button center alignment
+                '<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
+                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
+                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{6}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
+                '</tbody></table>');
+        this.template.compile();
+		
+		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
+	        store: this.store,
+	        columns: [
+	            {id:'alias', 
+            	header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
+            	, width: 160
+            	, sortable: true
+            	, dataIndex: 'alias'
+            	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+		        	return this.template.apply(
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias]		
+		        	);
+		    	}
+	            , scope: this
+            	}
+	        ],
+	        stripeRows: false,
+	        autoExpandColumn: 'alias',
+	        enableDragDrop: true
+	    }));
+    }
+    
 });
