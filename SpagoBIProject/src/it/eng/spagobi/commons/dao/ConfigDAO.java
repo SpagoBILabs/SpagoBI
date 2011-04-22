@@ -223,84 +223,64 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 	 * @throws EMFUserError the EMF user error
 	 * 
 	 */
-    public void saveConfig(Config config) throws EMFUserError {
-    	// TODO Auto-generated method stub
-    	Config toSave = null;
-    	Session aSession = null;
-    	Transaction tx = null;
-   	
-    	try {
-    		aSession = getSession();
-    		tx = aSession.beginTransaction();
-    		
-    		if (config.getId() == null) {
-    			logger.debug("insert new config");	
-    			
-    			SbiConfig sbiConfig = this.fromConfig(config);
-	    		aSession.save(sbiConfig);
-	    		config.setId(sbiConfig.getId());
-	    		updateSbiCommonInfo4Insert(sbiConfig);
-	    		tx.commit();
-    		}
-    		else{
-    			logger.debug("update config");
-    			this.updateConfig(config);
-    		}
-    	
-    	} catch (HibernateException he) {
-    		logException(he);
+	public void saveConfig(Config config) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
 
-    		if (tx != null)
-    			tx.rollback();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
 
-    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			Criterion labelCriterrion = Expression.eq("label",config.getLabel());
+			Criteria criteria = aSession.createCriteria(SbiConfig.class);
+			criteria.add(labelCriterrion);	
+			
+			SbiConfig hibConfig = (SbiConfig) criteria.uniqueResult();	
+			
+			Criterion domainCriterrion = Expression.eq("valueId",config.getValueTypeId());
+			Criteria domainCriteria = aSession.createCriteria(SbiDomains.class);
+			domainCriteria.add(domainCriterrion);	
+			
+			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();	
+			
+			if (hibConfig==null){
+				logger.debug("Insert new Config");
+				hibConfig=fromConfig(config);
+				updateSbiCommonInfo4Insert(hibConfig);
+				aSession.save(hibConfig);
+				hibConfig.setSbiDomains(hibDomains);
+			}else{
+				logger.debug("Update Config");
+				hibConfig.setDescription(config.getDescription());
+				hibConfig.setName(config.getName());
+				hibConfig.setValueCheck(config.getValueCheck());
+				hibConfig.setIsActive(config.isActive());
+				hibConfig.setSbiDomains(hibDomains);
+				updateSbiCommonInfo4Update(hibConfig);
+			}
+			
+			
+			tx.commit();
 
-    	} finally {
-    		if (aSession!=null){
-    			if (aSession.isOpen()) aSession.close();
-    		}
-    	}
-    	
-    }
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
 
-    /**
-     * Update domain by id.
-     * 
-     * @param id the id
-     * 
-     * @return void
-     * 
-     * @throws EMFUserError the EMF user error
-     * 
-     */
-    public void updateConfig(Config config) throws EMFUserError {
-    	// TODO Auto-generated method stub
-    	Session aSession = null;
-    	Transaction tx = null;
+			if (tx != null)
+				tx.rollback();
 
-    	try {
-    		aSession = getSession();
-    		tx = aSession.beginTransaction();
-    		
-    		aSession.update(this.fromConfig(config));
-    		updateSbiCommonInfo4Update(this.fromConfig(config));
-    		tx.commit();
-    	
-    	} catch (HibernateException he) {
-    		logException(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-    		if (tx != null)
-    			tx.rollback();
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+	}
 
-    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-    	} finally {
-    		if (aSession!=null){
-    			if (aSession.isOpen()) aSession.close();
-    		}
-    	}
-    	
-    }
 
     /**
      * Delete domain by id.
@@ -313,6 +293,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
      * 
      */
     public void delete(Integer idConfig)  throws EMFUserError {
+    	logger.debug("IN");
     	Session sess = null;
     	Transaction tx = null;
 
@@ -320,15 +301,15 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     		sess = getSession();
     		tx = sess.beginTransaction();
     		
-    		Criterion aCriterion = Expression.eq("idconfig", idConfig);
-    		Criteria criteria = sess.createCriteria(SbiDomains.class);
+    		Criterion aCriterion = Expression.eq("id", idConfig);
+    		Criteria criteria = sess.createCriteria(SbiConfig.class);
     		criteria.add(aCriterion);
-    		SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
-    		if (aSbiDomains!=null) sess.delete(aSbiDomains);
+    		SbiConfig aSbiConfig = (SbiConfig) criteria.uniqueResult();
+    		if (aSbiConfig!=null) sess.delete(aSbiConfig);
     		tx.commit();
     		
     	} catch (HibernateException he) {
-    		logException(he);
+    		logger.error("HibernateException",he);
 
     		if (tx != null)
     			tx.rollback();
@@ -340,6 +321,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     			if (sess.isOpen()) sess.close();
     		}
     	}
+    	logger.debug("OUT");
     }
 
 }

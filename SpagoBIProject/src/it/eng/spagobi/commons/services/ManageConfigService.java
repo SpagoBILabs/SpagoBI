@@ -78,17 +78,18 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 	private static final String CONFIG_DELETE = "CONFIG_DELETE";
 	private static final String CONFIG_SAVE = "CONFIG_SAVE";
 
-	protected IEngUserProfile profile = null;
+	private IEngUserProfile profile = null;
+	IConfigDAO configDao=null;
 
 	@Override
 	public void doService() {
-		IConfigDAO configDao;
-		String serviceType;
-
 		logger.debug("IN");
+		String serviceType=null;
+		profile=getUserProfile();
 
 		try {
 			configDao = DAOFactory.getSbiConfigDAO();
+			configDao.setUserProfile(profile);
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred");
@@ -109,6 +110,8 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Unable to execute service [" + serviceType + "]");
 			}
+		}else {
+			logger.warn("The service type is missing");
 		}
 
 		logger.debug("OUT");
@@ -120,17 +123,14 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		logger.debug("IN");
 
 		try {
-
-			logger.debug("Save config");
-
-			Config config = this.setConfig();
-			DAOFactory.getSbiConfigDAO().setUserProfile(profile);
-			DAOFactory.getSbiConfigDAO().saveConfig(config);
+			Config config = readConfig();
+   			configDao.saveConfig(config);		
 			JSONObject response = new JSONObject();
 			response.put("ID", config.getId());
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
+			logger.error("Exception occurred while saving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to save config", e);
 		} finally {
@@ -139,10 +139,11 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 	}
 
 	public void doDelete() {
+		logger.debug("IN");
 		try {
 			logger.debug("Delete config");
 			Integer id = this.getAttributeAsInteger("ID");
-			DAOFactory.getSbiConfigDAO().delete(id);
+			configDao.delete(id);
 			JSONObject response = new JSONObject();
 			response.put("ID", id);
 			writeBackToClient(new JSONSuccess(response));
@@ -151,10 +152,13 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to delete config", e);
+		}finally{
+			logger.debug("OUT");
 		}
 	}
 
 	public void doConfigList() {
+		logger.debug("IN");
 		try {
 			logger.debug("Loaded config list");
 
@@ -162,25 +166,6 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 
 			JSONArray configListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(configList,
 							this.getLocale());
-
-			// PaginatorIFace paginator = new GenericPaginator();
-
-			// int numRows = 20;
-			/*
-			 * try { ConfigSingleton spagoconfig =
-			 * ConfigSingleton.getInstance(); String lookupnumRows = (String)
-			 * spagoconfig.getAttribute("SPAGOBI.LOOKUP.numberRows"); if
-			 * (lookupnumRows != null) { numRows =
-			 * Integer.parseInt(lookupnumRows); } } catch (Exception e) {
-			 * numRows = 20;
-			 * logger.error("Error while recovering number rows for " +
-			 * "lookup from configuration, usign default 10", e); }
-			 */
-			// paginator.setPageSize(numRows);
-			// logger.debug("setPageSize="+numRows);
-			// ListIFace list = new GenericList();
-			// list.setPaginator(paginator);
-
 			JSONObject response = new JSONObject();
 			response.put("response", configListJSON);
 
@@ -190,10 +175,13 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Exception occurred while retrieving config data", e);
+		}finally{
+			logger.debug("OUT");
 		}
 	}
 
-	public Config setConfig() {
+	private Config readConfig() {
+		logger.debug("IN");
 		Config config = new Config();
 		if(this.requestContainsAttribute("ID")){
 			config.setId(this.getAttributeAsInteger("ID"));
@@ -204,7 +192,7 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
 		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
 		config.setValueTypeId(this.getAttributeAsInteger("VALUE_TYPE"));
-
+		logger.debug("OUT");
 		return config;
 
 	}
