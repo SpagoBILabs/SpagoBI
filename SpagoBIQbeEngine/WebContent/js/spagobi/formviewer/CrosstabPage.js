@@ -112,7 +112,7 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
 				    id: 'gear'
 				    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
 				    , handler: function() {
-				    	var crosstabDefinition = this.crosstabDesignerPanel.centerRegionPanel.getCrosstabDefinition();
+				    	var crosstabDefinition = this.crosstabDesignerPanel.getCrosstabDefinition();
 				    	this.showCrosstabPreview(crosstabDefinition);
 				    }
 				    , scope: this
@@ -147,7 +147,7 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
 		);
 	}
 	
-  	, showCrosstabPreview: function(crosstabDefinitionPanel, crosstabDefinition) {
+  	, showCrosstabPreview: function(crosstabDefinition) {
   		this.crosstabPreviewPanel.on('beforeload', this.addFormStateParameter, this);
   		this.tabs.activate(this.crosstabPreviewPanel);
   		this.crosstabPreviewPanel.load(crosstabDefinition);
