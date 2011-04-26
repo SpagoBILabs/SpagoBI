@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 it.eng.spago.base.SourceBean,			
 				 java.util.Date"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.dao.IObjNoteDAO"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.ObjNote"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate"%>
 <%@page import="java.util.GregorianCalendar"%>
