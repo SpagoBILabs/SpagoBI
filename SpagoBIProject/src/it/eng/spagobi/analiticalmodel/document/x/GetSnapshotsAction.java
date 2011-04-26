@@ -23,9 +23,9 @@ package it.eng.spagobi.analiticalmodel.document.x;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.chiron.serializer.SerializationException;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 

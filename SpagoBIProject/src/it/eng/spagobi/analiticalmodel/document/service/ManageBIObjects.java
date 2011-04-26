@@ -3,8 +3,8 @@ package it.eng.spagobi.analiticalmodel.document.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 

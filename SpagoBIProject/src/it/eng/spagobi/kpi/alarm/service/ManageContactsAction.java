@@ -23,8 +23,8 @@ package it.eng.spagobi.kpi.alarm.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.model.bo.Resource;

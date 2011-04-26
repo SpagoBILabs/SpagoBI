@@ -12,8 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
