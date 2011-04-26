@@ -37,6 +37,16 @@ Sbi.locale.ln['sbi.worksheet.palete']= 'Palete';
 
 
 //===================================================================
+//Sbi.worksheet.DesignToolsLayoutPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.title'] = 'Layout';
+Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.headerfooter'] = 'La pagina &grave; composta da un header, dal contenuto e da un footer';
+Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.header'] = 'La pagina &grave; composta da un header e dal contenuto';
+Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.footer'] = 'La pagina &grave; composta dal contenuto e da un footer';
+Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.content'] = 'La pagina &grave; composta solo dal contenuto';
+
+//===================================================================
 //Sbi.worksheet.SheetContentPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.sheetcontentpanel.emptymsg'] = 'Trascina qui un componente dalla palette';
+			
