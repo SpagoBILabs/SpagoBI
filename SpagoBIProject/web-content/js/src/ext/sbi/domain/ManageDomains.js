@@ -131,7 +131,6 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			store : this.store,
 			cm : this.columnModel,
 			tbar : this.gridToolbar,
-			bbar: pagingToolbar,
 			sm : new Ext.grid.RowSelectionModel( {
 				singleSelect : true
 			}),
@@ -180,7 +179,18 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 						 	response = Ext.util.JSON.decode( response.responseText ); 
 						    var index = this.store.find( "VALUE_ID", response.VALUE_ID );
 						    var record =  this.store.getAt(  index ) ;
-						    if(record) this.store.remove(record);						    
+						    if(record) {
+						    	this.store.remove(record);
+						    	Ext.MessageBox.show({
+						            title: LN('sbi.home.Info'),
+						            msg: LN('sbi.models.selectNode'),
+						            modal: false,
+						            buttons: Ext.MessageBox.OK,
+						            width:300,
+						            icon: Ext.MessageBox.INFO,
+						            animEl: 'root-menu'           
+						           });
+						    }
 						},
 						failure : Sbi.exception.ExceptionHandler.handleFailure,
 						scope : this
@@ -306,5 +316,15 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			failure : Sbi.exception.ExceptionHandler.handleFailure,
 			scope : this
 		});
+		
+		Ext.MessageBox.show({
+            title: LN('sbi.home.Info'),
+            msg: LN('sbi.execution.viewpoints.msg.saved'),
+            modal: false,
+            buttons: Ext.MessageBox.OK,
+            width:300,
+            icon: Ext.MessageBox.INFO,
+            animEl: 'root-menu'           
+           });
 	}
 });

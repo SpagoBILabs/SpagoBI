@@ -69,7 +69,8 @@
 					<VALIDATOR validatorName="MAXLENGTH" arg0="1000" />
 				</FIELD>
 				<FIELD name="VALUE_TYPE" label="#config.definitionForm.fields.value_type">
-					<VALIDATOR validatorName="NUMERIC"/>
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="25" />
 				</FIELD>
 			</FIELDS>
 		</VALIDATION>

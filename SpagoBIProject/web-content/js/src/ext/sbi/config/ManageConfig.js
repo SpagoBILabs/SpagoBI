@@ -131,7 +131,6 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			store : this.store,
 			cm : this.columnModel,
 			tbar : this.gridToolbar,
-			bbar: pagingToolbar,
 			sm : new Ext.grid.RowSelectionModel( {
 				singleSelect : true
 			}),
@@ -152,6 +151,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			text : 'Add',
 			handler : function() {
 				var record = new this.Record();
+				record.set('IS_ACTIVE', 'true');
+				record.set('VALUE_TYPE', 'STRING');
 				this.editor.stopEditing();
 				this.store.insert(0, record);
 				this.grid.getView().refresh();
@@ -160,7 +161,6 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			},
 			scope : this
 		}, {
-			// ref: '../removeBtn',
 			iconCls : 'icon-domain-delete',
 			text : 'Delete',
 			// disabled: true,
@@ -182,7 +182,18 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 							 	response = Ext.util.JSON.decode( response.responseText );
 							    var index = this.store.find( "ID", response.ID );
 							    var record =  this.store.getAt(  index ) ;
-							    if(record) this.store.remove(record);						    
+							    if(record) {
+							    	this.store.remove(record);
+									Ext.MessageBox.show({
+							            title: LN('sbi.home.Info'),
+							            msg: LN('sbi.models.selectNode'),
+							            modal: false,
+							            buttons: Ext.MessageBox.OK,
+							            width:300,
+							            icon: Ext.MessageBox.INFO,
+							            animEl: 'root-menu'           
+							           });
+								}
 							},
 							failure : Sbi.exception.ExceptionHandler.handleFailure,
 							scope : this
@@ -260,7 +271,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			// width: 150,
 			sortable : true,
 			editor : {
-				xtype : 'numberfield',
+				xtype : 'textfield',
 				allowBlank : false,
 				maxLength : 11,
 				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
@@ -301,20 +312,12 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	,
 	saveConfig : function(rowEditor, obj, record, rowIndex) {
 
-		/*var p = {};
-		if (record.get('ID') != undefined && record.get('ID') != null && record.get('ID') !== '') {
-			p.VALUE_ID = record.get('ID');
-		}
-		
-		p.LABEL = record.get('LABEL');
-		p.NAME = record.get('NAME');
-		p.DESCRIPTION = record.get('DESCRIPTION');
-		p.IS_ACTIVE = record.get('IS_ACTIVE');
-		p.VALUE_CHECK = record.get('VALUE_CHECK');
-		p.VALUE_TYPE = record.get('VALUE_TYPE');*/
 		var p = Ext.apply({},record.data);
 		if (record.get('ID') == undefined || record.get('ID') == null || record.get('ID') == '') {
 			delete p.ID;
+		}
+		if (record.get('VALUE_TYPE') == undefined || record.get('VALUE_TYPE') == null || record.get('VALUE_TYPE') == '') {
+			delete p.VALUE_TYPE;
 		}
 
 		Ext.Ajax.request( {
@@ -329,5 +332,16 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			failure : Sbi.exception.ExceptionHandler.handleFailure,
 			scope : this
 		});
+		
+		Ext.MessageBox.show({
+            title: LN('sbi.home.Info'),
+            msg: LN('sbi.execution.viewpoints.msg.saved'),
+            modal: false,
+            buttons: Ext.MessageBox.OK,
+            width:300,
+            icon: Ext.MessageBox.INFO,
+            animEl: 'root-menu'           
+           });
+
 	}
 });
