@@ -91,7 +91,7 @@ Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {
 				border: false,
 				items: [
 				        new Ext.Panel({
-				        	height:300,
+				        	height:285,
 				        	border: false,
 				        	style: 'padding-top: 0px; padding-left: 0px',
 				        	items:[
@@ -115,11 +115,11 @@ Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {
 	
 	getAvailablePallettes:function(){
 		var pallette = [];
-		pallette.push({name: 'Bar Char', url:'img/worksheet/bar_chart.png'});
-		pallette.push({name: 'Pie Char', url:'img/worksheet/pie_chart.png'});
-		pallette.push({name: 'Line Char', url:'img/worksheet/line_chart.png'});
-		pallette.push({name: 'Table', url:'img/worksheet/table.png'});
-		pallette.push({name: 'Pivot Table', url:'img/worksheet/crosstab.png'});	
+		pallette.push({name: 'Bar Char', url:'img/worksheet/palette_bar_chart.png'});
+		pallette.push({name: 'Pie Char', url:'img/worksheet/palette_pie_chart.png'});
+		pallette.push({name: 'Line Char', url:'img/worksheet/palette_line_chart.png'});
+		pallette.push({name: 'Table', url:'img/worksheet/palette_table.png'});
+		pallette.push({name: 'Pivot Table', url:'img/worksheet/palette_crosstab.png'});	
 		return pallette;
 	}
 
