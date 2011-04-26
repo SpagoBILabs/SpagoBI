@@ -63,6 +63,7 @@ Sbi.locale.ln['sbi.generic.details']                  = 'D\u00E9tail';
 Sbi.locale.ln['sbi.generic.select']                   = 'S\u00E9lectionner';
 Sbi.locale.ln['sbi.generic.serviceError']             = 'Erreur du service';
 Sbi.locale.ln['sbi.generic.update']                   = 'Enregistrer';
+Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name']                     = 'Nom';

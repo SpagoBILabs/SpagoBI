@@ -27,6 +27,7 @@ Sbi.locale.ln['sbi.generic.update'] = 'Save';
 Sbi.locale.ln['sbi.generic.details'] = 'Detail';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
+Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';
 Sbi.locale.ln['sbi.generic.descr'] = 'Description';

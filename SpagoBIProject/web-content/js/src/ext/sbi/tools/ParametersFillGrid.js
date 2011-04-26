@@ -49,8 +49,8 @@ Sbi.tools.ParametersFillGrid = function(config) {
 	    var grid = {
 	    	xtype: 'grid',
 	    	title:  LN('sbi.ds.fillPars'),
-	        width: 250,
-	        height: 200,
+	        width: 380,
+	        height: 250,
 	        autoScroll: true,
 	        source: config.pars,
 	        forceLayout: true,

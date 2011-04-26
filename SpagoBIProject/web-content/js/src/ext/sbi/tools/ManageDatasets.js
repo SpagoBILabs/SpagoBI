@@ -415,9 +415,9 @@ Ext.extend(
 								layout : 'form',
 								autoScroll : true,
 								style : {
-									"margin-left" : "10px",
-									"margin-top" : "10px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px": "-13px"): "10px"
+									"margin-left" : "0px",
+									"margin-top" : "5px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "15px": "-13px"): "15px"
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
@@ -437,14 +437,15 @@ Ext.extend(
 									labelWidth : 90,
 									defaultType : 'textfield',
 									autoHeight : true, autoScroll : true,
-									bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
-											: 'padding:10px 15px;',
+									bodyStyle : Ext.isIE ? 'padding:0 0 8px 10px;'
+											: 'padding:8px 10px;',
 									border : false,
+									
 									style : {
-										"margin-left" : "10px",
-										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-10px"
-												: "-13px")
-												: "0"
+										"margin-left" : "8px",
+										"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-5px"
+												: "-8px")
+												: "8"
 									},
 									items : [ 
 									        detailFieldLabel, detailFieldName,
@@ -505,7 +506,7 @@ Ext.extend(
 					this.detailDataSource = new Ext.form.ComboBox({
 						name : 'dataSource',
 						store : this.dataSourceStore,
-						width : 120,
+						width : 80,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'dataSource', // what the user
 						// sees in the
@@ -631,7 +632,7 @@ Ext.extend(
 					this.detailScriptLanguage = new Ext.form.ComboBox({
 						name : 'scriptLanguage',
 						store : this.scriptLanguagesStore,
-						width : 120,
+						width : 80,
 						fieldLabel : LN('sbi.ds.scriptLanguage'),
 						displayField : 'scriptLanguage', // what the user
 						// sees in the
@@ -820,17 +821,7 @@ Ext.extend(
 								id : 'man-pars',
 								layout : 'form',
 								autoScroll : false
-								// , bodyStyle: Ext.isIE ? 'padding:0 0 5px
-								// 15px;' : 'padding:10px
-								// 15px;'
-								,
-								style : {
-									"margin-left" : "3px",
-									"margin-top" : "3px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-70px"
-											: "-73px")
-											: "70px"
-								},
+								 , bodyStyle: Ext.isIE ? 'padding:0 0 0px 18px;' : 'padding:0px 18px;',
 								border : true,
 								items : [ this.manageParsGrid ],
 								scope : this
@@ -1037,8 +1028,8 @@ Ext.extend(
 						id : 'test-pars',
 						layout : 'vbox',
 						autoScroll : true,
-						bodyStyle : Ext.isIE ? 'padding:0 0 45px 35px;'
-								: 'padding:45px 25px;',
+						bodyStyle : Ext.isIE ? 'padding:0 0 20px 25px;'
+								: 'padding:20px 25px;',
 						border : true,
 						items : [ this.parsGrid],
 						scope : this
