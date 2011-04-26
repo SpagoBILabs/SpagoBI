@@ -23,11 +23,11 @@ package it.eng.spagobi.profiling.services;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;

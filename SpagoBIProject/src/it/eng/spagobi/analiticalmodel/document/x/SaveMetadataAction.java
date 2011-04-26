@@ -32,8 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.chiron.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;

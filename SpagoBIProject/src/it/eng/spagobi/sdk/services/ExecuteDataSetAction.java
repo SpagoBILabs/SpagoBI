@@ -28,8 +28,8 @@ import org.json.JSONObject;
 
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.analiticalmodel.document.x.SpagoBIServiceExceptionHandler;
-import it.eng.spagobi.chiron.serializer.SerializationException;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.dataset.service.DataSetSupplier;

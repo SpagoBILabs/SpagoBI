@@ -23,9 +23,9 @@ package it.eng.spagobi.kpi.model.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
-import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.model.dao.IResourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
