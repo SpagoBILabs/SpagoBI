@@ -96,7 +96,7 @@ Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {
 				        	style: 'padding-top: 0px; padding-left: 0px',
 				        	items:[
 				        	       new Ext.grid.GridPanel({
-				        	    	   ddGroup: 'gridDDGroup',
+				        	    	   ddGroup: 'paleteDDGroup',
 				        	    	   header: false,
 				        	    	   hideHeaders : true,
 				        	    	   enableDragDrop: true,
