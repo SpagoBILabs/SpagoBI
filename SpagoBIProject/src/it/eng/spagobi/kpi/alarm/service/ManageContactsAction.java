@@ -80,6 +80,7 @@ public class ManageContactsAction extends AbstractSpagoBIAction{
 		ISbiAlarmContactDAO contactDao;
 		try {
 			contactDao = DAOFactory.getAlarmContactDAO();
+			contactDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

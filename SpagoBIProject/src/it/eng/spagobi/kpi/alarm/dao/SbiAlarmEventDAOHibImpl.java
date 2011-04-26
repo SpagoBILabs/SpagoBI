@@ -39,6 +39,7 @@ public class SbiAlarmEventDAOHibImpl extends AbstractHibernateDAO implements ISb
         Transaction tx = null;
         try {
         	tx = session.beginTransaction();
+        	updateSbiCommonInfo4Insert(item);
 			session.save(item);
 			tx.commit();
 			
@@ -54,15 +55,16 @@ public class SbiAlarmEventDAOHibImpl extends AbstractHibernateDAO implements ISb
     }
     
     
-    public void insert(Session session, SbiAlarmEvent item) {
+  /*  public void insert(Session session, SbiAlarmEvent item) {
         session.save(item);
     }
-
+*/
     public void update(SbiAlarmEvent item) {
         Session session = getSession();
         Transaction tx = null;
         try {
         	tx = session.beginTransaction();
+        	updateSbiCommonInfo4Update(item);
 			session.update(item);
 			tx.commit();
 			
@@ -76,11 +78,11 @@ public class SbiAlarmEventDAOHibImpl extends AbstractHibernateDAO implements ISb
 			session.close();
 		}
     }	
-    
+  /*  
     public void update(Session session, SbiAlarmEvent item) {
         session.update(item);
     }	
-	
+	*/
     public void delete(SbiAlarmEvent item) {
         Session session = getSession();
         Transaction tx = null;

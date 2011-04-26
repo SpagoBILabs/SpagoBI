@@ -63,13 +63,14 @@ import org.quartz.JobExecutionException;
 public class AlarmInspectorJob implements Job {
 
     static private Logger logger = Logger.getLogger(AlarmInspectorJob.class);	
-	
+
 	/* (non-Javadoc)
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
     
     	SbiAlarmEventDAOHibImpl sae = new SbiAlarmEventDAOHibImpl();
     	SbiAlarmContactDAOHibImpl sac = new SbiAlarmContactDAOHibImpl();
+    	
     
     	private Map<SbiAlarmContact, List<AlertSendingItem>> alertSendingSessionMap = new HashMap<SbiAlarmContact, List<AlertSendingItem>>();
     	private List<AlertSendingItem>  alertSendingSessionList = null;
@@ -81,7 +82,6 @@ public class AlarmInspectorJob implements Job {
 	public void execute(JobExecutionContext jex) throws JobExecutionException 
 	{
 	    logger.debug("IN");
-	    
 	    org.hibernate.Session hsession = null;
 	    List<SbiAlarmEvent> activeSbiAlarmEventList = null;
 	    SbiAlarm sbiAlarm = null;
