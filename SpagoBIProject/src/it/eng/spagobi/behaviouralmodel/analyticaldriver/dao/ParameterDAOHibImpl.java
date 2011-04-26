@@ -292,6 +292,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 			SbiDomains parameterType = (SbiDomains)aSession.load(SbiDomains.class, typeId); 
 			
 			SbiParameters hibParameters = (SbiParameters)aSession.load(SbiParameters.class,  aParameter.getId());
+			updateSbiCommonInfo4Update(hibParameters);
 			hibParameters.setDescr(aParameter.getDescription());
 			hibParameters.setLength(new Short(aParameter.getLength().shortValue()));
 			hibParameters.setLabel(aParameter.getLabel());
@@ -365,6 +366,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements
 			else hibParameters.setFunctionalFlag(new Short((short) 0));
 			if (aParameter.isTemporal()) hibParameters.setTemporalFlag(new Short((short) 1));
 			else hibParameters.setTemporalFlag(new Short((short) 0));
+			updateSbiCommonInfo4Insert(hibParameters);
 			aSession.save(hibParameters);
 			tx.commit();
 		} catch (HibernateException he) {

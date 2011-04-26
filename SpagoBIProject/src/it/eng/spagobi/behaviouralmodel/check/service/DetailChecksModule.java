@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.behaviouralmodel.check.service;
 
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,8 +29,10 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -157,11 +160,14 @@ public class DetailChecksModule extends AbstractModule {
 				response.setAttribute("modality", mod);
 				return;
 			}
-			
+			SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);		
+			ICheckDAO dao=DAOFactory.getChecksDAO();
+			dao.setUserProfile(profile);
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				DAOFactory.getChecksDAO().insertCheck(aCheck);
+				dao.insertCheck(aCheck);
 			} else {
-				DAOFactory.getChecksDAO().modifyCheck(aCheck);
+				dao.modifyCheck(aCheck);
 			}
             
 		} catch (Exception ex) {			

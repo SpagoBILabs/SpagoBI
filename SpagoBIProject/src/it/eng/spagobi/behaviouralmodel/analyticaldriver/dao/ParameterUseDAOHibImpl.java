@@ -292,7 +292,7 @@ IParameterUseDAO {
 
 			SbiParuse hibParuse = (SbiParuse) aSession.load(SbiParuse.class,
 					aParameterUse.getUseID());
-
+			updateSbiCommonInfo4Update(hibParuse);
 			hibParuse.setLabel(aParameterUse.getLabel());
 			hibParuse.setName(aParameterUse.getName());
 			hibParuse.setDescr(aParameterUse.getDescription());
@@ -337,6 +337,7 @@ IParameterUseDAO {
 						((Role) newRoles.get(i)).getId());
 				hibParUseDetId.setSbiExtRoles(tmpExtRole);
 				hibParUseDet = new SbiParuseDet(hibParUseDetId);
+				updateSbiCommonInfo4Insert(hibParUseDet);
 				aSession.save(hibParUseDet);
 				parUseDetsToSave.add(hibParUseDet);
 			}
@@ -419,6 +420,7 @@ IParameterUseDAO {
 			hibParuse.setSelectionType(aParameterUse.getSelectionType());
 			hibParuse.setMultivalue(aParameterUse.isMultivalue()? new Integer(1): new Integer(0));
 			hibParuse.setManualInput(aParameterUse.getManualInput());
+			updateSbiCommonInfo4Insert(hibParuse);
 			Integer useId = (Integer)aSession.save(hibParuse);
 
 
@@ -456,6 +458,7 @@ IParameterUseDAO {
 				tmpCheck = (SbiChecks)aSession.load(SbiChecks.class, ((Check)newChecks.get(i)).getCheckId());
 				hibParUseCkId.setSbiChecks(tmpCheck);
 				hibParUseCk = new SbiParuseCk(hibParUseCkId);
+				updateSbiCommonInfo4Insert(hibParUseCk);
 				aSession.save(hibParUseCk);
 				parUseCkToSave.add(hibParUseCk);
 			}

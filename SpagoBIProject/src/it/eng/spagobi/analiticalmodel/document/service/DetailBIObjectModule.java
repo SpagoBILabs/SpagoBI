@@ -294,7 +294,9 @@ public class DetailBIObjectModule extends AbstractModule {
 										  ObjectsTreeConstants.DETAIL_MOD, false, false);
 				return;
 			}
-			DAOFactory.getBIObjectParameterDAO().modifyBIObjectParameter(biObjPar);
+			IBIObjectParameterDAO dao=DAOFactory.getBIObjectParameterDAO();
+			dao.setUserProfile(profile);
+			dao.modifyBIObjectParameter(biObjPar);
 		} else {
 			biObjPar = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(biObjPar.getId());
 		}
@@ -904,6 +906,7 @@ public class DetailBIObjectModule extends AbstractModule {
 							return;
 						}
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
+						objParDAO.setUserProfile(profile);
 						if (biObjPar.getId().intValue() == -1) {
 							// it is requested to insert a new BIObjectParameter
 							objParDAO.insertBIObjectParameter(biObjPar);
@@ -982,6 +985,7 @@ public class DetailBIObjectModule extends AbstractModule {
 	    			// check if there's a parameter to save and in case save it
 	    			if (biParameterToBeSaved) {
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
+						objParDAO.setUserProfile(profile);
 						if (biObjPar.getId().intValue() == -1) {
 							// it is requested to insert a new BIObjectParameter
 							objParDAO.insertBIObjectParameter(biObjPar);

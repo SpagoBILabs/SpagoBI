@@ -114,6 +114,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setPostCondition(aObjParuse.getPostCondition());
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
 			// save new object
+			updateSbiCommonInfo4Insert(correlation);
 			aSession.save(correlation);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -173,6 +174,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setPreCondition(aObjParuse.getPreCondition());
 			correlation.setPostCondition(aObjParuse.getPostCondition());
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
+			updateSbiCommonInfo4Insert(correlation);
 			aSession.save(correlation);
 			tx.commit();
 		} catch (HibernateException he) {

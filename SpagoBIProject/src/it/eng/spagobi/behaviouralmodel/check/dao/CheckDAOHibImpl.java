@@ -224,7 +224,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			hibCheck.setValue1(check.getFirstValue());
 			hibCheck.setValue2(check.getSecondValue());
 			hibCheck.setValueTypeCd(check.getValueTypeCd());
-
+			updateSbiCommonInfo4Insert(hibCheck);
 			aSession.save(hibCheck);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -289,7 +289,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			hibCheck.setValue2(check.getSecondValue());
 			hibCheck.setCheckType(aSbiDomains);
 			hibCheck.setValueTypeCd(aSbiDomains.getValueCd());
-
+			updateSbiCommonInfo4Update(hibCheck);
 			tx.commit();
 			
 		} catch (HibernateException he) {
