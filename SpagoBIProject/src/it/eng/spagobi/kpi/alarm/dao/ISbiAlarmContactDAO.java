@@ -29,11 +29,11 @@ public interface ISbiAlarmContactDAO extends ISpagoBIDao{
 
     public Integer insert(SbiAlarmContact item);
     
-    public void insert(Session session, SbiAlarmContact item);
+  //  public void insert(Session session, SbiAlarmContact item);
 
     public void update(SbiAlarmContact item);
     
-    public void update(Session session, SbiAlarmContact item);
+ //   public void update(Session session, SbiAlarmContact item);
 	
     public void delete(SbiAlarmContact item);
     

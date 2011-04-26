@@ -53,6 +53,7 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Insert(item);
 			session.save(item);
 			tx.commit();
 
@@ -173,8 +174,9 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 							alarmEv.setKpiDescription(value.getValueDescr());
 							if (value.getR() != null) alarmEv.setResourcesId(value.getR().getId());
 							alarmEv.setKpiInstanceId(value.getKpiInstanceId());
-
-							DAOFactory.getAlarmEventDAO().insert(alarmEv);
+							ISbiAlarmEventDAO dao=DAOFactory.getAlarmEventDAO();
+							dao.setUserProfile(getUserProfile());
+							dao.insert(alarmEv);
 							logger
 							.debug("A new alarm has been inserted in the Alarm Event Table");
 						}
@@ -205,11 +207,11 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		logger.debug("OUT");
 	}
 	
-
+/*
 	public void insert(Session session, SbiAlarm item) {
 		session.save(item);
 	}
-	
+	*/
 	public Integer update(SbiAlarm item) {
 		Session session = getSession();
 		Transaction tx = null;
@@ -221,7 +223,7 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 				save = false;
 			}
 			tx = session.beginTransaction();
-			
+			updateSbiCommonInfo4Update(item);
 			if(save){
 				//save
 				id = (Integer)session.save(item);
@@ -242,11 +244,11 @@ public class SbiAlarmDAOHibImpl extends AbstractHibernateDAO implements ISbiAlar
 		}
 		return id;
 	}	
-
+/*
 	public void update(Session session, SbiAlarm item) {
 		session.update(item);
 	}	
-
+*/
 	public void delete(SbiAlarm item) {
 		Session session = getSession();
 		Transaction tx = null;

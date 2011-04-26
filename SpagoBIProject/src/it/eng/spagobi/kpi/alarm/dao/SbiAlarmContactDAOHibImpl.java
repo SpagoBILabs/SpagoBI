@@ -48,6 +48,7 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
         Integer id = null;
         try {
         	tx = session.beginTransaction();
+        	updateSbiCommonInfo4Insert(item);
 			id = (Integer)session.save(item);
 			tx.commit();
 			
@@ -66,16 +67,18 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
 		}
     }
     
-    
+ /*   
     public void insert(Session session, SbiAlarmContact item) {
+    	updateSbiCommonInfo4Insert(item);
         session.save(item);
     }
-
+*/
     public void update(SbiAlarmContact item) {
         Session session = getSession();
         Transaction tx = null;
         try {
         	tx = session.beginTransaction();
+        	updateSbiCommonInfo4Update(item);
 			session.update(item);
 			tx.commit();
 			
@@ -89,11 +92,11 @@ public class SbiAlarmContactDAOHibImpl extends AbstractHibernateDAO implements I
 			session.close();
 		}
     }	
-    
+/*    
     public void update(Session session, SbiAlarmContact item) {
         session.update(item);
     }	
-	
+*/	
     public void delete(SbiAlarmContact item) {
         Session session = getSession();
         Transaction tx = null;

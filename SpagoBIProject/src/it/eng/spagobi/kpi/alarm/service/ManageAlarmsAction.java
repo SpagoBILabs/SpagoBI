@@ -95,6 +95,7 @@ public class ManageAlarmsAction extends AbstractSpagoBIAction{
 		ISbiAlarmDAO alarmDao;
 		try {
 			alarmDao = DAOFactory.getAlarmDAO();
+			alarmDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
