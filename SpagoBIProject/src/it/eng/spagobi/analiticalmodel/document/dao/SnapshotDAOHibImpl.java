@@ -121,6 +121,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, idBIObj);
 			SbiBinContents hibBinContent = new SbiBinContents();
 			hibBinContent.setContent(content);
+			updateSbiCommonInfo4Insert(hibBinContent);
 			Integer idBin = (Integer)aSession.save(hibBinContent);
 			// recover the saved binary hibernate object
 			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
@@ -131,6 +132,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			hibSnap.setName(name);
 			hibSnap.setSbiBinContents(hibBinContent);
 			hibSnap.setSbiObject(hibBIObject);
+			updateSbiCommonInfo4Insert(hibSnap);
 			aSession.save(hibSnap);
 			tx.commit();
 		} catch (HibernateException he) {

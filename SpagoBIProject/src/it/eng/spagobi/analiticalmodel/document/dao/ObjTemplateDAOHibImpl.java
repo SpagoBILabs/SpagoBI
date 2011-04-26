@@ -292,7 +292,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			SbiBinContents hibBinContent = new SbiBinContents();
 			byte[] bytes = objTemplate.getContent();
 			hibBinContent.setContent(bytes);
-
+			updateSbiCommonInfo4Insert(hibBinContent);
 			Integer idBin = (Integer) aSession.save(hibBinContent);
 			// recover the saved binary hibernate object
 			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
@@ -343,7 +343,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				if (user == null || user.equals(""))user = obj.getCreationUser();
 				hibObjTemplate.setCreationUser(user);
 				hibObjTemplate.setDimension(objTemplate.getDimension());
-
+				updateSbiCommonInfo4Insert(hibObjTemplate);
 				aSession.save(hibObjTemplate);
 			}
 			tx.commit();

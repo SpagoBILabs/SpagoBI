@@ -280,7 +280,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			}
 			hibBinContent.setContent(bytes);
-			
+			updateSbiCommonInfo4Insert(hibBinContent);
 			Integer idBin = (Integer)aSession.save(hibBinContent);
 			// recover the saved binary hibernate object
 			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
@@ -295,6 +295,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			hibSub.setName(subObj.getName());
 			hibSub.setSbiBinContents(hibBinContent);
 			hibSub.setSbiObject(hibBIObject);
+			updateSbiCommonInfo4Insert(hibSub);
 			aSession.save(hibSub);
 			subObjId = hibSub.getSubObjId();
 			tx.commit();
@@ -347,7 +348,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			}
 			hibBinContent.setContent(bytes);
-			
+			updateSbiCommonInfo4Insert(hibBinContent);
 			Integer idBin = (Integer)aSession.save(hibBinContent);
 			// recover the saved binary hibernate object
 			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
