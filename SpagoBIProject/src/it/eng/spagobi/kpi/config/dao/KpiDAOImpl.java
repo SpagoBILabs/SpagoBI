@@ -35,6 +35,7 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -625,7 +626,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			hibKpiValue.setSbiKpiInstance(sbiKpiInstance);
 			logger.debug("Kpi Instance setted");
 			hibKpiValue.setXmlData(value.getValueXml());
-
+			updateSbiCommonInfo4Insert(hibKpiValue);
 			kpiValueId = (Integer)aSession.save(hibKpiValue);
 			tx.commit();
 			return kpiValueId;
@@ -1191,6 +1192,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					SbiKpiDocument temp = new SbiKpiDocument();
 					temp.setSbiKpi(sbiKpi);
 					temp.setSbiObjects(hibObject);
+					updateSbiCommonInfo4Update(temp);
 					aSession.saveOrUpdate(temp);
 				}
 			}
@@ -1219,10 +1221,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			//sbiKpi.setSbiKpiDocumentses(sbiKpiDocuments);
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
-
+			updateSbiCommonInfo4Update(sbiKpi);
 			aSession.saveOrUpdate(sbiKpi);
-
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+			IUdpValueDAO dao=DAOFactory.getUdpDAOValue();
+			dao.setUserProfile(getUserProfile());
+			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
 
 			tx.commit();
 
@@ -1318,7 +1321,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setIsAdditive(kpi.getIsAdditive());
 			sbiKpi.setSbiDataSet(ds);
 			sbiKpi.setSbiThreshold(sbiThreshold);
-
+			updateSbiCommonInfo4Insert(sbiKpi);
 			idToReturn = (Integer) aSession.save(sbiKpi);
 
 			List kpiDocsList = kpi.getSbiKpiDocuments();
@@ -1335,11 +1338,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				SbiKpiDocument temp = new SbiKpiDocument();
 				temp.setSbiKpi(sbiKpi);
 				temp.setSbiObjects(hibObject);
+				updateSbiCommonInfo4Insert(temp);
 				aSession.save(temp);
 			}
 
 			//insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+			IUdpValueDAO dao = DAOFactory.getUdpDAOValue();
+			dao.setUserProfile(getUserProfile());
+			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
 
 			tx.commit();
 

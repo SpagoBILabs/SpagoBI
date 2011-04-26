@@ -115,6 +115,9 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 			kpiDao = DAOFactory.getKpiDAO();
 			dsDao = DAOFactory.getDataSetDAO();
 			thrDao = DAOFactory.getThresholdDAO();
+			kpiDao.setUserProfile(getUserProfile());
+			dsDao.setUserProfile(getUserProfile());
+			thrDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

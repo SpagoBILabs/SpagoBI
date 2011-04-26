@@ -62,7 +62,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			hibGoal.setStartDate(goal.getStartDate());
 			hibGoal.setEndDate(goal.getEndDate());
 			hibGoal.setGrantId(goal.getGrantId());
-			
+			updateSbiCommonInfo4Insert(hibGoal);
 			if(goal.getId()!=null){
 				hibGoal.setGoalId(goal.getId());
 				aSession.update(hibGoal);					
@@ -168,6 +168,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 				SbiGoalHierarchy father= (SbiGoalHierarchy)hibQuery.uniqueResult();
 				hibGoalHierarchy.setSbiGoalHierarchy(father);
 			}
+			updateSbiCommonInfo4Insert(hibGoalHierarchy);
 			aSession.save(hibGoalHierarchy);	
 			tx.commit();
 			goalNode.setId(hibGoalHierarchy.getGoalHierarchyId());
@@ -205,6 +206,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 
 			SbiGoalHierarchy hibGrantNode = (SbiGoalHierarchy) aSession.load(SbiGoalHierarchy.class, goalId);
 			hibGrantNode.setName(newName);
+			updateSbiCommonInfo4Update(hibGrantNode);
 			aSession.update(hibGrantNode);
 
 			tx.commit();
@@ -227,6 +229,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			exists.setName(goalNode.getName());
 			exists.setLabel(goalNode.getLabel());
 			exists.setGoal(goalNode.getGoalDescr());
+			updateSbiCommonInfo4Update(exists);
 			aSession.update(exists);	
 			tx.commit();			
 		} finally {
@@ -312,7 +315,7 @@ public class GoalDAOImpl extends AbstractHibernateDAO implements IGoalDAO{
 			hibQuery.setInteger(1, hibSbiGoalKpi.getKpiInstanceId());
 			exists= (SbiGoalKpi)hibQuery.uniqueResult();
 		}
-
+		updateSbiCommonInfo4Insert(hibSbiGoalKpi);
 		if(exists == null){
 			aSession.save(hibSbiGoalKpi);	
 			goalKpi.setId(hibSbiGoalKpi.getGoalKpiId());
