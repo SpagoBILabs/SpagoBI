@@ -97,7 +97,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 		    fields: ['name'
      	          , 'type'
       	          ],
-		    idIndex: 0,
+		    //idIndex: 0,
 		    data:{}
 		});
 	 
@@ -169,7 +169,7 @@ Ext.extend(Sbi.tools.ManageDatasetParameters, Ext.grid.EditorGridPanel, {
 
     ,onAdd: function (btn, ev) {
         var emptyRecToAdd = new Ext.data.Record({
-			  id: 0,
+			  //id: 0,
               type: 'String'     
 			 });   
         this.store.insert(0,emptyRecToAdd);

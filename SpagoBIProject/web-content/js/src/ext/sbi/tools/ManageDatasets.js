@@ -117,7 +117,8 @@ Ext.extend(
 				datasetTestTab : null,
 				manageParsGrid : null,
 				manageDsVersionsGrid : null,
-				newRecord: null
+				newRecord: null,
+				detailFieldId: null
 
 				,activateTransfForm : function(combo, record, index) {
 					var transfSelected = record.get('trasfTypeCd');
@@ -314,10 +315,10 @@ Ext.extend(
 					});
 
 					// START list of detail fields
-					var detailFieldId = {
+					this.detailFieldId = new Ext.form.TextField({
 						name : 'id',
 						hidden : true
-					};
+					});
 					
 					var detailFieldUserIn = {
 							name : 'userIn',
@@ -448,7 +449,7 @@ Ext.extend(
 									items : [ 
 									        detailFieldLabel, detailFieldName,
 											detailFieldDescr, detailFieldCatType, this.manageDsVersionsPanel ,
-											detailFieldUserIn,detailFieldDateIn,detailFieldVersNum,detailFieldVersId,detailFieldId
+											detailFieldUserIn,detailFieldDateIn,detailFieldVersNum,detailFieldVersId,this.detailFieldId
 											]
 								}
 							});
@@ -1087,10 +1088,18 @@ Ext.extend(
 
 				,cloneItem: function() {	
 					var values = this.getForm().getFieldValues();
+					var params = this.buildParamsToSendToServer(values);
+					var arrayPars = this.manageParsGrid.getParsArray();
 					
-					this.newRecord = this.buildNewRecordToSave(values);
+					this.newRecord = this.buildNewRecordToSave(values);		
+					this.newRecord.set('pars',arrayPars);
 					this.getForm().loadRecord(this.newRecord);
-					this.manageParsGrid.loadItems([]);
+					
+					if (arrayPars) {
+						this.manageParsGrid.loadItems(arrayPars);
+					}else{
+						this.manageParsGrid.loadItems([]);
+					}
 					this.manageDsVersionsGrid.loadItems([]);
 					
 					this.tabs.items.each(function(item) {
@@ -1148,7 +1157,6 @@ Ext.extend(
 						label : '...',
 						usedByNDocs: 0,
 						dsVersions: [],
-						pars: [],
 						description : values['description'],
 						dsTypeCd : values['dsTypeCd'],
 						catTypeCd : values['catTypeCd'],
@@ -1211,7 +1219,7 @@ Ext.extend(
 					return params;
 				}
 				
-				,updateNewRecord: function(record, values){
+				,updateNewRecord: function(record, values, arrayPars){
 					record.set('label',values['label']);
 					record.set('name',values['name']);
 					record.set('description',values['description']);
@@ -1239,6 +1247,10 @@ Ext.extend(
 					record.set('dateIn',values['dateIn']);
 					record.set('versNum',values['versNum']);
 					record.set('versId',values['versId']);
+					
+					if (arrayPars) {
+						record.set('pars',arrayPars);
+					}
 				}
 				
 				, updateMainStore: function(idRec){
@@ -1251,7 +1263,9 @@ Ext.extend(
 			   	        	record = tempRecord;
 						}			   
 			   	    }	
-					this.updateNewRecord(record,values);
+					var params = this.buildParamsToSendToServer(values);
+					var arrayPars = this.manageParsGrid.getParsArray();
+					this.updateNewRecord(record,values,arrayPars);
 					this.mainElementsStore.commitChanges();
 				}
 				
@@ -1279,9 +1293,11 @@ Ext.extend(
 					var newRec;
 					var newDsVersion;
 					var isNewRec = false;
+					var params = this.buildParamsToSendToServer(values);
+					var arrayPars = this.manageParsGrid.getParsArray();
 
 					if (idRec == 0 || idRec == null || idRec === '') {
-						this.updateNewRecord(this.newRecord,values);
+						this.updateNewRecord(this.newRecord,values,arrayPars);
 						isNewRec = true;
 					}else{
 						var record;
@@ -1294,7 +1310,7 @@ Ext.extend(
 				   	        	oldType = record.get('dsTypeCd');
 							}			   
 				   	    }	
-						this.updateNewRecord(record,values);
+						this.updateNewRecord(record,values,arrayPars);
 						newDsVersion = new Ext.data.Record(
 								{	dsId: values['id'],
 									dateIn : values['dateIn'],
@@ -1304,15 +1320,9 @@ Ext.extend(
 									versNum : values['versNum']
 								});
 					}
-
-					var params = this.buildParamsToSendToServer(values);
-
-					var arrayPars = this.manageParsGrid.getParsArray();
+					
 					if (arrayPars) {
 						params.pars = Ext.util.JSON.encode(arrayPars);
-						if (isNewRec) {
-							this.newRecord.set('pars',arrayPars);
-						}
 					}
 
 					if (idRec) {
@@ -1345,19 +1355,22 @@ Ext.extend(
 														&& itemId != null
 														&& itemId !== '') {
 		
-													if(this.newRecord != null && this.newRecord != undefined){
-														
-														var modifRec = this.mainElementsStore.getModifiedRecords()[0];
-													
-														if(modifRec!=null && modifRec!=undefined){
-															modifRec.set('id',itemId);
-															modifRec.commit();
-														}
-													}
+													var record;
+													var length = this.mainElementsStore.getCount();
+													for(var i=0;i<length;i++){
+											   	        var tempRecord = this.mainElementsStore.getAt(i);
+											   	        if(tempRecord.data.id==0){
+											   	        	tempRecord.set('id',itemId);
+											   	        	tempRecord.commit();
+											   	        	this.detailFieldId.setValue(itemId);
+														}			   
+											   	    }
 												}else{
 													if(newDsVersion!= null && newDsVersion != undefined){
 														this.manageDsVersionsGrid.getStore().addSorted(newDsVersion);
 														this.manageDsVersionsGrid.getStore().commitChanges();
+														var values = this.getForm().getFieldValues();
+														this.updateDsVersionsOfMainStore(values['id']);
 													}
 												}
 												this.mainElementsStore.commitChanges();
