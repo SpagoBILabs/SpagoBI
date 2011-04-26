@@ -23,14 +23,11 @@ package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import java.sql.Connection;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.chiron.ListEnginesAction;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
@@ -51,7 +48,7 @@ public class UserDocumentsBrowserStartAction extends AbstractBaseHttpAction{
 	public static final String LABEL_SUBTREE_NODE = "LABEL_SUBTREE_NODE";
 	
 	// logger component
-	private static Logger logger = Logger.getLogger(ListEnginesAction.class);
+	private static Logger logger = Logger.getLogger(UserDocumentsBrowserStartAction.class);
 	
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		
