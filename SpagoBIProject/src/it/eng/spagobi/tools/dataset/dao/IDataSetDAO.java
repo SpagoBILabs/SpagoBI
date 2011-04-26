@@ -31,6 +31,7 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
@@ -79,7 +80,7 @@ public interface IDataSetDAO extends ISpagoBIDao{
 	 * @param dsVersion the a data set Version
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) throws EMFUserError ;
+	public GuiGenericDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) throws EMFUserError ;
 	
 	/**
 	 * Returns the Higher Version Number of a selected DS

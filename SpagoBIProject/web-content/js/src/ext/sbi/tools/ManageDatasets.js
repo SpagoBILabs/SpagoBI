@@ -382,6 +382,25 @@ Ext.extend(
 
 					var c = {};
 					this.manageDsVersionsGrid = new Sbi.tools.ManageDatasetVersions(c);
+					this.manageDsVersionsGrid.addListener('verionrestored', function(version) {
+						
+						var values = this.getForm().getFieldValues();
+						var newDsVersion = new Ext.data.Record(
+								{	dsId: values['id'],
+									dateIn : values['dateIn'],
+									userIn : values['userIn'],
+									versId : values['versId'],
+									type : values['dsTypeCd'], 
+									versNum : values['versNum']
+								});
+						this.manageDsVersionsGrid.getStore().addSorted(newDsVersion);
+						this.manageDsVersionsGrid.getStore().commitChanges();
+						var rec = this.buildNewRecordDsVersion(version);
+						this.activateDsTypeForm(null, rec, null);
+						this.activateTransfForm(null, rec, null);
+						this.activateDsTestTab(this.datasetTestTab);
+						this.getForm().loadRecord(rec);
+					}, this);
 
 					this.manageDsVersionsPanel = new Ext.Panel(
 							{	id : 'man-vers',
@@ -1078,6 +1097,43 @@ Ext.extend(
 					}
 					this.tabs.setActiveTab(0);
 			    }
+				,buildNewRecordDsVersion: function(values){
+					var actualValues = this.getForm().getFieldValues();
+					var newRec = new Ext.data.Record({
+						id: actualValues['id'],
+						name : actualValues['name'],
+						label : actualValues['label'],
+						usedByNDocs: actualValues['usedByNDocs'],
+						dsVersions: [],
+						pars: values['pars'],
+						description : actualValues['description'],
+						dsTypeCd : values['dsTypeCd'],
+						catTypeCd : values['catTypeCd'],
+						usedByNDocs : values['usedByNDocs'],
+						fileName : values['fileName'],
+						query : values['query'],
+						dataSource : values['dataSource'],
+						wsAddress : values['wsAddress'],
+						wsOperation : values['wsOperation'],
+						script : values['script'],
+						scriptLanguage : values['scriptLanguage'],
+						jclassName : values['jclassName'],
+						trasfTypeCd : values['trasfTypeCd'],
+						pivotColName : values['pivotColName'],
+						pivotColValue : values['pivotColValue'],
+						pivotRowName : values['pivotRowName'],
+						pivotIsNumRows : values['pivotIsNumRows'],
+						qbeSQLQuery : values['qbeSQLQuery'],
+						qbeJSONQuery : values['qbeJSONQuery'],
+						qbeDataSource: values['qbeDataSource'],
+						qbeDatamarts: values['qbeDatamarts'],
+						userIn: values['userIn'],
+						dateIn: values['dateIn'],
+						versNum: values['versNum'],
+						versId: values['versId']
+					});
+					return newRec;
+				}
 				
 				,buildNewRecordToSave: function(values){
 					var newRec = new Ext.data.Record({
