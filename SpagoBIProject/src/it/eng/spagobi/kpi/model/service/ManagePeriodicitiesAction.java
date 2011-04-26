@@ -67,6 +67,7 @@ public class ManagePeriodicitiesAction extends AbstractSpagoBIAction {
 		IPeriodicityDAO perDao;
 		try {
 			perDao = DAOFactory.getPeriodicityDAO();
+			perDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

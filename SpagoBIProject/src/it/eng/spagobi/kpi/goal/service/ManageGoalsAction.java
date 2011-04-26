@@ -1,19 +1,9 @@
 package it.eng.spagobi.kpi.goal.service;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.kpi.goal.dao.IGoalDAO;
 import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalNode;
@@ -24,6 +14,17 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ManageGoalsAction extends AbstractSpagoBIAction {
 
@@ -72,11 +73,22 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 	public static final String GOAL_FATHER = "fatherCountNode";
 	public static final String GOAL_NODE_COUNT = "nodeCount";
 
+	IGoalDAO daoGoal=null;
+	
 	@Override
 	public void doService() {
 
 	
 		logger.debug("IN");
+		
+		try {
+			daoGoal = DAOFactory.getGoalDAO();
+
+		} catch (Exception e1) {
+			logger.error(e1.getMessage(), e1);
+			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
+		}
+		
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		
 		if (serviceType != null && serviceType.equalsIgnoreCase(GOAL_NODE_CHILD)) {
@@ -84,7 +96,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			try{
 				Integer nodeId =  getAttributeAsInteger("nodeId");
 				logger.debug("nodeId:"+ nodeId);
-				List<GoalNode> children = DAOFactory.getGoalDAO().getChildrenNodes(nodeId);
+				List<GoalNode> children = daoGoal.getChildrenNodes(nodeId);
 				JSONArray ja = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(children,	getLocale());
 				writeBackToClient(new JSONSuccess(ja));				
 			} catch (NumberFormatException e) {
@@ -107,7 +119,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			Integer goalId =  getAttributeAsInteger("goalId");
 			Integer ouId =  getAttributeAsInteger("ouId");
 			logger.debug("goalId: "+goalId+" ,ouId "+ouId);
-			GoalNode root = DAOFactory.getGoalDAO().getRootNode(goalId, ouId);
+			GoalNode root = daoGoal.getRootNode(goalId, ouId);
 			try{
 				if(root!=null){
 					jo = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(root, getLocale());
@@ -154,9 +166,9 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 				for(int i=0; i<kpis.length(); i++){
 					kpisList.add(deserializeKpiNode((JSONObject)kpis.get(i), goalNodeId));
 				}
-				DAOFactory.getGoalDAO().ereseGoalKpis(goalNodeId);
-				DAOFactory.getGoalDAO().insertGoalKpis(kpisList, goalNodeId);
-				DAOFactory.getGoalDAO().updateGoalNode(gn);
+				daoGoal.ereseGoalKpis(goalNodeId);
+				daoGoal.insertGoalKpis(kpisList, goalNodeId);
+				daoGoal.updateGoalNode(gn);
 				writeBackToClient(new JSONAcknowledge());	
 			} catch (Exception e){
 				logger.debug("Error adding the details to the goal node");
@@ -170,7 +182,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			logger.debug("id:"+goalNode);
 			String goalName =  getAttributeAsString("newName");
 			
-			DAOFactory.getGoalDAO().updateGoalName(goalNode, goalName);
+			daoGoal.updateGoalName(goalNode, goalName);
 			try{
 				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e){
@@ -183,7 +195,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			logger.debug("Removing the goal node with id:");
 			Integer goalNode =  getAttributeAsInteger("id");
 			logger.debug("id:"+goalNode);
-			DAOFactory.getGoalDAO().ereseGoalNode(goalNode);
+			daoGoal.ereseGoalNode(goalNode);
 			try{
 				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e){
@@ -220,7 +232,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 				JSONObject modelInstanceJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( mi, null);
 				
 				if(goalNodeId!=null){
-					List<GoalKpi> listGoalKpi = DAOFactory.getGoalDAO().getGoalKpi(goalNodeId);
+					List<GoalKpi> listGoalKpi = daoGoal.getGoalKpi(goalNodeId);
 					for(int i=0; i<listGoalKpi.size(); i++){
 						if(listGoalKpi.get(i).getModelInstanceId().equals( mi.getId())){
 							modelInstanceJSON.put("weight1", ""+listGoalKpi.get(i).getWeight1());
@@ -255,7 +267,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			Integer goalId = getAttributeAsInteger("goalId");
 			logger.debug(goalId);
 			logger.debug(goalId);
-			DAOFactory.getGoalDAO().eraseGoal(goalId);
+			daoGoal.eraseGoal(goalId);
 			try{
 				writeBackToClient( new JSONAcknowledge() );
 			} catch (IOException e){
@@ -270,7 +282,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 			logger.debug(goalJSON);
 			try{
 				Goal goal = deserializeGoal(goalJSON);
-				DAOFactory.getGoalDAO().insertGoal(goal);
+				daoGoal.insertGoal(goal);
 				writeBackToClient( new JSONAcknowledge() );
 			} catch (Exception e){
 				logger.debug("Error inserting the goal");
@@ -281,7 +293,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 		if (serviceType != null && serviceType.equalsIgnoreCase(GOALS_LIST)) {
 			logger.debug("Getting the list of the goals");
 			try{
-			List<Goal> goals = DAOFactory.getGoalDAO().getGoalsList();
+			List<Goal> goals = daoGoal.getGoalsList();
 			JSONArray jo = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(goals,	getLocale());
 			JSONObject grantsJSONObject = new JSONObject();
 			grantsJSONObject.put("rows",jo);
@@ -316,7 +328,7 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 	private GoalNode insertGoalNode(JSONObject goal, JSONArray kpis, Integer goalId, Integer ou) throws Exception{
 		
 		GoalNode gn = deserializeGoalNode(goal,goalId,ou);
-		DAOFactory.getGoalDAO().insertGoalNode(gn, gn.getFatherCountId());
+		daoGoal.insertGoalNode(gn, gn.getFatherCountId());
 		if(kpis!=null){
 			insertKpiNodesArray(kpis, gn.getId());
 		}
@@ -346,8 +358,8 @@ public class ManageGoalsAction extends AbstractSpagoBIAction {
 		for(int i=0;i<kpis.length(); i++){
 			goalKpis.add(deserializeKpiNode(kpis.getJSONObject(i),goalNodeId));
 		}
-		DAOFactory.getGoalDAO().ereseGoalKpis(goalNodeId);
-		DAOFactory.getGoalDAO().insertGoalKpis(goalKpis, goalNodeId);
+		daoGoal.ereseGoalKpis(goalNodeId);
+		daoGoal.insertGoalKpis(goalKpis, goalNodeId);
 	}
 	
 	private GoalKpi deserializeKpiNode(JSONObject JSONGoal, Integer goalNodeId) throws Exception{

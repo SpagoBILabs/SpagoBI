@@ -54,6 +54,8 @@ import it.eng.spagobi.kpi.config.bo.KpiDocuments;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.bo.KpiRel;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
+import it.eng.spagobi.kpi.config.dao.IKpiDAO;
+import it.eng.spagobi.kpi.config.dao.IKpiErrorDAO;
 import it.eng.spagobi.kpi.config.dao.KpiDAOImpl;
 import it.eng.spagobi.kpi.exceptions.MissingKpiValueException;
 import it.eng.spagobi.kpi.model.bo.ModelInstanceNode;
@@ -309,7 +311,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				}
 				logger.debug("New value calculated");
 				// Insert new Value into the DB
-				DAOFactory.getKpiDAO().insertKpiValue(value);
+				IKpiDAO dao=DAOFactory.getKpiDAO();
+				dao.setUserProfile(profile);
+				dao.insertKpiValue(value);
 				logger.debug("New value inserted in the DB");		
 				// Checks if the value is alarming (out of a certain range)
 				// If the value is alarming a new line will be inserted in the sbi_alarm_event table and scheduled to be sent
@@ -1196,7 +1200,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 			if(e instanceof DatasetException){
 				logger.error("write exception in tabe kpiError ", e);
-				DAOFactory.getKpiErrorDAO().insertKpiError(
+				IKpiErrorDAO dao= DAOFactory.getKpiErrorDAO();
+				dao.setUserProfile(profile);
+				dao.insertKpiError(
 						(DatasetException)e, 
 						modInstNodeId, 
 						kVal.getR() != null ? kVal.getR().getName() : null );
@@ -1233,7 +1239,9 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 						if(doSave){
 							// Insert new Value into the DB
-							Integer kpiValueId = DAOFactory.getKpiDAO().insertKpiValue(kpiValTemp);
+							IKpiDAO dao= DAOFactory.getKpiDAO();
+							dao.setUserProfile(profile);
+							Integer kpiValueId = dao.insertKpiValue(kpiValTemp);
 							kVal.setKpiValueId(kpiValueId);
 							logger.info("New value inserted in the DB. Resource="+kpiValTemp.getR().getName()+" KpiInstanceId="+kpiValTemp.getKpiInstanceId());
 						}
@@ -1360,7 +1368,10 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		if (kpiValueToReturn == null && valueFound == true){
 			logger.error("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");
 			MissingKpiValueException missingKpiValueException = new MissingKpiValueException("cjheck dataset "+datasetLabel+ " because no value field for kpi was found");			
-			DAOFactory.getKpiErrorDAO().insertKpiError(
+			
+			IKpiErrorDAO dao= DAOFactory.getKpiErrorDAO();
+			dao.setUserProfile(profile);
+			dao.insertKpiError(
 					missingKpiValueException, 
 					modInstId, 
 					kpiVal.getR() != null ? kpiVal.getR().getName() : null );

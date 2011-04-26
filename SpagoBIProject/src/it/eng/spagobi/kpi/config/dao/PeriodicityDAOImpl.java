@@ -43,7 +43,7 @@ public class PeriodicityDAOImpl extends AbstractHibernateDAO implements
 			sbiPer.setHours(hours);
 			sbiPer.setMinutes(mins);
 			sbiPer.setMonths(months);		
-
+			updateSbiCommonInfo4Update(sbiPer);
 			aSession.update(sbiPer);
 			tx.commit();
 
@@ -93,7 +93,7 @@ public class PeriodicityDAOImpl extends AbstractHibernateDAO implements
 			sbiPer.setHours(hours);
 			sbiPer.setMinutes(mins);
 			sbiPer.setMonths(months);	
-
+			updateSbiCommonInfo4Insert(sbiPer);
 			idToReturn = (Integer) aSession.save(sbiPer);
 			tx.commit();
 

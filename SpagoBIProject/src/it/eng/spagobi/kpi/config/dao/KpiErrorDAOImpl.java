@@ -40,6 +40,7 @@ public class KpiErrorDAOImpl extends AbstractHibernateDAO implements IKpiErrorDA
 			SbiKpiError sbiKpiError = toSbiKpiError(exception, modelInstanceId, resourceName, session);
 			tx = session.beginTransaction();
 			id = (Integer)session.save(sbiKpiError);
+			updateSbiCommonInfo4Insert(sbiKpiError);
 			tx.commit();
 
 		} catch (HibernateException e) {
@@ -74,7 +75,9 @@ public class KpiErrorDAOImpl extends AbstractHibernateDAO implements IKpiErrorDA
 		Integer id = null;
 		try {
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Insert(sbiKpiError);
 			id = (Integer)session.save(sbiKpiError);
+			
 			tx.commit();
 
 		} catch (HibernateException e) {
