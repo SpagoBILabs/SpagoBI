@@ -465,13 +465,13 @@ Ext.extend(
 					});
 
 					this.dataSourceStore = new Ext.data.SimpleStore({
-						fields : [ 'dataSource' ],
+						fields : [ 'dataSource','name' ],
 						data : config.dataSourceLabels,
 						autoLoad : false
 					});
 
 					this.scriptLanguagesStore = new Ext.data.SimpleStore({
-						fields : [ 'scriptLanguage' ],
+						fields : [ 'scriptLanguage' ,'name'],
 						data : config.scriptTypes,
 						autoLoad : false
 					});
@@ -508,7 +508,7 @@ Ext.extend(
 						store : this.dataSourceStore,
 						width : 80,
 						fieldLabel : LN('sbi.ds.dataSource'),
-						displayField : 'dataSource', // what the user
+						displayField : 'name', // what the user
 						// sees in the
 						// popup
 						valueField : 'dataSource', // what is passed to the
@@ -634,7 +634,7 @@ Ext.extend(
 						store : this.scriptLanguagesStore,
 						width : 80,
 						fieldLabel : LN('sbi.ds.scriptLanguage'),
-						displayField : 'scriptLanguage', // what the user
+						displayField : 'name', // what the user
 						// sees in the
 						// popup
 						valueField : 'scriptLanguage', // what is passed to

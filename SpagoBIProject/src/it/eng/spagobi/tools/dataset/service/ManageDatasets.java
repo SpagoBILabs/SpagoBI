@@ -625,7 +625,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
 			String name = obj.getString("name");	
-			String value = "'"+obj.getString("value")+"'";	
+			String tempVal = obj.getString("value");
+			String value = "";
+			if(tempVal!=null && tempVal.contains(",")){
+				String[] tempArrayValues = tempVal.split(",");
+				for(int j=0; j< tempArrayValues.length; j++){
+					if(j==0){
+						value = "'"+tempArrayValues[j]+"'";
+					}else{
+						value = value+",'"+tempArrayValues[j]+"'";	
+					}
+				}
+			}else{
+			    value = "'"+tempVal+"'";	
+			}
 			h.put(name,value);
 		}	
 		return h;
