@@ -216,6 +216,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
+			updateSbiCommonInfo4Insert(hibRole);
 			aSession.save(hibRole);
 			
 			tx.commit();
@@ -325,7 +326,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
-			
+			updateSbiCommonInfo4Update(hibRole);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -640,7 +641,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setIsAbleToSaveRememberMe(new Boolean(role.isAbleToSaveRememberMe()));
 			hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(role.isAbleToSaveIntoPersonalFolder()));
 			hibRole.setIsAbleToBuildQbeQuery(new Boolean(role.isAbleToBuildQbeQuery()));
-			
+			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer)aSession.save(hibRole);
 			
 			tx.commit();
