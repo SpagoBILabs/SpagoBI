@@ -178,6 +178,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
     }, this);
     
     this.addEvents('verionrestored');	
+    this.addEvents('verionsdeleted');	
 
 };
 
@@ -244,45 +245,38 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
     
     ,onDelete: function() {   	
     	var rec = this.getSelectionModel().getSelected();
-        var versNum = rec.get('versNum');
-        var dsId = rec.get('versNum');
-        alert(itemId);
+        var dsVersId = rec.get('versId');
         
-        if (itemId != null && itemId!=undefined && itemId!=0){       	
+        if (dsVersId != null && dsVersId!=undefined && dsVersId!=0){       	
         	Ext.MessageBox.confirm(
     			LN('sbi.generic.pleaseConfirm'),
     			LN('sbi.generic.confirmDelete'),            
                 function(btn, text) {
                     if (btn=='yes') {
-                    	if (itemId != null) {	
-
-    						Ext.Ajax.request({
-    				            url: this.services['deleteDsVersionService'],
-    				            params: {'versId': itemId},
-    				            method: 'GET',
-    				            success: function(response, options) {
-    								if (response !== undefined) {
-    									var deleteRow = this.getSelectionModel().getSelected();
-    									this.store.remove(deleteRow);
-    									this.store.commitChanges();
-    								} else {
-    									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
-    								}
-    				            },
-    				            failure: function() {
-    				                Ext.MessageBox.show({
-    				                    title: LN('sbi.generic.error'),
-    				                    msg: LN('sbi.generic.deletingItemError'),
-    				                    width: 150,
-    				                    buttons: Ext.MessageBox.OK
-    				               });
-    				            }
-    				            ,scope: this
-    			
-    						});
-    					} else {
-    						Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.generic.error.msg'),LN('sbi.generic.warning'));
-    					}
+						Ext.Ajax.request({
+				            url: this.services['deleteDsVersionService'],
+				            params: {'versId': dsVersId},
+				            method: 'GET',
+				            success: function(response, options) {
+								if (response !== undefined) {
+									var deleteRow = this.getSelectionModel().getSelected();
+									this.store.remove(deleteRow);
+									this.store.commitChanges();
+									this.fireEvent('verionsdeleted');
+								} else {
+									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
+								}
+				            },
+				            failure: function() {
+				                Ext.MessageBox.show({
+				                    title: LN('sbi.generic.error'),
+				                    msg: LN('sbi.generic.deletingItemError'),
+				                    width: 150,
+				                    buttons: Ext.MessageBox.OK
+				               });
+				            }
+				            ,scope: this
+						});
                     }
                 },
                 this
@@ -310,6 +304,7 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
 	    								if (response !== undefined) {
 	    									this.store.removeAll();
 	    									this.store.commitChanges();
+	    									this.fireEvent('verionsdeleted');
 	    								} else {
 	    									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
 	    								}
@@ -338,6 +333,18 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
 	        }
      }
    }
+    
+    ,getCurrentDsVersions: function(){
+	    var arrayVers = new Array();
+		var storeVers = this.getStore();
+		var length = storeVers.getCount();
+		for(var i = 0;i< length;i++){
+			var item = storeVers.getAt(i);
+			var data = item.data;
+			arrayVers.push(data);
+		}
+		return arrayVers;
+    }
 
 });
 

@@ -394,12 +394,18 @@ Ext.extend(
 									versNum : values['versNum']
 								});
 						this.manageDsVersionsGrid.getStore().addSorted(newDsVersion);
-						this.manageDsVersionsGrid.getStore().commitChanges();
+						this.manageDsVersionsGrid.getStore().commitChanges();	
 						var rec = this.buildNewRecordDsVersion(version);
 						this.activateDsTypeForm(null, rec, null);
 						this.activateTransfForm(null, rec, null);
 						this.activateDsTestTab(this.datasetTestTab);
 						this.getForm().loadRecord(rec);
+						this.updateMainStore(values['id']);
+					}, this);
+					
+					this.manageDsVersionsGrid.addListener('verionsdeleted', function() {
+						var values = this.getForm().getFieldValues();
+						this.updateDsVersionsOfMainStore(values['id']);
 					}, this);
 
 					this.manageDsVersionsPanel = new Ext.Panel(
@@ -1233,6 +1239,36 @@ Ext.extend(
 					record.set('dateIn',values['dateIn']);
 					record.set('versNum',values['versNum']);
 					record.set('versId',values['versId']);
+				}
+				
+				, updateMainStore: function(idRec){
+					var values = this.getForm().getFieldValues();
+					var record;
+					var length = this.mainElementsStore.getCount();
+					for(var i=0;i<length;i++){
+			   	        var tempRecord = this.mainElementsStore.getAt(i);
+			   	        if(tempRecord.data.id==idRec){
+			   	        	record = tempRecord;
+						}			   
+			   	    }	
+					this.updateNewRecord(record,values);
+					this.mainElementsStore.commitChanges();
+				}
+				
+				, updateDsVersionsOfMainStore: function(idRec){
+					var arrayVersions = this.manageDsVersionsGrid.getCurrentDsVersions();
+					if (arrayVersions) {
+						var record;
+						var length = this.mainElementsStore.getCount();
+						for(var i=0;i<length;i++){
+				   	        var tempRecord = this.mainElementsStore.getAt(i);
+				   	        if(tempRecord.data.id==idRec){
+				   	        	record = tempRecord;
+							}			   
+				   	    }	
+						record.set('dsVersions',arrayVersions);
+						this.mainElementsStore.commitChanges();			
+					}
 				}
 				
 				// OVERRIDING save method
