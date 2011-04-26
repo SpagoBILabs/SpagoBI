@@ -52,7 +52,6 @@ Sbi.worksheet.SheetPanel = function(config) {
                 type:'vbox',
                 align:'stretch'
             },
-            ddGroup: 'paleteDDGroup',
             items:[this.titlePanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	}
 	
