@@ -109,8 +109,9 @@
 <DOMAIN valueCd="Integer" valueNm="Udp Integer Type" domainCd="UDP_TYPE" domainNm="Udp type" valueDs="Predefined udp type"/>
 <DOMAIN valueCd="Model" valueNm="Model Family" domainCd="UDP_FAMILY" domainNm="Udp family" valueDs="Predefined udp family"/>
 <DOMAIN valueCd="Kpi" valueNm="Kpi_Family" domainCd="UDP_FAMILY" domainNm="Udp famil" valueDs="Predefined udp family"/>
-<DOMAIN valueCd="Groovy" valueNm="Groovy" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
-<DOMAIN valueCd="Javascript" valueNm="Javascript" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
+<DOMAIN valueCd="groovy" valueNm="Groovy" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
+<DOMAIN valueCd="rhino-nonjdk" valueNm="Javascript" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
+<DOMAIN valueCd="ejs" valueNm="Embedded Javascript" domainCd="SCRIPT_TYPE" domainNm="Script Type" valueDs="Script Type"/>
 <DOMAIN valueCd="File" valueNm="SbiFileDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiFileDataSet"/>
 <DOMAIN valueCd="Query" valueNm="SbiQueryDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiQueryDataSet"/>
 <DOMAIN valueCd="Java Class" valueNm="SbiJClassDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiJClassDataSet"/>
