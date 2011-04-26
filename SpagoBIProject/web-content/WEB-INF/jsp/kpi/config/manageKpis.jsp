@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 <%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
-<%@page import="it.eng.spagobi.chiron.serializer.UdpJSONSerializer"%>
+<%@page import="it.eng.spagobi.commons.serializer.UdpJSONSerializer"%>
 <%@page import="org.json.JSONObject"%><script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">

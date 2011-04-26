@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.engines.config.bo.Exporters"%>
 <%@page import="java.util.List"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.SubObject"%>
-<%@page import="it.eng.spagobi.chiron.serializer.SerializerFactory"%>
+<%@page import="it.eng.spagobi.commons.serializer.SerializerFactory"%>
 
 <%! private static transient Logger logger = Logger.getLogger(ExecuteDocumentAction.class);%>
 
