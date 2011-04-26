@@ -357,8 +357,7 @@ public class ResourceDAOImpl extends AbstractHibernateDAO implements
 	
 		String hql = "select count(*) from SbiResources ";
 		Query hqlQuery = aSession.createQuery(hql);
-		resultNumber = (Integer)hqlQuery.uniqueResult();
-		
+		resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 		offset = offset < 0 ? 0 : offset;
 		if(resultNumber > 0) {
 			fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
@@ -406,7 +405,7 @@ public class ResourceDAOImpl extends AbstractHibernateDAO implements
 		
 			String hql = "select count(*) from SbiResources ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Resources", he);	

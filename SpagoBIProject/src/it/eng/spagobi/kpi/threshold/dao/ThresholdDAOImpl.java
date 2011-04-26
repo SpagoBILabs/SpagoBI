@@ -363,7 +363,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 		
 			String hql = "select count(*) from SbiThreshold ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Thresholds", he);	
@@ -399,7 +399,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			
 			String hql = "select count(*) from SbiThreshold ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
@@ -454,7 +454,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			
 			String hql = "select count(*) "+hsql;
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
