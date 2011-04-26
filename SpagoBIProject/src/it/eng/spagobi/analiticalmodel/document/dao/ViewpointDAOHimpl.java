@@ -314,7 +314,7 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 			hibViewpoint.setVpScope(viewpoint.getVpScope());
 			hibViewpoint.setVpValueParams(viewpoint.getVpValueParams());
 			hibViewpoint.setVpCreationDate(viewpoint.getVpCreationDate());
-			
+			updateSbiCommonInfo4Insert(hibViewpoint);
 			aSession.save(hibViewpoint);
 			tx.commit();
 		} catch (HibernateException he) {

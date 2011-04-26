@@ -152,6 +152,7 @@ implements ISubreportDAO {
 		hibSubreportid.setMasterReport(masterReport);
 		hibSubreportid.setSubReport(subReport);
 		SbiSubreports hibSubreport = new SbiSubreports(hibSubreportid);
+		updateSbiCommonInfo4Insert(hibSubreport);
 		aSession.save(hibSubreport);	
 		tx.commit();
 	}

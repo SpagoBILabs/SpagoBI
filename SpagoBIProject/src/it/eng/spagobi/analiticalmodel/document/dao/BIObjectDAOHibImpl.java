@@ -502,6 +502,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
 				aSbiObjFuncId.setSbiObjects(hibBIObject);
 				SbiObjFunc aSbiObjFunc = new SbiObjFunc(aSbiObjFuncId);
+				updateSbiCommonInfo4Update(aSbiObjFunc);
 				aSession.save(aSbiObjFunc);
 				hibObjFunc.add(aSbiObjFunc);
 			}
@@ -516,7 +517,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					// set the biobject id into ObjTemplate (it should not be necessary, but to avoid errors ...)
 					objTemp.setBiobjId(biObject.getId());
 					//insert or update new template
-					DAOFactory.getObjTemplateDAO().insertBIObjectTemplate(objTemp);
+					IObjTemplateDAO dao = DAOFactory.getObjTemplateDAO();
+					dao.setUserProfile(this.getUserProfile());
+					dao.insertBIObjectTemplate(objTemp);
 					//if the input document is a document composition and template is changed deletes existing parameters 
 					//and creates all new parameters automatically 
 					//(the parameters are recovered from all documents that compose general document)
@@ -682,7 +685,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			if (objTemp != null) {
 				objTemp.setBiobjId(id);
-				DAOFactory.getObjTemplateDAO().insertBIObjectTemplate(objTemp);
+				
+				IObjTemplateDAO dao=DAOFactory.getObjTemplateDAO();
+				dao.setUserProfile(this.getUserProfile());
+				dao.insertBIObjectTemplate(objTemp);
 			}
 
 			//if the document is a document composition creates all parameters automatically 
@@ -1469,6 +1475,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							sbiObjPar.setMultFl(new Short(objPar.getMultivalue().shortValue()));
 							sbiObjPar.setProg(objPar.getProg());
 							sbiObjPar.setPriority(new Integer(totalParameters.size()+1)); 
+							updateSbiCommonInfo4Insert(sbiObjPar);
 							aSession.save(sbiObjPar);
 							totalParameters.add(objPar.getLabel());
 						}
@@ -1556,6 +1563,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							sbiObjPar.setMultFl(new Short(objPar.getMultivalue().shortValue()));
 							sbiObjPar.setProg(objPar.getProg());
 							sbiObjPar.setPriority(new Integer(totalParameters.size()+1)); 
+							updateSbiCommonInfo4Insert(sbiObjPar);
 							aSession.save(sbiObjPar);
 							totalParameters.add(objPar.getLabel());
 						}

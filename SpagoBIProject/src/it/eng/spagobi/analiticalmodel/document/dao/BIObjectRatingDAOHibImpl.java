@@ -67,6 +67,7 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements
 			if (hibBIObjectsRating != null){
 				
 				hibBIObjectsRating.setRating(newRating);
+				updateSbiCommonInfo4Update(hibBIObjectsRating);
 				aSession.update(hibBIObjectsRating);
 
 			}else {
@@ -78,6 +79,7 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements
 				hibBIObjectsRating1.setRating(newRating);
 				hibBIObjectsRating1.setSbiObjects(hibBIObject);
 				hibBIObjectsRating = hibBIObjectsRating1 ;
+				updateSbiCommonInfo4Insert(hibBIObjectsRating);
 				aSession.save(hibBIObjectsRating);
 				
 				
