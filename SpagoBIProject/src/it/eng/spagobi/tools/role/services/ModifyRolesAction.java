@@ -21,8 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.role.services;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.x.GetUrlForExecutionAction;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -59,8 +63,12 @@ public class ModifyRolesAction extends AbstractHttpAction {
 		String message = null;
 		freezeHttpResponse();
 		HttpServletResponse httResponse = getHttpResponse();
+		RequestContainer requestContainer = this.getRequestContainer();
+		SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
+	    IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			roleDAO.setUserProfile(profile);
 			String modifiedRoles = (String) serviceRequest.getAttribute("MODIFIED_ROLES");
 			if (modifiedRoles == null || modifiedRoles.trim().equals("")) {
 				logger.warn("No roles to save");

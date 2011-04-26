@@ -21,7 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.profiling.services;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -35,6 +38,8 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -81,9 +86,14 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	@Override
 	public void doService() {
 		logger.debug("IN");
+		HttpServletResponse httpResponse = getHttpResponse();
+		RequestContainer requestContainer = this.getRequestContainer();
+		SessionContainer permanentSession = requestContainer.getSessionContainer().getPermanentContainer();
+	    IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		IRoleDAO roleDao;
 		try {
 			roleDao = DAOFactory.getRoleDAO();
+			roleDao.setUserProfile(profile);
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

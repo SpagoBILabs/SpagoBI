@@ -438,6 +438,7 @@ IParameterUseDAO {
 				tmpExtRole = (SbiExtRoles)aSession.load(SbiExtRoles.class, ((Role)newRoles.get(i)).getId());
 				hibParUseDetId.setSbiExtRoles(tmpExtRole);
 				hibParUseDet = new SbiParuseDet(hibParUseDetId);
+				updateSbiCommonInfo4Insert(hibParUseDet);
 				aSession.save(hibParUseDet);
 				parUseDetsToSave.add(hibParUseDet);
 			}

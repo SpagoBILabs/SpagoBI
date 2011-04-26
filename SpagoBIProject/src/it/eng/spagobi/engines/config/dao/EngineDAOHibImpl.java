@@ -273,6 +273,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			hibEngine.setUseDataSet(new Boolean(aEngine.getUseDataSet()));			
 			hibEngine.setUseDataSource(new Boolean(aEngine.getUseDataSource()));						
 			hibEngine.setDataSource(hibDataSource);
+			updateSbiCommonInfo4Update(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -330,7 +331,8 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			hibEngine.setDataSource(hibDataSource);
 			hibEngine.setUseDataSet(new Boolean(aEngine.getUseDataSet()));
 			hibEngine.setUseDataSource(new Boolean(aEngine.getUseDataSource()));
-			hibEngine.setDataSource(hibDataSource);			
+			hibEngine.setDataSource(hibDataSource);	
+			updateSbiCommonInfo4Insert(hibEngine);
 			aSession.save(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
