@@ -83,9 +83,21 @@ Sbi.qbe.QbePanel = function(config) {
 	items.push(this.queryResultPanel);
 	
 	if (c.displayCrosstabDesignerPanel) {
-		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(c.crosstab);
+		var crosstabDesignerConfig = Ext.apply(c.crosstab || {}, {
+			centerConfig: {
+				tools : [{
+				    id: 'gear'
+				    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
+				    , handler: function() {
+				    	var crosstabDefinition = this.crosstabDesignerPanel.getCrosstabDefinition();
+				    	this.showCrosstabPreview(crosstabDefinition);
+				    }
+				    , scope: this
+			   }]
+			}
+		});
+		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(crosstabDesignerConfig);
 		items.push(this.crosstabDesignerPanel);
-		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
 	}
 
 	if (c.displayCrosstabPreviewPanel) {
@@ -276,7 +288,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		return filters;
 	}
   	
-  	, showCrosstabPreview: function(crosstabDefinitionPanel, crosstabDefinition) {
+  	, showCrosstabPreview: function(crosstabDefinition) {
   		this.tabs.activate(this.crosstabPreviewPanel);
   		this.crosstabPreviewPanel.load(crosstabDefinition);
   	}

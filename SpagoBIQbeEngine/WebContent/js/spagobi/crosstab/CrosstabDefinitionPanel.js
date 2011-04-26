@@ -64,20 +64,13 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 	c = Ext.apply(c, {
       	items: [this.crosstabDefinitionPanel]
       	, autoScroll: true
-      	, tools: [{
-		    id: 'gear'
-		    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
-		    , handler: function() {
-      			this.fireEvent('preview', this, this.getCrosstabDefinition());
-		    }
-		    , scope: this
-      	}]
+      	, tools: this.tools || []
 	});
 	
 	// constructor
     Sbi.crosstab.CrosstabDefinitionPanel.superclass.constructor.call(this, c);
     
-    this.addEvents('preview');
+//    this.addEvents('preview');
     
 };
 
@@ -88,6 +81,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	, columnsContainerPanel: null
 	, rowsContainerPanel: null
 	, measuresContainerPanel: null
+	, ddGroup: null // must be provided with the constructor input object
 	
 	, init: function(c) {
 		
@@ -95,12 +89,14 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
             title: LN('sbi.crosstab.crosstabdefinitionpanel.columns')
             , width: 400
             , initialData: this.crosstabTemplate.columns
+            , ddGroup: this.ddGroup
 		});
 		
 		this.rowsContainerPanel = new Sbi.crosstab.AttributesContainerPanel({
             title: LN('sbi.crosstab.crosstabdefinitionpanel.rows')
             , width: 200
             , initialData: this.crosstabTemplate.rows
+            , ddGroup: this.ddGroup
 		});
 		
 		this.measuresContainerPanel = new Sbi.crosstab.MeasuresContainerPanel({
@@ -108,6 +104,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
             , width: 400
             , initialData: this.crosstabTemplate.measures
             , crosstabConfig: this.crosstabTemplate.config
+            , ddGroup: this.ddGroup
 		});
 	
 	    this.crosstabDefinitionPanel = new Ext.Panel({

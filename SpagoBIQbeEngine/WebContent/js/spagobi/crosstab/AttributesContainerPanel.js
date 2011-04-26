@@ -59,12 +59,12 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
 	this.init(c);
-			
+	
 	Ext.apply(c, {
         store: this.store
         , cm: this.cm
         , enableDragDrop: true
-        , ddGroup: 'crosstabDesignerDDGroup'
+        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 	    , layout: 'fit'
 	    , viewConfig: {
 	    	forceFit: true
@@ -166,7 +166,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
-			ddGroup: 'crosstabDesignerDDGroup'
+			ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 			, onFieldDrop: this.onFieldDrop
 		});
 	}
@@ -195,7 +195,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
-			if (this.store.find('id', aRow.data.id) !== undefined) {
+			if (this.store.find('id', aRow.data.id) !== -1) {
 				Ext.Msg.show({
 					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),

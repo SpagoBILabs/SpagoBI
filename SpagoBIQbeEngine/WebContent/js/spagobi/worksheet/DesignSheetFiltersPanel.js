@@ -80,7 +80,6 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	store: null
 	, emptyMsgPanel: null
-    , template: null
     , filters: null
 	, empty: null
 	, contents: null
@@ -93,27 +92,10 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 	])
 	
 	, init: function() {
-		this.initTemplate();
 		this.initStore();
 		this.initEmptyMsgPanel();
 		this.contents = [this.emptyMsgPanel];
 		this.empty = true;
-	}
-	
-	, initTemplate: function () {
-		this.template = new Ext.Template(
-				  '<div class="x-tab-strip">',
-				  	'<div class="x-tab-strip-closable"><a class="x-tab-strip-close"></a></div>',
-				  	'<div style="float: left; padding-right: 20px; padding-bottom: 3px;">{0}</div>',
-				  '</div>');
-//            '<table style="margin-left: auto; margin-right: auto;" id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
-//            '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-//            '<tr><td class="x-btn-ml"><i>&#160;</i></td><td>',
-//            '<span class="x-tab-strip x-tab-strip-closable"><a class="x-tab-strip-close "></a></span>{6}',
-//            '</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
-//            '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
-//            '</tbody></table>');
-		this.template.compile();
 	}
 	
 	, initStore: function() {

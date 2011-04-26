@@ -96,7 +96,10 @@ Ext.extend(Sbi.worksheet.DesignToolsFieldsPanel, Ext.Panel, {
        ['uno','ID','none','field','attribute'],
        ['due','NOME','none','field','attribute'],
        ['tre','COGNOME','none','field','attribute'],
-       ['quattro','MISURA','SUM','field','measure']
+       ['quattro','MISURA','SUM','field','measure'],
+       ['5','MISURA 2','SUM','field','measure'],
+       ['6','MISURA 3 ','SUM','field','measure'],
+       ['7','MISURA 4 ','SUM','field','measure']
     ]
    
    
