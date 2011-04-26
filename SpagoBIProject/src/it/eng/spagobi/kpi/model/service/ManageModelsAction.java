@@ -76,14 +76,15 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 	
 	private final String NODES_TO_SAVE = "nodes";
 
-
+	IModelDAO modelDao=null;
 
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IModelDAO modelDao;
+		
 		try {
 			modelDao = DAOFactory.getModelDAO();
+			modelDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -177,7 +178,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			Integer modelId = getAttributeAsInteger("modelId");
 			logger.warn("DELETING NODE WITH MODEL_ID:"+modelId);
 			try {
-				DAOFactory.getModelDAO().deleteModel(modelId);
+				modelDao.deleteModel(modelId);
 				logger.debug("Model deleted");
 				writeBackToClient( new JSONSuccess("Operation succeded") );
 			} catch (Throwable e) {
@@ -372,10 +373,10 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 				//root node --> save first
 				try {
 					if(model.getId()  != null){
-						DAOFactory.getModelDAO().modifyModel(model);
+						modelDao.modifyModel(model);
 						respObj.put(model.getGuiId(), model.getId());
 					}else{
-						Integer index = DAOFactory.getModelDAO().insertModel(model);
+						Integer index = modelDao.insertModel(model);
 						respObj.put(model.getGuiId(), index);
 					}
 				} catch (Exception e) {
@@ -398,12 +399,12 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 			//GET JSON OBJECT VALUE
 			Integer parentId = orderedNode.getParentId();
 			try {
-				Model parent = DAOFactory.getModelDAO().loadModelWithoutChildrenById(parentId);
+				Model parent = modelDao.loadModelWithoutChildrenById(parentId);
 				if(parent != null){						
 					//if parent exists--> save					
 					//if node id is negative --> insert
 					if(orderedNode.getId() == null){
-						Integer newId = DAOFactory.getModelDAO().insertModel(orderedNode);
+						Integer newId = modelDao.insertModel(orderedNode);
 						if (newId != null){
 							orderedNode.setId(newId);
 							respObj.put(orderedNode.getGuiId(), newId);
@@ -412,7 +413,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 						}
 					}else{
 					//else update
-						DAOFactory.getModelDAO().modifyModel(orderedNode);
+						modelDao.modifyModel(orderedNode);
 						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
 					}
 					

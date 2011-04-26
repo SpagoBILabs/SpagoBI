@@ -92,7 +92,9 @@ import org.json.JSONObject;
 		IThresholdValueDAO tDao;
 		try {
 			thrDao = DAOFactory.getThresholdDAO();
+			thrDao.setUserProfile(getUserProfile());
 			tDao = DAOFactory.getThresholdValueDAO();
+			tDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

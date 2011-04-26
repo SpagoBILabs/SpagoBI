@@ -45,6 +45,7 @@ import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNodeWithGrant;
+import it.eng.spagobi.kpi.ou.dao.IOrganizationalUnitDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -86,12 +87,22 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	
 	//private HashMap<String, HashMap<String, Array>>
 
+	IOrganizationalUnitDAO orUnitDao=null;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void doService() {
 		logger.debug("IN");
 		utilityGrantNodesCollection = new ArrayList<HashMap<Integer,Integer>>();
 
+		try {
+			orUnitDao = DAOFactory.getOrganizationalUnitDAO();
+			orUnitDao.setUserProfile(getUserProfile());
+		} catch (Exception e1) {
+			logger.error(e1.getMessage(), e1);
+			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
+		}
+		
 		try {
 			String serviceType = this.getAttributeAsString(MESSAGE_DET);
 			if (serviceType != null && serviceType.equalsIgnoreCase(GRANT_DEF)) {
@@ -128,11 +139,11 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				
 				logger.debug("Loading the grant..");
 				Integer grantId =  getAttributeAsInteger("grantId");
-				OrganizationalUnitGrant grant = DAOFactory.getOrganizationalUnitDAO().getGrant(grantId);
+				OrganizationalUnitGrant grant = orUnitDao.getGrant(grantId);
 				logger.debug("Grant loaded.");
 
 				Integer hierarchyId = grant.getHierarchy().getId();
-				OrganizationalUnitNode ou = DAOFactory.getOrganizationalUnitDAO().getRootNode(hierarchyId);
+				OrganizationalUnitNode ou = orUnitDao.getRootNode(hierarchyId);
 				
 				try {
 					JSONObject hierarchyWithRoot = new JSONObject();
@@ -191,7 +202,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 				}
 				String parentId = (String)getAttributeAsString("modelInstId");
 				
-				List<OrganizationalUnitNodeWithGrant> ousWithGrants = DAOFactory.getOrganizationalUnitDAO().getGrantNodes(ouNodeId, grantId);
+				List<OrganizationalUnitNodeWithGrant> ousWithGrants = orUnitDao.getGrantNodes(ouNodeId, grantId);
 				List<OrganizationalUnitGrantNode> grants = new ArrayList<OrganizationalUnitGrantNode>();
 				for(int i=0; i<ousWithGrants.size(); i++){
 					grants.addAll(ousWithGrants.get(i).getGrants());
@@ -273,7 +284,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * Load the list of grants and serialize them in a JSOMObject. The list live in the attributes with name rows
 	 */
 	private void getGrantsList(){
-		List<OrganizationalUnitGrant> grants = DAOFactory.getOrganizationalUnitDAO().getGrantsList();
+		List<OrganizationalUnitGrant> grants = orUnitDao.getGrantsList();
 	
 		try {
 			JSONArray grantsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( grants, null);
@@ -290,7 +301,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * @param grantId the id of the grant
 	 */
 	private void getGrant(Integer grantId){
-		OrganizationalUnitGrant grant = DAOFactory.getOrganizationalUnitDAO().getGrant(grantId);
+		OrganizationalUnitGrant grant = orUnitDao.getGrant(grantId);
 	
 		try {
 			JSONObject grantsJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( grant, null);
@@ -304,7 +315,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * Load the list of OUHierarchies and serialize them in a JSOMObject. 
 	 */
 	private void getHierarchiesList(){
-		List<OrganizationalUnitHierarchy> ous = DAOFactory.getOrganizationalUnitDAO().getHierarchiesList();
+		List<OrganizationalUnitHierarchy> ous = orUnitDao.getHierarchiesList();
 	
 		try {
 			JSONArray grantsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( ous, null);
@@ -326,13 +337,13 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	private void getOUChildrenNodes(Integer nodeId, Integer grantId){
 		List<OrganizationalUnitNodeWithGrant> ousWithGrants = null;
 		if(grantId==null){
-			List<OrganizationalUnitNode> ous = DAOFactory.getOrganizationalUnitDAO().getChildrenNodes(nodeId);
+			List<OrganizationalUnitNode> ous = orUnitDao.getChildrenNodes(nodeId);
 			ousWithGrants = new ArrayList<OrganizationalUnitNodeWithGrant>();
 			for(int i=0; i<ous.size(); i++){
 				ousWithGrants.add(new OrganizationalUnitNodeWithGrant(ous.get(i), new ArrayList<OrganizationalUnitGrantNode>()));
 			}
 		}else{
-			ousWithGrants = DAOFactory.getOrganizationalUnitDAO().getChildrenNodesWithGrants(nodeId, grantId);
+			ousWithGrants = orUnitDao.getChildrenNodesWithGrants(nodeId, grantId);
 		} try {
 			JSONArray grantsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( ousWithGrants, null);
 			writeBackToClient( new JSONSuccess( grantsJSON ) );
@@ -353,11 +364,11 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		OrganizationalUnitNodeWithGrant ouWithGrant;
 		
 			if(grantId==null){
-				OrganizationalUnitNode ou = DAOFactory.getOrganizationalUnitDAO().getRootNode(hierarchyId);
+				OrganizationalUnitNode ou = orUnitDao.getRootNode(hierarchyId);
 				ouWithGrant = new OrganizationalUnitNodeWithGrant(ou, new ArrayList<OrganizationalUnitGrantNode>());
 
 			}else{
-				ouWithGrant = DAOFactory.getOrganizationalUnitDAO().getRootNodeWithGrants(hierarchyId, grantId);
+				ouWithGrant = orUnitDao.getRootNodeWithGrants(hierarchyId, grantId);
 
 			}
 		try {
@@ -382,7 +393,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	 * @param grantId the id of the grant to erase
 	 */
 	private void eraseGrant(Integer grantId){
-		DAOFactory.getOrganizationalUnitDAO().eraseGrant(grantId);
+		orUnitDao.eraseGrant(grantId);
 		try {
 			writeBackToClient( new JSONAcknowledge() );
 		} catch (IOException e) {
@@ -399,14 +410,14 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		try {
 			OrganizationalUnitGrant grant = deserializeOrganizationalUnitGrant(grantJSON);
 			if(grant.getId()!=null){
-				DAOFactory.getOrganizationalUnitDAO().eraseNodeGrants(grant.getId());
-				DAOFactory.getOrganizationalUnitDAO().modifyGrant(grant);
+				orUnitDao.eraseNodeGrants(grant.getId());
+				orUnitDao.modifyGrant(grant);
 			}else{
-				DAOFactory.getOrganizationalUnitDAO().insertGrant(grant);
+				orUnitDao.insertGrant(grant);
 			}
 
 			List<OrganizationalUnitGrantNode> grantNodes = deserializeOrganizationalUnitGrantNodesAndUpdateChilds(grantNodesJSON, grant);
-			DAOFactory.getOrganizationalUnitDAO().insertNodeGrants(grantNodes);
+			orUnitDao.insertNodeGrants(grantNodes);
 			
 			//disable grants for unexpanded children tree
 /*			for(int i=0; i<grantNodes.size(); i++){
@@ -444,7 +455,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		int hierarchyId = JSONGrant.getInt("hierarchy");
 		int modelInstanceId = JSONGrant.getInt("modelinstance");
 		ModelInstance modelInstance = DAOFactory.getModelInstanceDAO().loadModelInstanceWithChildrenById(modelInstanceId);
-		OrganizationalUnitHierarchy organizationalUnitHierarchy = DAOFactory.getOrganizationalUnitDAO().getHierarchy(hierarchyId);
+		OrganizationalUnitHierarchy organizationalUnitHierarchy = orUnitDao.getHierarchy(hierarchyId);
 		organizationalUnitGrant.setModelInstance(modelInstance);
 		organizationalUnitGrant.setHierarchy(organizationalUnitHierarchy);
 		
@@ -480,7 +491,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
 		String ouPath = JSONGrantNode.getString("ouPath");
 		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
-		OrganizationalUnitNode ouNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(ouPath, hierarchyId);
+		OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
 		node.setGrant(grant);
 		node.setModelInstanceNode(modelInstanceNode);
 		node.setOuNode(ouNode);
@@ -562,7 +573,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		int modelInstanceId = JSONGrantNode.getInt("modelinstance");
 		String ouPath = JSONGrantNode.getString("ouPath");
 		ModelInstanceNode modelInstanceNode = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modelInstanceId, null);
-		OrganizationalUnitNode ouNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(ouPath, hierarchyId);
+		OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
 		node.setGrant(grant);
 		node.setModelInstanceNode(modelInstanceNode);
 		node.setOuNode(ouNode);
@@ -644,7 +655,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 //					int hierarchyId = jsonNode.getInt("hierarchyId");
 //					//find model instance to disable for grant
 //					ModelInstanceNode modelInstNodeToDisable = DAOFactory.getModelInstanceDAO().loadModelInstanceById(uncheckChildren, null);
-//					OrganizationalUnitNode ouNode = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitNode(ouPath, hierarchyId);
+//					OrganizationalUnitNode ouNode = orUnitDao.getOrganizationalUnitNode(ouPath, hierarchyId);
 //					eraseDescendant(modelInstNodeToDisable, grant, ouNode);				
 //				}
 //			
@@ -666,7 +677,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 //				Integer modInstId = (Integer) iterator.next();
 //				//find model instance to disable for grant
 //				ModelInstanceNode modelInstChildDisable = DAOFactory.getModelInstanceDAO().loadModelInstanceById(modInstId, null);
-//				List<OrganizationalUnitGrantNode> allGrants = DAOFactory.getOrganizationalUnitDAO().getGrants(modInstId);
+//				List<OrganizationalUnitGrantNode> allGrants = orUnitDao.getGrants(modInstId);
 //				for(int i =0; i<allGrants.size(); i++){
 //					OrganizationalUnitGrantNode ounodeGrant = allGrants.get(i);
 //					if(ounodeGrant.getGrant().getId().intValue() == grant.getId().intValue() &&
@@ -681,7 +692,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 //		grantNode.setModelInstanceNode(modelInstNodeToDisable);
 //		grantNode.setOuNode(ouNode);
 //		
-//		DAOFactory.getOrganizationalUnitDAO().eraseNodeGrant(grantNode);
+//		orUnitDao.eraseNodeGrant(grantNode);
 //	}
 	/**
 	 * For each child of the OrganizationalUnitNode ouNode, build a OrganizationalUnitGrantNode
@@ -694,7 +705,7 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 	private List<OrganizationalUnitGrantNode> buildGrantForChilds(OrganizationalUnitNode ouNode, ModelInstanceNode modelInstanceNode,  OrganizationalUnitGrant grant){
 		List<OrganizationalUnitGrantNode> nodes = new ArrayList<OrganizationalUnitGrantNode>();
 		OrganizationalUnitGrantNode childNode;
-		List<OrganizationalUnitNode> childOus = DAOFactory.getOrganizationalUnitDAO().getChildrenNodes(ouNode.getNodeId());
+		List<OrganizationalUnitNode> childOus = orUnitDao.getChildrenNodes(ouNode.getNodeId());
 		
 		for(int i=0; i<childOus.size(); i++){
 			childNode= new OrganizationalUnitGrantNode();

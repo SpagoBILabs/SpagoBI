@@ -8,6 +8,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
+import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -119,10 +120,11 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 			} else {
 				sbiKpiModel.setSbiKpi(null);
 			}
-
+			updateSbiCommonInfo4Update(sbiKpiModel);
 			aSession.update(sbiKpiModel);
-			
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(value, sbiKpiModel, aSession, "MODEL");
+			IUdpValueDAO dao=DAOFactory.getUdpDAOValue();
+			dao.setUserProfile(getUserProfile());
+			dao.insertOrUpdateRelatedUdpValues(value, sbiKpiModel, aSession, "MODEL");
 			
 			tx.commit();
 
@@ -300,9 +302,11 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 				SbiKpi sbiKpi = (SbiKpi) aSession.load(SbiKpi.class, kpiId);
 				sbiKpiModel.setSbiKpi(sbiKpi);
 			}
-
+			updateSbiCommonInfo4Insert(sbiKpiModel);
 			idToReturn = (Integer) aSession.save(sbiKpiModel);
-			DAOFactory.getUdpDAOValue().insertOrUpdateRelatedUdpValues(model, sbiKpiModel, aSession, "MODEL");
+			IUdpValueDAO dao=DAOFactory.getUdpDAOValue();
+			dao.setUserProfile(getUserProfile());
+			dao.insertOrUpdateRelatedUdpValues(model, sbiKpiModel, aSession, "MODEL");
 
 
 			tx.commit();
@@ -460,7 +464,7 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 				SbiKpi sbiKpi = (SbiKpi) aSession.load(SbiKpi.class, kpiId);
 				sbiKpiModel.setSbiKpi(sbiKpi);
 			}
-
+			updateSbiCommonInfo4Insert(sbiKpiModel);
 			idToReturn = (Integer) aSession.save(sbiKpiModel);
 
 			tx.commit();
