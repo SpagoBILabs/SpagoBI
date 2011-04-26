@@ -94,6 +94,7 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			
 			List defaultRoles = _config.getAttributeAsList("DEFAULT_ROLES.ROLE");
 			IRoleDAO roleDAO= DAOFactory.getRoleDAO();
+			roleDAO.setUserID("server_init");
 			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
 		    List<Domain> domains =domainDAO.loadListDomainsByType("ROLE_TYPE");
 		    HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();

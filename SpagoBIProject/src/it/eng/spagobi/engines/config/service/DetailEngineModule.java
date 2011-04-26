@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.config.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,6 +30,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
 import it.eng.spagobi.commons.bo.Domain;
@@ -167,11 +170,16 @@ public class DetailEngineModule extends AbstractModule {
 					}
 				}
 			}
-			
+			RequestContainer reqCont = getRequestContainer();
+			SessionContainer sessCont = reqCont.getSessionContainer();
+			SessionContainer permSess = sessCont.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngineDAO dao=DAOFactory.getEngineDAO();
+			dao.setUserProfile(profile);
 			if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				DAOFactory.getEngineDAO().insertEngine(engine);
+				dao.insertEngine(engine);
 			} else {
-				DAOFactory.getEngineDAO().modifyEngine(engine);
+				dao.modifyEngine(engine);
 			}
             
 		} catch (EMFUserError e){
