@@ -56,7 +56,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	this.userColumns =  [
 	    {
 	    	header: LN('sbi.generic.name'), 
-	    	width: 110, 
+	    	width: 200, 
 			id:'name',
 			sortable: true, 
 			dataIndex: 'name',  
@@ -67,7 +67,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 			})
 	    },{
 			header: LN('sbi.generic.type'), 
-			width: 90, 
+			width: 130, 
 			id:'type',
 			sortable: true, 
 			dataIndex: 'type',  		
@@ -93,11 +93,9 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	    });
 	 
 	 this.store = new Ext.data.JsonStore({
-		    //id : 'id',
 		    fields: ['name'
      	          , 'type'
       	          ],
-		    //idIndex: 0,
 		    data:{}
 		});
 	 
@@ -107,13 +105,13 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	            text: LN('sbi.attributes.add'),
 	            iconCls: 'icon-add',
 	            handler: this.onAdd,
-	            width: 30,
+	            width: 60,
 	            scope: this
 	        }), '-', new Ext.Toolbar.Button({
 	            text: LN('sbi.attributes.delete'),
 	            iconCls: 'icon-remove',
 	            handler: this.onDelete,
-	            width: 30,
+	            width: 40,
 	            scope: this
 	        }), '-'
 	    	]
@@ -130,7 +128,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	        layout: 'fit',
 	        cm: cm,
 	        sm: sm,
-	        width: 240,
+	        width: 370,
 	        height: 110,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
@@ -169,7 +167,6 @@ Ext.extend(Sbi.tools.ManageDatasetParameters, Ext.grid.EditorGridPanel, {
 
     ,onAdd: function (btn, ev) {
         var emptyRecToAdd = new Ext.data.Record({
-			  //id: 0,
               type: 'String'     
 			 });   
         this.store.insert(0,emptyRecToAdd);
