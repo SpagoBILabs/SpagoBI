@@ -40,6 +40,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -220,7 +221,10 @@ public class ListObjParuseModule extends AbstractModule {
 	
 	private void updateDatabase(List oldCorrelations, List newCorrelations ) throws EMFUserError {
 		//TODO all this operations must be performed inside a transaction
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);		
 		IObjParuseDAO corrDao = DAOFactory.getObjParuseDAO();
+		corrDao.setUserProfile(profile);
 		Iterator iterOldCorr = oldCorrelations.iterator();
 		while(iterOldCorr.hasNext()) {
 			ObjParuse oldCorr = (ObjParuse)iterOldCorr.next();

@@ -31,6 +31,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.navigation.LightNavigationManager;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -349,6 +350,9 @@ public class DetailParameterModule extends AbstractModule {
 						}
 
 						IParameterUseDAO paruseDAO = DAOFactory.getParameterUseDAO();
+						SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+						IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);	
+						paruseDAO.setUserProfile(profile);
 						if (paruseIdInt.intValue() == -1) {
 							// it is requested to insert a new ParameterUse
 							paruseDAO.insertParameterUse(paruse);
@@ -430,6 +434,9 @@ public class DetailParameterModule extends AbstractModule {
 	    			
 	    			if (paruseToBeSaved) {
 						IParameterUseDAO paruseDAO = DAOFactory.getParameterUseDAO();
+						SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+						IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);	
+						paruseDAO.setUserProfile(profile);
 						if (paruseIdInt.intValue() == -1) {
 							// it is requested to insert a new ParameterUse
 							paruseDAO.insertParameterUse(paruse);
@@ -464,7 +471,11 @@ public class DetailParameterModule extends AbstractModule {
 				}
 
     			// inserts into DB the new Parameter
-    			DAOFactory.getParameterDAO().insertParameter(parameter);
+				SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+				IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);	
+				IParameterDAO dao=DAOFactory.getParameterDAO();
+				dao.setUserProfile(profile);
+    			dao.insertParameter(parameter);
     			// reload the Parameter with the correct id
     			parameter = reloadParameter(parameter.getLabel());
     		}

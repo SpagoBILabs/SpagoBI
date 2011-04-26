@@ -432,7 +432,9 @@ public class DetailModalitiesValueModule extends AbstractModule {
 			// finally (if there are no error, if there is no request for test or to
 			// add or delete a Fix Lov item) writes into DB
 			if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {
-				DAOFactory.getModalitiesValueDAO().insertModalitiesValue(modVal);
+				IModalitiesValueDAO dao=DAOFactory.getModalitiesValueDAO();
+				dao.setUserProfile(profile);
+				dao.insertModalitiesValue(modVal);
 			} else {
 				// looks for dependencies associated to the previous lov
 				Integer lovId = modVal.getId();
@@ -500,7 +502,9 @@ public class DetailModalitiesValueModule extends AbstractModule {
 						}
 					}
 				}
-				DAOFactory.getModalitiesValueDAO().modifyModalitiesValue(modVal);
+				IModalitiesValueDAO dao=DAOFactory.getModalitiesValueDAO();
+				dao.setUserProfile(profile);
+				dao.modifyModalitiesValue(modVal);
 			}
 			
 		} catch (Exception ex) {			

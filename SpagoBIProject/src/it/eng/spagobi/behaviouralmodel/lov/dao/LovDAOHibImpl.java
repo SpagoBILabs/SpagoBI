@@ -155,6 +155,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	    hibLov.setInputType(inpType);
 	    hibLov.setInputTypeCd(aModalitiesValue.getITypeCd());
 	    hibLov.setLovProvider(aModalitiesValue.getLovProvider());
+	    updateSbiCommonInfo4Update(hibLov);
 	    tx.commit();
 	} catch (HibernateException he) {
 	    logger.error("HibernateException", he);
@@ -198,6 +199,7 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	    hibLov.setInputType(inpType);
 	    hibLov.setInputTypeCd(aModalitiesValue.getITypeCd());
 	    hibLov.setLovProvider(aModalitiesValue.getLovProvider());
+	    updateSbiCommonInfo4Insert(hibLov);
 	    aSession.save(hibLov);
 	    tx.commit();
 	} catch (HibernateException he) {

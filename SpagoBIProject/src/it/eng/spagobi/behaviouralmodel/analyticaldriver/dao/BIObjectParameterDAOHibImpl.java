@@ -177,7 +177,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 			hibObjPar.setPriority(newPriority);
 			hibObjPar.setProg(new Integer(1));
-			
+			updateSbiCommonInfo4Update(hibObjPar);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -229,7 +229,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			query.executeUpdate();
 			
 			hibObjectParameterNew.setPriority(aBIObjectParameter.getPriority());
-			
+			updateSbiCommonInfo4Insert(hibObjectParameterNew);
 			aSession.save(hibObjectParameterNew);
 			
 			tx.commit();
