@@ -103,7 +103,7 @@ public class SaveNotesAction extends AbstractSpagoBIAction {
 			} else {
 				logger.debug("Saving notes...");
 				try {
-					saveNotes(execIdentifier, obj.getId(), notes, objnote, owner, visibility);
+					saveNotes(execIdentifier, obj.getId(), notes, objnote, owner, visibility,profile);
 					logger.debug("Notes saved");
 					resultStr = "ok";
 				} catch (Exception e) {
@@ -125,11 +125,12 @@ public class SaveNotesAction extends AbstractSpagoBIAction {
 		}
 	}
 	
-	private void saveNotes(String execIdentifier, Integer objectId, String notes, ObjNote objnote, String owner, String visibility) 
+	private void saveNotes(String execIdentifier, Integer objectId, String notes, ObjNote objnote, String owner, String visibility,IEngUserProfile profile) 
 			throws Exception {
 		logger.debug("IN");
 		try {
 			IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
+			objNoteDAO.setUserProfile(profile);
 			if (objnote != null) {
 				//Modify note
 				objnote.setContent(notes.getBytes());

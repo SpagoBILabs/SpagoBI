@@ -44,11 +44,18 @@ public class AbstractHibernateDAO {
 	
     private static transient Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
     private String userID="";
+    private IEngUserProfile profile=null;
     
-    
+    public void setUserID(String user){
+    	userID=user;
+    }
     public void setUserProfile(IEngUserProfile profile){
+    	this.profile=profile;
     	if (profile!=null) userID=(String) profile.getUserUniqueIdentifier();
     	logger.debug("userID="+userID);    	
+    }
+    public IEngUserProfile getUserProfile(){
+    	return  profile;   	
     }
 	/**
 	 * Gets tre current session.

@@ -36,6 +36,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjNoteDAO;
+import it.eng.spagobi.analiticalmodel.document.x.GetUrlForExecutionAction;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -197,7 +198,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 					} 
 		    		
 		    		if (tempOldNotes.equals(oldNotes)){
-		    			saveNotes(execIdentifier, objId, notes);
+		    			saveNotes(execIdentifier, objId, notes,profile2);
 		    		} else {
 		    			conflict = "true" ;
 		    			notes = oldNotes ;
@@ -240,13 +241,14 @@ public class InsertNotesAction extends AbstractHttpAction {
 			return notes ;
 		}
 	 
-	 private void saveNotes(String execIdentifier,String objectid , String notes) {
+	 private void saveNotes(String execIdentifier,String objectid , String notes,IEngUserProfile profile) {
 			try{	
 					IBIObjectDAO objectDAO = DAOFactory.getBIObjectDAO();
 					BIObject biobject = objectDAO.loadBIObjectById(new Integer(objectid));
 					EMFErrorHandler errorHandler = getErrorHandler();
 					
 					IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
+					objNoteDAO.setUserProfile(profile);
 					ObjNote objNote = objNoteDAO.getExecutionNotes(new Integer(objectid), execIdentifier);
 					if(objNote!=null) {
 						objNote.setContent(notes.getBytes());

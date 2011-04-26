@@ -195,27 +195,6 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 
 	}
 
-	private void saveNotes(String execIdentifier, Integer objectId, String notes, ObjNote objnote) throws Exception {
-		logger.debug("IN");
-		try {
-			IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
-			if (objnote != null) {
-				objnote.setContent(notes.getBytes());
-				objNoteDAO.modifyExecutionNotes(objnote);
-			} else {
-				objnote = new ObjNote();
-				objnote.setContent(notes.getBytes());
-				objnote.setExecReq(execIdentifier);
-				objNoteDAO.saveExecutionNotes(objectId, objnote);
-			}
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-
-
-
 	/**
 	 * Gets the template template.
 	 * 
