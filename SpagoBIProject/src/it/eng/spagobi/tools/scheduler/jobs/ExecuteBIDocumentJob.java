@@ -325,7 +325,7 @@ public class ExecuteBIDocumentJob implements Job {
 						
 						
 						if(saveInfo.isSaveAsSnapshot()) {
-							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString());
+							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString(),profile);
 						}
 
 						if(saveInfo.isSaveAsDocument()) {
@@ -572,7 +572,7 @@ public class ExecuteBIDocumentJob implements Job {
 	}
 
 
-	private void saveAsSnap(SaveInfo sInfo,BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription) {
+	private void saveAsSnap(SaveInfo sInfo,BIObject biobj, byte[] response, String toBeAppendedToName, String toBeAppendedToDescription,IEngUserProfile profile) {
 		logger.debug("IN");
 		try {
 			String snapName = sInfo.getSnapshotName();
@@ -595,6 +595,7 @@ public class ExecuteBIDocumentJob implements Job {
 			String historylengthStr = sInfo.getSnapshotHistoryLength();
 			// store document as snapshot
 			ISnapshotDAO snapDao = DAOFactory.getSnapshotDAO();
+			snapDao.setUserProfile(profile);
 			// get the list of snapshots
 			List allsnapshots = snapDao.getSnapshots(biobj.getId());
 			// get the list of the snapshot with the store name

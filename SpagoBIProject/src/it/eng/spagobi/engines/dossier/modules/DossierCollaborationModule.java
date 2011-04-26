@@ -246,6 +246,7 @@ public class DossierCollaborationModule extends AbstractModule {
 				biobj.setVisible((visible? new Integer(1): new Integer(0)));
 				
 				IBIObjectDAO objectDAO = DAOFactory.getBIObjectDAO();
+				objectDAO.setUserProfile(profile);
 				objectDAO.insertBIObject(biobj, templ);
 				// put data into response
 				response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);

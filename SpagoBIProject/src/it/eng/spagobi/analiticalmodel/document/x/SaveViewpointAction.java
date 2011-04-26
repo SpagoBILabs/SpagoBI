@@ -152,6 +152,7 @@ public class SaveViewpointAction extends AbstractSpagoBIAction {
 			
 			try {
 				viewpointDAO = DAOFactory.getViewpointDAO();
+				viewpointDAO.setUserProfile(userProfile);
 				viewpoint = new Viewpoint();
 				viewpoint.setBiobjId( biobjectId );
 				viewpoint.setVpName( viewpointName );

@@ -37,6 +37,7 @@ public class ManageBIObjects extends AbstractSpagoBIAction {
 		IBIObjectDAO boDao;
 		try {
 			boDao = DAOFactory.getBIObjectDAO();
+			boDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

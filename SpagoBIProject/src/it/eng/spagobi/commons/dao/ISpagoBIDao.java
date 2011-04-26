@@ -4,4 +4,6 @@ import it.eng.spago.security.IEngUserProfile;
 
 public interface ISpagoBIDao {
 	void setUserProfile(IEngUserProfile profile);
+	void setUserID(String user);
+	IEngUserProfile getUserProfile();
 }

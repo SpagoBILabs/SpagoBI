@@ -102,6 +102,7 @@ public class SaveToPersonalFolderAction extends AbstractHttpAction {
 
 			// Load document
 			IBIObjectDAO biObjectDAOHibImpl = DAOFactory.getBIObjectDAO();
+			biObjectDAOHibImpl.setUserProfile(profile);
 			BIObject biObject = biObjectDAOHibImpl.loadBIObjectById(Integer.valueOf(documentIdStr));
 			if (biObject == null) {
 				logger.error("Could not load document");

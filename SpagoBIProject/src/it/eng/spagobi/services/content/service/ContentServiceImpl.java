@@ -292,6 +292,7 @@ public class ContentServiceImpl extends AbstractServiceImpl{
 	logger.debug("IN");
 	try {
 	    ISubObjectDAO subdao = DAOFactory.getSubObjectDAO();
+	    subdao.setUserID(user);
 	    Integer docId = new Integer(documentiId);
 	    boolean subobjExists = false;
 	    
@@ -345,6 +346,7 @@ public class ContentServiceImpl extends AbstractServiceImpl{
 	logger.debug("IN");
 	try {
 	    IBIObjectDAO objdao = DAOFactory.getBIObjectDAO();
+	    objdao.setUserID(user);
 	    Integer docId = new Integer(documentiId);
 	    BIObject biobj = objdao.loadBIObjectById(docId);
 	    ObjTemplate objTemp = new ObjTemplate();

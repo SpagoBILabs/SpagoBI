@@ -62,7 +62,10 @@ public class CheckLinksModule extends AbstractHibernateConnectionCheckListModule
 	public void save() throws Exception {
 		logger.debug( "IN" );
 		super.save();
-		
+		RequestContainer requestContainer = this.getRequestContainer();	
+		SessionContainer sessionContainer = requestContainer.getSessionContainer();
+		SessionContainer permanentSession = sessionContainer.getPermanentContainer();
+		profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String subjectIdName = (String)((SourceBean) config.getAttribute("KEYS.SUBJECT")).getAttribute("key");
 		String masterReportIdStr = (String)getAttribute(subjectIdName, _request);
 		Integer masterReportId = new Integer(masterReportIdStr);		
@@ -71,6 +74,7 @@ public class CheckLinksModule extends AbstractHibernateConnectionCheckListModule
 				
 		try {
 			ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
+			subrptdao.setUserProfile(profile);
 			subrptdao.eraseSubreportByMasterRptId(masterReportId);
 			for(int i = 0; i < checkedObjectsList.size(); i++) {
 				SourceBean subreport = (SourceBean)checkedObjectsList.get(i);
