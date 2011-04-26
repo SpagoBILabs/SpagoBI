@@ -51,13 +51,18 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+import it.eng.spagobi.chiron.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -180,7 +185,7 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		}
 	}
 
-	private Config readConfig() {
+	private Config readConfig()  throws EMFUserError {
 		logger.debug("IN");
 		Config config = new Config();
 		if(this.requestContainsAttribute("ID")){
@@ -191,7 +196,12 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		config.setDescription(this.getAttributeAsString("DESCRIPTION"));
 		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
 		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
-		config.setValueTypeId(this.getAttributeAsInteger("VALUE_TYPE"));
+		if(this.requestContainsAttribute("VALUE_TYPE")){
+			DomainDAOHibImpl domain = new DomainDAOHibImpl();
+			Domain dom = domain.loadDomainByCodeAndValue("PAR_TYPE", this.getAttributeAsString("VALUE_TYPE"));
+			config.setValueTypeId(dom.getValueId());
+		}
+		
 		logger.debug("OUT");
 		return config;
 
