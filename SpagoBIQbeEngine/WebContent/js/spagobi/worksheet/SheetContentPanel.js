@@ -43,47 +43,30 @@
  */
 Ext.ns("Sbi.worksheet");
 
-Sbi.worksheet.SheetPanel = function(config) { 
+Sbi.worksheet.SheetContentPanel = function(config) { 
 
-	this.initPanels();
-	
 	var c ={
-            layout: {
-                type:'vbox',
-                align:'stretch'
-            },
-            ddGroup: 'paleteDDGroup',
-            items:[this.titlePanel, this.filtersPanel, this.contentPanel, this.footerPanel]
+			html: 'ciao'
 	}
-	
-	c = Ext.apply(config,c);
-	 Ext.apply(this,c);
-	Sbi.worksheet.SheetPanel.superclass.constructor.call(this, c);	 	
-
+	Sbi.worksheet.SheetContentPanel.superclass.constructor.call(this, c);	
+	this.on('render', this.initDropTarget, this);
 
 };
 
-Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
-	titlePanel: null,
-	filtersPanel: null,
-	contentPanel: null,
-	footerPanel: null,
+Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
+	 
 	
-	
-	initPanels: function(){
-		
-		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({title: true, img:true});
-		this.filtersPanel = new Sbi.worksheet.DesignSheetFiltersPanel({
-			style:'padding:5px 15px 0'
-			, ddGroup: 'worksheetDesignerDDGroup'
-		});
-		this.contentPanel = new Sbi.worksheet.SheetContentPanel({});
+	initDropTarget: function() {
+		// This will make sure we only drop to the view container
+		var formPanelDropTargetEl =  this.body.dom;
 
-		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({title: true});
-		
-		this.titlePanel.flex = 1;
-		this.contentPanel.flex = 4;
-		this.footerPanel.flex = 1;
+		var formPanelDropTarget = new Ext.dd.DropTarget(formPanelDropTargetEl, {
+			ddGroup     : 'paleteDDGroup',
+
+			notifyDrop  : function(ddSource, e, data){
+				alert(data.toSource());
+			}
+		});
 	}
-	
+
 });

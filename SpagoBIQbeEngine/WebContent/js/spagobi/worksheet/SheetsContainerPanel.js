@@ -95,8 +95,8 @@ Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
 	    
 	    tab.on('beforeClose',function(panel){
 			Ext.MessageBox.confirm(
-					LN('sbi.generic.pleaseConfirm'),
-					LN('sbi.generic.confirmDelete'),            
+					LN('sbi.worksheet.msg.deletetab.title'),
+					LN('sbi.worksheet.msg.deletetab.msg'),            
 		            function(btn, text) {
 		                if (btn=='yes') {
 		                	this.remove(panel);
