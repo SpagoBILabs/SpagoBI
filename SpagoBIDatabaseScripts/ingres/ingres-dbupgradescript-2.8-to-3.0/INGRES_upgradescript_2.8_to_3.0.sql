@@ -1,6 +1,6 @@
-INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Groovy','Groovy','SCRIPT_TYPE','Script Type','Script Type');\p\g
-INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Javascript','Javascript','SCRIPT_TYPE','Script Type','Script Type');\p\g
-INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('File','SbiFileDataSet','DATA_SET_TYPE','Data Set Type','SbiFileDataSet');\p\g
+INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('groovy','Groovy','SCRIPT_TYPE','Script Type','Script Type');
+INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('rhino-nonjdk','Javascript','SCRIPT_TYPE','Script Type','Script Type');
+INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('ejs','Embedded Javascript','SCRIPT_TYPE','Script Type','Script Type');INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('File','SbiFileDataSet','DATA_SET_TYPE','Data Set Type','SbiFileDataSet');\p\g
 INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Query','SbiQueryDataSet','DATA_SET_TYPE','Data Set Type','SbiQueryDataSet');\p\g
 INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Java Class','SbiJClassDataSet','DATA_SET_TYPE','Data Set Type','SbiJClassDataSet');\p\g
 INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('Web Service','SbiWSDataSet','DATA_SET_TYPE','Data Set Type','SbiWSDataSet');\p\g
