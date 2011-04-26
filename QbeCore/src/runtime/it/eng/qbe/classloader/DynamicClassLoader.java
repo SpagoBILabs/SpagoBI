@@ -200,6 +200,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				logger.warn("Impossible to read content from entry [" + jarEntry + "]", t);
 			} finally {
 				closeInputStream(jarInputStream);
+				closeJarFile(jarFile);
 			}
 		}
 		
