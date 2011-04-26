@@ -39,3 +39,8 @@ Sbi.locale.ln['sbi.worksheet.designsheetfilterspanel.cannotdrophere.unknownsourc
 Sbi.locale.ln['sbi.worksheet.designsheetfilterspanel.cannotdrophere.attributealreadypresent'] = 'Field already present';
 Sbi.locale.ln['sbi.worksheet.designsheetfilterspanel.cannotdrophere.measures'] = 'You cannot drop here measures';
 Sbi.locale.ln['sbi.worksheet.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'You cannot drop here script-based calculated fields';
+
+//===================================================================
+//Sbi.worksheet.SheetContentPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.sheetcontentpanel.emptymsg'] = 'Drag & drop here a widget from the palette';

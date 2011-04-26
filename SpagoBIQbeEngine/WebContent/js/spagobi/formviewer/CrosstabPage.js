@@ -106,10 +106,24 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
 		
 		var items = [];
 
-		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(c.crosstab || {});
+		var crosstabDesignerConfig = Ext.apply(c.crosstab || {}, {
+			centerConfig: {
+				tools : [{
+				    id: 'gear'
+				    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
+				    , handler: function() {
+				    	var crosstabDefinition = this.crosstabDesignerPanel.centerRegionPanel.getCrosstabDefinition();
+				    	this.showCrosstabPreview(crosstabDefinition);
+				    }
+				    , scope: this
+			   }]
+			}
+		});
+		
+		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(crosstabDesignerConfig);
 		items.push(this.crosstabDesignerPanel);
 		this.crosstabDesignerPanel.westRegionPanel.store.on('load', this.addCountField, this);
-		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
+//		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
 		
 		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab || {});
 		items.push(this.crosstabPreviewPanel);

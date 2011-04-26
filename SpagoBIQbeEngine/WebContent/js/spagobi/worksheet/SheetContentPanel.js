@@ -39,14 +39,28 @@
  * 
  * [list]
  * 
- * Authors - Alberto Ghedin
+ * Authors - Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.SheetContentPanel = function(config) { 
 
-	var c ={
-			html: 'ciao'
+	var defaultSettings = {
+		emptyMsg: LN('sbi.worksheet.sheetcontentpanel.emptymsg')
+	};
+		
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetContentPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetContentPanel);
+	}
+	
+	var c = Ext.apply(defaultSettings, config || {});
+	
+	Ext.apply(this, c);
+	
+	this.initEmptyMsgPanel();
+	
+	c = {
+		items: [this.emptyMsgPanel]
 	}
 	Sbi.worksheet.SheetContentPanel.superclass.constructor.call(this, c);	
 	this.on('render', this.initDropTarget, this);
@@ -54,19 +68,60 @@ Sbi.worksheet.SheetContentPanel = function(config) {
 };
 
 Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
-	 
 	
-	initDropTarget: function() {
-		// This will make sure we only drop to the view container
-		var formPanelDropTargetEl =  this.body.dom;
-
-		var formPanelDropTarget = new Ext.dd.DropTarget(formPanelDropTargetEl, {
-			ddGroup     : 'paleteDDGroup',
-
-			notifyDrop  : function(ddSource, e, data){
-				alert(data.toSource());
-			}
+	emptyMsg: null
+	, emptyMsgPanel: null
+	
+	, initEmptyMsgPanel: function() {
+		this.emptyMsgPanel = new Ext.Panel({
+			html: this.emptyMsg
+			, height: 40
+			, frame: true
+		});
+	}
+	
+	, initDropTarget: function() {
+		this.removeListener('render', this.initDropTarget, this);
+		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
+			ddGroup: 'paleteDDGroup'
+			, onFieldDrop: this.onFieldDrop
 		});
 	}
 
+	, onFieldDrop: function(ddSource) {
+		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'palette') {
+			// dragging from palette
+			this.notifyDropFromPalette(ddSource);
+		} else {
+			alert('Unknown DD source!!');
+		}
+	}
+	
+	, notifyDropFromPalette: function(ddSource) {
+		var rows = ddSource.dragData.selections;
+		if (rows.length > 1) {
+			Ext.Msg.show({
+				   title:'Drop not allowed',
+				   msg: 'You can insert a single widget on a sheet',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return;
+		}
+		var row = rows[0];
+		if (row.json.name === 'Pivot Table') {
+			this.insertCrosstabDesigner();
+		}
+	}
+
+	, insertCrosstabDesigner: function () {
+		this.emptyMsgPanel.destroy();
+		var crosstabDesigner = new Sbi.crosstab.CrosstabDefinitionPanel({
+			crosstabTemplate: {}
+			, ddGroup: 'worksheetDesignerDDGroup'
+		});
+		this.add(crosstabDesigner);
+		this.doLayout();
+	}
+	
 });

@@ -68,13 +68,15 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 		this.crosstabConfig = {measureson: "columns"};
 	}
 	
+	Ext.apply(this, c);
+	
 	this.init(c);
 			
 	Ext.apply(c, {
         store: this.store
         , cm: this.cm
         , enableDragDrop: true
-        , ddGroup: 'crosstabDesignerDDGroup'
+        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 	    , layout: 'fit'
 	    , viewConfig: {
 	    	forceFit: true
@@ -190,7 +192,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
-			ddGroup: 'crosstabDesignerDDGroup'
+			ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 			, onFieldDrop: this.onFieldDrop
 		});
 	}
