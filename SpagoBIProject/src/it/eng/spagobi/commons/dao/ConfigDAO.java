@@ -214,7 +214,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 	}
 	
 	/**
-	 * Save domain by id.
+	 * Save config by id.
 	 * 
 	 * @param id the id
 	 * 
@@ -283,7 +283,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 
 
     /**
-     * Delete domain by id.
+     * Delete config by id.
      * 
      * @param id the id
      * 

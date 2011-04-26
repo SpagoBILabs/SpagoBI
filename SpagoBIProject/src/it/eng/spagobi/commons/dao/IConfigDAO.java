@@ -52,9 +52,9 @@ public interface IConfigDAO extends ISpagoBIDao{
 	
 
 	/**
-	 * Delete a domain
+	 * Delete a config
 	 * 
-	 * @return Delete domains
+	 * @return Delete config
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */	
