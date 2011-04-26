@@ -28,6 +28,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
+import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -69,7 +70,9 @@ public class CreateMenuAction extends AbstractSpagoBIAction {
 			String message = null;
 			boolean inserted;
 			try {
-				inserted = DAOFactory.getRememberMeDAO().saveRememberMe(name, description, obj.getId(), subobjectId, profile.getUserId().toString(), parameters);
+				IRememberMeDAO dao=DAOFactory.getRememberMeDAO();
+				dao.setUserProfile(profile);
+				inserted = dao.saveRememberMe(name, description, obj.getId(), subobjectId, profile.getUserId().toString(), parameters);
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot save remember me", e);
 			}

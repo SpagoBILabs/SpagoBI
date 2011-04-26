@@ -357,6 +357,7 @@ public class ProcessOOTemplateAction implements ActionHandler {
 	    logger.debug("image bytes decoded " + firstImg);
 	    // store image into cms
 	    IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();
+	    dptDAO.setUserProfile(profile);
 	    dptDAO.storeImage(dossier.getId(), firstImg, confDoc.getLogicalName(), numPage, workflowProcessId);
 	    logger.debug("image stored into cms");
 	} catch (Exception e) {

@@ -214,6 +214,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 			}
 			temp.setSbiSubObject(subObj);
 			temp.setParameters(parameters);
+			updateSbiCommonInfo4Insert(temp);
 			aSession.save(temp);
 			tx.commit();
 			return true;
