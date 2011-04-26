@@ -213,7 +213,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			sbiThreshold.setDescription(description);
 			sbiThreshold.setCode(code);
 			sbiThreshold.setThresholdType(newThresholdType);
-
+			updateSbiCommonInfo4Update(sbiThreshold);
 			aSession.saveOrUpdate(sbiThreshold);
 			
 			Integer thrId = threshold.getId();
@@ -263,7 +263,7 @@ public class ThresholdDAOImpl extends AbstractHibernateDAO implements
 			sbiThreshold.setDescription(description);
 			sbiThreshold.setCode(code);
 			sbiThreshold.setThresholdType(thresholdType);
-
+			updateSbiCommonInfo4Insert(sbiThreshold);
 			idToReturn = (Integer) aSession.save(sbiThreshold);
 
 			tx.commit();

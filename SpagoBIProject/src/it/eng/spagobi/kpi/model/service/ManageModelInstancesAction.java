@@ -91,15 +91,19 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	private final String DROPPED_NODES_TO_SAVE = "droppedNodes";
 	private final String ROOT_TO_SAVE = "rootNode";
 
-
+	IModelInstanceDAO modelDao;
+	IModelResourceDAO modelResourcesDao ;
+	
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IModelInstanceDAO modelDao;
-		IModelResourceDAO modelResourcesDao ;
+
 		try {
 			modelDao = DAOFactory.getModelInstanceDAO();
 			modelResourcesDao = DAOFactory.getModelResourcesDAO();
+			modelDao.setUserProfile(getUserProfile());
+			modelResourcesDao.setUserProfile(getUserProfile());
+			
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -243,7 +247,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 
 			Integer modelInstId = getAttributeAsInteger("modelInstId");
 			try {
-				boolean result = DAOFactory.getModelInstanceDAO().deleteModelInstance(modelInstId);
+				boolean result = modelDao.deleteModelInstance(modelInstId);
 				logger.debug("Model instance node deleted");
 				writeBackToClient( new JSONSuccess("Operation succeded") );
 			} catch (Throwable e) {
@@ -400,7 +404,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				
 				modelInstNode = setProgressiveOnDuplicate(modelInstNode);
 				
-				Integer miId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
+				Integer miId = modelDao.insertModelInstanceWithKpi(modelInstNode);
 				
 				response.append("root", miId);
 				response.append("rootlabel", modelInstNode.getLabel());
@@ -467,7 +471,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 	}
 	private ModelInstance setProgressiveOnDuplicate(ModelInstance modelInst) throws EMFUserError{
 		String name = modelInst.getName();
-		Integer howManyExistent = DAOFactory.getModelInstanceDAO().getExistentRootsByName(name);
+		Integer howManyExistent = modelDao.getExistentRootsByName(name);
 		if(howManyExistent != null && howManyExistent.intValue() != 0){
 			String newName = name + "_"+(howManyExistent.intValue()+1);
 			modelInst.setName(newName);
@@ -559,7 +563,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 					modelInstNode = fillModelInstanceByModel(model, modelInstNode, parentId);
 					modelInstNode = setProgressiveOnDuplicate(modelInstNode);
 					//save node as ModelInstance node
-					modelInstId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modelInstNode);
+					modelInstId = modelDao.insertModelInstanceWithKpi(modelInstNode);
 					modelInstNode.setId(modelInstId);
 
 					if(parentId == null){
@@ -630,7 +634,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			Integer genId = modInstToSave.getId();
 			if(isToSave){
 
-				genId = DAOFactory.getModelInstanceDAO().insertModelInstanceWithKpi(modInstToSave);
+				genId = modelDao.insertModelInstanceWithKpi(modInstToSave);
 				modInstToSave.setId(genId);
 			}
 
@@ -938,7 +942,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 				//root node --> save first
 				try {
 					if(modelInstance.getId()  != null){
-						DAOFactory.getModelInstanceDAO().modifyModelInstance(modelInstance);
+						modelDao.modifyModelInstance(modelInstance);
 						respObj.put(modelInstance.getGuiId(), modelInstance.getId());
 					}else{
 						if(modelInstance.getId() == null &&
@@ -947,7 +951,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 							//new model instance root --> insert it first
 							logger.debug("new model instance root");
 						}
-						Integer index = DAOFactory.getModelInstanceDAO().insertModelInstance(modelInstance);
+						Integer index = modelDao.insertModelInstance(modelInstance);
 						respObj.put(modelInstance.getGuiId(), index);
 					}
 				} catch (Exception e) {
@@ -970,12 +974,12 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 			//GET JSON OBJECT VALUE
 			Integer parentId = orderedNode.getParentId();
 			try {
-				ModelInstance parent = DAOFactory.getModelInstanceDAO().loadModelInstanceWithoutChildrenById(parentId);
+				ModelInstance parent = modelDao.loadModelInstanceWithoutChildrenById(parentId);
 				if(parent != null){						
 					//if parent exists--> save					
 					//if node id is negative --> insert
 					if(orderedNode.getId() == null){
-						Integer newId = DAOFactory.getModelInstanceDAO().insertModelInstance(orderedNode);
+						Integer newId = modelDao.insertModelInstance(orderedNode);
 						if (newId != null){
 							orderedNode.setId(newId);
 							respObj.put(orderedNode.getGuiId(), newId);
@@ -984,7 +988,7 @@ public class ManageModelInstancesAction extends AbstractSpagoBIAction {
 						}
 					}else{
 						//else update
-						DAOFactory.getModelInstanceDAO().modifyModelInstance(orderedNode);
+						modelDao.modifyModelInstance(orderedNode);
 						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
 					}
 

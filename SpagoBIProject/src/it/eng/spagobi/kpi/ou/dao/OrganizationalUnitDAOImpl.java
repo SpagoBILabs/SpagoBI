@@ -320,6 +320,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibQuery.setString(1, ou.getLabel());
 	
 			SbiOrgUnit exists= (SbiOrgUnit)hibQuery.uniqueResult();
+			updateSbiCommonInfo4Insert(hibOU);
 			if(exists == null){
 				aSession.save(hibOU);	
 				tx.commit();
@@ -350,7 +351,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibOU.setLabel(ou.getLabel());
 			hibOU.setName(ou.getName());
 			hibOU.setDescription(ou.getDescription());
-
+			updateSbiCommonInfo4Update(hibOU);
 			aSession.save(hibOU);
 			
 			tx.commit();
@@ -393,7 +394,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibHierarchy.setDescription(h.getDescription());
 			hibHierarchy.setTarget(h.getTarget());
 			hibHierarchy.setCompany(h.getCompany());
-
+			updateSbiCommonInfo4Insert(hibHierarchy);
 			aSession.save(hibHierarchy);
 			
 			tx.commit();
@@ -419,7 +420,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibHierarchy.setDescription(h.getDescription());
 			hibHierarchy.setTarget(h.getTarget());
 			hibHierarchy.setCompany(h.getCompany());
-
+			updateSbiCommonInfo4Update(hibHierarchy);
 			aSession.save(hibHierarchy);
 			
 			tx.commit();
@@ -524,7 +525,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				SbiOrgUnitNodes parentNode = (SbiOrgUnitNodes) hibQuery.uniqueResult();
 				hibNode.setSbiOrgUnitNodes(parentNode);
 			}
-
+			updateSbiCommonInfo4Insert(hibNode);
 			aSession.save(hibNode);
 			tx.commit();
 			
@@ -566,7 +567,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			query.setInteger(0, kpiModelInstId);
 			SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
 			hibGrant.setSbiKpiModelInst(s);
-			
+			updateSbiCommonInfo4Insert(hibGrant);
 			aSession.save(hibGrant);
 			tx.commit();
 			
@@ -622,7 +623,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				SbiKpiModelInst s = (SbiKpiModelInst) query.uniqueResult();
 				hibGrant.setSbiKpiModelInst(s);
 			}
-			
+			updateSbiCommonInfo4Update(hibGrant);
 			aSession.save(hibGrant);
 			
 			tx.commit();
@@ -700,6 +701,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				grantNode.setSbiOrgUnitGrant(hibGrant);
 				logger.debug("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
 				System.out.println("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
+				updateSbiCommonInfo4Insert(grantNode);
 				aSession.save(grantNode);
 			}
 			

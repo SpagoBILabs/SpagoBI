@@ -546,6 +546,7 @@ IModelInstanceDAO {
 				sbiKpiInstanceHistory
 				.setBeginDt(oldSbiKpiInstance.getBeginDt());
 				sbiKpiInstanceHistory.setEndDt(now.getTime());
+				updateSbiCommonInfo4Insert(sbiKpiInstanceHistory);
 				aSession.save(sbiKpiInstanceHistory);
 			}
 
@@ -565,11 +566,13 @@ IModelInstanceDAO {
 					kpiInstanceToCreate = setSbiKpiInstanceFromModelInstance(
 							aSession, value, kpiInstanceToCreate);
 				}
+				updateSbiCommonInfo4Update(kpiInstanceToCreate);
 				aSession.saveOrUpdate(kpiInstanceToCreate);
 				sbiKpiModelInst.setSbiKpiInstance(kpiInstanceToCreate);
 			} else {
 				sbiKpiModelInst.setSbiKpiInstance(null);
 			}
+			updateSbiCommonInfo4Update(sbiKpiModelInst);
 			aSession.update(sbiKpiModelInst);
 
 			//adds or updates periodicity
@@ -782,7 +785,7 @@ IModelInstanceDAO {
 						}
 						Calendar now = Calendar.getInstance();
 						sbiKpiInstance.setBeginDt(now.getTime());
-
+						updateSbiCommonInfo4Insert(sbiKpiInstance);
 						aSession.save(sbiKpiInstance);
 						sbiKpiModelInst.setSbiKpiInstance(sbiKpiInstance);
 					}
@@ -793,7 +796,7 @@ IModelInstanceDAO {
 				.load(SbiKpiModelInst.class, parentId);
 				sbiKpiModelInst.setSbiKpiModelInst(sbiKpiModelInstParent);
 			}
-
+			updateSbiCommonInfo4Insert(sbiKpiModelInst);
 			idToReturn = (Integer) aSession.save(sbiKpiModelInst);
 
 			tx.commit();
@@ -860,7 +863,7 @@ IModelInstanceDAO {
 				.load(SbiKpiModelInst.class, parentId);
 				sbiKpiModelInst.setSbiKpiModelInst(sbiKpiModelInstParent);
 			}
-
+			updateSbiCommonInfo4Insert(sbiKpiModelInst);
 			idToReturn = (Integer) aSession.save(sbiKpiModelInst);
 
 			// insert or update the udp values

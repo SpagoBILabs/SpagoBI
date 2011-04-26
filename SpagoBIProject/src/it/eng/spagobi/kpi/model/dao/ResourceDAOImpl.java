@@ -68,7 +68,7 @@ public class ResourceDAOImpl extends AbstractHibernateDAO implements
 			sbiResource.setResourceDescr(resourceDescription);
 			sbiResource.setResourceCode(resourceCode);
 			sbiResource.setType(sbiDomain);
-
+			updateSbiCommonInfo4Update(sbiResource);
 			aSession.update(sbiResource);
 			tx.commit();
 
@@ -113,7 +113,7 @@ public class ResourceDAOImpl extends AbstractHibernateDAO implements
 			SbiDomains sbiDomains = (SbiDomains) aSession.load(
 					SbiDomains.class, toCreate.getTypeId());
 			hibResource.setType(sbiDomains);
-
+			updateSbiCommonInfo4Insert(hibResource);
 			idToReturn = (Integer) aSession.save(hibResource);
 			tx.commit();
 
