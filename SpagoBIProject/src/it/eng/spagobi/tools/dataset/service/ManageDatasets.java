@@ -59,6 +59,7 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -203,9 +204,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
 			Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
 			try {
-				dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+				GuiGenericDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+				List temp = new ArrayList();
+				temp.add(dsNewDetail);
 				logger.debug("Dataset Version correctly Restored");
-				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+				JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);	
+				JSONObject version = itemJSON.getJSONObject(0);
+				/*JSONObject results = new JSONObject();
+				results.put("result", itemJSON);*/
+				JSONObject attributesResponseSuccessJSON = new JSONObject();
+				attributesResponseSuccessJSON.put("success", true);
+				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+				attributesResponseSuccessJSON.put("result", version);
+				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+				//writeBackToClient(new JSONSuccess(results));
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);

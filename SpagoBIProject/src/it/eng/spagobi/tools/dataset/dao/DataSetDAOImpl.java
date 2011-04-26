@@ -372,10 +372,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * @param dsVersion the a data set Version
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) throws EMFUserError {
+	public GuiGenericDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		GuiGenericDataSet toReturn = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -408,6 +409,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				aSession.update(dsActiveDetail);
 				aSession.update(dsDetail);
 				tx.commit();
+				toReturn = toDataSet(dsDetail);
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while modifing the data Set with id " + ((dsId == null)?"":String.valueOf(dsId)), he);
@@ -420,6 +422,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("OUT");
 			}
 		}
+		return toReturn;
 	}
 
 	/**

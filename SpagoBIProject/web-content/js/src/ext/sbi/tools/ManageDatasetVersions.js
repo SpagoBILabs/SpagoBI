@@ -176,6 +176,8 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 		var col = e.column;
 		var row = e.row;	   	
     }, this);
+    
+    this.addEvents('verionrestored');	
 
 };
 
@@ -209,9 +211,12 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
     				            method: 'GET',
     				            success: function(response, options) {
     								if (response !== undefined) {
-    									/*var deleteRow = this.getSelectionModel().getSelected();
+    									var content = Ext.util.JSON.decode(response.responseText);
+    									var version = content.result;
+    									this.fireEvent('verionrestored',version);
+    									var deleteRow = this.getSelectionModel().getSelected();
     									this.store.remove(deleteRow);
-    									this.store.commitChanges();*/
+    									this.store.commitChanges();
     								} else {
     									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
     								}
