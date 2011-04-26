@@ -198,6 +198,7 @@ public class DossierPresentationsDAOHibImpl extends AbstractHibernateDAO impleme
 			hibObj.setSbiBinaryContent(hibBinContent);
 			hibObj.setSbiObject(obj);
 			hibObj.setApproved(null);
+			updateSbiCommonInfo4Insert(hibObj);
 			aSession.save(hibObj);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -227,6 +228,7 @@ public class DossierPresentationsDAOHibImpl extends AbstractHibernateDAO impleme
 			hibObj.setProg(dossierPresentation.getProg());
 			boolean approved = dossierPresentation.getApproved().booleanValue();
 			hibObj.setApproved(approved ? new Short((short) 1) : new Short((short) 0));
+			updateSbiCommonInfo4Update(hibObj);
 			aSession.save(hibObj);
 			tx.commit();
 		} catch (HibernateException he) {

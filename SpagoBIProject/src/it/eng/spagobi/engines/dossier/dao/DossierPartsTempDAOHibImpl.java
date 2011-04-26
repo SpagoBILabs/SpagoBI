@@ -126,6 +126,7 @@ public class DossierPartsTempDAOHibImpl extends AbstractHibernateDAO implements 
 				hibObjTemp.setPageId(pageId);
 				hibObjTemp.setSbiDossierBinaryContentsTemps(new HashSet());
 				hibObjTemp.setWorkflowProcessId(workflowProcessId);
+				updateSbiCommonInfo4Insert(hibObjTemp);
 				aSession.save(hibObjTemp);
 			}
 			/*hql = "from SbiDossierBinaryContentsTemp binTemp where binTemp.sbiDossierPartsTemp.pageId=" + pageId.toString() +
@@ -157,6 +158,7 @@ public class DossierPartsTempDAOHibImpl extends AbstractHibernateDAO implements 
 				temp.setName(NOTE);
 				temp.setType(NOTE);
 			}
+			updateSbiCommonInfo4Insert(temp);
 			aSession.save(temp);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -208,6 +210,7 @@ public class DossierPartsTempDAOHibImpl extends AbstractHibernateDAO implements 
 			temp.setCreationDate(new Date());
 			temp.setName(docLogicalName);
 			temp.setType(IMAGE);
+			updateSbiCommonInfo4Insert(temp);
 			aSession.save(temp);
 			tx.commit();
 		} catch (HibernateException he) {

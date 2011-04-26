@@ -357,6 +357,7 @@ public class GenerateFinalDocumentAction implements ActionHandler {
 	    FileInputStream fis = new FileInputStream(pathFinalDoc);
 	    byte[] docCont = GeneralUtilities.getByteArrayFromInputStream(fis);
 	    IDossierPresentationsDAO dpDAO = DAOFactory.getDossierPresentationDAO();
+	    
 	    DossierPresentation dossierPresentation = new DossierPresentation();
 	    dossierPresentation.setApproved(null);
 	    dossierPresentation.setProg(null);

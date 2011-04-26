@@ -33,6 +33,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 
 import java.util.Iterator;
 import java.util.List;
@@ -129,8 +130,9 @@ public class SaveRememberMeAction extends AbstractHttpAction {
 					throw new Exception("Current user [" + userId + "] CANNOT execute document with id = " + docId + " with specified parameters!!!!");
 				}
 			}
-			
-			boolean inserted = DAOFactory.getRememberMeDAO().saveRememberMe(name, description, docId, subobjectId, userId, parameters);
+			IRememberMeDAO dao=DAOFactory.getRememberMeDAO();
+			dao.setUserProfile(profile);
+			boolean inserted = dao.saveRememberMe(name, description, docId, subobjectId, userId, parameters);
 			if (inserted) {
 				message = "sbi.rememberme.saveOk";
 			} else {

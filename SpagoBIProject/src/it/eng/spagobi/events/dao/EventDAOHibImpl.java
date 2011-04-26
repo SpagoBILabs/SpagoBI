@@ -133,6 +133,7 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO{
 		tx = aSession.beginTransaction();
 		SbiEvents hibEvent = new SbiEvents();
 		hibEvent.setUser(user);
+		updateSbiCommonInfo4Insert(hibEvent);
 		aSession.save(hibEvent);	
 		tx.commit();
 		return hibEvent.getId();

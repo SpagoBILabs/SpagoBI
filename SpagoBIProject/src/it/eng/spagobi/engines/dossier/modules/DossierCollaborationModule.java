@@ -485,7 +485,12 @@ public class DossierCollaborationModule extends AbstractModule {
 			String dossierIdStr = (String) contextInstance.getVariable(DossierConstants.DOSSIER_ID);
 			Integer dossierId = new Integer(dossierIdStr);
 			// store presentation
+			SessionContainer session = this.getRequestContainer().getSessionContainer();
+			SessionContainer permanentSession = session.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
 			IDossierPresentationsDAO dpDAO = DAOFactory.getDossierPresentationDAO();
+			dpDAO.setUserProfile(profile);
 			DossierPresentation currPresentation = dpDAO.getCurrentPresentation(dossierId, workflowProcessId);
 			boolean approvedBool = false;
 			if (approved.equalsIgnoreCase("true")) {
@@ -658,7 +663,11 @@ public class DossierCollaborationModule extends AbstractModule {
 			ContextInstance contextInstance = taskInstance.getContextInstance();
 			ProcessInstance processInstance = contextInstance.getProcessInstance();
 			Long workflowProcessId = new Long(processInstance.getId());
+			SessionContainer session = this.getRequestContainer().getSessionContainer();
+			SessionContainer permanentSession = session.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();
+			dptDAO.setUserProfile(profile);
 			dptDAO.storeNote(dossierId, pageNum, noteSent.getBytes(), workflowProcessId);
 			// recover from cms images and notes
 		    String notes = recoverNotes(dossierId, pageNum, workflowProcessId);
