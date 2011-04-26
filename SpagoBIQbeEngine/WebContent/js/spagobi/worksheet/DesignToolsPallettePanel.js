@@ -45,11 +45,82 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.DesignToolsPallettePanel = function(config) { 
 
-	var c ={
-			html: 'ciao'
-	}
+
+	var c = this.initPanel();
 	Sbi.worksheet.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {});
+Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {
+	
+	initPanel:function(){
+
+		var store = new Ext.data.ArrayStore({
+			fields: ['name', 'url'],
+			data   : this.getAvailablePallettes()
+		});
+
+		this.tpl = new Ext.Template(
+				'<tpl for=".">',
+
+				'<div  style="float: left; clear: left; padding-bottom: 10px;">',
+					'<div style="float: left;"><img src="{0}" title="{1}" width="40"></div>',
+					'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
+				'</div>',
+	
+				'</tpl>'
+		);
+		this.tpl.compile();
+	    var fieldColumn = new Ext.grid.Column({
+	    	width: 300
+	    	, dataIndex: 'name'
+	    	, hideable: false
+	    	, hidden: false	
+	    	, sortable: false
+	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
+	        	return this.tpl.apply(	
+	        			[record.json.url, record.json.name]	);
+	    	}
+	        , scope: this
+	    });
+	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+
+		var conf ={
+				title: 'Palette',	
+				autoScroll : true,
+				border: false,
+				items: [
+				        new Ext.Panel({
+				        	height:300,
+				        	border: false,
+				        	style: 'padding-top: 0px; padding-left: 0px',
+				        	items:[
+				        	       new Ext.grid.GridPanel({
+				        	    	   ddGroup: 'gridDDGroup',
+				        	    	   header: false,
+				        	    	   hideHeaders : true,
+				        	    	   enableDragDrop: true,
+				        	    	   cm:this.cm,
+				        	    	   store: store,
+				        	    	   autoHeight: true
+				        	       })]
+				        })]
+		};
+	    
+		return conf;
+
+	},
+	
+	
+	getAvailablePallettes:function(){
+		var pallette = [];
+		pallette.push({name: 'Bar Char', url:'img/worksheet/bar_chart.png'});
+		pallette.push({name: 'Pie Char', url:'img/worksheet/pie_chart.png'});
+		pallette.push({name: 'Line Char', url:'img/worksheet/line_chart.png'});
+		pallette.push({name: 'Table', url:'img/worksheet/table.png'});
+		pallette.push({name: 'Pivot Table', url:'img/worksheet/crosstab.png'});	
+		return pallette;
+	}
+
+	
+});

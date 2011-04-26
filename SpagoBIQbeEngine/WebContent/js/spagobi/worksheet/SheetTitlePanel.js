@@ -253,12 +253,12 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	
 	//returns the array with the available images
 	getAvailableImages:function(min,max,step){
-		this.imageArray = [];
-		this.imageArray.push({image: 'img1'});
-		this.imageArray.push({image: 'img2'});
-		this.imageArray.push({image: 'img3'});
-		this.imageArray.push({image: 'img4'});	
-		return this.imageArray;
+		var imageArray = [];
+		imageArray.push({image: 'img1'});
+		imageArray.push({image: 'img2'});
+		imageArray.push({image: 'img3'});
+		imageArray.push({image: 'img4'});	
+		return imageArray;
 	},
 	
 	//handler for the load image button
