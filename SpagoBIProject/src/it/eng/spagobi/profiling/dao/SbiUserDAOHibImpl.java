@@ -653,7 +653,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		Integer resultNumber;
+		Long resultNumber;
 		
 		try {
 			aSession = getSession();
@@ -661,7 +661,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		
 			String hql = "select count(*) from SbiUser ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = (Long)hqlQuery.uniqueResult();
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiUser", he);	
@@ -676,7 +676,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				logger.debug("OUT");
 			}
 		}
-		return resultNumber;
+		return new Integer(resultNumber.intValue());
 	}
 
 	public List<UserBO> loadPagedUsersList(Integer offset, Integer fetchSize)
@@ -695,7 +695,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			List toTransform = null;
 			String hql = "select count(*) from SbiUser ";
 			Query hqlQuery = aSession.createQuery(hql);
-			resultNumber = (Integer)hqlQuery.uniqueResult();
+			resultNumber = new Integer(((Long)hqlQuery.uniqueResult()).intValue());
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
