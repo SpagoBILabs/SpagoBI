@@ -61,7 +61,7 @@ public class ClassLoaderManager{
 				Thread.currentThread().setContextClassLoader(qbeClassLoader);
 			}
 			
-			updateCurrentClassLoader(jarFile);
+			qbeClassLoader = updateCurrentClassLoader(jarFile);
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
