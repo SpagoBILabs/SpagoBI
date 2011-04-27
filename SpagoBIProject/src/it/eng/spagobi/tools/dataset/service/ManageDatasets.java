@@ -53,6 +53,7 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -369,7 +370,32 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
 				dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd);
-			}		
+			}
+			
+			IDataSet ds = null;		
+			try {
+				if ( dsType!=null && !dsType.equals("")) {
+					
+					ds = instantiateCorrectIDataSetType(dsType);		
+					if(ds!=null){									
+						if(trasfTypeCd!=null && !trasfTypeCd.equals("")){
+							ds = setTransformer(ds, trasfTypeCd);
+						}
+						HashMap h = new HashMap();
+						if(parsJSON!=null){
+							h = deserializeParValuesListJSONArray(parsJSON);
+						}
+						IEngUserProfile profile = getUserProfile();
+						String dsMetadata = getDatasetTestMetadata(ds, h, profile);	
+						dsActiveDetail.setDsMetadata(dsMetadata);
+					}							
+				}else{
+					logger.error("DataSet type is not existent");
+					throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+				}
+			} catch (Exception e) {
+				logger.error("Error while getting dataset metadataa",e);
+			}
 		}	
 		return dsActiveDetail;
 	}
@@ -629,8 +655,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		HashMap h = new HashMap();
 		for(int i=0; i< parsListJSON.length(); i++){
 			JSONObject obj = (JSONObject)parsListJSON.get(i);
-			String name = obj.getString("name");	
-			String tempVal = obj.getString("value");
+			String name = obj.getString("name");
+			boolean hasVal  = obj.has("value");
+			String tempVal = "";
+			if(hasVal){
+				tempVal = obj.getString("value");
+			}
 			String value = "";
 			if(tempVal!=null && tempVal.contains(",")){
 				String[] tempArrayValues = tempVal.split(",");
@@ -666,6 +696,30 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		sb.setAttribute(sb1);
 		toReturn = sb.toXML(false);
 		return toReturn;
+	}
+	
+	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
+		logger.debug("IN");
+		String dsMetadata = null;
+		
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+		
+		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
+		dataSet.setParamsMap(parametersFilled);		
+		try {
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			IDataStore dataStore = dataSet.getDataStore();
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			dsMetadata = dsp.metadataToXML(dataStore);
+		}
+		catch (Exception e) {
+			logger.error("Error while executing dataset for test purpose",e);
+			return null;		
+		}
+
+		logger.debug("OUT");
+		return dsMetadata;
 	}
 	
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
