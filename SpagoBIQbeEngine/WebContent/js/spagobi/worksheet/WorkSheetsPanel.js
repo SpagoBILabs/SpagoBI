@@ -83,6 +83,15 @@ Ext.extend(Sbi.worksheet.WorkSheetsPanel, Ext.Panel, {
 
 	initPanels: function(){
 		this.designToolsPanel = new Sbi.worksheet.DesignToolsPanel();
+		this.designToolsPanel.on('toolschange',function(change){
+			this.sheetsContainerPanel.updateActiveSheet(change);
+		},this);
 		this.sheetsContainerPanel = new Sbi.worksheet.SheetsContainerPanel();
+		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
+			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
+		},this);
+		
+		
+		
 	}
 });

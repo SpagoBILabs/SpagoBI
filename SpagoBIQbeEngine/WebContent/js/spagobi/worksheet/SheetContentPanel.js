@@ -60,6 +60,7 @@ Sbi.worksheet.SheetContentPanel = function(config) {
 	this.initEmptyMsgPanel();
 	
 	c = {
+		style:'padding:5px 15px 5px',
 		items: [this.emptyMsgPanel]
 	}
 	Sbi.worksheet.SheetContentPanel.superclass.constructor.call(this, c);	
@@ -75,7 +76,8 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
-			, height: 40
+			, border: false
+			//, bodyStyle:'height: 100%'
 			, frame: true
 		});
 	}
@@ -124,4 +126,6 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 		this.doLayout();
 	}
 	
+	
+
 });

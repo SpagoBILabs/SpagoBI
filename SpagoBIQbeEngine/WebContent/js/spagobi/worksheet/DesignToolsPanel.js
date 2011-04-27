@@ -32,12 +32,14 @@
  * 
  * Public Methods
  * 
- * [list]
+ * updateToolsForActiveTab(activeSheet): update the tools: take the configuration of the activeSheet
+ * and update the tools
  * 
  * 
  * Public Events
  * 
- * [list]
+ * toolschange(change): the value of the tools is changed.. change a map with the change value.
+ * for example {layout: layout-header}
  * 
  * Authors - Alberto Ghedin
  */
@@ -74,5 +76,18 @@ Ext.extend(Sbi.worksheet.DesignToolsPanel, Ext.Panel, {
 		this.designToolsFieldsPanel.flex = 1;
 		this.designToolsPallettePanel.flex = 1;
 		this.designToolsLayoutPanel.flex = 1;
+		this.designToolsLayoutPanel.on('layoutchange', function(layout){
+			var change = {
+				layout : layout
+			};
+			this.fireEvent('toolschange',change);
+		}, this);
+	}
+
+	//Update the tools info for the active sheet
+	, updateToolsForActiveTab: function(activeSheet){
+		if(activeSheet.layout!=null){
+			this.designToolsLayoutPanel.setLayoutValue(activeSheet.layout);
+		}
 	}
 });

@@ -43,13 +43,15 @@ Sbi.worksheet.DesignToolsLayoutPanel = function(config) {
 		hideLabel: true,
 		columns: 2,
 		items: [
-		        {name: 'layout', height: 40, id:'layout-headerfooter', ctCls:'layout-headerfooter',inputValue: 'layout_headerfooter', checked: true},
-		        {name: 'layout', height: 40, id:'layout-header', ctCls:'layout-header',inputValue: 'layout_header'},
-		        {name: 'layout', height: 40, id:'layout-footer', ctCls:'layout-footer', inputValue: 'layout_footer'},
-		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout_content'},
+		        {name: 'layout', height: 40, id:'layout-headerfooter', ctCls:'layout-headerfooter',inputValue: 'layout-headerfooter', checked: true},
+		        {name: 'layout', height: 40, id:'layout-header', ctCls:'layout-header',inputValue: 'layout-header'},
+		        {name: 'layout', height: 40, id:'layout-footer', ctCls:'layout-footer', inputValue: 'layout-footer'},
+		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content'},
 		        ]
 	});
 
+	this.layoutRadioGroup.on('change', this.updateSheetLayout, this);
+	
 	var conf ={
 			title:  LN('sbi.worksheet.designtoolslayoutpanel.title'),
 			border: false,
@@ -105,6 +107,10 @@ Ext.extend(Sbi.worksheet.DesignToolsLayoutPanel, Ext.FormPanel, {
 	//.. class comment)
 	setLayoutValue: function(value){
 		this.layoutRadioGroup.setValue(value);
+	},
+	
+	updateSheetLayout: function(){
+		this.fireEvent('layoutchange',this.getLayoutValue());
 	}
 
 
