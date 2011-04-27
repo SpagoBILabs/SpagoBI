@@ -38,6 +38,14 @@
 	background-image: url('../../../img/erase.png') !important;
 }
 
+.icon-info {
+    background-image:url('../../../img/info16.png') !important;
+}
+
+.icon-profattr {
+    background-image:url('../../../img/rolesynch16.png') !important;
+}
+
 .icon-execute {
 	background-image: url('../../../img/exec16.png') !important;
 }

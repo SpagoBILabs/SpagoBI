@@ -188,6 +188,9 @@ Sbi.widgets.ListDetailForm = function(config) {
 	}else{
 		this.setCloneButton = false;
 	}
+	if(conf.tbButtonsArray){
+		this.tbButtonsArray = conf.tbButtonsArray;
+	}
 
 	this.mainElementsStore = new Ext.data.JsonStore({
     	autoLoad: false    	  
@@ -269,6 +272,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, gridWidth: null
 	, filterWidth: 405
 	, setCloneButton: null
+	, tbButtonsArray: null
 	
 	
 	,initWidget: function(){
@@ -321,10 +325,17 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	            scope: this
  	            });
         
+        var buttonsArray = new Array();
+        if(this.tbButtonsArray!=null && this.tbButtonsArray!=undefined){
+        	buttonsArray = this.tbButtonsArray;
+        }
+        
+        buttonsArray.push(this.tbSaveButton);
+        
  	    this.tbSave = new Ext.Toolbar({
  	    	buttonAlign : 'right', 	 
  	    	height: 28,
- 	    	items:[this.tbSaveButton]
+ 	    	items: buttonsArray
  	    });
 
  	   this.tabs = new Ext.TabPanel({

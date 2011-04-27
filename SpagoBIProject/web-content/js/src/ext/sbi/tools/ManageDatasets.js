@@ -97,6 +97,8 @@ Sbi.tools.ManageDatasets = function(config) {
 		this.activateDsTestTab(this.datasetTestTab);
 		this.getForm().loadRecord(rec);
 	}, this);
+	
+	this.tabs.addListener('tabchange', this.modifyToolbar, this);
 };
 
 Ext.extend(
@@ -105,8 +107,11 @@ Ext.extend(
 			{
 
 				configurationObject : null,
+				tbInfoButton: null,
+				tbProfAttrsButton : null,
 				gridForm : null,
 				mainElementsStore : null,
+				profileAttributesStore: null,
 				trasfDetail : null,
 				jClassDetail : null,
 				scriptDetail : null,
@@ -124,6 +129,17 @@ Ext.extend(
 				detailFieldVersNum: null,
 				detailFieldVersId: null
 
+				, modifyToolbar : function(tabpanel, panel){
+					var itemId = panel.getItemId();
+					if(itemId !== undefined && itemId !== null && itemId === 'advanced'){
+						this.tbInfoButton.show();
+						this.tbProfAttrsButton.show();
+					}else{
+						this.tbInfoButton.hide();
+						this.tbProfAttrsButton.hide();
+					}
+				}
+			
 				,activateTransfForm : function(combo, record, index) {
 					var transfSelected = record.get('trasfTypeCd');
 					if (transfSelected != null
@@ -299,6 +315,26 @@ Ext.extend(
 
 					this.configurationObject.panelTitle = LN('sbi.ds.panelTitle');
 					this.configurationObject.listTitle = LN('sbi.ds.listTitle');
+					
+					var tbButtonsArray = new Array();
+					this.tbProfAttrsButton = new Ext.Toolbar.Button({
+		 	            text: LN('sbi.ds.pars'),
+		 	            iconCls: 'icon-profattr',
+		 	            handler: this.profileAttrs,
+		 	            width: 30,
+		 	            scope: this
+		 	            });
+					tbButtonsArray.push(this.tbProfAttrsButton);
+					
+					this.tbInfoButton = new Ext.Toolbar.Button({
+		 	            text: LN('sbi.ds.help'),
+		 	            iconCls: 'icon-info',
+		 	            handler: this.info,
+		 	            width: 30,
+		 	            scope: this
+		 	            });
+					tbButtonsArray.push(this.tbInfoButton);
+					this.configurationObject.tbButtonsArray = tbButtonsArray;
 
 					this.initTabItems();
 				}
@@ -311,6 +347,12 @@ Ext.extend(
 				}
 				
 				,initDetailTab : function() {
+					this.profileAttributesStore = new Ext.data.SimpleStore({
+						fields : [ 'profAttrs' ],
+						data : config.attrs,
+						autoLoad : false
+					});
+					
 					// Store of the combobox
 					this.catTypesStore = new Ext.data.SimpleStore({
 						fields : [ 'catTypeCd' ],
@@ -1485,5 +1527,47 @@ Ext.extend(
 					this.qbeDataSetBuilder.setDatasetId( datasetId );
 					this.qbeDataSetBuilder.show();
 				}
+				//METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
+				,info : function() {		
+					var win_info_2;
+					if(!win_info_2){
+						win_info_2= new Ext.Window({
+							id:'win_info_2',
+							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsrules.html'},             				
+							layout:'fit',
+							width:650,
+							height:350,
+							autoScroll: true,
+							closeAction:'close',
+							buttonAlign : 'left',
+							plain: true,
+							title: LN('sbi.ds.help')
+						});
+					};
+					win_info_2.show();
+			    }
+				
+				,profileAttrs: function() {		
+					var win_info_3;
+					if(!win_info_3){
+						win_info_3= new Ext.Window({
+							id:'win_info_3',          				
+							layout:'fit',
+							width:220,
+							height:350,
+							closeAction:'close',
+							buttonAlign : 'left',
+							autoScroll: true,
+							plain: true,
+							items: {  
+						        xtype: 'grid',
+						        border: false,
+						        columns: [{header: LN('sbi.ds.pars'),width : 170}],                
+						        store: this.profileAttributesStore
+						    }
+						});
+					};
+					win_info_3.show();
+			    }
 
 });

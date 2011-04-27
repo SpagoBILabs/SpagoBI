@@ -528,6 +528,8 @@ Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nom de la colonne des categories à pivot
 Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nom de la colonne des valeurs à pivoter';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nom de la colonne à ne pas pivoter';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numeration automatique des Colonnes?';
+Sbi.locale.ln['sbi.ds.help'] = 'Help';
+Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

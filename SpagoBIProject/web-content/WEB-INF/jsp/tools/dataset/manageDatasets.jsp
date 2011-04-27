@@ -18,6 +18,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
+<%@page import="it.eng.spagobi.profiling.bean.SbiAttribute"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 
 <%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
@@ -39,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     List dataSourceList = (List) aSessionContainer.getAttribute("dataSourceList");
     List scriptLanguageList = (List) aSessionContainer.getAttribute("scriptLanguageList");
     List trasfTypesList = (List) aSessionContainer.getAttribute("trasfTypesList");
-	
+    List sbiAttrsList = (List) aSessionContainer.getAttribute("sbiAttrsList");
 %>
 
 
@@ -62,6 +63,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}	
 	String dsTypes = dsTypesArray.toString();
 	dsTypes = dsTypes.replaceAll("\"","'");
+	
+	JSONArray profAttrsArray = new JSONArray();
+	if(sbiAttrsList != null){
+		for(int i=0; i< sbiAttrsList.size(); i++){
+			SbiAttribute attr = (SbiAttribute)sbiAttrsList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(attr.getAttributeName());
+			profAttrsArray.put(temp);
+		}
+	}	
+	String attrs = profAttrsArray.toString();
+	attrs = attrs.replaceAll("\"","'");
 	
 	JSONArray catTypesArray = new JSONArray();
 	catTypesArray.put(empty);
@@ -148,6 +161,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     config.dataSourceLabels = <%= dataSourceLabels%>;
     config.scriptTypes = <%= scriptTypes%>;
     config.trasfTypes = <%= trasfTypes%>;    
+    config.attrs = <%= attrs%>;  
 	
 	var url = {
     	host: '<%= request.getServerName()%>'
