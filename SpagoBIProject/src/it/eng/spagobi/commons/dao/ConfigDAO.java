@@ -203,13 +203,13 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 		return toReturn;
     }
     
-    public SbiConfig fromConfig(Config Config){
+    public SbiConfig fromConfig(Config config){
 		SbiConfig hibConfig = new SbiConfig();
-		hibConfig.setValueCheck(Config.getValueCheck());
-		hibConfig.setId(Config.getId());
-		hibConfig.setName(Config.getName());
-		hibConfig.setLabel(Config.getLabel());
-		hibConfig.setDescription(Config.getDescription());
+		hibConfig.setValueCheck(config.getValueCheck());
+		hibConfig.setId(config.getId());
+		hibConfig.setName(config.getName());
+		hibConfig.setLabel(config.getLabel());
+		hibConfig.setDescription(config.getDescription());
 		return hibConfig;
 	}
 	
@@ -231,12 +231,9 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
-			Criterion labelCriterrion = Expression.eq("label",config.getLabel());
-			Criteria criteria = aSession.createCriteria(SbiConfig.class);
-			criteria.add(labelCriterrion);	
 			
-			SbiConfig hibConfig = (SbiConfig) criteria.uniqueResult();	
+			SbiConfig hibConfig = null;
+			Integer id = config.getId();
 			
 			Criterion domainCriterrion = Expression.eq("valueId",config.getValueTypeId());
 			Criteria domainCriteria = aSession.createCriteria(SbiDomains.class);
@@ -244,24 +241,30 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 			
 			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();	
 			
-			if (hibConfig==null){
-				logger.debug("Insert new Config");
-				hibConfig=fromConfig(config);
-				updateSbiCommonInfo4Insert(hibConfig);
-				aSession.save(hibConfig);
-				hibConfig.setSbiDomains(hibDomains);
-			}else{
+			if(id!=null){
+				//modification
 				logger.debug("Update Config");
+				hibConfig = (SbiConfig) aSession.load(SbiConfig.class, id);
+				updateSbiCommonInfo4Update(hibConfig);
 				hibConfig.setDescription(config.getDescription());
 				hibConfig.setName(config.getName());
 				hibConfig.setValueCheck(config.getValueCheck());
 				hibConfig.setIsActive(config.isActive());
 				hibConfig.setSbiDomains(hibDomains);
-				updateSbiCommonInfo4Update(hibConfig);
+			}
+			else{
+				//insertion
+				logger.debug("Insert new Config");
+				hibConfig = fromConfig(config);
+				updateSbiCommonInfo4Insert(hibConfig);
+				hibConfig.setSbiDomains(hibDomains);
 			}
 			
-			
+			Integer newId = (Integer) aSession.save(hibConfig);
+				
 			tx.commit();
+			
+			config.setId(newId);
 
 		} catch (HibernateException he) {
 			logger.error("HibernateException", he);

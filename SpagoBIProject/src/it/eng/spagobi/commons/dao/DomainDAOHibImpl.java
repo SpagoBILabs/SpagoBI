@@ -378,28 +378,35 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
-			Criterion domainCriterrion = Expression.eq("valueCd",domain.getValueCd());
-			Criteria domainCriteria = aSession.createCriteria(SbiDomains.class);
-			domainCriteria.add(domainCriterrion);
-			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();	
+			SbiDomains hibDomains = null;
+			Integer id = domain.getValueId();
 			
-			if (hibDomains == null) {
-				logger.debug("insert new domain");
-				
-				hibDomains = this.fromDomain(domain);
-				updateSbiCommonInfo4Insert(hibDomains);
-				aSession.save(hibDomains);
-			}else{
-				logger.debug("update domain");
-				hibDomains.setValueCd(domain.getValueCd());
-				hibDomains.setValueId(domain.getValueId());
-				hibDomains.setValueNm(domain.getValueName());
+			if(id!=null){
+				//modification
+				logger.debug("Update Domain");
+				hibDomains = (SbiDomains) aSession.load(SbiDomains.class, id);
+				updateSbiCommonInfo4Update(hibDomains);
 				hibDomains.setDomainCd(domain.getDomainCode());
 				hibDomains.setDomainNm(domain.getDomainName());
+				hibDomains.setValueCd(domain.getValueCd());
 				hibDomains.setValueDs(domain.getValueDescription());
-				updateSbiCommonInfo4Update(hibDomains);
+				hibDomains.setValueId(domain.getValueId());
+				hibDomains.setValueNm(domain.getValueName());
 			}
+			else{
+				//insertion
+				logger.debug("Insert new Domain");
+				hibDomains = fromDomain(domain);
+				updateSbiCommonInfo4Insert(hibDomains);
+				hibDomains.setValueId(domain.getValueId());
+			}
+			
+			Integer newId = (Integer) aSession.save(hibDomains);
+				
 			tx.commit();
+			
+			domain.setValueId(newId);
+			
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -433,6 +440,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	 * 
 	 */
 	public void delete(Integer idDomain) throws EMFUserError {
+		logger.debug("IN");
 		Session sess = null;
 		Transaction tx = null;
 

@@ -167,9 +167,11 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 				this.editor.stopEditing();
 				var s = this.grid.getSelectionModel().getSelections();
 				for ( var i = 0, r; r = s[i]; i++) {
-					var params = {
-							VALUE_ID: r.get('VALUE_ID')
-							};
+					var id = r.get('VALUE_ID');
+					if(id != undefined && id != null){
+						var params = {
+								VALUE_ID: r.get('VALUE_ID')
+						};
 
 					Ext.Ajax.request( {
 						url : this.crudServices['deleteItemService'],
@@ -182,8 +184,8 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 						    if(record) {
 						    	this.store.remove(record);
 						    	Ext.MessageBox.show({
-						            title: LN('sbi.home.Info'),
-						            msg: LN('sbi.models.selectNode'),
+						            title: LN('sbi.generic.info'),
+						            msg: LN('sbi.config.manageconfig.delete'),
 						            modal: false,
 						            buttons: Ext.MessageBox.OK,
 						            width:300,
@@ -195,6 +197,10 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 						failure : Sbi.exception.ExceptionHandler.handleFailure,
 						scope : this
 					});
+				}
+				else{
+						this.store.remove(r);
+					}
 				}
 			},
 			scope : this
@@ -308,18 +314,19 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			url : this.crudServices['saveItemService'],
 			params : p,
 			method : 'POST',
-			success : function(response, options) {
-				var jsonResponse = Ext.util.JSON.decode(response.responseText);
-				record.set('VALUE_ID', jsonResponse.VALUE_ID);
-				record.commit();
-			},
+			success : this.successSave.createDelegate(this, [record], true),
 			failure : Sbi.exception.ExceptionHandler.handleFailure,
 			scope : this
 		});
+	}
+	,successSave : function(response, options, record) {
+		var jsonResponse = Ext.util.JSON.decode(response.responseText);
+		record.set('VALUE_ID', jsonResponse.VALUE_ID);
+		record.commit();
 		
 		Ext.MessageBox.show({
-            title: LN('sbi.home.Info'),
-            msg: LN('sbi.execution.viewpoints.msg.saved'),
+            title: LN('sbi.generic.info'),
+            msg: LN('sbi.config.manageconfig.save'),
             modal: false,
             buttons: Ext.MessageBox.OK,
             width:300,

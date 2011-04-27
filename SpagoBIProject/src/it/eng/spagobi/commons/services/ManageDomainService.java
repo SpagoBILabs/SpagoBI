@@ -53,11 +53,13 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class ManageDomainService extends AbstractSpagoBIAction {
@@ -119,18 +121,32 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 	public void doSave() {
 
 		logger.debug("IN");
-
+		Domain domain = null;
+		Domain domainTemp = null;
 		try {
-
+			domain = this.setDomain();
+			domainTemp = domainDao.loadDomainByCodeAndValue(domain.getDomainCode(), domain.getValueCd());
+		} catch (Throwable e) {
+			logger.error("Exception occurred while saving config data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to save domain", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		if (domainTemp != null && !domainTemp.getValueId().equals(domain.getValueId())) {
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Domain Code and Value Code already in use");
+		}
+		try {
 			logger.debug("Save domain");
-
-			Domain domain = this.setDomain();
+			
 			domainDao.saveDomain(domain);
 			JSONObject response = new JSONObject();
 			response.put("VALUE_ID", domain.getValueId());
 			writeBackToClient(new JSONSuccess(response));
-
+			
 		} catch (Throwable e) {
+			logger.error("Exception occurred while saving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to save domain", e);
 		} finally {
@@ -143,9 +159,7 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			logger.debug("Delete domain");
 			Integer valueId = this.getAttributeAsInteger("VALUE_ID");
 			domainDao.delete(valueId);
-			JSONObject response = new JSONObject();
-			response.put("VALUE_ID", valueId);
-			writeBackToClient(new JSONSuccess(response));
+			writeBackToClient(new JSONAcknowledge());
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);

@@ -624,3 +624,5 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Descrizione';
 Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Attivo';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Valore check';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Tipo';
+Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Dati cancellati correttamente';
+Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Dati salvati correttamente';
