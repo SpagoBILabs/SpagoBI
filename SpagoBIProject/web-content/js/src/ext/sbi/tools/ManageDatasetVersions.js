@@ -94,7 +94,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 			dataIndex: 'type' 
 	    },{
 	    	header: LN('sbi.ds.dateIn'), 
-	    	width: 140, 
+	    	width: 130, 
 			id:'dateIn',
 			sortable: true, 
 			dataIndex: 'dateIn' 

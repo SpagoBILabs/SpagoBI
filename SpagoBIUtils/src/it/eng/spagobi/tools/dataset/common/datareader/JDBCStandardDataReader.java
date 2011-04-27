@@ -4,6 +4,7 @@
 package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -39,6 +40,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     	DataStoreMetaData dataStoreMeta;
     	FieldMetadata fieldMeta;
     	String fieldName;
+    	String fieldType;
     	ResultSet rs;
     	int columnCount;
     	int columnIndex;
@@ -62,8 +64,12 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		for(columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
         		fieldMeta = new FieldMetadata();
         		fieldName = rs.getMetaData().getColumnLabel(columnIndex);
+        		fieldType = rs.getMetaData().getColumnClassName(columnIndex);
         		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
         		fieldMeta.setName( fieldName );
+        		if(fieldType!=null){
+					fieldMeta.setType(Class.forName(fieldType.trim()));
+        		}
         		dataStoreMeta.addFiedMeta(fieldMeta);
         	}    
     		dataStore.setMetaData(dataStoreMeta);
@@ -145,6 +151,9 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
     		logger.debug("Reading total record numeber is equal to [" + resultNumber + "]");
     	} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			logger.error("Class type not found",e);
 			e.printStackTrace();
 		} finally {
     		logger.debug("OUT");
