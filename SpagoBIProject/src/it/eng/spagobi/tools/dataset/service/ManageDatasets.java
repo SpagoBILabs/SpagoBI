@@ -240,6 +240,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);	
 				List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
 				getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);	
+				List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
+				getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);	
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"Exception retrieving dataset types", e);

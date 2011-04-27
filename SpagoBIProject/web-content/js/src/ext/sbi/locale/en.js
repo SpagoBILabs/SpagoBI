@@ -553,6 +553,8 @@ Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Name of Value Column to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Name of the Column not to be Pivoted';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Automatic Columns numeration?';
 Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Open QbE wizard';
+Sbi.locale.ln['sbi.ds.help'] = 'Help';
+Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
