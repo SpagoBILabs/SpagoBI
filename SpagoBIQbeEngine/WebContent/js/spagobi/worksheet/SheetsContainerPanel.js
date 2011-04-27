@@ -32,12 +32,14 @@
  * 
  * Public Methods
  * 
- * [list]
+ * updateLayout(layout): update the layout of the active tab
+ * 
+ * updateActiveSheet(change) : update the sheet after tools value changed 
  * 
  * 
  * Public Events
  * 
- * [list]
+ * tabChange(activePanel): the tab is changed
  * 
  * Authors - Alberto Ghedin
  */
@@ -75,10 +77,11 @@ Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
 	    		this.addTab();
 	    		tabPanel.setActiveTab(tabPanel.items.length-2);
 	    	}
+	    	this.fireEvent('sheetchange',tab);
 	    },this);
-	},
+	}
 
-	addTab: function(){
+	, addTab: function(){
 		this.suspendEvents();
 		this.remove('addTab');
 		var sheet = new Sbi.worksheet.SheetPanel({
@@ -106,6 +109,25 @@ Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
 				);
 			return false;
 	    },this);
+	}
+	
+	//Update the layout of the active panel
+	, updateLayout: function (layout) {
+		var activeTab = this.getActiveTab();
+		if(activeTab==null){
+			this.setActiveTab(0);
+			activeTab = this.getActiveTab();
+		}
+		activeTab.updateLayout(layout);
+	}
+	
+	//Update the sheet after tools value changed 
+	, updateActiveSheet: function(change){
+	
+		
+		if(change.layout!=null && change.layout!=undefined){
+			this.updateLayout(change.layout);
+		}
 	}
 
 	

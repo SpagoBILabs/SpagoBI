@@ -67,22 +67,38 @@ Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	filtersPanel: null,
 	contentPanel: null,
 	footerPanel: null,
-	
+	layout: null,
 	
 	initPanels: function(){
-		
+		this.layout = 'layout_headerfooter';
 		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({title: true, img:true});
 		this.filtersPanel = new Sbi.worksheet.DesignSheetFiltersPanel({
 			style:'padding:5px 15px 0'
 			, ddGroup: 'worksheetDesignerDDGroup'
 		});
 		this.contentPanel = new Sbi.worksheet.SheetContentPanel({});
-
 		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({title: true});
-		
 		this.titlePanel.flex = 1;
 		this.contentPanel.flex = 4;
 		this.footerPanel.flex = 1;
+	}
+
+	, updateLayout: function (layout) {
+		if(layout!=null){
+			 this.layout=layout;
+			 if(layout=='layout-header' || layout=='layout-content'){
+				 this.footerPanel.hide();
+			 }
+			 if(layout=='layout-footer' || layout=='layout-content'){
+				 this.titlePanel.hide();
+			 }
+			 if(layout=='layout-footer' || layout=='layout-headerfooter'){
+				 this.footerPanel.show();
+			 }
+			 if(layout=='layout-header' || layout=='layout-headerfooter'){
+				 this.titlePanel.show();
+			 }
+		}
 	}
 	
 });
