@@ -140,7 +140,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 						
 				//queryRewriter =  new HQL2SQLStatementRewriter( session );
 				//sqlQuery = queryRewriter.rewrite(hqlQuery);
-				sqlQuery = statement.getSqlQueryString();
+	//			sqlQuery = statement.getSqlQueryString();
 			} else {
 				// case of FormEngine
 				
