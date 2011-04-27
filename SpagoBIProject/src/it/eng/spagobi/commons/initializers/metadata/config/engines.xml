@@ -18,5 +18,6 @@
 <ENGINE label="CommonJEngine" name="CommonJ Engine" descr="Engine to execute process" mainUrl="/SpagoBICommonJEngine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.commonj.CommonjDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false" useDataSource="false" encrypt="0" />
 <ENGINE label="SmartFilterEngine" name="SmartFilterEngine" descr="SmartFilterEngine" mainUrl="/SpagoBIQbeEngine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="false" useDataSource="true" encrypt="0" />
 <ENGINE label="GeoReportEngine" name="GeoReportEngine" descr="GeoReportEngine" mainUrl="/SpagoBIGeoReportEngine/GeoReportEngineStartAction" driverNm="it.eng.spagobi.engines.drivers.generic.GenericDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true" useDataSource="true" encrypt="0" />
+<ENGINE label="ConsoleEngine" name="ConsoleEngine" descr="ConsoleEngine" mainUrl="/SpagoBIConsoleEngine/servlet/AdapterHTTP?ACTION_NAME=CONSOLE_ENGINE_START_ACTION" driverNm="it.eng.spagobi.engines.drivers.generic.GenericDriver"  engineTypeCd="EXT" classNm="" biobjTypeCd="CONSOLE" useDataSet="true" useDataSource="true" encrypt="0" />
 
 </ENGINES>
