@@ -135,11 +135,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
 						Integer dsID = dsDao.insertDataSet(ds);
+						GuiGenericDataSet dsSaved = dsDao.loadDataSetById(dsID);
 						logger.debug("New Resource inserted");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						attributesResponseSuccessJSON.put("id", dsID);
+						if(dsSaved!=null){
+							GuiDataSetDetail dsDetailSaved = dsSaved.getActiveDetail();
+							attributesResponseSuccessJSON.put("dateIn", dsDetailSaved.getTimeIn());
+							attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
+							attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
+							attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
+						}
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}
 				} catch (Throwable e) {
@@ -205,19 +213,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
 			try {
 				GuiGenericDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+				logger.debug("Dataset Version correctly Restored");
 				List temp = new ArrayList();
 				temp.add(dsNewDetail);
-				logger.debug("Dataset Version correctly Restored");
 				JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);	
 				JSONObject version = itemJSON.getJSONObject(0);
-				/*JSONObject results = new JSONObject();
-				results.put("result", itemJSON);*/
 				JSONObject attributesResponseSuccessJSON = new JSONObject();
 				attributesResponseSuccessJSON.put("success", true);
 				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 				attributesResponseSuccessJSON.put("result", version);
 				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-				//writeBackToClient(new JSONSuccess(results));
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);
