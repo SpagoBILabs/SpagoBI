@@ -185,8 +185,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 							    if(record) {
 							    	this.store.remove(record);
 									Ext.MessageBox.show({
-							            title: LN('sbi.home.Info'),
-							            msg: LN('sbi.models.selectNode'),
+							            title: LN('sbi.generic.info'),
+							            msg: LN('sbi.config.manageconfig.delete'),
 							            modal: false,
 							            buttons: Ext.MessageBox.OK,
 							            width:300,
@@ -324,24 +324,24 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			url : this.crudServices['saveItemService'],
 			params : p,
 			method : 'POST',
-			success : function(response, options) {
-				var jsonResponse = Ext.util.JSON.decode(response.responseText);
-				record.set('ID', jsonResponse.ID);
-				record.commit();
-			},
+			success : this.successSave.createDelegate(this, [record], true),
 			failure : Sbi.exception.ExceptionHandler.handleFailure,
 			scope : this
 		});
+	}
+	,successSave : function(response, options, record) {
+		var jsonResponse = Ext.util.JSON.decode(response.responseText);
+		record.set('ID', jsonResponse.ID);
+		record.commit();
 		
 		Ext.MessageBox.show({
-            title: LN('sbi.home.Info'),
-            msg: LN('sbi.execution.viewpoints.msg.saved'),
+            title: LN('sbi.generic.info'),
+            msg: LN('sbi.config.manageconfig.save'),
             modal: false,
             buttons: Ext.MessageBox.OK,
             width:300,
             icon: Ext.MessageBox.INFO,
             animEl: 'root-menu'           
            });
-
 	}
 });

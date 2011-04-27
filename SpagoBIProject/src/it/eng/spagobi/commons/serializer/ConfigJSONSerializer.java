@@ -26,6 +26,8 @@ import java.util.Locale;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 
 /**
  * @author Monia Spinelli (monia.spinelli@eng.it)
@@ -52,7 +54,12 @@ public class ConfigJSONSerializer implements Serializer {
 		}
 		
 		try {
+			Domain domain = null;
 			Config config = (Config)o;
+			DomainDAOHibImpl domainImpl = new DomainDAOHibImpl();
+			if(config.getValueTypeId() != null){
+				domain = domainImpl.loadDomainById(config.getValueTypeId());
+			}
 			result = new JSONObject();
 			result.put(CONFIG_CODE, config.getLabel()); // BIOBJ_TYPE
 			result.put(CONFIG_NAME, config.getName()); // BI Object types
@@ -63,7 +70,7 @@ public class ConfigJSONSerializer implements Serializer {
 			result.put(VALUE_DECRIPTION, config.getDescription()); // Basic business intelligence objects type
 			result.put(IS_ACTIVE, config.isActive());
 			result.put(VALUE_CHECK, config.getValueCheck());
-			result.put(VALUE_TYPE, config.getValueTypeId());
+			result.put(VALUE_TYPE, domain != null ? domain.getValueCd() : "");
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

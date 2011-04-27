@@ -51,11 +51,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
@@ -63,6 +62,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.DomainDAOHibImpl;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 public class ManageConfigService extends AbstractSpagoBIAction {
@@ -83,13 +83,13 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 	private static final String CONFIG_SAVE = "CONFIG_SAVE";
 
 	private IEngUserProfile profile = null;
-	IConfigDAO configDao=null;
+	IConfigDAO configDao = null;
 
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		String serviceType=null;
-		profile=getUserProfile();
+		String serviceType = null;
+		profile = getUserProfile();
 
 		try {
 			configDao = DAOFactory.getSbiConfigDAO();
@@ -114,7 +114,7 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Unable to execute service [" + serviceType + "]");
 			}
-		}else {
+		} else {
 			logger.warn("The service type is missing");
 		}
 
@@ -125,14 +125,29 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 	public void doSave() {
 
 		logger.debug("IN");
+		Config config = null;
+		Config configTemp = null;
 
 		try {
-			Config config = readConfig();
-   			configDao.saveConfig(config);		
+			config = readConfig();
+			configTemp = configDao.loadConfigParametersByLabel(config
+					.getLabel());
+		} catch (Throwable e) {
+			logger.error("Exception occurred while saving config data", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to save config", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		if (configTemp != null && !configTemp.getId().equals(config.getId())) {
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Label already in use");
+		}
+		try {
+			configDao.saveConfig(config);
 			JSONObject response = new JSONObject();
 			response.put("ID", config.getId());
 			writeBackToClient(new JSONSuccess(response));
-
 		} catch (Throwable e) {
 			logger.error("Exception occurred while saving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
@@ -148,15 +163,13 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.debug("Delete config");
 			Integer id = this.getAttributeAsInteger("ID");
 			configDao.delete(id);
-			JSONObject response = new JSONObject();
-			response.put("ID", id);
-			writeBackToClient(new JSONSuccess(response));
+			writeBackToClient(new JSONAcknowledge());
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to delete config", e);
-		}finally{
+		} finally {
 			logger.debug("OUT");
 		}
 	}
@@ -166,28 +179,29 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		try {
 			logger.debug("Loaded config list");
 
-			List <Config> configList = DAOFactory.getSbiConfigDAO().loadAllConfigParameters();
+			List<Config> configList = DAOFactory.getSbiConfigDAO()
+					.loadAllConfigParameters();
 
-			JSONArray configListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(configList,
+			JSONArray configListJSON = (JSONArray) SerializerFactory
+					.getSerializer("application/json").serialize(configList,
 							this.getLocale());
 			JSONObject response = new JSONObject();
 			response.put("response", configListJSON);
-
 			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Exception occurred while retrieving config data", e);
-		}finally{
+		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-	private Config readConfig()  throws EMFUserError {
+	private Config readConfig() throws EMFUserError {
 		logger.debug("IN");
 		Config config = new Config();
-		if(this.requestContainsAttribute("ID")){
+		if (this.requestContainsAttribute("ID")) {
 			config.setId(this.getAttributeAsInteger("ID"));
 		}
 		config.setLabel(this.getAttributeAsString("LABEL"));
@@ -195,12 +209,13 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		config.setDescription(this.getAttributeAsString("DESCRIPTION"));
 		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
 		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
-		if(this.requestContainsAttribute("VALUE_TYPE")){
+		if (this.requestContainsAttribute("VALUE_TYPE")) {
 			DomainDAOHibImpl domain = new DomainDAOHibImpl();
-			Domain dom = domain.loadDomainByCodeAndValue("PAR_TYPE", this.getAttributeAsString("VALUE_TYPE"));
+			Domain dom = domain.loadDomainByCodeAndValue("PAR_TYPE", this
+					.getAttributeAsString("VALUE_TYPE"));
 			config.setValueTypeId(dom.getValueId());
 		}
-		
+
 		logger.debug("OUT");
 		return config;
 
