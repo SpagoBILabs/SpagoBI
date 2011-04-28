@@ -130,8 +130,6 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			logger.error("Exception occurred while saving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to save domain", e);
-		} finally {
-			logger.debug("OUT");
 		}
 		if (domainTemp != null && !domainTemp.getValueId().equals(domain.getValueId())) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
@@ -159,7 +157,9 @@ public class ManageDomainService extends AbstractSpagoBIAction {
 			logger.debug("Delete domain");
 			Integer valueId = this.getAttributeAsInteger("VALUE_ID");
 			domainDao.delete(valueId);
-			writeBackToClient(new JSONAcknowledge());
+			JSONObject response = new JSONObject();
+			response.put("VALUE_ID", valueId);
+			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving domain data", e);

@@ -202,7 +202,6 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 					else{
 						this.store.remove(r);
 					}
-						
 				}
 			},
 			scope : this

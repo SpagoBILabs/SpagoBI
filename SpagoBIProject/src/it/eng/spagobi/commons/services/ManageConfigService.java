@@ -136,8 +136,6 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.error("Exception occurred while saving config data", e);
 			throw new SpagoBIServiceException(SERVICE_NAME,
 					"Impossible to save config", e);
-		} finally {
-			logger.debug("OUT");
 		}
 		if (configTemp != null && !configTemp.getId().equals(config.getId())) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
@@ -163,7 +161,9 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 			logger.debug("Delete config");
 			Integer id = this.getAttributeAsInteger("ID");
 			configDao.delete(id);
-			writeBackToClient(new JSONAcknowledge());
+			JSONObject response = new JSONObject();
+			response.put("ID", id);
+			writeBackToClient(new JSONSuccess(response));
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving config data", e);
