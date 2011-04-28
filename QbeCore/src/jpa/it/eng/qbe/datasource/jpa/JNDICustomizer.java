@@ -21,14 +21,17 @@
 package it.eng.qbe.datasource.jpa;
 
 import org.eclipse.persistence.config.SessionCustomizer;
+import org.eclipse.persistence.sessions.Connector;
 import org.eclipse.persistence.sessions.JNDIConnector;
 import org.eclipse.persistence.sessions.Session;
 
-public class JNDICustomizer implements SessionCustomizer{
+public class JNDICustomizer implements SessionCustomizer {
 
-	public void customize(Session session) throws Exception
-	{
-	JNDIConnector connector = (JNDIConnector) session.getLogin().getConnector();
-	connector.setLookupType(JNDIConnector.STRING_LOOKUP);
+	public void customize(Session session) throws Exception {
+		Connector connector = session.getLogin().getConnector();
+		if(connector instanceof JNDIConnector) {
+			 JNDIConnector jndiConnector = (JNDIConnector) session.getLogin().getConnector();
+			 jndiConnector.setLookupType(JNDIConnector.STRING_LOOKUP);
+		}
 	}
 }
