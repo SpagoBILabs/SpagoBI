@@ -10,6 +10,8 @@ Sbi.locale.ln['sbi.worksheet.image'] = 'Immagine';
 Sbi.locale.ln['sbi.worksheet.position'] = 'Posizione';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.title'] = 'Non valido';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.msg'] = 'I dati inseriti non sono validi o sono incompleti';
+Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.title'] = 'Upload riuscito';
+Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'] = 'L\'immagine è stata caricata correttamente sul server';
 	
 //===================================================================
 //Sbi.worksheet.DesignSheetFiltersPanel
@@ -33,7 +35,7 @@ Sbi.locale.ln['sbi.worksheet.msg.deletetab.msg'] = 'Confermi l\'eliminazione del
 //===================================================================
 //DESIGNER TOOLS
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.palete']= 'Palete';
+Sbi.locale.ln['sbi.worksheet.palete']= 'Palette';
 
 
 //===================================================================

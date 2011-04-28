@@ -214,7 +214,9 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		freezeHttpResponse();
 		
 		// setup response header
-		getHttpResponse().setHeader("Content-Disposition", (inline?"inline":"attachment") + "; filename=\"" + fileName + "\";");
+		if (fileName != null) {
+			getHttpResponse().setHeader("Content-Disposition", (inline?"inline":"attachment") + "; filename=\"" + fileName + "\";");
+		}
 		getHttpResponse().setContentType( contentType );
 		// encoding content using UTF8, since content length depends on encoding
 		String utf8EncodedContent = null;

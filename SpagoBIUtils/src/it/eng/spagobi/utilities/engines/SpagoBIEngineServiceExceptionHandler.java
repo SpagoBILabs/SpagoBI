@@ -95,6 +95,6 @@ public class SpagoBIEngineServiceExceptionHandler {
 		
 		serviceException.setEngineInstance(engineInstance);
 
-		throw serviceException;
+		return serviceException;
 	}
 }

@@ -40,7 +40,9 @@
  * 
  * [list]
  * 
- * Authors - Alberto Ghedin
+ * Authors
+ * 		Alberto Ghedin (alberto.ghedin@eng.it)
+ * 		Davide Zerbetto (davide.zerbetto@eng.it)
  */
 Ext.ns("Sbi.worksheet");
 
@@ -49,6 +51,15 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 	this.config = config;
 	var formItems = [];
 	var formRows = 0;	
+	
+	// services
+	this.services = this.services || new Array();	
+	this.services['getImagesList'] = this.services['getImagesList'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_WORKSHEET_IMAGES_LIST_ACTION'
+		, baseParams: new Object()
+	});
+	// there also the upload service, but it cannot be built with Sbi.config.serviceRegistry.getServiceUrl,
+	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
 	//row of the title
 	if(config.title){
@@ -62,7 +73,7 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 		formItems = this.addImage(formItems);
 	}
 	
-	var c ={
+	var c = {
 		border: false,
 		frame:true,
 		style:'padding:5px 15px 5px',  
@@ -75,7 +86,8 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
             layout:'column',
             items: formItems
         }]
-	}
+	};
+	
 	Sbi.worksheet.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
 };
@@ -89,6 +101,7 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	imgFile: null,
 	imgPosition: null,
 	config: null,
+	imagesStore: null,
 	
 	
 	//add the title row in the items of the panel
@@ -135,10 +148,15 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	//add the image row in the items of the panel
 	addImage: function(items){
 		
+		this.imagesStore = new Ext.data.ArrayStore({
+			fields : ['image'],
+			url   : this.services['getImagesList']
+		});
+		
 		//combo box with the image.. the store get the image from the server
 		this.imgCombo = new Ext.form.ComboBox({
 			xtype:          'combo',
-			mode:           'local',
+			mode:           'remote',
 			triggerAction:  'all',
 			forceSelection: true,
 			allowBlank: 	false,
@@ -148,11 +166,8 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			displayField:   'image',
 			valueField:     'image',
 			anchor:			'95%',
-			store:          new Ext.data.JsonStore({
-				fields : ['image'],
-				data   : this.getAvailableImages()
-			})}
-		);
+			store:          this.imagesStore
+		});
 		
 		//text field for load the image in the server from the file system
 		this.imgFile = new Ext.form.TextField({
@@ -179,20 +194,31 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			}]
 		});
 		
+		this.imgFileFormPanel = new Ext.form.FormPanel({
+			fileUpload: true
+			, items: [this.imgFile]
+		});
+		
 		//Panel with the load file field
 		this.loadImageFileBrows = new Ext.Panel({
             layout:'column',
             hidden: true,
-            items: [{
-    			layout: 'form',
-    			items: [this.imgFile]
-			},{
+            items: [
+                    this.imgFileFormPanel,
+              {
 				xtype:          'button',
                	width: 			40,
 				handler:		this.uploadImgButtonHandler,
 				scope: 			this,
 				style:			'padding-left: 5px',
 				iconCls:		'uploadImgIcon'
+			}, {
+				xtype:          'button',
+               	width: 			40,
+				handler:		this.closeUploader,
+				scope: 			this,
+				style:			'padding-left: 5px',
+				iconCls:		'closeUploadImgIcon'
 			}]
 		});
 		
@@ -251,16 +277,6 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 		return array;
 	},
 	
-	//returns the array with the available images
-	getAvailableImages:function(min,max,step){
-		var imageArray = [];
-		imageArray.push({image: 'img1'});
-		imageArray.push({image: 'img2'});
-		imageArray.push({image: 'img3'});
-		imageArray.push({image: 'img4'});	
-		return imageArray;
-	},
-	
 	//handler for the load image button
 	//This button hides the select image combo box 
 	//and shows the file input field
@@ -272,13 +288,44 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	//handler for the upload image button
 	//This button hides the file input field 
 	//and shows the load file combo box
-	uploadImgButtonHandler: function(btn, e){
-		if(this.imgFile.isValid(false)){
-			this.imgCombo.setValue("img1");
-			this.loadImageFileBrows.hide();
-			this.loadImageCombo.show();
-		}
-		this.getFormValues(true);
+	uploadImgButtonHandler: function(btn, e) {
+		
+        var form = this.imgFileFormPanel.getForm();
+        if(form.isValid()){
+            form.submit({
+                url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
+                												   // they must POST parameters
+                params: {
+                    ACTION_NAME: 'UPLOAD_WORKSHEET_IMAGE_ACTION'
+                },
+                waitMsg: 'Uploading your image...',
+                success: function(form, action) {
+        			Ext.Msg.show({
+     				   title: LN('sbi.worksheet.sheettitlepanel.uploadfile.confirm.title'),
+     				   msg: LN('sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'),
+     				   buttons: Ext.Msg.OK,
+     				   icon: Ext.MessageBox.INFO
+     				});
+        			this.imagesStore.load();
+        			this.closeUploader();
+                },
+                failure : function (form, action) {
+        			Ext.Msg.show({
+      				   title: 'Error',
+      				   msg: action.result.msg,
+      				   buttons: Ext.Msg.OK,
+      				   icon: Ext.MessageBox.ERROR
+      				});
+                },
+                scope : this
+            });
+        }
+	},
+	
+	closeUploader: function (btn, e) {
+		this.loadImageFileBrows.hide();
+		this.loadImageCombo.show();
+		this.imgCombo.clearInvalid();
 	},
 	
 	isValidForm: function(){
