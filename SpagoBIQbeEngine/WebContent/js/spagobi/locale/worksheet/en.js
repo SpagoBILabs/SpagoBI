@@ -10,6 +10,8 @@ Sbi.locale.ln['sbi.worksheet.image'] = 'Image';
 Sbi.locale.ln['sbi.worksheet.position'] = 'Position';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.title'] = 'Not valid';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.msg'] = 'The values of the fields are not valid or incomplete';
+Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.title'] = 'Upload successful';
+Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'] = 'Image uploaded successfully';
 	
 //===================================================================
 // DESIGNER SHEETCONTAINER
@@ -21,7 +23,7 @@ Sbi.locale.ln['sbi.worksheet.msg.deletetab.msg'] = 'Confirm item delete?';
 //===================================================================
 //DESIGNER TOOLS
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.palete']= 'Palete' ;
+Sbi.locale.ln['sbi.worksheet.palete']= 'Palette' ;
 Sbi.locale.ln['sbi.worksheet.title'] = 'Title';
 Sbi.locale.ln['sbi.worksheet.size'] = 'Size';
 Sbi.locale.ln['sbi.worksheet.image'] = 'Image';

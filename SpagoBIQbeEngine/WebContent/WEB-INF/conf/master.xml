@@ -55,4 +55,7 @@
 	<!-- start dataset configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/dataset/actions.xml" />
 	
+	<!-- start worksheet configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/actions.xml" />
+	
 </MASTER>

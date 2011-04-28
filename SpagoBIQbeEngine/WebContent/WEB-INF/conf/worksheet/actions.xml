@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<ACTION name="GET_WORKSHEET_IMAGES_LIST_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorksheetImagesListAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+	<ACTION name="UPLOAD_WORKSHEET_IMAGE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.UploadWorksheetImageAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+
