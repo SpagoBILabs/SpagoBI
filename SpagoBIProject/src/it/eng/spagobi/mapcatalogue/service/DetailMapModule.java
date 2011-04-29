@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.mapcatalogue.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
@@ -28,6 +30,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spago.validation.coordinator.ValidationCoordinator;
@@ -38,6 +41,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -200,6 +206,13 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 	
 	try {
 		
+		RequestContainer reqCont = getRequestContainer();
+		SessionContainer sessCont = reqCont.getSessionContainer();
+		SessionContainer permSess = sessCont.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		ISbiGeoMapsDAO daoGeoMaps=DAOFactory.getSbiGeoMapsDAO();
+		daoGeoMaps.setUserProfile(profile);
+		
 		GeoMap mapNew = recoverMapDetails(serviceRequest);
 		
 		EMFErrorHandler errorHandler = getErrorHandler();
@@ -220,7 +233,7 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 		
 		if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {			
 			//if a map with the same name not exists on db ok else error
-			if (DAOFactory.getSbiGeoMapsDAO().loadMapByName(mapNew.getName()) != null){
+			if (daoGeoMaps.loadMapByName(mapNew.getName()) != null){
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5005, new Vector(), params );
@@ -234,9 +247,9 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			 * (all objects are had taken from the template file)
 			 */
 			//DAOFactory.getSbiGeoMapsDAO().insertMap(mapNew);
-			DAOFactory.getSbiGeoMapsDAO().insertMap(mapNew, content);
-			loadUpdateMapFeatures(mapNew);
-			GeoMap tmpMap = DAOFactory.getSbiGeoMapsDAO().loadMapByName(mapNew.getName());
+			daoGeoMaps.insertMap(mapNew, content);
+			loadUpdateMapFeatures(mapNew,profile);
+			GeoMap tmpMap = daoGeoMaps.loadMapByName(mapNew.getName());
 			mapNew.setMapId(tmpMap.getMapId());
 			mapNew.setBinId(tmpMap.getBinId());
 			serviceResponse.setAttribute("mapObj", mapNew);
@@ -265,9 +278,9 @@ private void modDetailMap(SourceBean serviceRequest, String mod, SourceBean serv
 			}
 			List lstOldFeatures = DAOFactory.getSbiGeoMapFeaturesDAO().loadFeaturesByMapId(new Integer(mapNew.getMapId()));
 			//update map
-			DAOFactory.getSbiGeoMapsDAO().modifyMap(mapNew, content);			
+			daoGeoMaps.modifyMap(mapNew, content);			
 			//update features
-			List lstNewFeatures = loadUpdateMapFeatures(mapNew);
+			List lstNewFeatures = loadUpdateMapFeatures(mapNew,profile);
 			logger.debug("Loaded " +lstNewFeatures.size()+ " features form svg file." );
 			 // If in the new file svg there aren't more some feature, the user can choose if erase theme relations or not.
 			List lstFeaturesDel = new ArrayList();
@@ -364,6 +377,14 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 	throws EMFUserError, SourceBeanException {
 	
 	try {		
+		RequestContainer reqCont = getRequestContainer();
+		SessionContainer sessCont = reqCont.getSessionContainer();
+		SessionContainer permSess = sessCont.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+		ISbiGeoMapFeaturesDAO dao=DAOFactory.getSbiGeoMapFeaturesDAO();
+		dao.setUserProfile(profile);
+		
 		String mapId = (String) request.getAttribute("MAP_ID");
 		String featureId = (String)request.getAttribute("FEATURE_ID");	
 		GeoMap map = DAOFactory.getSbiGeoMapsDAO().loadMapByID(new Integer(mapId));
@@ -384,17 +405,17 @@ private void insRelMapFeature(SourceBean request, SourceBean response)
 		}
 
 		//inserts the relation
-		GeoMapFeature mapFeature = DAOFactory.getSbiGeoMapFeaturesDAO().loadMapFeatures(new Integer(mapId), new Integer(featureId));
+		GeoMapFeature mapFeature = dao.loadMapFeatures(new Integer(mapId), new Integer(featureId));
 		if (mapFeature == null){
 			mapFeature = new  GeoMapFeature();
 			mapFeature.setMapId(new Integer(mapId).intValue());
 			mapFeature.setFeatureId(new Integer(featureId).intValue());
 			mapFeature.setSvgGroup(null);
 			mapFeature.setVisibleFlag(null);		
-			DAOFactory.getSbiGeoMapFeaturesDAO().insertMapFeatures(mapFeature);
+			dao.insertMapFeatures(mapFeature);
 		}
 		//create a List of features
-		List lstAllFeatures = DAOFactory.getSbiGeoMapFeaturesDAO().loadFeatureNamesByMapId(new Integer(map.getMapId()));
+		List lstAllFeatures = dao.loadFeatureNamesByMapId(new Integer(map.getMapId()));
 		List lstMapFeatures = new ArrayList();
 
 		for (int i=0; i < lstAllFeatures.size(); i ++){			
@@ -498,7 +519,7 @@ private GeoMap recoverMapDetails (SourceBean serviceRequest) throws EMFUserError
 	return map;
 	}
 	
-	private List loadUpdateMapFeatures(GeoMap mapNew) throws EMFUserError, Exception {
+	private List loadUpdateMapFeatures(GeoMap mapNew,IEngUserProfile profile) throws EMFUserError, Exception {
 		try {
 	//		through the content of a map, gets and opens the svg file and inserts a feature for every tag <g>
 			GeoFeature feature = null;
@@ -517,7 +538,9 @@ private GeoMap recoverMapDetails (SourceBean serviceRequest) throws EMFUserError
 					feature.setName((String)hFeature.get("id"));
 					feature.setDescr((String)hFeature.get("descr"));
 					feature.setType((String)hFeature.get("type"));
-					DAOFactory.getSbiGeoFeaturesDAO().insertFeature(feature);					 				
+					ISbiGeoFeaturesDAO dao=DAOFactory.getSbiGeoFeaturesDAO();
+					dao.setUserProfile(profile);
+					dao.insertFeature(feature);					 				
 				}
 				lstFeatures.add(feature.getName());
 	//			for every map/feature inserts a row in join table (SBI_GEO_MAP_FEATURES)							
@@ -539,7 +562,9 @@ private GeoMap recoverMapDetails (SourceBean serviceRequest) throws EMFUserError
 					mapFeature.setFeatureId(featureId);
 					mapFeature.setSvgGroup(null);
 					mapFeature.setVisibleFlag(null);
-					DAOFactory.getSbiGeoMapFeaturesDAO().insertMapFeatures(mapFeature);			
+					ISbiGeoMapFeaturesDAO dao=DAOFactory.getSbiGeoMapFeaturesDAO();
+					dao.setUserProfile(profile);
+					dao.insertMapFeatures(mapFeature);			
 				}
 			}//for
 			return lstFeatures;
