@@ -79,6 +79,7 @@ public class ManageAttributesAction extends AbstractSpagoBIAction{
 		ISbiAttributeDAO attrDao;
 		try {
 			attrDao = DAOFactory.getSbiAttributeDAO();
+			attrDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");

@@ -117,6 +117,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
+			updateSbiCommonInfo4Insert(attribute);
 			Integer id = (Integer) aSession.save(attribute);
 
 			tx.commit();
@@ -159,8 +160,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements
 			}
 			Integer idAttrPassed = attribute.getAttributeId();
 			if(idAttrPassed != null && !String.valueOf(idAttrPassed.intValue()).equals("")){
+				updateSbiCommonInfo4Insert(hibAttribute);
 				idToReturn = (Integer)aSession.save(hibAttribute);
 			}else{
+				updateSbiCommonInfo4Update(hibAttribute);
 				aSession.saveOrUpdate(hibAttribute);
 				idToReturn = idAttrPassed;
 			}

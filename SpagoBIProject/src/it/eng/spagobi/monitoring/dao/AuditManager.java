@@ -111,6 +111,7 @@ public class AuditManager {
 			try {
 				Class persistenceClass = Class.forName(persistenceClassName);
 				_auditDAO = (IAuditDAO) persistenceClass.newInstance();
+				
 			} catch (Exception e) {
 				logger.error("Error while instantiating persistence class. Audit log will be disabled", e);
 				_disabled = true;
@@ -152,7 +153,7 @@ public class AuditManager {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void insertAudit(SbiAudit aSbiAudit) throws EMFUserError {
+	private void insertAudit(SbiAudit aSbiAudit) throws EMFUserError {
 		if (canBeRegistered(aSbiAudit))
 			_auditDAO.insertAudit(aSbiAudit);
 	}
@@ -164,7 +165,7 @@ public class AuditManager {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void modifyAudit(SbiAudit aSbiAudit) throws EMFUserError {
+	private void modifyAudit(SbiAudit aSbiAudit) throws EMFUserError {
 		if (canBeRegistered(aSbiAudit))
 			_auditDAO.modifyAudit(aSbiAudit);
 	}
@@ -196,6 +197,7 @@ public class AuditManager {
 	 */
 	public Integer insertAudit(BIObject obj, SubObject subObj, IEngUserProfile profile, String role, String modality) {
 		logger.debug("IN");
+		_auditDAO.setUserProfile(profile);
 		SbiAudit audit = new SbiAudit();
 		logger.debug("userID for audit"+ ((UserProfile)profile).getUserId().toString());
 		audit.setUserName(((UserProfile)profile).getUserId().toString());

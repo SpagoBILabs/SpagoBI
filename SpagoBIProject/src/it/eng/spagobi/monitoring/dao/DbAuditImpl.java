@@ -79,6 +79,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 				SbiEngines sbiEngine = (SbiEngines) session.load(SbiEngines.class, engineId);
 				aSbiAudit.setSbiEngine(sbiEngine);
 			}
+			updateSbiCommonInfo4Insert(aSbiAudit);
 			session.save(aSbiAudit);
 			session.flush();
 			tx.commit();
@@ -177,6 +178,7 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// TODO forse mettere un controllo per vedere se ci sono sbiobject e sbiengine?
+			updateSbiCommonInfo4Update(aSbiAudit);
 			aSession.saveOrUpdate(aSbiAudit);
 			tx.commit();
 		} catch (HibernateException he) {
