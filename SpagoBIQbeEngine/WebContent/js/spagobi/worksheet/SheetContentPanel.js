@@ -111,9 +111,16 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 			return;
 		}
 		var row = rows[0];
-		if (row.json.name === 'Pivot Table') {
-			this.insertCrosstabDesigner();
-		}
+		switch (row.json.name) {
+	        case 'Pivot Table':
+	        	this.insertCrosstabDesigner();
+	            break;
+	        case 'Bar Char':
+	        	this.insertBarchartDesigner();
+	            break;
+	        default: 
+	        	alert('Unknown widget!');
+	   }
 	}
 
 	, insertCrosstabDesigner: function () {
@@ -126,6 +133,13 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 		this.doLayout();
 	}
 	
-	
+	, insertBarchartDesigner: function () {
+		this.emptyMsgPanel.destroy();
+		var barchartDesigner = new Sbi.worksheet.BarChartDesignerPanel({
+			ddGroup: 'worksheetDesignerDDGroup'
+		});
+		this.add(barchartDesigner);
+		this.doLayout();
+	}
 
 });

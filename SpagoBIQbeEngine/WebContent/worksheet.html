@@ -200,6 +200,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/SheetTitlePanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/WorkSheetsPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/SheetContentPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/ChartCategoryPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/ChartSeriesPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/BarChartDesignerPanel.js'/></script>
+
 
 
 <!-- END-DEBUG -->
@@ -274,6 +278,7 @@ END-PRODUCTION -->
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
 	        	var workSheetPanel = new Sbi.worksheet.WorkSheetsPanel({});
+	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
 	           	var viewport = new Ext.Viewport(workSheetPanel);  
 	           	
 	           		

@@ -11,7 +11,7 @@ Sbi.locale.ln['sbi.worksheet.position'] = 'Posizione';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.title'] = 'Non valido';
 Sbi.locale.ln['sbi.worksheet.msg.invalidinput.msg'] = 'I dati inseriti non sono validi o sono incompleti';
 Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.title'] = 'Upload riuscito';
-Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'] = 'L\'immagine è stata caricata correttamente sul server';
+Sbi.locale.ln['sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'] = 'L\'immagine &grave; stata caricata correttamente sul server';
 	
 //===================================================================
 //Sbi.worksheet.DesignSheetFiltersPanel
@@ -51,4 +51,34 @@ Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.content'] = 'La pagi
 //Sbi.worksheet.SheetContentPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.sheetcontentpanel.emptymsg'] = 'Trascina qui un componente dalla palette';
-			
+
+//===================================================================
+//Sbi.worksheet.BarChartDesignerPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.title'] = 'Definizione bar chart';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.title'] = 'Orientamento';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.vertical'] = 'verticale';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.horizontal'] = 'orizzontale';
+
+
+//===================================================================
+//Sbi.worksheet.BarChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.title'] = 'Asse x: categoria';
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.emptymsg'] = 'Trascina qui un attributo della query come categoria';
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.title'] = 'Drop non consentito';
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.unknownsource'] = 'Sorgente sconosciuta';
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.measures'] = 'Non puoi trascinare qui le misure';
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'Non puoi trascinare qui i campi calcolati basati su script';
+
+
+//===================================================================
+//Sbi.worksheet.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.title'] = 'Asse y: serie';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.emptymsg'] = 'Trascina qui alcune misure della query come serie';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.title'] = 'Drop non consentito';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'La misura è già presente';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
