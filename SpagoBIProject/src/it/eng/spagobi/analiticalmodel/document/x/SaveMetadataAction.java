@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -60,6 +61,8 @@ public class SaveMetadataAction extends AbstractSpagoBIAction {
 	public void doService() {
 		logger.debug("IN");
 		try {
+			IObjMetacontentDAO dao=DAOFactory.getObjMetacontentDAO();
+			dao.setUserProfile(getUserProfile());
 			Integer biobjectId = this.getAttributeAsInteger(OBJECT_ID);
 			logger.debug("Object id = " + biobjectId);
 			Integer subobjectId = null;
@@ -82,7 +85,7 @@ public class SaveMetadataAction extends AbstractSpagoBIAction {
 				JSONObject aMetadata = metadata.getJSONObject(i);
 				Integer metadataId = aMetadata.getInt(MetadataJSONSerializer.METADATA_ID);
 				String text = aMetadata.getString(MetadataJSONSerializer.TEXT);
-				ObjMetacontent aObjMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(metadataId, biobjectId, subobjectId);
+				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
 				if (aObjMetacontent == null) {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + 
 							", subobject id = " + subobjectId + " was not found, creating a new one...");
@@ -93,13 +96,13 @@ public class SaveMetadataAction extends AbstractSpagoBIAction {
 					aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					aObjMetacontent.setCreationDate(new Date());
 					aObjMetacontent.setLastChangeDate(new Date());
-					DAOFactory.getObjMetacontentDAO().insertObjMetacontent(aObjMetacontent);
+					dao.insertObjMetacontent(aObjMetacontent);
 				} else {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + 
 							", subobject id = " + subobjectId + " was found, it will be modified...");
 					aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					aObjMetacontent.setLastChangeDate(new Date());
-					DAOFactory.getObjMetacontentDAO().modifyObjMetacontent(aObjMetacontent);
+					dao.modifyObjMetacontent(aObjMetacontent);
 				}
 
 			}		
