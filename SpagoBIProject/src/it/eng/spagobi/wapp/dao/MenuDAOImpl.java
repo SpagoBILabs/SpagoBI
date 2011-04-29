@@ -244,6 +244,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 
 			hibMenu.setStaticPage(aMenu.getStaticPage());
 			hibMenu.setExternalApplicationUrl(aMenu.getExternalApplicationUrl());
+			updateSbiCommonInfo4Update(hibMenu);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -338,7 +339,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			if (maxProg != null) hibMenu.setProg(new Integer(maxProg.intValue() + 1));
 			else hibMenu.setProg(new Integer(1));
 			
-			
+			updateSbiCommonInfo4Insert(hibMenu);
 			tmpSession.save(hibMenu);
 
 			Set menuRoleToSave = new HashSet();
@@ -778,7 +779,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			sbiMenuRole.setId(sbiMenuRoleId);
 			sbiMenuRole.setSbiMenu(hibMenu);
 			sbiMenuRole.setSbiExtRoles(hibRole);
-
+			updateSbiCommonInfo4Insert(sbiMenuRole);
 			aSession.save(sbiMenuRole);
 			menuRoleToSave.add(sbiMenuRole);
 		}
@@ -901,7 +902,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			
 			hibMenu.setProg(newProg);
 			hibUpperMenu.setProg(oldProg);
-			
+			updateSbiCommonInfo4Update(hibMenu);
+			updateSbiCommonInfo4Update(hibUpperMenu);
 			tx.commit();
 		} catch (HibernateException he) {
 			if (tx != null)
@@ -963,7 +965,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO{
 			
 			hibMenu.setProg(newProg);
 			hibUpperMenu.setProg(oldProg);
-			
+			updateSbiCommonInfo4Update(hibMenu);
+			updateSbiCommonInfo4Update(hibUpperMenu);
 			tx.commit();
 		} catch (HibernateException he) {
 			if (tx != null)

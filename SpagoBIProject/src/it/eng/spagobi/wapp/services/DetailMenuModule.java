@@ -31,6 +31,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
@@ -181,10 +182,17 @@ public class DetailMenuModule extends AbstractModule {
 	throws EMFUserError, SourceBeanException {
 
 		//**********************************************************************
+		RequestContainer reqCont = getRequestContainer();
+		SessionContainer sessCont = reqCont.getSessionContainer();
+		SessionContainer permSess = sessCont.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+		
 		Menu menu = recoverMenuDetails(request, mod);
 		response.setAttribute(MENU, menu);
 		response.setAttribute(AdmintoolsConstants.MODALITY, mod);
-
+		IMenuDAO menuDao=DAOFactory.getMenuDAO();
+		menuDao.setUserProfile(profile);
 		// if there are some validation errors into the errorHandler does not write into DB
 		Collection errors = errorHandler.getErrors();
 		if (errors != null && errors.size() > 0) {
@@ -195,7 +203,7 @@ public class DetailMenuModule extends AbstractModule {
 					Integer parentMenuId = menu.getParentId();
 					Menu parentMenu = null;
 					if (parentMenuId != null) {
-						parentMenu = DAOFactory.getMenuDAO().loadMenuByID(parentMenuId);
+						parentMenu = menuDao.loadMenuByID(parentMenuId);
 					}
 					if (parentMenu== null) {
 						throw new EMFUserError(EMFErrorSeverity.ERROR, "10001", messageBundle);
@@ -208,9 +216,9 @@ public class DetailMenuModule extends AbstractModule {
 		}
 
 		if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_INS)) {			
-			DAOFactory.getMenuDAO().insertMenu(menu);
+			menuDao.insertMenu(menu);
 		} else if(mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
-			DAOFactory.getMenuDAO().modifyMenu(menu);
+			menuDao.modifyMenu(menu);
 		}
 
 
