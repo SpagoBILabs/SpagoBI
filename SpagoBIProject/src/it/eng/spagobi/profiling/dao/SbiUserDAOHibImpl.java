@@ -450,11 +450,12 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				userToUpdate.setFullName(user.getFullName());
 				userToUpdate.setUserId(user.getUserId());
 				userToUpdate.setId(id);
+				updateSbiCommonInfo4Update(userToUpdate);
 
 			}	
 			
 			if(save){
-				//save
+				updateSbiCommonInfo4Insert(userToUpdate);
 				id = (Integer)aSession.save(userToUpdate);	
 				userToUpdate.setId(id);
 			}
@@ -490,7 +491,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			    	
 			    	sbiExtUserRole.setId(extUserRoleId);
 			    	sbiExtUserRole.setSbiUser(userToUpdate);  
-			    	
+			    	updateSbiCommonInfo4Insert(sbiExtUserRole);
 			    	aSession.saveOrUpdate(sbiExtUserRole);
 			    	aSession.flush();
 
@@ -524,6 +525,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 						if(attrVal.equals("")){
 							aSession.delete(attribute);
 						}else{
+							updateSbiCommonInfo4Update(attribute);
 							aSession.saveOrUpdate(attribute);
 						}
 						aSession.flush();
@@ -541,6 +543,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 					attributeToAddId.setId(id);
 					attributeToAddId.setAttributeId(attrID);
 					attributeToAdd.setId(attributeToAddId);
+					updateSbiCommonInfo4Insert(attributeToAdd);
 					aSession.saveOrUpdate(attributeToAdd);
 					aSession.flush();
 					
