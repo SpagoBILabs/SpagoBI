@@ -215,7 +215,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			
 			hibDistributionList.setName(aDistributionList.getName());
 			hibDistributionList.setDescr(aDistributionList.getDescr());
-			
+			updateSbiCommonInfo4Insert(hibDistributionList);
 			aSession.save(hibDistributionList);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -362,6 +362,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 					new Integer(aDistributionList.getId()));			
 			hibDistributionList.setName(aDistributionList.getName());
 			hibDistributionList.setDescr(aDistributionList.getDescr());
+			updateSbiCommonInfo4Update(hibDistributionList);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while modifing the distribution list with id " + ((aDistributionList == null)?"":String.valueOf(aDistributionList.getId())), he);
@@ -497,7 +498,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			hibDistributionListUser.setUserId(user.getUserId());
 			hibDistributionListUser.setEMail(user.getEmail());
 			hibDistributionListUser.setSbiDistributionList(hibDistributionList);
-			
+			updateSbiCommonInfo4Insert(hibDistributionListUser);
 			aSession.save(hibDistributionListUser);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -617,7 +618,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			hibDistributionListsObjects.setSbiDistributionList(hibDistributionList);
 			hibDistributionListsObjects.setSbiObjects(hibObj);
 			hibDistributionListsObjects.setXml(xml);
-			
+			updateSbiCommonInfo4Insert(hibDistributionListsObjects);
 			aSession.save(hibDistributionListsObjects);
 			tx.commit();
 		} catch (HibernateException he) {

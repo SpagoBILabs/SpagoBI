@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.distributionlist.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,12 +30,14 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
+import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -161,7 +165,13 @@ public class DetailDistributionListModule extends AbstractModule {
 		throws EMFUserError, SourceBeanException {
 		logger.debug("IN");
 		try {
-			
+			RequestContainer reqCont = getRequestContainer();
+			SessionContainer sessCont = reqCont.getSessionContainer();
+			SessionContainer permSess = sessCont.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+			IDistributionListDAO dao=DAOFactory.getDistributionListDAO();
+			dao.setUserProfile(profile);
 			DistributionList dlNew = recoverDistributionListDetails(serviceRequest);
 			
 			EMFErrorHandler errorHandler = getErrorHandler();
@@ -182,7 +192,7 @@ public class DetailDistributionListModule extends AbstractModule {
 			
 			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {			
 				//if a dl with the same name does not exist in the db ok, else error
-				if (DAOFactory.getDistributionListDAO().loadDistributionListByName(dlNew.getName()) != null){
+				if (dao.loadDistributionListByName(dlNew.getName()) != null){
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListDistributionListModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 9100, new Vector(), params );
@@ -190,15 +200,15 @@ public class DetailDistributionListModule extends AbstractModule {
 					return;
 				}	 		
 				 
-				DAOFactory.getDistributionListDAO().insertDistributionList(dlNew);
+				dao.insertDistributionList(dlNew);
 				
 				//gets the new setted Id from the DL just inserted and puts it into dlNew
-				DistributionList tmpDL = DAOFactory.getDistributionListDAO().loadDistributionListByName(dlNew.getName());
+				DistributionList tmpDL = dao.loadDistributionListByName(dlNew.getName());
 				dlNew.setId(tmpDL.getId());
 				mod = SpagoBIConstants.DETAIL_MOD; 
 			} else {				
 				//updates dl
-				DAOFactory.getDistributionListDAO().modifyDistributionList(dlNew);			
+				dao.modifyDistributionList(dlNew);			
 			}  
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dialects = domaindao.loadListDomainsByType("DIALECT_HIB");

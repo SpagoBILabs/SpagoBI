@@ -37,6 +37,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.bo.Email;
+import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -158,7 +159,9 @@ public class DetailDistributionListUserModule extends AbstractHttpModule {
 			user.setEmail(email);
 			user.setUserId(userId);
 			//subscribe to the dl
-			DAOFactory.getDistributionListDAO().subscribeToDistributionList(dl,user);
+			IDistributionListDAO dao=DAOFactory.getDistributionListDAO();
+			dao.setUserProfile(profile);
+			dao.subscribeToDistributionList(dl,user);
 		}
 		catch (EMFUserError e){
 			  logger.error("Cannot fill response container" + e.getLocalizedMessage());
