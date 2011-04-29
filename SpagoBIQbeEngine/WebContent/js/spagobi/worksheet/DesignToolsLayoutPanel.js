@@ -46,7 +46,7 @@ Sbi.worksheet.DesignToolsLayoutPanel = function(config) {
 		        {name: 'layout', height: 40, id:'layout-headerfooter', ctCls:'layout-headerfooter',inputValue: 'layout-headerfooter', checked: true},
 		        {name: 'layout', height: 40, id:'layout-header', ctCls:'layout-header',inputValue: 'layout-header'},
 		        {name: 'layout', height: 40, id:'layout-footer', ctCls:'layout-footer', inputValue: 'layout-footer'},
-		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content'},
+		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content'}
 		        ]
 	});
 
