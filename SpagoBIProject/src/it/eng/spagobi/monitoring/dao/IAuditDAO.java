@@ -22,12 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.monitoring.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.monitoring.metadata.SbiAudit;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface IAuditDAO {
+public interface IAuditDAO extends ISpagoBIDao{
 
 	/**
 	 * Returns the list of all audit records.
