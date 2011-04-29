@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.mapcatalogue.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,6 +30,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
@@ -36,6 +39,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -159,6 +163,13 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 	throws EMFUserError, SourceBeanException {
 	
 	try {
+		RequestContainer reqCont = getRequestContainer();
+		SessionContainer sessCont = reqCont.getSessionContainer();
+		SessionContainer permSess = sessCont.getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
+		ISbiGeoFeaturesDAO dao=DAOFactory.getSbiGeoFeaturesDAO();
+		dao.setUserProfile(profile);
 		GeoFeature feature = recoverFeatureDetails(request);
 		if (feature.getName() == null) {
 			response.setAttribute("mapObj", feature);
@@ -184,16 +195,16 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 		
 		if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {
 			//if a feature with the same name yet exists on db: error
-			if (DAOFactory.getSbiGeoFeaturesDAO().loadFeatureByName(feature.getName()) != null){
+			if (dao.loadFeatureByName(feature.getName()) != null){
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 5018, new Vector(), params );
 				getErrorHandler().addError(error);
 				return;
 			}			
-			DAOFactory.getSbiGeoFeaturesDAO().insertFeature(feature);
+			dao.insertFeature(feature);
 		} else {
-			DAOFactory.getSbiGeoFeaturesDAO().modifyFeature(feature);
+			dao.modifyFeature(feature);
 		}
         
 	} catch (EMFUserError e){

@@ -356,7 +356,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 
 			SbiGeoMapFeatures hibFeature = (SbiGeoMapFeatures) aSession.load(SbiGeoMapFeatures.class, hibMapFeatureId);
 			hibFeature.setSvgGroup(aMapFeature.getSvgGroup());
-			hibFeature.setVisibleFlag(aMapFeature.getVisibleFlag());			
+			hibFeature.setVisibleFlag(aMapFeature.getVisibleFlag());
+			updateSbiCommonInfo4Update(hibFeature);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -398,6 +399,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			
 			hibMapFeature.setSvgGroup(aMapFeature.getSvgGroup());
 			hibMapFeature.setVisibleFlag(aMapFeature.getVisibleFlag());
+			updateSbiCommonInfo4Insert(hibMapFeature);
 			aSession.save(hibMapFeature);
 			tx.commit();
 		} catch (HibernateException he) {

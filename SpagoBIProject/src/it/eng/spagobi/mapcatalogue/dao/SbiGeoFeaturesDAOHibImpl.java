@@ -154,7 +154,8 @@ public class SbiGeoFeaturesDAOHibImpl extends AbstractHibernateDAO implements IS
 			SbiGeoFeatures hibFeature = (SbiGeoFeatures) tmpSession.load(SbiGeoFeatures.class, new Integer(aFeature.getFeatureId()));
 			hibFeature.setName(aFeature.getName());
 			hibFeature.setDescr(aFeature.getDescr());
-			hibFeature.setType(aFeature.getType());			
+			hibFeature.setType(aFeature.getType());	
+			updateSbiCommonInfo4Update(hibFeature);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -194,6 +195,7 @@ public class SbiGeoFeaturesDAOHibImpl extends AbstractHibernateDAO implements IS
 			hibFeature.setName(aFeature.getName());
 			hibFeature.setDescr(aFeature.getDescr());
 			hibFeature.setType(aFeature.getType());
+			updateSbiCommonInfo4Insert(hibFeature);
 			tmpSession.save(hibFeature);
 			tx.commit();
 		} catch (HibernateException he) {

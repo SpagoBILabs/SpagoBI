@@ -174,6 +174,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			if (binId != null && binId > new Integer("0")){
 				hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, binId);
 				hibBinContents.setContent(content);
+				updateSbiCommonInfo4Insert(hibBinContents);
 				tmpSession.save(hibBinContents);
 			} else {
 				hibBinContents = new SbiBinContents();
@@ -188,6 +189,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			hibMap.setUrl(aMap.getUrl());			
 			hibMap.setFormat(aMap.getFormat());
 			hibMap.setBinContents(hibBinContents);
+			updateSbiCommonInfo4Update(hibMap);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -236,7 +238,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			hibMap.setFormat(aMap.getFormat());
 
 			hibMap.setBinContents(hibBinContents);
-
+			updateSbiCommonInfo4Insert(hibMap);
 			tmpSession.save(hibMap);
 			tx.commit();
 		} catch (HibernateException he) {
