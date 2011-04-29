@@ -275,6 +275,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			hibMeta.setName(aObjMetadata.getName());
 			hibMeta.setDescription(aObjMetadata.getDescription());
 			hibMeta.setDataType(dataType);
+			updateSbiCommonInfo4Update(hibMeta);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -326,6 +327,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			hibMeta.setDescription(aObjMetadata.getDescription());
 			hibMeta.setDataType(dataType);
 			hibMeta.setCreationDate(now);
+			updateSbiCommonInfo4Insert(hibMeta);
 			aSession.save(hibMeta);
 			tx.commit();
 		} catch (HibernateException he) {

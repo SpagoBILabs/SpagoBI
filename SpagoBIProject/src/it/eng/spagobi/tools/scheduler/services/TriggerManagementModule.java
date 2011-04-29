@@ -30,6 +30,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -37,6 +38,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplier;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
+import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.SaveInfo;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
@@ -118,12 +120,18 @@ public class TriggerManagementModule extends AbstractModule {
 	
 	private void runSchedule(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
+			RequestContainer reqCont = getRequestContainer();
+			SessionContainer sessCont = reqCont.getSessionContainer();
+			SessionContainer permSess = sessCont.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+			
 		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
 			String jobName = (String)request.getAttribute("jobName");
 			String jobGroupName = (String)request.getAttribute("jobGroupName");
 			getSchedule(request, response);
 			TriggerInfo tInfo = (TriggerInfo)sessCont.getAttribute(SpagoBIConstants.TRIGGER_INFO);
-			StringBuffer message = createMessageSaveSchedulation(tInfo, true);
+			StringBuffer message = createMessageSaveSchedulation(tInfo, true,profile);
 			// call the web service to create the schedule
 			String resp = schedulerService.scheduleJob(message.toString());
 			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
@@ -204,6 +212,10 @@ public class TriggerManagementModule extends AbstractModule {
 	
 	private void saveScheduleForJob(SourceBean request, SourceBean response) throws EMFUserError {
 		try{
+			RequestContainer reqCont = getRequestContainer();
+			SessionContainer sessCont = reqCont.getSessionContainer();
+			SessionContainer permSess = sessCont.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		    SchedulerServiceSupplier schedulerService=new SchedulerServiceSupplier();
 			TriggerInfo triggerInfo = (TriggerInfo)sessCont.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 			JobInfo jobInfo = triggerInfo.getJobInfo();
@@ -410,7 +422,7 @@ public class TriggerManagementModule extends AbstractModule {
 				return;
 			}
 			
-			StringBuffer message = createMessageSaveSchedulation(triggerInfo, false);
+			StringBuffer message = createMessageSaveSchedulation(triggerInfo, false,profile);
 			// call the web service to create the schedule
 			String servoutStr = schedulerService.scheduleJob(message.toString());
 			SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
@@ -504,7 +516,7 @@ public class TriggerManagementModule extends AbstractModule {
 	
 	
 	
-	private StringBuffer createMessageSaveSchedulation(TriggerInfo tInfo, boolean runImmediately) throws EMFUserError {
+	private StringBuffer createMessageSaveSchedulation(TriggerInfo tInfo, boolean runImmediately,IEngUserProfile profile) throws EMFUserError {
 		StringBuffer message = new StringBuffer();
 		JobInfo jInfo = tInfo.getJobInfo();
 		Map saveOptions = tInfo.getSaveOptions();
@@ -695,8 +707,10 @@ public class TriggerManagementModule extends AbstractModule {
 						
 						Integer dlId = (Integer)iter.next();
 						try {if(!runImmediately){
-							DistributionList dl = DAOFactory.getDistributionListDAO().loadDistributionListById(dlId);
-							DAOFactory.getDistributionListDAO().insertDLforDocument(dl, objId, xml);
+							IDistributionListDAO dao=DAOFactory.getDistributionListDAO();
+							dao.setUserProfile(profile);
+							DistributionList dl = dao.loadDistributionListById(dlId);
+							dao.insertDLforDocument(dl, objId, xml);
 						}
 						} catch (Exception ex) {
 							logger.error("Cannot fill response container" + ex.getLocalizedMessage());	

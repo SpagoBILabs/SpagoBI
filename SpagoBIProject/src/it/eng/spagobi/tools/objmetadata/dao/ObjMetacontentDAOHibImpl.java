@@ -356,7 +356,7 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 					hibContents.setSbiSubObjects(subobj);
 				}
 			}
-
+			updateSbiCommonInfo4Update(hibContents);
 			// update content
 			SbiBinContents binaryContent = hibContents.getSbiBinContents();
 			if (binaryContent == null) {
@@ -365,6 +365,7 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			} else {
 				binaryContent.setContent(aObjMetacontent.getContent());
 			}
+			updateSbiCommonInfo4Insert(binaryContent);
 			aSession.save(binaryContent);
 			hibContents.setSbiBinContents(binaryContent);
 
@@ -431,6 +432,7 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 
 			SbiBinContents binaryContent = new SbiBinContents();
 			binaryContent.setContent(aObjMetacontent.getContent());
+			updateSbiCommonInfo4Insert(binaryContent);
 			aSession.save(binaryContent);
 			hibContents.setSbiBinContents(binaryContent);
 
@@ -438,7 +440,7 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 
 			hibContents.setCreationDate(aObjMetacontent.getCreationDate());;
 			hibContents.setLastChangeDate(aObjMetacontent.getLastChangeDate());
-
+			updateSbiCommonInfo4Insert(hibContents);
 			aSession.save(hibContents);
 			tx.commit();
 		} catch (HibernateException he) {

@@ -63,6 +63,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		Integer id = null;
 		try {
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Insert(prop);
 			id = (Integer)session.save(prop);
 			tx.commit();
 		} catch (HibernateException e) {
@@ -80,19 +81,20 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}
 	}
 
-
+/*
 	public void insert(Session session, SbiUdp prop) {
 		logger.debug("IN");
 		session.save(prop);
 		logger.debug("OUT");
 	}
-
+*/
 	public void update(SbiUdp prop) {
 		logger.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+			updateSbiCommonInfo4Update(prop);
 			session.update(prop);
 			tx.commit();
 
@@ -108,11 +110,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		logger.debug("OUT");		
 	}	
 
-	public void update(Session session, SbiUdp prop) {
-		logger.debug("IN");
-		session.update(prop);
-		logger.debug("OUT");
-	}	
+	
 
 	public void delete(SbiUdp prop) {
 		logger.debug("IN");
@@ -132,12 +130,6 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}finally{
 			session.close();
 		}
-		logger.debug("OUT");
-	}
-
-	public void delete(Session session, SbiUdp item) {
-		logger.debug("IN");
-		session.delete(item);
 		logger.debug("OUT");
 	}
 
@@ -163,11 +155,6 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 	}
 
 
-	public void delete(Session session, Integer id) {
-		logger.debug("IN");
-		session.delete(session.load(SbiUdp.class, id));
-		logger.debug("OUT");
-	}
 
 	@SuppressWarnings("unchecked")
 	public SbiUdp findById(Integer id) {
