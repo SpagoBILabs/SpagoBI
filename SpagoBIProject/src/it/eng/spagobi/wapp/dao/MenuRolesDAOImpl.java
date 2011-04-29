@@ -113,7 +113,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 	/**
 	 * Load menu roles.
-	 * 
+	 * @deprecated
 	 * @param menuId the menu id
 	 * @param roleId the role id
 	 * 
@@ -162,12 +162,12 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 	/**
 	 * Modify menu role.
-	 * 
+	 * @deprecated
 	 * @param aMenuRole the a menu role
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 * 
-	 * @see it.eng.spagobi.wapp.dao.IMenuRolesDAOO#modifyMenuRole(it.eng.spagobi.wapp.bo.MenuRoles)
+	 * 
 	 */
 	public void modifyMenuRole(MenuRoles aMenuRole) throws EMFUserError {
 	    logger.debug("IN");
@@ -201,7 +201,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 	/**
 	 * Insert menu role.
-	 * 
+	 * @deprecated
 	 * @param aMenuRole the a menu role
 	 * 
 	 * @throws EMFUserError the EMF user error
@@ -221,6 +221,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 			hibMenuRoleId.setMenuId(aMenuRole.getMenuId());
 			hibMenuRoleId.setExtRoleId(aMenuRole.getExtRoleId());
 			hibMenuRole.setId(hibMenuRoleId);
+			updateSbiCommonInfo4Insert(hibMenuRole);
 			aSession.save(hibMenuRole);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -242,7 +243,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 	/**
 	 * Erase menu role.
-	 * 
+	 * @deprecated
 	 * @param aMenuRole the a menu role
 	 * 
 	 * @throws EMFUserError the EMF user error
