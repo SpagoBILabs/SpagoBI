@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.objmetadata.service;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractModule;
@@ -28,12 +30,14 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -152,6 +156,13 @@ public class DetailObjMetadataModule extends AbstractModule {
 		throws EMFUserError, SourceBeanException {
 		
 		try {
+			RequestContainer reqCont = getRequestContainer();
+			SessionContainer sessCont = reqCont.getSessionContainer();
+			SessionContainer permSess = sessCont.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			 
+			IObjMetadataDAO dao=DAOFactory.getObjMetadataDAO();
+			dao.setUserProfile(profile);
 			
 			ObjMetadata metaNew = recoverObjMetadataDetails(serviceRequest);
 			
@@ -173,22 +184,22 @@ public class DetailObjMetadataModule extends AbstractModule {
 			
 			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {			
 				//if a ds with the same label not exists on db ok else error
-				if (DAOFactory.getObjMetadataDAO().loadObjMetadataByLabel(metaNew.getLabel()) != null){
+				if (dao.loadObjMetadataByLabel(metaNew.getLabel()) != null){
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListObjMetadataModule.MODULE_PAGE);
 					EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 13004, new Vector(), params );
 					getErrorHandler().addError(error);
 					return;
 				}	 		
-				 
-				DAOFactory.getObjMetadataDAO().insertObjMetadata(metaNew);
+
+				dao.insertObjMetadata(metaNew);
 				
-				ObjMetadata tmpMeta = DAOFactory.getObjMetadataDAO().loadObjMetadataByLabel(metaNew.getLabel());
+				ObjMetadata tmpMeta = dao.loadObjMetadataByLabel(metaNew.getLabel());
 				metaNew.setObjMetaId(tmpMeta.getObjMetaId());
 				mod = SpagoBIConstants.DETAIL_MOD; 
 			} else {				
 				//update metadata
-				DAOFactory.getObjMetadataDAO().modifyObjMetadata(metaNew);			
+				dao.modifyObjMetadata(metaNew);			
 			}  
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 			List dataTypes = domaindao.loadListDomainsByType("OBJMETA_DATA_TYPE");

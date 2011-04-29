@@ -39,20 +39,13 @@ import org.hibernate.Session;
 public interface IUdpDAO extends ISpagoBIDao{
 
     public Integer insert(SbiUdp prop);
-    
-    public void insert(Session session, SbiUdp prop);
 
     public void update(SbiUdp prop);
-    
-    public void update(Session session, SbiUdp prop);
 	
     public void delete(SbiUdp prop);
-    
-    public void delete(Session session, SbiUdp prop);
 
     public void delete(Integer id);
-    
-    public void delete(Session session, Integer id);
+
 	
     public SbiUdp findById(Integer id);
 

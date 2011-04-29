@@ -26,6 +26,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
@@ -79,9 +80,13 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IUdpDAO udpDao;
+		IUdpDAO udpDao=null;
+		IDomainDAO daoDomain=null;
 		try {
 			udpDao = DAOFactory.getUdpDAO();
+			udpDao.setUserProfile(getUserProfile());
+			daoDomain=DAOFactory.getDomainDAO();
+			udpDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e1) {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,	"Error occurred");
@@ -131,10 +136,10 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 				String label = getAttributeAsString(LABEL);
 				String description = getAttributeAsString(DESCRIPTION);
 				String typeStr = getAttributeAsString(TYPE);			
-				Domain tmpDomain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(UDP_TYPES, typeStr);
+				Domain tmpDomain = daoDomain.loadDomainByCodeAndValue(UDP_TYPES, typeStr);
 				Integer type = tmpDomain.getValueId();
 				String familyStr = getAttributeAsString(FAMILY);
-				tmpDomain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(UDP_FAMILIES, familyStr);
+				tmpDomain = daoDomain.loadDomainByCodeAndValue(UDP_FAMILIES, familyStr);
 				Integer family = tmpDomain.getValueId();
 				Boolean isMultivalue = Boolean.valueOf(getAttributeAsBoolean(IS_MULTIVALUE));
 				
@@ -197,9 +202,9 @@ public class ManageUdpAction extends AbstractSpagoBIAction{
 			}
 		}else if(serviceType == null){
 			try {
-				List types = DAOFactory.getDomainDAO().loadListDomainsByType(UDP_TYPES);
+				List types = daoDomain.loadListDomainsByType(UDP_TYPES);
 				getSessionContainer().setAttribute("TYPE_LIST", types);
-				List families = DAOFactory.getDomainDAO().loadListDomainsByType(UDP_FAMILIES);
+				List families = daoDomain.loadListDomainsByType(UDP_FAMILIES);
 				getSessionContainer().setAttribute("FAMILY_LIST", families);
 				
 			} catch (EMFUserError e) {
