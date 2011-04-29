@@ -23,9 +23,9 @@
  		<DAO name="ObjNoteDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjNoteDAOHibImpl"/>	
  		<DAO name="SubObjectDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl"/>	
  		<DAO name="SnapshotDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SnapshotDAOHibImpl"/>
- 		<DAO name="GeoFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.bo.dao.hibernate.SbiGeoFeaturesDAOHibImpl"/>  
-		<DAO name="GeoMapDAO" implementation="it.eng.spagobi.mapcatalogue.bo.dao.hibernate.SbiGeoMapsDAOHibImpl"/>  
-		<DAO name="GeoMapFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.bo.dao.hibernate.SbiGeoMapFeaturesDAOHibImpl"/>
+ 		<DAO name="GeoFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoFeaturesDAOHibImpl"/>  
+		<DAO name="GeoMapDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapsDAOHibImpl"/>  
+		<DAO name="GeoMapFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapFeaturesDAOHibImpl"/>
 		<DAO name="UserFunctionalityDAO" implementation="it.eng.spagobi.commons.dao.UserFunctionalityDAO"/>
 		<DAO name="DistributionListDAO" implementation="it.eng.spagobi.tools.distributionlist.dao.DistributionListDaoImpl"/>
 		<DAO name="DossierDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierDAOHibImpl"/>
