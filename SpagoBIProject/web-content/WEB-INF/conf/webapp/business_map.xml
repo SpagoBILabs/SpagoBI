@@ -12,7 +12,6 @@
 		<MAP_PAGE_MODULE pageName="LoginPage" moduleName="LoginModule" businessProcess="MenuManagement" />	
 		<MAP_PAGE_MODULE pageName="ViewBuilderPage" moduleName="ViewBuilderModule" businessProcess="MenuManagement" />
 		<MAP_PAGE_MODULE pageName="DirectExecutionPage" moduleName="DirectExecutionModule" businessProcess="MenuManagement" />
-		<MAP_PAGE_MODULE pageName="MenuPage" moduleName="MenuModule" businessProcess="MenuManagement" />
 		<MAP_PAGE_MODULE pageName="DetailMenuPage" moduleName="DetailMenuModule" businessProcess="MenuManagement" />
 		<MAP_PAGE_MODULE pageName="MenuConfigurationPage" moduleName="TreeMenuModule" businessProcess="MenuManagement" />
 		<MAP_PAGE_MODULE pageName="DocumentLookupPage" moduleName="ListLookupDocumentModule" businessProcess="MenuManagement" />
