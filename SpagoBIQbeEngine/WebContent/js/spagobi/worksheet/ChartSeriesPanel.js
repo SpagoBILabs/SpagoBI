@@ -96,14 +96,33 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	, targetRow: null
 	, detailsWizard: undefined
 	, grid: null
+	, currentRowEdit : null
+	
+	// static members
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
 	      , {name: 'funct', type: 'string'}
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
+	      , {name: 'seriename', type: 'string'}
+	      , {name: 'colour', type: 'string'}
 	])
-
+	
+	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
+		 fields: ['funzione', 'nome', 'descrizione'],
+	     data : [
+	        ['NONE', LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.none')],
+	        ['SUM', LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')],
+	        ['AVG', LN('sbi.qbe.selectgridpanel.aggfunc.name.avg'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.avg')],
+	        ['MAX', LN('sbi.qbe.selectgridpanel.aggfunc.name.max'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.max')],
+	        ['MIN', LN('sbi.qbe.selectgridpanel.aggfunc.name.min'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.min')],
+	        ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
+	        ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
+	     ] 
+	 })
+	
+	
 	, init: function(c) {
 		this.initEmptyMsgPanel();
 		this.initStore(c);
@@ -120,7 +139,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.SimpleStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'colour']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -132,37 +151,70 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	}
 	
 	, initColumnModel: function(c) {
-        this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
-        		// margin auto in order to have button center alignment
-                '<table style="margin-left: auto; margin-right: auto;" id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
-                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{6} ({7})</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
-                '</tbody></table>');
-        
-        this.template.compile();
+		
+	    var serieNameColumn = new Ext.grid.Column({
+	    	header: LN('sbi.worksheet.chartseriespanel.columns.seriename')
+	    	, dataIndex: 'seriename'
+	    	, hideable: false
+	    	, sortable: false
+	    	, editor: new Ext.form.TextField({})
+	    });
 		
 	    var fieldColumn = new Ext.grid.Column({
-	    	header:  ''
+	    	header: LN('sbi.worksheet.chartseriespanel.columns.queryfield')
 	    	, dataIndex: 'alias'
 	    	, hideable: false
-	    	, hidden: false	
 	    	, sortable: false
-	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias, record.data.funct]		
-	        	);
-	    	}
 	        , scope: this
 	    });
-	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+	    
+	    var aggregatorColumn = new Ext.grid.Column({
+	    	 header: LN('sbi.qbe.selectgridpanel.headers.function')
+	         , dataIndex: 'funct'
+	         , editor: new Ext.form.ComboBox({
+		         allowBlank: true,
+		         editable: false,
+		         store: this.aggregationFunctionsStore,
+		         displayField: 'nome',
+		         valueField: 'funzione',
+		         typeAhead: true,
+		         mode: 'local',
+		         triggerAction: 'all',
+		         autocomplete: 'off',
+		         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
+		         selectOnFocus: true
+	         })
+		     , hideable: true
+		     , hidden: false
+		     , width: 50
+		     , sortable: false
+	    });
+	    
+		var colourFieldEditor = new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true});
+		colourFieldEditor.on('select', function(f, val) {
+			this.store.getAt(this.currentRowRecordEdited).set('colour', val);
+		}, this);
+		
+		var colourColumn = new Ext.grid.Column({
+			header: LN('sbi.worksheet.chartseriespanel.columns.colour')
+			, width: 60
+			, dataIndex: 'colour'
+			, editor: colourFieldEditor
+			, renderer : function(v, metadata, record) {
+				metadata.attr = ' style="background:' + v + ';"';
+				return v;  
+	       }
+		});
+	    
+	    this.cm = new Ext.grid.ColumnModel([serieNameColumn, fieldColumn, aggregatorColumn, colourColumn]);
 	}
 	
 	, initGrid: function (c) {
-		this.grid = new Ext.grid.GridPanel({
+		this.grid = new Ext.grid.EditorGridPanel({
 	        store: this.store
 	        , border: false
 	        , cm: this.cm
+	        , sm: new Ext.grid.RowSelectionModel()
 	        , enableDragDrop: true
 	        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 		    , layout: 'fit'
@@ -170,9 +222,13 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 		    	forceFit: true
 		    }
 	        , listeners: {
-				render: function(grid) { // hide the grid header
-					grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
-	    		}
+	        	beforeedit: {
+	        		fn : function (e) {
+	        	    	var t = Ext.apply({}, e);
+	        			this.currentRowRecordEdited = t.row;	
+	        		}
+	        		, scope : this
+	        	}
 	        	, keydown: {
 	        		fn: function(e) {
 		        		if (e.keyCode === 46) {
@@ -192,17 +248,6 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	        			this.targetRow = undefined;
 			        }
         			, scope: this
-	        	}
-	        	, rowdblclick: {
-	        		fn: function(theGrid, rowIndex, e) {
-		        		var theRow = this.store.getAt(rowIndex);
-						var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
-							behindMeasure: Ext.apply({}, theRow.data) // creates a clone
-		        	  	});
-		        	  	aWindow.show();
-		        	  	aWindow.on('apply', function(modifiedMeasure, theWindow) {this.modifyMeasure(theRow, new this.Record(modifiedMeasure));}, this);
-		        	}
-    				, scope: this
 	        	}
 			}
 	        , type: 'measuresContainerPanel'
@@ -325,9 +370,20 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	}
 	
 	, addMeasure: function(record) {
+		var theRecord = null;
+		if (record.data.seriename === undefined && record.data.colour === undefined ) {
+			var data = Ext.apply({}, record.data); // make a clone
+			data = Ext.apply(data, { // add additional properties
+				seriename: record.data.alias
+				, colour: '#FFFFFF'
+			});
+			theRecord = new this.Record(data);
+		} else {
+			theRecord = record;
+		}
 		this.getLayout().setActiveItem( 1 );
 		// if the measure is already present, does not insert it 
-		if (this.containsMeasure(record)) {
+		if (this.containsMeasure(theRecord)) {
 			Ext.Msg.show({
 				   title: LN('sbi.worksheet.chartseriespanel.cannotdrophere.title'),
 				   msg: LN('sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadypresent'),
@@ -335,7 +391,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 				   icon: Ext.MessageBox.WARNING
 			});
 		} else {
-			this.store.add(record);
+			this.store.add(theRecord);
 		}
 	}
 	
@@ -352,10 +408,6 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	, removeAllMeasures: function() {
 		this.store.removeAll(false);
         this.getLayout().setActiveItem( 0 );
-	}
-	
-	, modifyMeasure: function(recordToBeModified, newRecordsValues) {
-		recordToBeModified.set("funct", newRecordsValues.get("funct")); // only the aggregation function must be modified
 	}
 
 });

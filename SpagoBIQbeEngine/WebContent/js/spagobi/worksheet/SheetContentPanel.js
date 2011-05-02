@@ -72,6 +72,7 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	
 	emptyMsg: null
 	, emptyMsgPanel: null
+	, designer: null
 	
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
@@ -100,6 +101,15 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	}
 	
 	, notifyDropFromPalette: function(ddSource) {
+		if (this.designer != null) {
+			Ext.Msg.show({
+				   title:'Drop not allowed',
+				   msg: 'You can insert a single widget on a sheet. Create a new sheet',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return;
+		}
 		var rows = ddSource.dragData.selections;
 		if (rows.length > 1) {
 			Ext.Msg.show({
@@ -115,8 +125,14 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	        case 'Pivot Table':
 	        	this.insertCrosstabDesigner();
 	            break;
-	        case 'Bar Char':
+	        case 'Bar Chart':
 	        	this.insertBarchartDesigner();
+	            break;
+	        case 'Line Chart':
+	        	this.insertLinechartDesigner();
+	            break;
+	        case 'Pie Chart':
+	        	this.insertPiechartDesigner();
 	            break;
 	        default: 
 	        	alert('Unknown widget!');
@@ -124,21 +140,72 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	}
 
 	, insertCrosstabDesigner: function () {
-		this.emptyMsgPanel.destroy();
-		var crosstabDesigner = new Sbi.crosstab.CrosstabDefinitionPanel({
+		this.designer = new Sbi.crosstab.CrosstabDefinitionPanel({
 			crosstabTemplate: {}
 			, ddGroup: 'worksheetDesignerDDGroup'
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+			}]
 		});
-		this.add(crosstabDesigner);
-		this.doLayout();
+		this.insertDesigner();
 	}
 	
 	, insertBarchartDesigner: function () {
-		this.emptyMsgPanel.destroy();
-		var barchartDesigner = new Sbi.worksheet.BarChartDesignerPanel({
+		this.designer = new Sbi.worksheet.BarChartDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
+			, border: false
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+			}]
 		});
-		this.add(barchartDesigner);
+		this.insertDesigner();
+	}
+	
+	, insertLinechartDesigner: function () {
+		this.designer = new Sbi.worksheet.LineChartDesignerPanel({
+			ddGroup: 'worksheetDesignerDDGroup'
+			, border: false
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+			}]
+		});
+		this.insertDesigner();
+	}
+	
+	, insertPiechartDesigner: function () {
+		this.designer = new Sbi.worksheet.PieChartDesignerPanel({
+			ddGroup: 'worksheetDesignerDDGroup'
+			, border: false
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+			}]
+		});
+		this.insertDesigner();
+	}
+	
+	, insertDesigner: function() {
+		this.emptyMsgPanel.destroy();
+		this.add(this.designer);
+		this.doLayout();
+	}
+	
+	, removeDesigner: function (event, tool, panel, tc) {
+		this.designer.destroy();
+		this.designer = null;
+		this.initEmptyMsgPanel();
+		this.add(this.emptyMsgPanel);
 		this.doLayout();
 	}
 

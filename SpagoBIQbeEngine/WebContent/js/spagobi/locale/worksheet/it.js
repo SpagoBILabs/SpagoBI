@@ -51,6 +51,8 @@ Sbi.locale.ln['sbi.worksheet.designtoolslayoutpanel.tooltip.content'] = 'La pagi
 //Sbi.worksheet.SheetContentPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.sheetcontentpanel.emptymsg'] = 'Trascina qui un componente dalla palette';
+Sbi.locale.ln['sbi.worksheet.sheetcontentpanel.tools.tt.remove'] = 'Rimuovi';
+
 
 //===================================================================
 //Sbi.worksheet.BarChartDesignerPanel
@@ -59,12 +61,43 @@ Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.title'] = 'Definizione bar ch
 Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.title'] = 'Orientamento';
 Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.vertical'] = 'verticale';
 Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.orientation.horizontal'] = 'orizzontale';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.type.tooltip.side-by-side'] = 'Barre affiancate';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.type.tooltip.stacked'] = 'Barre cumulate';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Barre cumulate in percentuale';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.showvalues.title'] = 'Visualizza valori';
+Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.showlegend.title'] = 'Visualizza legenda';
+//Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.fieldsets.type'] = 'Tipo';
+//Sbi.locale.ln['sbi.worksheet.barchartdesignerpanel.form.fieldsets.options'] = 'Opzioni';
 
 
 //===================================================================
-//Sbi.worksheet.BarChartCategoryPanel
+//Sbi.worksheet.LineChartDesignerPanel
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.chartcategorypanel.title'] = 'Asse x: categoria';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.title'] = 'Definizione line chart';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.orientation.title'] = 'Orientamento';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.orientation.vertical'] = 'verticale';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.orientation.horizontal'] = 'orizzontale';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.type.tooltip.side-by-side'] = 'Linee sovrapposte';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.type.tooltip.stacked'] = 'Linee cumulate';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Linee cumulate in percentuale';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.showvalues.title'] = 'Visualizza valori';
+Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.showlegend.title'] = 'Visualizza legenda';
+//Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.fieldsets.type'] = 'Tipo';
+//Sbi.locale.ln['sbi.worksheet.linechartdesignerpanel.form.fieldsets.options'] = 'Opzioni';
+
+
+//===================================================================
+//Sbi.worksheet.PieChartDesignerPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.piechartdesignerpanel.title'] = 'Definizione pie chart';
+Sbi.locale.ln['sbi.worksheet.piechartdesignerpanel.form.showvalues.title'] = 'Visualizza valori';
+Sbi.locale.ln['sbi.worksheet.piechartdesignerpanel.form.showlegend.title'] = 'Visualizza legenda';
+
+
+//===================================================================
+//Sbi.worksheet.ChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.chartcategorypanel.title'] = 'Categoria';
 Sbi.locale.ln['sbi.worksheet.chartcategorypanel.emptymsg'] = 'Trascina qui un attributo della query come categoria';
 Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.title'] = 'Drop non consentito';
 Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.unknownsource'] = 'Sorgente sconosciuta';
@@ -75,8 +108,11 @@ Sbi.locale.ln['sbi.worksheet.chartcategorypanel.cannotdrophere.postlinecalculate
 //===================================================================
 //Sbi.worksheet.ChartSeriesPanel
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.chartseriespanel.title'] = 'Asse y: serie';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.title'] = 'Serie';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.emptymsg'] = 'Trascina qui alcune misure della query come serie';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.columns.queryfield'] = 'Campo';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.columns.seriename'] = 'Nome';
+Sbi.locale.ln['sbi.worksheet.chartseriespanel.columns.colour'] = 'Colore';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.title'] = 'Drop non consentito';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'La misura è già presente';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
