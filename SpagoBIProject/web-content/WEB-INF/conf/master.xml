@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <MASTER>
 
-<!--  chiron -->	
-	<CONFIGURATOR path="/WEB-INF/conf/chiron/actions.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/chiron/presentation.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/chiron/publishers.xml" />
 <!--  commons -->	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/audit.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
