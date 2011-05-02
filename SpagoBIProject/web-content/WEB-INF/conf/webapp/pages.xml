@@ -51,18 +51,6 @@
     	</MODULES>
   	</PAGE>
 
-	<PAGE name="MenuPage" scope="REQUEST" title="Menu Page" >
-    	<DEPENDENCIES>
-      		<DEPENDENCE source="MenuPage" target="MenuModule">
-        		<CONDITIONS/>
-        		<CONSEQUENCES/>
-      		</DEPENDENCE>
-    	</DEPENDENCIES>
-    	<MODULES>
-      		<MODULE keep_instance="false" keep_response="false" name="MenuModule"/>
-    	</MODULES>
-  	</PAGE>
-
 	<PAGE name="DetailMenuPage" scope="REQUEST" title="Menu Page" >
     	<DEPENDENCIES>
       		<DEPENDENCE source="DetailMenuPage" target="DetailMenuModule">
