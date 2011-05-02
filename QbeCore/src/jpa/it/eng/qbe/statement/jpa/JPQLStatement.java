@@ -23,6 +23,7 @@ package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -52,6 +53,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,6 +63,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.BasicType;
@@ -71,6 +74,14 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
 
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.expressions.Expression;
+import org.eclipse.persistence.internal.expressions.CollectionExpression;
+import org.eclipse.persistence.internal.expressions.ConstantExpression;
+import org.eclipse.persistence.internal.expressions.FunctionExpression;
+import org.eclipse.persistence.internal.expressions.LogicalExpression;
+import org.eclipse.persistence.internal.expressions.RelationExpression;
+import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
+import org.eclipse.persistence.queries.ReportQuery;
 
 
 
@@ -1181,19 +1192,116 @@ public class JPQLStatement extends AbstractStatement {
 	}
 	
 	public String getSqlQueryString() {
-		String sqlQuery = null;
-		EntityManager em = dataSource.getEntityManager();
-		java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
+		StringBuffer sqlQuery = new StringBuffer();
+		StringBuffer sqlQuery2 = new StringBuffer();
+		int i=0;
+		String freshSqlQuery = null;
+		JPADataSource ds = ((JPADataSource)getDataSource());
+		EntityManager em = ds.getEntityManager();
 
-		JPQL2SQLStatementRewriter queryRewriter;
-		try {
-			queryRewriter = new JPQL2SQLStatementRewriter(em);
-			sqlQuery = queryRewriter.rewrite( getQueryString() );
-		} finally {
-			//if (em != null && em.isOpen()) em.close(); 
+		String parameterValue;
+		logger.debug("IN: get the sql code for the jpql query");
+		
+		EJBQueryImpl qi = (EJBQueryImpl)em.createQuery( getQueryString());
+
+		//In qi, all the constants are substituted with ? (a place holder for the parameter)..
+		//so we shold get the parameter values with getParameters
+		ReportQuery rq = (ReportQuery)qi.getDatabaseQuery();
+		List<String> whereParameters = getParameters(rq.getSelectionCriteria());
+		List<String> havingParameters = getParameters(rq.getHavingExpression());
+		List<String> queryParameters = whereParameters;
+		queryParameters.addAll(havingParameters);
+		
+		qi.getDatabaseQuery().getSQLStatement();
+		freshSqlQuery = qi.getDatabaseQuery().getSQLString();
+		
+		logger.debug("JPQL QUERY: "+freshSqlQuery);
+		logger.debug("JPQL QUERY Paramaters n: "+queryParameters.size());
+		
+		//ADD THE PARAMETERS
+		StringTokenizer stk = new StringTokenizer(freshSqlQuery,"?");
+
+		while(stk.hasMoreTokens()){
+			sqlQuery = sqlQuery.append(stk.nextToken());
+			if(i<queryParameters.size()){
+				parameterValue = queryParameters.get(i);
+				if(parameterValue.startsWith("'") && parameterValue.endsWith("'")){
+					parameterValue = parameterValue.substring(1,parameterValue.length()-1);
+				}
+				sqlQuery.append(parameterValue);
+				i++;
+			}
 		}
 		
-		return sqlQuery;		
+		
+		//ADD THE ALIAS
+		int fromPosition = sqlQuery.indexOf("FROM");
+		i=0;
+		String SelectStatement = sqlQuery.substring(0,fromPosition-1);
+		StringTokenizer SelectStatementStk = new StringTokenizer(SelectStatement,",");
+
+		while(SelectStatementStk.hasMoreTokens()){
+			sqlQuery2.append(SelectStatementStk.nextToken());
+			sqlQuery2.append(" as alias");
+			sqlQuery2.append(i);
+			sqlQuery2.append(",");
+			i++;
+		}
+		sqlQuery2.append(sqlQuery2.substring(0,sqlQuery2.length()-2)+sqlQuery.substring(fromPosition-1));
+		
+		logger.debug("JPQL QUERY: "+sqlQuery2);
+		
+		return sqlQuery2.toString();		
+	}
+	
+	/**
+	 * ONLY FOR ECLIPSELINK
+	 * Get the list of constants from the expression
+	 * @param e Expression to parse
+	 * @return list of Constant values of the expression
+	 */
+	public List<String> getParameters(Expression e){
+		if(e instanceof FunctionExpression){
+			List<String> l =  new ArrayList<String>();
+			Vector<Expression> children = ((FunctionExpression) e).getChildren();
+			Iterator<Expression> it=children.iterator();
+			while(it.hasNext()){
+				Expression o = it.next();
+				l.addAll(getParameters(o));
+			}
+			return l;
+		}else if(e instanceof CollectionExpression){
+			List<String> l =  new ArrayList<String>();
+			Object value = ((CollectionExpression) e).getValue();
+			if(value instanceof Collection){
+				Iterator<Expression> it=((Collection) value).iterator();
+				while(it.hasNext()){
+					Expression o = it.next();
+					l.addAll(getParameters(o));
+				}
+			}
+			return l;
+		}else if(e instanceof ConstantExpression){
+			List<String> l =  new ArrayList<String>();
+			l.add(""+((ConstantExpression)e).getValue());
+			return l;
+		}else if(e instanceof RelationExpression){
+			Expression fchild = ((RelationExpression)e).getFirstChild();
+			List<String> firstList = getParameters(fchild);
+			Expression schild = ((RelationExpression)e).getSecondChild();
+			List<String> secondList = getParameters(schild);
+			firstList.addAll(secondList);
+			return firstList;
+		}else if(e instanceof LogicalExpression){
+			Expression fchild = ((LogicalExpression)e).getFirstChild();
+			List<String> firstList = getParameters(fchild);
+			Expression schild = ((LogicalExpression)e).getSecondChild();
+			List<String> secondList = getParameters(schild);
+			firstList.addAll(secondList);
+			return firstList;
+		}
+		return new ArrayList<String>();
+
 	}
 
 	
