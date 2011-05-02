@@ -43,14 +43,14 @@
  */
 Ext.ns("Sbi.worksheet");
 
-Sbi.worksheet.BarChartDesignerPanel = function(config) { 
+Sbi.worksheet.LineChartDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.barchartdesignerpanel.title')
+		title: LN('sbi.worksheet.linechartdesignerpanel.title')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.barChartDesignerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.barChartDesignerPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.lineChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.lineChartDesignerPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,13 +63,13 @@ Sbi.worksheet.BarChartDesignerPanel = function(config) {
 		items: [this.form]
 	}
 	
-	Sbi.worksheet.BarChartDesignerPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.LineChartDesignerPanel.superclass.constructor.call(this, c);
 	
 	this.on('afterLayout', this.addToolTips, this);
 
 };
 
-Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 
 	form: null
 	, items: null
@@ -90,9 +90,9 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			hideLabel: true,
 			columns: 3,
 			items: [
-		        {name: 'type', height: 80, width: 80, id:'side-by-side-barchart', ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
-		        {name: 'type', height: 80, width: 80, id:'stacked-barchart', ctCls:'stacked-barchart-vertical', inputValue: 'stacked-barchart'},
-		        {name: 'type', height: 80, width: 80, id:'percent-stacked-barchart', ctCls:'percent-stacked-barchart-vertical', inputValue: 'percent-stacked-barchart'},
+		        {name: 'type', height: 80, width: 80, id:'side-by-side-linechart', ctCls:'side-by-side-linechart-vertical', inputValue: 'side-by-side-linechart', checked: true},
+		        {name: 'type', height: 80, width: 80, id:'stacked-linechart', ctCls:'stacked-linechart-vertical', inputValue: 'stacked-linechart'},
+		        {name: 'type', height: 80, width: 80, id:'percent-stacked-linechart', ctCls:'percent-stacked-linechart-vertical', inputValue: 'percent-stacked-linechart'},
 			]
 		});
 		this.typeRadioGroup.on('change', this.changeBarChartImage, this);
@@ -103,7 +103,7 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.barchartdesignerpanel.form.orientation.title'),
+			fieldLabel:     LN('sbi.worksheet.linechartdesignerpanel.form.orientation.title'),
 			name:           'orientation',
 			displayField:   'description',
 			valueField:     'name',
@@ -111,20 +111,20 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			//anchor:			'95%',
 			store:          new Ext.data.ArrayStore({
 								fields : ['name', 'description']
-								, data : [['vertical', LN('sbi.worksheet.barchartdesignerpanel.form.orientation.vertical')]
-									, ['horizontal', LN('sbi.worksheet.barchartdesignerpanel.form.orientation.horizontal')]]
+								, data : [['vertical', LN('sbi.worksheet.linechartdesignerpanel.form.orientation.vertical')]
+									, ['horizontal', LN('sbi.worksheet.linechartdesignerpanel.form.orientation.horizontal')]]
 							})
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showvalues.title')
+			, fieldLabel: LN('sbi.worksheet.linechartdesignerpanel.form.showvalues.title')
 		});
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showlegend.title')
+			, fieldLabel: LN('sbi.worksheet.linechartdesignerpanel.form.showlegend.title')
 		});
 		
 		
@@ -146,7 +146,7 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
             , height: 120
-            , html: this.imageTemplate.apply(['side-by-side-barchart', 'vertical'])
+            , html: this.imageTemplate.apply(['side-by-side-linechart', 'vertical'])
 		});
 		
 	    this.axisDefinitionPanel = new Ext.Panel({
@@ -168,7 +168,7 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		    ]
 	    });
 	    
-	    
+
 		this.form = new Ext.form.FormPanel({
 			border: false
 			, items: [
@@ -179,14 +179,14 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			    	, items: [
 		  			    {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.type')
+//							, title: LN('sbi.worksheet.linechartdesignerpanel.form.fieldsets.type')
 							, columnWidth : .7
 							, border: false
 							, items: [this.typeRadioGroup]
 						}
 						, {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.options')
+//							, title: LN('sbi.worksheet.linechartdesignerpanel.form.fieldsets.options')
 							, columnWidth : .3
 							, border: false
 							, items: [this.orientationCombo, this.showValuesCheck, this.showLegendCheck]
@@ -208,16 +208,16 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		};
 	
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-side-by-side-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.side-by-side'),
+			target: 'x-form-el-side-by-side-linechart',
+			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.side-by-side'),
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-stacked-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.stacked')
+			target: 'x-form-el-stacked-linechart',
+			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.stacked')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-percent-stacked-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.percent-stacked')
+			target: 'x-form-el-percent-stacked-linechart',
+			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
 	

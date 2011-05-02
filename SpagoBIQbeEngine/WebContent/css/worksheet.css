@@ -55,14 +55,58 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 }
 
 /* Sbi.worksheet.BarChartDesignerPanel */
-.side-by-side-barchart {
-	 background:url(../img/worksheet/designer/chart/sidebysidebarchart.gif) no-repeat 22px 0px !important;
+.side-by-side-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/sidebysidebarchart-vertical.gif) no-repeat 22px 0px !important;
 }
 
-.stacked-barchart {
-	 background:url(../img/worksheet/designer/chart/stackedbarchart.gif) no-repeat 22px 0px !important;
+.stacked-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/stackedbarchart-vertical.gif) no-repeat 22px 0px !important;
 }
 
-.percent-stacked-barchart {
-	 background:url(../img/worksheet/designer/chart/percentstackedbarchart.gif) no-repeat 22px 0px !important;
+.percent-stacked-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/percentstackedbarchart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/sidebysidebarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/stackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/percentstackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+
+/* Sbi.worksheet.LineChartDesignerPanel */
+.side-by-side-linechart-vertical {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-linechart-vertical {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-linechart-vertical {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-linechart-horizontal {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-linechart-horizontal {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-linechart-horizontal {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+
+/* Sbi.worksheet.PieChartDesignerPanel */
+.piechart {
+	 background:url(../img/worksheet/designer/chart/piechart.gif) no-repeat 22px 0px !important;
 }
