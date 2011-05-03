@@ -45,8 +45,17 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.DesignToolsPallettePanel = function(config) { 
 
+	var defaultSettings = {};
 
-	var c = this.initPanel();
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsPallettePanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsPallettePanel);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+
+	c = this.initPanel();
 	Sbi.worksheet.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
 
 };

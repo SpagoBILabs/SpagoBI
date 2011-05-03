@@ -45,9 +45,20 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.SheetPanel = function(config) { 
 
+	
+	var defaultSettings = {};
+
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetsPanel);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+	
 	this.initPanels();
 	
-	var c ={
+	c ={
             layout: {
                 type:'vbox',
                 align:'stretch'
@@ -56,7 +67,7 @@ Sbi.worksheet.SheetPanel = function(config) {
 	}
 	
 	c = Ext.apply(config,c);
-	 Ext.apply(this,c);
+	Ext.apply(this,c);
 	Sbi.worksheet.SheetPanel.superclass.constructor.call(this, c);	 	
 
 
@@ -71,13 +82,13 @@ Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		this.layout = 'layout_headerfooter';
-		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({title: true, img:true});
+		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({titleForm: true, imgForm:true});
 		this.filtersPanel = new Sbi.worksheet.DesignSheetFiltersPanel({
 			style:'padding:5px 15px 0'
 			, ddGroup: 'worksheetDesignerDDGroup'
 		});
 		this.contentPanel = new Sbi.worksheet.SheetContentPanel({});
-		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({title: true});
+		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({titleForm: true});
 		this.titlePanel.flex = 1;
 		this.contentPanel.flex = 4;
 		this.footerPanel.flex = 1;

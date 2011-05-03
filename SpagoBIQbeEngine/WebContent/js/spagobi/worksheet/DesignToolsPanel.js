@@ -47,6 +47,16 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.DesignToolsPanel = function(config) { 
 
+	var defaultSettings = {};
+
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designTools) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designTools);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+	
 	this.initPanels();
 	var c ={
             layout: {

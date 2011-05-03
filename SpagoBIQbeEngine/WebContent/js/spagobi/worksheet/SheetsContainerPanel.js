@@ -46,6 +46,17 @@
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.SheetsContainerPanel = function(config) { 
+	
+	var defaultSettings = {};
+
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetsContainerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetsContainerPanel);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+	
 	this.index = 0;
 	this.addEvents();
 	this.addPanel = {
@@ -54,7 +65,7 @@ Sbi.worksheet.SheetsContainerPanel = function(config) {
             iconCls: 'newTabIcon',
         	};
 	
-	var c ={
+	c ={
 			tabPosition: 'bottom',        
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},

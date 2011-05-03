@@ -134,6 +134,9 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	        case 'Pie Chart':
 	        	this.insertPiechartDesigner();
 	            break;
+	        case 'Table':
+	        	this.insertTableDesigner();
+	            break;
 	        default: 
 	        	alert('Unknown widget!');
 	   }
@@ -183,6 +186,20 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	
 	, insertPiechartDesigner: function () {
 		this.designer = new Sbi.worksheet.PieChartDesignerPanel({
+			ddGroup: 'worksheetDesignerDDGroup'
+			, border: false
+			, tools:  [{
+				id: 'close'
+	        	, handler: this.removeDesigner
+	          	, scope: this
+	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+			}]
+		});
+		this.insertDesigner();
+	}
+	
+	, insertTableDesigner: function () {
+		this.designer = new Sbi.worksheet.TableDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{

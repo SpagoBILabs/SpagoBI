@@ -47,8 +47,17 @@
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.SheetTitlePanel = function(config) { 
+	
+	var defaultSettings = {};
 
-	this.config = config;
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetTitlePanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetTitlePanel);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+
 	var formItems = [];
 	var formRows = 0;	
 	
@@ -62,18 +71,18 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
 	//row of the title
-	if(config.title){
+	if(this.titleForm){
 		formRows++;
 		formItems = this.addTitle(formItems);
 	}
 	
 	//row of the image
-	if(config.img){
+	if(this.imgForm){
 		formRows++;
 		formItems = this.addImage(formItems);
 	}
 	
-	var c = {
+	c = {
 		border: false,
 		frame:true,
 		style:'padding:5px 15px 5px',  
@@ -354,10 +363,10 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	
 	isValidForm: function(){
 		var valid= true;
-		if(this.config.title){
+		if(this.titleForm){
 			valid = valid && this.titleField.isValid(false) && this.sizeField.isValid(false);
 		}
-		if(this.config.img){
+		if(this.imgForm){
 			valid = valid && this.imgCombo.isValid(false) && this.imgPosition.isValid(false);
 		}
 		return valid;
@@ -366,11 +375,11 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	getFormValues: function(messageBox){
 		if(this.isValidForm()){	
 			var values={};
-			if(this.config.title){
+			if(this.titleForm){
 				values.title =  this.titleField.getValue();
 				values.size =   this.sizeField.getValue();
 			}
-			if(this.config.img){
+			if(this.imgForm){
 				values.img =  this.imgCombo.getValue()
 				values.position =   this.imgPosition.getValue();
 			}
@@ -388,11 +397,11 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	},
 	
 	setFormValues: function(values){
-		if(this.config.title){
+		if(this.titleForm){
 			 this.titleField.setValue(values.title)
 			 this.sizeField.setValue(values.size);
 		}
-		if(this.config.img){
+		if(this.imgForm){
 			 this.imgCombo.setValue(values.img)
 			 this.imgPosition.setValue(values.position);
 		}

@@ -38,7 +38,21 @@
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.DesignToolsLayoutPanel = function(config) { 
-
+	
+	var defaultSettings = {
+		title:  LN('sbi.worksheet.designtoolslayoutpanel.title'),
+		border: false,
+		bodyStyle: 'padding-top: 15px; padding-left: 15px'
+	};
+			
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsLayoutPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsLayoutPanel);
+	}
+		
+	var c = Ext.apply(defaultSettings, config || {});
+		
+	Ext.apply(this, c);
+			
 	this.layoutRadioGroup = new Ext.form.RadioGroup({
 		hideLabel: true,
 		columns: 2,
@@ -49,17 +63,14 @@ Sbi.worksheet.DesignToolsLayoutPanel = function(config) {
 		        {name: 'layout', height: 40, id:'layout-content', ctCls:'layout-content', inputValue: 'layout-content'}
 		        ]
 	});
+	
+	c = {
+		items: [this.layoutRadioGroup]
+	}
 
 	this.layoutRadioGroup.on('change', this.updateSheetLayout, this);
 	
-	var conf ={
-			title:  LN('sbi.worksheet.designtoolslayoutpanel.title'),
-			border: false,
-			bodyStyle: 'padding-top: 15px; padding-left: 15px',
-			items: [this.layoutRadioGroup]
-	};
-
-	Sbi.worksheet.DesignToolsLayoutPanel.superclass.constructor.call(this, conf);	
+	Sbi.worksheet.DesignToolsLayoutPanel.superclass.constructor.call(this, c);	
 
 	this.on('afterLayout',this.addToolTips,this);
 
