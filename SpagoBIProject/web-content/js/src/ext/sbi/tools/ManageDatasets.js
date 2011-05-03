@@ -1581,10 +1581,10 @@ Ext.extend(
 					if(!win_info_4){
 						win_info_4= new Ext.Window({
 							id:'win_info_4',
-							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsrules.html'},             				
+							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsTrasformationHelp.html'},             				
 							layout:'fit',
-							width:650,
-							height:350,
+							width:750,
+							height:550,
 							autoScroll: true,
 							closeAction:'close',
 							buttonAlign : 'left',
