@@ -250,15 +250,15 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
             var receiveHandler = function(message) {
             	var messageName = message.data.messageName;
             	if (messageName == 'getQbeQuery') {
-	               	qbe.getSQLQuery(function(sqlQuery) {
+	               //	qbe.getSQLQuery(function(sqlQuery) {
 	   					var message = {};
 	   					message.messageName = 'gotqbequery';
-	   					message.jsonQuery = this.getQueriesCatalogue();
-	   					message.sqlQuery = sqlQuery;
+	   					message.jsonQuery = qbe.getQueriesCatalogue();
+	   					message.sqlQuery = "";
 	   					message.datamarts = <%= datamartNamesBuffer.toString() %>;
-	   					message.parameters = this.getParameters();
+	   					message.parameters = qbe.getParameters();
 	   					sendMessage(message);
-	      			}, qbe);
+	      			//}, qbe);
             	} else if (messageName == 'setQbeQuery') {
             		var queriesCatalogue = Ext.util.JSON.decode(message.data.jsonQuery);
             		var parameters = message.data.qbeParameters;
