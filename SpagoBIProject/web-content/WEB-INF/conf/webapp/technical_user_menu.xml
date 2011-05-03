@@ -15,10 +15,6 @@
 				functionality="DatasetManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_DATASETS_ACTION"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
-		<ITEM	title="#menu.DataSetMan"
-				functionality="DatasetManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDatasetPage"
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
 		<ITEM	title="#menu.MapCat"
 				functionality="MapCatalogueManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage"

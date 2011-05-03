@@ -1475,7 +1475,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					realResult.add(toIDataSet(temp));				
 				}
 			}
-			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading all data sets ", he);
 			if (tx != null)
@@ -1547,27 +1546,29 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			
 		}
 
-		if(hibDataSet.getSbiDsConfig()!=null){
-			ds.setId(hibDataSet.getSbiDsConfig().getDsId());
-			ds.setName(hibDataSet.getSbiDsConfig().getName());
-			ds.setLabel(hibDataSet.getSbiDsConfig().getLabel());
-			ds.setDescription(hibDataSet.getSbiDsConfig().getDescription());	
-		}
-
-		ds.setTransformerId((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueId());
-		ds.setPivotColumnName(hibDataSet.getPivotColumnName());
-		ds.setPivotRowName(hibDataSet.getPivotRowName());
-		ds.setPivotColumnValue(hibDataSet.getPivotColumnValue());
-		ds.setNumRows(hibDataSet.isNumRows());
-
-		ds.setParameters(hibDataSet.getParameters());		
-		ds.setDsMetadata(hibDataSet.getDsMetadata());		
-
-		if(ds.getPivotColumnName() != null 
-				&& ds.getPivotColumnValue() != null
-				&& ds.getPivotRowName() != null){
-			ds.setDataStoreTransformer(
-					new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+		if(ds!=null){
+			if(hibDataSet.getSbiDsConfig()!=null){
+				ds.setId(hibDataSet.getSbiDsConfig().getDsId());
+				ds.setName(hibDataSet.getSbiDsConfig().getName());
+				ds.setLabel(hibDataSet.getSbiDsConfig().getLabel());
+				ds.setDescription(hibDataSet.getSbiDsConfig().getDescription());	
+			}
+	
+			ds.setTransformerId((hibDataSet.getTransformer()==null)?null:hibDataSet.getTransformer().getValueId());
+			ds.setPivotColumnName(hibDataSet.getPivotColumnName());
+			ds.setPivotRowName(hibDataSet.getPivotRowName());
+			ds.setPivotColumnValue(hibDataSet.getPivotColumnValue());
+			ds.setNumRows(hibDataSet.isNumRows());
+	
+			ds.setParameters(hibDataSet.getParameters());		
+			ds.setDsMetadata(hibDataSet.getDsMetadata());		
+	
+			if(ds.getPivotColumnName() != null 
+					&& ds.getPivotColumnValue() != null
+					&& ds.getPivotRowName() != null){
+				ds.setDataStoreTransformer(
+						new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+			}
 		}
 		return ds;
 	}

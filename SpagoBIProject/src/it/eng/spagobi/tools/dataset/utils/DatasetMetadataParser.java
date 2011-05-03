@@ -7,7 +7,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.service.ListTestDataSetModule;
 
 import java.util.HashMap;
 import java.util.Iterator;

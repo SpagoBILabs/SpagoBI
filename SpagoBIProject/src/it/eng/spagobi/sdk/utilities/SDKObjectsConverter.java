@@ -61,7 +61,6 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
-import it.eng.spagobi.tools.dataset.service.DetailDataSetModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -434,7 +433,9 @@ public class SDKObjectsConverter {
 
 			toReturn.setType(type);
 
-			List dataSetParameterItemList = DetailDataSetModule.getParametersToFill(spagoBiDataSet);
+			//List dataSetParameterItemList = DetailDataSetModule.getParametersToFill(spagoBiDataSet);
+			//TODO da cambiare con il nuovo metodo
+			List dataSetParameterItemList = new ArrayList();
 			SDKDataSetParameter[] parameters = null;
 			if (dataSetParameterItemList != null) {
 				parameters = this.fromDataSetParameterItemListToSDKDataSetParameterArray(dataSetParameterItemList);
