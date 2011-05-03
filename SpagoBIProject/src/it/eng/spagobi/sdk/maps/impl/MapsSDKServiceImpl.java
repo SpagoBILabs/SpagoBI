@@ -42,9 +42,9 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.service.DetailDataSetModule;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -272,7 +272,9 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 				return null;
 			}
 			Map parameters = new HashMap();
-			List parametersToFill = DetailDataSetModule.getParametersToFill(dataSet.toSpagoBiDataSet());
+			//List parametersToFill = DetailDataSetModule.getParametersToFill(dataSet.toSpagoBiDataSet());
+			//TODO da cambiare con il nuovo metodo
+			List parametersToFill = new ArrayList();
 			if (parametersToFill != null && parametersToFill.size() > 0) {
 				Iterator it = parametersToFill.iterator();
 				while (it.hasNext()) {

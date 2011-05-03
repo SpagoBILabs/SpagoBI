@@ -4,8 +4,5 @@
 		<MAP_ACTION actionName="MANAGE_DATASETS_ACTION"  businessProcess="KpiManagement"/>
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
-		<MAP_PAGE_MODULE pageName="ListDataSetPage" moduleName="ListDataSetModule" businessProcess="DatasetManagement" />	
-		<MAP_PAGE_MODULE pageName="DetailDataSetPage" moduleName="DetailDataSetModule" businessProcess="DatasetManagement" />
-		<MAP_PAGE_MODULE pageName="DetailDataSetPage" moduleName="ListTestDataSetModule" businessProcess="DatasetManagement" />
 	</MAP_PAGE_MODULES>
 </BUSINESS_MAP>

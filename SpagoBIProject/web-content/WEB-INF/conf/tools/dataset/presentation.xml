@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <PRESENTATION>
-	<MAPPING business_type="ACTION" business_name="MANAGE_DATASETS_ACTION" publisher_name="ManageDatasetsPublisher"/>
-	<MAPPING business_name="ListDataSetPage" business_type="PAGE" publisher_name="ListDataSetPubJ"/>
-	<MAPPING business_name="DetailDataSetPage" business_type="PAGE" publisher_name="DetailDataSetPubJ"/>      	 
+	<MAPPING business_type="ACTION" business_name="MANAGE_DATASETS_ACTION" publisher_name="ManageDatasetsPublisher"/>	 
 </PRESENTATION>
