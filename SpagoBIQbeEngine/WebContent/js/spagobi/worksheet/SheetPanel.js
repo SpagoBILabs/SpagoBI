@@ -90,13 +90,13 @@ Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 				 this.footerPanel.hide();
 			 }
 			 if(layout=='layout-footer' || layout=='layout-content'){
-				 this.titlePanel.hide();
+				 this.titlePanel.hideTitle();
 			 }
 			 if(layout=='layout-footer' || layout=='layout-headerfooter'){
 				 this.footerPanel.show();
 			 }
 			 if(layout=='layout-header' || layout=='layout-headerfooter'){
-				 this.titlePanel.show();
+				 this.titlePanel.showTitle();
 			 }
 		}
 	}

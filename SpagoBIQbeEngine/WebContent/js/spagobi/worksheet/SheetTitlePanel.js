@@ -95,6 +95,7 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	loadImageCombo: null,
 	loadImageFileBrows: null,
+	titlePanel: null,
 	titleField: null,
 	sizeField: null,
 	imgCombo: null,
@@ -131,16 +132,39 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			})
 		});
 		
-		items.push({
-			columnWidth:.7,
-			layout: 'form',
-			items: [this.titleField]
+		this.titlePanel = new Ext.Panel({
+            layout:'column',
+            columnWidth:1,
+            items: [		{
+    			columnWidth:.7,
+    			layout: 'form',
+    			items: [this.titleField]
+    		},
+    		{
+    			columnWidth:.3,
+    			layout: 'form',
+    			items: [this.sizeField]
+    		}]
 		});
-		items.push({
-			columnWidth:.3,
-			layout: 'form',
-			items: [this.sizeField]
-		});
+		
+		items.push(this.titlePanel);
+		
+//		items.push({
+//			columnWidth:.7,
+//			layout: 'form',
+//			items: [this.titleField]
+//		});
+//		items.push({
+//	        items: [{
+//	            layout:'column',
+//	            items: formItems
+//	        }]
+//		});
+		
+		
+		
+
+		
 		return items;
 	},
 	
@@ -372,6 +396,16 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			 this.imgCombo.setValue(values.img)
 			 this.imgPosition.setValue(values.position);
 		}
+	},
+	
+	hideTitle: function(){
+		this.titlePanel.hide();
+		this.setHeight(45);
+	},
+	
+	showTitle: function(){
+		this.titlePanel.show();
+		this.setHeight(75);
 	}
 	
 });
