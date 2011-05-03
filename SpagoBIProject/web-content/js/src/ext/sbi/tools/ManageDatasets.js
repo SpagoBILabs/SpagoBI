@@ -403,7 +403,7 @@ Ext.extend(
 					});
 
 					var detailFieldName = {
-						maxLength : 40,	minLength : 1, width : 200,
+						maxLength : 50,	minLength : 1, width : 200,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.name'),
 						allowBlank : false,	validationEvent : true,
@@ -411,7 +411,7 @@ Ext.extend(
 					};
 
 					var detailFieldLabel = {
-						maxLength : 45, minLength : 1, width : 200,
+						maxLength : 50, minLength : 1, width : 200,
 						regexText : LN('sbi.roles.alfanumericString2'),
 						fieldLabel : LN('sbi.generic.label'),
 						allowBlank : false, validationEvent : true,
@@ -420,7 +420,7 @@ Ext.extend(
 
 					var detailFieldDescr = {
 						xtype : 'textarea',
-						width : 250, height : 80, maxLength : 400,
+						width : 250, height : 80, maxLength : 160,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.descr'),
 						validationEvent : true,
@@ -552,7 +552,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : true, validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						xtype : 'combo'
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
@@ -574,7 +574,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : true, validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						xtype : 'combo'
 					});
 
@@ -592,7 +592,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : true, validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						xtype : 'combo'
 					});
 
@@ -614,26 +614,27 @@ Ext.extend(
 					});
 
 					this.detailQuery = new Ext.form.TextArea({
-						maxLength : 5000,
+						maxLength : 30000,
 						xtype : 'textarea',
 						height : 180,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.query'),
 						validationEvent : true,
+						allowBlank : false,
 						name : 'query'
 					});
 
 					this.detailWsAddress = new Ext.form.TextField({
-						maxLength : 40, minLength : 1,
+						maxLength : 250, minLength : 1,
 						width : 150,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsAddress'),
-						allowBlank : true, validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						name : 'wsAddress'
 					});
 
 					this.detailWsOperation = new Ext.form.TextField({
-						maxLength : 40, minLength : 1, width : 150,
+						maxLength : 50, minLength : 1, width : 150,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsOperation'),
 						allowBlank : true, validationEvent : true,
@@ -641,13 +642,13 @@ Ext.extend(
 					});
 
 					this.detailScript = new Ext.form.TextArea({
-						maxLength : 5000,
+						maxLength : 30000,
 						xtype : 'textarea',
 						width : this.textAreaWidth,
 						height : 175,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.script'),
-						allowBlank : true, validationEvent : true,
+						allowBlank : false, validationEvent : true,
 						name : 'script'
 					});
 
@@ -721,17 +722,17 @@ Ext.extend(
 						triggerAction : 'all',
 						selectOnFocus : true,
 						editable : false,
-						allowBlank : true,
+						allowBlank : false,
 						validationEvent : true,
 						xtype : 'combo'
 					});
 
 					this.detailJclassName = new Ext.form.TextField({
-						maxLength : 40,
+						maxLength : 100,
 						minLength : 1,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.jclassName'),
-						allowBlank : true,
+						allowBlank : false,
 						validationEvent : true,
 						name : 'jclassName'
 					});
