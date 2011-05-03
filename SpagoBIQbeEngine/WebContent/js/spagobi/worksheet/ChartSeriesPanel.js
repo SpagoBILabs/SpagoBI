@@ -97,6 +97,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	, detailsWizard: undefined
 	, grid: null
 	, currentRowEdit : null
+	, displayColourColumn : true // to display or not the colour column, default is true
 	
 	// static members
 	, Record: Ext.data.Record.create([
@@ -206,7 +207,11 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	       }
 		});
 	    
-	    this.cm = new Ext.grid.ColumnModel([serieNameColumn, fieldColumn, aggregatorColumn, colourColumn]);
+		var columns = [serieNameColumn, fieldColumn, aggregatorColumn];
+		if (this.displayColourColumn)  {
+			columns.push(colourColumn);
+		}
+	    this.cm = new Ext.grid.ColumnModel(columns);
 	}
 	
 	, initGrid: function (c) {
@@ -375,7 +380,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 			var data = Ext.apply({}, record.data); // make a clone
 			data = Ext.apply(data, { // add additional properties
 				seriename: record.data.alias
-				, colour: '#FFFFFF'
+				, colour: this.getRandomColour()
 			});
 			theRecord = new this.Record(data);
 		} else {
@@ -408,6 +413,17 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	, removeAllMeasures: function() {
 		this.store.removeAll(false);
         this.getLayout().setActiveItem( 0 );
+	}
+	
+	, getRandomColour: function() {
+		var chars = "0123456789ABCDEF";
+		var string_length = 6;
+		var randomstring = '';
+		for (var i=0; i<string_length; i++) {
+			var rnum = Math.floor(Math.random() * chars.length);
+			randomstring += chars.substring(rnum,rnum+1);
+		}
+		return "#" + randomstring;
 	}
 
 });
