@@ -45,6 +45,17 @@ Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.WorkSheetsPanel = function(config) { 
 
+	
+	var defaultSettings = {};
+
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.workSheetsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.workSheetsPanel);
+	}
+
+	var c = Ext.apply(defaultSettings, config || {});
+
+	Ext.apply(this, c);
+	
 	this.initPanels();
 	var c ={
 			layout: 'border',
@@ -72,7 +83,6 @@ Sbi.worksheet.WorkSheetsPanel = function(config) {
 			        ]
 	}; 
 		
-	c=	Ext.apply({}, config || {}, c);
 	Sbi.worksheet.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
 
 };
