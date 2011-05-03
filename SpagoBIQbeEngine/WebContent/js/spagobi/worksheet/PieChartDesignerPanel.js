@@ -76,6 +76,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 	, seriesContainerPanel: null
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
+	, seriesPalette: null
 	
 	, init: function () {
 		
@@ -102,6 +103,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
+            , displayColourColumn: false
 		});
 		
 		this.imageContainerPanel = new Ext.Panel({
@@ -127,6 +129,11 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		    ]
 	    });
 	    
+		this.seriesPalette = new Sbi.worksheet.SeriesPalette({
+			height: 300
+			, width: 150
+			, closeAction: 'hide'
+		});
 	    
 		this.form = new Ext.form.FormPanel({
 			border: false
@@ -138,6 +145,17 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 					, items: [this.showValuesCheck, this.showLegendCheck]
 				}
 				, this.axisDefinitionPanel
+				, {
+					padding: '10 10 10 10'
+					, border: false
+					, items: new Ext.Button({
+						text: LN('sbi.worksheet.seriespalette.title')
+				        , handler: function() {
+							this.seriesPalette.show();
+						} 
+						, scope: this
+					})
+				}
 			]
 		});
 	}

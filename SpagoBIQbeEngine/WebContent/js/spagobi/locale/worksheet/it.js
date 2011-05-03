@@ -118,3 +118,9 @@ Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadyprese
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
+
+
+//===================================================================
+//Sbi.worksheet.SeriesPalette
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.seriespalette.title'] = 'Tavolozza delle serie';

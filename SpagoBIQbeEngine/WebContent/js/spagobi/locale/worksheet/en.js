@@ -121,3 +121,9 @@ Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadyprese
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+
+
+//===================================================================
+//Sbi.worksheet.SeriesPalette
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.seriespalette.title'] = 'Series palette';
