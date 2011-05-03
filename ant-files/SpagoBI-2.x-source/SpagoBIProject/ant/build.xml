@@ -433,9 +433,16 @@
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>	
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
 
+				    	<file name="./src/ext/sbi/tools/ManageDatasetVersions.js"/>
+				    	<file name="./src/ext/sbi/tools/ManageDatasetParameters.js"/>
+			    		<file name="./src/ext/sbi/tools/ParametersFillGrid.js"/>
+				    	<file name="./src/ext/sbi/tools/ManageDatasets.js"/>
+				    	
 				    	<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
 				    	<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
-
+				    	
+				    	<file name="./src/ext/sbi/domain/ManageDomains.js"/>
+				    	<file name="./src/ext/sbi/config/ManageConfig.js"/>	
 				    </filelist>
 
 				</concat>
