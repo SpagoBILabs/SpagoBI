@@ -24,6 +24,7 @@ package it.eng.spagobi.tools.dataset.service;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
@@ -32,6 +33,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -59,6 +61,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -242,6 +245,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);	
 				List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
 				getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);	
+				ConfigSingleton configSingleton = ConfigSingleton.getInstance();
+				SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				String pathh = (String) sb.getCharacters();
+				String filePath= SpagoBIUtilities.readJndiResource(pathh);
+				filePath += "/dataset/files";
+				File dir = new File(filePath);
+	   			String[] fileNames = dir.list();
+	   			getSessionContainer().setAttribute("fileNames", fileNames);	
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"Exception retrieving dataset types", e);
