@@ -109,6 +109,7 @@ Ext.extend(
 				configurationObject : null,
 				tbInfoButton: null,
 				tbProfAttrsButton : null,
+				tbTransfInfoButton: null,
 				gridForm : null,
 				mainElementsStore : null,
 				profileAttributesStore: null,
@@ -134,10 +135,16 @@ Ext.extend(
 					if(itemId !== undefined && itemId !== null && itemId === 'advanced'){
 						this.tbInfoButton.show();
 						this.tbProfAttrsButton.show();
+						this.tbTransfInfoButton.hide();
+					}else if(itemId !== undefined && itemId !== null && itemId === 'transf'){
+						this.tbTransfInfoButton.show();
+						this.tbInfoButton.hide();
+						this.tbProfAttrsButton.hide();
 					}else{
 						this.tbInfoButton.hide();
 						this.tbProfAttrsButton.hide();
-					}
+						this.tbTransfInfoButton.hide();
+					}	
 				}
 			
 				,activateTransfForm : function(combo, record, index) {
@@ -334,6 +341,15 @@ Ext.extend(
 		 	            scope: this
 		 	            });
 					tbButtonsArray.push(this.tbInfoButton);
+					
+					this.tbTransfInfoButton = new Ext.Toolbar.Button({
+		 	            text: LN('sbi.ds.help'),
+		 	            iconCls: 'icon-info',
+		 	            handler: this.transfInfo,
+		 	            width: 30,
+		 	            scope: this
+		 	            });
+					tbButtonsArray.push(this.tbTransfInfoButton);
 					this.configurationObject.tbButtonsArray = tbButtonsArray;
 
 					this.initTabItems();
@@ -540,13 +556,26 @@ Ext.extend(
 						xtype : 'combo'
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
-
-					this.detailFileName = new Ext.form.TextField({
-						maxLength : 40, minLength : 1,
-						regexText : LN('sbi.roles.alfanumericString'),
+					
+					this.fileNamesStore = new Ext.data.SimpleStore({
+						fields : ['fileName'],
+						data : config.fileTypes,
+						autoLoad : false
+					});
+					
+					this.detailFileName = new Ext.form.ComboBox({
+						name : 'fileName',
+						store : this.fileNamesStore,
+						width : 80,
 						fieldLabel : LN('sbi.ds.fileName'),
+						displayField : 'fileName', 
+						valueField : 'fileName', 
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
 						allowBlank : true, validationEvent : true,
-						name : 'fileName'
+						xtype : 'combo'
 					});
 
 					this.detailDataSource = new Ext.form.ComboBox({
@@ -1545,6 +1574,25 @@ Ext.extend(
 						});
 					};
 					win_info_2.show();
+			    }
+				
+				,transfInfo: function() {		
+					var win_info_4;
+					if(!win_info_4){
+						win_info_4= new Ext.Window({
+							id:'win_info_4',
+							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsrules.html'},             				
+							layout:'fit',
+							width:650,
+							height:350,
+							autoScroll: true,
+							closeAction:'close',
+							buttonAlign : 'left',
+							plain: true,
+							title: LN('sbi.ds.help')
+						});
+					};
+					win_info_4.show();
 			    }
 				
 				,profileAttrs: function() {		
