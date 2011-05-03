@@ -625,8 +625,17 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	    Integer transformerId = domainTrasfIds.get(trasfTypeCd);
 		
 	    String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME);
+	    if(pivotColName!=null){
+	    	pivotColName = pivotColName.trim();
+	    }
 		String pivotColValue = getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE);
+		if(pivotColValue!=null){
+			pivotColValue = pivotColValue.trim();
+	    }
 		String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME);
+		if(pivotRowName!=null){
+			pivotRowName = pivotRowName.trim();
+	    }
 		Boolean pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
 		
 		if(pivotColName != null && !pivotColName.equals("")){
