@@ -28,7 +28,8 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.ResponseContainerAccess;
 import it.eng.spago.base.ResponseContainerPortletAccess;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 import javax.portlet.PortletPreferences;
@@ -111,12 +112,13 @@ public class ChannelUtilities {
 	 * @param httpRequest the http request
 	 * 
 	 * @return the spago bi context name
+	 * @throws EMFUserError 
 	 */
 	public static String getSpagoBIContextName(HttpServletRequest httpRequest) {
 		String contextName = "Spagobi";
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
+		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
-		String sbiMode = (String)spagoconfig.getAttribute("SPAGOBI.SPAGOBI-MODE.mode");   
+		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 		// based on mode get spago object and url builder
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			contextName = httpRequest.getContextPath();
@@ -132,11 +134,12 @@ public class ChannelUtilities {
 	 * Checks if is web running.
 	 * 
 	 * @return true, if is web running
+	 * @throws EMFUserError 
 	 */
 	public static boolean isWebRunning() {
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
+		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
-		String sbiMode = (String)spagoconfig.getAttribute("SPAGOBI.SPAGOBI-MODE.mode");   
+		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 		if( (sbiMode!=null) && sbiMode.equalsIgnoreCase("WEB") ) {
 			return true;
 		} else {
@@ -149,11 +152,12 @@ public class ChannelUtilities {
 	 * Checks if is portlet running.
 	 * 
 	 * @return true, if is portlet running
+	 * @throws EMFUserError 
 	 */
 	public static boolean isPortletRunning() {
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
+		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
-		String sbiMode = (String)spagoconfig.getAttribute("SPAGOBI.SPAGOBI-MODE.mode");   
+		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 		if( (sbiMode==null) || !sbiMode.equalsIgnoreCase("WEB")){
 			return true;
 		} else {

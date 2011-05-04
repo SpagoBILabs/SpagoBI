@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.dossier.utils;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.dossier.actions.DossierDownloadAction;
@@ -53,6 +54,7 @@ public class DossierUtilities {
 	 * @param request the request
 	 * 
 	 * @return the dossier service url
+	 * @throws EMFUserError 
 	 */
 	public static String getDossierServiceUrl(HttpServletRequest request) {
 		logger.debug("IN");

@@ -26,13 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.InputSource;
 
-import it.eng.spagobi.commons.dao.ConfigDAO;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiConfig;
-import it.eng.spagobi.services.common.EnginConf;
 
 /**
  * Defines the Singleton SpagoBI implementations.
@@ -48,16 +46,21 @@ public class SingletonConfig {
 	private HashMap<String, String> cache=null;
 	
 	public synchronized static SingletonConfig getInstance() {
+		try{
 		if (instance == null)
 			instance = new SingletonConfig();
+		}catch(Exception e) {
+			logger.error("Impossible to load configuration for report engine",e);
+		}
 		return instance;
 	}
 
-	private SingletonConfig() {
+	private SingletonConfig() throws Exception {
 		logger.debug("Resource: Table SbiConfig");
 		
-		IConfigDAO dao= new ConfigDAO();  // sostituirlo con la DAOFactory.getConfigDAO()  che c'è
+		IConfigDAO dao= null;  
 		try {
+			dao= DAOFactory.getSbiConfigDAO();
 			List<SbiConfig> allConfig= dao.loadAllConfigParameters();
 			
 			for (SbiConfig config: allConfig ) {
@@ -65,7 +68,7 @@ public class SingletonConfig {
 				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
 			}
 			
-		} catch (Exception e) {
+		} catch (EMFUserError e) {
 			logger.error("Impossible to load configuration for report engine",e);
 		}
 	}
