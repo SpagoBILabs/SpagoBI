@@ -171,6 +171,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
+		state.colours = this.seriesPalette.getColours();
 		return state;
 	}
 	
@@ -179,6 +180,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+		if (state.colours) this.seriesPalette.setColours(state.colours);
 	}
 
 });

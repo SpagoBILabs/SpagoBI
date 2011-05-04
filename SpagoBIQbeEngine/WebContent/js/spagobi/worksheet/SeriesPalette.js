@@ -147,5 +147,19 @@ Ext.extend(Sbi.worksheet.SeriesPalette, Ext.Window, {
 			}
 		});
 	}
+	
+	, getColours: function() {
+		var colours = [];
+		for(i = 0; i < this.store.getCount(); i++) {
+			var record = this.store.getAt(i);
+			var colour = record.data.colour;
+			colours.push(field);
+		}
+		return colours;
+	}
+	
+	, setColours: function(colours) {
+		this.store.loadData(colours);
+	}
 
 });
