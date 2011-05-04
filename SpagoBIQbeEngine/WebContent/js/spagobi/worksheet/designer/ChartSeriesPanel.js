@@ -44,18 +44,18 @@
   * - Davide Zerbetto (davide.zerbetto@eng.it)
   */
 
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.ChartSeriesPanel = function(config) {
+Sbi.worksheet.designer.ChartSeriesPanel = function(config) {
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.chartseriespanel.title')
+		title: LN('sbi.worksheet.designer.chartseriespanel.title')
 		, frame: true
-		, emptyMsg: LN('sbi.worksheet.chartseriespanel.emptymsg')
+		, emptyMsg: LN('sbi.worksheet.designer.chartseriespanel.emptymsg')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.chartSeriesPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.chartSeriesPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.chartSeriesPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.chartSeriesPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -76,19 +76,19 @@ Sbi.worksheet.ChartSeriesPanel = function(config) {
 	        	  id: 'close'
   	        	, handler: this.removeAllMeasures
   	          	, scope: this
-  	          	, qtip: LN('sbi.worksheet.chartseriespanel.tools.tt.removeall')
+  	          	, qtip: LN('sbi.worksheet.designer.chartseriespanel.tools.tt.removeall')
 	  	      }
 		]
 	});
 	
 	// constructor
-    Sbi.worksheet.ChartSeriesPanel.superclass.constructor.call(this, c);
+    Sbi.worksheet.designer.ChartSeriesPanel.superclass.constructor.call(this, c);
     
     this.on('render', this.initDropTarget, this);
     
 };
 
-Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	
 	emptyMsg : null
 	, emptyMsgPanel : null
@@ -154,7 +154,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	, initColumnModel: function(c) {
 		
 	    var serieNameColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.chartseriespanel.columns.seriename')
+	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
 	    	, dataIndex: 'seriename'
 	    	, hideable: false
 	    	, sortable: false
@@ -162,7 +162,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	    });
 		
 	    var fieldColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.chartseriespanel.columns.queryfield')
+	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.queryfield')
 	    	, dataIndex: 'alias'
 	    	, hideable: false
 	    	, sortable: false
@@ -197,7 +197,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 		}, this);
 		
 		var colourColumn = new Ext.grid.Column({
-			header: LN('sbi.worksheet.chartseriespanel.columns.colour')
+			header: LN('sbi.worksheet.designer.chartseriespanel.columns.colour')
 			, width: 60
 			, dataIndex: 'colour'
 			, editor: colourFieldEditor
@@ -277,8 +277,8 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 			this.notifyDropFromMeasuresContainerPanel(ddSource);
 		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'attributesContainerPanel') {
 			Ext.Msg.show({
-				   title: LN('sbi.worksheet.chartseriespanel.cannotdrophere.title'),
-				   msg: LN('sbi.worksheet.chartseriespanel.cannotdrophere.attributes'),
+				   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
+				   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.WARNING
 			});
@@ -293,8 +293,8 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 			// if the field is an attribute show a warning
 			if (aRow.data.nature === 'attribute') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.chartseriespanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.chartseriespanel.cannotdrophere.attributes'),
+					   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.WARNING
 				});
@@ -303,8 +303,8 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.chartseriespanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.chartseriespanel.cannotdrophere.postlinecalculated'),
+					   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 				});
@@ -390,8 +390,8 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 		// if the measure is already present, does not insert it 
 		if (this.containsMeasure(theRecord)) {
 			Ext.Msg.show({
-				   title: LN('sbi.worksheet.chartseriespanel.cannotdrophere.title'),
-				   msg: LN('sbi.worksheet.chartseriespanel.cannotdrophere.measurealreadypresent'),
+				   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
+				   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealreadypresent'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.WARNING
 			});

@@ -41,16 +41,16 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.DesignToolsFieldsPanel = function(config) { 
+Sbi.worksheet.designer.DesignToolsFieldsPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designtoolsfieldspanel.title')
+		title: LN('sbi.worksheet.designer.designtoolsfieldspanel.title')
 	};
 		
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsFieldsPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsFieldsPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designToolsFieldsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designToolsFieldsPanel);
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
@@ -74,7 +74,7 @@ Sbi.worksheet.DesignToolsFieldsPanel = function(config) {
       	items: [this.grid],
       	tools: [{
 		    id:'gear',
-		    qtip: LN('sbi.worksheet.designtoolsfieldspanel.refresh'),
+		    qtip: LN('sbi.worksheet.designer.designtoolsfieldspanel.refresh'),
 		    handler: function(){
       			this.refresh();
 		    }
@@ -83,11 +83,11 @@ Sbi.worksheet.DesignToolsFieldsPanel = function(config) {
 	});
 
 	// constructor	
-	Sbi.worksheet.DesignToolsFieldsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.DesignToolsFieldsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.DesignToolsFieldsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.DesignToolsFieldsPanel, Ext.Panel, {
 	
     services: null
     , grid: null

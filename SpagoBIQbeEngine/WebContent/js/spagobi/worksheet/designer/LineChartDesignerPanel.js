@@ -41,16 +41,16 @@
  * 
  * Authors - Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.LineChartDesignerPanel = function(config) { 
+Sbi.worksheet.designer.LineChartDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.linechartdesignerpanel.title')
+		title: LN('sbi.worksheet.designer.linechartdesignerpanel.title')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.lineChartDesignerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.lineChartDesignerPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.lineChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.lineChartDesignerPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,13 +63,13 @@ Sbi.worksheet.LineChartDesignerPanel = function(config) {
 		items: [this.form]
 	}
 	
-	Sbi.worksheet.LineChartDesignerPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.LineChartDesignerPanel.superclass.constructor.call(this, c);
 	
 	this.on('afterLayout', this.addToolTips, this);
 
 };
 
-Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 
 	form: null
 	, items: null
@@ -103,7 +103,7 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.linechartdesignerpanel.form.orientation.title'),
+			fieldLabel:     LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.title'),
 			name:           'orientation',
 			displayField:   'description',
 			valueField:     'name',
@@ -111,31 +111,31 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 			//anchor:			'95%',
 			store:          new Ext.data.ArrayStore({
 								fields : ['name', 'description']
-								, data : [['vertical', LN('sbi.worksheet.linechartdesignerpanel.form.orientation.vertical')]
-									, ['horizontal', LN('sbi.worksheet.linechartdesignerpanel.form.orientation.horizontal')]]
+								, data : [['vertical', LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.vertical')]
+									, ['horizontal', LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.horizontal')]]
 							})
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.linechartdesignerpanel.form.showvalues.title')
+			, fieldLabel: LN('sbi.worksheet.designer.linechartdesignerpanel.form.showvalues.title')
 		});
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.linechartdesignerpanel.form.showlegend.title')
+			, fieldLabel: LN('sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.title')
 		});
 		
 		
-		this.categoryContainerPanel = new Sbi.worksheet.ChartCategoryPanel({
+		this.categoryContainerPanel = new Sbi.worksheet.designer.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
 		});
 		
-		this.seriesContainerPanel = new Sbi.worksheet.ChartSeriesPanel({
+		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 400
             , height: 120
             , initialData: []
@@ -181,14 +181,14 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 			    	, items: [
 		  			    {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.linechartdesignerpanel.form.fieldsets.type')
+//							, title: LN('sbi.worksheet.designer.linechartdesignerpanel.form.fieldsets.type')
 							, columnWidth : .7
 							, border: false
 							, items: [this.typeRadioGroup]
 						}
 						, {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.linechartdesignerpanel.form.fieldsets.options')
+//							, title: LN('sbi.worksheet.designer.linechartdesignerpanel.form.fieldsets.options')
 							, columnWidth : .3
 							, border: false
 							, items: [this.orientationCombo, this.showValuesCheck, this.showLegendCheck]
@@ -211,15 +211,15 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 	
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-side-by-side-linechart',
-			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.side-by-side'),
+			html: LN('sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.side-by-side'),
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-stacked-linechart',
-			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.stacked')
+			html: LN('sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.stacked')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-percent-stacked-linechart',
-			html: LN('sbi.worksheet.linechartdesignerpanel.form.type.tooltip.percent-stacked')
+			html: LN('sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
 	

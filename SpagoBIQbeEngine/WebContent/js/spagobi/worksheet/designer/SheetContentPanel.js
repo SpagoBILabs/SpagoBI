@@ -41,16 +41,16 @@
  * 
  * Authors - Alberto Ghedin (alberto.ghedin@eng.it), Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.SheetContentPanel = function(config) { 
+Sbi.worksheet.designer.SheetContentPanel = function(config) { 
 
 	var defaultSettings = {
-		emptyMsg: LN('sbi.worksheet.sheetcontentpanel.emptymsg')
+		emptyMsg: LN('sbi.worksheet.designer.sheetcontentpanel.emptymsg')
 	};
 		
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetContentPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetContentPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetContentPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.sheetContentPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,12 +63,12 @@ Sbi.worksheet.SheetContentPanel = function(config) {
 		style:'padding:5px 15px 5px',
 		items: [this.emptyMsgPanel]
 	}
-	Sbi.worksheet.SheetContentPanel.superclass.constructor.call(this, c);	
+	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);	
 	this.on('render', this.initDropTarget, this);
 
 };
 
-Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	
 	emptyMsg: null
 	, emptyMsgPanel: null
@@ -134,21 +134,21 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 				id: 'close'
 	        	, handler: this.removeDesigner
 	          	, scope: this
-	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
 		});
 		this.insertDesigner();
 	}
 	
 	, insertBarchartDesigner: function () {
-		this.designer = new Sbi.worksheet.BarChartDesignerPanel({
+		this.designer = new Sbi.worksheet.designer.BarChartDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
 				id: 'close'
 	        	, handler: this.removeDesigner
 	          	, scope: this
-	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}/*, {
 				id: 'help'
 		        	, handler: function() {alert(this.designer.getFormState().toSource());}
@@ -175,42 +175,42 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	}
 	
 	, insertLinechartDesigner: function () {
-		this.designer = new Sbi.worksheet.LineChartDesignerPanel({
+		this.designer = new Sbi.worksheet.designer.LineChartDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
 				id: 'close'
 	        	, handler: this.removeDesigner
 	          	, scope: this
-	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
 		});
 		this.insertDesigner();
 	}
 	
 	, insertPiechartDesigner: function () {
-		this.designer = new Sbi.worksheet.PieChartDesignerPanel({
+		this.designer = new Sbi.worksheet.designer.PieChartDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
 				id: 'close'
 	        	, handler: this.removeDesigner
 	          	, scope: this
-	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
 		});
 		this.insertDesigner();
 	}
 	
 	, insertTableDesigner: function () {
-		this.designer = new Sbi.worksheet.TableDesignerPanel({
+		this.designer = new Sbi.worksheet.designer.TableDesignerPanel({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
 				id: 'close'
 	        	, handler: this.removeDesigner
 	          	, scope: this
-	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
+	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
 		});
 		this.insertDesigner();

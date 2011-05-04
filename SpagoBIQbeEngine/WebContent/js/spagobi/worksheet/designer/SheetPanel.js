@@ -41,15 +41,15 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.SheetPanel = function(config) { 
+Sbi.worksheet.designer.SheetPanel = function(config) { 
 
 	
 	var defaultSettings = {};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetsPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetsPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.sheetsPanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -68,12 +68,12 @@ Sbi.worksheet.SheetPanel = function(config) {
 	
 	c = Ext.apply(config,c);
 	Ext.apply(this,c);
-	Sbi.worksheet.SheetPanel.superclass.constructor.call(this, c);	 	
+	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
 
 
 };
 
-Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	titlePanel: null,
 	filtersPanel: null,
 	contentPanel: null,
@@ -82,13 +82,13 @@ Ext.extend(Sbi.worksheet.SheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		this.layout = 'layout_headerfooter';
-		this.titlePanel = new Sbi.worksheet.SheetTitlePanel({});
-		this.filtersPanel = new Sbi.worksheet.DesignSheetFiltersPanel({
+		this.titlePanel = new Sbi.worksheet.designer.SheetTitlePanel({});
+		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 			style:'padding:0px 15px 0px 15px'
 			, ddGroup: 'worksheetDesignerDDGroup'
 		});
-		this.contentPanel = new Sbi.worksheet.SheetContentPanel({});
-		this.footerPanel  = new Sbi.worksheet.SheetTitlePanel({});
+		this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({});
+		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.contentPanel.flex = 4;
 	}
 

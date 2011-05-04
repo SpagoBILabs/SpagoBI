@@ -124,7 +124,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	}
 	
 	, initStore: function(c) {
-		this.store =  new Ext.data.SimpleStore({
+		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
 		});
 		// if there are initialData, load them into the store
@@ -275,6 +275,15 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 			attributes.push(record.data);
 		}
 		return attributes;
+	}
+	
+	, setAttributes: function (attributes) {
+		this.removeAllAttributes();
+		for (var i = 0; i < attributes.length; i++) {
+  			var attribute = attributes[i];
+  			var record = new this.Record(attribute);
+  			this.store.add(record); 
+  		}
 	}
 	
 	, removeSelectedAttributes: function() {

@@ -43,14 +43,14 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.DesignToolsPanel = function(config) { 
+Sbi.worksheet.designer.DesignToolsPanel = function(config) { 
 
 	var defaultSettings = {};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designTools) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designTools);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designTools) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designTools);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -65,24 +65,24 @@ Sbi.worksheet.DesignToolsPanel = function(config) {
             },
             items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	}
-	Sbi.worksheet.DesignToolsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.DesignToolsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	designToolsFieldsPanel: null,
 	designToolsPallettePanel: null,
 	designToolsLayoutPanel: null,
 
 	initPanels: function(){
-		this.designToolsFieldsPanel = new Sbi.worksheet.DesignToolsFieldsPanel({
+		this.designToolsFieldsPanel = new Sbi.worksheet.designer.DesignToolsFieldsPanel({
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
 	        	, type: 'queryFieldsPanel'
 	        }
 		});
-		this.designToolsPallettePanel = new Sbi.worksheet.DesignToolsPallettePanel();
-		this.designToolsLayoutPanel = new Sbi.worksheet.DesignToolsLayoutPanel();
+		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel();
+		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel();
 		this.designToolsFieldsPanel.flex = 1;
 		this.designToolsPallettePanel.flex = 1;
 		this.designToolsLayoutPanel.flex = 1;

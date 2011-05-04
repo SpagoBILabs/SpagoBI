@@ -135,4 +135,19 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 		return crosstabDef;
 	}
 	
+	, getFormState: function() {
+		var state = {};
+		state.designer = 'Pivot Table';
+		var crosstabDefinition = this.getCrosstabDefinition();
+		state = Ext.apply(state, crosstabDefinition);
+		return state;
+	}
+	
+	, setFormState: function(state) {
+		if (state.rows) this.rowsContainerPanel.setAttributes(state.rows);
+		if (state.columns) this.columnsContainerPanel.setAttributes(state.columns);
+		if (state.measures) this.measuresContainerPanel.setMeasures(state.measures);
+		if (state.config) this.measuresContainerPanel.setCrosstabConfig(state.config);
+	}
+	
 });

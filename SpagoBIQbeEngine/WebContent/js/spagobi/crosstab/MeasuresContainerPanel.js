@@ -290,6 +290,10 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 		return this.crosstabConfig;
 	}
 	
+	, setCrosstabConfig: function(crosstabConfig) {
+		this.crosstabConfig = crosstabConfig;
+	}
+	
 	, getContainedMeasures: function () {
 		var measures = [];
 		for(i = 0; i < this.store.getCount(); i++) {
@@ -297,6 +301,15 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 			measures.push(record.data);
 		}
 		return measures;
+	}
+	
+	, setMeasures: function (measures) {
+		this.removeAllMeasures();
+		for (var i = 0; i < measures.length; i++) {
+  			var measure = measures[i];
+  			var record = new this.Record(measure);
+  			this.store.add(record); 
+  		}
 	}
 	
 	, removeSelectedMeasures: function() {

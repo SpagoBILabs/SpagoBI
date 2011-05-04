@@ -41,16 +41,16 @@
  * 
  * Authors - Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.PieChartDesignerPanel = function(config) { 
+Sbi.worksheet.designer.PieChartDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.piechartdesignerpanel.title')
+		title: LN('sbi.worksheet.designer.piechartdesignerpanel.title')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.pieChartDesignerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.pieChartDesignerPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.pieChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.pieChartDesignerPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,11 +63,11 @@ Sbi.worksheet.PieChartDesignerPanel = function(config) {
 		items: [this.form]
 	}
 	
-	Sbi.worksheet.PieChartDesignerPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.PieChartDesignerPanel.superclass.constructor.call(this, c);
 
 };
 
-Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 
 	form: null
 	, items: null
@@ -82,22 +82,22 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.piechartdesignerpanel.form.showvalues.title')
+			, fieldLabel: LN('sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title')
 		});
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
-			, fieldLabel: LN('sbi.worksheet.piechartdesignerpanel.form.showlegend.title')
+			, fieldLabel: LN('sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title')
 		});
 		
-		this.categoryContainerPanel = new Sbi.worksheet.ChartCategoryPanel({
+		this.categoryContainerPanel = new Sbi.worksheet.designer.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
 		});
 		
-		this.seriesContainerPanel = new Sbi.worksheet.ChartSeriesPanel({
+		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 400
             , height: 120
             , initialData: []
@@ -131,7 +131,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		    ]
 	    });
 	    
-		this.seriesPalette = new Sbi.worksheet.SeriesPalette({
+		this.seriesPalette = new Sbi.worksheet.designer.SeriesPalette({
 			height: 300
 			, width: 150
 			, closeAction: 'hide'
@@ -144,7 +144,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 					xtype: 'form'
 					, height: 55
 					, style: 'padding: 10px 0px 0px 15px;'
-				//	, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.options')
+				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
 					, items: [this.showValuesCheck, this.showLegendCheck]
 				}
@@ -153,7 +153,7 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 					padding: '10 10 10 10'
 					, border: false
 					, items: new Ext.Button({
-						text: LN('sbi.worksheet.seriespalette.title')
+						text: LN('sbi.worksheet.designer.seriespalette.title')
 				        , handler: function() {
 							this.seriesPalette.show();
 						} 

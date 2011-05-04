@@ -43,14 +43,14 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.SheetsContainerPanel = function(config) { 
+Sbi.worksheet.designer.SheetsContainerPanel = function(config) { 
 	
 	var defaultSettings = {};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetsContainerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetsContainerPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetsContainerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.sheetsContainerPanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -75,11 +75,11 @@ Sbi.worksheet.SheetsContainerPanel = function(config) {
 	this.on('render',function(){this.addTab();},this);
 	
 	this.initPanel();
-	Sbi.worksheet.SheetsContainerPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
+Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	index: null,
 	
 	initPanel: function(){
@@ -95,7 +95,7 @@ Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
 	, addTab: function(){
 		this.suspendEvents();
 		this.remove('addTab');
-		var sheet = new Sbi.worksheet.SheetPanel({
+		var sheet = new Sbi.worksheet.designer.SheetPanel({
 	        title: 'Sheet ' + (++this.index),
 	        closable:true
 	    }); 
@@ -109,8 +109,8 @@ Ext.extend(Sbi.worksheet.SheetsContainerPanel, Ext.TabPanel, {
 	    
 	    tab.on('beforeClose',function(panel){
 			Ext.MessageBox.confirm(
-					LN('sbi.worksheet.msg.deletetab.title'),
-					LN('sbi.worksheet.msg.deletetab.msg'),            
+					LN('sbi.worksheet.designer.msg.deletetab.title'),
+					LN('sbi.worksheet.designer.msg.deletetab.msg'),            
 		            function(btn, text) {
 		                if (btn=='yes') {
 		                	this.remove(panel);

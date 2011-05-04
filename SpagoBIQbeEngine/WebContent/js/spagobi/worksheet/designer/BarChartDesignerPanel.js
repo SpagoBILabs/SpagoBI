@@ -41,16 +41,16 @@
  * 
  * Authors - Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.BarChartDesignerPanel = function(config) { 
+Sbi.worksheet.designer.BarChartDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.barchartdesignerpanel.title')
+		title: LN('sbi.worksheet.designer.barchartdesignerpanel.title')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.barChartDesignerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.barChartDesignerPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.barChartDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.barChartDesignerPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,13 +63,13 @@ Sbi.worksheet.BarChartDesignerPanel = function(config) {
 		items: [this.form]
 	}
 	
-	Sbi.worksheet.BarChartDesignerPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.BarChartDesignerPanel.superclass.constructor.call(this, c);
 	
 	this.on('afterLayout', this.addToolTips, this);
 
 };
 
-Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 
 	form: null
 	, items: null
@@ -103,7 +103,7 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.barchartdesignerpanel.form.orientation.title'),
+			fieldLabel:     LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.title'),
 			name:           'orientation',
 			displayField:   'description',
 			valueField:     'name',
@@ -111,8 +111,8 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			//anchor:			'95%',
 			store:          new Ext.data.ArrayStore({
 								fields : ['name', 'description']
-								, data : [['vertical', LN('sbi.worksheet.barchartdesignerpanel.form.orientation.vertical')]
-									, ['horizontal', LN('sbi.worksheet.barchartdesignerpanel.form.orientation.horizontal')]]
+								, data : [['vertical', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical')]
+									, ['horizontal', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal')]]
 							})
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
@@ -120,24 +120,24 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		this.showValuesCheck = new Ext.form.Checkbox({
 			name: 'showvalues'
 			, checked: false
-			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showvalues.title')
+			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title')
 		});
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
 			name: 'showlegend'
 			, checked: false
-			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showlegend.title')
+			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
 		});
 		
 		
-		this.categoryContainerPanel = new Sbi.worksheet.ChartCategoryPanel({
+		this.categoryContainerPanel = new Sbi.worksheet.designer.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
 		});
 		
-		this.seriesContainerPanel = new Sbi.worksheet.ChartSeriesPanel({
+		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 400
             , height: 120
             , initialData: []
@@ -183,14 +183,14 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 			    	, items: [
 		  			    {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.type')
+//							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.type')
 							, columnWidth : .7
 							, border: false
 							, items: [this.typeRadioGroup]
 						}
 						, {
 							xtype: 'fieldset'
-//							, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.options')
+//							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 							, columnWidth : .3
 							, border: false
 							, items: [this.orientationCombo, this.showValuesCheck, this.showLegendCheck]
@@ -213,15 +213,15 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 	
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-side-by-side-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.side-by-side'),
+			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side'),
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-stacked-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.stacked')
+			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-percent-stacked-barchart',
-			html: LN('sbi.worksheet.barchartdesignerpanel.form.type.tooltip.percent-stacked')
+			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
 	

@@ -42,9 +42,9 @@
  * 		Alberto Ghedin  (alberto.ghedin@eng.it)
  * 		Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.SheetTitlePanel = function(config) { 
+Sbi.worksheet.designer.SheetTitlePanel = function(config) { 
 	
 	var defaultSettings = {		
 		border: false,
@@ -54,8 +54,8 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 		height: 90
 	};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetTitlePanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetTitlePanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetTitlePanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.sheetTitlePanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -88,11 +88,11 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
         }]
 	};
 	
-	Sbi.worksheet.SheetTitlePanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
+Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	loadImageCombo: null,
 	loadImageFileBrows: null,
 	titlePanel: null,
@@ -138,7 +138,7 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			forceSelection: true,
 			allowBlank: 	false,
 			editable:       false,
-			fieldLabel:     LN('sbi.worksheet.image'),
+			fieldLabel:     LN('sbi.worksheet.designer.image'),
 			name:           'image',
 			displayField:   'image',
 			valueField:     'image',
@@ -149,7 +149,7 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 		//text field for load the image in the server from the file system
 		this.imgFile = new Ext.form.TextField({
 			inputType:	'file',
-			fieldLabel: LN('sbi.worksheet.image'),
+			fieldLabel: LN('sbi.worksheet.designer.image'),
 			anchor:			'95%',
 			allowBlank: false
 		});
@@ -208,7 +208,7 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.position'),
+			fieldLabel:     LN('sbi.worksheet.designer.position'),
 			name:           'position',
 			displayField:   'position',
 			valueField:     'position',
@@ -262,8 +262,8 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
                 waitMsg: 'Uploading your image...',
                 success: function(form, action) {
         			Ext.Msg.show({
-     				   title: LN('sbi.worksheet.sheettitlepanel.uploadfile.confirm.title'),
-     				   msg: LN('sbi.worksheet.sheettitlepanel.uploadfile.confirm.msg'),
+     				   title: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'),
+     				   msg: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'),
      				   buttons: Ext.Msg.OK,
      				   icon: Ext.MessageBox.INFO
      				});
@@ -306,8 +306,8 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 		}
 		if(messageBox){
 			Ext.Msg.show({
-				   title: LN('sbi.worksheet.msg.invalidinput.title'),
-				   msg: LN('sbi.worksheet.msg.invalidinput.msg'),
+				   title: LN('sbi.worksheet.designer.msg.invalidinput.title'),
+				   msg: LN('sbi.worksheet.designer.msg.invalidinput.msg'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
 				});

@@ -41,18 +41,18 @@
  * 
  * Authors - Davide Zerbetto (davide.zerbetto@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.DesignSheetFiltersPanel = function(config) { 
+Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designsheetfilterspanel.title')
+		title: LN('sbi.worksheet.designer.designsheetfilterspanel.title')
 		, frame: true
-		, emptyMsg: LN('sbi.worksheet.designsheetfilterspanel.emptymsg')
+		, emptyMsg: LN('sbi.worksheet.designer.designsheetfilterspanel.emptymsg')
 	};
 		
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designSheetFiltersPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designSheetFiltersPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designSheetFiltersPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designSheetFiltersPanel);
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
@@ -70,13 +70,13 @@ Sbi.worksheet.DesignSheetFiltersPanel = function(config) {
 	});
 
 	// constructor	
-	Sbi.worksheet.DesignSheetFiltersPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.DesignSheetFiltersPanel.superclass.constructor.call(this, c);
 	
 	this.on('render', this.initDropTarget, this);
 
 };
 
-Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	store: null
 	, emptyMsgPanel: null
@@ -125,8 +125,8 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
 			Ext.Msg.show({
-			   title: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.title'),
-			   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.unknownsource'),
+			   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
+			   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.unknownsource'),
 			   buttons: Ext.Msg.OK,
 			   icon: Ext.MessageBox.WARNING
 			});
@@ -140,8 +140,8 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 			// if the attribute is already present show a warning
 			if (this.store.find('id', aRow.data.id) !== -1) {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.attributealreadypresent'),
+					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.attributealreadypresent'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.WARNING
 				});
@@ -150,8 +150,8 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 			// if the field is a measure show a warning
 			if (aRow.data.nature === 'measure') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.measures'),
+					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.measures'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.WARNING
 				});
@@ -160,8 +160,8 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designsheetfilterspanel.cannotdrophere.postlinecalculated'),
+					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 				});

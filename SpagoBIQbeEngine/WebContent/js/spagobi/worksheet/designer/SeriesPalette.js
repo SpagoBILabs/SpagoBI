@@ -44,17 +44,17 @@
   * - Davide Zerbetto (davide.zerbetto@eng.it)
   */
 
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.SeriesPalette = function(config) {
+Sbi.worksheet.designer.SeriesPalette = function(config) {
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.seriespalette.title')
+		title: LN('sbi.worksheet.designer.seriespalette.title')
 		, frame: true
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.seriesPalette) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.seriesPalette);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.seriesPalette) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.seriesPalette);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -73,11 +73,11 @@ Sbi.worksheet.SeriesPalette = function(config) {
 	});
 	
 	// constructor
-    Sbi.worksheet.SeriesPalette.superclass.constructor.call(this, c);
+    Sbi.worksheet.designer.SeriesPalette.superclass.constructor.call(this, c);
     
 };
 
-Ext.extend(Sbi.worksheet.SeriesPalette, Ext.Window, {
+Ext.extend(Sbi.worksheet.designer.SeriesPalette, Ext.Window, {
 
 	grid : null
 	, colourFieldEditor : null
