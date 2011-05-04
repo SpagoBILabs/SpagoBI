@@ -115,7 +115,9 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        layout: 'table'
 	        , baseCls:'x-plain'
-	        , padding: '10 10 10 10'
+		    , cls: 'centered-panel' //for center the panel
+			, width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel
+	        , padding: '0 10 10 10'
 	        , layoutConfig: {columns : 2}
 	        // applied to child components
 	        //, defaults: {height: 100}
@@ -139,7 +141,9 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 			border: false
 			, items: [
 				{
-					xtype: 'fieldset'
+					xtype: 'form'
+					, height: 55
+					, style: 'padding: 10px 0px 0px 15px;'
 				//	, title: LN('sbi.worksheet.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
 					, items: [this.showValuesCheck, this.showLegendCheck]
