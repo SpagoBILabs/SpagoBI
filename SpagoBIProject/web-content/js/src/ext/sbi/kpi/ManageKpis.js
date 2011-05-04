@@ -90,12 +90,12 @@ Sbi.kpi.ManageKpis = function(config) {
 	if(config.textAreaWidth){
 		this.textAreaWidth = config.textAreaWidth;
     }else{
-    	this.textAreaWidth = 250;
+    	this.textAreaWidth = 310;
     }
 	if(config.fieldsDefaultWidth){
 		this.fieldsDefaultWidth = config.fieldsDefaultWidth;
 	}else{
-		this.fieldsDefaultWidth = 200;
+		this.fieldsDefaultWidth = 280;
 	}
 
 	this.gridColumnNumber = config.gridColumnNumber;
@@ -189,9 +189,9 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 			                                        ];
 		}else{
 			this.configurationObject.gridColItems = [
-			                                         {id:'name',header: LN('sbi.generic.name'), width: 125, sortable: true, locked:false, dataIndex: 'name'},
-			                                         {header: LN('sbi.generic.code'), width: 125, sortable: true, dataIndex: 'code'},
-			                                         {header: LN('sbi.kpis.threshold'), width: 110, sortable: true, dataIndex: 'threshold'}
+			                                         {id:'name',header: LN('sbi.generic.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
+			                                         {header: LN('sbi.generic.code'), width: 140, sortable: true, dataIndex: 'code'},
+			                                         {header: LN('sbi.kpis.threshold'), width: 130, sortable: true, dataIndex: 'threshold'}
 			                                        ];
 		}
 		
@@ -501,12 +501,12 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	 		   	 itemId: 'items-detail',   	              
 	 		   	 //columnWidth: 0.4,
 	             xtype: 'fieldset',
-	             labelWidth: 90,
+	             labelWidth: 110,
 	             defaults: {width: this.fieldsDefaultWidth, border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
-	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
+	             bodyStyle: Ext.isIE ? 'padding:0 0 10px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
 	                 "margin-left": "10px", 
@@ -528,12 +528,12 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		 		   	// columnWidth: 0.4,
 		             xtype: 'fieldset',
 		             scope: this,
-		             labelWidth: 90,
+		             labelWidth: 110,
 		             defaults: {width: this.fieldsDefaultWidth, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
-		             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:0px 0px;',
+		             bodyStyle: Ext.isIE ? 'padding:0 0 10px 15px;' : 'padding:10px 15px;',
 		             border: false,
 		             style: {
 		                 "margin-left": "10px", 
@@ -572,7 +572,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.thrWin = new Ext.Window({
 			title: LN('sbi.lookup.Select') ,   
             layout      : 'fit',
-            width       : 955,
+            width       : 1020,
             height      : 350,
             y			: 15,
             closeAction :'close',

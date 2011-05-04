@@ -99,8 +99,8 @@ Ext.extend(Sbi.alarm.ManageContacts, Sbi.widgets.ListDetailForm, {
 											});
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.alarmcontact.name'), width: 150, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {id:'email',header:  LN('sbi.alarmcontact.email'), width: 200, sortable: true, locked:false, dataIndex: 'email'}
+		                                         {id:'name',header: LN('sbi.alarmcontact.name'), width: 170, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {id:'email',header:  LN('sbi.alarmcontact.email'), width: 240, sortable: true, locked:false, dataIndex: 'email'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.alarmcontact.contactsManagement');
@@ -181,16 +181,15 @@ Ext.extend(Sbi.alarm.ManageContacts, Sbi.widgets.ListDetailForm, {
 	 		   	itemId: 'items-detail',   	              
 	 		   	columnWidth: 0.4,
 	             xtype: 'fieldset',
-	             labelWidth: 90,
-	             defaults: {width: 200, border:false},    
+	             labelWidth: 110,
+	             defaults: {width: 280, border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
-	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
-	                 "margin-left": "10px", 
-	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+	                 "margin-left": "25px", 
+	                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-15px" : "-13px") : "15"  
 	             },
 	             items: [detailFieldId, detailFieldName, detailFieldEmail, detailFieldCell, detailFieldResources]	    	
 	    	}

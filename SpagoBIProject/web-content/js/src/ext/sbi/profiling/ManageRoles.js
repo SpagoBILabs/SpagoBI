@@ -127,8 +127,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 										});
 		
 		this.configurationObject.gridColItems = [
-					{id:'name',header: LN('sbi.attributes.headerName'), width: 180, sortable: true, locked:false, dataIndex: 'name'},
-					{header:  LN('sbi.attributes.headerDescr'), width: 180, sortable: true, dataIndex: 'description'}
+					{id:'name',header: LN('sbi.attributes.headerName'), width: 200, sortable: true, locked:false, dataIndex: 'name'},
+					{header:  LN('sbi.attributes.headerDescr'), width: 220, sortable: true, dataIndex: 'description'}
 				];
 		
 		this.configurationObject.panelTitle = LN('sbi.roles.rolesManagement');
@@ -235,16 +235,16 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		 		   	     id: 'role-detail',   	              
 		 		   	     columnWidth: 0.4,
 			             xtype: 'fieldset',
-			             labelWidth: 90,
-			             defaults: {width: 200, border:false},    
+			             labelWidth: 110,
+			             defaults: {width: 220, border:false},    
 			             defaultType: 'textfield',
 			             autoHeight: true,
 			             autoScroll  : true,
 			             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 			             border: false,
 			             style: {
-			                 "margin-left": "10px", 
-			                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  
+			                 "margin-left": "20px", 
+			                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-20px" : "-23px") : "20"  
 			             },
 			             items: [ detailFieldId, detailFieldName, detailFieldCode, 
 			                      detailFieldDescr, detailFieldNodeType]
@@ -263,8 +263,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
            xtype:'fieldset'
            ,id: 'checks-form'
            ,columnWidth: 0.8
-           ,height: 400
-           ,autoWidth: true
+           , width: 250
+	        , height: 350
            , defaults: {
                anchor: '-20' // leave room for error icon
            }
