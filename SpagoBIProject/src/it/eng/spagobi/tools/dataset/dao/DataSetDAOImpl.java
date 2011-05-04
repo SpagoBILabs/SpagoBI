@@ -868,7 +868,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aQbeDataSetDetail.setJsonQuery(qbeHibDataSet.getJsonQuery());
 			aQbeDataSetDetail.setDatamarts(qbeHibDataSet.getDatamarts());
 			SbiDataSource sbids = qbeHibDataSet.getDataSource();
-			aQbeDataSetDetail.setDataSourceLabel(sbids.getLabel());
+			if (sbids!=null){
+				aQbeDataSetDetail.setDataSourceLabel(sbids.getLabel());
+			}
 			dsActiveDetail.setDsType(QBE_DS_TYPE);
 		}
 
