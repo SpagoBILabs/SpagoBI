@@ -121,25 +121,9 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 			return;
 		}
 		var row = rows[0];
-		switch (row.json.name) {
-	        case 'Pivot Table':
-	        	this.insertCrosstabDesigner();
-	            break;
-	        case 'Bar Chart':
-	        	this.insertBarchartDesigner();
-	            break;
-	        case 'Line Chart':
-	        	this.insertLinechartDesigner();
-	            break;
-	        case 'Pie Chart':
-	        	this.insertPiechartDesigner();
-	            break;
-	        case 'Table':
-	        	this.insertTableDesigner();
-	            break;
-	        default: 
-	        	alert('Unknown widget!');
-	   }
+		var state = {};
+		state.designer = row.json.name;
+		this.addDesigner(state);
 	}
 
 	, insertCrosstabDesigner: function () {
@@ -165,7 +149,27 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 	        	, handler: this.removeDesigner
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.sheetcontentpanel.tools.tt.remove')
-			}]
+			}/*, {
+				id: 'help'
+		        	, handler: function() {alert(this.designer.getFormState().toSource());}
+		          	, scope: this
+		          	, qtip: 'getformstate'
+			}, {
+				id: 'gear'
+		        	, handler: function() {this.designer.setFormState({
+		        		  type:"stacked-barchart", 
+		        		  orientation:"horizontal", 
+		        		  showvalues:true, 
+		        		  showlegend:false, 
+		        		  category:{id:"tre", alias:"COGNOME", funct:"none", iconCls:"field", nature:"attribute"}, 
+		        		  series:[
+		        		      {id:"5", alias:"MISURA 2", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA 2", colour:"#99CC00"}, 
+		        		      {id:"quattro", alias:"MISURA", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA", colour:"#FF00FF"}
+		        		  ]
+		        	});}
+		          	, scope: this
+		          	, qtip: 'setformstate'
+			}*/]
 		});
 		this.insertDesigner();
 	}
@@ -224,6 +228,43 @@ Ext.extend(Sbi.worksheet.SheetContentPanel, Ext.Panel, {
 		this.initEmptyMsgPanel();
 		this.add(this.emptyMsgPanel);
 		this.doLayout();
+	}
+	
+	, getDesignerState: function () {
+		if (this.designer !== null) {
+			return this.designer.getFormState();
+		} else {
+			return null;
+		}
+	}
+	
+	, setDesignerState: function (state) {
+		if (this.designer !== null) {
+			this.designer.setFormState(state);
+		}
+	}
+	
+	, addDesigner: function (state) {
+		switch (state.designer) {
+	        case 'Pivot Table':
+	        	this.insertCrosstabDesigner();
+	            break;
+	        case 'Bar Chart':
+	        	this.insertBarchartDesigner();
+	            break;
+	        case 'Line Chart':
+	        	this.insertLinechartDesigner();
+	            break;
+	        case 'Pie Chart':
+	        	this.insertPiechartDesigner();
+	            break;
+	        case 'Table':
+	        	this.insertTableDesigner();
+	            break;
+	        default: 
+	        	alert('Unknown widget!');
+		}
+		this.setDesignerState(state);
 	}
 
 });

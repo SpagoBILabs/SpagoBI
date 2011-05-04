@@ -118,12 +118,14 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
-			checked: false
+			name: 'showvalues'
+			, checked: false
 			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showvalues.title')
 		});
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
-			checked: false
+			name: 'showlegend'
+			, checked: false
 			, fieldLabel: LN('sbi.worksheet.barchartdesignerpanel.form.showlegend.title')
 		});
 		
@@ -231,6 +233,27 @@ Ext.extend(Sbi.worksheet.BarChartDesignerPanel, Ext.Panel, {
 		var orientation = this.orientationCombo.getValue();
 		var newHtml = this.imageTemplate.apply([type, orientation]);
 		this.imageContainerPanel.update(newHtml);
+	}
+	
+	, getFormState: function() {
+		var state = {};
+		state.designer = 'Bar Chart';
+		state.type = this.typeRadioGroup.getValue().getGroupValue();
+		state.orientation = this.orientationCombo.getValue();
+		state.showvalues = this.showValuesCheck.getValue();
+		state.showlegend = this.showLegendCheck.getValue();
+		state.category = this.categoryContainerPanel.getCategory();
+		state.series = this.seriesContainerPanel.getContainedMeasures();
+		return state;
+	}
+	
+	, setFormState: function(state) {
+		if (state.type) this.typeRadioGroup.setValue(state.type);
+		if (state.orientation) this.orientationCombo.setValue(state.orientation);
+		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
+		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.category) this.categoryContainerPanel.setCategory(state.category);
+		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 	}
 
 });

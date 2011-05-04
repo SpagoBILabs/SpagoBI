@@ -232,5 +232,26 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 		var newHtml = this.imageTemplate.apply([type, orientation]);
 		this.imageContainerPanel.update(newHtml);
 	}
+	
+	, getFormState: function() {
+		var state = {};
+		state.designer = 'Line Chart';
+		state.type = this.typeRadioGroup.getValue().getGroupValue();
+		state.orientation = this.orientationCombo.getValue();
+		state.showvalues = this.showValuesCheck.getValue();
+		state.showlegend = this.showLegendCheck.getValue();
+		state.category = this.categoryContainerPanel.getCategory();
+		state.series = this.seriesContainerPanel.getContainedMeasures();
+		return state;
+	}
+	
+	, setFormState: function(state) {
+		if (state.type) this.typeRadioGroup.setValue(state.type);
+		if (state.orientation) this.orientationCombo.setValue(state.orientation);
+		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
+		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.category) this.categoryContainerPanel.setCategory(state.category);
+		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+	}
 
 });
