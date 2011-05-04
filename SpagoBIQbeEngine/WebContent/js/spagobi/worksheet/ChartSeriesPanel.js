@@ -139,7 +139,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 	}
 
 	, initStore: function(c) {
-		this.store =  new Ext.data.SimpleStore({
+		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'colour']
 		});
 		// if there are initialData, load them into the store
@@ -414,7 +414,7 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 		this.store.removeAll(false);
         this.getLayout().setActiveItem( 0 );
 	}
-	
+
 	, getRandomColour: function() {
 		var chars = "0123456789ABCDEF";
 		var string_length = 6;
@@ -424,6 +424,18 @@ Ext.extend(Sbi.worksheet.ChartSeriesPanel, Ext.Panel, {
 			randomstring += chars.substring(rnum,rnum+1);
 		}
 		return "#" + randomstring;
+	}
+
+	, setMeasures: function(measures) {
+		this.removeAllMeasures();
+		if (measures !== undefined && measures !== null && measures.length > 0) {
+			for (var i = 0; i < measures.length; i++) {
+	  			var measure = measures[i];
+	  			var record = new this.Record(measure);
+	  			this.store.add(record); 
+	  		}
+			this.getLayout().setActiveItem( 1 );
+		}
 	}
 
 });

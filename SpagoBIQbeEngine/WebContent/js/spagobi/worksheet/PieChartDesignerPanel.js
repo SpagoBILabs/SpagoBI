@@ -160,4 +160,21 @@ Ext.extend(Sbi.worksheet.PieChartDesignerPanel, Ext.Panel, {
 		});
 	}
 
+	, getFormState: function() {
+		var state = {};
+		state.designer = 'Pie Chart';
+		state.showvalues = this.showValuesCheck.getValue();
+		state.showlegend = this.showLegendCheck.getValue();
+		state.category = this.categoryContainerPanel.getCategory();
+		state.series = this.seriesContainerPanel.getContainedMeasures();
+		return state;
+	}
+	
+	, setFormState: function(state) {
+		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
+		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.category) this.categoryContainerPanel.setCategory(state.category);
+		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+	}
+
 });

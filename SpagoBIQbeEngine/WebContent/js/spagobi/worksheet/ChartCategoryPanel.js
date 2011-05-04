@@ -137,13 +137,13 @@ Ext.extend(Sbi.worksheet.ChartCategoryPanel, Ext.Panel, {
 				});
 				return;
 			}
-			this.setCategory(aRow);
+			this.setCategory(aRow.data);
 		}
 
 	}
 	
-	, setCategory: function (aRow) {
-		this.category = aRow.data;
+	, setCategory: function (category) {
+		this.category = category;
 		this.content.destroy();
 		var panel = this.createCategoryPanel();
 		this.add(panel);
