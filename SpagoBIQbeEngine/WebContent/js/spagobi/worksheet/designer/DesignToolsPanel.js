@@ -58,12 +58,12 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 	Ext.apply(this, c);
 	
 	this.initPanels();
-	var c ={
-            layout: {
-                type:'vbox',
-                align:'stretch'
-            },
-            items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
+	var c = {
+        layout: {
+            type:'vbox',
+            align:'stretch'
+        },
+        items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	}
 	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);	 		
 
@@ -74,13 +74,22 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	designToolsPallettePanel: null,
 	designToolsLayoutPanel: null,
 
-	initPanels: function(){
-		this.designToolsFieldsPanel = new Sbi.worksheet.designer.DesignToolsFieldsPanel({
+	initPanels: function() {
+		
+		this.designToolsFieldsPanel = new Sbi.formbuilder.QueryFieldsPanel({
+			border: false,
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
 	        	, type: 'queryFieldsPanel'
 	        }
 		});
+		
+//		this.designToolsFieldsPanel = new Sbi.worksheet.designer.DesignToolsFieldsPanel({
+//	        gridConfig: {
+//				ddGroup: 'worksheetDesignerDDGroup'
+//	        	, type: 'queryFieldsPanel'
+//	        }
+//		});
 		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel();
 		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel();
 		this.designToolsFieldsPanel.flex = 1;

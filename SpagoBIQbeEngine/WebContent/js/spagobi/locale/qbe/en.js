@@ -32,6 +32,12 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Session has expired. Try re-execu
 
 
 //===================================================================
+//QBE PANEL
+//===================================================================
+Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Show worksheet preview';
+
+
+//===================================================================
 //QUERY EDITOR PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Query';

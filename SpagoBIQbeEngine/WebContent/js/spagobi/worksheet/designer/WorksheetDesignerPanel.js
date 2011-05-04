@@ -43,13 +43,14 @@
  */
 Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.designer.WorkSheetsPanel = function(config) { 
+Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) { 
 
-	
-	var defaultSettings = {};
+	var defaultSettings = {
+		title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
+	};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.workSheetsPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.workSheetsPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.worksheetDesignerPanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -83,11 +84,11 @@ Sbi.worksheet.designer.WorkSheetsPanel = function(config) {
 			        ]
 	}; 
 		
-	Sbi.worksheet.designer.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.WorksheetDesignerPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.designer.WorkSheetsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
 
@@ -100,8 +101,5 @@ Ext.extend(Sbi.worksheet.designer.WorkSheetsPanel, Ext.Panel, {
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);
-		
-		
-		
 	}
 });

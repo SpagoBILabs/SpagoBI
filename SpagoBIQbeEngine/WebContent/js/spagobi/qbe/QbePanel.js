@@ -52,8 +52,8 @@ Sbi.qbe.QbePanel = function(config) {
 		// set default values here
 		displayQueryBuilderPanel: true
 		, displayFormBuilderPanel: false
-		, displayCrosstabDesignerPanel: true
-		, displayCrosstabPreviewPanel: true
+		, displayWorksheetDesignerPanel: true
+		, displayWorksheetPreviewPanel: true
 	}, config || {});
 	
 	this.services = new Array();
@@ -71,7 +71,7 @@ Sbi.qbe.QbePanel = function(config) {
 	
 	this.queryEditorPanel = null;
 	this.queryResultPanel = new Sbi.widgets.DataStorePanel(c);
-	this.crosstabDesignerPanel = null;
+	this.worksheetDesignerPanel = null;
 	
 	var items = [];
 	
@@ -82,31 +82,34 @@ Sbi.qbe.QbePanel = function(config) {
 	
 	items.push(this.queryResultPanel);
 	
-	if (c.displayCrosstabDesignerPanel) {
-		var crosstabDesignerConfig = Ext.apply(c.crosstab || {}, {
+	if (c.displayWorksheetDesignerPanel) {
+		/*
+		var worksheetDesignerConfig = Ext.apply(c.crosstab || {}, {
 			centerConfig: {
 				tools : [{
 				    id: 'gear'
-				    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
+				    , qtip: LN('sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview')
 				    , handler: function() {
-				    	var crosstabDefinition = this.crosstabDesignerPanel.getCrosstabDefinition();
-				    	this.showCrosstabPreview(crosstabDefinition);
+				    	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+				    	this.showWorksheetPreview(worksheetDefinition);
 				    }
 				    , scope: this
 			   }]
 			}
 		});
-		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(crosstabDesignerConfig);
-		items.push(this.crosstabDesignerPanel);
+		*/
+		var worksheetDesignerConfig = c.crosstab || {};
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(worksheetDesignerConfig);
+		items.push(this.worksheetDesignerPanel);
 	}
 
-	if (c.displayCrosstabPreviewPanel) {
-		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
-		items.push(this.crosstabPreviewPanel);
+	if (c.displayWorksheetPreviewPanel) {
+		this.worksheetPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
+		items.push(this.worksheetPreviewPanel);
 		// if user is not a power user, show crosstab on first tab render event
-		if (!c.displayCrosstabDesignerPanel) {
-			this.crosstabPreviewPanel.on('render', function() {
-				this.showCrosstabPreview(null, c.crosstab.crosstabTemplate);
+		if (!c.displayWorksheetDesignerPanel) {
+			this.worksheetPreviewPanel.on('render', function() {
+				this.showWorksheetPreview(null, c.crosstab.crosstabTemplate);
 			}, this);
 		}
 	}
@@ -195,8 +198,8 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
     services: null
     , queryResultPanel: null
     , queryEditorPanel: null
-    , crosstabDesignerPanel: null
-    , crosstabPreviewPanel: null
+    , worksheetDesignerPanel: null
+    , worksheetPreviewPanel: null
     , tabs: null
     , query: null
    
@@ -288,9 +291,9 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		return filters;
 	}
   	
-  	, showCrosstabPreview: function(crosstabDefinition) {
-  		this.tabs.activate(this.crosstabPreviewPanel);
-  		this.crosstabPreviewPanel.load(crosstabDefinition);
+  	, showWorksheetPreview: function(worksheetDefinition) {
+  		this.tabs.activate(this.worksheetPreviewPanel);
+  		this.worksheetPreviewPanel.load(worksheetDefinition);
   	}
   	
   	, saveQuery: function(meta) {
@@ -328,14 +331,17 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
   	
 	, save: function(meta, callback, scope) {
 		
-		var crosstabDefinition =  this.crosstabDesignerPanel.getCrosstabDefinition();
-		var crosstabCalculatedFields =  this.crosstabPreviewPanel.getCalculatedFields();
+		// TODO think about saving worksheet definition into customized view
+//		var crosstabDefinition =  this.worksheetDesignerPanel.getCrosstabDefinition();
+//		var crosstabCalculatedFields =  this.worksheetPreviewPanel.getCalculatedFields();
+//		
+//		crosstabDefinition.calculatedFields = crosstabCalculatedFields;
+//		
+//		var params = Ext.apply({
+//			crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
+//		}, meta);
 		
-		crosstabDefinition.calculatedFields = crosstabCalculatedFields;
-		
-		var params = Ext.apply({
-			crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
-		}, meta);
+		var params = Ext.apply({}, meta);
 		
 		var doSave = function() {
 			Ext.Ajax.request({
@@ -363,7 +369,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	 */
 	, getCrosstabDataEncoded: function () {
 		
-		var crosstabData = this.crosstabPreviewPanel.serializeCrossTab();
+		var crosstabData = this.worksheetPreviewPanel.serializeCrossTab(); // TODO manage crosstab export
 		var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
 		return crosstabDataEncoded;
 		

@@ -23,11 +23,6 @@
 
 <link id="theme-overrides" rel="styleSheet" href ="js/lib/overrides-ext-3.2.1/resources/css/overrides-xtheme-gray.css" type="text/css" />
 
-<!-- Include Ext.ux.ColorField code -->
-<script type="text/javascript" src='js/lib/ext-3.2.1/ux/form/Ext.ux.ColorField.js'/></script>
-<link rel="styleSheet" href ="js/lib/ext-3.2.1/resources/css/Ext.ux.ColorField.css" type="text/css" />
-
-
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;
 	Ext.Ajax.defaultHeaders = {
@@ -47,6 +42,13 @@
 
 
 <script type="text/javascript" src='js/lib/ext-3.2.1/ux/miframe/miframe.js'/></script>
+
+
+<!-- Include Ext.ux.ColorField code -->
+<script type="text/javascript" src='js/lib/ext-3.2.1/ux/form/Ext.ux.ColorField.js'/></script>
+<link rel="styleSheet" href ="js/lib/ext-3.2.1/resources/css/Ext.ux.ColorField.css" type="text/css" />
+
+
 		<!-- 
 IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
 create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
@@ -113,6 +115,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/widgets/FilteringToolbar.js'/></script>
 <script type="text/javascript" src='js/spagobi/widgets/PagingToolbar.js'/></script>
 <script type="text/javascript" src='js/spagobi/widgets/TriggerFieldMultiButton.js'/></script>
+<script type="text/javascript" src='js/spagobi/widgets/SeriesPalette.js'/></script>
 
 <script type="text/javascript" src='js/spagobi/qbe/FilterComboBox.js'/></script>
 
@@ -202,14 +205,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetTitlePanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/designer/WorkSheetsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetContentPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/ChartCategoryPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/ChartSeriesPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/BarChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/LineChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/PieChartDesignerPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/designer/SeriesPalette.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/TableDesignerPanel.js'/></script>
 
 
@@ -285,7 +287,7 @@ END-PRODUCTION -->
 	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
-	        	var workSheetPanel = new Sbi.worksheet.designer.WorkSheetsPanel({});
+	        	var workSheetPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({});
 	           	var viewport = new Ext.Viewport(workSheetPanel);
 	           	
 	      	});
