@@ -22,9 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.commons;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
+import it.eng.spagobi.commons.dao.ConfigDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.services.common.EnginConf;
 
@@ -37,11 +43,11 @@ import it.eng.spagobi.services.common.EnginConf;
 public class SingletonConfig {
 
 	private static SingletonConfig instance = null;
-	private static transient Logger logger = Logger.getLogger(EnginConf.class);
+	private static transient Logger logger = Logger.getLogger(SingletonConfig.class);
 	
-	private SbiConfig config=null;
-
-	public static SingletonConfig getInstance() {
+	private HashMap<String, String> cache=null;
+	
+	public synchronized static SingletonConfig getInstance() {
 		if (instance == null)
 			instance = new SingletonConfig();
 		return instance;
@@ -49,19 +55,18 @@ public class SingletonConfig {
 
 	private SingletonConfig() {
 		logger.debug("Resource: Table SbiConfig");
-		config = new SbiConfig();
+		
+		IConfigDAO dao= new ConfigDAO();  // sostituirlo con la DAOFactory.getConfigDAO()  che c'è
 		try {
-			if (config != null) {
-				InputSource source = new InputSource(getClass()
-						.getResourceAsStream("/spagobi.xml"));
-
-				getConfigValue();
-			} else
-				logger
-						.debug("Impossible to load data to table SbiConfig");
+			List<SbiConfig> allConfig= dao.loadAllConfigParameters();
+			
+			for (SbiConfig config: allConfig ) {
+				cache.put(config.getLabel(), config.getValueCheck());
+				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
+			}
+			
 		} catch (Exception e) {
-			logger.error("Impossible to load configuration for report engine",
-					e);
+			logger.error("Impossible to load configuration for report engine",e);
 		}
 	}
 
@@ -69,9 +74,19 @@ public class SingletonConfig {
 	 * Gets the config.
 	 * 
 	 * @return SourceBean contain the configuration
+	 * 
+	 * QUESTO METODO LO UTILIZZI PER LEGGERE LA CONFIGURAZIONE DEI SINGOLI ELEMENTI:
+	 * ES:    String configurazione= SingletonConfig.getInstance().getConfigValue("home.banner");
 	 */
-	public SbiConfig getConfigValue() {
-		return config;
+	public synchronized String getConfigValue(String key) {
+		return cache.get(key);
 
 	}
+	/**
+	 * QUESTO METODO LO UTILIZZI ALL'INTERNO DEL SERVIZIO DI SALVATAGGIO CONFIGURAZIONE
+	 * OGNI VOLTA CHE SALVIAMO UNA RIGA SVUOTIAMO LA CACHE
+	 */
+	public synchronized void clearCache() {
+		instance=null;
+	}	
 }
