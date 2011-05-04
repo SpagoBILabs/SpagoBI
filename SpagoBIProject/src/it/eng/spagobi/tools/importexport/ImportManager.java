@@ -808,6 +808,7 @@ public class ImportManager implements IImportManager, Serializable {
 
 			while (iterSbiDataSet.hasNext()) {
 				exportedDataSet = (SbiDataSetConfig) iterSbiDataSet.next();
+				logger.debug("Importing exported dataset with id "+exportedDataSet.getDsId() + " and label "+exportedDataSet.getLabel());
 				Integer oldId = new Integer(exportedDataSet.getDsId());
 				Integer existingDatasetId = null;
 				Map datasetAss = metaAss.getDataSetIDAssociation();
@@ -820,15 +821,16 @@ public class ImportManager implements IImportManager, Serializable {
 					existingDatasetId = (Integer) datasetAss.get(oldId);
 				}
 				if (existingDatasetId != null) {
-					logger.info("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated.");
+					logger.info("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
-					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId);
-					ImportUtilities.associateWithExistingEntities(existingDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
+					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB);
+					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss);
 					sessionCurrDB.update(existingDataset);
 				} else {
 					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet);
-					ImportUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newDataset);
+					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss);
+
 					metaLog.log("Inserted new dataset " + newDataset.getName());
 					Integer newId = new Integer(newDataset.getDsId());
 					metaAss.insertCoupleDataSets(oldId, newId);

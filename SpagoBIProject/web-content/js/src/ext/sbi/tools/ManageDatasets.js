@@ -299,18 +299,18 @@ Ext.extend(
 					this.configurationObject.gridColItems = [ {
 						id : 'label',
 						header : LN('sbi.generic.label'),
-						width : 120,
+						width : 150,
 						sortable : true,
 						locked : false,
 						dataIndex : 'label'
 					}, {
 						header : LN('sbi.generic.name'),
-						width : 120,
+						width : 160,
 						sortable : true,
 						dataIndex : 'name'
 					}, {
 						header : LN('sbi.generic.type'),
-						width : 55,
+						width : 70,
 						sortable : true,
 						dataIndex : 'dsTypeCd'
 					}, {
@@ -403,7 +403,7 @@ Ext.extend(
 					});
 
 					var detailFieldName = {
-						maxLength : 50,	minLength : 1, width : 200,
+						maxLength : 50,	minLength : 1, width : 250,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.name'),
 						allowBlank : false,	validationEvent : true,
@@ -411,7 +411,7 @@ Ext.extend(
 					};
 
 					var detailFieldLabel = {
-						maxLength : 50, minLength : 1, width : 200,
+						maxLength : 50, minLength : 1, width : 250,
 						regexText : LN('sbi.roles.alfanumericString2'),
 						fieldLabel : LN('sbi.generic.label'),
 						allowBlank : false, validationEvent : true,
@@ -420,7 +420,7 @@ Ext.extend(
 
 					var detailFieldDescr = {
 						xtype : 'textarea',
-						width : 250, height : 80, maxLength : 160,
+						width : 350, height : 80, maxLength : 160,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.generic.descr'),
 						validationEvent : true,
@@ -430,7 +430,7 @@ Ext.extend(
 					var detailFieldCatType = {
 						name : 'catTypeCd',
 						store : this.catTypesStore,
-						width : 120,
+						width : 150,
 						fieldLabel : LN('sbi.ds.catType'),
 						displayField : 'catTypeCd', 
 						valueField : 'catTypeCd', 
@@ -474,12 +474,10 @@ Ext.extend(
 					this.manageDsVersionsPanel = new Ext.Panel(
 							{	id : 'man-vers',
 								title : LN('sbi.ds.versionPanel'),
-								layout : 'form',
+								layout : 'fit',
 								autoScroll : true,
 								style : {
-									"margin-left" : "0px",
-									"margin-top" : "5px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "15px": "-13px"): "15px"
+									"margin-top" : "10px"
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
@@ -542,7 +540,7 @@ Ext.extend(
 					var detailDsType = new Ext.form.ComboBox({
 						name : 'dsTypeCd',
 						store : this.dsTypesStore,
-						width : 120,
+						width : 160,
 						fieldLabel : LN('sbi.ds.dsTypeCd'),
 						displayField : 'dsTypeCd', // what the user sees in
 						// the popup
@@ -566,7 +564,7 @@ Ext.extend(
 					this.detailFileName = new Ext.form.ComboBox({
 						name : 'fileName',
 						store : this.fileNamesStore,
-						width : 80,
+						width : 350,
 						fieldLabel : LN('sbi.ds.fileName'),
 						displayField : 'fileName', 
 						valueField : 'fileName', 
@@ -581,7 +579,7 @@ Ext.extend(
 					this.detailDataSource = new Ext.form.ComboBox({
 						name : 'dataSource',
 						store : this.dataSourceStore,
-						width : 80,
+						width : 180,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'name', // what the user
 						// sees in the
@@ -599,7 +597,7 @@ Ext.extend(
 					this.detailQbeDataSource = new Ext.form.ComboBox({
 						name : 'qbeDataSource',
 						store : this.dataSourceStore,
-						width : 120,
+						width : 350,
 						fieldLabel : LN('sbi.ds.dataSource'),
 						displayField : 'dataSource', // what the user
 						// sees in the popup
@@ -616,6 +614,7 @@ Ext.extend(
 					this.detailQuery = new Ext.form.TextArea({
 						maxLength : 30000,
 						xtype : 'textarea',
+						width : 350,
 						height : 180,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.query'),
@@ -626,7 +625,7 @@ Ext.extend(
 
 					this.detailWsAddress = new Ext.form.TextField({
 						maxLength : 250, minLength : 1,
-						width : 150,
+						width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsAddress'),
 						allowBlank : false, validationEvent : true,
@@ -634,7 +633,7 @@ Ext.extend(
 					});
 
 					this.detailWsOperation = new Ext.form.TextField({
-						maxLength : 50, minLength : 1, width : 150,
+						maxLength : 50, minLength : 1, width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.wsOperation'),
 						allowBlank : true, validationEvent : true,
@@ -646,6 +645,7 @@ Ext.extend(
 						xtype : 'textarea',
 						width : this.textAreaWidth,
 						height : 175,
+						width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.script'),
 						allowBlank : false, validationEvent : true,
@@ -708,7 +708,7 @@ Ext.extend(
 					this.detailScriptLanguage = new Ext.form.ComboBox({
 						name : 'scriptLanguage',
 						store : this.scriptLanguagesStore,
-						width : 80,
+						width : 160,
 						fieldLabel : LN('sbi.ds.scriptLanguage'),
 						displayField : 'name', // what the user
 						// sees in the
@@ -730,6 +730,7 @@ Ext.extend(
 					this.detailJclassName = new Ext.form.TextField({
 						maxLength : 100,
 						minLength : 1,
+						width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.jclassName'),
 						allowBlank : false,
@@ -739,26 +740,25 @@ Ext.extend(
 
 					this.dsTypeDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 90,
+								labelWidth : 100,
 								defaultType : 'textfield',
 								autoHeight : true,
 								autoScroll : true,
 								border : true,
 								style : {
-									"margin-left" : "60px",
+									"margin-left" : "90px",
 									"margin-top" : "3px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-60px"
-											: "-63px")
-											: "60px"
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "90px"
+											: "-93px")
+											: "90px"
 								},
 								items : [ detailDsType ]
 							});
 
 					this.queryDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 80,
+								labelWidth : 100,
 								defaults : {
-									width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -778,9 +778,9 @@ Ext.extend(
 
 					this.qbeQueryDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 90,
+								labelWidth : 120,
 								defaults : {
-									width : 210,
+									width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -804,9 +804,9 @@ Ext.extend(
 
 					this.jClassDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 80,
+								labelWidth : 100,
 								defaults : {
-									width : 280,
+									//width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -827,7 +827,7 @@ Ext.extend(
 							{
 								labelWidth : 80,
 								defaults : {
-									width : 280,
+									//width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -846,9 +846,9 @@ Ext.extend(
 
 					this.WSDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 80,
+								labelWidth : 100,
 								defaults : {
-									width : 280,
+									//width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -868,9 +868,9 @@ Ext.extend(
 
 					this.scriptDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 80,
+								labelWidth : 100,
 								defaults : {
-									width : 280,
+								//	width : 280,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -895,10 +895,11 @@ Ext.extend(
 					this.manageParsPanel = new Ext.Panel(
 							{
 								id : 'man-pars',
-								layout : 'form',
+								layout : 'fit',
 								autoScroll : false
-								 , bodyStyle: Ext.isIE ? 'padding:0 0 0px 18px;' : 'padding:0px 18px;',
+								 , bodyStyle: Ext.isIE ? 'padding:0 0 0px 50px;' : 'padding:0px 50px;',
 								border : true,
+								height: 110,
 								items : [ this.manageParsGrid ],
 								scope : this
 							});
@@ -968,9 +969,9 @@ Ext.extend(
 
 					this.trasfTypeDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 90,
+								labelWidth : 120,
 								defaults : {
-									width : 210,
+									width : 260,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -1028,9 +1029,9 @@ Ext.extend(
 
 					this.trasfDetail = new Ext.form.FieldSet(
 							{
-								labelWidth : 90,
+								labelWidth : 150,
 								defaults : {
-									width : 210,
+									width : 260,
 									border : true
 								},
 								defaultType : 'textfield',
@@ -1102,10 +1103,10 @@ Ext.extend(
 					this.datasetTestTab = new Ext.Panel({
 						title : LN('sbi.ds.test'),
 						id : 'test-pars',
-						layout : 'vbox',
+						layout : 'fit',
 						autoScroll : true,
-						bodyStyle : Ext.isIE ? 'padding:0 0 20px 25px;'
-								: 'padding:20px 25px;',
+						bodyStyle : Ext.isIE ? 'padding:0 0 30px 60px;'
+								: 'padding:30px 60px;',
 						border : true,
 						items : [ this.parsGrid],
 						scope : this
@@ -1565,8 +1566,8 @@ Ext.extend(
 							id:'win_info_2',
 							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsrules.html'},             				
 							layout:'fit',
-							width:650,
-							height:350,
+							width:620,
+							height:410,
 							autoScroll: true,
 							closeAction:'close',
 							buttonAlign : 'left',

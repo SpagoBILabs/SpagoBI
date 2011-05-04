@@ -169,12 +169,12 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
     }else{
-    	this.tabPanelWidth = 430;
+    	this.tabPanelWidth = 520;
     }
 	if(conf.gridWidth){
 		this.gridWidth = conf.gridWidth;
     }else{
-    	this.gridWidth = 410;
+    	this.gridWidth = 470;
     }
 	
 	if(config.singleSelection){
@@ -270,7 +270,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, singleSelection: true
 	, tabPanelWidth: null
 	, gridWidth: null
-	, filterWidth: 405
+	, filterWidth: 465
 	, setCloneButton: null
 	, tbButtonsArray: null
 	

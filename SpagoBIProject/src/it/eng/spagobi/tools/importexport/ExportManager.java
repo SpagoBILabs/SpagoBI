@@ -52,7 +52,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
-import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -495,8 +495,11 @@ public class ExportManager implements IExportManager {
 			// Data set if present
 			Integer objDataSetId = biobj.getDataSetId();
 			if (objDataSetId != null) {
-				IDataSet dataset = dataSetDao.loadActiveIDataSetByID(objDataSetId);
-				exporter.insertDataSet(dataset, session);
+
+				GuiGenericDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
+				//IDataSet dataset = dataSetDao.loadActiveIDataSetByID(objDataSetId);
+				exporter.insertDataSet(genericDs, session);
+
 			}
 			// Engine if present, and data source if engine uses data source
 			Engine engine = biobj.getEngine();
@@ -506,8 +509,8 @@ public class ExportManager implements IExportManager {
 				exporter.insertDataSource(ds, session);
 			}
 
-			exporter.insertEngine(engine, session);   // finally insert biObj
-			exporter.insertBIObject(biobj, session);
+			exporter.insertEngine(engine, session);   
+			exporter.insertBIObject(biobj, session, false); // do not insert dataset
 
 
 			logger.debug("Export metadata associated to the object");
@@ -539,11 +542,15 @@ public class ExportManager implements IExportManager {
 							String datasetLabel = (String) datasetnameSB.getAttribute("value");
 							IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 							IDataSet dataset = datasetDao.loadActiveDataSetByLabel(datasetLabel);
+							GuiGenericDataSet guiGenericDataSet = datasetDao.loadDataSetByLabel(datasetLabel);
+
+
+
 							if (dataset == null) {
 								logger.warn("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : " +
 										"the template refers to a dataset with label " + datasetLabel + " that does not exist!");
 							} else {
-								exporter.insertDataSet(dataset, session);
+								exporter.insertDataSet(guiGenericDataSet, session);
 							}
 						}
 					} catch (Exception e) {
