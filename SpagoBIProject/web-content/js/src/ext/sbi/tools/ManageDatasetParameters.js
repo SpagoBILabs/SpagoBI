@@ -56,7 +56,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	this.userColumns =  [
 	    {
 	    	header: LN('sbi.generic.name'), 
-	    	width: 200, 
+	    	width: 230, 
 			id:'name',
 			sortable: true, 
 			dataIndex: 'name',  
@@ -67,7 +67,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 			})
 	    },{
 			header: LN('sbi.generic.type'), 
-			width: 130, 
+			width: 220, 
 			id:'type',
 			sortable: true, 
 			dataIndex: 'type',  		

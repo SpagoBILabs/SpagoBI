@@ -71,7 +71,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 16;
+	public static Integer LIMIT_DEFAULT = 15;
 
 	@Override
 	public void doService() {

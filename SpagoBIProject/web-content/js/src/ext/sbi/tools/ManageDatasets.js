@@ -477,7 +477,7 @@ Ext.extend(
 								layout : 'fit',
 								autoScroll : true,
 								style : {
-									"margin-top" : "10px"
+									"margin-top" : "20px"
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
@@ -615,7 +615,7 @@ Ext.extend(
 						maxLength : 30000,
 						xtype : 'textarea',
 						width : 350,
-						height : 180,
+						height : 195,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.query'),
 						validationEvent : true,
@@ -644,7 +644,7 @@ Ext.extend(
 						maxLength : 30000,
 						xtype : 'textarea',
 						width : this.textAreaWidth,
-						height : 175,
+						height : 195,
 						width : 350,
 						regexText : LN('sbi.roles.alfanumericString'),
 						fieldLabel : LN('sbi.ds.script'),
@@ -742,15 +742,16 @@ Ext.extend(
 							{
 								labelWidth : 100,
 								defaultType : 'textfield',
-								autoHeight : true,
+								//autoHeight : true,
 								autoScroll : true,
-								border : true,
+								border : false,
 								style : {
-									"margin-left" : "90px",
+									"margin-left" : "5px",
+									"margin-bottom" : "0px",
 									"margin-top" : "3px",
-									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "90px"
-											: "-93px")
-											: "90px"
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "0px"
+											: "-3px")
+											: "0px"
 								},
 								items : [ detailDsType ]
 							});
@@ -767,7 +768,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -789,7 +790,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -815,7 +816,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -836,7 +837,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -857,7 +858,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -879,7 +880,7 @@ Ext.extend(
 								border : true,
 								style : {
 									"margin-left" : "3px",
-									"margin-top" : "3px",
+									"margin-top" : "0px",
 									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
 											: "-5px")
 											: "3px"
@@ -897,7 +898,7 @@ Ext.extend(
 								id : 'man-pars',
 								layout : 'fit',
 								autoScroll : false
-								 , bodyStyle: Ext.isIE ? 'padding:0 0 0px 50px;' : 'padding:0px 50px;',
+								 , bodyStyle: Ext.isIE ? 'padding:0 0 3px 3px;' : 'padding:3px 3px;',
 								border : true,
 								height: 110,
 								items : [ this.manageParsGrid ],
@@ -1105,8 +1106,8 @@ Ext.extend(
 						id : 'test-pars',
 						layout : 'fit',
 						autoScroll : true,
-						bodyStyle : Ext.isIE ? 'padding:0 0 30px 60px;'
-								: 'padding:30px 60px;',
+						bodyStyle : Ext.isIE ? 'padding:0 0 10px 10px;'
+								: 'padding:10px 10px;',
 						border : true,
 						items : [ this.parsGrid],
 						scope : this
@@ -1585,8 +1586,8 @@ Ext.extend(
 							id:'win_info_4',
 							autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/dsTrasformationHelp.html'},             				
 							layout:'fit',
-							width:750,
-							height:550,
+							width:760,
+							height:420,
 							autoScroll: true,
 							closeAction:'close',
 							buttonAlign : 'left',
