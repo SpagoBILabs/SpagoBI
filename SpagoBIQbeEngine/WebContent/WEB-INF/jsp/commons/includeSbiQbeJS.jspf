@@ -5,6 +5,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- Include QBE stylesheets -->
 <link rel="styleSheet" href ="../css/qbe.css" type="text/css" />
+<link rel="styleSheet" href ="../css/worksheet.css" type="text/css" />
 
 <!-- Include localized labels  -->
 <script type="text/javascript" src='../js/spagobi/locale/commons/<%=locale.getLanguage()%>.js'/></script>
@@ -14,7 +15,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/widgets/lookupfield/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/dataset/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
-<script type="text/javascript" src='../js/spagobi/locale/worksheet/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/worksheet/designer/<%=locale.getLanguage()%>.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
 
@@ -58,6 +59,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/widgets/FilteringToolbar.js'/></script>
 <script type="text/javascript" src='../js/spagobi/widgets/PagingToolbar.js'/></script>
 <script type="text/javascript" src='../js/spagobi/widgets/TriggerFieldMultiButton.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/SeriesPalette.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'/></script>
 
@@ -131,6 +133,23 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabPreviewPanel.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/dataset/ParametersGridPanel.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetsContainerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsPallettePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsLayoutPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsFieldsPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetTitlePanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetContentPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartCategoryPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/ChartSeriesPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/BarChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/LineChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/PieChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/TableDesignerPanel.js'/></script>
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
