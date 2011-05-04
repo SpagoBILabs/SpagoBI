@@ -131,8 +131,9 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		    ]
 	    });
 	    
-		this.seriesPalette = new Sbi.worksheet.designer.SeriesPalette({
-			height: 300
+		this.seriesPalette = new Sbi.widgets.SeriesPalette({
+			title: LN('sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title')
+			, height: 300
 			, width: 150
 			, closeAction: 'hide'
 		});
@@ -153,7 +154,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 					padding: '10 10 10 10'
 					, border: false
 					, items: new Ext.Button({
-						text: LN('sbi.worksheet.designer.seriespalette.title')
+						text: LN('sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title')
 				        , handler: function() {
 							this.seriesPalette.show();
 						} 

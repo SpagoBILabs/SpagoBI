@@ -95,6 +95,7 @@ Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.tit
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Pie chart designer';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title'] = 'Show values';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title'] = 'Show legend';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title'] = 'Series palette';
 
 
 //===================================================================
@@ -121,9 +122,3 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealr
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
-
-
-//===================================================================
-//Sbi.worksheet.designer.SeriesPalette
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.seriespalette.title'] = 'Series palette';

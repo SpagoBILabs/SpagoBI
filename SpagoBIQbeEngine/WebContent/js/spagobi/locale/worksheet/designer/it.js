@@ -92,6 +92,7 @@ Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.tit
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Definizione pie chart';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title'] = 'Visualizza valori';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title'] = 'Visualizza legenda';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title'] = 'Tavolozza delle serie';
 
 
 //===================================================================
@@ -118,9 +119,3 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealr
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
-
-
-//===================================================================
-//Sbi.worksheet.designer.SeriesPalette
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.seriespalette.title'] = 'Tavolozza delle serie';
