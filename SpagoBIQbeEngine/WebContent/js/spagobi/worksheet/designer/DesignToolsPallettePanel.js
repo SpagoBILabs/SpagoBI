@@ -41,14 +41,14 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.DesignToolsPallettePanel = function(config) { 
+Sbi.worksheet.designer.DesignToolsPallettePanel = function(config) { 
 
 	var defaultSettings = {};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsPallettePanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsPallettePanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designToolsPallettePanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designToolsPallettePanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -56,11 +56,11 @@ Sbi.worksheet.DesignToolsPallettePanel = function(config) {
 	Ext.apply(this, c);
 
 	c = this.initPanel();
-	Sbi.worksheet.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.DesignToolsPallettePanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.DesignToolsPallettePanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.DesignToolsPallettePanel, Ext.Panel, {
 	
 	initPanel:function(){
 

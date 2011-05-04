@@ -41,16 +41,16 @@
  * 
  * Authors - Alberto Ghedin (alberto.ghedin@eng.it)
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.TableDesignerPanel = function(config) { 
+Sbi.worksheet.designer.TableDesignerPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.tabledesignerpanel.title')
+		title: LN('sbi.worksheet.designer.tabledesignerpanel.title')
 	};
 		
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.tableDesignerPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.tableDesignerPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.tableDesignerPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.tableDesignerPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -63,7 +63,7 @@ Sbi.worksheet.TableDesignerPanel = function(config) {
 		style: 'height: 100%;',
 		html: '&nbsp;'
 	};
-	Sbi.worksheet.TableDesignerPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.TableDesignerPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.worksheet.TableDesignerPanel, Ext.Panel, {});
+Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {});

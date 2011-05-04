@@ -35,18 +35,18 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.DesignToolsLayoutPanel = function(config) { 
+Sbi.worksheet.designer.DesignToolsLayoutPanel = function(config) { 
 	
 	var defaultSettings = {
-		title:  LN('sbi.worksheet.designtoolslayoutpanel.title'),
+		title:  LN('sbi.worksheet.designer.designtoolslayoutpanel.title'),
 		border: false,
 		bodyStyle: 'padding-top: 15px; padding-left: 15px'
 	};
 			
-	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designToolsLayoutPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designToolsLayoutPanel);
+	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.designToolsLayoutPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.designToolsLayoutPanel);
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
@@ -70,14 +70,14 @@ Sbi.worksheet.DesignToolsLayoutPanel = function(config) {
 
 	this.layoutRadioGroup.on('change', this.updateSheetLayout, this);
 	
-	Sbi.worksheet.DesignToolsLayoutPanel.superclass.constructor.call(this, c);	
+	Sbi.worksheet.designer.DesignToolsLayoutPanel.superclass.constructor.call(this, c);	
 
 	this.on('afterLayout',this.addToolTips,this);
 
 
 };
 
-Ext.extend(Sbi.worksheet.DesignToolsLayoutPanel, Ext.FormPanel, {
+Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 	layoutRadioGroup: null,
 
 	addToolTips: function(){
@@ -86,19 +86,19 @@ Ext.extend(Sbi.worksheet.DesignToolsLayoutPanel, Ext.FormPanel, {
 
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-headerfooter',
-			html: LN('sbi.worksheet.designtoolslayoutpanel.tooltip.headerfooter'),
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'),
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-header',
-			html: LN('sbi.worksheet.designtoolslayoutpanel.tooltip.header')
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.header')
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-footer',
-			html: LN('sbi.worksheet.designtoolslayoutpanel.tooltip.footer')
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer')
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-content',
-			html: LN('sbi.worksheet.designtoolslayoutpanel.tooltip.content')
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content')
 		},sharedConf));
 		this.on('afterLayout',this.addToolTips,this);
 	},

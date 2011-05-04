@@ -41,15 +41,15 @@
  * 
  * Authors - Alberto Ghedin
  */
-Ext.ns("Sbi.worksheet");
+Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.WorkSheetsPanel = function(config) { 
+Sbi.worksheet.designer.WorkSheetsPanel = function(config) { 
 
 	
 	var defaultSettings = {};
 
-	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.workSheetsPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.workSheetsPanel);
+	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.workSheetsPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.workSheetsPanel);
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
@@ -83,20 +83,20 @@ Sbi.worksheet.WorkSheetsPanel = function(config) {
 			        ]
 	}; 
 		
-	Sbi.worksheet.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.WorkSheetsPanel.superclass.constructor.call(this, c);	 		
 
 };
 
-Ext.extend(Sbi.worksheet.WorkSheetsPanel, Ext.Panel, {
+Ext.extend(Sbi.worksheet.designer.WorkSheetsPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
 
 	initPanels: function(){
-		this.designToolsPanel = new Sbi.worksheet.DesignToolsPanel();
+		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel();
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);
-		this.sheetsContainerPanel = new Sbi.worksheet.SheetsContainerPanel();
+		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel();
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);

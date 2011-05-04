@@ -63,7 +63,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/locale/formviewer/en.js'/></script>
 <script type="text/javascript" src='js/spagobi/locale/widgets/lookupfield/en.js'/></script>
 <script type="text/javascript" src='js/spagobi/locale/dataset/en.js'/></script>
-<script type="text/javascript" src='js/spagobi/locale/worksheet/en.js'/></script>
+<script type="text/javascript" src='js/spagobi/locale/worksheet/designer/en.js'/></script>
 
 <script type="text/javascript" src='js/spagobi/locale/crosstab/en.js'/></script>
 
@@ -194,24 +194,23 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 
-<script type="text/javascript" src='js/spagobi/worksheet/SheetsContainerPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsPallettePanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsLayoutPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/DesignToolsFieldsPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/SheetPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/DesignSheetFiltersPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/SheetTitlePanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/WorkSheetsPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/SheetContentPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/ChartCategoryPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/ChartSeriesPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/BarChartDesignerPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/LineChartDesignerPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/PieChartDesignerPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/SeriesPalette.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/TableDesignerPanel.js'/></script>
-
+<script type="text/javascript" src='js/spagobi/worksheet/designer/SheetsContainerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/DesignToolsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/DesignToolsPallettePanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/DesignToolsLayoutPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/DesignToolsFieldsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/SheetPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/SheetTitlePanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/WorkSheetsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/SheetContentPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/ChartCategoryPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/ChartSeriesPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/BarChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/LineChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/PieChartDesignerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/SeriesPalette.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/TableDesignerPanel.js'/></script>
 
 
 
@@ -286,13 +285,8 @@ END-PRODUCTION -->
 	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
-	        	var workSheetPanel = new Sbi.worksheet.WorkSheetsPanel({});
-	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
-	           	var viewport = new Ext.Viewport(workSheetPanel);  
-	           	
-	           		
-
-	         	
+	        	var workSheetPanel = new Sbi.worksheet.designer.WorkSheetsPanel({});
+	           	var viewport = new Ext.Viewport(workSheetPanel);
 	           	
 	      	});
 	    </script>
