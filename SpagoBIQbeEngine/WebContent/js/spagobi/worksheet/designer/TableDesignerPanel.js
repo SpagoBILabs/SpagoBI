@@ -66,4 +66,16 @@ Sbi.worksheet.designer.TableDesignerPanel = function(config) {
 	Sbi.worksheet.designer.TableDesignerPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {});
+Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {
+	
+	getFormState: function() {
+		var state = {};
+		state.designer = 'Table';
+		return state;
+	}
+	
+	, setFormState: function(state) {
+		
+	}
+	
+});
