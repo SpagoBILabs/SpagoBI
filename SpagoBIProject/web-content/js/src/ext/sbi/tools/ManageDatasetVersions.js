@@ -82,13 +82,13 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 		    hidden: true
 		},{
 	    	header: LN('sbi.ds.userIn'), 
-	    	width: 120, 
+	    	width: 180, 
 			id:'userIn',
 			sortable: true, 
 			dataIndex: 'userIn' 
 	    },{
 	    	header: LN('sbi.generic.type'), 
-	    	width: 80, 
+	    	width: 110, 
 			id:'type',
 			sortable: true, 
 			dataIndex: 'type' 
@@ -154,7 +154,7 @@ Sbi.tools.ManageDatasetVersions = function(config) {
 	        cm: cm,
 	        sm: sm,
 	        width: 370,
-	        height: 220,
+	        height: 210,
 	        frame: true,
 	        autoscroll: true,
 	        //clicksToEdit: 2,

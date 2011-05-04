@@ -9,6 +9,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.importexport.ExportManager;
@@ -89,7 +90,8 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					IDataSet dataset = dataSetDAO.loadActiveDataSetByLabel(string);
 					if(dataset != null){
 						logger.debug("found dataset with label " + string);
-						exporter.insertDataSet(dataset, session);
+						GuiGenericDataSet ds = dataSetDAO.toDataSet(dataset);
+						exporter.insertDataSet(ds, session);
 					}
 					else {
 						logger.error("could not find dataset with label "+string+" : ignore it");
@@ -101,7 +103,8 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					IDataSet datasetErrors = dataSetDAO.loadActiveDataSetByLabel(labelErrors);
 					if(datasetErrors != null){
 						logger.debug("found dataset with label " + labelErrors+"");
-						exporter.insertDataSet(datasetErrors, session);
+						GuiGenericDataSet ds = dataSetDAO.toDataSet(datasetErrors);
+						exporter.insertDataSet(ds, session);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelErrors);
@@ -113,15 +116,13 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					IDataSet datasetAlarms = dataSetDAO.loadActiveDataSetByLabel(labelAlarms);
 					if(datasetAlarms != null){
 						logger.debug("found dataset with label " + labelAlarms+"");
-						exporter.insertDataSet(datasetAlarms, session);
+						GuiGenericDataSet ds = dataSetDAO.toDataSet(datasetAlarms);
+						exporter.insertDataSet(ds, session);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelAlarms);
 					}
-					
-					
-					
-					
+
 				}
 			} catch (Exception e) {
 				logger.error("Error while exporting console with id " + biobj.getId() + " and label " + biobj.getLabel() + " : " +
@@ -129,13 +130,6 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", "component_impexp_messages");
 			}
 		}
-
-
 		logger.debug("OUT");
-
 	}
-
-
-
-
 }

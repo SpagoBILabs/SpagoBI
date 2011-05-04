@@ -66,6 +66,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -140,6 +141,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
@@ -150,6 +152,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiQbeDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
@@ -372,9 +375,9 @@ public class ExporterMetadata {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
-	 * Insert data set.
+	 * Insert data set if not already present
 	 * @param dataSet the a data set
 	 * @throws EMFUserError the EMF user error
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
@@ -383,23 +386,34 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		Transaction tx = null;
 		Integer idToReturn = null;
+
+		
 		try {
 			tx = session.beginTransaction();
-			SbiDataSetHistory hibDataSet =null;
+			
+			// check if it's not already present a dataset with id  dataSet.getDsId
+			Query hibQuery = session.createQuery(" from SbiDataSetConfig where dsId = " + dataSet.getDsId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+					logger.debug("dataset with id "+dataSet.getDsId()+" already inserted");
+				return;
+			}
+			
+			SbiDataSetHistory hibDataSetHistory =null;
 			if(dataSet!=null){
+				// get active dataset
 				GuiDataSetDetail dataSetActiveDetail = dataSet.getActiveDetail();
-	
+
 				if(dataSetActiveDetail instanceof FileDataSetDetail){
-					hibDataSet=new SbiFileDataSet();
+					hibDataSetHistory=new SbiFileDataSet();
 					if(((FileDataSetDetail)dataSetActiveDetail).getFileName()!=null){
-						((SbiFileDataSet)hibDataSet).setFileName(((FileDataSetDetail)dataSetActiveDetail).getFileName());
+						((SbiFileDataSet)hibDataSetHistory).setFileName(((FileDataSetDetail)dataSetActiveDetail).getFileName());
 					}
-				}
-	
+				}	
 				else if(dataSetActiveDetail instanceof QueryDataSetDetail){
-					hibDataSet=new SbiQueryDataSet();
+					hibDataSetHistory=new SbiQueryDataSet();
 					if(((QueryDataSetDetail)dataSetActiveDetail).getQuery()!=null){
-						((SbiQueryDataSet)hibDataSet).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery().toString());
+						((SbiQueryDataSet)hibDataSetHistory).setQuery(((QueryDataSetDetail)dataSetActiveDetail).getQuery().toString());
 					}
 					if(((QueryDataSetDetail)dataSetActiveDetail).getDataSourceLabel()!=null){
 						SbiDataSource hibDataSource = null;
@@ -408,107 +422,121 @@ public class ExporterMetadata {
 						Criteria criteria = session.createCriteria(SbiDataSource.class);
 						criteria.add(labelCriterrion);	
 						hibDataSource = (SbiDataSource) criteria.uniqueResult();
-						((SbiQueryDataSet)hibDataSet).setDataSource(hibDataSource);	
+						((SbiQueryDataSet)hibDataSetHistory).setDataSource(hibDataSource);	
 					}				
+				}else if(dataSetActiveDetail instanceof QbeDataSetDetail){
+					hibDataSetHistory = new SbiQbeDataSet();
+					SbiQbeDataSet hibQbeDataSet = (SbiQbeDataSet) hibDataSetHistory;
+					QbeDataSetDetail qbeDataSet = (QbeDataSetDetail) dataSetActiveDetail;
+					hibQbeDataSet.setSqlQuery(qbeDataSet.getSqlQuery());
+					hibQbeDataSet.setJsonQuery(qbeDataSet.getJsonQuery());
+					hibQbeDataSet.setDatamarts(qbeDataSet.getDatamarts());
+					String dataSourceLabel = qbeDataSet.getDataSourceLabel();
+					Criterion labelCriterrion = Expression.eq("label", dataSourceLabel);
+					Criteria criteria = session.createCriteria(SbiDataSource.class);
+					criteria.add(labelCriterrion);	
+					SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+					hibQbeDataSet.setDataSource(hibDataSource);	
 				}		
-	
 				else if(dataSetActiveDetail instanceof WSDataSetDetail){
-					hibDataSet=new SbiWSDataSet();
+					hibDataSetHistory=new SbiWSDataSet();
 					if(((WSDataSetDetail)dataSetActiveDetail).getAddress()!=null){
-						((SbiWSDataSet)hibDataSet).setAdress(((WSDataSetDetail)dataSetActiveDetail).getAddress());
+						((SbiWSDataSet)hibDataSetHistory).setAdress(((WSDataSetDetail)dataSetActiveDetail).getAddress());
 					}
 					if(((WSDataSetDetail)dataSetActiveDetail).getOperation()!=null){
-						((SbiWSDataSet)hibDataSet).setOperation(((WSDataSetDetail)dataSetActiveDetail).getOperation());
+						((SbiWSDataSet)hibDataSetHistory).setOperation(((WSDataSetDetail)dataSetActiveDetail).getOperation());
 					}	
 				}
-	
+
 				else if(dataSetActiveDetail instanceof JClassDataSetDetail){
-					hibDataSet=new SbiJClassDataSet();
+					hibDataSetHistory=new SbiJClassDataSet();
 					if(((JClassDataSetDetail)dataSetActiveDetail).getJavaClassName()!=null){
-						((SbiJClassDataSet)hibDataSet).setJavaClassName(((JClassDataSetDetail)dataSetActiveDetail).getJavaClassName());
+						((SbiJClassDataSet)hibDataSetHistory).setJavaClassName(((JClassDataSetDetail)dataSetActiveDetail).getJavaClassName());
 					}
 				}
-	
+
 				else if(dataSetActiveDetail instanceof ScriptDataSetDetail){
-					hibDataSet=new SbiScriptDataSet();
+					hibDataSetHistory=new SbiScriptDataSet();
 					if(((ScriptDataSetDetail)dataSetActiveDetail).getScript()!=null){
-						((SbiScriptDataSet)hibDataSet).setScript(((ScriptDataSetDetail)dataSetActiveDetail).getScript());
+						((SbiScriptDataSet)hibDataSetHistory).setScript(((ScriptDataSetDetail)dataSetActiveDetail).getScript());
 					}
 					if(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript()!=null){
-						((SbiScriptDataSet)hibDataSet).setLanguageScript(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript());
+						((SbiScriptDataSet)hibDataSetHistory).setLanguageScript(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript());
 					}
 				}
-	
+
 				SbiDomains transformer = null;
 				if (dataSetActiveDetail.getTransformerId() != null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dataSetActiveDetail.getTransformerId());
 					Criteria criteria = session.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
-	
+
 					transformer = (SbiDomains) criteria.uniqueResult();
-	
+
 					if (transformer == null){
 						logger.error("The Domain with value_id= "+dataSetActiveDetail.getTransformerId()+" does not exist.");
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 					}
 				}
-	
+
 				SbiDomains category = null;
 				if (dataSetActiveDetail.getCategoryId()!= null){ 
 					Criterion aCriterion = Expression.eq("valueId",	dataSetActiveDetail.getCategoryId());
 					Criteria criteria = session.createCriteria(SbiDomains.class);
 					criteria.add(aCriterion);
-	
+
 					category = (SbiDomains) criteria.uniqueResult();
-	
+
 					if (category == null){
 						logger.error("The Domain with value_id= "+dataSetActiveDetail.getCategoryId()+" does not exist.");
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 					}
 				}
 				Date currentTStamp = new Date();
-				SbiDataSetConfig dsConfig = new SbiDataSetConfig();			
-				dsConfig.setLabel(dataSet.getLabel());
-				dsConfig.setDescription(dataSet.getDescription());
-				dsConfig.setName(dataSet.getName());	
-				
-				//TODO modificare questo campo con quello corretto
-				hibDataSet.setUserIn("biadmin");
-				
-				//TODO aggiungere anche questi campi
-				/*dsConfig.setMetaVersion(metaVersion);
-				dsConfig.setOrganization(organization);
-				dsConfig.setSbiVersionDe(sbiVersionDe);
-				dsConfig.setSbiVersionIn(sbiVersionIn);
-				dsConfig.setSbiVersionUp(sbiVersionUp);
-				dsConfig.setTimeDe(timeDe);			
-				dsConfig.setTimeUp(timeUp);
-				dsConfig.setUserDe(userDe);				
-				dsConfig.setUserUp(userUp);
-				
-				hibDataSet.setSbiVersionIn(sbiVersionIn);*/			
-				
-				hibDataSet.setVersionNum(1);
-				hibDataSet.setTimeIn(currentTStamp);		
-				hibDataSet.setActive(true);			
-				
-				hibDataSet.setTransformer(transformer);
-				hibDataSet.setPivotColumnName(dataSetActiveDetail.getPivotColumnName());
-				hibDataSet.setPivotRowName(dataSetActiveDetail.getPivotRowName());
-				hibDataSet.setPivotColumnValue(dataSetActiveDetail.getPivotColumnValue());
-				hibDataSet.setNumRows(dataSetActiveDetail.isNumRows());
-				
-				hibDataSet.setCategory(category);
-				hibDataSet.setParameters(dataSetActiveDetail.getParameters());
-				hibDataSet.setDsMetadata(dataSetActiveDetail.getDsMetadata());
-	
-				Integer dsId =(Integer) session.save(dsConfig);
-				dsConfig.setDsId(dsId);
-				hibDataSet.setSbiDsConfig(dsConfig);
-				
-				session.save(hibDataSet);
-				
-				idToReturn = dsId;
+
+				// Fill dataset config values
+
+				SbiDataSetConfig hibDataSetConfig = new SbiDataSetConfig();	
+
+				hibDataSetConfig.setDsId(dataSet.getDsId());
+				hibDataSetConfig.setLabel(dataSet.getLabel());
+				hibDataSetConfig.setDescription(dataSet.getDescription());
+				hibDataSetConfig.setName(dataSet.getName());	
+				SbiCommonInfo comInfo = new SbiCommonInfo();
+				comInfo.setOrganization(dataSet.getOrganization());
+				comInfo.setSbiVersionDe(dataSet.getSbiVersionDe());
+				comInfo.setSbiVersionIn(dataSet.getSbiVersionIn());
+				comInfo.setSbiVersionUp(dataSet.getSbiVersionUp());
+				comInfo.setTimeDe(dataSet.getTimeDe());
+				comInfo.setTimeIn(dataSet.getTimeIn());
+				comInfo.setTimeUp(dataSet.getTimeUp());
+				comInfo.setUserDe(dataSet.getUserDe());
+				comInfo.setUserIn(dataSet.getUserIn());
+				comInfo.setUserUp(dataSet.getUserUp());
+				hibDataSetConfig.setCommonInfo(comInfo);
+
+				session.save(hibDataSetConfig);
+
+				// Fill Data set history values
+				hibDataSetHistory.setSbiDsConfig(hibDataSetConfig);
+				hibDataSetHistory.setDsHId(dataSetActiveDetail.getDsHId());
+				hibDataSetHistory.setVersionNum(1);
+				hibDataSetHistory.setTimeIn(currentTStamp);		
+				hibDataSetHistory.setActive(true);			
+				hibDataSetHistory.setUserIn(dataSetActiveDetail.getUserIn());
+
+				hibDataSetHistory.setTransformer(transformer);
+				hibDataSetHistory.setPivotColumnName(dataSetActiveDetail.getPivotColumnName());
+				hibDataSetHistory.setPivotRowName(dataSetActiveDetail.getPivotRowName());
+				hibDataSetHistory.setPivotColumnValue(dataSetActiveDetail.getPivotColumnValue());
+				hibDataSetHistory.setNumRows(dataSetActiveDetail.isNumRows());
+
+				hibDataSetHistory.setCategory(category);
+				hibDataSetHistory.setParameters(dataSetActiveDetail.getParameters());
+				hibDataSetHistory.setDsMetadata(dataSetActiveDetail.getDsMetadata());
+
+				session.save(hibDataSetHistory);
+
 				tx.commit();
 			}
 		} catch (HibernateException he) {
@@ -517,10 +545,9 @@ public class ExporterMetadata {
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (session!=null){
-				if (session.isOpen()) session.close();
-				logger.debug("OUT");
-			}
+			//if (session!=null){
+			//	if (session.isOpen()) session.close();
+			logger.debug("OUT");
 		}
 	}
 
@@ -532,7 +559,7 @@ public class ExporterMetadata {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void insertDataSet(IDataSet dataset, Session session) throws EMFUserError {
+	public void insertDataSetAndDataSource(IDataSet dataset, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			// if it is a query data set, insert datasource first, before opening a new transaction
@@ -545,7 +572,7 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			GuiGenericDataSet ds = DAOFactory.getDataSetDAO().toDataSet(dataset);
 			insertDataSet(ds,session);
-			tx.commit();
+			//tx.commit();
 		} catch (Exception e) {
 			logger.error("Error while inserting dataSet into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
@@ -742,7 +769,7 @@ public class ExporterMetadata {
 			logger.debug("OUT");
 		}
 	}	
-	
+
 	/*public void insertKpiDocuments(KpiDocuments docs, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -765,8 +792,10 @@ public class ExporterMetadata {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void insertBIObject(BIObject biobj, Session session) throws EMFUserError {
+	public void insertBIObject(BIObject biobj, Session session, boolean insertDataSet) throws EMFUserError {
 		logger.debug("IN");
+		logger.debug("Insert BI Object with id "+biobj.getId()+ " with inserting dataset "+insertDataSet);
+		
 		try {
 
 			Query hibQuery = session.createQuery(" from SbiObjects where biobjId = " + biobj.getId());
@@ -804,8 +833,11 @@ public class ExporterMetadata {
 			if (dataSetId != null) { 
 				// if the transaction is new insert dataset if missing   
 				IDataSetDAO datasetDao=DAOFactory.getDataSetDAO();
-				IDataSet ds=datasetDao.loadActiveIDataSetByID(dataSetId);
-				insertDataSet(ds, session);
+				// insert dataset if parameter insertDataSet is true (in case of KPI export)
+				if(insertDataSet){
+					GuiGenericDataSet guiGenericDataSet = datasetDao.loadDataSetById(dataSetId);
+					insertDataSet(guiGenericDataSet, session);
+				}
 				SbiDataSetConfig dataset = (SbiDataSetConfig) session.load(SbiDataSetConfig.class, dataSetId);
 				hibBIObj.setDataSet(dataset);
 			}
@@ -1766,7 +1798,7 @@ public class ExporterMetadata {
 					insertOrgUnitGrantNodes(organizationalUnitGrantNode, session);
 				}
 			}
-			
+
 
 			Transaction tx = session.beginTransaction();
 			session.save(hibMi);
@@ -1876,10 +1908,10 @@ public class ExporterMetadata {
 				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
 					UdpValue udpValue = (UdpValue) iterator.next();
 					insertUdpValue(udpValue, session);
-					
+
 				}
 			}
-			
+
 			Set modelChildren=new HashSet();
 			logger.debug("insert current model children");
 
@@ -1934,7 +1966,6 @@ public class ExporterMetadata {
 			hibKpi.setDescription(kpi.getDescription());
 			hibKpi.setInterpretation(kpi.getInterpretation());
 			hibKpi.setName(kpi.getKpiName());
-			// Weight???	hibKpi.setWeight(kpi.get)
 			hibKpi.setWeight(kpi.getStandardWeight());
 			char isFather=kpi.getIsParent().equals(true)? 'T' : 'F';
 			hibKpi.setFlgIsFather(new Character(isFather));
@@ -1960,9 +1991,9 @@ public class ExporterMetadata {
 			// load dataset
 			if (kpi.getKpiDsId() != null) {    
 				Integer dsID = kpi.getKpiDsId();				
-				IDataSet ds=DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsID);
-				insertDataSet(ds, session);
-				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, ds.getId());
+				GuiGenericDataSet guiGenericDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
+				insertDataSet(guiGenericDataSet, session);
+				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
 				hibKpi.setSbiDataSet(sbiDs);
 			}
 
@@ -1973,7 +2004,7 @@ public class ExporterMetadata {
 				SbiThreshold sbiTh= (SbiThreshold) session.load(SbiThreshold.class, th.getId());
 				hibKpi.setSbiThreshold(sbiTh);
 			}
-			
+
 			// Measure Unit   ???
 			if(kpi.getScaleCode()!=null && !kpi.getScaleCode().equalsIgnoreCase("")){
 				IMeasureUnitDAO muDao=DAOFactory.getMeasureUnitDAO();
@@ -1986,26 +2017,26 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			Integer kpiIdReturned = (Integer)session.save(hibKpi);
 			tx.commit();
-			
+
 			List kpiDocsList = kpi.getSbiKpiDocuments();
 			Iterator i = kpiDocsList.iterator();
 			while (i.hasNext()) {
 				KpiDocuments doc = (KpiDocuments) i.next();
 				String label = doc.getBiObjLabel();
-				
+
 				IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
 				BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
 				if(biobj!=null){
-					insertBIObject(biobj, session);
+					insertBIObject(biobj, session, true);
 					doc.setBiObjId(biobj.getId());				
 				}
-				
+
 				Integer origDocId = doc.getBiObjId();
 				Criterion labelCriterrion = Expression.eq("label",label);
 				Criteria criteria = session.createCriteria(SbiObjects.class);
 				criteria.add(labelCriterrion);
 				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
-				
+
 				if(hibObject!=null){
 					SbiKpiDocument temp = new SbiKpiDocument();
 					temp.setSbiKpi(hibKpi);
@@ -2028,9 +2059,9 @@ public class ExporterMetadata {
 					insertKpi(kpiRel.getKpiChildId(), session);
 					insertKpiRel(kpiRel, session);					
 				}
-				
+
 			}
-			
+
 			//manage insert of udp values
 
 			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "Kpi");
@@ -2038,7 +2069,7 @@ public class ExporterMetadata {
 				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
 					UdpValue udpValue = (UdpValue) iterator.next();
 					insertUdpValue(udpValue, session);
-					
+
 				}
 			}
 		} catch (Exception e) {
@@ -2103,9 +2134,9 @@ public class ExporterMetadata {
 			// load dataset
 			if (kpi.getKpiDsId() != null) {    
 				Integer dsID = kpi.getKpiDsId();				
-				IDataSet ds=DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsID);
-				insertDataSet(ds, session);
-				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, ds.getId());
+				GuiGenericDataSet guiGenericDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
+				insertDataSet(guiGenericDataSet, session);
+				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
 				hibKpi.setSbiDataSet(sbiDs);
 			}
 
@@ -2116,7 +2147,7 @@ public class ExporterMetadata {
 				SbiThreshold sbiTh= (SbiThreshold) session.load(SbiThreshold.class, th.getId());
 				hibKpi.setSbiThreshold(sbiTh);
 			}
-			
+
 			// Measure Unit   ???
 			if(kpi.getScaleCode()!=null && !kpi.getScaleCode().equalsIgnoreCase("")){
 				IMeasureUnitDAO muDao=DAOFactory.getMeasureUnitDAO();
@@ -2129,26 +2160,26 @@ public class ExporterMetadata {
 			Transaction tx = session.beginTransaction();
 			Integer kpiIdReturned = (Integer)session.save(hibKpi);
 			tx.commit();
-			
+
 			List kpiDocsList = kpi.getSbiKpiDocuments();
 			Iterator i = kpiDocsList.iterator();
 			while (i.hasNext()) {
 				KpiDocuments doc = (KpiDocuments) i.next();
 				String label = doc.getBiObjLabel();
-				
+
 				IBIObjectDAO biobjDAO = DAOFactory.getBIObjectDAO();
 				BIObject biobj = biobjDAO.loadBIObjectByLabel(label);
 				if(biobj!=null){
-					insertBIObject(biobj, session);
+					insertBIObject(biobj, session, true);
 					doc.setBiObjId(biobj.getId());				
 				}
-				
+
 				Integer origDocId = doc.getBiObjId();
 				Criterion labelCriterrion = Expression.eq("label",label);
 				Criteria criteria = session.createCriteria(SbiObjects.class);
 				criteria.add(labelCriterrion);
 				SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
-				
+
 				if(hibObject!=null){
 					SbiKpiDocument temp = new SbiKpiDocument();
 					temp.setSbiKpi(hibKpi);
@@ -2162,7 +2193,7 @@ public class ExporterMetadata {
 					}
 				}
 			}
-			
+
 			//manage insert of udp values
 
 			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
@@ -2170,7 +2201,7 @@ public class ExporterMetadata {
 				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
 					UdpValue udpValue = (UdpValue) iterator.next();
 					insertUdpValue(udpValue, session);
-					
+
 				}
 			}
 		} catch (Exception e) {
@@ -2179,11 +2210,11 @@ public class ExporterMetadata {
 		}finally{
 			logger.debug("OUT");
 			return hibKpi;
-			
-			
+
+
 		}
 	}
-	
+
 
 	/**
 	 * Insert Kpi Instance.
@@ -2826,17 +2857,17 @@ public class ExporterMetadata {
 			try {
 				kpiChild.getKpiId();
 				logger.error("kpi child id= "+kpiChild.getKpiId());
-				
+
 				hibRel.setSbiKpiByKpiChildId(kpiChild);
 				logger.error("set in try__ok: kpi child saved before");
 			}catch(Throwable t){
 				logger.error("set in try__ok: kpi child didn't exist");
 			}
-			
+
 			SbiKpi kpiFather=(SbiKpi)session.load(SbiKpi.class, kpiRel.getKpiFatherId());
 
 			// main attributes			
-			
+
 			hibRel.setParameter(kpiRel.getParameter());			
 			hibRel.setSbiKpiByKpiFatherId(kpiFather);
 			hibRel.setKpiRelId(kpiRel.getKpiRelId());
@@ -2844,7 +2875,7 @@ public class ExporterMetadata {
 			session.save(hibRel);
 			logger.error("saved rel");
 			tx.commit();
-			
+
 		} catch (Exception e) {
 			logger.error("Error while inserting kpi relation into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
@@ -2879,7 +2910,7 @@ public class ExporterMetadata {
 			hibUdp.setIsMultivalue(udp.getMultivalue());
 			hibUdp.setLabel(udp.getLabel());
 			hibUdp.setName(udp.getName());
-			
+
 			hibUdp.setTypeId(udpType.getValueId());
 			hibUdp.setUdpId(udp.getUdpId());
 
@@ -3067,7 +3098,7 @@ public class ExporterMetadata {
 			}
 			SbiOrgUnitHierarchies hier =(SbiOrgUnitHierarchies)session.load(SbiOrgUnitHierarchies.class, grant.getHierarchy().getId());
 			SbiKpiModelInst mi =(SbiKpiModelInst)session.load(SbiKpiModelInst.class, grant.getModelInstance().getId());
-			
+
 			// main attributes			
 			SbiOrgUnitGrant hibGrant = new SbiOrgUnitGrant();
 			hibGrant.setDescription(grant.getDescription());
@@ -3078,7 +3109,7 @@ public class ExporterMetadata {
 			hibGrant.setSbiKpiModelInst(mi);
 			hibGrant.setSbiOrgUnitHierarchies(hier);
 			hibGrant.setStartDate(grant.getStartDate());
-			
+
 			Transaction tx = session.beginTransaction();			
 			session.save(hibGrant);
 			tx.commit();
@@ -3102,13 +3133,13 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		try {
 			Query hibQuery = session.createQuery(" from SbiOrgUnitGrantNodes s where s.id.nodeId = " + ou.getOuNode().getNodeId()
-												+" and s.id.kpiModelInstNodeId = "+ou.getModelInstanceNode().getModelInstanceNodeId()
-												+" and s.id.grantId = "+ou.getGrant().getId());
+					+" and s.id.kpiModelInstNodeId = "+ou.getModelInstanceNode().getModelInstanceNodeId()
+					+" and s.id.grantId = "+ou.getGrant().getId());
 			List hibList = hibQuery.list();
 			if(!hibList.isEmpty()) {
 				return;
 			} 
-			
+
 			SbiKpiModelInst mi =(SbiKpiModelInst)session.load(SbiKpiModelInst.class, ou.getModelInstanceNode().getModelInstanceNodeId());
 			SbiOrgUnitGrant g =(SbiOrgUnitGrant)session.load(SbiOrgUnitGrant.class, ou.getGrant().getId());
 			SbiOrgUnitNodes n =(SbiOrgUnitNodes)session.load(SbiOrgUnitNodes.class, ou.getOuNode().getNodeId());
@@ -3119,12 +3150,12 @@ public class ExporterMetadata {
 			id.setGrantId(ou.getGrant().getId());
 			id.setNodeId(ou.getOuNode().getNodeId());
 			hibGrant.setId(id);		
-			
-			
+
+
 			hibGrant.setSbiKpiModelInst(mi);
 			hibGrant.setSbiOrgUnitGrant(g);
 			hibGrant.setSbiOrgUnitNodes(n);
-			
+
 			Transaction tx = session.beginTransaction();			
 			session.save(hibGrant);
 			tx.commit();

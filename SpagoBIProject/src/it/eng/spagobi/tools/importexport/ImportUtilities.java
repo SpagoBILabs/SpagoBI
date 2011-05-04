@@ -44,6 +44,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDetId;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -69,6 +70,7 @@ import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
@@ -97,6 +99,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.collections.set.CompositeSet.SetMutator;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -318,22 +321,7 @@ public class ImportUtilities {
 		return existingDatasource;
 	}
 
-	/**
-	 * Make new data set.
-	 * 
-	 * @param dataProxy the ds
-	 * 
-	 * @return the sbi data set
-	 */
-	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset){
-		logger.debug("IN");
-		SbiDataSetConfig newDataset = new SbiDataSetConfig();
-		newDataset.setLabel(dataset.getLabel());
-		newDataset.setName(dataset.getName());
-		newDataset.setDescription(dataset.getDescription());
-		logger.debug("OUT");
-		return newDataset;
-	}	
+
 
 	/**
 	 * Creates a new hibernate engine object.
@@ -1029,8 +1017,38 @@ public class ImportUtilities {
 
 	}
 
+
+
+
+
+	/**
+	 * Make new data set.
+	 * 
+	 * @param dataProxy the ds
+	 * 
+	 * @return the sbi data set
+	 */
+	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset){
+		logger.debug("IN");
+		SbiDataSetConfig newDsConfig = new SbiDataSetConfig();
+
+		newDsConfig.setLabel(dataset.getLabel());
+		newDsConfig.setName(dataset.getName());
+		newDsConfig.setDescription(dataset.getDescription());
+		newDsConfig.setCommonInfo(dataset.getCommonInfo());
+
+		logger.debug("OUT");
+		return newDsConfig;
+	}	
+
+
+
+
+
+
 	/**
 	 * Load an existing dataset and make modifications as per the exported dataset in input
+	 * For what concern the history keep track of the previous one and insert the new one
 	 * 
 	 * @param exportedDataset the exported dataset
 	 * @param sessionCurrDB the session curr db
@@ -1040,21 +1058,112 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError 	 */
 	public static SbiDataSetConfig modifyExistingSbiDataSet(SbiDataSetConfig exportedDataset,
-			Session sessionCurrDB, Integer existingId) {
+			Session sessionCurrDB, Integer existingId, Session sessionExpDB) {
 		logger.debug("IN");
 		SbiDataSetConfig existingDataset = null;
 		try {
 			existingDataset = (SbiDataSetConfig) sessionCurrDB.load(SbiDataSetConfig.class, existingId);
-			// TODO sistemare il cambio di subclass
-			//TODO mettere a posto con le nuove classi di dataset
 			existingDataset.setLabel(exportedDataset.getLabel());
 			existingDataset.setName(exportedDataset.getName());			
 			existingDataset.setDescription(exportedDataset.getDescription());
-		} finally {
+			existingDataset.setLabel(exportedDataset.getLabel());
+			existingDataset.setName(exportedDataset.getName());			
+			existingDataset.setDescription(exportedDataset.getDescription());
+			existingDataset.setCommonInfo(exportedDataset.getCommonInfo());
+
+
+			// Make precedent active inactive, new one will be active
+			Query hibQueryPreActive = sessionCurrDB.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig = ?" );
+			hibQueryPreActive.setBoolean(0, true); 
+			hibQueryPreActive.setInteger(1, existingId);	
+			SbiDataSetHistory  preActive = (SbiDataSetHistory)hibQueryPreActive.uniqueResult();
+			preActive.setActive(false);
+			sessionCurrDB.update(preActive);
+
+			//			// finally save the new exported history
+			//			// insert new Active dataset: in the export DB there is only one for each datasetConfig
+			//			Query hibQuery = sessionExpDB.createQuery(" from SbiDataSetHistory where dsId = '" + exportedDataset.getDsId() + "'");
+			//			SbiDataSetHistory dsHistory = (SbiDataSetHistory)hibQuery.uniqueResult();
+			//
+			//
+			//			// create a copy for current dataset (cannot modify the one retieved frome export DB
+			//			SbiDataSetHistory dsnewHistory = DAOFactory.getDataSetDAO().copyDataSetHistory(dsHistory );
+			//
+			//			dsnewHistory.setDsId(existingDataset);
+			//			sessionCurrDB.save(dsnewHistory);
+
+		}
+		catch (Exception e) {
+			logger.error("Error in modifying exported dataset "+exportedDataset.getLabel(), e);
+		}
+		finally {
 			logger.debug("OUT");
 		}
 		return existingDataset;
 	}
+
+
+	// insert
+
+
+	/**
+	 * associate the new History
+	 * associated with the exported dataset.
+	 * 
+	 * @param dataset the dataset
+	 * @param exportedDataset the exported dataset
+	 * @param sessionCurrDB the session curr db
+	 * @param importer the importer
+	 * @param metaAss the meta ass
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+
+
+	public static void associateNewSbiDataSethistory(SbiDataSetConfig dataset,
+			SbiDataSetConfig exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
+			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			// save the new exported history
+			// insert new Active dataset: in the export DB there is only one for each datasetConfig
+			Query hibQuery = sessionExpDB.createQuery(" from SbiDataSetHistory where sbiDsConfig = '" + exportedDataset.getDsId() + "'");
+			SbiDataSetHistory dsHistory = (SbiDataSetHistory)hibQuery.uniqueResult();
+
+			// create a copy for current dataset (cannot modify the one retieved frome export DB
+			SbiDataSetHistory dsnewHistory = DAOFactory.getDataSetDAO().copyDataSetHistory(dsHistory );
+
+			dsnewHistory.setSbiDsConfig(dataset);
+
+			// associate data source
+			if (dsHistory instanceof SbiQueryDataSet) {
+				SbiQueryDataSet queryDataSet = (SbiQueryDataSet) dsHistory;
+				SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
+				if (ds != null) {
+					((SbiQueryDataSet) dsnewHistory).setDataSource(ds);
+				}
+			}
+
+			SbiDomains transformer = getAssociatedTransfomerType(exportedDataset, sessionCurrDB, metaAss, importer);
+			if (transformer != null) {
+				dsnewHistory.setTransformer(transformer);
+
+			}
+
+			sessionCurrDB.save(dsnewHistory);
+
+		}
+		finally {
+			logger.debug("OUT");
+		}
+	}
+
+
+
+
+
+
+
 
 	/**
 	 * Load an existing lov and make modifications as per the exported lov in input
@@ -1160,41 +1269,7 @@ public class ImportUtilities {
 		}
 	}
 
-	/**
-	 * Set into the dataset the datasource
-	 * associated with the exported dataset.
-	 * 
-	 * @param dataset the dataset
-	 * @param exportedDataset the exported dataset
-	 * @param sessionCurrDB the session curr db
-	 * @param importer the importer
-	 * @param metaAss the meta ass
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 */
-	public static void associateWithExistingEntities(SbiDataSetConfig dataset,
-			SbiDataSetConfig exportedDataset, Session sessionCurrDB,
-			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
-		logger.debug("IN");
-		try {
-			// TODO Da mettere a posto con le nuove tabelle
-			/*
-			if (exportedDataset instanceof SbiQueryDataSet && dataset instanceof SbiQueryDataSet) {
-				SbiQueryDataSet queryDataSet = (SbiQueryDataSet) exportedDataset;
-				SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
-				if (ds != null) {
-					((SbiQueryDataSet) dataset).setDataSource(ds);
-				}
-			}
-			// reading existing transfomer type
-			SbiDomains transformer = getAssociatedTransfomerType(exportedDataset, sessionCurrDB, metaAss, importer);
-			if (transformer != null) {
-				dataset.setTransformer(transformer);
-			}*/
-		} finally {
-			logger.debug("OUT");
-		}
-	}
+
 
 	private static SbiDomains getAssociatedTransfomerType(SbiDataSetConfig exportedDataset,
 			Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
@@ -1210,7 +1285,7 @@ public class ImportUtilities {
 		unique.put("valuecd", typeCd);
 		unique.put("domaincd", "TRANSFORMER_TYPE");
 		SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
-		*/
+		 */
 		logger.debug("OUT");
 		return null;
 	}
@@ -3417,7 +3492,7 @@ public class ImportUtilities {
 		SbiKpiRel newSbiKpiRel = new SbiKpiRel();
 		try{
 			newSbiKpiRel.setParameter(kpirel.getParameter());
-		
+
 			// associations
 			entitiesAssociationsSbiKpiRel(kpirel, newSbiKpiRel, sessionCurrDB, metaAss, importer);
 
@@ -3428,7 +3503,7 @@ public class ImportUtilities {
 		}
 		return newSbiKpiRel;
 	}
-	
+
 	/**
 	 * For SbiKpiRel search new Ids
 	 * 
@@ -3476,7 +3551,7 @@ public class ImportUtilities {
 
 		logger.debug("OUT");
 	}
-	
+
 	/**
 	 * Creates a new hibernate SbiUdp udp object.
 	 * 
@@ -3492,7 +3567,7 @@ public class ImportUtilities {
 			newUdp.setIsMultivalue(udp.isIsMultivalue());
 			newUdp.setLabel(udp.getLabel());
 			newUdp.setName(udp.getName());
-			
+
 			// associations
 			entitiesAssociationsSbiUdp(udp, newUdp, sessionCurrDB, metaAss, importer);
 
@@ -3547,7 +3622,7 @@ public class ImportUtilities {
 
 		logger.debug("OUT");
 	}
-	
+
 	/**
 	 * Load an existing Udp and make modifications as per the exported udp in input
 	 * 
@@ -3696,7 +3771,7 @@ public class ImportUtilities {
 
 		logger.debug("OUT");
 	}
-	
+
 	/**
 	 * Load an existing Udp value and make modifications as per the exported udp in input
 	 * 
@@ -3864,7 +3939,7 @@ public class ImportUtilities {
 	public static void entitiesAssociationsOuGrantNode(SbiOrgUnitGrantNodesId id, SbiOrgUnitGrantNodes exportedGrantNode, SbiOrgUnitGrantNodes existingGrantNode,Session sessionCurrDB, 
 			MetadataAssociations metaAss, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");	
-		
+
 		// model instance id
 		Map modInstAss = metaAss.getModelInstanceIDAssociation();
 		//original value of exported object != null
