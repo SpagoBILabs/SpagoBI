@@ -129,8 +129,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+
+			String sqlQuery = statement.getSqlQueryString();
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			
 			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
@@ -154,9 +154,9 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 				dataStore = (DataStore) dataSet.getDataStore();
 			} else {
 				logger.debug("Using temporary table strategy....");
-				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (HQL): [" + hqlQuery + "]");
+		
 				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + sqlQuery + "]");
-				auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
+		
 				auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 				auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
 
