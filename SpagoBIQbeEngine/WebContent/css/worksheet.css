@@ -79,6 +79,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 background:url(../img/worksheet/designer/chart/percentstackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
 }
 
+.side-by-side-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/sidebysidebarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/stackedbarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/percentstackedbarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.side-by-side-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/sidebysidebarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/stackedbarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/percentstackedbarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
 
 /* Sbi.worksheet.LineChartDesignerPanel */
 .side-by-side-linechart-vertical {
@@ -105,10 +141,48 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-horizontal.gif) no-repeat 22px 0px !important;
 }
 
+.side-by-side-linechart-vertical-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-linechart-vertical-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-linechart-vertical-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.side-by-side-linechart-horizontal-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-linechart-horizontal-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-linechart-horizontal-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
 
 /* Sbi.worksheet.PieChartDesignerPanel */
 .piechart {
-	 background:url(../img/worksheet/designer/chart/piechart.gif) no-repeat 22px 0px !important;
+	background-image:url(../img/worksheet/designer/chart/piechart.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
 }
 
 
@@ -117,4 +191,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	background-image:url(../img/worksheet/palette_table_big.png) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
+}
+
+/**************/
+/*    MISC    */
+/**************/
+
+
+/*Center a pannel*/
+.centered-panel{
+	margin-left:auto;
+	margin-right:auto;
 }
