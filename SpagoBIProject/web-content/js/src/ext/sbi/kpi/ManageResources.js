@@ -103,9 +103,9 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
 										 });
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 140, sortable: true, dataIndex: 'code'},
-		                                         {header: LN('sbi.generic.type'), width: 80, sortable: true, dataIndex: 'typeCd'}
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 160, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 160, sortable: true, dataIndex: 'code'},
+		                                         {header: LN('sbi.generic.type'), width: 90, sortable: true, dataIndex: 'typeCd'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.resources.panelTitle');
@@ -154,8 +154,8 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	   var detailFieldDescr = {
           	 maxLength:400,
           	 xtype: 'textarea',
-       	     width : 250,
-             height : 80,
+       	     width : 300,
+             height : 150,
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
              validationEvent:true,
@@ -183,7 +183,7 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
  	   var detailFieldNodeType =  {
         	  name: 'typeCd',
               store: this.typesStore,
-              width : 120,
+              width : 150,
               fieldLabel: LN('sbi.generic.type'),
               displayField: 'typeCd',   // what the user sees in the popup
               valueField: 'typeCd',        // what is passed to the 'change' event
@@ -208,8 +208,8 @@ Ext.extend(Sbi.kpi.ManageResources, Sbi.widgets.ListDetailForm, {
 		 		   	 itemId: 'items-detail',   	              
 		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             labelWidth: 110,
+		             defaults: {width: 250, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,

@@ -182,9 +182,9 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 										 });   
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'name',header: LN('sbi.generic.name'), width: 135, sortable: true, locked:false, dataIndex: 'name'},
-		                                         {header: LN('sbi.generic.code'), width: 135, sortable: true, dataIndex: 'code'},
-		                                         {header: LN('sbi.generic.type'), width: 70, sortable: true, dataIndex: 'typeCd'}
+		                                         {id:'name',header: LN('sbi.generic.name'), width: 155, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.generic.code'), width: 155, sortable: true, dataIndex: 'code'},
+		                                         {header: LN('sbi.generic.type'), width: 90, sortable: true, dataIndex: 'typeCd'}
 		                                        ];
 		
 		if(this.drawSelectColumn){
@@ -222,7 +222,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  		   
  	   var detailFieldName = new Ext.form.TextField({
           	 maxLength:400,
-          	 width : 200,
+          	 width : 250,
         	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.name'),
@@ -233,7 +233,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	   var detailFieldCode = new Ext.form.TextField({
           	 maxLength:45,
         	 minLength:1,
-        	 width : 200,
+        	 width : 250,
         	 //regex : new RegExp("^([A-Za-z0-9_])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString2'),
              fieldLabel:LN('sbi.generic.code'),
@@ -244,8 +244,8 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  		   
  	   var detailFieldDescr = new Ext.form.TextArea({
           	 maxLength:1000,
-        	 width : 250,
-             height : 80,
+        	 width : 310,
+             height : 150,
         	 //regex : new RegExp("^([a-zA-Z1-9_\x2F])+$", "g"),
         	 regexText : LN('sbi.roles.alfanumericString'),
              fieldLabel: LN('sbi.generic.descr'),
@@ -256,7 +256,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	   var detailFieldNodeType =  new Ext.form.ComboBox({
         	  name: 'typeCd',
               store: this.typesStore,
-              width : 120,
+              width : 250,
               fieldLabel: LN('sbi.generic.type'),
               displayField: 'typeCd',   // what the user sees in the popup
               valueField: 'typeCd',        // what is passed to the 'change' event
@@ -284,7 +284,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  
  	  var detailThrPosition = new Ext.form.NumberField({		
              fieldLabel: LN('sbi.thresholds.position'),
-             width : 120,
+             width : 250,
              xtype: 'numeric',
              validationEvent:true,
              name: 'position'
@@ -293,7 +293,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  var detailThrLabel = new Ext.form.TextField({
  			 maxLength:20,
  			 minLength:1,
- 			 width : 200,
+ 			 width : 250,
              fieldLabel: LN('sbi.generic.label'),
              validationEvent:true,
              allowBlank: false,
@@ -302,7 +302,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	  
  	 this.detailThrMin = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.minVal'),
-             width : 120,
+             width : 250,
              xtype: 'numeric',
              validationEvent:true,
              name: 'min'
@@ -316,7 +316,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	
  	 this.detailThrMax = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.maxVal'),
-             width : 120,
+             width : 250,
              xtype: 'numeric',
              validationEvent:true,
              name: 'max'
@@ -332,7 +332,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	
  	var detailThrValue = new Ext.form.NumberField({
              fieldLabel: LN('sbi.thresholds.value'),
-             width : 120,
+             width : 250,
              xtype: 'numeric',
              validationEvent:true,
              name: 'val'
@@ -340,7 +340,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	
  	this.detailThrColor = new Ext.ux.ColorField({
  			fieldLabel: LN('sbi.thresholds.color'), 
- 			width : 120,
+ 			width : 250,
  			value: '#FFFFFF', 
  			msgTarget: 'qtip', 
  			name: 'color',
@@ -351,7 +351,7 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
  	var detailThrSeverity = new Ext.form.ComboBox({
       	  name: 'severityCd',
           store: this.severityStore,
-          width : 120,
+          width : 250,
           fieldLabel: LN('sbi.thresholds.severity'),
           displayField: 'severityCd',   // what the user sees in the popup
           valueField: 'severityCd',        // what is passed to the 'change' event
@@ -367,17 +367,17 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
       });  
  	  
  	  this.thrMinOrMaxDetail = new Ext.form.FieldSet({  	
-             labelWidth: 90,
+             labelWidth: 110,
              //defaults: {width: 200, border:false},    
              defaultType: 'textfield',
              autoHeight: true,
              autoScroll  : true,
-             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+            // bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
              border: true,
              style: {
-                 "margin-left": "10px", 
-                 "margin-top": "10px", 
-                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "10px"  
+                 "margin-left": "30px", 
+                 "margin-top": "20px", 
+                 "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-30px" : "-33px") : "30px"  
              },
              items: [detailThrValFieldId, detailThrPosition, detailThrLabel, this.detailThrMin, 
                      this.detailThrMinClosed, this.detailThrMax, this.detailThrMaxClosed, 
@@ -389,12 +389,12 @@ Ext.extend(Sbi.kpi.ManageThresholds, Sbi.widgets.ListDetailForm, {
 	 		   	 itemId: 'items-detail',   	              
 	 		   	// columnWidth: 0.4,
 	             xtype: 'fieldset',
-	             labelWidth: 90,
+	             labelWidth: 110,
 	            // defaults: {width: 200, border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
-	             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
+	             bodyStyle: Ext.isIE ? 'padding:0 0 10px 15px;' : 'padding:10px 15px;',
 	             border: false,
 	             style: {
 	                 "margin-left": "10px",  
