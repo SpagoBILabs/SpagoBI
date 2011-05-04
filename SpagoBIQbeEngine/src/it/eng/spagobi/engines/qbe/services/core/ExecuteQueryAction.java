@@ -135,9 +135,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			//String sqlQuery = statement.getSqlQueryString();
+			String sqlQuery = statement.getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
 			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
