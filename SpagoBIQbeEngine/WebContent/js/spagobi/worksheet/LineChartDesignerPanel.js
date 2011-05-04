@@ -152,6 +152,8 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 	    this.axisDefinitionPanel = new Ext.Panel({
 	        layout: 'table'
 	        , baseCls:'x-plain'
+	        , cls: 'centered-panel' //for center the panel
+	        , width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel
 	        , padding: '10 10 10 10'
 	        , layoutConfig: {columns : 2}
 	        // applied to child components
@@ -174,7 +176,7 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 			, items: [
 			    {
 			    	layout: 'column'
-			    	, padding: '10 10 10 10'
+			    	, padding: '0 10 10 10'
 			    	, border: false
 			    	, items: [
 		  			    {
@@ -222,7 +224,7 @@ Ext.extend(Sbi.worksheet.LineChartDesignerPanel, Ext.Panel, {
 	}
 	
 	, initTemplate: function () {
-        this.imageTemplate = new Ext.Template('<div class="{0}-{1}" style="height: 100%;"></div>');
+        this.imageTemplate = new Ext.Template('<div class="{0}-{1}-preview" style="height: 100%;"></div>');
         this.imageTemplate.compile();
 	}
 	
