@@ -39,7 +39,7 @@
  * 
  * [list]
  * 
- * Authors - Alberto Ghedni (alberto.ghedin@eng.it)
+ * Authors - Alberto Ghedin (alberto.ghedin@eng.it)
  */
 Ext.ns("Sbi.worksheet");
 
@@ -58,17 +58,12 @@ Sbi.worksheet.TableDesignerPanel = function(config) {
 	Ext.apply(this, c);
 	
 	c = {
-			layout: 'fit',
-			cls: 'table',
-			ctCls: 'table',
-			html: '&nbsp;'
-	}
-	
+		layout: 'fit',
+		cls: 'table',
+		style: 'height: 100%;',
+		html: '&nbsp;'
+	};
 	Sbi.worksheet.TableDesignerPanel.superclass.constructor.call(this, c);
-
 };
 
-Ext.extend(Sbi.worksheet.TableDesignerPanel, Ext.Panel, {
-
-	
-});
+Ext.extend(Sbi.worksheet.TableDesignerPanel, Ext.Panel, {});

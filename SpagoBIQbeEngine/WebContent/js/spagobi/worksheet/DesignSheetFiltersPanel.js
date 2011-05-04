@@ -196,7 +196,7 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
-			, height: 40
+			, height: 20
 		});
 	}
 
@@ -220,7 +220,7 @@ Ext.extend(Sbi.worksheet.DesignSheetFiltersPanel, Ext.Panel, {
             , layout: {
                 type:'column'
             }
-			, style:'padding:5px 5px 5px 5px'
+			, style:'padding:0px 5px 5px 5px'
        		, items: [{
        			html: aRow.data.alias
        		}, new Ext.Button({

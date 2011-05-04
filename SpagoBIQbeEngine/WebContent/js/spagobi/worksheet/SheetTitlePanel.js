@@ -22,8 +22,6 @@
 /**
  * Object name
  * 
- * config.img = image form line
- * config.title = title form line
  * 
  * 
  * Public Properties
@@ -41,14 +39,20 @@
  * [list]
  * 
  * Authors
- * 		Alberto Ghedin (alberto.ghedin@eng.it)
+ * 		Alberto Ghedin  (alberto.ghedin@eng.it)
  * 		Davide Zerbetto (davide.zerbetto@eng.it)
  */
 Ext.ns("Sbi.worksheet");
 
 Sbi.worksheet.SheetTitlePanel = function(config) { 
 	
-	var defaultSettings = {};
+	var defaultSettings = {		
+		border: false,
+		frame:true,
+		style:'padding:5px 15px 5px',  
+		fileUpload: true,
+		height: 90
+	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.sheetTitlePanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.sheetTitlePanel);
@@ -57,6 +61,8 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 
 	Ext.apply(this, c);
+	
+	Ext.QuickTips.init();  // enable tool tips
 
 	var formItems = [];
 	var formRows = 0;	
@@ -71,26 +77,11 @@ Sbi.worksheet.SheetTitlePanel = function(config) {
 	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
 	//row of the title
-	if(this.titleForm){
-		formRows++;
-		formItems = this.addTitle(formItems);
-	}
-	
-	//row of the image
-	if(this.imgForm){
-		formRows++;
-		formItems = this.addImage(formItems);
-	}
+
+	formItems = this.addTitle(formItems);
+	formItems = this.addImage(formItems);
 	
 	c = {
-		border: false,
-		frame:true,
-		style:'padding:5px 15px 5px',  
-		fileUpload: true,
-		height: 15+formRows*30,
-		defaults: {
-			anchor: '95%',
-		},
         items: [{
             layout:'column',
             items: formItems
@@ -106,74 +97,27 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	loadImageFileBrows: null,
 	titlePanel: null,
 	titleField: null,
-	sizeField: null,
 	imgCombo: null,
 	imgFile: null,
 	imgPosition: null,
-	config: null,
 	imagesStore: null,
 	
 	
 	//add the title row in the items of the panel
 	addTitle:function(items){
 		
-		this.titleField = new Ext.form.TextField({
-			fieldLabel: LN('sbi.worksheet.title'),
-			allowBlank: false,
-			name: 		'first',
-			anchor:		'95%'
-		});
+		this.titlePanel =
+			new Ext.form.HtmlEditor({
+            	columnWidth:		.6,
+            	anchor:				'95%',
+                height: 			65,
+        	    enableLinks :  		false,
+        	    enableLists :		false,
+        	    enableSourceEdit : 	false
+            });
 		
-		this.sizeField = new Ext.form.ComboBox({
-			mode:           'local',
-			triggerAction:  'all',
-			forceSelection: true,
-			editable:       false,
-			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.size'),
-			name:           'size',
-			displayField:   'size',
-			valueField:     'size',
-			anchor:			'95%',
-			store:          new Ext.data.JsonStore({
-				fields : ['size'],
-				data   : this.getAvailableSizes(10,50,2)
-			})
-		});
-		
-		this.titlePanel = new Ext.Panel({
-            layout:'column',
-            columnWidth:1,
-            items: [		{
-    			columnWidth:.7,
-    			layout: 'form',
-    			items: [this.titleField]
-    		},
-    		{
-    			columnWidth:.3,
-    			layout: 'form',
-    			items: [this.sizeField]
-    		}]
-		});
 		
 		items.push(this.titlePanel);
-		
-//		items.push({
-//			columnWidth:.7,
-//			layout: 'form',
-//			items: [this.titleField]
-//		});
-//		items.push({
-//	        items: [{
-//	            layout:'column',
-//	            items: formItems
-//	        }]
-//		});
-		
-		
-		
-
-		
 		return items;
 	},
 	
@@ -276,16 +220,12 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 		});
 
 		items.push({
-			columnWidth:.5,
+			columnWidth:.4,
+			style:'padding-left: 10px; padding-top: 7px;',
 			layout: 'form',
-			items: [this.loadImageCombo,this.loadImageFileBrows]
+			items: [this.loadImageCombo,this.loadImageFileBrows,this.imgPosition]
 		});
 		
-		items.push({
-			columnWidth:.5,
-			layout: 'form',
-			items: [this.imgPosition]
-		});
 		return items;
 	},
 	
@@ -293,23 +233,11 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	getAvailablePositions:function(){
 		var array = [];
 		array.push({position: 'left'});
-		array.push({position: 'top'});
+		array.push({position: 'center'});
 		array.push({position: 'right'});
-		array.push({position: 'bottom'});	
 		return array;
 	},
-	
-	//returns the array with the available size for the text form
-	getAvailableSizes:function(min,max,step){
-		var array = [];
-		var i=min;
-		while(i<=max){
-			array.push({size: ''+i});
-			i=i+step;
-		}
-		return array;
-	},
-	
+		
 	//handler for the load image button
 	//This button hides the select image combo box 
 	//and shows the file input field
@@ -363,26 +291,17 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	
 	isValidForm: function(){
 		var valid= true;
-		if(this.titleForm){
-			valid = valid && this.titleField.isValid(false) && this.sizeField.isValid(false);
-		}
-		if(this.imgForm){
-			valid = valid && this.imgCombo.isValid(false) && this.imgPosition.isValid(false);
-		}
+		valid = valid && this.titleField.isValid(false);
+		valid = valid && this.imgCombo.isValid(false) && this.imgPosition.isValid(false);
 		return valid;
 	},
 	
 	getFormValues: function(messageBox){
 		if(this.isValidForm()){	
 			var values={};
-			if(this.titleForm){
-				values.title =  this.titleField.getValue();
-				values.size =   this.sizeField.getValue();
-			}
-			if(this.imgForm){
-				values.img =  this.imgCombo.getValue()
-				values.position =   this.imgPosition.getValue();
-			}
+			values.title =  this.titleField.getValue();
+			values.img =  this.imgCombo.getValue()
+			values.position =   this.imgPosition.getValue();
 			return values;
 		}
 		if(messageBox){
@@ -397,24 +316,9 @@ Ext.extend(Sbi.worksheet.SheetTitlePanel, Ext.FormPanel, {
 	},
 	
 	setFormValues: function(values){
-		if(this.titleForm){
-			 this.titleField.setValue(values.title)
-			 this.sizeField.setValue(values.size);
-		}
-		if(this.imgForm){
-			 this.imgCombo.setValue(values.img)
-			 this.imgPosition.setValue(values.position);
-		}
-	},
-	
-	hideTitle: function(){
-		this.titlePanel.hide();
-		this.setHeight(45);
-	},
-	
-	showTitle: function(){
-		this.titlePanel.show();
-		this.setHeight(75);
+		 this.titleField.setValue(values.title)
+		 this.imgCombo.setValue(values.img)
+		 this.imgPosition.setValue(values.position);
 	}
 	
 });
