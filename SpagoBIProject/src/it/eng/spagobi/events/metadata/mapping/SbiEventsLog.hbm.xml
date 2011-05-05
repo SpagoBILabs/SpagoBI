@@ -6,13 +6,13 @@
     <class name="it.eng.spagobi.events.metadata.SbiEventsLog" table="SBI_EVENTS_LOG">
         <id name="id" type="integer">
             <column name="id" />
-   <generator class="org.hibernate.id.enhanced.TableGenerator">
-		<param name="optimizer">hilo</param>
-		<param name="segment_value">SBI_EVENTS_LOG</param>	
-		<param name="initial_value">1</param>	
-   </generator>
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">hilo</param>
+				<param name="segment_value">SBI_EVENTS_LOG</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
         </id>
-                    <component name="commonInfo" insert="true" update="true" 
+     <component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
         <property name="userIn" type="string">
             <column name="USER_IN" length="100" not-null="true" />
@@ -57,7 +57,7 @@
         <property name="params" type="string">
             <column name="params" length="1000" not-null="false" />
         </property>
-        <property name="handler" type="string">
+        <property name="handlerClass" type="string">
             <column name="handler" length="400" not-null="true" />
         </property>
         <set name="roles" inverse="true">
