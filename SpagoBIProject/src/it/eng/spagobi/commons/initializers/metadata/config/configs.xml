@@ -10,4 +10,7 @@
 <CONFIG label="changepwd.change_first" name="Change at first login " description="The pwd must be changed at first login" isActive="false" valueCheck="" valueType=""/>
 <CONFIG label="changepwd.disactivation_time" name="Disactivation time" description="Number of months before disactivation" isActive="false" valueCheck="6" valueType="NUM"/>
 <CONFIG label="changepwd.expired_time" name="Expired time" description="Number of days fo the expiration" isActive="false" valueCheck="90" valueType="NUM"/>
+<CONFIG label="home.banner" name="home.banner" description="home.banner" isActive="true" valueCheck="true" valueType="STRING"/>
+<CONFIG label="home.footer" name="home.footer" description="home.footer" isActive="true" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="SPAGOBI.SPAGOBI-MODE.mode" description="SPAGOBI.SPAGOBI-MODE.mode" isActive="true" valueCheck="WEB" valueType="STRING"/>
 </CONFIGS>
