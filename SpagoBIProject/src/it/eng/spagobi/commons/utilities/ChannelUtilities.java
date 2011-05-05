@@ -134,7 +134,6 @@ public class ChannelUtilities {
 	 * Checks if is web running.
 	 * 
 	 * @return true, if is web running
-	 * @throws EMFUserError 
 	 */
 	public static boolean isWebRunning() {
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
@@ -152,7 +151,6 @@ public class ChannelUtilities {
 	 * Checks if is portlet running.
 	 * 
 	 * @return true, if is portlet running
-	 * @throws EMFUserError 
 	 */
 	public static boolean isPortletRunning() {
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
