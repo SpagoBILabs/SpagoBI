@@ -36,7 +36,7 @@ public class SbiEventsLog extends SbiHibernateModel {
 	private Date date;
 	private String desc;
 	private String params;
-	private String handler; 
+	private String handlerClass; 
 	private Set roles; 
 	
 	/**
@@ -168,8 +168,8 @@ public class SbiEventsLog extends SbiHibernateModel {
 	 * 
 	 * @return the handler
 	 */
-	public String getHandler() {
-		return handler;
+	public String getHandlerClass() {
+		return handlerClass;
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class SbiEventsLog extends SbiHibernateModel {
 	 * 
 	 * @param handler the new handler
 	 */
-	public void setHandler(String handler) {
-		this.handler = handler;
+	public void setHandlerClass(String handler) {
+		this.handlerClass = handler;
 	}
 }
