@@ -70,7 +70,9 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	
-	initPanels: function(){
+	filtersPanel : null
+	
+	, initPanels: function() {
 		
 		var items = [];
 		
@@ -79,7 +81,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			style:'padding:5px 15px 5px'
 		}
 		
-		if (this.sheetConf.title!=null && this.sheetConf.title!=undefined){
+		if (this.sheetConf.title!=undefined && this.sheetConf.title!=null){
 			
 			//this.sheetConf.title = '<div style="float: left">'+this.sheetConf.title+'</div><div style="float: left">asd456456456sad</div>';
 			this.sheetConf.title = '<div>'+this.sheetConf.title+'</div><div>234234234</div>';
@@ -90,6 +92,18 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			
 			
 			items.push(header);
+		}
+
+		if (this.sheetConf.filters != undefined && this.sheetConf.filters != null && this.sheetConf.filters.length > 0) {
+			var dynamicFilters = [];
+			for ( var i = 0; i < this.sheetConf.filters.length; i++ ) {
+				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConf.filters[i]);
+				dynamicFilters.push(aDynamicFilter);	
+			}
+			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, {
+				title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
+			});
+			items.push(this.filtersPanel);
 		}
 		
 		var content = new Ext.Panel(Ext.apply({
@@ -108,4 +122,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		return items;
 	}
 	
+	, getDynamicFilterDefinition: function (aField) {
+		return {
+            "text": aField.alias,
+            "field": aField.id,
+            "operator": "EQUALS TO",
+            "singleSelection": false
+		};
+	}
 });
