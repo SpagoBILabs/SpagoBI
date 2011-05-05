@@ -196,7 +196,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeWorkSheetsPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/></script>
 
 
 
@@ -273,7 +273,7 @@ END-PRODUCTION -->
 	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
-	        	var workSheetPanel = new Sbi.worksheet.runtime.RuntimeWorkSheetsPanel({});
+	        	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel({});
 	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
 	           	var viewport = new Ext.Viewport(workSheetPanel);  
 	           	
