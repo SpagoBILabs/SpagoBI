@@ -16,6 +16,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/dataset/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/worksheet/designer/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/worksheet/runtime/<%=locale.getLanguage()%>.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
 
