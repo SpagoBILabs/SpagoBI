@@ -51,7 +51,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-<script type="text/javascript" src="/SpagoBI/js/src/ext/sbi/overrides/overrides.js"></script>
+
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%><script type="text/javascript" src="/SpagoBI/js/src/ext/sbi/overrides/overrides.js"></script>
 	
 <script type="text/javascript" src="<%=linkSbijs%>"></script>
 <script type="text/javascript" src="<%=linkProto%>"></script>
@@ -105,9 +106,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	MenuListJSONSerializer m = new MenuListJSONSerializer();
 	JSONObject jsonMenuList = (JSONObject)m.serialize(filteredMenuList,locale);
 	if(jsonMenuList == null) jsonMenuList= new JSONObject();	
-	ConfigSingleton spagoconfig = ConfigSingleton.getInstance(); 
+	SingletonConfig spagoconfig = SingletonConfig.getInstance();
 	// get mode of execution
-	String viewTrack = (String)spagoconfig.getAttribute("SPAGOBI.MENU.pathTracked");   
+	String viewTrack = (String)spagoconfig.getConfigValue("SPAGOBI.MENU.pathTracked");   
 	boolean viewTrackPath=false;	
 	if(viewTrack!=null && viewTrack.equalsIgnoreCase("TRUE")){
 	viewTrackPath=true;	
@@ -228,14 +229,12 @@ var themesViewName;
 
 <%
 // BANNER AND FOOTER CONFIGURATION
-SourceBean b = (SourceBean)spagoconfig.getAttribute("SPAGOBI.HOME.BANNER");
-String banner = (String)b.getAttribute("view");
+String banner = spagoconfig.getConfigValue("SPAGOBI.HOME.BANNER.view");
 boolean showbanner = true;
 if (banner!=null && !banner.equals("") && banner.equalsIgnoreCase("false")){
 	showbanner = false;
 }
-SourceBean f = (SourceBean)spagoconfig.getAttribute("SPAGOBI.HOME.FOOTER");
-String footer =(String) f.getAttribute("view");
+String footer = spagoconfig.getConfigValue("SPAGOBI.HOME.FOOTER.view");
 boolean showfooter = true;
 if (footer!=null && !footer.equals("") && footer.equalsIgnoreCase("false")){
 	showfooter =  false;
@@ -254,7 +253,8 @@ else
 }
 
 //recover all themes
-	List themes=spagoconfig.getAttributeAsList("SPAGOBI.THEMES.THEME");
+	ConfigSingleton configspago = ConfigSingleton.getInstance();
+	List themes=configspago.getAttributeAsList("SPAGOBI.THEMES.THEME");
 	boolean drawSelectTheme=ThemesManager.drawSelectTheme(themes);
 	
 	//keep track of current theme view name
