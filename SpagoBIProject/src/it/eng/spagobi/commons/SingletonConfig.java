@@ -31,7 +31,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.metadata.SbiConfig;
 
 /**
  * Defines the Singleton SpagoBI implementations.
@@ -44,14 +43,14 @@ public class SingletonConfig {
 	private static SingletonConfig instance = null;
 	private static transient Logger logger = Logger.getLogger(SingletonConfig.class);
 	
-	private HashMap<String, String> cache=null;
+	private HashMap<String, String> cache=new HashMap<String, String>();
 	
 	public synchronized static SingletonConfig getInstance() {
 		try{
 		if (instance == null)
 			instance = new SingletonConfig();
 		}catch(Exception e) {
-			logger.error("Impossible to load configuration for report engine",e);
+			logger.error("Impossible to load configuration",e);
 		}
 		return instance;
 	}
@@ -60,7 +59,6 @@ public class SingletonConfig {
 		logger.debug("Resource: Table SbiConfig");
 		
 		IConfigDAO dao= null;  
-		cache=new HashMap<String, String>();
 		try {
 			dao= DAOFactory.getSbiConfigDAO();
 			List<Config> allConfig= dao.loadAllConfigParameters();
