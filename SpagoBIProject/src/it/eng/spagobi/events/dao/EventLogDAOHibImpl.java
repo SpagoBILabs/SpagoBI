@@ -242,7 +242,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		hibEventLog.setDate(eventLog.getDate());
 		hibEventLog.setDesc(eventLog.getDesc());
 		hibEventLog.setParams(eventLog.getParams());
-		hibEventLog.setHandler(eventLog.getHandler());
+		hibEventLog.setHandlerClass(eventLog.getHandler());
 		session.save(hibEventLog);
 		Set hibEventRoles = new HashSet();
 		List roles = eventLog.getRoles();
@@ -385,7 +385,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		eventLog.setDate(hibEventLog.getDate());
 		eventLog.setDesc(hibEventLog.getDesc());
 		eventLog.setParams(hibEventLog.getParams());
-		eventLog.setHandler(hibEventLog.getHandler());
+		eventLog.setHandler(hibEventLog.getHandlerClass());
 		List roles = new ArrayList();
 		Set rolesSet = hibEventLog.getRoles();
 		Iterator rolesIt = rolesSet.iterator();
