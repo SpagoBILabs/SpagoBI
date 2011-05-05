@@ -28,6 +28,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiConfig;
@@ -59,11 +60,12 @@ public class SingletonConfig {
 		logger.debug("Resource: Table SbiConfig");
 		
 		IConfigDAO dao= null;  
+		cache=new HashMap<String, String>();
 		try {
 			dao= DAOFactory.getSbiConfigDAO();
-			List<SbiConfig> allConfig= dao.loadAllConfigParameters();
+			List<Config> allConfig= dao.loadAllConfigParameters();
 			
-			for (SbiConfig config: allConfig ) {
+			for (Config config: allConfig ) {
 				cache.put(config.getLabel(), config.getValueCheck());
 				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
 			}
