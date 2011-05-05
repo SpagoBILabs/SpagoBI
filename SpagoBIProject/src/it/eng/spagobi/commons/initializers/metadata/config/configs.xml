@@ -13,4 +13,5 @@
 <CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="mode" description="mode" isActive="false" valueCheck="WEB" />
 <CONFIG label="BANNER.view" name="banner" description="banner" isActive="false" valueCheck="true" />
 <CONFIG label="HOME.FOOTER.view" name="footer" description="footer" isActive="false" valueCheck="true" />
+<CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="false" valueCheck="true" />
 </CONFIGS>
