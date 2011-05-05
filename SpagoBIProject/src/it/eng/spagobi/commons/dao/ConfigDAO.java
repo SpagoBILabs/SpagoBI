@@ -246,6 +246,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 				logger.debug("Update Config");
 				hibConfig = (SbiConfig) aSession.load(SbiConfig.class, id);
 				updateSbiCommonInfo4Update(hibConfig);
+				hibConfig.setLabel(config.getLabel());
 				hibConfig.setDescription(config.getDescription());
 				hibConfig.setName(config.getName());
 				hibConfig.setValueCheck(config.getValueCheck());
