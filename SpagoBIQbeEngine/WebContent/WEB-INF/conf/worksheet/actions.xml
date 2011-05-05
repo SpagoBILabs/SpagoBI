@@ -15,5 +15,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	
+	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetImageContentAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

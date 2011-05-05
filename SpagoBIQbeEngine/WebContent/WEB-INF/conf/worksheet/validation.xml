@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<VALIDATIONS>
+
+	<SERVICE name="GET_IMAGE_CONTENT_ACTION" type="ACTION">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="FILE_NAME">
+				    <VALIDATOR validatorName="MANDATORY"/>
+				    <!-- Avoid path separators (/ and \) on FILE_NAME parameter -->
+				    <VALIDATOR validatorName="REGEXP" arg0="^[^/\\\\]*$"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

@@ -126,7 +126,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		return {
             "text": aField.alias,
             "field": aField.id,
-            "operator": "EQUALS TO",
+            "operator": "IN",
             "singleSelection": false
 		};
 	}
