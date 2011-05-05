@@ -46,8 +46,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.cglib.transform.impl.AddDelegateTransformer;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
