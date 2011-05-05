@@ -104,7 +104,7 @@ Sbi.qbe.QbePanel = function(config) {
 	}
 
 	if (c.displayWorksheetPreviewPanel) {
-		this.worksheetPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab);
+		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel();
 		items.push(this.worksheetPreviewPanel);
 		// if user is not a power user, show crosstab on first tab render event
 		if (!c.displayWorksheetDesignerPanel) {
