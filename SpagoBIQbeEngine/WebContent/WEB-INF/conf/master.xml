@@ -57,5 +57,6 @@
 	
 	<!-- start worksheet configuration -->
 	<CONFIGURATOR path="/WEB-INF/conf/worksheet/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/validation.xml" />
 	
 </MASTER>
