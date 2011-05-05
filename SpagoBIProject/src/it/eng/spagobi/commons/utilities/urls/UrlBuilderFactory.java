@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.utilities.urls;
 
 import it.eng.spago.base.ApplicationContainer;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 public class UrlBuilderFactory {
@@ -36,9 +36,9 @@ public class UrlBuilderFactory {
 		ApplicationContainer spagoContext = ApplicationContainer.getInstance();
 		IUrlBuilder urlBuilder = (IUrlBuilder)spagoContext.getAttribute(SpagoBIConstants.URL_BUILDER);
 		if(urlBuilder==null) {
-			ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
+			SingletonConfig spagoconfig = SingletonConfig.getInstance();
 			// get mode of execution
-			String sbiMode = (String)spagoconfig.getAttribute("SPAGOBI.SPAGOBI-MODE.mode");   
+			String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 			// based on mode get spago object and url builder
 			if (sbiMode.equalsIgnoreCase("WEB")) {
 				urlBuilder = new WebUrlBuilder();		

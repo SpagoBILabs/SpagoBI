@@ -17,6 +17,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.message.MessageBundle;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -410,8 +411,8 @@ public class MessageBuilder
             }
         } else
         {
-            ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
-            sbiMode = (String)spagoconfig.getAttribute("SPAGOBI.SPAGOBI-MODE.mode");
+            SingletonConfig spagoconfig = SingletonConfig.getInstance();
+            sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");
         }
         logger.debug((new StringBuilder("OUT: sbiMode = ")).append(sbiMode).toString());
         return sbiMode;
