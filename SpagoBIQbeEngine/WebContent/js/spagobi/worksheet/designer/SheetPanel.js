@@ -142,4 +142,21 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		}
 	}
 	
+	, isValid(){
+		var valid = true;
+		if(sheetState.header!=null){
+			valid = valid && this.headerPanel.isValid();
+		}
+//		if(sheetState.filters!=null){
+//			this.filtersPanel.setFilters(sheetState.filters);
+//		}
+//		if(sheetState.content!=null){
+//			this.contentPanel.setDesignerState(sheetState.content);
+//		}
+		if(sheetState.footer!=null){
+			valid = valid && this.footerPanel.isValid();
+		}
+		return valid;
+	}
+	
 });
