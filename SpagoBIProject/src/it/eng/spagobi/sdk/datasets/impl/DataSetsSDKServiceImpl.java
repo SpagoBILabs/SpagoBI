@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.sdk.datasets.impl;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.sdk.AbstractSDKService;
@@ -33,13 +35,14 @@ import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -139,9 +142,12 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			{
 				logger.warn("error in parsing, recover metadata executing again the dataset! ");
 				Map parameters = new HashMap();
-				//List parametersToFill = DetailDataSetModule.getParametersToFill(dataSet.toSpagoBiDataSet());
-				//TODO da cambiare con il nuovo metodo
-				List parametersToFill = new ArrayList();
+				List parametersToFill = null;
+				String parametersXML=dataSet.toSpagoBiDataSet().getParameters();
+				if(parametersXML!=null && !((parametersXML.trim()).equals(""))){
+					DataSetParametersList dsParam=new DataSetParametersList(parametersXML);
+					parametersToFill=dsParam.getItems();				
+				}
 				if (parametersToFill != null && parametersToFill.size() > 0) {
 					Iterator it = parametersToFill.iterator();
 					while (it.hasNext()) {
@@ -185,6 +191,48 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		} finally {
 			logger.debug("OUT");
 		}
+		return toReturn;
+	}
+	
+	public Integer saveDataset(SDKDataSet sdkDataSet) throws NotAllowedOperationException {
+		logger.debug("IN");
+		Integer dataSetId = null;
+		Integer toReturn = null;
+		try {
+			IEngUserProfile profile = getUserProfile();
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			if (sdkDataSet == null) {
+				logger.warn("SDKDataSet in input is null!");
+				return null;
+			}
+			//defines the new dataset from the sdk object
+			String userId = ((UserProfile) profile).getUserId().toString();
+			logger.debug("Current user id is [" + userId + "]");
+			
+			dataSetId = sdkDataSet.getId();
+			logger.debug("Looking for dataset with id = " + dataSetId);
+			if (dataSetId == null){
+				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");
+				sdkDataSet.setUserIn(((UserProfile) profile).getUserId().toString());
+				GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);				
+				toReturn = DAOFactory.getDataSetDAO().insertDataSet(sbiDataset);
+				if (toReturn != null) {
+					logger.info("DataSet saved with id = " + toReturn);
+				} else {
+					logger.error("DataSet not modified!!");
+				}
+			}else{
+				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");	
+				sdkDataSet.setUserIn(((UserProfile) profile).getUserId().toString());
+				sdkDataSet.setUserUp(((UserProfile) profile).getUserId().toString());
+				GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);		
+				DAOFactory.getDataSetDAO().modifyDataSet(sbiDataset);
+			}		
+			
+		} catch(Exception e) {
+			logger.error("Error while saving dataset", e);
+		}
+		logger.debug("OUT");
 		return toReturn;
 	}
 

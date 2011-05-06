@@ -21,9 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.sdk.utilities;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -54,13 +55,25 @@ import it.eng.spagobi.sdk.maps.bo.SDKMap;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JClassDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.QbeDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.QueryDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
+import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -414,6 +427,7 @@ public class SDKObjectsConverter {
 			// java dataset
 			toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
 
+			/*
 			String type = null;
 
 			if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
@@ -432,10 +446,15 @@ public class SDKObjectsConverter {
 			}
 
 			toReturn.setType(type);
-
-			//List dataSetParameterItemList = DetailDataSetModule.getParametersToFill(spagoBiDataSet);
-			//TODO da cambiare con il nuovo metodo
-			List dataSetParameterItemList = new ArrayList();
+			 */
+			toReturn.setType(spagoBiDataSet.getType());
+			
+			List dataSetParameterItemList = null;
+			String parametersXML=spagoBiDataSet.getParameters();
+			if(parametersXML!=null && !((parametersXML.trim()).equals(""))){
+				DataSetParametersList dsParam=new DataSetParametersList(parametersXML);
+				dataSetParameterItemList=dsParam.getItems();
+			}
 			SDKDataSetParameter[] parameters = null;
 			if (dataSetParameterItemList != null) {
 				parameters = this.fromDataSetParameterItemListToSDKDataSetParameterArray(dataSetParameterItemList);
@@ -470,10 +489,33 @@ public class SDKObjectsConverter {
 		logger.debug("OUT");
 		return toReturn;
 	}
+	
+	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray) 
+			throws  SourceBeanException{
+		logger.debug("IN");
+		if (dataSetParameterArray == null) {
+			logger.warn("dataSetParameterArray in input is null!!");
+			return null;
+		}
+		String toReturn = null;
+		List paramsList = new ArrayList<String>();
+		for (int i = 0; i < dataSetParameterArray.length; i++) {
+			SDKDataSetParameter aDataSetParameterItem = ((SDKDataSetParameter) dataSetParameterArray[i]);
+			DataSetParameterItem aBIDataSetParameter = this.fromSDKDataSetParameterItemToBIDataSetParameter(aDataSetParameterItem);
+			paramsList.add(aBIDataSetParameter);
+		}
+		toReturn = this.deserializeSKDatasetParametersArray(paramsList);
 
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	
 	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(
 			DataSetParameterItem dataSetParameterItem) {
+		
 		logger.debug("IN");
+		
 		if (dataSetParameterItem == null) {
 			logger.warn("DataSetParameterItem in input is null!!");
 			return null;
@@ -484,7 +526,171 @@ public class SDKObjectsConverter {
 		logger.debug("OUT");
 		return toReturn;
 	}
+	
+	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(SDKDataSetParameter SDKDataSetParameterItem) {
+		
+		logger.debug("IN");
+		
+		if (SDKDataSetParameterItem == null) {
+			logger.warn("SDKDataSetParameterItem in input is null!!");
+			return null;
+		}
+		DataSetParameterItem toReturn = new DataSetParameterItem();
+		toReturn.setName(SDKDataSetParameterItem.getName());
+		toReturn.setType(SDKDataSetParameterItem.getType());
+		logger.debug("OUT");
+		return toReturn;
+	}
 
+	public GuiGenericDataSet fromSDKDatasetToBIDataset(SDKDataSet dataset) {
+		logger.debug("IN");
+		if (dataset == null) {
+			logger.warn("SDKDataSet in input is null!!");
+			return null;
+		}
+		GuiGenericDataSet ds = null;
+		GuiDataSetDetail dsDetail = null;
+		try {
+			ds = new GuiGenericDataSet();
+			if (dataset.getId() != null){
+				ds.setDsId(dataset.getId());
+			}
+			ds.setLabel(dataset.getLabel());
+			ds.setName(dataset.getName());
+			ds.setDescription(dataset.getDescription());
+			ds.setUserIn(dataset.getUserIn());
+			ds.setUserUp(dataset.getUserUp());
+			ds.setUserDe(dataset.getUserDe());
+			ds.setSbiVersionIn(dataset.getSbiVersionIn());
+			ds.setSbiVersionUp(dataset.getSbiVersionUp());
+			ds.setSbiVersionDe(dataset.getSbiVersionDe());
+			ds.setMetaVersion(dataset.getMetaVersion());
+			ds.setOrganization(dataset.getOrganization());
+
+			//defines correct dataset detail
+			if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
+				dsDetail = new FileDataSetDetail();
+				String fileName = dataset.getFileName();
+				if(fileName!=null && !fileName.equals("")){
+					((FileDataSetDetail)dsDetail).setFileName(fileName);
+				}
+			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_JCLASS)){
+				dsDetail = new JClassDataSetDetail();
+				String jclassName = dataset.getJavaClassName();
+				if(jclassName!=null && !jclassName.equals("")){
+					((JClassDataSetDetail)dsDetail).setJavaClassName(jclassName);
+				}
+			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)){
+				dsDetail = new QueryDataSetDetail();
+				String query = dataset.getJdbcQuery();
+				Integer dataSourceId = dataset.getJdbcDataSourceId();
+				if(query!=null && !query.equals("")){
+					((QueryDataSetDetail)dsDetail).setQuery(query);
+				}
+				if(dataSourceId!=null){
+					IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
+					if(dataSource!=null){
+						((QueryDataSetDetail)dsDetail).setDataSourceLabel(dataSource.getLabel());
+					}
+					
+				}
+			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)){
+				dsDetail = new QbeDataSetDetail();
+				String sqlQuery = dataset.getJdbcQuery();
+				String jsonQuery = dataset.getJsonQuery();
+				Integer dataSourceId = dataset.getJdbcDataSourceId();
+				String datamarts = dataset.getDatamarts();				
+				((QbeDataSetDetail) dsDetail).setSqlQuery(sqlQuery);
+				((QbeDataSetDetail) dsDetail).setJsonQuery(jsonQuery);
+				((QbeDataSetDetail) dsDetail).setDatamarts(datamarts);
+				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(dataSourceId);
+				if(dataSource!=null){
+					((QbeDataSetDetail)dsDetail).setDataSourceLabel(dataSource.getLabel());
+				}
+			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){
+				dsDetail = new ScriptDataSetDetail();
+				String script = dataset.getScriptText();
+				String scriptLanguage = dataset.getScriptLanguage();
+				if(scriptLanguage!=null && !scriptLanguage.equals("")){
+					((ScriptDataSetDetail)dsDetail).setLanguageScript(scriptLanguage);
+				}
+				if(script!=null && !script.equals("")){
+					((ScriptDataSetDetail)dsDetail).setScript(script);
+				}
+			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_WS)){
+				dsDetail = new WSDataSetDetail();
+				String wsAddress = dataset.getWebServiceAddress();
+				String wsOperation = dataset.getWebServiceOperation();
+				if(wsOperation!=null && !wsOperation.equals("")){
+					((WSDataSetDetail)dsDetail).setOperation(wsOperation);
+				}
+				if(wsAddress!=null && !wsAddress.equals("")){
+					((WSDataSetDetail)dsDetail).setAddress(wsAddress);
+				}
+			}
+			//sets other general GuiDetailDataset object's fields
+			if(dataset.getUserIn()!=null && !dataset.getUserIn().equals("")){
+				dsDetail.setUserIn(dataset.getUserIn());
+			}
+			if(dataset.getSbiVersionIn()!=null && !dataset.getSbiVersionIn().equals("")){
+				dsDetail.setSbiVersionIn(dataset.getSbiVersionIn());
+			}
+			if(dataset.getMetaVersion()!=null && !dataset.getMetaVersion().equals("")){
+				dsDetail.setMetaVersion(dataset.getMetaVersion());
+			}
+			if(dataset.getPivotColumnName()!=null && !dataset.getPivotColumnName().equals("")){
+				dsDetail.setPivotColumnName(dataset.getPivotColumnName());
+			}
+			if(dataset.getPivotRowName()!=null && !dataset.getPivotRowName().equals("")){
+				dsDetail.setPivotRowName(dataset.getPivotRowName());
+			}
+			if(dataset.getPivotColumnValue()!=null && !dataset.getPivotColumnValue().equals("")){
+				dsDetail.setPivotColumnValue(dataset.getPivotColumnValue());
+			}
+			if(dataset.getNumberingRows()!=null){
+				dsDetail.setNumRows(dataset.getNumberingRows());
+			}
+
+			//dsDetail.setDsMetadata(dataset.getXXX);
+			
+			//sets dataset's parameters			
+			String parameters = null;
+			if (dataset.getParameters() != null) {				
+				parameters = this.fromSDKDataSetParameterArrayToBIDataSetParameterList(dataset.getParameters());
+			} 
+			dsDetail.setParameters(parameters);
+
+			
+			/*private int dsHId;	
+			private int dsId;
+			private String dsType;
+			private String dsMetadata=null;
+			 */
+			
+			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+			// sets dataset's transformer type domain
+			if (dataset.getTransformer() != null) {
+				Domain transformer = domainDAO.loadDomainByCodeAndValue("TRANSFORMER_TYPE", dataset.getTransformer());
+				dsDetail.setTransformerCd(transformer.getValueCd());
+				dsDetail.setTransformerId(transformer.getValueId());
+			}
+			// sets dataset's category domain
+			if (dataset.getCategory() != null){
+				Domain category = domainDAO.loadDomainByCodeAndValue("CATEGORY_TYPE", dataset.getCategory());
+				dsDetail.setCategoryCd(category.getValueCd());
+				dsDetail.setCategoryId(category.getValueId());
+			}
+			ds.setActiveDetail(dsDetail);
+
+		} catch (Exception e) {
+			logger.error("Error while converting SDKDataSet into GuiGenericDataSet.", e);
+			logger.debug("Returning null.");
+			return null;
+		}
+		logger.debug("OUT");
+		return ds;
+	}
+	
 	public SDKDataStoreMetadata fromDataStoreMetadataToSDKDataStoreMetadata(DataStoreMetaData aDataStoreMetaData) {
 		logger.debug("IN");
 		if (aDataStoreMetaData == null) {
@@ -669,13 +875,23 @@ public class SDKObjectsConverter {
 	}
 
 
-
-
-
-
-
-
-
-
-
+	private String deserializeSKDatasetParametersArray(List  parsArraySDK) throws  SourceBeanException{
+		String toReturn = "";
+		SourceBean sb = new SourceBean("PARAMETERSLIST");	
+		SourceBean sb1 = new SourceBean("ROWS");
+		
+		for(int i=0; i< parsArraySDK.size(); i++){
+			DataSetParameterItem par = (DataSetParameterItem)parsArraySDK.get(i);
+			String name = par.getName();	
+			String type = par.getType();	
+			SourceBean b = new SourceBean("ROW");
+			b.setAttribute("NAME", name);
+			b.setAttribute("TYPE", type);
+			sb1.setAttribute(b);	
+		}	
+		sb.setAttribute(sb1);
+		toReturn = sb.toXML(false);
+		return toReturn;
+	}
+	
 }

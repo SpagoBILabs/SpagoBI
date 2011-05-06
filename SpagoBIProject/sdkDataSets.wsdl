@@ -67,6 +67,18 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="scriptLanguage" nillable="true" type="soapenc:string"/>
      <element name="scriptText" nillable="true" type="soapenc:string"/>
      <element name="type" nillable="true" type="soapenc:string"/>
+     <element name="userIn" nillable="true" type="soapenc:string"/>
+     <element name="userUp" nillable="true" type="soapenc:string"/>
+     <element name="userDe" nillable="true" type="soapenc:string"/>
+     <element name="sbiVersionIn" nillable="true" type="soapenc:string"/>
+     <element name="sbiVersionUp" nillable="true" type="soapenc:string"/>
+     <element name="sbiVersionDe" nillable="true" type="soapenc:string"/>
+     <element name="metaVersion" nillable="true" type="soapenc:string"/>
+     <element name="organization" nillable="true" type="soapenc:string"/>
+     <element name="transformer" nillable="true" type="soapenc:string"/>
+     <element name="category" nillable="true" type="soapenc:string"/>
+     <element name="jsonQuery" nillable="true" type="soapenc:string"/>
+     <element name="datamarts" nillable="true" type="soapenc:string"/>
      <element name="webServiceAddress" nillable="true" type="soapenc:string"/>
      <element name="webServiceOperation" nillable="true" type="soapenc:string"/>
     </sequence>
@@ -132,6 +144,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="saveDatasetResponse">
+
+      <wsdl:part name="saveDatasetReturn" type="soapenc:int"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDataSetResponse">
 
       <wsdl:part name="getDataSetReturn" type="tns2:SDKDataSet"/>
@@ -178,6 +196,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="saveDatasetRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDataSet"/>
+
+   </wsdl:message>
+
    <wsdl:portType name="DataSetsSDKService">
 
       <wsdl:operation name="getDataSets">
@@ -209,6 +233,16 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:fault message="impl:InvalidParameterValue" name="InvalidParameterValue"/>
 
          <wsdl:fault message="impl:MissingParameterValue" name="MissingParameterValue"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveDataset" parameterOrder="in0">
+
+         <wsdl:input message="impl:saveDatasetRequest" name="saveDatasetRequest"/>
+
+         <wsdl:output message="impl:saveDatasetResponse" name="saveDatasetResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -295,6 +329,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
             <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="MissingParameterValue" namespace="urn:spagobisdkdatasets" use="encoded"/>
 
          </wsdl:fault>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveDataset">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="saveDatasetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="saveDatasetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:output>
 
          <wsdl:fault name="NotAllowedOperationException">
 
