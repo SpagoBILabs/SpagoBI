@@ -20,10 +20,10 @@
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/postgresql-8.2-505.jdbc2ee.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
-	<classpathentry kind="lib" path="/SpagoBIUtils/lib/jsr223.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
 	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/eclipselink/eclipselink_2.1.2.v20101206-r8635.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/jsr223.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
