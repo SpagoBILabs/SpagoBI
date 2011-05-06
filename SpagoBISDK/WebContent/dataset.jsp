@@ -60,10 +60,6 @@ if (user != null && password != null) {
 		if (dsId != null){
 			dataset = proxy.getDataSet(Integer.valueOf(dsId));
 			System.out.println("*** dataset: " + dataset);
-			//first test calling saveDataSet:
-			dataset.setUserIn(user);
-			dataset.setUserUp(user);
-			dataset.setMetaVersion("Beta");
 		}else{
 			//test inserimento nuovo dataset (tipo qbe)		
 			 Random randomGenerator = new Random();
@@ -75,10 +71,7 @@ if (user != null && password != null) {
 			 dataset.setDatamarts("testDatamart");
 	   		 dataset.setJsonQuery("query json test");
 	 	 	 dataset.setJdbcQuery("select * from sbi_engines");
-	 		 dataset.setJdbcDataSourceId(1);
-			 dataset.setUserIn(user);
-			 dataset.setUserUp(user);
-			 dataset.setMetaVersion("Beta");		
+	 		 dataset.setJdbcDataSourceId(1);	
 		}
 		Integer result = proxy.saveDataset(dataset);
 		
