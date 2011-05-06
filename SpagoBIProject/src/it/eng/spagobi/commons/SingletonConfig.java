@@ -90,6 +90,10 @@ public class SingletonConfig {
 	 * OGNI VOLTA CHE SALVIAMO UNA RIGA SVUOTIAMO LA CACHE
 	 */
 	public synchronized void clearCache() {
-		instance=null;
-	}	
+		try{
+		instance= new SingletonConfig();
+		}catch(Exception e){
+			logger.error("Impossible to create a new istance", e);
+		}
+	}
 }

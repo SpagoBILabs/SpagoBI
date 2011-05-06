@@ -37,9 +37,9 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.security.RoleSynchronizer;
 
 public class SecurityInitializer implements InitializerIFace {
@@ -62,8 +62,8 @@ public class SecurityInitializer implements InitializerIFace {
 
 		logger.debug("SecurityInitializer::init: roles synchronization ended.");
 		_config = config;
-		SourceBean configSingleton = ConfigSingleton.getInstance();
-		String portalSecurityInitClassName = ((SourceBean) configSingleton.getAttribute("SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS")).getCharacters();
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String portalSecurityInitClassName = (configSingleton.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS"));
 		logger.debug("SecurityInitializer::init: Portal security initialization class name: '" + portalSecurityInitClassName + "'");
 		if (portalSecurityInitClassName == null || portalSecurityInitClassName.trim().equals("")) return;
 		portalSecurityInitClassName = portalSecurityInitClassName.trim();

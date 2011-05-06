@@ -1,9 +1,9 @@
 package it.eng.spagobi.engines.kpi.service;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 import java.io.FileInputStream;
@@ -57,9 +57,8 @@ public class GetThresholdImageAction extends AbstractHttpAction {
 		//response.setHeader("Expires", "Sat, 6 May 2010 12:00:00 GMT");	
 		response.setHeader("Cache-Control: max-age", "600");	
 		
-		ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-		SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String pathh = (String) sb.getCharacters();
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String pathh = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		String filePath= SpagoBIUtilities.readJndiResource(pathh);
 		filePath += "/kpi_images/";
 		String dirName = (String)serviceRequest.getAttribute("dirName");

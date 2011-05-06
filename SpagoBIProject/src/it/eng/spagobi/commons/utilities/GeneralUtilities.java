@@ -58,6 +58,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -330,9 +331,8 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 */
 	public static boolean isSSOEnabled() {
 		boolean toReturn;
-		ConfigSingleton config = ConfigSingleton.getInstance();
-		SourceBean configSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.ACTIVE");
-		String active = (String) configSB.getCharacters();
+		SingletonConfig config = SingletonConfig.getInstance();
+		String active = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
 		logger.debug("active SSO: " + active);
 		if (active != null && active.equalsIgnoreCase("true") ){
 			toReturn = true;
@@ -360,11 +360,10 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			String tmp = null;
 			try {
 				logger.debug("Trying to recover SpagoBiHost from ConfigSingleton");
-				ConfigSingleton spagoConfig = ConfigSingleton.getInstance();
-				SourceBean sbTmp = (SourceBean) spagoConfig.getAttribute("SPAGOBI.SPAGOBI_HOST_JNDI");
-				if (sbTmp != null) {
-					String jndi = sbTmp.getCharacters();
-					tmp = readJndiResource(jndi);
+				SingletonConfig spagoConfig = SingletonConfig.getInstance();
+				tmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
+				if (tmp != null) {
+					readJndiResource(tmp);
 				}
 				if (tmp == null) {
 					logger.debug("SPAGOBI_HOST not set, using the default value ");
@@ -421,10 +420,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 */
 	public static String getSpagoAdapterHttpUrl() {
 		logger.debug("IN");
-		ConfigSingleton config = ConfigSingleton.getInstance();
+		SingletonConfig config = SingletonConfig.getInstance();
 		String attName = "SPAGOBI.SPAGO_ADAPTERHTTP_URL";
-		SourceBean adapUrlSB = (SourceBean) config.getAttribute(attName);
-		String adapUrlStr = adapUrlSB.getCharacters();
+		String adapUrlStr = config.getConfigValue(attName);
 		adapUrlStr = adapUrlStr.trim();
 		logger.debug("OUT:" + adapUrlStr);
 		return adapUrlStr;
@@ -677,10 +675,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		logger.debug("IN");
 		int toReturn = MAX_DEFAULT_TEMPLATE_SIZE;
 		try {
-			ConfigSingleton serverConfig = ConfigSingleton.getInstance();
-			SourceBean maxSizeSB = (SourceBean) serverConfig.getAttribute("SPAGOBI.TEMPLATE_MAX_SIZE");
-			if (maxSizeSB != null) {
-				String maxSizeStr = (String) maxSizeSB.getCharacters();
+			SingletonConfig serverConfig = SingletonConfig.getInstance();
+			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.TEMPLATE_MAX_SIZE");
+			if (maxSizeStr != null) {
 				logger.debug("Configuration found for max template size: " + maxSizeStr);
 				Integer maxSizeInt = new Integer(maxSizeStr);
 				toReturn = maxSizeInt.intValue();
@@ -701,11 +698,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		String path = "";
 		try {
 			logger.debug("Trying to recover spagobi context from ConfigSingleton");
-			ConfigSingleton spagoConfig = ConfigSingleton.getInstance();
-			SourceBean sbTmp = (SourceBean) spagoConfig.getAttribute("SPAGOBI.SPAGOBI_CONTEXT");
-			if (sbTmp!=null){
-				path = sbTmp.getCharacters();
-			}else {
+			SingletonConfig spagoConfig = SingletonConfig.getInstance();
+			path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
+			if (path==null){
 				logger.debug("SPAGOBI_CONTEXT not set, using the default value ");
 				path="/SpagoBI";
 			}
@@ -723,11 +718,8 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		String sessionExpiredUrl = null;
 		try {
 			logger.debug("Trying to recover SpagoBI session expired url from ConfigSingleton");
-			ConfigSingleton spagoConfig = ConfigSingleton.getInstance();
-			SourceBean sbTmp = (SourceBean) spagoConfig.getAttribute("SPAGOBI.SESSION_EXPIRED_URL");
-			if (sbTmp != null) {
-				sessionExpiredUrl = sbTmp.getCharacters();
-			}
+			SingletonConfig spagoConfig = SingletonConfig.getInstance();
+			sessionExpiredUrl = spagoConfig.getConfigValue("SPAGOBI.SESSION_EXPIRED_URL");
 		} catch (Exception e) {
 			logger.error("Error while recovering SpagoBI session expired url", e);
 		}
@@ -854,7 +846,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	
 	public static int getDatasetMaxResults() {
 		int maxResults = Integer.MAX_VALUE;
-		String maxResultsStr = (String) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATASET.maxResults");
+		String maxResultsStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.maxResults");
 		if (maxResultsStr != null) {
 			maxResults = Integer.parseInt(maxResultsStr);
 		} else {

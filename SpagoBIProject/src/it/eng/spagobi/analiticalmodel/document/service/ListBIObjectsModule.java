@@ -24,7 +24,6 @@ package it.eng.spagobi.analiticalmodel.document.service;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.module.list.basic.AbstractBasicListModule;
 import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.paginator.basic.ListIFace;
@@ -35,6 +34,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -112,8 +112,8 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 
 	int numRows = 10;
 	try {
-	    ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
-	    String lookupnumRows = (String) spagoconfig.getAttribute("SPAGOBI.LOOKUP.numberRows");
+	    SingletonConfig spagoconfig = SingletonConfig.getInstance();
+	    String lookupnumRows = spagoconfig.getConfigValue("SPAGOBI.LOOKUP.numberRows");
 	    if (lookupnumRows != null) {
 		numRows = Integer.parseInt(lookupnumRows);
 	    }

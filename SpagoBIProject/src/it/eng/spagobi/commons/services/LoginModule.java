@@ -31,12 +31,12 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -105,9 +105,8 @@ public class LoginModule extends AbstractHttpModule {
 		String theme_name=(String)request.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: "+theme_name);
 
-		ConfigSingleton serverConfig = ConfigSingleton.getInstance();
-		SourceBean validateSB = (SourceBean) serverConfig.getAttribute("SPAGOBI_SSO.ACTIVE");
-		String activeStr = (String) validateSB.getCharacters();
+		SingletonConfig serverConfig = SingletonConfig.getInstance();
+		String activeStr = serverConfig.getConfigValue("SPAGOBI_SSO.ACTIVE");
 		boolean activeSoo=false;
 		if (activeStr != null && activeStr.equalsIgnoreCase("true")) {
 			activeSoo=true;
@@ -237,8 +236,7 @@ public class LoginModule extends AbstractHttpModule {
 				SbiUser user = userDao.loadSbiUserByUserId(userId);
 
 				//check user's role: if he's admin it doesn't apply checks on password
-				SourceBean adminPatternSB = (SourceBean) serverConfig.getAttribute("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
-				String strAdminPatter = (String) adminPatternSB.getCharacters();
+				String strAdminPatter =  serverConfig.getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				int sbiUserId=-1;
 				if (user!=null)sbiUserId=user.getId();
 				List lstRoles = userDao.loadSbiUserRolesById(sbiUserId);
