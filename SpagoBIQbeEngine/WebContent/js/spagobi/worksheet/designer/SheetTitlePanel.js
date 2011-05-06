@@ -96,7 +96,6 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	loadImageCombo: null,
 	loadImageFileBrows: null,
 	titlePanel: null,
-	titleField: null,
 	imgCombo: null,
 	imgFile: null,
 	imgPosition: null,
@@ -289,40 +288,30 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.imgCombo.clearInvalid();
 	},
 	
-	isValidForm: function(){
+	isValid: function(){
 		var valid= true;
-		valid = valid && this.titleField.isValid(false);
+		var title = this.titlePanel.getValue();
+		valid = valid && title!=null && title!='' ;
 		valid = valid && this.imgCombo.isValid(false) && this.imgPosition.isValid(false);
 		return valid;
 	},
 	
 	getTitleState: function(messageBox){
-		if(this.isValidForm()){	
-			var values={};
-			values.title =  this.titleField.getValue();
-			values.img =  this.imgCombo.getValue();
-			if(valuses.img==''){
-				values.img =null;
-			}
-			values.position =   this.imgPosition.getValue();
-			if(valuses.position==''){
-				values.img =null;
-			}
-			return values;
+		var values={};
+		values.title =  this.titlePanel.getValue();
+		values.img =  this.imgCombo.getValue();
+		if(values.img==''){
+			values.img =null;
 		}
-		if(messageBox){
-			Ext.Msg.show({
-				   title: LN('sbi.worksheet.designer.msg.invalidinput.title'),
-				   msg: LN('sbi.worksheet.designer.msg.invalidinput.msg'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR
-				});
+		values.position =   this.imgPosition.getValue();
+		if(values.position==''){
+			values.img =null;
 		}
-		
+		return values;
 	},
 	
 	setTitleState: function(values){
-		 this.titleField.setValue(values.title)
+		 this.titlePanel.setValue(values.title)
 		 this.imgCombo.setValue(values.img)
 		 this.imgPosition.setValue(values.position);
 	}

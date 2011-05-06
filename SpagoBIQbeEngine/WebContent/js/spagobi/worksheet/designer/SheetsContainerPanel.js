@@ -36,6 +36,9 @@
  * 
  * updateActiveSheet(change) : update the sheet after tools value changed 
  * 
+ * isValid(): return true if the panel is valid
+ * setSheetsState(state): set the state of the panels
+ * getSheetsState(): get the state of the panel
  * 
  * Public Events
  * 
@@ -69,7 +72,15 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 			tabPosition: 'bottom',        
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},
-	        items: [this.addPanel]
+	        items: [this.addPanel],
+			tools: [
+			          {
+			        	  id: 'help'
+			        	, handler: this.showState
+			          	, scope: this
+			          	, qtip: LN('sbi.crosstab.measurescontainerpanel.tools.tt.showdetailswizard')
+			          }
+				]
 	};
 	
 	this.on('render',function(){this.addTab();},this);
@@ -149,8 +160,10 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	
 	, getSheetsState: function(){
 		var sheets = [];
-		for(var i=0; i<this.items.length; i++){
-			sheets.push(this.items[i].getSheetState());
+		if(this.items.items.length>1){
+			for(var i=0; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+				sheets.push(this.items.items[i].getSheetState());
+			}
 		}
 		return sheets;
 	}
@@ -178,6 +191,34 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			},this);
 		}
 	}
+	
+	, isValid(): function(){
+		var valid = true;
+		if(this.items.items.length>1){
+			for(var i=0; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+				valid = valid && this.items.items[i].isValid();
+				if(!valid){
+					break;
+				}
+			}
+		}
+		return valid;
+	}
+
+	, showState: function(event, toolEl, panel) {
+		Ext.MessageBox.confirm(
+				LN('sbi.worksheet.designer.msg.deletetab.title'),
+				Ext.encode(this.getSheetsState()),            
+	            function(btn, text) {
+	                if (btn=='yes') {
+	                	this.remove(panel);
+	                }
+	            },
+	            this
+			);
+  	}
+	
+	
 
 	
 });
