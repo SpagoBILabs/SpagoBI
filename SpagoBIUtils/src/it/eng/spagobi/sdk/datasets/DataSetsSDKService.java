@@ -36,4 +36,6 @@ public interface DataSetsSDKService {
 	
 	SDKDataStoreMetadata getDataStoreMetadata(SDKDataSet sdkDataSet) throws NotAllowedOperationException, MissingParameterValue, InvalidParameterValue;
 	
+	Integer saveDataset(SDKDataSet sdkDataSet) throws NotAllowedOperationException;
+	
 }

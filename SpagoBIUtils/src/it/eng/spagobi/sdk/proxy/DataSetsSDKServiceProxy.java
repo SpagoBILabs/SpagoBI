@@ -70,5 +70,10 @@ public class DataSetsSDKServiceProxy extends AbstractSDKServiceProxy implements 
     return dataSetsSDKService.getDataStoreMetadata(in0);
   }
   
+  public java.lang.Integer saveDataset(it.eng.spagobi.sdk.datasets.bo.SDKDataSet in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+	    if (dataSetsSDKService == null)
+	      _initDataSetsSDKServiceProxy();
+	    return dataSetsSDKService.saveDataset(in0);
+  }
   
 }

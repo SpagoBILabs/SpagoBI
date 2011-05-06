@@ -40,6 +40,30 @@ public class SDKDataSet  implements java.io.Serializable {
 
     private java.lang.String type;
 
+    private java.lang.String userIn;
+
+    private java.lang.String userUp;
+
+    private java.lang.String userDe;
+
+    private java.lang.String sbiVersionIn;
+
+    private java.lang.String sbiVersionUp;
+
+    private java.lang.String sbiVersionDe;
+
+    private java.lang.String metaVersion;
+
+    private java.lang.String organization;
+
+    private java.lang.String transformer;
+
+    private java.lang.String category;
+
+    private java.lang.String jsonQuery;
+
+    private java.lang.String datamarts;
+
     private java.lang.String webServiceAddress;
 
     private java.lang.String webServiceOperation;
@@ -64,6 +88,18 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.String scriptLanguage,
            java.lang.String scriptText,
            java.lang.String type,
+           java.lang.String userIn,
+           java.lang.String userUp,
+           java.lang.String userDe,
+           java.lang.String sbiVersionIn,
+           java.lang.String sbiVersionUp,
+           java.lang.String sbiVersionDe,
+           java.lang.String metaVersion,
+           java.lang.String organization,
+           java.lang.String transformer,
+           java.lang.String category,
+           java.lang.String jsonQuery,
+           java.lang.String datamarts,
            java.lang.String webServiceAddress,
            java.lang.String webServiceOperation) {
            this.description = description;
@@ -82,6 +118,18 @@ public class SDKDataSet  implements java.io.Serializable {
            this.scriptLanguage = scriptLanguage;
            this.scriptText = scriptText;
            this.type = type;
+           this.userIn = userIn;
+           this.userUp = userUp;
+           this.userDe = userDe;
+           this.sbiVersionIn = sbiVersionIn;
+           this.sbiVersionUp = sbiVersionUp;
+           this.sbiVersionDe = sbiVersionDe;
+           this.metaVersion = metaVersion;
+           this.organization = organization;
+           this.transformer = transformer;
+           this.category = category;
+           this.jsonQuery = jsonQuery;
+           this.datamarts = datamarts;
            this.webServiceAddress = webServiceAddress;
            this.webServiceOperation = webServiceOperation;
     }
@@ -408,6 +456,246 @@ public class SDKDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the userIn value for this SDKDataSet.
+     * 
+     * @return userIn
+     */
+    public java.lang.String getUserIn() {
+        return userIn;
+    }
+
+
+    /**
+     * Sets the userIn value for this SDKDataSet.
+     * 
+     * @param userIn
+     */
+    public void setUserIn(java.lang.String userIn) {
+        this.userIn = userIn;
+    }
+
+
+    /**
+     * Gets the userUp value for this SDKDataSet.
+     * 
+     * @return userUp
+     */
+    public java.lang.String getUserUp() {
+        return userUp;
+    }
+
+
+    /**
+     * Sets the userUp value for this SDKDataSet.
+     * 
+     * @param userUp
+     */
+    public void setUserUp(java.lang.String userUp) {
+        this.userUp = userUp;
+    }
+
+
+    /**
+     * Gets the userDe value for this SDKDataSet.
+     * 
+     * @return userDe
+     */
+    public java.lang.String getUserDe() {
+        return userDe;
+    }
+
+
+    /**
+     * Sets the userDe value for this SDKDataSet.
+     * 
+     * @param userDe
+     */
+    public void setUserDe(java.lang.String userDe) {
+        this.userDe = userDe;
+    }
+
+
+    /**
+     * Gets the sbiVersionIn value for this SDKDataSet.
+     * 
+     * @return sbiVersionIn
+     */
+    public java.lang.String getSbiVersionIn() {
+        return sbiVersionIn;
+    }
+
+
+    /**
+     * Sets the sbiVersionIn value for this SDKDataSet.
+     * 
+     * @param sbiVersionIn
+     */
+    public void setSbiVersionIn(java.lang.String sbiVersionIn) {
+        this.sbiVersionIn = sbiVersionIn;
+    }
+
+
+    /**
+     * Gets the sbiVersionUp value for this SDKDataSet.
+     * 
+     * @return sbiVersionUp
+     */
+    public java.lang.String getSbiVersionUp() {
+        return sbiVersionUp;
+    }
+
+
+    /**
+     * Sets the sbiVersionUp value for this SDKDataSet.
+     * 
+     * @param sbiVersionUp
+     */
+    public void setSbiVersionUp(java.lang.String sbiVersionUp) {
+        this.sbiVersionUp = sbiVersionUp;
+    }
+
+
+    /**
+     * Gets the sbiVersionDe value for this SDKDataSet.
+     * 
+     * @return sbiVersionDe
+     */
+    public java.lang.String getSbiVersionDe() {
+        return sbiVersionDe;
+    }
+
+
+    /**
+     * Sets the sbiVersionDe value for this SDKDataSet.
+     * 
+     * @param sbiVersionDe
+     */
+    public void setSbiVersionDe(java.lang.String sbiVersionDe) {
+        this.sbiVersionDe = sbiVersionDe;
+    }
+
+
+    /**
+     * Gets the metaVersion value for this SDKDataSet.
+     * 
+     * @return metaVersion
+     */
+    public java.lang.String getMetaVersion() {
+        return metaVersion;
+    }
+
+
+    /**
+     * Sets the metaVersion value for this SDKDataSet.
+     * 
+     * @param metaVersion
+     */
+    public void setMetaVersion(java.lang.String metaVersion) {
+        this.metaVersion = metaVersion;
+    }
+
+
+    /**
+     * Gets the organization value for this SDKDataSet.
+     * 
+     * @return organization
+     */
+    public java.lang.String getOrganization() {
+        return organization;
+    }
+
+
+    /**
+     * Sets the organization value for this SDKDataSet.
+     * 
+     * @param organization
+     */
+    public void setOrganization(java.lang.String organization) {
+        this.organization = organization;
+    }
+
+
+    /**
+     * Gets the transformer value for this SDKDataSet.
+     * 
+     * @return transformer
+     */
+    public java.lang.String getTransformer() {
+        return transformer;
+    }
+
+
+    /**
+     * Sets the transformer value for this SDKDataSet.
+     * 
+     * @param transformer
+     */
+    public void setTransformer(java.lang.String transformer) {
+        this.transformer = transformer;
+    }
+
+
+    /**
+     * Gets the category value for this SDKDataSet.
+     * 
+     * @return category
+     */
+    public java.lang.String getCategory() {
+        return category;
+    }
+
+
+    /**
+     * Sets the category value for this SDKDataSet.
+     * 
+     * @param category
+     */
+    public void setCategory(java.lang.String category) {
+        this.category = category;
+    }
+
+
+    /**
+     * Gets the jsonQuery value for this SDKDataSet.
+     * 
+     * @return jsonQuery
+     */
+    public java.lang.String getJsonQuery() {
+        return jsonQuery;
+    }
+
+
+    /**
+     * Sets the jsonQuery value for this SDKDataSet.
+     * 
+     * @param jsonQuery
+     */
+    public void setJsonQuery(java.lang.String jsonQuery) {
+        this.jsonQuery = jsonQuery;
+    }
+
+
+    /**
+     * Gets the datamarts value for this SDKDataSet.
+     * 
+     * @return datamarts
+     */
+    public java.lang.String getDatamarts() {
+        return datamarts;
+    }
+
+
+    /**
+     * Sets the datamarts value for this SDKDataSet.
+     * 
+     * @param datamarts
+     */
+    public void setDatamarts(java.lang.String datamarts) {
+        this.datamarts = datamarts;
+    }
+
+
+    /**
      * Gets the webServiceAddress value for this SDKDataSet.
      * 
      * @return webServiceAddress
@@ -506,6 +794,42 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
               this.type.equals(other.getType()))) &&
+            ((this.userIn==null && other.getUserIn()==null) || 
+             (this.userIn!=null &&
+              this.userIn.equals(other.getUserIn()))) &&
+            ((this.userUp==null && other.getUserUp()==null) || 
+             (this.userUp!=null &&
+              this.userUp.equals(other.getUserUp()))) &&
+            ((this.userDe==null && other.getUserDe()==null) || 
+             (this.userDe!=null &&
+              this.userDe.equals(other.getUserDe()))) &&
+            ((this.sbiVersionIn==null && other.getSbiVersionIn()==null) || 
+             (this.sbiVersionIn!=null &&
+              this.sbiVersionIn.equals(other.getSbiVersionIn()))) &&
+            ((this.sbiVersionUp==null && other.getSbiVersionUp()==null) || 
+             (this.sbiVersionUp!=null &&
+              this.sbiVersionUp.equals(other.getSbiVersionUp()))) &&
+            ((this.sbiVersionDe==null && other.getSbiVersionDe()==null) || 
+             (this.sbiVersionDe!=null &&
+              this.sbiVersionDe.equals(other.getSbiVersionDe()))) &&
+            ((this.metaVersion==null && other.getMetaVersion()==null) || 
+             (this.metaVersion!=null &&
+              this.metaVersion.equals(other.getMetaVersion()))) &&
+            ((this.organization==null && other.getOrganization()==null) || 
+             (this.organization!=null &&
+              this.organization.equals(other.getOrganization()))) &&
+            ((this.transformer==null && other.getTransformer()==null) || 
+             (this.transformer!=null &&
+              this.transformer.equals(other.getTransformer()))) &&
+            ((this.category==null && other.getCategory()==null) || 
+             (this.category!=null &&
+              this.category.equals(other.getCategory()))) &&
+            ((this.jsonQuery==null && other.getJsonQuery()==null) || 
+             (this.jsonQuery!=null &&
+              this.jsonQuery.equals(other.getJsonQuery()))) &&
+            ((this.datamarts==null && other.getDatamarts()==null) || 
+             (this.datamarts!=null &&
+              this.datamarts.equals(other.getDatamarts()))) &&
             ((this.webServiceAddress==null && other.getWebServiceAddress()==null) || 
              (this.webServiceAddress!=null &&
               this.webServiceAddress.equals(other.getWebServiceAddress()))) &&
@@ -578,6 +902,42 @@ public class SDKDataSet  implements java.io.Serializable {
         }
         if (getType() != null) {
             _hashCode += getType().hashCode();
+        }
+        if (getUserIn() != null) {
+            _hashCode += getUserIn().hashCode();
+        }
+        if (getUserUp() != null) {
+            _hashCode += getUserUp().hashCode();
+        }
+        if (getUserDe() != null) {
+            _hashCode += getUserDe().hashCode();
+        }
+        if (getSbiVersionIn() != null) {
+            _hashCode += getSbiVersionIn().hashCode();
+        }
+        if (getSbiVersionUp() != null) {
+            _hashCode += getSbiVersionUp().hashCode();
+        }
+        if (getSbiVersionDe() != null) {
+            _hashCode += getSbiVersionDe().hashCode();
+        }
+        if (getMetaVersion() != null) {
+            _hashCode += getMetaVersion().hashCode();
+        }
+        if (getOrganization() != null) {
+            _hashCode += getOrganization().hashCode();
+        }
+        if (getTransformer() != null) {
+            _hashCode += getTransformer().hashCode();
+        }
+        if (getCategory() != null) {
+            _hashCode += getCategory().hashCode();
+        }
+        if (getJsonQuery() != null) {
+            _hashCode += getJsonQuery().hashCode();
+        }
+        if (getDatamarts() != null) {
+            _hashCode += getDatamarts().hashCode();
         }
         if (getWebServiceAddress() != null) {
             _hashCode += getWebServiceAddress().hashCode();
@@ -688,6 +1048,78 @@ public class SDKDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("type");
         elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("userIn");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "userIn"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("userUp");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "userUp"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("userDe");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "userDe"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sbiVersionIn");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sbiVersionIn"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sbiVersionUp");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sbiVersionUp"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("sbiVersionDe");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "sbiVersionDe"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("metaVersion");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "metaVersion"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("organization");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("transformer");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "transformer"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("category");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "category"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("jsonQuery");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "jsonQuery"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("datamarts");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "datamarts"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
