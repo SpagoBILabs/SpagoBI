@@ -420,10 +420,8 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	 */
 	public static String getSpagoAdapterHttpUrl() {
 		logger.debug("IN");
-		SingletonConfig config = SingletonConfig.getInstance();
-		String attName = "SPAGOBI.SPAGO_ADAPTERHTTP_URL";
-		String adapUrlStr = config.getConfigValue(attName);
-		adapUrlStr = adapUrlStr.trim();
+		String adapUrlStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGO_ADAPTERHTTP_URL");
+		if (adapUrlStr!=null) adapUrlStr = adapUrlStr.trim();
 		logger.debug("OUT:" + adapUrlStr);
 		return adapUrlStr;
 	}
