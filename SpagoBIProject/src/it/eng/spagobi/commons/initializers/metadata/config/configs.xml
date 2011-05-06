@@ -13,5 +13,20 @@
 <CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="mode" description="mode" isActive="false" valueCheck="WEB" valueType="STRING"/>
 <CONFIG label="SPAGOBI.HOME.BANNER.view" name="banner" description="banner" isActive="false" valueCheck="true" valueType="STRING"/>
 <CONFIG label="SPAGOBI.HOME.FOOTER.view" name="footer" description="footer" isActive="false" valueCheck="true" valueType="STRING"/>
-<CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="false" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="true" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.LOOKUP.numberRows" name="numberRows" description="numberRows" isActive="true" valueCheck="20" valueType="STRING"/>
+
+<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="JNDI_NAME" description="JNDI_NAME" isActive="true" valueCheck="java://comp/env/spagobi_resource_pathresource" valueType="STRING"/>
+<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE" description="ACTIVE" isActive="true" valueCheck="false" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN" name="ADMIN-PATTERN" description="ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/admin" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="HOST_JNDI" description="HOST_JNDI" isActive="true" valueCheck="/env/spagobi_host_url" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP_URL" description="ADAPTERHTTP_URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING"/>
+<CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE_MAX_SIZE" description="TEMPLATE_MAX_SIZE" isActive="true" valueCheck="5242880" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI_CONTEXT" description="SPAGOBI_CONTEXT" isActive="true" valueCheck="/SpagoBI" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION_EXPIRED_URL" description="SESSION_EXPIRED_URL" isActive="true" valueCheck="/WEB-INF/jsp/commons/sessionExpired.jsp" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DATASET.maxResult" name="maxResult" description="maxResult" isActive="true" valueCheck="500000" valueType="STRING"/>
+<CONFIG label="SPAGOBI.HIBERNATE-CFGFILE" name="HIBERNATE-CFGFILE" description="HIBERNATE-CFGFILE" isActive="true" valueCheck="hibernate.cfg.xml" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS" name="PORTAL-SECURITY-INIT-CLASS" description="PORTAL-SECURITY-INIT-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS" name="PORTAL-SECURITY-CLASS" description="PORTAL-SECURITY-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="enabled" description="enabled" isActive="true" valueCheck="false" valueType="STRING"/>
 </CONFIGS>
