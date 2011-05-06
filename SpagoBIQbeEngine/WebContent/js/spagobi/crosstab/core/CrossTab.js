@@ -1084,9 +1084,9 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		classEmptyBottomRight = classEmptyBottomRight+' crosstab-none-left-border-panel';
     	}
     	   	
-    	this.table = new Ext.Panel({    	
+    	this.table = new Ext.Panel({  
+    		cls: 'centered-panel',
             layout:'table',
-            border: false,
             border: false,
             layoutConfig: {
                 columns: tableColumns,

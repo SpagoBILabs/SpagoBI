@@ -46,6 +46,8 @@
 
 Ext.ns("Sbi.crosstab");
 
+//config contains:
+//					crosstabConfig definition of the crosstab
 Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	
 	var defaultSettings = {
@@ -146,6 +148,8 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, measuresMetadata: measuresMetadata
 		};
 
+		c = Ext.apply(c,this.crosstabConfig||{});
+		
 		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
 		this.crosstab.reloadHeadersAndTable(null,true);
 		this.add(this.crosstab);
