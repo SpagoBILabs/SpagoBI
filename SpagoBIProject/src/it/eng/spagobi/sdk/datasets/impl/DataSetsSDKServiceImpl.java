@@ -199,22 +199,18 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		Integer dataSetId = null;
 		Integer toReturn = null;
 		try {
-			IEngUserProfile profile = getUserProfile();
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
 				logger.warn("SDKDataSet in input is null!");
 				return null;
 			}
 			//defines the new dataset from the sdk object
-			String userId = ((UserProfile) profile).getUserId().toString();
-			logger.debug("Current user id is [" + userId + "]");
+			GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);	
 			
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);
 			if (dataSetId == null){
-				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");
-				sdkDataSet.setUserIn(((UserProfile) profile).getUserId().toString());
-				GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);				
+				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");		
 				toReturn = DAOFactory.getDataSetDAO().insertDataSet(sbiDataset);
 				if (toReturn != null) {
 					logger.info("DataSet saved with id = " + toReturn);
@@ -222,10 +218,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 					logger.error("DataSet not modified!!");
 				}
 			}else{
-				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");	
-				sdkDataSet.setUserIn(((UserProfile) profile).getUserId().toString());
-				sdkDataSet.setUserUp(((UserProfile) profile).getUserId().toString());
-				GuiGenericDataSet sbiDataset = new SDKObjectsConverter().fromSDKDatasetToBIDataset(sdkDataSet);		
+				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");			
 				DAOFactory.getDataSetDAO().modifyDataSet(sbiDataset);
 			}		
 			
