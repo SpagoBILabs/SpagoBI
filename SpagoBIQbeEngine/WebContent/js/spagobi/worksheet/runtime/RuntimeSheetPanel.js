@@ -96,10 +96,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			items.push(header);
 		}
 
-		if (this.sheetConf.filters != undefined && this.sheetConf.filters != null && this.sheetConf.filters.length > 0) {
+		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.length > 0) {
 			var dynamicFilters = [];
-			for ( var i = 0; i < this.sheetConf.filters.length; i++ ) {
-				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConf.filters[i]);
+			for ( var i = 0; i < this.sheetConfig.filters.length; i++ ) {
+				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters[i]);
 				dynamicFilters.push(aDynamicFilter);	
 			}
 			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, {
@@ -140,18 +140,22 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			html = '<div>'+title.title+'</div>';
 		}
 		if(title.img!=undefined && title.img!=null){
+			var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName: 'GET_IMAGE_CONTENT_ACTION'
+				, baseParams: {FILE_NAME: title.img}
+			});
 			switch (title.position) {
 	        case 'left':
-	        	html = '<div style="float: left"><img src="'+title.img+'"></img></div>'+html;
+	        	html = '<div style="float: left; margin-right:10px;"><img src="'+loadHeaderImgService+'"></img></div>'+html;
 	            break;
 	        case 'right':
-	        	html = html+'<div style="float: right"><img src="'+title.img+'"></img></div>';
+	        	html = html+'<div style="float: right; margin-left:10px;"><img src="'+loadHeaderImgService+'"></img></div>';
 	            break;
 	        default: 
 	        	if(header){
-	        		html = '<div style="text-align:center"><img src="'+title.img+'"></img></div>'+html;
+	        		html = '<div style="text-align:center"><img src="'+loadHeaderImgService+'"></img></div>'+html;
 	        	}else{
-	        		html = html+'<div style="text-align:center"><img src="'+title.img+'"></img></div>';
+	        		html = html+'<div style="text-align:center"><img src="'+loadHeaderImgService+'"></img></div>';
 	        	}
 	            break;
 			}
