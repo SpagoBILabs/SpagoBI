@@ -557,15 +557,7 @@ public class SDKObjectsConverter {
 			}
 			ds.setLabel(dataset.getLabel());
 			ds.setName(dataset.getName());
-			ds.setDescription(dataset.getDescription());
-			ds.setUserIn(dataset.getUserIn());
-			ds.setUserUp(dataset.getUserUp());
-			ds.setUserDe(dataset.getUserDe());
-			ds.setSbiVersionIn(dataset.getSbiVersionIn());
-			ds.setSbiVersionUp(dataset.getSbiVersionUp());
-			ds.setSbiVersionDe(dataset.getSbiVersionDe());
-			ds.setMetaVersion(dataset.getMetaVersion());
-			ds.setOrganization(dataset.getOrganization());
+			ds.setDescription(dataset.getDescription());	
 
 			//defines correct dataset detail
 			if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
@@ -629,15 +621,6 @@ public class SDKObjectsConverter {
 				}
 			}
 			//sets other general GuiDetailDataset object's fields
-			if(dataset.getUserIn()!=null && !dataset.getUserIn().equals("")){
-				dsDetail.setUserIn(dataset.getUserIn());
-			}
-			if(dataset.getSbiVersionIn()!=null && !dataset.getSbiVersionIn().equals("")){
-				dsDetail.setSbiVersionIn(dataset.getSbiVersionIn());
-			}
-			if(dataset.getMetaVersion()!=null && !dataset.getMetaVersion().equals("")){
-				dsDetail.setMetaVersion(dataset.getMetaVersion());
-			}
 			if(dataset.getPivotColumnName()!=null && !dataset.getPivotColumnName().equals("")){
 				dsDetail.setPivotColumnName(dataset.getPivotColumnName());
 			}
@@ -661,9 +644,7 @@ public class SDKObjectsConverter {
 			dsDetail.setParameters(parameters);
 
 			
-			/*private int dsHId;	
-			private int dsId;
-			private String dsType;
+			/*
 			private String dsMetadata=null;
 			 */
 			
