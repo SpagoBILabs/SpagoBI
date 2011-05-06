@@ -11,7 +11,7 @@
 <CONFIG label="changepwd.disactivation_time" name="Disactivation time" description="Number of months before disactivation" isActive="false" valueCheck="6" valueType="NUM"/>
 <CONFIG label="changepwd.expired_time" name="Expired time" description="Number of days fo the expiration" isActive="false" valueCheck="90" valueType="NUM"/>
 <CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="mode" description="mode" isActive="false" valueCheck="WEB" valueType="STRING"/>
-<CONFIG label="BANNER.view" name="banner" description="banner" isActive="false" valueCheck="true" valueType="STRING"/>
-<CONFIG label="HOME.FOOTER.view" name="footer" description="footer" isActive="false" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.HOME.BANNER.view" name="banner" description="banner" isActive="false" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.HOME.FOOTER.view" name="footer" description="footer" isActive="false" valueCheck="true" valueType="STRING"/>
 <CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="false" valueCheck="true" valueType="STRING"/>
 </CONFIGS>
