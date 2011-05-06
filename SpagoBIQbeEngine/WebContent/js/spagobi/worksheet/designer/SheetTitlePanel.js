@@ -136,7 +136,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			mode:           'remote',
 			triggerAction:  'all',
 			forceSelection: true,
-			allowBlank: 	false,
+			allowBlank: 	true,
 			editable:       false,
 			fieldLabel:     LN('sbi.worksheet.designer.image'),
 			name:           'image',
@@ -207,7 +207,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			triggerAction:  'all',
 			forceSelection: true,
 			editable:       false,
-			allowBlank: 	false,
+			allowBlank: 	true,
 			fieldLabel:     LN('sbi.worksheet.designer.position'),
 			name:           'position',
 			displayField:   'position',
@@ -296,12 +296,18 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		return valid;
 	},
 	
-	getFormValues: function(messageBox){
+	getTitleState: function(messageBox){
 		if(this.isValidForm()){	
 			var values={};
 			values.title =  this.titleField.getValue();
-			values.img =  this.imgCombo.getValue()
+			values.img =  this.imgCombo.getValue();
+			if(valuses.img==''){
+				values.img =null;
+			}
 			values.position =   this.imgPosition.getValue();
+			if(valuses.position==''){
+				values.img =null;
+			}
 			return values;
 		}
 		if(messageBox){
@@ -315,7 +321,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		
 	},
 	
-	setFormValues: function(values){
+	setTitleState: function(values){
 		 this.titleField.setValue(values.title)
 		 this.imgCombo.setValue(values.img)
 		 this.imgPosition.setValue(values.position);

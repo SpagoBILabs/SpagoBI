@@ -56,24 +56,29 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	var items = this.initPanels();
+	
+	
+	var items = this.initPanels(config);
 	
 	c ={
+			title: this.sheetConfig.title,
             items: items
 	}
 	
 	c = Ext.apply(config,c);
 	this.addEvents();
-	Ext.apply(this,c);
+	Ext.apply(this,c);	
+	
+	this.on('activate', function(){this.content.updateContent();}, this)
+	
 	Sbi.worksheet.runtime.RuntimeSheetPanel.superclass.constructor.call(this, c);	 	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
+	content: null,
+	filtersPanel : null,
 	
-	filtersPanel : null
-	
-	, initPanels: function() {
-		
+	initPanels: function(config){
 		var items = [];
 		
 		var sharedConf = {				
@@ -81,16 +86,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			style:'padding:5px 15px 5px'
 		}
 		
-		if (this.sheetConf.title!=undefined && this.sheetConf.title!=null){
+		//Builds the header
+		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
 			
-			//this.sheetConf.title = '<div style="float: left">'+this.sheetConf.title+'</div><div style="float: left">asd456456456sad</div>';
-			this.sheetConf.title = '<div>'+this.sheetConf.title+'</div><div>234234234</div>';
 			var header = new Ext.Panel(Ext.apply({
-				html: this.sheetConf.title
+				html: this.buildTitleHtml(this.sheetConfig.header, true)
 			},sharedConf));
 
-			
-			
 			items.push(header);
 		}
 
@@ -106,20 +108,55 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			items.push(this.filtersPanel);
 		}
 		
-		var content = new Ext.Panel(Ext.apply({
-			html: 'sadasdasd'
-		},sharedConf));
-		items.push(content);
+		//Builds the content
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply(config||{},{contentConfig: this.sheetConfig.content}));
+		items.push(this.content);
 		
-		
-		if (this.sheetConf.footer!=null && this.sheetConf.footer!=undefined){
+		//Builds the footer
+		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
 			var footer = new Ext.Panel(Ext.apply({
-				html: this.sheetConf.title
+				html: this.buildTitleHtml(this.sheetConfig.footer, false)
 			},sharedConf));
+
 			items.push(footer);
 		}
 
 		return items;
+	},
+	
+	/**
+	 * Build the html for the header or the footer
+	 * @param: title: the configuration {tilte, img, position}
+	 * @param: header: true if it builds the header, false otherwise
+	 * @return: the hatml for the title
+	 */
+	buildTitleHtml: function(title, header){
+		if(title.position==null || title.position==undefined){
+			title.position='center';
+		}
+		if(title.img!=undefined && title.img!=null && title.position!='center'){
+			html = '<div style="float: left">'+title.title+'</div>';
+		}else{
+			html = '<div>'+title.title+'</div>';
+		}
+		if(title.img!=undefined && title.img!=null){
+			switch (title.position) {
+	        case 'left':
+	        	html = '<div style="float: left"><img src="'+title.img+'"></img></div>'+html;
+	            break;
+	        case 'right':
+	        	html = html+'<div style="float: right"><img src="'+title.img+'"></img></div>';
+	            break;
+	        default: 
+	        	if(header){
+	        		html = '<div style="text-align:center"><img src="'+title.img+'"></img></div>'+html;
+	        	}else{
+	        		html = html+'<div style="text-align:center"><img src="'+title.img+'"></img></div>';
+	        	}
+	            break;
+			}
+		}
+		return html;
 	}
 	
 	, getDynamicFilterDefinition: function (aField) {

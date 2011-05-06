@@ -75,7 +75,7 @@ Sbi.formviewer.DataStorePanel = function(config) {
 	});
 	
 	this.initStore();
-	this.initPanel();
+	this.initPanel(config);
 	
 	c = Ext.apply(c, {
 		layout: 'fit',
@@ -180,7 +180,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		
 	}
 
-	, initPanel: function() {
+	, initPanel: function(config) {
 		var cm = new Ext.grid.ColumnModel([
 			new Ext.grid.RowNumberer(), 
 			{
@@ -252,8 +252,13 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 			//this.pagingTBar.loading.setVisible(false); // it does not work with Ext 3.2.1
 		}, this);
 		
+		var gridConf = {};
+		if(config!=null && config.gridConfig!=null){
+			gridConf = config.gridConfig;
+		}
+		
 		// create the Grid
-	    this.grid = new Ext.grid.GridPanel({
+	    this.grid = new Ext.grid.GridPanel(Ext.apply({
 	    	store: this.store,
 	        cm: cm,
 	        clicksToEdit:1,
@@ -271,7 +276,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	        
 	        //tbar:this.exportTBar,
 	        bbar: this.pagingTBar
-	    });   
+	    },gridConf));   
 	}
 
 	, onDataStoreLoaded: function(store) {

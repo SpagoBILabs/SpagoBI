@@ -15,6 +15,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="EXECUTE_WORKSHEET_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.ExecuteWorksheetQueryAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
 	
 	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.worksheet.GetImageContentAction" 

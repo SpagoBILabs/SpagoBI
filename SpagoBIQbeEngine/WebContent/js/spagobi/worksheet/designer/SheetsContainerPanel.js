@@ -92,13 +92,19 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	    },this);
 	}
 
-	, addTab: function(){
+	, addTab: function(sheetConf){
 		this.suspendEvents();
 		this.remove('addTab');
-		var sheet = new Sbi.worksheet.designer.SheetPanel({
+		
+		if(sheetConf==null){
+			sheetConf={};
+		}
+		
+		//The title property is overridden: see setSheetsState
+		var sheet = new Sbi.worksheet.designer.SheetPanel(Ext.apply(sheetConf,{
 	        title: 'Sheet ' + (++this.index),
 	        closable:true
-	    }); 
+	    })); 
 		
 	    var tab = this.add(sheet);
 	    this.add(this.addPanel);
@@ -138,6 +144,38 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		
 		if(change.layout!=null && change.layout!=undefined){
 			this.updateLayout(change.layout);
+		}
+	}
+	
+	, getSheetsState: function(){
+		var sheets = [];
+		for(var i=0; i<this.items.length; i++){
+			sheets.push(this.items[i].getSheetState());
+		}
+		return sheets;
+	}
+	
+	/**
+	 * Set the tabs..  THE PANEL SHOULD BE ALREADY RENDERED
+	 * The title is overridden: if the saved panels has title [Sheet 1, Sheet 2, Sheet 7]
+	 * the new titles are  [Sheet 1, Sheet 2, Sheet 3]
+	 */
+	, setSheetsState: function(sheets){
+		if(this.items.length>1){
+			this.remove(this.items[0]);//remove the first panel
+		}
+		
+		//add the panels
+		if(this.rendered){
+			for(var i=0; i<sheets.length; i++){
+				this.addTab(sheets[i]);
+			}
+		}else{
+			this.on('render',function(){
+				for(var i=0; i<sheets.length; i++){
+					this.addTab(sheets[i]);
+				}
+			},this);
 		}
 	}
 

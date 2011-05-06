@@ -63,7 +63,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
                 type:'vbox',
                 align:'stretch'
             },
-            items:[this.titlePanel, this.filtersPanel, this.contentPanel, this.footerPanel]
+            items:[this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	}
 	
 	c = Ext.apply(config,c);
@@ -74,7 +74,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
-	titlePanel: null,
+	headerPanel: null,
 	filtersPanel: null,
 	contentPanel: null,
 	footerPanel: null,
@@ -82,7 +82,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		this.layout = 'layout_headerfooter';
-		this.titlePanel = new Sbi.worksheet.designer.SheetTitlePanel({});
+		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 			style:'padding:0px 15px 0px 15px'
 			, ddGroup: 'worksheetDesignerDDGroup'
@@ -99,14 +99,46 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 				 this.footerPanel.hide();
 			 }
 			 if(layout=='layout-footer' || layout=='layout-content'){
-				 this.titlePanel.hide();
+				 this.headerPanel.hide();
 			 }
 			 if(layout=='layout-footer' || layout=='layout-headerfooter'){
 				 this.footerPanel.show();
 			 }
 			 if(layout=='layout-header' || layout=='layout-headerfooter'){
-				 this.titlePanel.show();
+				 this.headerPanel.show();
 			 }
+		}
+	}
+	
+	, getSheetState: function(){
+		var state = {};
+		state.title = this.title;
+		if(!this.headerPanel.hidden){
+			state.header = this.headerPanel.getTitleState();
+		}
+		state.filters = this.filtersPanel.getFilters();
+		state.content = this.contentPanel.getDesignerState();
+		
+		if(!this.footerPanel.hidden){
+			state.footer = this.footerPanel.getTitleState();
+		}
+		return state;
+	}
+	
+	, setSheetState: function(sheetState){
+		var state = {};
+		this.title = sheetState.title;
+		if(sheetState.header!=null){
+			this.headerPanel.setTitleState(sheetState.header);
+		}
+		if(sheetState.filters!=null){
+			this.filtersPanel.setFilters(sheetState.filters);
+		}
+		if(sheetState.content!=null){
+			this.contentPanel.setDesignerState(sheetState.content);
+		}
+		if(sheetState.footer!=null){
+			this.footerPanel.setTitleState(sheetState.footer);
 		}
 	}
 	
