@@ -2,7 +2,7 @@
  * DataSetsSDKServiceSoapBindingSkeleton.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis 1.3 Oct 05, 2005 (05:23:37 EDT) WSDL2Java emitter.
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
 package it.eng.spagobi.sdk.datasets.stub;
@@ -95,6 +95,24 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
         _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
         _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
         _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.datasets.sdk.spagobi.eng.it", "SDKDataSet"), it.eng.spagobi.sdk.datasets.bo.SDKDataSet.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("saveDataset", _params, new javax.xml.namespace.QName("", "saveDatasetReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdatasets", "saveDataset"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("saveDataset") == null) {
+            _myOperations.put("saveDataset", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("saveDataset")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdatasets", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
     }
 
     public DataSetsSDKServiceSoapBindingSkeleton() {
@@ -119,6 +137,12 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
     public it.eng.spagobi.sdk.datasets.bo.SDKDataStoreMetadata getDataStoreMetadata(it.eng.spagobi.sdk.datasets.bo.SDKDataSet in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.InvalidParameterValue, it.eng.spagobi.sdk.exceptions.MissingParameterValue, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
     {
         it.eng.spagobi.sdk.datasets.bo.SDKDataStoreMetadata ret = impl.getDataStoreMetadata(in0);
+        return ret;
+    }
+
+    public java.lang.Integer saveDataset(it.eng.spagobi.sdk.datasets.bo.SDKDataSet in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    {
+        java.lang.Integer ret = impl.saveDataset(in0);
         return ret;
     }
 
