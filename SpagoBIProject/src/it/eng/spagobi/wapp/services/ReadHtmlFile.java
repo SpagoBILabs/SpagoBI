@@ -24,11 +24,11 @@ package it.eng.spagobi.wapp.services;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
@@ -95,9 +95,8 @@ public class ReadHtmlFile extends AbstractHttpAction{
 			
 			logger.debug("fileName="+fileName);
 			
-			ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-			SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String path = (String) sb.getCharacters();
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String filePath= SpagoBIUtilities.readJndiResource(path);
 			filePath+="/static_menu/"+fileName;
 			

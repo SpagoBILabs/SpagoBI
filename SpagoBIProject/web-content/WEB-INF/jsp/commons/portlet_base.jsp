@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          pageEncoding="ISO-8859-1"
          session="true" 
          import="it.eng.spago.base.*,
-         		 it.eng.spago.configuration.ConfigSingleton,
          		 it.eng.spagobi.commons.utilities.urls.IUrlBuilder,
          		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"
 %>
@@ -172,7 +171,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	
 	String currViewThemeName = ThemesManager.getCurrentThemeName(currTheme);
 	
-	String sessionParamsManagerEnabled = (String) ConfigSingleton.getInstance().getAttribute("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
+	String sessionParamsManagerEnabled = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled");
 	
 	%>
 
@@ -181,7 +180,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <% if (sbiMode.equalsIgnoreCase("WEB")){ %> 
 
 
-<html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
+
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
 </head>

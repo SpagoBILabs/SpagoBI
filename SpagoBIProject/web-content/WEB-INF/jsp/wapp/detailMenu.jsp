@@ -571,9 +571,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<select name="staticpage" size="1" class='portlet-form-input-field'>
 				<option value=""> </option>
 					<%//Insert all options (only HTML files) 
-					ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-					SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-					String path = (String) sb.getCharacters();
+					SingletonConfig configSingleton = SingletonConfig.getInstance();
+					String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 					String resourcePath= SpagoBIUtilities.readJndiResource(path);
 					resourcePath+="/static_menu";
 					String currentStaticPage=menu.getStaticPage();

@@ -118,7 +118,7 @@ public class ChannelUtilities {
 		String contextName = "Spagobi";
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
-		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
+		String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
 		// based on mode get spago object and url builder
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			contextName = httpRequest.getContextPath();

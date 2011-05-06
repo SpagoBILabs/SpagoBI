@@ -22,11 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.utilities.indexing;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjMetaDataAndContent;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
@@ -81,11 +81,10 @@ public class LuceneIndexer {
 	public static void addBiobjToIndex(BIObject biObj){
 		logger.debug("IN");
 		try {
-			String indexBasePath = "";
-			SourceBean jndiBean =(SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (jndiBean != null) {
-				String jndi = jndiBean.getCharacters();
-				indexBasePath = SpagoBIUtilities.readJndiResource(jndi);
+			String indexBasePath = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (indexBasePath != null) {
+				
+				SpagoBIUtilities.readJndiResource(indexBasePath);
 			}
 			String index = indexBasePath+"/idx";
 			Date start = new Date();
@@ -129,11 +128,9 @@ public class LuceneIndexer {
 	public static void updateBiobjInIndex(BIObject biObj, boolean delete){
 		logger.debug("IN");
 		try {
-			String indexBasePath = "";
-			SourceBean jndiBean =(SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (jndiBean != null) {
-				String jndi = jndiBean.getCharacters();
-				indexBasePath = SpagoBIUtilities.readJndiResource(jndi);
+			String indexBasePath = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (indexBasePath != null) {
+				SpagoBIUtilities.readJndiResource(indexBasePath);
 			}
 			String index = indexBasePath+"/idx";
 			Date start = new Date();

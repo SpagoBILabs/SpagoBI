@@ -23,6 +23,7 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiConfig;
@@ -281,6 +282,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 					aSession.close();
 			}
 		}
+		SingletonConfig.getInstance().clearCache();
 		logger.debug("OUT");
 	}
 
@@ -325,6 +327,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
     			if (sess.isOpen()) sess.close();
     		}
     	}
+    	SingletonConfig.getInstance().clearCache();
     	logger.debug("OUT");
     }
 
