@@ -44,7 +44,6 @@
 Ext.ns("Sbi.worksheet.runtime");
 
 Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(config) { 
-
 	
 	var defaultSettings = {
 			title: LN('sbi.worksheet.runtime.worksheetruntimepanel.title')
