@@ -99,7 +99,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeQueryAction.totalTime");
 			
-			queryId = getAttributeAsString( QUERY_ID );
+			queryId = getQueryId();
 			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
 			
 			start = getAttributeAsInteger( START );	
@@ -135,9 +135,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			statement.setParameters( getEnv() );
 			
 			String hqlQuery = statement.getQueryString();
-			String sqlQuery = statement.getSqlQueryString();
+			//String sqlQuery = statement.getSqlQueryString();
 			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
 			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
@@ -213,6 +213,14 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		
 	}
 	
+	/**
+	 * Get the query id from the request
+	 * @return
+	 */
+	public String getQueryId() {
+		return getAttributeAsString( QUERY_ID );
+	}
+
 	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
 		logger.debug("IN");
 		List whereFields = query.getWhereFields();
