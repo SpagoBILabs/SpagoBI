@@ -230,12 +230,12 @@ var themesViewName;
 
 <%
 // BANNER AND FOOTER CONFIGURATION
-String banner = spagoconfig.getConfigValue("HOME.BANNER.view");
+String banner = spagoconfig.getConfigValue("SPAGOBI.HOME.BANNER.view");
 boolean showbanner = true;
 if (banner!=null && !banner.equals("") && banner.equalsIgnoreCase("false")){
 	showbanner = false;
 }
-String footer = spagoconfig.getConfigValue("HOME.FOOTER.view");
+String footer = spagoconfig.getConfigValue("SPAGOBI.HOME.FOOTER.view");
 boolean showfooter = true;
 if (footer!=null && !footer.equals("") && footer.equalsIgnoreCase("false")){
 	showfooter =  false;
