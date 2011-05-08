@@ -24,7 +24,9 @@ package it.eng.qbe.model.structure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -102,10 +104,17 @@ public class ModelViewEntity extends ModelEntity {
 		setType( view.getType() );
 		
 		entities = new ArrayList<IModelEntity>();
+		subEntities = new HashMap<String,IModelEntity>();
+		
 		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
 		for(String innerEntityUniqueName : innerEntityUniqueNames) {
 			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
 			entities.add(e);
+			List<IModelEntity> innerEntitySubEntities = e.getSubEntities();
+			for(IModelEntity innerEntitySubEntity : innerEntitySubEntities) {
+				subEntities.put(innerEntitySubEntity.getUniqueName(), innerEntitySubEntity);
+			}
+			
 		}
 		
 		joins = new ArrayList<Join>();
@@ -113,8 +122,6 @@ public class ModelViewEntity extends ModelEntity {
 		for(IModelViewJoinDescriptor joinDescriptor : joinDescriptors) {
 			joins.add( new Join(joinDescriptor, modelName, structure) );
 		}
-		
-		
 	}
 	
 	// =========================================================================
