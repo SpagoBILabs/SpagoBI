@@ -1020,7 +1020,16 @@ public class JPQLStatement extends AbstractStatement {
 				conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( CriteriaConstants.EQUALS_TO );
 				
 				String sourceEntityAlias = (String)entityAliases.get(join.getSourceEntity().getUniqueName());
+				if(sourceEntityAlias == null) {
+					sourceEntityAlias = getNextAlias(entityAliasesMaps);
+					entityAliases.put(join.getSourceEntity().getUniqueName(), sourceEntityAlias);
+				}
 				String destinationEntityAlias = (String)entityAliases.get(join.getDestinationEntity().getUniqueName());
+				if(destinationEntityAlias == null) {
+					destinationEntityAlias = getNextAlias(entityAliasesMaps);
+					entityAliases.put(join.getDestinationEntity().getUniqueName(), destinationEntityAlias);
+				}
+				
 				for(int i = 0; i < join.getSourceFileds().size(); i++) {
 					IModelField sourceField = join.getSourceFileds().get(i);
 					IModelField destinationField = join.getDestinationFileds().get(i);
