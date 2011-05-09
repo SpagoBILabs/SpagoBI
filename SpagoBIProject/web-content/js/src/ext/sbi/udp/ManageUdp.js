@@ -106,8 +106,8 @@ Ext.extend(Sbi.udp.ManageUdp, Sbi.widgets.ListDetailForm, {
 										 });
 		
 		this.configurationObject.gridColItems = [
-		                                         {header: LN('sbi.udp.label'), width: 100, sortable: true, dataIndex: 'label'},
-											     {id:'name',header: LN('sbi.udp.name'), width: 130, sortable: true, locked:false, dataIndex: 'name'},
+		                                         {header: LN('sbi.udp.label'), width: 130, sortable: true, dataIndex: 'label'},
+											     {id:'name',header: LN('sbi.udp.name'), width: 140, sortable: true, locked:false, dataIndex: 'name'},
 										         {header: LN('sbi.udp.type'), width: 70, sortable: true, dataIndex: 'type'},
 										         {header: LN('sbi.udp.family'), width: 70, sortable: true, dataIndex: 'family'}
 		                                        ];
@@ -228,8 +228,8 @@ Ext.extend(Sbi.udp.ManageUdp, Sbi.widgets.ListDetailForm, {
 		 		   	 itemId: 'items-detail',   	              
 		 		   	 columnWidth: 0.4,
 		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             labelWidth: 100,
+		             defaults: {width: 250, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
