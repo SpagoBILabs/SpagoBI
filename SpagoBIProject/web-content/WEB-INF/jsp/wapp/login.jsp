@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
@@ -45,10 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	ResponseContainer aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 	//RequestContainer requestContainer = RequestContainerAccess.getRequestContainer(request); 
 	
-	ConfigSingleton serverConfig = ConfigSingleton.getInstance();
-	SourceBean securitySB = (SourceBean) serverConfig.getAttribute("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS");
-	
-	String strInternalSecurity = (String) securitySB.getAttribute("className");
+	SingletonConfig serverConfig = SingletonConfig.getInstance();
+	String strInternalSecurity = serverConfig.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
 	boolean isInternalSecurity = (strInternalSecurity.indexOf("InternalSecurity")>0)?true:false;
 	
 	RequestContainer requestContainer = RequestContainer.getRequestContainer();
@@ -82,7 +79,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
-<html>
+
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html>
   <head>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
     <title>SpagoBI</title>

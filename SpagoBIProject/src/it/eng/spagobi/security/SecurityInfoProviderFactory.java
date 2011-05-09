@@ -34,7 +34,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 package it.eng.spagobi.security;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 
 import org.apache.log4j.Logger;
 
@@ -52,10 +52,8 @@ public class SecurityInfoProviderFactory {
 		 */
 		public static synchronized ISecurityInfoProvider getPortalSecurityProvider() throws Exception {
 			logger.debug("IN");
-			SourceBean configSingleton = ConfigSingleton.getInstance();
-			SourceBean portalSecuritySB = (SourceBean) configSingleton.getAttribute("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS");
-			logger.debug(" Portal security class configuration " + portalSecuritySB);
-			String portalSecurityClassName = (String) portalSecuritySB.getAttribute("className");
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String portalSecurityClassName = configSingleton.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
 			logger.debug(" Portal security class name: " + portalSecurityClassName);
 			if (portalSecurityClassName == null || portalSecurityClassName.trim().equals("")) {
 				logger.error(" Portal security class name not set!!!!");

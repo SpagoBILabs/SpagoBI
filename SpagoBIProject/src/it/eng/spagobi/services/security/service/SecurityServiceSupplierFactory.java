@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.services.security.service;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 
 import org.apache.log4j.Logger;
 
@@ -41,12 +41,12 @@ public class SecurityServiceSupplierFactory {
      */
     public static ISecurityServiceSupplier createISecurityServiceSupplier(){
 	logger.debug("IN");
-	SourceBean configSingleton = (SourceBean)ConfigSingleton.getInstance();
-	SourceBean engUserProfileFactorySB = (SourceBean) configSingleton.getAttribute("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS");
+	SingletonConfig configSingleton = SingletonConfig.getInstance();
+	String engUserProfileFactorySB = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 	if (engUserProfileFactorySB==null){
 	    logger.warn("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS ... NOT FOUND");
 	}
-	String engUserProfileFactoryClass = (String) engUserProfileFactorySB.getAttribute("className");
+	String engUserProfileFactoryClass = engUserProfileFactorySB;
 	engUserProfileFactoryClass = engUserProfileFactoryClass.trim(); 
 	try {
 	    return  (ISecurityServiceSupplier)Class.forName(engUserProfileFactoryClass).newInstance();

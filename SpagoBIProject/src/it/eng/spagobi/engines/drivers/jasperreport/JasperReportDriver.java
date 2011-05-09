@@ -40,7 +40,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -50,6 +49,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
@@ -130,9 +130,9 @@ public class JasperReportDriver extends AbstractDriver implements IEngineDriver 
 	logger.debug("Add document parameter:" + biobj.getLabel());
 
 	// adding date format parameter
-	ConfigSingleton config = ConfigSingleton.getInstance();
-	SourceBean formatSB = (SourceBean) config.getAttribute("SPAGOBI.DATE-FORMAT");
-	String format = (formatSB == null) ? "DD-MM-YYYY" : (String) formatSB.getAttribute("format");
+	SingletonConfig config = SingletonConfig.getInstance();
+	String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+	String format = (formatSB == null) ? "DD-MM-YYYY" : formatSB;
 	pars.put("dateformat", format);
 
 	pars = addBISubreports(biobj, pars);

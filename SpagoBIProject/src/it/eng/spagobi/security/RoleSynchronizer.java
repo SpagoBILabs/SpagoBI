@@ -34,12 +34,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 package it.eng.spagobi.security;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dbaccess.Utils;
 import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.dbaccess.sql.SQLCommand;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -73,20 +73,18 @@ public class RoleSynchronizer {
 		logger.debug("IN");
         try {
             IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-        	ConfigSingleton conf = ConfigSingleton.getInstance();
+        	SingletonConfig conf = SingletonConfig.getInstance();
         	logger.debug("Config singleton retrived " + conf);
-        	SourceBean secClassSB = (SourceBean)conf.getAttribute("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS");
-        	logger.debug("Source bean security class retrived " + secClassSB);
-        	String portalSecurityProviderClass = (String) secClassSB.getAttribute("className");
+        	String portalSecurityProviderClass = conf.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
         	portalSecurityProviderClass = portalSecurityProviderClass.trim();
         	logger.debug("Security class name retrived " + portalSecurityProviderClass);
         	Class secProvClass = Class.forName(portalSecurityProviderClass);
         	logger.debug("Security class found " + secProvClass);
         	ISecurityInfoProvider portalSecurityProvider = (ISecurityInfoProvider)secProvClass.newInstance();
         	logger.debug("Security class instance created " + portalSecurityProvider);
-        	SourceBean secFilterSB = (SourceBean)conf.getAttribute("SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER");
+        	String secFilterSB = conf.getConfigValue("SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER");
         	logger.debug("Source bean filter retrived " + secFilterSB);
-            String rolePatternFilter = secFilterSB.getCharacters();
+            String rolePatternFilter = secFilterSB;
             logger.debug("Filter string retrived " + rolePatternFilter);
             Pattern filterPattern = Pattern.compile(rolePatternFilter);
             logger.debug("Filter pattern regular expression " + filterPattern);
@@ -190,10 +188,10 @@ public class RoleSynchronizer {
 	
 	private boolean isRoleType(Role aRole, String roleTypeCd) {
 		String roleName = aRole.getName();
-		ConfigSingleton conf = ConfigSingleton.getInstance();
-		SourceBean adminRolePatternSB = (SourceBean) conf.getAttribute("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS." + roleTypeCd + "-PATTERN");
+		SingletonConfig conf = SingletonConfig.getInstance();
+		String adminRolePatternSB = conf.getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS." + roleTypeCd + "-PATTERN");
 		if (adminRolePatternSB != null) {
-			String adminPatternStr = adminRolePatternSB.getCharacters();
+			String adminPatternStr = adminRolePatternSB;
 			Pattern adminPattern = Pattern.compile(adminPatternStr);
 			Matcher matcher = adminPattern.matcher(roleName);
     		if (matcher.matches()) {

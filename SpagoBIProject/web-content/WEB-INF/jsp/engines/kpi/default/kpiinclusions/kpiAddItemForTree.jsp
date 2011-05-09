@@ -1,4 +1,5 @@
 
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="java.io.IOException"%>
 <%@page import="org.jfree.chart.ChartUtilities"%>
@@ -7,7 +8,6 @@
 <%@page import="org.jfree.chart.JFreeChart"%>
 <%@page import="it.eng.spagobi.engines.kpi.bo.ChartImpl"%>
 <%@page import="java.text.ParseException"%>
-<%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
@@ -389,8 +389,7 @@ private HashMap createParMapForMetadataWindow(KpiValue kpiVal,Integer modelInsta
 private HashMap createParMapForTrendWindow(Resource r,Date d,String timeRangeFrom, String timeRangeTo, KpiValue kpiVal,String trend_publisher_Name){
 	
 	HashMap execUrlParMap = new HashMap();
-	SourceBean formatSB = ((SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-	String format = (String) formatSB.getAttribute("format");
+	String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 	SimpleDateFormat f = new SimpleDateFormat();
 	f.applyPattern(format);	
 	
@@ -431,8 +430,7 @@ private String createParStringForCrossNavigation(ExecutionInstance execInstance,
 	
 	String executionFlowId = execInstance.getFlowId();
 	String uuidPrincip = execInstance.getExecutionId();
-	SourceBean formatSB = ((SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-	String format = (String) formatSB.getAttribute("format");
+	String format = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 	SimpleDateFormat f = new SimpleDateFormat();
 	f.applyPattern(format);
 	if(parsToDetailDocs!= null && parsToDetailDocs!=""){

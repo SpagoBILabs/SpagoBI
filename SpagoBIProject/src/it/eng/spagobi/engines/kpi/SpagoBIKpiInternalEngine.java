@@ -27,7 +27,6 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -36,6 +35,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -547,15 +547,15 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			locale=new Locale(lang,country,"");
 		}
 
-		SourceBean internationalizedFormatSB = null; 
+		String internationalizedFormatSB = null; 
 		if(lang!=null && country!=null){
-			internationalizedFormatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-"+lang.toUpperCase()+"_"+country.toUpperCase()));				
+			internationalizedFormatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+lang.toUpperCase()+"_"+country.toUpperCase()+".format"));				
 		}else{
-			internationalizedFormatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
+			internationalizedFormatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 		}
-		internationalizedFormat = (String) internationalizedFormatSB.getAttribute("format");	
-		SourceBean formatServerSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-		formatServer = (String) formatServerSB.getAttribute("format");
+		internationalizedFormat = internationalizedFormatSB;	
+		String formatServerSB = (SingletonConfig.getInstance().getConfigValue(("SPAGOBI.DATE-FORMAT-SERVER.format")));
+		formatServer = formatServerSB;
 
 		logger.debug("OUT");
 	}
@@ -1501,8 +1501,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	private String getDateForDataset(Date d){
 		String toReturn = "";
-		SourceBean formatSB = ((SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-		String format = (String) formatSB.getAttribute("format");
+		String formatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String format = formatSB;
 		SimpleDateFormat f = new SimpleDateFormat();
 		f.applyPattern(format);
 		toReturn = f.format(d);
@@ -1511,8 +1511,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	private String setCalculationDateOfKpi(String value){
 		logger.debug("IN");
-		SourceBean formatSB = ((SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-		String format = (String) formatSB.getAttribute("format");
+		String formatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String format = formatSB;
 		SimpleDateFormat f = new SimpleDateFormat();
 		f.applyPattern(format);
 		String temp = f.format(this.dateOfKPI);
