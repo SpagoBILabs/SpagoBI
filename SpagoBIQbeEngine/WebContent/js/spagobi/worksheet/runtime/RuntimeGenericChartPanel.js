@@ -32,7 +32,7 @@
   * 
   * Public Methods
   * 
-  *  loadChartData(crosstabDefinition): load the data for the chart
+  *  loadChartData(dataConfig): load the data for the chart
   *  getCategories(): Load the categories for the chart
   *  getSeries(): Load the series for the chart
   * 
@@ -162,9 +162,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
     		this.loadMask.hide();
     	}
 	}
-	
 
-	
 });
 
 
