@@ -192,7 +192,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		}
 	}
 	
-	, isValid(): function(){
+	, isValid: function(){
 		var valid = true;
 		if(this.items.items.length>1){
 			for(var i=0; i<this.items.items.length-1; i++){//-1 because of the add panel teb
