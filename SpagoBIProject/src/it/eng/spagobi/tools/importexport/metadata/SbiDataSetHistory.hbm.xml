@@ -40,18 +40,6 @@
         <property name="numRows" type="boolean">
             <column name="NUM_ROWS" />
         </property>
-        <property name="userIn" type="string">
-            <column name="USER_IN" />
-        </property>
-        <property name="timeIn" type="timestamp">
-            <column name="TIME_IN"  />
-        </property>	 
-        <property name="sbiVersionIn" type="string">
-            <column name="SBI_VERSION_IN" />
-        </property>
-        <property name="metaVersion" type="string">
-            <column name="META_VERSION" />
-        </property>
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet" discriminator-value="SbiFileDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
 	        <property name="fileName" type="string">
 	            <column name="FILE_NAME" />

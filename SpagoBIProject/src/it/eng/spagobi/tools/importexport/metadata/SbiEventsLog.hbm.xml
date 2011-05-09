@@ -19,7 +19,7 @@
         <property name="params" type="string">
             <column name="params" length="1000" not-null="false" />
         </property>
-        <property name="handler" type="string">
+        <property name="handlerClass" type="string">
             <column name="handler" length="400" not-null="true" />
         </property>
         <set name="roles" inverse="true">

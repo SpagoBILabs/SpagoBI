@@ -385,6 +385,7 @@ public class ExporterMetadata {
 	public void insertDataSet(GuiGenericDataSet dataSet, Session session) throws EMFUserError {
 		logger.debug("IN");
 		Transaction tx = null;
+		Transaction tx2 = null;
 		Integer idToReturn = null;
 
 		
@@ -502,28 +503,15 @@ public class ExporterMetadata {
 				hibDataSetConfig.setLabel(dataSet.getLabel());
 				hibDataSetConfig.setDescription(dataSet.getDescription());
 				hibDataSetConfig.setName(dataSet.getName());	
-				SbiCommonInfo comInfo = new SbiCommonInfo();
-				comInfo.setOrganization(dataSet.getOrganization());
-				comInfo.setSbiVersionDe(dataSet.getSbiVersionDe());
-				comInfo.setSbiVersionIn(dataSet.getSbiVersionIn());
-				comInfo.setSbiVersionUp(dataSet.getSbiVersionUp());
-				comInfo.setTimeDe(dataSet.getTimeDe());
-				comInfo.setTimeIn(dataSet.getTimeIn());
-				comInfo.setTimeUp(dataSet.getTimeUp());
-				comInfo.setUserDe(dataSet.getUserDe());
-				comInfo.setUserIn(dataSet.getUserIn());
-				comInfo.setUserUp(dataSet.getUserUp());
-				hibDataSetConfig.setCommonInfo(comInfo);
 
 				session.save(hibDataSetConfig);
+				tx.commit();
 
 				// Fill Data set history values
 				hibDataSetHistory.setSbiDsConfig(hibDataSetConfig);
 				hibDataSetHistory.setDsHId(dataSetActiveDetail.getDsHId());
 				hibDataSetHistory.setVersionNum(1);
-				hibDataSetHistory.setTimeIn(currentTStamp);		
 				hibDataSetHistory.setActive(true);			
-				hibDataSetHistory.setUserIn(dataSetActiveDetail.getUserIn());
 
 				hibDataSetHistory.setTransformer(transformer);
 				hibDataSetHistory.setPivotColumnName(dataSetActiveDetail.getPivotColumnName());
@@ -534,15 +522,17 @@ public class ExporterMetadata {
 				hibDataSetHistory.setCategory(category);
 				hibDataSetHistory.setParameters(dataSetActiveDetail.getParameters());
 				hibDataSetHistory.setDsMetadata(dataSetActiveDetail.getDsMetadata());
-
+				tx2 = session.beginTransaction();
 				session.save(hibDataSetHistory);
 
-				tx.commit();
+				tx2.commit();
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the New Data Set ", he);
 			if (tx != null)
 				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			//if (session!=null){
