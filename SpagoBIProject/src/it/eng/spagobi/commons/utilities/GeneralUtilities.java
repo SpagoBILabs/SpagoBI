@@ -361,9 +361,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			try {
 				logger.debug("Trying to recover SpagoBiHost from ConfigSingleton");
 				SingletonConfig spagoConfig = SingletonConfig.getInstance();
-				tmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
-				if (tmp != null) {
-					readJndiResource(tmp);
+				String sbTmp = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_HOST_JNDI");
+				if (sbTmp != null) {
+					tmp = readJndiResource(sbTmp);
 				}
 				if (tmp == null) {
 					logger.debug("SPAGOBI_HOST not set, using the default value ");

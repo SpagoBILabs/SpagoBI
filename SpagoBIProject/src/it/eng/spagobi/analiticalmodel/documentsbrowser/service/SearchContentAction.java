@@ -121,10 +121,10 @@ public class SearchContentAction extends AbstractSpagoBIAction{
 			boolean similar = getAttributeAsBoolean(SIMILAR);
 
 			logger.debug("Parameter [" + SpagoBIConstants.VALUE_FILTER + "] is equal to [" + valueFilter + "]");
-
-			String indexBasePath = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (indexBasePath != null) {
-				SpagoBIUtilities.readJndiResource(indexBasePath);
+			String indexBasePath = "";
+			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (jndiBean != null) {
+				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBean);
 			}
 			String index = indexBasePath+"/idx";
 			IndexReader reader;
