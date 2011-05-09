@@ -142,7 +142,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		}
 	}
 	
-	, isValid(){
+	, isValid: function(){
 		var valid = true;
 		if(sheetState.header!=null){
 			valid = valid && this.headerPanel.isValid();
