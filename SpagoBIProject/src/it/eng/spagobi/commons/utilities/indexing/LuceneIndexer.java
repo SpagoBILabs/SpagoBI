@@ -81,10 +81,10 @@ public class LuceneIndexer {
 	public static void addBiobjToIndex(BIObject biObj){
 		logger.debug("IN");
 		try {
-			String indexBasePath = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (indexBasePath != null) {
-				
-				SpagoBIUtilities.readJndiResource(indexBasePath);
+			String indexBasePath = "";
+			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (jndiBean != null) {	
+				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBean);
 			}
 			String index = indexBasePath+"/idx";
 			Date start = new Date();
@@ -128,9 +128,10 @@ public class LuceneIndexer {
 	public static void updateBiobjInIndex(BIObject biObj, boolean delete){
 		logger.debug("IN");
 		try {
-			String indexBasePath = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			if (indexBasePath != null) {
-				SpagoBIUtilities.readJndiResource(indexBasePath);
+			String indexBasePath = "";
+			String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			if (jndiBean != null) {
+				indexBasePath = SpagoBIUtilities.readJndiResource(jndiBean);
 			}
 			String index = indexBasePath+"/idx";
 			Date start = new Date();
