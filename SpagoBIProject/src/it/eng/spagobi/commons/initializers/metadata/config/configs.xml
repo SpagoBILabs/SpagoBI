@@ -32,17 +32,17 @@
 
 <CONFIG label="SPAGOBI.SECURITY.DEFAULT_USER" name="DEFAULT_USER" description="DEFAULT_USER" isActive="true" valueCheck="biadmin" valueType="STRING"/>
 <CONFIG label="SPAGOBI.DATE-FORMAT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DATE-FORMAT.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-SERVER.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-SERVER.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-SERVER.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-IT_IT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-IT_IT.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="m/d/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-IT_IT.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="m/d/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-EN_US.format" name="format" description="format" isActive="true" valueCheck="MM/dd/yyyy" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-EN_US.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-EN_US.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-FR_FR.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-FR_FR.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-FR_FR.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-ES_ES.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-ES_ES.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-ES_ES.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource" name="jndiDatasource" description="jndiDatasource" isActive="true" valueCheck="java:comp/env/jdbc/foodmart" valueType="STRING"/>
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getHierarchiesQuery" name="getHierarchiesQuery" description="getHierarchiesQuery" isActive="true" valueCheck="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store" valueType="STRING"/>
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getOUsQuery" name="getOUsQuery" description="getOUsQuery" isActive="true" valueCheck="SELECT distinct a.store_state as name, a.store_state as code FROM store a union select b.store_city as name, b.store_city as code from store b union select c.store_name as name , c.store_name as code from store c" valueType="STRING"/>
