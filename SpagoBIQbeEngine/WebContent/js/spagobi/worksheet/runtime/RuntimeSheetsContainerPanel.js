@@ -61,8 +61,8 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config) {
 					content:{designer: 'Bar Chart', 
 						
 						chartConfig: {
-							type:"stacked-barchart", 
-							orientation:"horizontal", 
+							type:"side-by-side-barchart", 
+							orientation:"vertical", 
 							showvalues:true, 
 							showlegend:true, 
 							category:

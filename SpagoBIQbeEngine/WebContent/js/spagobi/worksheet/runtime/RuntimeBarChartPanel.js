@@ -105,22 +105,26 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 				renderTo : this.chartDivId,
 				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column'
 			},
+			plotOptions: this.getPlotOptions(),
 			legend: {
 				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
 			},
 			tooltip: {
-				enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true
+				enabled: true
 			},
 			colors: this.getColors(),
 			title : {
 				text : ''
 			},
 			xAxis : {
-				categories : this.getCategories()
+				categories : this.getCategories(),
+				title : {
+					text : (this.chartConfig.orientation === 'vertical') ?  this.chartConfig.category.alias : ''
+				}
 			},
 			yAxis : {
 				title : {
-					text : this.chartConfig.category.alias
+					text : (this.chartConfig.orientation === 'horizontal') ?  this.chartConfig.category.alias : ''
 				}
 			},
 			series : this.getSeries()
@@ -135,6 +139,46 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 			}
 		}
 		return colors;
+	}
+	
+	, getPlotOptions : function () {
+		var plotOptions = null;
+		if (this.chartConfig.orientation === 'horizontal') {
+			plotOptions = {
+				series: {
+					stacking: this.getStacking()
+				},
+				bar: {
+					dataLabels: {
+						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true
+					}
+				}
+			};
+		} else {
+			plotOptions = {
+				column: {
+					stacking: this.getStacking(),
+					dataLabels: {
+						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true
+					}
+				}
+			};
+		}
+		return plotOptions;
+	}
+	
+	, getStacking : function () {
+		switch (this.chartConfig.type) {
+	        case 'side-by-side-barchart':
+	        	return null;
+	        case 'stacked-barchart':
+	        	return 'normal';
+	        case 'percent-stacked-barchart':
+	        	return 'percent';
+	        default: 
+	        	alert('Unknown chart type!');
+	        return null;
+		}
 	}
 	
 });
