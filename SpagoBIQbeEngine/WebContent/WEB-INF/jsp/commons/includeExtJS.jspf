@@ -51,3 +51,9 @@
 <%-- Include Ext.ux.ColorField code --%>
 <script type="text/javascript" src='../js/lib/ext-3.2.1/ux/form/Ext.ux.ColorField.js'/></script>
 <link rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/Ext.ux.ColorField.css" type="text/css" />
+
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src="../js/lib/jquery-1.5.1/jquery-1.5.1.js"></script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src="../js/lib/highcharts-2.1.4/highcharts.js"></script>

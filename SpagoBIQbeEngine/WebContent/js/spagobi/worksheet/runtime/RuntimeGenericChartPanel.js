@@ -51,29 +51,29 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) { 
 	
 	var defaultSettings = {
-			id: 'RuntimeGenericChartPanel'
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeGenericChartPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.runtimeGenericChartPanel);
 	}
 	
-	this.services = new Array();
+	var c = Ext.apply(defaultSettings, config || {});
+	
+	Ext.apply(this, c);
+	
+	this.services = this.services || new Array();
 	var params = {};
-	this.services['loadData'] = Sbi.config.serviceRegistry.getServiceUrl({
+	this.services['loadData'] = this.services['loadData'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'LOAD_CROSSTAB_ACTION'
 		, baseParams: params
 	});
-	var c = Ext.apply(defaultSettings, config || {});
-	Ext.apply(this, c);
-	
-	
 
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	loadMask: null,
+	services: null,
 	dataContainerObject: null//the object with the data for the panel
 	
 	/**
@@ -83,28 +83,27 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
 	 */
 	, loadChartData: function(dataConfig){
-		this.showMask();
-		crosstabDefinitionEncoded = Ext.util.JSON.encode(dataConfig);
+		//this.showMask();
+		
 		var requestParameters = {
-				crosstabDefinition: {
-					'rows': [dataConfig.rows],
+				crosstabDefinition: Ext.util.JSON.encode({
+					'rows': dataConfig.rows,
 					'columns':[],
-					'measures': [dataConfig.measures],
+					'measures': dataConfig.measures,
 					'config': {'measureson':'columns'}
-				}
+				})
 		}
 		Ext.Ajax.request({
 	        url: this.services['loadData'],//load the crosstab from the server
 	        params: requestParameters,
 	        success : function(response, opts) {
-        		this.hideMask();
+        		//this.hideMask();
 	        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-	        	alert(this.getCategories().toSource());
-	        	alert(this.getSeries().toSource());
+	        	this.createChart();
 	        },
 	        scope: this,
 			failure: function(response, options) {
-				this.hideMask();
+				//this.hideMask();
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}      
 		});
@@ -119,7 +118,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var categories = [];
 			for(var i=0; i<measures.length; i++){
 				categories.push(measures[i].node_key);
-			}	
+			}
+			alert(categories.toSource());
 			return  categories;
 		}
 	}
@@ -139,6 +139,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			      serie.data =   this.dataContainerObject.data[i];
 			      series.push(serie);
 			}	
+			alert(series.toSource());
 			return series;
 		}
 	}
@@ -147,9 +148,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 * Opens the loading mask 
 	 */
     , showMask : function(){
-    	
     	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask('RuntimeGenericChartPanel', {msg: "Loading.."});
+    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
     	}
     	this.loadMask.show();
     }
