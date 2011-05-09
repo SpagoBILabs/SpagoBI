@@ -56,7 +56,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	Ext.apply(this, c);
 	
 //	this.content = this.initContent(c);
-	this.content = new Ext.Panel({});
+	this.content = new Ext.Panel({height: 500});
 	c = {
 		border: false,
 		style:'padding:5px 15px 5px',
@@ -137,7 +137,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        	this.content.load(this.contentConfig.crosstabDefinition);
 	            break;
 	        case 'Bar Chart':
+	        	this.remove(this.content);
 	        	this.content= new Sbi.worksheet.runtime.RuntimeBarChartPanel(this.contentConfig);
+	        	this.add(this.content);
 	            break;
 	        case 'Line Chart':
 	        	this.insertLinechartDesigner();
@@ -151,6 +153,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        default: 
 	        	alert('Unknown widget!');
 		}
+		
 		this.doLayout();
 	}
 	
