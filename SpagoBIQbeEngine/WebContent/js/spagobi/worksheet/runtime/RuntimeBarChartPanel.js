@@ -56,11 +56,11 @@ Sbi.worksheet.runtime.RuntimeBarChartPanel = function(config) {
 
 	Ext.apply(this, c);
 	
+	this.chartDivId = Ext.id();
+	
 	c = Ext.apply(c, {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;">aaaa</div>'
 	});
-	
-	this.chartDivId = Ext.id();
 	
 	Sbi.worksheet.runtime.RuntimeBarChartPanel.superclass.constructor.call(this, c);
 	

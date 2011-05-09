@@ -51,6 +51,8 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) { 
 	
 	var defaultSettings = {
+			height: 500,
+			border: false
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.runtimeGenericChartPanel) {
@@ -87,10 +89,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		
 		var requestParameters = {
 				crosstabDefinition: Ext.util.JSON.encode({
-					'rows': dataConfig.rows,
-					'columns':[],
+					'rows': [],
+					'columns':dataConfig.rows,
 					'measures': dataConfig.measures,
-					'config': {'measureson':'columns'}
+					'config': {'measureson':'rows'}
 				})
 		}
 		Ext.Ajax.request({
@@ -119,7 +121,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			for(var i=0; i<measures.length; i++){
 				categories.push(measures[i].node_key);
 			}
-			alert(categories.toSource());
 			return  categories;
 		}
 	}
@@ -136,10 +137,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			for(var i=0; i<seriesNames.length; i++){
 			      serie = {};
 			      serie.name =   seriesNames[i].node_key;
+			//      var s = this.dataContainerObject.data[i];
+			//      var s1 = [];
+			//      for(var j=0; j<s.length; j++){
+			//    	  s1.push(parseFloat(s[j]));
+			//      }
+			//      serie.data =   s1;
 			      serie.data =   this.dataContainerObject.data[i];
 			      series.push(serie);
 			}	
-			alert(series.toSource());
 			return series;
 		}
 	}
