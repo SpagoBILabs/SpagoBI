@@ -113,7 +113,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 			qbeEngineInstance.setAnalysisMetadata( getAnalysisMetadata() );
 	
 			
-			// initializes form state, in not already initialized (starting a new form definition)
+			// initializes form state, if not already initialized (starting a new form definition)
 			FormState formState = qbeEngineInstance.getFormState();
 			if (formState == null) {
 				logger.debug("Initializing a new form state object...");
