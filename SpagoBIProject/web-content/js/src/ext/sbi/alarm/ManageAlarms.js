@@ -132,8 +132,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 										});
 		
 		this.configurationObject.gridColItems = [
-		                                         {header: LN('sbi.alarms.alarmLabel'), width: 170, sortable: true, dataIndex: 'label'},
-		                                         {header: LN('sbi.alarms.alarmName'), width: 170, sortable: true, dataIndex: 'name'}
+		                                         {header: LN('sbi.alarms.alarmLabel'), width: 200, sortable: true, dataIndex: 'label'},
+		                                         {header: LN('sbi.alarms.alarmName'), width: 200, sortable: true, dataIndex: 'name'}
 		                                        ];
 		
 		this.configurationObject.panelTitle = LN('sbi.alarms.manageAlarms');
@@ -251,7 +251,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	 	   var detailFieldName = {
 	                 fieldLabel:  LN('sbi.alarms.alarmName'),
 	                 name: 'name',
-	                 width : 250,
 	                 allowBlank: false,
 	                 validationEvent:true,
 	            	 maxLength:50,
@@ -263,7 +262,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	  	   var detailFieldLabel = {
 	                 fieldLabel: LN('sbi.alarms.alarmLabel'),
 	                 name: 'label',
-	                 width : 250,
 	                 allowBlank: false,
 	                 validationEvent:true,
 	            	 maxLength:50,
@@ -274,9 +272,10 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	  	   
 	  	   var detailFieldDescr = {
 	                 fieldLabel: LN('sbi.alarms.alarmDescr'),
-	                 width : 250,
 	                 name: 'description',
 	                 allowBlank: true,
+	                 xtype: 'textarea',
+	                 height : 80,
 	                 validationEvent:true,
 		             maxLength:200
 	             };	
@@ -286,6 +285,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 		            itemId: 'modality',
 		            name: 'mod',
 		            boxMinWidth  : 50,
+		            boxMaxWidth  : 200,
 		            boxMinHeight  : 100,
 		            fieldLabel: LN('sbi.alarms.alarmModality'),
 		            items: [
@@ -299,6 +299,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	            itemId: 'options',
 	            columns: 2,
 	            boxMinWidth  : 200,
+	            boxMaxWidth  : 200,
 	            boxMinHeight  : 100,
 	            hideLabel  : false,
 	            fieldLabel: LN('sbi.alarms.options'),
@@ -310,7 +311,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	  	 
 	  	var detailFieldUrl = {
                 fieldLabel:  LN('sbi.alarms.alarmMailUrl'),
-                width : 250,
                 name: 'url',
                 allowBlank: true,
                 validationEvent:true,
@@ -320,7 +320,6 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	  	var detailFieldMailText = {
                 fieldLabel:  LN('sbi.alarms.alarmMailText'),
                 xtype: 'textarea',
-                width : 250,
                 height : 80,
                 name: 'text',
                 allowBlank: true,
@@ -336,8 +335,8 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	 		   	     id: 'alarm-detail',   	              
 	 		   	     columnWidth: 0.4,
 		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 200, border:false},    
+		             labelWidth: 100,
+		             defaults: {width: 320, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
@@ -370,15 +369,15 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 	                 id: 'id',
 	                 header: LN('sbi.alarms.kpiInstanceIdHeader'),
 	                 dataIndex: 'id',
-	                 width: 75
+	                 width: 85
 	             }, {
 	                 header: LN('sbi.alarms.kpiModelHeader'),
 	                 dataIndex: 'kpiModel',
-	                 width: 130
+	                 width: 170
 	             }, {
 	                 header: LN('sbi.alarms.kpiNameHeader'),
 	                 dataIndex: 'kpiName',
-	                 width: 140
+	                 width: 170
 	             },
 	             this.kpiCheckColumn // the plugin instance
 	         ]
@@ -395,6 +394,7 @@ Ext.extend(Sbi.alarms.ManageAlarms, Sbi.widgets.ListDetailForm, {
 			stripeRows: true,
 			forceLayout:true,
 			frame: true,
+			autoScroll: true,
            /* viewConfig : {
 	            //forceFit : true,
 	            scrollOffset : 2

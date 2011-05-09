@@ -123,8 +123,8 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 									});
 		
 		this.configurationObject.gridColItems = [
-		                                         {id:'userId', header: LN('sbi.users.userId'), width: 150, sortable: true, dataIndex: 'userId'},
-		                                         {header: LN('sbi.users.fullName'), width: 170, sortable: true, dataIndex: 'fullName'}
+		                                         {id:'userId', header: LN('sbi.users.userId'), width: 200, sortable: true, dataIndex: 'userId'},
+		                                         {header: LN('sbi.users.fullName'), width: 200, sortable: true, dataIndex: 'fullName'}
 		                                         ];
 		
 		this.configurationObject.panelTitle = LN('sbi.users.manageUsers');
@@ -212,8 +212,8 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 		             style: Ext.isIE ? {} : {	
 		            	 position: 'absolute'
 		        	 	,top: '95px'
-		            	,left: '290px'
-		            	,zIndex: '100'
+		            	,left: '385px'
+		            	,zIndex: '180'
 			         },
 		             handler: function(){
 			        	 this.detailFieldPwd.enable(); 
@@ -231,8 +231,8 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 	 		   	     id: 'alarm-detail',   	              
 	 		   	     columnWidth: 0.4,
 		             xtype: 'fieldset',
-		             labelWidth: 90,
-		             defaults: {width: 150, border:false},    
+		             labelWidth: 100,
+		             defaults: {width: 240, border:false},    
 		             defaultType: 'textfield',
 		             autoHeight: true,
 		             autoScroll  : true,
