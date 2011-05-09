@@ -27,6 +27,12 @@
 <script type="text/javascript" src='js/lib/ext-3.2.1/ux/form/Ext.ux.ColorField.js'/></script>
 <link rel="styleSheet" href ="js/lib/ext-3.2.1/resources/css/Ext.ux.ColorField.css" type="text/css" />
 
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src="js/lib/jquery-1.5.1/jquery-1.5.1.js"></script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src="js/lib/highcharts-2.1.4/highcharts.src.js"></script>
+
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;
@@ -199,7 +205,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/></script>
-
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/BarChartPanel.js'/></script>
 
 
 
@@ -276,9 +282,22 @@ END-PRODUCTION -->
 	        
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
-	        	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel({});
+	        	//var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel({});
+	        	var workSheetPanel = new Sbi.worksheet.runtime.BarChartPanel({
+	        		chartConfig: {
+	        			type:"stacked-barchart"
+	        			, orientation:"vertical"
+	        			, showvalues:true
+	        			//, showlegend:false
+	        			, category:null
+	        			, series:[]
+	        		}
+	        	});
 	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
-	           	var viewport = new Ext.Viewport(workSheetPanel);  
+	           	var viewport = new Ext.Viewport({layout: 'border', items: [{
+	           		region: 'center'
+	           		, items: [workSheetPanel]
+	           	}]});  
 	           	
 	           		
 

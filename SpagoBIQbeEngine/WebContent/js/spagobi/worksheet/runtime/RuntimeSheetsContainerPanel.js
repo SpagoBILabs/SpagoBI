@@ -58,7 +58,20 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config) {
 		[{//FAKE
 					title: 'Sheet n',
 					header :{title: 'header', img:'img/delete.gif', position:'left'},
-					content:{designer: 'Pivot Table', crosstabDefinition: 	{'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'},{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productDepartment','nature':'attribute','alias':'Product Department','iconCls':'attribute'}],'columns':[{'id':'it.eng.spagobi.SalesFact1998::store(store_id):storeCountry','nature':'attribute','alias':'Store Country','iconCls':'attribute'},{'id':'it.eng.spagobi.SalesFact1998::store(store_id):storeState','nature':'attribute','alias':'Store State','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}],'config':{'measureson':'columns'}}},
+					content:{designer: 'Bar Chart', 
+						
+						chartConfig: {
+							type:"stacked-barchart", 
+							orientation:"horizontal", 
+							showvalues:true, 
+							showlegend:true, 
+							category:
+								{id:"it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily", alias:"Product Family", funct:"NONE", iconCls:"attribute", nature:"attribute"}, 
+							series:[
+							    {id:"it.eng.spagobi.SalesFact1998:storeCost", alias:"Store Cost", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Cost", colour:"#862D72"}, 
+							    {id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", colour:"#8340E2"}
+							]
+						}},
 					footer :{title: 'footer', img:'img/delete.gif', position:'right'}
 					
 			}]); 

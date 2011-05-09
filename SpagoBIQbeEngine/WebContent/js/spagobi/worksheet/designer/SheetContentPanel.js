@@ -149,12 +149,12 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	        	, handler: this.removeDesigner
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
-			}/*, {
+			}, {
 				id: 'help'
 		        	, handler: function() {alert(this.designer.getFormState().toSource());}
 		          	, scope: this
 		          	, qtip: 'getformstate'
-			}, {
+			}/*, {
 				id: 'gear'
 		        	, handler: function() {this.designer.setFormState({
 		        		  type:"stacked-barchart", 
