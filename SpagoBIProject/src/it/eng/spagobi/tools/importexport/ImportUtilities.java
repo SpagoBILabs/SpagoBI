@@ -46,6 +46,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -89,6 +90,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1035,7 +1037,11 @@ public class ImportUtilities {
 		newDsConfig.setLabel(dataset.getLabel());
 		newDsConfig.setName(dataset.getName());
 		newDsConfig.setDescription(dataset.getDescription());
-		newDsConfig.setCommonInfo(dataset.getCommonInfo());
+		SbiCommonInfo i = new SbiCommonInfo();
+		i.setTimeIn(new Date());
+		i.setUserIn("biadmin");
+		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		newDsConfig.setCommonInfo(i);
 
 		logger.debug("OUT");
 		return newDsConfig;
@@ -1122,7 +1128,7 @@ public class ImportUtilities {
 
 	public static void associateNewSbiDataSethistory(SbiDataSetConfig dataset,
 			SbiDataSetConfig exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
-			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+			ImporterMetadata importer, MetadataAssociations metaAss) {
 		logger.debug("IN");
 		try {
 			// save the new exported history
@@ -1149,9 +1155,16 @@ public class ImportUtilities {
 				dsnewHistory.setTransformer(transformer);
 
 			}
+			
+			dsnewHistory.setUserIn("biadmin");
+			dsnewHistory.setTimeIn(new Date());
+			dsnewHistory.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 
 			sessionCurrDB.save(dsnewHistory);
 
+		} catch (EMFUserError e) {
+			logger.error("EMF user Error",e);
+			e.printStackTrace();
 		}
 		finally {
 			logger.debug("OUT");
