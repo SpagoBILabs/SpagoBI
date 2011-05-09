@@ -5,6 +5,7 @@
 <hibernate-mapping>
     <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" table="SBI_KPI_INSTANCE" >
         <id name="idKpiInstance" type="integer">
+         <column name="ID_KPI_INSTANCE" />
    <generator class="org.hibernate.id.enhanced.TableGenerator">
 		<param name="optimizer">hilo</param>
 		<param name="segment_value">SBI_KPI_INSTANCE</param>
