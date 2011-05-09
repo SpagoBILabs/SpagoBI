@@ -103,7 +103,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 		  this.chart = new Highcharts.Chart({
 			chart : {
 				renderTo : this.chartDivId,
-				defaultSeriesType : 'bar'
+				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column'
 			},
 			legend: {
 				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
