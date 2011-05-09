@@ -30,9 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -441,9 +441,8 @@ public class ManageOUsAction extends AbstractSpagoBIAction {
 		OrganizationalUnitGrant organizationalUnitGrant = new OrganizationalUnitGrant();
 		organizationalUnitGrant.setDescription(JSONGrant.getString("description"));
 		
-        ConfigSingleton config = ConfigSingleton.getInstance();
-        SourceBean formatSB = (SourceBean) config.getAttribute("SPAGOBI.DATE-FORMAT-SERVER");
-	    String format = (String) formatSB.getAttribute("format");
+        SingletonConfig config = SingletonConfig.getInstance();
+        String format = config.getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
 	    
 		organizationalUnitGrant.setEndDate(toDate(JSONGrant.getString("enddate"), format));
 		organizationalUnitGrant.setStartDate(toDate(JSONGrant.getString("startdate"), format));

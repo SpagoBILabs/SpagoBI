@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.kpi.ou.provider;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
@@ -72,20 +72,19 @@ public class OrganizationalUnitListProviderDB extends
 	 * ag_tab nome gerarchia 
 	 * ag_cetabl1.....15 codici uo 
 	 * ag_detabl1....15 sono i nomi delle UO 
-	 * 15 livelli di profondità 
-	 * AG_DIM è il codice foglia 
-	 * cd_az è il codice azienda
+	 * 15 livelli di profonditï¿½ 
+	 * AG_DIM ï¿½ il codice foglia 
+	 * cd_az ï¿½ il codice azienda
 	 */	
 	@Override
 	public void initialize() {		
-		SourceBean ouConfig = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.ORGANIZATIONAL-UNIT");
-
-		jndiDatasource = (String) ouConfig.getAttribute("jndiDatasource");
-		getHierarchiesQuery = (String) ouConfig.getAttribute("getHierarchiesQuery");
-		getOUsQuery= (String) ouConfig.getAttribute("getOUsQuery");
-		getRootByHierarchy = (String) ouConfig.getAttribute("getRootByHierarchy");
-		getChildrenByLevel= (String) ouConfig.getAttribute("getChildrenByLevel");
-		getRootLeaves= (String) ouConfig.getAttribute("getRootLeaves");
+		SingletonConfig singleConfig = SingletonConfig.getInstance();
+		jndiDatasource = singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource");
+		getHierarchiesQuery = singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.getHierarchiesQuery");
+		getOUsQuery= singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.getOUsQuery");
+		getRootByHierarchy = singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.getRootByHierarchy");
+		getChildrenByLevel= singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.getChildrenByLevel");
+		getRootLeaves= singleConfig.getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.getRootLeaves");
 	}
 
 	 static Connection getJNDIConnection() {

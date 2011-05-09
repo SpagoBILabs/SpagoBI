@@ -31,9 +31,9 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -73,9 +73,9 @@ public class PortletLoginModule extends AbstractModule {
 		
 		if (profile == null) {
 			logger.debug("Principal profile not found on request. Looking for a default user configuration.... ");
-			SourceBean defatulUserSB = (SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.SECURITY.DEFAULT_USER");
+			String defatulUserSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_USER");
 			if(defatulUserSB != null) {
-				userName = defatulUserSB.getCharacters();
+				userName = defatulUserSB;
 				logger.debug("Default user configuration found = [" + userName + "]");
 			} else 	{
 				logger.error("No default user configuration found");

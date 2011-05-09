@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.kpi.ou.util;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
@@ -356,8 +356,7 @@ public class OrganizationalUnitSynchronizer {
 		logger.debug("IN");
 		OrganizationalUnitListProvider o = null;
 		try {
-			SourceBean ouConfig = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.ORGANIZATIONAL-UNIT");
-			String prodiverClassName = (String) ouConfig.getAttribute("provider");
+			String prodiverClassName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.ORGANIZATIONAL-UNIT.provider");  
 			o = (OrganizationalUnitListProvider) Class.forName(prodiverClassName).newInstance();
 			logger.debug("OUT");
 		} catch (Exception e) {

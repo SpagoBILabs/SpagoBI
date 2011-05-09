@@ -29,4 +29,32 @@
 <CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS" name="PORTAL-SECURITY-INIT-CLASS" description="PORTAL-SECURITY-INIT-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS" name="PORTAL-SECURITY-CLASS" description="PORTAL-SECURITY-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="enabled" description="enabled" isActive="true" valueCheck="false" valueType="STRING"/>
+
+<CONFIG label="SPAGOBI.SECURITY.DEFAULT_USER" name="DEFAULT_USER" description="DEFAULT_USER" isActive="true" valueCheck="biadmin" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DATE-FORMAT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DATE-FORMAT.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-SERVER.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-SERVER.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-IT_IT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-IT_IT.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="m/d/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-EN_US.format" name="format" description="format" isActive="true" valueCheck="MM/dd/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-EN_US.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-FR_FR.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-FR_FR.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-ES_ES.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-ES_ES.xtJsFormat" name="xtJsFormat" description="xtJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource" name="jndiDatasource" description="jndiDatasource" isActive="true" valueCheck="java:comp/env/jdbc/foodmart" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getHierarchiesQuery" name="getHierarchiesQuery" description="getHierarchiesQuery" isActive="true" valueCheck="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getOUsQuery" name="getOUsQuery" description="getOUsQuery" isActive="true" valueCheck="SELECT distinct a.store_state as name, a.store_state as code FROM store a union select b.store_city as name, b.store_city as code from store b union select c.store_name as name , c.store_name as code from store c" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootByHierarchy" name="getRootByHierarchy" description="getRootByHierarchy" isActive="true" valueCheck="SELECT distinct store_country as code, store_country as name FROM store where store_country = ?" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getChildrenByLevel" name="getChildrenByLevel" description="getChildrenByLevel" isActive="true" valueCheck="select distinct ! as code, ! as name from store where store_country = ? " valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootLeaves" name="getRootLeaves" description="getRootLeaves" isActive="true" valueCheck="" valueType="STRING"/>
+<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.provider" name="provider" description="provider" isActive="true" valueCheck="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className" name="className" description="className" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className" name="className" description="className" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER" name="ROLE-NAME-PATTERN-FILTER" description="ROLE-NAME-PATTERN-FILTER" isActive="true" valueCheck=".*" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN" name="DEV_ROLE-PATTERN" description="DEV_ROLE-PATTERN" isActive="true" valueCheck="/spagobi/dev" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN" name="TEST_ROLE-PATTERN" description="TEST_ROLE-PATTERN" isActive="true" valueCheck="/spagobi/test" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN" name="MODEL_ADMIN-PATTERN" description="MODEL_ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/modeladmin" valueType="STRING"/>
 </CONFIGS>
+

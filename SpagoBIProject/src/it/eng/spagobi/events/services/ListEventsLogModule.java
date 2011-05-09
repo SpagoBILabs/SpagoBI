@@ -23,7 +23,6 @@ package it.eng.spagobi.events.services;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.module.list.basic.AbstractBasicListModule;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -33,6 +32,7 @@ import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.util.StringUtils;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -81,9 +81,9 @@ public class ListEventsLogModule extends AbstractBasicListModule {
 		
 		EventsManager eventsManager = EventsManager.getInstance();		
 		List firedEventsList = eventsManager.getRegisteredEvents(profile);
-        ConfigSingleton config = ConfigSingleton.getInstance();
-        SourceBean formatSB = (SourceBean) config.getAttribute("SPAGOBI.DATE-FORMAT");
-        String format = (formatSB==null)?"":(String) formatSB.getAttribute("format");
+        SingletonConfig config = SingletonConfig.getInstance();
+        String formatSB = config.getConfigValue("SPAGOBI.DATE-FORMAT.format");
+        String format = (formatSB==null)?"": formatSB;
 	    format = format.replaceAll("D", "d");
 	    format = format.replaceAll("m", "M");
 	    format = format.replaceAll("Y", "y");
