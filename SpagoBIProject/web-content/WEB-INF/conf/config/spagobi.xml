@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <SPAGOBI>
-    <!--  
-    Date format used while displaying dates according to user current locale.
-    Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details,
-    while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/.
-    IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY.
-    -->    
-  
-  	 <TIMESTAMP-FORMAT format="dd/MM/yyyy hh:mm:ss" extJsFormat="d/m/Y H:i:s"/>
-  	 
+
 
 
 	<!--  True If you want to log user actions in DB table sbi_activity_monitoring-->      
