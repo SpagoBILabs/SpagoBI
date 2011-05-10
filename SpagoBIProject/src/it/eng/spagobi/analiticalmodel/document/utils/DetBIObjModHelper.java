@@ -60,9 +60,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 
 public class DetBIObjModHelper {
-
+	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
 	SourceBean request = null;
 	SourceBean response = null;
 	RequestContainer reqCont = null;
@@ -369,8 +370,9 @@ public class DetBIObjModHelper {
 	 * Fills the response SourceBean with some needed BI Objects information.
 	 * 
 	 * @param initialPath the initial path
+	 * @throws Exception 
 	 */
-	public void fillResponse(String initialPath) {
+	public void fillResponse(String initialPath) throws EMFUserError {
 		try {
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
 	        List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");	       
@@ -402,7 +404,8 @@ public class DetBIObjModHelper {
 			}
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
 		} catch (Exception e) {
-			SpagoBITracer.major(ObjectsTreeConstants.NAME_MODULE, "DetailBIObjectModule","fillResponse","Cannot fill the response ", e  );
+			logger.error("Cannot fill the response",e);
+			throw new EMFUserError( "",1);
 		}
 	}
 	

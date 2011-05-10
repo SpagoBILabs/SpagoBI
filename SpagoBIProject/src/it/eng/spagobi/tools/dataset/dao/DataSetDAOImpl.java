@@ -1542,9 +1542,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			qbeDataset.setDatamarts(aSbiQbeDataSet.getDatamarts());
 			
 			SbiDataSource sbids = aSbiQbeDataSet.getDataSource();
-			DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-			IDataSource dataSource = dataSourceDao.toDataSource(sbids);
-			qbeDataset.setDataSource(dataSource);
+			if (sbids!=null){
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				IDataSource dataSource = dataSourceDao.toDataSource(sbids);
+				qbeDataset.setDataSource(dataSource);				
+			}
+
 			
 		}
 
