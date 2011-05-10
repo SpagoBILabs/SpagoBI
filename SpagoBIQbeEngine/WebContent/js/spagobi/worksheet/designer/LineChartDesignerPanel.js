@@ -74,7 +74,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 	form: null
 	, items: null
 	, typeRadioGroup: null
-	, orientationCombo: null
+	, colorAreaCheck: null
 	, showValuesCheck: null
 	, imageTemplate: null
 	, categoryContainerPanel: null
@@ -90,32 +90,18 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 			hideLabel: true,
 			columns: 3,
 			items: [
-		        {name: 'type', height: 80, width: 80, id:'side-by-side-linechart', ctCls:'side-by-side-linechart-vertical', inputValue: 'side-by-side-linechart', checked: true},
-		        {name: 'type', height: 80, width: 80, id:'stacked-linechart', ctCls:'stacked-linechart-vertical', inputValue: 'stacked-linechart'},
-		        {name: 'type', height: 80, width: 80, id:'percent-stacked-linechart', ctCls:'percent-stacked-linechart-vertical', inputValue: 'percent-stacked-linechart'},
+		        {name: 'type', height: 80, width: 80, id:'side-by-side-linechart', ctCls:'side-by-side-linechart-line', inputValue: 'side-by-side-linechart', checked: true},
+		        {name: 'type', height: 80, width: 80, id:'stacked-linechart', ctCls:'stacked-linechart-line', inputValue: 'stacked-linechart'},
+		        {name: 'type', height: 80, width: 80, id:'percent-stacked-linechart', ctCls:'percent-stacked-linechart-line', inputValue: 'percent-stacked-linechart'},
 			]
 		});
-		this.typeRadioGroup.on('change', this.changeBarChartImage, this);
+		this.typeRadioGroup.on('change', this.changeLineChartImage, this);
 		
-		this.orientationCombo = new Ext.form.ComboBox({
-			mode:           'local',
-			triggerAction:  'all',
-			forceSelection: true,
-			editable:       false,
-			allowBlank: 	false,
-			fieldLabel:     LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.title'),
-			name:           'orientation',
-			displayField:   'description',
-			valueField:     'name',
-			value:			'vertical',
-			//anchor:			'95%',
-			store:          new Ext.data.ArrayStore({
-								fields : ['name', 'description']
-								, data : [['vertical', LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.vertical')]
-									, ['horizontal', LN('sbi.worksheet.designer.linechartdesignerpanel.form.orientation.horizontal')]]
-							})
+		this.colorAreaCheck = new Ext.form.Checkbox({
+			checked: false
+			, fieldLabel: LN('sbi.worksheet.designer.linechartdesignerpanel.form.colorarea.title')
 		});
-		this.orientationCombo.on('change', this.changeBarChartImage, this);
+		this.colorAreaCheck.on('check', this.changeLineChartImage, this);
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
 			checked: false
@@ -146,7 +132,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
             , height: 120
-            , html: this.imageTemplate.apply(['side-by-side-linechart', 'vertical'])
+            , html: this.imageTemplate.apply(['side-by-side-linechart', 'line'])
 		});
 		
 	    this.axisDefinitionPanel = new Ext.Panel({
@@ -191,7 +177,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 //							, title: LN('sbi.worksheet.designer.linechartdesignerpanel.form.fieldsets.options')
 							, columnWidth : .3
 							, border: false
-							, items: [this.orientationCombo, this.showValuesCheck, this.showLegendCheck]
+							, items: [this.colorAreaCheck, this.showValuesCheck, this.showLegendCheck]
 						}
 			    	]
 			    }
@@ -228,10 +214,10 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
         this.imageTemplate.compile();
 	}
 	
-	, changeBarChartImage: function() {
+	, changeLineChartImage: function() {
 		var type = this.typeRadioGroup.getValue().getGroupValue();
-		var orientation = this.orientationCombo.getValue();
-		var newHtml = this.imageTemplate.apply([type, orientation]);
+		var lineOrArea = this.colorAreaCheck.getValue() ? 'area' : 'line';
+		var newHtml = this.imageTemplate.apply([type, lineOrArea]);
 		this.imageContainerPanel.update(newHtml);
 	}
 	
@@ -239,7 +225,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		var state = {};
 		state.designer = 'Line Chart';
 		state.type = this.typeRadioGroup.getValue().getGroupValue();
-		state.orientation = this.orientationCombo.getValue();
+		state.colorarea = this.colorAreaCheck.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
@@ -249,7 +235,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 	
 	, setFormState: function(state) {
 		if (state.type) this.typeRadioGroup.setValue(state.type);
-		if (state.orientation) this.orientationCombo.setValue(state.orientation);
+		if (state.colorarea) this.colorAreaCheck.setValue(state.colorarea);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
