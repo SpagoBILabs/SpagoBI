@@ -19,13 +19,17 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.analiticalmodel.document.x;
+package it.eng.spagobi.analiticalmodel.execution.service;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -40,12 +44,12 @@ import org.json.JSONObject;
 /**
  * @author Zerbetto Davide
  */
-public class GetSnapshotsAction extends AbstractSpagoBIAction {
+public class GetSubObjectsAction extends AbstractSpagoBIAction {
 	
-	public static final String SERVICE_NAME = "GET_SNAPSHOTS_ACTION";
+	public static final String SERVICE_NAME = "GET_SUBOBJECTS_ACTION";
 	
 	// logger component
-	private static Logger logger = Logger.getLogger(GetSnapshotsAction.class);
+	private static Logger logger = Logger.getLogger(GetSubObjectsAction.class);
 	
 	public void doService() {
 		logger.debug("IN");
@@ -55,18 +59,26 @@ public class GetSnapshotsAction extends AbstractSpagoBIAction {
 			// retrieving execution instance from session, no need to check if user is able to execute the required document
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 			Integer biobjectId = executionInstance.getBIObject().getId();
-			List snapshotsList = null;
+			List subObjectsList = null;
+			IEngUserProfile userProfile = this.getUserProfile();
 			try {
-				snapshotsList = DAOFactory.getSnapshotDAO().getSnapshots(biobjectId);
+				if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+					subObjectsList = DAOFactory.getSubObjectDAO().getSubObjects(biobjectId);
+				} else {
+					subObjectsList = DAOFactory.getSubObjectDAO().getAccessibleSubObjects(biobjectId, userProfile);
+				}
 			} catch (EMFUserError e) {
-				logger.error("Error while recovering snapshots list for document with id = " + biobjectId, e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load scheduled executions", e);
+				logger.error("Error while recovering subobjects list for document with id = " + biobjectId, e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load customized views", e);
+			} catch (EMFInternalError e) {
+				logger.error("Error while recovering information about user", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Error while recovering information about user", e);
 			}
 			
 			try {
-				JSONArray snapshotsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( snapshotsList ,null);
+				JSONArray subObjectsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( subObjectsList,null );
 				JSONObject results = new JSONObject();
-				results.put("results", snapshotsListJSON);
+				results.put("results", subObjectsListJSON);
 				writeBackToClient( new JSONSuccess( results ) );
 			} catch (IOException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);

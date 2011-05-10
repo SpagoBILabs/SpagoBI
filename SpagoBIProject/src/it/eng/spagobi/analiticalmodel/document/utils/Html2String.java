@@ -1,6 +1,6 @@
 package it.eng.spagobi.analiticalmodel.document.utils;
 
-import it.eng.spagobi.analiticalmodel.document.x.PrintNotesAction;
+import it.eng.spagobi.analiticalmodel.execution.service.PrintNotesAction;
 
 import java.io.FileReader;
 import java.io.IOException;

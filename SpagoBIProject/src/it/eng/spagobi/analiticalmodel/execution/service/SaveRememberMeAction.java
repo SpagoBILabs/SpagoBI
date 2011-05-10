@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.analiticalmodel.document.x;
+package it.eng.spagobi.analiticalmodel.execution.service;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -44,12 +45,12 @@ import org.json.JSONObject;
  * @author Zerbetto Davide
  *
  */
-public class CreateMenuAction extends AbstractSpagoBIAction {
+public class SaveRememberMeAction extends AbstractSpagoBIAction {
 	
-	public static final String CREATE_MENU_ACTION = "CREATE_MENU_ACTION";
+	public static final String SERVICE_NAME = "SAVE_REMEMBER_ME_ACTION";
 	
 	// logger component
-	private static Logger logger = Logger.getLogger(CreateMenuAction.class);
+	private static Logger logger = Logger.getLogger(SaveRememberMeAction.class);
 	
 	public void doService() {
 		logger.debug("IN");

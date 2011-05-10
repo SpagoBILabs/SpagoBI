@@ -23,11 +23,11 @@ package it.eng.spagobi.tools.udp.service;
 
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
