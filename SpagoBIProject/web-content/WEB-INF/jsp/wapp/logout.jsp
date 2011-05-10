@@ -66,9 +66,8 @@ session.invalidate();
 
 
 //Check if SSO is active
-ConfigSingleton serverConfig = ConfigSingleton.getInstance();
-SourceBean validateSB = (SourceBean) serverConfig.getAttribute("SPAGOBI_SSO.ACTIVE");
-String active = (String) validateSB.getCharacters();
+
+String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
 
 if ((active == null || active.equalsIgnoreCase("false")) && backUrlB==false) {
 	String context = request.getContextPath();
@@ -76,8 +75,7 @@ if ((active == null || active.equalsIgnoreCase("false")) && backUrlB==false) {
 }
 else if (active != null && active.equalsIgnoreCase("true")) {
 
-	SourceBean logoutSB = (SourceBean) serverConfig.getAttribute("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
-	String urlLogout = (String) logoutSB.getCharacters();
+	String urlLogout = String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
 	if(backUrlB==true){
 		response.sendRedirect(backUrl); 
 	}
