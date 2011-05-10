@@ -18,22 +18,19 @@
 
 <CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="JNDI_NAME" description="JNDI_NAME" isActive="true" valueCheck="java://comp/env/spagobi_resource_pathresource" valueType="STRING"/>
 <CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE" description="ACTIVE" isActive="true" valueCheck="false" valueType="STRING"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN" name="ADMIN-PATTERN" description="ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/admin" valueType="STRING"/>
-<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="HOST_JNDI" description="HOST_JNDI" isActive="true" valueCheck="/env/spagobi_host_url" valueType="STRING"/>
+
+<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="HOST_JNDI" description="HOST_JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP_URL" description="ADAPTERHTTP_URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING"/>
 <CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE_MAX_SIZE" description="TEMPLATE_MAX_SIZE" isActive="true" valueCheck="5242880" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI_CONTEXT" description="SPAGOBI_CONTEXT" isActive="true" valueCheck="/SpagoBI" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION_EXPIRED_URL" description="SESSION_EXPIRED_URL" isActive="true" valueCheck="/WEB-INF/jsp/commons/sessionExpired.jsp" valueType="STRING"/>
 <CONFIG label="SPAGOBI.DATASET.maxResult" name="maxResult" description="maxResult" isActive="true" valueCheck="500000" valueType="STRING"/>
-<CONFIG label="SPAGOBI.HIBERNATE-CFGFILE" name="HIBERNATE-CFGFILE" description="HIBERNATE-CFGFILE" isActive="true" valueCheck="hibernate.cfg.xml" valueType="STRING"/>
-<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS" name="PORTAL-SECURITY-INIT-CLASS" description="PORTAL-SECURITY-INIT-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer" valueType="STRING"/>
-<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS" name="PORTAL-SECURITY-CLASS" description="PORTAL-SECURITY-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="enabled" description="enabled" isActive="true" valueCheck="false" valueType="STRING"/>
 
 <CONFIG label="SPAGOBI.SECURITY.DEFAULT_USER" name="DEFAULT_USER" description="DEFAULT_USER" isActive="true" valueCheck="biadmin" valueType="STRING"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DATE-FORMAT.format" name="format" description="Date format for communications with the server (both on sending and receiving) format attribute is for server side services, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
 <CONFIG label="SPAGOBI.DATE-FORMAT.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
-<CONFIG label="DATE-FORMAT-SERVER.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
+<CONFIG label="DATE-FORMAT-SERVER.format" name="format" description="Date format used while displaying dates according to user current locale. Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-SERVER.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-IT_IT.format" name="format" description="format" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING"/>
 <CONFIG label="DATE-FORMAT-IT_IT.extJsFormat" name="extJsFormat" description="extJsFormat" isActive="true" valueCheck="m/d/Y" valueType="STRING"/>
@@ -50,11 +47,14 @@
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getChildrenByLevel" name="getChildrenByLevel" description="getChildrenByLevel" isActive="true" valueCheck="select distinct ! as code, ! as name from store where store_country = ? " valueType="STRING"/>
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootLeaves" name="getRootLeaves" description="getRootLeaves" isActive="true" valueCheck="" valueType="STRING"/>
 <CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.provider" name="provider" description="provider" isActive="true" valueCheck="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart" valueType="STRING"/>
+
 <CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className" name="className" description="className" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className" name="className" description="className" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS.className" name="PORTAL-SECURITY-INIT-CLASS" description="PORTAL-SECURITY-INIT-CLASS" isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER" name="ROLE-NAME-PATTERN-FILTER" description="ROLE-NAME-PATTERN-FILTER" isActive="true" valueCheck=".*" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN" name="DEV_ROLE-PATTERN" description="DEV_ROLE-PATTERN" isActive="true" valueCheck="/spagobi/dev" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN" name="TEST_ROLE-PATTERN" description="TEST_ROLE-PATTERN" isActive="true" valueCheck="/spagobi/test" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN" name="MODEL_ADMIN-PATTERN" description="MODEL_ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/modeladmin" valueType="STRING"/>
+<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN" name="ADMIN-PATTERN" description="ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/admin" valueType="STRING"/>
 </CONFIGS>
 
