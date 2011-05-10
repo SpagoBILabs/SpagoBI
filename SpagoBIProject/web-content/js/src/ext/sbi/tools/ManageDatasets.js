@@ -299,13 +299,13 @@ Ext.extend(
 					this.configurationObject.gridColItems = [ {
 						id : 'label',
 						header : LN('sbi.generic.label'),
-						width : 150,
+						width : 140,
 						sortable : true,
 						locked : false,
 						dataIndex : 'label'
 					}, {
 						header : LN('sbi.generic.name'),
-						width : 160,
+						width : 150,
 						sortable : true,
 						dataIndex : 'name'
 					}, {

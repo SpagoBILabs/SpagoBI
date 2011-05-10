@@ -22,9 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.document.x;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -75,10 +80,26 @@ public class SpagoBIServiceExceptionHandler {
 	 */
 	public SpagoBIEngineServiceException getWrappedException(String serviceName,  Throwable e) {
 		SpagoBIServiceException serviceException = null;
+		MessageBuilder msgBuild = new MessageBuilder();
+		Locale locale = null;	
+		RequestContainer requestContainer=RequestContainer.getRequestContainer();
+		if(requestContainer!=null){
+			SessionContainer permSess=requestContainer.getSessionContainer().getPermanentContainer();
+			String lang=(String)permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String country=(String)permSess.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			if(lang!=null && country!=null){
+				locale=new Locale(lang,country,"");
+			}
+		}else{
+			locale = MessageBuilder.getDefaultLocale();	
+		}
 		
 		if(e instanceof SpagoBIServiceException) {
 			// this mean that the service have catched the exception nicely
 			serviceException = (SpagoBIServiceException)e;
+			String sms = serviceException.getMessage();
+			sms = msgBuild.getMessage(sms, locale);	
+			serviceException = new SpagoBIServiceException(serviceName, sms, e);
 		} else {
 			// otherwise an unpredicted exception has been raised. 	
 			
@@ -91,6 +112,7 @@ public class SpagoBIServiceExceptionHandler {
 				rootException = rootException.getCause();
 			}
 			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			str = msgBuild.getMessage(str, locale);	
 			String message = "An unpredicted error occurred while executing service."
 							 + "\nThe root cause of the error is: " + str;
 			

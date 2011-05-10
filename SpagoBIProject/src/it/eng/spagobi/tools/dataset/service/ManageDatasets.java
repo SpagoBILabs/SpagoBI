@@ -106,8 +106,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving items", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving items", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.general.retrieveItemsError", e);
 			}
 		} else if(serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {			
 			try {		
@@ -120,8 +119,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving items", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Exception occurred while retrieving items", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.general.retrieveItemsError", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {			
 			GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
@@ -156,11 +154,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 				} catch (Throwable e) {
 					logger.error(e.getMessage(), e);
-					throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while saving new dataset", e);
+					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.saveDsError", e);
 				}
 			}else{
 				logger.error("DataSet name, label or type are missing");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please fill DataSet name, label and type");
+				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.fillFieldsError");
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {			
 			try {
@@ -172,11 +170,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
 					}
 				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"DataSet Test has errors");
+					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError");
 				}
 			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while Testing Dataset", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
 			}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
@@ -186,21 +184,21 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
 			Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
 			try {
-				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);
-				logger.debug("Dataset Version deleted");
+				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);	
 				if(deleted){
+					logger.debug("Dataset Version deleted");
 					writeBackToClient( new JSONAcknowledge("Operation succeded") );
 				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset Version to delete");
+					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion");
 				}
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);
+				logger.error("Exception occurred while retrieving dataset version to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
@@ -210,7 +208,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
@@ -229,7 +227,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 			} catch (Throwable e) {
 				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.restoreVersionError", e);
 			}
 		}else if(serviceType == null){
 			try {
@@ -254,7 +252,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	   			getSessionContainer().setAttribute("fileNames", fileNames);	
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"Exception retrieving dataset types", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsTypesRetrieve", e);
 			}
 		}
 		logger.debug("OUT");
@@ -332,7 +330,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				ds.setActiveDetail(dsActiveDetail);	
 			}else{
 				logger.error("DataSet type is not existent");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
 			}
 		}    
 		return ds;
@@ -403,7 +401,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}							
 				}else{
 					logger.error("DataSet type is not existent");
-					throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
 				}
 			} catch (Exception e) {
 				logger.error("Error while getting dataset metadataa",e);
@@ -541,7 +539,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}							
 		}else{
 			logger.error("DataSet type is not existent");
-			throw new SpagoBIServiceException(SERVICE_NAME,	"Please change DataSet Type");
+			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
 		}
 		return dataSetJSON;
 	}
