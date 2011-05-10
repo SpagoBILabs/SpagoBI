@@ -27,6 +27,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package it.eng.spagobi.commons.utilities;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,39 +61,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Contains some SpagoBI's general utilities.
@@ -553,24 +548,20 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	public static String getLocaleDateFormat(SessionContainer permSess){
 		String language=(String)permSess.getAttribute("AF_LANGUAGE");
 		String country=(String)permSess.getAttribute("AF_COUNTRY");
-
-
-		SourceBean formatSB=null; 
+		String format=null;
 		// if a particular language is specified take the corrisponding date-format
 		if(language!=null ){
 			if(country==null){
-				formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()));
+				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+".format");
 			}
 			else{
-				formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+"_"+country.toUpperCase()));				
+				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+"_"+country.toUpperCase()+".format");				
 			}		
 		}
-		if(formatSB==null){
-			formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT"));
+		if(format==null){
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
 		}
-
-		String format = (String) formatSB.getAttribute("format");
-		logger.debug("DATE FORMAT:"+format);
+		logger.debug("DATE FORMAT.format:"+format);
 		return format;
 
 	}
@@ -578,93 +569,64 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	public static String getLocaleDateFormatForExtJs(SessionContainer permSess){
 		String language=(String)permSess.getAttribute("AF_LANGUAGE");
 		String country=(String)permSess.getAttribute("AF_COUNTRY");
-		SourceBean formatSB=null; 
+		String format=null;
 		// if a particular language is specified take the corrisponding date-format
 		if(language!=null ){
 			if(country==null){
-				formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()));
+				format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+".extJsFormat");
 			}
 			else{
-				formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+"_"+country.toUpperCase()));				
+				format =SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-"+language.toUpperCase()+"_"+country.toUpperCase()+".extJsFormat");	
 			}		
 		}
-		if(formatSB==null){
-			formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT"));
+		if(format==null){
+			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");
 		}
-		String format = (String) formatSB.getAttribute("extJsFormat");
 		if (format == null) {
 			logger.warn("Locale date format for ExtJs not found, using d/m/Y as deafult");
 			format = "d/m/Y";
 		}
-		logger.debug("DATE FORMAT:"+format);
+		logger.debug("DATE FORMAT.extJsFormat:"+format);
 		return format;
 
 	}
 
 	public static String getServerDateFormat(){
 		logger.debug("IN");
-		SourceBean formatSB=null; 
+		String format="dd/MM/yyyy"; 
 		// if a particular language is specified take the corrisponding date-format
-		formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
-		String format="dd/MM/yyyy";
-		if(formatSB!=null){
-			format = (String) formatSB.getAttribute("format");
-			logger.debug("server date format set to "+format);
-		}
-		else{
-			logger.error("could not find server date format, set default to "+format);			
-		}
+		format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+
 		logger.debug("OUT");
 		return format;
 	}
 
 	public static String getServerTimeStampFormat(){
 		logger.debug("IN");
-		SourceBean formatSB=null; 
-		// if a particular language is specified take the corrisponding date-format
-		formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.TIMESTAMP-FORMAT"));
 		String format="dd/MM/yyyy hh:mm:ss";
-		if(formatSB!=null){
-			format = (String) formatSB.getAttribute("format");
-			logger.debug("server date format set to "+format);
-		}
-		else{
-			logger.error("could not find server date format, set default to "+format);			
-		}
+		// if a particular language is specified take the corrisponding date-format
+		format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
+
 		logger.debug("OUT");
 		return format;
 	}
 
 	public static String getServerDateFormatExtJs(){
 		logger.debug("IN");
-		SourceBean formatSB=null; 
-		// if a particular language is specified take the corrisponding date-format
-		formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.DATE-FORMAT-SERVER"));
 		String format="d/m/Y";
-		if(formatSB!=null){
-			format = (String) formatSB.getAttribute("extJsFormat");
-			logger.debug("server date format for ExtJs set to "+format);
-		}
-		else{
-			logger.error("could not find server date format, set default to "+format);			
-		}
+		// if a particular language is specified take the corrisponding date-format
+		format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.extJsFormat");
+
 		logger.debug("OUT");
 		return format;
 	}
 
 	public static String getServerTimestampFormatExtJs(){
 		logger.debug("IN");
-		SourceBean formatSB=null; 
-		// if a particular language is specified take the corrisponding date-format
-		formatSB = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.TIMESTAMP-FORMAT"));
 		String format="d/m/Y H:i:s";
-		if(formatSB!=null){
-			format = (String) formatSB.getAttribute("extJsFormat");
-			logger.debug("server date format for ExtJs set to "+format);
-		}
-		else{
-			logger.error("could not find server date format, set default to "+format);			
-		}
+		// if a particular language is specified take the corrisponding date-format
+		format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.extJsFormat");
+
 		logger.debug("OUT");
 		return format;
 	}
@@ -844,7 +806,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	
 	public static int getDatasetMaxResults() {
 		int maxResults = Integer.MAX_VALUE;
-		String maxResultsStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.maxResults");
+		String maxResultsStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.maxResult");
 		if (maxResultsStr != null) {
 			maxResults = Integer.parseInt(maxResultsStr);
 		} else {
