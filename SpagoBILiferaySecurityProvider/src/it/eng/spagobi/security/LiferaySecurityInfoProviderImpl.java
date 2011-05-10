@@ -56,7 +56,7 @@ public class LiferaySecurityInfoProviderImpl implements ISecurityInfoProvider {
 		logger.debug("IN");
 		List groups = new ArrayList();
 		SourceBean rolesSB = (SourceBean) ConfigSingleton.getInstance()
-				.getAttribute("SPAGOBI.SECURITY.ROLES");
+				.getAttribute("SPAGOBI_LIFERAY.SECURITY.ROLES");
 		List groupsSB = rolesSB.getAttributeAsList("ROLE");
 
 		if (groupsSB != null && groupsSB.size() > 0) {
@@ -125,7 +125,7 @@ public class LiferaySecurityInfoProviderImpl implements ISecurityInfoProvider {
 		List attributes = new ArrayList();
 
 		SourceBean attrSB = (SourceBean) ConfigSingleton.getInstance()
-				.getAttribute("SPAGOBI.SECURITY.PROFILE_ATTRIBUTES");
+				.getAttribute("SPAGOBI_LIFERAY.SECURITY.PROFILE_ATTRIBUTES");
 		List attrsSB = attrSB.getAttributeAsList("ATTRIBUTE");
 
 		if (attrsSB != null && attrsSB.size() > 0) {

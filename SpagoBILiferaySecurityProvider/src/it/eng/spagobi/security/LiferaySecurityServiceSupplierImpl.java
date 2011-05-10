@@ -157,7 +157,7 @@ public class LiferaySecurityServiceSupplierImpl implements ISecurityServiceSuppl
 	 */
 	private URL _getURL(String serviceName) throws MalformedURLException {
 
-		SourceBean wsSB = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.SECURITY.WS_SERVICE");
+		SourceBean wsSB = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI_LIFERAY.SECURITY.WS_SERVICE");
 
 		String adminUser=(String)wsSB.getAttribute("username");
 		String psw=(String)wsSB.getAttribute("password");
