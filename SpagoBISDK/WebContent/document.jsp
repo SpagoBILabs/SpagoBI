@@ -47,7 +47,7 @@ String bodyCode = "";
 if (user != null && password != null) {
 	try { 
 		DocumentsServiceProxy proxy = new DocumentsServiceProxy(user, password);
-		proxy.setEndpoint("http://localhost:38080/SpagoBI/sdk/DocumentsService");		
+		proxy.setEndpoint("http://localhost:8080/SpagoBI/sdk/DocumentsService");		
 		//gets request variables
 		doUpload = (String)request.getParameter("doUpload");
 		folderUpload = (String)request.getParameter("folderUpload");
