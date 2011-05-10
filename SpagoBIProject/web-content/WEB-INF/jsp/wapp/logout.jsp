@@ -75,7 +75,7 @@ if ((active == null || active.equalsIgnoreCase("false")) && backUrlB==false) {
 }
 else if (active != null && active.equalsIgnoreCase("true")) {
 
-	String urlLogout = String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
+	String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
 	if(backUrlB==true){
 		response.sendRedirect(backUrl); 
 	}
