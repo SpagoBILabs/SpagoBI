@@ -63,7 +63,7 @@ public class SecurityInitializer implements InitializerIFace {
 		logger.debug("SecurityInitializer::init: roles synchronization ended.");
 		_config = config;
 		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String portalSecurityInitClassName = (configSingleton.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS"));
+		String portalSecurityInitClassName = (configSingleton.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS.className"));
 		logger.debug("SecurityInitializer::init: Portal security initialization class name: '" + portalSecurityInitClassName + "'");
 		if (portalSecurityInitClassName == null || portalSecurityInitClassName.trim().equals("")) return;
 		portalSecurityInitClassName = portalSecurityInitClassName.trim();
