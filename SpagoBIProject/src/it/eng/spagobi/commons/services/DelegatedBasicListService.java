@@ -49,6 +49,7 @@ import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.QueryExecutor;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -702,10 +703,8 @@ public class DelegatedBasicListService {
 		}
 		// case of date filtering
 		else if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)) {
-	        ConfigSingleton config = ConfigSingleton.getInstance();
-//		    SourceBean formatSB = (SourceBean) config.getAttribute("DATA-ACCESS.DATE-FORMAT");
-	        SourceBean formatSB = (SourceBean) config.getAttribute("SPAGOBI.DATE-FORMAT-SERVER");
-		    String format = (String) formatSB.getAttribute("format");
+
+		    String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
 		    TracerSingleton.log(
 					Constants.NOME_MODULO,
 					TracerSingleton.WARNING,

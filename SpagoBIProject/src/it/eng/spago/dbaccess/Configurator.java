@@ -30,6 +30,7 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
  /**
 * DATE            CONTRIBUTOR/DEVELOPER    NOTE
 * 13-12-2004		  Butano           Eliminato il parser creato appositamente per il DB
@@ -103,8 +104,9 @@ public class Configurator {
     	// date format and timestamp format is read from spagobi.xml instead of data_access.xml
 //    	_dateFormat = (String)dataAccess.getAttribute("DATE-FORMAT.format");
 //      _timeStampFormat = (String)dataAccess.getAttribute("TIMESTAMP-FORMAT.format");
-    	_dateFormat = (String)config.getAttribute("SPAGOBI.DATE-FORMAT-SERVER.format");
-        _timeStampFormat = (String)config.getAttribute("SPAGOBI.TIMESTAMP-FORMAT.format");
+    	
+    	_dateFormat = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+        _timeStampFormat = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format"); 
         // end modifications by Zerbetto on March 9th 2009
     } // private Configurator()
 

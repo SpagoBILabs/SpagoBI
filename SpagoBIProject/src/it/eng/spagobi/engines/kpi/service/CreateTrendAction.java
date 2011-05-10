@@ -50,7 +50,7 @@ public class CreateTrendAction extends AbstractHttpAction{
 		String tempKpiInstId = (String)serviceRequest.getAttribute("KPI_INST_ID");
 		logger.debug("Got KpiInstance ID:"+(tempKpiInstId!=null ? tempKpiInstId : "null"));
 		Integer kpiInstId = new Integer(tempKpiInstId);
-		String formatSB = (SingletonConfig.getInstance().getConfigValue("DATE-FORMAT-SERVER.format"));
+		String formatSB = (SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 		String format = formatSB;
 		logger.debug("Got Date format: "+(format!=null ? format : "null"));
 		SimpleDateFormat f = new SimpleDateFormat();
