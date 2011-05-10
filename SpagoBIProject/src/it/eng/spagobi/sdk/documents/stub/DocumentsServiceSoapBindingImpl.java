@@ -61,8 +61,17 @@ public class DocumentsServiceSoapBindingImpl implements it.eng.spagobi.sdk.docum
     }
 
     public it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent executeDocument(it.eng.spagobi.sdk.documents.bo.SDKDocument in0, it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter[] in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.InvalidParameterValue, it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException, it.eng.spagobi.sdk.exceptions.MissingParameterValue, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+        return null;
+    }
+
+    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
     	DocumentsServiceImpl impl = new DocumentsServiceImpl();
-    	return impl.executeDocument(in0, in1, in2, in3);
+    	impl.uploadDatamartTemplate(in0);
+    }
+
+    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartTemplate(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    	DocumentsServiceImpl impl = new DocumentsServiceImpl();
+    	return impl.downloadDatamartTemplate(in0, in1);
     }
 
 }

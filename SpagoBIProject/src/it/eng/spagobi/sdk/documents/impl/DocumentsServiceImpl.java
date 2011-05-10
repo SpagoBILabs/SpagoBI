@@ -27,6 +27,7 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.service.DefaultRequestContext;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFUserError;
@@ -48,6 +49,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.exporters.KpiExporter;
@@ -66,10 +68,16 @@ import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
+import it.eng.spagobi.sdk.utilities.SDKObjectsConverter.MemoryOnlyDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +91,8 @@ import org.apache.log4j.Logger;
 
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
+	
+	public static final String DATAMART_FILE_NAME = "datamart.jar";
 
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
@@ -717,8 +727,118 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	}
 
 
+	public void uploadDatamartTemplate(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
+		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
+		InputStream is = null;
+		FileOutputStream osDatamartFile = null;
+		DataHandler dh = null;
+		try {
+			// if user cannot develop the specified document, he cannot upload templates on it
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			if (sdkTemplate == null) {
+				logger.warn("SDKTemplate in input is null!");
+				return;
+			}
+			
+			//creates the folder correct (the name is given by the name of the file).
+			String path = getResourcePath()  + System.getProperty("file.separator") + sdkTemplate.getFolderName();
+			logger.debug("Datamart path: " + path);
+			File datamartFolder = new File (path);
+			if (!datamartFolder.exists()){
+				datamartFolder.mkdir();
+			}
+			path += System.getProperty("file.separator") + (sdkTemplate.getFileName() == null || sdkTemplate.getFileName().equals("")?DATAMART_FILE_NAME:sdkTemplate.getFileName());
+			File datamartFile = new File(path);
+			logger.debug("Datamart file: " + path);
+			if (!datamartFile.exists()){
+				datamartFile.createNewFile();
+			}
+			osDatamartFile = new FileOutputStream(path);
+			dh = sdkTemplate.getContent();
+			is = dh.getInputStream();
+			logger.debug("Upload datamart template....");
+			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+			osDatamartFile.write(templateContent);
+			logger.debug("Template uploaded without errors.");
+		} catch(Exception e) {
+			logger.error("Error while uploading template", e);
+		} finally {
+			if (is != null) {
+				try {				
+					is.close();
+				} catch (IOException e) {
+					logger.error("Error closing file input stream", e);
+				}
+			}
+			if (osDatamartFile != null) {
+				try {				
+					osDatamartFile.close();
+				} catch (IOException e) {
+					logger.error("Error closing output stream", e);
+				}
+			}
+		}
+		logger.debug("OUT");
+	} 
+ 
+	public SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException{
+		logger.debug("IN");
+		SDKTemplate toReturn = null;
+		FileInputStream isDatamartFile = null;
+		try {
+			// if user cannot develop the specified document, he cannot upload templates on it
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			// retrieves template
+			String path = getResourcePath()  + System.getProperty("file.separator") + folderName;
+			logger.debug("Datamart path: " + path);
+			File datamartFolder = new File (path);
+			if(!datamartFolder.exists()) {
+				throw new RuntimeException("Datamart Folder [" + datamartFolder.getPath() + "] does not exist");
+			}
+			if(!datamartFolder.isDirectory()) {
+				throw new RuntimeException("Datamart folder [" + datamartFolder + "] is a file not a folder");
+			}
+			path += System.getProperty("file.separator") + (fileName == null || fileName.equals("")?DATAMART_FILE_NAME:fileName);
+			File datamartFile = new File(path);
+			logger.debug("Datamart file: " + path);
+			if(!datamartFile.exists()) {
+				throw new RuntimeException("File [" + datamartFile.getPath() + "] does not exist");
+			}
+			//check file content
+			isDatamartFile = new FileInputStream(path);
+			if (isDatamartFile == null) {
+				logger.warn("The datamart template for document [" + folderName + "] is NULL");
+				return null;
+			}
+			//creates a SDKTemplate
+			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
+			toReturn = new SDKTemplate();
+			toReturn.setFileName(DATAMART_FILE_NAME);
+			SDKObjectsConverter objConverter = new SDKObjectsConverter();
+			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
+			DataHandler dhSource = new DataHandler(mods);
+			toReturn.setContent(dhSource);
+			logger.debug("Template for document [" + folderName + "] retrieved.");
+		} catch(Exception e) {
+			logger.error(e);
+			return null;
+		}
+		logger.debug("OUT");
+		return toReturn;
+    }
 
+	private String getResourcePath() {
+		
+		String path = null;
+		SourceBean pathSB;
 
-
+		pathSB = (SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		Assert.assertNotNull(pathSB, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
+		String jndiPath = (String) pathSB.getCharacters() ;
+		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
+		Assert.assertNotNull(pathSB, "Block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] found in configuration is empty");
+		
+		return path;
+	}
 
 }
