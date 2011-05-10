@@ -208,6 +208,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeBarChartPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimePieChartPanel.js'/></script>
 
 
 
@@ -285,10 +286,8 @@ END-PRODUCTION -->
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
 	        	//var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel({});
-	        	var workSheetPanel = new Sbi.worksheet.runtime.RuntimeLineChartPanel({
+	        	var workSheetPanel = new Sbi.worksheet.runtime.RuntimePieChartPanel({
 	        		chartConfig: {
-						type: "percent-stacked-linechart", 
-						colorarea: true, 
 						showvalues: true, 
 						showlegend: true,
 						categories: ['Drink', 'Food', 'Non c'],
@@ -298,12 +297,12 @@ END-PRODUCTION -->
 						    {id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", colour:"#FFBBAA"}
 						],
 						theSeries: [{
-				            name: 'Store cost',
-				            data: [10, 20, 43]
-				         }, {
 				            name: 'Store sales',
 				            data: [51, 73, 34]
-				         }]
+				        }],
+				        colours: ['#4572A7', '#DB843D', '#56AFC7', '#80699B', '#89A54E', '#AA4643', '#50B432'
+							, '#1EA6E0', '#DDDF00', '#ED561B', '#64E572', '#E2E2E2', '#FFFF9B', '#FFFFFF'
+							, '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']
 					}
 	        	});
 	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
