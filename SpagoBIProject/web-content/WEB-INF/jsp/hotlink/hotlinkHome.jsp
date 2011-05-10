@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.x.ExecuteDocumentAction"%>
+<%@page import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
 
 <%
 List rememberMeList = null;
