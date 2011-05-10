@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,21 +35,15 @@ public class HibernateUtil {
 	private static final SessionFactory sessionFactory;
 	static {
 		try {
-			// Create the SessionFactory
-			SourceBean fileCfgSb = ((SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.HIBERNATE-CFGFILE"));
-			
-			if (fileCfgSb != null){
-				String fileCfg = fileCfgSb.getCharacters();
+
+
+				String fileCfg = "hibernate.cfg.xml";
 				fileCfg = fileCfg.trim();
 				log.info( "Initializing hibernate Session Factory Described by [" + fileCfg +"]");
 				Configuration conf = new Configuration();
 				conf = conf.configure(fileCfg);
 				sessionFactory = conf.buildSessionFactory();
-			}else{
-			    log.info("Initializing hibernate Session Factory with default configuration [hibernate.cfg.xml]");
-				sessionFactory = new Configuration().configure()
-					.buildSessionFactory();
-			}
+
 		} catch (Throwable ex) {
 			// Make sure you log the exception, as it might be swallowed
 			log.error("Initial SessionFactory creation failed.", ex);
