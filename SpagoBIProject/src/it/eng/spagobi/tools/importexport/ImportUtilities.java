@@ -22,10 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.importexport;
 
 
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -1030,7 +1032,7 @@ public class ImportUtilities {
 	 * 
 	 * @return the sbi data set
 	 */
-	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset){
+	public static SbiDataSetConfig makeNewSbiDataSet(SbiDataSetConfig dataset, SessionContainer session){
 		logger.debug("IN");
 		SbiDataSetConfig newDsConfig = new SbiDataSetConfig();
 
@@ -1038,8 +1040,13 @@ public class ImportUtilities {
 		newDsConfig.setName(dataset.getName());
 		newDsConfig.setDescription(dataset.getDescription());
 		SbiCommonInfo i = new SbiCommonInfo();
+		IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		String userid = "biadmin";
+		if(profile!=null){
+			userid =(String) profile.getUserUniqueIdentifier();
+		}
 		i.setTimeIn(new Date());
-		i.setUserIn("biadmin");
+		i.setUserIn(userid);
 		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 		newDsConfig.setCommonInfo(i);
 
@@ -1064,7 +1071,7 @@ public class ImportUtilities {
 	 * 
 	 * @throws EMFUserError 	 */
 	public static SbiDataSetConfig modifyExistingSbiDataSet(SbiDataSetConfig exportedDataset,
-			Session sessionCurrDB, Integer existingId, Session sessionExpDB) {
+			Session sessionCurrDB, Integer existingId, Session sessionExpDB, SessionContainer session) {
 		logger.debug("IN");
 		SbiDataSetConfig existingDataset = null;
 		try {
@@ -1075,7 +1082,16 @@ public class ImportUtilities {
 			existingDataset.setLabel(exportedDataset.getLabel());
 			existingDataset.setName(exportedDataset.getName());			
 			existingDataset.setDescription(exportedDataset.getDescription());
-			existingDataset.setCommonInfo(exportedDataset.getCommonInfo());
+			SbiCommonInfo i = new SbiCommonInfo();
+			IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			String userid = "biadmin";
+			if(profile!=null){
+				userid =(String) profile.getUserUniqueIdentifier();
+			}
+			i.setTimeIn(new Date());
+			i.setUserIn(userid);
+			i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			existingDataset.setCommonInfo(i);
 
 
 			// Make precedent active inactive, new one will be active
@@ -1128,7 +1144,7 @@ public class ImportUtilities {
 
 	public static void associateNewSbiDataSethistory(SbiDataSetConfig dataset,
 			SbiDataSetConfig exportedDataset, Session sessionCurrDB, Session sessionExpDB, 
-			ImporterMetadata importer, MetadataAssociations metaAss) {
+			ImporterMetadata importer, MetadataAssociations metaAss, SessionContainer session) {
 		logger.debug("IN");
 		try {
 			// save the new exported history
@@ -1155,8 +1171,14 @@ public class ImportUtilities {
 				dsnewHistory.setTransformer(transformer);
 
 			}
+			SbiCommonInfo i = new SbiCommonInfo();
+			IEngUserProfile profile = (IEngUserProfile)session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			String userid = "biadmin";
+			if(profile!=null){
+				userid =(String) profile.getUserUniqueIdentifier();
+			}
 			
-			dsnewHistory.setUserIn("biadmin");
+			dsnewHistory.setUserIn(userid);
 			dsnewHistory.setTimeIn(new Date());
 			dsnewHistory.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 
