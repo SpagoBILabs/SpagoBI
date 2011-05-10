@@ -53,7 +53,6 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.bo.Config;

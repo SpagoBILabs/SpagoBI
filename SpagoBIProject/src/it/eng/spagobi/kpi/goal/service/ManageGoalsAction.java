@@ -1,8 +1,8 @@
 package it.eng.spagobi.kpi.goal.service;
 
-import it.eng.spagobi.analiticalmodel.document.x.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.kpi.goal.dao.IGoalDAO;
 import it.eng.spagobi.kpi.goal.metadata.bo.Goal;
 import it.eng.spagobi.kpi.goal.metadata.bo.GoalKpi;

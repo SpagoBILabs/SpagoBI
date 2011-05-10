@@ -27,7 +27,7 @@ import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.analiticalmodel.document.x.GetParametersForExecutionAction;
+import it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 
 /**
