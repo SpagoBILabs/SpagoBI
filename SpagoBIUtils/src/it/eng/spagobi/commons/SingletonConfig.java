@@ -67,8 +67,7 @@ public class SingletonConfig {
 	 * ES:    String configurazione= SingletonConfig.getInstance().getConfigValue("home.banner");
 	 */
 	public synchronized String getConfigValue(String key) {
-		if (cache.get(key)==null) logger.warn("The property '"+key+"' doens't have any value assigned, check SBI_CONFIG table");
-		return cache.get(key);
+			return cache.get(key);
 
 	}
 	/**
