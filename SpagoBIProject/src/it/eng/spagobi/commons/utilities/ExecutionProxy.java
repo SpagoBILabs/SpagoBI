@@ -34,6 +34,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.InternalEngineIFace;
@@ -255,9 +256,7 @@ public class ExecutionProxy {
 			adjustParametersForExecutionProxy(aEngineDriver,mapPars);
 
 			// pass ticket ...
-			ConfigSingleton config = ConfigSingleton.getInstance();
-			SourceBean passSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.PASS");
-			String pass = (String) passSB.getCharacters();
+			String pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
 			if (pass==null) logger.warn("Pass Ticket is null");
 			mapPars.put(SpagoBIConstants.PASS_TICKET,pass);
 

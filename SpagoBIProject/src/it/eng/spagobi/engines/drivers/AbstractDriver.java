@@ -8,6 +8,7 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -42,9 +43,7 @@ public class AbstractDriver {
      */
     protected Map applySecurity(Map pars, IEngUserProfile profile) {
         logger.debug("IN");
-        ConfigSingleton config = ConfigSingleton.getInstance();
-        SourceBean configSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.ACTIVE");
-		String active = (String) configSB.getCharacters();
+        String active =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
 		String userId=(String)profile.getUserUniqueIdentifier();
 		if (active != null && active.equalsIgnoreCase("true") && !((UserProfile)profile).isSchedulerUser(userId)){
 		    logger.debug("I don't put the UserId information in the URL");

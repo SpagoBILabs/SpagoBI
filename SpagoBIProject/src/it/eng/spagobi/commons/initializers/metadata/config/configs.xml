@@ -17,7 +17,6 @@
 <CONFIG label="SPAGOBI.LOOKUP.numberRows" name="numberRows" description="numberRows" isActive="true" valueCheck="20" valueType="STRING"/>
 
 <CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="JNDI_NAME" description="JNDI_NAME" isActive="true" valueCheck="java://comp/env/spagobi_resource_pathresource" valueType="STRING"/>
-<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE" description="ACTIVE" isActive="true" valueCheck="false" valueType="STRING"/>
 
 <CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="HOST_JNDI" description="HOST_JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP_URL" description="ADAPTERHTTP_URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING"/>
@@ -56,5 +55,13 @@
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN" name="TEST_ROLE-PATTERN" description="TEST_ROLE-PATTERN" isActive="true" valueCheck="/spagobi/test" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN" name="MODEL_ADMIN-PATTERN" description="MODEL_ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/modeladmin" valueType="STRING"/>
 <CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN" name="ADMIN-PATTERN" description="ADMIN-PATTERN" isActive="true" valueCheck="/spagobi/admin" valueType="STRING"/>
+<CONFIG label="CAS_SSO.VALIDATE-USER.URL" name="CAS_SSO.VALIDATE-USER.URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas" valueType="STRING"/>
+<CONFIG label="CAS_SSO.VALIDATE-USER.SERVICE" name="CAS_SSO.VALIDATE-USER.SERVICE" description="" isActive="true" valueCheck="http://localhost:58080/SpagoBI/proxyCallback" valueType="STRING"/>
+
+<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE" description="ACTIVE" isActive="true" valueCheck="false" valueType="STRING"/>
+<CONFIG label="SPAGOBI_SSO.PASS" name="SPAGOBI_SSO.PASS" description="" isActive="true" valueCheck="PASS" valueType="STRING"/>
+<CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SPAGOBI_SSO.SECURITY_LOGOUT_URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout" valueType="STRING"/>
+<CONFIG label="INTEGRATION_CLASS_JNDI" name="INTEGRATION_CLASS_JNDI" description="" isActive="true" valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING"/>
+
 </CONFIGS>
 

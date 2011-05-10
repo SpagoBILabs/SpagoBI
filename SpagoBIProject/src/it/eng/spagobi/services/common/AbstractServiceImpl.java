@@ -23,6 +23,7 @@ package it.eng.spagobi.services.common;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 import org.apache.log4j.Logger;
@@ -46,9 +47,7 @@ public abstract class AbstractServiceImpl {
 
     private void init() {
 	logger.debug("IN");
-	ConfigSingleton config = ConfigSingleton.getInstance();
-	SourceBean validateSB = (SourceBean) config.getAttribute("SPAGOBI_SSO.PASS");
-	pass = (String) validateSB.getCharacters();
+	pass = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.PASS");
 
     }
 

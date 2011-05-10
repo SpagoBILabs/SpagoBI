@@ -105,8 +105,7 @@ public class LoginModule extends AbstractHttpModule {
 		String theme_name=(String)request.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: "+theme_name);
 
-		SingletonConfig serverConfig = SingletonConfig.getInstance();
-		String activeStr = serverConfig.getConfigValue("SPAGOBI_SSO.ACTIVE");
+		String activeStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
 		boolean activeSoo=false;
 		if (activeStr != null && activeStr.equalsIgnoreCase("true")) {
 			activeSoo=true;
@@ -236,7 +235,7 @@ public class LoginModule extends AbstractHttpModule {
 				SbiUser user = userDao.loadSbiUserByUserId(userId);
 
 				//check user's role: if he's admin it doesn't apply checks on password
-				String strAdminPatter =  serverConfig.getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
+				String strAdminPatter =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				int sbiUserId=-1;
 				if (user!=null)sbiUserId=user.getId();
 				List lstRoles = userDao.loadSbiUserRolesById(sbiUserId);
