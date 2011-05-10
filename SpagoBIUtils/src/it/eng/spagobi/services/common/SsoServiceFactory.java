@@ -27,6 +27,7 @@ import javax.naming.NamingException;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 import org.apache.log4j.Logger;
@@ -56,10 +57,7 @@ public abstract class SsoServiceFactory {
 			
 			if (integrationClass==null){
 				// now we are in the core
-				ConfigSingleton configSingleton=ConfigSingleton.getInstance();
-				SourceBean validateSB = (SourceBean) configSingleton.getAttribute("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI");
-				
-				integrationClass = SpagoBIUtilities.readJndiResource((String) validateSB.getCharacters());
+				integrationClass = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI"));
 			}
 			daoObject = (SsoServiceInterface)Class.forName(integrationClass).newInstance();
 			logger.debug(" Instatiate successfully:"+integrationClass);
