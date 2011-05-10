@@ -81,9 +81,7 @@ Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.titl
 //Sbi.worksheet.designer.LineChartDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.title'] = 'Definizione line chart';
-Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.orientation.title'] = 'Orientamento';
-Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.orientation.vertical'] = 'verticale';
-Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.orientation.horizontal'] = 'orizzontale';
+Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.colorarea.title'] = 'Colora area';
 Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.side-by-side'] = 'Linee sovrapposte';
 Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.stacked'] = 'Linee cumulate';
 Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Linee cumulate in percentuale';

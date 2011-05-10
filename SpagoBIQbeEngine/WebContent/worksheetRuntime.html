@@ -205,7 +205,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/></script>
-<script type="text/javascript" src='js/spagobi/worksheet/runtime/BarChartPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeBarChartPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/></script>
 
 
 
@@ -283,15 +285,26 @@ END-PRODUCTION -->
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
 	        	//var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel({});
-	        	var workSheetPanel = new Sbi.worksheet.runtime.BarChartPanel({
+	        	var workSheetPanel = new Sbi.worksheet.runtime.RuntimeLineChartPanel({
 	        		chartConfig: {
-	        			type:"stacked-barchart"
-	        			, orientation:"vertical"
-	        			, showvalues:true
-	        			//, showlegend:false
-	        			, category:null
-	        			, series:[]
-	        		}
+						type: "percent-stacked-linechart", 
+						colorarea: true, 
+						showvalues: true, 
+						showlegend: true,
+						categories: ['Drink', 'Food', 'Non c'],
+						category: {id:"it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily", alias:"Product Family", funct:"NONE", iconCls:"attribute", nature:"attribute"},
+						series: [
+						    {id:"it.eng.spagobi.SalesFact1998:storeCost", alias:"Store Cost", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Cost", colour:"#FFFFCC"}, 
+						    {id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", colour:"#FFBBAA"}
+						],
+						theSeries: [{
+				            name: 'Store cost',
+				            data: [10, 20, 43]
+				         }, {
+				            name: 'Store sales',
+				            data: [51, 73, 34]
+				         }]
+					}
 	        	});
 	        	//var barchartdesigner = new Sbi.worksheet.BarChartDesignerPanel({});
 	           	var viewport = new Ext.Viewport({layout: 'border', items: [{

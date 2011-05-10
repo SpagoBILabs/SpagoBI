@@ -117,62 +117,62 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 /* Sbi.worksheet.LineChartDesignerPanel */
-.side-by-side-linechart-vertical {
-	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-vertical.gif) no-repeat 22px 0px !important;
+.side-by-side-linechart-area {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-area.gif) no-repeat 22px 0px !important;
 }
 
-.stacked-linechart-vertical {
-	 background:url(../img/worksheet/designer/chart/stackedlinechart-vertical.gif) no-repeat 22px 0px !important;
+.stacked-linechart-area {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-area.gif) no-repeat 22px 0px !important;
 }
 
-.percent-stacked-linechart-vertical {
-	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-vertical.gif) no-repeat 22px 0px !important;
+.percent-stacked-linechart-area {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-area.gif) no-repeat 22px 0px !important;
 }
 
-.side-by-side-linechart-horizontal {
-	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-horizontal.gif) no-repeat 22px 0px !important;
+.side-by-side-linechart-line {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-line.gif) no-repeat 22px 0px !important;
 }
 
-.stacked-linechart-horizontal {
-	 background:url(../img/worksheet/designer/chart/stackedlinechart-horizontal.gif) no-repeat 22px 0px !important;
+.stacked-linechart-line {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-line.gif) no-repeat 22px 0px !important;
 }
 
-.percent-stacked-linechart-horizontal {
-	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-horizontal.gif) no-repeat 22px 0px !important;
+.percent-stacked-linechart-line {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-line.gif) no-repeat 22px 0px !important;
 }
 
-.side-by-side-linechart-vertical-preview {
-	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-vertical.gif) !important;
+.side-by-side-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-area.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
 
-.stacked-linechart-vertical-preview {
-	background-image:url(../img/worksheet/designer/chart/stackedlinechart-vertical.gif) !important;
+.stacked-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-area.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
 
-.percent-stacked-linechart-vertical-preview {
-	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-vertical.gif) !important;
+.percent-stacked-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-area.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
 
-.side-by-side-linechart-horizontal-preview {
-	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-horizontal.gif) !important;
+.side-by-side-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-line.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
 
-.stacked-linechart-horizontal-preview {
-	background-image:url(../img/worksheet/designer/chart/stackedlinechart-horizontal.gif) !important;
+.stacked-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-line.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
 
-.percent-stacked-linechart-horizontal-preview {
-	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-horizontal.gif) !important;
+.percent-stacked-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-line.gif) !important;
 	background-repeat:no-repeat !important;
 	background-position:center !important;
 }
