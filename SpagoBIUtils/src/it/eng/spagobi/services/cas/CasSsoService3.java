@@ -23,6 +23,7 @@ package it.eng.spagobi.services.cas;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -127,11 +128,9 @@ public class CasSsoService3 implements SsoServiceInterface {
 	String validateService=null;
 	if (config!=null){
 		// only server side...
-    	SourceBean validateSB = (SourceBean) config.getAttribute("CAS_SSO.VALIDATE-USER.URL");
-    	validateUrl = (String) validateSB.getCharacters();
+		validateUrl = SingletonConfig.getInstance().getConfigValue("CAS_SSO.VALIDATE-USER.URL");
     	logger.debug("Read validateUrl=" + validateUrl);
-    	validateSB = (SourceBean) config.getAttribute("CAS_SSO.VALIDATE-USER.SERVICE");
-    	validateService =  (String) validateSB.getCharacters();
+    	validateService = SingletonConfig.getInstance().getConfigValue("CAS_SSO.VALIDATE-USER.SERVICE");
     	logger.debug("Read validateService=" + validateService);
 	}
 	logger.debug("userId:"+userId);
