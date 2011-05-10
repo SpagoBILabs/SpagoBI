@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.importexport;
 
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.importexport.bo.AssociationFile;
 
@@ -79,7 +80,7 @@ public interface IImportManager {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void importObjects(boolean overwrite) throws EMFUserError;
+	public void importObjects(boolean overwrite, SessionContainer session) throws EMFUserError;
 	
 	/**
 	 * Gets the list of all exported roles.

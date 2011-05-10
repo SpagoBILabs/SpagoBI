@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.importexport;
 
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -258,7 +259,7 @@ public class ImportManager implements IImportManager, Serializable {
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void importObjects(boolean overwrite) throws EMFUserError {
+	public void importObjects(boolean overwrite, SessionContainer session) throws EMFUserError {
 		logger.debug("IN");
 		metaLog.log("                                             ");
 		metaLog.log("-+-+-+-+-+-+-Begin import objects-+-+-+-+-+-");
@@ -269,7 +270,7 @@ public class ImportManager implements IImportManager, Serializable {
 		metaLog.log("-------Data Source-----");
 		importDataSource(overwrite);
 		metaLog.log("-------Data Set-----");
-		importDataSet(overwrite);
+		importDataSet(overwrite, session);
 		metaLog.log("-------Roles-----");
 		importRoles();
 		metaLog.log("-------Engines-----");
@@ -798,7 +799,7 @@ public class ImportManager implements IImportManager, Serializable {
 		}
 	}
 
-	private void importDataSet(boolean overwrite) throws EMFUserError {
+	private void importDataSet(boolean overwrite, SessionContainer session) throws EMFUserError {
 		logger.debug("IN");
 		SbiDataSetConfig exportedDataSet = null;
 		try {				
@@ -823,13 +824,13 @@ public class ImportManager implements IImportManager, Serializable {
 				if (existingDatasetId != null) {
 					logger.info("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
-					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB);
-					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss);
+					SbiDataSetConfig existingDataset = ImportUtilities.modifyExistingSbiDataSet(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, session);
+					ImportUtilities.associateNewSbiDataSethistory(existingDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
 					sessionCurrDB.update(existingDataset);
 				} else {
-					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet);
+					SbiDataSetConfig newDataset = ImportUtilities.makeNewSbiDataSet(exportedDataSet, session);
 					sessionCurrDB.save(newDataset);
-					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss);
+					ImportUtilities.associateNewSbiDataSethistory(newDataset, exportedDataSet, sessionCurrDB, sessionExpDB, importer, metaAss, session);
 
 					metaLog.log("Inserted new dataset " + newDataset.getName());
 					Integer newId = new Integer(newDataset.getDsId());
