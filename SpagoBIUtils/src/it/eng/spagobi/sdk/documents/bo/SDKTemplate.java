@@ -12,14 +12,18 @@ public class SDKTemplate  implements java.io.Serializable {
 
     private java.lang.String fileName;
 
+    private java.lang.String folderName;
+
     public SDKTemplate() {
     }
 
     public SDKTemplate(
            javax.activation.DataHandler content,
-           java.lang.String fileName) {
+           java.lang.String fileName,
+           java.lang.String folderName) {
            this.content = content;
            this.fileName = fileName;
+           this.folderName = folderName;
     }
 
 
@@ -62,6 +66,26 @@ public class SDKTemplate  implements java.io.Serializable {
         this.fileName = fileName;
     }
 
+
+    /**
+     * Gets the folderName value for this SDKTemplate.
+     * 
+     * @return folderName
+     */
+    public java.lang.String getFolderName() {
+        return folderName;
+    }
+
+
+    /**
+     * Sets the folderName value for this SDKTemplate.
+     * 
+     * @param folderName
+     */
+    public void setFolderName(java.lang.String folderName) {
+        this.folderName = folderName;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SDKTemplate)) return false;
@@ -79,7 +103,10 @@ public class SDKTemplate  implements java.io.Serializable {
               this.content.equals(other.getContent()))) &&
             ((this.fileName==null && other.getFileName()==null) || 
              (this.fileName!=null &&
-              this.fileName.equals(other.getFileName())));
+              this.fileName.equals(other.getFileName()))) &&
+            ((this.folderName==null && other.getFolderName()==null) || 
+             (this.folderName!=null &&
+              this.folderName.equals(other.getFolderName())));
         __equalsCalc = null;
         return _equals;
     }
@@ -96,6 +123,9 @@ public class SDKTemplate  implements java.io.Serializable {
         }
         if (getFileName() != null) {
             _hashCode += getFileName().hashCode();
+        }
+        if (getFolderName() != null) {
+            _hashCode += getFolderName().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -116,6 +146,12 @@ public class SDKTemplate  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("fileName");
         elemField.setXmlName(new javax.xml.namespace.QName("", "fileName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("folderName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "folderName"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

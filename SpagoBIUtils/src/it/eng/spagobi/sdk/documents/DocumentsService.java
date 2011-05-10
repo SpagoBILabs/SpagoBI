@@ -56,5 +56,9 @@ public interface DocumentsService {
 	Integer saveNewDocument(SDKDocument document, SDKTemplate template, Integer functionalityId) throws NotAllowedOperationException;
 
     SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType) throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
+    
+    void uploadDatamartTemplate(SDKTemplate template) throws NotAllowedOperationException;
+    
+    SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException;
 
 }
