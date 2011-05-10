@@ -210,7 +210,7 @@
 <CONFIGURATOR path="/WEB-INF/conf/webapp/validation.xml" />
 <CONFIGURATOR path="/WEB-INF/conf/webapp/ldap_authorizations.xml" />
 
-
+	<CONFIGURATOR path="/WEB-INF/conf/config/security_liferay_config.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />	
 	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_SSO.xml" />
