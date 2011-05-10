@@ -95,97 +95,97 @@
       ================================================================================= -->
  
  <ACTION name="START_EXECUTION_PROCESS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.StartNewExecutionProcess" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.StartNewExecutionProcess" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_ROLES_FOR_EXECUTION_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetRolesForExecutionAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetRolesForExecutionAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_PARAMETERS_FOR_EXECUTION_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetParametersForExecutionAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetParameterValuesForExecutionAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetParameterValuesForExecutionAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_URL_FOR_EXECUTION_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetUrlForExecutionAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_SUBOBJECTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetSubObjectsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetSubObjectsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="DELETE_SUBOBJECTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.DeleteSubObjectsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.DeleteSubObjectsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_NOTES_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetNotesAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetNotesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="SAVE_NOTES_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.SaveNotesAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.SaveNotesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="DELETE_NOTES_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.DeleteNotesAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.DeleteNotesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
  <ACTION name="PRINT_NOTES_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.PrintNotesAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.PrintNotesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
  <ACTION name="SAVE_REMEMBER_ME_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.SaveRememberMeAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.SaveRememberMeAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_VIEWPOINTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetViewpointsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetViewpointsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="DELETE_VIEWPOINTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.DeleteViewpointsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.DeleteViewpointsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="SAVE_VIEWPOINT_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.SaveViewpointAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.SaveViewpointAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="GET_SNAPSHOTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetSnapshotsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetSnapshotsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="DELETE_SNAPSHOTS_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.DeleteSnapshotsAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.DeleteSnapshotsAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
  
  <ACTION name="EXECUTE_DOCUMENT_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.ExecuteDocumentAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
  <ACTION name="GET_DOCUMENT_INFO_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.document.x.GetDocumentInfoAction" scope="REQUEST">
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
