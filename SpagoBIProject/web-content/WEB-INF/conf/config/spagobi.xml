@@ -1,192 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <SPAGOBI>
-
-    <!-- ********************* START MODE CONFIGURATION ************************ -->
-<!-- START-WEB  -->
-<SPAGOBI-MODE mode="WEB"/>
-<!-- END-WEB  -->
-
-	<HOME>
-		<BANNER view="true" /> 
-		<FOOTER view="true" /> 
-	</HOME>
-
-<!-- START-PORTLET 
-	<SPAGOBI-MODE mode="PORTLET"/>
-  END-PORTLET  -->	
-
-    <!-- ********************* END MODE CONFIGURATION ************************** -->
-     
-	<!-- defines the max dimension (in bytes) of a document template when uploading it into document detail page -->
-	<TEMPLATE_MAX_SIZE>5242880</TEMPLATE_MAX_SIZE>
-     
-    <!-- ********************* START MENU CONFIGURATION ************************ -->
-	<!-- Property 'mode' defines the style of menu: 
-			- 'ALL_TOP': all the menu voices are on the top of page
-			- 'ALL_LEFT': all the menu voices are on the left of the page
-			- 'TOP_LEFT': the first level is on the top, while others levels are on the left of the page
-			AT THE TIME BEING, ONLY ALL_TOP WORKS PROPERLY
-	 -->
-	 <MENU mode="ALL_TOP" viewExtra="YES" pathTracked="false"/> 
-	 
-
-    <!-- ********************* END MENU CONFIGURATION ************************** -->
-     
-    
-    <!-- ********************* START ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
-    <!-- ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderMock" /-->
-	<!--ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderDB" 
-    	jndiDatasource="java:comp/env/jdbc/DWS"
-		getHierarchiesQuery="select distinct ag_ctab as HIERARCHY, cd_az as COMPANY from dws_t_an_aggr_ce"
-		getOUsQuery="SELECT AG_CETABL! AS CODE, AG_DETABL! AS NAME, CD_AZ AS COMPANY, AG_CTAB AS HIERARCHY FROM DWS_T_AN_AGGR_CE GROUP BY AG_CETABL!, AG_DETABL!, CD_AZ, AG_CTAB" 
-		getRootByHierarchy="select distinct ag_cetabl1 code, ag_detabl1 name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ?  and ag_cetabl2 is not null"
-		getRootLeaves="select distinct ag_cetabl1 code, ag_detabl1 name , ag_dim as leaf from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ? and ag_cetabl2 is null and ag_cetabl1 = ag_dim"
-		getChildrenByLevel="select distinct ag_cetabl! code, ag_detabl! name from dws_t_an_aggr_ce where ag_ctab = ? and cd_az = ?  and ag_cetabl% = ? and ag_detabl% = ?"
-		/-->
-	<ORGANIZATIONAL-UNIT provider="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart" 
-    	jndiDatasource="java:comp/env/jdbc/foodmart"
-		getHierarchiesQuery="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store"
-		getOUsQuery="SELECT distinct a.store_state as name, a.store_state as code 
-			 FROM store a union select b.store_city as name, b.store_city as code
-			 from store b union select c.store_name as name , c.store_name as code from store c" 
-		getRootByHierarchy="SELECT distinct store_country as code, store_country as name FROM store where store_country = ?"
-		getRootLeaves=""
-		getChildrenByLevel="select distinct ! as code, ! as name from store where store_country = ? "
-		/>		
-    <!-- ********************* END ORGANIZATIONAL UNIT PROVIDER CONFIGURATION ************************ -->
-     
-    <!-- ********************* START SECURITY CONFIGURATION ************************ -->
-     
-   
-     
-<!-- START-XML -->
-	 
-	 <SECURITY>
-  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.InternalSecurityInitializer</PORTAL-SECURITY-INIT-CLASS>
-		<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.InternalSecurityInfoProviderImpl">
-			<CONFIG />
-		</PORTAL-SECURITY-CLASS>
-		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl" />
-    	<ROLE-NAME-PATTERN-FILTER>.*</ROLE-NAME-PATTERN-FILTER>
-    	<ROLE-TYPE-PATTERNS>
-	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
-	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
-	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
-	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
-    	</ROLE-TYPE-PATTERNS>
-	 </SECURITY>
-
-<!-- STOP-XML -->
-
-
-   <!-- Web security Provider  (LDAP) -->
-<!-- 
-	<SECURITY>
-  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.LdapSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
-			<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.LdapSecurityProviderImpl">
-				<CONFIG />
-			</PORTAL-SECURITY-CLASS>
-		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.LdapUserProfileFactoryImpl" />
-		<ROLE-NAME-PATTERN-FILTER>.*</ROLE-NAME-PATTERN-FILTER>
-    	<ROLE-TYPE-PATTERNS>
-	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
-	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
-	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
-	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
-    	</ROLE-TYPE-PATTERNS>
-	</SECURITY>
- -->
-     
-<!-- Exo security Provider  -->
-<!--
-     <SECURITY>
-  		<PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.ExoPortalSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
-		<PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.ExoSecurityProviderImpl">
-			<CONFIG>
-				<NAME_PORTAL_APPLICATION>@portal.context@</NAME_PORTAL_APPLICATION>
-			</CONFIG>
-		</PORTAL-SECURITY-CLASS>
-		<USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.ExoUserProfileImpl">
-		</USER-PROFILE-FACTORY-CLASS>
-    	<ROLE-NAME-PATTERN-FILTER>/spagobi/.*</ROLE-NAME-PATTERN-FILTER>
-    	<ROLE-TYPE-PATTERNS>
-	    	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
-	    	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
-	    	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
-	    	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
-    	</ROLE-TYPE-PATTERNS>
-	 </SECURITY>
- -->
-
-<!-- START-LIFERAY
-
-     <SECURITY>
-        <PORTAL-SECURITY-INIT-CLASS>it.eng.spagobi.security.init.LiferayPortalSecurityProviderInit</PORTAL-SECURITY-INIT-CLASS>
-        <PORTAL-SECURITY-CLASS className="it.eng.spagobi.security.LiferaySecurityInfoProviderImpl">
-	      <CONFIG />
-		</PORTAL-SECURITY-CLASS>
-        <USER-PROFILE-FACTORY-CLASS className="it.eng.spagobi.security.LiferaySecurityServiceSupplierImpl">
-        </USER-PROFILE-FACTORY-CLASS>
-        <WS_SERVICE url="localhost:58080/tunnel-web/secure/axis/"  username="bruno" password="bruno"/>
-        <ROLE-NAME-PATTERN-FILTER>/spagobi/.*</ROLE-NAME-PATTERN-FILTER>
-		<ROLE-TYPE-PATTERNS>
-                	<ADMIN-PATTERN>/spagobi/admin</ADMIN-PATTERN>
-                	<DEV_ROLE-PATTERN>/spagobi/dev</DEV_ROLE-PATTERN>
-                	<TEST_ROLE-PATTERN>/spagobi/test</TEST_ROLE-PATTERN>
-                	<MODEL_ADMIN-PATTERN>/spagobi/modeladmin</MODEL_ADMIN-PATTERN>
-        </ROLE-TYPE-PATTERNS>
-	    <PROFILE_ATTRIBUTES>
-		    <ATTRIBUTE name="NAME" default="" source="NAME" />
-		    <ATTRIBUTE name="SURNAME" default="" source="SURNAME" />
-		    <ATTRIBUTE name="USER_ID" default="" source="USER_ID" />
-		    <ATTRIBUTE name="E_MAIL" default="" source="E_MAIL" />
-	    </PROFILE_ATTRIBUTES>
-	    <ROLES>
-	    	<ROLE name="/spagobi/admin" desc="/spagobi/admin" />
-	    	<ROLE name="/spagobi/dev" desc="/spagobi/dev" />
-	    	<ROLE name="/spagobi/test" desc="/spagobi/test" />
-	    	<ROLE name="/spagobi/modeladmin" desc="/spagobi/modeladmin" />
-	    	<ROLE name="/spagobi/user" desc="/spagobi/user" />
-	    </ROLES>
-      </SECURITY>
-END-LIFERAY -->
-         
-    <!-- ********************* END SECURITY CONFIGURATION ************************** --> 
-
-     
-   
-	 <HIBERNATE-CFGFILE>hibernate.cfg.xml</HIBERNATE-CFGFILE>
-	
-  
-
-     <!-- ********************* START GENERAL CONFIGURATION ************************ -->
-     
-   
-    <!--  
-    Date format for communications with the server (both on sending and receiving); format attribute is for server side services, see java.text.SimpleDateFormat for details,
-    while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/.
-    IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY.
-    -->
-     <DATE-FORMAT-SERVER format="dd/MM/yyyy" extJsFormat="d/m/Y" />
-
     <!--  
     Date format used while displaying dates according to user current locale.
     Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details,
     while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/.
     IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY.
     -->    
-     <DATE-FORMAT-IT_IT format="dd/MM/yyyy" extJsFormat="d/m/Y"/>
-     <DATE-FORMAT-EN_US format="MM/dd/yyyy" extJsFormat="m/d/Y"/>
-     <DATE-FORMAT-FR_FR format="dd/MM/yyyy" extJsFormat="d/m/Y"/>      
-     <DATE-FORMAT-ES_ES format="dd/MM/yyyy" extJsFormat="d/m/Y"/>   
+  
   	 <TIMESTAMP-FORMAT format="dd/MM/yyyy hh:mm:ss" extJsFormat="d/m/Y H:i:s"/>
   	 
-    <!--  Date visual format if language is not found-->      	 
-  	<DATE-FORMAT format="dd/MM/yyyy" extJsFormat="d/m/Y"/>
 
 
 	<!--  True If you want to log user actions in DB table sbi_activity_monitoring-->      
 	<DB_LOG value="false" />
+	
     <!--  TimeStamp Format of SpagoBI DB-->          
     <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
     <!--  yyyy-MM-dd HH:mm:ss -->
@@ -205,26 +32,7 @@ END-LIFERAY -->
 	<!-- <THEME name="other_theme" default="false" view_name="other" />  -->	
 	 </THEMES>
 
-	 <SESSION_PARAMETERS_MANAGER enabled="false" />
-     
-     <LOOKUP numberRows = "20" />
 
-
-	<!-- Start configuration for dataset -->
-	<DATASET maxResults = "500000" />
-	<!-- end configuration for dataset -->
-
-     <SPAGOBI_CONTEXT>/SpagoBI</SPAGOBI_CONTEXT>
-    
-     <SPAGOBI_HOST_JNDI>java://comp/env/spagobi_host_url</SPAGOBI_HOST_JNDI>
-     
-     <RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
-     
-	<!-- The URL to FORWARD to when session has expired -->
-	<SESSION_EXPIRED_URL>/WEB-INF/jsp/commons/sessionExpired.jsp</SESSION_EXPIRED_URL>	
- 	 
- 	 <SPAGO_ADAPTERHTTP_URL>/servlet/AdapterHTTP</SPAGO_ADAPTERHTTP_URL>
-	
 	 <PORTLET_EDIT_MODE_ROLES>
 		<ROLE name="/spagobi/admin" />
 	 </PORTLET_EDIT_MODE_ROLES>
