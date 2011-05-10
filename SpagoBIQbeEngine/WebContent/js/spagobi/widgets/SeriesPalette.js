@@ -82,8 +82,8 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 	grid : null
 	, colourFieldEditor : null
 	, colourColumn : null
-	, colours : [['#690000'], ['#FFA1D3'], ['#33FE32'], ['#0079F7'], ['#FFFF00'], ['#A17653'], ['#FD0100']
-			, ['#0000A2'], ['#67FFFE'], ['#E2D2C3'], ['#F69495'], ['#E2E2E2'], ['#FFFF9B'], ['#FFFFFF']
+	, colours : [['#4572A7'], ['#DB843D'], ['#56AFC7'], ['#80699B'], ['#89A54E'], ['#AA4643'], ['#50B432']
+			, ['#1EA6E0'], ['#DDDF00'], ['#ED561B'], ['#64E572'], ['#E2E2E2'], ['#FFFF9B'], ['#FFFFFF']
 			, ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF']]
 
 	, init: function(c) {
@@ -153,7 +153,7 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 		for(i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
 			var colour = record.data.colour;
-			colours.push(field);
+			colours.push(colour);
 		}
 		return colours;
 	}

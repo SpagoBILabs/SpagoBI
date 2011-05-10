@@ -159,6 +159,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeBarChartPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanel.js'/></script>
 
 
 <!-- END-DEBUG -->
