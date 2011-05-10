@@ -132,18 +132,26 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		if(this.dataContainerObject!=null){
 			var seriesNames = this.dataContainerObject.rows.node_childs;
 			var data = this.dataContainerObject.data;
+			var measures_metadata = this.dataContainerObject.measures_metadata;
+			var measures_metadata_map = {};
+			//load the metadata of the measures (we need the type)
+			for(var i=0; i<measures_metadata.length; i++){
+				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
+			}
 			var series = [];
 			var serie;
+			var map ;
+			var serieData, serieDataFormatted;
 			for(var i=0; i<seriesNames.length; i++){
 			      serie = {};
 			      serie.name =   seriesNames[i].node_key;
-			//      var s = this.dataContainerObject.data[i];
-			//      var s1 = [];
-			//      for(var j=0; j<s.length; j++){
-			//    	  s1.push(parseFloat(s[j]));
-			//      }
-			//      serie.data =   s1;
-			      serie.data =   this.dataContainerObject.data[i];
+			      serieData = this.dataContainerObject.data[i];
+			      serieDataFormatted = [];
+			      for(var j=0; j<serieData.length; j++){
+			    	  map = measures_metadata_map[serie.name];
+			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format ));
+			      }
+			      serie.data = serieDataFormatted;
 			      series.push(serie);
 			}	
 			return series;
@@ -167,6 +175,27 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
     	if (this.loadMask != null) {
     		this.loadMask.hide();
     	}
+	}
+	
+    , format: function(value, type, format) {
+    	if(value==null){
+    		return value;
+    	}
+		try {
+			var valueObj = value;
+			if (type == 'int') {
+				valueObj = parseInt(value);
+			} else if (type == 'float') {
+				valueObj = parseFloat(value);
+			} else if (type == 'date') {
+				valueObj = Date.parseDate(value, format);
+			} else if (type == 'timestamp') {
+				valueObj = Date.parseDate(value, format);
+			}
+			return valueObj;
+		} catch (err) {
+			return value;
+		}
 	}
 
 });
