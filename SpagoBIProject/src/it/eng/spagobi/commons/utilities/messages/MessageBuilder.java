@@ -174,7 +174,6 @@ public class MessageBuilder
             message = MessageBundle.getMessage(code, locale);
         } else
         {
-            //getMessageSpagoOverwrite(code, MESSAGES_FOLDER + bundle, locale);
             message = MessageBundle.getMessage(code, MESSAGES_FOLDER + bundle, locale);
         }
         if(message == null || message.trim().equals(""))
@@ -182,53 +181,6 @@ public class MessageBuilder
             message = code;
         }
         logger.debug((new StringBuilder("OUT-message:")).append(message).toString());
-        return message;
-    }
-
-    public static String getMessageSpagoOverwrite(String code, String bundle, Locale userLocale)
-    {
-        String bundleKey = (new StringBuilder(String.valueOf(bundle))).append("_").append(userLocale.getLanguage()).append(userLocale.getCountry()).toString();
-        ResourceBundle messages = null;
-        logger.debug((new StringBuilder("bundleKey ")).append(bundleKey).toString());
-        try
-        {        	
-            messages = ResourceBundle.getBundle(bundle, userLocale);
-        }
-        catch(MissingResourceException ex)
-        {
-            logger.debug((new StringBuilder("Impossible to locate message boundle for locale ")).append(userLocale).toString(), ex);
-        }
-        if(messages == null)
-        {
-            logger.warn("Unreachable block (messages == null)");
-            return null;
-        }
-        logger.debug((new StringBuilder("boundle locale ")).append(messages.getLocale()).toString());
-    
-        if(messages.getKeys() != null)
-        {
-        	/*
-            String cde;
-            for(Enumeration e = messages.getKeys(); e.hasMoreElements(); logger.debug((new StringBuilder(String.valueOf(cde))).append(" = ").append(messages.getString(cde)).toString()))
-            {
-                cde = (String)e.nextElement();
-            }
-            */
-        } else
-        {
-            
-        	logger.error("no keys in the boundle");
-        }
-        String message = null;
-        try
-        {
-            message = messages.getString(code);
-        }
-        catch(Exception ex)
-        {
-            logger.warn((new StringBuilder("Impossible to find valid message for key: ")).append(code).toString(), ex);
-        }
-        logger.debug((new StringBuilder("message: ")).append(message).toString());
         return message;
     }
 
