@@ -206,6 +206,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetTitlePanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/ChooseImageWindow.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/SheetContentPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/ChartCategoryPanel.js'/></script>
@@ -214,6 +215,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='js/spagobi/worksheet/designer/LineChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/PieChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='js/spagobi/worksheet/designer/TableDesignerPanel.js'/></script>
+<script type="text/javascript" src='js/spagobi/worksheet/designer/ChooseImageWindow.js'/></script>
 
 
 
@@ -289,6 +291,11 @@ END-PRODUCTION -->
 	        Ext.onReady(function(){
 	        	Ext.QuickTips.init();   
 	        	var workSheetPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({});
+	        	//var workSheetPanel = new Sbi.worksheet.designer.ChooseImageWindow({});
+	           	//var viewport = new Ext.Viewport({layout: 'border', items: [{
+	           	//	region: 'center'
+	           	//	, items: [workSheetPanel]
+	           	//}]});  
 	           	var viewport = new Ext.Viewport(workSheetPanel);
 	           	
 	      	});
