@@ -58,7 +58,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	this.services = new Array();
 	var params = {};
 	this.services['setWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
+		serviceName: 'SET_WORKSHEET_PREVIEW_ACTION'
 		, baseParams: params
 	});
 	
