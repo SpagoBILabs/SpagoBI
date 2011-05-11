@@ -80,12 +80,9 @@ Sbi.widgets.SeriesPalette = function(config) {
 Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 
 	grid : null
-	, colourFieldEditor : null
-	, colourColumn : null
-	, colours : [['#4572A7'], ['#DB843D'], ['#56AFC7'], ['#80699B'], ['#89A54E'], ['#AA4643'], ['#50B432']
-			, ['#1EA6E0'], ['#DDDF00'], ['#ED561B'], ['#64E572'], ['#E2E2E2'], ['#FFFF9B'], ['#FFFFFF']
-			, ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF'], ['#FFFFFF']]
-
+	, colorFieldEditor : null
+	, colorColumn : null
+	, defaultColors : Sbi.widgets.Colors.defaultColors
 	, init: function(c) {
 		this.initStore(c);
 		this.initColumnModel(c);
@@ -94,17 +91,17 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['colour']
-			, data: this.colours
+	        fields: ['color']
 		});
+		this.setColors(this.defaultColors);
 	}
 	
 	, initColumnModel: function(c) {
 		
-		this.colourColumn = new Ext.grid.Column({
+		this.colorColumn = new Ext.grid.Column({
 			header: ''
 			, width: 60
-			, dataIndex: 'colour'
+			, dataIndex: 'color'
 			, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
 												 // on the grid's beforeedit event 
 			, renderer : function(v, metadata, record) {
@@ -112,7 +109,7 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 				return '';  
 	       }
 		});
-	    this.cm = new Ext.grid.ColumnModel([this.colourColumn]);
+	    this.cm = new Ext.grid.ColumnModel([this.colorColumn]);
 	}
 	
 	, initGrid: function (c) {
@@ -135,12 +132,12 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 	        		fn : function (e) {
 	        	    	var t = Ext.apply({}, e);
 	        			this.currentRowRecordEdited = t.row;
-	        			var colour = this.store.getAt(this.currentRowRecordEdited).data.colour;
-	        			var colourFieldEditor = new Ext.ux.ColorField({ value: colour, msgTarget: 'qtip', fallback: true});
-	        			colourFieldEditor.on('select', function(f, val) {
-	        				this.store.getAt(this.currentRowRecordEdited).set('colour', val);
+	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
+	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
+	        			colorFieldEditor.on('select', function(f, val) {
+	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
 	        			}, this);
-	        			this.colourColumn.setEditor(colourFieldEditor);
+	        			this.colorColumn.setEditor(colorFieldEditor);
 	        		}
 	        		, scope : this
 	        	}
@@ -148,18 +145,22 @@ Ext.extend(Sbi.widgets.SeriesPalette, Ext.Window, {
 		});
 	}
 	
-	, getColours: function() {
-		var colours = [];
+	, getColors: function() {
+		var colors = [];
 		for(i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
-			var colour = record.data.colour;
-			colours.push(colour);
+			var color = record.data.color;
+			colors.push(color);
 		}
-		return colours;
+		return colors;
 	}
 	
-	, setColours: function(colours) {
-		this.store.loadData(colours);
+	, setColors: function(colors) {
+		var array = [];
+		for (var i = 0; i < colors.length; i++) {
+			array.push([colors[i]]);
+		}
+		this.store.loadData(array);
 	}
 
 });

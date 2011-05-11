@@ -97,7 +97,8 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	, detailsWizard: undefined
 	, grid: null
 	, currentRowEdit : null
-	, displayColourColumn : true // to display or not the colour column, default is true
+	, displayColorColumn : true // to display or not the color column, default is true
+	, colorColumn : null
 	
 	// static members
 	, Record: Ext.data.Record.create([
@@ -107,7 +108,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
 	      , {name: 'seriename', type: 'string'}
-	      , {name: 'colour', type: 'string'}
+	      , {name: 'color', type: 'string'}
 	])
 	
 	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
@@ -140,7 +141,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'colour']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -190,17 +191,13 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		     , width: 50
 		     , sortable: false
 	    });
-	    
-		var colourFieldEditor = new Ext.ux.ColorField({ value: '#FFFFFF', msgTarget: 'qtip', fallback: true});
-		colourFieldEditor.on('select', function(f, val) {
-			this.store.getAt(this.currentRowRecordEdited).set('colour', val);
-		}, this);
 		
-		var colourColumn = new Ext.grid.Column({
-			header: LN('sbi.worksheet.designer.chartseriespanel.columns.colour')
+		this.colorColumn = new Ext.grid.Column({
+			header: LN('sbi.worksheet.designer.chartseriespanel.columns.color')
 			, width: 60
-			, dataIndex: 'colour'
-			, editor: colourFieldEditor
+			, dataIndex: 'color'
+			, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
+			 									 // on the grid's beforeedit event 
 			, renderer : function(v, metadata, record) {
 				metadata.attr = ' style="background:' + v + ';"';
 				return v;  
@@ -208,8 +205,8 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		});
 	    
 		var columns = [serieNameColumn, fieldColumn, aggregatorColumn];
-		if (this.displayColourColumn)  {
-			columns.push(colourColumn);
+		if (this.displayColorColumn)  {
+			columns.push(this.colorColumn);
 		}
 	    this.cm = new Ext.grid.ColumnModel(columns);
 	}
@@ -230,7 +227,13 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	        	beforeedit: {
 	        		fn : function (e) {
 	        	    	var t = Ext.apply({}, e);
-	        			this.currentRowRecordEdited = t.row;	
+	        			this.currentRowRecordEdited = t.row;
+	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
+	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
+	        			colorFieldEditor.on('select', function(f, val) {
+	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
+	        			}, this);
+	        			this.colorColumn.setEditor(colorFieldEditor);
 	        		}
 	        		, scope : this
 	        	}
@@ -376,11 +379,11 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	
 	, addMeasure: function(record) {
 		var theRecord = null;
-		if (record.data.seriename === undefined && record.data.colour === undefined ) {
+		if (record.data.seriename === undefined && record.data.color === undefined ) {
 			var data = Ext.apply({}, record.data); // make a clone
 			data = Ext.apply(data, { // add additional properties
 				seriename: record.data.alias
-				, colour: this.getRandomColour()
+				, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
 			});
 			theRecord = new this.Record(data);
 		} else {
@@ -413,17 +416,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	, removeAllMeasures: function() {
 		this.store.removeAll(false);
         this.getLayout().setActiveItem( 0 );
-	}
-
-	, getRandomColour: function() {
-		var chars = "0123456789ABCDEF";
-		var string_length = 6;
-		var randomstring = '';
-		for (var i=0; i<string_length; i++) {
-			var rnum = Math.floor(Math.random() * chars.length);
-			randomstring += chars.substring(rnum,rnum+1);
-		}
-		return "#" + randomstring;
 	}
 
 	, setMeasures: function(measures) {

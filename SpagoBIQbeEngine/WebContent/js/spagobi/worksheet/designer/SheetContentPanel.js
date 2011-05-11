@@ -163,8 +163,8 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		        		  showlegend:false, 
 		        		  category:{id:"tre", alias:"COGNOME", funct:"none", iconCls:"field", nature:"attribute"}, 
 		        		  series:[
-		        		      {id:"5", alias:"MISURA 2", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA 2", colour:"#99CC00"}, 
-		        		      {id:"quattro", alias:"MISURA", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA", colour:"#FF00FF"}
+		        		      {id:"5", alias:"MISURA 2", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA 2", color:"#99CC00"}, 
+		        		      {id:"quattro", alias:"MISURA", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA", color:"#FF00FF"}
 		        		  ]
 		        	});}
 		          	, scope: this
