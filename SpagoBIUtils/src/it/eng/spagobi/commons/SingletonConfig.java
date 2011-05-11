@@ -41,8 +41,8 @@ public class SingletonConfig {
 	
 	public synchronized static SingletonConfig getInstance() {
 		try{
-		if (instance == null)
-			instance = new SingletonConfig();
+			if (instance == null)
+					instance = new SingletonConfig();
 		}catch(Exception e) {
 			logger.error("Impossible to load configuration",e);
 		}
@@ -76,7 +76,7 @@ public class SingletonConfig {
 	 */
 	public synchronized void clearCache() {
 		try{
-		instance= new SingletonConfig();
+			instance= null;
 		}catch(Exception e){
 			logger.error("Impossible to create a new istance", e);
 		}
