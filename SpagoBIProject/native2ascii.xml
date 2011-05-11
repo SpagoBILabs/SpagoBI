@@ -8,7 +8,7 @@
     </target>
 
   <target name="create" depends="clean">
-    <native2ascii encoding="ISO-8859-15" src="./MessageFiles" dest="./src"  includes="**/*.properties" />
+    <native2ascii encoding="ISO-8859-15" src="./MessageFiles" dest="./src/MessageFiles"  includes="**/*.properties" />
   </target>	
   
   
