@@ -43,7 +43,7 @@
  */
 Ext.ns("Sbi.worksheet.runtime");
 
-Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(config) { 
+Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) { 
 	
 	var defaultSettings = {
 			title: LN('sbi.worksheet.runtime.worksheetruntimepanel.title')
@@ -54,24 +54,31 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-
+	
 	Ext.apply(this, c);
 	
-	this.initPanels();
+	this.initPanels(template);
+
 	var c ={
 			layout: 'fit',
+			bodyStyle: 'height: 100%',
 			autoScroll: true,
 			items: [this.sheetsContainerPanel]
 	}; 
 		
-	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	
+	//Set height
+	this.addEvents();
+	this.on('afterlayout',function(){
+		this.sheetsContainerPanel.setHeight(this.getHeight()-54);
+	}, this);
 
 };
 
 Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 	sheetsContainerPanel: null,
 
-	initPanels: function(){
-		this.sheetsContainerPanel = new Sbi.worksheet.runtime.RuntimeSheetsContainerPanel();		
+	initPanels: function(template){
+		this.sheetsContainerPanel = new Sbi.worksheet.runtime.RuntimeSheetsContainerPanel({},template);		
 	}
 });

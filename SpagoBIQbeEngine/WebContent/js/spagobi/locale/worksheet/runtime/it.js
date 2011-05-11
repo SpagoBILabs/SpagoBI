@@ -12,4 +12,9 @@ Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Worksheet p
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title'] = 'Filtri';
 
+//===================================================================
+//Sbi.worksheet.designer.WorkSheetPreviewPage
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Work Sheet';
+
 

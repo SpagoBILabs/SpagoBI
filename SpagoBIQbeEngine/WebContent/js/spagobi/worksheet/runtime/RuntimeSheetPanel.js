@@ -56,12 +56,11 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	
-	
 	var items = this.initPanels(config);
 	
 	c ={
-			title: this.sheetConfig.title,
+			border: false,
+			title: this.sheetConfig.name,
             items: items
 	}
 	
@@ -85,7 +84,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			border: false,
 			style:'padding:5px 15px 5px'
 		}
-		
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
 			

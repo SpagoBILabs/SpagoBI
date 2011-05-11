@@ -28,10 +28,10 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -54,7 +54,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	String activeQueryId;
 	QbeTemplate template;
 	FormState formState;
-	CrosstabDefinition crosstabDefinition;
+	WorkSheetDefinition workSheetDefinition;
 
 	// executable version of the query. cached here for performance reasons (i.e. avoid query re-compilation 
 	// over result-set paging)
@@ -182,10 +182,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		QbeEngineAnalysisState analysisState = null;
 		analysisState= new QbeEngineAnalysisState( dataSource );
 		analysisState.setCatalogue( this.getQueryCatalogue() );
-		if (this.getCrosstabDefinition() != null) {
-			analysisState.setCrosstabDefinition( this.getCrosstabDefinition() );
+		if (this.getWorkSheetDefinition() != null) {
+			analysisState.setWorkSheetDefinition( this.getWorkSheetDefinition() );
 		} else {
-			analysisState.setCrosstabDefinition( CrosstabDefinition.EMPTY_CROSSTAB );
+			analysisState.setWorkSheetDefinition( WorkSheetDefinition.EMPTY_WORKSHEET );
 		}
 		return analysisState;
 	}
@@ -195,7 +195,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		
 		qbeEngineAnalysisState = (QbeEngineAnalysisState)analysisState;
 		setQueryCatalogue( qbeEngineAnalysisState.getCatalogue(  ) );
-		setCrosstabDefinition( qbeEngineAnalysisState.getCrosstabDefinition( ) );
+		setWorkSheetDefinition( qbeEngineAnalysisState.getWorkSheetDefinition( ) );
 	}
 	
 
@@ -259,13 +259,17 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	public void setStatment(IStatement statment) {
 		this.statment = statment;
 	}
-	
-	public CrosstabDefinition getCrosstabDefinition() {
-		return crosstabDefinition;
+
+	public WorkSheetDefinition getWorkSheetDefinition() {
+		return workSheetDefinition;
 	}
 
-	public void setCrosstabDefinition(CrosstabDefinition crosstabDefinition) {
-		this.crosstabDefinition = crosstabDefinition;
+	public void setWorkSheetDefinition(WorkSheetDefinition workSheetDefinition) {
+		this.workSheetDefinition = workSheetDefinition;
 	}
+
+
+	
+
 	
 }

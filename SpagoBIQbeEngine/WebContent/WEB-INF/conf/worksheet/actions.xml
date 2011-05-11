@@ -27,5 +27,17 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="GET_WORKSHEET_DEFINITION_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetDefinitionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SET_WORKSHEET_DEFINITION_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.SetWorkSheetDefinitionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

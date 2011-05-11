@@ -72,15 +72,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 			tabPosition: 'bottom',        
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},
-	        items: [this.addPanel],
-			tools: [
-			          {
-			        	  id: 'help'
-			        	, handler: this.showState
-			          	, scope: this
-			          	, qtip: LN('sbi.crosstab.measurescontainerpanel.tools.tt.showdetailswizard')
-			          }
-				]
+	        items: [this.addPanel]
 	};
 	
 	this.on('render',function(){this.addTab();},this);

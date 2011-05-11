@@ -112,7 +112,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	, getSheetState: function(){
 		var state = {};
-		state.title = this.title;
+		state.name = this.title;
 		if(!this.headerPanel.hidden){
 			state.header = this.headerPanel.getTitleState();
 		}
@@ -127,7 +127,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	, setSheetState: function(sheetState){
 		var state = {};
-		this.title = sheetState.title;
+		this.title = sheetState.name;
 		if(sheetState.header!=null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}

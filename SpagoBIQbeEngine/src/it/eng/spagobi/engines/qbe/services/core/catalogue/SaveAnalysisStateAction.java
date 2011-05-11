@@ -25,8 +25,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
+import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -45,15 +46,11 @@ import org.json.JSONObject;
  */
 public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 	
+	private static final long serialVersionUID = -2692347943059370260L;
 	public static final String SERVICE_NAME = "SAVE_ANALYSIS_STATE_ACTION";
 	public String getActionName(){return SERVICE_NAME;}
 	
-	// INPUT PARAMETERS
-	public static final String CATALOGUE_NAME = "name";	
-	public static final String CATALOGUE_DESCRIPTION = "description";
-	public static final String CATALOGUE_SCOPE = "scope";
-	public static final String CROSSTAB_DEFINITION = "crosstabDefinition";
-	
+	// 
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(SaveAnalysisStateAction.class);
@@ -76,18 +73,18 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			// service implementation
 			validateInput();
 			
-			queryName = getAttributeAsString(CATALOGUE_NAME);		
-			logger.debug(CATALOGUE_NAME + ": " + queryName);
-			queryDescritpion  = getAttributeAsString(CATALOGUE_DESCRIPTION);
-			logger.debug(CATALOGUE_DESCRIPTION + ": " + queryDescritpion);
-			queryScope  = getAttributeAsString(CATALOGUE_SCOPE);
-			logger.debug(CATALOGUE_SCOPE + ": " + queryScope);
+			queryName = getAttributeAsString(QbeEngineStaticVariables.CATALOGUE_NAME);		
+			logger.debug(QbeEngineStaticVariables.CATALOGUE_NAME + ": " + queryName);
+			queryDescritpion  = getAttributeAsString(QbeEngineStaticVariables.CATALOGUE_DESCRIPTION);
+			logger.debug(QbeEngineStaticVariables.CATALOGUE_DESCRIPTION + ": " + queryDescritpion);
+			queryScope  = getAttributeAsString(QbeEngineStaticVariables.CATALOGUE_SCOPE);
+			logger.debug(QbeEngineStaticVariables.CATALOGUE_SCOPE + ": " + queryScope);
 			
-			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			//CrosstabDefinition crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
-			CrosstabDefinition crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-			getEngineInstance().setCrosstabDefinition(crosstabDefinition);
+			JSONObject workSheetDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
+			logger.debug("Parameter [" + workSheetDefinitionJSON + "] is equals to [" + workSheetDefinitionJSON.toString() + "]");
+			
+			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
+			getEngineInstance().setWorkSheetDefinition(workSheetDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();
 			analysisMetadata.setName( queryName );
@@ -98,7 +95,7 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			} else if( EngineAnalysisMetadata.PRIVATE_SCOPE.equalsIgnoreCase( queryScope ) ) {
 				analysisMetadata.setScope( EngineAnalysisMetadata.PRIVATE_SCOPE );
 			} else {
-				Assert.assertUnreachable("Value [" + queryScope + "] is not valid for the input parameter " + CATALOGUE_SCOPE);
+				Assert.assertUnreachable("Value [" + queryScope + "] is not valid for the input parameter " + QbeEngineStaticVariables.CATALOGUE_SCOPE);
 			}
 			
 			String result = saveAnalysisState();
