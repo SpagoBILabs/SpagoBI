@@ -34,7 +34,7 @@
 	</ACTION>
 	
 	<ACTION name="SET_WORKSHEET_DEFINITION_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetPreviewAction" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.SetWorkSheetDefinitionAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

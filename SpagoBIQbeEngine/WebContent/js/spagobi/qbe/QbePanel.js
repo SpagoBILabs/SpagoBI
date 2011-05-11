@@ -67,7 +67,7 @@ Sbi.qbe.QbePanel = function(config) {
 		, baseParams: params
 	});
 	this.services['getWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_WORKSHEET_DEFINITION_ACTION'
+		serviceName: 'GET_WORKSHEET_PREVIEW_ACTION'
 		, baseParams: params
 	});
 	
