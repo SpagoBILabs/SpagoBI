@@ -36,8 +36,10 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-public class ChannelUtilities {
+import org.apache.log4j.Logger;
 
+public class ChannelUtilities {
+	private static transient Logger logger = Logger.getLogger(ChannelUtilities.class);
 	/**
 	 * Gets the request container.
 	 * 
@@ -118,7 +120,11 @@ public class ChannelUtilities {
 		String contextName = "Spagobi";
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
-		String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
+		String sbiMode = spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode"); 
+		if (sbiMode==null) {
+			logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
+			sbiMode="WEB";
+		}
 		// based on mode get spago object and url builder
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			contextName = httpRequest.getContextPath();
@@ -139,7 +145,11 @@ public class ChannelUtilities {
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
 		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
-		if( (sbiMode!=null) && sbiMode.equalsIgnoreCase("WEB") ) {
+		if (sbiMode==null) {
+			logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
+			return false;
+		}
+		if( sbiMode.equalsIgnoreCase("WEB") ) {
 			return true;
 		} else {
 			return false;
@@ -156,7 +166,11 @@ public class ChannelUtilities {
 		SingletonConfig spagoconfig = SingletonConfig.getInstance();
 		// get mode of execution
 		String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
-		if( (sbiMode==null) || !sbiMode.equalsIgnoreCase("WEB")){
+		if (sbiMode==null) {
+			logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
+			return false;
+		}
+		if( !sbiMode.equalsIgnoreCase("WEB")){
 			return true;
 		} else {
 			return false;

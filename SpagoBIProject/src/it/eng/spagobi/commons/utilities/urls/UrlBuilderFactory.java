@@ -21,12 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.commons.utilities.urls;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.ApplicationContainer;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 public class UrlBuilderFactory {
 
+	private static transient Logger logger = Logger.getLogger(UrlBuilderFactory.class);
+	
 	/**
 	 * Gets the url builder.
 	 * 
@@ -39,6 +43,10 @@ public class UrlBuilderFactory {
 			SingletonConfig spagoconfig = SingletonConfig.getInstance();
 			// get mode of execution
 			String sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");   
+			if (sbiMode==null) {
+				logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
+				sbiMode="WEB";
+			}
 			// based on mode get spago object and url builder
 			if (sbiMode.equalsIgnoreCase("WEB")) {
 				urlBuilder = new WebUrlBuilder();		
