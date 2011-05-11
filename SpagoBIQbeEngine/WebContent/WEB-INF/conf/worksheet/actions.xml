@@ -27,14 +27,14 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="GET_WORKSHEET_DEFINITION_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetDefinitionAction" 
+	<ACTION name="GET_WORKSHEET_PREVIEW_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetPreviewAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="SET_WORKSHEET_DEFINITION_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.SetWorkSheetDefinitionAction" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetPreviewAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

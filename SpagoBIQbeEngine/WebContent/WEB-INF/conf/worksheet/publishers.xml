@@ -2,7 +2,7 @@
 
 <PUBLISHERS>
 	
-	<PUBLISHER name="GET_WORKSHEET_DEFINITION_ACTION_PUBLISHER">		
+	<PUBLISHER name="GET_WORKSHEET_PREVIEW_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
 				<ITEM prog="0" resource="/WEB-INF/jsp/worksheet.jsp" />

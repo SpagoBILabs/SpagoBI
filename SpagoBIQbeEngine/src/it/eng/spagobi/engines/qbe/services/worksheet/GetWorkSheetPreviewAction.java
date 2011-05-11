@@ -41,12 +41,12 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  */
-public class GetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
+public class GetWorkSheetPreviewAction extends AbstractQbeEngineAction {
 
 	private static final long serialVersionUID = 4009276536964480679L;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(GetWorkSheetDefinitionAction.class);
+    public static transient Logger logger = Logger.getLogger(GetWorkSheetPreviewAction.class);
 
 	public void service(SourceBean request, SourceBean response)  {				
 		logger.debug("IN");
