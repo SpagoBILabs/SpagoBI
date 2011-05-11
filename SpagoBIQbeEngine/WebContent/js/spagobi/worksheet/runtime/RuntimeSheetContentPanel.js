@@ -54,7 +54,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
-	
+	this.addEvents();
 	this.content = this.initContent(c);
 	//this.content = new Ext.Panel({height: 500});
 	c = {
@@ -75,91 +75,62 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		var items = [];
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
-	        	return new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c|| {},{
-	        			crosstabConfig: {autoHeight: true}, 
-	        			title: false})
-	        	);
+	        	return this.initCrossTab(c);
 	        case 'Bar Chart':
 	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel(this.contentConfig);
 	        case 'Line Chart':
-	        	this.insertLinechartDesigner();
-	            break;
+	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel(this.contentConfig);
 	        case 'Pie Chart':
-	        	this.insertPiechartDesigner();
-	            break;
+	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel(this.contentConfig);
 	        case 'Table':
-	        	return new Sbi.formviewer.DataStorePanel({
-	        		split: true,
-	        		collapsible: false,
-	        		padding: '0 20 0 0',
-	        		autoScroll: false,
-	        		frame: false, 
-	        		border: false,
-	        		displayInfo: false,
-	        		pageSize: 50,
-	        		autoHeight: true,
-	        		sortable: false,
-	        		gridConfig: {
-	        			autoHeight: true
-	        		},
-	        		services: {
-	        			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
-	        				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
-	        				, baseParams: new Object()
-	        			})
-	        		}
-	        	});
+	        	return this.initTable(c);
 	        default: 
 	        	alert('Unknown widget!');
 		}
-		this.doLayout();
-		this.updateContent();
 	},
 	
 	
-//	initTable(): function{
-//		
-//	},
-//	
-//	initTable(): function{
-//		
-//	},
-//	
-//	initTable(): function{
-//		
-//	},
+	initTable: function(c){
+    	var table =  new Sbi.formviewer.DataStorePanel({
+    		split: true,
+    		collapsible: false,
+    		padding: '0 20 0 0',
+    		autoScroll: false,
+    		frame: false, 
+    		border: false,
+    		displayInfo: false,
+    		pageSize: 50,
+    		autoHeight: true,
+    		sortable: false,
+    		gridConfig: {
+    			autoHeight: true
+    		},
+    		services: {
+    			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
+    				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
+    				, baseParams: new Object()
+    			})
+    		}
+    	});
+		table.execQuery({});
+		return table;
+	},
 	
-	
-	
-	updateContent: function () {
-		var items = [];
-		switch (this.contentConfig.designer) {
-	        case 'Pivot Table':
-	        	this.content.load(this.contentConfig.crosstabDefinition);
-	            break;
-	        case 'Bar Chart':
-	        	this.remove(this.content);
-	        	this.content= new Sbi.worksheet.runtime.RuntimeBarChartPanel(this.contentConfig);
-	        	this.add(this.content);
-	            break;
-	        case 'Line Chart':
-	        	this.insertLinechartDesigner();
-	            break;
-	        case 'Pie Chart':
-	        	this.insertPiechartDesigner();
-	            break;
-	        case 'Table':
-	        	this.content.execQuery({});
-	            break;
-	        default: 
-	        	alert('Unknown widget!');
-		}
+	initCrossTab: function(c){
+		var crossTab = new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c|| {},{
+			crosstabConfig: {autoHeight: true}, 
+			title: false}));
+		this.on('afterlayout',this.loadCrosstab,this);
 		
-		this.doLayout();
+		return crossTab;
+	},
+	
+	loadCrosstab: function(){
+		this.content.load(this.contentConfig.crosstabDefinition);
+		this.un('afterlayout',this.loadCrosstab,this);
 	}
 	
-	
-	
+
 	
 
 });

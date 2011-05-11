@@ -68,7 +68,7 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 	this.addEvents();
 	Ext.apply(this,c);	
 	
-	this.on('activate', function(){this.content.updateContent();}, this)
+	//this.on('activate', function(){this.content.updateContent();}, this)
 	
 	Sbi.worksheet.runtime.RuntimeSheetPanel.superclass.constructor.call(this, c);	 	
 };
