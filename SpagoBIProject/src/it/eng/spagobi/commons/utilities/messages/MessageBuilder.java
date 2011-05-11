@@ -1,15 +1,5 @@
 package it.eng.spagobi.commons.utilities.messages;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.RequestContainerPortletAccess;
@@ -22,6 +12,16 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
 // Referenced classes of package it.eng.spagobi.commons.utilities.messages:
 //            IMessageBuilder
 
@@ -30,6 +30,7 @@ public class MessageBuilder
 {
 
     private static Logger logger = Logger.getLogger(MessageBuilder.class);
+    private static final String MESSAGES_FOLDER = "MessageFiles.";
 
     public MessageBuilder()
     {
@@ -173,8 +174,8 @@ public class MessageBuilder
             message = MessageBundle.getMessage(code, locale);
         } else
         {
-            getMessageSpagoOverwrite(code, bundle, locale);
-            message = MessageBundle.getMessage(code, bundle, locale);
+            //getMessageSpagoOverwrite(code, MESSAGES_FOLDER + bundle, locale);
+            message = MessageBundle.getMessage(code, MESSAGES_FOLDER + bundle, locale);
         }
         if(message == null || message.trim().equals(""))
         {
@@ -190,7 +191,7 @@ public class MessageBuilder
         ResourceBundle messages = null;
         logger.debug((new StringBuilder("bundleKey ")).append(bundleKey).toString());
         try
-        {
+        {        	
             messages = ResourceBundle.getBundle(bundle, userLocale);
         }
         catch(MissingResourceException ex)
@@ -429,5 +430,5 @@ public class MessageBuilder
         logger.debug("OUT");
         return message;
     }
-
+    
 }
