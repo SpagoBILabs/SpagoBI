@@ -68,11 +68,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 	var formRows = 0;	
 	
 	// services
-	this.services = this.services || new Array();	
-	this.services['getImagesList'] = this.services['getImagesList'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_WORKSHEET_IMAGES_LIST_ACTION'
-		, baseParams: new Object()
-	});
+	this.services = this.services || new Array();
 	// there also the upload service, but it cannot be built with Sbi.config.serviceRegistry.getServiceUrl,
 	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
@@ -96,10 +92,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	loadImageCombo: null,
 	loadImageFileBrows: null,
 	titlePanel: null,
-	imgCombo: null,
+	imgTriggerField: null,
 	imgFile: null,
 	imgPosition: null,
-	imagesStore: null,
+	chooseImageWindow: null,
 	
 	
 	//add the title row in the items of the panel
@@ -124,33 +120,25 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	//add the image row in the items of the panel
 	addImage: function(items){
 		
-		this.imagesStore = new Ext.data.ArrayStore({
-			fields : ['image'],
-			url   : this.services['getImagesList']
+		this.imgTriggerField = new Ext.form.TriggerField({
+			name : 'img'
+			, fieldLabel : LN('sbi.worksheet.designer.image')
+			, triggerClass : 'x-form-search-trigger'
+			, editable : false
+			, allowBlank : true
 		});
-		
-		//combo box with the image.. the store get the image from the server
-		this.imgCombo = new Ext.form.ComboBox({
-			xtype:          'combo',
-			mode:           'remote',
-			triggerAction:  'all',
-			forceSelection: true,
-			allowBlank: 	true,
-			editable:       false,
-			fieldLabel:     LN('sbi.worksheet.designer.image'),
-			name:           'image',
-			displayField:   'image',
-			valueField:     'image',
-			anchor:			'95%',
-			store:          this.imagesStore
-		});
+		this.imgTriggerField.on("render", function(field) {
+			field.trigger.on("click", function(e) {
+				this.imgTriggerFieldHandler(); 
+			}, this);
+		}, this);
 		
 		//text field for load the image in the server from the file system
 		this.imgFile = new Ext.form.TextField({
 			inputType:	'file',
 			fieldLabel: LN('sbi.worksheet.designer.image'),
 			anchor:			'95%',
-			allowBlank: false
+			allowBlank: true
 		});
 		
 		
@@ -160,7 +148,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
             items: [{
             	columnWidth:.7,
     			layout: 'form',
-    			items: [this.imgCombo]
+    			items: [this.imgTriggerField]
 			},{
 				xtype:          'button',
                	width: 			30,
@@ -179,6 +167,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.loadImageFileBrows = new Ext.Panel({
             layout:'column',
             hidden: true,
+            hideMode: !Ext.isIE ? 'nosize' : 'display',
             items: [
                     this.imgFileFormPanel,
               {
@@ -245,6 +234,21 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.loadImageFileBrows.show();
 	},
 	
+	imgTriggerFieldHandler: function() {
+		if (!this.chooseImageWindow) {
+			this.chooseImageWindow = new Sbi.worksheet.designer.ChooseImageWindow({
+				width: 450
+				, height: 400
+				, closeAction: 'hide'
+			});
+			this.chooseImageWindow.on('select', function(theChooseImageWindow, fileName) {
+				this.imgTriggerField.setValue(fileName);
+				this.chooseImageWindow.hide();
+			}, this);
+		}
+		this.chooseImageWindow.show();
+	},
+	
 	//handler for the upload image button
 	//This button hides the file input field 
 	//and shows the load file combo box
@@ -257,6 +261,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
                 												   // they must POST parameters
                 params: {
                     ACTION_NAME: 'UPLOAD_WORKSHEET_IMAGE_ACTION'
+                    , SBI_EXECUTION_ID: Sbi.config.serviceRegistry.getExecutionId()
                 },
                 waitMsg: 'Uploading your image...',
                 success: function(form, action) {
@@ -266,7 +271,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
      				   buttons: Ext.Msg.OK,
      				   icon: Ext.MessageBox.INFO
      				});
-        			this.imagesStore.load();
+        			if (this.chooseImageWindow) {
+        				this.chooseImageWindow.store.load();
+        			}
+        			this.imgFile.setValue('');
         			this.closeUploader();
                 },
                 failure : function (form, action) {
@@ -285,21 +293,20 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	closeUploader: function (btn, e) {
 		this.loadImageFileBrows.hide();
 		this.loadImageCombo.show();
-		this.imgCombo.clearInvalid();
 	},
 	
 	isValid: function(){
 		var valid= true;
 		var title = this.titlePanel.getValue();
 		valid = valid && title!=null && title!='' ;
-		valid = valid && this.imgCombo.isValid(false) && this.imgPosition.isValid(false);
+		valid = valid && this.imgTriggerField.isValid(false) && this.imgPosition.isValid(false);
 		return valid;
 	},
 	
 	getTitleState: function(messageBox){
 		var values={};
 		values.title =  this.titlePanel.getValue();
-		values.img =  this.imgCombo.getValue();
+		values.img =  this.imgTriggerField.getValue();
 		if(values.img==''){
 			values.img =null;
 		}
@@ -312,7 +319,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	
 	setTitleState: function(values){
 		 this.titlePanel.setValue(values.title)
-		 this.imgCombo.setValue(values.img)
+		 this.imgTriggerField.setValue(values.img)
 		 this.imgPosition.setValue(values.position);
 	}
 	

@@ -115,4 +115,8 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     	}
     	return  baseUrlStr;
     }
+    
+    , getExecutionId: function () {
+    	return this.baseParams['SBI_EXECUTION_ID'];
+    }
 });

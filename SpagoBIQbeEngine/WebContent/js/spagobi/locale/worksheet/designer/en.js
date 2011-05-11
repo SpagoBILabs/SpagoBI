@@ -19,7 +19,14 @@ Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Not valid';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'The values of the fields are not valid or incomplete';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'] = 'Upload successful';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'] = 'Image uploaded successfully';
-	
+
+
+//===================================================================
+//Sbi.worksheet.designer.ChooseImageWindow
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Scegli l\'immagine ...';
+
+
 //===================================================================
 // DESIGNER SHEETCONTAINER
 //===================================================================
