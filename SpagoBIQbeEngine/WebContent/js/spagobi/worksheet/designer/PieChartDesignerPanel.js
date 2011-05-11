@@ -103,7 +103,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
-            , displayColourColumn: false
+            , displayColorColumn: false
 		});
 		
 		this.imageContainerPanel = new Ext.Panel({
@@ -172,7 +172,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		state.showlegend = this.showLegendCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
-		state.colours = this.seriesPalette.getColours();
+		state.colors = this.seriesPalette.getColors();
 		return state;
 	}
 	
@@ -181,7 +181,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
-		if (state.colours) this.seriesPalette.setColours(state.colours);
+		if (state.colors) this.seriesPalette.setColors(state.colors);
 	}
 
 });

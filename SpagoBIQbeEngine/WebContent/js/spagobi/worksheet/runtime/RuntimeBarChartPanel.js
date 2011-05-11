@@ -83,8 +83,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 //								category:
 //									{id:"it.eng.spagobi.SalesFact1998::customer(customer_id):fullname", alias:"Full Name", funct:"NONE", iconCls:"attribute", nature:"attribute"}, 
 //								series:[
-//									{id:"it.eng.spagobi.SalesFact1998:unitSales", alias:"Unit Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Unit Sales", colour:"#9220CD"}, 
-//									{id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", colour:"#624D0F"}
+//									{id:"it.eng.spagobi.SalesFact1998:unitSales", alias:"Unit Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Unit Sales", color:"#9220CD"}, 
+//									{id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", color:"#624D0F"}
 //								]
 //							}
 	
@@ -129,7 +129,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 		var colors = [];
 		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
 			for (var i = 0; i < this.chartConfig.series.length; i++) {
-				colors.push(this.chartConfig.series[i].colour);
+				colors.push(this.chartConfig.series[i].color);
 			}
 		}
 		return colors;
