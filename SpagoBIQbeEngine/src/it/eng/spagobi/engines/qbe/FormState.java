@@ -160,7 +160,7 @@ public class FormState extends EngineAnalysisState {
 		Map<String, String> nameIdMap = new HashMap<String, String>();
 		try{
 				JSONObject formState = (JSONObject) getProperty(FORM_STATE);
-				if(formState!=null){
+				if(formState!=null && formState.length()!=0){
 					JSONArray staticOpenFilters = formState.optJSONArray("staticOpenFilters");
 					fillMaps(staticOpenFilters, idNameMap, nameIdMap, "id", "text","staticOpenFilters");
 					JSONArray dynamicFilters = formState.optJSONArray("dynamicFilters");
