@@ -60,6 +60,7 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 	this.initPanels(template);
 
 	var c ={
+			border: false,
 			layout: 'fit',
 			bodyStyle: 'height: 100%',
 			autoScroll: true,
