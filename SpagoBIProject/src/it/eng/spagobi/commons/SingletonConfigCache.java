@@ -22,7 +22,7 @@ public class SingletonConfigCache implements ISingletonConfigCache{
 		try {
 			dao= DAOFactory.getSbiConfigDAO();
 			List<Config> allConfig= dao.loadAllConfigParameters();
-			
+			if (allConfig.size()==0) logger.error("The table sbi_config is EMPTY");
 			for (Config config: allConfig ) {
 				cache.put(config.getLabel(), config.getValueCheck());
 				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
@@ -38,7 +38,6 @@ public class SingletonConfigCache implements ISingletonConfigCache{
 	}
 	
 	public String get(String key){
-		
 		if (cache.get(key)==null) {
 			logger.error("The property '"+key+"' doens't have any value assigned, check SBI_CONFIG table");
 			return null;

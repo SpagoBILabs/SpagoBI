@@ -411,8 +411,11 @@ public class MessageBuilder
             }
         } else
         {
-            SingletonConfig spagoconfig = SingletonConfig.getInstance();
-            sbiMode = (String)spagoconfig.getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");
+            sbiMode = (String)SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");
+    		if (sbiMode==null) {
+    			logger.error("SPAGOBI.SPAGOBI-MODE.mode IS NULL");
+    			sbiMode="WEB";
+    		}
         }
         logger.debug((new StringBuilder("OUT: sbiMode = ")).append(sbiMode).toString());
         return sbiMode;

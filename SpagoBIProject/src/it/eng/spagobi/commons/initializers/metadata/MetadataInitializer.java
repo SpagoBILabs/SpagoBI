@@ -25,6 +25,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
@@ -140,6 +141,7 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 				logger.debug("Config table is already populated");
 			}
 			
+			
 			hql = "from SbiKpiPeriodicity";
 			hqlQuery = aSession.createQuery(hql);
 			List periodicities = hqlQuery.list();
@@ -154,6 +156,8 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 
 			tx.commit();
 
+			SingletonConfig.getInstance().clearCache();
+			
 		} catch (Exception e) {
 			logger.error("Error while initializing metadata", e);
 			if (tx != null)
