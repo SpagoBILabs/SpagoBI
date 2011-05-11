@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe;
 
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabDeserializerFactory;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabSerializerFactory;
 import it.eng.spagobi.engines.qbe.worksheet.serializer.WorkSheetDeserializerFactory;
 import it.eng.spagobi.engines.qbe.worksheet.serializer.WorkSheetSerializerFactory;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -49,6 +51,9 @@ public class QbeEngine {
     	}
     	WorkSheetDeserializerFactory.getInstance();
     	WorkSheetSerializerFactory.getInstance();
+    	CrosstabDeserializerFactory.getInstance();
+    	CrosstabSerializerFactory.getInstance();
+    	
     	
 	}
     
