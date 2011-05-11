@@ -66,6 +66,10 @@ Sbi.qbe.QbePanel = function(config) {
 		serviceName: 'SAVE_ANALYSIS_STATE_ACTION'
 		, baseParams: params
 	});
+	this.services['getWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_WORKSHEET_DEFINITION_ACTION'
+		, baseParams: params
+	});
 	
 	this.addEvents();
 	
@@ -98,20 +102,21 @@ Sbi.qbe.QbePanel = function(config) {
 			}
 		});
 		*/
-		var worksheetDesignerConfig = c.crosstab || {};
+		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(worksheetDesignerConfig);
+		this.worksheetDesignerPanel.on('worksheetpreview', this.activatePreview, this);
 		items.push(this.worksheetDesignerPanel);
 	}
 
 	if (c.displayWorksheetPreviewPanel) {
-		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel();
+		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
 		items.push(this.worksheetPreviewPanel);
 		// if user is not a power user, show crosstab on first tab render event
-		if (!c.displayWorksheetDesignerPanel) {
-			this.worksheetPreviewPanel.on('render', function() {
-				this.showWorksheetPreview(null, c.crosstab.crosstabTemplate);
-			}, this);
-		}
+//		if (!c.displayWorksheetDesignerPanel) {
+//			this.worksheetPreviewPanel.on('render', function() {
+//				this.showWorksheetPreview(null, c.worksheet.worksheetTemplate );
+//			}, this);
+//		}
 	}
 	
 	if (c.displayFormBuilderPanel && c.formbuilder !== undefined && c.formbuilder.template !== undefined) {
@@ -397,5 +402,14 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	setQueriesCatalogue: function (queriesCatalogue) {
 		this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
 	}
+	
+	,
+	activatePreview: function(){
+		 this.tabs.activate(this.worksheetPreviewPanel);
+		 this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+		 //this.worksheetPreviewPanel.getFrame().setSrc("http://www.google.it");
+		 
+	}
+	
 	
 });

@@ -55,8 +55,8 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-//	this.content = this.initContent(c);
-	this.content = new Ext.Panel({height: 500});
+	this.content = this.initContent(c);
+	//this.content = new Ext.Panel({height: 500});
 	c = {
 		border: false,
 		style:'padding:5px 15px 5px',
@@ -113,6 +113,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        	alert('Unknown widget!');
 		}
 		this.doLayout();
+		this.updateContent();
 	},
 	
 	

@@ -21,43 +21,46 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.crosstable.serializer;
 
-
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.IDeserializerFactory;
-
+import it.eng.qbe.serializer.ISerializer;
+import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabJSONDeserializer;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabJSONSerializer;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class CrosstabJSONDeserializerFactory implements IDeserializerFactory {
+public class CrosstabSerializerFactory implements ISerializerFactory{
+
+	static CrosstabSerializerFactory instance;
 	
-	static CrosstabJSONDeserializerFactory instance;
-	
-	static CrosstabJSONDeserializerFactory getIntsnce() {
+	static CrosstabSerializerFactory getIntsnce() {
 		return instance;
 	}
 	
 	static {
-		instance = new CrosstabJSONDeserializerFactory();
-		SerializationManager.registerDeserializerFactory(CrosstabDefinition.class, instance);
+		instance = new CrosstabSerializerFactory();
+		SerializationManager.registerSerializerFactory(CrosstabDefinition.class, instance);
 		
 	}
 	
-	public static CrosstabJSONDeserializerFactory getInstance() {
+	
+	public static CrosstabSerializerFactory getInstance() {
 		if (instance == null) {
-			instance = new CrosstabJSONDeserializerFactory();
+			instance = new CrosstabSerializerFactory();
 		}
 		return instance;
 	}
 	
-	private CrosstabJSONDeserializerFactory() {}
+	private CrosstabSerializerFactory() {}
 
-	public IDeserializer getDeserializer(String mimeType) {
-		return new CrosstabJSONDeserializer();
+	
+	public ISerializer getSerializer(String mimeType) {
+		return new CrosstabJSONSerializer();
 	}
 
 }

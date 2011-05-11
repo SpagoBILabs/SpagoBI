@@ -32,7 +32,7 @@
  * 
  * Public Methods
  * 
- * 
+ * refresh(sheets): remove all the sheets and add the new sheets
  * 
  * Public Events
  * 
@@ -42,7 +42,7 @@
  */
 Ext.ns("Sbi.worksheet.runtime");
 
-Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config) { 
+Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) { 
 	
 	var defaultSettings = {};
 
@@ -54,29 +54,15 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	var items =this.buildSheets(config,
-		[{//FAKE
-					title: 'Sheet n',
-					header :{title: 'header', img:'img/delete.gif', position:'left'},
-					content:{designer: 'Bar Chart', 
-						
-						chartConfig: {
-							type:"side-by-side-barchart", 
-							orientation:"vertical", 
-							showvalues:true, 
-							showlegend:true, 
-							category:
-								{id:"it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily", alias:"Product Family", funct:"NONE", iconCls:"attribute", nature:"attribute"}, 
-							series:[
-							    {id:"it.eng.spagobi.SalesFact1998:storeCost", alias:"Store Cost", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Cost", color:"#862D72"}, 
-							    {id:"it.eng.spagobi.SalesFact1998:storeSales", alias:"Store Sales", funct:"SUM", iconCls:"measure", nature:"measure", seriename:"Store Sales", color:"#8340E2"}
-							]
-						}},
-					footer :{title: 'footer', img:'img/delete.gif', position:'right'}
-					
-			}]); 
+	this.config = config;
+	var items= [new Ext.Panel({})];
+	if(sheets!= undefined && sheets!=null){
+		items= this.buildSheets(config, sheets.sheets);
+	}
+	
 	c ={
-			tabPosition: 'bottom',        
+			border: false,
+			tabPosition: 'bottom', 
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},
 	        items: items
@@ -102,6 +88,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			}
 		}
 		return items;
+	},
+	
+	refresh: function(sheets){
+		if(sheets!=undefined && sheets!=null){
+			this.removeAll(true);
+			this.add(this.buildSheets(this.config, sheets.sheets));
+		}
 	}
 	
 	

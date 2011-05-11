@@ -23,8 +23,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
 
+<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
-<%@page import="it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -180,16 +180,16 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
 
-	      	qbeConfig.crosstab = {};
+	      	qbeConfig.worksheet = {};
 	      	<%
-	      	CrosstabDefinition crosstabDefinition = qbeEngineInstance.getCrosstabDefinition();
-	      	JSONObject crosstabDefinitionJSON = crosstabDefinition != null ? 
-	      			(JSONObject) SerializationManager.serialize(crosstabDefinition, "application/json") : 
+	      	WorkSheetDefinition workSheetDefinition = qbeEngineInstance.getWorkSheetDefinition();
+	      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
+	      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
 	      				new JSONObject();
 	      	%>
 	      	
 	
-	      	qbeConfig.crosstab.crosstabTemplate = <%= crosstabDefinitionJSON %>;
+	      	qbeConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");
