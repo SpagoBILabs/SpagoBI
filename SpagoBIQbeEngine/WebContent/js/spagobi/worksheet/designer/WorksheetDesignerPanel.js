@@ -54,29 +54,14 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-
-	this.services = new Array();
-	var params = {};
-	this.services['setWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
-		, baseParams: params
-	});
-	
 	
 	Ext.apply(this, c);
 	
 	this.initPanels();
+	
 	var c ={
 			layout: 'border',
-			autoScroll: true,			
-			tools: [
-		      {
-	        	  id: 'gear'
-	        	, qtip: LN('sbi.worksheet.designer.worksheetdesignerpanel.openpreview.qtip')
-	        	, handler: this.execute
-	          	, scope: this
-	          }
-    		],
+			autoScroll: true,
 			items: [
 			        {
 			        	id: 'designToolsPanel',
@@ -117,24 +102,6 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);
-	},
-	
-	execute: function(){
-		var state = this.sheetsContainerPanel.getSheetsState();
-
-		var params = {
-				'worksheetdefinition':  Ext.encode({'sheets':state})
-		};
-		Ext.Ajax.request({
-		    url: this.services['setWorkSheetState'],
-		    success: function(){
-		    	this.fireEvent('worksheetpreview');
-		    },
-		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
-		    scope: this,
-		    params: params
-		});   
 	}
-
 	
 });

@@ -123,9 +123,15 @@ Ext.extend(Sbi.worksheet.designer.ChooseImageWindow, Ext.Window, {
 	, initTemplate : function () {
 		this.tpl = new Ext.XTemplate(
 		    '<tpl for=".">',
-	            '<div class="thumb-wrap" id="{image}" style="float: left; margin: 10px; padding: 5px; width: 100px; height: 120px">',
-	            '<div class="thumb"><img src="' + this.services['getImageContent'] + '&FILE_NAME={image}" title="{image}" height="100px"></div>',
-	            '<span class="x-editable">{image}</span></div>',
+	            '<div class="thumb-wrap" id="{image}" style="float: left; margin: 10px; padding: 5px; width: 100px; height: 110px">',
+	            '	<div class="thumb">',
+	            '		<div style="width:100px;height:100px">',
+	            '			<img src="' + this.services['getImageContent'] + '&FILE_NAME={image}" title="{image}" max-width="100px" max-height="100px">',
+	            //'			<img src="/SpagoBIQbeEngine/temp/{image}" title="{image}" max-width="100px" max-height="100px">',
+	            '		</div>',
+	            '		<span class="x-editable">{image:ellipsis(20)}</span>',
+	            '	</div>',
+	            '</div>',
 	        '</tpl>',
 	        '<div class="x-clear"></div>'
 		);

@@ -235,7 +235,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	},
 	
 	imgTriggerFieldHandler: function() {
-		if (!this.chooseImageWindow) {
+		if (this.chooseImageWindow == null) {
 			this.chooseImageWindow = new Sbi.worksheet.designer.ChooseImageWindow({
 				width: 450
 				, height: 400
@@ -271,7 +271,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
      				   buttons: Ext.Msg.OK,
      				   icon: Ext.MessageBox.INFO
      				});
-        			if (this.chooseImageWindow) {
+        			if (this.chooseImageWindow != null) {
         				this.chooseImageWindow.store.load();
         			}
         			this.imgFile.setValue('');

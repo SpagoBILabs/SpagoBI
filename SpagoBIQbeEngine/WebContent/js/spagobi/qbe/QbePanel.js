@@ -104,12 +104,16 @@ Sbi.qbe.QbePanel = function(config) {
 		*/
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(worksheetDesignerConfig);
-		this.worksheetDesignerPanel.on('worksheetpreview', this.activatePreview, this);
 		items.push(this.worksheetDesignerPanel);
 	}
 
 	if (c.displayWorksheetPreviewPanel) {
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
+		
+		this.worksheetPreviewPanel.on('activate', function() {
+			this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+		}, this);
+		
 		items.push(this.worksheetPreviewPanel);
 		// if user is not a power user, show crosstab on first tab render event
 //		if (!c.displayWorksheetDesignerPanel) {
@@ -296,11 +300,6 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		return filters;
 	}
   	
-  	, showWorksheetPreview: function(worksheetDefinition) {
-  		this.tabs.activate(this.worksheetPreviewPanel);
-  		this.worksheetPreviewPanel.load(worksheetDefinition);
-  	}
-  	
   	, saveQuery: function(meta) {
     	this.save(meta, function(response, options) {
     		// for old gui
@@ -404,12 +403,23 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}
 	
 	,
-	activatePreview: function(){
-		 this.tabs.activate(this.worksheetPreviewPanel);
-		 this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
-		 //this.worksheetPreviewPanel.getFrame().setSrc("http://www.google.it");
-		 
+	setWorksheetState : function (successFn, failureFn, scope) {
+		var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
+		var params = {
+				'worksheetdefinition':  Ext.encode({'sheets':state})
+		};
+		Ext.Ajax.request({
+		    url: this.services['setWorkSheetState'],
+		    success: successFn,
+		    failure: failureFn,
+		    scope: scope,
+		    params: params
+		});   
 	}
 	
+	,
+	refreshWorksheetPreview : function () {
+		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+	}
 	
 });
