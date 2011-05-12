@@ -12,7 +12,19 @@
           		<include name="**/*.jar"/>
     		</fileset>
 		<!-- LIBRERIE ESTERNE necessarie per la compilazione -->
-    		<fileset dir="${extlib}">
+    		<fileset dir="${lib}/eclipselink">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<fileset dir="${lib}/hibernate">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<fileset dir="${lib}/hibernate/jpa">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<fileset dir="${lib}/hibernate/required">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<fileset dir="${lib}/jdbc">
           		<include name="**/*.jar"/>
     		</fileset>
 
@@ -55,6 +67,7 @@
    	<property prefix="svn" file="${src}/svn.properties"/>
   </target>
 
+   
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
@@ -64,19 +77,21 @@
 			<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
 		</replaceregexp>
   </target> 
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   COMPILAZIONE							                                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <target name="compile"  description="compile the source" >
-  	<antcall target="upgrade.mf" />
+	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
     <javac destdir="${build}" debug="on">
       <classpath refid="jar.classpath"/>
-	<src path="${src.runtime}"/>
-	<src path="${src.hibernate}"/>
-	<src path="${src.jpa}"/>
-	<src path="${src.serialization}"/>
-    </javac>  
+	<src path="${src}/test"/>
+	<src path="${src}/hibernate"/>
+	<src path="${src}/jpa"/>
+	<src path="${src}/runtime"/>
+	<src path="${src}/serialization"/>
+    </javac> 
   </target>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -91,6 +106,7 @@
     </copy>
 
   </target>
+
 
 	<target name="create.jar" depends="init,copy.artifacts" >
 	      <mkdir dir="${dist}"/>
