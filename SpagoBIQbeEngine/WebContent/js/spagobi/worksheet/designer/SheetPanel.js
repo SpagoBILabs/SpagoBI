@@ -58,19 +58,22 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	
 	this.initPanels();
 	
+	var emptyPanel = new Ext.Panel({
+		htlm:'&nbsp;',
+		height: 0,
+		layout: 'fit',
+		hidden: true
+	});
+	
 	c ={
-            layout: {
-                type:'vbox',
-                align:'stretch'
-            },
-            items:[this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
+			scrollable: true,
+            layout: 'fit',
+            items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	}
 	
 	c = Ext.apply(config,c);
 	Ext.apply(this,c);
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
-
-
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
@@ -78,10 +81,10 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	filtersPanel: null,
 	contentPanel: null,
 	footerPanel: null,
-	layout: null,
+	sheetLayout: null,
 	
 	initPanels: function(){
-		this.layout = 'layout_headerfooter';
+		this.sheetLayout = 'layout_headerfooter';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 			style:'padding:0px 15px 0px 15px'
@@ -89,22 +92,21 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		});
 		this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({});
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
-		this.contentPanel.flex = 4;
 	}
 
-	, updateLayout: function (layout) {
-		if(layout!=null){
-			 this.layout=layout;
-			 if(layout=='layout-header' || layout=='layout-content'){
+	, updateLayout: function (sheetLayout) {
+		if(sheetLayout!=null){
+			 this.sheetLayout=sheetLayout;
+			 if(sheetLayout=='layout-header' || sheetLayout=='layout-content'){
 				 this.footerPanel.hide();
 			 }
-			 if(layout=='layout-footer' || layout=='layout-content'){
+			 if(sheetLayout=='layout-footer' || sheetLayout=='layout-content'){
 				 this.headerPanel.hide();
 			 }
-			 if(layout=='layout-footer' || layout=='layout-headerfooter'){
+			 if(sheetLayout=='layout-footer' || sheetLayout=='layout-headerfooter'){
 				 this.footerPanel.show();
 			 }
-			 if(layout=='layout-header' || layout=='layout-headerfooter'){
+			 if(sheetLayout=='layout-header' || sheetLayout=='layout-headerfooter'){
 				 this.headerPanel.show();
 			 }
 		}
@@ -112,7 +114,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	, getSheetState: function(){
 		var state = {};
-		state.name = this.title;
+		state.name = this.name;
+		state.sheetLayout = this.sheetLayout;
 		if(!this.headerPanel.hidden){
 			state.header = this.headerPanel.getTitleState();
 		}
@@ -127,7 +130,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	, setSheetState: function(sheetState){
 		var state = {};
-		this.title = sheetState.name;
+		this.name = sheetState.name;
+		this.sheetLayout = state.sheetLayout;
 		if(sheetState.header!=null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
