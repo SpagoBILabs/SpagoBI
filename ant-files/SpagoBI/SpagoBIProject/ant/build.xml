@@ -49,6 +49,24 @@
    </exec>
   </target>
 
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   AGGIORNAMENTO JAR QBE.CORE							                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="qbe.core.update" 
+      description="Updates qbe.core library from distribution folder (THIS JAR MUST BE EXISTING)">
+    <!-- deletes any previuos qbe.core -->
+    <delete>
+      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/qbe.core*.jar"/>
+    </delete>
+   
+    <!-- copies the newly created jar file -->
+    <copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" 
+        todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+              
+  </target>
+
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -78,7 +96,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   COMPILAZIONE							                                                  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <target name="compile" depends="sbi.utils.update" description="compile the source" >
+  <target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
     <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
       <classpath refid="web.classpath"/>
@@ -130,8 +148,9 @@
           <wcVersion path="${src}" prefix="svn."/>
       </svn>
 		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar"  >
-		<fileset dir="${build}/${webapp_name}/WEB-INF/classes/it/eng/spagobi">
-			<include name="**/*" />
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes/">
+			<include name="it/**/*" />
+			<exclude name="it/eng/spago/**/*" />
 		</fileset>
 
 			<manifest>
@@ -312,8 +331,7 @@
 			<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			    <filelist  dir="${build}/${webapp_name}/js">
 			    
-			    	<file name="./src/ext/sbi/commons/Format.js"/>
-			    	<file name="./src/ext/sbi/locale/LocaleUtils.js"/>
+			    	 <file name="./src/ext/sbi/locale/LocaleUtils.js"/>
 			    	 
 			    	 <file name="./src/ext/sbi/exception/ExceptionHandler.js"/>
 			    	 
@@ -374,7 +392,6 @@
 
 			<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 				    <filelist  dir="${build}/${webapp_name}/js">
-				    	 <file name="./src/ext/sbi/commons/Format.js"/>
 				    	 <file name="./src/ext/sbi/locale/LocaleUtils.js"/>			    	 
 				    	 <file name="./src/ext/sbi/exception/ExceptionHandler.js"/>				    	 
 				    	 <file name="./src/ext/sbi/service/ServiceRegistry.js"/>
@@ -392,8 +409,7 @@
 				    	 <file name="./src/ext/sbi/widgets/TreeModelPanel.js"/>
 				    	 <file name="./src/ext/sbi/widgets/TreeSerializers.js"/>
 				    	 <file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js"/>
-					 	<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
-				    	<file name="./src/ext/sbi/widgets/DataStorePanel.js"/>
+					 <file name="./src/ext/sbi/widgets/FilteringToolbarLight.js"/>
 
 				    	 <file name="./src/ext/sbi/udp/ManageUdp.js"/>
 				    	 <file name="./src/ext/sbi/udp/ManageUdpValues.js"/>				    	
@@ -433,16 +449,7 @@
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js"/>	
 				    	<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js"/>
 
-				    	<file name="./src/ext/sbi/tools/ManageDatasetVersions.js"/>
-				    	<file name="./src/ext/sbi/tools/ManageDatasetParameters.js"/>
-			    		<file name="./src/ext/sbi/tools/ParametersFillGrid.js"/>
-				    	<file name="./src/ext/sbi/tools/ManageDatasets.js"/>
-				    	
-				    	<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js"/>
-				    	<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
-				    	
-				    	<file name="./src/ext/sbi/domain/ManageDomains.js"/>
-				    	<file name="./src/ext/sbi/config/ManageConfig.js"/>	
+
 				    </filelist>
 
 				</concat>
@@ -499,37 +506,36 @@
 	
   <target name="sso.no_sso"  >
 	</target>	
-  	
 
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
-	  <target name="upgrade.mf"  >
-			<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
-				<regexp pattern="(Implementation-Version:)(.*?$)"/>
-				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
-			</replaceregexp>
-	  </target>
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	  <!--   CREAZIONE WAR                                                                -->
-	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
-		<target name="create.war" depends="init,jar" >
-	        
-	        <antcall target="${sso}" />
-	        <antcall target="${specific.ant.task}" />
-	        <antcall target="${modality}" />
-	        <antcall target="${ext.deploy}" />
-			<antcall target="upgrade.mf" />
-	        
-		      <mkdir dir="${dist}"/>
-		      <delete file="${dist}/${war_name}" />
-		      <war warfile="${dist}/${war_name}" 
-		           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
-		           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
-		           basedir="${build}/${webapp_name}"/>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <target name="upgrade.mf"  >
+		<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+			<regexp pattern="(Implementation-Version:)(.*?$)"/>
+			<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+		</replaceregexp>
+  </target>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   CREAZIONE WAR                                                                -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+	<target name="create.war" depends="init,jar" >
+        
+        <antcall target="${sso}" />
+        <antcall target="${specific.ant.task}" />
+        <antcall target="${modality}" />
+        <antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+        
+	      <mkdir dir="${dist}"/>
+	      <delete file="${dist}/${war_name}" />
+	      <war warfile="${dist}/${war_name}" 
+	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+	           basedir="${build}/${webapp_name}"/>
 
 
-		</target>
+	</target>
 
   <target name="javadoc">    
     <javadoc packagenames="*"
