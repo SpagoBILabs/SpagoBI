@@ -56,19 +56,17 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	var items = this.initPanels(config);
-	
 	c ={
 			border: false,
 			title: this.sheetConfig.name,
-            items: items
+            items: [new Ext.Panel({})]
 	}
 	
 	c = Ext.apply(config,c);
 	this.addEvents();
 	Ext.apply(this,c);	
 	
-	//this.on('activate', function(){this.content.updateContent();}, this)
+	this.on('activate',this.renderContent, this)
 	
 	Sbi.worksheet.runtime.RuntimeSheetPanel.superclass.constructor.call(this, c);	 	
 };
@@ -77,7 +75,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	content: null,
 	filtersPanel : null,
 	
-	initPanels: function(config){
+	initPanels: function(){
 		var items = [];
 		
 		var sharedConf = {				
@@ -107,7 +105,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		}
 		
 		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply(config||{},{contentConfig: this.sheetConfig.content}));
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({},{contentConfig: this.sheetConfig.content}));
 		items.push(this.content);
 		
 		//Builds the footer
@@ -168,5 +166,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
             "operator": "IN",
             "singleSelection": false
 		};
+	}
+	
+	//render the content after the sheet has been activated
+	, renderContent: function(){
+		this.un('activate', this.renderContent, this);
+		this.removeAll();
+		this.add(this.initPanels());
 	}
 });
