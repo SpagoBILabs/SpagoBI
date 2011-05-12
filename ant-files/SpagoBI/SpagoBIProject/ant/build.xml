@@ -185,24 +185,7 @@
       	 <replacetoken><![CDATA[END-LIFERAY -->]]></replacetoken>
 			   <replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>		
       </replace>  
-      
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-XML -->]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-XML]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[<!-- STOP-XML -->]]></replacetoken>
-			   <replacevalue><![CDATA[STOP-XML -->]]></replacevalue>		
-      </replace> 
-      
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-LIFERAY]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-LIFERAY -->]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[END-LIFERAY -->]]></replacetoken>
-			   <replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>		
-      </replace>      
+        
                           
   </target>
   
@@ -220,23 +203,6 @@
 			   <replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>		
       </replace>  
       
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-XML -->]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-XML]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[<!-- STOP-XML -->]]></replacetoken>
-			   <replacevalue><![CDATA[STOP-XML -->]]></replacevalue>		
-      </replace> 
-      
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-LIFERAY]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-LIFERAY -->]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[END-LIFERAY -->]]></replacetoken>
-			   <replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>		
-      </replace>      
                           
   </target>
 
@@ -258,23 +224,7 @@
       	 <replacetoken><![CDATA[<!-- END-WEB  -->]]></replacetoken>
 			   <replacevalue><![CDATA[END-WEB  -->]]></replacevalue>		
       </replace>  
-      
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-WEB  -->]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-WEB]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[<!-- END-WEB  -->]]></replacetoken>
-			   <replacevalue><![CDATA[END-WEB  -->]]></replacevalue>		
-      </replace>  
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-			   <replacetoken><![CDATA[<!-- START-PORTLET]]></replacetoken>      
-			   <replacevalue><![CDATA[<!-- START-PORTLET -->]]></replacevalue>		
-      </replace>
-      <replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi.xml">
-      	 <replacetoken><![CDATA[END-PORTLET  -->]]></replacetoken>
-			   <replacevalue><![CDATA[<!-- END-PORTLET  -->]]></replacevalue>		
-      </replace>       
+           
                           
   </target>
 
@@ -475,23 +425,7 @@
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->	
 	
   <target name="sso.cas"  >
-			<replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi_SSO.xml">
-				 <replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>      
-				 <replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>		
-			</replace>
-			<replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi_SSO.xml">
-				 <replacetoken><![CDATA[END-CAS -->]]></replacetoken>      
-				 <replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>		
-			</replace>
-			
-			<replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi_SSO.xml">
-				 <replacetoken><![CDATA[<!-- START-NO-CAS -->]]></replacetoken>      
-				 <replacevalue><![CDATA[<!-- START-NO-CAS]]></replacevalue>		
-			</replace>
-			<replace file="${build}/${webapp_name}/WEB-INF/conf/config/spagobi_SSO.xml">
-				 <replacetoken><![CDATA[<!-- END-NO-CAS -->]]></replacetoken>      
-				 <replacevalue><![CDATA[END-NO-CAS -->]]></replacevalue>		
-			</replace>      			
+    			
 
 			<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
 				 <replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>      
