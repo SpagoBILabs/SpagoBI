@@ -108,6 +108,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 			title : {
 				text : ''
 			},
+			yAxis : {
+				title : {
+					text : ''
+				}
+			},
 			xAxis : {
 				categories : this.getCategories(),
 				title : {

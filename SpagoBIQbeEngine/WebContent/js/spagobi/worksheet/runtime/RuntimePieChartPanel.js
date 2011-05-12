@@ -101,7 +101,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 			tooltip: {
 				enabled: true,
 				formatter: function() {
-					return '<b>'+ this.point.name +'</b>: '+ this.y;
+	                return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y;
+					//return '<b>'+ this.point.name +'</b>: '+ this.y;
 				}
 			},
 			colors: this.getColors(),
