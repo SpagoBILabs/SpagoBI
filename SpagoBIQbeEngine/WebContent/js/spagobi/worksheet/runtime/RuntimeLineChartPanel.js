@@ -66,8 +66,6 @@ Sbi.worksheet.runtime.RuntimeLineChartPanel = function(config) {
 	
 	this.init();
 	
-	this.on('afterlayout', this.onAfterLayout, this);
-	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.RuntimeGenericChartPanel, {
@@ -93,11 +91,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
 	}
 
-	, onAfterLayout: function () {
-		this.removeListener('afterlayout', this.onAfterLayout, this);
-		//this.createChart();
-	}
-	
 	, createChart: function () {
 		  this.chart = new Highcharts.Chart({
 			chart : {

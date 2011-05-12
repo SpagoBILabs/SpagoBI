@@ -73,15 +73,16 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	initContent: function (c) {
 		var items = [];
+		
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
 	        case 'Bar Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel(this.contentConfig);
+	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel({'chartConfig':this.contentConfig});
 	        case 'Line Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel(this.contentConfig);
+	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel({'chartConfig':this.contentConfig});
 	        case 'Pie Chart':
-	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel(this.contentConfig);
+	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel({'chartConfig':this.contentConfig});
 	        case 'Table':
 	        	return this.initTable(c);
 	        default: 

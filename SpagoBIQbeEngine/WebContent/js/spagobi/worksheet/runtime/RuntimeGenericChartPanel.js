@@ -51,7 +51,6 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) { 
 	
 	var defaultSettings = {
-			height: 500,
 			border: false
 	};
 
