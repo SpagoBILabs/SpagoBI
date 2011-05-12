@@ -143,10 +143,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	
 	//Update the sheet after tools value changed 
 	, updateActiveSheet: function(change){
-	
-		
-		if(change.layout!=null && change.layout!=undefined){
-			this.updateLayout(change.layout);
+		if(change.sheetLayout!=null && change.sheetLayout!=undefined){
+			this.updateLayout(change.sheetLayout);
 		}
 	}
 	

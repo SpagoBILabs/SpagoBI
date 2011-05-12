@@ -49,7 +49,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 	var defaultSettings = {		
 		border: false,
 		frame:true,
-		style:'padding:5px 15px 5px',  
+		style:'padding:5px 15px 2px 15px',  
 		fileUpload: true,
 		height: 100
 	};

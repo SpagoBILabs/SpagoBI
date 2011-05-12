@@ -61,7 +61,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	
 	c = {
 		height: 400,
-		style:'padding:5px 15px 5px',
+		style:'padding:5px 15px 2px',
 		items: [this.emptyMsgPanel]
 	}
 	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);	

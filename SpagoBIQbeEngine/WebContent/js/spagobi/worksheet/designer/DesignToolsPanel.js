@@ -95,9 +95,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		this.designToolsFieldsPanel.flex = 1;
 		this.designToolsPallettePanel.flex = 1;
 		this.designToolsLayoutPanel.flex = 1;
-		this.designToolsLayoutPanel.on('layoutchange', function(layout){
+		this.designToolsLayoutPanel.on('layoutchange', function(sheetLayout){
 			var change = {
-				layout : layout
+				'sheetLayout' : sheetLayout
 			};
 			this.fireEvent('toolschange',change);
 		}, this);
@@ -105,8 +105,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 
 	//Update the tools info for the active sheet
 	, updateToolsForActiveTab: function(activeSheet){
-		if(activeSheet.layout!=null){
-			this.designToolsLayoutPanel.setLayoutValue(activeSheet.layout);
+		if(activeSheet.sheetLayout!=null){
+			this.designToolsLayoutPanel.setLayoutValue(activeSheet.sheetLayout);
 		}
 	}
 });
