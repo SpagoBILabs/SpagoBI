@@ -5,7 +5,6 @@ Ext.ns("Sbi.locale");
 //Sbi.worksheet.designer.WorksheetDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.title'] = 'Worksheet designer';
-Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.openpreview.qtip'] = 'Vai alla preview';
 
 
 //===================================================================
@@ -25,7 +24,7 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'] =
 //===================================================================
 //Sbi.worksheet.designer.ChooseImageWindow
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Choose the image ...';
+Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Scegli l\'immagine ...';
 
 
 //===================================================================
