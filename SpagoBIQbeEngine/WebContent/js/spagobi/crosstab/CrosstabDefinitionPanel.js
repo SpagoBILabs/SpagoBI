@@ -145,10 +145,12 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	}
 	
 	, setFormState: function(state) {
-		if (state.crosstabDefinition.rows) this.rowsContainerPanel.setAttributes(state.rows);
-		if (state.crosstabDefinition.columns) this.columnsContainerPanel.setAttributes(state.columns);
-		if (state.crosstabDefinition.measures) this.measuresContainerPanel.setMeasures(state.measures);
-		if (state.crosstabDefinition.config) this.measuresContainerPanel.setCrosstabConfig(state.config);
+		if(state!=undefined && state!=null && state.crosstabDefinition!=undefined && state.crosstabDefinition!=null){
+			if (state.crosstabDefinition.rows) this.rowsContainerPanel.setAttributes(state.rows);
+			if (state.crosstabDefinition.columns) this.columnsContainerPanel.setAttributes(state.columns);
+			if (state.crosstabDefinition.measures) this.measuresContainerPanel.setMeasures(state.measures);
+			if (state.crosstabDefinition.config) this.measuresContainerPanel.setCrosstabConfig(state.config);
+		}
 	}
 	
 });

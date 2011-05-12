@@ -71,7 +71,8 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 			autoScroll: true,			
 			tools: [
 		      {
-	        	  id: 'help'
+	        	  id: 'gear'
+	        	, qtip: LN('sbi.worksheet.designer.worksheetdesignerpanel.openpreview.qtip')
 	        	, handler: this.execute
 	          	, scope: this
 	          }

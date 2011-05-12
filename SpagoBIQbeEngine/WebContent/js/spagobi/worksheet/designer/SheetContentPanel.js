@@ -60,7 +60,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	this.initEmptyMsgPanel();
 	
 	c = {
-		height: 500,
+		height: 400,
 		style:'padding:5px 15px 5px',
 		items: [this.emptyMsgPanel]
 	}

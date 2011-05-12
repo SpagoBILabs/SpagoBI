@@ -5,6 +5,7 @@ Ext.ns("Sbi.locale");
 //Sbi.worksheet.designer.WorksheetDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.title'] = 'Worksheet designer';
+Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.openpreview.qtip'] = 'Open preview';
 
 
 //===================================================================
