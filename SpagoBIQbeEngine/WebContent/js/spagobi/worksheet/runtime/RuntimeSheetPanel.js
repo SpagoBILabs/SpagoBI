@@ -127,11 +127,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	 * @return: the hatml for the title
 	 */
 	buildTitleHtml: function(title, header){
+		var titleId = Ext.id();
+		var textId = Ext.id();
+		var imgId = null;
+		var html = '<div id="'+titleId+'">';
 		if(title.position==null || title.position==undefined){
 			title.position='center';
 		}
 		if(title.img!=undefined && title.img!=null && title.position!='center'){
-			html = '<div style="float: left">'+title.title+'</div>';
+			html = '<div id="'+textId+'" style="float: left">'+title.title+'</div>';
 		}else{
 			html = '<div>'+title.title+'</div>';
 		}
@@ -142,10 +146,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			});
 			switch (title.position) {
 	        case 'left':
-	        	html = '<div style="float: left; margin-right:10px;"><img src="'+loadHeaderImgService+'"></img></div>'+html;
+	        	imgId= Ext.id();
+	           	html = '<div id="'+imgId+'" style="float: left; margin-right:10px;"><img src="'+loadHeaderImgService+'"></img></div>'+html;
 	            break;
 	        case 'right':
-	        	html = html+'<div style="float: right; margin-left:10px;"><img src="'+loadHeaderImgService+'"></img></div>';
+	        	imgId= Ext.id();
+	        	html = html+'<div id="'+imgId+'" style="float: right; margin-left:10px;"><img src="'+loadHeaderImgService+'"></img></div>';
 	            break;
 	        default: 
 	        	if(header){
@@ -156,7 +162,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	            break;
 			}
 		}
-		return html;
+		
+		if(imgId!=null){
+			//align the image and the text:
+			//get the width of the image and set as width of the text in this way:
+			//width text = total width-img width-2
+           	this.on("afterlayout",function(){
+           		var textDiv = Ext.get(textId);
+           		var imgDiv = Ext.get(imgId);
+           		var titleDiv = Ext.get(titleId);
+           		textDiv.setWidth(titleDiv.getWidth()-imgDiv.getWidth()-2);
+           	},this);
+		}
+		return html+'</div>';
 	}
 	
 	, getDynamicFilterDefinition: function (aField) {
