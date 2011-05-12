@@ -51,7 +51,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 		frame:true,
 		style:'padding:5px 15px 5px',  
 		fileUpload: true,
-		height: 90
+		height: 100
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetTitlePanel) {
@@ -105,7 +105,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			new Ext.form.HtmlEditor({
             	columnWidth:		.6,
             	anchor:				'95%',
-                height: 			65,
+                height: 			75,
         	    enableLinks :  		false,
         	    enableLists :		false,
         	    enableSourceEdit : 	false
