@@ -87,7 +87,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.sheetLayout = 'layout_headerfooter';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
-			style:'padding:0px 15px 0px 15px'
+			style:'padding:5px 15px 0px 15px'
 			, ddGroup: 'worksheetDesignerDDGroup'
 		});
 		this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({});
