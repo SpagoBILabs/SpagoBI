@@ -112,15 +112,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 	}
 	
 	, getTooltipFormatter: function () {
-		var toReturn = null;
-		if (this.chartConfig.showpercentage) {
-			toReturn = function () {
-				return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y + ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+		var showPercentage = this.chartConfig.showpercentage;
+		var toReturn = function () {
+			var tooltip = '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y;
+			if (showPercentage) {
+				tooltip += ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
 			}
-		} else {
-			toReturn = function () {
-				return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y;
-			}
+			return  tooltip;
 		}
 		return toReturn;
 	}
@@ -144,15 +142,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 	}
 	
 	, getDataLabelsFormatter: function () {
-		var toReturn = null;
-		if (this.chartConfig.showpercentage) {
-			toReturn = function () {
-				return '<b>'+ this.point.name +'</b>: '+ this.y + ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+		var showPercentage = this.chartConfig.showpercentage;
+		var toReturn = function () {
+			var tooltip = '<b>'+ this.point.name +'</b>: '+ this.y;
+			if (showPercentage) {
+				tooltip += ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
 			}
-		} else {
-			toReturn = function () {
-				return '<b>'+ this.point.name +'</b>: '+ this.y;
-			}
+			return  tooltip;
 		}
 		return toReturn;
 	}
