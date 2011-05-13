@@ -151,6 +151,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.services['manageListService'] = conf.manageListService;
 	this.services['saveItemService'] = conf.saveItemService;
 	this.services['deleteItemService'] = conf.deleteItemService;
+
 	
 	this.emptyRecord = conf.emptyRecToAdd;
 	this.tabItems = conf.tabItems;
@@ -190,6 +191,9 @@ Sbi.widgets.ListDetailForm = function(config) {
 	}
 	if(conf.tbButtonsArray){
 		this.tbButtonsArray = conf.tbButtonsArray;
+	}
+	if(conf.tbListButtonsArray){
+		this.tbListButtonsArray = conf.tbListButtonsArray;
 	}
 
 	this.mainElementsStore = new Ext.data.JsonStore({
@@ -273,6 +277,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	, filterWidth: 465
 	, setCloneButton: null
 	, tbButtonsArray: null
+	, tbListButtonsArray: null
 	
 	
 	,initWidget: function(){
@@ -353,7 +358,11 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 		   , items: this.tabItems
 		});
  	   
- 	   var buttonsArray = new Array();
+ 	      var buttonsArray = new Array();
+          if(this.tbListButtonsArray!=null && this.tbListButtonsArray!=undefined){
+        	buttonsArray = this.tbListButtonsArray;
+          }
+
 	 	  buttonsArray.push(new Ext.Toolbar.Button({
 	           text: LN('sbi.generic.add'),
 	            iconCls: 'icon-add',
@@ -369,7 +378,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	 	            width: 30,
 	 	            scope: this
 	 	            }));
-	 	  }
+	 	  }	 	 
 
  	    this.tb = new Ext.Toolbar({
  	    	buttonAlign : 'right',
@@ -513,5 +522,5 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	,cloneItem: function() {		
 		alert('Abstract Method: it needs to be overridden');
     }
-
+	
 });
