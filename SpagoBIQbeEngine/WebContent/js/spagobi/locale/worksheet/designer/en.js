@@ -111,7 +111,8 @@ Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.tit
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Pie chart designer';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title'] = 'Show values';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title'] = 'Show legend';
-Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title'] = 'Series palette';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showpercentage.title'] = 'Show percentage value';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title'] = 'Category\'s colors palette';
 
 
 //===================================================================

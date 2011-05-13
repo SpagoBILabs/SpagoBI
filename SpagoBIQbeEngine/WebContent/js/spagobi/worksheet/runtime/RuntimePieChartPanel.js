@@ -100,10 +100,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 			plotOptions: this.getPlotOptions(),
 			tooltip: {
 				enabled: true,
-				formatter: function() {
-	                return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y;
-					//return '<b>'+ this.point.name +'</b>: '+ this.y;
-				}
+				formatter: this.getTooltipFormatter()
 			},
 			colors: this.getColors(),
 			title : {
@@ -112,6 +109,20 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 			series : this.getSeries(),
 			colors : this.getColors()
 		});
+	}
+	
+	, getTooltipFormatter: function () {
+		var toReturn = null;
+		if (this.chartConfig.showpercentage) {
+			toReturn = function () {
+				return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y + ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+			}
+		} else {
+			toReturn = function () {
+				return '<b>'+ this.point.name +'</b><br/>'+ this.series.name +': '+ this.y;
+			}
+		}
+		return toReturn;
 	}
 	
 	, getColors : function () {
@@ -124,14 +135,26 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 			pie: {
 				dataLabels: {
 					enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
-					formatter: function() {
-						return '<b>'+ this.point.name +'</b>: '+ this.y;
-					}
+					formatter: this.getDataLabelsFormatter()
 				},
 				showInLegend: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
 			}
 		};
 		return plotOptions;
+	}
+	
+	, getDataLabelsFormatter: function () {
+		var toReturn = null;
+		if (this.chartConfig.showpercentage) {
+			toReturn = function () {
+				return '<b>'+ this.point.name +'</b>: '+ this.y + ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+			}
+		} else {
+			toReturn = function () {
+				return '<b>'+ this.point.name +'</b>: '+ this.y;
+			}
+		}
+		return toReturn;
 	}
 	
 	, getSeries: function () {
