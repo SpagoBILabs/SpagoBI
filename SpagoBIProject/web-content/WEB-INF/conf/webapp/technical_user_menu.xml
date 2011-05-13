@@ -71,10 +71,6 @@
 				functionality="SchedulerManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
-		<ITEM	title="#menu.RolesSynch"
-				functionality="SyncronizeRolesManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=DetailRolesPage&amp;MESSAGEDET=LIST_ROLES"
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
 		<ITEM	title="#menu.menuconfiguration"
 				functionality="MenuManagement"
 				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=MenuConfigurationPage"

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<BUSINESS_MAP>
-	<MAP_ACTIONS>
-		<MAP_ACTION actionName="MODIFY_ROLES_ACTION" businessProcess="SyncronizeRolesManagement" />
-	</MAP_ACTIONS>
-	<MAP_PAGE_MODULES>
-		<MAP_PAGE_MODULE pageName="DetailRolesPage" moduleName="DetailRolesModule" businessProcess="SyncronizeRolesManagement" />	
-	</MAP_PAGE_MODULES>
-</BUSINESS_MAP>
