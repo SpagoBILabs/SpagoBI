@@ -26,6 +26,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 import java.io.File;
@@ -49,12 +50,11 @@ public class ThemesManager {
 	 */   
 
 	public static String getDefaultTheme(){
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance(); 
+		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
 		String toRet=null;
-		it.eng.spago.base.SourceBean themeSB = (SourceBean)spagoconfig.getFilteredSourceBeanAttribute("SPAGOBI.THEMES.THEME", 
-				"default", "true");
-		if(themeSB!=null){
-			toRet = (String)themeSB.getAttribute("name");
+		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.default");
+		if("true".equals(themeSB)){
+			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
 		}
 		else 
 		{
@@ -64,12 +64,11 @@ public class ThemesManager {
 	}
 
 	public static String getCurrentThemeName(String  currTheme){
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance(); 
+		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
 		String toRet=null;
-		it.eng.spago.base.SourceBean themeSB = (SourceBean)spagoconfig.getFilteredSourceBeanAttribute("SPAGOBI.THEMES.THEME", 
-				"name", currTheme);	
-		if(themeSB!=null){
-			toRet = (String)themeSB.getAttribute("view_name");
+		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");	
+		if(themeSB.equals(currTheme)){
+			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.view_name");
 		}
 		else 
 		{
@@ -169,19 +168,16 @@ public class ThemesManager {
 
 
 	public static String getTheExtTheme(String currTheme){
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance(); 
+		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
 		String toRet=null;
-		it.eng.spago.base.SourceBean themeSB = (SourceBean)spagoconfig.getFilteredSourceBeanAttribute("SPAGOBI.THEMES.THEME", 
-				"name", currTheme);
-		if(themeSB!=null){
-			toRet = (String)themeSB.getAttribute("ext_theme");
+		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
+		if(themeSB.equals(currTheme)){
+			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.ext_theme");
 		}
 		if(toRet==null){
-			it.eng.spago.base.SourceBean themeSB2 = (SourceBean)spagoconfig.getFilteredSourceBeanAttribute("SPAGOBI.THEMES.THEME", 
-					"name", "sbi_default");
-					if(themeSB2!=null){
-						toRet = (String)themeSB2.getAttribute("ext_theme");
-
+			String themeSB2 = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
+					if("sbi_default".equals(themeSB2)){
+						toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.ext_theme");
 					}
 		}
 		// gets a default one if still not specified
