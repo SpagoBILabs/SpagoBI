@@ -283,6 +283,37 @@
 		    	<file name='./spagobi/crosstab/CrosstabPreviewPanel.js'/>
 		    	
 		    	<file name='./spagobi/dataset/ParametersGridPanel.js'/>
+
+		    	
+		    	
+		    	<file name='./spagobi/worksheet/designer/SheetsContainerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/DesignToolsPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/DesignToolsPallettePanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/DesignToolsLayoutPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/DesignToolsFieldsPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/SheetPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/SheetTitlePanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/ChooseImageWindow.js'/>
+		    	<file name='./spagobi/worksheet/designer/WorksheetDesignerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/SheetContentPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/ChartCategoryPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/ChartSeriesPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/TableDesignerPanel.js'/>
+
+
+		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimePieChartPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/>
 		    	
 		    </filelist>
 
