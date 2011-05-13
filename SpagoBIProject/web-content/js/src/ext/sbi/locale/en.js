@@ -28,6 +28,7 @@ Sbi.locale.ln['sbi.generic.details'] = 'Detail';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
+
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';
 Sbi.locale.ln['sbi.generic.descr'] = 'Description';
@@ -388,6 +389,7 @@ Sbi.locale.ln['sbi.roles.rolesManagement'] = 'Roles management';
 Sbi.locale.ln['sbi.roles.rolesList'] = 'Roles list';
 Sbi.locale.ln['sbi.roles.error'] = 'Error';
 Sbi.locale.ln['sbi.roles.result'] = 'Result';
+Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Synchronize';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';

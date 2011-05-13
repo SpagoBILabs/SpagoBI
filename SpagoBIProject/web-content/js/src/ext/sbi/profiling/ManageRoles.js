@@ -63,8 +63,10 @@ Sbi.profiling.ManageRoles = function(config) {
 		serviceName: 'MANAGE_ROLES_ACTION'
 		, baseParams: paramsDel
 	});
-	
-	this.initConfigObject();
+
+	var configSecurity = {};
+	configSecurity.isInternalSecurity = config.isInternalSecurity;
+	this.initConfigObject(configSecurity);
 	config.configurationObject = this.configurationObject;
 	
 	var c = Ext.apply({}, config || {}, {});
@@ -87,7 +89,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	, authorizationTab:null
 	, checkGroup: null
 
-	,initConfigObject:function(){
+	,initConfigObject:function(configSecurity){
 	    this.configurationObject.fields = ['id'
 	                         	          , 'name'
 	                        	          , 'description'
@@ -134,6 +136,18 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.panelTitle = LN('sbi.roles.rolesManagement');
 		this.configurationObject.listTitle = LN('sbi.roles.rolesList');
 		
+		/*create buttons toolbar's list (Add and Synchronize buttons)*/
+		if (configSecurity.isInternalSecurity !== undefined && configSecurity.isInternalSecurity == false) {
+			var tbButtonsArray = new Array();
+			tbButtonsArray.push(new Ext.Toolbar.Button({
+		            text: LN('sbi.roles.rolesSynchronization'),
+		            iconCls: 'icon-refresh',
+		            handler: this.synchronize,
+		            width: 30,
+		            scope: this	            
+		            }));
+			this.configurationObject.tbListButtonsArray = tbButtonsArray;
+		}
 		this.initTabItems();
     }
 
@@ -590,6 +604,77 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                Ext.MessageBox.show({
 	                    title: LN('sbi.roles.error'),
 	                    msg: 'Error while Saving Role',
+	                    width: 150,
+	                    buttons: Ext.MessageBox.OK
+	               });
+	      		}
+            }
+            ,scope: this
+        });
+    }
+	
+	,synchronize : function() {
+		var syncUrl = Sbi.config.serviceRegistry.getServiceUrl({
+					  serviceName: 'MANAGE_ROLES_ACTION'
+					, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "ROLES_SYNCHRONIZATION"}
+			});
+		
+        Ext.Ajax.request({
+            url: syncUrl,
+            success: function(response, options) {
+				if (response !== undefined) {
+		      		if(response.responseText !== undefined) {
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content.responseText !== 'Operation succeded') {
+			                    Ext.MessageBox.show({
+			                        title: LN('sbi.roles.error'),
+			                        msg: content,
+			                        width: 150,
+			                        buttons: Ext.MessageBox.OK
+			                   });
+			      		}else{		
+			      			this.mainElementsStore.load();
+			      			Ext.MessageBox.show({
+			                        title: LN('sbi.roles.result'),
+			                        msg: LN('sbi.roles.resultMsg'),
+			                        width: 200,
+			                        buttons: Ext.MessageBox.OK
+			                });
+			      		}      				 
+
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Error while synchronize Roles', 'Service Error');
+				}
+            },
+            failure: function(response) {
+	      		if(response.responseText !== undefined) {
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			var errMessage ='';
+					for (var count = 0; count < content.errors.length; count++) {
+						var anError = content.errors[count];
+	        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+	        				errMessage += anError.localizedMessage;
+	        			} else if (anError.message !== undefined && anError.message !== '') {
+	        				errMessage += anError.message;
+	        			}
+	        			if (count < content.errors.length - 1) {
+	        				errMessage += '<br/>';
+	        			}
+					}
+
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.attributes.validationError'),
+	                    msg: errMessage,
+	                    width: 400,
+	                    buttons: Ext.MessageBox.OK
+	               });
+	      		}else{	      			
+	                Ext.MessageBox.show({
+	                    title: LN('sbi.roles.error'),
+	                    msg: 'Error while synchronize Roles',
 	                    width: 150,
 	                    buttons: Ext.MessageBox.OK
 	               });
