@@ -125,16 +125,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/business_map.xml" />
-	  
-  
-	<!-- tools.role -->	
-	<CONFIGURATOR path="/WEB-INF/conf/tools/role/actions.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/tools/role/modules.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/tools/role/pages.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/tools/role/presentation.xml" />
-    <CONFIGURATOR path="/WEB-INF/conf/tools/role/publishers.xml" />   
-    <CONFIGURATOR path="/WEB-INF/conf/tools/role/business_map.xml" />  
-  
   
 	<!-- tools.scheduler -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/messages.xml" />
