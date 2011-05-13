@@ -5,7 +5,6 @@ import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.RequestContainerPortletAccess;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -197,10 +196,10 @@ public class MessageBuilder
                 HttpServletRequest request = (HttpServletRequest)obj;
                 Locale reqLocale = request.getLocale();
                 String language = reqLocale.getLanguage();
-                SourceBean langSB = (SourceBean)ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", language);
-                if(langSB != null)
+                String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+                if(langSB != null && language.equals(langSB))
                 {
-                    String country = (String)langSB.getAttribute("country");
+                    String country = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
                     browserLocale = new Locale(language, country);
                 }
             }
@@ -219,10 +218,10 @@ public class MessageBuilder
         Locale browserLocale = null;
         Locale reqLocale = request.getLocale();
         String language = reqLocale.getLanguage();
-        SourceBean langSB = (SourceBean)ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", language);
-        if(langSB != null)
+        String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+        if(langSB != null && language.equals(langSB))
         {
-            String country = (String)langSB.getAttribute("country");
+            String country = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
             browserLocale = new Locale(language, country);
         }
         if(browserLocale == null)
@@ -236,9 +235,9 @@ public class MessageBuilder
     public static Locale getDefaultLocale()
     {
         logger.debug("IN");
-        SourceBean defaultLangSB = (SourceBean)ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "default", "true");
-        String defaultLang = (String)defaultLangSB.getAttribute("language");
-        String defaultCountry = (String)defaultLangSB.getAttribute("country");
+        String defaultLangSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+        String defaultLang = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+        String defaultCountry = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
         Locale locale = new Locale(defaultLang, defaultCountry);
         logger.debug("OUT");
         return locale;
@@ -285,9 +284,9 @@ public class MessageBuilder
         if(StringUtilities.isEmpty(locale.getCountry()))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not contain the country value. The one specified in configuration will be used").toString());
-            ConfigSingleton spagobiConfig = ConfigSingleton.getInstance();
-            SourceBean localeConf = (SourceBean)spagobiConfig.getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", locale.getLanguage());
-            String country = (String)localeConf.getAttribute("country");
+            SingletonConfig spagobiConfig = SingletonConfig.getInstance();
+            String localeConf = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+            String country = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
             locale = new Locale(locale.getLanguage(), country);
         }
         logger.debug((new StringBuilder("OUT-locale:")).append(locale == null ? "null" : locale.toString()).toString());
@@ -298,7 +297,7 @@ public class MessageBuilder
     private boolean isValidLocale(Locale locale) {
 		logger.info("IN");
 		
-		ConfigSingleton spagobiConfig;
+		SingletonConfig spagobiConfig;
 		Object localeConf;
 		String language;
 		String country;
@@ -309,8 +308,8 @@ public class MessageBuilder
 		try {
 			language = locale.getLanguage();
 			
-			spagobiConfig = ConfigSingleton.getInstance();
-			localeConf = spagobiConfig.getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", language);
+			spagobiConfig = SingletonConfig.getInstance();
+			localeConf = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
 			
 			if(localeConf == null) return false;
 			
