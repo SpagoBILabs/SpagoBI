@@ -65,7 +65,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	this.addPanel = {
 			id: 'addTab',
             title: '<br>',
-            iconCls: 'newTabIcon',
+            iconCls: 'newTabIcon'
         	};
 	
 	c ={
@@ -107,7 +107,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		var sheet = new Sbi.worksheet.designer.SheetPanel(Ext.apply(sheetConf,{
 	        title: 'Sheet ' + (++this.index),
 	        closable:true
-	    })); 
+	    }));
+		sheet.contentPanel.on('addDesigner', this.addDesignerHandler, this);
 		
 	    var tab = this.add(sheet);
 	    this.add(this.addPanel);
@@ -129,7 +130,31 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 				);
 			return false;
 	    },this);
+	    
+	    return sheet;
 	}
+	
+	, addDesignerHandler: function (sheet, state) {
+		var newSheet = this.addTab({});
+		newSheet.contentPanel.addDesigner(state);
+		this.activate(newSheet);
+		this.notifySheetAdded.defer(500, this, ['New sheet', 'A new sheet was added']);
+		//Ext.example.msg.defer(500, this, ['New sheet', 'A new sheet was added']);
+	}
+	
+    , createBox: function (t, s) {
+        return '<div class="msg"><h3>' + t + '</h3><p>' + s + '</p></div>';
+    }
+    
+    , notifySheetAdded : function(title, format) {
+        if(!this.msgCt){
+        	this.msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
+        }
+        var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));
+        var m = Ext.DomHelper.append(this.msgCt, this.createBox(title, s), true);
+        m.hide();
+        m.slideIn('b', { duration: 1 }).pause( 1 ).ghost("b", { duration: 2, remove: true});
+    }
 	
 	//Update the layout of the active panel
 	, updateLayout: function (layout) {

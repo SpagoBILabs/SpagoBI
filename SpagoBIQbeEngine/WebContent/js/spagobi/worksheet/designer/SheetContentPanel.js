@@ -64,7 +64,10 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 		style:'padding:5px 15px 2px',
 		items: [this.emptyMsgPanel]
 	}
-	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);	
+	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents('addDesigner');
+	
 	this.on('render', this.initDropTarget, this);
 
 };
@@ -102,15 +105,6 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	}
 	
 	, notifyDropFromPalette: function(ddSource) {
-		if (this.designer != null) {
-			Ext.Msg.show({
-				   title:'Drop not allowed',
-				   msg: 'You can insert a single widget on a sheet. Create a new sheet',
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.WARNING
-			});
-			return;
-		}
 		var rows = ddSource.dragData.selections;
 		if (rows.length > 1) {
 			Ext.Msg.show({
@@ -124,6 +118,17 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		var row = rows[0];
 		var state = {};
 		state.designer = row.json.name;
+		if (this.designer != null) {
+//			Ext.Msg.show({
+//				   title:'Drop not allowed',
+//				   msg: 'You can insert a single widget on a sheet. Create a new sheet',
+//				   buttons: Ext.Msg.OK,
+//				   icon: Ext.MessageBox.WARNING
+//			});
+//			return;
+			this.fireEvent('addDesigner', this, state);
+			return;
+		}
 		this.addDesigner(state);
 	}
 
