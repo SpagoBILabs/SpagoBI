@@ -46,9 +46,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		types+="]";
 		
 	}
+	
+	//getting security type: if it's internal (SpagoBI) active pwd management and checks
+	SingletonConfig serverConfig = SingletonConfig.getInstance();
+	String strInternalSecurity = serverConfig.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
+	boolean isInternalSecurity = (strInternalSecurity.indexOf("InternalSecurity")>0)?true:false;
 	%>
 
 	var config=<%= types%>;
+	config.isInternalSecurity = <%=isInternalSecurity%>  
 	var url = {
     	host: '<%= request.getServerName()%>'
     	, port: '<%= request.getServerPort()%>'
@@ -61,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
     	baseUrl: url
     });
+    
 
 Ext.onReady(function(){
 	Ext.QuickTips.init();

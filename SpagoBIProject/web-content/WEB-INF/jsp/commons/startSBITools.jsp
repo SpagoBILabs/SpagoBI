@@ -89,23 +89,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				</td>
 			</tr>
 		<%} %>
-		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SYNCRONIZE_ROLES_MANAGEMENT)) {%>
-			<tr class="portlet-font" vAlign="middle">
-				<td width="100" align="center">
-					<img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/rolesynch64.jpg", currTheme)%>' />
-				</td>
-				<td width="20">
-					&nbsp;
-				</td>
-				<td vAlign="middle">
-				    <br/> 
-					<a href='<portlet:actionURL><portlet:param name="PAGE" value="DetailRolesPage"/><portlet:param name="MESSAGEDET" value="LIST_ROLES"/></portlet:actionURL>' 
-						class="link_main_menu" >
-						<spagobi:message key = "SBISet.linkRolesSynch" />
-					</a>
-				</td>
-			</tr>
-		<%} %>
 	</table>
 	<br/>
 </div>
