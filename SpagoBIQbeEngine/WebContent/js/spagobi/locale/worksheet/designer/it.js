@@ -19,6 +19,9 @@ Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Non valido';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'I dati inseriti non sono validi o sono incompleti';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'] = 'Upload riuscito';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'] = 'L\'immagine &grave; stata caricata correttamente sul server';
+Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.closeimage'] = 'Torna alla scelta dell\'imagine';
+Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadimage'] = 'Upload dell\'immagine';
+Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.laodimage'] = 'Carica un\'immagine dal file system';
 
 
 //===================================================================
