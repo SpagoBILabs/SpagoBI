@@ -116,22 +116,23 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		return items;
 	},
 	
-	
 	//add the image row in the items of the panel
 	addImage: function(items){
 		
-		this.imgTriggerField = new Ext.form.TriggerField({
+		this.imgTriggerField = new Ext.form.TwinTriggerField({
 			name : 'img'
 			, fieldLabel : LN('sbi.worksheet.designer.image')
 			, triggerClass : 'x-form-search-trigger'
 			, editable : false
 			, allowBlank : true
+			, trigger1Class:'x-form-search-trigger'
+			, trigger2Class:'x-form-clear-trigger'
+			, onTrigger1Click: this.imgTriggerFieldHandler.createDelegate(this)
+			, onTrigger2Click: this.cleanTriggerFieldHandler.createDelegate(this)
+			, scope: this
+			
 		});
-		this.imgTriggerField.on("render", function(field) {
-			field.trigger.on("click", function(e) {
-				this.imgTriggerFieldHandler(); 
-			}, this);
-		}, this);
+		 
 		
 		//text field for load the image in the server from the file system
 		this.imgFile = new Ext.form.TextField({
@@ -141,16 +142,16 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			allowBlank: true
 		});
 		
-		
 		//Panel with the load image combo box
 		this.loadImageCombo = new Ext.Panel({
             layout:'column',
             items: [{
-            	columnWidth:.7,
+            	columnWidth:.75,
     			layout: 'form',
     			items: [this.imgTriggerField]
 			},{
 				xtype:          'button',
+				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.laodimage'),
                	width: 			30,
 				handler:		this.imgButtonHandler,
 				scope: 			this,
@@ -159,8 +160,8 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		});
 		
 		this.imgFileFormPanel = new Ext.form.FormPanel({
-			fileUpload: true
-			, items: [this.imgFile]
+			fileUpload: true,
+			items: [this.imgFile]
 		});
 		
 		//Panel with the load file field
@@ -172,21 +173,22 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
                     this.imgFileFormPanel,
               {
 				xtype:          'button',
-               	width: 			40,
+               	width: 			30,
 				handler:		this.uploadImgButtonHandler,
 				scope: 			this,
+				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
 				style:			'padding-left: 5px',
 				iconCls:		'uploadImgIcon'
 			}, {
 				xtype:          'button',
-               	width: 			40,
+               	width: 			30,
 				handler:		this.closeUploader,
 				scope: 			this,
+				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.closeimage'),
 				style:			'padding-left: 5px',
 				iconCls:		'closeUploadImgIcon'
 			}]
 		});
-		
 		
 		//Combo box with positions
 		this.imgPosition = new Ext.form.ComboBox({
@@ -247,6 +249,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			}, this);
 		}
 		this.chooseImageWindow.show();
+	},
+	
+	cleanTriggerFieldHandler: function() {
+		this.imgTriggerField.setValue('');
 	},
 	
 	//handler for the upload image button
