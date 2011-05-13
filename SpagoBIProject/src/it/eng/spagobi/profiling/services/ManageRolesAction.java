@@ -27,10 +27,12 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -60,6 +62,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	private final String ROLES_LIST = "ROLES_LIST";
 	private final String ROLE_INSERT = "ROLE_INSERT";
 	private final String ROLE_DELETE = "ROLE_DELETE";
+	private final String ROLES_SYNCHRONIZATION = "ROLES_SYNCHRONIZATION";
 	
 	private final String ID = "id";
 	private final String NAME = "name";
@@ -239,11 +242,26 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 						"Exception occurred while deleting role",
 						e);
 			}
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(ROLES_SYNCHRONIZATION)) {
+			try {
+				RoleSynchronizer roleSynch = new RoleSynchronizer();
+				roleSynch.synchronize();
+				logger.debug("Roles synchronized");
+				JSONObject attributesResponseSuccessJSON = new JSONObject();
+				attributesResponseSuccessJSON.put("success", true);
+				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+
+			} catch (Throwable e) {
+				logger.error("Exception occurred while syncronize roles", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Exception occurred while syncronize role",
+						e);
+			}
 		}else if(serviceType == null){
 			try {
 				List<Domain> domains = DAOFactory.getDomainDAO().loadListDomainsByType("ROLE_TYPE");
 				getSessionContainer().setAttribute("roleTypes", domains);
-				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,
