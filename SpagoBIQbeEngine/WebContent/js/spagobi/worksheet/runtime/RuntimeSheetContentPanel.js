@@ -56,7 +56,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	Ext.apply(this, c);
 	this.addEvents();
 	this.content = this.initContent(c);
-	//this.content = new Ext.Panel({height: 500});
+
 	c = {
 		border: false,
 		style:'padding:5px 15px 5px',
@@ -122,7 +122,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 			crosstabConfig: {autoHeight: true}, 
 			title: false}));
 		this.on('afterlayout',this.loadCrosstab,this);
-		
 		return crossTab;
 	},
 	
