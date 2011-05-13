@@ -106,7 +106,8 @@ Sbi.crosstab.core.CrossTab = function(config) {
     this.addDDArrowsToPage();
     
     var c = {
-  		layout:'fit',
+  	//	layout:'fit',
+  		autoHeight: true,
   		border: false,
   		defaults: {autoScroll: true},
 		padding : 10
@@ -606,7 +607,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	            var brothers =this.getDragData().panel.father.childs;
 	    	            var i=0;
 	    	        	var father = this.getDragData().panel.father;
-	    	        	
+	    	        	if(father==undefined || father==null){
+	    	        		return;
+	    	        	}
+	    	            if(father.getEl()==undefined || father.getEl()==null){
+	    	            	return;
+	    	            }
 	    	            if(horizontal){
 	    	            	var arrowBottom = document.getElementById('ext-arrow-dd-bottom');
 		    	            arrowBottom.style.visibility = "visible";
@@ -732,6 +738,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 			        	}
 			        	
 			        	var father =this.getDragData().panel.father;
+			        	
+	    	        	if(father==undefined || father==null){
+	    	        		return;
+	    	        	}
+			        	
 			        	var tempChilds = new Array();
 			        	var xy;
 			        	
@@ -1068,6 +1079,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     		if(this.withColumnsSum  && this.datapanelColumnSum!=null){
     			this.datapanelColumnSum.destroy();
     		}
+    		this.table.hide();
     		this.remove(this.table, false);
     	}
     	
