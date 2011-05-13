@@ -76,6 +76,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 	, seriesContainerPanel: null
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
+	, showPercentageCheck: null
 	, seriesPalette: null
 	
 	, init: function () {
@@ -90,11 +91,24 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 			, fieldLabel: LN('sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title')
 		});
 		
+		this.showPercentageCheck = new Ext.form.Checkbox({
+			checked: false
+			, fieldLabel: LN('sbi.worksheet.designer.piechartdesignerpanel.form.showpercentage.title')
+		});
+		
 		this.categoryContainerPanel = new Sbi.worksheet.designer.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
+            , tools: [{
+            	id: 'list'
+  	        	, handler: function() {
+					this.seriesPalette.show();
+				}
+  	          	, scope: this
+  	          	, qtip: LN('sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title')
+            }]
 		});
 		
 		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
@@ -132,7 +146,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 	    });
 	    
 		this.seriesPalette = new Sbi.widgets.SeriesPalette({
-			title: LN('sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title')
+			title: LN('sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title')
 			, height: 300
 			, width: 150
 			, closeAction: 'hide'
@@ -143,24 +157,13 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 			, items: [
 				{
 					xtype: 'form'
-					, height: 55
+					, height: 100
 					, style: 'padding: 10px 0px 0px 15px;'
 				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
-					, items: [this.showValuesCheck, this.showLegendCheck]
+					, items: [this.showValuesCheck, this.showLegendCheck, this.showPercentageCheck]
 				}
 				, this.axisDefinitionPanel
-				, {
-					padding: '10 10 10 10'
-					, border: false
-					, items: new Ext.Button({
-						text: LN('sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title')
-				        , handler: function() {
-							this.seriesPalette.show();
-						} 
-						, scope: this
-					})
-				}
 			]
 		});
 	}
@@ -170,6 +173,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		state.designer = 'Pie Chart';
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.showpercentage = this.showPercentageCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		state.colors = this.seriesPalette.getColors();
@@ -179,6 +183,7 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 	, setFormState: function(state) {
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.showpercentage) this.showPercentageCheck.setValue(state.showpercentage);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);

@@ -107,7 +107,8 @@ Sbi.locale.ln['sbi.worksheet.designer.linechartdesignerpanel.form.showlegend.tit
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.title'] = 'Definizione pie chart';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showvalues.title'] = 'Visualizza valori';
 Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showlegend.title'] = 'Visualizza legenda';
-Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.seriespalette.title'] = 'Tavolozza delle serie';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.form.showpercentage.title'] = 'Visualizza valori percentuali';
+Sbi.locale.ln['sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title'] = 'Tavolozza dei colori della categoria';
 
 
 //===================================================================
