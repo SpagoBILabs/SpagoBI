@@ -29,7 +29,7 @@ package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.base.PortletAccess;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 import java.util.Iterator;
@@ -258,15 +258,15 @@ public class PortletUtilities {
 		 
 		private static Locale getDefaultLocale() {
 			Locale locale = null;	
-			ConfigSingleton spagobiConf;
-			SourceBean defaultLocaeSB;
+			SingletonConfig spagobiConf;
+			String defaultLocaeSB;
 			String language;
 			String country;
 						
-			spagobiConf = ConfigSingleton.getInstance();
-			defaultLocaeSB = (SourceBean)spagobiConf.getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "default", "true");
-			language = (String)defaultLocaeSB.getAttribute("language");
-			country = (String)defaultLocaeSB.getAttribute("country");
+			spagobiConf = SingletonConfig.getInstance();
+			defaultLocaeSB = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			language = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+			country = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
 			locale = new Locale(language, country);
 			
 			return locale;
@@ -274,14 +274,14 @@ public class PortletUtilities {
 		
 		private static boolean isLocaleSupported(Locale locale) {
 				
-			ConfigSingleton spagobiConf;
-			SourceBean defaultLocaeSB;
+			SingletonConfig spagobiConf;
+			String defaultLocaeSB;
 			String country;
 			
 			if(locale == null) return false;
 			
-			spagobiConf = ConfigSingleton.getInstance();
-			defaultLocaeSB = (SourceBean)spagobiConf.getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", "language", locale.getLanguage());
+			spagobiConf = SingletonConfig.getInstance();
+			defaultLocaeSB = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
 			
 			return defaultLocaeSB != null;
 		}
@@ -313,10 +313,8 @@ public class PortletUtilities {
 				 
 			 }
 			 // get the configuration sourceBean/language code/country code of the default language
-			 SourceBean defaultLangSB = (SourceBean)ConfigSingleton.getInstance()
-		 	                           .getFilteredSourceBeanAttribute("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE", 
-		 	                           		                           "default", "true");
-			 String defaultLang = (String)defaultLangSB.getAttribute("language");
+			 String defaultLangSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			 String defaultLang = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
 		 	 return defaultLang;
 	    } 
 }

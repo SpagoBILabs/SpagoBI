@@ -4,7 +4,7 @@
 
 
 	<!--  True If you want to log user actions in DB table sbi_activity_monitoring-->      
-	<DB_LOG value="false" />
+	<!-- <DB_LOG value="false" /> --> 
 	
     <!--  TimeStamp Format of SpagoBI DB-->          
     <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
@@ -15,98 +15,18 @@
     <!--  dd-MMM-yy HH:mm:ss-->
     <!--  Hsqldb: Uncomment the row below and edit the file to provide Db timestamp  info -->
     <!--  yyyy-MM-dd HH:mm:ss -->          
-    <DB-TIMESTAMP-FORMAT format="yyyy-MM-dd HH:mm:ss" /> 
+    <!-- <DB-TIMESTAMP-FORMAT format="yyyy-MM-dd HH:mm:ss" /> -->
 
 
 
-     <THEMES>
-		<THEME name="sbi_default" default="true" view_name="default" ext_theme="xtheme-gray.css" /> 
+     <!-- <THEMES> -->
+		<!-- <THEME name="sbi_default" default="true" view_name="default" ext_theme="xtheme-gray.css" />  -->
 	<!-- <THEME name="other_theme" default="false" view_name="other" />  -->	
-	 </THEMES>
+	 <!-- </THEMES> -->
 
 
-	 <PORTLET_EDIT_MODE_ROLES>
-		<ROLE name="/spagobi/admin" />
-	 </PORTLET_EDIT_MODE_ROLES>
-
-	 <LANGUAGE_SUPPORTED>
-		<LANGUAGE default="false" language="it" country="IT" />
-		<LANGUAGE default="true" language="en" country="US" />
-		<LANGUAGE default="false" language="fr" country="FR" />
-		<LANGUAGE default="false" language="es" country="ES" />		
-	 </LANGUAGE_SUPPORTED>	
-	
-	
-	 <SCRIPT_LANGUAGE_SUPPORTED>
-		<SCRIPT_LANGUAGE default="true" 
-						name="groovy" 
-						engineclass="org.codehaus.groovy.bsf.GroovyEngine"
-						identifier="groovy"
-						shortidentifier="gy" 
-						predefinedScriptFile="predefinedGroovyScript.groovy"/>
-		<SCRIPT_LANGUAGE default="false" 
-						name="javascript" 
-						identifier="javascript"
-						shortidentifier="js" 
-						predefinedScriptFile="predefinedJavascriptScript.js"/>						
-	 </SCRIPT_LANGUAGE_SUPPORTED>	
-	
-	
-	 <TREE_INITIALIZATION>
-		<TREE_INITIAL_STRUCTURE>
-			<NODE code="Functionalities" name="Functionalities" 
-					description="Functionalities" parentPath="" codeType="LOW_FUNCT" />
-			<!-- 
-			<NODE code="SystemFunctionalities" name="System Functionalities" 
-					description="System Functionalities" parentPath="/Functionalities" codeType="LOW_FUNCT" />
-			-->
-		</TREE_INITIAL_STRUCTURE>
-	 </TREE_INITIALIZATION>
-     <INDEX_INITIALIZATION>
-		<INDEX jndiResourcePath="java://comp/env/spagobi_resource_path" name="//idx" />
-	 </INDEX_INITIALIZATION>
-     <INTERNAL_PROFILING_INITIALIZER>
-		<DEFAULT_USERS>
-			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator">
-				<ATTRIBUTE name="email" value="admin@eng.it" />
-				<ATTRIBUTE name="name" value="SpagoBI Administrator" />
-				<ROLE name="/spagobi/admin"/>
-			</USER>
-			<USER userId="biuser" password="biuser" fullName="SpagoBI User">
-				<ATTRIBUTE name="name" value="SpagoBI User" />
-				<ROLE name="/spagobi/user"/>
-			</USER>
-			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User">
-				<ATTRIBUTE name="name" value="SpagoBI TestUser" />
-				<ROLE name="/spagobi/test"/>
-			</USER>
-			<USER userId="bidev" password="bidev" fullName="SpagoBI Developer">
-				<ATTRIBUTE name="name" value="SpagoBI Developer" />
-				<ROLE name="/spagobi/dev"/>
-			</USER>
-			<USER userId="bam" password="bam" fullName="Bam User">
-				<ATTRIBUTE name="name" value="Bam User" />
-				<ROLE name="/spagobi/bam"/>
-			</USER>
-		</DEFAULT_USERS>
-		<DEFAULT_ATTRIBUTES>
-			<ATTRIBUTE name="name" description="name" />
-			<ATTRIBUTE name="surname" description="surname" />
-			<ATTRIBUTE name="address" description="address" />
-			<ATTRIBUTE name="birth_date" description="birth date" />
-			<ATTRIBUTE name="email" description="email" />
-		</DEFAULT_ATTRIBUTES>
-		<DEFAULT_ROLES>
-			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" roleTypeCD="DEV_ROLE"/>
-			<ROLE roleName="/spagobi/test" description="/spagobi/test" roleTypeCD="TEST_ROLE"/>
-			<ROLE roleName="/spagobi/user" description="/spagobi/user" roleTypeCD="USER"/>
-			<ROLE roleName="/spagobi/userb" description="/spagobi/userb" roleTypeCD="USER" />
-			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" roleTypeCD="ADMIN" />
-			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" />
-			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" />
-			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" />	
-			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />		
-		</DEFAULT_ROLES>
-	 </INTERNAL_PROFILING_INITIALIZER>  
+<!-- 	 <PORTLET_EDIT_MODE_ROLES> -->
+<!-- 		<ROLE name="/spagobi/admin" /> -->
+<!-- 	 </PORTLET_EDIT_MODE_ROLES> -->
 	
 </SPAGOBI>

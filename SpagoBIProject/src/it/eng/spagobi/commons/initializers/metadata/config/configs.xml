@@ -66,5 +66,22 @@
 <CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SPAGOBI_SSO.SECURITY_LOGOUT_URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout" valueType="STRING"/>
 <CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" description="" isActive="true" valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING"/>
 
+<CONFIG label="SPAGOBI.DB-TIMESTAMP-FORMAT.format" name="DB-TIMESTAMP-FORMAT" description="DB-TIMESTAMP-FORMAT" isActive="true" valueCheck="yyyy-MM-dd HH:mm:ss" valueType="STRING"/>
+<CONFIG label="SPAGOBI.DB_LOG.value" name="DB_LOG.value" description="DB_LOG.value" isActive="true" valueCheck="false" valueType="STRING"/>
+<CONFIG label="SPAGOBI.THEMES.THEME.name" name="THEME.name" description="THEME.name" isActive="true" valueCheck="sbi_default" valueType="STRING"/>
+<CONFIG label="SPAGOBI.THEMES.THEME.default" name="THEME.default" description="THEME.default" isActive="true" valueCheck="true" valueType="STRING"/>
+<CONFIG label="SPAGOBI.THEMES.THEME.view_name" name="THEME.view_name" description="THEME.view_name" isActive="true" valueCheck="default" valueType="STRING"/>
+<CONFIG label="SPAGOBI.THEMES.THEME.ext_theme" name="THEME.ext_theme" description="THEME.ext_theme" isActive="true" valueCheck="xtheme-gray.css" valueType="STRING"/>
+<CONFIG label="SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE.name" name="ROLE.name" description="ROLE.name" isActive="true" valueCheck="/spagobi/admin" valueType="STRING"/>
+<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE" name="LANGUAGE" description="LANGUAGE" isActive="true" valueCheck="[it,IT],[en,US],[fr,FR],[es,ES]" valueType="STRING"/>
+<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language" name="language" description="language" isActive="true" valueCheck="en" valueType="STRING"/>
+<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country" name="country" description="country" isActive="true" valueCheck="US" valueType="STRING"/>
+<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default" name="default" description="default" isActive="true" valueCheck="true" valueType="STRING"/>
+<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.code" name="NODE.code" description="NODE.code" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
+<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.name" name="NODE.name" description="NODE.name" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
+<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.description" name="NODE.description" description="NODE.description" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
+<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.parentPath" name="NODE.parentPath" description="NODE.parentPath" isActive="true" valueCheck="" valueType="STRING"/>
+<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.codeType" name="NODE.codeType" description="NODE.codeType" isActive="true" valueCheck="LOW_FUNCT" valueType="STRING"/>
+
 </CONFIGS>
 

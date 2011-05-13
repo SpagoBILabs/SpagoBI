@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 java.util.Iterator,
 				 it.eng.spago.base.SourceBean,
 				 it.eng.spago.security.IEngUserProfile,
-				 it.eng.spago.configuration.ConfigSingleton,it.eng.spagobi.commons.utilities.PortletUtilities" %>
+				 it.eng.spagobi.commons.SingletonConfig,
+				 it.eng.spagobi.commons.utilities.PortletUtilities" %>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Arrays"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
@@ -47,12 +48,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	roles = ((UserProfile)profile).getRolesForUse();
 	
 	boolean hasPortletEditPermissionRoles = false;
-	ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-	List rolesSB = (List) configSingleton.getAttributeAsList("SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE");
-	Iterator rolesIt = rolesSB.iterator();
-	while (rolesIt.hasNext()) {
-		SourceBean roleSB = (SourceBean) rolesIt.next();
-		String roleName = (String) roleSB.getAttribute("name");
+	SingletonConfig configSingleton = SingletonConfig.getInstance();
+	String roleSB = configSingleton.getConfigValue("SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE.name");
+	if (roleSB!=null) {
+		String roleName = roleSB;
 		if (roles.contains(roleName)) {
 			hasPortletEditPermissionRoles = true;
 			break;
