@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.CustomJDBCAppender;
 import it.eng.spagobi.commons.bo.UserProfile;
 
@@ -58,9 +58,9 @@ public class AuditLogUtilities {
 		logger.debug("IN");
 		CustomJDBCAppender ja = null;
 		boolean updateDB= false;
-		ConfigSingleton serverConfig = ConfigSingleton.getInstance();
-		String dbTimestampFormat = (String)serverConfig.getAttribute("SPAGOBI.DB-TIMESTAMP-FORMAT.format");
-		String updateDBConf = (String)serverConfig.getAttribute("SPAGOBI.DB_LOG.value");
+		SingletonConfig serverConfig = SingletonConfig.getInstance();
+		String dbTimestampFormat = serverConfig.getConfigValue("SPAGOBI.DB-TIMESTAMP-FORMAT.format");
+		String updateDBConf = serverConfig.getConfigValue("SPAGOBI.DB_LOG.value");
 		if(updateDBConf!=null && updateDBConf.equalsIgnoreCase("true")){
 			updateDB=true;
 		}
