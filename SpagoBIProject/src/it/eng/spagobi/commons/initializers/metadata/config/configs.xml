@@ -89,11 +89,19 @@
 <CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES" name="LANGUAGES" description="All languages supported" isActive="true" valueCheck="[it,IT],[en,US],[fr,FR],[es,ES]" valueType="STRING"/>
 <CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default" name="default" description="default" isActive="true" valueCheck="en,US" valueType="STRING"/>
 
-<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.code" name="NODE.code" description="NODE.code" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
-<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.name" name="NODE.name" description="NODE.name" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
-<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.description" name="NODE.description" description="NODE.description" isActive="true" valueCheck="Functionalities" valueType="STRING"/>
-<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.parentPath" name="NODE.parentPath" description="NODE.parentPath" isActive="true" valueCheck="" valueType="STRING"/>
-<CONFIG label="TREE_INITIAL_STRUCTURE.NODE.codeType" name="NODE.codeType" description="NODE.codeType" isActive="true" valueCheck="LOW_FUNCT" valueType="STRING"/>
+<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="java://comp/env/spagobi_resource_path" valueType="STRING"/>
+<CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="//idx" valueType="STRING"/>
+
+<CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT_LANGUAGE_DEFAULT" description="" isActive="true" valueCheck="groovy" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.groovy.name" name="SCRIPT_LANGUAGE.groovy.name" description="" isActive="true" valueCheck="groovy" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.groovy.engineclass" name="SCRIPT_LANGUAGE.groovy.engineclass" description="" isActive="true" valueCheck="org.codehaus.groovy.bsf.GroovyEngine" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.groovy.shortidentifier" name="SCRIPT_LANGUAGE.groovy.shortidentifier" description="" isActive="true" valueCheck="gy" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.groovy.predefinedScriptFile" name="SCRIPT_LANGUAGE.groovy.predefinedScriptFile" description="" isActive="true" valueCheck="predefinedGroovyScript.groovy" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.groovy.identifier" name="SCRIPT_LANGUAGE.groovy.identifier" description="" isActive="true" valueCheck="groovy" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.javascript.name" name="SCRIPT_LANGUAGE.groovy.name" description="" isActive="true" valueCheck="javascript" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.javascript.shortidentifier" name="SCRIPT_LANGUAGE.groovy.shortidentifier" description="" isActive="true" valueCheck="js" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.javascript.predefinedScriptFile" name="SCRIPT_LANGUAGE.groovy.predefinedScriptFile" description="" isActive="true" valueCheck="predefinedJavascriptScript.js" valueType="STRING"/>
+<CONFIG label="SCRIPT_LANGUAGE.javascript.identifier" name="SCRIPT_LANGUAGE.groovy.identifier" description="" isActive="true" valueCheck="javascript" valueType="STRING"/>
 
 </CONFIGS>
 

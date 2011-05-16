@@ -23,6 +23,7 @@ package it.eng.spagobi.commons.initializers.indexing;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 
@@ -53,15 +54,10 @@ public class IndexingInitializer implements InitializerIFace {
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		_config = config;
-		//at server startup calls create index
-		
-		List nodes = _config.getAttributeAsList("INDEX");
-		Iterator it = nodes.iterator();
-		while (it.hasNext()) {
-		    SourceBean node = (SourceBean) it.next();
-		    String jndiResourcePath = (String) node.getAttribute("jndiResourcePath");
+
+		    String jndiResourcePath = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.jndiResourcePath");
 		    String location = SpagoBIUtilities.readJndiResource(jndiResourcePath);
-		    String name = (String) node.getAttribute("name");
+		    String name = SingletonConfig.getInstance().getConfigValue("INDEX_INITIALIZATION.name");
 		    //first checks if iindex exists
 		    File idxFile = new File(location+name);
 		    if(!idxFile.exists()){
@@ -79,7 +75,7 @@ public class IndexingInitializer implements InitializerIFace {
 		    }
 
 		    
-		}
+
 		logger.debug("OUT");
 	}
 
