@@ -30,7 +30,9 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 
@@ -50,31 +52,14 @@ public class ThemesManager {
 	 */   
 
 	public static String getDefaultTheme(){
-		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
-		String toRet=null;
-		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.default");
-		if("true".equals(themeSB)){
-			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
-		}
-		else 
-		{
-			toRet="sbi_default";
-		}
-		return toRet;	
+		return SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME.default");
+	
 	}
 
 	public static String getCurrentThemeName(String  currTheme){
-		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
-		String toRet=null;
-		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");	
-		if(themeSB.equals(currTheme)){
-			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.view_name");
-		}
-		else 
-		{
-			toRet="default";
-		}
-		return toRet;	
+		logger.debug("IN:currTheme="+currTheme);
+		return SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME."+currTheme+".view_name");
+
 	}
 	
 
@@ -100,6 +85,20 @@ public class ThemesManager {
 		return drawSelect;
 
 	}
+	
+	public static List<String> getThemes(){
+		logger.debug("IN");
+		String themes=SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEMES");
+		List<String> toReturn=new ArrayList<String>();
+		StringTokenizer tokenizer=new StringTokenizer(themes,",");
+		while (tokenizer.hasMoreElements()) {
+			String theme = (String) tokenizer.nextElement();
+			toReturn.add(theme);
+			logger.debug("Add Theme:"+theme);
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 
 	/**
 	 * Check if a resource exists in the current team;
@@ -111,6 +110,7 @@ public class ThemesManager {
 		logger.debug("IN");
 		ConfigSingleton config = ConfigSingleton.getInstance();
 		String rootPath=config.getRootPath();
+		logger.debug("rootPath="+rootPath);
 		String urlByTheme=resource;
 		resource.trim();
 		if(resource.startsWith("/"))
@@ -125,12 +125,16 @@ public class ThemesManager {
 		// check if object exists
 		File check=new File(urlComplete);
 		// if file
-		logger.debug("IN");
+		
 		if(!check.exists())
 		{
+			logger.debug("OUT.true");
 			return false;
 		}
-		else return true;
+		else {
+			logger.debug("OUT.false");
+			return true;
+		}
 
 	}
 
@@ -168,22 +172,14 @@ public class ThemesManager {
 
 
 	public static String getTheExtTheme(String currTheme){
-		SingletonConfig spagoconfig = SingletonConfig.getInstance(); 
-		String toRet=null;
-		String themeSB = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
-		if(themeSB.equals(currTheme)){
-			toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.ext_theme");
+		
+		logger.debug("IN:currTheme="+currTheme);
+		String ext_theme= SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME."+currTheme+".ext_theme");
+		if (ext_theme==null){
+			ext_theme=getTheExtTheme("sbi_default");
 		}
-		if(toRet==null){
-			String themeSB2 = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.name");
-					if("sbi_default".equals(themeSB2)){
-						toRet = spagoconfig.getConfigValue("SPAGOBI.THEMES.THEME.ext_theme");
-					}
-		}
-		// gets a default one if still not specified
-		//if(toRet==null)toRet="xtheme-gray.css";
-		return toRet;
-
+		logger.debug("OUT:"+ext_theme);
+		return ext_theme;
 
 		}
 
