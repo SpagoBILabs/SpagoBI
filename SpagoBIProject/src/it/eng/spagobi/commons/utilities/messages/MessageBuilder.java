@@ -4,18 +4,13 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.RequestContainerPortletAccess;
 import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.message.MessageBundle;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
