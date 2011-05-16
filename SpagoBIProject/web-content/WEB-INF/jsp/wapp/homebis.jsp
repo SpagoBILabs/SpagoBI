@@ -254,8 +254,7 @@ else
 }
 
 //recover all themes
-	ConfigSingleton configspago = ConfigSingleton.getInstance();
-	List themes=configspago.getAttributeAsList("SPAGOBI.THEMES.THEME");
+	List themes=ThemesManager.getThemes();
 	boolean drawSelectTheme=ThemesManager.drawSelectTheme(themes);
 	
 	//keep track of current theme view name
