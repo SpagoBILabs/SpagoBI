@@ -517,9 +517,9 @@ public class GeneralUtilities extends SpagoBIUtilities{
     	List locales=GeneralUtilities.getSupportedLocales();
     	Iterator iter=locales.iterator();
     	while (iter.hasNext() ){
-    		 String localeTmp=(String)iter.next();
-    		 String languageTmp = localeTmp.substring(1,3);
-			 country = localeTmp.substring(4,6); 
+    		 Locale localeTmp=(Locale)iter.next();
+    		 String languageTmp = localeTmp.getLanguage();
+			 country = localeTmp.getCountry();
 			 if (languageTmp.equals(language)) {
 				 logger.debug("OUT:"+country);
 				 return country;
