@@ -437,12 +437,12 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		String language = null;
 		Locale locale = null;
 		SingletonConfig config = SingletonConfig.getInstance();
-		String languageSB = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-		if (languageSB != null && languageSB.equals("true")) {
-			country = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
-			language = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+		String languageConfig = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+		if (languageConfig != null ) {
+			language = languageConfig.substring(0, 2);
+			country = languageConfig.substring(3);
 			if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
-
+				logger.warn("Problem reading locale");
 			}
 			else{
 				// set the locale!
@@ -466,11 +466,10 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		String country = null;
 		String language = null;
 		Locale locale = null;
-		SingletonConfig config = SingletonConfig.getInstance();
-		String languageSB = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-		if (languageSB != null && languageSB.equals("true")) {
-			country = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
-			language = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
+		String languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+		if (language != null ) {
+			language = languageConfig.substring(0, 2);
+			country = languageConfig.substring(3);
 			if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
 				country = "US";
 				language = "en";
@@ -487,9 +486,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	public static List<Locale> getSupportedLocales() {
 		logger.debug("IN");
 		List<Locale> toReturn = new ArrayList<Locale>();
-		SingletonConfig config = SingletonConfig.getInstance();
-		String attName = "SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE";
-		String locales = config.getConfigValue(attName);
+		String locales = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (locales != null && locales.length() > 0) {
 			//Iterator it = locales.iterator();
 			while (locales.length() > 1) {
@@ -512,6 +509,24 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+	
+	public static String getCountry(String language) {
+		logger.debug("IN");
+		String country=null;
+    	List locales=GeneralUtilities.getSupportedLocales();
+    	Iterator iter=locales.iterator();
+    	while (iter.hasNext() ){
+    		 String localeTmp=(String)iter.next();
+    		 String languageTmp = localeTmp.substring(1,3);
+			 country = localeTmp.substring(4,6); 
+			 if (languageTmp.equals(language)) {
+				 logger.debug("OUT:"+country);
+				 return country;
+			 }
+    	}
+		logger.debug("OUT:"+country);
+		return country;
 	}
 
 	public static JSONArray getSupportedLocalesAsJSONArray() {

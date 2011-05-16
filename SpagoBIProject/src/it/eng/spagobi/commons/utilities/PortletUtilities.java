@@ -243,7 +243,7 @@ public class PortletUtilities {
 			 		locale = portalLocale; 
 			 	} else {
 			 		logger.warn("Portal locale [" +  portalLocale.getLanguage() + "," + portalLocale.getCountry() + "] is not supported by SpagoBI");
-			 		locale = getDefaultLocale();
+			 		locale = GeneralUtilities.getDefaultLocale();
 			 		logger.debug("Default locale [" +  locale.getLanguage() + "," + locale.getCountry() + "] will be used");
 			 	}
 			 	
@@ -255,35 +255,14 @@ public class PortletUtilities {
 		 	
 		 	return locale;
 		}
-		 
-		private static Locale getDefaultLocale() {
-			Locale locale = null;	
-			SingletonConfig spagobiConf;
-			String defaultLocaeSB;
-			String language;
-			String country;
-						
-			spagobiConf = SingletonConfig.getInstance();
-			defaultLocaeSB = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-			language = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-			country = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
-			locale = new Locale(language, country);
-			
-			return locale;
-		}
-		
+	
 		private static boolean isLocaleSupported(Locale locale) {
 				
-			SingletonConfig spagobiConf;
-			String defaultLocaeSB;
-			String country;
-			
-			if(locale == null) return false;
-			
-			spagobiConf = SingletonConfig.getInstance();
-			defaultLocaeSB = spagobiConf.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-			
-			return defaultLocaeSB != null;
+
+			String defaultLocal=SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+			String tmp="["+locale.getLanguage()+","+locale.getCountry()+"]";
+			logger.debug("Check if "+tmp+" is supported");	
+			return defaultLocal.contains(tmp);
 		}
 		
 		
@@ -299,22 +278,20 @@ public class PortletUtilities {
 			 try {
 			 	Locale portalLocale =  PortletAccess.getPortalLocale();
 			 	if(portalLocale == null) {
-		        	SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, "SpagoBIMessageTag", 
-		        			            "getLanguageCode", 
-		        			            "Portal locale not found by PortletAccess.getPortalLocale() method!! " +
+		        	logger.error( "Portal locale not found by PortletAccess.getPortalLocale() method!! " +
 				              			"May be there is not a portlet request");
 			 	} else {
 			 		String portalLang = portalLocale.getLanguage();
 			 		return portalLang;
 			 	}
 			 } catch (Exception e) {
-				 SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, "SpagoBIMessageTag", 
-			              			"getLanguageCode", "Error while getting portal locale", e);
+				 logger.error(  "Error while getting portal locale", e);
 				 
 			 }
+			 
 			 // get the configuration sourceBean/language code/country code of the default language
-			 String defaultLangSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-			 String defaultLang = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-		 	 return defaultLang;
+			 String languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+
+		 	 return languageConfig.substring(0, 2);
 	    } 
 }

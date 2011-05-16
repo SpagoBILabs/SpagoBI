@@ -29,6 +29,7 @@ import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -133,7 +134,7 @@ public abstract class AbstractSpagoBIAction extends AbstractBaseHttpAction {
 		
 		RequestContainer requestContainer;
 		
-		locale = MessageBuilder.getDefaultLocale();
+		locale = GeneralUtilities.getDefaultLocale();
 		
 		requestContainer = RequestContainer.getRequestContainer();
 		if(requestContainer != null){

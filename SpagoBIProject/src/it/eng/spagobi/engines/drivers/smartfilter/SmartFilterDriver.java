@@ -43,6 +43,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -435,7 +436,7 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 			return locale;
 		} catch (Exception e) {
 		    logger.error("Error while getting locale; using default one", e);
-		    return MessageBuilder.getDefaultLocale();
+		    return GeneralUtilities.getDefaultLocale();
 		} finally  {
 			logger.debug("OUT");
 		}	
