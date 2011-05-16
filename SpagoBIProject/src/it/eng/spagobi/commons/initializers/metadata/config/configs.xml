@@ -79,6 +79,7 @@
 <CONFIG label="SPAGOBI.DB_LOG.value" name="DB_LOG.value" description="DB_LOG.value" isActive="true" valueCheck="false" valueType="STRING"/>
 
 <!-- for each themes you have to define 3 properties: view_name,ext_theme,name-->
+<CONFIG label="SPAGOBI.THEMES.THEMES" name="THEMEs" description="All themes" isActive="true" valueCheck="sbi_default" valueType="STRING"/>
 <CONFIG label="SPAGOBI.THEMES.THEME.default" name="THEME.default" description="THEME.default" isActive="true" valueCheck="sbi_default" valueType="STRING"/>
 <CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.view_name" name="THEME.view_name" description="THEME.view_name" isActive="true" valueCheck="default" valueType="STRING"/>
 <CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.ext_theme" name="THEME.ext_theme" description="THEME.ext_theme" isActive="true" valueCheck="xtheme-gray.css" valueType="STRING"/>

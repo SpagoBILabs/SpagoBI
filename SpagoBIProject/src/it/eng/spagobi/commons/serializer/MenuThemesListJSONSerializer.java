@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
 import java.util.List;
@@ -58,14 +59,14 @@ public class MenuThemesListJSONSerializer implements Serializer {
 		}
 		
 		try {
-			List filteredMenuList = (List) o;
+			List<String> filteredMenuList = (List) o;
 			if(filteredMenuList!=null && !filteredMenuList.isEmpty()){
 			result = new JSONObject();
 			JSONArray tempFirstLevelMenuList = new JSONArray();
 				for (int i=0; i<filteredMenuList.size(); i++){
-					SourceBean t = (SourceBean)filteredMenuList.get(i);
-					String name = (String) t.getAttribute("name");
-					String viewName = (String) t.getAttribute("view_name");
+					String theme = filteredMenuList.get(i);
+					String name = SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME."+theme+".name"); 
+					String viewName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.THEMES.THEME."+theme+".view_name");
 					if(viewName==null || viewName.equalsIgnoreCase("")){
 						viewName=name;	
 					}
