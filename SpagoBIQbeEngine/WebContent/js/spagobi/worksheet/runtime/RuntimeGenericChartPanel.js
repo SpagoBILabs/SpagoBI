@@ -196,8 +196,107 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			return value;
 		}
 	}
+    
+	, getDataLabelsFormatter: function () {
+		var showPercentage = this.chartConfig.showpercentage;
+		var chartType = this.chartConfig.designer;
+		var allSeries = this.chartConfig.series;
+		
+		var toReturn = function () {
+			var theSerieName = this.series.name;
+			var serieDefinition = null;
+			
+			// find the serie configuration
+			for (var i = 0; i < allSeries.length; i++) {
+				if (allSeries[i].seriename === theSerieName) {
+					serieDefinition = allSeries[i];
+					break;
+				}
+			}
+			
+			// format the value according to serie configuration
+			var value = Sbi.qbe.commons.Format.number(this.y, {
+	    		decimalSeparator: Sbi.locale.formats.float.decimalSeparator,
+	    		decimalPrecision: serieDefinition.precision,
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats.float.groupingSeparator : '',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+			});
+
+			// add suffix
+			if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
+				value = value + ' ' + serieDefinition.suffix;
+			}
+			
+			var dataLabel = null;
+			if (chartType == 'Pie Chart') {
+				dataLabel = '<b>'+ this.point.name +'</b>: ' + value;
+			} else {
+				dataLabel = value;
+			}
+			
+			// display percentage if needed
+			if (showPercentage) {
+				dataLabel += ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+			}
+			
+			return dataLabel;
+			
+		}
+		return toReturn;
+	}
+	
+	, getTooltipFormatter: function () {
+		var showPercentage = this.chartConfig.showpercentage;
+		var chartType = this.chartConfig.designer;
+		var allSeries = this.chartConfig.series;
+		
+		var toReturn = function () {
+			
+			var theSerieName = this.series.name;
+			var serieDefinition = null;
+			
+			// find the serie configuration
+			for (var i = 0; i < allSeries.length; i++) {
+				if (allSeries[i].seriename === theSerieName) {
+					serieDefinition = allSeries[i];
+					break;
+				}
+			}
+			
+			// format the value according to serie configuration
+			var value = Sbi.qbe.commons.Format.number(this.y, {
+	    		decimalSeparator: Sbi.locale.formats.float.decimalSeparator,
+	    		decimalPrecision: serieDefinition.precision,
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats.float.groupingSeparator : '',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+			});
+
+			// add suffix
+			if (serieDefinition.suffix !== undefined && serieDefinition.suffix !== null && serieDefinition.suffix !== '') {
+				value = value + ' ' + serieDefinition.suffix;
+			}
+			
+			var tooltip = null;
+			if (chartType == 'Pie Chart') {
+				tooltip = '<b>' + this.point.name + '</b><br/>' + this.series.name + ': ' + value;
+			} else {
+				tooltip = '<b>' + this.x + '</b><br/> ' + this.series.name + ': ' + value;
+			}
+			
+			// display percentage if needed
+			if (showPercentage) {
+				tooltip += ' ( ' + Ext.util.Format.number(this.percentage, '0.00') + ' %)';
+			}
+			
+			return  tooltip;
+			
+		}
+		
+		return toReturn;
+	}
 
 });
-
-
-

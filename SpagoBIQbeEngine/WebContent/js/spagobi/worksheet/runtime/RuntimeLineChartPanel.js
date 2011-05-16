@@ -102,7 +102,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 				enabled: (this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true
 			},
 			tooltip: {
-				enabled: true
+				enabled: true,
+				formatter: this.getTooltipFormatter()
 			},
 			colors: this.getColors(),
 			title : {
@@ -142,7 +143,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 				area: {
 					stacking: this.getStacking(),
 					dataLabels: {
-						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true
+						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
+						formatter: this.getDataLabelsFormatter()
 					}
 				}
 			};
@@ -151,7 +153,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 				line: {
 					stacking: this.getStacking(),
 					dataLabels: {
-						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true
+						enabled: (this.chartConfig.showvalues !== undefined) ? this.chartConfig.showvalues : true,
+						formatter: this.getDataLabelsFormatter()
 					}
 				}
 			};
