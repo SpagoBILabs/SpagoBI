@@ -1,42 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<SPAGOBI>
-	 <LANGUAGE_SUPPORTED>
-		<LANGUAGE default="false" language="it" country="IT" />
-		<LANGUAGE default="true" language="en" country="US" /> 
-		<LANGUAGE default="false" language="fr" country="FR" />
-		<LANGUAGE default="false" language="es" country="ES" />	 	
-	 </LANGUAGE_SUPPORTED>	
-	
-	
-	 <SCRIPT_LANGUAGE_SUPPORTED>
-		<SCRIPT_LANGUAGE default="true" 
-						name="groovy" 
-						engineclass="org.codehaus.groovy.bsf.GroovyEngine"
-						identifier="groovy"
-						shortidentifier="gy" 
-						predefinedScriptFile="predefinedGroovyScript.groovy"/>
-		<SCRIPT_LANGUAGE default="false" 
-						name="javascript" 
-						identifier="javascript"
-						shortidentifier="js" 
-						predefinedScriptFile="predefinedJavascriptScript.js"/>						
-	 </SCRIPT_LANGUAGE_SUPPORTED>	
-	
-	
-	 <TREE_INITIALIZATION>
-		<TREE_INITIAL_STRUCTURE>
-			<NODE code="Functionalities" name="Functionalities" 
-					description="Functionalities" parentPath="" codeType="LOW_FUNCT" />
-			<!-- 
-			<NODE code="SystemFunctionalities" name="System Functionalities" 
-					description="System Functionalities" parentPath="/Functionalities" codeType="LOW_FUNCT" />
-			-->
-		</TREE_INITIAL_STRUCTURE>
-	 </TREE_INITIALIZATION>
-     <INDEX_INITIALIZATION>
-		<INDEX jndiResourcePath="java://comp/env/spagobi_resource_path" name="//idx" />
-	 </INDEX_INITIALIZATION>
-     <INTERNAL_PROFILING_INITIALIZER>
+<INTERNAL_PROFILING_INITIALIZER>
 		<DEFAULT_USERS>
 			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator">
 				<ATTRIBUTE name="email" value="admin@eng.it" />
@@ -78,6 +41,4 @@
 			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" />	
 			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />		
 		</DEFAULT_ROLES>
-	 </INTERNAL_PROFILING_INITIALIZER>  
-	
-</SPAGOBI>
+</INTERNAL_PROFILING_INITIALIZER>

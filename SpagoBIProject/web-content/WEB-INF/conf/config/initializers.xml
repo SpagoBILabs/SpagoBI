@@ -20,14 +20,14 @@
     <!-- START-WEB  -->
     
     <INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
-	  <INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="SPAGOBI.TREE_INITIALIZATION" />
+	  <INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
 	
 	<!-- END-WEB  -->
 	<!--  LUCENE INDEXER -->
-	<INITIALIZER class="it.eng.spagobi.commons.initializers.indexing.IndexingInitializer" config="SPAGOBI.INDEX_INITIALIZATION" />
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.indexing.IndexingInitializer" config="" />
 	<!--  /LUCENE INDEXER -->
 	
 	<!-- INTERNAL PROFILING -->
-	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="SPAGOBI.INTERNAL_PROFILING_INITIALIZER" />
+	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="INTERNAL_PROFILING_INITIALIZER" />
 	
 </INITIALIZERS>
