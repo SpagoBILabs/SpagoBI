@@ -40,6 +40,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -234,7 +235,7 @@ public class CommonjDriver extends AbstractDriver implements IEngineDriver {
 			return locale;
 		} catch (Exception e) {
 		    logger.error("Error while getting locale; using default one", e);
-		    return MessageBuilder.getDefaultLocale();
+		    return GeneralUtilities.getDefaultLocale();
 		} finally  {
 			logger.debug("OUT");
 		}	

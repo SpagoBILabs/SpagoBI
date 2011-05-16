@@ -91,7 +91,7 @@ public class SpagoBIServiceExceptionHandler {
 				locale=new Locale(lang,country,"");
 			}
 		}else{
-			locale = MessageBuilder.getDefaultLocale();	
+			locale = GeneralUtilities.getDefaultLocale();	
 		}
 		
 		if(e instanceof SpagoBIServiceException) {

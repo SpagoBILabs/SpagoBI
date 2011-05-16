@@ -42,7 +42,7 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
         }
         String message = "";
         try
@@ -78,7 +78,7 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
         }
         return getMessageInternal(code, null, locale);
     }
@@ -94,7 +94,7 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
         }
         return getMessageInternal(code, bundle, locale);
     }
@@ -110,7 +110,7 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
         }
         return getMessageInternal(code, null, locale);
     }
@@ -157,7 +157,7 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
         }
         return getMessageInternal(code, bundle, locale);
     }
@@ -196,17 +196,17 @@ public class MessageBuilder
                 HttpServletRequest request = (HttpServletRequest)obj;
                 Locale reqLocale = request.getLocale();
                 String language = reqLocale.getLanguage();
-                String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-                if(langSB != null && language.equals(langSB))
+                String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+                if(langSB != null )
                 {
-                    String country = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
+                	String country=GeneralUtilities.getCountry(language);
                     browserLocale = new Locale(language, country);
                 }
             }
         }
         if(browserLocale == null)
         {
-            browserLocale = getDefaultLocale();
+            browserLocale = GeneralUtilities.getDefaultLocale();
         }
         logger.debug("OUT");
         return browserLocale;
@@ -218,29 +218,18 @@ public class MessageBuilder
         Locale browserLocale = null;
         Locale reqLocale = request.getLocale();
         String language = reqLocale.getLanguage();
-        String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-        if(langSB != null && language.equals(langSB))
+        String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+        if(langSB != null )
         {
-            String country = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
+        	String country=GeneralUtilities.getCountry(language);
             browserLocale = new Locale(language, country);
         }
         if(browserLocale == null)
         {
-            browserLocale = getDefaultLocale();
+            browserLocale = GeneralUtilities.getDefaultLocale();
         }
         logger.debug("OUT");
         return browserLocale;
-    }
-
-    public static Locale getDefaultLocale()
-    {
-        logger.debug("IN");
-        String defaultLangSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
-        String defaultLang = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-        String defaultCountry = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
-        Locale locale = new Locale(defaultLang, defaultCountry);
-        logger.debug("OUT");
-        return locale;
     }
 
     public Locale getLocale(HttpServletRequest request)
@@ -278,15 +267,15 @@ public class MessageBuilder
         if(!isValidLocale(locale))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not valid since it is not configured.").toString());
-            locale = getDefaultLocale();
+            locale = GeneralUtilities.getDefaultLocale();
             logger.debug((new StringBuilder("Using default locale ")).append(locale).append(".").toString());
         } else
         if(StringUtilities.isEmpty(locale.getCountry()))
         {
             logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not contain the country value. The one specified in configuration will be used").toString());
             SingletonConfig spagobiConfig = SingletonConfig.getInstance();
-            String localeConf = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-            String country = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.country");
+
+            String country = GeneralUtilities.getCountry(locale.getLanguage());
             locale = new Locale(locale.getLanguage(), country);
         }
         logger.debug((new StringBuilder("OUT-locale:")).append(locale == null ? "null" : locale.toString()).toString());
@@ -296,9 +285,7 @@ public class MessageBuilder
     
     private boolean isValidLocale(Locale locale) {
 		logger.info("IN");
-		
-		SingletonConfig spagobiConfig;
-		Object localeConf;
+
 		String language;
 		String country;
 		
@@ -307,32 +294,13 @@ public class MessageBuilder
 		
 		try {
 			language = locale.getLanguage();
+			country =GeneralUtilities.getCountry(language);
 			
-			spagobiConfig = SingletonConfig.getInstance();
-			localeConf = spagobiConfig.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.language");
-			
-			if(localeConf == null) return false;
 			
 			if(StringUtilities.isEmpty( locale.getCountry() )) {
 				return true;
 			} else {
-				if (localeConf instanceof SourceBean) {
-					SourceBean localeSB = (SourceBean) localeConf;
-					country = (String) localeSB.getAttribute("country");
 					return locale.getCountry().equalsIgnoreCase(country);
-				} else if (localeConf instanceof List) {
-					List list = (List) localeConf;
-					Iterator it = list.iterator();
-					while (it.hasNext()) {
-						SourceBean langSB = (SourceBean) it.next();
-						country = (String) langSB.getAttribute("country");
-						if (locale.getCountry().equalsIgnoreCase(country)) return true;
-					}
-					return false;
-				} else {
-					logger.warn("Invalid configuration.");
-					return false;
-				}
 			}
 		} finally {
 			logger.info("OUT");
