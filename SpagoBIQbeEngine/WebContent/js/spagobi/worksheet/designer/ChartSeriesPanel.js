@@ -109,6 +109,9 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	      , {name: 'nature', type: 'string'}
 	      , {name: 'seriename', type: 'string'}
 	      , {name: 'color', type: 'string'}
+	      , {name: 'showcomma', type: 'bool'}
+	      , {name: 'precision', type: 'int'}
+	      , {name: 'suffix', type: 'string'}
 	])
 	
 	, aggregationFunctionsStore:  new Ext.data.ArrayStore({
@@ -141,7 +144,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -203,11 +206,46 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 				return v;  
 	       }
 		});
+		
+	    var showCommaCheckColumn = new Ext.grid.CheckColumn({
+    		header: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
+    		, dataIndex: 'showcomma'
+    		, hideable: false
+    		, hidden: false	
+    		, width: 50
+    		, sortable: false
+    	});
+	    
+	    var precisionColumn = new Ext.grid.Column({
+	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
+	    	, dataIndex: 'precision'
+	    	, hideable: false
+	    	, sortable: false
+	        , editor: new Ext.form.NumberField({
+	        	value: 2
+	        	, minValue: 0
+	        	, maxValue: 10
+	        })
+	    });
+		
+	    var suffixColumn = new Ext.grid.Column({
+	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
+	    	, dataIndex: 'suffix'
+	    	, hideable: false
+	    	, sortable: false
+	        , editor: new Ext.form.TextField({})
+	    });
 	    
 		var columns = [serieNameColumn, fieldColumn, aggregatorColumn];
 		if (this.displayColorColumn)  {
 			columns.push(this.colorColumn);
 		}
+		columns.push(showCommaCheckColumn);
+		columns.push(precisionColumn);
+		columns.push(suffixColumn);
+	    
+		this.plgins = [showCommaCheckColumn];
+		
 	    this.cm = new Ext.grid.ColumnModel(columns);
 	}
 	
@@ -223,6 +261,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		    , viewConfig: {
 		    	forceFit: true
 		    }
+			, plugins: this.plgins
 	        , listeners: {
 	        	beforeedit: {
 	        		fn : function (e) {
@@ -378,17 +417,25 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	}
 	
 	, addMeasure: function(record) {
-		var theRecord = null;
-		if (record.data.seriename === undefined && record.data.color === undefined ) {
-			var data = Ext.apply({}, record.data); // make a clone
-			data = Ext.apply(data, { // add additional properties
-				seriename: record.data.alias
-				, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
-			});
-			theRecord = new this.Record(data);
-		} else {
-			theRecord = record;
-		}
+		var data = Ext.apply({}, record.data, {
+			seriename: record.data.alias
+			, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
+			, showcomma: true
+			, precision: 2
+			, suffix: '' 
+		});
+		var theRecord = new this.Record(data);
+		
+//		if (record.data.seriename === undefined && record.data.color === undefined ) {
+//			var data = Ext.apply({}, record.data); // make a clone
+//			data = Ext.apply(data, { // add additional properties
+//				seriename: record.data.alias
+//				, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
+//			});
+//			theRecord = new this.Record(data);
+//		} else {
+//			theRecord = record;
+//		}
 		this.getLayout().setActiveItem( 1 );
 		// if the measure is already present, does not insert it 
 		if (this.containsMeasure(theRecord)) {
