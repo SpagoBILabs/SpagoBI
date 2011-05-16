@@ -23,10 +23,9 @@ package it.eng.spagobi.utilities.scripting;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
@@ -34,12 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 import org.apache.log4j.Logger;
@@ -122,12 +118,9 @@ public class ScriptManager {
 	 */
 	private static String run(String script, Binding bind) throws Exception {
 		String result = "";
-		// get the sourcebean of the default script language
-		it.eng.spago.base.SourceBean scriptLangSB = (SourceBean)ConfigSingleton.getInstance().
-		getFilteredSourceBeanAttribute("SPAGOBI.SCRIPT_LANGUAGE_SUPPORTED.SCRIPT_LANGUAGE", 
-				"default", "true");
+		String defaltEngine=SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE_DEFAULT");
 		// get the name of the default script language
-		String name = (String)scriptLangSB.getAttribute("name");
+		String name = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaltEngine+".name");
 		// the only language supported now is groovy so if the default script isn't groovy
 		// throw an exception and return an empty string
 		if(!name.equalsIgnoreCase("groovy")) {
@@ -137,7 +130,7 @@ public class ScriptManager {
 			return "";
 		}
 		// load predefined script file
-		String predefinedScriptFileName = (String)scriptLangSB.getAttribute("predefinedScriptFile");
+		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaltEngine+".predefinedScriptFile");
 		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
 					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
@@ -270,21 +263,9 @@ public class ScriptManager {
 
 
 	static public String addGroovyPredefined(String script) throws IOException{
-		it.eng.spago.base.SourceBean scriptLangSB = (SourceBean)ConfigSingleton.getInstance().
-		getFilteredSourceBeanAttribute("SPAGOBI.SCRIPT_LANGUAGE_SUPPORTED.SCRIPT_LANGUAGE", 
-				"default", "true");
-		// get the name of the default script language
-		String name = (String)scriptLangSB.getAttribute("name");
-		// the only language supported now is groovy so if the default script isn't groovy
-		// throw an exception and return an empty string
-		if(!name.equalsIgnoreCase("groovy")) {
-			SpagoBITracer.critical(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-					"run", "The only script language supported is groovy, " +
-			"the configuration file has no configuration for groovy");
-			return "";
-		}
+
 		// load predefined script file
-		String predefinedScriptFileName = (String)scriptLangSB.getAttribute("predefinedScriptFile");
+		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.groovy.predefinedScriptFile");
 		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
 					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
@@ -317,19 +298,9 @@ public class ScriptManager {
 
 
 	static public String addJavascriptPredefined(String script) throws IOException{
-		it.eng.spago.base.SourceBean scriptLangSB = (SourceBean)ConfigSingleton.getInstance().
-		getFilteredSourceBeanAttribute("SPAGOBI.SCRIPT_LANGUAGE_SUPPORTED.SCRIPT_LANGUAGE", 
-				"name", "javascript");
-		// get the name of the default script language
-		String name = (String)scriptLangSB.getAttribute("name");
-		if(!name.equalsIgnoreCase("javascript")) {
-			SpagoBITracer.critical(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-					"run", "This should be javascript , " +
-			"the configuration file has no configuration for javascript");
-			return "";
-		}
+
 		// load predefined script file
-		String predefinedScriptFileName = (String)scriptLangSB.getAttribute("predefinedScriptFile");
+		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.javascript.predefinedScriptFile");
 		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
 					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
