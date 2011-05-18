@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 
 public class SpagoBIDossierInternalEngine implements InternalEngineIFace {
 
-	public static final String messageBundle = "component_dossier_messages";
+	public static final String messageBundle = "MessageFiles.component_dossier_messages";
 	
 	static private Logger logger = Logger.getLogger(SpagoBIDossierInternalEngine.class);
 	

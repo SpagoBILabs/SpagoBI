@@ -53,7 +53,7 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 
     private static transient Logger logger = Logger.getLogger(SpagoBIDashboardInternalEngine.class);
 
-    public static final String messageBundle = "component_spagobidashboardIE_messages";
+    public static final String messageBundle = "MessageFiles.component_spagobidashboardIE_messages";
     
     Map confParameters;
     Map dataParameters;

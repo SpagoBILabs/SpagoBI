@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 
 public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace {
 
-	public static final String messageBundle = "component_spagobiofficedocIE_messages";
+	public static final String messageBundle = "MessageFiles.component_spagobiofficedocIE_messages";
 	
 	private static transient Logger logger=Logger.getLogger(SpagoBIOfficeDocumentInternalEngine.class);
 	

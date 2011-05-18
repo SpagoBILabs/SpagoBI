@@ -51,7 +51,7 @@ import com.jamonapi.MonitorFactory;
 
 public class SpagoBIDocumentCompositionInternalEngine implements InternalEngineIFace {
 
-	public static final String messageBundle = "component_spagobidocumentcompositionIE_messages";
+	public static final String messageBundle = "MessageFiles.component_spagobidocumentcompositionIE_messages";
 	
 	private static transient Logger logger=Logger.getLogger(SpagoBIDocumentCompositionInternalEngine.class);
 	
