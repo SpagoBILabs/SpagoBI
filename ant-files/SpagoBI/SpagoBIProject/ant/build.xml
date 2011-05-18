@@ -310,6 +310,7 @@
               <file name="./src/ext/sbi/execution/SessionParametersManager.js"/>
               <file name="./src/ext/sbi/execution/RoleSelectionPage.js"/>
               <file name="./src/ext/sbi/execution/ParametersSelectionPage.js"/>
+			  <file name="./src/ext/sbi/execution/SaveDocumentWindow.js"/>  	
               <file name="./src/ext/sbi/execution/DocumentExecutionPage.js"/>
               <file name="./src/ext/sbi/execution/ExecutionWizard.js"/>
               <file name="./src/ext/sbi/execution/ExecutionPanel.js"/>
