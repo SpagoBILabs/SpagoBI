@@ -82,6 +82,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%><html>
   <head>
+  <script type="text/javascript">
+	function escapeUserName(){
+	
+	userName = document.login.userID.value;
+	
+		if (userName.indexOf("<")>-1 || userName.indexOf(">")>-1 || userName.indexOf("'")>-1 || userName.indexOf("\"")>-1 || userName.indexOf("%")>-1)
+			{
+			alert('Invalid username');
+			return false;
+			}
+		else
+			{return true;}
+	}
+	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
     <title>SpagoBI</title>
     <style>
@@ -103,7 +117,7 @@ else {
 }
 
 %>	<jsp:include page='<%=url%>' />
-        <form action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" >
+        <form name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
         	<input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />
         	<%
         	// propagates parameters (if any) for document execution
