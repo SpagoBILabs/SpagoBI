@@ -45,6 +45,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -91,7 +92,7 @@ import org.apache.log4j.Logger;
 
 
 public class DocumentsServiceImpl extends AbstractSDKService implements DocumentsService {
-	
+
 	public static final String DATAMART_FILE_NAME = "datamart.jar";
 
 	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
@@ -540,16 +541,16 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		logger.debug("IN");
 		SDKExecutedDocumentContent toReturn = null;
-		
+
 		try {
-			
+
 			ReportExporter jse = new ReportExporter();
 			File tmpFile = jse.getReport(biobj, profile, output);
 			if (tmpFile == null) {
 				logger.error("File returned from exporter is NULL!");
 				return null;
 			}
-	
+
 			logger.debug("setting object to return of type SDKExecuteDocumentContent");
 			toReturn = new SDKExecutedDocumentContent();
 			FileDataSource mods = new FileDataSource(tmpFile);
@@ -598,7 +599,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		catch (Exception e) {
 			logger.error("could not retrieve profile",e);
 			throw new NonExecutableDocumentException();
-			}
+		}
 
 		ExecutionInstance instance =null;
 		try{
@@ -611,7 +612,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		// put the parameters value in SDKPArameters into BiObject
 		instance.refreshBIObjectWithSDKParameters(parameters);
 
-//		check if there were errors referring to parameters
+		//		check if there were errors referring to parameters
 
 		List errors=null;
 		try{
@@ -674,56 +675,56 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	public SDKDocument getDocumentById(Integer id) {
 		SDKDocument toReturn = null;
-        logger.debug("IN: document in input = " + id);
-        try {
-        	super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
-        	if (id == null) {
-	        	logger.warn("Document identifier in input is null!");
-	        	return null;
-	        }
-        	BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
-        	if (biObject == null) {
-        		logger.warn("BiObject with identifier [" + id + "] not existing.");
-        		return null;
-        	}
-        	toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
-        } catch(NotAllowedOperationException e) {
-        	
-        } catch(Exception e) {
-            logger.error("Error while retrieving SDKEngine list", e);
-            logger.debug("Returning null");
-            return null;
-        } finally {
-        	logger.debug("OUT");
-        }
-        return toReturn;
+		logger.debug("IN: document in input = " + id);
+		try {
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			if (id == null) {
+				logger.warn("Document identifier in input is null!");
+				return null;
+			}
+			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			if (biObject == null) {
+				logger.warn("BiObject with identifier [" + id + "] not existing.");
+				return null;
+			}
+			toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
+		} catch(NotAllowedOperationException e) {
+
+		} catch(Exception e) {
+			logger.error("Error while retrieving SDKEngine list", e);
+			logger.debug("Returning null");
+			return null;
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 	public SDKDocument getDocumentByLabel(String label) {
 		SDKDocument toReturn = null;
-        logger.debug("IN: document in input = " + label);
-        try {
-        	super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
-        	if (label == null) {
-	        	logger.warn("Document label in input is null!");
-	        	return null;
-	        }
-        	BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
-        	if (biObject == null) {
-        		logger.warn("BiObject with label [" + label + "] not existing.");
-        		return null;
-        	}
-        	toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
-        } catch(NotAllowedOperationException e) {
-        	
-        } catch(Exception e) {
-            logger.error("Error while retrieving SDKEngine list", e);
-            logger.debug("Returning null");
-            return null;
-        } finally {
-        	logger.debug("OUT");
-        }
-        return toReturn;
+		logger.debug("IN: document in input = " + label);
+		try {
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			if (label == null) {
+				logger.warn("Document label in input is null!");
+				return null;
+			}
+			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+			if (biObject == null) {
+				logger.warn("BiObject with label [" + label + "] not existing.");
+				return null;
+			}
+			toReturn = new SDKObjectsConverter().fromBIObjectToSDKDocument(biObject);
+		} catch(NotAllowedOperationException e) {
+
+		} catch(Exception e) {
+			logger.error("Error while retrieving SDKEngine list", e);
+			logger.debug("Returning null");
+			return null;
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 
@@ -739,7 +740,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				logger.warn("SDKTemplate in input is null!");
 				return;
 			}
-			
+
 			//creates the folder correct (the name is given by the name of the file).
 			String path = getResourcePath()  + System.getProperty("file.separator") + sdkTemplate.getFolderName();
 			logger.debug("Datamart path: " + path);
@@ -780,7 +781,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 		logger.debug("OUT");
 	} 
- 
+
 	public SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException{
 		logger.debug("IN");
 		SDKTemplate toReturn = null;
@@ -825,19 +826,21 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 		logger.debug("OUT");
 		return toReturn;
-    }
+	}
 
 	private String getResourcePath() {
-		
+
 		String path = null;
 		SourceBean pathSB;
-
-		pathSB = (SourceBean)ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		Assert.assertNotNull(pathSB, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
-		String jndiPath = (String) pathSB.getCharacters() ;
+//		SourceBean sb = (SourceBean)ConfigSingleton.getInstance();
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+//		pathSB = (SourceBean)sb.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
+//		String jndiPath = (String) pathSB.getCharacters() ;
 		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
-		Assert.assertNotNull(pathSB, "Block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] found in configuration is empty");
-		
+		//Assert.assertNotNull(jndiSB, "Block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] found in configuration is empty");
+
 		return path;
 	}
 
