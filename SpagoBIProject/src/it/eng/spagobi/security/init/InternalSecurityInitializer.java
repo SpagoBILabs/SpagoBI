@@ -37,6 +37,8 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -144,7 +146,13 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			    String userId = (String) user.getAttribute("userId");
 			    sbiUser.setUserId(userId);
 			    String password = (String) user.getAttribute("password");
-			    sbiUser.setPassword(password);
+				if (password!=null){
+				    try {
+				    	sbiUser.setPassword(Password.encriptPassword(password));
+					} catch (Exception e) {
+						logger.error("Impossible to encript Password", e);
+					}
+				}
 			    String fullName = (String) user.getAttribute("fullName");
 			    if(fullName != null){
 			    	sbiUser.setFullName(fullName);
