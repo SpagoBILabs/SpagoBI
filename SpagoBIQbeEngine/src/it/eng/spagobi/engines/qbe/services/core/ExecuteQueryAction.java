@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
+import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
@@ -39,6 +40,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +74,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 //		(Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);		
 
-		
 		String queryId = null;
 		Integer limit = null;
 		Integer start = null;
@@ -91,6 +92,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 					
+		List<String> visibleSelectFields = new ArrayList<String>();
+		JSONArray JSONVisibleSelectFields  = null;
 		logger.debug("IN");
 		
 		try {
@@ -106,6 +109,20 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			
 			limit = getAttributeAsInteger( LIMIT );
+			
+			try {
+				JSONVisibleSelectFields = getAttributeAsJSONArray("visibleselectfields");
+				if(JSONVisibleSelectFields!=null){
+					for(int i=0; i<JSONVisibleSelectFields.length(); i++){
+						visibleSelectFields.add(JSONVisibleSelectFields.getString(i));
+					}	
+				}
+			} catch (Exception e) {
+				logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
+			}
+
+
+
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 						
 			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
@@ -118,6 +135,20 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			
 			// retrieving query specified by id on request
 			query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
+			
+			//hide the fields not present in the request parameter visibleselectfields
+			if(visibleSelectFields!=null && visibleSelectFields.size()>0){
+				List<AbstractSelectField> selectedField = query.getSelectFields(true);
+				for(int i=0; i<selectedField.size(); i++){
+					String alias = selectedField.get(i).getAlias();
+					if(!visibleSelectFields.contains(alias)){
+						selectedField.get(i).setVisible(false);
+						visibleSelectFields.remove(alias);
+						continue;
+					}
+				}
+			}
+
 			Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
 			
 			if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
@@ -209,9 +240,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			if(totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}	
-		
-		
 	}
+	
 	
 	/**
 	 * Get the query id from the request
