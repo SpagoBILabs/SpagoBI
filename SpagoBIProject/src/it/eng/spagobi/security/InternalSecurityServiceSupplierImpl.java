@@ -21,14 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.security;
 
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -64,11 +62,13 @@ public class InternalSecurityServiceSupplierImpl implements
 				return null;
 			}
 			String password = user.getPassword();
+			String encrPass = Password.encriptPassword(psw);
 			if (password == null || password.length() == 0) {
 			    logger.error("UserName/pws not defined into database");
 			    return null;
-			}else if(!password.equals(psw)){
-			//else check password
+			}else if(password.equals(encrPass)){
+				logger.debug("Logged in with SHA pass");
+			}else if(!password.equals(encrPass)){
 				logger.error("UserName/pws not found into database");
 				return null;
 			}
@@ -81,6 +81,8 @@ public class InternalSecurityServiceSupplierImpl implements
 			return obj;
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("PASS decrypt error:"+e.getMessage(), e);
 		}
 		return null;
 

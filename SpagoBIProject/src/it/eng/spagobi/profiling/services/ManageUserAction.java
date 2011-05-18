@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.profiling.services;
 
+
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.execution.service.SaveMetadataAction;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -31,6 +32,7 @@ import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -46,13 +48,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+/**
+ * @author Monica Franceschini (monica.franceschini@eng.it)
+ * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
+ */
 public class ManageUserAction extends AbstractSpagoBIAction {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8920524215721282986L;
 	// logger component
-	private static Logger logger = Logger.getLogger(SaveMetadataAction.class);
+	private static Logger logger = Logger.getLogger(ManageUserAction.class);
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	private final String USERS_LIST = "USERS_LIST";
@@ -71,7 +78,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 15;
+	public static Integer LIMIT_DEFAULT = 16;
 
 	@Override
 	public void doService() {
@@ -126,8 +133,14 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				user.setUserId(userId);
 				user.setFullName(fullName);
 				if(password != null){
-					user.setPassword(password);
-				}				
+					try {
+						user.setPassword(Password.encriptPassword(password));
+					} catch (Exception e) {
+						logger.error("Impossible to encript Password", e);
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Impossible to encript Password",e);
+					}
+				}
 				
 				if(id!=null){
 					user.setId(id);

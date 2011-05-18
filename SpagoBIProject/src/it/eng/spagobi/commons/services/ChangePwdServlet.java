@@ -5,6 +5,7 @@
  */
 package it.eng.spagobi.commons.services;
 
+
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -16,8 +17,11 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +39,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 /**
+ * @author Antonella Giachino (antonella.giachino@eng.it)
+ * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
  * Process jasper report execution requests and returns bytes of the filled
  * reports
  */
@@ -151,7 +157,7 @@ public class ChangePwdServlet extends HttpServlet {
 						}						
 					}
 					tmpUser.setDtLastAccess(beginDate); //reset last access date
-					tmpUser.setPassword(newPwd);
+					tmpUser.setPassword(Password.encriptPassword(newPwd));//SHA encrypt
 					tmpUser.setFlgPwdBlocked(false); //reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
 					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
@@ -195,7 +201,8 @@ public class ChangePwdServlet extends HttpServlet {
 			logger.debug("Some fields are empty." );	
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14011);  
 		}	
-		if (!oldPwd.equals(tmpUser.getPassword())){
+		//Controllo la pass vecchia, sia clear che criptata
+		if (!Password.encriptPassword(oldPwd).equals(tmpUser.getPassword())){
 			logger.debug("The old pwd is uncorrect." );	
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 14010);  
 		}
