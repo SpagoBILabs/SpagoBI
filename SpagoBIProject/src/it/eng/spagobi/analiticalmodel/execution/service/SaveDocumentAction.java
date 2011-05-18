@@ -92,8 +92,16 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String template = getAttributeAsString(TEMPLATE);	
 			JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 
-			if (name != null && label != null && engineId != null && template != null && functsArrayJSon!=null && functsArrayJSon.length()!= 0 && type!=null) {
-				BIObject o = new BIObject();	
+			if (name != null && name != "" && label != null && label != "" && 
+				engineId != null && template != null && type!=null && 
+				functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
+				
+				BIObject o = new BIObject();
+				BIObject objAlreadyExisting = objDao.loadBIObjectByLabel(label);
+				if(objAlreadyExisting!=null){
+					logger.error("Document with the same label already exists");
+					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.labelAlreadyExistent");
+				}
 				o.setName(name);
 				o.setLabel(label);
 				o.setDescription(description);

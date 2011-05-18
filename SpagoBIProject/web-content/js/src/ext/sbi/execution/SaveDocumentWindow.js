@@ -191,8 +191,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		var docDescr = this.docDescr.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
 		
-		if(docName == null || docName == undefined ||
-		   docLabel == null || docLabel == undefined ||
+		if(docName == null || docName == undefined || docName == '' ||
+		   docLabel == null || docLabel == undefined || docLabel == '' ||
 		   functs == null || functs == undefined 
 		   || functs.length == 0){
 				Ext.MessageBox.show({
