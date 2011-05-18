@@ -78,6 +78,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	initPanels: function(){
 		var items = [];
 		
+		
+		//show the loading mask
+		if(this.rendered){
+			this.showMask();
+		} else{
+			this.on('afterlayout',this.showMask,this);
+		}
+		
 		var sharedConf = {				
 			border: false,
 			style:'padding:5px 15px 5px'
@@ -106,6 +114,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		
 		//Builds the content
 		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({},{contentConfig: this.sheetConfig.content}));
+		//catch the event of the contentloaded from the component and hide the loading mask
+		this.content.on('contentloaded',this.hideMask,this);
 		items.push(this.content);
 		
 		//Builds the footer
@@ -191,5 +201,25 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		this.un('activate', this.renderContent, this);
 		this.removeAll();
 		this.add(this.initPanels());
+	}
+	
+	/**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
+    	}
+    	this.loadMask.show();
+    }
+	
+	/**
+	 * Closes the loading mask
+	 */
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
 	}
 });

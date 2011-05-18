@@ -37,7 +37,7 @@
   * 
   * Public Events
   * 
-  *  [list]
+  *  contentloaded: fired after the data has been loaded
   * 
   * Authors
   * 
@@ -80,7 +80,7 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	
 	// constructor
     Sbi.crosstab.CrosstabPreviewPanel.superclass.constructor.call(this, c);
-	
+    this.addEvents('contentloaded');
     this.addEvents('beforeload');
     
 };
@@ -177,14 +177,16 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
     	if (this.loadMask != null) {
     		this.loadMask.hide();
     	}
+    	this.fireEvent('contentloaded');
 	}
 	
     , showMask : function(){
-    	
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask('CrosstabPreviewPanel', {msg: "Loading.."});
+    	if(!this.hideLoadingMask){
+	    	if (this.loadMask == null) {
+	    		this.loadMask = new Ext.LoadMask('CrosstabPreviewPanel', {msg: "Loading.."});
+	    	}
+	    	this.loadMask.show();
     	}
-    	this.loadMask.show();
     }
     
     , serializeCrossTab: function () {
