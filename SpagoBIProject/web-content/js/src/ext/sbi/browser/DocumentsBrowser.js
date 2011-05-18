@@ -261,12 +261,12 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.execute();
 	}
 
-	, onDocumentClick: function(panel, r) {
-	
+	, onDocumentClick: function(panel, doc) {
+		
 		var executionPanel = new Sbi.execution.ExecutionPanel({
-			title: r.title !== undefined ? r.title : r.name
+			title: doc.title !== undefined ? doc.title : doc.name
 			, closable: true
-		}, r);
+		}, doc);
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		

@@ -243,9 +243,6 @@ Sbi.locale.ln['sbi.browser.document.objectve']  = 'scopo';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'parole chiave';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervallo di aggiornamento';
 
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
-
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o più cartelle e Salva';
 Sbi.locale.ln['sbi.execution.error']  = 'Un errore si ï¿½ verificato durante l\'esecuzione del documento';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento ï¿½ necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';

@@ -42,6 +42,10 @@
  	<CONFIG/>
  </ACTION>
  
+ <ACTION name="SAVE_DOCUMENT_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.SaveDocumentAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
  <!-- =================================================================================
  		Document Browser
       ================================================================================= -->

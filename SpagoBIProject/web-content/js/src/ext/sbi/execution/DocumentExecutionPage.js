@@ -102,7 +102,6 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		serviceName: 'GET_NOTES_ACTION'
 		, baseParams: params
 	});
-
 	
 	// add events 20100505
     this.addEvents('beforetoolbarinit', 'beforesynchronize', 'moveprevrequest', 'loadurlfailure', 'crossnavigation', 'beforerefresh','collapse3', 'backToAdmin');
@@ -284,6 +283,14 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 					}			
 				}));
 		}
+			
+		//if (executionInstance.document.typeCode == 'DATAMART') {
+			this.toolbar.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-save' 
+			    , scope: this
+			    , handler : this.saveDocument
+			}));
+		//}
 		
 		this.toolbar.addButton(new Ext.Toolbar.Button({
 			iconCls: 'icon-rating' 
@@ -850,6 +857,20 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			}
 			*/
 		}
+	}
+	
+	, saveDocument: function(b,e,template) {
+		
+		if(template == undefined || template == null){
+			template = '<EMPTY_TEMPLATE></EMPTY_TEMPLATE>';
+		}
+		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
+																'OBJECT_TYPE': this.executionInstance.document.typeCode,
+																'OBJECT_ENGINE': this.executionInstance.document.engineid,
+																'OBJECT_TEMPLATE': template,
+																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource,
+																'OBJECT_PARS': this.executionInstance.PARAMETERS});
+		this.win_saveDoc.show();
 	}
 	
 	, rateExecution: function() {

@@ -37,11 +37,20 @@ Sbi.browser.DocumentsTree = function(config) {
 		}
 	});
 	// -----------------------------------------
+	this.checkedIdNodes = new Array();
 	
+	if(config.drawUncheckedChecks == true){
+		this.loader = new Ext.tree.TreeLoader({
+	        dataUrl   : this.services['loadFTreeFoldersService'],
+	        scope: this,
+			createNode: this.createnode 
+	    });
+	}else{
+		this.loader = new Ext.tree.TreeLoader({
+	        dataUrl   : this.services['loadFTreeFoldersService']
+	    });
+	}
 	
-	this.loader = new Ext.tree.TreeLoader({
-        dataUrl   : this.services['loadFTreeFoldersService']
-    });
 	this.loader.on('loadexception', function(loader, node, response) {
 		Sbi.exception.ExceptionHandler.handleFailure(response);
 	});
@@ -75,10 +84,8 @@ Sbi.browser.DocumentsTree = function(config) {
     });    
     this.setRootNode(this.rootNode);    
     
-    //this.addListener('click', this.onClickTestFn, this);
+    this.addListener('checkchange', this.updateCheckedNodesArray, this);
 }
-
-
 
 
 Ext.extend(Sbi.browser.DocumentsTree, Ext.tree.TreePanel, {
@@ -87,9 +94,29 @@ Ext.extend(Sbi.browser.DocumentsTree, Ext.tree.TreePanel, {
 	, loader: null
 	, rootNode: null
 	, rootNodeId: null
+	, checkedIdNodes: null
 	
 	, refresh: function() {
 		this.loader.load(this.rootNode, function(){});
+	}
+
+	, createnode: function(attr) {			
+		attr.checked = false;
+		var node = Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+		return node;
+	}
+
+	, updateCheckedNodesArray: function(node, checked) {
+		var nodeId = node.id;
+		if (this.checkedIdNodes.indexOf(nodeId)!= -1){
+			this.checkedIdNodes.remove(nodeId);
+		}else{
+			this.checkedIdNodes.push(nodeId);
+		}
+	}
+
+	, returnCheckedIdNodesArray: function() {
+		return this.checkedIdNodes;
 	}
    
 });

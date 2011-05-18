@@ -550,8 +550,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true,
-						xtype : 'combo'
+						allowBlank : false, validationEvent : true
 					});
 					detailDsType.addListener('select',this.activateDsTypeForm, this);
 					
@@ -572,8 +571,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true,
-						xtype : 'combo'
+						allowBlank : false, validationEvent : true
 					});
 
 					this.detailDataSource = new Ext.form.ComboBox({
@@ -590,8 +588,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true,
-						xtype : 'combo'
+						allowBlank : false, validationEvent : true
 					});
 
 					this.detailQbeDataSource = new Ext.form.ComboBox({
@@ -607,8 +604,7 @@ Ext.extend(
 						mode : 'local',
 						triggerAction : 'all',
 						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true,
-						xtype : 'combo'
+						allowBlank : false, validationEvent : true
 					});
 
 					this.detailQuery = new Ext.form.TextArea({
