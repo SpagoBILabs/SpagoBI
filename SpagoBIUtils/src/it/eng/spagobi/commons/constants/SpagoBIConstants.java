@@ -146,6 +146,7 @@ public class SpagoBIConstants {
 	public static final String THEME = "THEME";
 	public static final String DEFAULT_ROLE = "DEFAULT_ROLE";
 	
+	public static final String BIOBJ_TYPE = "BIOBJ_TYPE";
 	public static final String BIOBJECT_TYPE_CODE = "BIOBJECT_TYPE_CODE";
 	public static final String REPORT_TYPE_CODE = "REPORT";
 	public static final String DATAMART_TYPE_CODE = "DATAMART";
@@ -155,6 +156,10 @@ public class SpagoBIConstants {
 	public static final String MAP_TYPE_CODE = "MAP";
 	public static final String LOW_FUNCTIONALITY_TYPE_CODE = "LOW_FUNCT";
 	public static final String USER_FUNCTIONALITY_TYPE_CODE = "USER_FUNCT";
+	public static final String STATE_TYPE_CODE = "STATE";
+	public static final String DEV_STATE = "DEV";
+	public static final String REL_STATE = "REL";
+	public static final String TEST_STATE = "TEST";	
 		
 	public static final String SUBOBJECT_LIST = "SUBOBJECT_NAMES_LIST";
 	public static final String SNAPSHOT_LIST = "SNAPSHOT_LIST";
