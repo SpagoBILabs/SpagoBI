@@ -63,6 +63,7 @@ Sbi.locale.ln['sbi.generic.details']                  = 'D\u00E9tail';
 Sbi.locale.ln['sbi.generic.select']                   = 'S\u00E9lectionner';
 Sbi.locale.ln['sbi.generic.serviceError']             = 'Erreur du service';
 Sbi.locale.ln['sbi.generic.update']                   = 'Enregistrer';
+Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name']                     = 'Nom';
@@ -361,6 +362,7 @@ Sbi.locale.ln['sbi.rememberme.name']                                            
 Sbi.locale.ln['sbi.rememberme.save']                                                                      = 'Enregistrer';
 Sbi.locale.ln['sbi.rememberme.saveOk']                                                                    = 'Ex\u00E9cution enregistr\u00E9 correctement comme Favoris';
 // Profile Management
+Sbi.locale.ln['sbi.generic.clone'] = 'Copier';
 Sbi.locale.ln['sbi.attributes.add'] 																		= 'Ajouter';
 Sbi.locale.ln['sbi.attributes.delete'] 																		= 'Effacer';
 Sbi.locale.ln['sbi.attributes.title'] = 'Profil Attributes';
@@ -400,6 +402,7 @@ Sbi.locale.ln['sbi.roles.rolesManagement'] = 'Roles management';
 Sbi.locale.ln['sbi.roles.rolesList'] = 'Roles list';
 Sbi.locale.ln['sbi.roles.error'] = 'Error';
 Sbi.locale.ln['sbi.roles.result'] = 'Result';
+Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Synchronize';
 
 Sbi.locale.ln['sbi.users.fullName'] = 'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID';
@@ -477,30 +480,62 @@ Sbi.locale.ln['sbi.general.close'] = 'Fermer';
 Sbi.locale.ln['sbidomains.nm.user'] = 'Utilisateur';
 Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Developpeur';
 Sbi.locale.ln['sbidomains.nm.test_role'] = 'Testeur';
-Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrateur du Modèle';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrateur du Mod\u00e8le';
 //START GOALS messages
 Sbi.locale.ln['sbi.goals.listTitle'] = 'Liste des Buts';
-Sbi.locale.ln['sbi.goals.nogrant'] = 'Sélectionner un grant'
-Sbi.locale.ln['sbi.goals.nogoal'] = 'Enregistrer le but avant de procéder'
-Sbi.locale.ln['sbi.goals.define.goal'] = 'Définir un but'
-Sbi.locale.ln['sbi.goals.removed'] = 'But effacé correctement'
+Sbi.locale.ln['sbi.goals.nogrant'] = 'S\u00e9lectionner un grant'
+Sbi.locale.ln['sbi.goals.nogoal'] = 'Enregistrer le but avant de proc\u00e9der'
+Sbi.locale.ln['sbi.goals.define.goal'] = 'D\u00e9finir un but'
+Sbi.locale.ln['sbi.goals.removed'] = 'But effac\u00e9 correctement'
 Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
-Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insérer les champs requis'   
+Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Ins\u00e9rer les champs requis'   
 Sbi.locale.ln['sbi.goals.weight1'] = 'Poid 1';
 Sbi.locale.ln['sbi.goals.weight2'] = 'Poid 2';
 Sbi.locale.ln['sbi.goals.threshold'] = 'Seuils';
    
 //END GOALS messages
-Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Enregistrer les Vues Customizées';
-Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Voir Vues Customizées';
-Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir paramètres enregistrés';
+Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Enregistrer les Vues Customiz\u00e9es';
+Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Voir Vues Customiz\u00e9es';
+Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Voir param\u00e8tres enregistr\u00e9s';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir Interrogations QbE';
-Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de spécifier le pool des connexions configurées dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Pour la configuration du DataSource, merci de sp\u00e9cifier le pool des connexions configur\u00e9es dans le serveur. Par exemple: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 
+
+//Datasets
+Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Effacer Tout';
+Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Effacer Version';
+Sbi.locale.ln['sbi.ds.restore'] = 'Remplacer Currante';
+Sbi.locale.ln['sbi.ds.dateIn'] = 'Date de Creation';
+Sbi.locale.ln['sbi.ds.userIn'] = 'Creation User';
+Sbi.locale.ln['sbi.ds.versionPanel'] = 'Viellies Versions';
+Sbi.locale.ln['sbi.ds.test'] = 'Tester';
+Sbi.locale.ln['sbi.ds.fillPars'] = 'Remplir les Valeurs des Parametres';
+Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilisée Par';
+Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestion des DataSets';
+Sbi.locale.ln['sbi.ds.listTitle'] = 'Liste des DataSets';
+Sbi.locale.ln['sbi.ds.catType'] = 'Categorie';
+Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'Type de DataSet';
+Sbi.locale.ln['sbi.ds.fileName'] = 'Nom du Fichier';
+Sbi.locale.ln['sbi.ds.dataSource'] = 'Source des Données';
+Sbi.locale.ln['sbi.ds.query'] = 'Query';
+Sbi.locale.ln['sbi.ds.wsAddress'] = 'Addresse du Web Service';
+Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operation du Web Service';
+Sbi.locale.ln['sbi.ds.script'] = 'Script';
+Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Langage du Script';
+Sbi.locale.ln['sbi.ds.jclassName'] = 'Nom de Classe Java';
+Sbi.locale.ln['sbi.ds.transfType'] = 'Transformation';
+Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Type de Transformation';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nom de la colonne des categories à pivoter';
+Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nom de la colonne des valeurs à pivoter';
+Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nom de la colonne à ne pas pivoter';
+Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numeration automatique des Colonnes?';
+Sbi.locale.ln['sbi.ds.help'] = 'Help';
+Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Sbi.locale.ln['sbi.generic.from'] = 'Date de début';
+Sbi.locale.ln['sbi.generic.from'] = 'Date de d\u00e9but';
 Sbi.locale.ln['sbi.generic.to'] = 'Date de fin';
+
 

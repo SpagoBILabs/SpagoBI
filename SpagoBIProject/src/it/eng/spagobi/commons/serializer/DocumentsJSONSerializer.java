@@ -54,6 +54,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String VISIBLE = "visible";
 	public static final String PROFILEDVISIBILITY = "profiledVisibility";
 	public static final String ENGINE = "engine";
+	public static final String ENGINE_ID = "engineid";
 	public static final String DATASOURCE = "datasource";
 	public static final String DATASET = "dataset";
 	public static final String UUID = "uuid";
@@ -97,9 +98,9 @@ public class DocumentsJSONSerializer implements Serializer {
 				result.put(ENGINE, obj.getEngine().getDescription());
 			} else if(obj.getEngine().getName() != null) {
 				result.put(ENGINE, obj.getEngine().getName());
-			} else {
-				result.put(ENGINE, obj.getEngine().getId());
 			}
+			
+			result.put(ENGINE_ID, obj.getEngine().getId());
 			result.put(DATASOURCE, obj.getDataSourceId());
 			result.put(DATASET, obj.getDataSetId());
 			result.put(UUID, obj.getUuid());

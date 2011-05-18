@@ -189,6 +189,9 @@ Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Sort';
 Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Search';
 Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Search';
 
+
+
+
 Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'The selected folder is empty';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'List View';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Group View';
@@ -239,13 +242,12 @@ Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'No default role';
 Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Save';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancel';
 
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document, please fill in Name and Label fields and check at least one folder where to place your document';
 
 Sbi.locale.ln['sbi.execution.error']  = 'An error has occured while executing document';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Document id is required in order to execute a document';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'User have no valid roles for the execution of the selected document';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the form, place your document in one or more folders and Save';
+
 
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Role selection';
