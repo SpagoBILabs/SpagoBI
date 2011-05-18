@@ -17,6 +17,7 @@
 <DOMAIN valueCd="KPI" valueNm="Kpi" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="Kpi business indicator"/>
 <DOMAIN valueCd="SMART_FILTER" valueNm="sbidomains.nm.smart_filter" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.smart_filter"/>
 <DOMAIN valueCd="CONSOLE" valueNm="Console" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.console"/>
+<DOMAIN valueCd="WORKSHEET" valueNm="sbidomains.nm.worksheet" domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.worksheet"/>
 <DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.bool"/>
 <DOMAIN valueCd="SINGLE" valueNm="sbidomains.nm.single" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.single"/>
 <DOMAIN valueCd="MULTI" valueNm="sbidomains.nm.multi" domainCd="VALUE_TYPE" domainNm="Input value types to check" valueDs="sbidomains.ds.multi"/>
