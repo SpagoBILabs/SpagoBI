@@ -129,6 +129,14 @@
 		!important;
 }
 
+.group-view .document-item-icon .WORKSHEET-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_worksheet.png')
+		!important;
+}
+
 .group-view .document-item-icon .ACCESSIBLE_HTML-icon {
 	width: 96px;
 	height: 96px;
