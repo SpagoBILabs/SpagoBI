@@ -96,7 +96,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 	private static transient Logger logger = Logger.getLogger(SpagoBIKpiInternalEngine.class);
 
-	public static final String messageBundle = "messages";
+	public static final String messageBundle = "MessageFiles.messages";
 
 	private static final String RESOURCE="RES_NAME";
 

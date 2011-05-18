@@ -68,7 +68,7 @@ public class DetailMenuModule extends AbstractModule {
 	public final static String MENU = "MENU";
 	public final static String ROLES = "ROLES";
 	public final static String LOOKUP = "lookupLoopback";
-	public static final String messageBundle = "messages";
+	public static final String messageBundle = "MessageFiles.messages";
 
 	public final static String PATH = "PATH";
 	public final static String EXT_APP_URL = "EXT_APP_URL";
