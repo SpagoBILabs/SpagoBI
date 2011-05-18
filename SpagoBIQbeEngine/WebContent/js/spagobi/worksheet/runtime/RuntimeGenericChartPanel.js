@@ -39,7 +39,7 @@
   * 
   * Public Events
   * 
-  *  [list]
+  *  contentloaded: fired after the data has been loaded
   * 
   * Authors
   * 
@@ -69,6 +69,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 		, baseParams: params
 	});
 
+	this.addEvents('contentloaded');
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	
 };
 
@@ -84,8 +85,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
 	 */
 	, loadChartData: function(dataConfig){
-		//this.showMask();
-		
+	
 		var requestParameters = {
 				crosstabDefinition: Ext.util.JSON.encode({
 					'rows': [],
@@ -98,13 +98,13 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	        url: this.services['loadData'],//load the crosstab from the server
 	        params: requestParameters,
 	        success : function(response, opts) {
-        		//this.hideMask();
+	        	this.fireEvent('contentloaded');
 	        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
 	        	this.createChart();
 	        },
 	        scope: this,
 			failure: function(response, options) {
-				//this.hideMask();
+				this.fireEvent('contentloaded');
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}      
 		});
@@ -155,25 +155,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			}	
 			return series;
 		}
-	}
-	
-	/**
-	 * Opens the loading mask 
-	 */
-    , showMask : function(){
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
-    	}
-    	this.loadMask.show();
-    }
-	
-	/**
-	 * Closes the loading mask
-	 */
-	, hideMask: function() {
-    	if (this.loadMask != null) {
-    		this.loadMask.hide();
-    	}
 	}
 	
     , format: function(value, type, format) {

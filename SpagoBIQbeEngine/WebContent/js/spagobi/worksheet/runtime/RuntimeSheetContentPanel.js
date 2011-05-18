@@ -37,7 +37,7 @@
  * 
  * Public Events
  * 
- * [list]
+ *  contentloaded: fired after the data has been loaded
  * 
  * Authors - Alberto Ghedin (alberto.ghedin@eng.it)
  */
@@ -54,8 +54,12 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
-	this.addEvents();
+	
+    this.addEvents('contentloaded');
 	this.content = this.initContent(c);
+	
+	//catch the event of the contentloaded and throws it to the parent
+	this.content.on('contentloaded',function(){this.fireEvent('contentloaded');},this);
 
 	c = {
 		border: false,
@@ -73,7 +77,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	initContent: function (c) {
 		var items = [];
-		
+	
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
@@ -109,7 +113,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
     				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
-    				, baseParams: new Object()
+    				, baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
     			})
     		}
     	});
@@ -119,6 +123,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	initCrossTab: function(c){
 		var crossTab = new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c|| {},{
+			hideLoadingMask: true,
 			crosstabConfig: {autoHeight: true}, 
 			title: false}));
 		this.on('afterlayout',this.loadCrosstab,this);
@@ -129,7 +134,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 		this.content.load(this.contentConfig.crosstabDefinition);
 		this.un('afterlayout',this.loadCrosstab,this);
 	}
-	
 
 	
 

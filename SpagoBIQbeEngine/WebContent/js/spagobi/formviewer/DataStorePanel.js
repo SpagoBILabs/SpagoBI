@@ -37,7 +37,7 @@
   * 
   * Public Events
   * 
-  *  [list]
+  *  contentloaded: fired after the data has been loaded
   * 
   * Authors
   * 
@@ -76,6 +76,7 @@ Sbi.formviewer.DataStorePanel = function(config) {
 	
 	this.initStore();
 	this.initPanel(config);
+	this.addEvents('contentloaded');
 	
 	c = Ext.apply(c, {
 		layout: 'fit',
@@ -280,6 +281,9 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	}
 
 	, onDataStoreLoaded: function(store) {
+		
+		 this.fireEvent('contentloaded');
+		
 		 var recordsNumber = store.getTotalCount();
        	 if(recordsNumber == 0) {
        		Ext.Msg.show({
@@ -303,6 +307,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	}
 	
 	, onDataStoreLoadException: function(response, options) {
+		this.fireEvent('contentloaded');
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
 
