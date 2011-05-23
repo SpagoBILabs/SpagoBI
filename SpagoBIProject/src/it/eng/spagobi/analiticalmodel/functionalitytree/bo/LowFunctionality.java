@@ -53,6 +53,8 @@ public class LowFunctionality  implements Serializable  {
 	private Role[] devRoles = null;
 
 	private Role[] testRoles = null;
+	
+	private Role[] createRoles = null;
 
 	private IEngUserProfile profile = null;
 	
@@ -192,6 +194,14 @@ public class LowFunctionality  implements Serializable  {
 	 */
 	public void setExecRoles(Role[] execRoles) {
 		this.execRoles = execRoles;
+	}
+	
+	public Role[] getCreateRoles() {
+		return createRoles;
+	}
+
+	public void setCreateRoles(Role[] createRoles) {
+		this.createRoles = createRoles;
 	}
 	
 	/**

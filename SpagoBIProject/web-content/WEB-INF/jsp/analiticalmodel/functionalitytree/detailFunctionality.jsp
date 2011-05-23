@@ -1,4 +1,4 @@
-<!--
+<%--
 SpagoBI - The Business Intelligence Free Platform
 
 Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
@@ -16,7 +16,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
--->
+--%>
 
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
@@ -180,6 +180,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		for(int i=0; i<testRolesObj.length; i++) {
 			testRules[i] = testRolesObj[i].getId().toString();
 		}
+		Role[] createRolesObj = lowFunctionality.getCreateRoles();
+		String[] createRules = new String[createRolesObj.length];
+		for(int i=0; i<createRolesObj.length; i++) {
+			createRules[i] = createRolesObj[i].getId().toString();
+		}
 %>	
 	
 <div class="div_functions_role_associations">
@@ -197,6 +202,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 					<td class='portlet-section-header' align="center" width="90px">
                             <spagobi:message key = "SBISet.Funct.tabCol4" />
                         </td>
+	 					<td class='portlet-section-header' align="center" width="90px">
+                            <spagobi:message key = "SBISet.Funct.tabCol5" />
+                        </td>
 	                    <td class='portlet-section-header' align="center" width="90px">
                         	&nbsp;
                         </td> 				
@@ -211,33 +219,55 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 			            boolean isDev = false;
 	 			            boolean isTest = false;
 	 			            boolean isExec = false;
+	 			            boolean isCreate = false;
 	 			            boolean isDevParent = false;
 	 			            boolean isTestParent = false;
 	 			            boolean isExecParent = false;
+	 			            boolean isCreateParent = false;
 	 			            DetailFunctionalityModule detFunct = new DetailFunctionalityModule();
 	 			            for(int j=0; j<devRules.length; j++) {
-	 			               if(devRules[j].equals(ruleId)) { isDev = true; }
-	 			               		}
-	 			               		//if(!pathParent.equals(AdmintoolsConstants.FUNCT_ROOT_PATH) && !modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               			if(detFunct.isParentRule(ruleId,parentFunctionality,"DEV")){isDevParent = true;}
-										}
+	 			               if(devRules[j].equals(ruleId)) {
+	 			            	   isDev = true; 
+	 			               }
+	 			            }
+		               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
+		               			if(detFunct.isParentRule(ruleId,parentFunctionality,SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)){
+		               				isDevParent = true;
+		               			}
+							}
 									 			            
 	 			            for(int j=0; j<testRules.length; j++) {
-	 			               if(testRules[j].equals(ruleId)) { isTest = true; } 
-	 			               		}
-	 			               		//if(!pathParent.equals(AdmintoolsConstants.FUNCT_ROOT_PATH) && !modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               			if(detFunct.isParentRule(ruleId,parentFunctionality,"TEST")){isTestParent = true;}
-	 			            			}
+	 			               if(testRules[j].equals(ruleId)) {
+	 			            	   isTest = true; 
+	 			               }
+	 			            }
+		               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
+		               			if(detFunct.isParentRule(ruleId,parentFunctionality,SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)){
+		               				isTestParent = true;
+		               			}
+		            		}
 	 			            		
 	 			            for(int j=0; j<execRules.length; j++) {
-	 			               if(execRules[j].equals(ruleId)) { isExec = true; }
-	 			               		}
-	 			               		//if(!pathParent.equals(AdmintoolsConstants.FUNCT_ROOT_PATH) && !modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
-	 			               			if(detFunct.isParentRule(ruleId,parentFunctionality,"EXEC")){isExecParent = true;}
-	 			           				 }
+	 			               if(execRules[j].equals(ruleId)) {
+	 			            	   isExec = true;
+	 			               }
+	 			            }
+		               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
+		               			if(detFunct.isParentRule(ruleId,parentFunctionality,SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)){
+		               				isExecParent = true;
+		               			}
+		           			}
+		               		
+	 			            for(int j=0; j<createRules.length; j++) {
+	 			               if(createRules[j].equals(ruleId)) {
+	 			            	   isCreate = true;
+	 			               }
+	 			            }
+		               		if(!modality.equals(AdmintoolsConstants.DETAIL_INS)){
+		               			if(detFunct.isParentRule(ruleId,parentFunctionality,SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)){
+		               				isCreateParent = true;
+		               			}
+		           			}
 	 			            		
 	 			            rowClass = (alternate) ? "portlet-section-alternate" : "portlet-section-body";
 	 			            alternate = !alternate;
@@ -267,6 +297,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					 	    <%
 					 	    	if(isExec) out.print(" checked='checked' ");
 					 	    	else if (!isExecParent && parentFunctionality.getParentId() != null) out.print(" disabled='disabled' "); 
+					 	    %> 
+					 	    />
+					 	</td>
+					 	<td align="center">
+					 	    <input type="checkbox" name="creation" id="creation" value="<%=ruleId%>" 
+					 	    <%
+					 	    	if(isCreate) out.print(" checked='checked' ");
+					 	    	else if (!isCreateParent && parentFunctionality.getParentId() != null) out.print(" disabled='disabled' "); 
 					 	    %> 
 					 	    />
 					 	</td> 
@@ -308,6 +346,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 					    <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/erase.png", currTheme)%>'/>
 					    </a>
 					    </td>
+					    <td align="center">
+                        <a onclick = "selectAllInColumns('creation')" title='<spagobi:message key = "SBISet.Funct.selAllColumn" />' alt='<spagobi:message key = "SBISet.Funct.selAllColumn" />'>
+                        <img  src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/expertok.gif", currTheme)%>'/>
+                        </a>
+					    <a onclick = "deselectAllInColumns('creation')" title='<spagobi:message key = "SBISet.Funct.deselAllColumn" />' alt='<spagobi:message key = "SBISet.Funct.deselAllColumn" />'>
+					    <img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/erase.png", currTheme)%>'/>
+					    </a>
+					    </td>
 						<td align="center">&nbsp;</td>   
                      </tr>
 	 		</table>
@@ -323,61 +369,74 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <script>
 function selectAllInColumns (columnName){
-var checkCollection = document.forms.formFunct.elements[columnName];
-for (var i = 0; i< checkCollection.length; i++){
-if(!checkCollection[i].checked){
-checkCollection[i].click();
-}
-}
+	var checkCollection = document.forms.formFunct.elements[columnName];
+	for (var i = 0; i< checkCollection.length; i++){
+		if(!checkCollection[i].checked){
+			checkCollection[i].click();
+		}
+	}
 }
 function deselectAllInColumns (columnName){
-var checkCollection = document.forms.formFunct.elements[columnName];
-for (var i = 0; i< checkCollection.length; i++){
-if(checkCollection[i].checked){
-checkCollection[i].click();
-}
-}
+	var checkCollection = document.forms.formFunct.elements[columnName];
+	for (var i = 0; i< checkCollection.length; i++){
+		if(checkCollection[i].checked){
+			checkCollection[i].click();
+		}
+	}
 }
 function selectAllInRows (rowId){
-var checkDevCollection = document.forms.formFunct.elements['development'];
-var checkTestCollection = document.forms.formFunct.elements['test'];
-var checkExecCollection = document.forms.formFunct.elements['execution'];
+	var checkDevCollection = document.forms.formFunct.elements['development'];
+	var checkTestCollection = document.forms.formFunct.elements['test'];
+	var checkExecCollection = document.forms.formFunct.elements['execution'];
+	var checkCreateCollection = document.forms.formFunct.elements['creation'];
+	
+	for(var i=0; i<checkDevCollection.length; i++){
+		if(checkDevCollection[i].value == rowId && !checkDevCollection[i].checked){
+			checkDevCollection[i].click();
+		}
+	}
+	for(var j=0; j<checkTestCollection.length; j++){
+		if(checkTestCollection[j].value == rowId && !checkTestCollection[j].checked){
+			checkTestCollection[j].click();
+		}
+	}
+	for(var k=0; k<checkExecCollection.length; k++){
+		if(checkExecCollection[k].value == rowId && !checkExecCollection[k].checked){
+			checkExecCollection[k].click();
+		}
+	}
+	for(var l=0; l<checkCreateCollection.length; l++){
+		if(checkCreateCollection[l].value == rowId && !checkCreateCollection[l].checked){
+			checkCreateCollection[l].click();
+		}
+	}
+}
 
-for(var i=0; i<checkDevCollection.length; i++){
-if(checkDevCollection[i].value == rowId && !checkDevCollection[i].checked){
-checkDevCollection[i].click();
-}
-}
-for(var j=0; j<checkTestCollection.length; j++){
-if(checkTestCollection[j].value == rowId && !checkTestCollection[j].checked){
-checkTestCollection[j].click();
-}
-}
-for(var k=0; k<checkExecCollection.length; k++){
-if(checkExecCollection[k].value == rowId && !checkExecCollection[k].checked){
-checkExecCollection[k].click();
-}
-}
-}
 function deselectAllInRows (rowId){
-var checkDevCollection = document.forms.formFunct.elements['development'];
-var checkTestCollection = document.forms.formFunct.elements['test'];
-var checkExecCollection = document.forms.formFunct.elements['execution'];
-
-for(var i=0; i<checkDevCollection.length; i++){
-if(checkDevCollection[i].value == rowId && checkDevCollection[i].checked){
-checkDevCollection[i].click();
-}
-}
-for(var j=0; j<checkTestCollection.length; j++){
-if(checkTestCollection[j].value == rowId && checkTestCollection[j].checked){
-checkTestCollection[j].click();
-}
-}
-for(var k=0; k<checkExecCollection.length; k++){
-if(checkExecCollection[k].value == rowId && checkExecCollection[k].checked){
-checkExecCollection[k].click();
-}
-}
+	var checkDevCollection = document.forms.formFunct.elements['development'];
+	var checkTestCollection = document.forms.formFunct.elements['test'];
+	var checkExecCollection = document.forms.formFunct.elements['execution'];
+	var checkCreateCollection = document.forms.formFunct.elements['creation'];
+	
+	for(var i=0; i<checkDevCollection.length; i++){
+		if(checkDevCollection[i].value == rowId && checkDevCollection[i].checked){
+			checkDevCollection[i].click();
+		}
+	}
+	for(var j=0; j<checkTestCollection.length; j++){
+		if(checkTestCollection[j].value == rowId && checkTestCollection[j].checked){
+			checkTestCollection[j].click();
+		}
+	}
+	for(var k=0; k<checkExecCollection.length; k++){
+		if(checkExecCollection[k].value == rowId && checkExecCollection[k].checked){
+			checkExecCollection[k].click();
+		}
+	}
+	for(var l=0; l<checkCreateCollection.length; l++){
+		if(checkCreateCollection[l].value == rowId && checkCreateCollection[l].checked){
+			checkCreateCollection[l].click();
+		}
+	}
 }
 </script>

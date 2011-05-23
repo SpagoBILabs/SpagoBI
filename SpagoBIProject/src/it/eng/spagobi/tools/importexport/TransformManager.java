@@ -105,8 +105,8 @@ public class TransformManager {
 	    String verDest = (String) sb.getAttribute("to");
 	    String className = (String) sb.getAttribute("class");
 	    if (verOrigin.trim().equalsIgnoreCase(nameVerOrigin.trim())) {
-		transformers.add(className);
-		fillListTransClassName(transList, verDest, transformers);
+			transformers.add(className);
+			fillListTransClassName(transList, verDest, transformers);
 	    }
 	}
 	logger.debug("OUT");

@@ -384,4 +384,12 @@ public class SpagoBIConstants {
 	public static final String CHANGEPWD_EXPIRED_TIME  = "changepwd.expired_time";
 	public static final String CHANGEPWD_CHANGE_FIRST  = "changepwd.change_first";
 	public static final String CHANGEPWD_DISACTIVE_TIME  = "changepwd.disactivation_time";
+	
+	//constants to manage roles permission on folder (to develop, test, execute and create documents) 
+	public static final String PERMISSION_ON_FOLDER  = "PERMISSION_ON_FOLDER";
+	public static final String PERMISSION_ON_FOLDER_TO_DEVELOP  = "DEVELOPMENT";
+	public static final String PERMISSION_ON_FOLDER_TO_TEST  = "TEST";
+	public static final String PERMISSION_ON_FOLDER_TO_EXECUTE  = "EXECUTION";
+	public static final String PERMISSION_ON_FOLDER_TO_CREATE  = "CREATION";
+	
 }

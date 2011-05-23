@@ -121,4 +121,8 @@
 <DOMAIN valueCd="Qbe" valueNm="SbiQbeDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiQbeDataSet"/>
 <DOMAIN valueCd="Cat1" valueNm="Cat1" domainCd="CATEGORY_TYPE" domainNm="Category Type" valueDs="Cat1"/>
 <DOMAIN valueCd="Cat2" valueNm="Cat2" domainCd="CATEGORY_TYPE" domainNm="Category Type" valueDs="Cat2"/>
+<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.dev"/>
+<DOMAIN valueCd="TEST" valueNm="sbidomains.permissiononfolder.nm.test" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.test"/>
+<DOMAIN valueCd="EXECUTION" valueNm="sbidomains.permissiononfolder.nm.execute" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.execute"/>
+<DOMAIN valueCd="CREATION" valueNm="sbidomains.permissiononfolder.nm.create" domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder" valueDs="sbidomains.permissiononfolder.ds.create"/>
 </DOMAINS>
