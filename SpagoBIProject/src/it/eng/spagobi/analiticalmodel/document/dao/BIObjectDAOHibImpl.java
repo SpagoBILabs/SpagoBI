@@ -1693,7 +1693,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if(!isPersonalFolder){
 
 				try {
-					RequestContainer reqCont = RequestContainer.getRequestContainer();
 					if(profile != null)
 						roles  = ((UserProfile)profile).getRolesForUse();
 				} catch (Exception e) {
@@ -1708,9 +1707,20 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					" and f.functId = :FOLDER_ID  " );
 
 					if(profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
-						buffer.append(" and ( fr.id.state.valueId = o.state OR o.stateCode = 'SUSP') " ); 
+//						buffer.append(" and ( fr.id.state.valueId = o.state OR o.stateCode = 'SUSP') " ); 
+						
+						buffer.append(" and (" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DEV_STATE + "') OR" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.TEST_STATE + "') OR " +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.REL_STATE + "') OR " +
+								"o.stateCode = '" + SpagoBIConstants.SUSP_STATE + "'" +
+								") " ); 
 					}else{
-						buffer.append(" and fr.id.state.valueId = o.state " ); 
+						buffer.append(" and (" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DEV_STATE + "') OR" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.TEST_STATE + "') OR " +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.REL_STATE + "')" +
+								") " ); 
 					}
 
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
