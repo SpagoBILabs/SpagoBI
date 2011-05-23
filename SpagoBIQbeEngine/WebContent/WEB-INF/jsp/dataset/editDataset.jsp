@@ -31,7 +31,6 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
-<%@page import="it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
 <%@page import="it.eng.spago.base.*"%>
@@ -49,7 +48,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
-<%@page import="it.eng.spagobi.engines.qbe.QbeEngineAnalysisState"%>
+<%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -133,7 +132,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 			Sbi.config.queryValidation.isEnabled = <%= isQueryValidationEnabled %>;
 			Sbi.config.queryValidation.isBlocking = <%= isQueryValidationBlocking %>;
 			
-			Sbi.config.qbeEngineAnalysisStateVersion = <%= QbeEngineAnalysisState.CURRENT_VERSION %>;
+			Sbi.config.qbeEngineAnalysisStateVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
 	  	
 			var url = {
 		    	host: '<%= request.getServerName()%>'
@@ -183,15 +182,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
 
 	      	qbeConfig.crosstab = {};
-	      	<%
-	      	CrosstabDefinition crosstabDefinition = qbeEngineInstance.getCrosstabDefinition();
-	      	JSONObject crosstabDefinitionJSON = crosstabDefinition != null ? 
-	      			(JSONObject) SerializationManager.serialize(crosstabDefinition, "application/json") : 
-	      				new JSONObject();
-	      	%>
-	      	
-	
-	      	qbeConfig.crosstab.crosstabTemplate = <%= crosstabDefinitionJSON %>;
+	      	qbeConfig.crosstab.crosstabTemplate = {};
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");
