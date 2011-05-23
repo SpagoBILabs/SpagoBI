@@ -57,6 +57,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
@@ -947,6 +948,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// first filter on roles: finds only roles with permissions on folders containing the required document
 			SbiObjects hibBIObject = (SbiObjects)aSession.load(SbiObjects.class, id);
 			String objectState = hibBIObject.getState().getValueCd();
+			String permission = ObjectsAccessVerifier.getPermissionFromDocumentState(objectState);
 			Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
 			Iterator itObjFunc = hibObjFuncs.iterator();
 			while (itObjFunc.hasNext()) {
@@ -962,7 +964,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					"SbiExtRoles as roles, SbiFuncRole as funcRole " + 
 					"where roles.extRoleId = funcRole.id.role.extRoleId and " +
 					"	   funcRole.id.function.functId = " + aSbiFunctions.getFunctId() + " and " +
-					"	   funcRole.id.state.valueCd = '" + objectState + "' ";
+					"	   funcRole.id.state.valueCd = '" + permission + "' ";
 					Query rolesHqlQuery = aSession.createQuery(rolesHql);
 					// get the list of roles that can see the document (in REL or TEST state) in that functionality
 					List rolesNames = new ArrayList();
@@ -1057,7 +1059,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		logger.debug("OUT");
 		return correctRoles;
 	}
-
 
 
 	/**
