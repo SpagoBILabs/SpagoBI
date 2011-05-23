@@ -207,6 +207,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		        	name :  docName,
 		        	label : docLabel,
 		        	description : docDescr,
+		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
 					engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,

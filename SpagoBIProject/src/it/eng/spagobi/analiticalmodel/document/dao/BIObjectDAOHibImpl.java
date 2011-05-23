@@ -595,14 +595,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
-		internalInsertBIObject(obj, objTemp, false);
+	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError {
+		return internalInsertBIObject(obj, objTemp, false);
 	}
 
-	private void internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
+	private Integer internalInsertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer idToReturn = null;
 		try {
 
 			aSession = getSession();
@@ -661,6 +662,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			
 			// save biobject
 			Integer id = (Integer) aSession.save(hibBIObject);
+			idToReturn = id;
 			// recover the saved hibernate object
 			hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, id);
 			// functionalities storing
@@ -708,8 +710,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null) {
 				if (aSession.isOpen()) aSession.close();
 			}
-		}
+		}	
 		logger.debug("OUT");
+		return idToReturn;
 	}
 
 
@@ -1710,16 +1713,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 //						buffer.append(" and ( fr.id.state.valueId = o.state OR o.stateCode = 'SUSP') " ); 
 						
 						buffer.append(" and (" +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DEV_STATE + "') OR" +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.TEST_STATE + "') OR " +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.REL_STATE + "') OR " +
-								"o.stateCode = '" + SpagoBIConstants.SUSP_STATE + "'" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_DEV + "') OR" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "') OR " +
+								"o.stateCode = '" + SpagoBIConstants.DOC_STATE_SUSP + "'" +
 								") " ); 
 					}else{
 						buffer.append(" and (" +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DEV_STATE + "') OR" +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.TEST_STATE + "') OR " +
-								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.REL_STATE + "')" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_DEV + "') OR" +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " +
+								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "')" +
 								") " ); 
 					}
 

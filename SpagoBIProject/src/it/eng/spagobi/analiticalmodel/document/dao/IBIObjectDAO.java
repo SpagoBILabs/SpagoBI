@@ -205,7 +205,7 @@ public interface IBIObjectDAO extends ISpagoBIDao{
 	 * @param objTemp The template of the biobject
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
+	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
 	
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored
