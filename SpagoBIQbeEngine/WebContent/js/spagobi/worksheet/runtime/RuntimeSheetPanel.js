@@ -60,13 +60,13 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 			border: false,
 			title: this.sheetConfig.name,
             items: [new Ext.Panel({})]
-	}
+	};
 	
 	c = Ext.apply(config,c);
 	this.addEvents();
 	Ext.apply(this,c);	
 	
-	this.on('activate',this.renderContent, this)
+	this.on('activate',this.renderContent, this);
 	
 	Sbi.worksheet.runtime.RuntimeSheetPanel.superclass.constructor.call(this, c);	 	
 };
@@ -89,7 +89,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		var sharedConf = {				
 			border: false,
 			style:'padding:5px 15px 5px'
-		}
+		};
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
 			
@@ -102,7 +102,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.length > 0) {
 			var dynamicFilters = [];
-			for ( var i = 0; i < this.sheetConfig.filters.length; i++ ) {
+			var i = 0;
+			for (; i < this.sheetConfig.filters.length; i++ ) {
 				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters[i]);
 				dynamicFilters.push(aDynamicFilter);	
 			}

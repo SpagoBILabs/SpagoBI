@@ -61,7 +61,7 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	
 	c = {
 		items: [this.form]
-	}
+	};
 	
 	Sbi.worksheet.designer.PieChartDesignerPanel.superclass.constructor.call(this, c);
 

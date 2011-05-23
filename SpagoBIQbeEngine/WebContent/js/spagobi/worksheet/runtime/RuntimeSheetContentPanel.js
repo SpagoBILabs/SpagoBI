@@ -66,7 +66,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 		style:'padding:5px 15px 5px',
 		items: this.content,
 		autoHeight: true
-	}
+	};
 	Sbi.worksheet.runtime.RuntimeSheetContentPanel.superclass.constructor.call(this, c);	
 
 };

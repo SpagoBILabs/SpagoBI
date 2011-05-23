@@ -69,7 +69,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 			scrollable: true,
             layout: 'fit',
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
-	}
+	};
 	
 	c = Ext.apply(config,c);
 	Ext.apply(this,c);
@@ -95,18 +95,18 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	}
 
 	, updateLayout: function (sheetLayout) {
-		if(sheetLayout!=null){
+		if(sheetLayout!==null){
 			 this.sheetLayout=sheetLayout;
-			 if(sheetLayout=='layout-header' || sheetLayout=='layout-content'){
+			 if(sheetLayout==='layout-header' || sheetLayout==='layout-content'){
 				 this.footerPanel.hide();
 			 }
-			 if(sheetLayout=='layout-footer' || sheetLayout=='layout-content'){
+			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-content'){
 				 this.headerPanel.hide();
 			 }
-			 if(sheetLayout=='layout-footer' || sheetLayout=='layout-headerfooter'){
+			 if(sheetLayout==='layout-footer' || sheetLayout==='layout-headerfooter'){
 				 this.footerPanel.show();
 			 }
-			 if(sheetLayout=='layout-header' || sheetLayout=='layout-headerfooter'){
+			 if(sheetLayout==='layout-header' || sheetLayout==='layout-headerfooter'){
 				 this.headerPanel.show();
 			 }
 		}
@@ -132,32 +132,32 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		var state = {};
 		this.title = sheetState.name;
 		this.sheetLayout = state.sheetLayout;
-		if(sheetState.header!=null){
+		if(sheetState.header!==null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
-		if(sheetState.filters!=null){
+		if(sheetState.filters!==null){
 			this.filtersPanel.setFilters(sheetState.filters);
 		}
-		if(sheetState.content!=null){
+		if(sheetState.content!==null){
 			this.contentPanel.setDesignerState(sheetState.content);
 		}
-		if(sheetState.footer!=null){
+		if(sheetState.footer!==null){
 			this.footerPanel.setTitleState(sheetState.footer);
 		}
 	}
 	
 	, isValid: function(){
 		var valid = true;
-		if(sheetState.header!=null){
+		if(sheetState.header!==null){
 			valid = valid && this.headerPanel.isValid();
 		}
-//		if(sheetState.filters!=null){
+//		if(sheetState.filters!==null){
 //			this.filtersPanel.setFilters(sheetState.filters);
 //		}
-//		if(sheetState.content!=null){
+//		if(sheetState.content!==null){
 //			this.contentPanel.setDesignerState(sheetState.content);
 //		}
-		if(sheetState.footer!=null){
+		if(sheetState.footer!==null){
 			valid = valid && this.footerPanel.isValid();
 		}
 		return valid;

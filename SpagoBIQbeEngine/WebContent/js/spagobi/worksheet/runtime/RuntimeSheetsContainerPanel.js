@@ -83,7 +83,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	buildSheets: function(config, sheetsConfig){
 		var items = [];
 		if(sheetsConfig!=undefined && sheetsConfig!=null){
-			for(var i=0; i<sheetsConfig.length; i++){
+			var i=0;
+			for(; i<sheetsConfig.length; i++){
 				items.push(new Sbi.worksheet.runtime.RuntimeSheetPanel(Ext.apply(config||{},{sheetConfig: sheetsConfig[i]})));
 			}
 		}

@@ -102,7 +102,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 				enabled: true,
 				formatter: this.getTooltipFormatter()
 			},
-			colors: this.getColors(),
 			title : {
 				text : ''
 			},
@@ -163,7 +162,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 		serie.type = 'pie';
 		serie.name = theSerie.name;
 		serie.data = [];
-		for (var i = 0; i < categories.length; i++) {
+		var i = 0;
+		for (; i < categories.length; i++) {
 			serie.data.push([categories[i], theSerie.data[i]]);
 		}
 		series.push(serie);

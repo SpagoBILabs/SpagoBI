@@ -135,7 +135,8 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.selections;
-		for (var i = 0; i < rows.length; i++) {
+		var i = 0;
+		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
 			if (this.store.find('id', aRow.data.id) !== -1) {
@@ -248,9 +249,10 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		var recordIndex = this.store.find('id', rowId);
 		this.store.removeAt(recordIndex);
 		var item = null;
-		for (var i = this.contents.length-1; i >= 0; i--) {
+		var i = this.contents.length-1;
+		for (; i >= 0; i--) {
 			var temp = this.contents[i];
-			if (temp.getId() == 'designsheetfilterspanel_' + aRow.data.alias) {
+			if (temp.getId() === 'designsheetfilterspanel_' + aRow.data.alias) {
 				item = temp;
 				break;
 			}
@@ -258,7 +260,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		this.contents.remove(item);
 		item.destroy();
 
-		if (this.contents.length == 0) {
+		if (this.contents.length === 0) {
 			this.initEmptyMsgPanel();
 			this.contents.push(this.emptyMsgPanel);
 			this.add(this.emptyMsgPanel);
@@ -269,7 +271,8 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	, reset: function() {
 		if (this.contents && this.contents.length) {
-			for (var i = this.contents.length - 1; i >= 0; i--) {
+			var i = this.contents.length - 1;
+			for (; i >= 0; i--) {
 				this.contents[i].destroy();
 			}
 		}

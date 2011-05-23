@@ -186,7 +186,8 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.selections;
-		for (var i = 0; i < rows.length; i++) {
+		var i = 0;
+		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
 			if (this.store.find('id', aRow.data.id) !== -1) {
@@ -224,7 +225,8 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	
 	, setValues: function (attributes) {
 		this.removeAllAttributes();
-		for (var i = 0; i < attributes.length; i++) {
+		var i = 0;
+		for (; i < attributes.length; i++) {
   			var attribute = attributes[i];
   			var record = new this.Record(attribute);
   			this.store.add(record); 

@@ -176,7 +176,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	, getSheetsState: function(){
 		var sheets = [];
 		if(this.items.items.length>1){
-			for(var i=0; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+			var i=0;
+			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
 				sheets.push(this.items.items[i].getSheetState());
 			}
 		}
@@ -195,12 +196,14 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		
 		//add the panels
 		if(this.rendered){
-			for(var i=0; i<sheets.length; i++){
+			var i=0;
+			for(; i<sheets.length; i++){
 				this.addTab(sheets[i]);
 			}
 		}else{
 			this.on('render',function(){
-				for(var i=0; i<sheets.length; i++){
+				var i=0;
+				for(; i<sheets.length; i++){
 					this.addTab(sheets[i]);
 				}
 			},this);
@@ -210,7 +213,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	, isValid: function(){
 		var valid = true;
 		if(this.items.items.length>1){
-			for(var i=0; i<this.items.items.length-1; i++){//-1 because of the add panel teb
+			var i=0;
+			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
 				valid = valid && this.items.items[i].isValid();
 				if(!valid){
 					break;

@@ -209,6 +209,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		
 	    var showCommaCheckColumn = new Ext.grid.CheckColumn({
     		header: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
+    		, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
     		, dataIndex: 'showcomma'
     		, hideable: false
     		, hidden: false	
@@ -330,7 +331,8 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.selections;
-		for (var i = 0; i < rows.length; i++) {
+		var i = 0;
+		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the field is an attribute show a warning
 			if (aRow.data.nature === 'attribute') {
@@ -382,13 +384,13 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 			if(this.targetRow) {
 				rowIndex = this.grid.getView().findRowIndex( this.targetRow );
 			}
-			if (rowIndex == undefined || rowIndex === false) {
+			if (rowIndex === undefined || rowIndex === false) {
 				rowIndex = undefined;
 			}
 	           
          	var rowData = this.store.getById(row.id);
         	this.store.remove(this.store.getById(row.id));
-            if (rowIndex != undefined) {
+            if (rowIndex !== undefined) {
             	this.store.insert(rowIndex, rowData);
             } else {
             	this.store.add(rowData);
@@ -411,7 +413,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
         var sm = this.grid.getSelectionModel();
         var rows = sm.getSelections();
         this.store.remove( rows );
-        if (this.store.getCount() == 0) {
+        if (this.store.getCount() === 0) {
         	this.getLayout().setActiveItem( 0 );
         }
 	}
@@ -468,7 +470,8 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	, setMeasures: function(measures) {
 		this.removeAllMeasures();
 		if (measures !== undefined && measures !== null && measures.length > 0) {
-			for (var i = 0; i < measures.length; i++) {
+			var i = 0;
+			for (; i < measures.length; i++) {
 	  			var measure = measures[i];
 	  			var record = new this.Record(measure);
 	  			this.store.add(record); 
