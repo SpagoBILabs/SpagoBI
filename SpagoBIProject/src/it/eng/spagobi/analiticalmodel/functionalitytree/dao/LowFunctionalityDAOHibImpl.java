@@ -1453,6 +1453,94 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		return realResult;
 	}
 
+	/**
+	 * Load all functionalities associated the user roles. 
+	 * 
+	 * @param onlyFirstLevel limits functionalities to first level
+	 * @param recoverBIObjects the recover bi objects
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
+	 */
+	public List loadUserFunctionalitiesFiltered(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile, String permission) throws EMFUserError {
+		logger.debug( "IN" );
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String username = null;
+			Collection roles = null;
+			try {
+				RequestContainer reqCont = RequestContainer.getRequestContainer();
+				if(reqCont!=null){
+					username = (String)((UserProfile)profile).getUserId();
+					roles  = ((UserProfile)profile).getRolesForUse();				
+				}
+			} catch (Exception e) {
+				logger.error("Error while recovering user profile", e);
+			}
+			boolean onlyFirstLevel = (parentId == null)? true : false;
+
+			Query hibQuery = null;
+
+			//getting correct root parent id (if the function must return only functionality of first level)
+			Integer tmpParentId = null;
+			List lstParentId = null;
+			if (onlyFirstLevel){
+				hibQuery = aSession.createQuery(" from SbiFunctions s where s.parentFunct.functId is null and s.functTypeCd  = 'LOW_FUNCT'");
+				lstParentId = hibQuery.list();
+				tmpParentId = (lstParentId==null || lstParentId.size() == 0)?new Integer("-1"):((SbiFunctions)lstParentId.get(0)).getFunctId();
+			}
+			else
+				tmpParentId = parentId;
+
+			//getting functionalities
+			if(username == null || roles == null) {
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.stateCd = ? and sfr.id.role.name in (:roles) order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				hibQuery.setParameterList("roles", roles);
+				hibQuery.setString(0,permission);
+			} else if (onlyFirstLevel){
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where ((sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?) or sfr.id.function.path like ? ) and sfr.stateCd = ? and sfr.id.role.name in (:roles) " +											
+				" order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				hibQuery.setInteger(0, tmpParentId.intValue());
+				hibQuery.setString(1, "/"+username);
+				hibQuery.setParameterList("roles", roles);
+				hibQuery.setString(2,permission);
+			} else{
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where (sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  ) and sfr.stateCd = ? and sfr.id.role.name in (:roles) " +											
+				" order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				hibQuery.setInteger(0, tmpParentId.intValue());
+				hibQuery.setParameterList("roles", roles);
+				hibQuery.setString(1,permission);
+			}
+			List hibList = hibQuery.list();	
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				SbiFunctions tmpFunc = (SbiFunctions) it.next();
+				realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
+			}
+		} catch (HibernateException he) {
+			logger.error( "HibernateException",he );
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug( "OUT" );
+		return realResult;
+	}
+	
 	private boolean existFunction (List lstFunctions, SbiFunctions newFunct){
 		boolean res = false;
 		for (int i=0; i< lstFunctions.size(); i++){

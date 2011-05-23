@@ -274,6 +274,19 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao{
 	 */
 	public List loadUserFunctionalities(Integer parentId, boolean recoverBIObjects,  IEngUserProfile profile) throws EMFUserError;
 	
+	/**
+	 * Load all functionalities associated the user roles. 
+	 * 
+	 * @param onlyFirstLevel limits functionalities to first level
+	 * @param recoverBIObjects the recover bi objects
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
+	 */
+	public List loadUserFunctionalitiesFiltered(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile, String permission) throws EMFUserError ;
 
 	/**
 	 * Load all fathers functionalities to root level. 
