@@ -18,13 +18,13 @@ INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values 
 /
 INSERT into SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) values ('WORKSHEET','sbidomains.nm.worksheet','BIOBJ_TYPE','BI Object types','sbidomains.ds.worksheet')
 /
-INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('DEVELOPMENT', 'sbidomains.permissiononfolder.nm.dev','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.dev', '')
+INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('DEVELOPMENT', 'sbidomains.permissiononfolder.nm.dev','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.dev')
 /
-INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('TEST', 'sbidomains.permissiononfolder.nm.test','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.test', '')
+INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('TEST', 'sbidomains.permissiononfolder.nm.test','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.test')
 /
-INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('EXECUTION', 'sbidomains.permissiononfolder.nm.execute','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.execute', '')
+INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('EXECUTION', 'sbidomains.permissiononfolder.nm.execute','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.execute')
 /
-INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('CREATION', 'sbidomains.permissiononfolder.nm.create','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.create', '')
+INSERT INTO SBI_DOMAINS (VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS) VALUES ('CREATION', 'sbidomains.permissiononfolder.nm.create','PERMISSION_ON_FOLDER','Permission on folder','sbidomains.permissiononfolder.ds.create')
 /
 UPDATE SBI_FUNC_ROLE SET STATE_ID = (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'DEVELOPMENT' AND DOMAIN_CD = 'PERMISSION_ON_FOLDER'), STATE_CD = 'DEVELOPMENT' WHERE STATE_ID = (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'DEV' AND DOMAIN_CD = 'STATE')
 /
