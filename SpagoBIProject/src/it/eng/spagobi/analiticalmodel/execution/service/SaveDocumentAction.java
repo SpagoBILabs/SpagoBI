@@ -26,6 +26,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -37,6 +38,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,6 +58,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	// RES detail
 	private final String ID = "id";
+	private final String OBJ_ID = "obj_id";	
 	private final String NAME = "name";
 	private final String LABEL = "label";
 	private final String DESCRIPTION = "description";
@@ -83,6 +86,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 		if (serviceType != null	&& serviceType.equalsIgnoreCase(DOC_SAVE)) {
 			String id = getAttributeAsString(ID);
+			String orig_biobj_id = getAttributeAsString(OBJ_ID);
 			String label = getAttributeAsString(LABEL);
 			String name = getAttributeAsString(NAME);
 			String description = getAttributeAsString(DESCRIPTION);
@@ -114,8 +118,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				Integer biObjectTypeID = objType.getValueId();
 				o.setBiObjectTypeID(biObjectTypeID);
 				o.setBiObjectTypeCode(objType.getValueCd());
-				
-				//o.setBiObjectParameters(businessObjectParameters);			
+						
 				String creationUser =  (String)getUserProfile().getUserUniqueIdentifier();
 				o.setCreationUser(creationUser);
 				if(dataSourceId!=null && dataSourceId!=""){
@@ -128,7 +131,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}		
 				o.setFunctionalities(functionalities);
 				
-				Domain objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.STATE_TYPE_CODE, SpagoBIConstants.REL_STATE);			
+				Domain objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_REL);			
 				Integer stateID = objState.getValueId();
 				o.setStateID(stateID);
 				o.setStateCode(objState.getValueCd());		
@@ -150,7 +153,19 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
-						objDao.insertBIObject(o, objTemp);
+						Integer biObjectID = objDao.insertBIObject(o, objTemp);
+						if(orig_biobj_id!=null && orig_biobj_id!=""){
+							BIObject orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
+							List obj_pars = orig_obj.getBiObjectParameters();
+							if(obj_pars!=null && !obj_pars.isEmpty()){
+								Iterator it = obj_pars.iterator();
+								while(it.hasNext()){
+									BIObjectParameter par = (BIObjectParameter)it.next();
+									par.setBiObjectID(biObjectID);
+									DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(par);
+								}
+							}
+						}
 						logger.debug("New document inserted");
 						JSONObject attributesResponseSuccessJSON = new JSONObject();
 						attributesResponseSuccessJSON.put("success", true);
