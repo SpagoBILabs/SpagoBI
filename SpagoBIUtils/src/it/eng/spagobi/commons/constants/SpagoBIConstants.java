@@ -160,6 +160,7 @@ public class SpagoBIConstants {
 	public static final String DEV_STATE = "DEV";
 	public static final String REL_STATE = "REL";
 	public static final String TEST_STATE = "TEST";	
+	public static final String SUSP_STATE = "SUSP";	
 		
 	public static final String SUBOBJECT_LIST = "SUBOBJECT_NAMES_LIST";
 	public static final String SNAPSHOT_LIST = "SNAPSHOT_LIST";
