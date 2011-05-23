@@ -36,12 +36,18 @@ Sbi.browser.DocumentsTree = function(config) {
 				LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 		}
 	});
+	this.services['loadFTreeFoldersFilteredService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_FTREE_FOLDERS_ACTION'
+		, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',PERMISSION_ON_FOLDER: 'CREATION'
+		}
+	});
 	// -----------------------------------------
 	this.checkedIdNodes = new Array();
 	
 	if(config.drawUncheckedChecks == true){
 		this.loader = new Ext.tree.TreeLoader({
-	        dataUrl   : this.services['loadFTreeFoldersService'],
+	        dataUrl   : this.services['loadFTreeFoldersFilteredService'],
 	        scope: this,
 			createNode: this.createnode 
 	    });

@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -53,6 +54,8 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 	
 	public static final String ROOT_NODE_ID = "rootNode";
 	
+	public static final String PERMISSION_ON_FOLDER = "PERMISSION_ON_FOLDER";
+	public static final String PERMISSION_CREATION = "CREATION";
 	// logger component
 	private static Logger logger = Logger.getLogger(GetFTreeFoldersAction.class);
 	
@@ -69,26 +72,28 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 			setSpagoBIResponseContainer( response );
 			
 			nodeId = getAttributeAsString( NODE_ID );
+			String permission_on_folder = getAttributeAsString( PERMISSION_ON_FOLDER );
 			logger.debug("Parameter [" + NODE_ID + "] is equal to [" + nodeId + "]");
 			
 			SessionContainer sessCont = getSessionContainer();
 			SessionContainer permCont = sessCont.getPermanentContainer();
 			IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			
-			/*
+			ILowFunctionalityDAO lfDao = DAOFactory.getLowFunctionalityDAO();
 			if (nodeId.equalsIgnoreCase(ROOT_NODE_ID)) {
 				//getting all I° level folders
-				folders = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(true, false, profile);	
+				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
+					folders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);
+				}else{
+					folders = lfDao.loadUserFunctionalities(null, false, profile);	
+				}
 			} else {
 				//getting children folders
-				folders = DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities(new Integer(nodeId), false);	
-			}*/
-			if (nodeId.equalsIgnoreCase(ROOT_NODE_ID)) {
-				//getting all I° level folders
-				folders = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(null, false, profile);	
-			} else {
-				//getting children folders
-				folders = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(new Integer(nodeId), false, profile);		
+				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
+					folders = lfDao.loadUserFunctionalitiesFiltered(new Integer(nodeId), false, profile, PERMISSION_CREATION);
+				}else{
+					folders = lfDao.loadUserFunctionalities(new Integer(nodeId), false, profile);	
+				}
 			}
 			HttpServletRequest httpRequest = getHttpRequest();
 			MessageBuilder m = new MessageBuilder();
