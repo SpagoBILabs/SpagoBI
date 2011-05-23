@@ -42,6 +42,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Contains some methods to control user exec/dev/test rights.
@@ -924,5 +925,26 @@ public class ObjectsAccessVerifier {
 		logger.debug("OUT");
 		monitor.stop();
 		return correctRoles;
+	}
+	
+	/**
+	 * Retrieves the correct permission on folder that the user must have in order to execute the document: eg:
+	 * document state = REL --> permission to EXECUTION
+	 * document state = DEV --> permission to DEVELOPMENT
+	 * document state = TEST --> permission to TEST
+	 * @param documentState The document state 
+	 * @return the permission required to execute the document
+	 */
+	public static String getPermissionFromDocumentState(String documentState) {
+		if (SpagoBIConstants.DOC_STATE_REL.equals(documentState)) {
+			return SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE;
+		}
+		if (SpagoBIConstants.DOC_STATE_DEV.equals(documentState)) {
+			return SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP;
+		}
+		if (SpagoBIConstants.DOC_STATE_TEST.equals(documentState)) {
+			return SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST;
+		}
+		throw new SpagoBIRuntimeException("Document state [" + documentState + "] not valid!!");
 	}
 }
