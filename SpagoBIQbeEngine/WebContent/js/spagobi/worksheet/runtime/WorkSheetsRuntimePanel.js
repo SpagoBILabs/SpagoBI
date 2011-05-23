@@ -59,7 +59,7 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 	
 	this.initPanels(template);
 
-	var c ={
+	c ={
 			border: false,
 			layout: 'fit',
 			bodyStyle: 'height: 100%',

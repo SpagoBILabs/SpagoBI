@@ -93,7 +93,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 					'measures': dataConfig.measures,
 					'config': {'measureson':'rows'}
 				})
-		}
+		};
 		Ext.Ajax.request({
 	        url: this.services['loadData'],//load the crosstab from the server
 	        params: requestParameters,
@@ -117,7 +117,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		if(this.dataContainerObject!=null){
 			var measures = this.dataContainerObject.columns.node_childs;
 			var categories = [];
-			for(var i=0; i<measures.length; i++){
+			var i=0;
+			for(; i<measures.length; i++){
 				categories.push(measures[i].node_key);
 			}
 			return  categories;
@@ -134,19 +135,22 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var measures_metadata = this.dataContainerObject.measures_metadata;
 			var measures_metadata_map = {};
 			//load the metadata of the measures (we need the type)
-			for(var i=0; i<measures_metadata.length; i++){
+			var i=0;
+			for(; i<measures_metadata.length; i++){
 				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
 			}
 			var series = [];
 			var serie;
 			var map ;
 			var serieData, serieDataFormatted;
-			for(var i=0; i<seriesNames.length; i++){
+			i=0;
+			for(; i<seriesNames.length; i++){
 			      serie = {};
 			      serie.name =   seriesNames[i].node_key;
 			      serieData = this.dataContainerObject.data[i];
 			      serieDataFormatted = [];
-			      for(var j=0; j<serieData.length; j++){
+			      var j=0;
+			      for(; j<serieData.length; j++){
 			    	  map = measures_metadata_map[serie.name];
 			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format ));
 			      }
@@ -188,7 +192,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var serieDefinition = null;
 			
 			// find the serie configuration
-			for (var i = 0; i < allSeries.length; i++) {
+			var i = 0;
+			for (; i < allSeries.length; i++) {
 				if (allSeries[i].seriename === theSerieName) {
 					serieDefinition = allSeries[i];
 					break;
@@ -224,7 +229,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			
 			return dataLabel;
 			
-		}
+		};
 		return toReturn;
 	}
 	
@@ -239,7 +244,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			var serieDefinition = null;
 			
 			// find the serie configuration
-			for (var i = 0; i < allSeries.length; i++) {
+			var i = 0;
+			for (; i < allSeries.length; i++) {
 				if (allSeries[i].seriename === theSerieName) {
 					serieDefinition = allSeries[i];
 					break;
@@ -275,7 +281,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			
 			return  tooltip;
 			
-		}
+		};
 		
 		return toReturn;
 	}

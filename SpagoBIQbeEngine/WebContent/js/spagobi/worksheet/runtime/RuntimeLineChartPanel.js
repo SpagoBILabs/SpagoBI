@@ -127,7 +127,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	, getColors : function () {
 		var colors = [];
 		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
-			for (var i = 0; i < this.chartConfig.series.length; i++) {
+			var i = 0;
+			for (; i < this.chartConfig.series.length; i++) {
 				colors.push(this.chartConfig.series[i].color);
 			}
 		}
@@ -136,8 +137,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	
 	, getPlotOptions : function () {
 		var plotOptions = null;
-		
-		var plotOptions = null;
+
 		if (this.chartConfig.colorarea === true) {
 			plotOptions = {
 				area: {

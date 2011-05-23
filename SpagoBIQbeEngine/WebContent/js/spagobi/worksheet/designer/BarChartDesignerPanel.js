@@ -61,7 +61,7 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	c = {
 		items: [this.form]
-	}
+	};
 	
 	Sbi.worksheet.designer.BarChartDesignerPanel.superclass.constructor.call(this, c);
 	

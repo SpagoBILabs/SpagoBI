@@ -66,7 +66,7 @@ Sbi.worksheet.designer.DesignToolsLayoutPanel = function(config) {
 	
 	c = {
 		items: [this.layoutRadioGroup]
-	}
+	};
 
 	this.layoutRadioGroup.on('change', this.updateSheetLayout, this);
 	
@@ -106,7 +106,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 	//returns a string with the selected layout (for the available values look the..
 	//.. class comment)
 	getLayoutValue: function(){
-		if(this.layoutRadioGroup!=null && this.layoutRadioGroup.getValue()!=null && this.layoutRadioGroup.getValue().getGroupValue()!=null){
+		if(this.layoutRadioGroup!==null && this.layoutRadioGroup.getValue()!==null && this.layoutRadioGroup.getValue().getGroupValue()!==null){
 			return this.layoutRadioGroup.getValue().getGroupValue();
 		}else{
 			this.layoutRadioGroup.setValue('layout-headerfooter');

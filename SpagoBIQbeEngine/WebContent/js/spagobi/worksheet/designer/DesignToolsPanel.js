@@ -58,13 +58,13 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 	Ext.apply(this, c);
 	
 	this.initPanels();
-	var c = {
+	c = {
         layout: {
             type:'vbox',
             align:'stretch'
         },
         items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
-	}
+	};
 	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);	 		
 
 };
@@ -105,7 +105,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 
 	//Update the tools info for the active sheet
 	, updateToolsForActiveTab: function(activeSheet){
-		if(activeSheet.sheetLayout!=null){
+		if(activeSheet.sheetLayout!==null){
 			this.designToolsLayoutPanel.setLayoutValue(activeSheet.sheetLayout);
 		}
 	}

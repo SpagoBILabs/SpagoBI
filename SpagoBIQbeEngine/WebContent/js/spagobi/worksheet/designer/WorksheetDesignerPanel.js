@@ -59,7 +59,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	
 	this.initPanels();
 	
-	var c ={
+	c ={
 			layout: 'border',
 			autoScroll: true,
 			items: [

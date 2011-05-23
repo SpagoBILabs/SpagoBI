@@ -324,8 +324,8 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	},
 	
 	setTitleState: function(values){
-		 this.titlePanel.setValue(values.title)
-		 this.imgTriggerField.setValue(values.img)
+		 this.titlePanel.setValue(values.title);
+		 this.imgTriggerField.setValue(values.img);
 		 this.imgPosition.setValue(values.position);
 	}
 	
