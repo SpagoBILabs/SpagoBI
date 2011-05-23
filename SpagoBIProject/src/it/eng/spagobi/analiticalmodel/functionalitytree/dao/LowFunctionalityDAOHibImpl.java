@@ -21,9 +21,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.analiticalmodel.functionalitytree.dao;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.AdmintoolsConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,33 +64,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
-
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
-import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.AdmintoolsConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.RoleDAOHibImpl;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 /**
  * Defines the Hibernate implementations for all DAO methods,
@@ -173,6 +170,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			// save functionality roles
 
+			/* TODO does it make sens to assign execution permissions on personal folder???
 			Set functRoleToSave = new HashSet();
 			criteria = aSession.createCriteria(SbiDomains.class);
 			Criterion relstatecriterion = Expression.eq("valueCd", "REL");
@@ -204,7 +202,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				}
 			}
 			hibFunct.setSbiFuncRoles(functRoleToSave);
-
+			*/
 
 
 
@@ -482,11 +480,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// save roles functionality
 			Set functRoleToSave = new HashSet();
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "DEV"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP));
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "TEST"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST));
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "REL"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE));
+			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE));
 			// set new roles into sbiFunctions
 			hibFunct.setSbiFuncRoles(functRoleToSave);
 			// set new data
@@ -568,37 +568,41 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/**
-	 * Saves all roles for a functionality, using session and state information.
-	 * The state for a functionality can be Developing, Testing and execution and 
-	 * each state has its own roles.
+	 * Saves all roles for a functionality, using session and permission information.
+	 * The permission for a functionality can be DEVELOPMENT, TEST, EXECUTION AND CREATE and 
+	 * each permission has its own roles.
 	 * 
 	 * @param aSession The current session object
 	 * @param hibFunct The functionality hibernate object
 	 * @param aLowFunctionality The Low Functionality object
-	 * @param state The string defining the state
+	 * @param permission The string defining the permission
 	 * @return A collection object containing all roles 
 	 * @throws EMFUserError 
 	 * 
 	 */
-	private Set saveRolesFunctionality(Session aSession, SbiFunctions hibFunct, LowFunctionality aLowFunctionality, String state) throws EMFUserError {
+	private Set saveRolesFunctionality(Session aSession, SbiFunctions hibFunct, LowFunctionality aLowFunctionality, String permission) throws EMFUserError {
 		Set functRoleToSave = new HashSet();
 		Criterion domainCdCriterrion = null;
 		Criteria criteria = null;	
 		criteria = aSession.createCriteria(SbiDomains.class);
-		domainCdCriterrion = Expression.eq("valueCd", state);
+		domainCdCriterrion = Expression.and(
+				Expression.eq("valueCd", permission), 
+				Expression.eq("domainCd", SpagoBIConstants.PERMISSION_ON_FOLDER));
 		criteria.add(domainCdCriterrion);
-		SbiDomains devStateDomain = (SbiDomains)criteria.uniqueResult();
-		if (devStateDomain == null){
-			logger.error("The Domain with value_cd="+state+" does not exist.");
+		SbiDomains permissionDomain = (SbiDomains)criteria.uniqueResult();
+		if (permissionDomain == null){
+			logger.error("The Domain with value_cd=" + permission + " and domain_cd=" + SpagoBIConstants.PERMISSION_ON_FOLDER + " does not exist.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1039);
 		}
 		Role[] roles = null;
-		if(state.equalsIgnoreCase("DEV")) {
+		if(permission.equalsIgnoreCase(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
 			roles = aLowFunctionality.getDevRoles();
-		} else if(state.equalsIgnoreCase("TEST")) {
+		} else if(permission.equalsIgnoreCase(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)) {
 			roles = aLowFunctionality.getTestRoles();
-		} else if(state.equalsIgnoreCase("REL")) {
+		} else if(permission.equalsIgnoreCase(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)) {
 			roles = aLowFunctionality.getExecRoles();
+		} else if(permission.equalsIgnoreCase(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)) {
+			roles = aLowFunctionality.getCreateRoles();
 		}
 		for(int i=0; i<roles.length; i++) {
 			Role role = roles[i];
@@ -608,11 +612,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiExtRoles hibRole = (SbiExtRoles)criteria.uniqueResult();
 			SbiFuncRoleId sbifuncroleid = new SbiFuncRoleId();
 			sbifuncroleid.setFunction(hibFunct);
-			sbifuncroleid.setState(devStateDomain);
+			sbifuncroleid.setState(permissionDomain);
 			sbifuncroleid.setRole(hibRole);
 			SbiFuncRole sbifuncrole = new SbiFuncRole();
 			sbifuncrole.setId(sbifuncroleid);
-			sbifuncrole.setStateCd(devStateDomain.getValueCd());
+			sbifuncrole.setStateCd(permissionDomain.getValueCd());
 			
 			updateSbiCommonInfo4Update(sbifuncrole);
 			
@@ -690,11 +694,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// save roles functionality
 			Set functRoleToSave = new HashSet();
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "DEV"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP));
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "TEST"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST));
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
-					aLowFunctionality, "REL"));
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE));
+			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct,
+					aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE));
 			// set new roles into sbiFunctions
 			hibFunct.setSbiFuncRoles(functRoleToSave);
 
@@ -823,6 +829,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		List devRolesList = new ArrayList();
 		List testRolesList = new ArrayList();
 		List execRolesList = new ArrayList();
+		List createRolesList = new ArrayList();
 
 		Set roles = hibFunct.getSbiFuncRoles();
 		if (roles!=null){
@@ -831,18 +838,20 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			while(iterRoles.hasNext()) {
 				SbiFuncRole hibfuncrole = (SbiFuncRole)iterRoles.next();
 				SbiExtRoles hibRole = hibfuncrole.getId().getRole();
-				SbiDomains hibState = hibfuncrole.getId().getState();
+				SbiDomains hibPermission = hibfuncrole.getId().getState();
 				logger.debug( "hibfuncrole.getId().getRole().getName()="+hibRole.getName() );
 				RoleDAOHibImpl roleDAO =  new RoleDAOHibImpl();
 				Role role = roleDAO.toRole(hibRole);
 
-				String state = hibState.getValueCd();
-				if(state.equals("DEV")) {
+				String state = hibPermission.getValueCd();
+				if(state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
 					devRolesList.add(role);
-				} else if(state.equals("TEST")) {
+				} else if(state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)) {
 					testRolesList.add(role);
-				} else if(state.equals("REL")) {
+				} else if(state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)) {
 					execRolesList.add(role);
+				} else if(state.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)) {
+					createRolesList.add(role);
 				}
 			}
 		}
@@ -850,6 +859,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		Role[] execRoles = new Role[execRolesList.size()];
 		Role[] devRoles = new Role[devRolesList.size()];
 		Role[] testRoles = new Role[testRolesList.size()];
+		Role[] createRoles = new Role[createRolesList.size()];
 
 		for (int i = 0; i < execRolesList.size(); i++)
 			execRoles[i] = (Role) execRolesList.get(i);
@@ -857,10 +867,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			testRoles[i] = (Role) testRolesList.get(i);
 		for (int i = 0; i < devRolesList.size(); i++)
 			devRoles[i] = (Role) devRolesList.get(i);
+		for (int i = 0; i < createRolesList.size(); i++)
+			createRoles[i] = (Role) createRolesList.get(i);
 
 		lowFunct.setDevRoles(devRoles);
 		lowFunct.setTestRoles(testRoles);
 		lowFunct.setExecRoles(execRoles);
+		lowFunct.setCreateRoles(createRoles);
 
 		List biObjects = new ArrayList();
 		if (recoverBIObjects) {
@@ -1149,7 +1162,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				ArrayList rolesArray = (ArrayList)i.next();
 				Integer functId = (Integer)rolesArray.get(0);
 				Integer roleId = (Integer)rolesArray.get(1);
-				String stateCD = (String)rolesArray.get(2);
+				String permission = (String)rolesArray.get(2);
 				SbiFunctions sbiFunct = new SbiFunctions();
 				sbiFunct.setFunctId(functId);
 
@@ -1161,7 +1174,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hqlQuery = aSession.createQuery(hql);
 				hqlQuery.setInteger(0, sbiFunct.getFunctId().intValue());
 				hqlQuery.setInteger(1, roleId.intValue());
-				hqlQuery.setString(2, stateCD);
+				hqlQuery.setString(2, permission);
 				functions = hqlQuery.list();
 
 				Iterator it = functions.iterator();
@@ -1492,11 +1505,6 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					realResult.add(toLowFunctionality(hibFunct, false));
 				}
 			}
-
-			if(rootFolderID != null) {
-
-			}
-
 
 			tx.commit();
 		} catch (HibernateException he) {

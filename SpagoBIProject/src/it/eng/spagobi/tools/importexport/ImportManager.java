@@ -49,6 +49,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
@@ -1929,7 +1930,7 @@ public class ImportManager implements IImportManager, Serializable {
 				String stateCd = functrole.getStateCd();
 				Map uniqueDom = new HashMap();
 				uniqueDom.put("valuecd", stateCd);
-				uniqueDom.put("domaincd", "STATE");
+				uniqueDom.put("domaincd", SpagoBIConstants.PERMISSION_ON_FOLDER);
 				SbiDomains existDom = (SbiDomains) importer.checkExistence(uniqueDom, sessionCurrDB, new SbiDomains());
 				if (existDom != null) {
 					newFunctRole.getId().setState(existDom);

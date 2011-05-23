@@ -62,6 +62,7 @@ import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.Subreport;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -1357,25 +1358,36 @@ public class ExporterMetadata {
 			session.save(hibFunct);
 			tx.commit();
 			Role[] devRoles = funct.getDevRoles();
-			Domain devDom = domDAO.loadDomainByCodeAndValue("STATE", "DEV");
+			Domain devDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, 
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
 			for(int i=0; i<devRoles.length; i++) {
 				Role devRole = devRoles[i];
 				insertRole(devRole, session);
 				insertFunctRole(devRole, funct, devDom.getValueId(), devDom.getValueCd(), session);
 			}
 			Role[] testRoles = funct.getTestRoles();
-			Domain testDom = domDAO.loadDomainByCodeAndValue("STATE", "TEST");
+			Domain testDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, 
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
 			for(int i=0; i<testRoles.length; i++) {
 				Role testRole = testRoles[i];
 				insertRole(testRole, session);
 				insertFunctRole(testRole, funct, testDom.getValueId(), testDom.getValueCd(), session);
 			}
 			Role[] execRoles = funct.getExecRoles();
-			Domain execDom = domDAO.loadDomainByCodeAndValue("STATE", "REL");
+			Domain execDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, 
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
 			for(int i=0; i<execRoles.length; i++) {
 				Role execRole = execRoles[i];
 				insertRole(execRole, session);
 				insertFunctRole(execRole, funct, execDom.getValueId(), execDom.getValueCd(), session);
+			}
+			Role[] createRoles = funct.getCreateRoles();
+			Domain createDom = domDAO.loadDomainByCodeAndValue(SpagoBIConstants.PERMISSION_ON_FOLDER, 
+					SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
+			for(int i=0; i<createRoles.length; i++) {
+				Role createRole = createRoles[i];
+				insertRole(createRole, session);
+				insertFunctRole(createRole, funct, createDom.getValueId(), createDom.getValueCd(), session);
 			}
 
 		} catch (Exception e) {
@@ -1448,20 +1460,20 @@ public class ExporterMetadata {
 	 * 
 	 * @param role The role object which is an element of the association
 	 * @param funct The functionality object which is an element of the association
-	 * @param stateId The id of the State associated to the couple role / functionality
-	 * @param stateCD The code of the State associated to the couple role / functionality
+	 * @param permissionId The id of the permission associated to the couple role / functionality
+	 * @param permissionCd The code of the permission associated to the couple role / functionality
 	 * @param session Hibernate session for the exported database
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void insertFunctRole(Role role, LowFunctionality funct, Integer stateId, String stateCD, Session session) throws EMFUserError {
+	public void insertFunctRole(Role role, LowFunctionality funct, Integer permissionId, String permissionCd, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			Transaction tx = session.beginTransaction();
 			Integer roleid = role.getId();
 			Integer functid = funct.getId();
 			String query = " from SbiFuncRole where id.function = " + functid +
-			" and id.role = " + roleid + " and id.state = " + stateId ;
+			" and id.role = " + roleid + " and id.state = " + permissionId ;
 			Query hibQuery = session.createQuery(query);
 			List hibList = hibQuery.list();
 			if(!hibList.isEmpty()) {
@@ -1471,12 +1483,12 @@ public class ExporterMetadata {
 			SbiFuncRoleId hibFuncRoleId = new SbiFuncRoleId();
 			SbiFunctions hibFunct = (SbiFunctions)session.load(SbiFunctions.class, funct.getId());
 			SbiExtRoles hibRole = (SbiExtRoles)session.load(SbiExtRoles.class, role.getId());
-			SbiDomains hibState = (SbiDomains)session.load(SbiDomains.class, stateId);
+			SbiDomains hibPermission = (SbiDomains)session.load(SbiDomains.class, permissionId);
 			hibFuncRoleId.setFunction(hibFunct);
 			hibFuncRoleId.setRole(hibRole);
-			hibFuncRoleId.setState(hibState);
+			hibFuncRoleId.setState(hibPermission);
 			SbiFuncRole hibFunctRole = new SbiFuncRole(hibFuncRoleId);
-			hibFunctRole.setStateCd(stateCD);
+			hibFunctRole.setStateCd(permissionCd);
 			session.save(hibFunctRole);
 			tx.commit();
 
