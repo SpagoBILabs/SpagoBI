@@ -85,7 +85,8 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	this.on('render',function(){this.addTab();},this);
 	
 	this.initPanel();
-	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 		
+	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 	
+	this.addEvents('saveworkheet');
 
 };
 
@@ -245,15 +246,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
   	}
 	
 	, saveWorkSheet: function(){
-
-		var	template = '<EMPTY_TEMPLATE></EMPTY_TEMPLATE>';
-		alert(this.executionInstance.toSource());
-		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
-																'OBJECT_TYPE': 'WORKSHEET',
-																'OBJECT_TEMPLATE': template,
-																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-																});
-		this.win_saveDoc.show();
+		var	wk_definition = this.getSheetsState();
+		this.fireEvent('saveworkheet', this, {'OBJECT_TYPE': 'WORKSHEET','OBJECT_WK_DEFINITION': wk_definition });	
 	}
 
 	
