@@ -30,6 +30,8 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -281,6 +283,20 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
     
     private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
     public final static String PARAM_NEW_SESSION = "NEW_SESSION";
+    private final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
+    public final static String QUERY = "QUERY";
+    
+    public String composeWorksheetTemplate(String workSheetDef, String workSheetQuery, String originalQbeTempl) throws SourceBeanException{
+    	SourceBean confSB = SourceBean.fromXMLString( originalQbeTempl );
+		SourceBean wk_def_sb = new SourceBean(WORKSHEET_DEFINITION);
+		wk_def_sb.setCharacters(workSheetDef);
+		SourceBean query_sb = new SourceBean(QUERY);
+		query_sb.setCharacters(workSheetQuery);
+		confSB.setAttribute(wk_def_sb);
+		confSB.setAttribute(query_sb);
+		String template = confSB.toXML(false);	
+		return template;
+    }
     
 	private Map applyService(Map parameters, BIObject biObject) {
 		ObjTemplate template;
