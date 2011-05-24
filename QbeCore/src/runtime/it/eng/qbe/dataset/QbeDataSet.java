@@ -28,8 +28,7 @@ import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -159,9 +158,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	private String getResourcePath() {
 		String filePath = null;
 		try {
-			ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-			SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String jndiName = (String) sb.getCharacters();
+			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			filePath = SpagoBIUtilities.readJndiResource(jndiName);
 		} catch (Throwable t) {
 			logger.debug(t);
