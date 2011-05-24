@@ -35,6 +35,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.qbe.QbeDriver;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -157,14 +158,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}else if(wk_definition!=null && query!=null && orig_obj!=null){
 					ObjTemplate qbETemplate = orig_obj.getActiveTemplate();
 					String templCont = new String(qbETemplate.getContent());
-					SourceBean confSB = SourceBean.fromXMLString( templCont );
-					SourceBean wk_def_sb = new SourceBean("WORKSHEET_DEFINITION");
-					wk_def_sb.setCharacters(wk_definition);
-					SourceBean query_sb = new SourceBean("QUERY");
-					query_sb.setCharacters(query);
-					confSB.setAttribute(wk_def_sb);
-					confSB.setAttribute(query_sb);
-					String temp = confSB.toXML(false);
+					QbeDriver q = new QbeDriver();
+					String temp = q.composeWorksheetTemplate(wk_definition, query, templCont);
 					content = temp.getBytes();
 				}else{
 					logger.error("Document template not available");
