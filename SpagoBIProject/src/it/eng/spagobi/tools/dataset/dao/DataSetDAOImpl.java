@@ -1329,7 +1329,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h, SbiDataSetConfig d where h.active = ? and d.label = ? and d.dsId = h.sbiDsConfig" );
+			Query hibQueryHistory = aSession.createQuery("from SbiDataSetHistory h where h.active = ? and h.sbiDsConfig.label = ? " );
 			hibQueryHistory.setBoolean(0, true);
 			hibQueryHistory.setString(1, dsLabel);	
 			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
