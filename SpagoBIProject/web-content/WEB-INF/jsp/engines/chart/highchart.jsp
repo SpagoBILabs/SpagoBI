@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	//gets the metadata of dataset
 	String dsId =  String.valueOf(sbModuleResponse.getAttribute(DataSetConstants.ID));
+	String dsLabel =  String.valueOf(sbModuleResponse.getAttribute(DataSetConstants.LABEL));
 	String dsTypeCd =  (String) sbModuleResponse.getAttribute(DataSetConstants.DS_TYPE_CD);
 	JSONArray dsPars =  (JSONArray) sbModuleResponse.getAttribute(DataSetConstants.PARS);
 	String dsTransformerType =  (String) sbModuleResponse.getAttribute(DataSetConstants.TRASFORMER_TYPE_CD);
@@ -92,6 +93,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 			};
 	
+		
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 			  baseUrl: url
 		    , baseParams: params
@@ -102,6 +104,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			
 			var config = <%=template%>;
 			config.dsId = <%=dsId%>;
+			config.dsLabel = "<%=dsLabel%>";
 			config.dsTypeCd = "<%=dsTypeCd%>";
 			config.dsPars =  <%=dsPars%>;
 			config.dsTransformerType = "<%=dsTransformerType%>";

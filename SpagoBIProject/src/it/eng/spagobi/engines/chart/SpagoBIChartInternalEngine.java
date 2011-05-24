@@ -297,6 +297,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				response.setAttribute("divWidth", templateUtil.getDivWidth());
 				response.setAttribute("divHeight", templateUtil.getDivHeight());
 				response.setAttribute(DataSetConstants.ID, dataset.getId());
+				response.setAttribute(DataSetConstants.LABEL, dataset.getLabel());
 				response.setAttribute(DataSetConstants.DS_TYPE_CD, (dataset.getDsType()==null)?"":dataset.getDsType());				
 				response.setAttribute(DataSetConstants.PARS, parsJSON);
 				response.setAttribute(DataSetConstants.TRASFORMER_TYPE_CD, (dataset.getTransformerCd()==null)?"":dataset.getTransformerCd());
