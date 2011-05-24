@@ -169,6 +169,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 								while(it.hasNext()){
 									BIObjectParameter par = (BIObjectParameter)it.next();
 									par.setBiObjectID(biObjectID);
+									par.setId(null);
 									DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(par);
 								}
 							}
