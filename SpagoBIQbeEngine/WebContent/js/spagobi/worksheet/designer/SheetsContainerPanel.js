@@ -245,7 +245,15 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
   	}
 	
 	, saveWorkSheet: function(){
-		alert('Saving');
+
+		var	template = '<EMPTY_TEMPLATE></EMPTY_TEMPLATE>';
+		alert(this.executionInstance.toSource());
+		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
+																'OBJECT_TYPE': 'WORKSHEET',
+																'OBJECT_TEMPLATE': template,
+																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+																});
+		this.win_saveDoc.show();
 	}
 
 	
