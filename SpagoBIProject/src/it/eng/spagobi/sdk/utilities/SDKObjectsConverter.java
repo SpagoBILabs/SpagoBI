@@ -427,6 +427,9 @@ public class SDKObjectsConverter {
 			// java dataset
 			toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
 
+			toReturn.setJsonQuery(spagoBiDataSet.getJsonQuery());
+			toReturn.setDatamarts(spagoBiDataSet.getDatamarts());
+
 			/*
 			String type = null;
 
