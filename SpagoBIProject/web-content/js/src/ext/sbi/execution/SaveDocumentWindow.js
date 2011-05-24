@@ -61,6 +61,8 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	this.OBJECT_ENGINE = config.OBJECT_ENGINE;
 	this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
 	this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
+	this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
+	this.OBJECT_QUERY = config.OBJECT_QUERY;
 	
 	this.initFormPanel();
 	
@@ -189,6 +191,10 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		var docLabel = this.docLabel.getValue();
 		var docDescr = this.docDescr.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
+		var query = this.OBJECT_WK_DEFINITION;
+		var wk_definition = this.OBJECT_QUERY;
+		query = Ext.util.JSON.encode(query);
+		wk_definition = Ext.util.JSON.encode(wk_definition);
 		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
@@ -208,6 +214,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		        	description : docDescr,
 		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
+					wk_definition: wk_definition,
+					query: query,
 					//engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,

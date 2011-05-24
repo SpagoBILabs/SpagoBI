@@ -283,14 +283,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 					}			
 				}));
 		}
-			
-		//if (executionInstance.document.typeCode == 'DATAMART') {
-			this.toolbar.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-save' 
-			    , scope: this
-			    , handler : this.saveDocument
-			}));
-		//}
 		
 		this.toolbar.addButton(new Ext.Toolbar.Button({
 			iconCls: 'icon-rating' 
@@ -859,20 +851,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}
 	}
 	
-	, saveDocument: function(b,e,template) {
-		
-		if(template == undefined || template == null){
-			template = '<EMPTY_TEMPLATE></EMPTY_TEMPLATE>';
-		}
-		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
-																'OBJECT_TYPE': 'WORKSHEET',
-																//'OBJECT_ENGINE': this.executionInstance.document.engineid,
-																'OBJECT_TEMPLATE': template,
-																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-																});
-		this.win_saveDoc.show();
-	}
-	
 	, rateExecution: function() {
 		this.win_rating = new Sbi.execution.toolbar.RatingWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID});
 		this.win_rating.show();
@@ -1249,6 +1227,21 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	        		}
 	        		, scope: this
 	            }
+	        	, 'message:saveworkheet': {
+	        		fn: function(srcFrame, message){
+	        			var wk_definition = message.data.OBJECT_WK_DEFINITION;
+	        			var objType = message.data.OBJECT_TYPE;
+	        			var query = message.data.OBJECT_QUERY;
+	        			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
+	        																	'OBJECT_TYPE': objType,
+	        																	'OBJECT_WK_DEFINITION': wk_definition,
+	        																	'OBJECT_QUERY': query,
+	        																	'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+	        																	});
+	        			this.win_saveDoc.show();
+	        		}
+	        	    , scope: this
+	        	}
 				
 				, domready : function(frame) {
 
