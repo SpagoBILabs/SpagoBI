@@ -10,10 +10,10 @@
     scope="REQUEST">
     <CONFIG></CONFIG>
   </ACTION>  
-
-  <!-- <ACTION name="CREATE_CHART" class="it.eng.spagobi.engines.chart.service.CreateChart" scope="REQUEST">
+  
+  <ACTION name="GET_DATA_CHART_ACTION" class="it.eng.spagobi.engines.chart.service.GetChartDataAction" scope="REQUEST">
  	<CONFIG/>
- </ACTION>-->
+  </ACTION>
 
 </ACTIONS>
 

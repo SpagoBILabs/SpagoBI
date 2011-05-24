@@ -32,6 +32,7 @@ public class DataSetConstants {
 	public static final String DATASET_INSERT = "DATASET_INSERT";
 	public static final String DATASET_DELETE = "DATASET_DELETE";
 	public static final String DATASET_TEST = "DATASET_TEST";
+	public static final String DATASET_EXEC = "DATASET_EXEC";
 	
 	public static final String DATASET_VERSION_RESTORE = "DATASET_VERSION_RESTORE";
 	public static final String DATASET_VERSION_DELETE = "DATASET_VERSION_DELETE";
@@ -60,13 +61,17 @@ public class DataSetConstants {
 	
 	public static final String DS_TYPE_CD = "dsTypeCd";
 	public static final String FILE_NAME = "fileName";
-	public static final String QUERY = "query";
+	public static final String QUERY = "Query";
 	public static final String DATA_SOURCE = "dataSource";
 	public static final String WS_ADDRESS = "wsAddress";
 	public static final String WS_OPERATION = "wsOperation";
-	public static final String SCRIPT = "script";
+	public static final String SCRIPT = "Script";
 	public static final String SCRIPT_LANGUAGE = "scriptLanguage";
 	public static final String JCLASS_NAME = "jclassName";
+	public static final String FILE = "File";
+	public static final String JAVA_CLASS = "Java Class";
+	public static final String WEB_SERVICE = "Web Service";
+	public static final String QBE = "Qbe";
 	
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";

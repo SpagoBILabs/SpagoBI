@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  **/
-package it.eng.spagobi.tools.dataset.service;
+package it.eng.spagobi.engines.chart.service;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -77,10 +77,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ManageDatasets extends AbstractSpagoBIAction {
+public class GetChartDataAction extends AbstractSpagoBIAction {
 	
 	// logger component
-	public static Logger logger = Logger.getLogger(ManageDatasets.class);
+	public static Logger logger = Logger.getLogger(GetChartDataAction.class);
+
 
 	@Override
 	public void doService() {
@@ -174,23 +175,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 				}else{
 					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError");
-				}
-			} catch (Throwable e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
-			}
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_EXEC)) {			
-			try {
-				Integer dsId = getAttributeAsInteger(DataSetConstants.ID);
-				JSONObject dataSetJSON =getJSONDatasetResult(dsId, profile);
-				if(dataSetJSON!=null){
-					try {
-						writeBackToClient( new JSONSuccess( dataSetJSON ) );
-					} catch (IOException e) {
-						throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-					}
-				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"No data found");
 				}
 			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
@@ -531,10 +515,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
 		
 		List<Domain> domainsDs = (List<Domain>)getSessionContainer().getAttribute("dsTypesList");	
-		//if the method is called out of DatasetManagement
-		if (domainsDs == null) {
-			domainsDs = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-		}
 		String dsType = "";
 		if(domainsDs!=null && !domainsDs.isEmpty()){
 			Iterator it = domainsDs.iterator();
@@ -741,7 +721,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 	
-	public JSONArray serializeJSONArrayParsList(String parsList) throws JSONException, SourceBeanException{
+	private JSONArray serializeJSONArrayParsList(String parsList) throws JSONException, SourceBeanException{
 		JSONArray toReturn = new JSONArray();
 		DataSetParametersList params  = DataSetParametersList.fromXML(parsList);
 		toReturn = ObjectUtils.toJSONArray(params.getItems());
@@ -809,12 +789,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dataSetJSON;
 	}
 	
-	public JSONObject getJSONDatasetResult(Integer dsId, IEngUserProfile profile) throws Exception{
+	public JSONObject getJSONDatasetResult(BIObject obj, IEngUserProfile profile) throws Exception{
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;		
-		//Integer id = obj.getDataSetId();	
+		Integer id = obj.getDataSetId();	
 		//gets the dataset object informations
-		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsId);
+		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
 		try {
 			if (dataset.getParameters() != null){
 				JSONArray parsJSON = serializeJSONArrayParsList(dataset.getParameters());
