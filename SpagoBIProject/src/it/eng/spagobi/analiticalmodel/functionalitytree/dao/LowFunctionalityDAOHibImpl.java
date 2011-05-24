@@ -1508,13 +1508,20 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibQuery.setParameterList("roles", roles);
 			} else if (onlyFirstLevel){
 				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
-				+ "( sfr.id.function.path like ? or (sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
-				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ) )"										
+				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
+				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
 				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
-				hibQuery.setString(0, "/"+username);
-				hibQuery.setInteger(1, tmpParentId.intValue());
-				hibQuery.setString(2, permission);
-				hibQuery.setParameterList("roles", roles);				
+				hibQuery.setInteger(0, tmpParentId.intValue());
+				hibQuery.setString(1, permission);
+				hibQuery.setParameterList("roles", roles);		
+				Query hibQueryPersonalFolder = aSession.createQuery("select f from SbiFunctions f where f.path like ? ");
+				hibQueryPersonalFolder.setString(0, "/"+username);
+				List hibListPersF = hibQueryPersonalFolder.list();	
+				Iterator it = hibListPersF.iterator();
+				while (it.hasNext()) {
+					SbiFunctions tmpFunc = (SbiFunctions) it.next();
+					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
+				}
 			} else{
 				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
 				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ? "
