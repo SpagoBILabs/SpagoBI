@@ -140,10 +140,6 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 	}
 
 
-
-
-
-
 	/**
 	 * Load all engines.
 	 * 
@@ -197,15 +193,14 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 	 * 
 	 * @see it.eng.spagobi.engines.config.dao.IEngineDAO#loadAllEnginesForBIObjectType(java.lang.String)
 	 */
-	public List loadAllEnginesForBIObjectType(String biobjectType) throws EMFUserError {
+	public List<Engine> loadAllEnginesForBIObjectType(String biobjectType) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<Engine> realResult = new ArrayList<Engine>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			//Query hibQuery = aSession.createQuery(" from SbiEngines engines where engines.biobjType.valueCd = '" + biobjectType + "'");
 			Query hibQuery = aSession.createQuery(" from SbiEngines engines where engines.biobjType.valueCd = ?" );
 			hibQuery.setString(0, biobjectType);
 			List hibList = hibQuery.list();
@@ -214,7 +209,6 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			while (it.hasNext()) {
 				realResult.add(toEngine((SbiEngines) it.next()));
 			}
-			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
 

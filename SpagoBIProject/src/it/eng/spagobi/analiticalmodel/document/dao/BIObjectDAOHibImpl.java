@@ -1123,6 +1123,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			functionlities.add(functionalityId);
 		}
 		aBIObject.setFunctionalities(functionlities);
+		
+		List businessObjectParameters = new ArrayList();
+		Set hibObjPars = hibBIObject.getSbiObjPars();
+		if(hibObjPars!=null){
+			for (Iterator it = hibObjPars.iterator(); it.hasNext(); ) {
+				SbiObjPar aSbiObjPar = (SbiObjPar) it.next();
+				BIObjectParameter par = toBIObjectParameter(aSbiObjPar);
+				businessObjectParameters.add(par);
+			}
+			aBIObject.setBiObjectParameters(businessObjectParameters);
+		}
 
 		aBIObject.setCreationDate(hibBIObject.getCreationDate());
 		aBIObject.setCreationUser(hibBIObject.getCreationUser());
@@ -1130,6 +1141,33 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());
 		logger.debug("OUT");
 		return aBIObject;
+	}
+	
+	/**
+	 * From the hibernate BI object parameter at input, gives
+	 * the corrispondent <code>BIObjectParameter</code> object.
+	 * 
+	 * @param hiObjPar The hybernate BI object parameter
+	 * 
+	 * @return The corrispondent <code>BIObjectParameter</code>
+	 */
+	public BIObjectParameter toBIObjectParameter(SbiObjPar hiObjPar){
+		BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+		aBIObjectParameter.setId(hiObjPar.getObjParId());
+		aBIObjectParameter.setLabel(hiObjPar.getLabel());
+		aBIObjectParameter.setModifiable(new Integer(hiObjPar.getModFl().intValue()));
+		aBIObjectParameter.setMultivalue(new Integer(hiObjPar.getMultFl().intValue()));
+		aBIObjectParameter.setBiObjectID(hiObjPar.getSbiObject().getBiobjId());
+		aBIObjectParameter.setParameterUrlName(hiObjPar.getParurlNm());
+		aBIObjectParameter.setParID(hiObjPar.getSbiParameter().getParId());
+		aBIObjectParameter.setRequired(new Integer(hiObjPar.getReqFl().intValue()));
+		aBIObjectParameter.setVisible(new Integer(hiObjPar.getViewFl().intValue()));
+		aBIObjectParameter.setPriority(hiObjPar.getPriority());
+		aBIObjectParameter.setProg(hiObjPar.getProg());
+		Parameter parameter = new Parameter();
+		parameter.setId(hiObjPar.getSbiParameter().getParId());
+		aBIObjectParameter.setParameter(parameter);
+		return aBIObjectParameter;
 	}
 
 
