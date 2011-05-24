@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -67,6 +70,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String TEMPLATE = "template";
 	private final String DATASOURCE = "datasourceid";
 	private final String FUNCTS = "functs";
+	private final String OBJECT_WK_DEFINITION = "wk_definition";
+	private final String OBJECT_QUERY = "query";
 
 	@Override
 	public void doService() {
@@ -95,10 +100,11 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String type = getAttributeAsString(TYPE);
 			String template = getAttributeAsString(TEMPLATE);	
 			JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
+			String wk_definition = getAttributeAsString(OBJECT_WK_DEFINITION);
+			String query = getAttributeAsString(OBJECT_QUERY);
 
 			if (name != null && name != "" && label != null && label != "" && 
-				template != null && type!=null && 
-				functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
+				 type!=null && functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
 				
 				BIObject o = new BIObject();
 				BIObject objAlreadyExisting = objDao.loadBIObjectByLabel(label);
@@ -143,8 +149,28 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				o.setStateID(stateID);
 				o.setStateCode(objState.getValueCd());		
 				
+				BIObject orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
 				ObjTemplate objTemp = new ObjTemplate();
-				byte[] content = template.getBytes();
+				byte[] content = null;
+				if(template != null && template != ""){
+					content = template.getBytes();
+				}else if(wk_definition!=null && query!=null && orig_obj!=null){
+					ObjTemplate qbETemplate = orig_obj.getActiveTemplate();
+					String templCont = new String(qbETemplate.getContent());
+					SourceBean confSB = SourceBean.fromXMLString( templCont );
+					SourceBean wk_def_sb = new SourceBean("WORKSHEET_DEFINITION");
+					wk_def_sb.setCharacters(wk_definition);
+					SourceBean query_sb = new SourceBean("QUERY");
+					query_sb.setCharacters(query);
+					confSB.setAttribute(wk_def_sb);
+					confSB.setAttribute(query_sb);
+					String temp = confSB.toXML(false);
+					content = temp.getBytes();
+				}else{
+					logger.error("Document template not available");
+					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.saveError");
+				}
+				
 				objTemp.setContent(content);
 				objTemp.setCreationUser(creationUser);
 				objTemp.setDimension(Long.toString(content.length/1000)+" KByte");
@@ -161,8 +187,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 					}else{
 						Integer biObjectID = objDao.insertBIObject(o, objTemp);
-						if(orig_biobj_id!=null && orig_biobj_id!=""){
-							BIObject orig_obj = objDao.loadBIObjectById(new Integer(orig_biobj_id));
+						if(orig_biobj_id!=null && orig_biobj_id!=""){					
 							List obj_pars = orig_obj.getBiObjectParameters();
 							if(obj_pars!=null && !obj_pars.isEmpty()){
 								Iterator it = obj_pars.iterator();
@@ -195,6 +220,12 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			logger.error(e1.getMessage(), e1);
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e1);
 		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e);
+		} catch (EMFInternalError e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e);
+		} catch (SourceBeanException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.document.saveError", e);
 		}
