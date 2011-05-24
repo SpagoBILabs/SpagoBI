@@ -865,11 +865,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			template = '<EMPTY_TEMPLATE></EMPTY_TEMPLATE>';
 		}
 		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
-																'OBJECT_TYPE': this.executionInstance.document.typeCode,
-																'OBJECT_ENGINE': this.executionInstance.document.engineid,
+																'OBJECT_TYPE': 'WORKSHEET',
+																//'OBJECT_ENGINE': this.executionInstance.document.engineid,
 																'OBJECT_TEMPLATE': template,
-																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource,
-																'OBJECT_PARS': this.executionInstance.PARAMETERS});
+																'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+																});
 		this.win_saveDoc.show();
 	}
 	

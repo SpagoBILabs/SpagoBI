@@ -1501,22 +1501,28 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			//getting functionalities
 			if(username == null || roles == null) {
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.stateCd = ? and sfr.id.role.name in (:roles) order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
-				hibQuery.setParameterList("roles", roles);
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
+				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.stateCd = ? and sfr.id.role.name in (:roles) "
+				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setString(0,permission);
+				hibQuery.setParameterList("roles", roles);
 			} else if (onlyFirstLevel){
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where ((sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?) or sfr.id.function.path like ? ) and sfr.stateCd = ? and sfr.id.role.name in (:roles) " +											
-				" order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
-				hibQuery.setInteger(0, tmpParentId.intValue());
-				hibQuery.setString(1, "/"+username);
-				hibQuery.setParameterList("roles", roles);
-				hibQuery.setString(2,permission);
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
+				+ "( sfr.id.function.path like ? or (sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
+				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ) )"										
+				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				hibQuery.setString(0, "/"+username);
+				hibQuery.setInteger(1, tmpParentId.intValue());
+				hibQuery.setString(2, permission);
+				hibQuery.setParameterList("roles", roles);				
 			} else{
-				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where (sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  ) and sfr.stateCd = ? and sfr.id.role.name in (:roles) " +											
-				" order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				hibQuery = aSession.createQuery("select sfr.id.function from SbiFuncRole sfr where "
+				+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ? "
+				+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) "										
+				+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
-				hibQuery.setParameterList("roles", roles);
 				hibQuery.setString(1,permission);
+				hibQuery.setParameterList("roles", roles);
 			}
 			List hibList = hibQuery.list();	
 			Iterator it = hibList.iterator();

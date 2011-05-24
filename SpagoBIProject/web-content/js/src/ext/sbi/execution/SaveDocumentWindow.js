@@ -61,7 +61,6 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	this.OBJECT_ENGINE = config.OBJECT_ENGINE;
 	this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
 	this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
-	this.OBJECT_PARS = config.OBJECT_PARS;
 	
 	this.initFormPanel();
 	
@@ -209,10 +208,9 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		        	description : docDescr,
 		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
-					engineid: this.OBJECT_ENGINE,
+					//engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
-					pars: this.OBJECT_PARS,
 					functs: functs
 		        };
 			

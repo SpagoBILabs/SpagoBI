@@ -97,7 +97,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 
 			if (name != null && name != "" && label != null && label != "" && 
-				engineId != null && template != null && type!=null && 
+				template != null && type!=null && 
 				functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
 				
 				BIObject o = new BIObject();
@@ -111,8 +111,15 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				o.setDescription(description);
 				o.setVisible(new Integer(1));
 				
-				Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
-				o.setEngine(engine);
+				if(engineId!=null){
+					Engine engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
+					o.setEngine(engine);
+				}else{
+					List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
+					if(engines!=null && !engines.isEmpty()){
+						o.setEngine(engines.get(0));
+					}
+				}
 				
 				Domain objType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.BIOBJ_TYPE, type);
 				Integer biObjectTypeID = objType.getValueId();
