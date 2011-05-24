@@ -1335,8 +1335,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
 			if(sbiDataSetHistory!=null){
 				detail = toDataSetDetail(sbiDataSetHistory);
-			}
-			toReturn = toDataSet(sbiDataSetHistory);
+				toReturn = toDataSet(sbiDataSetHistory);
+				}
+
 
 			//			Query hibQueryConfig = aSession.createQuery("from SbiDataSetConfig h where h.dsId = ?" );
 			//			hibQueryConfig.setBoolean(0, true);
