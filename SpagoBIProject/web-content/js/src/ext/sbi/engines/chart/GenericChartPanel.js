@@ -56,9 +56,10 @@ Sbi.engines.chart.GenericChartPanel  = function(config) {
 
 Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	loadMask: null,
-	services: null,
 	storeManager: null,				//the store manager
-	store: null						//the store
+	store: null,					//the store
+	categoryAlias: null,
+	serieAlias: null
 	
 	/**
 	 * Loads the data for the chart.. Call the action which loads the data 
@@ -66,7 +67,9 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 */
 	, loadChartData: function(dataConfig){
 		//this.showMask();
-
+		this.categoryAlias = (dataConfig.xaxis)?dataConfig.xaxis.categories:"";
+		
+		this.serieAlias = (dataConfig.plotoptions && dataConfig.plotoptions.series)?dataConfig.plotoptions.series.columnname:"";
 		var requestParameters = {
 			    id: dataConfig.dsId
 			  , label: dataConfig.dsLabel
@@ -78,50 +81,25 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		var datasets = [];
 		datasets.push(requestParameters);	
 		this.initStore(datasets, dataConfig.dsId);
-		this.createChart();
+//		this.createChart();
 	}
 	
 	/**
 	 * Load the categories for the chart
 	 */
 	, getCategories: function(){
+		
 		if(this.store!=null){
-			var categories = [];
-			var rec = this.store.getAt(0);
-			//alert("rec: " + rec);
-			if(rec) {
-				//alert("rec: " + rec.toSource());
-			
-				var fields = this.storeMeta.fields;
-				for(var i = 0, l = fields.length, f; i < l; i++) {
-					f = fields[i];
-					//alert("f: " + f.toSource());
-					if( (typeof f) === 'string') {
-						f = {name: f};
-					}
-					var alias = f.header || f.name;
-					if(alias === 'recNo') continue;
-					
-					categories[alias] = rec.get(f.name);
-					//alert(categories.toSource());
-					/*
-					var tmpDescValue = this.getDescriptionColumn(alias);
-					if (tmpDescValue!== undefined && tmpDescValue != ''){											
-						data[alias] = rec.get(f.name) + '|' + rec.get(this.store.getFieldNameByAlias(tmpDescValue));
-					}else{
-						data[alias] = rec.get(f.name);
-					}
-					*/
+		   	var categories = [];
+	    	var catColumn = this.store.getFieldNameByAlias(this.categoryAlias);
+			var records = this.store.getRange();
+	    	for (var i = 0; i < records.length; i++) {
+	    		var rec = records[i].data;
+				if(rec) {
+					categories.push(rec[catColumn]);
 				}
-			}
-			/*
-			alert(this.store.toSource());
-			var measures = this.store.columns.node_childs;
-			var categories = [];
-			for(var i=0; i<measures.length; i++){
-				categories.push(measures[i].node_key);
-			}
-			*/
+	        }
+
 			return  categories;
 		}
 	}
@@ -130,7 +108,10 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 * Loads the series for the chart
 	 */
 	, getSeries: function(){
+		
 		if(this.store!=null){
+			
+			/* gestire multiserie...
 			var seriesNames = this.store.rows.node_childs;
 			var data = this.store.data;
 			var measures_metadata = this.store.measures_metadata;
@@ -155,7 +136,18 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			      serie.data = serieDataFormatted;
 			      series.push(serie);
 			}	
-			return series;
+			return series; */
+		   	var series = [];
+	    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias);
+			var records = this.store.getRange();
+	    	for (var i = 0; i < records.length; i++) {
+	    		var rec = records[i].data;
+				if(rec) {
+					series.push(rec[serieColumn]);
+				}
+	        }
+	    	
+			return  series;
 		}
 	}
 	
@@ -205,8 +197,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		this.store.loadStore();
 		if (this.store === undefined) {
 			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
-		}else{
-			//this.store.remoteSort = false;  //local type		
+		}else{		
 			this.store.on('load', this.onLoad, this);
 			this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
 			this.store.on('metachange', this.onMetaChange, this);
@@ -236,25 +227,16 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		//adds numeration column    
 		tmpMeta.fields[0] = new Ext.grid.RowNumberer();
 
-		var categories = this.getCategories();
-		//alert("this.store: " + this.store.toSource()	);
+		
 
+		//var categories = this.getCategories();
 	}
     
-    , onLoad: function(){
-    	//alert("onload");
-    	var cat =  this.store.find(this.store.getFieldNameByAlias("mese"),"Jun")
-    	//alert("cat: " +cat);
-/*
-		for(var j = 0, len = this.inlineCharts.length; j < len; j++) {
-			var idx = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[j].column));
-			this.getColumnModel().setRenderer(idx, this.createInlineChartRenderer(this.inlineCharts[j]) );			
-		}
-		*/
-	}
-	
-
-    
+    ,onLoad: function(){
+    	this.getCategories();
+    	this.getSeries();
+    	this.createChart();
+    }
 });
 
 
