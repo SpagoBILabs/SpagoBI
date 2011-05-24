@@ -78,8 +78,8 @@ Sbi.tools.ManageDatasets = function(config) {
 
 	this.initConfigObject();
 	this.configurationObject.filter = true;
-	this.configurationObject.columnName = [['dsId.label', LN('sbi.generic.label')],
-	                                       ['dsId.name', LN('sbi.generic.name')],
+	this.configurationObject.columnName = [['sbiDsConfig.label', LN('sbi.generic.label')],
+	                                       ['sbiDsConfig.name', LN('sbi.generic.name')],
 	                                       ['category.valueNm', LN('sbi.ds.catType')]
 	                	                   ];
 	this.configurationObject.setCloneButton = true;
