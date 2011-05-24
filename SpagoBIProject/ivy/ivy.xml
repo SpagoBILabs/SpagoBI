@@ -65,6 +65,6 @@
 <!--
 Used by SbiGeoMapsDAOHibImpl
 -->
-<dependency org="jsr173-api" name="jsr173-api" rev="1.0"/>
+<dependency org="com.sun.xml.stream" name="sjsxp" rev="1.0.1"/>
     </dependencies>
 </ivy-module>
