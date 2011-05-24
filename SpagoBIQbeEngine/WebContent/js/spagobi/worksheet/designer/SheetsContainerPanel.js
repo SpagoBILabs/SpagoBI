@@ -72,7 +72,14 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 			tabPosition: 'bottom',        
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},
-	        items: [this.addPanel]
+	        items: [this.addPanel],
+	        frame: true,
+	        tools:[{
+	        	id:'save',
+	        	qtip: LN('sbi.qbe.queryeditor.centerregion.tools.save'),
+	        	handler:this.saveWorkSheet,
+	        	scope: this
+	        }]
 	};
 	
 	this.on('render',function(){this.addTab();},this);
@@ -237,7 +244,9 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			);
   	}
 	
-	
+	, saveWorkSheet: function(){
+		alert('Saving');
+	}
 
 	
 });
