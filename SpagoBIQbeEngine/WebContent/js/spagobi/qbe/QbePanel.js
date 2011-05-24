@@ -199,7 +199,13 @@ Sbi.qbe.QbePanel = function(config) {
 	// constructor
     Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
     
-  
+    this.worksheetDesignerPanel.sheetsContainerPanel.on('saveworkheet', function (obj,conf) {
+    			   var query = this.getQueries();
+    			   sendMessage({'OBJECT_TYPE': conf.OBJECT_TYPE,
+    				   			'OBJECT_WK_DEFINITION': conf.OBJECT_WK_DEFINITION ,
+    				   			'OBJECT_QUERY': query},'saveworkheet');
+    			},this);
+    
     //alert('isFromCross: ' + config.isFromCross);
     if(config.isFromCross) {
     	this.loadFirstQuery();
