@@ -41,6 +41,7 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
@@ -1503,6 +1504,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		if(hibDataSet instanceof SbiFileDataSet){		
 			ds = new FileDataSet();
 			((FileDataSet)ds).setFileName(((SbiFileDataSet)hibDataSet).getFileName());		
+			ds.setDsType(DataSetConstants.FILE);
 		}
 
 		if(hibDataSet instanceof SbiQueryDataSet){			
@@ -1515,23 +1517,27 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				IDataSource dataSource=dataSourceDao.toDataSource(sbids);
 				((JDBCDataSet)ds).setDataSource(dataSource);
 			}
+			ds.setDsType(DataSetConstants.QUERY);
 		}
 
 		if(hibDataSet instanceof SbiWSDataSet){			
 			ds=new WebServiceDataSet();
 			((WebServiceDataSet)ds).setAddress(((SbiWSDataSet)hibDataSet).getAdress());
 			((WebServiceDataSet)ds).setOperation(((SbiWSDataSet)hibDataSet).getOperation());
+			ds.setDsType(DataSetConstants.WEB_SERVICE);
 		}
 
 		if(hibDataSet instanceof SbiScriptDataSet){			
 			ds=new ScriptDataSet();
 			((ScriptDataSet)ds).setScript(((SbiScriptDataSet)hibDataSet).getScript());
 			((ScriptDataSet)ds).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
+			ds.setDsType(DataSetConstants.SCRIPT);
 		}
 
 		if(hibDataSet instanceof SbiJClassDataSet){			
 			ds=new JavaClassDataSet();
 			((JavaClassDataSet)ds).setClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+			ds.setDsType(DataSetConstants.JAVA_CLASS);
 		}
 		
 		if (hibDataSet instanceof SbiQbeDataSet) {			
@@ -1547,7 +1553,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				IDataSource dataSource = dataSourceDao.toDataSource(sbids);
 				qbeDataset.setDataSource(dataSource);				
 			}
-
+			ds.setDsType(DataSetConstants.QBE);
 			
 		}
 

@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.engines.chart;
 
-
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -39,7 +37,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IUserFunctionalityDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.chart.bo.ChartImpl;
@@ -51,7 +48,11 @@ import it.eng.spagobi.engines.chart.bo.charttypes.clusterchart.ClusterCharts;
 import it.eng.spagobi.engines.chart.bo.charttypes.utils.DrillParameter;
 import it.eng.spagobi.engines.chart.utils.AttributesContainer;
 import it.eng.spagobi.engines.chart.utils.DatasetMap;
+import it.eng.spagobi.engines.chart.utils.Template;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 import java.io.File;
 import java.util.HashMap;
@@ -65,10 +66,8 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-
-import com.novell.ldap.events.edir.eventdata.BinderyObjectEventData;
-
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /** Internal Engine
@@ -76,14 +75,12 @@ import com.novell.ldap.events.edir.eventdata.BinderyObjectEventData;
  *     giulio.gavardi@eng.it
  */
 
-
-
 public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	private static transient Logger logger = Logger.getLogger(SpagoBIChartInternalEngine.class);
 
-	public static final String messageBundle = "component_spagobichartKPI_messages";
-
+	//public static final String messageBundle = "component_spagobichartKPI_messages";
+	public static final String messageBundle = "MessageFiles.component_spagobidashboardIE_messages";
 
 	/** This method is used to execute a chart code way and returning the image chart execution
 	 *  Pay attention that must get the parameters from BiObject in order to filter categories and series
@@ -95,9 +92,6 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	 * @param response
 	 * @throws EMFUserError
 	 */
-
-
-
 	public File executeChartCode(RequestContainer requestContainer, BIObject obj, SourceBean response, IEngUserProfile userProfile) throws EMFUserError{
 		logger.debug("IN");
 		File toReturn=null;
@@ -112,8 +106,30 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		SourceBean serviceRequest=requestContainer.getServiceRequest();
 
 		try{
-			SourceBean content = getTemplate(documentId);
+			//SourceBean content = getTemplate(documentId);
+			SourceBean content = null;
+			byte[] contentBytes = null;
+			try{
+				ObjTemplate template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(Integer.valueOf(documentId));
+				if(template==null) throw new Exception("Active Template null");
+				contentBytes = template.getContent();
+				if(contentBytes==null) {
+					logger.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2007);
+					userError.setBundle("messages");
+					throw userError; 
+				}
 
+				// get bytes of template and transform them into a SourceBean
+
+				String contentStr = new String(contentBytes);
+				content = SourceBean.fromXMLString(contentStr);
+			} catch (Exception e) {
+				logger.error("Error while converting the Template bytes into a SourceBean object");
+				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
+				userError.setBundle("messages");
+				throw userError;
+			}
 			//		**************take informations on the chart type*****************
 			String type=content.getName();
 			String subtype = (String)content.getAttribute("type");
@@ -247,9 +263,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 
-
-
-	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError{
+	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) 
+				throws EMFUserError{
 
 		SessionContainer session = requestContainer.getSessionContainer();
 		IEngUserProfile userProfile = (IEngUserProfile) session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -260,9 +275,39 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		String country=(String)session.getPermanentContainer().getAttribute(SpagoBIConstants.AF_COUNTRY);
 		if(lang!=null && country!=null){
 			locale=new Locale(lang,country,"");
+		}		
+		//defines the chart type for the correct execution
+		ResponseContainer responseContainer=ResponseContainer.getResponseContainer();
+		EMFErrorHandler errorHandler=responseContainer.getErrorHandler();
+		String chartType = getChartType(obj, errorHandler);
+		Template templateUtil = new Template();
+		try{
+			if (chartType != null && chartType.startsWith(templateUtil.HIGHCHART_TEMPLATE)){
+				//gets the dataset object informations
+				Integer id = obj.getDataSetId();
+				IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+				
+				ManageDatasets mDs = new ManageDatasets();
+				JSONArray parsJSON = mDs.serializeJSONArrayParsList(dataset.getParameters());
+				
+				//converts the template from xml to json format				
+				JSONObject template = templateUtil.getJSONTemplateFromXml( getTemplate(obj.getId().toString())); 
+				//sets the response
+				response.setAttribute("template", template);
+				response.setAttribute("divWidth", templateUtil.getDivWidth());
+				response.setAttribute("divHeight", templateUtil.getDivHeight());
+				response.setAttribute(DataSetConstants.ID, dataset.getId());
+				response.setAttribute(DataSetConstants.DS_TYPE_CD, (dataset.getDsType()==null)?"":dataset.getDsType());				
+				response.setAttribute(DataSetConstants.PARS, parsJSON);
+				response.setAttribute(DataSetConstants.TRASFORMER_TYPE_CD, (dataset.getTransformerCd()==null)?"":dataset.getTransformerCd());
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "HIGHCHART");
+			}else{
+				executeChart(requestContainer, obj, response, userProfile, locale);
+			}
+		}catch(Exception e){
+			logger.error("Error in execution chart. " + e.getLocalizedMessage());
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
 		}
-
-		executeChart(requestContainer, obj, response, userProfile, locale);
 	}
 
 	/**
@@ -276,124 +321,22 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	 */
 
 	public void executeChart(RequestContainer requestContainer, BIObject obj, SourceBean response, IEngUserProfile userProfile, Locale locale) throws EMFUserError{
-
-
 		DatasetMap datasets=null;
 		ChartImpl sbi=null;
 
 		//RequestContainer requestContainer=RequestContainer.getRequestContainer();
+		SourceBean serviceRequest=requestContainer.getServiceRequest();
 		ResponseContainer responseContainer=ResponseContainer.getResponseContainer();
 		EMFErrorHandler errorHandler=responseContainer.getErrorHandler();
+		SourceBean content = getTemplate(obj.getId().toString());
 
-		if (obj == null) {
-			logger.error("The input object is null.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
-		}
-
-		if (!obj.getBiObjectTypeCode().equalsIgnoreCase("DASH")) {
-			logger.error("The input object is not a dashboard.");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "1001", messageBundle);
-		}
-
-		String documentId=obj.getId().toString();
-
-
-		logger.debug("got parameters userId="+userProfile.getUserUniqueIdentifier()+" and documentId="+documentId.toString());
-
-		//		**************get the template*****************
-		logger.debug("getting template");
-		SourceBean serviceRequest=requestContainer.getServiceRequest();
-
+		//		**************take informations on the chart type*****************
 		try{
-			SourceBean content=getTemplate(documentId);
-
-			//			SourceBean content = null;
-			//			byte[] contentBytes = null;
-			//			try{
-			//			ObjTemplate template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(Integer.valueOf(documentId));
-			//			if(template==null) throw new Exception("Active Template null");
-			//			contentBytes = template.getContent();
-			//			if(contentBytes==null) {
-			//			logger.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			//			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2007);
-			//			userError.setBundle("messages");
-			//			throw userError; 
-			//			}
-
-			//			// get bytes of template and transform them into a SourceBean
-
-			//			String contentStr = new String(contentBytes);
-			//			content = SourceBean.fromXMLString(contentStr);
-			//			} catch (Exception e) {
-			//			logger.error("Error while converting the Template bytes into a SourceBean object");
-			//			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
-			//			userError.setBundle("messages");
-			//			throw userError;
-			//			}
-
-
-			//		**************take informations on the chart type*****************
-
-
 			String type=content.getName();
 			String subtype = (String)content.getAttribute("type");
-
-
-
-			String data="";
-			try{
-				logger.debug("Getting Data Set ID");
-				if(obj.getDataSetId()!=null){
-					data=obj.getDataSetId().toString();
-				} else {
-					logger.error("Data Set not defined");
-					throw new Exception("Data Set not defined");				    
-				}
-			}catch (Exception e) {
-				logger.error("Error while getting the dataset");
-				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9207);
-				userError.setBundle("messages");
-				throw userError;
-			}
-
+			String data=getDataset(obj);
 
 			Map parametersMap=getParameters(obj);
-
-
-			//			HashMap parametersMap=null;
-
-			//			//Search if the chart has parameters
-			//			List parametersList=obj.getBiObjectParameters();
-			//			logger.debug("Check for BIparameters and relative values");
-			//			if(parametersList!=null){
-			//			parametersMap=new HashMap();
-			//			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
-			//			BIObjectParameter par= (BIObjectParameter) iterator.next();
-			//			String url=par.getParameterUrlName();
-			//			List values=par.getParameterValues();
-			//			if(values!=null){
-			//			if(values.size()==1){
-			//			String value=(String)values.get(0);
-			//			/*String parType=par.getParameter().getType();
-			//			if(parType.equalsIgnoreCase("STRING") || parType.equalsIgnoreCase("DATE")){
-			//			value="'"+value+"'";
-			//			}*/
-			//			parametersMap.put(url, value);
-			//			}else if(values.size() >=1){
-			//			String value = "'"+(String)values.get(0)+"'";
-			//			for(int k = 1; k< values.size() ; k++){
-			//			value = value + ",'" + (String)values.get(k)+"'";
-			//			}
-			//			parametersMap.put(url, value);
-			//			}
-			//			}
-
-			//			}	
-
-			//			} // end looking for parameters
-
-
-
 
 			try{
 				logger.debug("create the chart");
@@ -478,22 +421,6 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 
 			datasets=retrieveDatasetValue(sbi);
-
-
-			//			// calculate values for the chart
-			//			try{
-			//			logger.debug("Retrieve value by executing the dataset");
-			//			datasets=sbi.calculateValue();
-			//			}	
-			//			catch (Exception e) {
-			//			logger.error("Error in retrieving the value", e);
-			//			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2006);
-			//			userError.setBundle("messages");
-			//			throw userError;
-			//			}
-
-
-			//JFreeChart chart=null;
 			// create the chart
 
 
@@ -728,57 +655,6 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 
-	/** Called by exporter function COnverts from BIObject Parameters to a map, in presence of multi value creates an array,
-	 * Only difference with getParameters functionis that does include in '' single values. merge with getParameters
-	 * @param obj
-	 * @return
-	 */
-	//	public Map getParametersCode(BIObject obj){
-	//		HashMap parametersMap=null;
-	//
-	//		//Search if the chart has parameters
-	//		List parametersList=obj.getBiObjectParameters();
-	//		logger.debug("Check for BIparameters and relative values");
-	//		if(parametersList!=null){
-	//			parametersMap=new HashMap();
-	//			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
-	//				BIObjectParameter par= (BIObjectParameter) iterator.next();
-	//				String url=par.getParameterUrlName();
-	//				List values=par.getParameterValues();
-	//				if(values!=null){
-	//					if(values.size()==1){
-	//						String value=(String)values.get(0);
-	//						String parType=par.getParameter().getType();
-	//						if(parType.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || parType.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-	//							value="'"+value+"'";
-	//						}
-	//						parametersMap.put(url, value);
-	//					}else if(values.size() >=1){
-	//						String type = (par.getParameter() != null) ? par.getParameter().getType() : SpagoBIConstants.STRING_TYPE_FILTER;
-	//						String value = "";
-	//						if(type.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || type.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-	//							value = "'"+(String)values.get(0)+"'";
-	//							for(int k = 1; k< values.size() ; k++){
-	//								value = value + ",'" + (String)values.get(k)+"'";
-	//							}
-	//						}
-	//						else{
-	//							value = (String)values.get(0);
-	//							for(int k = 1; k< values.size() ; k++){
-	//								value = value + "," + (String)values.get(k)+"";
-	//							}	
-	//						}
-	//						
-	//						parametersMap.put(url, values);
-	//					}
-	//				}
-	//			}	
-	//
-	//		} // end looking for parameters
-	//		return parametersMap;
-	//	}
-
-
 	public DatasetMap retrieveDatasetValue(ChartImpl sbi) throws EMFUserError{
 		DatasetMap datasets=null;
 		// calculate values for the chart
@@ -797,12 +673,32 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	}
 
 
+	private String getChartType(BIObject obj, EMFErrorHandler errorHandler) throws EMFUserError{
+		SourceBean template =  getTemplate(obj.getId().toString());
+		if (template == null) {
+			logger.error("The template object is null.");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
+		}
+		return template.getName();
+	}
+	
+	private String getDataset (BIObject obj) throws EMFUserError{
+		String toReturn = "";
+		try{
+			logger.debug("Getting Data Set ID");
+			if(obj.getDataSetId()!=null){
+				toReturn=obj.getDataSetId().toString();
+			} else {
+				logger.error("Data Set not defined");
+				throw new Exception("Data Set not defined");				    
+			}
+		}catch (Exception e) {
+			logger.error("Error while getting the dataset");
+			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9207);
+			userError.setBundle("messages");
+			throw userError;
+		}
+		return toReturn;
+	}
 
 }
-
-
-
-
-
-
-

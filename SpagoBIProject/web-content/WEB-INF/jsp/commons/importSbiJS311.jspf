@@ -15,6 +15,12 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
 
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/jquery-1.5.1/jquery-1.5.1.js")%>'</script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/highcharts-2.1.4/highcharts.js")%>'</script>
+
 
 <!-- START-DEBUG -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
@@ -89,6 +95,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/domain/ManageDomains.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/config/ManageConfig.js")%>'></script>
 
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/GenericChartPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/BarChartPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/LineChartPanel.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/PieChartPanel.js")%>'></script>
 
 
 <!-- END-DEBUG -->
