@@ -61,5 +61,10 @@
 <dependency org="javascript-engine" name="javascript-engine" rev="0.1"/>
 <dependency org="groovy-engine" name="groovy-engine" rev="0.1"/>
 <dependency org="javax.mail" name="mail" rev="1.4.4"/>
+
+<!--
+Used by SbiGeoMapsDAOHibImpl
+-->
+<dependency org="jsr173-api" name="jsr173-api" rev="1.0"/>
     </dependencies>
 </ivy-module>
