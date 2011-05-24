@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="jdom"
+		module="jdom"
+		revision="1.0"
+		status="release"
+		publication="20051108225808"/>
+
+	<configurations>
+		<conf name="default" visibility="public"/>
+	</configurations>
+	<publications>
+		<artifact name="jdom" type="jar" ext="jar" />
+	</publications>
+<dependencies>
+</dependencies>
+</ivy-module>

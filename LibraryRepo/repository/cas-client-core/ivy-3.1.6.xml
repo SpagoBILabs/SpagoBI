@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+	<info organisation="org.jasig.cas"
+		module="cas-client-core"
+		revision="3.1.6"
+		status="release"
+		publication="20051108225808"/>
+
+	<configurations>
+		<conf name="default" visibility="public"/>
+	</configurations>
+	<publications>
+		<artifact name="cas-client-core" type="jar" ext="jar" />
+	</publications>
+<dependencies>
+<dependency org="log4j" name="log4j" rev="1.2.16"/>
+<dependency org="xml-security" name="xmlsec" rev="1.4.2"/>
+<dependency org="org.opensaml" name="opensaml" rev="1.1"/>
+</dependencies>
+</ivy-module>
