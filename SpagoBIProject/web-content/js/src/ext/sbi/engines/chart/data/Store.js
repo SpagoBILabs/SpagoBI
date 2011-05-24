@@ -159,7 +159,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 			}
 			this.alias2FieldMetaMap[f.header].push(f);
 		}
-		alert("store.this.alias2FieldMetaMap: " + this.alias2FieldMetaMap.toSource());
+
 		Sbi.engines.chart.data.Store.superclass.onMetaChange.call(this, meta);
     }
 
