@@ -159,7 +159,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	          collapsible: false,
 	          title: '',
 	          drawUncheckedChecks: true,
-	          bodyStyle:'padding:6px 6px 6px 6px;',
+	          bodyStyle:'padding:6px 6px 6px 6px;'
 	    });
 	    
 	    this.saveDocumentForm = new Ext.form.FormPanel({
