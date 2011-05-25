@@ -93,6 +93,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 	
 	, createChart: function () {
 		  this.chart = new Highcharts.Chart({
+			exporting : {
+				url : this.services['exportChart']
+			},
 			chart : {
 				renderTo : this.chartDivId,
 				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column'

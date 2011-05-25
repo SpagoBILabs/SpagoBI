@@ -57,3 +57,4 @@
 
 <!--  HighCharts -->
 <script type="text/javascript" src="../js/lib/highcharts-2.1.4/highcharts.js"></script>
+<script type="text/javascript" src="../js/lib/highcharts-2.1.4/modules/exporting.js"></script>

@@ -47,6 +47,9 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.pos
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confermi l\'eliminazione dell\'oggetto?';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nuovo sheet';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'E\' stato aggiunto un nuovo sheet';
+
 
 //===================================================================
 //DESIGNER SHEET

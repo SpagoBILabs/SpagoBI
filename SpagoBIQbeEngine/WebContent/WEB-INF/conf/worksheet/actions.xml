@@ -39,5 +39,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="EXPORT_CHART_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.ExportChartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 
