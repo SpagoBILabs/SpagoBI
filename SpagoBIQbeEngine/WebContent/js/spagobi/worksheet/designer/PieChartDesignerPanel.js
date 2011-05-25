@@ -152,18 +152,19 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 			, closeAction: 'hide'
 		});
 	    
-		this.form = new Ext.form.FormPanel({
+		this.form = new Ext.Panel({
 			border: false
+			, layout: 'form'
 			, items: [
 				{
 					xtype: 'form'
-					, height: 100
 					, style: 'padding: 10px 0px 0px 15px;'
 				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
 					, items: [this.showValuesCheck, this.showLegendCheck, this.showPercentageCheck]
 				}
-				, this.axisDefinitionPanel
+				, 
+				this.axisDefinitionPanel
 			]
 		});
 	}

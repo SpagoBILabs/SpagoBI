@@ -92,7 +92,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 			items: [
 		        {name: 'type', height: 80, width: 80, id:'side-by-side-barchart', ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
 		        {name: 'type', height: 80, width: 80, id:'stacked-barchart', ctCls:'stacked-barchart-vertical', inputValue: 'stacked-barchart'},
-		        {name: 'type', height: 80, width: 80, id:'percent-stacked-barchart', ctCls:'percent-stacked-barchart-vertical', inputValue: 'percent-stacked-barchart'},
+		        {name: 'type', height: 80, width: 80, id:'percent-stacked-barchart', ctCls:'percent-stacked-barchart-vertical', inputValue: 'percent-stacked-barchart'}
 			]
 		});
 		this.typeRadioGroup.on('change', this.changeBarChartImage, this);

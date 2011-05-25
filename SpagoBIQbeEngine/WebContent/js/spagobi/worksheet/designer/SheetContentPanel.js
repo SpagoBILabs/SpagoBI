@@ -82,7 +82,6 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
 			, border: false
-			//, bodyStyle:'height: 100%'
 			, frame: true
 		});
 	}
@@ -119,21 +118,14 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		var state = {};
 		state.designer = row.json.name;
 		if (this.designer !== null) {
-//			Ext.Msg.show({
-//				   title:'Drop not allowed',
-//				   msg: 'You can insert a single widget on a sheet. Create a new sheet',
-//				   buttons: Ext.Msg.OK,
-//				   icon: Ext.MessageBox.WARNING
-//			});
-//			return;
 			this.fireEvent('addDesigner', this, state);
 			return;
 		}
 		this.addDesigner(state);
 	}
 
-	, insertCrosstabDesigner: function () {
-		this.designer = new Sbi.crosstab.CrosstabDefinitionPanel({
+	, insertCrosstabDesigner: function (sheredConf) {
+		this.designer = new Sbi.crosstab.CrosstabDefinitionPanel(Ext.apply({
 			crosstabTemplate: {}
 			, ddGroup: 'worksheetDesignerDDGroup'
 			, tools:  [{
@@ -142,12 +134,12 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
-		});
+		},sheredConf));
 		this.insertDesigner();
 	}
 	
-	, insertBarchartDesigner: function () {
-		this.designer = new Sbi.worksheet.designer.BarChartDesignerPanel({
+	, insertBarchartDesigner: function (sheredConf) {
+		this.designer = new Sbi.worksheet.designer.BarChartDesignerPanel(Ext.apply({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
@@ -160,28 +152,13 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		        	, handler: function() {alert(this.designer.getFormState().toSource());}
 		          	, scope: this
 		          	, qtip: 'getformstate'
-			}/*, {
-				id: 'gear'
-		        	, handler: function() {this.designer.setFormState({
-		        		  type:"stacked-barchart", 
-		        		  orientation:"horizontal", 
-		        		  showvalues:true, 
-		        		  showlegend:false, 
-		        		  category:{id:"tre", alias:"COGNOME", funct:"none", iconCls:"field", nature:"attribute"}, 
-		        		  series:[
-		        		      {id:"5", alias:"MISURA 2", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA 2", color:"#99CC00"}, 
-		        		      {id:"quattro", alias:"MISURA", funct:"SUM", iconCls:"field", nature:"measure", seriename:"MISURA", color:"#FF00FF"}
-		        		  ]
-		        	});}
-		          	, scope: this
-		          	, qtip: 'setformstate'
-			}*/]
-		});
+			}]
+		},sheredConf));
 		this.insertDesigner();
 	}
 	
-	, insertLinechartDesigner: function () {
-		this.designer = new Sbi.worksheet.designer.LineChartDesignerPanel({
+	, insertLinechartDesigner: function (sheredConf) {
+		this.designer = new Sbi.worksheet.designer.LineChartDesignerPanel(Ext.apply({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
@@ -190,12 +167,12 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
-		});
+		},sheredConf));
 		this.insertDesigner();
 	}
 	
-	, insertPiechartDesigner: function () {
-		this.designer = new Sbi.worksheet.designer.PieChartDesignerPanel({
+	, insertPiechartDesigner: function (sheredConf) {
+		this.designer = new Sbi.worksheet.designer.PieChartDesignerPanel(Ext.apply({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
@@ -204,12 +181,12 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
-		});
+		},sheredConf));
 		this.insertDesigner();
 	}
 	
-	, insertTableDesigner: function () {
-		this.designer = new Sbi.worksheet.designer.TableDesignerPanel({
+	, insertTableDesigner: function (sheredConf) {
+		this.designer = new Sbi.worksheet.designer.TableDesignerPanel(Ext.apply({
 			ddGroup: 'worksheetDesignerDDGroup'
 			, border: false
 			, tools:  [{
@@ -218,7 +195,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	          	, scope: this
 	          	, qtip: LN('sbi.worksheet.designer.sheetcontentpanel.tools.tt.remove')
 			}]
-		});
+		},sheredConf));
 		this.insertDesigner();
 	}
 	
@@ -251,21 +228,22 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	}
 	
 	, addDesigner: function (state) {
+		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
 		switch (state.designer) {
 	        case 'Pivot Table':
-	        	this.insertCrosstabDesigner();
+	        	this.insertCrosstabDesigner(sheredConf);
 	            break;
 	        case 'Bar Chart':
-	        	this.insertBarchartDesigner();
+	        	this.insertBarchartDesigner(sheredConf);
 	            break;
 	        case 'Line Chart':
-	        	this.insertLinechartDesigner();
+	        	this.insertLinechartDesigner(sheredConf);
 	            break;
 	        case 'Pie Chart':
-	        	this.insertPiechartDesigner();
+	        	this.insertPiechartDesigner(sheredConf);
 	            break;
 	        case 'Table':
-	        	this.insertTableDesigner();
+	        	this.insertTableDesigner(sheredConf);
 	            break;
 	        default: 
 	        	alert('Unknown widget!');
