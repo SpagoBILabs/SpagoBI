@@ -199,12 +199,18 @@ Sbi.qbe.QbePanel = function(config) {
 	// constructor
     Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
     
-    this.worksheetDesignerPanel.sheetsContainerPanel.on('saveworkheet', function (obj,conf) {
-    			   var query = this.getQueries();
-    			   sendMessage({'OBJECT_TYPE': conf.OBJECT_TYPE,
-    				   			'OBJECT_WK_DEFINITION': conf.OBJECT_WK_DEFINITION ,
-    				   			'OBJECT_QUERY': query},'saveworkheet');
-    			},this);
+
+    if (this.worksheetDesignerPanel !== null) {
+		this.worksheetDesignerPanel.sheetsContainerPanel.on('saveworkheet', function(obj, conf) {
+			var queries = this.getQueriesCatalogue();
+			var messageContent = Ext.util.JSON.encode({
+				'OBJECT_TYPE' : conf.objectType,
+				'OBJECT_WK_DEFINITION' : conf.worksheetDefinition,
+				'OBJECT_QUERY' : queries
+			});
+			sendMessage(messageContent, 'saveworkheet');
+		}, this);
+	}
     
     //alert('isFromCross: ' + config.isFromCross);
     if(config.isFromCross) {
@@ -403,7 +409,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		var toReturn = {};
 		toReturn.catalogue = {};
 		toReturn.catalogue.queries = this.getQueries();
-		toReturn.version = Sbi.config.qbeEngineAnalysisStateVersion;
+		toReturn.version = Sbi.config.queryVersion;
 		return toReturn;
 	}
 	
@@ -416,7 +422,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	setWorksheetState : function (successFn, failureFn, scope) {
 		var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
 		var params = {
-				'worksheetdefinition':  Ext.encode({'sheets':state})
+				'worksheetdefinition':  Ext.encode(state)
 		};
 		Ext.Ajax.request({
 		    url: this.services['setWorkSheetState'],

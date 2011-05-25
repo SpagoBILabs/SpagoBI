@@ -23,6 +23,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
 
+<%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
 <%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@ page language="java" 
@@ -126,6 +127,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     	<script type="text/javascript">  
 			Sbi.config = {};
 	
+			Sbi.config.queryVersion = <%= QbeEngineStaticVariables.CURRENT_QUERY_VERSION %>;
+			Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 			Sbi.config.queryLimit = {};
 			Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 			Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;

@@ -1229,15 +1229,17 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	            }
 	        	, 'message:saveworkheet': {
 	        		fn: function(srcFrame, message){
-	        			var wk_definition = message.data.OBJECT_WK_DEFINITION;
-	        			var objType = message.data.OBJECT_TYPE;
-	        			var query = message.data.OBJECT_QUERY;
-	        			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({'OBJECT_ID': this.executionInstance.OBJECT_ID,
-	        																	'OBJECT_TYPE': objType,
-	        																	'OBJECT_WK_DEFINITION': wk_definition,
-	        																	'OBJECT_QUERY': query,
-	        																	'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-	        																	});
+	        			var messageJSON = Ext.util.JSON.decode(message.data);
+	        			var wk_definition = messageJSON.OBJECT_WK_DEFINITION;
+	        			var objType = messageJSON.OBJECT_TYPE;
+	        			var query = messageJSON.OBJECT_QUERY;
+	        			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
+	        				'OBJECT_ID': this.executionInstance.OBJECT_ID,
+							'OBJECT_TYPE': objType,
+							'OBJECT_WK_DEFINITION': wk_definition,
+							'OBJECT_QUERY': query,
+							'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+						});
 	        			this.win_saveDoc.show();
 	        		}
 	        	    , scope: this

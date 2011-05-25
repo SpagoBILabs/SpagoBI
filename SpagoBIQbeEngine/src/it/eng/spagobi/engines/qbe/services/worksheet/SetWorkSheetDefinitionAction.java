@@ -53,7 +53,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 		super.service(request, response);	
 		try {
 			//get the worksheet from the request
-			JSONObject workSheetDefinitionJSON =getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
+			JSONObject workSheetDefinitionJSON = getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
 			Assert.assertNotNull(workSheetDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + workSheetDefinitionJSON + "] is equals to [" + workSheetDefinitionJSON.toString() + "]");
 

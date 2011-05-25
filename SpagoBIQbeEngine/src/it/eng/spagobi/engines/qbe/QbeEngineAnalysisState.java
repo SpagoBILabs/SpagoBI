@@ -98,9 +98,9 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			}
 			
 			JSONObject catalogueJSON = abalysisStateJSON.getJSONObject("catalogue");
-			JSONObject workSheetDefinitionJSON = abalysisStateJSON.getJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER);
+//			JSONObject workSheetDefinitionJSON = abalysisStateJSON.getJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER);
 			setProperty( QbeEngineStaticVariables.CATALOGUE,  catalogueJSON);
-			setProperty( QbeEngineStaticVariables.WORKSHEET_DEFINITION,  workSheetDefinitionJSON);
+//			setProperty( QbeEngineStaticVariables.WORKSHEET_DEFINITION,  workSheetDefinitionJSON);
 			logger.debug("analysis state loaded succsfully from row data");
 		} catch (JSONException e) {
 			throw new SpagoBIEngineException("Impossible to load analysis state from raw data", e);

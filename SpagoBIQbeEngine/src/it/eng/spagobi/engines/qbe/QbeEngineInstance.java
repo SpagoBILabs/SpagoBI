@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -117,48 +118,16 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			dataSource.setDataMartModelAccessModality( template.getDatamartModelAccessModality() );
 		}
 		
-		
-		
 		if( template.getProperty("query") != null ) {
-			try {
-				QbeEngineAnalysisState analysisState = new QbeEngineAnalysisState( dataSource );
-				// TODO set the encoding
-				analysisState.load( template.getProperty("query").toString().getBytes() );
-				setAnalysisState( analysisState );
-			} catch(Throwable t) {
-				SpagoBIRuntimeException serviceException;
-				String msg = "Impossible load query [" + template.getProperty("query") + "].";
-				Throwable rootException = t;
-				while(rootException.getCause() != null) {
-					rootException = rootException.getCause();
-				}
-				String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-				msg += "\nThe root cause of the error is: " + str;
-				serviceException = new SpagoBIRuntimeException(msg, t);
-				
-				throw serviceException;
-			}
+			loadQueryDefinition((JSONObject) template.getProperty("query"));
 		}
 		
 		if( template.getProperty("formJSONTemplate") != null ) {
-			try {
-				FormState formState = new FormState();
-				// TODO set the encoding
-				formState.load( template.getProperty("formJSONTemplate").toString().getBytes() );
-				setFormState( formState );
-			} catch(Throwable t) {
-				SpagoBIRuntimeException serviceException;
-				String msg = "Impossible load form state [" + template.getProperty("formJSONTemplate") + "].";
-				Throwable rootException = t;
-				while(rootException.getCause() != null) {
-					rootException = rootException.getCause();
-				}
-				String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-				msg += "\nThe root cause of the error is: " + str;
-				serviceException = new SpagoBIRuntimeException(msg, t);
-				
-				throw serviceException;
-			}
+			loadFormDefinition((JSONObject) template.getProperty("formJSONTemplate"));
+		}
+		
+		if( template.getProperty("worksheetJSONTemplate") != null ) {
+			loadWorksheetDefinition((JSONObject) template.getProperty("worksheetJSONTemplate"));
 		}
 		
 		validate();
@@ -166,6 +135,70 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		logger.debug("OUT");
 	}
 	
+	private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
+		try {
+			WorkSheetDefinition workSheetDefinition = new WorkSheetDefinition();
+			// TODO set the encoding
+			workSheetDefinition.load( worksheetDefinition.toString().getBytes() );
+			setWorkSheetDefinition(workSheetDefinition);
+		} catch(Throwable t) {
+			SpagoBIRuntimeException serviceException;
+			String msg = "Impossible load worksheet definition [" + worksheetDefinition + "].";
+			Throwable rootException = t;
+			while(rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			msg += "\nThe root cause of the error is: " + str;
+			serviceException = new SpagoBIRuntimeException(msg, t);
+			
+			throw serviceException;
+		}
+	}
+
+	private void loadFormDefinition(JSONObject formDefinition) {
+		try {
+			FormState formState = new FormState();
+			// TODO set the encoding
+			formState.load( formDefinition.toString().getBytes() );
+			setFormState( formState );
+		} catch(Throwable t) {
+			SpagoBIRuntimeException serviceException;
+			String msg = "Impossible load form state [" + formDefinition + "].";
+			Throwable rootException = t;
+			while(rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			msg += "\nThe root cause of the error is: " + str;
+			serviceException = new SpagoBIRuntimeException(msg, t);
+			
+			throw serviceException;
+		}
+		
+	}
+
+	private void loadQueryDefinition(JSONObject queryDefinition) {
+		try {
+			QbeEngineAnalysisState analysisState = new QbeEngineAnalysisState( dataSource );
+			// TODO set the encoding
+			analysisState.load( queryDefinition.toString().getBytes() );
+			setAnalysisState( analysisState );
+		} catch(Throwable t) {
+			SpagoBIRuntimeException serviceException;
+			String msg = "Impossible load query [" + queryDefinition + "].";
+			Throwable rootException = t;
+			while(rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			msg += "\nThe root cause of the error is: " + str;
+			serviceException = new SpagoBIRuntimeException(msg, t);
+			
+			throw serviceException;
+		}
+	}
+
 	public void setFormState(FormState formState) {
 		this.formState = formState;
 	}
@@ -195,7 +228,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		
 		qbeEngineAnalysisState = (QbeEngineAnalysisState)analysisState;
 		setQueryCatalogue( qbeEngineAnalysisState.getCatalogue(  ) );
-		setWorkSheetDefinition( qbeEngineAnalysisState.getWorkSheetDefinition( ) );
+//		setWorkSheetDefinition( qbeEngineAnalysisState.getWorkSheetDefinition( ) );
 	}
 	
 

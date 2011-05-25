@@ -23,6 +23,11 @@
 	<!-- ******************** -->
 	<!--  end dataset build   -->
 	<!-- ******************** -->
-			 
+
+	<!-- WORKSHEET_ENGINE view presentation -->
+	<MAPPING business_type="ACTION" 
+			 business_name="WORKSHEET_ENGINE_START_ACTION" 
+			 publisher_name="WORKSHEET_ENGINE_START_ACTION_PUBLISHER"/>
+	
 </PRESENTATION>
 

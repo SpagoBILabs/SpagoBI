@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.qbe.QbeDriver;
+import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.bo.UdpValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -158,7 +159,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}else if(wk_definition!=null && query!=null && orig_obj!=null){
 					ObjTemplate qbETemplate = orig_obj.getActiveTemplate();
 					String templCont = new String(qbETemplate.getContent());
-					QbeDriver q = new QbeDriver();
+					WorksheetDriver q = new WorksheetDriver();
 					String temp = q.composeWorksheetTemplate(wk_definition, query, templCont);
 					content = temp.getBytes();
 				}else{
@@ -169,7 +170,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				objTemp.setContent(content);
 				objTemp.setCreationUser(creationUser);
 				objTemp.setDimension(Long.toString(content.length/1000)+" KByte");
-				objTemp.setName(name);
+				objTemp.setName("template.sbiworksheet");
 				
 				try {
 					if(id != null && !id.equals("") && !id.equals("0")){							
