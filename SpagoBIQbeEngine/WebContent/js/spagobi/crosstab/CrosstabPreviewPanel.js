@@ -93,10 +93,13 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, loadMask: null
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	
-		, load: function(crosstabDefinition) {
+		, load: function(crosstabDefinition, filters) {
 			var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);
 			this.requestParameters = {
 				crosstabDefinition: crosstabDefinitionEncoded
+			}
+			if(filters!=undefined && filters!=null){
+				this.requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
 			}
 			if (this.fireEvent('beforeload', this, this.requestParameters) !== false) { // this permits other objects 
 																						// to modify the crosstab requestParameters

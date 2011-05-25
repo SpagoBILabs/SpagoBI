@@ -61,6 +61,8 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
+
+	this.style='width: 80%';
 	
 	this.services = this.services || new Array();
 	var params = {};
@@ -84,7 +86,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 * @param dataConfig the field for the chart..
 	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
 	 */
-	, loadChartData: function(dataConfig){
+	, loadChartData: function(dataConfig, filters){
 	
 		var requestParameters = {
 				crosstabDefinition: Ext.util.JSON.encode({
@@ -94,6 +96,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 					'config': {'measureson':'rows'}
 				})
 		};
+		if(filters!=null){
+			requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
+		}
 		Ext.Ajax.request({
 	        url: this.services['loadData'],//load the crosstab from the server
 	        params: requestParameters,

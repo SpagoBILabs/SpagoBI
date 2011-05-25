@@ -39,4 +39,8 @@ public class QbeEngineStaticVariables {
 	public static final String CATALOGUE_NAME = "name";	
 	public static final String CATALOGUE_DESCRIPTION = "description";
 	public static final String CATALOGUE_SCOPE = "scope";
+	
+	//LoadCrosstabAction
+	public static final String CROSSTAB_DEFINITION = "crosstabDefinition";
+	public static final String OPTIONAL_FILTERS = "optionalfilters";
 }

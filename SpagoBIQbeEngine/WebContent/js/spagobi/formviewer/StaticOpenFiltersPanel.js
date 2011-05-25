@@ -105,10 +105,17 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 			var field = this.createField( openFilters[i] );
 			this.combos.push( field );
 			var aPanel = new Ext.Panel({
-				items: [field]
+				
+				items: [	{   
+					xtype: 'fieldset',
+
+					title: '',
+					defaultType: 'checkbox', // each item will be a checkbox
+					layout: 'anchor',
+					items:[ {xtype: 'component', html: openFilters[i].text, cls:'x-form-check-group-label'}, field  ]}]
 				, layout: 'form' // form layout required: input field labels
 									// are displayed only with this layout
-				, width: 350
+					, width: 230
 				// , height: 40 // cannot set a static height, since the
 				// SuperBoxSelect resize vertically
 			});

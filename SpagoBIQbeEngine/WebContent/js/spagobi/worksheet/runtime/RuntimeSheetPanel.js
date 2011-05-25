@@ -109,6 +109,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			}
 			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, {
 				title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
+				, tools:  [{
+					id: 'gear'
+			        	, handler: this.applyFilters
+			          	, scope: this
+			          	, qtip: LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip')
+				}]
 			});
 			items.push(this.filtersPanel);
 		}
@@ -124,7 +130,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			var footer = new Ext.Panel(Ext.apply({
 				html: this.buildTitleHtml(this.sheetConfig.footer, false)
 			},sharedConf));
-
 			items.push(footer);
 		}
 
@@ -192,6 +197,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		return {
             "text": aField.alias,
             "field": aField.id,
+            "id": aField.id,
             "operator": "IN",
             "singleSelection": false
 		};
@@ -205,12 +211,26 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	}
 	
 	/**
+	 * Get the values of the filters..
+	 * Return an array of properties
+	 */
+	, applyFilters: function(){
+		var filtersValue = [];
+		if(this.filtersPanel!=null){
+			filtersValue = this.filtersPanel.getFormState();
+		}
+		this.content.applyFilters(filtersValue);
+		return filtersValue;
+	}
+	
+	/**
 	 * Opens the loading mask 
 	 */
     , showMask : function(){
     	this.un('afterlayout',this.showMask,this);
-    	if (this.loadMask == null) {
-    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
+    	if (this.loadMask == null) {//'runtimeworksheet'
+    		this.loadMask = new Ext.LoadMask('runtimeworksheet', {msg: "Loading.."});
+    		//this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Loading.."});
     	}
     	this.loadMask.show();
     }

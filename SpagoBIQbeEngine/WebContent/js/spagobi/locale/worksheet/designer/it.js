@@ -48,6 +48,12 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.pos
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confermi l\'eliminazione dell\'oggetto?';
 
+//===================================================================
+//DESIGNER SHEET
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.up.filter'] = 'Sposta i filtri sopra il contenuto';
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'Sposta i filtri alla sinistra del contenuto';
+
 
 //===================================================================
 //DESIGNER TOOLS

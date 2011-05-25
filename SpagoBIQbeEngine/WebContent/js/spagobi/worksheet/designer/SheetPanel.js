@@ -87,10 +87,23 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.sheetLayout = 'layout_headerfooter';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
+			tools:[{
+	        	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
+	        	id: 'down',
+	        	handler:this.showLeftFilters,
+	        	scope: this
+	        }],
 			style:'padding:5px 15px 0px 15px'
 			, ddGroup: 'worksheetDesignerDDGroup'
 		});
-		this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({});
+		
+		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);
+		
+		this.contentPanel.on('topFilters', function(){
+			this.filtersPanel.show();
+			this.filtersPanel.updateFilters();
+		},this)
+		
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
 	}
 
@@ -161,6 +174,11 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			valid = valid && this.footerPanel.isValid();
 		}
 		return valid;
+	}
+	
+	, showLeftFilters: function(){
+		this.filtersPanel.hide();
+		this.contentPanel.showLeftFilter();
 	}
 	
 });

@@ -22,12 +22,16 @@ package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.DataMartSelectField;
+import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -148,10 +152,23 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					}
 				}
 			}
+			
+			//Apply optional filters
+			JSONObject optionalUserFilters= null;
+			try {
+				optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
+				logger.debug("Found those optional filters "+optionalUserFilters);
+			} catch (Exception e) {
+				logger.debug("Found no optional filters");
+			}
+			
+			if(optionalUserFilters!=null){			
+				applyOptionalFilters(query, optionalUserFilters);
+			}
 
 			Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
 			
-			if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
+			if(optionalUserFilters==null && getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
 				logger.debug("Query with id [" + queryId + "] is the current active query. Previous generated statment will be reused");
 				query = getEngineInstance().getActiveQuery();
 			} else {
@@ -358,6 +375,55 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}		
 		
 		return gridDataFeed;
+	}
+	
+	/**
+	 * Get the query and add the where fields defined in the optionalUserFilters
+	 * @param query
+	 * @param optionalUserFilters
+	 * @throws JSONException
+	 */
+	private void applyOptionalFilters(Query query, JSONObject optionalUserFilters) throws JSONException{
+		String[] fields = JSONObject.getNames(optionalUserFilters);
+		ExpressionNode leftExpression = query.getWhereClauseStructure();
+		for(int i=0; i<fields.length; i++){
+			String fieldName = fields[i];
+			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
+			String[] values = new String[1];
+			values[0] =fieldName;
+
+			Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
+
+			values = new String[valuesArray.length()];
+			for(int j=0; j<valuesArray.length(); j++){
+				values[j] = valuesArray.getString(j);
+			}
+
+			Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+			String operator = "NOT EQUALS TO";
+			if(valuesArray.length()>0){
+				operator="IN";
+			}
+
+			query.addWhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND");
+
+
+
+			ExpressionNode filterNode = new ExpressionNode("NO_NODE_OP","$F{OptionalFilter"+i+"}");
+
+			//build the where clause tree 
+			if(leftExpression==null){
+				leftExpression = filterNode;
+			}else{
+				ExpressionNode operationNode = new ExpressionNode("NODE_OP", "AND");
+				operationNode.addChild(leftExpression);
+				operationNode.addChild(filterNode);
+				leftExpression = operationNode;
+			}
+
+		}
+		query.setWhereClauseStructure(leftExpression);
 	}
 
 }

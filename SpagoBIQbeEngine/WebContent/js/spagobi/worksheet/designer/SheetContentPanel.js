@@ -46,7 +46,8 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.SheetContentPanel = function(config) { 
 
 	var defaultSettings = {
-		emptyMsg: LN('sbi.worksheet.designer.sheetcontentpanel.emptymsg')
+		emptyMsg: LN('sbi.worksheet.designer.sheetcontentpanel.emptymsg'),
+		style:'padding:5px 15px 2px'
 	};
 		
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.sheetContentPanel) {
@@ -61,7 +62,6 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	
 	c = {
 		height: 400,
-		style:'padding:5px 15px 2px',
 		items: [this.emptyMsgPanel]
 	};
 	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);
