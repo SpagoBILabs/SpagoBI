@@ -99,8 +99,7 @@ public class Template {
 			
 			xmlTemplate.delAttribute(WIDTH);
 			xmlTemplate.delAttribute(HEIGHT);
-			
-			setFirstBlock(true);
+
 			ow = getPropertiesDetail(xmlTemplate, ow);
 			ow.write("}\n");
 			ow.flush();			
@@ -119,7 +118,9 @@ public class Template {
 		    }
 	    	
 	    }
-	    toReturn =  ObjectUtils.toJSONObject(out.toString());
+	    //replace dublicate , charachter
+	    String json = out.toString().replaceAll(", ,", ",");
+	    toReturn =  ObjectUtils.toJSONObject(json);
 		
 		return toReturn;
 	}
@@ -181,26 +182,126 @@ public class Template {
 		
 	    try{
 	    	List atts = ((SourceBean)sbConfig).getContainedAttributes();
-			for (Iterator iterator = atts.iterator(); iterator.hasNext();) {
-				SourceBeanAttribute object = (SourceBeanAttribute) iterator.next();
+	    	for (int i=0; i< atts.size();i++) {
+
+				SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);
+
 				String key=(String)object.getKey();
-				if (!isFirstBlock()) {
-		    		toReturn.write(", ");					
+				if(key.endsWith("_LIST")){
+					String arrayKey = key.substring(0, key.indexOf("_LIST"));
+					toReturn.write("      " + convertKeyString(arrayKey) +": [ \n");	
+					toReturn = getAllArrayAttributes(object, toReturn);
+					toReturn.write("       ]\n");
+				}else{
+					toReturn.write("      " + convertKeyString(key) +": { \n");	
+					toReturn = getAllAttributes(object, ow);
+					toReturn.write("       }\n");
 				}
-				toReturn.write("      " + key.toLowerCase() +": { \n");	
-				toReturn = getAllAttributes(key, object, toReturn);
-				toReturn.write("       }\n");
-				setFirstBlock(false);
+				if(i != atts.size()-1){
+					toReturn.write(", ");		
+				}
 			}
 	    	
-	    }catch (IOException ioe){
-	    	logger.error("Error while defining json chart template: " + ioe.getMessage());
 	    }catch (Exception e){
 	    	logger.error("Error while defining json chart template: " + e.getMessage());
 	    }	 
 	    return toReturn;
 	}
 	
+
+	/**
+	 * Returns an OutputStreamWriter with all details about a single key (ie. CHART tag)
+	 * @param key
+	 * @param sb
+	 * @param ow
+	 * @return
+	 */
+	private OutputStreamWriter getAllAttributes(SourceBeanAttribute sb, OutputStreamWriter ow){
+		OutputStreamWriter toReturn = ow;
+		
+		try{
+			if (sb.getValue() instanceof SourceBean){
+				SourceBean sbSubConfig = (SourceBean)sb.getValue();
+				List subAtts = sbSubConfig.getContainedAttributes();
+				List containedSB = sbSubConfig.getContainedSourceBeanAttributes();
+				int numberOfSb = containedSB.size();
+				int sbCounter = 1;
+				//standard tag attributes
+				for(int i =0; i< subAtts.size(); i++){
+					SourceBeanAttribute object = (SourceBeanAttribute)subAtts.get(i);
+					if (object.getValue() instanceof SourceBean){
+						
+						String key=(String)object.getKey();
+						if (sbCounter != numberOfSb) {
+				    		toReturn.write(", ");					
+						}
+						if(key.endsWith("_LIST")){
+							String arrayKey = key.substring(0, key.indexOf("_LIST"));
+							toReturn.write("      " + convertKeyString(arrayKey) +": [ \n");	
+							toReturn = getAllArrayAttributes(object, toReturn);
+							toReturn.write("       ]\n");
+						}else{
+							toReturn.write("      " + convertKeyString(key) +": { \n");	
+							toReturn = getAllAttributes(object, toReturn);
+							toReturn.write("       }\n");
+						}
+
+						sbCounter++;
+					}else{
+						SourceBeanAttribute subObject2 = (SourceBeanAttribute) subAtts.get(i);
+						toReturn = writeTagAttribute(subObject2, toReturn, false);
+						if(i != subAtts.size()-1){
+							toReturn.write("       , ");
+						}
+					}
+				}
+			
+			}	
+		}catch (IOException ioe){
+	    	logger.error("Error while defining json chart template: " + ioe.getMessage());
+	    }catch (Exception e){
+	    	logger.error("Error while defining json chart template: " + e.getMessage());
+	    }
+		return toReturn;
+	}
+	private OutputStreamWriter getAllArrayAttributes(SourceBeanAttribute sb, OutputStreamWriter ow){
+		OutputStreamWriter toReturn = ow;
+		
+		try{
+			if (sb.getValue() instanceof SourceBean){
+				SourceBean sbSubConfig = (SourceBean)sb.getValue();
+
+				List containedSB = sbSubConfig.getContainedSourceBeanAttributes();
+				int numberOfSb = containedSB.size();
+				int sbCounter = 1;
+				//standard tag attributes
+				for(int i =0; i< containedSB.size(); i++){
+					SourceBeanAttribute object = (SourceBeanAttribute)containedSB.get(i);
+					Object o = object.getValue();
+					SourceBean sb1 = SourceBean.fromXMLString(o.toString());
+					String v = sb1.getCharacters();
+					if(v!= null){
+						toReturn.write(v + "\n" );
+
+					}else{
+						//attributes
+
+						toReturn.write("{ 	\n" );
+				    	List atts = ((SourceBean)sb1).getContainedAttributes();
+						toReturn = getAllAttributes(object, toReturn);
+				    	toReturn.write("} 	\n" );
+					}
+					if(i != containedSB.size()-1){
+						toReturn.write("       , ");
+					}
+				}
+			
+			}	
+		}catch (Exception e){
+	    	logger.error("Error while defining json chart template: " + e.getMessage());
+	    }
+		return toReturn;
+	}
 	/**
 	 * Returns an object (String or Integer) with the value of the property.
 	 * @param key the attribute key
@@ -227,73 +328,46 @@ public class Template {
 		}
 		return finalValue;
 	}
-
 	/**
-	 * Returns an OutputStreamWriter with all details about a single key (ie. CHART tag)
-	 * @param key
 	 * @param sb
-	 * @param ow
+	 * @param toReturn
 	 * @return
+	 * @throws IOException
 	 */
-	private OutputStreamWriter getAllAttributes(String key, SourceBeanAttribute sb, OutputStreamWriter ow){
-		OutputStreamWriter toReturn = ow;
-		
-		try{
-			if (sb.getValue() instanceof SourceBean){
-				int cont = 0;
-				int cont2 = 0;
-				int cont3 = 0;
-				SourceBean sbSubConfig = (SourceBean)sb.getValue();
-				List subAtts = sbSubConfig.getContainedAttributes();
-				for (Iterator subIterator = subAtts.iterator(); subIterator.hasNext();) {
-					SourceBeanAttribute subObject = (SourceBeanAttribute) subIterator.next();
-					if (subObject.getValue() instanceof SourceBean){	
-						cont2 = 0;
-						SourceBean sbSubConfig2 = (SourceBean)subObject.getValue();
-						List subAtts2 = sbSubConfig2.getContainedAttributes();
-						if (cont>0 || cont3>0) {
-							toReturn.write("       , " + subObject.getKey().toLowerCase() +": { \n");	
-						}else{
-							toReturn.write("         " + subObject.getKey().toLowerCase() +": { \n");	
-							cont3++;
-						}
-						
-						for (Iterator subIterator2 = subAtts2.iterator(); subIterator2.hasNext();) {
-							SourceBeanAttribute subObject2 = (SourceBeanAttribute) subIterator2.next();
-							Object subValue = getAttributeValue(subObject2.getKey(), subObject2);
-							if (subValue != null){
-								if (cont2 > 0) {
-									toReturn.write("         , ");
-								}else{
-									toReturn.write("           ");
-									cont2++;
-								}
-								toReturn.write(subObject2.getKey().toLowerCase() + ": " + subValue + "\n" );	
-								//cont2++;
-							}
-						}
-						toReturn.write("         }\n");
-						//cont3++;
-					}
-					else{
-						Object subValue = getAttributeValue(key, subObject);
-						if (subValue != null){
-							if (cont > 0) {
-								toReturn.write("       , ");
-							}else{
-								toReturn.write("         ");
-							}
-							toReturn.write(subObject.getKey().toLowerCase() + ": " + subValue + "\n" );	
-							cont++;
-						}
-					}
-				}//for
-			}	
-		}catch (IOException ioe){
-	    	logger.error("Error while defining json chart template: " + ioe.getMessage());
-	    }catch (Exception e){
-	    	logger.error("Error while defining json chart template: " + e.getMessage());
-	    }
+	private OutputStreamWriter writeTagAttribute(SourceBeanAttribute sb, OutputStreamWriter toReturn, boolean isTag) throws IOException{
+
+		Object subValue = getAttributeValue(sb.getKey(), sb);
+		if (subValue != null){
+			if(isTag){
+				toReturn.write(convertKeyString(sb.getKey()) + ": " + subValue + "\n" );	
+			}else{				
+				toReturn.write(sb.getKey() + ": " + subValue + "\n" );	
+			}
+
+		}
 		return toReturn;
+	}
+	private String convertKeyString(String xmlTag){
+		String jsonKey = xmlTag.toLowerCase();
+		StringBuffer sb = new StringBuffer();
+		int count = 0;
+	    for (String s : xmlTag.split("_")) {
+	    	if(count == 0){
+	    		sb.append(Character.toLowerCase(s.charAt(0)));
+	    	}else{
+	    		sb.append(Character.toUpperCase(s.charAt(0)));
+	    	}
+	        if (s.length() > 1) {
+	            sb.append(s.substring(1, s.length()).toLowerCase());
+	        }
+	        count++;
+	    }
+	    System.out.println(sb);
+	    if(!sb.toString().equals("")){
+	    	jsonKey = sb.toString();
+	    }
+	    
+	    return jsonKey;
+
 	}
 }
