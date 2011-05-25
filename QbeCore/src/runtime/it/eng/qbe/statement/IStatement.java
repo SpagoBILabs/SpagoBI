@@ -63,7 +63,7 @@ public interface IStatement {
 	public int getMaxResults();	
 	public void setMaxResults(int maxResults);
 	
-	
+	public Map getParameters();
 	public void setParameters(Map parameters);
 	
 	

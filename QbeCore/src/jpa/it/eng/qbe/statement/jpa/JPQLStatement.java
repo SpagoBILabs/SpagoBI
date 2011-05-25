@@ -617,7 +617,7 @@ public class JPQLStatement extends AbstractStatement {
 	
 	
 	
-	private String getValueBounded(String operandValueToBound, String operandType) {
+	public String getValueBounded(String operandValueToBound, String operandType) {
 		
 		String boundedValue = operandValueToBound;
 		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String") || operandType.equalsIgnoreCase("java.lang.Character")) {
