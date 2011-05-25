@@ -146,8 +146,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		var newSheet = this.addTab({});
 		newSheet.contentPanel.addDesigner(state);
 		this.activate(newSheet);
-		this.notifySheetAdded.defer(500, this, ['New sheet', 'A new sheet was added']);
-		//Ext.example.msg.defer(500, this, ['New sheet', 'A new sheet was added']);
+		this.notifySheetAdded.defer(500, this, [LN('sbi.worksheet.designer.msg.newsheet.title'), LN('sbi.worksheet.designer.msg.newsheet.msg')]);
 	}
 	
     , createBox: function (t, s) {

@@ -24,7 +24,6 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadimage'] = 'Upload im
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.laodimage'] = 'Load image from file system';
 
 
-
 //===================================================================
 //Sbi.worksheet.designer.ChooseImageWindow
 //===================================================================
@@ -36,6 +35,8 @@ Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Choose the im
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Please confirm';
 Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confirm item delete?';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'New sheet';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'A new sheet has been added';
 
 
 //===================================================================

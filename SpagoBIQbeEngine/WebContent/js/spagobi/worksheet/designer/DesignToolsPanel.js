@@ -83,6 +83,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	        	, type: 'queryFieldsPanel'
 	        }
 		});
+//		this.designToolsFieldsPanel.on('render', function() {
+//			this.designToolsFieldsPanel.refresh();
+//		}, this);
 		
 //		this.designToolsFieldsPanel = new Sbi.worksheet.designer.DesignToolsFieldsPanel({
 //	        gridConfig: {
