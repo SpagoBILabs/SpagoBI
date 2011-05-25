@@ -21,8 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.qbe.utils.crosstab;
 
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -47,15 +52,17 @@ public class CrosstabQueryCreator {
 	
     public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count"; 
     
-	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery) {
+	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, List<WhereField> whereField, String sqlQuery, IStatement stmt) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 		
 		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
 		
 		putSelectClause(buffer, crosstabDefinition, baseQuery, baseQuerySelectedFields);
-		
+			
 		buffer.append(" FROM TEMPORARY_TABLE ");
+		
+		putWhereClause(buffer, whereField, baseQuery, baseQuerySelectedFields, (AbstractStatement)stmt);
 		
 		putGroupByClause(buffer, crosstabDefinition, baseQuery, baseQuerySelectedFields);
 		
@@ -77,7 +84,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String alias = getSQLAlias(aColumn, baseQuery, baseQuerySelectedFields);
+			String alias = getSQLAlias(aColumn.getAlias(), baseQuery, baseQuerySelectedFields);
 			toReturn.append(alias);
 			toReturn.append(", ");
 		}
@@ -85,7 +92,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String alias = getSQLAlias(aRow, baseQuery, baseQuerySelectedFields);
+			String alias = getSQLAlias(aRow.getAlias(), baseQuery, baseQuerySelectedFields);
 			toReturn.append(alias);
 			toReturn.append(", ");
 		}
@@ -95,7 +102,7 @@ public class CrosstabQueryCreator {
 		while (measuresIt.hasNext()) {
 			CrosstabDefinition.Measure aMeasure = measuresIt.next();
 			IAggregationFunction function = aMeasure.getAggregationFunction();
-			String alias = getSQLAlias(aMeasure, baseQuery, baseQuerySelectedFields);
+			String alias = getSQLAlias(aMeasure.getAlias(), baseQuery, baseQuerySelectedFields);
 			if (alias == null) {
 				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
 				// is automatically added inside query fields, therefore the alias is not found on base query selected fields
@@ -132,7 +139,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String alias = getSQLAlias(aColumn, baseQuery, baseQuerySelectedFields);
+			String alias = getSQLAlias(aColumn.getAlias(), baseQuery, baseQuerySelectedFields);
 			toReturn.append(alias);
 			if (columsIt.hasNext()) {
 				toReturn.append(", ");
@@ -148,7 +155,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String alias = getSQLAlias(aRow, baseQuery, baseQuerySelectedFields);
+			String alias = getSQLAlias(aRow.getAlias(), baseQuery, baseQuerySelectedFields);
 			toReturn.append(alias);
 			if (rowsIt.hasNext()) {
 				toReturn.append(", ");
@@ -158,7 +165,7 @@ public class CrosstabQueryCreator {
 		
 	}
 	
-	private static String getSQLAlias(CrosstabDefinition.CrosstabElement element, Query baseQuery, List baseQuerySelectedFields) {
+	private static String getSQLAlias(String elementElias, Query baseQuery, List baseQuerySelectedFields) {
 		logger.debug("IN");
 		String toReturn = null;
 		
@@ -166,7 +173,69 @@ public class CrosstabQueryCreator {
 		int index = -1;
 		for (int i = 0; i < qbeQueryFields.size(); i++) {
 			ISelectField field = (ISelectField) qbeQueryFields.get(i);
-			if (field.getAlias().equals(element.getAlias())) {
+			if (field.getAlias().equals(elementElias)) {
+				index = i;
+				break;
+			}
+		}
+		
+		if (index > -1) {
+			String[] sqlField = (String[]) baseQuerySelectedFields.get(index);
+			toReturn = sqlField[1] != null ? sqlField[1] : sqlField[0];
+		}
+		
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+	
+	
+	private static void putWhereClause(StringBuffer toReturn, List<WhereField> whereFields, Query baseQuery, List baseQuerySelectedFields, AbstractStatement stmt) {
+		String boundedValue,leftValue,alias;
+		String[] rightValues;
+		IModelField datamartField;
+		
+		logger.debug("IN");
+		if(whereFields!=null && whereFields.size()>0){
+			toReturn.append(" WHERE ");
+			for(int i=0; i<whereFields.size(); i++){
+				leftValue = whereFields.get(i).getLeftOperand().values[0];
+				datamartField = stmt.getDataSource().getModelStructure().getField(leftValue);
+				
+				rightValues = whereFields.get(i).getRightOperand().values;
+				
+				alias = getSQLAliasByUniqueName(datamartField.getUniqueName(), baseQuery, baseQuerySelectedFields);
+				if(rightValues.length==1){
+					boundedValue = stmt.getValueBounded(rightValues[0], datamartField.getType());
+					toReturn.append(alias+" = "+boundedValue);
+				}else{
+					toReturn.append(alias+" IN (");
+					for(int j=0; j<rightValues.length; j++){
+						boundedValue = stmt.getValueBounded(rightValues[j], datamartField.getType());
+						toReturn.append(boundedValue);
+						if (j<rightValues.length-1) {
+							toReturn.append(", ");
+						}
+					}
+					toReturn.append(") ");
+				}				
+				if (i<whereFields.size()-1) {
+					toReturn.append(", ");
+				}
+			}
+		}
+		logger.debug("OUT: returning " + toReturn);
+	}
+	
+	
+	private static String getSQLAliasByUniqueName(String elementUniqueName, Query baseQuery, List baseQuerySelectedFields) {
+		logger.debug("IN");
+		String toReturn = null;
+		
+		List qbeQueryFields = baseQuery.getSelectFields(true);
+		int index = -1;
+		for (int i = 0; i < qbeQueryFields.size(); i++) {
+			DataMartSelectField field = (DataMartSelectField) qbeQueryFields.get(i);
+			if (field.getUniqueName().equals(elementUniqueName)) {
 				index = i;
 				break;
 			}

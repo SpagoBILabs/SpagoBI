@@ -99,14 +99,21 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, initStore: function() {
-		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
-		});
-		// if there are initialData, load them into the store
-		if (this.initialData !== undefined) {
-			for (i = 0; i < this.initialData.length; i++) {
-				var record = new this.Record(this.initialData[i]);
-	  			this.store.add(record);
+		//the store has been injected from the parent
+		if(this.store==null){
+			this.store =  new Ext.data.ArrayStore({
+		        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+			});
+			// if there are initialData, load them into the store
+			if (this.initialData !== undefined) {
+				for (i = 0; i < this.initialData.length; i++) {
+					var record = new this.Record(this.initialData[i]);
+		  			this.store.add(record);
+				}
+			}
+		}else{
+			if(this.store.getCount()>0){
+				this.empty=false;
 			}
 		}
 	}
@@ -197,7 +204,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
 			html: this.emptyMsg
-			, height: 20
+			//, height: 20
 		});
 	}
 
@@ -277,6 +284,22 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			}
 		}
 		this.contents = new Array();
+		this.initEmptyMsgPanel();
+		this.contents.push(this.emptyMsgPanel);
+		this.add(this.emptyMsgPanel);
+		this.empty = true;
+	}
+	
+	, updateFilters: function(){
+		this.reset();
+		for(var i=0; i<this.store.getCount(); i++){
+			var aRow = (this.store.getAt(i));
+			var item = this.createFilterPanel(aRow);
+
+			this.contents.push(item);
+			this.add(item);
+		}
+		this.doLayout();
 	}
     
 });

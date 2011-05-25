@@ -39,6 +39,13 @@ Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Confirm item delete
 
 
 //===================================================================
+//DESIGNER SHEET
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.up.filter'] = 'Move the filters up the content';
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'Move the filters on the left of the content';
+
+
+//===================================================================
 //DESIGNER TOOLS
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette' ;

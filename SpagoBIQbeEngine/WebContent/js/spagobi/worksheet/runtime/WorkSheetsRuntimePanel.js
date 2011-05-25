@@ -60,11 +60,12 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 	this.initPanels(template);
 
 	c ={
-			border: false,
-			layout: 'fit',
-			bodyStyle: 'height: 100%',
-			autoScroll: true,
-			items: [this.sheetsContainerPanel]
+		id: 'runtimeworksheet',
+		border: false,
+		layout: 'fit',
+		bodyStyle: 'height: 100%',
+		autoScroll: true,
+		items: [this.sheetsContainerPanel]
 	}; 
 		
 	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	

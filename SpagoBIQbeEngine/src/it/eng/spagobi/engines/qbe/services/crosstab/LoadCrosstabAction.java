@@ -21,13 +21,18 @@
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
+import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
@@ -48,8 +53,13 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarException;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -58,7 +68,7 @@ import com.jamonapi.MonitorFactory;
 public class LoadCrosstabAction extends AbstractQbeEngineAction {	
 	
 	// INPUT PARAMETERS
-	public static final String CROSSTAB_DEFINITION = "crosstabDefinition";
+
 
 	
 	
@@ -73,6 +83,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		
 		Query query = null;
 		IStatement statement = null;
+		List<WhereField> optinalWhereFields = null;
 		
 		Integer maxSize = null;
 		Integer resultNumber = null;
@@ -89,11 +100,11 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeCrosstabQueryAction.totalTime");
 			
-			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
+			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.CROSSTAB_DEFINITION );
 			String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
 			logger.debug("Form state retrieved as a string: " + jsonEncodedFormState);
 			
-			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
 			//crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
 			crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
@@ -136,7 +147,21 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			DataSource dataSource = getDataSource(connection);
 			
-			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, sqlQuery);
+			//optional filters specified by the user (now used in the worksheet)
+			JSONObject optionalUserFilters= null;
+			try {
+				optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
+				logger.debug("Found those optional filters "+optionalUserFilters);
+			} catch (Exception e) {
+				logger.debug("Found no optional filters");
+			}
+			
+			if(optionalUserFilters!=null){			
+				optinalWhereFields = applyOptionalFilters(optionalUserFilters);
+			}
+			
+			
+			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, optinalWhereFields, sqlQuery, statement);
 			logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
 			
 			if (!TemporaryTableManager.isEnabled()) {
@@ -218,4 +243,34 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		dataSource.setPwd(connection.getPassword());
 		return dataSource;
 	}
+	
+	private List<WhereField> applyOptionalFilters(JSONObject optionalUserFilters) throws JSONException{
+		String[] fields = JSONObject.getNames(optionalUserFilters);
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		for(int i=0; i<fields.length; i++){
+			String fieldName = fields[i];
+			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
+			String[] values = new String[1];
+			values[0] =fieldName;
+
+			Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
+			
+			values = new String[valuesArray.length()];
+			for(int j=0; j<valuesArray.length(); j++){
+				values[j] = valuesArray.getString(j);
+			}
+			
+			Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+			
+			String operator = "NOT EQUALS TO";
+			if(valuesArray.length()>0){
+				operator="IN";
+			}
+			
+			whereFields.add(new WhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND"));
+			
+		}
+		return whereFields;
+	}
+	
 }

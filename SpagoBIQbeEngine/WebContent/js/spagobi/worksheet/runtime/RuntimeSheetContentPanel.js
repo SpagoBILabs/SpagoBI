@@ -113,11 +113,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
     				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
-    				, baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
+    				, baseParams: new Object()//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
     			})
     		}
     	});
-		table.execQuery({});
+		table.execQuery({'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)});
 		return table;
 	},
 	
@@ -133,6 +133,31 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	loadCrosstab: function(){
 		this.content.load(this.contentConfig.crosstabDefinition);
 		this.un('afterlayout',this.loadCrosstab,this);
+	},
+	
+	applyFilters: function(filtersValue){
+		switch (this.contentConfig.designer) {
+	        case 'Pivot Table':
+	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
+	        	break;
+	        case 'Table':
+        		var params ={'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)};
+        		if(filtersValue!=undefined && filtersValue!=null){
+        			params.optionalfilters = Ext.encode(filtersValue);
+        		}
+        		this.content.execQuery(params);
+	        	break;
+	        case 'Bar Chart':
+	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	        	break;
+	        case 'Line Chart':
+	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	        	break;
+	        case 'Pie Chart':
+	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
+	        	break;
+
+		}
 	}
 
 	

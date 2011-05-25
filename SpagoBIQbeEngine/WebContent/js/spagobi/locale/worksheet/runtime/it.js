@@ -11,6 +11,7 @@ Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Worksheet p
 //Sbi.worksheet.runtime.RuntimeSheetPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title'] = 'Filtri';
+Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'] = 'Applica i filtri';
 
 //===================================================================
 //Sbi.worksheet.designer.WorkSheetPreviewPage
