@@ -623,7 +623,7 @@ public class HQLStatement extends AbstractStatement {
 	}
 	
 	
-	private String getValueBounded(String operandValueToBound, String operandType) {
+	public String getValueBounded(String operandValueToBound, String operandType) {
 		String boundedValue;
 		Date operandValueToBoundDate;
 		
@@ -659,7 +659,7 @@ public class HQLStatement extends AbstractStatement {
 	
 	
 	
-	private String composeStringToDt(String dialect, Date date){
+	public static String composeStringToDt(String dialect, Date date){
 		String toReturn = "";
 		
 		DateFormat stagingDataFormat = new SimpleDateFormat("dd/MM/yyyy");	

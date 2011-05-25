@@ -165,5 +165,6 @@ public abstract class  AbstractStatement implements IStatement{
 		this.queryString = queryString;
 	}
 
+	public abstract String getValueBounded(String operandValueToBound, String operandType);
 
 }
