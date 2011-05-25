@@ -86,7 +86,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsLayoutPanel, Ext.FormPanel, {
 
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-headerfooter',
-			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'),
+			html: LN('sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter')
 		},sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-layout-header',

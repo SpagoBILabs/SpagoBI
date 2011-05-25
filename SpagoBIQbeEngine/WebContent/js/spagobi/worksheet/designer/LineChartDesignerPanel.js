@@ -197,7 +197,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 	
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-side-by-side-linechart',
-			html: LN('sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.side-by-side'),
+			html: LN('sbi.worksheet.designer.linechartdesignerpanel.form.type.tooltip.side-by-side')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
 			target: 'x-form-el-stacked-linechart',
