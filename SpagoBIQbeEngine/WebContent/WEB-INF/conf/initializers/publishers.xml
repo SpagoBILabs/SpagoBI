@@ -76,4 +76,19 @@
 	<!--  end dataset build   -->
 	<!-- ******************** -->
 	
+	
+	<!-- ***************** -->
+	<!--  start worksheet  -->
+	<!-- ***************** -->
+	<PUBLISHER name="WORKSHEET_ENGINE_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/worksheet.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	<!-- ***************** -->
+	<!--   end worksheet   -->
+	<!-- ***************** -->
+	
 </PUBLISHERS>

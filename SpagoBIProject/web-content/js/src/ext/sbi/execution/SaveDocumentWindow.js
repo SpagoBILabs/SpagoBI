@@ -150,7 +150,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	                 "margin-left": "4px",
 	                 "margin-top": "25px"
 	             },
-	             items: [this.docName,this.docLabel,this.docDescr]
+	             items: [this.docLabel,this.docName,this.docDescr]
 	    	}
 	    });
 	    
@@ -191,8 +191,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		var docLabel = this.docLabel.getValue();
 		var docDescr = this.docDescr.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
-		var query = this.OBJECT_WK_DEFINITION;
-		var wk_definition = this.OBJECT_QUERY;
+		var query = this.OBJECT_QUERY;
+		var wk_definition = this.OBJECT_WK_DEFINITION;
 		query = Ext.util.JSON.encode(query);
 		wk_definition = Ext.util.JSON.encode(wk_definition);
 		

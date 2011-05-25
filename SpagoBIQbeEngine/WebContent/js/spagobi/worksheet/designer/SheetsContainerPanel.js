@@ -188,7 +188,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 				sheets.push(this.items.items[i].getSheetState());
 			}
 		}
-		return sheets;
+		return {'sheets' : sheets};
 	}
 	
 	/**
@@ -245,8 +245,9 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
   	}
 	
 	, saveWorkSheet: function(){
-		var	wk_definition = this.getSheetsState();
-		this.fireEvent('saveworkheet', this, {'OBJECT_TYPE': 'WORKSHEET','OBJECT_WK_DEFINITION': wk_definition });	
+		var	worksheetDefinition = this.getSheetsState();
+		worksheetDefinition.version = Sbi.config.worksheetVersion;
+		this.fireEvent('saveworkheet', this, {objectType : 'WORKSHEET', worksheetDefinition : worksheetDefinition });	
 	}
 
 	

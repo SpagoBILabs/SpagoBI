@@ -19,8 +19,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.drivers.qbe;
+package it.eng.spagobi.engines.drivers.worksheet;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -45,12 +47,22 @@ import org.apache.log4j.Logger;
 
 
 /**
- * Driver Implementation (IEngineDriver Interface) for Qbe External Engine. 
+ * Driver Implementation (IEngineDriver Interface) for Worksheet External Engine. 
  */
-public class QbeDriver extends AbstractDriver implements IEngineDriver {
+public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	
-	static private Logger logger = Logger.getLogger(QbeDriver.class);
-	 
+	static private Logger logger = Logger.getLogger(WorksheetDriver.class);
+	
+	public final static String PARAM_SERVICE_NAME = "ACTION_NAME";
+    public final static String PARAM_NEW_SESSION = "NEW_SESSION";
+    public final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
+    public final static String QUERY = "QUERY";
+    public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
+    public final static String PARAM_MODALITY = "MODALITY";
+    public final static String PARAM_MODALITY_VIEW = "VIEW";
+    public final static String PARAM_MODALITY_EDIT = "EDIT";
+    
+    
 		
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -135,32 +147,6 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 		return parameters;
 		
 	}
-	
-//    private Map addDocumentParametersInfo(Map map, BIObject biobject) {
-//    	logger.debug("IN");
-//    	JSONArray parametersJSON = new JSONArray();
-//    	try {
-//	    	Locale locale = getLocale();
-//			List parameters = biobject.getBiObjectParameters();
-//			if (parameters != null && parameters.size() > 0) {
-//				Iterator iter = parameters.iterator();
-//				while (iter.hasNext()) {
-//					BIObjectParameter biparam = (BIObjectParameter) iter.next();
-//					JSONObject jsonParam = new JSONObject();
-//					jsonParam.put("id", biparam.getParameterUrlName());
-//					IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-//					jsonParam.put("label", msgBuilder.getUserMessage(biparam.getLabel(), SpagoBIConstants.DEFAULT_USER_BUNDLE, locale));
-//					jsonParam.put("type", biparam.getParameter().getType());
-//					parametersJSON.put(jsonParam);
-//				}
-//			}
-//    	} catch (Exception e) {
-//    		logger.error("Error while adding document parameters info", e);
-//    	}
-//    	map.put("SBI_DOCUMENT_PARAMETERS", parametersJSON.toString());
-//    	logger.debug("OUT");
-//		return map;
-//	}
 
 	/**
      * Starting from a BIObject extracts from it the map of the paramaeters for the
@@ -273,27 +259,29 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 
     
     
-    private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
-    private final static String PARAM_NEW_SESSION = "NEW_SESSION";
+
+    public String composeWorksheetTemplate(String workSheetDef, String workSheetQuery, String originalQbeTempl) throws SourceBeanException{
+    	SourceBean confSB = SourceBean.fromXMLString( originalQbeTempl );
+		SourceBean wk_def_sb = new SourceBean(WORKSHEET_DEFINITION);
+		wk_def_sb.setCharacters(workSheetDef);
+		SourceBean query_sb = new SourceBean(QUERY);
+		query_sb.setCharacters(workSheetQuery);
+		confSB.setAttribute(wk_def_sb);
+		confSB.setAttribute(query_sb);
+		String template = confSB.toXML(false);	
+		return template;
+    }
     
 	private Map applyService(Map parameters, BIObject biObject) {
-		ObjTemplate template;
-		
 		logger.debug("IN");
 		
 		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			
-			template = getTemplate(biObject);
-			if(template.getName().trim().toLowerCase().endsWith(".xml")) {
-				parameters.put(PARAM_SERVICE_NAME, "QBE_ENGINE_START_ACTION");
-			} else if(template.getName().trim().toLowerCase().endsWith(".json")) {
-				parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_START_ACTION");
-			} else {
-				Assert.assertUnreachable("Active template [" + template.getName() + "] extension is not valid (valid extensions are: .xml ; .json)");
-			}
-			
+			parameters.put(PARAM_SERVICE_NAME, PARAM_ACTION_NAME);
+			parameters.put(PARAM_MODALITY, PARAM_MODALITY_VIEW);
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
+			
 		} catch(Throwable t) {
 			throw new RuntimeException("Impossible to guess from template extension the engine startup service to call");
 		} finally {
@@ -327,7 +315,6 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 		
 		return template;
 	}
-	
     
     private void appendRequestParameter(Map parameters, String pname, String pvalue) {
 		parameters.put(pname, pvalue);

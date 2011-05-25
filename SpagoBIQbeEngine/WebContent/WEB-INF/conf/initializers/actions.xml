@@ -30,5 +30,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<!-- WORKSHEET_ENGINE start action -->
+	<ACTION name="WORKSHEET_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 
