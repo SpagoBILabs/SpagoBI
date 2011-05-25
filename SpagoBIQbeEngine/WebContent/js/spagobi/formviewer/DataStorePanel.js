@@ -104,6 +104,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		this.store.baseParams = baseParams;
 		var requestParameters = {start: 0, limit: this.pageSize };
 		this.store.load({params: requestParameters});
+		this.doLayout();
 	}
 
 

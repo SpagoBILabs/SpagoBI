@@ -187,7 +187,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
            		var textDiv = Ext.get(textId);
            		var imgDiv = Ext.get(imgId);
            		var titleDiv = Ext.get(titleId);
-           		textDiv.setWidth(titleDiv.getWidth()-imgDiv.getWidth()-2);
+           		if(textDiv!=undefined && textDiv!=null && imgDiv!=undefined && imgDiv!=null && titleDiv!=undefined && titleDiv!=null ){
+           			textDiv.setWidth(titleDiv.getWidth()-imgDiv.getWidth()-2);
+           		}
            	},this);
 		}
 		return html+'</div>';

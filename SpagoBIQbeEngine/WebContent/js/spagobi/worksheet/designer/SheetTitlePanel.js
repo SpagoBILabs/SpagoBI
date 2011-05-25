@@ -110,8 +110,6 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
         	    enableLists :		false,
         	    enableSourceEdit : 	false
             });
-		
-		
 		items.push(this.titlePanel);
 		return items;
 	},
@@ -159,35 +157,40 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			}]
 		});
 		
-		this.imgFileFormPanel = new Ext.form.FormPanel({
+		this.imgFileFormPanel = new Ext.Panel({
+			layout: 'form',
+			columnWidth: 0.6,
 			fileUpload: true,
 			items: [this.imgFile]
 		});
 		
 		//Panel with the load file field
 		this.loadImageFileBrows = new Ext.Panel({
-            layout:'column',
-            hidden: true,
-            hideMode: !Ext.isIE ? 'nosize' : 'display',
-            items: [
-                    this.imgFileFormPanel,
-              {
-				xtype:          'button',
-               	width: 			30,
-				handler:		this.uploadImgButtonHandler,
-				scope: 			this,
-				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
-				style:			'padding-left: 5px',
-				iconCls:		'uploadImgIcon'
-			}, {
-				xtype:          'button',
-               	width: 			30,
-				handler:		this.closeUploader,
-				scope: 			this,
-				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.closeimage'),
-				style:			'padding-left: 5px',
-				iconCls:		'closeUploadImgIcon'
-			}]
+			layout:'column',
+			hidden: true,
+			hideMode: !Ext.isIE ? 'nosize' : 'display',
+			items: [
+			        this.imgFileFormPanel ,
+			        {
+			        	xtype:          'button',
+			        	//width: 			25,
+			        	columnWidth: 0.1,
+			        	handler:		this.uploadImgButtonHandler,
+			        	scope: 			this,
+			        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
+			        	style:			'padding-left: 5px',
+			        	iconCls:		'uploadImgIcon'
+			        }, {
+			        	xtype:          'button',
+			        	//width: 			25,
+			        	columnWidth: 0.1,
+			        	handler:		this.closeUploader,
+			        	scope: 			this,
+			        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.closeimage'),
+			        	style:			'padding-left: 5px',
+			        	iconCls:		'closeUploadImgIcon'
+			        }
+			        ]
 		});
 		
 		//Combo box with positions
@@ -260,7 +263,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	//and shows the load file combo box
 	uploadImgButtonHandler: function(btn, e) {
 		
-        var form = this.imgFileFormPanel.getForm();
+        var form = this.getForm();
         if(form.isValid()){
             form.submit({
                 url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;

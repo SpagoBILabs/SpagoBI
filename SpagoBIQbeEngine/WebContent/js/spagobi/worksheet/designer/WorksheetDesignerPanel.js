@@ -84,7 +84,6 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 			        }
 			        ]
 	}; 
-		
 	Sbi.worksheet.designer.WorksheetDesignerPanel.superclass.constructor.call(this, c);	 		
 
 };

@@ -63,18 +63,11 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 		id: 'runtimeworksheet',
 		border: false,
 		layout: 'fit',
-		bodyStyle: 'height: 100%',
 		autoScroll: true,
 		items: [this.sheetsContainerPanel]
 	}; 
 		
 	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	
-	//Set height
-	this.addEvents();
-	this.on('afterlayout',function(){
-		this.sheetsContainerPanel.setHeight(this.getHeight()-54);
-	}, this);
-
 };
 
 Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {

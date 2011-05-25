@@ -77,7 +77,7 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
 		, tools: [
 	          {
 	        	  id: 'close'
-	        	, handler: this.getContainedValues//this.removeAllValues
+	        	, handler: this.removeAllValues
 	          	, scope: this
 	          	, qtip: LN('sbi.crosstab.attributescontainerpanel.tools.tt.removeall')
 	          }

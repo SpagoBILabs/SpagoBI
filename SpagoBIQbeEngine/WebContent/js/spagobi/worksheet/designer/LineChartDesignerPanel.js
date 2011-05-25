@@ -92,7 +92,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 			items: [
 		        {name: 'type', height: 80, width: 80, id:'side-by-side-linechart', ctCls:'side-by-side-linechart-line', inputValue: 'side-by-side-linechart', checked: true},
 		        {name: 'type', height: 80, width: 80, id:'stacked-linechart', ctCls:'stacked-linechart-line', inputValue: 'stacked-linechart'},
-		        {name: 'type', height: 80, width: 80, id:'percent-stacked-linechart', ctCls:'percent-stacked-linechart-line', inputValue: 'percent-stacked-linechart'},
+		        {name: 'type', height: 80, width: 80, id:'percent-stacked-linechart', ctCls:'percent-stacked-linechart-line', inputValue: 'percent-stacked-linechart'}
 			]
 		});
 		this.typeRadioGroup.on('change', this.changeLineChartImage, this);
