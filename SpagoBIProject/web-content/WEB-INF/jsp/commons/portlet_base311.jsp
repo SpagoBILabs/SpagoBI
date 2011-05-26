@@ -199,6 +199,12 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%-- MIF library --%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/miframe-debug.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/miframe/mifmsg.js")%>"></script>
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.4/highcharts.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.4/modules/exporting.js")%>"></script>
 
 <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-3.1.1/resources/images/default/s.gif")%>';
@@ -330,6 +336,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		type='text/css' 
 		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-3.1.1/ux/css/Ext.ux.ColorField.css")
 		%>'/> 
+      
+      
       
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS311.jspf"%>
 

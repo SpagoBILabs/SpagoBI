@@ -58,8 +58,9 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	loadMask: null,
 	storeManager: null,				//the store manager
 	store: null,					//the store
-	categoryAlias: null,
-	serieAlias: null
+	categoryAliasX: [],
+	categoryAliasY: [],
+	serieAlias: []
 	
 	/**
 	 * Loads the data for the chart.. Call the action which loads the data 
@@ -67,8 +68,40 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 */
 	, loadChartData: function(dataConfig){
 		//this.showMask();
-		this.categoryAlias = (dataConfig.xaxis)?dataConfig.xaxis.categories:"";
-		
+		//this.categoryAlias = (dataConfig.xaxis)?dataConfig.xaxis.categories:"";
+		if(dataConfig.xAxis != undefined){
+			if(dataConfig.xAxis.length != undefined){
+				for(var i=0; i< dataConfig.xAxis.length; i++){
+					var alias = dataConfig.xAxis[i].alias;
+					if(alias != undefined){
+						this.categoryAliasX[i]=alias;
+					}
+				}
+			}else{
+				//single axis
+				var alias = dataConfig.xAxis.alias;
+				if(alias != undefined){
+					this.categoryAliasX[0]=alias;
+				}
+			}	
+		}
+		if(dataConfig.yAxis != undefined){
+			if(dataConfig.yAxis.length != undefined){
+				for(var i=0; i< dataConfig.yAxis.length; i++){//it's an array
+					var alias = dataConfig.yAxis[i].alias;
+					if(alias != undefined){
+						this.categoryAliasY[i]=alias;
+					}
+				}
+			}else{
+				//single axis
+				var alias = dataConfig.yAxis.alias;
+				if(alias != undefined){
+					this.categoryAliasY[0]=alias;
+				}
+			}
+
+		}
 		this.serieAlias = (dataConfig.plotoptions && dataConfig.plotoptions.series)?dataConfig.plotoptions.series.columnname:"";
 		var requestParameters = {
 			    id: dataConfig.dsId
@@ -87,23 +120,48 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	/**
 	 * Load the categories for the chart
 	 */
-	, getCategories: function(){
+	, getCategoriesX: function(){
 		
 		if(this.store!=null){
 		   	var categories = [];
-	    	var catColumn = this.store.getFieldNameByAlias(this.categoryAlias);
-			var records = this.store.getRange();
-	    	for (var i = 0; i < records.length; i++) {
-	    		var rec = records[i].data;
-				if(rec) {
-					categories.push(rec[catColumn]);
-				}
-	        }
+		   	for(var j =0; j< this.categoryAliasX.length; j++){
+		    	var catColumn = this.store.getFieldNameByAlias(this.categoryAliasX[j]);
+				var records = this.store.getRange();
+				var categoriesPerColumn = [];
+		    	for (var i = 0; i < records.length; i++) {
+		    		var rec = records[i];
+					if(rec) {
+						categoriesPerColumn[i]= rec.get(catColumn);
+					}
+		        }
+		    	categories[j] = categoriesPerColumn;
+		   	}
+
 
 			return  categories;
 		}
 	}
-	
+	 , getCategoriesY: function(){
+			
+			if(this.store!=null){
+			   	var categories = [];
+			   	for(var j =0; j< this.categoryAliasY.length; j++){
+			    	var catColumn = this.store.getFieldNameByAlias(this.categoryAliasY[j]);
+					var records = this.store.getRange();
+					var categoriesPerColumn = [];
+			    	for (var i = 0; i < records.length; i++) {
+			    		var rec = records[i];
+						if(rec) {
+							categoriesPerColumn[i]= rec.get(catColumn);
+						}
+			        }
+			    	categories[j] = categoriesPerColumn;
+			   	}
+
+
+				return  categories;
+			}
+		}
 	/**
 	 * Loads the series for the chart
 	 */
@@ -233,7 +291,8 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	}
     
     ,onLoad: function(){
-    	this.getCategories();
+    	this.getCategoriesX();
+    	this.getCategoriesY();
     	this.getSeries();
     	this.createChart();
     }

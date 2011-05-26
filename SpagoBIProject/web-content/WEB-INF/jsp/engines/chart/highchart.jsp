@@ -68,9 +68,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- ---------------------------------------------------------------------- --%>
 
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
-	<script type="text/javascript" src="http://highcharts.com/js/testing.js"></script>
 	
-	<script type="text/javascript">
+	<script type="text/javascript"><!--
 		var template =  <%= template.toString()  %>;
 		Sbi.config = {};
 
@@ -109,20 +108,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.dsPars =  <%=dsPars%>;
 			config.dsTransformerType = "<%=dsTransformerType%>";
 			
-			var chartPanel;
-			switch (config.chart.type) {	        
-		        case 'bar' || 'column':
-		        	chartPanel =  new Sbi.engines.chart.BarChartPanel({'chartConfig':config});
-		        	break;
-		        case 'line':
-		        	chartPanel = new Sbi.engines.chart.LineChartPanel({'chartConfig':config});
-		        	break;
-		        case 'pie':
-		        	chartPanel = new Sbi.engines.chart.PieChartPanel({'chartConfig':config});
-		        	break;
-		        default: 
-		        	alert('Unknown widget!');
-			}
+			var chartPanel=  new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
+	
  
 			var viewport = new Ext.Viewport({
 				layout: 'border'
@@ -136,7 +123,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 			});
 		});
-	</script>
+	--></script>
 	<div id="pippo"></div>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
