@@ -110,6 +110,7 @@ public class TreeInitializer implements InitializerIFace {
 		    functionality.setDevRoles(new Role[0]);
 		    functionality.setExecRoles(new Role[0]);
 		    functionality.setTestRoles(new Role[0]);
+		    functionality.setCreateRoles(new Role[0]);
 		    functionalityDAO.insertLowFunctionality(functionality, null);
 		}
 	    }
