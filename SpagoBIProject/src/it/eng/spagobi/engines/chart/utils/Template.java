@@ -317,7 +317,8 @@ public class Template {
 				finalValue = Integer.valueOf(value);
 			}catch (Exception e){
 					//checks if the value is a boolean
-					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")){
+					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false") 
+							&& ! value.startsWith("[")){//not an array example for categories...
 						//the value is a string!
 						finalValue = "'" + value + "'";
 					}else{
