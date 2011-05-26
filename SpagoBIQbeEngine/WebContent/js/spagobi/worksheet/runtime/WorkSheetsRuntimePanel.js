@@ -46,8 +46,8 @@ Ext.ns("Sbi.worksheet.runtime");
 Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) { 
 	
 	var defaultSettings = {
-			title: LN('sbi.worksheet.runtime.worksheetruntimepanel.title')
-		};
+		title: LN('sbi.worksheet.runtime.worksheetruntimepanel.title')
+	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.runtime.workSheetsRuntimePanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.runtime.workSheetsRuntimePanel);
@@ -59,13 +59,13 @@ Sbi.worksheet.runtime.WorkSheetsRuntimePanel = function(template, config) {
 	
 	this.initPanels(template);
 
-	c ={
+	c = Ext.apply(c, {
 		id: 'runtimeworksheet',
 		border: false,
 		layout: 'fit',
 		autoScroll: true,
 		items: [this.sheetsContainerPanel]
-	}; 
+	}); 
 		
 	Sbi.worksheet.runtime.WorkSheetsRuntimePanel.superclass.constructor.call(this, c);	
 };

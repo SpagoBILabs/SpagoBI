@@ -120,7 +120,19 @@ end DOCTYPE declaration --%>
         	Ext.QuickTips.init();
 
 			var worksheet = <%= qbeEngineInstance.getWorkSheetDefinition().getConf().toString() %>;
-        	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet,{});
+        	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet, {
+        		tools: [{
+        			id : 'gear'
+       	        	, handler: function () {
+       	        		window.location.href = Sbi.config.serviceRegistry.getServiceUrl({
+       	        			serviceName: 'WORKSHEET_START_EDIT_ACTION'
+       	        			, baseParams: {}
+       	        		});
+       	        	}
+       	          	, scope: this
+       	          	, qtip: 'vai in edit'
+        		}]
+        	});
            	var viewport = new Ext.Viewport({layout: 'fit', items: [workSheetPanel]}); 
            	
       	});

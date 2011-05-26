@@ -45,5 +45,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="WORKSHEET_START_EDIT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.WorksheetStartEditAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

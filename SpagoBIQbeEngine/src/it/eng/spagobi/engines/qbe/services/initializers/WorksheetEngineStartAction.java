@@ -34,16 +34,11 @@ import org.apache.log4j.Logger;
 
 
 /**
- * The Class QbeEngineStartAction.
- * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class WorksheetEngineStartAction extends AbstractEngineStartAction {	
 	
 	// INPUT PARAMETERS
-	private final static String PARAM_MODALITY = "MODALITY";
-	private final static String PARAM_MODALITY_VIEW = "VIEW";
-	private final static String PARAM_MODALITY_EDIT = "EDIT";
 	
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
@@ -56,7 +51,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(WorksheetEngineStartAction.class);
     
-    public static final String ENGINE_NAME = "SpagoBIFormEngine";
+    public static final String ENGINE_NAME = "SpagoBIWorksheetEngine";
 	
     public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	QbeEngineInstance qbeEngineInstance = null;
