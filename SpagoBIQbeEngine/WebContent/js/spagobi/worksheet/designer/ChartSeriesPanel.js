@@ -85,6 +85,13 @@ Sbi.worksheet.designer.ChartSeriesPanel = function(config) {
     Sbi.worksheet.designer.ChartSeriesPanel.superclass.constructor.call(this, c);
     
     this.on('render', this.initDropTarget, this);
+    this.on('afterlayout', function() {
+    	if (this.store.getCount() > 0) {
+    		this.getLayout().setActiveItem( 1 );
+    	} else {
+    		this.getLayout().setActiveItem( 0 );
+    	}
+    }, this);
     
 };
 
@@ -428,16 +435,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		});
 		var theRecord = new this.Record(data);
 		
-//		if (record.data.seriename === undefined && record.data.color === undefined ) {
-//			var data = Ext.apply({}, record.data); // make a clone
-//			data = Ext.apply(data, { // add additional properties
-//				seriename: record.data.alias
-//				, color: Sbi.widgets.Colors.defaultColors[this.store.getCount()]
-//			});
-//			theRecord = new this.Record(data);
-//		} else {
-//			theRecord = record;
-//		}
 		this.getLayout().setActiveItem( 1 );
 		// if the measure is already present, does not insert it 
 		if (this.containsMeasure(theRecord)) {
