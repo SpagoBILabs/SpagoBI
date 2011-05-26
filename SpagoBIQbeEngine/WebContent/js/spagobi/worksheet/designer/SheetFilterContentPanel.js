@@ -103,6 +103,10 @@ Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {
 	
 	setDesignerState: function(state){
 		this.contentPanel.setDesignerState(state);
+	},
+	
+	addDesigner: function(state){
+		this.contentPanel.addDesigner(state);
 	}
 	
 });
