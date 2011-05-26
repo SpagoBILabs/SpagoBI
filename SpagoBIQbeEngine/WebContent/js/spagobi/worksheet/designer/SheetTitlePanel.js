@@ -264,7 +264,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	uploadImgButtonHandler: function(btn, e) {
 		
         var form = this.getForm();
-        if(form.isValid()){
+       // if(form.isValid()){
             form.submit({
                 url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
                 												   // they must POST parameters
@@ -296,7 +296,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
                 },
                 scope : this
             });
-        }
+        //}
 	},
 	
 	closeUploader: function (btn, e) {
@@ -308,7 +308,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		var valid= true;
 		var title = this.titlePanel.getValue();
 		valid = valid && title!=null && title!='' ;
-		valid = valid && this.imgTriggerField.isValid(false) && this.imgPosition.isValid(false);
+		valid = valid && this.imgTriggerField.isValid(false);
 		return valid;
 	},
 	
@@ -320,9 +320,9 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			values.img =null;
 		}
 		values.position =   this.imgPosition.getValue();
-		if(values.position==''){
-			values.img =null;
-		}
+//		if(values.position==''){
+//			values.img =null;
+//		}
 		return values;
 	},
 	

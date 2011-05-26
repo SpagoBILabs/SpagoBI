@@ -92,12 +92,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		};
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
-			
-			var header = new Ext.Panel(Ext.apply({
-				html: this.buildTitleHtml(this.sheetConfig.header, true)
-			},sharedConf));
-
-			items.push(header);
+			this.addTitle(this.sheetConfig.header,items, true);
 		}
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.length > 0) {
@@ -127,10 +122,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
-			var footer = new Ext.Panel(Ext.apply({
-				html: this.buildTitleHtml(this.sheetConfig.footer, false)
-			},sharedConf));
-			items.push(footer);
+			this.addTitle(this.sheetConfig.footer,items, false);
 		}
 
 		return items;
@@ -139,60 +131,77 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	/**
 	 * Build the html for the header or the footer
 	 * @param: title: the configuration {tilte, img, position}
+	 * @param: items: the array of the panel item
 	 * @param: header: true if it builds the header, false otherwise
-	 * @return: the hatml for the title
+	 * @return: the html for the title
 	 */
-	buildTitleHtml: function(title, header){
-		var titleId = Ext.id();
-		var textId = Ext.id();
-		var imgId = null;
-		var html = '<div id="'+titleId+'">';
-		if(title.position==null || title.position==undefined){
-			title.position='center';
-		}
-		if(title.img!=undefined && title.img!=null && title.position!='center'){
-			html = '<div id="'+textId+'" style="float: left">'+title.title+'</div>';
-		}else{
-			html = '<div>'+title.title+'</div>';
-		}
+	addTitle: function(title, items, header){
+		
+		var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_IMAGE_CONTENT_ACTION'
+			, baseParams: {FILE_NAME: title.img}
+		});
+		var textPanel = new Ext.Panel({
+			border: false,
+			html: '<div>'+title.title+'</div>'
+		});
+		
+		
+		var titlePanelItems = [];
+		var layout = 'fit';
 		if(title.img!=undefined && title.img!=null){
-			var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName: 'GET_IMAGE_CONTENT_ACTION'
-				, baseParams: {FILE_NAME: title.img}
+			
+			var imgPanel = new Ext.Panel({
+				border: false,
+				autoWidth: true,
+				autoHeight: true,
+				html: '<img src="'+loadHeaderImgService+'"></img>'
 			});
+			
 			switch (title.position) {
 	        case 'left':
-	        	imgId= Ext.id();
-	           	html = '<div id="'+imgId+'" style="float: left; margin-right:10px;"><img src="'+loadHeaderImgService+'"></img></div>'+html;
+	        	titlePanelItems.push(imgPanel);
+	        	titlePanelItems.push(textPanel);
+	        	layout = 'hbox';
 	            break;
 	        case 'right':
-	        	imgId= Ext.id();
-	        	html = html+'<div id="'+imgId+'" style="float: right; margin-left:10px;"><img src="'+loadHeaderImgService+'"></img></div>';
-	            break;
+	        	titlePanelItems.push(textPanel);
+	        	titlePanelItems.push(imgPanel);
+	        	layout = 'hbox';
+	        	break;
 	        default: 
+	        	imgPanel.style='width: 100%; text-align: center;';
+	        	textPanel.style='width: 100%';
 	        	if(header){
-	        		html = '<div style="text-align:center"><img src="'+loadHeaderImgService+'"></img></div>'+html;
+		        	titlePanelItems.push(imgPanel);
+		        	titlePanelItems.push(textPanel);
 	        	}else{
-	        		html = html+'<div style="text-align:center"><img src="'+loadHeaderImgService+'"></img></div>';
+		        	titlePanelItems.push(textPanel);
+		        	titlePanelItems.push(imgPanel);	
 	        	}
 	            break;
 			}
+		}else{
+        	textPanel.style='width: 100%';
+        	titlePanelItems.push(textPanel);
 		}
 		
-		if(imgId!=null){
-			//align the image and the text:
-			//get the width of the image and set as width of the text in this way:
-			//width text = total width-img width-2
-           	this.on("afterlayout",function(){
-           		var textDiv = Ext.get(textId);
-           		var imgDiv = Ext.get(imgId);
-           		var titleDiv = Ext.get(titleId);
-           		if(textDiv!=undefined && textDiv!=null && imgDiv!=undefined && imgDiv!=null && titleDiv!=undefined && titleDiv!=null ){
-           			textDiv.setWidth(titleDiv.getWidth()-imgDiv.getWidth()-2);
-           		}
-           	},this);
+		var titlePanel = new Ext.Panel({
+			border: false,
+	        layout: layout,
+	        items: titlePanelItems
+		});
+
+		if(title.position=='left' || title.position=='right'){
+		   	this.on("afterlayout",function(){
+		   		alert(titlePanel.getWidth() - imgPanel.getWidth());
+		   		textPanel.setWidth(titlePanel.getWidth() - imgPanel.getWidth());
+			},this);
 		}
-		return html+'</div>';
+		
+	   	items.push(titlePanel);
+
+	 
 	}
 	
 	, getDynamicFilterDefinition: function (aField) {
