@@ -121,7 +121,7 @@ end DOCTYPE declaration --%>
 
 			var worksheet = <%= qbeEngineInstance.getWorkSheetDefinition().getConf().toString() %>;
         	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet,{});
-           	var viewport = new Ext.Viewport({layout: 'border', items: [{region: 'center', items: [workSheetPanel]}]}); 
+           	var viewport = new Ext.Viewport({layout: 'fit', items: [workSheetPanel]}); 
            	
       	});
       	
