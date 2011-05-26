@@ -211,10 +211,12 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, initEmptyMsgPanel: function() {
-		this.emptyMsgPanel = new Ext.Panel({
-			html: this.emptyMsg
-			//, height: 20
-		});
+		if(this.emptyMsgPanel==undefined || this.emptyMsgPanel==undefined){
+			this.emptyMsgPanel = new Ext.Panel({
+				html: this.emptyMsg
+				//, height: 20
+			});
+		}
 	}
 
 	, addFilter: function(aRow) {
@@ -237,12 +239,13 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
             , layout: {
                 type:'column'
             }
-			, style:'padding:0px 5px 5px 5px'
+			, width: 120
+			, style:'padding:0px 5px 5px 5px; float: left'
        		, items: [{
        			html: aRow.data.alias
        		}, new Ext.Button({
        		    template: new Ext.Template(
-       		         '<div class="smallBtn">',
+       		         '<div class="smallBtn" class="float: left">',
        		             '<div class="delete-icon"></div>',
        		             '<div class="btnText"></div>',
        		         '</div>')
@@ -293,20 +296,22 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			}
 		}
 		this.contents = new Array();
-		this.initEmptyMsgPanel();
-		this.contents.push(this.emptyMsgPanel);
-		this.add(this.emptyMsgPanel);
 		this.empty = true;
 	}
 	
 	, updateFilters: function(){
 		this.reset();
+		if(this.store.getCount()==0){
+			this.initEmptyMsgPanel();
+			this.contents.push(this.emptyMsgPanel);
+			this.add(this.emptyMsgPanel);
+		}
 		for(var i=0; i<this.store.getCount(); i++){
 			var aRow = (this.store.getAt(i));
 			var item = this.createFilterPanel(aRow);
-
 			this.contents.push(item);
 			this.add(item);
+			this.empty = false;
 		}
 		this.doLayout();
 	}
