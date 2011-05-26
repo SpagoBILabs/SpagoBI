@@ -250,25 +250,28 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		for(int i=0; i<fields.length; i++){
 			String fieldName = fields[i];
 			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
-			String[] values = new String[1];
-			values[0] =fieldName;
 
-			Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
-			
-			values = new String[valuesArray.length()];
-			for(int j=0; j<valuesArray.length(); j++){
-				values[j] = valuesArray.getString(j);
-			}
-			
-			Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
-			
-			String operator = "NOT EQUALS TO";
+			//if the filter has some value
 			if(valuesArray.length()>0){
-				operator="IN";
+				String[] values = new String[1];
+				values[0] =fieldName;
+
+				Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
+
+				values = new String[valuesArray.length()];
+				for(int j=0; j<valuesArray.length(); j++){
+					values[j] = valuesArray.getString(j);
+				}
+
+				Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+				String operator = "NOT EQUALS TO";
+				if(valuesArray.length()>0){
+					operator="IN";
+				}
+
+				whereFields.add(new WhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND"));
 			}
-			
-			whereFields.add(new WhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND"));
-			
 		}
 		return whereFields;
 	}
