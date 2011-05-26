@@ -59,7 +59,7 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 
 	this.addEvents('addDesigner');
 	this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({style:'padding: 5px 15px 0px 15px;'});
-	this.contentPanel.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
+	this.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
 	
 	this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 		style:'padding:5px 10px 0px 15px; float: left'
