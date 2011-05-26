@@ -58,11 +58,6 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
     public final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
     public final static String QUERY = "QUERY";
     public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
-    public final static String PARAM_MODALITY = "MODALITY";
-    public final static String PARAM_MODALITY_VIEW = "VIEW";
-    public final static String PARAM_MODALITY_EDIT = "EDIT";
-    
-    
 		
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -279,7 +274,6 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			
 			parameters.put(PARAM_SERVICE_NAME, PARAM_ACTION_NAME);
-			parameters.put(PARAM_MODALITY, PARAM_MODALITY_VIEW);
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 			
 		} catch(Throwable t) {
