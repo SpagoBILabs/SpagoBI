@@ -248,7 +248,13 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	        default: 
 	        	alert('Unknown widget!');
 		}
-		this.setDesignerState(state);
+		if (this.rendered) {
+			this.setDesignerState(state);
+		} else {
+			this.on('render', function() {
+				this.setDesignerState(state);
+			}, this);
+		}
 	}
 
 });
