@@ -27,6 +27,7 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
@@ -97,7 +98,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Monitor errorHitsMonitor = null;
 					
 		List<String> visibleSelectFields = new ArrayList<String>();
-		JSONArray JSONVisibleSelectFields  = null;
 		logger.debug("IN");
 		
 		try {
@@ -114,18 +114,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			
 			limit = getAttributeAsInteger( LIMIT );
 			
-			try {
-				JSONVisibleSelectFields = getAttributeAsJSONArray("visibleselectfields");
-				if(JSONVisibleSelectFields!=null){
-					for(int i=0; i<JSONVisibleSelectFields.length(); i++){
-						visibleSelectFields.add(JSONVisibleSelectFields.getString(i));
-					}	
-				}
-			} catch (Exception e) {
-				logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
-			}
-
-
 
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 						
@@ -140,17 +128,34 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			// retrieving query specified by id on request
 			query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
 			
-			//hide the fields not present in the request parameter visibleselectfields
-			if(visibleSelectFields!=null && visibleSelectFields.size()>0){
-				List<AbstractSelectField> selectedField = query.getSelectFields(true);
-				for(int i=0; i<selectedField.size(); i++){
-					String alias = selectedField.get(i).getAlias();
-					if(!visibleSelectFields.contains(alias)){
-						selectedField.get(i).setVisible(false);
-						visibleSelectFields.remove(alias);
-						continue;
-					}
+			if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
+				logger.debug("Query with id [" + queryId + "] is the current active query. Previous generated statment will be reused");
+				query = getEngineInstance().getActiveQuery();
+			} else {
+				logger.debug("Query with id [" + queryId + "] is not the current active query. A new statment will be generated");
+				getEngineInstance().setActiveQuery(query);
+				
+			}			
+			
+			Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
+		
+			/*-----------------------------------------------------------------
+			* START: part added to apply some projection and selection in the query
+			* the projected columns stays in the request attribute visibleselectfields
+			* the selected rows stays in the request attribute optionalfilters
+			*------------------------------------------------------------------*/
+
+			
+			JSONArray JSONVisibleSelectFields  = null;
+			try {
+				JSONVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
+				if(JSONVisibleSelectFields!=null){
+					for(int i=0; i<JSONVisibleSelectFields.length(); i++){
+						visibleSelectFields.add(JSONVisibleSelectFields.getString(i));
+					}	
 				}
+			} catch (Exception e) {
+				logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
 			}
 			
 			//Apply optional filters
@@ -161,26 +166,49 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			} catch (Exception e) {
 				logger.debug("Found no optional filters");
 			}
-			
-			if(optionalUserFilters!=null){			
-				applyOptionalFilters(query, optionalUserFilters);
+				
+			if(JSONVisibleSelectFields!=null || optionalUserFilters!=null){
+				
+				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
+				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
+				
+				
+				//hide the fields not present in the request parameter visibleselectfields
+				if(visibleSelectFields!=null && visibleSelectFields.size()>0){
+					List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);
+					for(int i=0; i<selectedField.size(); i++){
+						String alias = selectedField.get(i).getAlias();
+						if(!visibleSelectFields.contains(alias)){
+							selectedField.get(i).setVisible(false);
+							visibleSelectFields.remove(alias);
+						}else{
+							selectedField.get(i).setVisible(true);
+						}
+					}
+				}
+				
+
+				if(optionalUserFilters!=null){			
+					applyOptionalFilters(clonedQuery, optionalUserFilters);			
+				}
+				
+				statement = getDataSource().createStatement( clonedQuery );
+				
+				/*-----------------------------------------------------------------
+				* END part added to apply some projection and selection in the query
+				*------------------------------------------------------------------*/
+			}else{
+				// promptable filters values may come with request (read-only user modality)
+				updatePromptableFiltersValue(query, this);
+				
+				statement = getEngineInstance().getStatment();	
+				statement.setParameters( getEnv() );
 			}
 
-			Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
 			
-			if(optionalUserFilters==null && getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
-				logger.debug("Query with id [" + queryId + "] is the current active query. Previous generated statment will be reused");
-				query = getEngineInstance().getActiveQuery();
-			} else {
-				logger.debug("Query with id [" + queryId + "] is not the current active query. A new statment will be generated");
-				getEngineInstance().setActiveQuery(query);
-				
-			}
-			// promptable filters values may come with request (read-only user modality)
-			updatePromptableFiltersValue(query, this);
 			
-			statement = getEngineInstance().getStatment();	
-			statement.setParameters( getEnv() );
+
+
 			
 			String hqlQuery = statement.getQueryString();
 			//String sqlQuery = statement.getSqlQueryString();
@@ -389,39 +417,43 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		for(int i=0; i<fields.length; i++){
 			String fieldName = fields[i];
 			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
-			String[] values = new String[1];
-			values[0] =fieldName;
 
-			Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
-
-			values = new String[valuesArray.length()];
-			for(int j=0; j<valuesArray.length(); j++){
-				values[j] = valuesArray.getString(j);
-			}
-
-			Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
-
-			String operator = "NOT EQUALS TO";
+			//if the filter has some value
 			if(valuesArray.length()>0){
-				operator="IN";
+
+				String[] values = new String[1];
+				values[0] =fieldName;
+
+				Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
+
+				values = new String[valuesArray.length()];
+				for(int j=0; j<valuesArray.length(); j++){
+					values[j] = valuesArray.getString(j);
+				}
+
+				Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+				String operator = "NOT EQUALS TO";
+				if(valuesArray.length()>0){
+					operator="IN";
+				}
+
+				query.addWhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND");
+
+
+
+				ExpressionNode filterNode = new ExpressionNode("NO_NODE_OP","$F{OptionalFilter"+i+"}");
+
+				//build the where clause tree 
+				if(leftExpression==null){
+					leftExpression = filterNode;
+				}else{
+					ExpressionNode operationNode = new ExpressionNode("NODE_OP", "AND");
+					operationNode.addChild(leftExpression);
+					operationNode.addChild(filterNode);
+					leftExpression = operationNode;
+				}
 			}
-
-			query.addWhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND");
-
-
-
-			ExpressionNode filterNode = new ExpressionNode("NO_NODE_OP","$F{OptionalFilter"+i+"}");
-
-			//build the where clause tree 
-			if(leftExpression==null){
-				leftExpression = filterNode;
-			}else{
-				ExpressionNode operationNode = new ExpressionNode("NODE_OP", "AND");
-				operationNode.addChild(leftExpression);
-				operationNode.addChild(filterNode);
-				leftExpression = operationNode;
-			}
-
 		}
 		query.setWhereClauseStructure(leftExpression);
 	}
