@@ -59,7 +59,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	
 	this.initPanels();
 	
-	c ={
+	c = Ext.apply(c, {
 			layout: 'border',
 			autoScroll: true,
 			items: [
@@ -83,7 +83,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 			        	items: [this.sheetsContainerPanel]
 			        }
 			        ]
-	}; 
+	}); 
 	Sbi.worksheet.designer.WorksheetDesignerPanel.superclass.constructor.call(this, c);	 		
 
 };
@@ -91,13 +91,16 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	designToolsPanel: null,
 	sheetsContainerPanel: null,
+	worksheetTemplate: {},   // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 
 	initPanels: function(){
 		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel();
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);
-		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel();
+		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel({
+			sheets : this.worksheetTemplate.sheets || []  
+		});
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);

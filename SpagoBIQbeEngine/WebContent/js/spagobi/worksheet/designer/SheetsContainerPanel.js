@@ -48,7 +48,7 @@
  */
 Ext.ns("Sbi.worksheet.designer");
 
-Sbi.worksheet.designer.SheetsContainerPanel = function(config) { 
+Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	
 	var defaultSettings = {};
 
@@ -82,16 +82,21 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	        }]
 	};
 	
-	this.on('render',function(){this.addTab();},this);
-	
 	this.initPanel();
 	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 	
 	this.addEvents('saveworkheet');
-
+	
+	if (this.sheets !== undefined && this.sheets !== null && this.sheets.length > 0) {
+		this.setSheetsState(this.sheets);
+	} else {
+		this.on('render',function(){this.addTab();},this);
+	}
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	index: null,
+	sheets: null, // the sheets to be displayed initially; to be passed as a property of the constructor's input object!!!
 	
 	initPanel: function(){
 	    this.on('tabchange',function(tabPanel, tab){
@@ -105,8 +110,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 
 	, addTab: function(sheetConf){
 		this.suspendEvents();
-		this.remove('addTab');
 		
+		this.remove('addTab');
 		if(sheetConf==null){
 			sheetConf={};
 		}
@@ -120,9 +125,11 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		
 	    var tab = this.add(sheet);
 	    this.add(this.addPanel);
+	    
 	    if(this.getActiveTab()==null){
 	    	this.setActiveTab(0);
 	    }
+
 	    this.resumeEvents();
 	    
 	    tab.on('beforeClose',function(panel){
@@ -137,8 +144,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		            this
 				);
 			return false;
-	    },this);
-	    
+	    }, this);
+
 	    return sheet;
 	}
 	
@@ -211,7 +218,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			this.on('render',function(){
 				var i=0;
 				for(; i<sheets.length; i++){
-					this.addTab(sheets[i]);
+					var aSheetPanel = this.addTab();
+					aSheetPanel.setSheetState(sheets[i]);
 				}
 			},this);
 		}

@@ -184,11 +184,20 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	, getFilters: function () {
 		var filters = [];
-		for(i = 0; i < this.store.getCount(); i++) {
+		for(var i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
 			filters.push(record.data);
 		}
 		return filters;
+	}
+	
+	, setFilters: function (filters) {
+		this.reset();
+		for(var i = 0; i < filters.lenght; i++) {
+			var aFilter = filters[i];
+			var aRecord = this.Record(aFilter);
+			this.addFilter(aRecord);
+		}
 	}
 	
 	, removeSelectedFilters: function() {

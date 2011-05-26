@@ -464,7 +464,9 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	
 	, removeAllMeasures: function() {
 		this.store.removeAll(false);
-        this.getLayout().setActiveItem( 0 );
+		if (this.rendered) {
+			this.getLayout().setActiveItem( 0 );
+		}
 	}
 
 	, setMeasures: function(measures) {
@@ -476,7 +478,9 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	  			var record = new this.Record(measure);
 	  			this.store.add(record); 
 	  		}
-			this.getLayout().setActiveItem( 1 );
+			if (this.rendered) {
+				this.getLayout().setActiveItem( 1 );
+			}
 		}
 	}
 

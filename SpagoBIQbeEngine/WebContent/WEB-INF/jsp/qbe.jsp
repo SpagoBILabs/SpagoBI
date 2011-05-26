@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
-
-
-<%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
-<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
-<%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -34,6 +29,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
+<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
+<%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
 <%@page import="it.eng.spago.base.*"%>
@@ -229,22 +227,3 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	</body>
 
 </html>
-
-
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    
