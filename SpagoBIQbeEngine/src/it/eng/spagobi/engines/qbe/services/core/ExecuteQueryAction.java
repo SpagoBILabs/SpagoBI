@@ -146,12 +146,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			*------------------------------------------------------------------*/
 
 			
-			JSONArray JSONVisibleSelectFields  = null;
+			JSONArray jsonVisibleSelectFields  = null;
 			try {
-				JSONVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
-				if(JSONVisibleSelectFields!=null){
-					for(int i=0; i<JSONVisibleSelectFields.length(); i++){
-						visibleSelectFields.add(JSONVisibleSelectFields.getString(i));
+				jsonVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
+				if (jsonVisibleSelectFields != null) {
+					for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
+						JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
+						visibleSelectFields.add(jsonVisibleSelectField.getString("alias"));
 					}	
 				}
 			} catch (Exception e) {
@@ -167,7 +168,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				logger.debug("Found no optional filters");
 			}
 				
-			if(JSONVisibleSelectFields!=null || optionalUserFilters!=null){
+			if(jsonVisibleSelectFields!=null || optionalUserFilters!=null){
 				
 				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
 				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());

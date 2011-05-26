@@ -217,14 +217,14 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 		var attributes = [];
 		for(i = 0; i < this.store.getCount(); i++) {
 			var record = this.store.getAt(i);
-			attributes.push(record.data.alias);
+			attributes.push(record.data);
 		}
 
 		return attributes;
 	}
 	
 	, setValues: function (attributes) {
-		this.removeAllAttributes();
+		this.removeAllValues();
 		var i = 0;
 		for (; i < attributes.length; i++) {
   			var attribute = attributes[i];
