@@ -87,14 +87,15 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.sheetLayout = 'layout_headerfooter';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
+			hidden: true,
 			tools:[{
 	        	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
 	        	id: 'down',
 	        	handler:this.showLeftFilters,
 	        	scope: this
 	        }],
-			style:'padding:5px 15px 0px 15px'
-			, ddGroup: 'worksheetDesignerDDGroup'
+			style:'padding:5px 15px 0px 15px',
+			ddGroup: 'worksheetDesignerDDGroup'
 		});
 		
 		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);

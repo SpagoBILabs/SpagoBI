@@ -62,12 +62,11 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	this.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
 	
 	this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
-		style:'padding:5px 10px 0px 15px; float: left'
+		style:'padding:5px 10px 0px 15px; float: left; overflow: auto'
 		, store: filterStore
 		, ddGroup: 'worksheetDesignerDDGroup'
 		, height: 400 
 		, width: 150
-		, hidden: true
 		, tools:[{
 			id: 'toggle',
         	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.up.filter'),
