@@ -102,7 +102,12 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			}
 
 		}
-		this.serieAlias = (dataConfig.plotoptions && dataConfig.plotoptions.series)?dataConfig.plotoptions.series.columnname:"";
+		if(dataConfig.plotOptions && dataConfig.plotOptions.series){
+			var str = dataConfig.plotOptions.series.alias;
+			this.serieAlias = str.split(",");
+		}
+		
+		
 		var requestParameters = {
 			    id: dataConfig.dsId
 			  , label: dataConfig.dsLabel
@@ -195,16 +200,37 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			      series.push(serie);
 			}	
 			return series; */
+			
+			
+			//single serie
 		   	var series = [];
-	    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias);
-			var records = this.store.getRange();
-	    	for (var i = 0; i < records.length; i++) {
-	    		var rec = records[i].data;
-				if(rec) {
-					series.push(rec[serieColumn]);
-				}
-	        }
-	    	
+
+			//coordinates or multiple columns for 1 value
+			if(this.serieAlias.length != 1){
+
+				var records = this.store.getRange();
+		    	for (var j = 0; j < records.length; j++) {
+		    		var rec = records[j].data;
+					if(rec) {
+						var recArray = [];
+						for(i = 0; i<this.serieAlias.length; i++){
+					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
+					    	recArray.push(rec[serieColumn]);
+						}
+						series.push(recArray);
+					}
+		    	}
+			}else{
+
+		    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias);
+				var records = this.store.getRange();
+		    	for (var i = 0; i < records.length; i++) {
+		    		var rec = records[i].data;
+					if(rec) {
+						series.push(rec[serieColumn]);
+					}
+		        }
+			}
 			return  series;
 		}
 	}
