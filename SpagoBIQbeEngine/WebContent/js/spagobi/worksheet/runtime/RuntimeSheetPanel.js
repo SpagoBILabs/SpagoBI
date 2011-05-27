@@ -92,7 +92,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		};
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
-			this.addTitle(this.sheetConfig.header,items, true);
+			if(Ext.isIE){
+				this.addTitleIE(this.sheetConfig.header,items, true);
+			} else{
+				this.addTitle(this.sheetConfig.header,items, true);
+			}
 		}
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.length > 0) {
@@ -122,7 +126,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
-			this.addTitle(this.sheetConfig.footer,items, false);
+			if(Ext.isIE){
+				this.addTitleIE(this.sheetConfig.footer,items, false);
+			} else{
+				this.addTitle(this.sheetConfig.footer,items, false);
+			}
 		}
 
 		return items;
@@ -192,16 +200,121 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	        items: titlePanelItems
 		});
 
+		//Set the width of the text as the width of the panel - the width of the img
 		if(title.position=='left' || title.position=='right'){
 		   	this.on("afterlayout",function(){
-		   		alert(titlePanel.getWidth() - imgPanel.getWidth());
 		   		textPanel.setWidth(titlePanel.getWidth() - imgPanel.getWidth());
 			},this);
 		}
-		
 	   	items.push(titlePanel);
+	},
+	
+	addTitleIE: function(title, items, header){
 
-	 
+		var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_IMAGE_CONTENT_ACTION'
+			, baseParams: {FILE_NAME: title.img}
+		});
+		
+		//build the text panel
+		var textPanel = new Ext.Panel({
+			border: false,
+			autoHeight: true,
+			padding: '15',
+			html: '<div>'+title.title+'</div>'
+		});
+		
+		
+		var titlePanelItems = [];
+		var layout = 'fit';
+		
+		//The image is defined
+		if(title.img!=undefined && title.img!=null){
+			
+			//build the image panel
+			var imgPanel = new Ext.Panel({
+				border: false,
+				autoWidth: true,
+				autoHeight: true,
+				padding: '15',
+				html: '<img src="'+loadHeaderImgService+'"></img>'
+			});
+			
+			if (title.position=='left' || title.position=='right') {
+
+	        	titlePanelItems.push(textPanel);
+	        	titlePanelItems.push(imgPanel);
+	        	layout = 'hbox';
+			}else{
+	        	imgPanel.style='width: 100%; text-align: center;';
+	        	textPanel.style='width: 100%';
+	        	if(header){
+		        	titlePanelItems.push(imgPanel);
+		        	titlePanelItems.push(textPanel);
+	        	}else{
+		        	titlePanelItems.push(textPanel);
+		        	titlePanelItems.push(imgPanel);	
+	        	}
+			}
+		}else{
+        	textPanel.style='width: 100%';
+        	titlePanelItems.push(textPanel);
+		}
+		
+		
+		var titlePanel = new Ext.Panel({
+			border: false,
+	        layout: layout,
+	        autoHeight: true,
+	        items: titlePanelItems
+		});
+		var titlePanel2 = new Ext.Panel({
+			border: false,
+	        layout: 'fit',
+	        autoHeight: true,
+	        items: [titlePanel]
+		});
+
+		//this is a trick.. The solution of a problem with IE 
+		if(title.position=='left' ){
+		   	this.on("afterlayout",function(){
+		   		var imgW =   imgPanel.getWidth();
+		   		var imgH =   imgPanel.getHeight();
+		   		var titleW = titlePanel.getWidth();
+		   		titlePanel2.remove(titlePanel);
+	   			
+				var textPanel2 = new Ext.Panel({
+					border: false,
+					width: titleW-40-imgW,
+					padding: '15',
+					html: '<div>'+title.title+'</div>'
+				});
+				
+				var imgPanel2 = new Ext.Panel({
+					border: false,
+					width: imgW,
+					height: imgH,
+					padding: '15',
+					html: '<img src="'+loadHeaderImgService+'"></img>'
+				});
+
+				var titlePanel3 = new Ext.Panel({
+					border: false,
+			        layout: layout,
+			        height: imgH,
+			        items: [imgPanel2, textPanel2]
+				});
+				titlePanel2.add(titlePanel3);
+			},this);
+		}
+		
+		//Set the width of the title text panel
+		if( title.position=='right'){
+		   	this.on("afterlayout",function(){
+		   		textPanel.setWidth(titlePanel.getWidth()-imgPanel.getWidth());
+			},this);
+		}
+	   	items.push(titlePanel2);
 	}
 	
 	, getDynamicFilterDefinition: function (aField) {
