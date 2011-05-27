@@ -47,14 +47,14 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 	this.ouId = '1';
 	this.selectedGrantId = '-2';
 
-	this.kpiTreeRoot ={
+	this.kpiTreeRoot = {
 		text : 'root',
 		modelId: '-1'
-	}
+	};
 	this.goalTreeRoot = {
 		text : 'root',
-		nodeCount: '1',
-	}
+		nodeCount: '1'
+	};
 
 	var paramsOUChildList = {LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "OU_CHILDS_LIST"};
 	this.configurationObject = {};
@@ -680,7 +680,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 				threshold1: document.getElementById("threshold1"+node.attributes.modelInstId).value,
 				sign1: document.getElementById("sign1"+node.attributes.modelInstId).value,
 				sign2: document.getElementById("sign2"+node.attributes.modelInstId).value,
-				threshold2: document.getElementById("threshold2"+node.attributes.modelInstId).value,
+				threshold2: document.getElementById("threshold2"+node.attributes.modelInstId).value
 			};
 			toreturn.push(encodedNode);
 		}
