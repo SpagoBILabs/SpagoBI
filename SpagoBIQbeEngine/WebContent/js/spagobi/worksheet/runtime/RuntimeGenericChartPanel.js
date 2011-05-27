@@ -211,9 +211,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			
 			// format the value according to serie configuration
 			var value = Sbi.qbe.commons.Format.number(this.y, {
-	    		decimalSeparator: Sbi.locale.formats.float.decimalSeparator,
+	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
 	    		decimalPrecision: serieDefinition.precision,
-	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats.float.groupingSeparator : '',
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
 	    		groupingSize: 3,
 	    		currencySymbol: '',
 	    		nullValue: ''
@@ -263,9 +263,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 			
 			// format the value according to serie configuration
 			var value = Sbi.qbe.commons.Format.number(this.y, {
-	    		decimalSeparator: Sbi.locale.formats.float.decimalSeparator,
+	    		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
 	    		decimalPrecision: serieDefinition.precision,
-	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats.float.groupingSeparator : '',
+	    		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
 	    		groupingSize: 3,
 	    		currencySymbol: '',
 	    		nullValue: ''
