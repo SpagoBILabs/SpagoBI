@@ -181,7 +181,6 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		}
 	}
 	
-	
 	, getFilters: function () {
 		var filters = [];
 		for(var i = 0; i < this.store.getCount(); i++) {
@@ -211,12 +210,9 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, initEmptyMsgPanel: function() {
-		if(this.emptyMsgPanel==undefined || this.emptyMsgPanel==undefined){
-			this.emptyMsgPanel = new Ext.Panel({
-				html: this.emptyMsg
-				//, height: 20
-			});
-		}
+		this.emptyMsgPanel = new Ext.Panel({
+			html: this.emptyMsg
+		});
 	}
 
 	, addFilter: function(aRow) {
@@ -278,7 +274,6 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		}
 		this.contents.remove(item);
 		item.destroy();
-
 		if (this.contents.length === 0) {
 			this.initEmptyMsgPanel();
 			this.contents.push(this.emptyMsgPanel);
