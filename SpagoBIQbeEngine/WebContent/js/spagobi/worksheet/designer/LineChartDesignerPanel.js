@@ -234,12 +234,25 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 	}
 	
 	, setFormState: function(state) {
+		this.typeRadioGroup.suspendEvents();  // work-around, workaround, see note below
+		this.colorAreaCheck.suspendEvents();  // work-around, workaround, see note below
 		if (state.type) this.typeRadioGroup.setValue(state.type);
 		if (state.colorarea) this.colorAreaCheck.setValue(state.colorarea);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+		this.typeRadioGroup.resumeEvents();  // work-around, workaround, see note below
+		this.colorAreaCheck.suspendEvents(); // work-around, workaround, see note below
+		if (this.rendered) {                 // work-around, workaround, see note below
+			this.changeLineChartImage.defer(200, this);// work-around, workaround, see note below
+		}                                    // work-around, workaround, see note below
+		/*
+		 * when setting value to this.typeRadioGroup and this.colorAreaCheck, the 'change' event is raised
+		 * and the changeLineChartImage is invoked, but it does not work properly (this.typeRadioGroup.getValue() 
+		 * is null or the this.imageContainerPanel.update(newHtml) instruction does not work).
+		 * Suspending the events and deferring the this.changeLineChartImage solve the issue.
+		 */
 	}
 
 });
