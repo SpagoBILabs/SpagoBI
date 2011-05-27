@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -232,9 +233,7 @@ public class Template {
 					if (object.getValue() instanceof SourceBean){
 						
 						String key=(String)object.getKey();
-						if (sbCounter != numberOfSb) {
-				    		toReturn.write(", ");					
-						}
+
 						if(key.endsWith("_LIST")){
 							String arrayKey = key.substring(0, key.indexOf("_LIST"));
 							toReturn.write("      " + convertKeyString(arrayKey) +": [ \n");	
@@ -245,7 +244,9 @@ public class Template {
 							toReturn = getAllAttributes(object, toReturn);
 							toReturn.write("       }\n");
 						}
-
+						if(i != subAtts.size()-1){
+							toReturn.write("       , ");
+						}
 						sbCounter++;
 					}else{
 						SourceBeanAttribute subObject2 = (SourceBeanAttribute) subAtts.get(i);
@@ -314,15 +315,18 @@ public class Template {
 		if(value != null){
 			try{
 				//checks if the value is a number
-				finalValue = Integer.valueOf(value);
+				//finalValue = Integer.valueOf(value);
+				finalValue =Long.valueOf(value);
 			}catch (Exception e){
 					//checks if the value is a boolean
-					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false") 
-							&& ! value.startsWith("[")){//not an array example for categories...
+					if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false") //boolean
+							&& ! value.startsWith("[")//not an array example for categories...
+							//&& ! value.trim().startsWith("function")//not an array example for categories...
+						){
 						//the value is a string!
 						finalValue = "'" + value + "'";
 					}else{
-						//the value is a boolean!
+						//the value is not a string
 						finalValue = value;
 					}
 			}
@@ -363,7 +367,7 @@ public class Template {
 	        }
 	        count++;
 	    }
-	    System.out.println(sb);
+
 	    if(!sb.toString().equals("")){
 	    	jsonKey = sb.toString();
 	    }
