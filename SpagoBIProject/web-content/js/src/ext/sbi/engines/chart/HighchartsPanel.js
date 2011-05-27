@@ -95,13 +95,13 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			formatter2 = this.chartConfig.tooltip.formatter;
 		}
 		if(formatter){
-			this.chartConfig.plotOptions.pie.dataLabels.formatter = eval(formatter);
+			this.chartConfig.plotOptions.pie.dataLabels.formatter = eval('function (){return '+formatter+';}');		
 		}
 		if(formatter1){
-			this.chartConfig.plotOptions.series.formatter = eval(formatter1);
+			this.chartConfig.plotOptions.series.formatter = eval('function (){return '+formatter1+';}');	
 		}
 		if(formatter2){
-			this.chartConfig.tooltip.formatter = eval(formatter);
+			this.chartConfig.tooltip.formatter = eval('function (){return '+formatter2+';}');	
 		}
 		var seriesData = this.chartConfig.plotOptions.series;//other attributes too
 		seriesData.data = this.getSeries();//values from dataset
