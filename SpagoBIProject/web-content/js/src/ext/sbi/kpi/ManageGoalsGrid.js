@@ -188,7 +188,7 @@ Ext.extend(Sbi.kpi.ManageGoalsGrid, Sbi.widgets.ListGridPanel, {
 				startdate:'',
 				enddate:'', 
 				grantid:'',
-				grantname:'',
+				grantname:''
 		};
 
 		var records = new Array();

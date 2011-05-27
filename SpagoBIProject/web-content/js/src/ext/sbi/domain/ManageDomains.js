@@ -215,7 +215,7 @@ Ext.extend(Sbi.domain.ManageDomains, Ext.Panel, {
 			// width: 220,
 			sortable : true,
 			editor : {
-				xtype : 'textfield',
+				xtype : 'textfield'
 				// allowBlank : false,
 				// maxLength : 100,
 				// maxLengthText :

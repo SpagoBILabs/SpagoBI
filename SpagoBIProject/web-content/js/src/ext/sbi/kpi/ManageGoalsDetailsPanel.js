@@ -209,8 +209,8 @@ Ext.extend(Sbi.kpi.ManageGoalsDetailsPanel, Ext.FormPanel, {
 			description: this.detailFieldDescr.getValue(),
 			startdate: this.detailFieldFrom.getValue(), 
 			enddate: this.detailFieldTo.getValue(),
-			grant: this.detailFieldGrant.getValue(), 
-		}
+			grant: this.detailFieldGrant.getValue()
+		};
 		
 		var goalE = Ext.encode(goal);
 		
