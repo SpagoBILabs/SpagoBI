@@ -60,9 +60,6 @@ Sbi.worksheet.designer.ChartSeriesPanel = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	
-	this.initialData = c.initialData;		// initial grid's content
-	delete c.initialData;
-	
 	Ext.apply(this, c);
 	
 	this.init(c);
@@ -85,13 +82,7 @@ Sbi.worksheet.designer.ChartSeriesPanel = function(config) {
     Sbi.worksheet.designer.ChartSeriesPanel.superclass.constructor.call(this, c);
     
     this.on('render', this.initDropTarget, this);
-    this.on('afterlayout', function() {
-    	if (this.store.getCount() > 0) {
-    		this.getLayout().setActiveItem( 1 );
-    	} else {
-    		this.getLayout().setActiveItem( 0 );
-    	}
-    }, this);
+    this.on('afterLayout', this.setActiveItem, this);
     
 };
 
@@ -99,7 +90,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	
 	emptyMsg : null
 	, emptyMsgPanel : null
-	, initialData: undefined
 	, targetRow: null
 	, detailsWizard: undefined
 	, grid: null
@@ -153,13 +143,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'seriename', 'color', 'showcomma', 'precision', 'suffix']
 		});
-		// if there are initialData, load them into the store
-		if (this.initialData !== undefined) {
-			for (i = 0; i < this.initialData.length; i++) {
-				var record = new this.Record(this.initialData[i]);
-	  			this.addMeasure(record);
-			}
-		}
 	}
 	
 	, initColumnModel: function(c) {
@@ -434,8 +417,6 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 			, suffix: '' 
 		});
 		var theRecord = new this.Record(data);
-		
-		this.getLayout().setActiveItem( 1 );
 		// if the measure is already present, does not insert it 
 		if (this.containsMeasure(theRecord)) {
 			Ext.Msg.show({
@@ -446,6 +427,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 			});
 		} else {
 			this.store.add(theRecord);
+			this.getLayout().setActiveItem( 1 );
 		}
 	}
 	
@@ -479,6 +461,15 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 				this.getLayout().setActiveItem( 1 );
 			}
 		}
+	}
+	
+	, setActiveItem: function() {
+		this.un('afterLayout', this.setActiveItem, this);
+    	if (this.store.getCount() > 0) {
+    		this.getLayout().setActiveItem( 1 );
+    	} else {
+    		this.getLayout().setActiveItem( 0 );
+    	}
 	}
 
 });

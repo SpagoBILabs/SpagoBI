@@ -251,7 +251,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		if (this.rendered) {
 			this.setDesignerState(state);
 		} else {
-			this.on('render', function() {
+			this.designer.on('render', function() {
 				this.setDesignerState(state);
 			}, this);
 		}
