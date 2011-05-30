@@ -245,7 +245,7 @@ Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervallo di aggiornam
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o più cartelle e Salva';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o piï¿½ cartelle e Salva';
 Sbi.locale.ln['sbi.execution.error']  = 'Un errore si ï¿½ verificato durante l\'esecuzione del documento';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento ï¿½ necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';
@@ -630,3 +630,4 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Valore check';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Tipo';
 Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Dati cancellati correttamente';
 Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Dati salvati correttamente';
+Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categoria';

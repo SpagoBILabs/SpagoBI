@@ -20,6 +20,7 @@ public class SbiConfig  extends SbiHibernateModel {
      private String description;
      private boolean isActive;
      private String valueCheck;
+     private String category;
 
 
     // Constructors
@@ -35,7 +36,7 @@ public class SbiConfig  extends SbiHibernateModel {
     }
     
     /** full constructor */
-    public SbiConfig(Integer id, SbiDomains sbiDomains, String label, String name, String description, boolean isActive, String valueCheck) {
+    public SbiConfig(Integer id, SbiDomains sbiDomains, String label, String name, String description, boolean isActive, String valueCheck, String category) {
         this.id = id;
         this.sbiDomains = sbiDomains;
         this.label = label;
@@ -43,6 +44,7 @@ public class SbiConfig  extends SbiHibernateModel {
         this.description = description;
         this.isActive = isActive;
         this.valueCheck = valueCheck;
+        this.category = category;
     }
     
 
@@ -104,6 +106,20 @@ public class SbiConfig  extends SbiHibernateModel {
     public void setValueCheck(String valueCheck) {
         this.valueCheck = valueCheck;
     }
+    
+	/**
+	 * @return the category to get
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category. 
+	 * The category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
     /**
 	 * From the Hibernate SbiConfig object at input, gives the corrispondent
@@ -122,6 +138,7 @@ public class SbiConfig  extends SbiHibernateModel {
 		config.setDescription(getDescription());
 		config.setActive(isActive);
 		config.setValueCheck(getValueCheck());
+		config.setCategory(getCategory());
 		SbiDomains tmpDom = getSbiDomains();
 		if (tmpDom != null) { 
 			config.setValueTypeId(tmpDom.getValueId().intValue());

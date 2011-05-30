@@ -211,6 +211,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 		hibConfig.setName(config.getName());
 		hibConfig.setLabel(config.getLabel());
 		hibConfig.setDescription(config.getDescription());
+		hibConfig.setCategory(config.getCategory());
 		return hibConfig;
 	}
 	
@@ -253,6 +254,7 @@ public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
 				hibConfig.setValueCheck(config.getValueCheck());
 				hibConfig.setIsActive(config.isActive());
 				hibConfig.setSbiDomains(hibDomains);
+				hibConfig.setCategory(config.getCategory());
 			}
 			else{
 				//insertion
