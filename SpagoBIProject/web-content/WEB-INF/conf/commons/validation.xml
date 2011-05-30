@@ -72,6 +72,10 @@
 					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
 					<VALIDATOR validatorName="MAXLENGTH" arg0="25" />
 				</FIELD>
+				<FIELD name="CATEGORY" label="#config.definitionForm.fields.category">
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50" />
+				</FIELD>
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>

@@ -36,6 +36,7 @@ public class Config  implements Serializable  {
      private boolean isActive;
      private String valueCheck;
      private Integer valueTypeId;
+     private String category;
 	/**
 	 * @return the id
 	 */
@@ -121,9 +122,20 @@ public class Config  implements Serializable  {
 		this.valueTypeId = valueTypeId;
 	}
 
+	/**
+	 * @return the category to get
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * @param category. 
+	 * The category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
 	
-
-
 }
 
 

@@ -45,6 +45,7 @@ public class ConfigJSONSerializer implements Serializer {
 	public static final String IS_ACTIVE = "IS_ACTIVE";
 	public static final String VALUE_CHECK = "VALUE_CHECK";
 	public static final String VALUE_TYPE = "VALUE_TYPE";
+	public static final String CATEGORY = "CATEGORY";
 	
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -72,6 +73,7 @@ public class ConfigJSONSerializer implements Serializer {
 			result.put(IS_ACTIVE, config.isActive());
 			result.put(VALUE_CHECK, config.getValueCheck());
 			result.put(VALUE_TYPE, domain != null ? domain.getValueCd() : "");
+			result.put(CATEGORY, config.getCategory());
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

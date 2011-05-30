@@ -275,6 +275,17 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				maxLength : 11,
 				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
 			}
+		},{
+			header : LN('sbi.config.manageconfig.fields.category'),
+			dataIndex : 'CATEGORY',
+			// width: 150,
+			sortable : true,
+			editor : {
+				xtype : 'textfield',
+				allowBlank : false,
+				maxLength : 50,
+				maxLengthText : LN('sbi.config.manageconfig.validation.maxlengthtext')
+			}
 		}]);
 	}
 
@@ -295,6 +306,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			name : 'VALUE_CHECK'
 		}, {
 			name : 'VALUE_TYPE'
+		}, {
+			name : 'CATEGORY'
 		} ];
 
 		this.store = new Ext.data.JsonStore( {

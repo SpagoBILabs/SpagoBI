@@ -63,5 +63,8 @@
         <property name="valueCheck" type="string">
             <column name="VALUE_CHECK" length="1000" />
         </property>
+        <property name="category" type="string">
+            <column name="CATEGORY" length="50" />
+        </property>
     </class>
 </hibernate-mapping>

@@ -208,6 +208,7 @@ public class ManageConfigService extends AbstractSpagoBIAction {
 		config.setDescription(this.getAttributeAsString("DESCRIPTION"));
 		config.setActive(this.getAttributeAsBoolean("IS_ACTIVE"));
 		config.setValueCheck(this.getAttributeAsString("VALUE_CHECK"));
+		config.setCategory(this.getAttributeAsString("CATEGORY"));
 		if (this.requestContainsAttribute("VALUE_TYPE")) {
 			DomainDAOHibImpl domain = new DomainDAOHibImpl();
 			Domain dom = domain.loadDomainByCodeAndValue("PAR_TYPE", this
