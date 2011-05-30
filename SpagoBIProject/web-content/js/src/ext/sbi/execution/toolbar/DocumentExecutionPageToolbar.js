@@ -906,7 +906,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 										this.southPanel.collapse();
 										this.northPanel.collapse();
 										this.fireEvent('refreshexecution');
-										//this.refreshExecution();
                 					}
             					},
             					this
@@ -917,7 +916,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 								this.southPanel.collapse();
 								this.northPanel.collapse();
 								this.fireEvent('refreshexecution');
-								//this.refreshExecution();
 							}
 					} // it 's not a qbe
 					else {
@@ -925,7 +923,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						this.southPanel.collapse();
 						this.northPanel.collapse();
 						this.fireEvent('refreshexecution');
-						//this.refreshExecution();
 				}
 			}			
 		}));
