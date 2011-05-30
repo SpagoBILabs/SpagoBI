@@ -1,5 +1,7 @@
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
+import it.eng.qbe.query.Query;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 
 public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
@@ -15,7 +17,12 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 	 */
 	@Override
 	public String getQueryId() {
-		return 	getEngineInstance().getActiveQuery().getId();
+		QbeEngineInstance engineInstance = getEngineInstance();
+		Query activeQuery = engineInstance.getActiveQuery();
+		if (activeQuery == null) {
+			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
+		}
+		return 	activeQuery.getId();
 	}
 
 
