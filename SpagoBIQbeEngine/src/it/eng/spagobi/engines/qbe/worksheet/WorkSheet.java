@@ -31,7 +31,7 @@ public class WorkSheet{
 	
 	private String name;
 	private JSONObject header;
-	private JSONArray filters;
+	private JSONObject filters;
 	private JSONObject content;
 	private JSONObject footer;
 	
@@ -42,7 +42,7 @@ public class WorkSheet{
 	 * @param content
 	 * @param footer
 	 */
-	public WorkSheet(String name, JSONObject header, JSONArray filters,
+	public WorkSheet(String name, JSONObject header, JSONObject filters,
 			JSONObject content, JSONObject footer) {
 		super();
 		this.name = name;
@@ -57,10 +57,10 @@ public class WorkSheet{
 	public void setHeader(JSONObject header) {
 		this.header = header;
 	}
-	public JSONArray getFilters() {
+	public JSONObject getFilters() {
 		return filters;
 	}
-	public void setFilters(JSONArray filters) {
+	public void setFilters(JSONObject filters) {
 		this.filters = filters;
 	}
 	public JSONObject getContent() {

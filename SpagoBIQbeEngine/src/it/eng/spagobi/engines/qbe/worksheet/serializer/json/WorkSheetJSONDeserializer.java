@@ -103,7 +103,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	private WorkSheet deserializeSheet(JSONObject sheetJSON) throws Exception {
 		String name = sheetJSON.getString(WorkSheetSerializationCostants.NAME);
 		JSONObject header = sheetJSON.optJSONObject(WorkSheetSerializationCostants.HEADER);
-		JSONArray filters = sheetJSON.optJSONArray(WorkSheetSerializationCostants.FILTERS);
+		JSONObject filters = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
 		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
 		return new WorkSheet(name, header, filters, content, footer);
