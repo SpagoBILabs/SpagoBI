@@ -90,7 +90,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			hidden: true,
 			tools:[{
 	        	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
-	        	id: 'down',
+	        	id: 'left',
 	        	handler:this.showLeftFilters,
 	        	scope: this
 	        }],
@@ -133,7 +133,17 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(!this.headerPanel.hidden){
 			state.header = this.headerPanel.getTitleState();
 		}
-		state.filters = this.filtersPanel.getFilters();
+		state.filters ={};
+		var filters = this.filtersPanel.getFilters();
+		if(filters!==null){
+			state.filters.filters = filters;
+			if(this.filtersPanel.hidden){
+				state.filters.position='left';
+			}else{
+				state.filters.position='top';
+			}
+		}
+
 		state.content = this.contentPanel.getDesignerState();
 		
 		if(!this.footerPanel.hidden){
@@ -150,7 +160,14 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			this.headerPanel.setTitleState(sheetState.header);
 		}
 		if(sheetState.filters!==null){
-			this.filtersPanel.setFilters(sheetState.filters);
+			var filters = sheetState.filters.filters;
+			this.filtersPanel.setFilters(filters);
+//			if(sheetState.filters.position){
+//				sheetState.filters.position='left';
+//			}else{
+//				sheetState.filters.position='top';
+//			}
+			
 		}
 		if(sheetState.content!==null){
 			this.contentPanel.addDesigner(sheetState.content);

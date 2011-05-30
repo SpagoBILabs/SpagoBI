@@ -85,11 +85,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		} else{
 			this.on('afterlayout',this.showMask,this);
 		}
-		
-		var sharedConf = {				
-			border: false,
-			style:'padding:5px 15px 5px'
-		};
+			
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
 			if(Ext.isIE){
@@ -98,31 +94,54 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				this.addTitle(this.sheetConfig.header,items, true);
 			}
 		}
-
-		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.length > 0) {
-			var dynamicFilters = [];
-			var i = 0;
-			for (; i < this.sheetConfig.filters.length; i++ ) {
-				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters[i]);
-				dynamicFilters.push(aDynamicFilter);	
-			}
-			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, {
-				title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
-				, tools:  [{
-					id: 'gear'
-			        	, handler: this.applyFilters
-			          	, scope: this
-			          	, qtip: LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip')
-				}]
-			});
-			items.push(this.filtersPanel);
-		}
 		
 		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({},{contentConfig: this.sheetConfig.content}));
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
 		//catch the event of the contentloaded from the component and hide the loading mask
 		this.content.on('contentloaded',this.hideMask,this);
-		items.push(this.content);
+
+		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
+			var dynamicFilters = [];
+			var i = 0;
+			for (; i < this.sheetConfig.filters.filters.length; i++ ) {
+				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters.filters[i]);
+				dynamicFilters.push(aDynamicFilter);	
+			}
+			
+			var filterConf = {
+					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
+					, layout: 'auto'
+					, tools:  [{
+						id: 'gear'
+				        	, handler: this.applyFilters
+				          	, scope: this
+				          	, qtip: LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip')
+					}]
+				};
+			
+			if ( this.sheetConfig.filters.position=='left') {
+				filterConf.width= 230;
+				filterConf.style = 'float: left; padding: 15px';
+			}
+			
+			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, filterConf);
+
+			if ( this.sheetConfig.filters.position=='left') {
+				var filterContentPanel = new Ext.Panel({
+		            border: false,
+					items:[this.filtersPanel,this.content]			       
+				});
+								
+				items.push(filterContentPanel);
+			}else{
+				items.push(this.filtersPanel);
+			}			
+		}
+			
+		if (this.sheetConfig.filters==undefined || this.sheetConfig.filters==null || this.sheetConfig.filters.filters.length<=0 || this.sheetConfig.filters.position!='left') {
+			items.push(this.content);
+		}
+		
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){

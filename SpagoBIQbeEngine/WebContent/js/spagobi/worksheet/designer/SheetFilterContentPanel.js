@@ -68,7 +68,7 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 		, height: 400 
 		, width: 150
 		, tools:[{
-			id: 'toggle',
+			id: 'up',
         	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.up.filter'),
         	handler:this.showTopFilters,
         	scope: this
