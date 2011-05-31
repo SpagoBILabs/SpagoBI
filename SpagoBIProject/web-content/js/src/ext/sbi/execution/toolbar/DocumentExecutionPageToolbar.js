@@ -45,9 +45,9 @@
   */
 
 
-Ext.ns("Sbi.execution");
+Ext.ns("Sbi.execution.toolbar");
 
-Sbi.execution.DocumentExecutionPageToolbar = function(config) {	
+Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {	
 	
 	this.toolbarConfig = config.TOOLBAR_CONFIG;
 	
@@ -100,12 +100,12 @@ Sbi.execution.DocumentExecutionPageToolbar = function(config) {
 		, baseParams: updateDocParams
 	});
 	
-	Sbi.execution.DocumentExecutionPageToolbar.superclass.constructor.call(this, config);
+	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, config);
 	
 	this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution');
 };
 
-Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
+Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
 	toolbarConfig: null
 	, services: null
@@ -360,7 +360,60 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 	}
 	
-   
+	, exportWorksheetsExecution: function (exportType) {
+		var frame = this.miframe.getFrame();
+	    var docurl = frame.getDocumentURI();
+	    var baseUrl = docurl.substring(0,docurl.indexOf('?')+1);   
+	    if (baseUrl=="") baseUrl = docurl;
+	 
+	    var docurlPar = "ACTION_NAME=EXPORT_WORKSHEETS_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
+	    var endUrl = baseUrl + docurlPar;
+	    
+		var worksheetDataEncoded = this.retrieveWorksheetsContentData(frame);    // retieving crosstab data (already encoded) from Qbe window
+		
+	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
+	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
+	    							 // See source of DomHelper.append and DomHelper.overwrite methods
+	    							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+	    var dh = Ext.DomHelper;
+	    
+	    var form = document.getElementById('export-crosstab-form');
+	    if (!form) {
+			form = dh.append(Ext.getBody(), { // creating the hidden form
+			    id: 'export-crosstab-form'
+			    , tag: 'form'
+			    , method: 'post'
+			    , cls: 'export-form'
+			});
+			dh.append(form, {					// creating CROSSTAB hidden input in form
+			    tag: 'input'
+			    , type: 'hidden'
+			    , name: 'WORKSHEETS'
+			    , value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
+			});
+	    }
+	    // putting the crosstab data into CROSSTAB hidden input
+	    form.elements[0].value = worksheetDataEncoded;
+		form.action = endUrl;
+		form.target = '_blank';				// result into a new browser tab
+		form.submit();
+	}
+	
+	, retrieveWorksheetsContentData: function (frame) {
+		try {
+			var worksheetWindow = frame.getWindow();
+			var exportedData = worksheetWindow.workSheetPanel.exportContent();
+			
+			return exportedData;
+		} catch (err) {
+			alert('Sorry, cannot perform operation.');
+			throw err;
+		}
+	}
+	
+	, updateFrame: function(miframe){
+		this.miframe = miframe;
+	}   
 	
    , synchronizeToolbar: function( executionInstance,miframe,southPanel,northPanel,parametersPanel,shortcutsPanel){
 	    this.executionInstance = executionInstance;
@@ -730,15 +783,64 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler :  function() { this.exportChartExecution('PDF'); }
 					, href: ''  
 				}));
-			}
-			else if ( executionInstance.document.typeCode == 'DATAMART' || executionInstance.document.typeCode == 'SMART_FILTER' || executionInstance.document.typeCode == 'WORKSHEET') {
+			}else if ( executionInstance.document.typeCode == 'WORKSHEET') {
+					var menuItems = new Array();
+					
+					for(i=0;i<executionInstance.document.exporters.length ;i++){
+						
+						if (executionInstance.document.exporters[i]=='PDF'){
+							menuItems.push(	new Ext.menu.Item({
+				                            id:  Ext.id()
+				                            , text: LN('sbi.execution.PdfExport')
+				                            , group: 'group_2'
+				                            , iconCls: 'icon-pdf' 
+									     	, scope: this
+									        , width: 15
+									    	, handler : function() { this.exportWorksheetsExecution('application/pdf'); }
+											, href: ''   
+				                        })	 
+				                       ); 
+						}else if(executionInstance.document.exporters[i]=='XLS'){
+							menuItems.push(   new Ext.menu.Item({
+				                            id:  Ext.id()
+				                            , text: LN('sbi.execution.XlsExport')
+				                            , group: 'group_2'
+				                            , iconCls: 'icon-xls' 
+									     	, scope: this
+											 , width: 15
+									    	, handler : function() { this.exportWorksheetsExecution('application/vnd.ms-excel'); }
+											, href: ''   
+				                        })	
+				                        ); 
+						}
+					}
+					var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						items: menuItems    
+					});	
+					
+					if(executionInstance.document.exporters.length > 0){
+						this.add(
+									new Ext.Toolbar.MenuButton({
+										id: Ext.id()
+							            , tooltip: 'Exporters'
+										, path: 'Exporters'	
+										, iconCls: 'icon-export' 	
+							            , menu: menu0
+							            , width: 15
+							            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+							        })					    				        				
+						);	
+					}
+			}else if ( executionInstance.document.typeCode == 'DATAMART' || 
+						executionInstance.document.typeCode == 'SMART_FILTER' ) {
 			
 					var menuItems = new Array();
 					
 					for(i=0;i<executionInstance.document.exporters.length ;i++){
 						
 						if (executionInstance.document.exporters[i]=='PDF'){
-						menuItems.push(	new Ext.menu.Item({
+							menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
 				                            , group: 'group_2'
@@ -750,7 +852,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				                        })	 
 				                       ); 
 						}else if(executionInstance.document.exporters[i]=='XLS'){
-						menuItems.push(   new Ext.menu.Item({
+							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XlsExport')
 				                            , group: 'group_2'
@@ -762,7 +864,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				                        })	
 				                        ); 
 						}else if(executionInstance.document.exporters[i]=='RTF'){
-						menuItems.push(   new Ext.menu.Item({
+							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.rtfExport')
 				                            , group: 'group_2'
@@ -774,7 +876,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				                        })	
 				                        ); 
 						}else if(executionInstance.document.exporters[i]=='CSV'){
-						menuItems.push(   new Ext.menu.Item({
+							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.CsvExport')
 				                            , group: 'group_2'
@@ -786,7 +888,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				                        })	
 				                        ); 
 						}else if(executionInstance.document.exporters[i]=='JRXML'){
-						menuItems.push(   new Ext.menu.Item({
+							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.jrxmlExport')
 				                            , group: 'group_2'
@@ -1065,8 +1167,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    var endUrl = baseUrl +parurl;
 	    return endUrl;
    }
-
-   , saveQbe: function () {
+	 
+	 , saveQbe: function () {
 		try {
 			var qbeWindow = this.miframe.getFrame().getWindow();
 			var qbePanel = qbeWindow.qbe;
@@ -1086,5 +1188,4 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			throw err;
 		}
    }
-   
 });

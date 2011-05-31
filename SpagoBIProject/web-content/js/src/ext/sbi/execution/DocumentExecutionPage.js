@@ -167,8 +167,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
+			
 			this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.northPanel,this.parametersPanel,this.shortcutsPanel);
-
+			
 			if(synchronizeSliders === undefined || synchronizeSliders === true) {
 
 				this.parametersPanel.synchronize(executionInstance);
@@ -186,6 +187,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
 		      					this.miframe.getFrame().setSrc( content.url );
+		      					this.toolbar.updateFrame(this.miframe);
 		      				}
 		      			} 
 		      		} else {
@@ -195,6 +197,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		        scope: this,
 				failure: Sbi.exception.ExceptionHandler.handleFailure      
 		   });
+			
+			
 		}
 	}
 
@@ -234,7 +238,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			items: ['']
 		});*/
 		var c = {TOOLBAR_CONFIG: this.toolbarConfig};
-		this.toolbar = new Sbi.execution.DocumentExecutionPageToolbar(c);
+		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(c);
 		this.toolbar.on('render', function() {
 			
 		}, this);
