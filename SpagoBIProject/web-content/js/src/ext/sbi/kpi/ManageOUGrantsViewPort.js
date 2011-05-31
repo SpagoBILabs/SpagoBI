@@ -88,8 +88,12 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 		this.manageOUGrantsGrid.getView().refresh();
 		this.manageOUGrantsGrid.getView().on('refresh', function(){	
 			var n = this.manageOUGrantsGrid.getStore().getCount();
-			this.manageOUGrantsGrid.getView().focusRow(n - 1);
-			this.manageOUGrantsGrid.rowselModel.selectLastRow();
+			var rec = this.manageOUGrantsGrid.rowselModel.getSelected();
+			if(rec == undefined){
+				this.manageOUGrantsGrid.getView().focusRow(n - 1);
+				this.manageOUGrantsGrid.rowselModel.selectLastRow();
+			}
+
 			this.manageOUGrantsGrid.fireEvent('rowclick');
 			}, this);
 	},this);

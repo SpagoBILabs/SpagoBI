@@ -763,6 +763,7 @@ Ext.extend(Sbi.kpi.ManageOUGrants, Sbi.widgets.KpiTreeOuTreePanel, {
 				url: this.configurationObject.saveGrantService,
 				params: {'grantnodes': grantNodes, 'grant': grant},
 				method: 'POST',
+				timeout: 600000,
 				success: function(response, options) {
 					if (response !== undefined) {
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'),'');
