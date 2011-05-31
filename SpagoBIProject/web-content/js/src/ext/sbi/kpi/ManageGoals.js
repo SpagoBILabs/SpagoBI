@@ -47,7 +47,7 @@ Sbi.kpi.ManageGoals = function(config, ref) {
 	this.ouId = '1';
 	this.selectedGrantId = '-2';
 
-	this.kpiTreeRoot = {
+	this.kpiTreeRoot ={
 		text : 'root',
 		modelId: '-1'
 	};
@@ -277,7 +277,7 @@ Ext.extend(Sbi.kpi.ManageGoals, Ext.Panel, {
 				node.on('append',function(tree,node,child,index){
 					tree.nodeCount = tree.nodeCount+1;
 					child.nodeCount = tree.nodeCount;
-				},this)
+				},this);
 
 				return node;
 			}
