@@ -55,9 +55,9 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 	Ext.apply(this, c);
 	
 	this.config = config;
-	var items= [new Ext.Panel({})];
+	this.sheetItems = [new Ext.Panel({})];
 	if(sheets!= undefined && sheets!=null){
-		items= this.buildSheets(config, sheets.sheets);
+		this.sheetItems= this.buildSheets(config, sheets.sheets);
 	}
 	
 	c ={
@@ -65,7 +65,7 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 			tabPosition: 'bottom', 
 	        enableTabScroll:true,
 	        defaults: {autoScroll:true},
-	        items: items
+	        items: this.sheetItems
 	};
 	this.addEvents();
 	Sbi.worksheet.runtime.RuntimeSheetsContainerPanel.superclass.constructor.call(this, c);	 
@@ -79,6 +79,8 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
+	
+	sheetItems: null,
 	//build the sheets
 	buildSheets: function(config, sheetsConfig){
 		var items = [];
@@ -96,7 +98,20 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			this.removeAll(true);
 			this.add(this.buildSheets(this.config, sheets.sheets));
 		}
-	}
+	},
 	
+	exportContent: function(){
+		var items = new Array();
+		if(this.sheetItems!=undefined && this.sheetItems!=null){
+			var i=0;
+			for(; i<this.sheetItems.length; i++){
+				var exportedSheet = this.sheetItems[i].exportContent();
+				items.push(exportedSheet);
+			}
+		}
+		var resultExport = { SHEETS_NUM: this.sheetItems.length,
+							 EXPORTED_SHEETS: items};
+		return resultExport;
+	}
 	
 });

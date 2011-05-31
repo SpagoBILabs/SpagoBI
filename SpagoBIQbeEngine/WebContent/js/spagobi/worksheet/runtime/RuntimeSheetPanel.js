@@ -75,6 +75,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	content: null,
 	filtersPanel : null,
 	
+	exportContent: function(){
+		var exportedContent = this.content.exportContent();
+		var header = this.sheetConfig.header;
+		var footer = this.sheetConfig.footer;
+		var completedExportedContent = {
+				HEADER: header,
+				FOOTER: footer,
+				CONTENT: exportedContent
+				}
+		return completedExportedContent;
+		//Poi aggiungere titolo e footer
+	},
+	
 	initPanels: function(){
 		var items = [];
 		
@@ -386,4 +399,5 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
     		this.loadMask.hide();
     	}
 	}
+
 });

@@ -74,6 +74,9 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	content: null,
 
+	exportContent: function(){
+		return this.content.exportContent();
+	},
 	
 	initContent: function (c) {
 		var items = [];

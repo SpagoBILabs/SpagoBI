@@ -51,5 +51,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="EXPORT_WORKSHEETS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.ExportWorksheetAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 
