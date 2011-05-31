@@ -225,8 +225,8 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			Ext.Ajax.request({
 		        url: this.services['saveDocumentService'],
 		        params: params,
-		        callback : function(options , success, response) {
-		  	  		if (success) {
+		        method: 'GET',
+		        success : function(response , options) {
 			      		if(response !== undefined && response.responseText !== undefined) {
 			      			var content = Ext.util.JSON.decode( response.responseText );
 			      			if(content.responseText !== 'Operation succeded') {
@@ -247,8 +247,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-			      		}
-		  	  		}
+			      		}  	  		
 		        },
 		        scope: this,
 				failure: Sbi.exception.ExceptionHandler.handleFailure      
