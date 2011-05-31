@@ -8,7 +8,7 @@ Sbi.settings.qbe = {
 			enableTreeTbSaveBtn: true,
 			
 			enableQueryTbExecuteBtn: true,
-			enableQueryTbSaveBtn: true,
+			enableQueryTbSaveBtn: false,
 			enableQueryTbValidateBtn: false,
 			
 			enableCatalogueTbDeleteBtn: true,
