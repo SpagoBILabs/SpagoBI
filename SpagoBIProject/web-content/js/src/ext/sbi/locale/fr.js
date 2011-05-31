@@ -262,6 +262,10 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh']                    
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.save']                                                 = 'Enregistrer le document dans un repertoire personnel';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send']                                                 = 'Envoyer le document par e-mail';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] 										  = 'En actualisant la page la strucure actualle de la page serat perdu: voulez vous poursuivre?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] 												  = 'Save';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] 											  = 'Save as ...';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] 											  = 'View document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] 												  = 'Edit';
 Sbi.locale.ln['sbi.execution.jrxmlExport']                                                                = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport']                                                                 = 'JSON';
 Sbi.locale.ln['sbi.execution.metadata']                                                                   = 'Metadonn\u00E9s';

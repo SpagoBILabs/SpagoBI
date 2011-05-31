@@ -313,23 +313,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	        		}
 	        		, scope: this
 	            }
-	        	, 'message:saveworkheet': {
-	        		fn: function(srcFrame, message){
-	        			var messageJSON = Ext.util.JSON.decode(message.data);
-	        			var wk_definition = messageJSON.OBJECT_WK_DEFINITION;
-	        			var objType = messageJSON.OBJECT_TYPE;
-	        			var query = messageJSON.OBJECT_QUERY;
-	        			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
-	        				'OBJECT_ID': this.executionInstance.OBJECT_ID,
-							'OBJECT_TYPE': objType,
-							'OBJECT_WK_DEFINITION': wk_definition,
-							'OBJECT_QUERY': query,
-							'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-						});
-	        			this.win_saveDoc.show();
-	        		}
-	        	    , scope: this
-	        	}
 				
 				, domready : function(frame) {
 

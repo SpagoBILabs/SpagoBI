@@ -98,12 +98,18 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);
-		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel({
+		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.sheetsContainerPanelCfg  || {}, {
 			sheets : this.worksheetTemplate.sheets || []  
-		});
+		}));
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);
+	}
+	
+	, getWorksheetDefinition: function () {
+		var	worksheetDefinition = this.sheetsContainerPanel.getSheetsState();
+		worksheetDefinition.version = Sbi.config.worksheetVersion;
+		return worksheetDefinition;
 	}
 	
 });

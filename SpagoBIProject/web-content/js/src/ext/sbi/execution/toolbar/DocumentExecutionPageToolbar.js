@@ -50,6 +50,9 @@ Ext.ns("Sbi.execution");
 Sbi.execution.DocumentExecutionPageToolbar = function(config) {	
 	
 	this.toolbarConfig = config.TOOLBAR_CONFIG;
+	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
+	
 	this.services = new Array();
 	this.services['showSendToForm'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SHOW_SEND_TO_FORM'
@@ -90,8 +93,16 @@ Sbi.execution.DocumentExecutionPageToolbar = function(config) {
 		serviceName: 'GET_NOTES_ACTION'
 		, baseParams: params
 	});
+	
+	var updateDocParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', MESSAGE_DET: 'DOC_UPDATE'};
+	this.services['updateDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SAVE_DOCUMENT_ACTION'
+		, baseParams: updateDocParams
+	});
+	
 	Sbi.execution.DocumentExecutionPageToolbar.superclass.constructor.call(this, config);
-	 this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution');
+	
+	this.addEvents('beforetoolbarinit', 'moveprevrequest', 'beforerefresh','collapse3', 'backToAdmin','refreshexecution');
 };
 
 Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
@@ -102,6 +113,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	, miframe: null
 	, parametersPanel: null
 	, shortcutsPanel: null
+	, documentMode: 'VIEW'
 	
 	, getNoteIcon: function () {
   		Ext.Ajax.request({
@@ -234,21 +246,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		window.open(urlExporter,'name','resizable=1,height=750,width=1000');	
 	}		
 	
-	,exportReportExecution: function (exportType) {
-		var mf = this.miframe;
-		var frame = mf.getFrame();
-	    var docurl = frame.getDocumentURI();
-	    var startIndex = docurl.indexOf('?')+1;
-	    var endIndex = docurl.length;
-	    var baseUrl = docurl.substring(0,startIndex);
-	    var docurlPar = docurl.substring(startIndex,endIndex);
-	    
-	    docurlPar = docurlPar.replace(/\+/g, " ");
-	    var parurl = Ext.urlDecode(docurlPar);
-	    parurl.outputType = exportType;
-	    parurl = Ext.urlEncode(parurl);
-	    var endUrl = baseUrl +parurl;
-		window.open(endUrl,'name','resizable=1,height=750,width=1000');
+	, exportReportExecution: function (exportType) {
+	    var endUrl = this.changeDocumentExecutionUrlParameter('outputType', exportType);
+		window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
 	}
 	
 	,exportOlapExecution: function (exportType) {
@@ -351,8 +351,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	
 	, retrieveQbeCrosstabData: function (frame) {
 		try {
-			var window = frame.getWindow();
-			var crosstabData = window.qbe.getCrosstabDataEncoded();
+			var qbeWindow = frame.getWindow();
+			var crosstabData = qbeWindow.qbe.getCrosstabDataEncoded();
 			return crosstabData;
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');
@@ -419,6 +419,36 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							this.fireEvent('collapse3');
 					}			
 				}));
+		}
+		
+		if (executionInstance.document.typeCode === 'WORKSHEET') {
+			if (this.documentMode === 'VIEW') {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-edit-worksheet' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
+				    , scope: this
+				    , handler : this.startWorksheetEditing	
+				}));
+			} else {
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-save-worksheet' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+				    , scope: this
+				    , handler : this.saveWorksheet
+				}));
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-saveas-worksheet' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
+				    , scope: this
+				    , handler : this.saveWorksheetAs	
+				}));
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-view-worksheet' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.view')
+				    , scope: this
+				    , handler : this.stopWorksheetEditing	
+				}));
+			}
 		}
 		
 		this.addButton(new Ext.Toolbar.Button({
@@ -927,5 +957,104 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}			
 		}));
 	}
+   
+   , startWorksheetEditing: function() {
+	   this.documentMode = 'EDIT';
+	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
+	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_START_EDIT_ACTION');
+	   this.miframe.getFrame().setSrc(newUrl);
+   }
+   
+   , saveWorksheet: function () {
+		var templateJSON = this.getWorksheetTemplateAsJSONObject();
+		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
+		var query = templateJSON.OBJECT_QUERY;
+		var params = Ext.apply(this.executionInstance, {
+			'wk_definition': Ext.util.JSON.encode(wkDefinition),
+			'query': Ext.util.JSON.encode(query)
+		});
+		Ext.Ajax.request({
+	        url: this.services['updateDocumentService'],
+	        params: params,
+	        success : function(response, options) {
+	      		if(response !== undefined && response.responseText !== undefined) {
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			if (content.text !== 'Operation succeded') {
+	                    Ext.MessageBox.show({
+	                        title: LN('sbi.generic.error'),
+	                        msg: content,
+	                        width: 150,
+	                        buttons: Ext.MessageBox.OK
+	                   });              
+		      		} else {			      			
+		      			Ext.MessageBox.show({
+	                        title: LN('sbi.generic.result'),
+	                        msg: LN('sbi.generic.resultMsg'),
+	                        width: 200,
+	                        buttons: Ext.MessageBox.OK
+		                });
+		      		}  
+	      		} else {
+	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	      		}
+	        },
+	        scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
+   }
+   
+   , getWorksheetTemplateAsString: function() {
+		try {
+			var qbeWindow = this.miframe.getFrame().getWindow();
+			var template = qbeWindow.qbe.getWorksheetTemplateAsString();
+			return template;
+		} catch (err) {
+			alert('Sorry, cannot perform operation.');
+			throw err;
+		}
+   }
+   
+   , getWorksheetTemplateAsJSONObject: function() {
+		var template = this.getWorksheetTemplateAsString();
+		var templateJSON = Ext.util.JSON.decode(template);
+		return templateJSON;
+  }
+   
+   , saveWorksheetAs: function () {
+		var templateJSON = this.getWorksheetTemplateAsJSONObject();
+		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
+		var query = templateJSON.OBJECT_QUERY;
+		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
+			'OBJECT_ID': this.executionInstance.OBJECT_ID,
+			'OBJECT_TYPE': 'WORKSHEET',
+			'OBJECT_WK_DEFINITION': wkDefinition,
+			'OBJECT_QUERY': query,
+			'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+		});
+		this.win_saveDoc.show();
+   }
+   
+   , stopWorksheetEditing: function() {
+	   this.documentMode = 'VIEW';
+	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
+	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_ENGINE_START_ACTION');
+	   this.miframe.getFrame().setSrc(newUrl);
+   }
+   
+   , changeDocumentExecutionUrlParameter: function(parameterName, parameterValue) {
+		var frame = this.miframe.getFrame();
+	    var docurl = frame.getDocumentURI();
+	    var startIndex = docurl.indexOf('?')+1;
+	    var endIndex = docurl.length;
+	    var baseUrl = docurl.substring(0, startIndex);
+	    var docurlPar = docurl.substring(startIndex, endIndex);
+	    
+	    docurlPar = docurlPar.replace(/\+/g, " ");
+	    var parurl = Ext.urlDecode(docurlPar);
+	    parurl[parameterName] = parameterValue;
+	    parurl = Ext.urlEncode(parurl);
+	    var endUrl = baseUrl +parurl;
+	    return endUrl;
+   }
 	
 });

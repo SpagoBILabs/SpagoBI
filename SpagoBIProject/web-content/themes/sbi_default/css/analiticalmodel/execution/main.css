@@ -111,6 +111,22 @@
 	background-image: url('../../../img/expand16x17bis.png') !important;
 }
 
+.icon-edit-worksheet {
+	background-image: url('../../../img/edit15.png') !important;
+}
+
+.icon-save-worksheet {
+	background-image: url('../../../img/save16.png') !important;
+}
+
+.icon-saveas-worksheet {
+	background-image: url('../../../img/save-as16.png') !important;
+}
+
+.icon-view-worksheet {
+	background-image: url('../../../img/editdelete15.png') !important;
+}
+
 .icon-print {
 	background-image: url('../../../img/analiticalmodel/execution/ico_print.png') !important;
 }
