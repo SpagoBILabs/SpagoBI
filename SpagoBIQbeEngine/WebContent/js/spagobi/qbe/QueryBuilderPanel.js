@@ -249,24 +249,23 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		      //getting meta informations 
 	       	Ext.Ajax.request({
 				url:  this.services['getMeta'],
-				callback: function(options, success, response) {
-       				if(success) {
-       					if(response !== undefined && response.responseText !== undefined ) {
-		      			    var content = Ext.util.JSON.decode( response.responseText );
-		      			  
-    		      			if (content !== undefined) {      		      					                   			 
-    		      				nameMeta = content.name;                      
-    		      				descriptionMeta = content.description; 
-    		      				scopeMeta = (content.scope);    		                   
-    		      				this.saveQueryWindow.setFormState({ name: nameMeta
-                                	    		, description: descriptionMeta
-                                	    		, scope: scopeMeta
-                                	    	  });   				      			
-    		      			} 
-    		      		} else {
-    		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-    		      		}
-       				}
+				success: function(response, options) {
+   					if(response !== undefined && response.responseText !== undefined ) {
+	      			    var content = Ext.util.JSON.decode( response.responseText );
+	      			  
+		      			if (content !== undefined) {      		      					                   			 
+		      				nameMeta = content.name;                      
+		      				descriptionMeta = content.description; 
+		      				scopeMeta = (content.scope);    		                   
+		      				this.saveQueryWindow.setFormState({ 
+		      					name: nameMeta
+	            	    		, description: descriptionMeta
+	            	    		, scope: scopeMeta
+	            	    	});   				      			
+		      			} 
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}
        			},
        			scope: this,
 				failure: Sbi.exception.ExceptionHandler.handleFailure		
