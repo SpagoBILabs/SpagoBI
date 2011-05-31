@@ -212,22 +212,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	       			, region: 'south'
 	       			, height: 155
 	       		});
-	       		/*
-	       		qbeConfig.centerConfig = {};
-	       		qbeConfig.centerConfig.saveButtonHandler = function () {
-	       			try {
-	       				this.getSQLQuery(function(sqlQuery) {
-	       					var message = {};
-	       					message.jsonQuery = this.getQuery(true);
-	       					message.sqlQuery = sqlQuery;
-	       					sendMessage(message);
-	       				}, this);
-	       			} catch (err) {
-	       				alert(err);
-	       				alert(err.description);
-	       			}
-		        };
-	       		*/
+
 	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
 	           	var viewport = new Ext.Viewport(qbe);  
 	           	<%if (isPowerUser && isFromCross.equalsIgnoreCase("false")) {%>

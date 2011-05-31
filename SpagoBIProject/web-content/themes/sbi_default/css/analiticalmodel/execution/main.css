@@ -10,8 +10,24 @@
 	background-image: url('../../../img/select16.png') !important;
 }
 
-.icon-save {
+/*.icon-save {
 	background-image: url('../../../img/save_generic16.png') !important;
+}*/
+
+.icon-save {
+	background-image: url('../../../img/save16.png') !important;
+}
+
+.icon-saveas {
+	background-image: url('../../../img/save-as16.png') !important;
+}
+
+.icon-edit {
+	background-image: url('../../../img/edit16.png') !important;
+}
+
+.icon-view {
+	background-image: url('../../../img/editdelete15.png') !important;
 }
 
 .icon-clear {
@@ -109,22 +125,6 @@
 
 .icon-expand {
 	background-image: url('../../../img/expand16x17bis.png') !important;
-}
-
-.icon-edit-worksheet {
-	background-image: url('../../../img/edit15.png') !important;
-}
-
-.icon-save-worksheet {
-	background-image: url('../../../img/save16.png') !important;
-}
-
-.icon-saveas-worksheet {
-	background-image: url('../../../img/save-as16.png') !important;
-}
-
-.icon-view-worksheet {
-	background-image: url('../../../img/editdelete15.png') !important;
 }
 
 .icon-print {

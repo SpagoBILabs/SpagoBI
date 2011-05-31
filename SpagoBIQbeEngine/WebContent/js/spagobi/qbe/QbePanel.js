@@ -78,13 +78,17 @@ Sbi.qbe.QbePanel = function(config) {
 	this.addEvents();
 	
 	this.queryEditorPanel = null;
-	this.queryResultPanel = new Sbi.widgets.DataStorePanel(c);
+	this.queryResultPanel = new Sbi.widgets.DataStorePanel(Ext.apply(c, {
+		id : 'DataStorePanel'
+	}));
 	this.worksheetDesignerPanel = null;
 	
 	var items = [];
 	
 	if (c.displayQueryBuilderPanel) {
-		this.queryEditorPanel = new Sbi.qbe.QueryBuilderPanel(c);
+		this.queryEditorPanel = new Sbi.qbe.QueryBuilderPanel(Ext.apply(c, {
+			id : 'QueryBuilderPanel'
+		}));
 		items.push(this.queryEditorPanel);
 	}
 	
@@ -107,12 +111,17 @@ Sbi.qbe.QbePanel = function(config) {
 		});
 		*/
 		var worksheetDesignerConfig = c.worksheet || {};
-		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(worksheetDesignerConfig);
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
+			id : 'WorksheetDesignerPanel'
+		}));
 		items.push(this.worksheetDesignerPanel);
 	}
 
 	if (c.displayWorksheetPreviewPanel) {
-		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
+		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({
+			id : 'WorkSheetPreviewPage',
+			closable: false
+		});
 		
 		this.worksheetPreviewPanel.on('activate', function() {
 			this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
@@ -304,16 +313,16 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}
   	
   	, saveQuery: function(meta) {
-    	this.save(meta, function(response, options) {
+    	this.saveAnalysisState(meta, function(response, options) {
     		// for old gui
     		try {
 				var content = Ext.util.JSON.decode( response.responseText );
 				content.text = content.text || "";
 				parent.loadSubObject(window.name, content.text);
 			} catch (ex) {}
+			
 			// for new gui
 			// build a JSON object containing message and ID of the saved  object
-			
 			try {
 				// get the id of the subobject just inserted, decode string, need to call metadata window
 				var responseJSON = Ext.util.JSON.decode( response.responseText )
@@ -336,7 +345,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		}, this);
   	}
   	
-	, save: function(meta, callback, scope) {
+	, saveAnalysisState: function(meta, callback, scope) {
 		
 		// TODO think about saving worksheet definition into customized view
 //		var crosstabDefinition =  this.worksheetDesignerPanel.getCrosstabDefinition();

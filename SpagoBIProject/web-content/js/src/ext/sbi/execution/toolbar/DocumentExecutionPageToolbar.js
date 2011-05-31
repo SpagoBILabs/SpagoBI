@@ -421,34 +421,43 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}));
 		}
 		
-		if (executionInstance.document.typeCode === 'WORKSHEET') {
+		if (executionInstance.document.typeCode === 'WORKSHEET' && Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
 			if (this.documentMode === 'VIEW') {
 				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-edit-worksheet' 
+					iconCls: 'icon-edit' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
 				    , scope: this
 				    , handler : this.startWorksheetEditing	
 				}));
 			} else {
 				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-save-worksheet' 
+					iconCls: 'icon-save' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
 				    , scope: this
 				    , handler : this.saveWorksheet
 				}));
 				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-saveas-worksheet' 
+					iconCls: 'icon-saveas' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
 				    , scope: this
 				    , handler : this.saveWorksheetAs	
 				}));
 				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-view-worksheet' 
+					iconCls: 'icon-view' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.view')
 				    , scope: this
 				    , handler : this.stopWorksheetEditing	
 				}));
 			}
+		}
+		
+		if (executionInstance.document.typeCode === 'DATAMART' && Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-save' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+			    , scope: this
+			    , handler : this.saveQbe	
+			}));
 		}
 		
 		this.addButton(new Ext.Toolbar.Button({
@@ -1056,5 +1065,26 @@ Ext.extend(Sbi.execution.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    var endUrl = baseUrl +parurl;
 	    return endUrl;
    }
-	
+
+   , saveQbe: function () {
+		try {
+			var qbeWindow = this.miframe.getFrame().getWindow();
+			var qbePanel = qbeWindow.qbe;
+			var anActiveTab = qbePanel.tabs.getActiveTab();
+			var activeTabId = anActiveTab.getId();
+			var isBuildingWorksheet = (activeTabId === 'WorksheetDesignerPanel' || activeTabId === 'WorkSheetPreviewPage');
+			if (isBuildingWorksheet) {
+				// save worksheet as document
+				this.saveWorksheetAs();
+			} else {
+				// save query as customized view
+				qbePanel.queryEditorPanel.showSaveQueryWindow();
+			}
+			//var template = qbePanel.save();
+		} catch (err) {
+			alert('Sorry, cannot perform operation.');
+			throw err;
+		}
+   }
+   
 });
