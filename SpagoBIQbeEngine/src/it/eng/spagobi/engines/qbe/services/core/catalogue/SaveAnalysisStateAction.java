@@ -80,11 +80,11 @@ public class SaveAnalysisStateAction extends AbstractQbeEngineAction {
 			queryScope  = getAttributeAsString(QbeEngineStaticVariables.CATALOGUE_SCOPE);
 			logger.debug(QbeEngineStaticVariables.CATALOGUE_SCOPE + ": " + queryScope);
 			
-			JSONObject workSheetDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
-			logger.debug("Parameter [" + workSheetDefinitionJSON + "] is equals to [" + workSheetDefinitionJSON.toString() + "]");
-			
-			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
-			getEngineInstance().setWorkSheetDefinition(workSheetDefinition);
+//			JSONObject workSheetDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
+//			logger.debug("Parameter [" + workSheetDefinitionJSON + "] is equals to [" + workSheetDefinitionJSON.toString() + "]");
+//			
+//			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
+//			getEngineInstance().setWorkSheetDefinition(workSheetDefinition);
 			
 			analysisMetadata = getEngineInstance().getAnalysisMetadata();
 			analysisMetadata.setName( queryName );
