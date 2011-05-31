@@ -199,19 +199,6 @@ Sbi.qbe.QbePanel = function(config) {
 	// constructor
     Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
     
-
-    if (this.worksheetDesignerPanel !== null) {
-		this.worksheetDesignerPanel.sheetsContainerPanel.on('saveworkheet', function(obj, conf) {
-			var queries = this.getQueriesCatalogue();
-			var messageContent = Ext.util.JSON.encode({
-				'OBJECT_TYPE' : conf.objectType,
-				'OBJECT_WK_DEFINITION' : conf.worksheetDefinition,
-				'OBJECT_QUERY' : queries
-			});
-			sendMessage(messageContent, 'saveworkheet');
-		}, this);
-	}
-    
     //alert('isFromCross: ' + config.isFromCross);
     if(config.isFromCross) {
     	this.loadFirstQuery();
@@ -436,6 +423,22 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	,
 	refreshWorksheetPreview : function () {
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+	}
+	
+	,
+	getWorksheetTemplateAsString : function () {
+	    if (this.worksheetDesignerPanel !== null) {
+			var queries = this.getQueriesCatalogue();
+			var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+			var template = Ext.util.JSON.encode({
+				'OBJECT_WK_DEFINITION' : worksheetDefinition,
+				'OBJECT_QUERY' : queries
+			});
+			return template;
+		} else {
+			alert('Warning: worksheetDesignerPanel not defined!!');
+			return null;
+		}
 	}
 	
 });

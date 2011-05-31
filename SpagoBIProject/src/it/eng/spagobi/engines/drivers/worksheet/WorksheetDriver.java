@@ -261,8 +261,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		wk_def_sb.setCharacters(workSheetDef);
 		SourceBean query_sb = new SourceBean(QUERY);
 		query_sb.setCharacters(workSheetQuery);
-		confSB.setAttribute(wk_def_sb);
-		confSB.setAttribute(query_sb);
+		confSB.updAttribute(wk_def_sb);
+		confSB.updAttribute(query_sb);
 		String template = confSB.toXML(false);	
 		return template;
     }

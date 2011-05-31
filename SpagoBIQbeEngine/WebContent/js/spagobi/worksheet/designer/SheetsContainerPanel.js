@@ -63,28 +63,21 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	this.index = 0;
 	this.addEvents();
 	this.addPanel = {
-			id: 'addTab',
-            title: '<br>',
-            iconCls: 'newTabIcon'
-        	};
+		id: 'addTab',
+        title: '<br>',
+        iconCls: 'newTabIcon'
+    };
 	
-	c ={
-			tabPosition: 'bottom',        
-	        enableTabScroll:true,
-	        defaults: {autoScroll:true},
-	        items: [this.addPanel],
-	        frame: true,
-	        tools:[{
-	        	id:'save',
-	        	qtip: LN('sbi.qbe.queryeditor.centerregion.tools.save'),
-	        	handler:this.saveWorkSheet,
-	        	scope: this
-	        }]
+	c = {
+		tabPosition: 'bottom',        
+        enableTabScroll:true,
+        defaults: {autoScroll:true},
+        items: [this.addPanel],
+        frame: true
 	};
 	
 	this.initPanel();
 	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 	
-	this.addEvents('saveworkheet');
 	
 	if (this.sheets !== undefined && this.sheets !== null && this.sheets.length > 0) {
 		this.setSheetsState(this.sheets);
@@ -251,12 +244,5 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	            this
 			);
   	}
-	
-	, saveWorkSheet: function(){
-		var	worksheetDefinition = this.getSheetsState();
-		worksheetDefinition.version = Sbi.config.worksheetVersion;
-		this.fireEvent('saveworkheet', this, {objectType : 'WORKSHEET', worksheetDefinition : worksheetDefinition });	
-	}
-
 	
 });

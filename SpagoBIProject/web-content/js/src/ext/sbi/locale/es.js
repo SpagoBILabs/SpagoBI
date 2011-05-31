@@ -247,6 +247,10 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Bookmark docume
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Annotate documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Show documento metadata';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Page refresh will cause the lost of actual QBE settings: go on?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Parámetros guardados';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Documento has no parámetros guardados]';
