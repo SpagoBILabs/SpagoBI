@@ -107,6 +107,11 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		this.doLayout();
 	}
 
+	, exportContent: function(){
+		alert('Export Data Store Panel content');
+		alert(this.store.toSource());
+		return this.store;
+	}
 
 	, exportResult: function(mimeType) {
 		var form = document.getElementById('export-form');

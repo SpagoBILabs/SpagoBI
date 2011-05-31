@@ -293,6 +293,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		};
 		
 		return toReturn;
+	},
+	
+	exportContent: function(){
+		var svg = this.chart.getSVG();
+		var exportedChart = {SVG: svg, SHEET_TYPE: 'CHART'};
+		return exportedChart;
 	}
 
 });

@@ -116,11 +116,13 @@ end DOCTYPE declaration --%>
 	        , baseParams: params
 		});
 	    
+	    var workSheetPanel = null;
+	    
         Ext.onReady(function() {
         	Ext.QuickTips.init();
 
 			var worksheet = <%= qbeEngineInstance.getWorkSheetDefinition().getConf().toString() %>;
-        	var workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet, {
+        	workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet, {
         		header: false
         	});
            	var viewport = new Ext.Viewport({layout: 'fit', items: [workSheetPanel]}); 
