@@ -117,22 +117,9 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			// retrieving first QbE query and setting it as active query
 			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
 			
+			//build the query filtered for the smart filter
 			if (jsonEncodedFormState != null) {
-				logger.debug("Making a deep copy of the original query...");
-				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale())).toString();
-				Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
-				logger.debug("Deep copy of the original query produced");
-				JSONObject formState = new JSONObject(jsonEncodedFormState);
-				logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
-				JSONObject template = (JSONObject) getEngineInstance().getFormState().getConf();
-				logger.debug("Form viewer template retrieved.");
-				
-				FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();
-				formViewerQueryTransformer.setFormState(formState);
-				formViewerQueryTransformer.setTemplate(template);
-				logger.debug("Applying Form Viewer query transformation...");
-				query = formViewerQueryTransformer.execTransformation(copy);
-				logger.debug("Applying Form Viewer query transformation...");
+				query = getFilteredQuery(query, new JSONObject(jsonEncodedFormState));
 			}
 			
 			getEngineInstance().setActiveQuery(query);

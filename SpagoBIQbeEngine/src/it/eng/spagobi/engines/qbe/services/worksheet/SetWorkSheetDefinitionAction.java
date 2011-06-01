@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.qbe.services.worksheet;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -42,6 +43,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 
 	private static final long serialVersionUID = -7253525210753136929L;
 	public static transient Logger logger = Logger.getLogger(SetWorkSheetDefinitionAction.class);
+	public static final String FORM_STATE = "formState";
 	
 	/**
 	 * Get the definition of the worksheet from the request, serialize and save it into the qbe engine instance
@@ -60,6 +62,23 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 			//set the worksheet into the qbe instance
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
 			getEngineInstance().setWorkSheetDefinition(workSheetDefinition);
+			
+			try {
+				JSONObject jsonEncodedFormState = getAttributeAsJSONObject(FORM_STATE);
+				
+				FormState formState = getEngineInstance().getFormState();
+				if(formState==null){
+					formState = new FormState();
+					getEngineInstance().setFormState(formState);
+				}
+				formState.setFormStateValues(jsonEncodedFormState);
+				
+
+			} catch (Exception e) {
+				logger.debug("No Form State defined");
+			}
+
+			
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {

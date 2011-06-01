@@ -60,7 +60,7 @@ Sbi.formviewer.StaticOpenFiltersPanel = function(openFilters, config) {
 	        columns: openFilters.length
 	    }
 		, valueDelimiter: '--!;;;;!--'
-		, style:'padding:10px'
+		, style:'padding: 15px'
 	};
 	if (Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.staticOpenFiltersPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.staticOpenFiltersPanel);
@@ -80,6 +80,7 @@ Sbi.formviewer.StaticOpenFiltersPanel = function(openFilters, config) {
 	this.init(openFilters);
 	
 	Ext.apply(c, {
+		autoScroll :true,
   		items: this.fields
 	});
 
@@ -105,26 +106,24 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 			var field = this.createField( openFilters[i] );
 			this.combos.push( field );
 			var aPanel = new Ext.Panel({
-				
-				items: [	{   
-					xtype: 'fieldset',
-
+					style: 'margin: 3px;  border: 1px solid #D0D0D0; padding: 3px',
 					title: '',
-					defaultType: 'checkbox', // each item will be a checkbox
-					layout: 'anchor',
-					items:[ {xtype: 'component', html: openFilters[i].text, cls:'x-form-check-group-label'}, field  ]}]
-				, layout: 'form' // form layout required: input field labels
-									// are displayed only with this layout
-					, width: 230
-				// , height: 40 // cannot set a static height, since the
-				// SuperBoxSelect resize vertically
+					width: 210,
+					items:[ 
+					        {
+					        	xtype: 'component', 
+					        	html: openFilters[i].text, 
+					        	cls:'x-form-check-group-label'
+					        }, 
+					        field  
+			       ]
 			});
 			this.fields.push(aPanel);
 		}
-		
 	}
 
 	, createField: function( openFilter ) {
+		
 		
 		var field;
 		
@@ -195,7 +194,6 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 				'QUERY_ROOT_ENTITY': queryRootEntity
 		};
 		store.baseParams = baseParams;
-		
 		store.on('loadexception', function(store, options, response, e) {
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		});

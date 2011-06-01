@@ -79,7 +79,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 //		(Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);		
 
-		String queryId = null;
+		//String queryId = null;
 		Integer limit = null;
 		Integer start = null;
 		Integer maxSize = null;
@@ -105,10 +105,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			super.service(request, response);	
 			
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeQueryAction.totalTime");
-			
-			queryId = getQueryId();
-			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
-			
+						
 			start = getAttributeAsInteger( START );	
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			
@@ -123,21 +120,20 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.isBlocking" + "] is equals to [" + isMaxResultsLimitBlocking + "]");
 			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(queryId, "Parameter [" + QUERY_ID + "] cannot be null in oder to execute " + this.getActionName() + " service");
+						
 			
 			// retrieving query specified by id on request
-			query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
+			query = getQuery();
 			
-			if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(queryId)) {
-				logger.debug("Query with id [" + queryId + "] is the current active query. Previous generated statment will be reused");
+			if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
 				query = getEngineInstance().getActiveQuery();
 			} else {
-				logger.debug("Query with id [" + queryId + "] is not the current active query. A new statment will be generated");
+				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
 				getEngineInstance().setActiveQuery(query);
 				
 			}			
 			
-			Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
+			Assert.assertNotNull(query, "Query object with id [" + query.getId() + "] does not exist in the catalogue");
 		
 			/*-----------------------------------------------------------------
 			* START: part added to apply some projection and selection in the query
@@ -145,6 +141,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			* the selected rows stays in the request attribute optionalfilters
 			*------------------------------------------------------------------*/
 
+			
 			
 			JSONArray jsonVisibleSelectFields  = null;
 			try {
@@ -170,10 +167,10 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 			if(jsonVisibleSelectFields!=null || optionalUserFilters!=null){
 				
-				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
-				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
-				
-				
+//				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
+//				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
+//				
+				Query clonedQuery = query = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
 				//hide the fields not present in the request parameter visibleselectfields
 				if(visibleSelectFields!=null && visibleSelectFields.size()>0){
 					List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);
@@ -293,8 +290,10 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	 * Get the query id from the request
 	 * @return
 	 */
-	public String getQueryId() {
-		return getAttributeAsString( QUERY_ID );
+	public Query getQuery() {
+		String queryId = getAttributeAsString( QUERY_ID );
+		logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
+		return getEngineInstance().getQueryCatalogue().getQuery(queryId);
 	}
 
 	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
