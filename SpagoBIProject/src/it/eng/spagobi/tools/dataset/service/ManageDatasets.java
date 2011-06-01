@@ -26,7 +26,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -71,6 +70,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -180,7 +180,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_EXEC)) {			
-			try {
+		//	try {
 				Integer dsId = getAttributeAsInteger(DataSetConstants.ID);
 				JSONObject dataSetJSON =getJSONDatasetResult(dsId, profile);
 				if(dataSetJSON!=null){
@@ -192,10 +192,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}else{
 					throw new SpagoBIServiceException(SERVICE_NAME,"No data found");
 				}
-			} catch (Throwable e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
-			}
+			//} catch (Throwable e) {
+			//	logger.error(e.getMessage(), e);
+			//	throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
+			//}
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 			try {
@@ -747,7 +747,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		toReturn = ObjectUtils.toJSONArray(params.getItems());
 		return toReturn;
 	}
-	
+
 	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile) throws Exception {
 		logger.debug("IN");
 		String dsMetadata = null;
@@ -809,15 +809,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dataSetJSON;
 	}
 	
-	public JSONObject getJSONDatasetResult(Integer dsId, IEngUserProfile profile) throws Exception{
+	public JSONObject getJSONDatasetResult(Integer dsId, IEngUserProfile profile) {
 		logger.debug("IN");
 		JSONObject dataSetJSON = null;		
 		//Integer id = obj.getDataSetId();	
-		//gets the dataset object informations
-		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsId);
+		//gets the dataset object informations		
 		try {
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsId);
 			if (dataset.getParameters() != null){
-				JSONArray parsJSON = serializeJSONArrayParsList(dataset.getParameters());
+				//JSONArray parsJSON = serializeJSONArrayParsList(dataset.getParameters());
+				JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 				HashMap h = new HashMap();
 				if(parsJSON!=null && parsJSON.length()>0){
 					h = deserializeParValuesListJSONArray(parsJSON);

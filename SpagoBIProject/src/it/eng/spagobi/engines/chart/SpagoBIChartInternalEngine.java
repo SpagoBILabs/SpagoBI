@@ -288,14 +288,16 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
 				
 				ManageDatasets mDs = new ManageDatasets();
-				JSONArray parsJSON = mDs.serializeJSONArrayParsList(dataset.getParameters());
-				
+				//JSONArray parsJSON = mDs.serializeJSONArrayParsList(dataset.getParameters());
+				JSONArray parsJSON = getParametersAsJSON(obj);
+				//Map parametersMap = getParameters(obj);
+				//JSONObject parsJSON = new JSONObject(parametersMap);
 				//converts the template from xml to json format				
 				JSONObject template = templateUtil.getJSONTemplateFromXml( getTemplate(obj.getId().toString())); 
 				//sets the response
 				response.setAttribute("template", template);
-				response.setAttribute("divWidth", templateUtil.getDivWidth());
-				response.setAttribute("divHeight", templateUtil.getDivHeight());
+				response.setAttribute("divWidth", (templateUtil.getDivWidth()==null)?"100%":templateUtil.getDivWidth());
+				response.setAttribute("divHeight",(templateUtil.getDivHeight()==null)?"100%":templateUtil.getDivHeight());
 				response.setAttribute(DataSetConstants.ID, dataset.getId());
 				response.setAttribute(DataSetConstants.LABEL, dataset.getLabel());
 				response.setAttribute(DataSetConstants.DS_TYPE_CD, (dataset.getDsType()==null)?"":dataset.getDsType());				
@@ -653,6 +655,67 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 		} // end looking for parameters
 		return parametersMap;
+	}
+
+	/** COnverts from BIObject Parameters to a map, in presence of multi value merge with ,
+	 * 
+	 * @param obj
+	 * @return
+	 */
+
+	public JSONArray getParametersAsJSON(BIObject obj){
+		JSONArray JSONPars = new JSONArray();
+
+		//Search if the chart has parameters
+		List parametersList=obj.getBiObjectParameters();
+		logger.debug("Check for BIparameters and relative values");
+		if(parametersList!=null){
+			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
+				BIObjectParameter par= (BIObjectParameter) iterator.next();
+				String name=par.getParameterUrlName();
+				String value = "";
+				List values=par.getParameterValues();
+				if(values!=null){
+					if(values.size()==1){
+						value=(String)values.get(0);
+						Parameter parameter = par.getParameter();
+						if(parameter != null){
+							String parType = parameter.getType();
+							if(parType.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || parType.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
+								value="'"+value+"'";
+							}
+						}
+					}else if(values.size() >=1){
+						String type = (par.getParameter() != null) ? par.getParameter().getType() : SpagoBIConstants.STRING_TYPE_FILTER;
+						// if par is a string or a date close with '', else not						
+						if(type.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || type.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
+							value = "'"+(String)values.get(0)+"'";
+							for(int k = 1; k< values.size() ; k++){
+								value = value + ",'" + (String)values.get(k)+"'";
+							}
+						}
+						else{
+							value = (String)values.get(0);
+							for(int k = 1; k< values.size() ; k++){
+								value = value + "," + (String)values.get(k)+"";
+							}							
+						}						
+					}
+					try{
+						JSONObject JSONObj = new JSONObject();						
+						JSONObj.put("name",name);
+						JSONObj.put("value",value);
+						JSONPars.put(JSONObj);				
+					} catch (Exception e) {
+						logger.warn("Impossible to load parameter object " + name 
+								+ " whose value is " + value
+								+ " to JSONObject", e);
+					}
+				}
+			}	
+
+		} // end looking for parameters
+		return JSONPars;
 	}
 
 
