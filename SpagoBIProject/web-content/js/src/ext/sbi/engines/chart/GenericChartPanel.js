@@ -333,6 +333,55 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 
 		//var categories = this.getCategories();
 	}
+    , enableDrillEvents: function(dataConfig){
+    	var drill = dataConfig.drill;
+    	if(drill != null && drill != undefined){
+    		var doc = drill.document;
+    		var params = "";
+    		for(var i = 0; i< drill.param.length; i++){
+    			if(drill.param[i].type == 'RELATIVE'){
+    				params+= drill.param[i].name +"="+drill.param[i].value;
+    			
+	    			if(i != drill.param.length -1 ){
+	    				params+="&amp;";
+	    			}
+    			}
+    		}
+    		var event = {
+    				click: function(ev){
+    					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
+    		    		for(var i = 0; i< drill.param.length; i++){
+    		    			if(drill.param[i].type == 'CATEGORY'){
+    		    				params+= drill.param[i].name +"="+ev.point.category;
+    		    			
+    			    			if(i != drill.param.length -1 ){
+    			    				params+="&amp;";
+    			    			}
+    		    			}
+    		    			
+    		    		}
+    		    		for(var i = 0; i< drill.param.length; i++){
+    		    			if(drill.param[i].type == 'SERIE'){
+    		    				params+= drill.param[i].name +"="+ev.point.y;
+    		    			
+    			    			if(i != drill.param.length -1 ){
+    			    				params+="&amp;";
+    			    			}
+    		    			}
+    		    			
+    		    		}
+    					parent.execCrossNavigation("self", doc, params);
+    				}
+    		};
+    		//depending on chart type enables click navigation events
+    		if(doc != null && doc != undefined){
+    			//line, spline, area, areaspline, column, bar, pie and scatter. 
+    			dataConfig.plotOptions.series.events = event;
+    		}
+    	}
+    	
+    	
+    }
     
     ,onLoad: function(){
     	this.getCategoriesX();

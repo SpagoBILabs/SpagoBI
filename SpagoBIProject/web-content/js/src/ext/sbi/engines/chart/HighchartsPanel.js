@@ -86,7 +86,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		var credits = {};
 		credits.enabled = false;
 		this.chartConfig.credits = credits;
-		
+		this.enableDrillEvents(this.chartConfig);
 		//gets series values and adds theme to the config
 		var seriesNode = [];
 		//looks for js functions
