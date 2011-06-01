@@ -368,8 +368,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	 
 	    var docurlPar = "ACTION_NAME=EXPORT_WORKSHEETS_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
 	    var endUrl = baseUrl + docurlPar;
-	    
+	   /* if (this.loadMask == null) {//'runtimeworksheet'
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "Exporting.."});
+    	}
+	    this.loadMask.show();*/
 		var worksheetDataEncoded = this.retrieveWorksheetsContentData(frame);    // retieving crosstab data (already encoded) from Qbe window
+		/*if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}*/
 		
 	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
 	    							 // but, if a value contains a " character, then the html produced is not correct!!! 

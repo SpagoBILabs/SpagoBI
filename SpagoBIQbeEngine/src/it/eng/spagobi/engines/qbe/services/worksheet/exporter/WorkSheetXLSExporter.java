@@ -142,7 +142,7 @@ public class WorkSheetXLSExporter {
 						int row = 4;
 						int colend = 13;
 						int rowend = 37;
-						setImageIntoWorkSheet(wb, sheet, jpgImage, col, row, colend, rowend);
+						setImageIntoWorkSheet(wb, sheet, jpgImage, col, row, colend, rowend,HSSFWorkbook.PICTURE_TYPE_JPEG);
 					} else if (sheetType.equalsIgnoreCase(CROSSTAB)) {
 	
 					} else if (sheetType.equalsIgnoreCase(TABLE)) {
@@ -176,32 +176,28 @@ public class WorkSheetXLSExporter {
 		
 		if(imgName!=null && !imgName.equals("") && !imgName.equals("null")){
 			File img = getImage(imgName);
+			String imgNameUpperCase = imgName.toUpperCase();
+			int impgType = HSSFWorkbook.PICTURE_TYPE_PICT;
+			if(imgNameUpperCase.contains(".PNG")){
+				impgType = HSSFWorkbook.PICTURE_TYPE_PNG;
+			}else if(imgNameUpperCase.contains(".JPG") || imgNameUpperCase.contains(".JPEG")){
+				impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
+			}
 			int r = 1;
-			int rowend = 3;
+			int rowend = 2;
+			int c = 7;
+			int colend = 9;
 
 			if(imagePosition!=null && !imagePosition.equals("")){
-				if(imagePosition.equals(CENTER)){
-					int c = 7;
-					int colend = 9;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
-				}else if(imagePosition.equals(LEFT)){
-					int c = 1;
-					int colend = 3;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
+				if(imagePosition.equals(LEFT)){
+					c = 1;
+					colend = 3;
 				}else if(imagePosition.equals(RIGHT)){
-					int c = 11;
-					int colend = 13;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
-				}else{
-					int c = 7;
-					int colend = 9;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
+					c = 11;
+					colend = 13;
 				}
-			}else{
-				int c = 7;
-				int colend = 9;
-				setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
 			}
+			setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend,impgType);
 		}
 		
 	}
@@ -222,32 +218,28 @@ public class WorkSheetXLSExporter {
 		
 		if(imgName!=null && !imgName.equals("") && !imgName.equals("null")){
 			File img = getImage(imgName);
+			String imgNameUpperCase = imgName.toUpperCase();
+			int impgType = HSSFWorkbook.PICTURE_TYPE_PICT;
+			if(imgNameUpperCase.contains(".PNG")){
+				impgType = HSSFWorkbook.PICTURE_TYPE_PNG;
+			}else if(imgNameUpperCase.contains(".JPG") || imgNameUpperCase.contains(".JPEG")){
+				impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
+			}
 			int r = 40;
 			int rowend = 43;
+			int c = 7;
+			int colend = 9;
 			
 			if(imagePosition!=null && !imagePosition.equals("")){
-				if(imagePosition.equals(CENTER)){
-					int c = 7;
-					int colend = 9;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
-				}else if(imagePosition.equals(LEFT)){
-					int c = 1;
-					int colend = 3;			
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
+				if(imagePosition.equals(LEFT)){
+					c = 1;
+					colend = 3;			
 				}else if(imagePosition.equals(RIGHT)){
-					int c = 11;
-					int colend = 13;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
-				}else{
-					int c = 7;
-					int colend = 9;
-					setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
+					c = 11;
+					colend = 13;
 				}
-			}else{
-				int c = 7;
-				int colend = 9;
-				setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend);
 			}
+			setImageIntoWorkSheet(wb, sheet, img, c, r, colend, rowend,impgType);
 		}
 	}
 	
@@ -261,7 +253,7 @@ public class WorkSheetXLSExporter {
 	}
 
 	private void setImageIntoWorkSheet(HSSFWorkbook wb, HSSFSheet sheet,
-			File f, int col, int row, int colend, int rowend) throws IOException {
+			File f, int col, int row, int colend, int rowend,int imgType) throws IOException {
 		FileInputStream fis = new FileInputStream(f);
 
 		ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
@@ -270,10 +262,10 @@ public class WorkSheetXLSExporter {
 			imgBytes.write(b);
 		}	
 		HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) col,	row, (short) colend, rowend);
-		int index = wb.addPicture(imgBytes.toByteArray(),HSSFWorkbook.PICTURE_TYPE_JPEG);
+		int index = wb.addPicture(imgBytes.toByteArray(),imgType);
 		HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 		patriarch.createPicture(anchor, index);
-		anchor.setAnchorType(2);
+		anchor.setAnchorType(0);
 		imgBytes.close();
 		fis.close();
 	}

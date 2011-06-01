@@ -76,11 +76,13 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 			this.setActiveTab(0);
 		}	
 	}, this);
+	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	
 	sheetItems: null,
+	sheetNumber: 0,
 	//build the sheets
 	buildSheets: function(config, sheetsConfig){
 		var items = [];
@@ -101,12 +103,67 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	},
 	
 	exportContent: function(){
-		var items = new Array();
+		if(this.sheetItems!=undefined && this.sheetItems!=null){
+			var i=0;			
+			this.sheetNumber = this.sheetItems.length;
+			for(; i<this.sheetItems.length; i++){
+				if(this.sheetItems[i].contentLoaded == false){
+					this.setActiveTab(i);
+				}
+			}
+		}
+		this.sleepUntilContentReady();
+		var resultExport = this.exportRenderedContent();
+		return resultExport;
+	}
+	
+	,sleepUntilContentReady: function(){
+		var contentReady = this.checkContentReady();
+		if(contentReady == true){
+			return true;
+		}else{
+			this.sleep(100);
+			alert('Exporting');
+			this.sleepUntilContentReady();
+		}
+	}
+	
+	, sleep: function (milliSeconds){
+		var startTime = new Date().getTime(); // get the current time
+		while (new Date().getTime() < startTime + milliSeconds); // hog cpu
+	}
+
+	,checkContentReady: function(){		
+		var allLoaded = false;
 		if(this.sheetItems!=undefined && this.sheetItems!=null){
 			var i=0;
 			for(; i<this.sheetItems.length; i++){
-				var exportedSheet = this.sheetItems[i].exportContent();
-				items.push(exportedSheet);
+				if(this.sheetItems[i].contentLoaded == true){
+					allLoaded = true
+				}else{
+					allLoaded = false;
+					break;
+				}
+			}
+		}
+		
+		if(allLoaded == true){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	,exportRenderedContent: function(){
+		var items = new Array();
+		
+		if(this.sheetItems!=undefined && this.sheetItems!=null){
+			var i=0;
+			for(; i<this.sheetItems.length; i++){
+				if(this.sheetItems[i].contentLoaded == true){
+					var exportedSheet = this.sheetItems[i].exportContent();
+					items.push(exportedSheet);
+				}
 			}
 		}
 		var resultExport = { SHEETS_NUM: this.sheetItems.length,
