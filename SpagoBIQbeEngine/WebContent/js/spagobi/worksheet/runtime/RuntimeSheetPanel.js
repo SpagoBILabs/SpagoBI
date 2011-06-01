@@ -63,7 +63,7 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 	};
 	
 	c = Ext.apply(config,c);
-	this.addEvents();
+	this.addEvents('contentloaded');
 	Ext.apply(this,c);	
 	
 	this.on('activate',this.renderContent, this);
@@ -74,6 +74,7 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	content: null,
 	filtersPanel : null,
+	contentLoaded: false,
 	
 	exportContent: function(){
 		var exportedContent = this.content.exportContent();
@@ -394,10 +395,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	/**
 	 * Closes the loading mask
 	 */
-	, hideMask: function() {
+	, hideMask: function() {		
     	if (this.loadMask != null) {
     		this.loadMask.hide();
     	}
+    	this.contentLoaded = true;
+    	this.fireEvent('contentloaded');
 	}
 
 });
