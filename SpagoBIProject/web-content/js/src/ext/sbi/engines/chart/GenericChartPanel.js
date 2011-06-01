@@ -102,12 +102,28 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			}
 
 		}
-		if(dataConfig.plotOptions && dataConfig.plotOptions.series){
-			var str = dataConfig.plotOptions.series.alias;
-			this.serieAlias = str.split(",");
+		//checks series configuration
+		if (dataConfig.series){
+			var strValue = dataConfig.series;
+			if (Ext.isArray(strValue)){
+				var str = "";
+				for(var i = 0; i < strValue.length; i++) {
+					str += strValue[i].alias;
+					if (i < (strValue.length-1)) str += ",";
+				}
+				if (str) {
+					this.serieAlias = str.split(",");
+				}
+			}
 		}
 		
-		
+		//checks plotOptions.series configuration			
+		if(this.serieAlias .length == 0 && dataConfig.plotOptions && dataConfig.plotOptions.series){
+			var str = dataConfig.plotOptions.series.alias;
+			if (str) {
+				this.serieAlias = str.split(",");
+			}
+		}
 		var requestParameters = {
 			    id: dataConfig.dsId
 			  , label: dataConfig.dsLabel
@@ -170,8 +186,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	/**
 	 * Loads the series for the chart
 	 */
-	, getSeries: function(){
-		
+	, getSeries: function(alias){
 		if(this.store!=null){
 			
 			/* gestire multiserie...
@@ -206,14 +221,17 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		   	var series = [];
 
 			//coordinates or multiple columns for 1 value
-			if(this.serieAlias.length != 1){
 
+		   	if (alias != undefined && alias != null){
+		   		this.serieAlias = alias.split(",");
+		   	}
+			if(this.serieAlias.length != 1){
 				var records = this.store.getRange();
 		    	for (var j = 0; j < records.length; j++) {
 		    		var rec = records[j].data;
 					if(rec) {
 						var recArray = [];
-						for(i = 0; i<this.serieAlias.length; i++){
+						for(i = 0; i<this.serieAlias.length; i++){			
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
 					    	recArray.push(rec[serieColumn]);
 						}
@@ -221,7 +239,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 					}
 		    	}
 			}else{
-
 		    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias);
 				var records = this.store.getRange();
 		    	for (var i = 0; i < records.length; i++) {
@@ -280,10 +297,11 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		this.store = this.storeManager.getStore(dsId);
 		this.store.loadStore();
 		if (this.store === undefined) {
-			Sbi.Msg.showError('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
+			Sbi.exception.ExceptionHandler.showErrorMessage('Dataset with identifier [' + this.storeId + '] is not correctly configurated');			
 		}else{		
 			this.store.on('load', this.onLoad, this);
 			this.store.on('exception', Sbi.exception.ExceptionHandler.onStoreLoadException, this);
+			//this.store.on('exception', Sbi.exception.ExceptionHandler.handleFailure, this);
 			this.store.on('metachange', this.onMetaChange, this);
 		}
 	}

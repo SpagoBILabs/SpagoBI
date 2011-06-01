@@ -65,7 +65,6 @@ Sbi.exception.ExceptionHandler = function(){
         	
         	var errMessage = ''
         	if(response !== undefined) {
-        		
         		if (response.responseText !== undefined) {
         			var content = Ext.util.JSON.decode( response.responseText );
         			if (content.errors !== undefined  && content.errors.length > 0) {
@@ -158,20 +157,7 @@ Sbi.exception.ExceptionHandler = function(){
         }
         
         , onStoreLoadException : function(proxy, type, action, options, response, arg) {
-			
-			var errMessage = 'Generic error';
-        
-			if(type === 'response') {
-				errMessage = 'An error occurred while parsing server response: ' + arg;
-			} else if(type === 'remote') {
-				errMessage = 'An error occurred at the server side';
-			}
-			Sbi.Msg.showError(errMessage, 'Store loading error');
-			
-			// to do ...
-			// dump some more contextual infos (dataset name, options)
-			// test timeout exception
-			// when type = remote show more info on the error
+        	Sbi.exception.ExceptionHandler.handleFailure(response, options);
         }
 
 	};
