@@ -344,9 +344,9 @@ public class Template {
 		Object subValue = getAttributeValue(sb.getKey(), sb);
 		if (subValue != null){
 			if(isTag){
-				toReturn.write(convertKeyString(sb.getKey()) + ": " + subValue + "\n" );	
+				toReturn.write("      " + convertKeyString(sb.getKey()) + ": " + subValue + "\n" );	
 			}else{				
-				toReturn.write(sb.getKey() + ": " + subValue + "\n" );	
+				toReturn.write("      " + sb.getKey() + ": " + subValue + "\n" );	
 			}
 
 		}
