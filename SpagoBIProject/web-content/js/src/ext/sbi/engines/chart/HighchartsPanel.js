@@ -78,6 +78,15 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 
 	, createChart: function () {
 		this.chartConfig.chart.renderTo = this.chartConfig.divId;
+		//disable exporting buttons
+		var exp = {};
+		exp.enabled = false;
+		this.chartConfig.exporting = exp;
+		//disable credits information
+		var credits = {};
+		credits.enabled = false;
+		this.chartConfig.credits = credits;
+		
 		//gets series values and adds theme to the config
 		var seriesNode = [];
 		//looks for js functions
