@@ -129,72 +129,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			, onTrigger2Click: this.cleanTriggerFieldHandler.createDelegate(this)
 			, scope: this
 			, anchor:'95%'
-		});
-		 
-		
-		//text field for load the image in the server from the file system
-		this.imgFile = new Ext.form.TextField({
-			inputType:	'file',
-			fieldLabel: LN('sbi.worksheet.designer.image'),
-			//anchor:			'95%',
-			allowBlank: true
-		});
-		
-		//Panel with the load image combo box
-		this.loadImageCombo = new Ext.Panel({
-            layout:'column',
-            items: [{
-            	columnWidth:.8,
-    			layout: 'form',
-    			items: [this.imgTriggerField]
-			},new Ext.Panel({
-				columnWidth:.2,
-				items: [{
-					xtype:          'button',
-					tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.laodimage'),
-               		width: 			30,
-               		handler:		this.imgButtonHandler,
-					scope: 			this,
-					iconCls:		'browsImgIcon'
-				}]}
-			)]
-		});
-		
-		this.imgFileFormPanel = new Ext.Panel({
-			layout: 'form',
-			columnWidth: 0.6,
-			fileUpload: true,
-			items: [this.imgFile]
-		});
-		
-		//Panel with the load file field
-		this.loadImageFileBrows = new Ext.Panel({
-			layout:'column',
-			hidden: true,
-			hideMode: !Ext.isIE ? 'nosize' : 'display',
-			items: [
-			        this.imgFileFormPanel ,
-			        {
-			        	xtype:          'button',
-			        	//width: 			25,
-			        	columnWidth: 0.1,
-			        	handler:		this.uploadImgButtonHandler,
-			        	scope: 			this,
-			        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
-			        	style:			'padding-left: 5px',
-			        	iconCls:		'uploadImgIcon'
-			        }, {
-			        	xtype:          'button',
-			        	//width: 			25,
-			        	columnWidth: 0.1,
-			        	handler:		this.closeUploader,
-			        	scope: 			this,
-			        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.closeimage'),
-			        	style:			'padding-left: 5px',
-			        	iconCls:		'closeUploadImgIcon'
-			        }
-			        ]
-		});
+		});	
 		
 		//Combo box with positions
 		this.imgPosition = new Ext.form.ComboBox({
@@ -219,7 +154,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			columnWidth:.4,
 			style:'padding-left: 10px; padding-top: 7px;',
 			layout: 'form',
-			items: [this.loadImageCombo,this.loadImageFileBrows,this.imgPosition]
+			items: [this.imgTriggerField,this.imgPosition]
 		});
 		
 		return items;
@@ -232,14 +167,6 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		array.push({position: 'center'});
 		array.push({position: 'right'});
 		return array;
-	},
-		
-	//handler for the load image button
-	//This button hides the select image combo box 
-	//and shows the file input field
-	imgButtonHandler: function(btn, e){
-		this.loadImageCombo.hide();
-		this.loadImageFileBrows.show();
 	},
 	
 	imgTriggerFieldHandler: function() {
@@ -259,52 +186,6 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	
 	cleanTriggerFieldHandler: function() {
 		this.imgTriggerField.setValue('');
-	},
-	
-	//handler for the upload image button
-	//This button hides the file input field 
-	//and shows the load file combo box
-	uploadImgButtonHandler: function(btn, e) {
-		
-        var form = this.getForm();
-       // if(form.isValid()){
-            form.submit({
-                url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
-                												   // they must POST parameters
-                params: {
-                    ACTION_NAME: 'UPLOAD_WORKSHEET_IMAGE_ACTION'
-                    , SBI_EXECUTION_ID: Sbi.config.serviceRegistry.getExecutionId()
-                },
-                waitMsg: 'Uploading your image...',
-                success: function(form, action) {
-        			Ext.Msg.show({
-     				   title: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'),
-     				   msg: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'),
-     				   buttons: Ext.Msg.OK,
-     				   icon: Ext.MessageBox.INFO
-     				});
-        			if (this.chooseImageWindow != null) {
-        				this.chooseImageWindow.store.load();
-        			}
-        			this.imgFile.setValue('');
-        			this.closeUploader();
-                },
-                failure : function (form, action) {
-        			Ext.Msg.show({
-      				   title: 'Error',
-      				   msg: action.result.msg,
-      				   buttons: Ext.Msg.OK,
-      				   icon: Ext.MessageBox.ERROR
-      				});
-                },
-                scope : this
-            });
-        //}
-	},
-	
-	closeUploader: function (btn, e) {
-		this.loadImageFileBrows.hide();
-		this.loadImageCombo.show();
 	},
 	
 	isValid: function(){
