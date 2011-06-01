@@ -39,5 +39,4 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Enregistrer la forme';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Enregistrer l\'état de la forme pour les prochaines executions';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Montrer crosstab';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Envoyer la forme et montrer les résultats dans une cross-table';
-Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
-Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Compte des Records';
+
