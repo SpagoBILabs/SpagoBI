@@ -48,7 +48,7 @@ Ext.ns("Sbi.formviewer");
 
 Sbi.formviewer.CrosstabPage = function(config) {	
 	var defaultSettings = {
-		title: LN('sbi.formviewer.crosstabpage.title')
+		title: LN('sbi.worksheet.title')
 		, layout: 'fit'
 		, autoScroll: true
 	};
@@ -57,6 +57,15 @@ Sbi.formviewer.CrosstabPage = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.crosstabPage);
 	}
 		
+	this.services={};
+	this.services['getWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_WORKSHEET_PREVIEW_ACTION'
+		, baseParams: params
+	});
+	this.services['setWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
+		, baseParams: params
+	});
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -105,48 +114,44 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
 	, init: function (c) {
 		
 		var items = [];
+	
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(c||{},{smartFilter: true}));
+	
+		items.push(this.worksheetDesignerPanel);
+		
+		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
+			
+		this.worksheetPreviewPanel.on('activate', function() {
+			this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+		}, this);
+			
+		items.push(this.worksheetPreviewPanel);
 
-		var crosstabDesignerConfig = Ext.apply(c.crosstab || {}, {
-			centerConfig: {
-				tools : [{
-				    id: 'gear'
-				    , qtip: LN('sbi.crosstab.crosstabdefinitionpanel.tools.preview')
-				    , handler: function() {
-				    	var crosstabDefinition = this.crosstabDesignerPanel.getCrosstabDefinition();
-				    	this.showCrosstabPreview(crosstabDefinition);
-				    }
-				    , scope: this
-			   }]
-			}
-		});
-		
-		this.crosstabDesignerPanel = new Sbi.crosstab.CrosstabDesignerPanel(crosstabDesignerConfig);
-		items.push(this.crosstabDesignerPanel);
-		this.crosstabDesignerPanel.westRegionPanel.store.on('load', this.addCountField, this);
-//		this.crosstabDesignerPanel.centerRegionPanel.on('preview', this.showCrosstabPreview, this);
-		
-		this.crosstabPreviewPanel = new Sbi.crosstab.CrosstabPreviewPanel(c.crosstab || {});
-		items.push(this.crosstabPreviewPanel);
 		
 		this.tabs = new Ext.TabPanel({
 			border: false,
 	  		activeTab: 0,
-	  		items: [items]
+	  		items: items
 		});
 	}
-
-	, addCountField: function () {
-		this.crosstabDesignerPanel.westRegionPanel.store.add(
-				new Ext.data.Record({
-					id: 'qbe_smartfilter_count'
-					, alias: LN('sbi.formviewer.crosstabpage.countfield')
-					, funct: 'COUNT'
-					, iconCls: 'measure'
-					, nature: 'measure'
-				})
-		);
-	}
 	
+	, setWorksheetState : function (successFn, failureFn, scope) {
+		var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
+		var params = {
+				'worksheetdefinition':  Ext.encode(state)
+		};
+		
+		params.formstate = Ext.util.JSON.encode(this.getFormState());
+		
+		Ext.Ajax.request({
+		    url: this.services['setWorkSheetState'],
+		    success: successFn,
+		    failure: failureFn,
+		    scope: scope,
+		    params: params
+		});   
+	}
+
   	, showCrosstabPreview: function(crosstabDefinition) {
   		this.crosstabPreviewPanel.on('beforeload', this.addFormStateParameter, this);
   		this.tabs.activate(this.crosstabPreviewPanel);
@@ -156,5 +161,9 @@ Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
   	, addFormStateParameter: function(crosstabPreviewPanel, requestParameters) {
   		requestParameters.formstate = Ext.util.JSON.encode(this.getFormState());
   	}
+  	
+	, refreshWorksheetPreview : function () {
+		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+	}
 
 });

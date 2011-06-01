@@ -1,6 +1,8 @@
 Ext.ns("Sbi.locale");
 
 
+Sbi.locale.ln['sbi.worksheet.title'] = 'Worksheet';
+
 //===================================================================
 //Sbi.worksheet.designer.WorksheetDesignerPanel
 //===================================================================

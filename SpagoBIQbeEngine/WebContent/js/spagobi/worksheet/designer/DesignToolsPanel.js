@@ -112,4 +112,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			this.designToolsLayoutPanel.setLayoutValue(activeSheet.sheetLayout);
 		}
 	}
+	
+	, refresh: function(){
+		alert('refres');
+		this.designToolsFieldsPanel.refresh();
+	}
 });

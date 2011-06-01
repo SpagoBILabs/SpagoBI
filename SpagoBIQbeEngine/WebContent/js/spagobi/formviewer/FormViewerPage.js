@@ -99,8 +99,8 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		    },
 		    '-'
 		    , {
-				text: LN('sbi.formviewer.formviewerpage.designcrosstab'),
-				tooltip: LN('sbi.formviewer.formviewerpage.designcrosstab.tooltip'),
+				text: LN('sbi.formviewer.formviewerpage.designworksheet'),
+				tooltip: LN('sbi.formviewer.formviewerpage.designworksheet.tooltip'),
 				handler: function() {
 		    		this.validateForm(function() {
 		    			var state = this.getFormState();

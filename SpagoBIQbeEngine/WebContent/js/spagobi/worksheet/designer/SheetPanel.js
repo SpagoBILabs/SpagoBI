@@ -70,7 +70,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
             layout: 'fit',
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	};
-	
+
 	c = Ext.apply(config,c);
 	Ext.apply(this,c);
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	

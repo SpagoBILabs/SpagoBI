@@ -12,17 +12,17 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 	private static final long serialVersionUID = -9134072368475124558L;
 
 	/**
-	 * Get the active query id
+	 * Get the active query
 	 * @return
 	 */
 	@Override
-	public String getQueryId() {
+	public Query getQuery() {
 		QbeEngineInstance engineInstance = getEngineInstance();
 		Query activeQuery = engineInstance.getActiveQuery();
 		if (activeQuery == null) {
 			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
 		}
-		return 	activeQuery.getId();
+		return activeQuery;
 	}
 
 

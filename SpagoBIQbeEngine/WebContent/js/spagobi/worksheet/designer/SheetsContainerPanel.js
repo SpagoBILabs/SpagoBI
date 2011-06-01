@@ -81,6 +81,8 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	
 	if (this.sheets !== undefined && this.sheets !== null && this.sheets.length > 0) {
 		this.setSheetsState(this.sheets);
+	} else 	if (config.smartFilter) {
+		this.on('resize',this.addFirstTab,this);
 	} else {
 		this.on('render',function(){this.addTab();},this);
 	}
@@ -140,6 +142,14 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	    }, this);
 
 	    return sheet;
+	}
+	
+	,addFirstTab: function(){
+		if(!this.alreadyBuilded){
+			this.un('resize',this.addFirstTab,this);
+			this.alreadyBuilded= true;
+			this.addTab();
+		}
 	}
 	
 	, addDesignerHandler: function (sheet, state) {
@@ -244,5 +254,6 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	            this
 			);
   	}
+	
 	
 });

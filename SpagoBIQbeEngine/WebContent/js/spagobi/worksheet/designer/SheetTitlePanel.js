@@ -83,7 +83,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
             items: formItems
         }]
 	};
-	
+
 	Sbi.worksheet.designer.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
 };
@@ -128,7 +128,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			, onTrigger1Click: this.imgTriggerFieldHandler.createDelegate(this)
 			, onTrigger2Click: this.cleanTriggerFieldHandler.createDelegate(this)
 			, scope: this
-			
+			, anchor:'95%'
 		});
 		 
 		
@@ -136,7 +136,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.imgFile = new Ext.form.TextField({
 			inputType:	'file',
 			fieldLabel: LN('sbi.worksheet.designer.image'),
-			anchor:			'95%',
+			//anchor:			'95%',
 			allowBlank: true
 		});
 		
@@ -144,17 +144,20 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.loadImageCombo = new Ext.Panel({
             layout:'column',
             items: [{
-            	columnWidth:.75,
+            	columnWidth:.8,
     			layout: 'form',
     			items: [this.imgTriggerField]
-			},{
-				xtype:          'button',
-				tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.laodimage'),
-               	width: 			30,
-				handler:		this.imgButtonHandler,
-				scope: 			this,
-				iconCls:		'browsImgIcon'
-			}]
+			},new Ext.Panel({
+				columnWidth:.2,
+				items: [{
+					xtype:          'button',
+					tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.laodimage'),
+               		width: 			30,
+               		handler:		this.imgButtonHandler,
+					scope: 			this,
+					iconCls:		'browsImgIcon'
+				}]}
+			)]
 		});
 		
 		this.imgFileFormPanel = new Ext.Panel({
