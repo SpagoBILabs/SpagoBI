@@ -63,26 +63,48 @@ Sbi.engines.chart.data.Store = function(config) {
 			
 			config.url = Sbi.config.serviceRegistry.getServiceUrl( serviceConfig );
 		} else if(config.datasetLabel)	{
-
 			var params = {};
 			params.MESSAGE_DET ="DATASET_EXEC";
 			params.id = config.storeId;
 			params.label = config.datasetLabel;
 			params.dsTypeCd = config.dsTypeCd || "";
-			params.pars = config.dsPars || [];
+			//params.pars = config.dsPars || [];
 			params.trasfTypeCd = config.dsTransformerType || "";
 			params.start =-1; // to get all values
 			params.limit =-1; // to get all values
+
+			var pars =  config.dsPars;
+			var separator = '';
+			var arParams = [];
+			//for(p in pars) {
+				if(Ext.isArray(pars)) {		
+					for(var i = 0; i < pars.length; i++) {
+						var strParams = {};
+						var elem = pars[i];
+						for(e in elem) {
+							strParams[e] = elem[e];							
+							separator = ',';
+						}
+						arParams.push(strParams);
+					}
+					//strValue = strValue.substr(0,strValue.length-1);
+					//pars[p] = strValue;
+				}
+				//strParams += separator + p + '=' + pars[p];
+				//separator = '&';
+			//}
+			params.pars = Ext.util.JSON.encode(arParams) || [];
 			
 			delete config.id;
 			delete config.label;	
 			delete config.dsTypeCd;	
 			delete config.pars;	
-			delete config.trasfTypeCd;	
-			
+			delete config.trasfTypeCd;
+
 			config.url = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'MANAGE_DATASETS_ACTION'
 																 , baseParams:params
 																   });
+			//alert("config.url: " + config.url.toSource());
 		}	
 	}
 	
@@ -92,7 +114,6 @@ Sbi.engines.chart.data.Store = function(config) {
 	Sbi.engines.chart.data.Store.superclass.constructor.call(this, config);
 };
 
-//Ext.extend(Sbi.engines.chart.data.Store, Ext.data.JsonStore, {
 Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {	
 	
     
@@ -104,7 +125,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 	, getFieldMetaByAlias: function(alias) {
 		// assert
 		if(!this.alias2FieldMetaMap) {
-			Sbi.Msg.showError('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
+			Sbi.exception.ExceptionHandler.showErrorMessage('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
 		}
 	
 		var m = this.alias2FieldMetaMap[alias];

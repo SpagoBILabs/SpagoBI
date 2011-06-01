@@ -149,7 +149,7 @@ Ext.extend(Sbi.engines.chart.data.StoreManager, Ext.util.Observable, {
 				storeId: c[i].id
 				, datasetLabel: c[i].label
 				, dsTypeCd: c[i].dsTypeCd
-				, dsPars: c[i].dsPars
+				, dsPars: c[i].pars
 				, dsTransformerType: c[i].dsTransformerType
 				, refreshTime: c[i].refreshTime
 				, autoLoad: false

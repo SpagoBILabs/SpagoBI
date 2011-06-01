@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				 it.eng.spagobi.tools.datasource.bo.*,
 				 java.util.ArrayList,
 				 java.util.List,
+				 java.util.Map,
 				 org.json.JSONArray" %>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
@@ -47,6 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		executionId = "null";
 	}  
 	
+	
+	
 	SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
 	
 	//gets the metadata of dataset
@@ -54,12 +57,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String dsLabel =  String.valueOf(sbModuleResponse.getAttribute(DataSetConstants.LABEL));
 	String dsTypeCd =  (String) sbModuleResponse.getAttribute(DataSetConstants.DS_TYPE_CD);
 	JSONArray dsPars =  (JSONArray) sbModuleResponse.getAttribute(DataSetConstants.PARS);
+	//JSONObject dsPars =  (JSONObject) sbModuleResponse.getAttribute(DataSetConstants.PARS);
 	String dsTransformerType =  (String) sbModuleResponse.getAttribute(DataSetConstants.TRASFORMER_TYPE_CD);
-
+	
+	String divId = (executionId != null)?executionId:"highchartDiv";
+	String divWidth = (String) sbModuleResponse.getAttribute("divWidth");
+	String divHeight = (String) sbModuleResponse.getAttribute("divHeight");
+	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
 	System.out.println("template in jsp: " + template.toString());
-	//String template = "Bar Chart";
+	
+	System.out.println("dsPars in jsp: " + dsPars.toString());
 %>
 
 
@@ -69,7 +78,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 	
-	<script type="text/javascript"><!--
+	<script type="text/javascript">
 		var template =  <%= template.toString()  %>;
 		Sbi.config = {};
 
@@ -107,6 +116,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.dsTypeCd = "<%=dsTypeCd%>";
 			config.dsPars =  <%=dsPars%>;
 			config.dsTransformerType = "<%=dsTransformerType%>";
+			config.divId = "<%=divId%>";
 			
 			var chartPanel=  new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
 	
@@ -123,7 +133,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 			});
 		});
-	--></script>
-	<div id="pippo"></div>
+	</script>
+	<div id="<%=divId%>" style="height:<%=divHeight%>; width:<%=divWidth%>;"></div>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
