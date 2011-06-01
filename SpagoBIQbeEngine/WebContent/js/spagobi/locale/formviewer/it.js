@@ -12,8 +12,6 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Salva il form';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Salva lo stato del form per esecuzioni successive';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Work sheet';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Apri il designer del documento worksheet';
-Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
-Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Conteggio';
 
 //===================================================================
 //FILTERS PANEL

@@ -46,15 +46,15 @@
 
 Ext.ns("Sbi.formviewer");
 
-Sbi.formviewer.CrosstabPage = function(config) {	
+Sbi.formviewer.WorksheetPage = function(config) {	
 	var defaultSettings = {
 		title: LN('sbi.worksheet.title')
 		, layout: 'fit'
 		, autoScroll: true
 	};
 		
-	if(Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.crosstabPage) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.crosstabPage);
+	if(Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.worksheetPage) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.worksheetPage);
 	}
 		
 	this.services={};
@@ -90,12 +90,12 @@ Sbi.formviewer.CrosstabPage = function(config) {
 	});
 		
 	// constructor
-	Sbi.formviewer.CrosstabPage.superclass.constructor.call(this, c);
+	Sbi.formviewer.WorksheetPage.superclass.constructor.call(this, c);
 	
 	this.addEvents('edit');
 };
 
-Ext.extend(Sbi.formviewer.CrosstabPage, Ext.Panel, {
+Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 
 	formState: null
 	
