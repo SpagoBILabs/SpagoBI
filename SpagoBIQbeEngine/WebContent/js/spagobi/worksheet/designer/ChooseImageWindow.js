@@ -48,7 +48,6 @@ Sbi.worksheet.designer.ChooseImageWindow = function(config) {
 
 	var defaultSettings = {
 		title: LN('sbi.worksheet.designer.chooseimagewindow.title')
-		, autoScroll: true
 	};
 		
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.chooseImageWindow) {
@@ -75,9 +74,15 @@ Sbi.worksheet.designer.ChooseImageWindow = function(config) {
 	
 	this.init();
 	
+	var dataviewHeight = this.height-this.loadImageFileBrows.height-30;
+	if(dataviewHeight==null || dataviewHeight<=0 || isNaN(dataviewHeight)){
+		c.autoScroll= true;	
+		dataviewHeight='auto';
+	}
+	
 	c = Ext.apply(c, {
 		id : 'choose-image-window'
-        , items : new Ext.DataView({
+        , items : [this.loadImageFileBrows,new Ext.Panel({height: dataviewHeight, autoScroll: true, layout: 'fit', items: [new Ext.DataView({
             store : this.store,
             tpl : this.tpl,
             autoHeight : true,
@@ -95,7 +100,7 @@ Sbi.worksheet.designer.ChooseImageWindow = function(config) {
                 	scope : this
                 }
             }
-        })
+        })]})]
 	});
 
 	Sbi.worksheet.designer.ChooseImageWindow.superclass.constructor.call(this, c);
@@ -113,6 +118,7 @@ Ext.extend(Sbi.worksheet.designer.ChooseImageWindow, Ext.Window, {
 	, init : function () {
 		this.initStore();
 		this.initTemplate();
+		this.initImageUpload();
 	}
 
 	, initStore : function () {
@@ -139,6 +145,85 @@ Ext.extend(Sbi.worksheet.designer.ChooseImageWindow, Ext.Window, {
 	        '</tpl>',
 	        '<div class="x-clear"></div>'
 		);
+	},
+	
+	initImageUpload: function(){
+		//text field for load the image in the server from the file system
+		this.imgFile = new Ext.form.TextField({
+			inputType:	'file',
+			fieldLabel: LN('sbi.worksheet.designer.image'),
+			//anchor:			'95%',
+			allowBlank: true
+		});
+		
+		
+		this.imgFileFormPanel = new Ext.FormPanel({
+			border: false,
+			columnWidth: 0.8,
+			fileUpload: true,
+			items: [this.imgFile]
+		});
+		
+		//Panel with the load file field
+		this.loadImageFileBrows = new Ext.Panel({
+			height: 45,
+			layout:'column',
+			frame: true,
+			header: false,
+			border: false,
+			padding: '5 5 5 5',
+			items: [
+			        this.imgFileFormPanel ,
+			        {
+			        	xtype:          'button',
+			        	border: 		false,
+			        	handler:		this.uploadImgButtonHandler,
+			        	columnWidth:	0.1,
+			        	scope: 			this,
+			        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
+			        	style:			'padding-left: 5px',
+			        	iconCls:		'uploadImgIcon'
+			        }
+			        ]
+		});
+	},
+	
+	//handler for the upload image button
+	//This button hides the file input field 
+	//and shows the load file combo box
+	uploadImgButtonHandler: function(btn, e) {
+		
+        var form = this.imgFileFormPanel.getForm();
+       // if(form.isValid()){
+            form.submit({
+                url: Sbi.config.serviceRegistry.getBaseUrlStr({}), // a multipart form cannot contain parameters on its main URL;
+                												   // they must POST parameters
+                params: {
+                    ACTION_NAME: 'UPLOAD_WORKSHEET_IMAGE_ACTION'
+                    , SBI_EXECUTION_ID: Sbi.config.serviceRegistry.getExecutionId()
+                },
+                waitMsg: 'Uploading your image...',
+                success: function(form, action) {
+        			Ext.Msg.show({
+     				   title: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'),
+     				   msg: LN('sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.msg'),
+     				   buttons: Ext.Msg.OK,
+     				   icon: Ext.MessageBox.INFO
+     				});
+       				this.store.load();
+                },
+                failure : function (form, action) {
+        			Ext.Msg.show({
+      				   title: 'Error',
+      				   msg: action.result.msg,
+      				   buttons: Ext.Msg.OK,
+      				   icon: Ext.MessageBox.ERROR
+      				});
+                },
+                scope : this
+            });
+        //}
 	}
+
 
 });
