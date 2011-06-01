@@ -96,9 +96,12 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 	grid : null,
 	columnModel : null,
-	store : null,
+	storeMain : null,
 	gridToolbar : null,
 	Record : null,
+	RecordDistinct :  Ext.data.Record.create([
+	                                            {name: 'category', type: 'string'}
+	                                         ]),
 	editor : null
 
 	// public methods
@@ -116,19 +119,20 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 		});
 		
-		  var pagingToolbar = new Ext.PagingToolbar ({ 
-				  store: this.store, 
-				  pageSize:20,
-				  displayInfo :true 
-		   });
 		 
 
 		this.initStore();
-		this.store.load({});
+		this.storeMain.load({});
+		
+		this.store =  new Ext.data.ArrayStore({
+	         fields: ['category']
+	    });
+		this.storeMain.on('load', this.initFilterStore, this);
+		//this.store.load(data);
 		this.initColumnModel();
 		this.initToolbar();
 		this.grid = new Ext.grid.GridPanel( {
-			store : this.store,
+			store : this.storeMain,
 			cm : this.columnModel,
 			tbar : this.gridToolbar,
 			sm : new Ext.grid.RowSelectionModel( {
@@ -146,7 +150,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 	,
 	initToolbar : function() {
-		this.gridToolbar = new Ext.Toolbar( [ {
+		this.gridToolbar = new Ext.Toolbar( [ 
+		{
 			iconCls : 'icon-domain-add',
 			text : 'Add',
 			handler : function() {
@@ -154,7 +159,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				record.set('IS_ACTIVE', 'true');
 				record.set('VALUE_TYPE', 'STRING');
 				this.editor.stopEditing();
-				this.store.insert(0, record);
+				this.storeMain.insert(0, record);
 				this.grid.getView().refresh();
 				this.grid.getSelectionModel().selectRow(0);
 				this.editor.startEditing(0);
@@ -180,10 +185,10 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 							// method: 'GET',
 							success : function(response, options) {
 							 	response = Ext.util.JSON.decode( response.responseText );
-							    var index = this.store.find( "ID", response.ID );
-							    var record =  this.store.getAt(  index ) ;
+							    var index = this.storeMain.find( "ID", response.ID );
+							    var record =  this.storeMain.getAt(  index ) ;
 							    if(record) {
-							    	this.store.remove(record);
+							    	this.storeMain.remove(record);
 									Ext.MessageBox.show({
 							            title: LN('sbi.generic.info'),
 							            msg: LN('sbi.config.manageconfig.delete'),
@@ -200,14 +205,53 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 						});
 					}
 					else{
-						this.store.remove(r);
+						this.storeMain.remove(r);
 					}
 				}
 			},
 			scope : this
-		} ])
+		},
+		{
+			xtype: 'tbspacer', width: 250
+		},
+		{
+			//iconCls : 'icon-domain-filter'
+		},
+		{
+			text: 'Category',
+			xtype: 'combo',
+			displayField:'FilterBy',
+			store: this.store,
+			triggerAction: 'all',			         
+			listeners : {
+				select : function (combo) {
+					var selectedValue = combo.value;
+					this.storeMain.filter("CATEGORY",selectedValue);
+				},
+				scope: this
+			},
+			scope: this
+		},
+			        // begin using the right-justified button container
+			        '->', // same as {xtype: 'tbfill'}, // Ext.toolbar.Fill
+		{
+			xtype    : 'textfield',
+			name     : 'LABEL',
+			emptyText: 'enter search Label'
+		},
+		{
+			xtype: 'tbspacer', width: 50
+		},
+		{
+			xtype    : 'textfield',
+			name     : 'NAME',
+			emptyText: 'enter search Name'
+		},
+		{
+			xtype: 'tbspacer', width: 50
+		}
+		])
 	}
-
 	,
 	initColumnModel : function() {
 		this.columnModel = new Ext.grid.ColumnModel( [ {
@@ -310,7 +354,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			name : 'CATEGORY'
 		} ];
 
-		this.store = new Ext.data.JsonStore( {
+		this.storeMain = new Ext.data.JsonStore( {
 
 			root : 'response',
 			idProperty : 'ID',
@@ -355,5 +399,17 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
             icon: Ext.MessageBox.INFO,
             animEl: 'root-menu'           
            });
+	}	
+
+	, initFilterStore: function() {
+		 var distinctValues; 
+  	   
+		 distinctValues = this.storeMain.collect("CATEGORY", true, true);
+     
+	     for(var i = 0, l = distinctValues.length; i < l; i++) {	
+	    	 var obj = { category : distinctValues[i]};
+		   var record = new this.RecordDistinct(obj);
+		   this.store.add(record);
+	   	 }
 	}
 });
