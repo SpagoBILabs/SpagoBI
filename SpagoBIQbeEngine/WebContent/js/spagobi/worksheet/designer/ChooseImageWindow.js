@@ -60,14 +60,17 @@ Sbi.worksheet.designer.ChooseImageWindow = function(config) {
 	Ext.apply(this, c);
 	
 	// services
-	this.services = this.services || new Array();	
+	this.services = this.services || new Array();
+	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	
 	this.services['getImagesList'] = this.services['getImagesList'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_WORKSHEET_IMAGES_LIST_ACTION'
-		, baseParams: new Object()
+		, baseParams: params
 	});
 	this.services['getImageContent'] = this.services['getImageContent'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_IMAGE_CONTENT_ACTION'
-		, baseParams: new Object()
+		, baseParams: params
 	});
 	
 	this.init();
@@ -126,8 +129,9 @@ Ext.extend(Sbi.worksheet.designer.ChooseImageWindow, Ext.Window, {
 	            '<div class="thumb-wrap" id="{image}" style="float: left; margin: 10px; padding: 5px; width: 100px; height: 110px">',
 	            '	<div class="thumb">',
 	            '		<div style="width:100px;height:100px">',
-	            '			<img src="' + this.services['getImageContent'] + '&FILE_NAME={image}" title="{image}" max-width="100px" max-height="100px">',
+	            '			<img class="image-preview" src="' + this.services['getImageContent'] + '&FILE_NAME={image}" title="{image}">',
 	            //'			<img src="/SpagoBIQbeEngine/temp/{image}" title="{image}" max-width="100px" max-height="100px">',
+	            //'			<img class="image-preview" src="/SpagoBIQbeEngine/GetImageContentServlet?FILE_NAME={image}" title="{image}">',
 	            '		</div>',
 	            '		<span class="x-editable">{image:ellipsis(20)}</span>',
 	            '	</div>',

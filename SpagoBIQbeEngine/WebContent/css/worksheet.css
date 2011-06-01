@@ -252,3 +252,10 @@ From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html
     background: #efefef; /* url(over.gif) repeat-x left top;*/
     /*padding: 4px;*/
 }
+
+#choose-image-window .image-preview {
+	max-width: 100px;
+	max-height: 100px;
+	width: expression(this.width > 100 ? "100px" : true);
+    height: expression(this.height > 100 ? "100px" : true);
+}
