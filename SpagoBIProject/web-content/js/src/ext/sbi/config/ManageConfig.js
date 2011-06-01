@@ -219,10 +219,12 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		},
 		{
 			text: 'Category',
+			title:'Select Category',
 			xtype: 'combo',
 			displayField:'category',
 			store: this.store,
 			mode: 'local',
+			typeAhead: true,
 			triggerAction: 'all',			         
 			listeners : {
 				select : function (combo) {
@@ -237,18 +239,18 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			        '->', // same as {xtype: 'tbfill'}, // Ext.toolbar.Fill
 		{
 			xtype    : 'textfield',
-			name     : 'LABEL',
 			emptyText: 'enter search Label',
-			mode: 'local',
 			triggerAction: 'all',
 			listeners : {
-						select : function (textfield) {
-							var labelInput = textfield.value;
-							this.storeMain.filter("LABEL",labelInput);
-						},
-						scope: this
-					},
-					scope: this
+				change : function (textfield) {
+					var selectedValue = textfield.value;
+					this.storeMain.filter("LABEL",selectedValue);
+					alert(value);
+				},
+				scope: this
+			 },
+			 scope: this
+					
 		},
 		{
 			xtype: 'tbspacer', width: 50
@@ -256,11 +258,11 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		{
 			xtype    : 'textfield',
 			name     : 'NAME',
+			fieldLabel: 'NAME',
 			emptyText: 'enter search Name',
-			mode: 'local',
 			triggerAction: 'all',
 			listeners : {
-				select : function (textfield) {
+				change : function (textfield) {
 					var nameInput = textfield.value;
 					this.storeMain.filter("NAME",namelInput);
 				},
@@ -427,13 +429,15 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 	, initFilterStore: function() {
 		 var distinctValues; 
-  	   
+		 var obj;
+		 var record;
+		 
 		 distinctValues = this.storeMain.collect("CATEGORY", true, true);
      
 	     for(var i = 0, l = distinctValues.length; i < l; i++) {	
-	    	 var obj = { category : distinctValues[i]};
-		   var record = new this.RecordDistinct(obj);
-		   this.store.add(record);
+	    	 obj = { category : distinctValues[i+1]};
+	    	 record = new this.RecordDistinct(obj);
+	    	 this.store.add(record);
 	   	 }
 	}
 });
