@@ -220,8 +220,9 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		{
 			text: 'Category',
 			xtype: 'combo',
-			displayField:'FilterBy',
+			displayField:'category',
 			store: this.store,
+			mode: 'local',
 			triggerAction: 'all',			         
 			listeners : {
 				select : function (combo) {
@@ -237,7 +238,17 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		{
 			xtype    : 'textfield',
 			name     : 'LABEL',
-			emptyText: 'enter search Label'
+			emptyText: 'enter search Label',
+			mode: 'local',
+			triggerAction: 'all',
+			listeners : {
+						select : function (textfield) {
+							var labelInput = textfield.value;
+							this.storeMain.filter("LABEL",labelInput);
+						},
+						scope: this
+					},
+					scope: this
 		},
 		{
 			xtype: 'tbspacer', width: 50
@@ -245,7 +256,17 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		{
 			xtype    : 'textfield',
 			name     : 'NAME',
-			emptyText: 'enter search Name'
+			emptyText: 'enter search Name',
+			mode: 'local',
+			triggerAction: 'all',
+			listeners : {
+				select : function (textfield) {
+					var nameInput = textfield.value;
+					this.storeMain.filter("NAME",namelInput);
+				},
+				scope: this
+			},
+			scope: this
 		},
 		{
 			xtype: 'tbspacer', width: 50
@@ -389,6 +410,9 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		var jsonResponse = Ext.util.JSON.decode(response.responseText);
 		record.set('ID', jsonResponse.ID);
 		record.commit();
+		
+		this.store.removeAll(false);
+		this.initFilterStore();
 		
 		Ext.MessageBox.show({
             title: LN('sbi.generic.info'),
