@@ -9,8 +9,8 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Show master-detail tab
 Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Submit the form and show results into master-detail tables';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save form';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Save form state for next executions';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Show work sheet';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Open the work sheet desiger';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Show worksheet';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Open the worksheet desiger';
 Sbi.locale.ln['sbi.formviewer.crosstabpage.title'] = 'CROSSTAB';
 Sbi.locale.ln['sbi.formviewer.crosstabpage.countfield'] = 'Records count';
 
