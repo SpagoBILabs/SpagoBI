@@ -94,9 +94,10 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	
 		, exportContent: function(){
-			alert('Export crosstab content');
-			alert(this.crosstab.toSource());
-			return this.crosstab;
+			var crosstabData = this.serializeCrossTab(); 
+			var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
+			var exportedCrosstab = {CROSSTAB: crosstabDataEncoded, SHEET_TYPE: 'CROSSTAB'};
+			return exportedCrosstab;
 		}
 
 		, load: function(crosstabDefinition, filters) {
