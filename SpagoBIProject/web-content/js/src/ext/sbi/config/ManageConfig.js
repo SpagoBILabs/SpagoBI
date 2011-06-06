@@ -102,7 +102,10 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	RecordDistinct :  Ext.data.Record.create([
 	                                            {name: 'category', type: 'string'}
 	                                         ]),
-	editor : null
+	editor : null,
+	chooseCategoryCombo : null,
+	filterLabelTextField : null,
+	filterNameTextField : null
 
 	// public methods
 	,
@@ -150,10 +153,43 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 	,
 	initToolbar : function() {
+		
+		this.chooseCategoryCombo = new Ext.form.ComboBox({
+			text: 'Category',
+			emptyText : LN('sbi.config.manageconfig.fields.selectCategory'),
+			displayField:'category',
+			store: this.store,
+			mode: 'local',
+			typeAhead: true,
+			triggerAction: 'all',			         
+			listeners : {
+				select : this.filterMainStore,
+				scope: this
+			}
+		});
+		
+		this.filterLabelTextField = new Ext.form.TextField({
+			emptyText: LN('sbi.config.manageconfig.fields.searchLabel'),
+			enableKeyEvents : true,
+			listeners : {
+				keyup : this.filterMainStore,
+				scope: this
+			 }
+		});
+		
+		this.filterNameTextField = new Ext.form.TextField({
+			emptyText: LN('sbi.config.manageconfig.fields.searchName'),
+			enableKeyEvents : true,
+			listeners : {
+				keyup : this.filterMainStore,
+				scope: this
+			}
+		});
+		
 		this.gridToolbar = new Ext.Toolbar( [ 
 		{
 			iconCls : 'icon-domain-add',
-			text : 'Add',
+			text : LN('sbi.generic.add'),
 			handler : function() {
 				var record = new this.Record();
 				record.set('IS_ACTIVE', 'true');
@@ -167,7 +203,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			scope : this
 		}, {
 			iconCls : 'icon-domain-delete',
-			text : 'Delete',
+			text : LN('sbi.generic.delete'),
 			// disabled: true,
 			handler : function() {
 				this.editor.stopEditing();
@@ -217,64 +253,48 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		{
 			//iconCls : 'icon-domain-filter'
 		},
-		{
-			text: 'Category',
-			title:'Select Category',
-			xtype: 'combo',
-			displayField:'category',
-			store: this.store,
-			mode: 'local',
-			typeAhead: true,
-			triggerAction: 'all',			         
-			listeners : {
-				select : function (combo) {
-					var selectedValue = combo.value;
-					this.storeMain.filter("CATEGORY",selectedValue);
-				},
-				scope: this
-			},
-			scope: this
-		},
+		this.chooseCategoryCombo,
 			        // begin using the right-justified button container
 			        '->', // same as {xtype: 'tbfill'}, // Ext.toolbar.Fill
-		{
-			xtype    : 'textfield',
-			emptyText: 'enter search Label',
-			triggerAction: 'all',
-			listeners : {
-				change : function (textfield) {
-					var selectedValue = textfield.value;
-					this.storeMain.filter("LABEL",selectedValue);
-					alert(value);
-				},
-				scope: this
-			 },
-			 scope: this
-					
-		},
+		this.filterLabelTextField,
 		{
 			xtype: 'tbspacer', width: 50
 		},
+		this.filterNameTextField,
 		{
-			xtype    : 'textfield',
-			name     : 'NAME',
-			fieldLabel: 'NAME',
-			emptyText: 'enter search Name',
-			triggerAction: 'all',
-			listeners : {
-				change : function (textfield) {
-					var nameInput = textfield.value;
-					this.storeMain.filter("NAME",namelInput);
-				},
-				scope: this
-			},
-			scope: this
+			xtype: 'tbspacer', width: 20
 		},
 		{
-			xtype: 'tbspacer', width: 50
+			iconCls : 'icon-clear',
+			handler : this.clearFilterForm,
+			scope : this,
+			tooltip: LN('sbi.config.manageconfig.fields.clearFilter')
 		}
 		])
 	}
+	
+	,
+	clearFilterForm : function () {
+		this.chooseCategoryCombo.clearValue();
+		this.filterLabelTextField.setValue('');
+		this.filterNameTextField.setValue('');
+		this.storeMain.clearFilter(false);
+	}
+	
+	,
+	filterMainStore : function () {
+		var category = this.chooseCategoryCombo.getValue();
+		var label = this.filterLabelTextField.getValue().toUpperCase();
+		var name = this.filterNameTextField.getValue().toUpperCase();
+		var filterFunction = function (record, recordId) {
+			var recordStartLabel = record.data.LABEL.substring(0, label.length).toUpperCase();
+			var recordStartName = record.data.NAME.substring(0, name.length).toUpperCase();
+			var recordCategory = record.data.CATEGORY;
+			return recordStartLabel == label && recordStartName == name && recordCategory == category;
+		};
+		this.storeMain.filterBy(filterFunction);
+	}
+	
 	,
 	initColumnModel : function() {
 		this.columnModel = new Ext.grid.ColumnModel( [ {
@@ -434,10 +454,12 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		 
 		 distinctValues = this.storeMain.collect("CATEGORY", true, true);
      
-	     for(var i = 0, l = distinctValues.length; i < l; i++) {	
-	    	 obj = { category : distinctValues[i+1]};
+	     for (var i = 0, l = distinctValues.length; i < l; i++) {	
+	    	 obj = { category : distinctValues[i]};
 	    	 record = new this.RecordDistinct(obj);
 	    	 this.store.add(record);
 	   	 }
+	     
+	     
 	}
 });

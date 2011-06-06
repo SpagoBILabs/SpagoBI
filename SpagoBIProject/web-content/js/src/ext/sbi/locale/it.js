@@ -626,6 +626,9 @@ Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Descrizione valore';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'Codice Dominio';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Nome Dominio';
 
+//===================================================================
+//CONFIG
+//===================================================================
 Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Etichetta';
 Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Nome';
 Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Descrizione';
@@ -635,3 +638,7 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Tipo';
 Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Dati cancellati correttamente';
 Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Dati salvati correttamente';
 Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categoria';
+Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
+Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
