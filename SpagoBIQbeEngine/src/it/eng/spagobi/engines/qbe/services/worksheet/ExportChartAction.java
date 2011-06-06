@@ -162,6 +162,8 @@ public class ExportChartAction extends AbstractQbeEngineAction {
 		    PdfWriter docWriter = PdfWriter.getInstance(pdfDocument, outputStream);
 		    pdfDocument.open();
 		    Image jpg = Image.getInstance(imageFile.getPath());
+		    fitImage(jpg);
+	    
 		    pdfDocument.add(jpg);
 		    pdfDocument.close();
 		    docWriter.close();
@@ -177,8 +179,24 @@ public class ExportChartAction extends AbstractQbeEngineAction {
 				imageFile.delete();
 			}
 		}
-
-		
+	}
+	
+	/**
+	 * Set the dimension of the image to fit the A4 page size
+	 * The layout of the page should be horizontal 
+	 * @param jpg the image to fit
+	 */
+	private void fitImage(Image jpg){
+	    if(jpg.width()>PageSize.A4.height()){
+	    	float imgScaledWidth = PageSize.A4.height()-100;
+	    	float imgScaledHeight = (imgScaledWidth/jpg.width())*jpg.height();
+	    	jpg.scaleAbsolute(imgScaledWidth,imgScaledHeight);	
+	    }	
+	    if(jpg.height()>PageSize.A4.width()){
+	    	float imgScaledHeight = PageSize.A4.width()-100;
+	    	float imgScaledWidth = (imgScaledHeight/jpg.height())*jpg.width();
+	    	jpg.scaleAbsolute(imgScaledWidth,imgScaledHeight);	
+	    }	
 	}
 
 	private void writeSVG(InputStream inputStream, OutputStream outputStream) throws IOException {
