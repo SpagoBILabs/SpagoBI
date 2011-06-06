@@ -89,11 +89,11 @@ public class CrosstabXLSExporter {
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
 		
 		// build headers for column first ...
-		buildColumnsHeader(sheet, columnsRootChilds, 0, rowsDepth, createHelper);
+		buildColumnsHeader(sheet, columnsRootChilds, 4, rowsDepth + 4, createHelper);
 		// ... then build headers for rows ....
-	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth, 0, createHelper);
+	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + 4, 4, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, data, columnsDepth, rowsDepth, createHelper);
+	    buildDataMatrix(sheet, data, columnsDepth + 4, rowsDepth + 4, createHelper);
 	}
 	
 	
@@ -164,7 +164,7 @@ public class CrosstabXLSExporter {
 		JSONObject rowsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
 		int rowsNumber = rowsHeaders.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
-		for (int i = 0; i < totalRowsNumber; i++) {
+		for (int i = 0; i < totalRowsNumber + 4; i++) {
 			sheet.createRow(i);
 		}
 	}
@@ -180,8 +180,8 @@ public class CrosstabXLSExporter {
 			JSONArray array = (JSONArray) data.get(i);
 			for (int j = 0; j < array.length(); j++) {
 				String text = (String) array.get(j);
-				int rowNum = rowOffset + i;
-				int columnNum = columnOffset + j;
+				int rowNum = rowOffset + i ;
+				int columnNum = columnOffset + j ;
 				Row row = sheet.getRow(rowNum);
 				Cell cell = row.createCell(columnNum);
 				

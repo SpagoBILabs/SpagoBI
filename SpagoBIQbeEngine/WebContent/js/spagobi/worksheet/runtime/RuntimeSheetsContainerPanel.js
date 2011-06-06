@@ -122,7 +122,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		if(contentReady == true){
 			return true;
 		}else{
-			this.sleep(100);
+			this.sleep(300);
 			alert('Exporting');
 			this.sleepUntilContentReady();
 		}

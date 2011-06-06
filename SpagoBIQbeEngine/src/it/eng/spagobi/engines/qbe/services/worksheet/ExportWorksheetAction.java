@@ -24,33 +24,17 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetXLSExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.mime.MimeUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -209,7 +193,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					
 				}				
 				IStatement statement = getStatementForWorksheet(visibleSelectFields, query, optionalUserFiltersJSON);
-				IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(50));
+				IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
 				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
 			}
 		}
