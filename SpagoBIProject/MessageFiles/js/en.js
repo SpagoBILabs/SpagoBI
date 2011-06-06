@@ -617,7 +617,9 @@ Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Value description';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'Domain code';
 Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Domain name';
 
-
+//===================================================================
+//CONFIG 
+//===================================================================
 Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Label';
 Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Description';
@@ -627,3 +629,7 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Type';
 Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Correctly deleted data';
 Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Correctly saved data';
 Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Category';
+Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Clear filter';
+Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Select Category';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Enter search Name';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Label';
