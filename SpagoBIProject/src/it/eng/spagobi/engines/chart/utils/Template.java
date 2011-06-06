@@ -77,6 +77,7 @@ public class Template {
 	
 	private String divWidth = "100%";
 	private String divHeight = "100%";
+	private String theme = "";
 	private boolean firstBlock = true;
 	private JSONArray parametersJSON = null;
 	/**
@@ -157,12 +158,27 @@ public class Template {
 	}
 	
 	/**
+	 * @return the theme
+	 */
+	public String getTheme() {
+		return theme;
+	}
+
+	/**
+	 * @param theme the theme to set
+	 */
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	/**
 	 * @return the firstBlock
 	 */
 	public boolean isFirstBlock() {
 		return firstBlock;
 	}
 
+	
 	/**
 	 * @param firstBlock the firstBlock to set
 	 */
