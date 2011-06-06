@@ -106,6 +106,10 @@ Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {
 	
 	addDesigner: function(state){
 		this.contentPanel.addDesigner(state);
+	},
+	
+	isValid: function(){
+		return this.contentPanel.isValid();
 	}
 	
 });

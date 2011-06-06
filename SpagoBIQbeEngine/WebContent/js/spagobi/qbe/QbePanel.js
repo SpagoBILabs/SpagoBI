@@ -95,21 +95,7 @@ Sbi.qbe.QbePanel = function(config) {
 	items.push(this.queryResultPanel);
 	
 	if (c.displayWorksheetDesignerPanel) {
-		/*
-		var worksheetDesignerConfig = Ext.apply(c.crosstab || {}, {
-			centerConfig: {
-				tools : [{
-				    id: 'gear'
-				    , qtip: LN('sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview')
-				    , handler: function() {
-				    	var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
-				    	this.showWorksheetPreview(worksheetDefinition);
-				    }
-				    , scope: this
-			   }]
-			}
-		});
-		*/
+
 		var worksheetDesignerConfig = c.worksheet || {};
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
 			id : 'WorksheetDesignerPanel'
@@ -124,7 +110,11 @@ Sbi.qbe.QbePanel = function(config) {
 		});
 		
 		this.worksheetPreviewPanel.on('activate', function() {
-			this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+			if(this.worksheetDesignerPanel.isValid()){
+				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);	
+			}else{
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
+			}
 		}, this);
 		
 		items.push(this.worksheetPreviewPanel);
@@ -439,6 +429,9 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	    if (this.worksheetDesignerPanel !== null) {
 			var queries = this.getQueriesCatalogue();
 			var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+			if(!this.worksheetDesignerPanel.isValid()){
+				return null;
+			}
 			var template = Ext.util.JSON.encode({
 				'OBJECT_WK_DEFINITION' : worksheetDefinition,
 				'OBJECT_QUERY' : queries

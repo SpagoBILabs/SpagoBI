@@ -272,5 +272,11 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 			}, this);
 		}
 	}
+	
+	, isValid: function () {
+		return this.designer !== null;
+	}
+	
+	
 
 });
