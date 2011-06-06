@@ -150,3 +150,9 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealr
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
+
+
+//===================================================================
+//Sbi.worksheet.designer.TableDesignerPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Definizione tabella piatta';
