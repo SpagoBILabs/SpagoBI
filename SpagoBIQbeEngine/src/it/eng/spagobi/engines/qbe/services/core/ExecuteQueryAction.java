@@ -170,7 +170,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 //				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
 //				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
 //				
-				Query clonedQuery = query = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
+				Query clonedQuery = null;
+				if(getEngineInstance().getFormState()==null){
+					clonedQuery = query;
+				}else{
+					clonedQuery = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
+				}
+					
 				//hide the fields not present in the request parameter visibleselectfields
 				if(visibleSelectFields!=null && visibleSelectFields.size()>0){
 					List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);

@@ -77,6 +77,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	emptyMsg: null
 	, emptyMsgPanel: null
 	, designer: null
+	, designerState: null //State of the designer.. (see setDesignerState & getDesignerState)
 	
 	, initEmptyMsgPanel: function() {
 		this.emptyMsgPanel = new Ext.Panel({
@@ -213,17 +214,31 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.doLayout();
 	}
 	
+	/**
+	 * Gets the state of the designer.. 
+	 * If the global variable designerState is null the sheet has been 
+	 * rendered and so the state of the designer is taken from  
+	 * this.designer by the method designer.getFormState()...
+	 * If the variable is != null the designer has not been rendered and
+	 * the method returns this.designerState
+	 */
 	, getDesignerState: function () {
-		if (this.designer !== null) {
-			return this.designer.getFormState();
-		} else {
-			return null;
+		
+		if(this.designerState==null){
+			if (this.designer !== null) {
+				return this.designer.getFormState();
+			} else {
+				return null;
+			}
+		}else{
+			return this.designerState;
 		}
 	}
 	
 	, setDesignerState: function (state) {
 		if (this.designer !== null) {
 			this.designer.setFormState(state);
+			this.designerState = null;
 		}
 	}
 	
@@ -248,6 +263,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	        default: 
 	        	alert('Unknown widget!');
 		}
+		this.designerState = state;
 		if (this.rendered) {
 			this.setDesignerState(state);
 		} else {
