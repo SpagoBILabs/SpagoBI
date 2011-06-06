@@ -34,6 +34,7 @@ import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -342,20 +343,9 @@ public class Template {
 							//&& ! value.trim().startsWith("function")//not an array example for categories...
 						){
 						//replace parameters
-						if(value.startsWith("$P{")){
-							String par = value.substring("$P{".length(), value.indexOf("}"));
-							//looks up for parameter name
-							for(int i=0; i<parametersJSON.length(); i++){
-								try {
-									JSONObject objPar = (JSONObject)parametersJSON.get(i);								
-									if(((String)objPar.get("name")).equals(par)){
-										finalValue = objPar.get("value");
-									}
-								} catch (JSONException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							}
+						if(value.contains("$P{")){
+							finalValue = replaceParametersInValue(value);
+							finalValue = "'" + finalValue + "'";
 						}else{
 							//the value is a string!
 							finalValue = "'" + value + "'";
@@ -367,6 +357,39 @@ public class Template {
 			}
 		}
 		return finalValue;
+	}
+	private String replaceParametersInValue(String valueString){
+		StringBuffer sb = new StringBuffer();
+		StringTokenizer st = new StringTokenizer(valueString,"$P{");
+		while(st.hasMoreTokens()){
+			String tok = st.nextToken();
+			if(tok.indexOf("}") != -1){
+				String [] str = tok.split("}");				
+				if(str.length >= 1){
+					String parName = str[0];
+					for(int i=0; i<parametersJSON.length(); i++){
+						try {
+							JSONObject objPar = (JSONObject)parametersJSON.get(i);								
+							if(((String)objPar.get("name")).equals(parName)){
+								String val = ((String)objPar.get("value")).replaceAll("'", "");
+								sb.append(val);
+							}
+						} catch (JSONException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					if(str.length > 1){
+						sb.append(str[1]);
+					}
+					
+				}
+			}else{
+				sb.append(tok);
+			}
+		}
+
+		return sb.toString(); 
 	}
 	/**
 	 * @param sb
