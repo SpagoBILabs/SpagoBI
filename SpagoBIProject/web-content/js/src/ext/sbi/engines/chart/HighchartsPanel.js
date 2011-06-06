@@ -89,30 +89,29 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		this.enableDrillEvents(this.chartConfig);
 		//gets series values and adds theme to the config
 		var seriesNode = [];
-		//looks for js functions
-		var formatter;
+		//looks for js function		
 		if (this.chartConfig.plotOptions){
 			if(this.chartConfig.plotOptions.pie && this.chartConfig.plotOptions.pie.dataLabels){
-				formatter = this.chartConfig.plotOptions.pie.dataLabels.formatter;
+				var formatter = this.getFormatterCode(this.chartConfig.plotOptions.pie.dataLabels.formatter);
+				if (formatter != null){
+					this.chartConfig.plotOptions.pie.dataLabels.formatter = formatter;
+				}
 			}
-			var formatter1;
 			if(this.chartConfig.plotOptions.series){
-				formatter1 = this.chartConfig.plotOptions.series.formatter;
-			}
-			var formatter2;
-			if(this.chartConfig.tooltip){
-				formatter2 = this.chartConfig.tooltip.formatter;
-			}
-			if(formatter){
-				this.chartConfig.plotOptions.pie.dataLabels.formatter = eval('function (){return '+formatter+';}');		
-			}
-			if(formatter1){
-				this.chartConfig.plotOptions.series.formatter = eval('function (){return '+formatter1+';}');	
-			}
-			if(formatter2){
-				this.chartConfig.tooltip.formatter = eval('function (){return '+formatter2+';}');	
+				var formatter = this.getFormatterCode(this.chartConfig.plotOptions.series.formatter);
+				if (formatter != null){
+					this.chartConfig.plotOptions.series.formatter = formatter;
+				}
 			}
 		}
+		//defines tooltip
+		if(this.chartConfig.tooltip){
+			var formatter = this.getFormatterCode(this.chartConfig.tooltip.formatter);
+			if (formatter != null){
+				this.chartConfig.tooltip.formatter = formatter;
+			}
+		}
+
 		//defines series data
 		if (this.chartConfig.series !== undefined ){
 			var serieValue = this.chartConfig.series;
@@ -231,4 +230,35 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}
 	}
 
+	, getFormatterCode: function (formatter){
+		if (formatter === undefined || formatter === null) return null;
+		
+		var result;
+		var formatterCode = "";
+		//alert("formatter: " + formatter);
+		switch (formatter) {
+	        case 'name_percentage':
+	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name +\': \'+ this.y +\' %\';}";
+	        	break;
+	        case 'name':
+	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name ;}";
+	        	break;
+	        case 'percentage':
+	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.y +\' %';}";
+	        	break;
+	        case 'x_y':
+	        	//TODO : internazionalizzare messaggi
+	        	formatterCode = "function (){return \'The value for \<b\>\'+ this.x +\'\</b\> is \<b\>\'+ this.y +\'\</b\>\';}";
+	        	break;
+	        default: 
+	        	formatterCode = "function (){return " + formatter.replace(/"/gi, "\'") + ";}";
+	        	break	       
+		}
+		
+		//formatterCode = 'function (){return '+formatterCode+';}';
+		//alert("formatterCode: " + formatterCode);
+		result = eval(formatterCode);
+		//alert("result: " + result);
+		return result;
+	}
 });

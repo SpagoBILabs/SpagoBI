@@ -63,12 +63,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String divId = (executionId != null)?executionId:"highchartDiv";
 	String divWidth = (String) sbModuleResponse.getAttribute("divWidth");
 	String divHeight = (String) sbModuleResponse.getAttribute("divHeight");
+	String theme = (String) sbModuleResponse.getAttribute("themeHighchart");
 	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
 	System.out.println("template in jsp: " + template.toString());
 	
 	System.out.println("dsPars in jsp: " + dsPars.toString());
+	System.out.println("theme in jsp: " + theme);
 %>
 
 
@@ -77,7 +79,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- ---------------------------------------------------------------------- --%>
 
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
-	
+	<% if (theme != null && !theme.equals("") ) { %>
+		<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/themes/"+theme+".js")%>'></script>
+	<% }%>
 	<script type="text/javascript">
 		var template =  <%= template.toString()  %>;
 		Sbi.config = {};
@@ -117,6 +121,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.dsPars =  <%=dsPars%>;
 			config.dsTransformerType = "<%=dsTransformerType%>";
 			config.divId = "<%=divId%>";
+			config.theme = "<%=theme%>";
 			
 			var chartPanel=  new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
 	
