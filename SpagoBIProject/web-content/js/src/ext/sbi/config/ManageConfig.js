@@ -96,6 +96,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 
 	grid : null,
 	columnModel : null,
+	categorySelected : false,
 	storeMain : null,
 	gridToolbar : null,
 	Record : null,
@@ -163,8 +164,11 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			mode: 'local',
 			typeAhead: true,
 			triggerAction: 'all',			         
-			listeners : {
-				select : this.filterMainStore,
+			listeners: {
+				select: function(){
+					this.categorySelected = true;
+					this.filterMainStore();
+				},
 				scope: this
 			}
 		});
@@ -270,6 +274,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 	,
 	clearFilterForm : function () {
 		this.chooseCategoryCombo.clearValue();
+		this.categorySelected = false;
 		this.filterLabelTextField.setValue('');
 		this.filterNameTextField.setValue('');
 		this.storeMain.clearFilter(false);
@@ -280,11 +285,12 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		var category = this.chooseCategoryCombo.getValue();
 		var label = this.filterLabelTextField.getValue().toUpperCase();
 		var name = this.filterNameTextField.getValue().toUpperCase();
+		var categorySelected = this.categorySelected;
 		var filterFunction = function (record, recordId) {
 			var recordStartLabel = record.data.LABEL.substring(0, label.length).toUpperCase();
 			var recordStartName = record.data.NAME.substring(0, name.length).toUpperCase();
 			var recordCategory = record.data.CATEGORY;
-			return recordStartLabel == label && recordStartName == name && (category == '' || recordCategory == category);
+			return recordStartLabel == label && recordStartName == name && (!categorySelected || recordCategory == category);
 		};
 		this.storeMain.filterBy(filterFunction);
 	}
