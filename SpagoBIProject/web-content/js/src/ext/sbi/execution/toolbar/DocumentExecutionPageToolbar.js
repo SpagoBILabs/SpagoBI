@@ -1133,22 +1133,29 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    , getWorksheetTemplateAsJSONObject: function() {
 		var template = this.getWorksheetTemplateAsString();
+		if(template==null){
+			return null;
+		}
 		var templateJSON = Ext.util.JSON.decode(template);
 		return templateJSON;
   }
    
    , saveWorksheetAs: function () {
 		var templateJSON = this.getWorksheetTemplateAsJSONObject();
-		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
-		var query = templateJSON.OBJECT_QUERY;
-		this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
-			'OBJECT_ID': this.executionInstance.OBJECT_ID,
-			'OBJECT_TYPE': 'WORKSHEET',
-			'OBJECT_WK_DEFINITION': wkDefinition,
-			'OBJECT_QUERY': query,
-			'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-		});
-		this.win_saveDoc.show();
+		if(templateJSON==null){
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
+		}else{
+			var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
+			var query = templateJSON.OBJECT_QUERY;
+			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
+				'OBJECT_ID': this.executionInstance.OBJECT_ID,
+				'OBJECT_TYPE': 'WORKSHEET',
+				'OBJECT_WK_DEFINITION': wkDefinition,
+				'OBJECT_QUERY': query,
+				'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+			});
+			this.win_saveDoc.show();
+		}
    }
    
    , stopWorksheetEditing: function() {

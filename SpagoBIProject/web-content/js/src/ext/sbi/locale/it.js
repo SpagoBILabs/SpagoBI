@@ -642,3 +642,10 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
+
+
+//===================================================================
+//WORKSHEET
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.validation.error.title'] = 'Errore di Validazione';
+Sbi.locale.ln['sbi.worksheet.validation.error.text'] = 'Ci sono degli sheet non validi.. Controlla che ogni sheet abbia un contenuto valido e, se specificati, un footer e header validi'

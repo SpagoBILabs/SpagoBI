@@ -636,3 +636,9 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Enter search Name'
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Label';
 Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Correctly saved data';
 Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Category';
+
+//===================================================================
+//WORKSHEET
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.validation.error.title'] = 'Validation Error';
+Sbi.locale.ln['sbi.worksheet.validation.error.text'] = 'Some sheet is not valid.. Check that all the sheets have a valid content.';
