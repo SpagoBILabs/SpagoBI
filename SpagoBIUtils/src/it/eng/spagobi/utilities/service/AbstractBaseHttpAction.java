@@ -32,6 +32,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 **/
 package it.eng.spagobi.utilities.service;
 
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.dispatching.action.AbstractHttpAction;
+import it.eng.spagobi.container.IBeanContainer;
+import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
+import it.eng.spagobi.container.SpagoBIRequestContainer;
+import it.eng.spagobi.container.SpagoBIResponseContainer;
+import it.eng.spagobi.container.SpagoBISessionContainer;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,15 +56,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.dispatching.action.AbstractHttpAction;
-import it.eng.spagobi.container.IBeanContainer;
-import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
-import it.eng.spagobi.container.SpagoBIRequestContainer;
-import it.eng.spagobi.container.SpagoBIResponseContainer;
-import it.eng.spagobi.container.SpagoBISessionContainer;
 
 
 /**
@@ -235,15 +235,21 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	
 	public void writeBackToClient(File file, IStreamEncoder encoder, 
 			boolean inline, String contentName, String contentType) throws IOException {
+		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		
 		logger.debug("Flushing file [" + file.getName() +"] - " + inline + " - " + contentType);
-		
-		bis = new BufferedInputStream( new FileInputStream(file) );
 		try {
+			fis = new FileInputStream( file );
+			bis = new BufferedInputStream(fis);
 			writeBackToClient(bis, encoder, inline, contentName, contentType);
 		} finally {
-			bis.close();
+			if (bis != null) {
+				bis.close();
+			}
+			if (fis != null) {
+				fis.close();
+			}
 		}		
 	}
 	
@@ -258,14 +264,6 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		getHttpResponse().setContentType( contentType );
 		
 		if(encoder == null) {
-			/*
-			byte[] buf = new byte[1024];
-        int i = 0;
-        while ((i = fis.read(buf)) != -1) {
-            fos.write(buf, 0, i);
-        }
-
-			 */
 			byte[] buf = new byte[1024];
 			while((b = in.read(buf)) != -1) {
 				getHttpResponse().getOutputStream().write(buf, 0, b);
@@ -276,6 +274,7 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 			encoder.encode(in, getHttpResponse().getOutputStream());
 		}
 		getHttpResponse().getOutputStream().flush();
+		getHttpResponse().getOutputStream().close();
 		
 		
 	}
