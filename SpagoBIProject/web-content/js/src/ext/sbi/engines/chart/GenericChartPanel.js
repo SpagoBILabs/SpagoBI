@@ -342,12 +342,23 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     				click: function(ev){
 		        		var params = "";
 		        		for(var i = 0; i< drill.param.length; i++){
-		        			if(drill.param[i].type == 'RELATIVE'){
+		        			if(drill.param[i].type == 'ABSOLUTE'){
 		        				params+= drill.param[i].name +"="+drill.param[i].value;
 		        			
 		    	    			if(i != drill.param.length -1 ){
 		    	    				params+="&";
 		    	    			}
+		        			}
+		        		}
+		        		var relParams = dataConfig.dsPars;
+		        		for(var i = 0; i< drill.param.length; i++){
+		        			if(drill.param[i].type == 'RELATIVE'){
+		        				for(var y =0; y<relParams.length; y++){
+		        					if(relParams[y].name == drill.param[i].name){
+				        				params+= drill.param[i].name +"="+relParams[y].value;
+			    	    				params+="&";
+		        					}
+		        				}
 		        			}
 		        		}
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
