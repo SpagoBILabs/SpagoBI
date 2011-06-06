@@ -163,7 +163,7 @@ public class WorkSheetXLSExporter {
 				impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
 			}
 			int r = 1;
-			int rowend = 2;
+			int rowend = 4;
 			int c = 7;
 			int colend = 9;
 
@@ -205,7 +205,7 @@ public class WorkSheetXLSExporter {
 				impgType = HSSFWorkbook.PICTURE_TYPE_JPEG;
 			}
 			int r = 40;
-			int rowend = 43;
+			int rowend = 44;
 			int c = 7;
 			int colend = 9;
 			
