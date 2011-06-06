@@ -586,7 +586,8 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 			String confName=((String) aConfigSB.getAttribute("name"));
 			String confDesc=((String) aConfigSB.getAttribute("description"));
 			String confIsActive=((String) aConfigSB.getAttribute("isActive"));
-			String confValueCheck=((String) aConfigSB.getAttribute("valueCheck"));			
+			String confValueCheck=((String) aConfigSB.getAttribute("valueCheck"));	
+			String confCategory=((String) aConfigSB.getAttribute("category"));
 			
 
 			SbiConfig aConfig=new SbiConfig();
@@ -595,7 +596,8 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 			aConfig.setName(confName);
 			aConfig.setDescription(confDesc);
 			aConfig.setValueCheck(confValueCheck);
-			aConfig.setSbiDomains(hibDomain);			
+			aConfig.setSbiDomains(hibDomain);
+			aConfig.setCategory(confCategory);
 
 			Boolean value = confIsActive!=null ? Boolean.valueOf(confIsActive) : Boolean.FALSE;
 			aConfig.setIsActive(value.booleanValue());

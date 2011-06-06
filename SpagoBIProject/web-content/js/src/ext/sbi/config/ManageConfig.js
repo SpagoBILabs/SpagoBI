@@ -128,7 +128,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		this.storeMain.load({});
 		
 		this.store =  new Ext.data.ArrayStore({
-	         fields: ['category']
+	         fields: ['value', 'description']
 	    });
 		this.storeMain.on('load', this.initFilterStore, this);
 		//this.store.load(data);
@@ -157,7 +157,8 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		this.chooseCategoryCombo = new Ext.form.ComboBox({
 			text: 'Category',
 			emptyText : LN('sbi.config.manageconfig.fields.selectCategory'),
-			displayField:'category',
+			displayField:'description',
+			valueField: 'value',
 			store: this.store,
 			mode: 'local',
 			typeAhead: true,
@@ -246,25 +247,18 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 				}
 			},
 			scope : this
-		},
-		{
-			xtype: 'tbspacer', width: 250
-		},
-		{
-			//iconCls : 'icon-domain-filter'
-		},
-		this.chooseCategoryCombo,
-			        // begin using the right-justified button container
-			        '->', // same as {xtype: 'tbfill'}, // Ext.toolbar.Fill
-		this.filterLabelTextField,
-		{
-			xtype: 'tbspacer', width: 50
-		},
-		this.filterNameTextField,
-		{
-			xtype: 'tbspacer', width: 20
-		},
-		{
+		}
+		,'->'
+		,{xtype: 'tbtext', text: LN('sbi.config.manageconfig.fields.selectCategory')}
+		, this.chooseCategoryCombo
+		,{xtype: 'tbtext', text: LN('sbi.config.manageconfig.fields.label'), style: {'padding-left': 20}}
+		, this.filterLabelTextField
+		,{xtype: 'tbtext', text: LN('sbi.config.manageconfig.fields.name'), style: {'padding-left': 20}}
+		, this.filterNameTextField
+		,{
+			xtype: 'tbspacer', width: 30
+		}
+		, {
 			iconCls : 'icon-clear',
 			handler : this.clearFilterForm,
 			scope : this,
@@ -290,7 +284,7 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 			var recordStartLabel = record.data.LABEL.substring(0, label.length).toUpperCase();
 			var recordStartName = record.data.NAME.substring(0, name.length).toUpperCase();
 			var recordCategory = record.data.CATEGORY;
-			return recordStartLabel == label && recordStartName == name && recordCategory == category;
+			return recordStartLabel == label && recordStartName == name && (category == '' || recordCategory == category);
 		};
 		this.storeMain.filterBy(filterFunction);
 	}
@@ -453,9 +447,10 @@ Ext.extend(Sbi.config.ManageConfig, Ext.Panel, {
 		 var record;
 		 
 		 distinctValues = this.storeMain.collect("CATEGORY", true, true);
-     
+		 
 	     for (var i = 0, l = distinctValues.length; i < l; i++) {	
-	    	 obj = { category : distinctValues[i]};
+	    	 var desc = distinctValues[i] === ''? 'NULL': distinctValues[i];
+	    	 obj = { description : desc, value : distinctValues[i]};
 	    	 record = new this.RecordDistinct(obj);
 	    	 this.store.add(record);
 	   	 }
