@@ -1,6 +1,8 @@
 Ext.ns("Sbi.locale");
 
 Sbi.locale.ln['sbi.worksheet.title'] = 'Worksheet';
+Sbi.locale.ln['sbi.worksheet.validation.error.title'] = 'Errore di Validazione';
+Sbi.locale.ln['sbi.worksheet.validation.error.text'] = 'Ci sono degli sheet non validi.. Controlla che ogni sheet abbia un contenuto valido e, se specificati, un footer e header validi'
 
 //===================================================================
 //Sbi.worksheet.designer.WorksheetDesignerPanel

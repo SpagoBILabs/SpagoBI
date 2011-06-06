@@ -190,9 +190,9 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	
 	isValid: function(){
 		var valid= true;
-		var title = this.titlePanel.getValue();
-		valid = valid && title!=null && title!='' ;
-		valid = valid && this.imgTriggerField.isValid(false);
+//		var title = this.titlePanel.getValue();
+//		valid = valid && title!=null && title!='' ;
+//		valid = valid && this.imgTriggerField.isValid(false);
 		return valid;
 	},
 	

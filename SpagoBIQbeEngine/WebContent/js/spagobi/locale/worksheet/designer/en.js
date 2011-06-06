@@ -2,6 +2,9 @@ Ext.ns("Sbi.locale");
 
 
 Sbi.locale.ln['sbi.worksheet.title'] = 'Worksheet';
+Sbi.locale.ln['sbi.worksheet.validation.error.title'] = 'Validation Error';
+Sbi.locale.ln['sbi.worksheet.validation.error.text'] = 'Some sheet is not valid.. Check that all the sheets have a valid content.';
+
 
 //===================================================================
 //Sbi.worksheet.designer.WorksheetDesignerPanel

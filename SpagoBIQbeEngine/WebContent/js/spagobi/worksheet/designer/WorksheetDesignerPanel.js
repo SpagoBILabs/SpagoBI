@@ -117,5 +117,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		return worksheetDefinition;
 	}
 	
+	, isValid: function () {
+		return this.sheetsContainerPanel.isValid();
+	}
+	
 	
 });
