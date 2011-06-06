@@ -155,3 +155,8 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealr
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+
+//===================================================================
+//Sbi.worksheet.designer.TableDesignerPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Flat table designer';
