@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,19 +78,20 @@ public class Template {
 	private String divWidth = "100%";
 	private String divHeight = "100%";
 	private boolean firstBlock = true;
-	
+	private JSONArray parametersJSON = null;
 	/**
 	 * Returns a JSONObject with the input configuration (xml format). 
 	 * 
 	 * @param xmlTemplate the template in xml language
+	 * @param
 	 * 
 	 * @return JSONObject the same template in json format (because highcharts uses json format)
 	 */
-	public JSONObject getJSONTemplateFromXml(SourceBean xmlTemplate) throws JSONException {
+	public JSONObject getJSONTemplateFromXml(SourceBean xmlTemplate, JSONArray parsJSON) throws JSONException {
 		JSONObject toReturn = null;
 	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 	    OutputStreamWriter ow = new OutputStreamWriter(out);
-
+	    parametersJSON = parsJSON;
 	    try{
 		    //the begin of all...
 		    ow.write("{\n");
@@ -323,8 +325,25 @@ public class Template {
 							&& ! value.startsWith("[")//not an array example for categories...
 							//&& ! value.trim().startsWith("function")//not an array example for categories...
 						){
-						//the value is a string!
-						finalValue = "'" + value + "'";
+						//replace parameters
+						if(value.startsWith("$P{")){
+							String par = value.substring("$P{".length(), value.indexOf("}"));
+							//looks up for parameter name
+							for(int i=0; i<parametersJSON.length(); i++){
+								try {
+									JSONObject objPar = (JSONObject)parametersJSON.get(i);								
+									if(((String)objPar.get("name")).equals(par)){
+										finalValue = objPar.get("value");
+									}
+								} catch (JSONException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
+						}else{
+							//the value is a string!
+							finalValue = "'" + value + "'";
+						}
 					}else{
 						//the value is not a string
 						finalValue = value;

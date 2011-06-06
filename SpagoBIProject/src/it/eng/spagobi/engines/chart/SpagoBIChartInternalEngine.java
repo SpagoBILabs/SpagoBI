@@ -293,7 +293,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				//Map parametersMap = getParameters(obj);
 				//JSONObject parsJSON = new JSONObject(parametersMap);
 				//converts the template from xml to json format				
-				JSONObject template = templateUtil.getJSONTemplateFromXml( getTemplate(obj.getId().toString())); 
+				JSONObject template = templateUtil.getJSONTemplateFromXml( getTemplate(obj.getId().toString()), parsJSON); 
 				//sets the response
 				response.setAttribute("template", template);
 				response.setAttribute("divWidth", (templateUtil.getDivWidth()==null)?"100%":templateUtil.getDivWidth());

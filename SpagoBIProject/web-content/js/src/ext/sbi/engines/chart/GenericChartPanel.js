@@ -343,7 +343,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     				params+= drill.param[i].name +"="+drill.param[i].value;
     			
 	    			if(i != drill.param.length -1 ){
-	    				params+="&amp;";
+	    				params+="&";
 	    			}
     			}
     		}
@@ -355,7 +355,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		    				params+= drill.param[i].name +"="+ev.point.category;
     		    			
     			    			if(i != drill.param.length -1 ){
-    			    				params+="&amp;";
+    			    				params+="&";
     			    			}
     		    			}
     		    			
@@ -365,7 +365,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		    				params+= drill.param[i].name +"="+ev.point.y;
     		    			
     			    			if(i != drill.param.length -1 ){
-    			    				params+="&amp;";
+    			    				params+="&";
     			    			}
     		    			}
     		    			
