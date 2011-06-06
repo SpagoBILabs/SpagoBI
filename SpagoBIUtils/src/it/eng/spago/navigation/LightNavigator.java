@@ -25,11 +25,13 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.tracing.TracerSingleton;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LightNavigator {
 
-	// ArrayList used as stack (last-in-first-out)
-	private ArrayList list = new ArrayList();
+	// Thread-safe list used as stack (last-in-first-out)
+	private List list = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * Adds a <code>MarkedRequest</code> element to the stack.
@@ -60,8 +62,10 @@ public class LightNavigator {
 			throw new NavigationException ("Index of the required request is not correct.");
 		}
 		MarkedRequest markedRequest = (MarkedRequest) list.get(i);
-		for (int j = 0; j < i; j++) {
-			list.remove(0);
+		synchronized (list) {
+			for (int j = 0; j < i; j++) {
+				list.remove(0);
+			}
 		}
 		return markedRequest;
 	}
@@ -84,10 +88,12 @@ public class LightNavigator {
 			"replaceLast: the stack is empty: it is not possible to substitute the request.");
 			throw new NavigationException ("The stack is empty: it is not possible to substitute the request.");
 		}
-		// removes the most recent request
-		list.remove(0);
-		// adds the request at input in the first position
-		list.add(0, markedRequest);
+		synchronized (list) {
+			// removes the most recent request
+			list.remove(0);
+			// adds the request at input in the first position
+			list.add(0, markedRequest);
+		}
 	}
 	
 	/**
@@ -95,7 +101,9 @@ public class LightNavigator {
 	 *
 	 */
 	public void reset() {
-		list = new ArrayList();
+		synchronized (list) {
+			list = Collections.synchronizedList(new ArrayList());
+		}
 	}
 	
 	/**
@@ -113,32 +121,37 @@ public class LightNavigator {
 		}
 		MarkedRequest toReturn = null;
 		int i = 1; 
-		while (i <= list.size()) {
-			MarkedRequest markedRequest = (MarkedRequest) list.get(i - 1);
-			if (mark.equalsIgnoreCase(markedRequest.getMark())) {
-				toReturn = markedRequest;
-				break;
+		synchronized (list) {
+			while (i <= list.size()) {
+				MarkedRequest markedRequest = (MarkedRequest) list.get(i - 1);
+				if (mark.equalsIgnoreCase(markedRequest.getMark())) {
+					toReturn = markedRequest;
+					break;
+				}
+				i++;
 			}
-			i++;
-		}
-		if (toReturn == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR, "LightNavigator: " +
-				"goBackToMark: Request with mark '" + mark + "' not found.");
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "The requests stack is:\n" + this.toString());
-			throw new NavigationException ("Request with mark '" + mark + "' not found.");
-		}
-		for (int j = 0; j < i - 1; j++) {
-			list.remove(0);
+			if (toReturn == null) {
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR, "LightNavigator: " +
+					"goBackToMark: Request with mark '" + mark + "' not found.");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "The requests stack is:\n" + this.toString());
+				throw new NavigationException ("Request with mark '" + mark + "' not found.");
+			}
+			for (int j = 0; j < i - 1; j++) {
+				list.remove(0);
+			}
 		}
 		return toReturn;
 	}
 
 	public String toString () {
 		String toReturn = "";
-		for (int i = 0 ; i < list.size(); i++) {
-			toReturn += "Position " + i + ":\n"; 
-			toReturn += list.get(i).toString();
-			toReturn += "\n-------------------------------------------\n";
+		synchronized (list) {
+			for (int i = 0 ; i < list.size(); i++) {
+				toReturn += "Position " + i + ":\n";
+				Object obj = list.get(i);
+				toReturn += obj != null ? list.get(i).toString() : "null";
+				toReturn += "\n-------------------------------------------\n";
+			}
 		}
 		return toReturn;
 	}

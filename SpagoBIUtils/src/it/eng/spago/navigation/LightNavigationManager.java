@@ -104,7 +104,8 @@ public class LightNavigationManager {
 			if ("true".equalsIgnoreCase(lightNavigatorDisabled)) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "LightNavigator disabled; " +
 						"return from the method controlNavigation without any modifications to the original request.");
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "The requests stack is not modified:\n" + lightNavigator.toString());
+				//TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "The requests stack is not modified:\n" + lightNavigator.toString());
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "The requests stack is not modified.");
 				return serviceRequest;
 			}
 
