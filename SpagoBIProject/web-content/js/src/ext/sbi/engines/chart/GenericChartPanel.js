@@ -337,18 +337,19 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	var drill = dataConfig.drill;
     	if(drill != null && drill != undefined){
     		var doc = drill.document;
-    		var params = "";
-    		for(var i = 0; i< drill.param.length; i++){
-    			if(drill.param[i].type == 'RELATIVE'){
-    				params+= drill.param[i].name +"="+drill.param[i].value;
-    			
-	    			if(i != drill.param.length -1 ){
-	    				params+="&";
-	    			}
-    			}
-    		}
+
     		var event = {
     				click: function(ev){
+		        		var params = "";
+		        		for(var i = 0; i< drill.param.length; i++){
+		        			if(drill.param[i].type == 'RELATIVE'){
+		        				params+= drill.param[i].name +"="+drill.param[i].value;
+		        			
+		    	    			if(i != drill.param.length -1 ){
+		    	    				params+="&";
+		    	    			}
+		        			}
+		        		}
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'CATEGORY'){
