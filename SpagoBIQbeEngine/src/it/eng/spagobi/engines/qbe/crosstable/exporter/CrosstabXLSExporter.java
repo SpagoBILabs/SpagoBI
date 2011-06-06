@@ -66,9 +66,14 @@ public class CrosstabXLSExporter {
 	public Workbook export(JSONObject json) throws JSONException {
 		
 		Workbook wb = new HSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
-	    Sheet sheet = wb.createSheet("new sheet");
+		Sheet sheet = wb.createSheet("new sheet");
 
+		CreationHelper createHelper = wb.getCreationHelper();
+	    fillSheet(sheet, json, createHelper);		
+		return wb;
+	}
+	
+	public void fillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
     	calculateDescendants(json);
@@ -89,8 +94,6 @@ public class CrosstabXLSExporter {
 	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth, 0, createHelper);
 	    // then put the matrix data
 	    buildDataMatrix(sheet, data, columnsDepth, rowsDepth, createHelper);
-		
-		return wb;
 	}
 	
 	

@@ -138,9 +138,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				hqlQuery = statement.getQueryString();
 				logger.debug("Executable HQL query: [" + hqlQuery + "]");
 						
-				//queryRewriter =  new HQL2SQLStatementRewriter( session );
-				//sqlQuery = queryRewriter.rewrite(hqlQuery);
-	//			sqlQuery = statement.getSqlQueryString();
 			} else {
 				// case of FormEngine
 				

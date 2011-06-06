@@ -28,6 +28,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.query.serializer.SerializerFactory;
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
@@ -167,37 +168,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				
 			if(jsonVisibleSelectFields!=null || optionalUserFilters!=null){
 				
-//				JSONObject queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
-//				Query clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
-//				
-				Query clonedQuery = null;
-				if(getEngineInstance().getFormState()==null){
-					clonedQuery = query;
-				}else{
-					clonedQuery = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
-				}
-					
-				//hide the fields not present in the request parameter visibleselectfields
-				if(visibleSelectFields!=null && visibleSelectFields.size()>0){
-					List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);
-					for(int i=0; i<selectedField.size(); i++){
-						String alias = selectedField.get(i).getAlias();
-						if(!visibleSelectFields.contains(alias)){
-							selectedField.get(i).setVisible(false);
-							visibleSelectFields.remove(alias);
-						}else{
-							selectedField.get(i).setVisible(true);
-						}
-					}
-				}
-				
-
-				if(optionalUserFilters!=null){			
-					applyOptionalFilters(clonedQuery, optionalUserFilters);			
-				}
-				
-				statement = getDataSource().createStatement( clonedQuery );
-				
+				statement = getStatementForWorksheet(visibleSelectFields, query, optionalUserFilters);			
 				/*-----------------------------------------------------------------
 				* END part added to apply some projection and selection in the query
 				*------------------------------------------------------------------*/
@@ -209,58 +180,11 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				statement.setParameters( getEnv() );
 			}
 
-			
-			
-
-
-			
-			String hqlQuery = statement.getQueryString();
-			//String sqlQuery = statement.getSqlQueryString();
-			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
-			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
-			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
-			
-			
-			try {
-				logger.debug("Executing query ...");
-				dataSet = QbeDatasetFactory.createDataSet(statement);
-				dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
-				
-				Map userAttributes = new HashMap();
-				UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-				Iterator it = profile.getUserAttributeNames().iterator();
-				while(it.hasNext()) {
-					String attributeName = (String)it.next();
-					Object attributeValue = profile.getUserAttribute(attributeName);
-					userAttributes.put(attributeName, attributeValue);
-				}
-				dataSet.addBinding("attributes", userAttributes);
-				dataSet.addBinding("parameters", this.getEnv());
-				dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
-				
-				dataStore = dataSet.getDataStore();
-				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
-			} catch (Exception e) {
-				logger.debug("Query execution aborted because of an internal exceptian");
-				SpagoBIEngineServiceException exception;
-				String message;
-				
-				message = "An error occurred in " + getActionName() + " service while executing query: [" +  statement.getQueryString() + "]";				
-				exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-				exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
-				exception.addHint("Check connection configuration");
-				exception.addHint("Check the qbe jar file");
-				
-				throw exception;
-			}
-			logger.debug("Query executed succesfully");
+			dataStore = executeQuery(statement, start, limit);
 			
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
-			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
+			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData cannot be null");
 			logger.debug("Total records: " + resultNumber);			
-			
 			
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
@@ -291,6 +215,85 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}	
 	}
 	
+	public IStatement getStatementForWorksheet(List<String> visibleSelectFields, Query query, 
+			JSONObject optionalUserFilters) throws SerializationException, JSONException{
+		
+		IStatement statement = null;
+
+		Query clonedQuery = null;
+		if(getEngineInstance().getFormState()==null){
+			clonedQuery = query;
+		}else{
+			clonedQuery = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
+		}
+		if(visibleSelectFields!=null && visibleSelectFields.size()>0){
+			List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);
+			for(int i=0; i<selectedField.size(); i++){
+				String alias = selectedField.get(i).getAlias();
+				if(!visibleSelectFields.contains(alias)){
+					selectedField.get(i).setVisible(false);
+					visibleSelectFields.remove(alias);
+				}else{
+					selectedField.get(i).setVisible(true);
+				}
+			}
+		}	
+
+		if(optionalUserFilters!=null){			
+			applyOptionalFilters(clonedQuery, optionalUserFilters);			
+		}
+		
+		statement = getDataSource().createStatement( clonedQuery );
+		return statement;
+		
+	}
+	
+	public IDataStore executeQuery(IStatement statement, Integer start, Integer limit){
+		IDataStore dataStore = null;
+		IDataSet dataSet = null;
+		String hqlQuery = statement.getQueryString();
+		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
+		logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
+		boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+		logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);	
+		
+		try {
+			logger.debug("Executing query ...");
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+			
+			Map userAttributes = new HashMap();
+			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			Iterator it = profile.getUserAttributeNames().iterator();
+			while(it.hasNext()) {
+				String attributeName = (String)it.next();
+				Object attributeValue = profile.getUserAttribute(attributeName);
+				userAttributes.put(attributeName, attributeValue);
+			}
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
+			
+			dataStore = dataSet.getDataStore();
+			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
+		} catch (Exception e) {
+			logger.debug("Query execution aborted because of an internal exceptian");
+			SpagoBIEngineServiceException exception;
+			String message;
+			
+			message = "An error occurred in " + getActionName() + " service while executing query: [" +  statement.getQueryString() + "]";				
+			exception = new SpagoBIEngineServiceException(getActionName(), message, e);
+			exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
+			exception.addHint("Check connection configuration");
+			exception.addHint("Check the qbe jar file");
+			
+			throw exception;
+		}
+		logger.debug("Query executed succesfully");
+		return dataStore;
+	}
 	
 	/**
 	 * Get the query id from the request
