@@ -93,6 +93,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DOC_UPDATE)) {
 				updateWorksheetTemplate();
 			}
+		} catch (SpagoBIServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error while updating document's template", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.saveError", e);
