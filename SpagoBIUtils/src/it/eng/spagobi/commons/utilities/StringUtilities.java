@@ -777,6 +777,7 @@ public class StringUtilities {
 		// check if numbers are number otherwise throw exception
 		try{
 			if(parType.equalsIgnoreCase("NUMBER")){
+				replacement = replacement.replaceAll("\'", "");
 				Double double1 = Double.valueOf(replacement); 
 			}
 		}
