@@ -344,7 +344,13 @@ public class Template {
 						){
 						//replace parameters
 						if(value.contains("$P{")){
-							finalValue = replaceParametersInValue(value);
+							finalValue = replaceParametersInValue(value, "$P{");
+							finalValue = "'" + finalValue + "'";
+						}else if(value.contains("$F{")){
+							finalValue = replaceParametersInValue(value, "$F{");
+							finalValue = "'" + finalValue + "'";
+						}else if(value.contains("${")){
+							finalValue = replaceParametersInValue(value, "${");
 							finalValue = "'" + finalValue + "'";
 						}else{
 							//the value is a string!
@@ -358,9 +364,9 @@ public class Template {
 		}
 		return finalValue;
 	}
-	private String replaceParametersInValue(String valueString){
+	private String replaceParametersInValue(String valueString, String suffix){
 		StringBuffer sb = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(valueString,"$P{");
+		StringTokenizer st = new StringTokenizer(valueString,suffix);
 		while(st.hasMoreTokens()){
 			String tok = st.nextToken();
 			if(tok.indexOf("}") != -1){
@@ -375,8 +381,7 @@ public class Template {
 								sb.append(val);
 							}
 						} catch (JSONException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							logger.error("Error while replacing parameters in value: " + e1.getMessage());
 						}
 					}
 					if(str.length > 1){
