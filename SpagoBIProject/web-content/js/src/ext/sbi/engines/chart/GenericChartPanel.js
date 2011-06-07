@@ -343,7 +343,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		        		var params = "";
 		        		for(var i = 0; i< drill.param.length; i++){
 		        			if(drill.param[i].type == 'ABSOLUTE'){
-		        				params+= drill.param[i].name +"="+drill.param[i].value;
+		        				params+= drill.param[i].name +"='"+drill.param[i].value+"'";
 		        			
 		    	    			if(i != drill.param.length -1 ){
 		    	    				params+="&";
@@ -355,7 +355,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		        			if(drill.param[i].type == 'RELATIVE'){
 		        				for(var y =0; y<relParams.length; y++){
 		        					if(relParams[y].name == drill.param[i].name){
-				        				params+= drill.param[i].name +"="+relParams[y].value;
+				        				params+= drill.param[i].name +"="+relParams[y].value+"";
 			    	    				params+="&";
 		        					}
 		        				}
@@ -364,7 +364,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'CATEGORY'){
-    		    				params+= drill.param[i].name +"="+ev.point.category;
+    		    				params+= drill.param[i].name +"='"+ev.point.category+"'";
     		    			
     			    			if(i != drill.param.length -1 ){
     			    				params+="&";
@@ -374,13 +374,19 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		    		}
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'SERIE'){
-    		    				params+= drill.param[i].name +"="+ev.point.y;
+    		    				params+= drill.param[i].name +"='"+ev.point.y+"'";
     		    			
     			    			if(i != drill.param.length -1 ){
     			    				params+="&";
     			    			}
     		    			}
     		    			
+    		    		}
+    		    		if(params.length != 0){
+	    		    		var atpos = params.lastIndexOf("&", params.length-1);
+	    		    		if(params.lastIndexOf("&", params.length-1) != -1){
+	    		    			params = params.substring(0, atpos);
+	    		    		}
     		    		}
     					parent.execCrossNavigation("iframe_"+dataConfig.docLabel, doc, params);
     		    		//parent.sendMessage( doc, params):
