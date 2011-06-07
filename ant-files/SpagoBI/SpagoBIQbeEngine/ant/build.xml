@@ -258,7 +258,7 @@
 		    	<file name='./spagobi/formviewer/SaveFormValueSubObject.js'/>
 		    	<file name='./spagobi/formviewer/DataStorePanel.js'/>
 		    	<file name='./spagobi/formviewer/ResultsPage.js'/>
-		    	<file name='./spagobi/formviewer/CrosstabPage.js'/>
+		    	<file name='./spagobi/formviewer/WorksheetPage.js'/>
 		    	<file name='./spagobi/formviewer/FormEnginePanel.js'/>
 
 		    	<file name='./spagobi/formtemplate/DocumentTemplateBuilder.js'/>
@@ -303,7 +303,8 @@
 		    	<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js'/>
 		    	<file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js'/>
 		    	<file name='./spagobi/worksheet/designer/TableDesignerPanel.js'/>
-
+		    	<file name='./spagobi/worksheet/designer/QueryFieldsContainerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/SheetFilterContentPanel.js'/>
 
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js'/>
