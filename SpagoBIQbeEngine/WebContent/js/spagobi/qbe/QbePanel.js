@@ -90,6 +90,9 @@ Sbi.qbe.QbePanel = function(config) {
 			id : 'QueryBuilderPanel'
 		}));
 		items.push(this.queryEditorPanel);
+	} else {
+		// if query designer panel is not displayed, put the queries into 'queries' local variable
+		this.queries = c.queries;
 	}
 	
 	items.push(this.queryResultPanel);
@@ -118,12 +121,6 @@ Sbi.qbe.QbePanel = function(config) {
 		}, this);
 		
 		items.push(this.worksheetPreviewPanel);
-		// if user is not a power user, show crosstab on first tab render event
-//		if (!c.displayWorksheetDesignerPanel) {
-//			this.worksheetPreviewPanel.on('render', function() {
-//				this.showWorksheetPreview(null, c.worksheet.worksheetTemplate );
-//			}, this);
-//		}
 	}
 	
 	if (c.displayFormBuilderPanel && c.formbuilder !== undefined && c.formbuilder.template !== undefined) {
@@ -211,6 +208,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
     , queryEditorPanel: null
     , worksheetDesignerPanel: null
     , worksheetPreviewPanel: null
+    , queries: null // used as a queries repository variable when the queryEditorPanel is not displayed
     , tabs: null
     , query: null
    
@@ -227,7 +225,13 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}
 	
 	, getQueries: function() {
-		return this.queryEditorPanel.getQueries();
+		if (this.queryEditorPanel == null) {
+			// query designer panel not displayed
+			return this.queries;
+		} else {
+			// query designer panel displayed
+			return this.queryEditorPanel.getQueries();
+		}
 	}
 	
     // private methods
@@ -337,16 +341,6 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
   	
 	, saveAnalysisState: function(meta, callback, scope) {
 		
-		// TODO think about saving worksheet definition into customized view
-//		var crosstabDefinition =  this.worksheetDesignerPanel.getCrosstabDefinition();
-//		var crosstabCalculatedFields =  this.worksheetPreviewPanel.getCalculatedFields();
-//		
-//		crosstabDefinition.calculatedFields = crosstabCalculatedFields;
-//		
-//		var params = Ext.apply({
-//			crosstabDefinition: Ext.util.JSON.encode(crosstabDefinition)
-//		}, meta);
-		
 		var params = Ext.apply({}, meta);
 		
 		var doSave = function() {
@@ -391,7 +385,8 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		this.queryEditorPanel.setParameters(parameters);
 	}
 	
-	, getQueriesCatalogue: function () {
+	, 
+	getQueriesCatalogue: function () {
 		var toReturn = {};
 		toReturn.catalogue = {};
 		toReturn.catalogue.queries = this.getQueries();

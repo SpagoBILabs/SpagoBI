@@ -49,6 +49,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="java.util.Iterator"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.services.proxy.SbiDocumentServiceProxy"%>
+<%@page import="it.eng.qbe.query.serializer.SerializerFactory"%>
+<%@page import="it.eng.qbe.query.Query"%>
+<%@page import="org.json.JSONArray"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -163,6 +166,18 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    });
 	
 	      	var qbeConfig = {};
+	      	
+	      	<%
+	      	JSONArray queries = new JSONArray();
+			Iterator queriesIt = qbeEngineInstance.getQueryCatalogue().getAllQueries(false).iterator();
+			while (queriesIt.hasNext()) {
+				Query query = (Query) queriesIt.next();
+				JSONObject queryJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(query, qbeEngineInstance.getDataSource(), locale);
+				queries.put(queryJSON);
+			}
+	      	%>
+	      	qbeConfig.queries = <%= queries %>
+	      	
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
@@ -209,7 +224,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	       		// if user is a power user, instantiate and show also the QueryBuilderPanel
 	       		qbeConfig.displayQueryBuilderPanel = Sbi.user.isPowerUser;
-	       		qbeConfig.displayWorksheetDesignerPanel = Sbi.user.isPowerUser;
+	       		//qbeConfig.displayWorksheetDesignerPanel = Sbi.user.isPowerUser;
 	       		qbeConfig.displayFormBuilderPanel = false;
 	       		
 	           	qbe = new Sbi.qbe.QbePanel(qbeConfig);
