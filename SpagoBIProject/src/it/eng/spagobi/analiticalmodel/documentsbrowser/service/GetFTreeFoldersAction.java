@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,7 +36,11 @@ import org.json.JSONObject;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -84,6 +89,10 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 				//getting all I° level folders
 				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
 					folders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);
+					if (!isPersonalFolderIncluded((UserProfile) profile, folders)) {
+						LowFunctionality userFunct = getPersonalFolder((UserProfile) profile, folders);
+						folders.add(userFunct);
+					}
 				}else{
 					folders = lfDao.loadUserFunctionalities(null, false, profile);	
 				}
@@ -113,6 +122,29 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 		}
 	}
 	
+	private LowFunctionality getPersonalFolder(UserProfile profile, List folders) {
+		String username = (String) profile.getUserName();
+		LowFunctionality userFunct = new LowFunctionality();
+	    userFunct.setCode("ufr_" + username);
+	    userFunct.setDescription("User Functionality Root");
+	    userFunct.setName(username);
+	    userFunct.setPath("/" + username);
+	    userFunct.setId(-1);
+	    return userFunct;
+	}
+
+	private boolean isPersonalFolderIncluded(UserProfile profile, List folders) {
+		String username = (String) profile.getUserName();
+		Iterator it = folders.iterator();
+		while (it.hasNext()) {
+			LowFunctionality folder = (LowFunctionality) it.next();
+			if (folder.getPath().equals("/" + username)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private JSONObject createNode(String id, String text, String type, JSONArray children) {
 		JSONObject node = new JSONObject();
 		try {
