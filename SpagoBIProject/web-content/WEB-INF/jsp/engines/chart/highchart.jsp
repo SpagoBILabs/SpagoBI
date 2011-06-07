@@ -67,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
+	String docLabel = (String)sbModuleResponse.getAttribute("documentLabel");
 	System.out.println("template in jsp: " + template.toString());
 	
 	System.out.println("dsPars in jsp: " + dsPars.toString());
@@ -121,6 +122,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.dsPars =  <%=dsPars%>;
 			config.dsTransformerType = "<%=dsTransformerType%>";
 			config.divId = "<%=divId%>";
+			config.docLabel ="<%=docLabel%>";
 			config.theme = "<%=theme%>";
 			
 			var chartPanel=  new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
