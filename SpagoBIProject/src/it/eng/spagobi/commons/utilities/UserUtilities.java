@@ -25,6 +25,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Role;
@@ -37,6 +38,8 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -198,6 +201,48 @@ public class UserUtilities {
 	return exists;
     }
 
+    /**
+     * User functionality root exists.
+     * 
+     * @param userProfile the user profile
+     * 
+     * @return true, if successful
+     * 
+     * @throws Exception the exception
+     */
+    public static boolean userFunctionalityRootExists(UserProfile userProfile) {
+    	Assert.assertNotNull(userProfile, "User profile in input is null");
+    	boolean toReturn = false;
+    	String userName = (String) userProfile.getUserName();
+    	try {
+    		toReturn = userFunctionalityRootExists(userName);
+    	} catch (Exception e) {
+    		throw new SpagoBIRuntimeException("Cannot find if user functionality exists for user [" + userName + "]", e);
+    	}
+    	return toReturn;
+    }
+    
+    /**
+     * User functionality root exists.
+     * 
+     * @param userProfile the user profile
+     * 
+     * @return true, if successful
+     * 
+     * @throws Exception the exception
+     */
+    public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile) {
+    	Assert.assertNotNull(userProfile, "User profile in input is null");
+    	String userName = (String) userProfile.getUserName();
+    	LowFunctionality lf = null;
+    	try {
+    		lf = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userName, false);
+    	} catch (Exception e) {
+    		throw new SpagoBIRuntimeException("Cannot load user functionality for user [" + userName + "]", e);
+    	}
+    	return lf;
+    }
+    
     /**
      * Creates the user functionality root.
      * 
@@ -384,7 +429,4 @@ public class UserUtilities {
 		return virtualRole;
 	}
 
-	
-
-	
 }

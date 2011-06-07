@@ -26,12 +26,14 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -149,8 +151,20 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}	
 			List<Integer> functionalities = new ArrayList<Integer>();
 			for(int i=0; i< functsArrayJSon.length(); i++){
-				String funcId = functsArrayJSon.getString(i);
-				functionalities.add(new Integer(funcId));
+				String funcIdStr = functsArrayJSon.getString(i);
+				Integer funcId = new Integer(funcIdStr);
+				if (funcId.intValue() == -1) {
+					// -1 stands for personal folder: check is it exists
+					boolean exists = UserUtilities.userFunctionalityRootExists(userProfile);
+					if (!exists) {
+						// create personal folder if it doesn't exist
+						UserUtilities.createUserFunctionalityRoot(userProfile);
+					}
+					// load personal folder to get its id
+					LowFunctionality lf = UserUtilities.loadUserFunctionalityRoot(userProfile);
+					funcId = lf.getId();
+				}
+				functionalities.add(funcId);
 			}		
 			o.setFunctionalities(functionalities);
 			
