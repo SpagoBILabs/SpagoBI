@@ -305,6 +305,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				response.setAttribute(DataSetConstants.PARS, parsJSON);
 				response.setAttribute(DataSetConstants.TRASFORMER_TYPE_CD, (dataset.getTransformerCd()==null)?"":dataset.getTransformerCd());
 				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "HIGHCHART");
+				response.setAttribute("documentLabel", obj.getLabel());
 			}else{
 				executeChart(requestContainer, obj, response, userProfile, locale);
 			}
