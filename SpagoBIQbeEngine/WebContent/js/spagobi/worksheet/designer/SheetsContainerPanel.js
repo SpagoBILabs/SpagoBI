@@ -80,8 +80,12 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 	
 	
 	if (this.sheets !== undefined && this.sheets !== null && this.sheets.length > 0) {
-		this.setSheetsState(this.sheets);
-	} else 	if (config.smartFilter) {
+		if (config.smartFilter) {
+			this.on('resize',this.setSheetsStateDefered,this);
+		} else {
+			this.setSheetsState(this.sheets);
+		}
+	} else if (config.smartFilter) {
 		this.on('resize',this.addFirstTab,this);
 	} else {
 		this.on('render',function(){this.addTab();},this);
@@ -105,26 +109,30 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 
 	, addTab: function(sheetConf){
 		this.suspendEvents();
+
 		
 		this.remove('addTab');
-		if(sheetConf==null){
-			sheetConf={};
-		}
 		
 		//The title property is overridden: see setSheetsState
-		var sheet = new Sbi.worksheet.designer.SheetPanel(Ext.apply(sheetConf,{
+		var sheet = new Sbi.worksheet.designer.SheetPanel({
 	        title: 'Sheet ' + (++this.index),
 	        closable:true
-	    }));
+	    });
+		
+		if(sheetConf!=undefined && sheetConf!=null ){
+			sheet.setSheetState(sheetConf) ;
+		}
+		
 		sheet.contentPanel.on('addDesigner', this.addDesignerHandler, this);
 		
 	    var tab = this.add(sheet);
 	    this.add(this.addPanel);
+
 	    
 	    if(this.getActiveTab()==null){
 	    	this.setActiveTab(0);
 	    }
-
+	    
 	    this.resumeEvents();
 	    
 	    tab.on('beforeClose',function(panel){
@@ -209,10 +217,11 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	 * the new titles are  [Sheet 1, Sheet 2, Sheet 3]
 	 */
 	, setSheetsState: function(sheets){
+
 		if(this.items.length>1){
 			this.remove(this.items[0]);//remove the first panel
 		}
-		
+
 		//add the panels
 		if(this.rendered){
 			var i=0;
@@ -230,6 +239,14 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		}
 	}
 	
+	, setSheetsStateDefered: function(){
+		if(!this.alreadyBuilded){
+			this.un('resize',this.setSheetsStateDefered,this);
+			this.alreadyBuilded= true;
+			this.setSheetsState(this.sheets);
+		}
+	}
+		
 	, isValid: function(){
 		var valid = true;
 		if(this.items.items.length>1){

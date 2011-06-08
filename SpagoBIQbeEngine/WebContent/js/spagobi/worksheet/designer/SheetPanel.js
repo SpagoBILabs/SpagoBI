@@ -71,7 +71,6 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	};
 
-	c = Ext.apply(config,c);
 	Ext.apply(this,c);
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
 };
@@ -153,9 +152,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	}
 	
 	, setSheetState: function(sheetState){
-		var state = {};
 		this.title = sheetState.name;
-		this.sheetLayout = state.sheetLayout;
+		this.sheetLayout = sheetState.sheetLayout;
 		if(sheetState.header!==null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
