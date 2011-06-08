@@ -21,15 +21,9 @@
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
-import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
@@ -39,7 +33,6 @@ import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
-import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -53,12 +46,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.jar.JarException;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,7 +72,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		
 		Query query = null;
 		IStatement statement = null;
-		List<WhereField> optinalWhereFields = null;
+				
+		JSONObject jsonFormState=null;
 		
 		Integer maxSize = null;
 		Integer resultNumber = null;
@@ -101,8 +91,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeCrosstabQueryAction.totalTime");
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.CROSSTAB_DEFINITION );
-			String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
-			logger.debug("Form state retrieved as a string: " + jsonEncodedFormState);
+			jsonFormState = loadSmartFilterFormValues();
+			logger.debug("Form state retrieved as a string: " + jsonFormState);
 			
 			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
@@ -118,8 +108,8 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
 			
 			//build the query filtered for the smart filter
-			if (jsonEncodedFormState != null) {
-				query = getFilteredQuery(query, new JSONObject(jsonEncodedFormState));
+			if (jsonFormState != null) {
+				query = getFilteredQuery(query, jsonFormState);
 			}
 			
 			getEngineInstance().setActiveQuery(query);
@@ -134,21 +124,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
 			DataSource dataSource = getDataSource(connection);
 			
-			//optional filters specified by the user (now used in the worksheet)
-			JSONObject optionalUserFilters= null;
-			try {
-				optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
-				logger.debug("Found those optional filters "+optionalUserFilters);
-			} catch (Exception e) {
-				logger.debug("Found no optional filters");
-			}
-			
-			if(optionalUserFilters!=null){			
-				optinalWhereFields = applyOptionalFilters(optionalUserFilters);
-			}
-			
-			
-			String sqlStatement = CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, query, optinalWhereFields, sqlQuery, statement);
+			String sqlStatement = buildSqlStatement(crosstabDefinition, query, sqlQuery, statement);
 			logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
 			
 			if (!TemporaryTableManager.isEnabled()) {
@@ -231,36 +207,31 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 		return dataSource;
 	}
 	
-	private List<WhereField> applyOptionalFilters(JSONObject optionalUserFilters) throws JSONException{
-		String[] fields = JSONObject.getNames(optionalUserFilters);
-		List<WhereField> whereFields = new ArrayList<WhereField>();
-		for(int i=0; i<fields.length; i++){
-			String fieldName = fields[i];
-			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
-
-			//if the filter has some value
-			if(valuesArray.length()>0){
-				String[] values = new String[1];
-				values[0] =fieldName;
-
-				Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
-
-				values = new String[valuesArray.length()];
-				for(int j=0; j<valuesArray.length(); j++){
-					values[j] = valuesArray.getString(j);
-				}
-
-				Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
-
-				String operator = "NOT EQUALS TO";
-				if(valuesArray.length()>0){
-					operator="IN";
-				}
-
-				whereFields.add(new WhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND"));
-			}
+	
+	/**
+	 * Loads the values of the form if the calling engine is smart filter
+	 * @return
+	 * @throws JSONException
+	 */
+	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+		String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
+		if(jsonEncodedFormState!=null){
+			return new JSONObject(jsonEncodedFormState);
 		}
-		return whereFields;
+		return null;
+	}
+	
+	/**
+	 * Build the sql statement for the temporary table 
+	 * @param crosstabDefinition definition of the crosstab
+	 * @param baseQuery base query
+	 * @param sqlQuery the sql rappresentation of the base query
+	 * @param stmt the qbe statement
+	 * @return
+	 * @throws JSONException
+	 */
+	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery, IStatement stmt) throws JSONException{
+		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, baseQuery, null, sqlQuery, stmt);
 	}
 	
 }
