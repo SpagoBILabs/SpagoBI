@@ -126,6 +126,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			loadFormDefinition((JSONObject) template.getProperty("formJSONTemplate"));
 		}
 		
+		if( template.getProperty("formValuesJSONTemplate") != null ) {
+			loadFormValuesDefinition((JSONObject) template.getProperty("formValuesJSONTemplate"));
+		}
+		
 		if( template.getProperty("worksheetJSONTemplate") != null ) {
 			loadWorksheetDefinition((JSONObject) template.getProperty("worksheetJSONTemplate"));
 		}
@@ -165,6 +169,25 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		} catch(Throwable t) {
 			SpagoBIRuntimeException serviceException;
 			String msg = "Impossible load form state [" + formDefinition + "].";
+			Throwable rootException = t;
+			while(rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			msg += "\nThe root cause of the error is: " + str;
+			serviceException = new SpagoBIRuntimeException(msg, t);
+			
+			throw serviceException;
+		}
+		
+	}
+	
+	private void loadFormValuesDefinition(JSONObject formValuesDefinition) {
+		try {
+			getFormState().setFormStateValues(formValuesDefinition);
+		} catch(Throwable t) {
+			SpagoBIRuntimeException serviceException;
+			String msg = "Impossible load form state [" + formValuesDefinition + "].";
 			Throwable rootException = t;
 			while(rootException.getCause() != null) {
 				rootException = rootException.getCause();

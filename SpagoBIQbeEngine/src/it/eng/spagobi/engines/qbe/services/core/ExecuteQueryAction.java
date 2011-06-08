@@ -20,20 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.query.AbstractSelectField;
-import it.eng.qbe.query.DataMartSelectField;
-import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.query.serializer.SerializerFactory;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -46,15 +38,12 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -86,7 +75,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Integer maxSize = null;
 		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		IDataSet dataSet = null;
 		JSONDataWriter dataSetWriter;
 		
 		Query query = null;
@@ -98,7 +86,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 					
-		List<String> visibleSelectFields = new ArrayList<String>();
+
 		logger.debug("IN");
 		
 		try {
@@ -131,60 +119,21 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			} else {
 				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
 				getEngineInstance().setActiveQuery(query);
-				
 			}			
 			
 			Assert.assertNotNull(query, "Query object with id [" + query.getId() + "] does not exist in the catalogue");
-		
-			/*-----------------------------------------------------------------
-			* START: part added to apply some projection and selection in the query
-			* the projected columns stays in the request attribute visibleselectfields
-			* the selected rows stays in the request attribute optionalfilters
-			*------------------------------------------------------------------*/
 
+			statement = getStatement(query);
 			
-			
-			JSONArray jsonVisibleSelectFields  = null;
-			try {
-				jsonVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
-				if (jsonVisibleSelectFields != null) {
-					for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
-						JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
-						visibleSelectFields.add(jsonVisibleSelectField.getString("alias"));
-					}	
-				}
-			} catch (Exception e) {
-				logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
-			}
-			
-			//Apply optional filters
-			JSONObject optionalUserFilters= null;
-			try {
-				optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
-				logger.debug("Found those optional filters "+optionalUserFilters);
-			} catch (Exception e) {
-				logger.debug("Found no optional filters");
-			}
-				
-			if(jsonVisibleSelectFields!=null || optionalUserFilters!=null){
-				
-				statement = getStatementForWorksheet(visibleSelectFields, query, optionalUserFilters);			
-				/*-----------------------------------------------------------------
-				* END part added to apply some projection and selection in the query
-				*------------------------------------------------------------------*/
-			}else{
-				// promptable filters values may come with request (read-only user modality)
-				updatePromptableFiltersValue(query, this);
-				
-				statement = getEngineInstance().getStatment();	
-				statement.setParameters( getEnv() );
-			}
+			// promptable filters values may come with request (read-only user modality)
+			updatePromptableFiltersValue(query, this);
 
 			dataStore = executeQuery(statement, start, limit);
 			
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
-			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData cannot be null");
+
 			logger.debug("Total records: " + resultNumber);			
+			
 			
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
@@ -215,38 +164,61 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}	
 	}
 	
-	public IStatement getStatementForWorksheet(List<String> visibleSelectFields, Query query, 
-			JSONObject optionalUserFilters) throws SerializationException, JSONException{
-		
-		IStatement statement = null;
+	
+	/**
+	 * Get the query id from the request
+	 * @return
+	 */
+	public Query getQuery() {
+		String queryId = getAttributeAsString( QUERY_ID );
+		logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
+		return getEngineInstance().getQueryCatalogue().getQuery(queryId);
+	}
 
-		Query clonedQuery = null;
-		if(getEngineInstance().getFormState()==null){
-			clonedQuery = query;
-		}else{
-			clonedQuery = getFilteredQuery(query,  getEngineInstance().getFormState().getFormStateValues());
-		}
-		if(visibleSelectFields!=null && visibleSelectFields.size()>0){
-			List<AbstractSelectField> selectedField = clonedQuery.getSelectFields(true);
-			for(int i=0; i<selectedField.size(); i++){
-				String alias = selectedField.get(i).getAlias();
-				if(!visibleSelectFields.contains(alias)){
-					selectedField.get(i).setVisible(false);
-					visibleSelectFields.remove(alias);
-				}else{
-					selectedField.get(i).setVisible(true);
+	/**
+	 * Build the statement
+	 * @param query
+	 * @return
+	 */
+	protected IStatement getStatement(Query query){
+		IStatement statement = getEngineInstance().getStatment();	
+		statement.setParameters( getEnv() );
+		return statement;
+	}
+	
+	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
+		logger.debug("IN");
+		List whereFields = query.getWhereFields();
+		Iterator whereFieldsIt = whereFields.iterator();
+		while (whereFieldsIt.hasNext()) {
+			WhereField whereField = (WhereField) whereFieldsIt.next();
+			if (whereField.isPromptable()) {
+				// getting filter value on request
+				List promptValuesList = action.getAttributeAsList(whereField.getName());
+				if (promptValuesList != null) {
+					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
+					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+					whereField.getRightOperand().lastValues = promptValues;
 				}
 			}
-		}	
-
-		if(optionalUserFilters!=null){			
-			applyOptionalFilters(clonedQuery, optionalUserFilters);			
 		}
-		
-		statement = getDataSource().createStatement( clonedQuery );
-		return statement;
-		
+		List havingFields = query.getHavingFields();
+		Iterator havingFieldsIt = havingFields.iterator();
+		while (havingFieldsIt.hasNext()) {
+			HavingField havingField = (HavingField) havingFieldsIt.next();
+			if (havingField.isPromptable()) {
+				// getting filter value on request
+				List promptValuesList = action.getAttributeAsList(havingField.getName());
+				if (promptValuesList != null) {
+					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
+					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+					havingField.getRightOperand().lastValues = promptValues; // TODO how to manage multi-values prompts?
+				}
+			}
+		}
+		logger.debug("OUT");
 	}
+	
 	
 	public IDataStore executeQuery(IStatement statement, Integer start, Integer limit){
 		IDataStore dataStore = null;
@@ -294,177 +266,83 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		logger.debug("Query executed succesfully");
 		return dataStore;
 	}
-	
-	/**
-	 * Get the query id from the request
-	 * @return
-	 */
-	public Query getQuery() {
-		String queryId = getAttributeAsString( QUERY_ID );
-		logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
-		return getEngineInstance().getQueryCatalogue().getQuery(queryId);
-	}
 
-	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
-		logger.debug("IN");
-		List whereFields = query.getWhereFields();
-		Iterator whereFieldsIt = whereFields.iterator();
-		while (whereFieldsIt.hasNext()) {
-			WhereField whereField = (WhereField) whereFieldsIt.next();
-			if (whereField.isPromptable()) {
-				// getting filter value on request
-				List promptValuesList = action.getAttributeAsList(whereField.getName());
-				if (promptValuesList != null) {
-					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
-					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
-					whereField.getRightOperand().lastValues = promptValues;
-				}
-			}
-		}
-		List havingFields = query.getHavingFields();
-		Iterator havingFieldsIt = havingFields.iterator();
-		while (havingFieldsIt.hasNext()) {
-			HavingField havingField = (HavingField) havingFieldsIt.next();
-			if (havingField.isPromptable()) {
-				// getting filter value on request
-				List promptValuesList = action.getAttributeAsList(havingField.getName());
-				if (promptValuesList != null) {
-					String[] promptValues = (String[]) promptValuesList.toArray(new String[] {});
-					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
-					havingField.getRightOperand().lastValues = promptValues; // TODO how to manage multi-values prompts?
-				}
-			}
-		}
-		logger.debug("OUT");
-	}
+//	private JSONObject buildGridDataFeed(List results, int resultNumber) throws JSONException {
+//		JSONObject gridDataFeed = new JSONObject();
+//		
+//		Iterator it = results.iterator();
+//		Object o = null;
+//		Object[] row;
+//		
+//		JSONObject metadata = new JSONObject();
+//		JSONArray fields = null;
+//		JSONArray rows = new JSONArray();
+//			
+//		metadata.put("totalProperty", "results");
+//		metadata.put("root", "rows");
+//		metadata.put("id", "id");
+//		gridDataFeed.put("metaData", metadata);
+//		gridDataFeed.put("results", resultNumber);
+//		gridDataFeed.put("rows", rows);
+//		
+//		if(results.size() == 0) {
+//			fields = new JSONArray();
+//			fields.put("recNo");
+//			JSONObject f = new JSONObject();
+//			f.put("header", "Data");
+//			f.put("name", "data");						
+//			f.put("dataIndex", "data");
+//			fields.put(f);					
+//			metadata.put("fields", fields);
+//		} 
+//		
+//		int recNo = 0;
+//		while (it.hasNext()){
+//			o = it.next();
+//			
+//		    if (!(o instanceof Object[])){
+//		    	row = new Object[1];
+//		    	row[0] = o == null? "": o.toString();
+//		    }else{
+//		    	row = (Object[])o;
+//		    }
+//		    
+//			if(fields == null) {
+//				fields = new JSONArray();
+//				fields.put("recNo");
+//				// Giro le intestazioni di colonne
+//				Iterator fieldsIterator = getEngineInstance().getActiveQuery().getDataMartSelectFields(true).iterator();
+//				for (int j=0; j < row.length; j++){ 
+//					JSONObject field = new JSONObject();
+//					DataMartSelectField f = (DataMartSelectField)fieldsIterator.next();
+//					if(!f.isVisible()) continue;
+//					String header = f.getAlias();
+//					if( header != null) field.put("header", header);
+//					else field.put("header", "Column-" + (j+1));
+//					
+//					field.put("name", "column-" + (j+1));						
+//					
+//					field.put("dataIndex", "column-" + (j+1));
+//					fields.put(field);
+//				}					
+//				metadata.put("fields", fields);
+//			}
+//		    
+//		    // Giro le colonne
+//			JSONObject record= null;
+//			for (int j=0; j < row.length; j++){ 
+//				if(record == null) {
+//					record = new JSONObject();
+//					record.put("id", ++recNo);
+//				}
+//				record.put("column-" + (j+1), row[j]!=null?row[j].toString():" ");
+//			}
+//			if(record != null) rows.put(record);
+//		}		
+//		
+//		return gridDataFeed;
+//	}
+//	
 
-	private JSONObject buildGridDataFeed(List results, int resultNumber) throws JSONException {
-		JSONObject gridDataFeed = new JSONObject();
-		
-		Iterator it = results.iterator();
-		Object o = null;
-		Object[] row;
-		
-		JSONObject metadata = new JSONObject();
-		JSONArray fields = null;
-		JSONArray rows = new JSONArray();
-			
-		metadata.put("totalProperty", "results");
-		metadata.put("root", "rows");
-		metadata.put("id", "id");
-		gridDataFeed.put("metaData", metadata);
-		gridDataFeed.put("results", resultNumber);
-		gridDataFeed.put("rows", rows);
-		
-		if(results.size() == 0) {
-			fields = new JSONArray();
-			fields.put("recNo");
-			JSONObject f = new JSONObject();
-			f.put("header", "Data");
-			f.put("name", "data");						
-			f.put("dataIndex", "data");
-			fields.put(f);					
-			metadata.put("fields", fields);
-		} 
-		
-		int recNo = 0;
-		while (it.hasNext()){
-			o = it.next();
-			
-		    if (!(o instanceof Object[])){
-		    	row = new Object[1];
-		    	row[0] = o == null? "": o.toString();
-		    }else{
-		    	row = (Object[])o;
-		    }
-		    
-			if(fields == null) {
-				fields = new JSONArray();
-				fields.put("recNo");
-				// Giro le intestazioni di colonne
-				Iterator fieldsIterator = getEngineInstance().getActiveQuery().getDataMartSelectFields(true).iterator();
-				for (int j=0; j < row.length; j++){ 
-					JSONObject field = new JSONObject();
-					DataMartSelectField f = (DataMartSelectField)fieldsIterator.next();
-					if(!f.isVisible()) continue;
-					String header = f.getAlias();
-					if( header != null) field.put("header", header);
-					else field.put("header", "Column-" + (j+1));
-					
-					field.put("name", "column-" + (j+1));						
-					
-					field.put("dataIndex", "column-" + (j+1));
-					fields.put(field);
-				}					
-				metadata.put("fields", fields);
-			}
-		    
-		    // Giro le colonne
-			JSONObject record= null;
-			for (int j=0; j < row.length; j++){ 
-				if(record == null) {
-					record = new JSONObject();
-					record.put("id", ++recNo);
-				}
-				record.put("column-" + (j+1), row[j]!=null?row[j].toString():" ");
-			}
-			if(record != null) rows.put(record);
-		}		
-		
-		return gridDataFeed;
-	}
-	
-	/**
-	 * Get the query and add the where fields defined in the optionalUserFilters
-	 * @param query
-	 * @param optionalUserFilters
-	 * @throws JSONException
-	 */
-	private void applyOptionalFilters(Query query, JSONObject optionalUserFilters) throws JSONException{
-		String[] fields = JSONObject.getNames(optionalUserFilters);
-		ExpressionNode leftExpression = query.getWhereClauseStructure();
-		for(int i=0; i<fields.length; i++){
-			String fieldName = fields[i];
-			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
-
-			//if the filter has some value
-			if(valuesArray.length()>0){
-
-				String[] values = new String[1];
-				values[0] =fieldName;
-
-				Operand leftOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_FIELD, values,values);
-
-				values = new String[valuesArray.length()];
-				for(int j=0; j<valuesArray.length(); j++){
-					values[j] = valuesArray.getString(j);
-				}
-
-				Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
-
-				String operator = "NOT EQUALS TO";
-				if(valuesArray.length()>0){
-					operator="IN";
-				}
-
-				query.addWhereField("OptionalFilter"+i, "OptionalFilter"+i, false, leftOperand, operator, rightOperand, "AND");
-
-
-
-				ExpressionNode filterNode = new ExpressionNode("NO_NODE_OP","$F{OptionalFilter"+i+"}");
-
-				//build the where clause tree 
-				if(leftExpression==null){
-					leftExpression = filterNode;
-				}else{
-					ExpressionNode operationNode = new ExpressionNode("NODE_OP", "AND");
-					operationNode.addChild(leftExpression);
-					operationNode.addChild(filterNode);
-					leftExpression = operationNode;
-				}
-			}
-		}
-		query.setWhereClauseStructure(leftExpression);
-	}
 
 }

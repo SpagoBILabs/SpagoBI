@@ -151,6 +151,14 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		    params: params
 		});   
 	}
+	
+	, getWorksheetDefinition : function () {
+		return this.worksheetDesignerPanel.getWorksheetDefinition();   
+	}
+	
+	, isValid : function () {
+		return this.worksheetDesignerPanel.isValid();
+	}
 
   	, showCrosstabPreview: function(crosstabDefinition) {
   		this.crosstabPreviewPanel.on('beforeload', this.addFormStateParameter, this);
@@ -165,5 +173,7 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	, refreshWorksheetPreview : function () {
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 	}
+	
+
 
 });
