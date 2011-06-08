@@ -421,21 +421,23 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	
 	,
 	getWorksheetTemplateAsString : function () {
-	    if (this.worksheetDesignerPanel !== null) {
-			var queries = this.getQueriesCatalogue();
-			var worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+		var queries = this.getQueriesCatalogue();
+		var worksheetDefinition = null;
+	    if (this.worksheetDesignerPanel.rendered === true) {
+	    	// get the current worksheet designer state
+			worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
 			if(!this.worksheetDesignerPanel.isValid()){
 				return null;
 			}
-			var template = Ext.util.JSON.encode({
-				'OBJECT_WK_DEFINITION' : worksheetDefinition,
-				'OBJECT_QUERY' : queries
-			});
-			return template;
 		} else {
-			alert('Warning: worksheetDesignerPanel not defined!!');
-			return null;
+			// get the initial worksheet template
+			worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
 		}
+		var template = Ext.util.JSON.encode({
+			'OBJECT_WK_DEFINITION' : worksheetDefinition,
+			'OBJECT_QUERY' : queries
+		});
+		return template;
 	}
 	
 });
