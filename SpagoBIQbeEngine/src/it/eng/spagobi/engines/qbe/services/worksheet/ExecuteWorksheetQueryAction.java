@@ -74,6 +74,12 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 				//the builder engine is the smart filter, so the query must be transformed 
 				clonedQuery = getFilteredQuery(activeQuery,  getEngineInstance().getFormState().getFormStateValues());
 			}
+			
+			if(getEngineInstance().getActiveQuery() == null || !getEngineInstance().getActiveQuery().getId().equals(clonedQuery.getId())) {
+				logger.debug("Query with id [" + activeQuery.getId() + "] is not the current active query. A new statment will be generated");
+				getEngineInstance().setActiveQuery(clonedQuery);
+			}
+			
 			applyFilters(clonedQuery);
 			return clonedQuery;
 		} catch (Exception e) {
