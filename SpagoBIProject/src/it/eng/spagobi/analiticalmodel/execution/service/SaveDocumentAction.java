@@ -113,8 +113,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String template = getAttributeAsString(TEMPLATE);	
 		JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 		String wk_definition = getAttributeAsString(OBJECT_WK_DEFINITION);
-		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
-		String query = optAttributeAsString(OBJECT_QUERY);
+		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
+		String query = getAttributeAsString(OBJECT_QUERY);
 
 		if (name != null && name != "" && label != null && label != "" && 
 			 type!=null && functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
@@ -261,7 +261,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
 		String query = getAttributeAsString(OBJECT_QUERY);
-		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
+		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
 		String smartFilterValuesString = null;
 		Assert.assertNotNull(wkDefinition, "Missing worksheet definition");
 		Assert.assertNotNull(query, "Missing base query definition");
@@ -299,7 +299,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private byte[] getSmartFilterTemplateContent() throws Exception {
 		logger.debug("OUT");
 		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
-		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
+		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
 		String smartFilterValuesString = smartFilterValues.toString();
 		Assert.assertNotNull(wkDefinition, "Missing worksheet definition");
 		Assert.assertNotNull(smartFilterValues, "Missing smart Filter Values");
