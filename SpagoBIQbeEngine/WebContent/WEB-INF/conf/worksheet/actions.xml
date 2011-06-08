@@ -57,5 +57,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="LOAD_WORKSHEET_CROSSTAB_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.LoadWorksheetCrosstabAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

@@ -67,7 +67,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 	this.services = this.services || new Array();
 	var params = {};
 	this.services['loadData'] = this.services['loadData'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'LOAD_CROSSTAB_ACTION'
+		serviceName: 'LOAD_WORKSHEET_CROSSTAB_ACTION'
 		, baseParams: params
 	});
 	this.services['exportChart'] = this.services['exportChart'] || Sbi.config.serviceRegistry.getServiceUrl({
