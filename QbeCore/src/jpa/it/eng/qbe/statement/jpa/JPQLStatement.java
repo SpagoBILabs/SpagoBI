@@ -251,6 +251,7 @@ public class JPQLStatement extends AbstractStatement {
 						
 						
 						selectClauseElement = rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
+						//selectClauseElement = rootEntityAlias + "." + queryName;
 						logger.debug("select clause element before aggregation [" + selectClauseElement + "]");
 						
 						selectClauseElement = selectField.getFunction().apply(selectClauseElement);

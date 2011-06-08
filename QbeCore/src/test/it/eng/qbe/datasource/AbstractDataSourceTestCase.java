@@ -48,8 +48,8 @@ public abstract class AbstractDataSourceTestCase extends AbstractQbeTestCase {
 
 	public void doTests() {
 		doTestSmoke();
-		doTestLabelLocalization();
-		doTestTooltipLocalization();
+		//doTestLabelLocalization();
+		//doTestTooltipLocalization();
 		doTestStructure();
 		doTestQuery();
 	}
