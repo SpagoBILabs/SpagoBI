@@ -397,7 +397,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     			if(dataConfig.plotOptions.series !== undefined){
     				dataConfig.plotOptions.series.events = event;
     			}else{
-    				alert(dataConfig.series);
     				dataConfig.series.events = event;
     			}
     			
