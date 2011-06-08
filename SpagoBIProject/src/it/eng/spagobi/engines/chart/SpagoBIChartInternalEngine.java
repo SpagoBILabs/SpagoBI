@@ -628,7 +628,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 						if(parameter != null){
 							String parType = parameter.getType();
 							if(parType.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || parType.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-								value="'"+value+"'";
+								value=value;
 							}
 						}
 						parametersMap.put(url, value);
@@ -637,9 +637,9 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 						// if par is a string or a date close with '', else not
 						String value = "";
 						if(type.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || type.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-							value = "'"+(String)values.get(0)+"'";
+							value = (String)values.get(0);
 							for(int k = 1; k< values.size() ; k++){
-								value = value + ",'" + (String)values.get(k)+"'";
+								value = value + "," + (String)values.get(k);
 							}
 						}
 						else{
@@ -684,16 +684,16 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 						if(parameter != null){
 							String parType = parameter.getType();
 							if(parType.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || parType.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-								value="'"+value+"'";
+								value=value;
 							}
 						}
 					}else if(values.size() >=1){
 						String type = (par.getParameter() != null) ? par.getParameter().getType() : SpagoBIConstants.STRING_TYPE_FILTER;
 						// if par is a string or a date close with '', else not						
 						if(type.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || type.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-							value = "'"+(String)values.get(0)+"'";
+							value = (String)values.get(0);
 							for(int k = 1; k< values.size() ; k++){
-								value = value + ",'" + (String)values.get(k)+"'";
+								value = value + "," + (String)values.get(k);
 							}
 						}
 						else{
