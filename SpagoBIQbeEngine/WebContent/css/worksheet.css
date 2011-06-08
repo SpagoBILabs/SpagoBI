@@ -38,7 +38,7 @@ From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html
     bottom:10px;
     /*top:10px;*/
     width:300px;
-    z-index:20000;
+    /*z-index:20000;*/
 }
 #msg-div .msg {
     border-radius: 8px;

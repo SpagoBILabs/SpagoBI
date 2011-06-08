@@ -167,6 +167,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
         if(!this.msgCt){
         	this.msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
         }
+        this.msgCt.applyStyles({'z-index': 20000});
+        this.msgCt.applyStyles.defer(4000, this.msgCt, [{'z-index': -10}]); // when the effect is finished, hide the container (it's a workaround)
         var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));
         var m = Ext.DomHelper.append(this.msgCt, this.createBox(title, s), true);
         m.hide();
