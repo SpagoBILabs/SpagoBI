@@ -176,7 +176,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 				queries.put(queryJSON);
 			}
 	      	%>
-	      	qbeConfig.queries = <%= queries %>
+	      	qbeConfig.initialQueriesCatalogue = {};
+	      	qbeConfig.initialQueriesCatalogue.catalogue = {};
+	      	qbeConfig.initialQueriesCatalogue.catalogue.queries = <%= queries %>;
+	      	qbeConfig.initialQueriesCatalogue.version = Sbi.config.queryVersion;
 	      	
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	<%

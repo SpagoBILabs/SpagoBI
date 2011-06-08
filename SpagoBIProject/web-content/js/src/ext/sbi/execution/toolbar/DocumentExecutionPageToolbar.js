@@ -442,8 +442,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		
 		this.addFill();
 		
-		var drawParBack = false;
-		
 		if (this.documentMode === 'VIEW') {
 			this.addButtonsForViewMode();
 		} else {
@@ -489,6 +487,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    }
    
    , addButtonsForViewMode: function () {
+	   
+	   var drawParBack = false;
 	   
 		if (this.executionInstance.isPossibleToComeBackToParametersPage == undefined || 
 				this.executionInstance.isPossibleToComeBackToParametersPage === true)

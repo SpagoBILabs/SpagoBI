@@ -77,6 +77,10 @@ Sbi.qbe.QbePanel = function(config) {
 	
 	this.addEvents();
 	
+	if (c.initialQueriesCatalogue) {
+		this.setInitialQueriesCatalogue(c.initialQueriesCatalogue);
+	}
+	
 	this.queryEditorPanel = null;
 	this.queryResultPanel = new Sbi.widgets.DataStorePanel(Ext.apply(c, {
 		id : 'DataStorePanel'
@@ -90,9 +94,6 @@ Sbi.qbe.QbePanel = function(config) {
 			id : 'QueryBuilderPanel'
 		}));
 		items.push(this.queryEditorPanel);
-	} else {
-		// if query designer panel is not displayed, put the queries into 'queries' local variable
-		this.queries = c.queries;
 	}
 	
 	items.push(this.queryResultPanel);
@@ -208,7 +209,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
     , queryEditorPanel: null
     , worksheetDesignerPanel: null
     , worksheetPreviewPanel: null
-    , queries: null // used as a queries repository variable when the queryEditorPanel is not displayed
+    , initialQueriesCatalogue: null // used as a queries repository variable when the queryEditorPanel is not displayed
     , tabs: null
     , query: null
    
@@ -225,13 +226,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}
 	
 	, getQueries: function() {
-		if (this.queryEditorPanel == null) {
-			// query designer panel not displayed
-			return this.queries;
-		} else {
-			// query designer panel displayed
-			return this.queryEditorPanel.getQueries();
-		}
+		return this.queryEditorPanel.getQueries();
 	}
 	
     // private methods
@@ -385,18 +380,38 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		this.queryEditorPanel.setParameters(parameters);
 	}
 	
+	,
+	getInitialQueriesCatalogue: function () {
+		return this.initialQueriesCatalogue;
+	}
+	
+	,
+	setInitialQueriesCatalogue: function (initialQueriesCatalogue) {
+		this.initialQueriesCatalogue = initialQueriesCatalogue;
+	}
+	
 	, 
 	getQueriesCatalogue: function () {
-		var toReturn = {};
-		toReturn.catalogue = {};
-		toReturn.catalogue.queries = this.getQueries();
-		toReturn.version = Sbi.config.queryVersion;
-		return toReturn;
+		if (this.queryEditorPanel == null) {
+			// query designer panel not displayed, returns the initial catalogue
+			return this.getInitialQueriesCatalogue();
+		} else {
+			// query designer panel displayed
+			var toReturn = {};
+			toReturn.catalogue = {};
+			toReturn.catalogue.queries = this.getQueries();
+			toReturn.version = Sbi.config.queryVersion;
+			return toReturn;
+		}
 	}
 	
 	,
 	setQueriesCatalogue: function (queriesCatalogue) {
-		this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
+		if (this.queryEditorPanel != null) {
+			this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
+		} else {
+			alert('Query builder panel not instantiated, you cannot invoke setQueriesCatalogue method');
+		}
 	}
 	
 	,
@@ -421,7 +436,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	
 	,
 	getWorksheetTemplateAsString : function () {
-		var queries = this.getQueriesCatalogue();
+		var queriesCatalogue = this.getQueriesCatalogue();
 		var worksheetDefinition = null;
 	    if (this.worksheetDesignerPanel.rendered === true) {
 	    	// get the current worksheet designer state
@@ -435,7 +450,7 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 		}
 		var template = Ext.util.JSON.encode({
 			'OBJECT_WK_DEFINITION' : worksheetDefinition,
-			'OBJECT_QUERY' : queries
+			'OBJECT_QUERY' : queriesCatalogue
 		});
 		return template;
 	}
