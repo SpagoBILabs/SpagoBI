@@ -389,7 +389,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	    		    		}
     		    		}
     					parent.execCrossNavigation("iframe_"+dataConfig.docLabel, doc, params);
-    		    		//parent.sendMessage( doc, params):
     				}
     		};
     		//depending on chart type enables click navigation events
