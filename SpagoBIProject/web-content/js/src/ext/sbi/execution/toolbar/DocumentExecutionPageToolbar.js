@@ -1157,16 +1157,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    , getWorksheetTemplateAsString: function() {
 		try {
-			var theWindow = null;
+			var thePanel = null;
 			if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
-				theWindow = this.miframe.getFrame().getWindow().qbe;
+				thePanel = this.miframe.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-				theWindow = this.miframe.getFrame().getWindow().formEnginePanel;
+				thePanel = this.miframe.getFrame().getWindow().formEnginePanel;
 			}else{
 				alert('Sorry, cannot perform operation. Invalid engine..');
 				return null;
 			}
-			template = theWindow.getWorksheetTemplateAsString();
+			var template = thePanel.getWorksheetTemplateAsString();
 			return template;
 		} catch (err) {
 			throw err;
