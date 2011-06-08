@@ -421,7 +421,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		this.miframe = miframe;
 	}   
 	
-   , synchronizeToolbar: function( executionInstance,miframe,southPanel,northPanel,parametersPanel,shortcutsPanel){
+   , synchronizeToolbar: function( executionInstance,miframe,southPanel,northPanel,parametersPanel,shortcutsPanel) {
 	    this.executionInstance = executionInstance;
 	    this.miframe = miframe;
 		this.southPanel = southPanel;
@@ -444,8 +444,54 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		
 		var drawParBack = false;
 		
-		if (executionInstance.isPossibleToComeBackToParametersPage == undefined || 
-				executionInstance.isPossibleToComeBackToParametersPage === true)
+		if (this.documentMode === 'VIEW') {
+			this.addButtonsForViewMode();
+		} else {
+			this.addButtonsForEditMode();
+		}
+		
+   }
+   
+   // edit mode buttons (at the moment used by Worksheet documents only)
+   , addButtonsForEditMode: function () {
+	   
+		this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
+		if (Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true) {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-expand' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
+				, scope: this
+				, handler : function() {
+					this.fireEvent('collapse3');
+				}			
+			}));
+		}
+	   
+		this.addButton(new Ext.Toolbar.Button({
+			iconCls: 'icon-save' 
+			, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+		    , scope: this
+		    , handler : this.saveWorksheet
+		}));
+		this.addButton(new Ext.Toolbar.Button({
+			iconCls: 'icon-saveas' 
+			, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
+		    , scope: this
+		    , handler : this.saveWorksheetAs	
+		}));
+		this.addSeparator();
+		this.addButton(new Ext.Toolbar.Button({
+			iconCls: 'icon-view' 
+			, tooltip: LN('sbi.execution.executionpage.toolbar.view')
+		    , scope: this
+		    , handler : this.stopWorksheetEditing	
+		}));
+   }
+   
+   , addButtonsForViewMode: function () {
+	   
+		if (this.executionInstance.isPossibleToComeBackToParametersPage == undefined || 
+				this.executionInstance.isPossibleToComeBackToParametersPage === true)
 		 {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-back' 
@@ -469,7 +515,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 		
     	this.toolbarConfig.expandBtnVisible = (this.toolbarConfig.expandBtnVisible === undefined)? true: this.toolbarConfig.expandBtnVisible ; 
-			if(Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true){
+		if(Sbi.user.ismodeweb && this.toolbarConfig.expandBtnVisible  === true){
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-expand' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.expand')
@@ -480,38 +526,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}));
 		}
 		
-		if (executionInstance.document.typeCode === 'WORKSHEET') {
-			if (this.documentMode === 'VIEW') {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-edit' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
-				    , scope: this
-				    , handler : this.startWorksheetEditing	
-				}));
-			} else {
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-save' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.save')
-				    , scope: this
-				    , handler : this.saveWorksheet
-				}));
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-saveas' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
-				    , scope: this
-				    , handler : this.saveWorksheetAs	
-				}));
-				this.addButton(new Ext.Toolbar.Button({
-					iconCls: 'icon-view' 
-					, tooltip: LN('sbi.execution.executionpage.toolbar.view')
-				    , scope: this
-				    , handler : this.stopWorksheetEditing	
-				}));
-			}
+		if (this.executionInstance.document.typeCode === 'WORKSHEET') {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-edit' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
+			    , scope: this
+			    , handler : this.startWorksheetEditing	
+			}));
 		}
 		
-		//if (executionInstance.document.typeCode === 'DATAMART' && Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
-		if (executionInstance.document.typeCode === 'DATAMART') {
+		if (this.executionInstance.document.typeCode === 'DATAMART') {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-save' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
@@ -520,7 +544,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-		if (executionInstance.document.typeCode === 'SMART_FILTER') {
+		if (this.executionInstance.document.typeCode === 'SMART_FILTER') {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-save' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
@@ -543,8 +567,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		    , handler : this.printExecution
 		}));
 		
-		if (Sbi.user.functionalities.contains('SendMailFunctionality') && !executionInstance.SBI_SNAPSHOT_ID
-				&& executionInstance.document.typeCode == 'REPORT') {
+		if (Sbi.user.functionalities.contains('SendMailFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID
+				&& this.executionInstance.document.typeCode == 'REPORT') {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-sendMail' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.send')
@@ -553,7 +577,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-		if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !executionInstance.SBI_SNAPSHOT_ID) {
+		if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-saveIntoPersonalFolder' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
@@ -562,7 +586,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 
-		if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !executionInstance.SBI_SNAPSHOT_ID) {
+		if (Sbi.user.functionalities.contains('SaveRememberMeFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-saveRememberMe'
 				, tooltip: LN('sbi.execution.executionpage.toolbar.bookmark')
@@ -571,7 +595,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-		if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !executionInstance.SBI_SNAPSHOT_ID) {
+		if (Sbi.user.functionalities.contains('SeeNotesFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
 			this.getNoteIcon();
 	    	this.addButton(new Ext.Toolbar.Button({
 	  			   id: 'noteIcon'
@@ -591,8 +615,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
-		if(executionInstance.document.exporters){
-			if ( executionInstance.document.typeCode == 'KPI' && executionInstance.document.exporters.contains('PDF')) {
+		if(this.executionInstance.document.exporters){
+			if ( this.executionInstance.document.typeCode == 'KPI' && this.executionInstance.document.exporters.contains('PDF')) {
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-pdf' 
 					, tooltip: LN('sbi.execution.PdfExport')
@@ -600,7 +624,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler : this.pdfExecution
 				}));
 			}
-			else if ( executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
+			else if ( this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE' ) {
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-pdf' 
 					, tooltip: LN('sbi.execution.PdfExport')
@@ -608,12 +632,12 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler : this.pdfDCExecution
 				}));
 			}
-			else if( executionInstance.document.typeCode == 'REPORT') {
+			else if( this.executionInstance.document.typeCode == 'REPORT') {
 					var menuItems = new Array();
 					
-					for(i=0;i<executionInstance.document.exporters.length ;i++){
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 						
-						if (executionInstance.document.exporters[i]=='PDF'){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
 						menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
@@ -625,7 +649,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	 
 				                       ); 
-						}else if(executionInstance.document.exporters[i]=='XLS'){
+						}else if(this.executionInstance.document.exporters[i]=='XLS'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XlsExport')
@@ -637,7 +661,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='RTF'){
+						}else if(this.executionInstance.document.exporters[i]=='RTF'){
 							menuItems.push(   new Ext.menu.Item({
 	                            id:  Ext.id()
 	                            , text: LN('sbi.execution.rtfExport')
@@ -649,7 +673,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 								, href: ''   
 	                        })	
 	                        );
-						}else if(executionInstance.document.exporters[i]=='DOC'){
+						}else if(this.executionInstance.document.exporters[i]=='DOC'){
 							menuItems.push(   new Ext.menu.Item({
 	                            id:  Ext.id()
 	                            , text: LN('sbi.execution.docExport')
@@ -661,7 +685,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 								, href: ''   
 	                        })	
 	                        );
-						}else if(executionInstance.document.exporters[i]=='CSV'){
+						}else if(this.executionInstance.document.exporters[i]=='CSV'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.CsvExport')
@@ -673,7 +697,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='XML'){
+						}else if(this.executionInstance.document.exporters[i]=='XML'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XmlExport')
@@ -685,7 +709,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='JPG'){
+						}else if(this.executionInstance.document.exporters[i]=='JPG'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id: Ext.id()
 				                            , text: LN('sbi.execution.JpgExport')
@@ -697,7 +721,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='TXT'){
+						}else if(this.executionInstance.document.exporters[i]=='TXT'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.txtExport')
@@ -709,7 +733,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='PPT'){
+						}else if(this.executionInstance.document.exporters[i]=='PPT'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.pptExport')
@@ -728,7 +752,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					items: menuItems    
 					});	
 					
-					if(executionInstance.document.exporters.length > 0){
+					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
 									new Ext.Toolbar.MenuButton({
 										id: Ext.id()
@@ -741,12 +765,12 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							        })					    				        				
 						);	
 					}
-			}else if( executionInstance.document.typeCode == 'OLAP') {
+			}else if( this.executionInstance.document.typeCode == 'OLAP') {
 					var menuItems = new Array();
 					
-					for(i=0;i<executionInstance.document.exporters.length ;i++){
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 						
-						if (executionInstance.document.exporters[i]=='PDF'){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
 						menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
@@ -758,7 +782,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	 
 				                       ); 
-						}else if(executionInstance.document.exporters[i]=='XLS'){
+						}else if(this.executionInstance.document.exporters[i]=='XLS'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XlsExport')
@@ -777,7 +801,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					items: menuItems    
 					});	
 					
-					if(executionInstance.document.exporters.length > 0){
+					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
 									new Ext.Toolbar.MenuButton({
 										id: Ext.id()
@@ -791,7 +815,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						);	
 					}
 			}
-			else if ( executionInstance.document.typeCode == 'DASH') {
+			else if ( this.executionInstance.document.typeCode == 'DASH') {
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-pdf' 
 					, tooltip: LN('sbi.execution.PdfExport')
@@ -799,12 +823,12 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	, handler :  function() { this.exportChartExecution('PDF'); }
 					, href: ''  
 				}));
-			}else if ( executionInstance.document.typeCode == 'WORKSHEET') {
+			}else if ( this.executionInstance.document.typeCode == 'WORKSHEET') {
 					var menuItems = new Array();
 					
-					for(i=0;i<executionInstance.document.exporters.length ;i++){
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 						
-						if (executionInstance.document.exporters[i]=='PDF'){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
 							menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
@@ -816,7 +840,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	 
 				                       ); 
-						}else if(executionInstance.document.exporters[i]=='XLS'){
+						}else if(this.executionInstance.document.exporters[i]=='XLS'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XlsExport')
@@ -835,7 +859,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						items: menuItems    
 					});	
 					
-					if(executionInstance.document.exporters.length > 0){
+					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
 									new Ext.Toolbar.MenuButton({
 										id: Ext.id()
@@ -848,14 +872,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							        })					    				        				
 						);	
 					}
-			}else if ( executionInstance.document.typeCode == 'DATAMART' || 
-						executionInstance.document.typeCode == 'SMART_FILTER' ) {
+			}else if ( this.executionInstance.document.typeCode == 'DATAMART' || 
+						this.executionInstance.document.typeCode == 'SMART_FILTER' ) {
 			
 					var menuItems = new Array();
 					
-					for(i=0;i<executionInstance.document.exporters.length ;i++){
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 						
-						if (executionInstance.document.exporters[i]=='PDF'){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
 							menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
@@ -867,7 +891,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	 
 				                       ); 
-						}else if(executionInstance.document.exporters[i]=='XLS'){
+						}else if(this.executionInstance.document.exporters[i]=='XLS'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.XlsExport')
@@ -879,7 +903,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='RTF'){
+						}else if(this.executionInstance.document.exporters[i]=='RTF'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.rtfExport')
@@ -891,7 +915,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='CSV'){
+						}else if(this.executionInstance.document.exporters[i]=='CSV'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.CsvExport')
@@ -903,7 +927,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						}else if(executionInstance.document.exporters[i]=='JRXML'){
+						}else if(this.executionInstance.document.exporters[i]=='JRXML'){
 							menuItems.push(   new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.jrxmlExport')
@@ -915,7 +939,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	
 				                        ); 
-						} else if(executionInstance.document.exporters[i]=='JSON'){
+						} else if(this.executionInstance.document.exporters[i]=='JSON'){
 							menuItems.push(   new Ext.menu.Item({
 	                            id:  Ext.id()
 	                            , text: LN('sbi.execution.jsonExport')
@@ -932,7 +956,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				    }
 					
 					var menu0 = null;
-					if (executionInstance.document.typeCode == 'DATAMART') {
+					if (this.executionInstance.document.typeCode == 'DATAMART') {
 						var resultItem = new Ext.menu.Item({
 							id:  Ext.id()
 							, text: LN('sbi.execution.export.qbe.results')
@@ -974,7 +998,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						});	
 					}
 					
-					if(executionInstance.document.exporters.length > 0){
+					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
 									new Ext.Toolbar.MenuButton({
 										id: Ext.id()
@@ -987,13 +1011,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							        })					    				        				
 						);	
 					}
-			}	else if ( executionInstance.document.typeCode == 'MAP') {
+			}	else if ( this.executionInstance.document.typeCode == 'MAP') {
 			
 					var menuItems = new Array();
 					
-					for(i=0;i<executionInstance.document.exporters.length ;i++){
+					for(i=0;i<this.executionInstance.document.exporters.length ;i++){
 						
-						if (executionInstance.document.exporters[i]=='PDF'){
+						if (this.executionInstance.document.exporters[i]=='PDF'){
 						menuItems.push(	new Ext.menu.Item({
 				                            id:  Ext.id()
 				                            , text: LN('sbi.execution.PdfExport')
@@ -1005,7 +1029,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 											, href: ''   
 				                        })	 
 				                       ); 
-						}else if(executionInstance.document.exporters[i]=='JPG'){
+						}else if(this.executionInstance.document.exporters[i]=='JPG'){
 						menuItems.push(   new Ext.menu.Item({
 				                            id: Ext.id()
 				                            , text: LN('sbi.execution.JpgExport')
@@ -1025,7 +1049,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						items: menuItems    
 					});	
 					
-					if(executionInstance.document.exporters.length > 0){
+					if(this.executionInstance.document.exporters.length > 0){
 						this.add(
 									new Ext.Toolbar.MenuButton({
 										id: Ext.id()
@@ -1050,7 +1074,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		    , handler : function() {
 					// save parameters into session
 					// if type is QBE inform user that will lose configurations
-					if(executionInstance.document.typeCode == 'DATAMART'){
+					if(this.executionInstance.document.typeCode == 'DATAMART'){
 						if(Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')){
 							
 							
@@ -1083,7 +1107,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}
 			}			
 		}));
-	}
+	   
+   }
    
    , startWorksheetEditing: function() {
 	   this.documentMode = 'EDIT';
