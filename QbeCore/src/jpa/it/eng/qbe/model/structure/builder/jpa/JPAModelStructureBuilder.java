@@ -197,7 +197,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					Class c = a.getJavaType();
 					String entityType = c.getName();
 					String columnName = a.getName();
-					String entityName =  getEntityNameFromEntityType(entityType);
+					String entityName =  a.getName(); //getEntityNameFromEntityType(entityType);
 			 		IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, dataMartEntity.getStructure());		
 			 		subEntities.add(subentity);		
 			}else//composite key 
