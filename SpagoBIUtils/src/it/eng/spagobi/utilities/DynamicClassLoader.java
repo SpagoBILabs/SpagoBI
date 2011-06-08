@@ -165,6 +165,7 @@ public class DynamicClassLoader extends URLClassLoader {
 				zipFile = new ZipFile(jar);
 				ZipEntry zipEntry = zipFile.getEntry(resourceName);
 				bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
+				zipFile.close();
 			} catch (Exception ex2) {
 				logger.warn("className: " +  resourceName + " Exception: "+ ex2);
 			} 
