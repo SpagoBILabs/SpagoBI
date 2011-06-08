@@ -198,6 +198,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		if (this.baseConfig.preferences && this.baseConfig.preferences.fromDocTreeOrList 
 				&& this.baseConfig.preferences.fromDocTreeOrList == true){
 					this.documentExecutionPage.callFromTreeListDoc = true;
+					this.documentExecutionPage.toolbar.callFromTreeListDoc = true;
 		}
 		
 		this.fireEvent('documentexecutionpageinit');
