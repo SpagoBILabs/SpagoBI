@@ -28,7 +28,10 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -176,6 +179,7 @@ public class CrosstabXLSExporter {
 
 
 	private void buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+		CellStyle cellStyle = buildDataCellStyle(sheet);
 		for (int i = 0; i < data.length(); i++) {
 			JSONArray array = (JSONArray) data.get(i);
 			for (int j = 0; j < array.length(); j++) {
@@ -184,7 +188,7 @@ public class CrosstabXLSExporter {
 				int columnNum = columnOffset + j ;
 				Row row = sheet.getRow(rowNum);
 				Cell cell = row.createCell(columnNum);
-				
+				cell.setCellStyle(cellStyle);
 				try {
 					double value = Double.parseDouble(text);
 					cell.setCellValue(value);
@@ -232,6 +236,9 @@ public class CrosstabXLSExporter {
 	 */
 	private void buildRowsHeaders(Sheet sheet, JSONArray siblings, int rowNum, int columnNum, CreationHelper createHelper) throws JSONException {
 		int rowsCounter = rowNum;
+		
+		CellStyle cellStyle = buildHeaderCellStyle(sheet);
+        
 		for (int i = 0; i < siblings.length(); i++) {
 			JSONObject aNode = (JSONObject) siblings.get(i);
 			Row row = sheet.getRow(rowsCounter);
@@ -239,6 +246,9 @@ public class CrosstabXLSExporter {
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			cell.setCellValue(createHelper.createRichTextString(text));
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+
+	        cell.setCellStyle(cellStyle);
+	       
 		    int descendants = aNode.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(
@@ -259,7 +269,50 @@ public class CrosstabXLSExporter {
 	}
 
 
-
+	public CellStyle buildHeaderCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);  
+        cellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setLeftBorderColor(IndexedColors.DARK_BLUE.getIndex());
+        cellStyle.setRightBorderColor(IndexedColors.DARK_BLUE.getIndex());
+        cellStyle.setBottomBorderColor(IndexedColors.DARK_BLUE.getIndex());
+        cellStyle.setTopBorderColor(IndexedColors.DARK_BLUE.getIndex());
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontHeightInPoints((short)14);
+        font.setFontName("Arial");
+        font.setColor(IndexedColors.DARK_BLUE.getIndex());
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
+	
+	public CellStyle buildDataCellStyle(Sheet sheet){
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+        cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);    
+        cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+        cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+        cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+        cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+        cellStyle.setLeftBorderColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setRightBorderColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setBottomBorderColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setTopBorderColor(IndexedColors.BLUE.getIndex());
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontHeightInPoints((short)12);
+        font.setFontName("Arial");
+        font.setColor(IndexedColors.BLACK.getIndex());
+        cellStyle.setFont(font);
+        return cellStyle;
+	}
 
 
 
@@ -282,6 +335,7 @@ public class CrosstabXLSExporter {
 	 */
 	private void buildColumnsHeader(Sheet sheet, JSONArray siblings, int rowNum, int columnNum, CreationHelper createHelper) throws JSONException {
 		int columnCounter = columnNum;
+		CellStyle cellStyle = buildHeaderCellStyle(sheet);
 		for (int i = 0; i < siblings.length(); i++) {
 			JSONObject aNode = (JSONObject) siblings.get(i);
 			Row row = sheet.getRow(rowNum);
@@ -289,6 +343,7 @@ public class CrosstabXLSExporter {
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			cell.setCellValue(createHelper.createRichTextString(text));
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		    cell.setCellStyle(cellStyle);
 		    int descendants = aNode.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(

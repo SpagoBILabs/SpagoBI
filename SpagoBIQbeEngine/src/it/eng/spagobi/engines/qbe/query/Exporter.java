@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.query;
 
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -67,6 +68,10 @@ public class Exporter {
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		 if(dataStore!=null  && !dataStore.isEmpty()){
+			 CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
+			 CellStyle hCellStyle = xlsExp.buildHeaderCellStyle(sheet);
+			 CellStyle dCellStyle = xlsExp.buildDataCellStyle(sheet);
+			 
 		    	IDataStoreMetaData d = dataStore.getMetaData();	
 		    	int colnum = d.getFieldCount();
 		    	Row row = sheet.createRow((short)0);
@@ -77,6 +82,7 @@ public class Exporter {
 		    	    String fieldName = d.getFieldName(j);
 		    	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
 		    	    String format = (String) fieldMetaData.getProperty("format");
+		    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
 		            if (extractedFields != null && extractedFields.get(j) != null) {
 		    	    	Field field = (Field) extractedFields.get(j);
 		    	    	fieldName = field.getAlias();
@@ -84,13 +90,16 @@ public class Exporter {
 		    	    		format = field.getPattern();
 		    	    	}
 		    	    }
+		            CellStyle aCellStyle = wb.createCellStyle(); 
 		            if (format != null) {
-	    	    		short formatInt = HSSFDataFormat.getBuiltinFormat(format);
-	    	    		CellStyle aCellStyle = wb.createCellStyle();   
+	    	    		short formatInt = HSSFDataFormat.getBuiltinFormat(format);  		  
 	    	    		aCellStyle.setDataFormat(formatInt);
 	    		    	cellTypes[j] = aCellStyle;
 		            }
-		    	    cell.setCellValue(createHelper.createRichTextString(fieldName));
+		            if (visible != null && visible.booleanValue() == true) { 
+		            	 cell.setCellValue(createHelper.createRichTextString(fieldName));
+		            	 cell.setCellStyle(hCellStyle);
+		            }	   
 		    	}
 		    	
 		    	Iterator it = dataStore.iterator();
@@ -114,50 +123,59 @@ public class Exporter {
 					for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
 						IField f = (IField)fields.get(fieldIndex);
 						if (f != null && f.getValue()!= null) {
-							
-							Class c = d.getFieldType(fieldIndex);
-							logger.debug("Column [" + (fieldIndex+1) + "] class is equal to [" + c.getName() + "]");
-							if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
-								logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");
-								Cell cell = rowVal.createCell(fieldIndex);
-							    Number val = (Number)f.getValue();
-							    cell.setCellValue(val.intValue());
-							    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-							    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
-							}else if( Number.class.isAssignableFrom(c) ) {
-								logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
-								Cell cell = rowVal.createCell(fieldIndex);
-							    Number val = (Number)f.getValue();
-							    cell.setCellValue(val.doubleValue());
-							    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-							   // List formats = HSSFDataFormat.getBuiltinFormats();
-							    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
-							}else if( String.class.isAssignableFrom(c)){
-								logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");
-								Cell cell = rowVal.createCell(fieldIndex);		    
-							    String val = (String)f.getValue();
-							    cell.setCellValue(createHelper.createRichTextString(val));
-							    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-							}else if( Boolean.class.isAssignableFrom(c) ) {
-								logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "BOOLEAN" + "]");
-								Cell cell = rowVal.createCell(fieldIndex);
-							    Boolean val = (Boolean)f.getValue();
-							    cell.setCellValue(val.booleanValue());
-							    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-							}else if(Date.class.isAssignableFrom(c)){
-								logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");
-							    Cell cell = rowVal.createCell(fieldIndex);		    
-							    Date val = (Date)f.getValue();
-							    cell.setCellValue(val);	
-							    cell.setCellStyle(cellStyleDate);
-							}else{
-								logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
-								Cell cell = rowVal.createCell(fieldIndex);
-							    String val = f.getValue().toString();
-							    cell.setCellValue(createHelper.createRichTextString(val));
-							    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-							}
-							
+							String fieldName = d.getFieldName(fieldIndex);
+				    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
+				    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
+				    	    if(visible){
+								Class c = d.getFieldType(fieldIndex);
+								logger.debug("Column [" + (fieldIndex+1) + "] class is equal to [" + c.getName() + "]");
+								if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
+									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");
+									Cell cell = rowVal.createCell(fieldIndex);
+								    Number val = (Number)f.getValue();
+								    cell.setCellValue(val.intValue());
+								    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+								    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
+								    cell.setCellStyle(dCellStyle);
+								}else if( Number.class.isAssignableFrom(c) ) {
+									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
+									Cell cell = rowVal.createCell(fieldIndex);
+								    Number val = (Number)f.getValue();
+								    cell.setCellValue(val.doubleValue());
+								    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+								   // List formats = HSSFDataFormat.getBuiltinFormats();
+								    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
+								    cell.setCellStyle(dCellStyle);
+								}else if( String.class.isAssignableFrom(c)){
+									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");
+									Cell cell = rowVal.createCell(fieldIndex);		    
+								    String val = (String)f.getValue();
+								    cell.setCellValue(createHelper.createRichTextString(val));
+								    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+								    cell.setCellStyle(dCellStyle);
+								}else if( Boolean.class.isAssignableFrom(c) ) {
+									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "BOOLEAN" + "]");
+									Cell cell = rowVal.createCell(fieldIndex);
+								    Boolean val = (Boolean)f.getValue();
+								    cell.setCellValue(val.booleanValue());
+								    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+								    cell.setCellStyle(dCellStyle);
+								}else if(Date.class.isAssignableFrom(c)){
+									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");
+								    Cell cell = rowVal.createCell(fieldIndex);		    
+								    Date val = (Date)f.getValue();
+								    cell.setCellValue(val);	
+								    cell.setCellStyle(cellStyleDate);
+								    cell.setCellStyle(dCellStyle);
+								}else{
+									logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
+									Cell cell = rowVal.createCell(fieldIndex);
+								    String val = f.getValue().toString();
+								    cell.setCellValue(createHelper.createRichTextString(val));
+								    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+								    cell.setCellStyle(dCellStyle);
+								}
+				    	    }
 						}
 					}
 					rownum ++;
