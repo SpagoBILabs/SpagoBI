@@ -395,7 +395,12 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		//depending on chart type enables click navigation events
     		if(doc != null && doc != undefined){
     			//line, spline, area, areaspline, column, bar, pie and scatter. 
-    			dataConfig.plotOptions.series.events = event;
+    			if(dataConfig.plotOptions.series){
+    				dataConfig.plotOptions.series.events = event;
+    			}else{
+    				dataConfig.series.events = event;
+    			}
+    			
     		}
     	}
     	
