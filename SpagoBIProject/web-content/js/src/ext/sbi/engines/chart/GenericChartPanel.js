@@ -343,7 +343,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		        		var params = "";
 		        		for(var i = 0; i< drill.param.length; i++){
 		        			if(drill.param[i].type == 'ABSOLUTE'){
-		        				params+= drill.param[i].name +"='"+drill.param[i].value+"'";
+		        				params+= drill.param[i].name +"="+drill.param[i].value;
 		        			
 		    	    			if(i != drill.param.length -1 ){
 		    	    				params+="&";
@@ -364,7 +364,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'CATEGORY'){
-    		    				params+= drill.param[i].name +"='"+ev.point.category+"'";
+    		    				params+= drill.param[i].name +"="+ev.point.category;
     		    			
     			    			if(i != drill.param.length -1 ){
     			    				params+="&";
@@ -374,7 +374,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		    		}
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'SERIE'){
-    		    				params+= drill.param[i].name +"='"+ev.point.y+"'";
+    		    				params+= drill.param[i].name +"="+ev.point.y;
     		    			
     			    			if(i != drill.param.length -1 ){
     			    				params+="&";
@@ -395,14 +395,21 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     		if(doc != null && doc != undefined){
     			//line, spline, area, areaspline, column, bar, pie and scatter. 
     			if(dataConfig.plotOptions.series !== undefined){
+    				alert('0');
     				dataConfig.plotOptions.series.events = event;
     			}else{
-    				if(Ext.isArray(dataConfig.series)){
-    					for(var i =0; i< dataConfig.series.length; i++){
-    						dataConfig.series[i].events = event;
-    					}
-    				}else{
-    					dataConfig.series.events = event;
+    				if(dataConfig.series !== undefined){
+    					alert('1');
+	    				if(Ext.isArray(dataConfig.series) == true){
+	    					alert('2');
+	    					for(var i =0; i< dataConfig.series.length; i++){
+	    						alert('3');
+	    						dataConfig.series[i].events = event;
+	    					}
+	    				}else{
+	    					alert('4');
+	    					dataConfig.series.events = event;
+	    				}
     				}
     			}
     			
