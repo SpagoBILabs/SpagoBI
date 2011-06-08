@@ -63,6 +63,7 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
 	this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
 	this.OBJECT_QUERY = config.OBJECT_QUERY;
+	this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
 	
 	this.initFormPanel();
 	
@@ -192,9 +193,18 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 		var docDescr = this.docDescr.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
 		var query = this.OBJECT_QUERY;
+		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
-		query = Ext.util.JSON.encode(query);
-		wk_definition = Ext.util.JSON.encode(wk_definition);
+		
+		if(formValues!=undefined && formValues!=null){
+			formValues=Ext.encode(formValues);
+		}
+		if(query!=undefined && query!=null){
+			query = Ext.util.JSON.encode(query);
+		}
+		if(wk_definition!=undefined && wk_definition!=null){
+			wk_definition = Ext.util.JSON.encode(wk_definition);
+		}
 		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
@@ -216,16 +226,17 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 					typeid: this.OBJECT_TYPE,
 					wk_definition: wk_definition,
 					query: query,
+					formValues: formValues,
 					//engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
+					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
 					functs: functs
 		        };
 			
 			Ext.Ajax.request({
 		        url: this.services['saveDocumentService'],
 		        params: params,
-		        method: 'GET',
 		        success : function(response , options) {
 			      		if(response !== undefined && response.responseText !== undefined) {
 			      			var content = Ext.util.JSON.decode( response.responseText );
