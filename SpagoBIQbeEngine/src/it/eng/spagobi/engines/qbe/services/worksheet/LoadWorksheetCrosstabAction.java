@@ -33,6 +33,7 @@ import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
@@ -55,7 +56,12 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	 */
 	@Override
 	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-		return  getEngineInstance().getFormState().getFormStateValues();
+		FormState formState = getEngineInstance().getFormState();
+		if (formState == null) {
+			return null;
+		} else {
+			return  formState.getFormStateValues();
+		}
 	}
 	
 	
