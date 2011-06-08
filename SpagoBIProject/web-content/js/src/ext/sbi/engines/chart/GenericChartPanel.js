@@ -69,7 +69,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	, loadChartData: function(dataConfig){
 		//this.showMask();
 		//this.categoryAlias = (dataConfig.xaxis)?dataConfig.xaxis.categories:"";
-		if(dataConfig.xAxis != undefined){
+		if(dataConfig.xAxis !== undefined){
 			if(dataConfig.xAxis.length != undefined){
 				for(var i=0; i< dataConfig.xAxis.length; i++){
 					var alias = dataConfig.xAxis[i].alias;
@@ -86,7 +86,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			}	
 		}
 		if(dataConfig.yAxis != undefined){
-			if(dataConfig.yAxis.length != undefined){
+			if(dataConfig.yAxis.length !== undefined){
 				for(var i=0; i< dataConfig.yAxis.length; i++){//it's an array
 					var alias = dataConfig.yAxis[i].alias;
 					if(alias != undefined){
@@ -392,22 +392,16 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     				}
     		};
     		//depending on chart type enables click navigation events
-    		if(doc != null && doc != undefined){
-    			//line, spline, area, areaspline, column, bar, pie and scatter. 
+    		if(doc !== undefined && doc != null ){
     			if(dataConfig.plotOptions.series !== undefined){
-    				alert('0');
     				dataConfig.plotOptions.series.events = event;
     			}else{
     				if(dataConfig.series !== undefined){
-    					alert('1');
 	    				if(Ext.isArray(dataConfig.series) == true){
-	    					alert('2');
 	    					for(var i =0; i< dataConfig.series.length; i++){
-	    						alert('3');
 	    						dataConfig.series[i].events = event;
 	    					}
 	    				}else{
-	    					alert('4');
 	    					dataConfig.series.events = event;
 	    				}
     				}
