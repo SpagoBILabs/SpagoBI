@@ -21,6 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.presentation.DynamicPublisher;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -49,6 +50,16 @@ public class WorksheetStartEditAction extends AbstractQbeEngineAction {
 			qbeEngineInstance = getEngineInstance();
 			
 			setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
+			
+			//publisher for the qbe edit
+			String publisherName = "WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER";
+			
+			if (qbeEngineInstance.getFormState()!=null) {
+				//publisher for the smart filter edit
+				publisherName = "WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER";
+			}
+			
+			serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME, publisherName);
 			
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);

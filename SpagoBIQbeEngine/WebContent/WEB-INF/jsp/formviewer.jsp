@@ -17,6 +17,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>
@@ -34,6 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
+<%@page import="it.eng.qbe.serializer.SerializationManager"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -116,6 +120,22 @@ end DOCTYPE declaration --%>
 	        , baseParams: params
 		});
 	    
+	    
+	    var formEngineConfig = {};
+	    formEngineConfig.worksheet = {};
+      	<%
+      	WorkSheetDefinition workSheetDefinition = qbeEngineInstance.getWorkSheetDefinition();
+      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
+      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
+      				new JSONObject();
+      	%>
+      	
+
+      	
+      	formEngineConfig.worksheet.worksheetTemplate = <%= workSheetDefinitionJSON %>;
+	    
+	    
+	    
 	    var formEnginePanel=null;
 	    
         Ext.onReady(function() {
@@ -128,7 +148,11 @@ end DOCTYPE declaration --%>
 				formValues = <%= qbeEngineInstance.getFormState().getFormStateValues().toString() %>;
 			<%}%>
 
-			formEnginePanel = new Sbi.formviewer.FormEnginePanel(template, {region: 'center'}, formValues);
+			formEngineConfig.template = template;
+			formEngineConfig.formValues = formValues;
+			formEngineConfig.config = {region: 'center'};
+			
+			formEnginePanel = new Sbi.formviewer.FormEnginePanel(formEngineConfig);
 	        var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
            	
       	});
