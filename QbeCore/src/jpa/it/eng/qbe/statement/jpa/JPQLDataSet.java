@@ -63,50 +63,16 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	
 	
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		EntityManager entityManager = null;
-		entityManager = ((IJpaDataSource)statement.getDataSource()).getEntityManager();
-		loadDataEclipseLink(offset, fetchSize, maxResults, entityManager);
+		EntityManager entityManager;
+		
+		try {
+			entityManager = ((IJpaDataSource)statement.getDataSource()).getEntityManager();
+			loadDataEclipseLink(offset, fetchSize, maxResults, entityManager);
+		} catch (Throwable t) {
+			throw new RuntimeException("Impossible to load data", t);
+		}
 	
 	}
-	
-//	private void loadWithDataHibernate(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
-//
-//		HibernateQuery jpqlQuery;
-//		boolean overflow = false;
-//		int resultNumber;
-//		
-//		jpqlQuery = (HibernateQuery)entityManager.createQuery( statement.getQueryString() );
-//		resultNumber =getResultNumber(jpqlQuery, entityManager);
-//		logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
-//		overflow = (maxResults > 0) && (resultNumber >= maxResults);
-//
-//		ScrollableResults sr = jpqlQuery.getHibernateQuery().scroll();
-//		sr.last();
-//		resultNumber =  sr.getRowNumber();
-//		sr.first();
-//		
-//		List result = null;
-//
-//		if (overflow && abortOnOverflow) {
-//			// does not execute query
-//			result = new ArrayList();
-//		} else {
-//			offset = offset < 0 ? 0 : offset;
-//			if(maxResults > 0) {
-//				fetchSize = (fetchSize > 0)? Math.min(fetchSize, maxResults): maxResults;
-//			}
-//			
-//			logger.debug("Executing query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
-//			jpqlQuery.setFirstResult(offset).setMaxResults(fetchSize);			
-//			result = jpqlQuery.getResultList();
-//			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
-//		}	
-//
-//		dataStore = toDataStore(result);
-//		dataStore.getMetaData().setProperty("resultNumber", resultNumber);		
-//	}
-	
-	
 	
 	private void loadDataEclipseLink(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
 
@@ -114,8 +80,15 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		boolean overflow = false;
 		int resultNumber;
 		
-		jpqlQuery = entityManager.createQuery( statement.getQueryString() );
-		resultNumber =getResultNumber(jpqlQuery, entityManager);
+		String statementStr = statement.getQueryString();
+		
+		try {
+			jpqlQuery = entityManager.createQuery( statementStr );
+		} catch (Throwable t) {
+			throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
+		}
+			
+		resultNumber = getResultNumber(jpqlQuery, entityManager);
 		logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
 		overflow = (maxResults > 0) && (resultNumber >= maxResults);
 
@@ -134,7 +107,15 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			if(fetchSize > 0) {
 				jpqlQuery.setMaxResults(fetchSize);		
 			}
-			result = jpqlQuery.getResultList();
+			
+			try {
+				result = jpqlQuery.getResultList();
+			} catch (Throwable t) {
+				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+			}
+			
+			
+			
 			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}	
 
