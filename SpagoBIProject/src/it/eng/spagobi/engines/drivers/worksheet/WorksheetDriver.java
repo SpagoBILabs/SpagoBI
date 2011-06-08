@@ -58,6 +58,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
     public final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
     public final static String QUERY = "QUERY";
     public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
+    public final static String FORM_VALUES = "FORM_VALUES";
 		
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -255,14 +256,24 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
     
     
 
-    public String composeWorksheetTemplate(String workSheetDef, String workSheetQuery, String originalQbeTempl) throws SourceBeanException{
+    public String composeWorksheetTemplate(String workSheetDef, String workSheetQuery, String smartFilterValues, String originalQbeTempl) throws SourceBeanException{
     	SourceBean confSB = SourceBean.fromXMLString( originalQbeTempl );
 		SourceBean wk_def_sb = new SourceBean(WORKSHEET_DEFINITION);
 		wk_def_sb.setCharacters(workSheetDef);
-		SourceBean query_sb = new SourceBean(QUERY);
-		query_sb.setCharacters(workSheetQuery);
 		confSB.updAttribute(wk_def_sb);
-		confSB.updAttribute(query_sb);
+		
+		if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+			SourceBean query_sb = new SourceBean(QUERY);
+			query_sb.setCharacters(workSheetQuery);
+			confSB.updAttribute(query_sb);
+		}
+		
+		if(smartFilterValues!=null && !smartFilterValues.equals("")){
+			SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+			smartFilterValuesSB.setCharacters(smartFilterValues);
+			confSB.updAttribute(smartFilterValuesSB);
+		}
+
 		String template = confSB.toXML(false);	
 		return template;
     }

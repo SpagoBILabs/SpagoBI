@@ -71,6 +71,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String FUNCTS = "functs";
 	private final String OBJECT_WK_DEFINITION = "wk_definition";
 	private final String OBJECT_QUERY = "query";
+	private final String FORMVALUES = "formValues";
 
 	private IBIObjectDAO objDao = null;
 	
@@ -93,8 +94,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DOC_UPDATE)) {
 				updateWorksheetTemplate();
 			}
-		} catch (SpagoBIServiceException e) {
-			throw e;
 		} catch (Exception e) {
 			logger.error("Error while updating document's template", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.saveError", e);
@@ -114,7 +113,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String template = getAttributeAsString(TEMPLATE);	
 		JSONArray functsArrayJSon = getAttributeAsJSONArray(FUNCTS);
 		String wk_definition = getAttributeAsString(OBJECT_WK_DEFINITION);
-		String query = getAttributeAsString(OBJECT_QUERY);
+		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
+		String query = optAttributeAsString(OBJECT_QUERY);
 
 		if (name != null && name != "" && label != null && label != "" && 
 			 type!=null && functsArrayJSon!=null && functsArrayJSon.length()!= 0) {
@@ -180,11 +180,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			byte[] content = null;
 			if(template != null && template != ""){
 				content = template.getBytes();
+			}else if(smartFilterValues!=null){ 
+				content = getSmartFilterTemplateContent();
 			}else if(wk_definition!=null && query!=null && orig_obj!=null){
 				ObjTemplate qbETemplate = orig_obj.getActiveTemplate();
 				String templCont = new String(qbETemplate.getContent());
 				WorksheetDriver q = new WorksheetDriver();
-				String temp = q.composeWorksheetTemplate(wk_definition, query, templCont);
+				String temp = q.composeWorksheetTemplate(wk_definition, query, null, templCont);
 				content = temp.getBytes();
 			}else{
 				logger.error("Document template not available");
@@ -259,16 +261,24 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		logger.debug("OUT");
 		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
 		String query = getAttributeAsString(OBJECT_QUERY);
+		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
+		String smartFilterValuesString = null;
 		Assert.assertNotNull(wkDefinition, "Missing worksheet definition");
-		Assert.assertNotNull(wkDefinition, "Missing base query definition");
+		Assert.assertNotNull(query, "Missing base query definition");
 		logger.debug("Worksheet definition : " + wkDefinition);
 		logger.debug("Base query definition : " + query);
+		logger.debug("Smart filter values : " + smartFilterValues);
 		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		BIObject biobj = executionInstance.getBIObject();
 		ObjTemplate qbETemplate = biobj.getActiveTemplate();
 		String templCont = new String(qbETemplate.getContent());
 		WorksheetDriver q = new WorksheetDriver();
-		String temp = q.composeWorksheetTemplate(wkDefinition, query, templCont);
+		
+		if(smartFilterValues!=null){
+			smartFilterValuesString =  smartFilterValues.toString();
+		}
+		
+		String temp = q.composeWorksheetTemplate(wkDefinition, query, smartFilterValuesString, templCont);
 		byte[] content = temp.getBytes();
 		logger.debug("OUT");
 		return content;
@@ -284,6 +294,26 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		objTemp.setName("template.sbiworksheet");
 		logger.debug("OUT");
 		return objTemp;
+	}
+	
+	private byte[] getSmartFilterTemplateContent() throws Exception {
+		logger.debug("OUT");
+		String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
+		JSONObject smartFilterValues = optAttributeAsJSONObject(FORMVALUES);
+		String smartFilterValuesString = smartFilterValues.toString();
+		Assert.assertNotNull(wkDefinition, "Missing worksheet definition");
+		Assert.assertNotNull(smartFilterValues, "Missing smart Filter Values");
+		logger.debug("Worksheet definition : " + wkDefinition);
+		logger.debug("Smart filter values : " + smartFilterValues);
+		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
+		BIObject biobj = executionInstance.getBIObject();
+		ObjTemplate qbETemplate = biobj.getActiveTemplate();
+		String templCont = new String(qbETemplate.getContent());
+		WorksheetDriver q = new WorksheetDriver();
+		String temp = q.composeWorksheetTemplate(wkDefinition, null, smartFilterValuesString, templCont);
+		byte[] content = temp.getBytes();
+		logger.debug("OUT");
+		return content;
 	}
 
 }

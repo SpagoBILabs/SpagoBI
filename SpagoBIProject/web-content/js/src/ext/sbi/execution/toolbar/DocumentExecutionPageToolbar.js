@@ -520,6 +520,15 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}));
 		}
 		
+		if (executionInstance.document.typeCode === 'SMART_FILTER') {
+			this.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-save' 
+				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+			    , scope: this
+			    , handler : this.saveWorksheetAs	
+			}));
+		}
+		
 		this.addButton(new Ext.Toolbar.Button({
 			iconCls: 'icon-rating' 
 			, tooltip: LN('sbi.execution.executionpage.toolbar.rating')
@@ -1123,11 +1132,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
    , getWorksheetTemplateAsString: function() {
 		try {
-			var qbeWindow = this.miframe.getFrame().getWindow();
-			var template = qbeWindow.qbe.getWorksheetTemplateAsString();
+			var window = null;
+			if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
+				window = this.miframe.getFrame().getWindow().qbe;
+			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
+				window = this.miframe.getFrame().getWindow().formEnginePanel;
+			}else{
+				alert('Sorry, cannot perform operation. Invalid engine..');
+				return null;
+			}
+			template = window.getWorksheetTemplateAsString();
 			return template;
 		} catch (err) {
-			alert('Sorry, cannot perform operation.');
 			throw err;
 		}
    }
@@ -1146,17 +1162,29 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		if(templateJSON==null){
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
 		}else{
-			var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
-			var query = templateJSON.OBJECT_QUERY;
-			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow({
+
+			var documentWindowsParams = this.getSaveDocumentWindowsParams(templateJSON);
+			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
+			this.win_saveDoc.show();
+		}
+   }
+   
+   , getSaveDocumentWindowsParams: function(templateJSON){
+		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
+		var params = {
 				'OBJECT_ID': this.executionInstance.OBJECT_ID,
 				'OBJECT_TYPE': 'WORKSHEET',
 				'OBJECT_WK_DEFINITION': wkDefinition,
-				'OBJECT_QUERY': query,
 				'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
-			});
-			this.win_saveDoc.show();
+			};
+		if(this.executionInstance.document.typeCode == 'DATAMART'){
+			params.OBJECT_QUERY = templateJSON.OBJECT_QUERY;
+		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
+			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;
+			params = Ext.apply(this.executionInstance, params);
+
 		}
+		return params;
    }
    
    , stopWorksheetEditing: function() {
