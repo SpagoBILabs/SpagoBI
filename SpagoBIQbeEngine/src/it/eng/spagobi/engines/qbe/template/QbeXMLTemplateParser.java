@@ -51,6 +51,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String TAG_FUNCTIONALITIES = "FUNCTIONALITIES";
 	public static String TAG_QUERY = "QUERY";
 	public static String TAG_FORM = "FORM";
+	public static String TAG_FORM_VALUES = "FORM_VALUES";
 	public static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public static String TAG_EXTERNAL_SERVICES = "EXTERNAL_SERVICES";
 	public static String TAG_EXTERNAL_SERVICE = "EXTERNAL_SERVICE";
@@ -80,7 +81,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 		List modalities;
 		SourceBean compositeModalitySB;
 		SourceBean functionalitiesSB;
-		JSONObject formJSONTemplate, queryJSON, worksheetJSONTemplate;
+		JSONObject formJSONTemplate, formValuesJSONTemplate, queryJSON, worksheetJSONTemplate;
 		
 		try {
 			
@@ -181,6 +182,15 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					qbeTemplate.setProperty("formJSONTemplate", formJSONTemplate);
 				} else {
 					logger.debug("Qbe template does not contain tag [" + TAG_FORM +"]");
+				}
+				
+				// form values block
+				if(template.containsAttribute(TAG_FORM_VALUES)) {
+					formSB = (SourceBean) template.getAttribute(TAG_FORM_VALUES);
+					formValuesJSONTemplate = new JSONObject(formSB.getCharacters());
+					qbeTemplate.setProperty("formValuesJSONTemplate", formValuesJSONTemplate);
+				} else {
+					logger.debug("Qbe template does not contain tag [" + TAG_FORM_VALUES +"]");
 				}
 				
 				// worksheet block

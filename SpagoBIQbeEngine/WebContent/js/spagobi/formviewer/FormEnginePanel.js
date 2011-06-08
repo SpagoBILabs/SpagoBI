@@ -131,5 +131,25 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     , moveToFormPage: function() {
     	this.getLayout().setActiveItem( 0 );
 	}
+    
+    , getWorksheetTemplateAsString : function () {
+	    if (this.worksheetPage !== null) {
+
+			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
+			var formState = this.formViewerPage.getFormState();
+			
+			if(!this.worksheetPage.isValid()){
+				return null;
+			}
+			var template = Ext.util.JSON.encode({
+				'OBJECT_WK_DEFINITION' : worksheetDefinition,
+				'OBJECT_FORM_VALUES' : formState
+			});
+			return template;
+		} else {
+			alert('Warning: worksheetDesignerPanel not defined!!');
+			return null;
+		}
+	}
 	
 });

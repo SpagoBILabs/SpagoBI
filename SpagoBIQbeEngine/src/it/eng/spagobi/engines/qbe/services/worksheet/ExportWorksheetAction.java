@@ -192,7 +192,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 					getEngineInstance().setActiveQuery(query);
 					
 				}				
-				IStatement statement = getStatementForWorksheet(visibleSelectFields, query, optionalUserFiltersJSON);
+				IStatement statement = getStatement(query);
 				IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
 				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
 			}

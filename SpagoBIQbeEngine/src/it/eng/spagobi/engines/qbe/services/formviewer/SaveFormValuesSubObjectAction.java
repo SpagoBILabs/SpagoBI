@@ -139,7 +139,7 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 	 * @param formState the values of the form
 	 * @return the values of the form but with the ids of the fields instead of the names
 	 */
-	private JSONObject parseValues(JSONObject formState, Map<String, String> idNameMap){
+	public static JSONObject parseValues(JSONObject formState, Map<String, String> idNameMap){
 		JSONObject parsedForm = new JSONObject();
 		JSONObject newDynamicFilters, newStaticOpenFilters, newStaticClosedFilters, newStaticClosedFiltersAnd, newStaticClosedFiltersXor;
 		try{
@@ -185,7 +185,7 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 	
 
 	
-	private JSONObject getPropertyNames(JSONObject filters, Map<String, String> idNameMap, String prefix) throws JSONException{
+	private static JSONObject getPropertyNames(JSONObject filters, Map<String, String> idNameMap, String prefix) throws JSONException{
 		if(filters!=null){
 			JSONObject newFilters = new JSONObject();
 			String key, newKey;

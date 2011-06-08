@@ -116,6 +116,8 @@ end DOCTYPE declaration --%>
 	        , baseParams: params
 		});
 	    
+	    var formEnginePanel=null;
+	    
         Ext.onReady(function() {
         	Ext.QuickTips.init();
 
@@ -126,7 +128,7 @@ end DOCTYPE declaration --%>
 				formValues = <%= qbeEngineInstance.getFormState().getFormStateValues().toString() %>;
 			<%}%>
 
-			var formEnginePanel = new Sbi.formviewer.FormEnginePanel(template, {region: 'center'}, formValues);
+			formEnginePanel = new Sbi.formviewer.FormEnginePanel(template, {region: 'center'}, formValues);
 	        var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
            	
       	});
