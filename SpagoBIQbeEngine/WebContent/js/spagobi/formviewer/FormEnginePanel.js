@@ -46,7 +46,7 @@
 
 Ext.ns("Sbi.formviewer");
 
-Sbi.formviewer.FormEnginePanel = function(template, config, formValues) {
+Sbi.formviewer.FormEnginePanel = function(formEngineConfig) {
 	
 	var defaultSettings = {
 		//title: LN('sbi.qbe.queryeditor.title'),
@@ -56,7 +56,7 @@ Sbi.formviewer.FormEnginePanel = function(template, config, formValues) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.queryBuilderPanel);
 	}
 	
-	var c = Ext.apply(defaultSettings, config || {});
+	var c = Ext.apply(defaultSettings, formEngineConfig.config || {});
 	
 	Ext.apply(this, c);
 	
@@ -70,9 +70,9 @@ Sbi.formviewer.FormEnginePanel = function(template, config, formValues) {
 	this.addEvents('execute');
 	*/
 	
-	this.initFormViewerPage(template, c.formViewerPageConfig || {},formValues);
+	this.initFormViewerPage(formEngineConfig.template, c.formViewerPageConfig || {},formEngineConfig.formValues);
 	this.initResultsPage(c.resultsPageConfig || {});
-	this.initWorksheetPage(c.worksheetPageConfig || {});
+	this.initWorksheetPage(formEngineConfig.worksheet || {});
 	
 	c = Ext.apply(c, {
 		closable: false

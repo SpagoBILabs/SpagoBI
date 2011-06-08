@@ -10,10 +10,27 @@
 		</RENDERING>    	
 	</PUBLISHER>
 	
-	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_PUBLISHER">		
+	
+	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_PUBLISHER">
+   	 	<RENDERING channel="HTTP" type="JAVA" mode="">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.commons.presentation.DynamicPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	
+	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
 				<ITEM prog="0" resource="/WEB-INF/jsp/qbe.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+		<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/formviewer.jsp" />
 			</RESOURCES>
 		</RENDERING>    	
 	</PUBLISHER>
