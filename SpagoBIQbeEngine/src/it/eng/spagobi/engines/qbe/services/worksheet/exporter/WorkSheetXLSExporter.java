@@ -144,7 +144,7 @@ public class WorkSheetXLSExporter {
 		String title = header.getString(TITLE);
 		String imgName = header.getString(IMG);
 		String imagePosition = header.getString(POSITION);
-		sheet.createRow(1);
+		//sheet.createRow(1);
 		
 		if(title!=null && !title.equals("")){			
 			Row row = sheet.getRow(1);

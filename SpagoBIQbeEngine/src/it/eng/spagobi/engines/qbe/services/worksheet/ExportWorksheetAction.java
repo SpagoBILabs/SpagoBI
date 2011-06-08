@@ -134,17 +134,18 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			String sheetName = "Sheet " + i;
 			HSSFSheet sheet = wb.createSheet(sheetName);
 			
+			if(sheetJ.has(exporter.CONTENT)){
+				JSONObject content = sheetJ.getJSONObject(exporter.CONTENT);
+				fillSheetContent(wb, sheet, content, createHelper, exporter);
+			}
+			
 			if(sheetJ.has(exporter.HEADER)){
 				JSONObject header = sheetJ.getJSONObject(exporter.HEADER);
 				if(header!=null){
 					exporter.setHeader(sheet, header, createHelper, wb);
 				}
-			}	
+			}			
 			
-			if(sheetJ.has(exporter.CONTENT)){
-				JSONObject content = sheetJ.getJSONObject(exporter.CONTENT);
-				fillSheetContent(wb, sheet, content, createHelper, exporter);
-			}
 			if(sheetJ.has(exporter.FOOTER)){
 				JSONObject footer = sheetJ.getJSONObject(exporter.FOOTER);
 				if(footer!=null){
