@@ -246,7 +246,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				attributesResponseSuccessJSON.put("result", version);
 				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
 			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset to delete", e);
+				logger.error("Exception occurred while retrieving dataset to restore", e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.restoreVersionError", e);
 			}
 		}else if(serviceType == null){
