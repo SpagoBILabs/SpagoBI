@@ -5,8 +5,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
  <wsdl:types>
   <schema targetNamespace="urn:spagobisdkdatasets" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="http://xml.apache.org/xml-soap"/>
-   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="ArrayOf_soapenc_string">
     <complexContent>
@@ -91,8 +91,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
   </schema>
   <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="http://xml.apache.org/xml-soap"/>
-   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="urn:spagobisdkdatasets"/>
+   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="NotAllowedOperationException">
     <sequence/>
@@ -112,9 +112,9 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    </complexType>
   </schema>
   <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
-   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
    <import namespace="urn:spagobisdkdatasets"/>
+   <import namespace="http://bo.datasets.sdk.spagobi.eng.it"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="mapItem">
     <sequence>
@@ -130,33 +130,33 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
   </schema>
  </wsdl:types>
 
-   <wsdl:message name="NotAllowedOperationException">
-
-      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="saveDatasetResponse">
-
-      <wsdl:part name="saveDatasetReturn" type="soapenc:int"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDataSetResponse">
-
-      <wsdl:part name="getDataSetReturn" type="tns2:SDKDataSet"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="MissingParameterValue">
-
-      <wsdl:part name="fault" type="tns3:MissingParameterValue"/>
-
-   </wsdl:message>
-
    <wsdl:message name="getDataSetRequest">
 
       <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="InvalidParameterValue">
+
+      <wsdl:part name="fault" type="tns3:InvalidParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataStoreMetadataResponse">
+
+      <wsdl:part name="getDataStoreMetadataReturn" type="tns2:SDKDataStoreMetadata"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveDatasetRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDataSet"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="executeDataSetRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
 
    </wsdl:message>
 
@@ -170,27 +170,39 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="getDataStoreMetadataResponse">
-
-      <wsdl:part name="getDataStoreMetadataReturn" type="tns2:SDKDataStoreMetadata"/>
-
-   </wsdl:message>
-
    <wsdl:message name="getDataStoreMetadataRequest">
 
       <wsdl:part name="in0" type="tns2:SDKDataSet"/>
 
    </wsdl:message>
 
-   <wsdl:message name="InvalidParameterValue">
+   <wsdl:message name="saveDatasetResponse">
 
-      <wsdl:part name="fault" type="tns3:InvalidParameterValue"/>
+      <wsdl:part name="saveDatasetReturn" type="soapenc:int"/>
 
    </wsdl:message>
 
-   <wsdl:message name="saveDatasetRequest">
+   <wsdl:message name="MissingParameterValue">
 
-      <wsdl:part name="in0" type="tns2:SDKDataSet"/>
+      <wsdl:part name="fault" type="tns3:MissingParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSetResponse">
+
+      <wsdl:part name="getDataSetReturn" type="tns2:SDKDataSet"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="executeDataSetResponse">
+
+      <wsdl:part name="executeDataSetReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="NotAllowedOperationException">
+
+      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
 
    </wsdl:message>
 
@@ -235,6 +247,16 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:saveDatasetRequest" name="saveDatasetRequest"/>
 
          <wsdl:output message="impl:saveDatasetResponse" name="saveDatasetResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="executeDataSet" parameterOrder="in0">
+
+         <wsdl:input message="impl:executeDataSetRequest" name="executeDataSetRequest"/>
+
+         <wsdl:output message="impl:executeDataSetResponse" name="executeDataSetResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -341,6 +363,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="saveDatasetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="executeDataSet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="executeDataSetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasets" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="executeDataSetResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasets" use="encoded"/>
 
