@@ -246,6 +246,11 @@ From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html
 	margin-right:auto;
 }
 
+/* Sbi.worksheet.designer.ChartSeriesPanel */
+.chart-series-panel table {
+	margin-left:0px !important;
+}
+
 /* Sbi.worksheet.designer.ChooseImageWindow */
 #choose-image-window .x-item-over{
     /*border:1px solid #dddddd;*/

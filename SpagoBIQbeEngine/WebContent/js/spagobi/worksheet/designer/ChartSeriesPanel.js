@@ -249,6 +249,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 	        , enableDragDrop: true
 	        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 		    , layout: 'fit'
+		    , cls: 'chart-series-panel'
 		    , viewConfig: {
 		    	forceFit: true
 		    }
