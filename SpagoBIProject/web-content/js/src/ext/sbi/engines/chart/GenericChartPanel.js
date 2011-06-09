@@ -391,19 +391,14 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     					parent.execCrossNavigation("iframe_"+dataConfig.docLabel, doc, params);
     				}
     		};
-    		alert("doc?"+doc);
     		//depending on chart type enables click navigation events
     		if(doc !== undefined && doc != null ){
-    			alert("1");
 				if(dataConfig.series !== undefined){
-					alert("2");
     				if(dataConfig.series.length !== undefined){
-    					alert("3");
     					for(var i =0; i< dataConfig.series.length; i++){
     						dataConfig.series[i].events = event;
     					}
     				}else{
-    					alert("4");
     					dataConfig.series.events = event;
     				}
 				}    			
