@@ -25,11 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
@@ -90,19 +91,19 @@ public class ChangeLanguage extends AbstractHttpAction{
 		}
 
 		
-		ConfigSingleton spagoconfig = ConfigSingleton.getInstance();
-		List languages=spagoconfig.getAttributeAsList("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE");
+		
+		List<Locale> languages=GeneralUtilities.getSupportedLocales();
 
 		if(language==null){
 			logger.error("language not specified");
 		}
 		else{
-			Iterator iter = languages.iterator();
+			Iterator<Locale> iter = languages.iterator();
 			boolean found=false;
 			while (iter.hasNext() && found==false) {
-				SourceBean lang_sb = (SourceBean) iter.next();
-				String lang_supported = (String) lang_sb.getAttribute("language");
-				String country_supported= (String) lang_sb.getAttribute("country");
+				Locale localeTmp = iter.next();
+				String lang_supported = localeTmp.getLanguage();
+				String country_supported= localeTmp.getCountry();
 
 				if(language.equalsIgnoreCase(lang_supported) && (country==null || country.equalsIgnoreCase(country_supported))){
 
