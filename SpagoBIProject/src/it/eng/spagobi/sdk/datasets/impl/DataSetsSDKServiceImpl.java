@@ -228,7 +228,36 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		logger.debug("OUT");
 		return toReturn;
 	}
-
+	/**
+	 * 
+	 */
+	public String executeDataSet(String label) throws NotAllowedOperationException{
+		String toReturn = null;
+		logger.debug("IN: label in input = " + label);
+		try {
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			if (label == null) {
+				logger.warn("DataSet identifier in input is null!");
+				return null;
+			}
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(label);
+			if (dataSet == null) {
+				logger.warn("DataSet with label [" + label + "] not existing.");
+				return null;
+			}
+			dataSet.loadData();
+			toReturn = dataSet.getDataStore().toXml();
+		} catch(NotAllowedOperationException e) {
+			throw e;
+		} catch(Exception e) {
+			logger.error("Error while retrieving SDKEngine list", e);
+			logger.debug("Returning null");
+			return null;
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
 	private String getParameterValues(String[] values,
 			DataSetParameterItem dataSetParameterItem) {
 		logger.debug("IN");
