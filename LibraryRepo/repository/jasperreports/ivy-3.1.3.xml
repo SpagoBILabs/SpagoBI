@@ -41,9 +41,12 @@
 
     <dependency org="javax.persistence" name="persistence-api" rev="2.0.1"/>
 		<dependency org="antlr" name="antlr" rev="2.7.6" force="true" />
+    <!--
+    commentato perche importato <dependency org="axis" name="axis-saaj" rev="1.4"/>
 		<dependency org="javax.xml.soap" name="saaj-api" rev="1.3" force="true" >
 			<exclude org="javax.activation" module="activation" name="*" type="*" ext="*" conf="" matcher="exact"/>
 		</dependency>
+    -->
 		<dependency org="jaxen" name="jaxen" rev="1.1.1" force="true" />
 		<dependency org="org.beanshell" name="bsh" rev="1.3" force="true" />
 	</dependencies>
