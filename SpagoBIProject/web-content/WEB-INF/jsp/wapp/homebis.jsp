@@ -217,6 +217,8 @@ var themesViewName;
 						firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
 					}
 				}
+			} else {
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";
 			}
 		}
 		
