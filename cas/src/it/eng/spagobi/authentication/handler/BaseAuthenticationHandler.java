@@ -25,6 +25,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.authentication.utility.AuthenticationUtility;
 
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,15 +50,21 @@ public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) 
     	throws AuthenticationException {
         logger.debug("IN");
+
         
         String username = credentials.getUsername();
         String password = credentials.getPassword();
-        String correctPassword = null;
         
+        logger.debug("user  "+username);
+        logger.debug("psw  "+password);
+        
+        String correctPassword = null;
+        String encrPass = null;
         logger.debug("Start validating password for the user " + username);
         List lstResult = null;
         //define query to get pwd from database
         try{
+        	encrPass = Password.encriptPassword(password);
         	AuthenticationUtility utility = new AuthenticationUtility();
         	List pars = new LinkedList();
         	pars.add(username);
@@ -77,7 +84,7 @@ public class BaseAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 		}
         
         logger.debug("OUT");
-        return password.equals(correctPassword);
+        return encrPass.equals(correctPassword);
     }
     
     

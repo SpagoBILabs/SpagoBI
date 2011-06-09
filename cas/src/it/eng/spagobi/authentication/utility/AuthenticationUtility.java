@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 public class AuthenticationUtility{
 	protected static Logger logger = Logger.getLogger(AuthenticationUtility.class);
 	private static final String PROPERTIES_FILE = "cas_spagobi.properties";
-	protected static Properties properties = null;
+	public static Properties properties = null;
 	
 	//constructor
 	public AuthenticationUtility() {
