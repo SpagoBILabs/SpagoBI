@@ -119,7 +119,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	        closable:true
 	    });
 		
-		if(sheetConf!=undefined && sheetConf!=null ){
+		if (sheetConf !== undefined && sheetConf !== null && sheetConf.length > 0) {
 			sheet.setSheetState(sheetConf) ;
 		}
 		
