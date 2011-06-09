@@ -38,4 +38,6 @@ public interface DataSetsSDKService {
 	
 	Integer saveDataset(SDKDataSet sdkDataSet) throws NotAllowedOperationException;
 	
+	String executeDataSet(String label) throws NotAllowedOperationException;
+	
 }
