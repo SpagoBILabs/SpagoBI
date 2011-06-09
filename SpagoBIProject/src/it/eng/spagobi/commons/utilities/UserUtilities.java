@@ -233,12 +233,12 @@ public class UserUtilities {
      */
     public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile) {
     	Assert.assertNotNull(userProfile, "User profile in input is null");
-    	String userName = (String) userProfile.getUserName();
+    	String userId = (String) userProfile.getUserId();
     	LowFunctionality lf = null;
     	try {
-    		lf = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userName, false);
+    		lf = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId, false);
     	} catch (Exception e) {
-    		throw new SpagoBIRuntimeException("Cannot load user functionality for user [" + userName + "]", e);
+    		throw new SpagoBIRuntimeException("Cannot load user functionality for user with id [" + userId + "]", e);
     	}
     	return lf;
     }
@@ -253,8 +253,8 @@ public class UserUtilities {
     public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
     	logger.debug("IN");
 	try {
-	    String username = (String) ((UserProfile)userProfile).getUserName();
-	    logger.debug("username: " + username);
+	    String userId = (String) ((UserProfile)userProfile).getUserId();
+	    logger.debug("userId: " + userId);
 	    Collection roleStrs = ((UserProfile)userProfile).getRolesForUse();
 	    Iterator roleIter = roleStrs.iterator();
 	    List roles = new ArrayList();
@@ -273,10 +273,10 @@ public class UserUtilities {
 	    rolesArr = (Role[]) roles.toArray(rolesArr);
 
 	    UserFunctionality userFunct = new UserFunctionality();
-	    userFunct.setCode("ufr_" + username);
+	    userFunct.setCode("ufr_" + userId);
 	    userFunct.setDescription("User Functionality Root");
-	    userFunct.setName(username);
-	    userFunct.setPath("/" + username);
+	    userFunct.setName(userId);
+	    userFunct.setPath("/" + userId);
 	    //userFunct.setExecRoles(rolesArr);
 	    ILowFunctionalityDAO functdao = DAOFactory.getLowFunctionalityDAO();
 	    functdao.insertUserFunctionality(userFunct);

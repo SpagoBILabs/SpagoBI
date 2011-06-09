@@ -78,7 +78,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#checkUserRootExists(java.lang.String)
 	 */
-	public boolean checkUserRootExists(String username) throws EMFUserError {
+	public boolean checkUserRootExists(String userId) throws EMFUserError {
 		logger.debug( "IN" );
 		boolean exists = false;
 		Session aSession = null;
@@ -90,7 +90,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					Expression.isNull("parentFunct"),
 					Expression.eq("functTypeCd", "USER_FUNCT"));
 			Criterion filters = Expression.and(userfunctANDnullparent, 
-					Expression.like("path", "/"+username));
+					Expression.like("path", "/"+userId));
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			criteria.add(filters);
 			SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
