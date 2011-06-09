@@ -113,6 +113,24 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
         _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
         _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
         _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("executeDataSet", _params, new javax.xml.namespace.QName("", "executeDataSetReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdatasets", "executeDataSet"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("executeDataSet") == null) {
+            _myOperations.put("executeDataSet", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("executeDataSet")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdatasets", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
     }
 
     public DataSetsSDKServiceSoapBindingSkeleton() {
@@ -143,6 +161,12 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
     public java.lang.Integer saveDataset(it.eng.spagobi.sdk.datasets.bo.SDKDataSet in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
     {
         java.lang.Integer ret = impl.saveDataset(in0);
+        return ret;
+    }
+
+    public java.lang.String executeDataSet(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    {
+        java.lang.String ret = impl.executeDataSet(in0);
         return ret;
     }
 
