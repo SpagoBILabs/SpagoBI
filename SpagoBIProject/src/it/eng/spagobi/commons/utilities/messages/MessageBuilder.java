@@ -191,12 +191,9 @@ public class MessageBuilder
                 HttpServletRequest request = (HttpServletRequest)obj;
                 Locale reqLocale = request.getLocale();
                 String language = reqLocale.getLanguage();
-                String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
-                if(langSB != null )
-                {
-                	String country=GeneralUtilities.getCountry(language);
-                    browserLocale = new Locale(language, country);
-                }
+                String country=GeneralUtilities.getCountry(language);
+                browserLocale = new Locale(language, country);
+
             }
         }
         if(browserLocale == null)
@@ -213,12 +210,9 @@ public class MessageBuilder
         Locale browserLocale = null;
         Locale reqLocale = request.getLocale();
         String language = reqLocale.getLanguage();
-        String langSB = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
-        if(langSB != null )
-        {
-        	String country=GeneralUtilities.getCountry(language);
-            browserLocale = new Locale(language, country);
-        }
+        String country=GeneralUtilities.getCountry(language);
+        browserLocale = new Locale(language, country);
+
         if(browserLocale == null)
         {
             browserLocale = GeneralUtilities.getDefaultLocale();
