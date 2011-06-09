@@ -30,4 +30,9 @@ public class DataSetsSDKServiceSoapBindingImpl implements it.eng.spagobi.sdk.dat
     	return impl.saveDataset(in0);
     }
 
+    public java.lang.String executeDataSet(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    	DataSetsSDKServiceImpl impl = new DataSetsSDKServiceImpl();
+    	return impl.executeDataSet(in0);
+    }
+
 }
