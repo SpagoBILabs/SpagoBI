@@ -89,8 +89,10 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 				//getting all I° level folders
 				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
 					folders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);
-					if (!isPersonalFolderIncluded((UserProfile) profile, folders)) {
-						LowFunctionality userFunct = getPersonalFolder((UserProfile) profile, folders);
+					String userId = (String) ((UserProfile) profile).getUserId();
+					// if user functionality does not exist, add it to the list but without creating it (it will be created if necessary)
+					if (!DAOFactory.getLowFunctionalityDAO().checkUserRootExists(userId)) {
+						LowFunctionality userFunct = getPersonalFolder((UserProfile) profile);
 						folders.add(userFunct);
 					}
 				}else{
@@ -122,27 +124,22 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 		}
 	}
 	
-	private LowFunctionality getPersonalFolder(UserProfile profile, List folders) {
-		String username = (String) profile.getUserName();
+	/**
+	 * Create a LowFunctionality object with the data of a user functionality, according to the input user profile
+	 * (but it does not actually create it into the metadata database) and with id = -1. 
+	 * See also it.eng.spagobi.analiticalmodel.execution.service.SaveDocumentAction
+	 * @param profile The user profile
+	 * @return A LowFunctionality object with the data of a user functionality and id = -1
+	 */
+	private LowFunctionality getPersonalFolder(UserProfile profile) {
+		String userId = (String) profile.getUserId();
 		LowFunctionality userFunct = new LowFunctionality();
-	    userFunct.setCode("ufr_" + username);
+	    userFunct.setCode("ufr_" + userId);
 	    userFunct.setDescription("User Functionality Root");
-	    userFunct.setName(username);
-	    userFunct.setPath("/" + username);
+	    userFunct.setName(userId);
+	    userFunct.setPath("/" + userId);
 	    userFunct.setId(-1);
 	    return userFunct;
-	}
-
-	private boolean isPersonalFolderIncluded(UserProfile profile, List folders) {
-		String username = (String) profile.getUserName();
-		Iterator it = folders.iterator();
-		while (it.hasNext()) {
-			LowFunctionality folder = (LowFunctionality) it.next();
-			if (folder.getPath().equals("/" + username)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private JSONObject createNode(String id, String text, String type, JSONArray children) {
