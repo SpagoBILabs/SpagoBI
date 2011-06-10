@@ -68,8 +68,28 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 */
 	, loadChartData: function(dataConfig){
 		//this.showMask();
-		//this.categoryAlias = (dataConfig.xaxis)?dataConfig.xaxis.categories:"";
-		if(dataConfig.xAxis !== undefined){
+		this.setCategoryAliasX(dataConfig);
+		this.setCategoryAliasY(dataConfig);
+		this.setSerieAlias(dataConfig);
+		
+		
+		var requestParameters = {
+			    id: dataConfig.dsId
+			  , label: dataConfig.dsLabel
+			  , refreshTime: dataConfig.refreshTime || 0
+			  , dsTypeCd: dataConfig.dsTypeCd
+			  , pars: dataConfig.dsPars
+			  , trasfTypeCd: dataConfig.dsTransformerType
+		}
+		var datasets = [];
+		datasets.push(requestParameters);	
+		this.initStore(datasets, dataConfig.dsId);
+	}
+	
+
+	, setCategoryAliasX: function(dataConfig) {
+		//alert("setCategoryAliasX.dataConfig: " +dataConfig.toSource());
+		if(dataConfig.xAxis != undefined){
 			if(dataConfig.xAxis.length != undefined){
 				for(var i=0; i< dataConfig.xAxis.length; i++){
 					var alias = dataConfig.xAxis[i].alias;
@@ -85,8 +105,12 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				}
 			}	
 		}
+	}
+		
+	, setCategoryAliasY: function(dataConfig) {
+		//alert("setCategoryAliasY.dataConfig: " +dataConfig.toSource());
 		if(dataConfig.yAxis != undefined){
-			if(dataConfig.yAxis.length !== undefined){
+			if(dataConfig.yAxis.length != undefined){
 				for(var i=0; i< dataConfig.yAxis.length; i++){//it's an array
 					var alias = dataConfig.yAxis[i].alias;
 					if(alias != undefined){
@@ -101,7 +125,11 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				}
 			}
 
-		}
+		}	
+	}
+	
+	, setSerieAlias: function(dataConfig){
+		//alert("setSerieAlias.dataConfig: " +dataConfig.toSource());
 		//checks series configuration
 		if (dataConfig.series){
 			var strValue = dataConfig.series;
@@ -124,20 +152,8 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				this.serieAlias = str.split(",");
 			}
 		}
-		var requestParameters = {
-			    id: dataConfig.dsId
-			  , label: dataConfig.dsLabel
-			  , refreshTime: dataConfig.refreshTime || 0
-			  , dsTypeCd: dataConfig.dsTypeCd
-			  , pars: dataConfig.dsPars
-			  , trasfTypeCd: dataConfig.dsTransformerType
-		}
-		var datasets = [];
-		datasets.push(requestParameters);	
-		this.initStore(datasets, dataConfig.dsId);
-//		this.createChart();
 	}
-	
+		
 	/**
 	 * Load the categories for the chart
 	 */
@@ -149,10 +165,15 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		    	var catColumn = this.store.getFieldNameByAlias(this.categoryAliasX[j]);
 				var records = this.store.getRange();
 				var categoriesPerColumn = [];
+				var cont = 0;
 		    	for (var i = 0; i < records.length; i++) {
 		    		var rec = records[i];
-					if(rec) {
-						categoriesPerColumn[i]= rec.get(catColumn);
+					if(rec ) {
+						var posValue = categoriesPerColumn.indexOf(rec.get(catColumn));
+						if (posValue == -1){
+							categoriesPerColumn[cont]= rec.get(catColumn);
+							cont++;	
+						}
 					}
 		        }
 		    	categories[j] = categoriesPerColumn;
@@ -170,10 +191,15 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			    	var catColumn = this.store.getFieldNameByAlias(this.categoryAliasY[j]);
 					var records = this.store.getRange();
 					var categoriesPerColumn = [];
+					var cont = 0;
 			    	for (var i = 0; i < records.length; i++) {
 			    		var rec = records[i];
 						if(rec) {
-							categoriesPerColumn[i]= rec.get(catColumn);
+							var posValue = categoriesPerColumn.indexOf(rec.get(catColumn));
+							if (posValue == -1){
+								categoriesPerColumn[cont]= rec.get(catColumn);
+								cont++;	
+							}
 						}
 			        }
 			    	categories[j] = categoriesPerColumn;
@@ -188,35 +214,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	 */
 	, getSeries: function(alias){
 		if(this.store!=null){
-			
-			/* gestire multiserie...
-			var seriesNames = this.store.rows.node_childs;
-			var data = this.store.data;
-			var measures_metadata = this.store.measures_metadata;
-			var measures_metadata_map = {};
-			//load the metadata of the measures (we need the type)
-			for(var i=0; i<measures_metadata.length; i++){
-				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
-			}
-			var series = [];
-			var serie;
-			var map ;
-			var serieData, serieDataFormatted;
-			for(var i=0; i<seriesNames.length; i++){
-			      serie = {};
-			      serie.name =   seriesNames[i].node_key;
-			      serieData = this.store.data[i];
-			      serieDataFormatted = [];
-			      for(var j=0; j<serieData.length; j++){
-			    	  map = measures_metadata_map[serie.name];
-			    	  serieDataFormatted.push(this.format(serieData[j], map.type, map.format ));
-			      }
-			      serie.data = serieDataFormatted;
-			      series.push(serie);
-			}	
-			return series; */
-			
-			
 			//single serie
 		   	var series = [];
 
@@ -233,7 +230,10 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 						var recArray = [];
 						for(i = 0; i<this.serieAlias.length; i++){			
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
-					    	recArray.push(rec[serieColumn]);
+					    	var posValue = recArray.indexOf(recArray[serieColumn]);
+							if (posValue == -1){
+								recArray.push(rec[serieColumn]);
+							}
 						}
 						series.push(recArray);
 					}
@@ -244,7 +244,10 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		    	for (var i = 0; i < records.length; i++) {
 		    		var rec = records[i].data;
 					if(rec) {
-						series.push(rec[serieColumn]);
+						var posValue = series.indexOf(rec[serieColumn]);
+						if (posValue == -1){
+							series.push(rec[serieColumn]);
+						}
 					}
 		        }
 			}
@@ -328,10 +331,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	   
 		//adds numeration column    
 		tmpMeta.fields[0] = new Ext.grid.RowNumberer();
-
-		
-
-		//var categories = this.getCategories();
 	}
     , enableDrillEvents: function(dataConfig){
     	var drill = dataConfig.drill;

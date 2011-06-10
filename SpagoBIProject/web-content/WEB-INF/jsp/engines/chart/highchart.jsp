@@ -57,21 +57,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String dsLabel =  String.valueOf(sbModuleResponse.getAttribute(DataSetConstants.LABEL));
 	String dsTypeCd =  (String) sbModuleResponse.getAttribute(DataSetConstants.DS_TYPE_CD);
 	JSONArray dsPars =  (JSONArray) sbModuleResponse.getAttribute(DataSetConstants.PARS);
-	//JSONObject dsPars =  (JSONObject) sbModuleResponse.getAttribute(DataSetConstants.PARS);
 	String dsTransformerType =  (String) sbModuleResponse.getAttribute(DataSetConstants.TRASFORMER_TYPE_CD);
 	
 	String divId = (executionId != null)?executionId:"highchartDiv";
 	String divWidth = (String) sbModuleResponse.getAttribute("divWidth");
 	String divHeight = (String) sbModuleResponse.getAttribute("divHeight");
 	String theme = (String) sbModuleResponse.getAttribute("themeHighchart");
+	Integer numCharts = (Integer) sbModuleResponse.getAttribute("numCharts");
+	String subType = (String) sbModuleResponse.getAttribute("subType");
 	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
 	String docLabel = (String)sbModuleResponse.getAttribute("documentLabel");
-	System.out.println("template in jsp: " + template.toString());
 	
+	//only for test... delete with production
+	System.out.println("template in jsp: " + template.toString());
 	System.out.println("dsPars in jsp: " + dsPars.toString());
 	System.out.println("theme in jsp: " + theme);
+	System.out.println("numCharts in jsp: " + numCharts);
 %>
 
 
@@ -124,10 +127,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.divId = "<%=divId%>";
 			config.docLabel ="<%=docLabel%>";
 			config.theme = "<%=theme%>";
+			config.numCharts = <%=numCharts%>;
+
 			
-			var chartPanel=  new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
-	
- 
+			var chartPanel = {};
+			if (config.chart && config.chart.subType && config.chart.subType === 'MasterDetail') {
+				chartPanel = new Sbi.engines.chart.MasterDetailChartPanel({'chartConfig':config});
+			}else{
+				chartPanel = new Sbi.engines.chart.HighchartsPanel({'chartConfig':config});
+			}
+			
 			var viewport = new Ext.Viewport({
 				layout: 'border'
 				, items: [
@@ -141,6 +150,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			});
 		});
 	</script>
-	<div id="<%=divId%>" style="height:<%=divHeight%>; width:<%=divWidth%>;"></div>
+	
+	<%if (subType != null && subType.equalsIgnoreCase("MasterDetail")) {%>
+		<div id="<%=divId%>__detail" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
+		<div id="<%=divId%>__master" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
+	<% }else{
+		  for (int i=0; i<numCharts; i++ ) { %>
+			<div id="<%=divId%>__<%=i%>" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
+	<%	  }
+	   } %>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>

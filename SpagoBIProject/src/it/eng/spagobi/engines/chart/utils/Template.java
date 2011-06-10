@@ -73,12 +73,16 @@ public class Template {
 	public static final String HIGH_STYLE = "STYLE";
 	public static final String WIDTH = "WIDTH";
 	public static final String HEIGHT = "HEIGHT";
+	public static final String HIGH_NUMCHARTS = "NUMCHARTS";
+	public static final String HIGH_SUBTYPE = "SUBTYPE";
 	
 	private static transient Logger logger = Logger.getLogger(Template.class);
 	
 	private String divWidth = "100%";
 	private String divHeight = "100%";
 	private String theme = "";
+	private Integer numCharts = new Integer ("1");
+	private String subType = "";
 	private boolean firstBlock = true;
 	private JSONArray parametersJSON = null;
 	/**
@@ -101,9 +105,15 @@ public class Template {
 			//dimension definition
 			setDivWidth((String)xmlTemplate.getAttribute(WIDTH));
 			setDivHeight((String)xmlTemplate.getAttribute(HEIGHT));
+			//number of chart definition
+			setNumCharts((xmlTemplate.getAttribute(HIGH_NUMCHARTS)!=null)?Integer.valueOf((String)xmlTemplate.getAttribute(HIGH_NUMCHARTS)):1);
+			//subtype for master/detail chart
+			setSubType((xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE)!=null)?(String)xmlTemplate.getAttribute(HIGH_CHART+"."+ HIGH_SUBTYPE):"");
 			
 			xmlTemplate.delAttribute(WIDTH);
 			xmlTemplate.delAttribute(HEIGHT);
+			xmlTemplate.delAttribute(HIGH_NUMCHARTS);
+			xmlTemplate.delAttribute(HIGH_SUBTYPE);
 
 			ow = getPropertiesDetail(xmlTemplate, ow);
 			ow.write("}\n");
@@ -170,6 +180,34 @@ public class Template {
 	 */
 	public void setTheme(String theme) {
 		this.theme = theme;
+	}
+
+	/**
+	 * @return the numCharts
+	 */
+	public Integer getNumCharts() {
+		return numCharts;
+	}
+
+	/**
+	 * @param numCharts the numCharts to set
+	 */
+	public void setNumCharts(Integer numCharts) {
+		this.numCharts = numCharts;
+	}
+
+	/**
+	 * @return the subType
+	 */
+	public String getSubType() {
+		return subType;
+	}
+
+	/**
+	 * @param subType the subType to set
+	 */
+	public void setSubType(String subType) {
+		this.subType = subType;
 	}
 
 	/**

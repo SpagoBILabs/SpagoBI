@@ -288,10 +288,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
 				
 				ManageDatasets mDs = new ManageDatasets();
-				//JSONArray parsJSON = mDs.serializeJSONArrayParsList(dataset.getParameters());
 				JSONArray parsJSON = getParametersAsJSON(obj);
-				//Map parametersMap = getParameters(obj);
-				//JSONObject parsJSON = new JSONObject(parametersMap);
 				//converts the template from xml to json format				
 				JSONObject template = templateUtil.getJSONTemplateFromXml( getTemplate(obj.getId().toString()), parsJSON); 
 				//sets the response
@@ -299,6 +296,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				response.setAttribute("divWidth", (templateUtil.getDivWidth()==null)?"100%":templateUtil.getDivWidth());
 				response.setAttribute("divHeight",(templateUtil.getDivHeight()==null)?"100%":templateUtil.getDivHeight());
 				response.setAttribute("themeHighchart", (templateUtil.getTheme()==null)?"":templateUtil.getTheme());
+				response.setAttribute("numCharts", (templateUtil.getNumCharts()==null)?1:templateUtil.getNumCharts());
+				response.setAttribute("subType", (templateUtil.getSubType()==null)?1:templateUtil.getSubType());
 				response.setAttribute(DataSetConstants.ID, dataset.getId());
 				response.setAttribute(DataSetConstants.LABEL, dataset.getLabel());
 				response.setAttribute(DataSetConstants.DS_TYPE_CD, (dataset.getDsType()==null)?"":dataset.getDsType());				
