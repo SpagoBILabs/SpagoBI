@@ -70,7 +70,6 @@ public class CrosstabXLSExporter {
 		
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet("new sheet");
-
 		CreationHelper createHelper = wb.getCreationHelper();
 	    fillSheet(sheet, json, createHelper);		
 		return wb;
@@ -82,13 +81,24 @@ public class CrosstabXLSExporter {
     	calculateDescendants(json);
     	// init the sheet
     	initSheet(sheet, json);
-    	JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
+    	commonFillSheet(sheet, json, createHelper);
+	}
+	
+	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
+	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
+	    // and when initializing the sheet
+    	calculateDescendants(json);
+    	int totalRowNum = commonFillSheet(sheet, json, createHelper);
+    	return totalRowNum;
+	}
+	
+	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{	
+		JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
     	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
     	int columnsDepth = getDepth(columnsRoot);
 		JSONObject rowsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
 		int rowsDepth = getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
-		
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
 		
 		// build headers for column first ...
@@ -96,11 +106,9 @@ public class CrosstabXLSExporter {
 		// ... then build headers for rows ....
 	    buildRowsHeaders(sheet, rowsRootChilds, columnsDepth + 4, 4, createHelper);
 	    // then put the matrix data
-	    buildDataMatrix(sheet, data, columnsDepth + 4, rowsDepth + 4, createHelper);
+	    int totalRowNum = buildDataMatrix(sheet, data, columnsDepth + 4, rowsDepth + 4, createHelper);
+	    return totalRowNum;
 	}
-	
-	
-
 	
 	
 	/**
@@ -178,8 +186,9 @@ public class CrosstabXLSExporter {
 
 
 
-	private void buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
 		CellStyle cellStyle = buildDataCellStyle(sheet);
+		int endRowNum = 0;
 		for (int i = 0; i < data.length(); i++) {
 			JSONArray array = (JSONArray) data.get(i);
 			for (int j = 0; j < array.length(); j++) {
@@ -187,6 +196,10 @@ public class CrosstabXLSExporter {
 				int rowNum = rowOffset + i ;
 				int columnNum = columnOffset + j ;
 				Row row = sheet.getRow(rowNum);
+				if(row==null){
+					row = sheet.createRow(rowNum);
+				}
+				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
 				cell.setCellStyle(cellStyle);
 				try {
@@ -201,7 +214,7 @@ public class CrosstabXLSExporter {
 				
 			}
 		}
-		
+		return endRowNum;
 	}
 
 
@@ -342,8 +355,7 @@ public class CrosstabXLSExporter {
 			Cell cell = row.createCell(columnCounter);
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			cell.setCellValue(createHelper.createRichTextString(text));
-		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    cell.setCellStyle(cellStyle);
+		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
 		    int descendants = aNode.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(
@@ -353,6 +365,8 @@ public class CrosstabXLSExporter {
 			    		columnCounter + descendants - 1  //last column  (0-based)
 			    ));
 		    }
+		    cell.setCellStyle(cellStyle);
+		    
 		    JSONArray childs = aNode.optJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		    if (childs != null && childs.length() > 0) {
 		    	buildColumnsHeader(sheet, childs, rowNum + 1, columnCounter, createHelper);
