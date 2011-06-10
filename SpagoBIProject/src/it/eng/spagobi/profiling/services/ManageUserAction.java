@@ -132,7 +132,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				SbiUser user = new SbiUser();
 				user.setUserId(userId);
 				user.setFullName(fullName);
-				if(password != null){
+				if(password != null && !password.isEmpty()){
 					try {
 						user.setPassword(Password.encriptPassword(password));
 					} catch (Exception e) {
