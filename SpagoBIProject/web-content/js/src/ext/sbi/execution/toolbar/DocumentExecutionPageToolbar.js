@@ -1121,10 +1121,19 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		var templateJSON = this.getWorksheetTemplateAsJSONObject();
 		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
 		var query = templateJSON.OBJECT_QUERY;
-		var params = Ext.apply(this.executionInstance, {
-			'wk_definition': Ext.util.JSON.encode(wkDefinition),
-			'query': Ext.util.JSON.encode(query)
-		});
+		var formValues = templateJSON.OBJECT_FORM_VALUES;
+		var params = this.executionInstance;
+				
+		if(wkDefinition!=null){
+			params = Ext.apply(params, {'wk_definition': Ext.util.JSON.encode(wkDefinition)});
+		}
+		if(query!=null){
+			params = Ext.apply(params, {'query': Ext.util.JSON.encode(query)});
+		}
+		if(formValues!=null){//the values of the smart filter
+			params = Ext.apply(params, {'formValues': Ext.util.JSON.encode(formValues)});
+		}
+		
 		Ext.Ajax.request({
 	        url: this.services['updateDocumentService'],
 	        params: params,
@@ -1158,7 +1167,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , getWorksheetTemplateAsString: function() {
 		try {
 			var thePanel = null;
-			if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
+			if(this.executionInstance.document.typeCode == 'WORKSHEET'){
+				//the worksheet has been constructed starting from a qbe document
+				thePanel = this.miframe.getFrame().getWindow().qbe;
+				if(thePanel==null){
+					//the worksheet has been constructed starting from a smart filter document
+					thePanel = this.miframe.getFrame().getWindow().formEnginePanel;
+				}
+			}else if(this.executionInstance.document.typeCode == 'DATAMART'){
 				thePanel = this.miframe.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 				thePanel = this.miframe.getFrame().getWindow().formEnginePanel;
@@ -1207,7 +1223,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;
 			params = Ext.apply(this.executionInstance, params);
-
 		}
 		return params;
    }
