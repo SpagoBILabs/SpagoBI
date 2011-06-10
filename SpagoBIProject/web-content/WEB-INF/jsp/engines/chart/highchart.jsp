@@ -71,10 +71,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String docLabel = (String)sbModuleResponse.getAttribute("documentLabel");
 	
 	//only for test... delete with production
+	/*
 	System.out.println("template in jsp: " + template.toString());
 	System.out.println("dsPars in jsp: " + dsPars.toString());
 	System.out.println("theme in jsp: " + theme);
 	System.out.println("numCharts in jsp: " + numCharts);
+	*/
 %>
 
 
