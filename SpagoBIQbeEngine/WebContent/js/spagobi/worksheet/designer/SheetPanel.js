@@ -85,18 +85,22 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	initPanels: function(){
 		this.sheetLayout = 'layout_headerfooter';
 		this.headerPanel = new Sbi.worksheet.designer.SheetTitlePanel({});
-		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
-			hidden: true,
-			tools:[{
+		
+		var filtersConf ={
+			style:'padding:5px 15px 0px 15px',
+			ddGroup: 'worksheetDesignerDDGroup'	
+		};
+		
+		if(!Ext.isIE){
+			filtersConf.tools=[{
 	        	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
 	        	id: 'left',
 	        	handler:this.showLeftFilters,
 	        	scope: this
-	        }],
-			style:'padding:5px 15px 0px 15px',
-			ddGroup: 'worksheetDesignerDDGroup'
-		});
+	        }];
+		}
 		
+		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel(filtersConf);
 		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);
 		
 		this.contentPanel.on('topFilters', function(){
@@ -160,12 +164,14 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetState.filters !== undefined && sheetState.filters !== null){
 			var filters = sheetState.filters.filters;
 			this.filtersPanel.setFilters(filters);
-//			if(sheetState.filters.position){
-//				sheetState.filters.position='left';
-//			}else{
-//				sheetState.filters.position='top';
-//			}
 			
+			if(sheetState.filters.position=='left'){
+				if(this.filtersPanel.rendered){
+					this.showLeftFilters();
+				}else{
+					this.filtersPanel.on('afterrender',this.showLeftFilters, this);	
+				}
+			}
 		}
 		if(sheetState.content!==null){
 			this.contentPanel.addDesigner(sheetState.content);

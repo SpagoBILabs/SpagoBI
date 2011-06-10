@@ -192,9 +192,9 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	
 	, setFilters: function (filters) {
 		this.reset();
-		for(var i = 0; i < filters.lenght; i++) {
+		for(var i = 0; i < filters.length; i++) {
 			var aFilter = filters[i];
-			var aRecord = this.Record(aFilter);
+			var aRecord = new this.Record(aFilter);
 			this.addFilter(aRecord);
 		}
 	}

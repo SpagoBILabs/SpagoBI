@@ -63,6 +63,7 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	
 	this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 		style:'padding:5px 10px 0px 15px; float: left; overflow: auto'
+		, hidden: true
 		, store: filterStore
 		, ddGroup: 'worksheetDesignerDDGroup'
 		, height: 400 
