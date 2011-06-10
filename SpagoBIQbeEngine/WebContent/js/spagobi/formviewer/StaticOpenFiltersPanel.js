@@ -60,7 +60,7 @@ Sbi.formviewer.StaticOpenFiltersPanel = function(openFilters, config) {
 	        columns: openFilters.length
 	    }
 		, valueDelimiter: '--!;;;;!--'
-		, style:'padding: 15px'
+		, style:'padding: 10px'
 	};
 	if (Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.staticOpenFiltersPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.staticOpenFiltersPanel);
@@ -80,10 +80,9 @@ Sbi.formviewer.StaticOpenFiltersPanel = function(openFilters, config) {
 	this.init(openFilters);
 	
 	Ext.apply(c, {
-		autoScroll :true,
   		items: this.fields
 	});
-
+	
 	// constructor
     Sbi.formviewer.StaticOpenFiltersPanel.superclass.constructor.call(this, c);
     
@@ -106,7 +105,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 			var field = this.createField( openFilters[i] );
 			this.combos.push( field );
 			var aPanel = new Ext.Panel({
-					style: 'margin: 3px;  border: 1px solid #D0D0D0; padding: 3px',
+					style: 'margin: 3px;  border: 1px solid #D0D0D0; padding: 3px; float: left;',
 					title: '',
 					width: 210,
 					items:[ 
@@ -137,7 +136,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 		
 		var store = this.createStore(openFilter);
 		
-		var maxSelectionNumber = 1;
+		var maxSelectionNumber = 20;
 		if (openFilter.maxSelectedNumber !== undefined && openFilter.maxSelectedNumber !== null) {
 			maxSelectionNumber = openFilter.maxSelectedNumber;
 		}

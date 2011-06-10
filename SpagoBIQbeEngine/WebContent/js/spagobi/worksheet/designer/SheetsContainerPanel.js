@@ -118,7 +118,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	        title: 'Sheet ' + (++this.index),
 	        closable:true
 	    });
-		
+
 		if (sheetConf !== undefined && sheetConf !== null && sheetConf.length > 0) {
 			sheet.setSheetState(sheetConf) ;
 		}
@@ -226,7 +226,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		if(this.rendered){
 			var i=0;
 			for(; i<sheets.length; i++){
-				this.addTab(sheets[i]);
+				var aSheetPanel = this.addTab();
+				aSheetPanel.setSheetState(sheets[i]);
 			}
 		}else{
 			this.on('render',function(){

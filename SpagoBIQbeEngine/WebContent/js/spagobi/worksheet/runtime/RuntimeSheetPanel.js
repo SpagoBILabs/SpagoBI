@@ -101,8 +101,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		var items = [];
-		
-		
+
 		//Builds the content
 		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
 		//catch the event of the contentloaded from the component and hide the loading mask
@@ -131,6 +130,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			var filterConf = {
 					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
 					, layout: 'auto'
+					, autoScroll :true
+					, style:'padding: 15px'					
 					, tools:  [{
 						id: 'gear'
 				        	, handler: this.applyFilters
@@ -140,8 +141,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				};
 			
 			if ( this.sheetConfig.filters.position=='left') {
-				filterConf.width= 230;
-				filterConf.style = 'float: left; padding: 15px';
+				filterConf.width= 257;
+				filterConf.autoWidth = false;
+				filterConf.style = 'float: left; padding: 15px 0px 15px 15px';
 			}
 			
 			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, filterConf);
@@ -184,6 +186,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			serviceName: 'GET_IMAGE_CONTENT_ACTION'
 			, baseParams: {FILE_NAME: title.img}
 		});
+
 			
 		var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
 		var html = titleHTML;

@@ -109,7 +109,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	        success : function(response, opts) {
 	        	this.fireEvent('contentloaded');
 	        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-	        	this.createChart();
+	        	if(this.rendered){
+	        		this.createChart();
+	        	}else{
+	        		this.on('afterrender',function(){alert('2');this.createChart();}, this);
+	        	}
 	        },
 	        scope: this,
 			failure: function(response, options) {
