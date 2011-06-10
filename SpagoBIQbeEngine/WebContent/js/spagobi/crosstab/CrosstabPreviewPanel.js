@@ -60,7 +60,7 @@ Sbi.crosstab.CrosstabPreviewPanel = function(config) {
 	this.services = new Array();
 	var params = {};
 	this.services['loadCrosstab'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'LOAD_CROSSTAB_ACTION'
+		serviceName: 'LOAD_WORKSHEET_CROSSTAB_ACTION'
 		, baseParams: params
 	});
 	
