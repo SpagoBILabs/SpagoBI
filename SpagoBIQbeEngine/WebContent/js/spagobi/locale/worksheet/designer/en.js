@@ -17,9 +17,12 @@ Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.title'] = 'Workshee
 //===================================================================
 
 Sbi.locale.ln['sbi.worksheet.designer.title'] = 'Title';
-Sbi.locale.ln['sbi.worksheet.designer.size'] = 'Size';
-Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
-Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
+Sbi.locale.ln['sbi.worksheet.designer.title.size'] = 'Size';
+Sbi.locale.ln['sbi.worksheet.designer.title.image'] = 'Image';
+Sbi.locale.ln['sbi.worksheet.designer.title.position'] = 'Position';
+Sbi.locale.ln['sbi.worksheet.designer.title.imgTriggerFieldId.tooltip'] = 'Select an immage for the title';
+Sbi.locale.ln['sbi.worksheet.designer.title.imgPositionId.tooltip'] = 'Select the position of the image in the title block';
+
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Not valid';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'The values of the fields are not valid or incomplete';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'] = 'Upload successful';

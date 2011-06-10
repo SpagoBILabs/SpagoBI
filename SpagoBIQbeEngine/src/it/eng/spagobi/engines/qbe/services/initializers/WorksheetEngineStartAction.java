@@ -22,15 +22,24 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngine;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
+
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 
 
 /**
@@ -110,6 +119,16 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 			
+			if(qbeEngineInstance!= null && qbeEngineInstance.getWorkSheetDefinition()!=null && qbeEngineInstance.getWorkSheetDefinition().getWorkSheet()!=null){
+				List<WorkSheet> ws = qbeEngineInstance.getWorkSheetDefinition().getWorkSheet();
+				for(int i=0; i<ws.size();i++){
+					setImageWidth((ws.get(i)).getHeader());
+					setImageWidth((ws.get(i)).getFooter());
+				}		
+			}
+
+			
+			
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;
 			
@@ -132,6 +151,36 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("OUT");
 		}		
 		
+	}
+    
+    /**
+     * Set the with of the image in the template
+     * @param title The JSONObject rapresentation of the header/footer
+     * @throws Exception
+     */
+	public static void setImageWidth(JSONObject title) throws Exception {
+		logger.debug("IN");
+		
+		if(title!=null){
+			String s = title.optString("img");
+			if(s!=null && !s.equals("") && !s.equals("null")){
+				try {
+					logger.debug("Image file = "+s);
+					File toReturn = null;
+					File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
+					toReturn = new File(imagesDir, s);
+
+					BufferedImage img = ImageIO.read(toReturn);
+				    int width= img.getWidth();
+					
+					title.put("width", width);	
+				} catch (Exception e) {
+					logger.error("Error loading the image "+s+":  "+e);
+				}
+
+			}
+		}
+		logger.debug("OUT");
 	}
     
 }

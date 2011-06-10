@@ -93,6 +93,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		var items = [];
 		
 		
+		//Builds the content
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
+		//catch the event of the contentloaded from the component and hide the loading mask
+		this.content.on('contentloaded',this.hideMask,this);
+		
 		//show the loading mask
 		if(this.rendered){
 			this.showMask();
@@ -102,17 +107,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
-			if(Ext.isIE){
-				this.addTitleIE(this.sheetConfig.header,items, true);
-			} else{
-				this.addTitle(this.sheetConfig.header,items, true);
-			}
+			this.addTitle(this.sheetConfig.header,items, true);
 		}
-		
-		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
-		//catch the event of the contentloaded from the component and hide the loading mask
-		this.content.on('contentloaded',this.hideMask,this);
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
 			var dynamicFilters = [];
@@ -159,11 +155,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		
 		//Builds the footer
 		if (this.sheetConfig.footer!=undefined && this.sheetConfig.footer!=null){
-			if(Ext.isIE){
-				this.addTitleIE(this.sheetConfig.footer,items, false);
-			} else{
-				this.addTitle(this.sheetConfig.footer,items, false);
-			}
+			this.addTitle(this.sheetConfig.footer,items, false);
 		}
 
 		return items;
@@ -182,173 +174,85 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			serviceName: 'GET_IMAGE_CONTENT_ACTION'
 			, baseParams: {FILE_NAME: title.img}
 		});
-		var textPanel = new Ext.Panel({
-			border: false,
-			html: '<div>'+title.title+'</div>'
-		});
+//		var titlePanel = new Ext.Panel({html:''});
+//		var titleHTML = '<div>'+title.title+'</div>';
+//		var html = titleHTML;
+//		
+//		if(title.img!=undefined && title.img!=null){
+//			alert(title.width);
+//			var imgWidth = '20';
+//			if(title.width!=undefined && title.width!=null && title.width!=''){
+//				imgWidth = title.width;
+//			}
+//			
+//			imgWidth = parseInt(imgWidth)/100;
+//			var textWidth =  1-imgWidth;
+//			
+//			var imgHTML = '<img width="100%" src="'+loadHeaderImgService+'"></img>';
+//			
+//			var tableItems;
+			
+//			if(title.position=='right') {
+//				tableItems = [{html: titleHTML, border: false, columnWidth: textWidth},{html: imgHTML, border: false, columnWidth: imgWidth}];	
+//			} else  if(title.position=='left') {
+//				tableItems = [{html: imgHTML, border: false, columnWidth: imgWidth}, {html: titleHTML, border: false, columnWidth: textWidth}];
+//			} else {
+//				imgHTML = '<div style="text-align: center; padding: 10px;"><img width="'+ imgWidth*100 +'%" src="'+loadHeaderImgService+'"></img></div>';
+//				if(header){ //position is center
+//					tableItems = [{html: imgHTML, border: false, columnWidth: 1},{html: titleHTML, border: false, columnWidth: 1}];
+//				}else {
+//					tableItems = [{html: titleHTML, border: false, columnWidth: 1},{html: imgHTML, border: false, columnWidth: 1}];
+//				}
+//			}
+			
+			
+			
+
+//			logger.debug("IN");
+//			
+//			titlePanel = new Ext.Panel({
+//				layout: 'column',
+//				border: false,
+//				style: 'padding: 10px',
+//				autoHeight: true,
+//				items: tableItems
+//			});
+//		
+//		}
+			
+			
+		var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
+		var html = titleHTML;
 		
-		
-		var titlePanelItems = [];
-		var layout = 'fit';
 		if(title.img!=undefined && title.img!=null){
-			
-			var imgPanel = new Ext.Panel({
-				border: false,
-				autoWidth: true,
-				autoHeight: true,
-				html: '<img src="'+loadHeaderImgService+'"></img>'
-			});
-			
-			switch (title.position) {
-	        case 'left':
-	        	titlePanelItems.push(imgPanel);
-	        	titlePanelItems.push(textPanel);
-	        	layout = 'hbox';
-	            break;
-	        case 'right':
-	        	titlePanelItems.push(textPanel);
-	        	titlePanelItems.push(imgPanel);
-	        	layout = 'hbox';
-	        	break;
-	        default: 
-	        	imgPanel.style='width: 100%; text-align: center;';
-	        	textPanel.style='width: 100%';
-	        	if(header){
-		        	titlePanelItems.push(imgPanel);
-		        	titlePanelItems.push(textPanel);
-	        	}else{
-		        	titlePanelItems.push(textPanel);
-		        	titlePanelItems.push(imgPanel);	
-	        	}
-	            break;
+
+			var imgWidth = '20';//default width 
+			if(title.width!=undefined && title.width!=null && title.width!=''){
+				imgWidth = title.width;
 			}
-		}else{
-        	textPanel.style='width: 100%';
-        	titlePanelItems.push(textPanel);
-		}
-		
-		var titlePanel = new Ext.Panel({
-			border: false,
-	        layout: layout,
-	        items: titlePanelItems
-		});
 
-		//Set the width of the text as the width of the panel - the width of the img
-		if(title.position=='left' || title.position=='right'){
-		   	this.on("afterlayout",function(){
-		   		textPanel.setWidth(titlePanel.getWidth() - imgPanel.getWidth());
-			},this);
-		}
-	   	items.push(titlePanel);
-	},
+			var imgHTML = '<img width="'+imgWidth+'px" src="'+loadHeaderImgService+'"></img>';
 	
-	addTitleIE: function(title, items, header){
-
-		var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_IMAGE_CONTENT_ACTION'
-			, baseParams: {FILE_NAME: title.img}
-		});
-		
-		//build the text panel
-		var textPanel = new Ext.Panel({
+			if(title.position=='right') {
+				html = '<table style="border-style: none; width:100%;"><tbody><tr><td>'+titleHTML+'</td><td width="'+ imgWidth+'px">'+imgHTML+'</td></tr></tbody></table>';	
+			} else  if(title.position=='left') {
+				html = '<table style="border-style: none; width:100%;"><tbody><tr><td width="'+imgWidth +'px">'+imgHTML+'</td><td>'+titleHTML+'</td></tr></tbody></table>';
+			} else if(header){ //position is center
+				html = '<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>'+titleHTML;
+			}else {
+				html = titleHTML+'<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>';
+			}
+		}
+	
+		var titlePanel = new Ext.Panel({
+			style: "padding: 10px;",
 			border: false,
 			autoHeight: true,
-			padding: '15',
-			html: '<div>'+title.title+'</div>'
+			html : html
 		});
 		
-		
-		var titlePanelItems = [];
-		var layout = 'fit';
-		
-		//The image is defined
-		if(title.img!=undefined && title.img!=null){
-			
-			//build the image panel
-			var imgPanel = new Ext.Panel({
-				border: false,
-				autoWidth: true,
-				autoHeight: true,
-				padding: '15',
-				html: '<img src="'+loadHeaderImgService+'"></img>'
-			});
-			
-			if (title.position=='left' || title.position=='right') {
-
-	        	titlePanelItems.push(textPanel);
-	        	titlePanelItems.push(imgPanel);
-	        	layout = 'hbox';
-			}else{
-	        	imgPanel.style='width: 100%; text-align: center;';
-	        	textPanel.style='width: 100%';
-	        	if(header){
-		        	titlePanelItems.push(imgPanel);
-		        	titlePanelItems.push(textPanel);
-	        	}else{
-		        	titlePanelItems.push(textPanel);
-		        	titlePanelItems.push(imgPanel);	
-	        	}
-			}
-		}else{
-        	textPanel.style='width: 100%';
-        	titlePanelItems.push(textPanel);
-		}
-		
-		
-		var titlePanel = new Ext.Panel({
-			border: false,
-	        layout: layout,
-	        autoHeight: true,
-	        items: titlePanelItems
-		});
-		var titlePanel2 = new Ext.Panel({
-			border: false,
-	        layout: 'fit',
-	        autoHeight: true,
-	        items: [titlePanel]
-		});
-
-		//this is a trick.. The solution of a problem with IE 
-		if(title.position=='left' ){
-		   	this.on("afterlayout",function(){
-		   		var imgW =   imgPanel.getWidth();
-		   		var imgH =   imgPanel.getHeight();
-		   		var titleW = titlePanel.getWidth();
-		   		titlePanel2.remove(titlePanel);
-	   			
-				var textPanel2 = new Ext.Panel({
-					border: false,
-					width: titleW-40-imgW,
-					padding: '15',
-					html: '<div>'+title.title+'</div>'
-				});
-				
-				var imgPanel2 = new Ext.Panel({
-					border: false,
-					width: imgW,
-					height: imgH,
-					padding: '15',
-					html: '<img src="'+loadHeaderImgService+'"></img>'
-				});
-
-				var titlePanel3 = new Ext.Panel({
-					border: false,
-			        layout: layout,
-			        height: imgH,
-			        items: [imgPanel2, textPanel2]
-				});
-				titlePanel2.add(titlePanel3);
-			},this);
-		}
-		
-		//Set the width of the title text panel
-		if( title.position=='right'){
-		   	this.on("afterlayout",function(){
-		   		textPanel.setWidth(titlePanel.getWidth()-imgPanel.getWidth());
-			},this);
-		}
-	   	items.push(titlePanel2);
-	}
+	   	items.push(titlePanel);
+	}	
 	
 	, getDynamicFilterDefinition: function (aField) {
 		return {
