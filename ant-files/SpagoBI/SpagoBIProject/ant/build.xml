@@ -397,6 +397,12 @@
               <file name="./src/ext/sbi/tools/dataset/PreviewWindow.js"/>
               <file name="./src/ext/sbi/domain/ManageDomains.js"/>
               <file name="./src/ext/sbi/config/ManageConfig.js"/>
+		      <file name="./src/ext/sbi/engines/chart/data/PagingStore.js"/>
+		      <file name="./src/ext/sbi/engines/chart/data/StoreManager.js"/>
+		      <file name="./src/ext/sbi/engines/chart/data/Store.js"/>
+		      <file name="./src/ext/sbi/engines/chart/GenericChartPanel.js"/>
+		      <file name="./src/ext/sbi/engines/chart/HighchartsPanel.js"/>
+		      <file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js"/>
 
 				    </filelist>
 
