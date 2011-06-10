@@ -44,7 +44,7 @@
 Ext.ns("Sbi.engines.chart");
 
 Sbi.engines.chart.HighchartsPanel = function(config) {
-
+	//alert("$$$ config: " + config.toSource());
 	var defaultSettings = {
 	};
 
@@ -52,13 +52,6 @@ Sbi.engines.chart.HighchartsPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	this.chartDivId = Ext.id();
-	
-	/*
-	c = Ext.apply(c, {
-		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
-	});
-	*/
 	// constructor
 	Sbi.engines.chart.HighchartsPanel.superclass.constructor.call(this, c);
 
@@ -66,120 +59,149 @@ Sbi.engines.chart.HighchartsPanel = function(config) {
 };
 
 Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPanel, {
-	
-	chartDivId : null
-	, chart : null
-	, chartConfig : null // mandatory object to be passed as a property of the constructor input object.						
-	
+
+	 chart : null
+   , chartConfig : null // mandatory object to be passed as a property of the constructor input object.						
+
 
 	, init : function () {
-		this.loadChartData(this.chartConfig);
+		/*
+		//sets categoryX and categoryY
+		var totalCharts = []; //for reset
+		totalCharts = this.chartConfig.charts || [];
+		if (totalCharts.length === 0 && this.chartConfig !== undefined){
+			//mono chart, retrocompatibility
+			totalCharts.push(this.chartConfig);
+		}
+		for (c in totalCharts){
+			this.setCategoryAliasX(totalCharts[c]);
+			this.setCategoryAliasY(totalCharts[c]);
+			this.setSerieAlias(totalCharts[c]);
+		}
+		*/
+		//gets dataset values (at the moment one dataset for all charts in a document)
+		var dataConfig = this.chartConfig;
+		if (this.chartConfig.charts){			
+			dataConfig =  Ext.apply( this.chartConfig.charts[0], dataConfig);
+			delete dataConfig.charts;
+		}
+		this.loadChartData(dataConfig);
 	}
 
 	, createChart: function () {
-		this.chartConfig.chart.renderTo = this.chartConfig.divId;
-		//disable exporting buttons
-		var exp = {};
-		exp.enabled = false;
-		this.chartConfig.exporting = exp;
-		//disable credits information
-		var credits = {};
-		credits.enabled = false;
-		this.chartConfig.credits = credits;
-		this.enableDrillEvents(this.chartConfig);
-		//gets series values and adds theme to the config
-		var seriesNode = [];
-		//looks for js function		
-		if (this.chartConfig.plotOptions){
-			if(this.chartConfig.plotOptions.pie && this.chartConfig.plotOptions.pie.dataLabels){
-				var formatter = this.getFormatterCode(this.chartConfig.plotOptions.pie.dataLabels.formatter);
+		var totalCharts = []; //for reset
+		totalCharts = this.chartConfig.charts || [];
+		if (totalCharts.length === 0 && this.chartConfig !== undefined){
+			//mono chart, retrocompatibility
+			totalCharts.push(this.chartConfig);
+		}
+		for (c in totalCharts){
+			var singleChartConfig = this.chartConfig;
+			singleChartConfig =  Ext.apply( totalCharts[c], singleChartConfig);
+			delete singleChartConfig.charts;
+			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + c + '';
+			//disable exporting buttons
+			var exp = {};
+			exp.enabled = false;
+			singleChartConfig.exporting = exp;
+			//disable credits information
+			var credits = {};
+			credits.enabled = false;
+			singleChartConfig.credits = credits;
+			this.enableDrillEvents(singleChartConfig);
+			//gets series values and adds theme to the config
+			var seriesNode = [];
+			//looks for js function		
+			if (singleChartConfig.plotOptions){
+				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels){
+					var formatter = this.getFormatterCode(singleChartConfig.plotOptions.pie.dataLabels.formatter);
+					if (formatter !== undefined && formatter !== null){
+						singleChartConfig.plotOptions.pie.dataLabels.formatter = formatter;
+					}
+				}
+				if(singleChartConfig.plotOptions.series){
+					var formatter = this.getFormatterCode(singleChartConfig.plotOptions.series.formatter);
+					if (formatter != null){
+						singleChartConfig.plotOptions.series.formatter = formatter;
+					}
+				}
+			}
+			//defines tooltip
+			if(singleChartConfig.tooltip){
+				var formatter = this.getFormatterCode(singleChartConfig.tooltip.formatter);
 				if (formatter != null){
-					this.chartConfig.plotOptions.pie.dataLabels.formatter = formatter;
+					singleChartConfig.tooltip.formatter = formatter;
 				}
 			}
-			if(this.chartConfig.plotOptions.series){
-				var formatter = this.getFormatterCode(this.chartConfig.plotOptions.series.formatter);
-				if (formatter != null){
-					this.chartConfig.plotOptions.series.formatter = formatter;
+	
+			//defines series data
+			if (singleChartConfig.series !== undefined ){
+				var serieValue = singleChartConfig.series;
+				if (Ext.isArray(serieValue)){
+					var seriesData =  {};
+					var str = "";
+					for(var i = 0; i < serieValue.length; i++) {
+						seriesData = serieValue[i];					
+						seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
+						seriesNode.push(seriesData);
+					}
 				}
+			}else if (singleChartConfig.plotOptions){ 
+				seriesData = singleChartConfig.plotOptions.series;//other attributes too
+				seriesData.data = this.getSeries();//values from dataset
+				seriesNode.push(seriesData);
 			}
-		}
-		//defines tooltip
-		if(this.chartConfig.tooltip){
-			var formatter = this.getFormatterCode(this.chartConfig.tooltip.formatter);
-			if (formatter != null){
-				this.chartConfig.tooltip.formatter = formatter;
-			}
-		}
-
-		//defines series data
-		if (this.chartConfig.series !== undefined ){
-			var serieValue = this.chartConfig.series;
-			if (Ext.isArray(serieValue)){
-				var seriesData =  {};
-				var str = "";
-				for(var i = 0; i < serieValue.length; i++) {
-					seriesData = serieValue[i];					
-					seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
-					seriesNode.push(seriesData);
-				}
-			}
-		}else if (this.chartConfig.plotOptions){ 
-			seriesData = this.chartConfig.plotOptions.series;//other attributes too
-			seriesData.data = this.getSeries();//values from dataset
-			seriesNode.push(seriesData);
-		}
-
-		this.chartConfig.series = seriesNode;
-		//get categories for each axis from dataset
-		if(this.chartConfig.xAxis != undefined){
-			//if multiple X axis
-			if(this.chartConfig.xAxis.length != undefined){
-				//gets categories values and adds theme to the config	
-				var categoriesX = this.getCategoriesX();
-				if(categoriesX == undefined || categoriesX.length == 0){
-					delete this.chartConfig.xAxis;
-					for(var j =0; j< this.categoryAliasX.length; j++){
-						this.chartConfig.xAxis[j].categories = categoriesX[j];
+	
+			singleChartConfig.series = seriesNode;
+			//get categories for each axis from dataset
+			if(singleChartConfig.xAxis != undefined){
+				//if multiple X axis
+				if(singleChartConfig.xAxis.length != undefined){
+					//gets categories values and adds theme to the config	
+					var categoriesX = this.getCategoriesX();
+					if(categoriesX == undefined || categoriesX.length == 0){
+						delete this.chartConfig.xAxis;
+						for(var j =0; j< this.categoryAliasX.length; j++){
+							singleChartConfig.xAxis[j].categories = categoriesX[j];
+						}
+						
+					}
+					//else keep templates ones
+	
+				}else{
+					//single axis
+					var categoriesX = this.getCategoriesX();
+					if(categoriesX != undefined && categoriesX.length != 0){
+						singleChartConfig.xAxis.categories = categoriesX[0];
 					}
 					
 				}
-				//else keep templates ones
-
-			}else{
-				//single axis
-				var categoriesX = this.getCategoriesX();
-				if(categoriesX != undefined && categoriesX.length != 0){
-					this.chartConfig.xAxis.categories = categoriesX[0];
-				}
-				
 			}
-		}
-		if(this.chartConfig.yAxis != undefined){
-			//if multiple Y axis
-			if(this.chartConfig.yAxis.length != undefined){
-				//gets categories values and adds theme to the config	
-				var categoriesY = this.getCategoriesY();
-				if(categoriesY == undefined || categoriesY.length == 0){
-					delete this.chartConfig.yAxis;
-					for(var j =0; j< this.categoryAliasY.length; j++){
-						this.chartConfig.yAxis[j].categories = categoriesY[j];
+			if(singleChartConfig.yAxis != undefined){
+				//if multiple Y axis
+				if(singleChartConfig.yAxis.length != undefined){
+					//gets categories values and adds theme to the config	
+					var categoriesY = this.getCategoriesY();
+					if(categoriesY == undefined || categoriesY.length == 0){
+						delete this.chartConfig.yAxis;
+						for(var j =0; j< this.categoryAliasY.length; j++){
+							singleChartConfig.yAxis[j].categories = categoriesY[j];
+						}
+						
+					}
+					//else keep templates ones
+				}else{
+					//single axis
+					var categoriesY = this.getCategoriesY();
+					if(categoriesY != undefined && categoriesY.length != 0){
+						singleChartConfig.yAxis.categories = categoriesY[0];
 					}
 					
 				}
-				//else keep templates ones
-			}else{
-				//single axis
-				var categoriesY = this.getCategoriesY();
-				if(categoriesY != undefined && categoriesY.length != 0){
-					this.chartConfig.yAxis.categories = categoriesY[0];
-				}
-				
 			}
+			this.chart = new Highcharts.Chart(singleChartConfig);
+			
 		}
-		//alert(this.chartConfig.toSource());
-		this.chart = new Highcharts.Chart(this.chartConfig);
-
 	}
 
 	, getColors : function () {
@@ -238,7 +260,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		//alert("formatter: " + formatter);
 		switch (formatter) {
 	        case 'name_percentage':
-	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name +\': \'+ this.y +\' %\';}";
+	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name +\': \'+ this.y +\' %\';}";	        	
 	        	break;
 	        case 'name':
 	        	formatterCode = "function (){return \'\<b\>\'+ this.series.name +\'\</b\>\<br/\>\'+ this.point.name ;}";
@@ -256,8 +278,8 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}
 		
 		//formatterCode = 'function (){return '+formatterCode+';}';
-		//alert("formatterCode: " + formatterCode);
 		result = eval(formatterCode);
+		//result = eval("{ return this.y;}");
 		//alert("result: " + result);
 		return result;
 	}

@@ -68,7 +68,6 @@ Sbi.engines.chart.data.Store = function(config) {
 			params.id = config.storeId;
 			params.label = config.datasetLabel;
 			params.dsTypeCd = config.dsTypeCd || "";
-			//params.pars = config.dsPars || [];
 			params.trasfTypeCd = config.dsTransformerType || "";
 			params.start =-1; // to get all values
 			params.limit =-1; // to get all values
@@ -76,7 +75,6 @@ Sbi.engines.chart.data.Store = function(config) {
 			var pars =  config.dsPars;
 			var separator = '';
 			var arParams = [];
-			//for(p in pars) {
 				if(Ext.isArray(pars)) {		
 					for(var i = 0; i < pars.length; i++) {
 						var strParams = {};
@@ -87,12 +85,8 @@ Sbi.engines.chart.data.Store = function(config) {
 						}
 						arParams.push(strParams);
 					}
-					//strValue = strValue.substr(0,strValue.length-1);
-					//pars[p] = strValue;
 				}
-				//strParams += separator + p + '=' + pars[p];
-				//separator = '&';
-			//}
+
 			params.pars = Ext.util.JSON.encode(arParams) || [];
 			
 			delete config.id;
@@ -100,6 +94,7 @@ Sbi.engines.chart.data.Store = function(config) {
 			delete config.dsTypeCd;	
 			delete config.pars;	
 			delete config.trasfTypeCd;
+			delete config.numCharts;
 
 			config.url = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'MANAGE_DATASETS_ACTION'
 																 , baseParams:params
@@ -123,23 +118,27 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 	
     // -- public methods ----------------------------------------------------------------
 	, getFieldMetaByAlias: function(alias) {
-		// assert
-		if(!this.alias2FieldMetaMap) {
-			Sbi.exception.ExceptionHandler.showErrorMessage('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
-		}
-	
-		var m = this.alias2FieldMetaMap[alias];
-		if(m){
-			if(m.length === 0) {
-				m = undefined;
-			} else if(m.length === 1) {
-				m = m[0];
-			} else {
-				m = m[0];
-				alert('Warning: there are [' + m.length + '] fields whose alias is [' + alias + ']. Only the first one will be used');
+		//if (this.ready){
+			// assert
+		/*
+			if(!this.alias2FieldMetaMap) {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
 			}
-		}
-		return m;
+			*/
+		
+			var m = this.alias2FieldMetaMap[alias];
+			if(m){
+				if(m.length === 0) {
+					m = undefined;
+				} else if(m.length === 1) {
+					m = m[0];
+				} else {
+					m = m[0];
+					alert('Warning: there are [' + m.length + '] fields whose alias is [' + alias + ']. Only the first one will be used');
+				}
+			}
+			return m;
+		//}
 	}
 
 	, getFieldNameByAlias: function(alias) {
