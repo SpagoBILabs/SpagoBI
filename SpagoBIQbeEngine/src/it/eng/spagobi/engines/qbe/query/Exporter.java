@@ -58,7 +58,9 @@ public class Exporter {
 		Workbook wb = new HSSFWorkbook();
 	    CreationHelper createHelper = wb.getCreationHelper();
 	    Sheet sheet = wb.createSheet("new sheet");
-	    
+	    for(int j = 0; j < 50; j++){
+			sheet.createRow(j);
+		}
 	    fillSheet(sheet, wb, createHelper);
 
 	    return wb;
@@ -68,119 +70,128 @@ public class Exporter {
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
 		 if(dataStore!=null  && !dataStore.isEmpty()){
-			 CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
-			 CellStyle hCellStyle = xlsExp.buildHeaderCellStyle(sheet);
-			 CellStyle dCellStyle = xlsExp.buildDataCellStyle(sheet);
-			 
-		    	IDataStoreMetaData d = dataStore.getMetaData();	
-		    	int colnum = d.getFieldCount();
-		    	Row row = sheet.createRow((short)0);
-		    	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
-		    	for(int j =0;j<colnum;j++){
-		    		Cell cell = row.createCell(j);
-		    	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-		    	    String fieldName = d.getFieldName(j);
-		    	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
-		    	    String format = (String) fieldMetaData.getProperty("format");
-		    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
-		            if (extractedFields != null && extractedFields.get(j) != null) {
-		    	    	Field field = (Field) extractedFields.get(j);
-		    	    	fieldName = field.getAlias();
-		    	    	if (field.getPattern() != null) {
-		    	    		format = field.getPattern();
-		    	    	}
-		    	    }
-		            CellStyle aCellStyle = wb.createCellStyle(); 
-		            if (format != null) {
-	    	    		short formatInt = HSSFDataFormat.getBuiltinFormat(format);  		  
-	    	    		aCellStyle.setDataFormat(formatInt);
-	    		    	cellTypes[j] = aCellStyle;
-		            }
-		            if (visible != null && visible.booleanValue() == true) { 
-		            	 cell.setCellValue(createHelper.createRichTextString(fieldName));
-		            	 cell.setCellStyle(hCellStyle);
-		            }	   
-		    	}
-		    	
-		    	Iterator it = dataStore.iterator();
-		    	int rownum = 1;
-		    	short formatIndexInt = HSSFDataFormat.getBuiltinFormat("#,##0");
-			    CellStyle cellStyleInt = wb.createCellStyle(); // cellStyleInt is the default cell style for integers
-			    cellStyleInt.setDataFormat(formatIndexInt);
-			    
-			    short formatIndexDoub = HSSFDataFormat.getBuiltinFormat("#,##0.00");
-			    CellStyle cellStyleDoub = wb.createCellStyle(); // cellStyleDoub is the default cell style for doubles
-			    cellStyleDoub.setDataFormat(formatIndexDoub);
-			    
-				CellStyle cellStyleDate = wb.createCellStyle(); // cellStyleDate is the default cell style for dates
-				cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
-			    
-				while(it.hasNext()){
-					Row rowVal = sheet.createRow(rownum);
-					IRecord record =(IRecord)it.next();
-					List fields = record.getFields();
-					int length = fields.size();
-					for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
-						IField f = (IField)fields.get(fieldIndex);
-						if (f != null && f.getValue()!= null) {
-							String fieldName = d.getFieldName(fieldIndex);
-				    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-				    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
-				    	    if(visible){
-								Class c = d.getFieldType(fieldIndex);
-								logger.debug("Column [" + (fieldIndex+1) + "] class is equal to [" + c.getName() + "]");
-								if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
-									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");
-									Cell cell = rowVal.createCell(fieldIndex);
-								    Number val = (Number)f.getValue();
-								    cell.setCellValue(val.intValue());
-								    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-								    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
-								    cell.setCellStyle(dCellStyle);
-								}else if( Number.class.isAssignableFrom(c) ) {
-									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
-									Cell cell = rowVal.createCell(fieldIndex);
-								    Number val = (Number)f.getValue();
-								    cell.setCellValue(val.doubleValue());
-								    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-								   // List formats = HSSFDataFormat.getBuiltinFormats();
-								    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
-								    cell.setCellStyle(dCellStyle);
-								}else if( String.class.isAssignableFrom(c)){
-									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");
-									Cell cell = rowVal.createCell(fieldIndex);		    
-								    String val = (String)f.getValue();
-								    cell.setCellValue(createHelper.createRichTextString(val));
-								    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-								    cell.setCellStyle(dCellStyle);
-								}else if( Boolean.class.isAssignableFrom(c) ) {
-									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "BOOLEAN" + "]");
-									Cell cell = rowVal.createCell(fieldIndex);
-								    Boolean val = (Boolean)f.getValue();
-								    cell.setCellValue(val.booleanValue());
-								    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
-								    cell.setCellStyle(dCellStyle);
-								}else if(Date.class.isAssignableFrom(c)){
-									logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");
-								    Cell cell = rowVal.createCell(fieldIndex);		    
-								    Date val = (Date)f.getValue();
-								    cell.setCellValue(val);	
-								    cell.setCellStyle(cellStyleDate);
-								    cell.setCellStyle(dCellStyle);
-								}else{
-									logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
-									Cell cell = rowVal.createCell(fieldIndex);
-								    String val = f.getValue().toString();
-								    cell.setCellValue(createHelper.createRichTextString(val));
-								    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-								    cell.setCellStyle(dCellStyle);
-								}
-				    	    }
-						}
-					}
-					rownum ++;
-				}
+			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, 4, 4);
+			    fillSheetData(sheet, wb, createHelper, cellTypes, 5, 4);    	
 		    }
+	}
+	
+	public CellStyle[] fillSheetHeader(Sheet sheet,Workbook wb, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {	
+		CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
+		CellStyle hCellStyle = xlsExp.buildHeaderCellStyle(sheet);
+		IDataStoreMetaData d = dataStore.getMetaData();	
+    	int colnum = d.getFieldCount();
+    	Row row = sheet.getRow(beginRowHeaderData);
+    	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
+    	for(int j = 0; j < colnum; j++){
+    		Cell cell = row.createCell(j + beginColumnHeaderData);
+    	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+    	    String fieldName = d.getFieldName(j);
+    	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
+    	    String format = (String) fieldMetaData.getProperty("format");
+    	    String alias = (String) fieldMetaData.getAlias();
+    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
+            if (extractedFields != null && extractedFields.get(j) != null) {
+    	    	Field field = (Field) extractedFields.get(j);
+    	    	fieldName = field.getAlias();
+    	    	if (field.getPattern() != null) {
+    	    		format = field.getPattern();
+    	    	}
+    	    }
+            CellStyle aCellStyle = wb.createCellStyle(); 
+            if (format != null) {
+	    		short formatInt = HSSFDataFormat.getBuiltinFormat(format);  		  
+	    		aCellStyle.setDataFormat(formatInt);
+		    	cellTypes[j] = aCellStyle;
+            }
+            if (visible != null && visible.booleanValue() == true) { 
+            	if(alias!=null && !alias.equals("")){
+            		cell.setCellValue(createHelper.createRichTextString(alias));
+            	}else{
+            		cell.setCellValue(createHelper.createRichTextString(fieldName));
+            	}	 
+            	cell.setCellStyle(hCellStyle);
+            }	   
+    	}
+    	return cellTypes;
+	}
+	
+	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
+		CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
+		CellStyle dCellStyle = xlsExp.buildDataCellStyle(sheet);
+	
+		Iterator it = dataStore.iterator();
+    	int rownum = beginRowData;
+    	short formatIndexInt = HSSFDataFormat.getBuiltinFormat("#,##0");
+	    CellStyle cellStyleInt = wb.createCellStyle(); // cellStyleInt is the default cell style for integers
+	    cellStyleInt.cloneStyleFrom(dCellStyle);
+	    cellStyleInt.setDataFormat(formatIndexInt);
+	    
+	    short formatIndexDoub = HSSFDataFormat.getBuiltinFormat("#,##0.00");
+	    CellStyle cellStyleDoub = wb.createCellStyle(); // cellStyleDoub is the default cell style for doubles
+	    cellStyleDoub.cloneStyleFrom(dCellStyle);
+	    cellStyleDoub.setDataFormat(formatIndexDoub);
+	    
+		CellStyle cellStyleDate = wb.createCellStyle(); // cellStyleDate is the default cell style for dates
+		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
+		cellStyleDate.cloneStyleFrom(dCellStyle);
+		IDataStoreMetaData d = dataStore.getMetaData();	
+		
+		while(it.hasNext()){
+			Row rowVal = sheet.getRow(rownum);
+			IRecord record =(IRecord)it.next();
+			List fields = record.getFields();
+			int length = fields.size();
+			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
+				IField f = (IField)fields.get(fieldIndex);
+				if (f != null && f.getValue()!= null) {
+		    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
+		    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
+		    	    if(visible){
+						Class c = d.getFieldType(fieldIndex);
+						logger.debug("Column [" + (fieldIndex) + "] class is equal to [" + c.getName() + "]");
+						if(rowVal==null){
+							rowVal = sheet.createRow(rownum);
+						}
+						Cell cell = rowVal.createCell(fieldIndex + beginColumnData);
+						cell.setCellStyle(dCellStyle);
+						if( Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
+							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "INTEGER" + "]");					
+						    Number val = (Number)f.getValue();
+						    cell.setCellValue(val.intValue());
+						    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+						    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleInt);
+						}else if( Number.class.isAssignableFrom(c) ) {
+							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "NUMBER" + "]");
+						    Number val = (Number)f.getValue();
+						    cell.setCellValue(val.doubleValue());
+						    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+						    cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cellStyleDoub);
+						}else if( String.class.isAssignableFrom(c)){
+							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "STRING" + "]");	    
+						    String val = (String)f.getValue();
+						    cell.setCellValue(createHelper.createRichTextString(val));
+						    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+						}else if( Boolean.class.isAssignableFrom(c) ) {
+							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "BOOLEAN" + "]");
+						    Boolean val = (Boolean)f.getValue();
+						    cell.setCellValue(val.booleanValue());
+						    cell.setCellType(HSSFCell.CELL_TYPE_BOOLEAN);
+						}else if(Date.class.isAssignableFrom(c)){
+							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");	    
+						    Date val = (Date)f.getValue();
+						    cell.setCellValue(val);	
+						    cell.setCellStyle(cellStyleDate);
+						}else{
+							logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
+						    String val = f.getValue().toString();
+						    cell.setCellValue(createHelper.createRichTextString(val));
+						    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
+						}
+		    	    }
+				}
+			}
+		   rownum ++;
+		}
 	}
 
 	public void setExtractedFields(Vector extractedFields) {

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -133,33 +134,41 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
 			String sheetName = "Sheet " + i;
 			HSSFSheet sheet = wb.createSheet(sheetName);
+			HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 			
-			if(sheetJ.has(exporter.CONTENT)){
-				JSONObject content = sheetJ.getJSONObject(exporter.CONTENT);
-				fillSheetContent(wb, sheet, content, createHelper, exporter);
+			for(int j = 0; j < 50; j++){
+				sheet.createRow(j);
 			}
 			
 			if(sheetJ.has(exporter.HEADER)){
 				JSONObject header = sheetJ.getJSONObject(exporter.HEADER);
 				if(header!=null){
-					exporter.setHeader(sheet, header, createHelper, wb);
+					exporter.setHeader(sheet, header, createHelper, wb, patriarch);
 				}
+			}	
+			
+			int endRowNum = 37;
+			if(sheetJ.has(exporter.CONTENT)){
+				JSONObject content = sheetJ.getJSONObject(exporter.CONTENT);
+				endRowNum = fillSheetContent(wb, sheet, content, createHelper, exporter, patriarch);
 			}			
 			
 			if(sheetJ.has(exporter.FOOTER)){
 				JSONObject footer = sheetJ.getJSONObject(exporter.FOOTER);
 				if(footer!=null){
-					exporter.setFooter(sheet, footer, createHelper, wb);
+					exporter.setFooter(sheet, footer, createHelper, wb, endRowNum, patriarch);
 				}
 			}		
 		}
 		return wb;
 	}
 	
-	public void fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject content, 
-			CreationHelper createHelper, WorkSheetXLSExporter exporter) throws IOException, JSONException, SerializationException{
+	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject content, 
+			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws IOException, JSONException, SerializationException{
 		
 		String sheetType = content.getString(exporter.SHEET_TYPE);
+		int endRowNum = 0;
+		
 
 		if (sheetType != null && !sheetType.equals("")) {
 			
@@ -169,14 +178,15 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				int row = 4;
 				int colend = 13;
 				int rowend = 37;
-				exporter.setImageIntoWorkSheet(wb, sheet, jpgImage, col, row, colend, rowend,HSSFWorkbook.PICTURE_TYPE_JPEG);
+				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, row, colend, rowend,HSSFWorkbook.PICTURE_TYPE_JPEG);
+				endRowNum = rowend;
 				
 			} else if (sheetType.equalsIgnoreCase(exporter.CROSSTAB)) {
 				
 				String crosstab = content.getString(exporter.CROSSTAB);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
 				CrosstabXLSExporter expCr = new CrosstabXLSExporter();
-				expCr.fillSheet(sheet, crosstabJSON, createHelper);
+				endRowNum = expCr.fillAlreadyCreatedSheet(sheet, crosstabJSON, createHelper);
 				
 			} else if (sheetType.equalsIgnoreCase(exporter.TABLE)) {
 
@@ -195,8 +205,11 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				}				
 				IStatement statement = getStatement(query);
 				IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
+				long recCount = dataStore.getRecordsCount();
+				endRowNum = (new Long(recCount)).intValue() + 5;
 				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
 			}
 		}
+		return endRowNum;
 	}
 }
