@@ -34,7 +34,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.FilterQueryTransformer;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -213,12 +213,10 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				dataSet.setQuery(sqlQuery);
 				dataSet.loadData(start, limit, -1);
 				dataStore = dataSet.getDataStore();
-				for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
-					IFieldMetaData m = dataStore.getMetaData().getFieldMeta(i);
+				IDataStoreMetaData dataStoreMetadata = dataStore.getMetaData();
+				for(int i = 0; i < dataStoreMetadata.getFieldCount(); i++) {
 					ISelectField queryField = (ISelectField)queryFields.get(i);
-					String[] f = (String[])selectFields.get(i);	
-					logger.debug(f[0] + ": " + m.getName() + ": " + queryField.getAlias());
-					m.setAlias(queryField.getAlias());
+					dataStoreMetadata.changeFieldAlias(i, queryField.getAlias());
 				}
 			} catch (Exception e) {
 				logger.debug("Query execution aborted because of an internal exceptian");

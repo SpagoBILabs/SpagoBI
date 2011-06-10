@@ -80,4 +80,6 @@ public interface IDataStoreMetaData {
 	void setProperty(String propertyName, Object proprtyValue);
 
 	void deleteFieldMetaDataAt(int pivotFieldIndex); 
+	
+	void changeFieldAlias(int fieldIndex, String newAlias);
 }

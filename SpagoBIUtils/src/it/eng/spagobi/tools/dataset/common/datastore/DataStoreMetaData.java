@@ -149,4 +149,12 @@ public class DataStoreMetaData implements IDataStoreMetaData {
 		return fieldsMeta;
 	}
 
+	public void changeFieldAlias(int fieldIndex, String newAlias) {
+		IFieldMetaData m = this.getFieldMeta(fieldIndex);
+		String previousAlias = m.getAlias() != null ? m.getAlias() :  m.getName();
+		m.setAlias(newAlias);
+		name2IndexMap.remove(previousAlias);
+		name2IndexMap.put(newAlias.toUpperCase(), fieldIndex);
+	}
+
 }
