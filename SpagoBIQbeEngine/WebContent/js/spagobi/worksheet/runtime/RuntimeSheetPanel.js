@@ -174,52 +174,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			serviceName: 'GET_IMAGE_CONTENT_ACTION'
 			, baseParams: {FILE_NAME: title.img}
 		});
-//		var titlePanel = new Ext.Panel({html:''});
-//		var titleHTML = '<div>'+title.title+'</div>';
-//		var html = titleHTML;
-//		
-//		if(title.img!=undefined && title.img!=null){
-//			alert(title.width);
-//			var imgWidth = '20';
-//			if(title.width!=undefined && title.width!=null && title.width!=''){
-//				imgWidth = title.width;
-//			}
-//			
-//			imgWidth = parseInt(imgWidth)/100;
-//			var textWidth =  1-imgWidth;
-//			
-//			var imgHTML = '<img width="100%" src="'+loadHeaderImgService+'"></img>';
-//			
-//			var tableItems;
-			
-//			if(title.position=='right') {
-//				tableItems = [{html: titleHTML, border: false, columnWidth: textWidth},{html: imgHTML, border: false, columnWidth: imgWidth}];	
-//			} else  if(title.position=='left') {
-//				tableItems = [{html: imgHTML, border: false, columnWidth: imgWidth}, {html: titleHTML, border: false, columnWidth: textWidth}];
-//			} else {
-//				imgHTML = '<div style="text-align: center; padding: 10px;"><img width="'+ imgWidth*100 +'%" src="'+loadHeaderImgService+'"></img></div>';
-//				if(header){ //position is center
-//					tableItems = [{html: imgHTML, border: false, columnWidth: 1},{html: titleHTML, border: false, columnWidth: 1}];
-//				}else {
-//					tableItems = [{html: titleHTML, border: false, columnWidth: 1},{html: imgHTML, border: false, columnWidth: 1}];
-//				}
-//			}
-			
-			
-			
-
-//			logger.debug("IN");
-//			
-//			titlePanel = new Ext.Panel({
-//				layout: 'column',
-//				border: false,
-//				style: 'padding: 10px',
-//				autoHeight: true,
-//				items: tableItems
-//			});
-//		
-//		}
-			
 			
 		var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
 		var html = titleHTML;
