@@ -362,7 +362,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if(dsActiveDetail!=null){
 			dsActiveDetail.setDsType(dsType);
 			
-			String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_CD);			
+			String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);			
 			JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 			String meta = getAttributeAsString(DataSetConstants.METADATA);					
 			String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
@@ -371,12 +371,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			HashMap<String, Integer> domainIds = new HashMap<String, Integer> ();
 		    if(domainsCat != null){
 			    for(int i=0; i< domainsCat.size(); i++){
-			    	domainIds.put(domainsCat.get(i).getValueCd(), domainsCat.get(i).getValueId());
+			    	domainIds.put(domainsCat.get(i).getValueName(), domainsCat.get(i).getValueId());
 			    }
 		    }
 		    Integer catTypeID = domainIds.get(catTypeCd);
 		    if(catTypeID!=null){
-				dsActiveDetail.setCategoryCd(catTypeCd);
+				dsActiveDetail.setCategoryValueName(catTypeCd);
 				dsActiveDetail.setCategoryId(catTypeID);
 			}
 
