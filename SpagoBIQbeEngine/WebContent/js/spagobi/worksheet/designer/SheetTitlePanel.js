@@ -73,7 +73,6 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
 	//row of the title
-
 	formItems = this.addTitle(formItems);
 	formItems = this.addImage(formItems);
 	
@@ -83,6 +82,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
             items: formItems
         }]
 	};
+
 
 	Sbi.worksheet.designer.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
@@ -117,9 +117,13 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	//add the image row in the items of the panel
 	addImage: function(items){
 		
+		var imgTriggerFieldId = Ext.id();
+		var imgPositionId = Ext.id();
+		
 		this.imgTriggerField = new Ext.form.TwinTriggerField({
 			name : 'img'
-			, fieldLabel : LN('sbi.worksheet.designer.image')
+			, id: imgTriggerFieldId
+			, fieldLabel : LN('sbi.worksheet.designer.title.image')
 			, triggerClass : 'x-form-search-trigger'
 			, editable : false
 			, allowBlank : true
@@ -133,13 +137,14 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		
 		//Combo box with positions
 		this.imgPosition = new Ext.form.ComboBox({
+			id:				imgPositionId,
 			xtype:          'combo',
 			mode:           'local',
 			triggerAction:  'all',
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	true,
-			fieldLabel:     LN('sbi.worksheet.designer.position'),
+			fieldLabel:     LN('sbi.worksheet.designer.title.position'),
 			name:           'position',
 			displayField:   'position',
 			valueField:     'position',
@@ -149,7 +154,9 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 				data   : this.getAvailablePositions()
 			})
 		});
-
+	
+		this.on('afterrender',this.addToolTips.createDelegate(this, [imgTriggerFieldId, imgPositionId]),this);
+		
 		items.push({
 			columnWidth:.4,
 			style:'padding-left: 10px; padding-top: 7px;',
@@ -188,6 +195,19 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		this.imgTriggerField.setValue('');
 	},
 	
+	addToolTips: function(imgTriggerFieldId, imgPositionId) {
+		var sharedConf ={anchor: 'top',width:200,trackMouse:true};
+
+		new Ext.ToolTip(Ext.apply({
+			target: imgTriggerFieldId,
+			html: LN('sbi.worksheet.designer.title.imgTriggerFieldId')
+		},sharedConf));
+		new Ext.ToolTip(Ext.apply({
+			target: imgPositionId,
+			html: LN('sbi.worksheet.designer.title.imgPositionId')
+		},sharedConf));
+	},
+	
 	isValid: function(){
 		var valid= true;
 //		var title = this.titlePanel.getValue();
@@ -198,7 +218,15 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	
 	getTitleState: function(messageBox){
 		var values={};
-		values.title =  this.titlePanel.getValue();
+		var titleToNormalize =  this.titlePanel.getValue();
+		
+		//titleToNormalize = Ext.util.Format.stripTags( titleToNormalize );
+  		//expression = Ext.util.Format.htmlEncode(expression);
+		titleToNormalize = titleToNormalize.replace(/&nbsp;/g," ");
+		titleToNormalize = titleToNormalize.replace(/\u200B/g,"");
+		titleToNormalize = titleToNormalize.replace(/&gt;/g,">");
+		values.title = titleToNormalize.replace(/&lt;/g,"<");
+		
 		values.img =  this.imgTriggerField.getValue();
 		if(values.img==''){
 			values.img =null;
