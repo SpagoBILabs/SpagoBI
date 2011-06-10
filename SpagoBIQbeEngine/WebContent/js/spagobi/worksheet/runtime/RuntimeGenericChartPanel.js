@@ -70,10 +70,10 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 		serviceName: 'LOAD_WORKSHEET_CROSSTAB_ACTION'
 		, baseParams: params
 	});
-	this.services['exportChart'] = this.services['exportChart'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'EXPORT_CHART_ACTION'
-		, baseParams: params
-	});
+//	this.services['exportChart'] = this.services['exportChart'] || Sbi.config.serviceRegistry.getServiceUrl({
+//		serviceName: 'EXPORT_CHART_ACTION'
+//		, baseParams: params
+//	});
 
 	this.addEvents('contentloaded');
 	Sbi.worksheet.runtime.RuntimeGenericChartPanel.superclass.constructor.call(this, c);	 	

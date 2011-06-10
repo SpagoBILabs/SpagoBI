@@ -54,36 +54,49 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 
 	Ext.apply(this, c);
 	
+	this.services = this.services || new Array();
+	this.services['exportWorksheet'] = this.services['exportWorksheet'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'EXPORT_WORKSHEETS_ACTION'
+		, baseParams: {'RESPONSE_TYPE' : 'RESPONSE_TYPE_ATTACHMENT', 'MIME_TYPE' : 'application/vnd.ms-excel'}
+	});
+	
 	this.config = config;
-	this.sheetItems = [new Ext.Panel({})];
-	if(sheets!= undefined && sheets!=null){
-		this.sheetItems= this.buildSheets(config, sheets.sheets);
+	this.sheetItems = [ new Ext.Panel({}) ];
+	if (sheets != undefined && sheets != null) {
+		this.sheetItems = this.buildSheets(config, sheets.sheets);
 	}
 	
-	c ={
-			border: false,
-			tabPosition: 'bottom', 
-	        enableTabScroll:true,
-	        defaults: {autoScroll:true},
-	        items: this.sheetItems
+
+	c = {
+		border : false,
+		tabPosition : 'bottom',
+		enableTabScroll : true,
+		defaults : {
+			autoScroll : true
+		},
+		items : this.sheetItems
 	};
+	
 	this.addEvents();
+	
 	Sbi.worksheet.runtime.RuntimeSheetsContainerPanel.superclass.constructor.call(this, c);	 
 	
 	//active the first tab after render
-	this.on('render',function(){
-		if(this.items.length>0){
+	this.on('render', function() {
+		if (this.items.length > 0) {
 			this.setActiveTab(0);
-		}	
+		}
 	}, this);
 	
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	
-	sheetItems: null,
-	sheetNumber: 0,
+	sheetItems: null
+	, sheetNumber: 0
 	//build the sheets
+	
+	,
 	buildSheets: function(config, sheetsConfig){
 		var items = [];
 		if(sheetsConfig!=undefined && sheetsConfig!=null){
@@ -93,81 +106,125 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			}
 		}
 		return items;
-	},
+	}
 	
+	,
 	refresh: function(sheets){
 		if(sheets!=undefined && sheets!=null){
 			this.removeAll(true);
 			this.add(this.buildSheets(this.config, sheets.sheets));
 		}
-	},
+	}
 	
-	exportContent: function(){
-		if(this.sheetItems!=undefined && this.sheetItems!=null){
-			var i=0;			
+	,
+	exportContent : function() {
+		if (this.sheetItems !== undefined && this.sheetItems !== null) {
+			var i = 0;
 			this.sheetNumber = this.sheetItems.length;
-			for(; i<this.sheetItems.length; i++){
-				if(this.sheetItems[i].contentLoaded == false){
+			for (; i < this.sheetItems.length; i++) {
+				if (this.sheetItems[i].contentLoaded === false) {
+					// register to the contentloaded event
+					this.sheetItems[i].on('contentloaded', this.checkContentReady, this);
 					this.setActiveTab(i);
 				}
 			}
 		}
-		this.sleepUntilContentReady();
-		var resultExport = this.exportRenderedContent();
-		return resultExport;
+		this.checkContentReady();
+//		this.sleepUntilContentReady();
+//		var resultExport = this.exportRenderedContent();
+//		return resultExport;
 	}
 	
-	,sleepUntilContentReady: function(){
+	/*
+	,
+	sleepUntilContentReady : function() {
 		var contentReady = this.checkContentReady();
-		if(contentReady == true){
+		if (contentReady == true) {
 			return true;
-		}else{
+		} else {
 			this.sleep(400);
-			alert('Exporting');
 			this.sleepUntilContentReady();
 		}
 	}
 	
-	, sleep: function (milliSeconds){
+	,
+	sleep : function(milliSeconds) {
 		var startTime = new Date().getTime(); // get the current time
-		while (new Date().getTime() < startTime + milliSeconds); // hog cpu
+		while (new Date().getTime() < startTime + milliSeconds);
 	}
+	*/
 
-	,checkContentReady: function(){		
+	,
+	checkContentReady : function() {
 		var allLoaded = false;
-		if(this.sheetItems!=undefined && this.sheetItems!=null){
-			var i=0;
-			for(; i<this.sheetItems.length; i++){
-				if(this.sheetItems[i].contentLoaded == true){
+		if (this.sheetItems !== undefined && this.sheetItems !== null) {
+			var i = 0;
+			for (; i < this.sheetItems.length; i++) {
+				if (this.sheetItems[i].contentLoaded === true) {
 					allLoaded = true
-				}else{
+				} else {
 					allLoaded = false;
 					break;
 				}
 			}
 		}
-		
-		if(allLoaded == true){
-			return true;
-		}else{
-			return false;
+
+		if (allLoaded == true) {
+//			return true;
+
+			var resultExport = this.exportRenderedContent();
+
+			var worksheetDataEncoded = Ext.encode(resultExport);
+			
+		    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
+						 // but, if a value contains a " character, then the html produced is not correct!!! 
+						 // See source of DomHelper.append and DomHelper.overwrite methods
+						 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+			var dh = Ext.DomHelper;
+			
+			var form = document.getElementById('export-worksheet-form');
+			if (!form) {
+				form = dh.append(Ext.getBody(), { // creating the hidden form
+					id: 'export-crosstab-form'
+					, tag: 'form'
+					, method: 'post'
+					, cls: 'export-form'
+				});
+				dh.append(form, {					// creating CROSSTAB hidden input in form
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'WORKSHEETS'
+					, value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
+				});
+			}
+			// putting the crosstab data into CROSSTAB hidden input
+			form.elements[0].value = worksheetDataEncoded;
+			form.action = this.services['exportWorksheet'];
+			form.target = '_blank';				// result into a new browser tab
+			form.submit();
+			
+		} else {
+//			return false;
 		}
 	}
 	
-	,exportRenderedContent: function(){
+	,
+	exportRenderedContent : function() {
 		var items = new Array();
-		
-		if(this.sheetItems!=undefined && this.sheetItems!=null){
-			var i=0;
-			for(; i<this.sheetItems.length; i++){
-				if(this.sheetItems[i].contentLoaded == true){
+
+		if (this.sheetItems != undefined && this.sheetItems != null) {
+			var i = 0;
+			for (; i < this.sheetItems.length; i++) {
+				if (this.sheetItems[i].contentLoaded == true) {
 					var exportedSheet = this.sheetItems[i].exportContent();
 					items.push(exportedSheet);
 				}
 			}
 		}
-		var resultExport = { SHEETS_NUM: this.sheetItems.length,
-							 EXPORTED_SHEETS: items};
+		var resultExport = {
+			SHEETS_NUM : this.sheetItems.length,
+			EXPORTED_SHEETS : items
+		};
 		return resultExport;
 	}
 	

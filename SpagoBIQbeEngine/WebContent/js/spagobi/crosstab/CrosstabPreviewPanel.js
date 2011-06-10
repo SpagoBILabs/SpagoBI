@@ -120,7 +120,6 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		        url: this.services['loadCrosstab'],
 		        params: this.requestParameters,
 		        success : function(response, opts) {
-	        		this.hideMask();
 		  			this.refreshCrossTab(Ext.util.JSON.decode( response.responseText ));
 		        },
 		        scope: this,
@@ -163,10 +162,15 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 		this.crosstab =  new Sbi.crosstab.core.CrossTab(c);
 		this.crosstab.reloadHeadersAndTable(null,true);
 		this.add(this.crosstab);
+		
+		this.hideMask();
+		
 		this.doLayout();
+		
 		if(config.columnsOverflow){		
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.crosstab.crosstabpreviewpanel.overflow.warning'), 'Warning');
 		}
+		
 	}
 
 	, fromNodeToArray: function(node){

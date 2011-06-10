@@ -94,7 +94,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 	, createChart: function () {
 		  this.chart = new Highcharts.Chart({
 			exporting : {
-				url : this.services['exportChart']
+				//url : this.services['exportChart']
+				buttons : {
+					exportButton : {enabled : false}
+		  			, printButton : {enabled : false}
+				}
 			},
 			chart : {
 				renderTo : this.chartDivId,

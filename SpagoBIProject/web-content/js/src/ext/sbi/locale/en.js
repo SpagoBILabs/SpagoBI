@@ -513,9 +513,6 @@ Sbi.locale.ln['sbi.execution.docExport'] = 'DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport'] = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 
-Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Results';
-Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Crosstab';
-
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Welcome: ';

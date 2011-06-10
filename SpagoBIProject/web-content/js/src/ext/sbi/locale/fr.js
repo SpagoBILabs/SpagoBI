@@ -3,8 +3,6 @@ Sbi.locale.ln = new Array();
 
 Sbi.locale.ln['sbi.general.yes'] = 'Oui';
 Sbi.locale.ln['sbi.general.No'] = 'Non';
-Sbi.locale.ln['sbi.execution.export.qbe.crosstab']    = 'Tableau Crois\u00E9';
-Sbi.locale.ln['sbi.execution.export.qbe.results']     = 'R\u00E9sultat';
 
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
