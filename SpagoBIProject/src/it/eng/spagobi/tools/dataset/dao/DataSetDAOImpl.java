@@ -912,7 +912,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		dsActiveDetail.setDsHId(hibDataSet.getDsHId());
 		dsActiveDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
-		dsActiveDetail.setCategoryCd((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueCd());
+		dsActiveDetail.setCategoryValueName((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueNm());
 		dsActiveDetail.setTransformerId((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueId());
 		dsActiveDetail.setTransformerCd((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueCd());
 		dsActiveDetail.setPivotColumnName(hibDataSet.getPivotColumnName());
@@ -987,7 +987,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 
 		dsVersionDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
-		dsVersionDetail.setCategoryCd((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueCd());
+		dsVersionDetail.setCategoryValueName((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueNm());
 		dsVersionDetail.setTransformerId((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueId());
 		dsVersionDetail.setTransformerCd((hibDataSet.getTransformer()== null)? null:hibDataSet.getTransformer().getValueCd());
 		dsVersionDetail.setPivotColumnName(hibDataSet.getPivotColumnName());

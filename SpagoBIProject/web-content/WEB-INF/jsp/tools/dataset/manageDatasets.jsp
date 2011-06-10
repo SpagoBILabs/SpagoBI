@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		for(int i=0; i< catTypesCd.size(); i++){
 			Domain domain = (Domain)catTypesCd.get(i);
 			JSONArray temp = new JSONArray();
-			temp.put(domain.getValueCd());
+			temp.put(domain.getValueName());
 			catTypesArray.put(temp);
 		}
 	}	
@@ -170,7 +170,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     var config = {};  
     config.dsTypes = <%= dsTypes%>;
-    config.catTypeCd = <%= catTypes%>;
+    config.catTypeVn = <%= catTypes%>;
     config.dataSourceLabels = <%= dataSourceLabels%>;
     config.scriptTypes = <%= scriptTypes%>;
     config.trasfTypes = <%= trasfTypes%>;    

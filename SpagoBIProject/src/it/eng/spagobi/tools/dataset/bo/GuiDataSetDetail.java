@@ -35,9 +35,9 @@ public class GuiDataSetDetail implements Serializable{
 	private int versionNum;
 
 	private String dsType;
-	 
+	
 	private Integer categoryId;
-    private String categoryCd;
+    private String categoryValueNm;
 	private String parameters=null;
 	private String dsMetadata=null;
 	
@@ -209,12 +209,12 @@ public class GuiDataSetDetail implements Serializable{
 		this.categoryId = categoryId;
 	}
 
-	public String getCategoryCd() {
-		return categoryCd;
+	public String getCategoryValueName() {
+		return categoryValueNm;
 	}
 
-	public void setCategoryCd(String categoryCd) {
-		this.categoryCd = categoryCd;
+	public void setCategoryValueName(String categoryValName) {
+		this.categoryValueNm = categoryValName;
 	}
 
 	public Integer getTransformerId() {
@@ -250,5 +250,6 @@ public class GuiDataSetDetail implements Serializable{
 	public void setDsMetadata(String dsMetadata) {
 		this.dsMetadata = dsMetadata;
 	}
+
     	
 }

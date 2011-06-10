@@ -35,7 +35,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String LABEL = "label";
 	private static final String USED_BY_N_DOCS = "usedByNDocs";
 	
-	private static final String CATEGORY_TYPE_CD = "catTypeCd";
+	private static final String CATEGORY_TYPE_VN = "catTypeVn";
 		
 	private static final String PARS = "pars";
 	private static final String METADATA = "meta";
@@ -83,7 +83,7 @@ public class DataSetJSONSerializer implements Serializer {
 			
 			GuiDataSetDetail dsDetail = ds.getActiveDetail();
 			
-			result.put(CATEGORY_TYPE_CD, dsDetail.getCategoryCd());
+			result.put(CATEGORY_TYPE_VN, dsDetail.getCategoryValueName());
 
 			JSONArray parsListJSON = new JSONArray();
 			String pars = dsDetail.getParameters();

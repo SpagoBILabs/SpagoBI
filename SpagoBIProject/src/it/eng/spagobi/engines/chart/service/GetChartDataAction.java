@@ -346,7 +346,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		if(dsActiveDetail!=null){
 			dsActiveDetail.setDsType(dsType);
 			
-			String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_CD);			
+			String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);			
 			JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 			String meta = getAttributeAsString(DataSetConstants.METADATA);					
 			String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
@@ -360,7 +360,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		    }
 		    Integer catTypeID = domainIds.get(catTypeCd);
 		    if(catTypeID!=null){
-				dsActiveDetail.setCategoryCd(catTypeCd);
+				dsActiveDetail.setCategoryValueName(catTypeCd);
 				dsActiveDetail.setCategoryId(catTypeID);
 			}
 

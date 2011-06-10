@@ -54,7 +54,7 @@ public class DataSetConstants {
 	public static final String DESCRIPTION = "description";
 	public static final String LABEL = "label";
 	
-	public static final String CATEGORY_TYPE_CD = "catTypeCd";
+	public static final String CATEGORY_TYPE_VN = "catTypeVn";
 		
 	public static final String PARS = "pars";
 	public static final String METADATA = "meta";

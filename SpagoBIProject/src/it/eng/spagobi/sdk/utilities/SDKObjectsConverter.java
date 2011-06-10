@@ -661,7 +661,7 @@ public class SDKObjectsConverter {
 			// sets dataset's category domain
 			if (dataset.getCategory() != null){
 				Domain category = domainDAO.loadDomainByCodeAndValue("CATEGORY_TYPE", dataset.getCategory());
-				dsDetail.setCategoryCd(category.getValueCd());
+				dsDetail.setCategoryValueName(category.getValueCd());
 				dsDetail.setCategoryId(category.getValueId());
 			}
 			ds.setActiveDetail(dsDetail);

@@ -274,7 +274,7 @@ Ext.extend(
 				,initConfigObject : function() {
 					this.configurationObject.fields = [ 'id', 'name',
 							'label', 'description', 'dsTypeCd',
-							'catTypeCd', 'usedByNDocs', 'fileName',
+							'catTypeVn', 'usedByNDocs', 'fileName',
 							'query', 'dataSource', 'wsAddress',
 							'wsOperation', 'script', 'scriptLanguage',
 							'jclassName', 'pars', 'trasfTypeCd',
@@ -286,7 +286,7 @@ Ext.extend(
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 							{	id : 0,
 								name : '', label : '', description : '',
-								dsTypeCd : '', catTypeCd : '', usedByNDocs : 0,
+								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
 								fileName : '', query : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', pars : [],
@@ -371,8 +371,8 @@ Ext.extend(
 					
 					// Store of the combobox
 					this.catTypesStore = new Ext.data.SimpleStore({
-						fields : [ 'catTypeCd' ],
-						data : config.catTypeCd,
+						fields : [ 'catTypeVn' ],
+						data : config.catTypeVn,
 						autoLoad : false
 					});
 
@@ -428,12 +428,12 @@ Ext.extend(
 					};
 
 					var detailFieldCatType = {
-						name : 'catTypeCd',
+						name : 'catTypeVn',
 						store : this.catTypesStore,
 						width : 150,
 						fieldLabel : LN('sbi.ds.catType'),
-						displayField : 'catTypeCd', 
-						valueField : 'catTypeCd', 
+						displayField : 'catTypeVn', 
+						valueField : 'catTypeVn', 
 						typeAhead : true, forceSelection : true,
 						mode : 'local',
 						triggerAction : 'all',
@@ -1122,7 +1122,7 @@ Ext.extend(
 					this.newRecord = new Ext.data.Record(
 							{	id : 0,
 								name : '', label : '', description : '',
-								dsTypeCd : '', catTypeCd : '', usedByNDocs : 0,
+								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
 								fileName : '', query : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
 								scriptLanguage : '', jclassName : '', pars : [],
@@ -1188,7 +1188,7 @@ Ext.extend(
 						pars: values['pars'],
 						description : actualValues['description'],
 						dsTypeCd : values['dsTypeCd'],
-						catTypeCd : values['catTypeCd'],
+						catTypeVn : values['catTypeVn'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
 						query : values['query'],
@@ -1224,7 +1224,7 @@ Ext.extend(
 						dsVersions: [],
 						description : values['description'],
 						dsTypeCd : values['dsTypeCd'],
-						catTypeCd : values['catTypeCd'],
+						catTypeVn : values['catTypeVn'],
 						usedByNDocs : values['usedByNDocs'],
 						fileName : values['fileName'],
 						query : values['query'],
@@ -1257,7 +1257,7 @@ Ext.extend(
 							label : values['label'],
 							description : values['description'],
 							dsTypeCd : values['dsTypeCd'],
-							catTypeCd : values['catTypeCd'],
+							catTypeVn : values['catTypeVn'],
 							usedByNDocs : values['usedByNDocs'],
 							fileName : values['fileName'],
 							query : values['query'],
@@ -1290,7 +1290,7 @@ Ext.extend(
 					record.set('description',values['description']);
 					record.set('usedByNDocs',0);
 					record.set('dsTypeCd',values['dsTypeCd']);
-					record.set('catTypeCd',values['catTypeCd']);
+					record.set('catTypeVn',values['catTypeVn']);
 					record.set('fileName',values['fileName']);
 					record.set('query',values['query']);
 					record.set('dataSource',values['dataSource']);
