@@ -73,6 +73,7 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
 	// since parameters (ACTION_NAME, ...) cannot be put on the service url, but they must be POST parameters 
 	
 	//row of the title
+	this.addEvents();
 	formItems = this.addTitle(formItems);
 	formItems = this.addImage(formItems);
 	
