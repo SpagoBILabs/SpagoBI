@@ -137,7 +137,10 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				statement.setParameters( getEnv() );
 				hqlQuery = statement.getQueryString();
 				logger.debug("Executable HQL query: [" + hqlQuery + "]");
-						
+				
+				sqlQuery = statement.getSqlQueryString();
+				Assert.assertNotNull(sqlQuery, "The SQL query is needed while exporting results.");
+				
 			} else {
 				// case of FormEngine
 				
