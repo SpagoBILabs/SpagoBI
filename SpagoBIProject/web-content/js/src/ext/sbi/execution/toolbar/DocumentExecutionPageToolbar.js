@@ -308,6 +308,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	    }
 	}
 	
+	/*
 	, exportQbECrosstab: function (exportType) {
 	    var mf = this.miframe;
 		var frame = mf.getFrame();
@@ -359,7 +360,20 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			throw err;
 		}
 	}
+	*/
 	
+	, exportWorksheetsExecution: function () {
+		try {
+			var frame = this.miframe.getFrame();
+			var worksheetWindow = frame.getWindow();
+			worksheetWindow.workSheetPanel.exportContent();
+		} catch (err) {
+			alert('Sorry, cannot perform operation.');
+			throw err;
+		}
+	}
+	
+	/*
 	, exportWorksheetsExecution: function (exportType) {
 		var frame = this.miframe.getFrame();
 	    var docurl = frame.getDocumentURI();
@@ -368,14 +382,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	 
 	    var docurlPar = "ACTION_NAME=EXPORT_WORKSHEETS_ACTION&SBI_EXECUTION_ID="+this.executionInstance.SBI_EXECUTION_ID+"&MIME_TYPE="+exportType+"&RESPONSE_TYPE=RESPONSE_TYPE_ATTACHMENT";
 	    var endUrl = baseUrl + docurlPar;
-	   /* if (this.loadMask == null) {//'runtimeworksheet'
-    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "Exporting.."});
-    	}
-	    this.loadMask.show();*/
 		var worksheetDataEncoded = this.retrieveWorksheetsContentData(frame);    // retieving crosstab data (already encoded) from Qbe window
-		/*if (this.loadMask != null) {
-    		this.loadMask.hide();
-    	}*/
 		
 	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
 	    							 // but, if a value contains a " character, then the html produced is not correct!!! 
@@ -404,7 +411,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		form.target = '_blank';				// result into a new browser tab
 		form.submit();
 	}
+	*/
 	
+	/*
 	, retrieveWorksheetsContentData: function (frame) {
 		try {
 			var worksheetWindow = frame.getWindow();
@@ -416,6 +425,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			throw err;
 		}
 	}
+	*/
 	
 	, updateFrame: function(miframe){
 		this.miframe = miframe;
@@ -955,7 +965,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 						
 				    }
 					
-					var menu0 = null;
+					var menu0 = new Ext.menu.Menu({
+						id: 'basicMenu_0',
+						listeners: {'mouseexit': function(item) {item.hide();}},
+						items: menuItems    
+					});
+					
+					/*
 					if (this.executionInstance.document.typeCode == 'DATAMART') {
 						var resultItem = new Ext.menu.Item({
 							id:  Ext.id()
@@ -997,6 +1013,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 							items: menuItems    
 						});	
 					}
+					*/
 					
 					if(this.executionInstance.document.exporters.length > 0){
 						this.add(

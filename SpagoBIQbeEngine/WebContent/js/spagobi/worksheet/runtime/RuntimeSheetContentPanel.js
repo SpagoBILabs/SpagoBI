@@ -112,7 +112,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		split: true,
     		collapsible: false,
     		padding: '0 20 0 0',
-    		autoScroll: false,
+    		autoScroll: true,
     		frame: false, 
     		border: false,
     		displayInfo: false,

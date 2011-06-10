@@ -96,7 +96,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				CONTENT: exportedContent
 				}
 		return completedExportedContent;
-		//Poi aggiungere titolo e footer
 	},
 	
 	initPanels: function(){

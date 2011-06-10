@@ -270,7 +270,8 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	        clicksToEdit:1,
 	        style:'padding:10px',
 	        frame: true,
-	        border:true,  	        
+	        border:true,
+	        autoScroll: true,
 	        collapsible: false,
 	        loadMask: true,
 	        viewConfig: {
