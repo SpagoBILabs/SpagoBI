@@ -263,8 +263,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		String query = getAttributeAsString(OBJECT_QUERY);
 		JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
 		String smartFilterValuesString = null;
-		Assert.assertNotNull(wkDefinition, "Missing worksheet definition");
-		Assert.assertNotNull(query, "Missing base query definition");
+		if(smartFilterValues!=null){
+			smartFilterValuesString =  smartFilterValues.toString();
+		}
 		logger.debug("Worksheet definition : " + wkDefinition);
 		logger.debug("Base query definition : " + query);
 		logger.debug("Smart filter values : " + smartFilterValues);
@@ -273,11 +274,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		ObjTemplate qbETemplate = biobj.getActiveTemplate();
 		String templCont = new String(qbETemplate.getContent());
 		WorksheetDriver q = new WorksheetDriver();
-		
-		if(smartFilterValues!=null){
-			smartFilterValuesString =  smartFilterValues.toString();
-		}
-		
 		String temp = q.composeWorksheetTemplate(wkDefinition, query, smartFilterValuesString, templCont);
 		byte[] content = temp.getBytes();
 		logger.debug("OUT");
