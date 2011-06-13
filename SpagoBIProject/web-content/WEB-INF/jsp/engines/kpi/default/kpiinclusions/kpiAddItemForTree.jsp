@@ -222,13 +222,13 @@ private StringBuffer addModelNameColumn( StringBuffer _htmlStream, KpiValue kpiV
 	
 	if(withSemaphore && semaphorColorHex!=null){
 		if (hasChildren){
-			_htmlStream.append("<td width='"+MODEL_COL_W+"%' class='"+td_css_class+"' ><div class='"+semaphor_div_css_class+"' style=\"margin-left: "+20*recursionLevel+"px;background-color:"+semaphorColorHex+"\"></div><div  class='"+div_css_class+"'><span class='"+toggle_kpi_css_class+"' onclick=\"toggleHideChild('"+lineTagId+"','"+tab_name+"');\">&nbsp;</span>"+modelName+"</div></td>\n");
+			_htmlStream.append("<td width='"+MODEL_COL_W+"%' class='"+td_css_class+"' ><div class='"+semaphor_div_css_class+"' style=\"margin-left: "+20*recursionLevel+"px;background-color:"+semaphorColorHex+"\"></div><div  class='"+div_css_class+"'><span class='"+toggle_kpi_css_class+"' onclick=\"javascript:toggleHideChild('"+lineTagId+"','"+tab_name+"');\">&nbsp;</span>"+modelName+"</div></td>\n");
 		}else{
 			_htmlStream.append("<td width='"+MODEL_COL_W+"%' class='"+td_css_class+"' ><div class='"+semaphor_div_css_class+"' style=\"margin-left: "+20*recursionLevel+"px;background-color:"+semaphorColorHex+"\"></div><div  class='"+div_css_class+"'>"+modelName+"</div></td>\n");
 		}
 	}else{
 		if (hasChildren){
-			_htmlStream.append("<td width='"+MODEL_COL_W+"%'  class='"+td_css_class+"' ><div class='"+div_css_class+"'><div style='MARGIN-LEFT: "+20*recursionLevel+"px;text-align:left;' class='"+div_css_class+"'><span class='"+toggle_kpi_css_class+"' onclick=\"toggleHideChild('"+lineTagId+"','"+tab_name+"');\">&nbsp;</span>"+modelName+"</div></div></td>\n");
+			_htmlStream.append("<td width='"+MODEL_COL_W+"%'  class='"+td_css_class+"' ><div class='"+div_css_class+"'><div style='MARGIN-LEFT: "+20*recursionLevel+"px;text-align:left;' class='"+div_css_class+"'><span class='"+toggle_kpi_css_class+"' onclick=\"javascript:toggleHideChild('"+lineTagId+"','"+tab_name+"');\">&nbsp;</span>"+modelName+"</div></div></td>\n");
 		}else{
 			_htmlStream.append("<td width='"+MODEL_COL_W+"%'  class='"+td_css_class+"' ><div class='"+div_css_class+"'><div style='MARGIN-LEFT: "+20*recursionLevel+"px;text-align:left;' class='"+div_css_class+"'>"+modelName+"</div></div></td>\n");
 		}
