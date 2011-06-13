@@ -19,7 +19,7 @@
 <ivy-module version="1.0">
 	<info organisation="javax.mail"
 		module="smtp"
-		revision="1.4.4"
+		revision="1.4"
 		status="release"
 		publication="20110512131058"
 		default="true"

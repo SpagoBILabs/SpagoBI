@@ -18,8 +18,8 @@
 -->
 <ivy-module version="1.0">
 	<info organisation="javax.mail"
-		module="dns"
-		revision="1.4.4"
+		module="pop3"
+		revision="1.4"
 		status="release"
 		publication="20110512131058"
 		default="true"
@@ -28,7 +28,7 @@
 		<conf name="default" visibility="public"/>
 	</configurations>
 	<publications>
-		<artifact name="dns" type="jar" ext="jar" conf="default"/>
+		<artifact name="pop3" type="jar" ext="jar" conf="default"/>
 	</publications>
     
     <dependencies>

@@ -18,6 +18,6 @@
 <dependency org="commons-digester" name="commons-digester" rev="1.7"/>
 <dependency org="commons-logging" name="commons-logging" rev="1.0.4"/>
 <dependency org="javax.transaction" name="jta" rev="1.1"/>
-<dependency org="javax.mail" name="mail" rev="1.4.4"/>
+<dependency org="javax.mail" name="mail" rev="1.4"/>
 </dependencies>
 </ivy-module>
