@@ -220,7 +220,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			//coordinates or multiple columns for 1 value
 
 		   	if (alias != undefined && alias != null){
-		   		this.serieAlias = alias.split(",");
+		   		this.serieAlias = alias.trim().split(",");
 		   	}
 			if(this.serieAlias.length != 1){
 				var records = this.store.getRange();

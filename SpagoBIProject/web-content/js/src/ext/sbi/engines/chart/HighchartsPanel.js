@@ -1,3 +1,4 @@
+
 /**
  * SpagoBI - The Business Intelligence Free Platform
  *
@@ -109,8 +110,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			credits.enabled = false;
 			singleChartConfig.credits = credits;
 			this.enableDrillEvents(singleChartConfig);
-			//gets series values and adds theme to the config
-			var seriesNode = [];
 			//looks for js function		
 			if (singleChartConfig.plotOptions){
 				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels){
@@ -135,70 +134,14 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			}
 	
 			//defines series data
-			if (singleChartConfig.series !== undefined ){
-				var serieValue = singleChartConfig.series;
-				if (Ext.isArray(serieValue)){
-					var seriesData =  {};
-					var str = "";
-					for(var i = 0; i < serieValue.length; i++) {
-						seriesData = serieValue[i];					
-						seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
-						seriesNode.push(seriesData);
-					}
-				}
-			}else if (singleChartConfig.plotOptions){ 
-				seriesData = singleChartConfig.plotOptions.series;//other attributes too
-				seriesData.data = this.getSeries();//values from dataset
-				seriesNode.push(seriesData);
-			}
-	
-			singleChartConfig.series = seriesNode;
+			this.defineSeriesData(singleChartConfig);
+			
 			//get categories for each axis from dataset
-			if(singleChartConfig.xAxis != undefined){
-				//if multiple X axis
-				if(singleChartConfig.xAxis.length != undefined){
-					//gets categories values and adds theme to the config	
-					var categoriesX = this.getCategoriesX();
-					if(categoriesX == undefined || categoriesX.length == 0){
-						delete this.chartConfig.xAxis;
-						for(var j =0; j< this.categoryAliasX.length; j++){
-							singleChartConfig.xAxis[j].categories = categoriesX[j];
-						}
-						
-					}
-					//else keep templates ones
-	
-				}else{
-					//single axis
-					var categoriesX = this.getCategoriesX();
-					if(categoriesX != undefined && categoriesX.length != 0){
-						singleChartConfig.xAxis.categories = categoriesX[0];
-					}
-					
-				}
-			}
-			if(singleChartConfig.yAxis != undefined){
-				//if multiple Y axis
-				if(singleChartConfig.yAxis.length != undefined){
-					//gets categories values and adds theme to the config	
-					var categoriesY = this.getCategoriesY();
-					if(categoriesY == undefined || categoriesY.length == 0){
-						delete this.chartConfig.yAxis;
-						for(var j =0; j< this.categoryAliasY.length; j++){
-							singleChartConfig.yAxis[j].categories = categoriesY[j];
-						}
-						
-					}
-					//else keep templates ones
-				}else{
-					//single axis
-					var categoriesY = this.getCategoriesY();
-					if(categoriesY != undefined && categoriesY.length != 0){
-						singleChartConfig.yAxis.categories = categoriesY[0];
-					}
-					
-				}
-			}
+			this.definesCategoriesX(singleChartConfig);
+			this.definesCategoriesY(singleChartConfig);
+			
+			
+			//alert(singleChartConfig.toSource()	);
 			this.chart = new Highcharts.Chart(singleChartConfig);
 			
 		}
@@ -282,5 +225,77 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		//result = eval("{ return this.y;}");
 		//alert("result: " + result);
 		return result;
+	}
+	
+	, defineSeriesData: function(config){
+		//gets series values and adds theme to the config
+		var seriesNode = [];
+
+		if (config.series !== undefined ){
+			var serieValue = config.series;
+			if (Ext.isArray(serieValue)){
+				var seriesData =  {};
+				var str = "";
+				for(var i = 0; i < serieValue.length; i++) {
+					seriesData = serieValue[i];					
+					seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
+					seriesNode.push(seriesData);
+				}
+			}
+		}else if (config.plotOptions){ 
+			seriesData = config.plotOptions.series;//other attributes too
+			seriesData.data = this.getSeries();//values from dataset
+			seriesNode.push(seriesData);
+		}
+
+		config.series = seriesNode;
+	}
+	
+	, definesCategoriesX: function(config){
+		if(config.xAxis != undefined){
+			//if multiple X axis
+			if(config.xAxis.length != undefined){
+				//gets categories values and adds theme to the config	
+				var categoriesX = this.getCategoriesX();
+				if(categoriesX == undefined || categoriesX.length == 0){
+					delete this.chartConfig.xAxis;
+					for(var j =0; j< this.categoryAliasX.length; j++){
+						config.xAxis[j].categories = categoriesX[j];
+					}					
+				}
+				//else keep templates ones
+
+			}else{
+				//single axis
+				var categoriesX = this.getCategoriesX();
+				if(categoriesX != undefined && categoriesX.length != 0){
+					config.xAxis.categories = categoriesX[0];
+				}				
+			}
+		}
+	}
+	
+	, definesCategoriesY: function(config){
+		if(config.yAxis != undefined){
+			//if multiple Y axis
+			if(config.yAxis.length != undefined){
+				//gets categories values and adds theme to the config	
+				var categoriesY = this.getCategoriesY();
+				if(categoriesY == undefined || categoriesY.length == 0){
+					delete this.chartConfig.yAxis;
+					for(var j =0; j< this.categoryAliasY.length; j++){
+						config.yAxis[j].categories = categoriesY[j];
+					}
+					
+				}
+				//else keep templates ones
+			}else{
+				//single axis
+				var categoriesY = this.getCategoriesY();
+				if(categoriesY != undefined && categoriesY.length != 0){
+					config.yAxis.categories = categoriesY[0];
+				}				
+			}
+		}
 	}
 });
