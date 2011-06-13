@@ -162,7 +162,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 			, items: [
 			    {
 			    	layout: 'column'
-			    	, padding: '0 10 10 10'
+			    	, padding: '10 10 10 10'
 			    	, border: false
 			    	, items: [
 		  			    {
