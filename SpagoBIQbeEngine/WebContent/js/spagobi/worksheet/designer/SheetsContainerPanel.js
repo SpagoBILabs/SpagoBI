@@ -57,8 +57,9 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-
+	
 	Ext.apply(this, c);
+
 	
 	this.index = 0;
 	this.addEvents();
@@ -95,7 +96,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 
 Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	index: null,
-	sheets: null, // the sheets to be displayed initially; to be passed as a property of the constructor's input object!!!
+	//sheets: null, from the config object the sheets to be displayed initially; to be passed as a property of the constructor's input object!!!
 	
 	initPanel: function(){
 	    this.on('tabchange',function(tabPanel, tab){
@@ -201,6 +202,9 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	, getSheetsState: function(){
+		if(this.sheets!=undefined && this.sheets!=null && this.sheets.length>0){//the sheet panel is not already rendered
+			return {'sheets' : this.sheets};
+		}
 		var sheets = [];
 		if(this.items.items.length>1){
 			var i=0;
@@ -217,13 +221,15 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	 * the new titles are  [Sheet 1, Sheet 2, Sheet 3]
 	 */
 	, setSheetsState: function(sheets){
-
+		
+		
 		if(this.items.length>1){
 			this.remove(this.items[0]);//remove the first panel
 		}
 
 		//add the panels
 		if(this.rendered){
+			this.sheets = null;
 			var i=0;
 			for(; i<sheets.length; i++){
 				var aSheetPanel = this.addTab();
@@ -231,6 +237,7 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			}
 		}else{
 			this.on('render',function(){
+				this.sheets = null;
 				var i=0;
 				for(; i<sheets.length; i++){
 					var aSheetPanel = this.addTab();
