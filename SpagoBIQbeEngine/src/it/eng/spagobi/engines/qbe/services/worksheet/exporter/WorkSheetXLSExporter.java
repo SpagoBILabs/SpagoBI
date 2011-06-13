@@ -297,7 +297,8 @@ public class WorkSheetXLSExporter {
 			InputStream inputStream = null;
 			OutputStream outputStream = null;
 			String svg = content.getString(SVG);
-			inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+			//Don't change ISO-8859-1 because it's the only way to export specific symbols
+			inputStream = new ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
 			String ext = ".jpg";
 			exportFile = File.createTempFile("chart", ext);
 			outputStream = new FileOutputStream(exportFile);
