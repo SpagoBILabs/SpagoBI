@@ -18,8 +18,8 @@
 -->
 <ivy-module version="1.0">
 	<info organisation="javax.mail"
-		module="imap"
-		revision="1.4.4"
+		module="dns"
+		revision="1.4"
 		status="release"
 		publication="20110512131058"
 		default="true"
@@ -28,7 +28,7 @@
 		<conf name="default" visibility="public"/>
 	</configurations>
 	<publications>
-		<artifact name="imap" type="jar" ext="jar" conf="default"/>
+		<artifact name="dns" type="jar" ext="jar" conf="default"/>
 	</publications>
     
     <dependencies>

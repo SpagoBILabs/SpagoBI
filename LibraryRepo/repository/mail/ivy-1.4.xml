@@ -18,8 +18,8 @@
 -->
 <ivy-module version="1.0">
 	<info organisation="javax.mail"
-		module="pop3"
-		revision="1.4.4"
+		module="mail"
+		revision="1.4"
 		status="release"
 		publication="20110512131058"
 		default="true"
@@ -28,9 +28,14 @@
 		<conf name="default" visibility="public"/>
 	</configurations>
 	<publications>
-		<artifact name="pop3" type="jar" ext="jar" conf="default"/>
+		<artifact name="mail" type="jar" ext="jar" conf="default"/>
 	</publications>
     
     <dependencies>
+<dependency org="javax.activation" name="activation" rev="1.1"/>
+<dependency org="javax.mail" name="dns" rev="1.4"/>
+<dependency org="javax.mail" name="smtp" rev="1.4"/>
+<dependency org="javax.mail" name="imap" rev="1.4"/>
+<dependency org="javax.mail" name="pop3" rev="1.4"/>
     </dependencies>
 </ivy-module>
