@@ -199,6 +199,10 @@ public class FormState extends EngineAnalysisState {
 			JSONObject formStructure = getConf();
 			JSONObject parsedForm = new JSONObject();
 			Map<String, String> nameIdMap = getNameIdMap();
+			if(nameIdMap==null){
+				logger.debug("The nameIdMap is null.. THE STORE STATE VALUES WILL NOT BE PARSED.. It's ok if the engine is worksheet");
+				return formState;
+			}
 			logger.debug("formStateValues: "+formState);
 			logger.debug("formState: "+getProperty( FORM_STATE ));
 			logger.debug("nameIdMap: "+nameIdMap);
