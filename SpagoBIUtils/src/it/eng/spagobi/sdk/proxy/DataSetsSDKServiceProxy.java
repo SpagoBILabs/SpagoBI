@@ -6,6 +6,7 @@ import org.apache.axis.client.Stub;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
 import it.eng.spagobi.sdk.callbacks.ClientCredentialsHolder;
+import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 
 public class DataSetsSDKServiceProxy extends AbstractSDKServiceProxy implements it.eng.spagobi.sdk.datasets.stub.DataSetsSDKService {
   private String _endpoint = null;
@@ -76,9 +77,9 @@ public class DataSetsSDKServiceProxy extends AbstractSDKServiceProxy implements 
 	    return dataSetsSDKService.saveDataset(in0);
   }
 
-  public java.lang.String executeDataSet(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+  public java.lang.String executeDataSet(java.lang.String in0, SDKDataSetParameter[] params) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
 	    if (dataSetsSDKService == null)
 	      _initDataSetsSDKServiceProxy();
-	    return dataSetsSDKService.executeDataSet(in0);
+	    return dataSetsSDKService.executeDataSet(in0,params);
 }
 }
