@@ -102,7 +102,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 				}
 			},
 			chart : {
-				renderTo : this.chartDivId
+				renderTo : this.chartDivId,
+				spacingTop : 25,
+				spacingRight : 75,
+				spacingBottom : 25,
+				spacingLeft : 75
 			},
 			plotOptions: this.getPlotOptions(),
 			tooltip: {
