@@ -136,7 +136,8 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	}
 	
 	var c = Ext.apply({}, config, {
-		layout: 'border'
+		id: 'documentexecutionpage'
+		, layout: 'border'
 		, tbar: this.toolbar
 		, items: items
 	});	    
@@ -288,8 +289,18 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	        			}    
 	        		}
 	        		, scope: this
+	        	},
+			
+				'message:contentexported': {
+	        		fn: function(srcFrame, message) {
+	        	    	if (this.toolbar.loadMask != null) {
+	        	    		this.toolbar.loadMask.hide();
+	        	    	}  
+	        		}
+	        		, scope: this
 	        	}
 	        
+			
 	        	, 'message:crossnavigation' : {
 	        		fn: function(srcFrame, message){
 	                	var config = {

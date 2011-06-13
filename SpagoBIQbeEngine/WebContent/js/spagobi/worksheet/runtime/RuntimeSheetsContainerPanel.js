@@ -77,7 +77,7 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 		items : this.sheetItems
 	};
 	
-	this.addEvents();
+	this.addEvents('contentexported');
 	
 	Sbi.worksheet.runtime.RuntimeSheetsContainerPanel.superclass.constructor.call(this, c);	 
 	
@@ -154,6 +154,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 
 			var resultExport = this.exportRenderedContent();
 
+			sendMessage({}, 'contentexported'); 
 			var worksheetDataEncoded = Ext.encode(resultExport);
 			
 		    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
