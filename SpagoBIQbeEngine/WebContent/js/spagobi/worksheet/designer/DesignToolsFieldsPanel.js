@@ -68,7 +68,7 @@ Sbi.worksheet.designer.DesignToolsFieldsPanel = function(config) {
 	
 	c = Ext.apply(c, {
 		title: this.title,
-		border: true,
+		border: false,
 		bodyStyle:'padding:3px',
       	layout: 'fit',   
       	items: [this.grid],
@@ -148,6 +148,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsFieldsPanel, Ext.Panel, {
 		
 		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
 	        store: this.store,
+	        border: false,
 	        columns: [
 	            {id:'alias', 
             	header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
