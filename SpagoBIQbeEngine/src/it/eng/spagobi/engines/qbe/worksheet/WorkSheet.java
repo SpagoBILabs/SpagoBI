@@ -30,23 +30,27 @@ import org.json.JSONObject;
 public class WorkSheet{
 	
 	private String name;
+	private String layout;
 	private JSONObject header;
 	private JSONObject filters;
 	private JSONObject content;
 	private JSONObject footer;
 	
+
 	/**
 	 * @param name
+	 * @param layout
 	 * @param header
 	 * @param filters
 	 * @param content
 	 * @param footer
 	 */
-	public WorkSheet(String name, JSONObject header, JSONObject filters,
-			JSONObject content, JSONObject footer) {
+	public WorkSheet(String name, String layout, JSONObject header,
+			JSONObject filters, JSONObject content, JSONObject footer) {
 		super();
 		this.name = name;
 		this.header = header;
+		this.layout = layout;
 		this.filters = filters;
 		this.content = content;
 		this.footer = footer;
@@ -81,5 +85,12 @@ public class WorkSheet{
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getLayout() {
+		return layout;
+	}
+	public void setLayout(String layout) {
+		this.layout = layout;
+	}
+	
 	
 }
