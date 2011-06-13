@@ -134,32 +134,14 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.Highchart
 				var extremesObject = event.xAxis[0],
 					min = extremesObject.min,
 					max = extremesObject.max,
-					xAxis = this.xAxis[0],
-					tmpDetailData = [];
+					xAxis = this.xAxis[0];
+					
 				
-				// reverse engineer the last part of the data
-				this.detailSerieData = detailSerieData;				
-				
-				for (k in this.detailSerieData) {
-				    var sers = this.detailSerieData[k];
-				    if (Ext.isArray(sers)){
-				    		var xValue = sers[0];
-				    		var yValue = sers[1];
-				    		if (xValue >  min && xValue < max) {
-				    			tmpDetailData.push({
-									x: xValue,
-									y: yValue
-								});
-						    }
-				    }
-				}
 				
 				// move the plot bands to reflect the new detail span
 				xAxis.removePlotBand('mask-before');
 				var pointStart = 0;
-				if (config.detailChart.plotOptions.series !== undefined && config.detailChart.plotOptions.series.pointStart !== undefined){
-					pointStart = config.detailChart.plotOptions.series.pointStart;
-				}else if (config.detailChart.series[0].pointStart !== undefined ){
+				if (config.detailChart.series[0].pointStart !== undefined ){
 					pointStart = config.detailChart.series[0].pointStart;
 				}
 				xAxis.addPlotBand({
@@ -181,7 +163,28 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.Highchart
 					to: detailMaxPlotBand,
 					color: 'rgba(0, 0, 0, 0.2)'
 				});
-				this.detailChart.series[0].setData(tmpDetailData);
+				
+				// reverse engineer the last part of the data
+				this.detailSerieData = detailSerieData;				
+				
+				for (k in this.detailSerieData) {
+					var tmpDetailData = [];
+				    var sers = this.detailSerieData[k].data;
+				    if (Ext.isArray(sers)){
+				    		for ( v in sers){
+				    			var serValues = sers[v];
+					    		var xValue = serValues[0];
+					    		var yValue = serValues[1];
+					    		if (xValue >  min && xValue < max) {
+					    			tmpDetailData.push({
+										x: xValue,
+										y: yValue
+									});
+							    }
+				    		}
+				    }
+				    this.detailChart.series[k].setData(tmpDetailData);
+				}
 				
 				return false;
 			}
@@ -225,10 +228,8 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.Highchart
 		if (chartTemplate.series && chartTemplate.series[0].pointStart !== undefined){
 			chartTemplate.series[0].pointStart = eval(chartTemplate.series[0].pointStart);
 		}
-			
-		chartTemplate.series = [{
-			data: this.detailSerieData
-		}];
+		
+		chartTemplate.series = this.detailSerieData;
 		return chartTemplate;
 	}
 	
@@ -251,14 +252,15 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.Highchart
 				var seriesData =  {};
 				var str = "";
 				for(var i = 0; i < serieValue.length; i++) {
-					seriesData = serieValue[i];					
-					seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
+					seriesData = serieValue[i];	
+					seriesData.data = this.getSeries(seriesData.alias);//values from dataset
 					seriesNode.push(seriesData);
 				}
 			}
 		}
 		config.series = seriesNode;
-		this.detailSerieData = config.series[0].data;
+		//this.detailSerieData = config.series[0].data;
+		this.detailSerieData = config.series;
 	}
 	
 	, definesDetailCategoriesX: function(config){
