@@ -108,7 +108,7 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 			displayField:   'description',
 			valueField:     'name',
 			value:			'vertical',
-			//anchor:			'95%',
+			anchor:			'95%',
 			store:          new Ext.data.ArrayStore({
 								fields : ['name', 'description']
 								, data : [['vertical', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical')]

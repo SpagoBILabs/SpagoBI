@@ -72,6 +72,8 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	};
 	this.filtersPositionPanel = 'top';
 	Ext.apply(this,c);
+	this.addEvents();
+	this.on('resize',this.resizePanels,this);
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
 };
 
@@ -209,6 +211,25 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.filtersPanel.hide();
 		this.contentPanel.showLeftFilter();
 		this.filtersPositionPanel = 'left';
+	}
+	
+	/**
+	 * Resizes the panels in the sheet panel (header, footer, content and filters)
+	 */
+	, resizePanels: function(a,newWidth,c,d,e){
+		var w = newWidth-22;//10 + 10 of left and right paddings
+		if(this.headerPanel != undefined && this.headerPanel != null){
+			this.headerPanel.setWidth(w);
+		}
+		if(this.filtersPanel != undefined && this.filtersPanel != null && !this.filtersPanel.hidden){
+			this.filtersPanel.setWidth(w);
+		}
+		if(this.contentPanel != undefined && this.contentPanel != null){
+			this.contentPanel.setWidth(w);
+		}
+		if(this.footerPanel != undefined && this.footerPanel != null){
+			this.footerPanel.setWidth(w);
+		}
 	}
 	
 });

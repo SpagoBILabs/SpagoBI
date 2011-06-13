@@ -84,7 +84,6 @@ Sbi.worksheet.designer.SheetTitlePanel = function(config) {
         }]
 	};
 
-
 	Sbi.worksheet.designer.SheetTitlePanel.superclass.constructor.call(this, c);	 		
 
 };
