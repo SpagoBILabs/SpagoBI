@@ -70,7 +70,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
             layout: 'fit',
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
 	};
-
+	this.filtersPositionPanel = 'top';
 	Ext.apply(this,c);
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
 };
@@ -81,6 +81,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	contentPanel: null,
 	footerPanel: null,
 	sheetLayout: null,
+	filtersPositionPanel: null,
 	
 	initPanels: function(){
 		this.sheetLayout = 'layout_headerfooter';
@@ -106,6 +107,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.contentPanel.on('topFilters', function(){
 			this.filtersPanel.show();
 			this.filtersPanel.updateFilters();
+			this.filtersPositionPanel = 'top';
 		},this)
 		
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
@@ -140,11 +142,16 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		var filters = this.filtersPanel.getFilters();
 		if(filters!==null){
 			state.filters.filters = filters;
-			if(this.filtersPanel.hidden){
-				state.filters.position='left';
+			if(this.filtersPositionPanel == null){
+				if(this.filtersPanel.hidden){
+					state.filters.position='left';
+				}else{
+					state.filters.position='top';
+				}				
 			}else{
-				state.filters.position='top';
+				state.filters.position=this.filtersPositionPanel;
 			}
+
 		}
 
 		state.content = this.contentPanel.getDesignerState();
@@ -164,7 +171,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetState.filters !== undefined && sheetState.filters !== null){
 			var filters = sheetState.filters.filters;
 			this.filtersPanel.setFilters(filters);
-			
+			this.filtersPositionPanel = sheetState.filters.position;
 			if(sheetState.filters.position=='left'){
 				if(this.filtersPanel.rendered){
 					this.showLeftFilters();
@@ -201,6 +208,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	, showLeftFilters: function(){
 		this.filtersPanel.hide();
 		this.contentPanel.showLeftFilter();
+		this.filtersPositionPanel = 'left';
 	}
 	
 });
