@@ -219,29 +219,39 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	getTitleState: function(messageBox){
 		var values={};
 		var titleToNormalize =  this.titlePanel.getValue();
-		
-		//titleToNormalize = Ext.util.Format.stripTags( titleToNormalize );
-  		//expression = Ext.util.Format.htmlEncode(expression);
-		titleToNormalize = titleToNormalize.replace(/&nbsp;/g," ");
-		titleToNormalize = titleToNormalize.replace(/\u200B/g,"");
-		titleToNormalize = titleToNormalize.replace(/&gt;/g,">");
-		values.title = titleToNormalize.replace(/&lt;/g,"<");
+
+		if(titleToNormalize!=undefined && titleToNormalize!=null ){
+			titleToNormalize = titleToNormalize.replace(/&nbsp;/g," ");
+			titleToNormalize = titleToNormalize.replace(/\u200B/g,"");
+			titleToNormalize = titleToNormalize.replace(/&gt;/g,">");
+			values.title = titleToNormalize.replace(/&lt;/g,"<");
+		}else{
+			values.title='';
+		}
 		
 		values.img =  this.imgTriggerField.getValue();
 		if(values.img==''){
 			values.img =null;
 		}
-		values.position =   this.imgPosition.getValue();
-//		if(values.position==''){
-//			values.img =null;
-//		}
+		values.position = this.imgPosition.getValue();
+		if(values.position==undefined  || values.position==null){
+			values.position ='';
+		}
 		return values;
 	},
 	
 	setTitleState: function(values){
-		 this.titlePanel.setValue(values.title);
-		 this.imgTriggerField.setValue(values.img);
-		 this.imgPosition.setValue(values.position);
+		if(values!=undefined && values!=null){
+			if(values.title!=undefined && values.title!=null){
+				this.titlePanel.setValue(values.title);
+			}
+			if(values.img!=undefined && values.img!=null){
+				this.titlePanel.setValue(values.img);
+			}
+			if(values.position!=undefined && values.position!=null){
+				this.titlePanel.setValue(values.position);
+			}
+		}
 	}
 	
 });

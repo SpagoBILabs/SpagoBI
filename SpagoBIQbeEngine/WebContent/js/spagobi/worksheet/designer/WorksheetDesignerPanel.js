@@ -100,7 +100,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);
-		
+
 		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.sheetsContainerPanelCfg  || {}, {
 			sheets : this.worksheetTemplate.sheets || []  ,
 			smartFilter: config.smartFilter || false

@@ -155,7 +155,6 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			}else{
 				state.filters.position=this.filtersPositionPanel;
 			}
-
 		}
 
 		state.content = this.contentPanel.getDesignerState();
@@ -163,16 +162,18 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(!this.footerPanel.hidden){
 			state.footer = this.footerPanel.getTitleState();
 		}
+
 		return state;
 	}
 	
 	, setSheetState: function(sheetState){
+
 		this.title = sheetState.name;
 		this.sheetLayout = sheetState.sheetLayout;
 		if(sheetState.header!==null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
-		if(sheetState.filters !== undefined && sheetState.filters !== null){
+		if(sheetState.filters !== undefined && sheetState.filters !== null && sheetState.filters.length>0){
 			var filters = sheetState.filters.filters;
 			this.filtersPanel.setFilters(filters);
 			this.filtersPositionPanel = sheetState.filters.position;
