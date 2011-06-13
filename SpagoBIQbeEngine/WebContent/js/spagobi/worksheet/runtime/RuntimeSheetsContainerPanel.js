@@ -124,53 +124,33 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded === false) {
 					// register to the contentloaded event
-					this.sheetItems[i].on('contentloaded', this.checkContentReady, this);
+//					this.sheetItems[i].on('contentloaded', this.checkContentReady, this);
+//					this.setActiveTab(i);
+					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this); }, this);
 					this.setActiveTab(i);
+					return;
 				}
 			}
 		}
 		this.checkContentReady();
-//		this.sleepUntilContentReady();
-//		var resultExport = this.exportRenderedContent();
-//		return resultExport;
 	}
-	
-	/*
-	,
-	sleepUntilContentReady : function() {
-		var contentReady = this.checkContentReady();
-		if (contentReady == true) {
-			return true;
-		} else {
-			this.sleep(400);
-			this.sleepUntilContentReady();
-		}
-	}
-	
-	,
-	sleep : function(milliSeconds) {
-		var startTime = new Date().getTime(); // get the current time
-		while (new Date().getTime() < startTime + milliSeconds);
-	}
-	*/
 
 	,
 	checkContentReady : function() {
-		var allLoaded = false;
-		if (this.sheetItems !== undefined && this.sheetItems !== null) {
-			var i = 0;
-			for (; i < this.sheetItems.length; i++) {
-				if (this.sheetItems[i].contentLoaded === true) {
-					allLoaded = true
-				} else {
-					allLoaded = false;
-					break;
-				}
-			}
-		}
+//		var allLoaded = false;
+//		if (this.sheetItems !== undefined && this.sheetItems !== null) {
+//			var i = 0;
+//			for (; i < this.sheetItems.length; i++) {
+//				if (this.sheetItems[i].contentLoaded === true) {
+//					allLoaded = true
+//				} else {
+//					allLoaded = false;
+//					break;
+//				}
+//			}
+//		}
 
-		if (allLoaded == true) {
-//			return true;
+//		if (allLoaded == true) {
 
 			var resultExport = this.exportRenderedContent();
 
@@ -203,9 +183,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 			form.target = '_blank';				// result into a new browser tab
 			form.submit();
 			
-		} else {
-//			return false;
-		}
+//		}
 	}
 	
 	,
