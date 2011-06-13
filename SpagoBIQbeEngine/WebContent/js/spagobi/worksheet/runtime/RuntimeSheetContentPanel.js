@@ -65,8 +65,6 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 		border: false,
 		style:'padding:5px 15px 5px',
 		items: this.content,
-		autoScroll: true,
-		autoWidth: true,
 		autoHeight: true
 	};
 	Sbi.worksheet.runtime.RuntimeSheetContentPanel.superclass.constructor.call(this, c);	

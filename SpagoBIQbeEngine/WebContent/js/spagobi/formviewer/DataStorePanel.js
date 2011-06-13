@@ -273,7 +273,6 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	        border:true,
 	        autoScroll: true,
 	        collapsible: false,
-	        autoWidth: true,
 	        loadMask: true,
 	        viewConfig: {
 	            forceFit:false,
