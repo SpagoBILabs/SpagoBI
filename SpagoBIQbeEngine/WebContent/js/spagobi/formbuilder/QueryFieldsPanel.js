@@ -161,9 +161,10 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
 		
 		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
 	        store: this.store,
+	        hideHeaders: true,
 	        columns: [
-	            {id:'alias', 
-            	header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
+	            {id:'alias' 
+            	, header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
             	, width: 160
             	, sortable: true
             	, dataIndex: 'alias'

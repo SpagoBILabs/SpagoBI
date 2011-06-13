@@ -65,6 +65,7 @@ Sbi.worksheet.designer.DesignToolsLayoutPanel = function(config) {
 	});
 	
 	c = {
+		//autoScroll : true,
 		items: [this.layoutRadioGroup]
 	};
 

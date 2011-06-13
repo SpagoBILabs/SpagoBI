@@ -60,13 +60,15 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 	this.initPanels();
 	c = {
         layout: {
-            type:'vbox',
-            align:'stretch'
+        	type:'border'
+            //type:'vbox',
+            //align:'stretch'
         },
         items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	};
-	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);	 		
-
+	
+	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
@@ -81,7 +83,10 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
 	        	, type: 'queryFieldsPanel'
-	        }
+	        },
+			region : 'north',
+			split: true,
+			height : 120
 		});
 //		this.designToolsFieldsPanel.on('render', function() {
 //			this.designToolsFieldsPanel.refresh();
@@ -93,11 +98,11 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 //	        	, type: 'queryFieldsPanel'
 //	        }
 //		});
-		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel();
-		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel();
-		this.designToolsFieldsPanel.flex = 1;
-		this.designToolsPallettePanel.flex = 1;
-		this.designToolsLayoutPanel.flex = 1;
+		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'center'});
+		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
+//		this.designToolsFieldsPanel.flex = 1;
+//		this.designToolsPallettePanel.flex = 1;
+//		this.designToolsLayoutPanel.flex = 1;
 		this.designToolsLayoutPanel.on('layoutchange', function(sheetLayout){
 			var change = {
 				'sheetLayout' : sheetLayout
