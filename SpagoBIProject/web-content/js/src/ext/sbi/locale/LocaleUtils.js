@@ -1,4 +1,5 @@
 Ext.ns("Sbi.locale");
+Ext.ns("Sbi.commons");
 
 Sbi.locale.dummyFormatter = function(v){return v;};
 Sbi.locale.formatters = {

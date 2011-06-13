@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>
 <link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
 <link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
-
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 	<%
 		SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("DetailDataSourceModule"); 
 		DataSource ds = (DataSource)moduleResponse.getAttribute("dsObj");
