@@ -21,16 +21,7 @@
     <property name="lib.dir" value="lib" />
     <property name="report.dir" value="report" />
     
-    
-  <target name="proxy" >
-    <property name="proxy.host" value="proxy.eng.it"/>  
-    <property name="proxy.port" value="3128"/>
-    <property name="proxy.user" value="bernabei"/>
-    <property name="proxy.pass" value="andrea88"/>
-    <setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"
-      proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
-  </target>
-  
+ 
     <!-- ================================= 
           target: resolve              
          ================================= -->
