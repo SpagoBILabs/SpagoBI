@@ -104,9 +104,10 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		String name = sheetJSON.getString(WorkSheetSerializationCostants.NAME);
 		JSONObject header = sheetJSON.optJSONObject(WorkSheetSerializationCostants.HEADER);
 		JSONObject filters = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
+		String layout = sheetJSON.optString(WorkSheetSerializationCostants.LAYOUT);
 		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
-		return new WorkSheet(name, header, filters, content, footer);
+		return new WorkSheet(name, layout, header, filters, content, footer);
 	}
 	
 		

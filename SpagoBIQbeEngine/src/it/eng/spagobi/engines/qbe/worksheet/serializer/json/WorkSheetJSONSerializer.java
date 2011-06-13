@@ -83,10 +83,12 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		JSONObject jsonSheet = new JSONObject();
 		try {
 			jsonSheet.put(WorkSheetSerializationCostants.NAME, sheet.getName());
+			jsonSheet.put(WorkSheetSerializationCostants.LAYOUT, sheet.getLayout());
 			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
 			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, sheet.getFilters());
 			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, sheet.getContent());
 			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
+			
 		} catch (Exception e) {
 			logger.error("Error serializing the sheet "+sheet.getName(),e);
 			throw new SerializationException("Error serializing the sheet "+sheet.getName(),e);
