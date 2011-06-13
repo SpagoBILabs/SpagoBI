@@ -102,7 +102,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeBarChartPanel, Sbi.worksheet.runtime.Run
 			},
 			chart : {
 				renderTo : this.chartDivId,
-				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column'
+				defaultSeriesType : (this.chartConfig.orientation === 'horizontal') ?  'bar' : 'column',
+				spacingTop : 25,
+				spacingRight : 75,
+				spacingBottom : 25,
+				spacingLeft : 75
 			},
 			plotOptions: this.getPlotOptions(),
 			legend: {

@@ -102,7 +102,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 			},
 			chart : {
 				renderTo : this.chartDivId,
-				defaultSeriesType : (this.chartConfig.colorarea === true) ?  'area' : 'line'
+				defaultSeriesType : (this.chartConfig.colorarea === true) ?  'area' : 'line',
+				spacingTop : 25,
+				spacingRight : 75,
+				spacingBottom : 25,
+				spacingLeft : 75
 			},
 			plotOptions: this.getPlotOptions(),
 			legend: {
