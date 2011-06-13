@@ -115,6 +115,7 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
         _oper.addFault(_fault);
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("urn:spagobisdkdatasets", "ArrayOf_tns2_SDKDataSetParameter"), it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter[].class, false, false), 
         };
         _oper = new org.apache.axis.description.OperationDesc("executeDataSet", _params, new javax.xml.namespace.QName("", "executeDataSetReturn"));
         _oper.setReturnType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
@@ -164,9 +165,9 @@ public class DataSetsSDKServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
         return ret;
     }
 
-    public java.lang.String executeDataSet(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    public java.lang.String executeDataSet(java.lang.String in0, it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter[] in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
     {
-        java.lang.String ret = impl.executeDataSet(in0);
+        java.lang.String ret = impl.executeDataSet(in0, in1);
         return ret;
     }
 
