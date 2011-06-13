@@ -606,7 +606,9 @@ public class HQLStatement extends AbstractStatement {
 			// calculated field
 			// TODO check!!!! why not a OPERAND_TYPE_CALCUALTED_FIELD????
 			if (leadOperand.values[0].contains("expression")) {
-				String type = (leadOperand.values[0].substring(leadOperand.values[0].indexOf("type\":")+7, leadOperand.values[0].indexOf("\"}")));
+				int startType = leadOperand.values[0].indexOf("type\":")+7;
+				int endType = leadOperand.values[0].indexOf( "\"", startType);
+				String type = leadOperand.values[0].substring(startType, endType);
 				boundedValue = getValueBounded(operandValueToBound, type);
 			}else if (OPERAND_TYPE_FIELD.equalsIgnoreCase(leadOperand.type) 
 							|| OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
