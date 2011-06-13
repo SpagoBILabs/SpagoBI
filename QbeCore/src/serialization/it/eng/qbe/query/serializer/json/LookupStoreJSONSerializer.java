@@ -179,8 +179,9 @@ public class LookupStoreJSONSerializer {
 							&& (propertyRawValue instanceof Boolean) 
 							&& ((Boolean)propertyRawValue).booleanValue() == false) {
 						continue;
-					}										
-					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( fieldMetaData.getName() ) );
+					}
+					String key = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
+					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( key ) );
 		
 					String fieldValue = "";
 					if(field.getValue() != null && !field.getValue().equals("")) {
