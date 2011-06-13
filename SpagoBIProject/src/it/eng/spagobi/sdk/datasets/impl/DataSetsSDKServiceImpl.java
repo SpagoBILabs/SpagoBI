@@ -50,6 +50,7 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSetsSDKService {
 
@@ -231,7 +232,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 	/**
 	 * 
 	 */
-	public String executeDataSet(String label) throws NotAllowedOperationException{
+	public String executeDataSet(String label, SDKDataSetParameter[] params) throws NotAllowedOperationException{
 		String toReturn = null;
 		logger.debug("IN: label in input = " + label);
 		try {
@@ -244,6 +245,15 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			if (dataSet == null) {
 				logger.warn("DataSet with label [" + label + "] not existing.");
 				return null;
+			}
+			if (params!=null && params.length>0){
+				HashMap parametersFilled= new HashMap();
+				for(int i=0; i< params.length; i++){
+					SDKDataSetParameter par = params[i];
+					parametersFilled.put(par.getName(),par.getValues()[0]);
+					logger.debug("Add parameter: "+par.getName()+"/"+par.getValues()[0]);
+				}				
+				dataSet.setParamsMap(parametersFilled);
 			}
 			dataSet.loadData();
 			toReturn = dataSet.getDataStore().toXml();
