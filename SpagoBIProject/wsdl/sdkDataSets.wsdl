@@ -158,6 +158,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       <wsdl:part name="in0" type="soapenc:string"/>
 
+      <wsdl:part name="in1" type="impl:ArrayOf_tns2_SDKDataSetParameter"/>
+
    </wsdl:message>
 
    <wsdl:message name="getDataSetsResponse">
@@ -252,7 +254,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="executeDataSet" parameterOrder="in0">
+      <wsdl:operation name="executeDataSet" parameterOrder="in0 in1">
 
          <wsdl:input message="impl:executeDataSetRequest" name="executeDataSetRequest"/>
 
