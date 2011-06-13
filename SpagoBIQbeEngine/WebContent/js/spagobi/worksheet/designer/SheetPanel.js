@@ -110,6 +110,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			this.filtersPanel.show();
 			this.filtersPanel.updateFilters();
 			this.filtersPositionPanel = 'top';
+			var w = this.getWidth()-22;//10 + 10 of left and right paddings
+			this.filtersPanel.setWidth(w);
 		},this)
 		
 		this.footerPanel  = new Sbi.worksheet.designer.SheetTitlePanel({});
