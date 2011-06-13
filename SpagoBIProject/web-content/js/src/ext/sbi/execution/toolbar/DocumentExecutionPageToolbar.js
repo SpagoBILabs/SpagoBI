@@ -362,10 +362,30 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	}
 	*/
 	
+	/**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask('documentexecutionpage', {msg: "Exporting.."});
+    	}
+    	this.loadMask.show();
+    }
+	
+	/**
+	 * Closes the loading mask
+	 */
+	, hideMask: function() {
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
+	}
+	
 	, exportWorksheetsExecution: function () {
 		try {
 			var frame = this.miframe.getFrame();
 			var worksheetWindow = frame.getWindow();
+			this.showMask();
 			worksheetWindow.workSheetPanel.exportContent();
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');
