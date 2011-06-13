@@ -134,6 +134,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
     }
     
 	public void setDataSource(IDataSource dataSource) {
+		
 		this.dataSource = dataSource;
 	}
 	
@@ -147,8 +148,9 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		sbd = super.toSpagoBiDataSet();
 
 		sbd.setType(DS_TYPE);
-
-		sbd.setDataSource(getDataSource().toSpagoBiDataSource());
+		if(getDataSource() != null) {
+			sbd.setDataSource(getDataSource().toSpagoBiDataSource());
+		}
 		sbd.setJsonQuery(getJsonQuery());
 		sbd.setDatamarts(getDatamarts());
 
