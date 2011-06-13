@@ -102,7 +102,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		var items = [];
 
 		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%', autoScroll: true},{contentConfig: this.sheetConfig.content}));
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
 		//catch the event of the contentloaded from the component and hide the loading mask
 		this.content.on('contentloaded',this.hideMask,this);
 		
@@ -150,7 +150,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			if ( this.sheetConfig.filters.position=='left') {
 				var filterContentPanel = new Ext.Panel({
 		            border: false,
-		            autoScroll: true,
 					items:[this.filtersPanel,this.content]			       
 				});
 								
