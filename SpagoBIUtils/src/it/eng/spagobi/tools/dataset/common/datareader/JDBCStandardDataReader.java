@@ -68,7 +68,14 @@ public class JDBCStandardDataReader extends AbstractDataReader {
         		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= "+fieldType);
         		fieldMeta.setName( fieldName );
         		if(fieldType!=null){
-					fieldMeta.setType(Class.forName(fieldType.trim()));
+        			// Patch for hsql..  TODO
+        			if ("double".equals(fieldType.trim())){
+        				fieldMeta.setType(Class.forName("java.lang.Double"));
+        			}if ("int".equals(fieldType.trim())){
+        				fieldMeta.setType(Class.forName("java.lang.Integer"));
+        			}else{
+        				fieldMeta.setType(Class.forName(fieldType.trim()));
+        			}
         		}
         		dataStoreMeta.addFiedMeta(fieldMeta);
         	}    
