@@ -3,9 +3,9 @@ Ext.ns("Sbi.settings");
 Sbi.settings.execution = {
 		parametersPanel: {
 			columnNo: 3
-			, columnWidth: 350
+			, columnWidth: 325
 			, labelAlign: 'left'
-			, fieldWidth: 200	
+			, fieldWidth: 190	
 			, maskOnRender: false
 			, fieldLabelWidth: 100
 		}
@@ -15,7 +15,7 @@ Sbi.settings.execution = {
 				, viewpoints: 2
 				, snapshots: 3
 			}
-			, height: 280
+			, height: 205
 		}
 };
 
