@@ -117,10 +117,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		border: false,
     		displayInfo: false,
     		pageSize: 50,
-    		autoHeight: true,
+    		//autoHeight: true,
     		sortable: false,
     		gridConfig: {
-    			autoHeight: true
+    			height: Sbi.settings.worksheet.runtime.table.height || 400
+    			//autoHeight: true
     		},
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
@@ -130,6 +131,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		}
     	});
 		table.execQuery({'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)});
+		
 		return table;
 	},
 	
