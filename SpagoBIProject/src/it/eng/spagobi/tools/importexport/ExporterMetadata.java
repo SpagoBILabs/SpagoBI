@@ -1953,7 +1953,7 @@ public class ExporterMetadata {
 		try {
 			Query hibQuery = session.createQuery(" from SbiKpi where kpiId = " + kpiId);
 			List hibList = hibQuery.list();
-			if(!hibList.isEmpty()) {
+			if(hibList!=null && !hibList.isEmpty()) {
 				return;
 			}
 			// get the Kpi BO from id
@@ -2386,10 +2386,14 @@ public class ExporterMetadata {
 				return;
 			} 
 
-			SbiDomains severity=(SbiDomains)session.load(SbiDomains.class, thValue.getSeverityId());
-
 			// main attributes			
 			SbiThresholdValue hibThValue = new SbiThresholdValue();
+			
+			if(thValue.getSeverityId()!=null){
+				SbiDomains severity=(SbiDomains)session.load(SbiDomains.class, thValue.getSeverityId());
+				hibThValue.setSeverity(severity);	
+			}
+			
 			hibThValue.setIdThresholdValue(thValue.getId());
 			hibThValue.setLabel(thValue.getLabel());
 			hibThValue.setMaxValue(thValue.getMaxValue());
@@ -2398,12 +2402,10 @@ public class ExporterMetadata {
 			hibThValue.setMaxClosed(thValue.getMaxClosed());
 			hibThValue.setThValue(thValue.getValue());
 
-			//Color col=thValue.getColour();
-			//String colour = "rgb("+col.getRed()+", "+col.getGreen()+", "+col.getBlue()+")" ;
 			String colour=thValue.getColourString();
 			hibThValue.setColour(colour);
 			hibThValue.setPosition(thValue.getPosition());
-			hibThValue.setSeverity(severity);
+			
 
 			// put association with Threshold
 			hibThValue.setSbiThreshold(sbiTh);
