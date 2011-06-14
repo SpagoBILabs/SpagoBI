@@ -10,6 +10,10 @@
 				<ATTRIBUTE name="name" value="SpagoBI User" />
 				<ROLE name="/spagobi/user"/>
 			</USER>
+			<USER userId="bidemo" password="bidemo" fullName="SpagoBI Demo User">
+				<ATTRIBUTE name="name" value="SpagoBI Demo User" />
+				<ROLE name="/spagobi/user/demo"/>
+			</USER>
 			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User">
 				<ATTRIBUTE name="name" value="SpagoBI TestUser" />
 				<ROLE name="/spagobi/test"/>
@@ -39,6 +43,7 @@
 			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" />
 			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" />
 			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" />	
-			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />		
+			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" />	
+			<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo" roleTypeCD="USER" />	
 		</DEFAULT_ROLES>
 </INTERNAL_PROFILING_INITIALIZER>
