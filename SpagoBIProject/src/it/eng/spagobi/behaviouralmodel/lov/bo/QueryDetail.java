@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBean;
@@ -65,23 +65,23 @@ import org.apache.log4j.Logger;
  */
 public class QueryDetail  implements ILovDetail  {
 	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
-	
+
 	private String dataSource= "" ;
 	private String queryDefinition = "";
-	
+
 	private List visibleColumnNames = null;
 	private String valueColumnName = "";
 	private String descriptionColumnName = "";
 	private List invisibleColumnNames = null;
 	private String databaseDialect = null;
-	
+
 	static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static Random random = new Random();
 
 	private static String ALIAS_DELIMITER = null;
 	private static String VALUE_ALIAS = "VALUE";
 	private static String DESCRIPTION_ALIAS = "DESCRIPTION";
-	
+
 	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
 	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
 	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
@@ -89,12 +89,12 @@ public class QueryDetail  implements ILovDetail  {
 	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
-	
+
 	/**
 	 * constructor.
 	 */
 	public QueryDetail() { }
-	
+
 	/**
 	 * constructor.
 	 * 
@@ -105,7 +105,7 @@ public class QueryDetail  implements ILovDetail  {
 	public QueryDetail(String dataDefinition) throws SourceBeanException {
 		loadFromXML(dataDefinition);
 	}
-	
+
 	/**
 	 * loads the lov from an xml string.
 	 * 
@@ -126,7 +126,7 @@ public class QueryDetail  implements ILovDetail  {
 				dataDefinition = dataDefinition.substring(0, startInd+6) + query + dataDefinition.substring(endId); 
 			}
 		}
-		
+
 		SourceBean source = SourceBean.fromXMLString(dataDefinition);
 		SourceBean connection = (SourceBean)source.getAttribute("CONNECTION"); 
 		String dataSource =  connection.getCharacters(); 
@@ -173,7 +173,7 @@ public class QueryDetail  implements ILovDetail  {
 		setInvisibleColumnNames(invisColNames);
 		logger.debug("OUT");
 	}
-	
+
 	/**
 	 * serialize the lov to an xml string.
 	 * 
@@ -181,17 +181,17 @@ public class QueryDetail  implements ILovDetail  {
 	 */
 	public String toXML () { 
 		String XML = "<QUERY>" +
-				     "<CONNECTION>"+this.getDataSource()+"</CONNECTION>" +
-			         "<STMT>"+this.getQueryDefinition() + "</STMT>" +
-				     "<VALUE-COLUMN>"+this.getValueColumnName()+"</VALUE-COLUMN>" +
-				     "<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
-				     "<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
-				     "<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
-				     "</QUERY>";
+		"<CONNECTION>"+this.getDataSource()+"</CONNECTION>" +
+		"<STMT>"+this.getQueryDefinition() + "</STMT>" +
+		"<VALUE-COLUMN>"+this.getValueColumnName()+"</VALUE-COLUMN>" +
+		"<DESCRIPTION-COLUMN>"+this.getDescriptionColumnName()+"</DESCRIPTION-COLUMN>" +
+		"<VISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getVisibleColumnNames(), ",")+"</VISIBLE-COLUMNS>" +
+		"<INVISIBLE-COLUMNS>"+GeneralUtilities.fromListToString(this.getInvisibleColumnNames(), ",")+"</INVISIBLE-COLUMNS>" +
+		"</QUERY>";
 		return XML;
 	}
-	
-	
+
+
 	/**
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
@@ -204,7 +204,7 @@ public class QueryDetail  implements ILovDetail  {
 		logger.debug("OUT.result="+result);
 		return result;
 	}
-	
+
 	/**
 	 * This methods builds the in-line view that filters the original lov using the dependencies.
 	 * For example, suppose the lov definition is 
@@ -227,11 +227,11 @@ public class QueryDetail  implements ILovDetail  {
 		logger.debug("OUT.result=" + result);
 		return result;
 	}
-	
+
 	private String getRandomAlias(int len) {
-		  StringBuilder sb = new StringBuilder( len );
-		  for( int i = 0; i < len; i++ ) sb.append( AB.charAt( random.nextInt(AB.length()) ) );
-		  return sb.toString();
+		StringBuilder sb = new StringBuilder( len );
+		for( int i = 0; i < len; i++ ) sb.append( AB.charAt( random.nextInt(AB.length()) ) );
+		return sb.toString();
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class QueryDetail  implements ILovDetail  {
 			buffer.append(" ( 1 = 1 ) "); // in case a filter has no value, add a TRUE condition
 		}
 	}
-	
+
 	private String getColumnSQLName(String columnName) {
 		if (columnName.contains(" ")) {
 			return ALIAS_DELIMITER + columnName + ALIAS_DELIMITER;
@@ -401,7 +401,7 @@ public class QueryDetail  implements ILovDetail  {
 			throw new SecurityException("Input value " + value + " is not a valid number");
 		}
 	}
-	
+
 	private void validateDate(String value) {
 		String dateFormat = GeneralUtilities.getServerDateFormat();
 		String timestampFormat = GeneralUtilities.getServerTimeStampFormat();
@@ -416,35 +416,37 @@ public class QueryDetail  implements ILovDetail  {
 	private String getDataSourceDialect() {
 		return databaseDialect;
 	}
-	
+
 	private void setDataSourceDialect() {
 		DataSourceSupplier supplierDS = new DataSourceSupplier();		
 		SpagoBiDataSource ds = supplierDS.getDataSourceByLabel(dataSource);
-		databaseDialect = ds.getHibDialectClass();
-		if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
-			ALIAS_DELIMITER = "`";
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_HSQL)) {
-			ALIAS_DELIMITER = "\"";
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_INGRES)) {
-			ALIAS_DELIMITER = "\""; // TODO check it!!!!
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE)) {
-			ALIAS_DELIMITER = "\"";
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
-			ALIAS_DELIMITER = "\"";
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
-			ALIAS_DELIMITER = "\"";
-		} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
-			ALIAS_DELIMITER = ""; // TODO check it!!!!
-		} else {
-			throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
+		if(ds != null){
+			databaseDialect = ds.getHibDialectClass();
+			if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
+				ALIAS_DELIMITER = "`";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_HSQL)) {
+				ALIAS_DELIMITER = "\"";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_INGRES)) {
+				ALIAS_DELIMITER = "\""; // TODO check it!!!!
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE)) {
+				ALIAS_DELIMITER = "\"";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
+				ALIAS_DELIMITER = "\"";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
+				ALIAS_DELIMITER = "\"";
+			} else if (databaseDialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
+				ALIAS_DELIMITER = ""; // TODO check it!!!!
+			} else {
+				throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
+			}
 		}
 	}
-	
+
 	private String escapeString(String value) {
 		if (value == null) return null;
 		return StringEscapeUtils.escapeSql(value);
 	}
-	
+
 	private String composeStringToDt(String dialect, String date){
 		String toReturn = "";
 		date = escapeString(date); // for security reasons
@@ -463,7 +465,7 @@ public class QueryDetail  implements ILovDetail  {
 					}else{
 						df = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
 					}
-					
+
 					Date myDate = df.parse(date);
 					df = new SimpleDateFormat("yyyy-MM-dd");		
 					toReturn =  "'"+df.format(myDate)+"'";
@@ -504,10 +506,10 @@ public class QueryDetail  implements ILovDetail  {
 				}
 			}
 		}
-		
+
 		return toReturn;
 	}
-	
+
 	/**
 	 * Finds the suitable operator for the input dependency.
 	 * 
@@ -571,7 +573,7 @@ public class QueryDetail  implements ILovDetail  {
 	 * @return the xml string containing values
 	 * @throws Exception	
 	 */
-	
+
 	private String getLovResult(IEngUserProfile profile,String statement) throws Exception {
 		String resStr = null;
 		DataConnection dataConnection = null;
@@ -584,7 +586,7 @@ public class QueryDetail  implements ILovDetail  {
 			dataConnection = dsUtil.getDataConnection(conn);
 			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
-	        ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			SourceBean result = scrollableDataResult.getSourceBean();
 			resStr = result.toXML(false);
 			resStr = resStr.trim();
@@ -598,7 +600,7 @@ public class QueryDetail  implements ILovDetail  {
 		}
 		return resStr;
 	}
-   
+
 	/**
 	 * This methods find out if the input parameters' values are admissible for this QueryDetail instance, i.e. if the values are
 	 * contained in the query result.
@@ -625,19 +627,19 @@ public class QueryDetail  implements ILovDetail  {
 			dataConnection = dsUtil.getDataConnection(conn);
 			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
-	        ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
+			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
 			result = scrollableDataResult.getSourceBean();
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}
-		
+
 		// START converting the SourceBean into a string and then into SourceBean again:
 		// this a necessary work-around (workaround, work around) because the getFilteredSourceBeanAttribute is not able to filter on numbers!!!
 		// By making this conversion, the information on data type is lost and every attribute becomes a String
 		String xml = result.toXML(false);
 		result = SourceBean.fromXMLString(xml);
 		// END converting the SourceBean into a string and then into SourceBean again:
-		
+
 		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			String description = null;
@@ -671,7 +673,7 @@ public class QueryDetail  implements ILovDetail  {
 		biparam.setParameterValuesDescription(parameterValuesDescription);
 		return toReturn;
 	}
-	
+
 	/**
 	 * This methods builds the validation query, see validateValues method.
 	 */
@@ -737,7 +739,7 @@ public class QueryDetail  implements ILovDetail  {
 		}
 		return contains;
 	}
-	
+
 	/**
 	 * Builds a simple sourcebean 
 	 * @param name name of the sourcebean
@@ -750,7 +752,7 @@ public class QueryDetail  implements ILovDetail  {
 		sb = SourceBean.fromXMLString("<"+name+">" + (value != null ? value : "") + "</"+name+">");
 		return sb;
 	}
-	
+
 	/**
 	 * Splits an XML string by using some <code>SourceBean</code> object methods
 	 * in order to obtain the source <code>QueryDetail</code> objects whom XML has been
@@ -765,7 +767,7 @@ public class QueryDetail  implements ILovDetail  {
 	public static QueryDetail fromXML (String dataDefinition) throws SourceBeanException {
 		return new QueryDetail(dataDefinition);
 	}
-	
+
 	/**
 	 * Gets the data source.
 	 * 
@@ -784,7 +786,7 @@ public class QueryDetail  implements ILovDetail  {
 		this.dataSource = dataSource;
 		setDataSourceDialect();
 	}
-	
+
 	/**
 	 * Gets the query definition.
 	 * 
@@ -874,6 +876,6 @@ public class QueryDetail  implements ILovDetail  {
 		return toReturn;
 	}
 
-	
-	
+
+
 }
