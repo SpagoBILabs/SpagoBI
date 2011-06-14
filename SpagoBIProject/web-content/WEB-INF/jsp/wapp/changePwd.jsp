@@ -109,22 +109,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
 		<input type="hidden" id="start_url" name="start_url" value="<%=startUrl%>" />
 	    
-    <div style="width:100%;height:50px;border:0px solid gray;">
+    <div style="width:100%;height:50px;border:0px solid gray;margin-top:60px;">
 	    	<table >
       			<tr>
-      				<td class='header-title-column-portlet-section-nogrey' width = "100px">
-      				 <H1> It is necessary to change your password... </H1>
+      				<td class='header-title-column-portlet-section-nogrey' style="padding-left:50px; width:100% !important;">
+      				 <H1 style="width:100% !important;"> It is necessary to change your password... </H1>
       				</td>
       			</tr>
       	</table>
 	  </div>
     <div id="content" style="width:100%;">
-      	<div style="width:500px;height:250px;border:0px solid gray;margin-left:50px;" >
+      	<div style="width:500px;height:250px;border:0px solid gray;margin-left:50px; margin-top:10px;" >
       
-      		<table >
+      		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
       			<tr>
       				<td class='header-title-column-portlet-section-nogrey' width = "100px">
-      				   <img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/loginUser64.png", currTheme)%>"/>
+      				   <img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/loginkey.png", currTheme)%>"/>
       				</td>
       				<td>
   				    <br/> 
@@ -196,16 +196,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       </div>
 	</form>
 	<spagobi:error/>
-	<%
-	String url2="";
-  if(ThemesManager.resourceExists(currTheme,"/html/footer.html")){
-  	url2 = "/themes/"+currTheme+"/html/footer.html";	
-  }
-  else {
-  	url2 = "/themes/sbi_default/html/footer.html";	
-  }
-  %>
-  	<jsp:include page='<%=url2%>' />
+
+	<% 
+		String url2="";
+		if(ThemesManager.resourceExists(currTheme,"/html/footerLogin.html")){
+			url2 = "/themes/"+currTheme+"/html/footerLogin.html";	
+		}
+		else {
+			url2 = "/themes/sbi_default/html/footerLogin.html";	
+		}
+	%>
+	<jsp:include page='<%=url2%>' />
   	
   	
   </body>
