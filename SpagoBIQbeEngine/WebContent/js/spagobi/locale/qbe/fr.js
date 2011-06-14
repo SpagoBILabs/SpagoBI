@@ -32,6 +32,12 @@ Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'Votre session a expir\u00E9e. Ess
 
 
 //===================================================================
+//QBE PANEL
+//===================================================================
+Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Previsualiser feuille de calcul';
+
+
+//===================================================================
 //QUERY EDITOR PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Requ\u00EAte';
@@ -334,6 +340,7 @@ Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.title'] = 'Param\u00E8tre du 
 Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.emptytext'] = 'Ce document n\'a pas de param\u00E8tre';
 Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.headers.label'] = 'Titre';
 Sbi.locale.ln['sbi.qbe.documentparametersgridpanel.parameterreference'] = 'Param\u00E8tre';
+Sbi.locale.ln['sbi.qbe.parametersgridpanel.parameterreference'] = 'Param\u00E8tre';
 
 
 //===================================================================

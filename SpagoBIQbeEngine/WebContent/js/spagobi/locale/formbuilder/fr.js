@@ -7,8 +7,8 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 Sbi.locale.ln['sbi.formbuilder.formbuilderpage.title'] = 'Concepteur';
 Sbi.locale.ln['sbi.formbuilder.formbuilderpage.toolbar.save'] = 'Enregistrer le mod\u00E8le';
 
-Sbi.locale.ln['sbi.formbuilder.formbuilderpage.templatesaved.title'] = 'Mod\u00E8le¨le enregistr\u00E9';
-Sbi.locale.ln['sbi.formbuilder.formbuilderpage.templatesaved.msg'] = 'Mod\u00E8¨le enregistr\u00E9 avec succ\u00E8s!!';
+Sbi.locale.ln['sbi.formbuilder.formbuilderpage.templatesaved.title'] = 'Mod\u00E8le enregistr\u00E9';
+Sbi.locale.ln['sbi.formbuilder.formbuilderpage.templatesaved.msg'] = 'Mod\u00E8 enregistr\u00E9 avec succ\u00E8s!!';
 Sbi.locale.ln['sbi.formbuilder.formbuilderpage.validationerrors.title'] = 'Erreur';
 
 Sbi.locale.ln['sbi.formbuilder.formpanel.title'] = 'Concepteur de formulaire';
@@ -26,7 +26,7 @@ Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext'
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startediting'] = 'D\u00E9marrer le concepteur...';
 
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.title'] = 'Filtre dynamique';
-Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Cliquer sur un bouton en haut \u00E0  doirte pour ajouter un filtre dynamique';
+Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Cliquer sur un bouton en haut \u00E0 doirte pour ajouter un filtre dynamique';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.grouptitle'] = 'Groupe de flitres dynamiques';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.filteritemname'] = 'Groupe de filtres dynamiques';
 
@@ -49,7 +49,7 @@ Sbi.locale.ln['sbi.formbuilder.variableeditorpanel.grouptitle'] = 'Variable';
 Sbi.locale.ln['sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields'] = 'Manque un champ utile pour cr\u00E9er la variable de rupture';
 
 Sbi.locale.ln['sbi.formbuilder.variablegroupeditor.grouptitle'] = 'Variable de rupture';
-Sbi.locale.ln['sbi.formbuilder.variablegroupeditor.emptymsg'] = 'Glisser un champ ici pour ajouter une nouvelle valeur \u00E0  la variable';
+Sbi.locale.ln['sbi.formbuilder.variablegroupeditor.emptymsg'] = 'Glisser un champ ici pour ajouter une nouvelle valeur \u00E0 la variable';
 
 Sbi.locale.ln['sbi.formbuilder.editordroptarget.wrongdropmsg.title'] = 'Mauvaise source gliss\u00E9e';
 Sbi.locale.ln['sbi.formbuilder.editordroptarget.wrongdropmsg.msg'] = 'S\u00E9lectionner juste un champ';
@@ -88,7 +88,7 @@ Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.
 
 
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.title'] = 'Filtres statiques ferm\u00E9s';
-Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.emptymsg'] = 'Cliquer sur le bouton en haut \u00E0  doite pour ajouter un grope de flitre';
+Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.emptymsg'] = 'Cliquer sur le bouton en haut \u00E0 doite pour ajouter un grope de flitre';
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.filteritemname'] = 'Groupe de filtres statiques ferm\u00E9s';
 
 
