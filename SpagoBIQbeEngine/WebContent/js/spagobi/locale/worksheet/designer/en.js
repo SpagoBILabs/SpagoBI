@@ -163,3 +163,5 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Flat table designer';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Visible fields';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Drag & drop here the attributes and measures that you want to visualize in the table';
