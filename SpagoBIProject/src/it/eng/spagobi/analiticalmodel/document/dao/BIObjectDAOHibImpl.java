@@ -1873,7 +1873,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				bufferFrom.append(" from SbiObjects as o, SbiObjFunc as sof, SbiFunctions as f,  SbiFuncRole as fr "); 	
 				bufferWhere.append(" where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId" +
 						" and fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +
-				" and fr.id.function.functId = f.functId and fr.id.state.valueId = o.state " ); 
+						" and fr.id.function.functId = f.functId and (" +
+						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_DEV + "') OR" +
+						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " +
+						"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_REL + "') " +
+						") " ); 
+				
 			} 
 			String operCondition = "";
 			String likeStart ="";
