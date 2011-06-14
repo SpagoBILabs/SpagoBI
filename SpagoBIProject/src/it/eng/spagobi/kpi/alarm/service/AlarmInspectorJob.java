@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.kpi.alarm.service;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.kpi.alarm.bo.AlertSendingItem;
 import it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl;
@@ -274,15 +274,10 @@ public class AlarmInspectorJob implements Job {
 	    logger.debug("IN");
 		try
 		{
-		    ConfigSingleton config = ConfigSingleton.getInstance();
-		    SourceBean mailProfSB = (SourceBean)config.getFilteredSourceBeanAttribute("MAIL.PROFILES.PROFILE", "name", "kpi_alarm");
 		    
-		    if(mailProfSB==null) {
-			throw new Exception("Mail profile configuration not found");
-		    }
-		    
-		    String smtphost = (String)mailProfSB.getAttribute("smtphost");
-		    String smtpport = (String) mailProfSB.getAttribute("smtpport");
+		    String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.smtphost");
+		    	
+		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.smtpport");
 		    int smptPort=25;
 		    
 		    if( (smtphost==null) || smtphost.trim().equals(""))
@@ -293,17 +288,17 @@ public class AlarmInspectorJob implements Job {
 		    	smptPort=Integer.parseInt(smtpport);
 		    }
 						    
-		    String from = (String)mailProfSB.getAttribute("from");
+		    String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.from");
 		    
 		    if( (from==null) || from.trim().equals(""))
 			from = "spagobi.scheduler@eng.it";
 		    
-		    String user = (String)mailProfSB.getAttribute("user");
+		    String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.user");
 		    
 		    if( (user==null) || user.trim().equals(""))
 			throw new Exception("Smtp user not configured");
 		    
-		    String pass = (String)mailProfSB.getAttribute("password");
+		    String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.kpi_alarm.password");
 		    
 		    if( (pass==null) || pass.trim().equals(""))
 			throw new Exception("Smtp password not configured");

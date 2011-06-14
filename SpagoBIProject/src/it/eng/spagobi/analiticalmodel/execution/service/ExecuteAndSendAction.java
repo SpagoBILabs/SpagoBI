@@ -25,7 +25,6 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -34,6 +33,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionController;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -200,14 +200,9 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 		fileextension = proxy.getFileExtensionFromContType(returnedContentType);
 	    //} end if (execCtrl.directExecution()) {
 	    // SEND MAIL
-	    ConfigSingleton config = ConfigSingleton.getInstance();
-	    SourceBean mailProfSB = (SourceBean) config.getFilteredSourceBeanAttribute("MAIL.PROFILES.PROFILE", "name",
-		    "user");
-	    if (mailProfSB == null) {
-		throw new Exception("Mail profile configuration not found");
-	    }
-	    String smtphost = (String) mailProfSB.getAttribute("smtphost");
-	    String smtpport = (String) mailProfSB.getAttribute("smtpport");
+
+	    String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
+	    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
 	    logger.debug(smtphost+" "+smtpport);
 	    
 	    int smptPort=25;
@@ -218,10 +213,10 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	    }else{
 	    	smptPort=Integer.parseInt(smtpport);
 	    }
-	    if ((from == null) || from.trim().equals("")) from = (String) mailProfSB.getAttribute("from");
-	    if(login == null || login.trim().equals(""))login = (String) mailProfSB.getAttribute("user");
-	    if(pass == null || pass.trim().equals(""))pass = (String) mailProfSB.getAttribute("password");
-	    
+	    if ((from == null) || from.trim().equals("")) from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
+	    if(login == null || login.trim().equals(""))login = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
+	    if(pass == null || pass.trim().equals(""))pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
+    
 	    if ((from == null) || from.trim().equals("")) throw new Exception("From field missing from input form or not configured");
 	    if(login == null || login.trim().equals(""))throw new Exception("Login field missing from input form or not configured");
 	    if(pass == null || pass.trim().equals(""))throw new Exception("Password field missing from input form or not configured");
