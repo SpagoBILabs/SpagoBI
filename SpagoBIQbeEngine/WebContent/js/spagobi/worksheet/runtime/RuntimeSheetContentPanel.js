@@ -121,7 +121,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		sortable: false,
     		gridConfig: {
     			height: Sbi.settings.worksheet.runtime.table.height || 400
-    			//autoHeight: true
+    			//autoHeight: true // setting autoHeight to true, scrollbars do not appear (ExtJS sets overflow : visible to the element style)
     		},
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
