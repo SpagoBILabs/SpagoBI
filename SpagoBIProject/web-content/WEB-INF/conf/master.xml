@@ -221,7 +221,6 @@
 	<CONFIGURATOR path="/WEB-INF/conf/config/events.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/useragents.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/renderers.xml" />
-	<CONFIGURATOR path="/WEB-INF/conf/config/mail.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/business_map.xml" />    	
 	<CONFIGURATOR path="/WEB-INF/conf/config/security.xml" />	
 
