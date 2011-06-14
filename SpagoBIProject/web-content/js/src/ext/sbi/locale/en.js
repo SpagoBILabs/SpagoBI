@@ -189,6 +189,9 @@ Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Sort';
 Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Search';
 Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Search';
 
+
+
+
 Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'The selected folder is empty';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'List View';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Group View';
@@ -239,13 +242,12 @@ Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'No default role';
 Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Save';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancel';
 
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document, please fill in Name and Label fields and check at least one folder where to place your document';
 
 Sbi.locale.ln['sbi.execution.error']  = 'An error has occured while executing document';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Document id is required in order to execute a document';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'User have no valid roles for the execution of the selected document';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the form, place your document in one or more folders and Save';
+
 
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Role selection';
@@ -280,11 +282,6 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Bookmark docume
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Annotate document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Show document metadata';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Page refresh will cause the lost of actual QBE settings: go on?';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
-
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Document has no saved parameters]';
@@ -513,6 +510,9 @@ Sbi.locale.ln['sbi.execution.docExport'] = 'DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport'] = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Results';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Crosstab';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Welcome: ';
@@ -627,15 +627,9 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Active';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Value check';
 Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Type';
 Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Correctly deleted data';
+Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Correctly saved data';
+Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Category';
 Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Clear filter';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Select Category';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Enter search Name';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Enter search Label';
-Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Correctly saved data';
-Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Category';
-
-//===================================================================
-//WORKSHEET
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.validation.error.title'] = 'Validation Error';
-Sbi.locale.ln['sbi.worksheet.validation.error.text'] = 'Some sheet is not valid.. Check that all the sheets have a valid content.';

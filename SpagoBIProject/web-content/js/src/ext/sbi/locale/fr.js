@@ -3,6 +3,8 @@ Sbi.locale.ln = new Array();
 
 Sbi.locale.ln['sbi.general.yes'] = 'Oui';
 Sbi.locale.ln['sbi.general.No'] = 'Non';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab']    = 'Tableau Crois\u00E9';
+Sbi.locale.ln['sbi.execution.export.qbe.results']     = 'R\u00E9sultat';
 
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Generic Node';
@@ -237,14 +239,12 @@ Sbi.locale.ln['sbi.browser.defaultRole.role']  															  = 'R\u00F4le: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  													  = 'Aucun default r\u00F4le';
 Sbi.locale.ln['sbi.browser.defaultRole.save'] 															  = 'Enregistrer';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  														  = 'Effacer';
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document, please fill in Name and Label fields and check at least one folder where to place your document';
 Sbi.locale.ln['sbi.execution.CsvExport']                                                                  = 'CSV';
 Sbi.locale.ln['sbi.execution.JpgExport']                                                                  = 'JPG';
 Sbi.locale.ln['sbi.execution.PdfExport']                                                                  = 'PDF';
 Sbi.locale.ln['sbi.execution.XlsExport']                                                                  = 'XLS';
 Sbi.locale.ln['sbi.execution.XmlExport']                                                                  = 'XML';
 Sbi.locale.ln['sbi.execution.docExport']                                                                  = 'DOC';
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the form, place your document in one or more folders and Save';
 Sbi.locale.ln['sbi.execution.error']                                                                      = 'Une erreur est arriv\u00E9 pendant l\'ex\u00E9cution du document';
 Sbi.locale.ln['sbi.execution.error.nodocid']                                                              = 'L\'ID du document est requis pour ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.error.novalidrole']                                                          = 'Cet utilisateur n\'a pas de r\u00F4les valides pour ex\u00E9cuter le document selectionn\u00E9';
@@ -260,10 +260,6 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh']                    
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.save']                                                 = 'Enregistrer le document dans un repertoire personnel';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send']                                                 = 'Envoyer le document par e-mail';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] 										  = 'En actualisant la page la strucure actualle de la page serat perdu: voulez vous poursuivre?';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] 												  = 'Save';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] 											  = 'Save as ...';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] 											  = 'View document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] 												  = 'Edit';
 Sbi.locale.ln['sbi.execution.jrxmlExport']                                                                = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport']                                                                 = 'JSON';
 Sbi.locale.ln['sbi.execution.metadata']                                                                   = 'Metadonn\u00E9s';
@@ -369,7 +365,7 @@ Sbi.locale.ln['sbi.rememberme.saveOk']                                          
 Sbi.locale.ln['sbi.generic.clone'] = 'Copier';
 Sbi.locale.ln['sbi.attributes.add'] 																		= 'Ajouter';
 Sbi.locale.ln['sbi.attributes.delete'] 																		= 'Effacer';
-Sbi.locale.ln['sbi.attributes.title'] = 'Profil Attributes';
+Sbi.locale.ln['sbi.attributes.title'] = 'Attributs de Profils';
 Sbi.locale.ln['sbi.attributes.update'] = 'Enregistrer';
 Sbi.locale.ln['sbi.attributes.validationError'] = 'Validation Error';
 Sbi.locale.ln['sbi.attributes.headerName'] = 'Nom';
@@ -514,13 +510,13 @@ Sbi.locale.ln['sbi.ds.userIn'] = 'Creation User';
 Sbi.locale.ln['sbi.ds.versionPanel'] = 'Viellies Versions';
 Sbi.locale.ln['sbi.ds.test'] = 'Tester';
 Sbi.locale.ln['sbi.ds.fillPars'] = 'Remplir les Valeurs des Parametres';
-Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilisée Par';
+Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilis\u00E9e Par';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Gestion des DataSets';
 Sbi.locale.ln['sbi.ds.listTitle'] = 'Liste des DataSets';
 Sbi.locale.ln['sbi.ds.catType'] = 'Categorie';
 Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'Type de DataSet';
 Sbi.locale.ln['sbi.ds.fileName'] = 'Nom du Fichier';
-Sbi.locale.ln['sbi.ds.dataSource'] = 'Source des Données';
+Sbi.locale.ln['sbi.ds.dataSource'] = 'Source des Donn\u00E9es';
 Sbi.locale.ln['sbi.ds.query'] = 'Query';
 Sbi.locale.ln['sbi.ds.wsAddress'] = 'Addresse du Web Service';
 Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operation du Web Service';
@@ -529,12 +525,12 @@ Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Langage du Script';
 Sbi.locale.ln['sbi.ds.jclassName'] = 'Nom de Classe Java';
 Sbi.locale.ln['sbi.ds.transfType'] = 'Transformation';
 Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Type de Transformation';
-Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nom de la colonne des categories à pivoter';
-Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nom de la colonne des valeurs à pivoter';
-Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nom de la colonne à ne pas pivoter';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nom de la colonne des categories \u00E0 pivoter';
+Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nom de la colonne des valeurs \u00E0pivoter';
+Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nom de la colonne \u00E0 ne pas pivoter';
 Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numeration automatique des Colonnes?';
 Sbi.locale.ln['sbi.ds.help'] = 'Help';
-Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
+Sbi.locale.ln['sbi.ds.pars'] = 'Attributs de profil disponibles';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -542,4 +538,65 @@ Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
 Sbi.locale.ln['sbi.generic.from'] = 'Date de d\u00e9but';
 Sbi.locale.ln['sbi.generic.to'] = 'Date de fin';
 
+//===================================================================
+//MESSAGE FOR QBE DATASET BUILDER
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Concepteur jeux de donn\u00E9es Qbe';
 
+//===================================================================
+//DATASET - CHOOSE DATAMART
+//===================================================================
+Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatamart'] = 'S\u00E9lectionnez un datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatasource'] = 'S\u00E9lectionnez une source de donn\u00E9es s\'il vous pla\u00c3\u00aet';
+
+//===================================================================
+//DATASET - PREVIEW
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.previewwindow.title'] = 'Pr\u00E9visualisation';
+
+//===================================================================
+//DATASTORE PANEL
+//===================================================================
+Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'R\u00E9sults';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Affichage {0} - {1} sur {2}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptymsg'] = 'Aucune donn\u00E9e \u00E0 afficher';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptywarningmsg'] = 'La requ\u00c3\u00aate ne retourne aucun r\u00E9sultats';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'Limit du nombre d\'enregistrements maximum';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afteroverflow'] = 'd\u00E9pass\u00E9';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforepagetext'] = 'Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afterpagetext'] = 'de {0}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.firsttext'] = 'Premi\u00e8re Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.prevtext'] = 'Page Pr\u00E9c\u00E9dante';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.nexttext'] = 'Page Suivante';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.lasttext'] = 'Derni\u00e8re Page';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.refreshtext'] = 'Actualiser';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.button.tt.exportto'] = 'Exporter vers';
+
+//===================================================================
+//DOMAIN 
+//===================================================================
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuecd'] = 'Code Valeur';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuenm'] = 'Nom Valeur';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Description Valeur';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'Code Domaine';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Nom Domaine';
+
+//===================================================================
+//CONFIG 
+//===================================================================
+Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Libell\u00E9';
+Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Nom';
+Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Description';
+Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Actif';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'V\u00E9rification de valeurs';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Type';
+Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Donn\u00E9e supprim\u00E9e correctement';
+Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Donn\u00E9e correctement sauv\u00E9e';
+Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categorie';
+Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'R\u00E9initialiser Filtres';
+Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'S\u00E9lectionnez une categorie';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Entrez le nom recherch\u00E9';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Entrez libell\u00E9 recherch\u00E9';
