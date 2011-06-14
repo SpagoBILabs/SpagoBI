@@ -163,7 +163,10 @@ String modality = instance.getExecutionModality();
 String executionRole = instance.getExecutionRole();
 Role virtualRole = getVirtualRole(userProfile, obj, executionRole);
 
-Integer executionAuditId = auditManager.insertAudit(obj, subObj, userProfile, executionRole, modality);
+Integer executionAuditId = (Integer)sbModuleResponse.getAttribute(AuditManager.AUDIT_ID);
+if(executionAuditId==null){
+    executionAuditId = auditManager.insertAudit(obj, subObj, userProfile, executionRole, modality);
+}
 // adding parameters for AUDIT updating
 if (executionAuditId != null) {
 	executionParameters.put(AuditManager.AUDIT_ID, executionAuditId.toString());

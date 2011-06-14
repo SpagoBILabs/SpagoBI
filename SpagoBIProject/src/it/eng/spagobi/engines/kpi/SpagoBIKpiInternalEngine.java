@@ -63,6 +63,7 @@ import it.eng.spagobi.kpi.model.bo.Resource;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrant;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitGrantNode;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
+import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -83,6 +84,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -339,6 +342,26 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 	public void execute(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError {
 		logger.debug("IN");
 
+		// AUDIT UPDATE
+		Integer auditId = null;
+		String auditIdStr = null;
+		AuditManager auditManager = AuditManager.getInstance();
+		
+		if(requestContainer.getServiceRequest()!=null){
+			auditIdStr = (String) requestContainer.getServiceRequest().getAttribute(AuditManager.AUDIT_ID);
+			if (auditIdStr == null) {
+			    logger.warn("Audit record id not specified! No operations will be performed");
+			} else {
+			    logger.debug("Audit id = [" + auditIdStr + "]");
+			    auditId = new Integer(auditIdStr);
+			}
+			
+			if (auditId != null) {
+			    auditManager.updateAudit(auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null,
+				    null);
+			}
+		}
+		
 		ResponseContainer responseContainer = ResponseContainer.getResponseContainer();
 		EMFErrorHandler errorHandler = responseContainer.getErrorHandler();
 		//setting locale, formats, profile, parameters, startDate, endDate
@@ -479,23 +502,30 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					response.setAttribute("styleSubTitle", styleSubTitle);
 				}
 				response.setAttribute("kpiRBlocks", kpiRBlocks);
+				response.setAttribute(AuditManager.AUDIT_ID, auditId);
 				kpiResultsList = kpiRBlocks;
 			} catch (Exception eex) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 10107);
 				userError.setBundle("messages");
 				throw userError;
 			}
-
-
 			logger.debug("OUT");
 		} catch (EMFUserError e) {
 			logger.error("User Error", e);
 			errorHandler.addError(e);
+			if(auditId!=null){
+				auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e
+					    .getMessage(), null);		
+			   }
 		} 	
 		catch (Exception e) {
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
 			logger.error("Generic Error", e);
-			errorHandler.addError(userError);			
+			errorHandler.addError(userError);	
+			if(auditId!=null){
+				auditManager.updateAudit(auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e
+					    .getMessage(), null);		
+			   }
 
 		}
 	}

@@ -55,6 +55,7 @@ import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -990,6 +991,14 @@ public class ExecutionInstance implements Serializable{
 			buffer.append("&" + SpagoBIConstants.RUN_ANYWAY + "=TRUE" );
 			buffer.append("&" + SpagoBIConstants.IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS + "=TRUE" );
 			buffer.append("&SBI_EXECUTION_ID=" + this.executionId); //adds constants if it works!!
+			
+			String kpiClassName = SpagoBIKpiInternalEngine.class.getCanonicalName();
+			if(engine.getClassName().equals(kpiClassName)){
+				Integer auditId = createAuditId();
+				if (auditId != null) {
+					buffer.append("&"+AuditManager.AUDIT_ID+"=" + auditId); //adds constants if it works!!
+				}
+			}
 
 			// identity string for context
 			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
