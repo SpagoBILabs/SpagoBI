@@ -28,7 +28,7 @@
 	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/> 
 	
 	<!-- limit of the cross tab cells number -->
-	<QBE-CROSSTAB-CELLS-LIMIT value="40" isBlocking="true"/> 
+	<QBE-CROSSTAB-CELLS-LIMIT value="2000" isBlocking="true"/> 
 	
 	<QBE_TEMPORARY_TABLE enabled="true" prefix="TMPSBIQBE_" suffix="" />
 
