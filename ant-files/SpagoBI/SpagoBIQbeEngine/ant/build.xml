@@ -304,6 +304,7 @@
 		    	<file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js'/>
 		    	<file name='./spagobi/worksheet/designer/TableDesignerPanel.js'/>
 		    	<file name='./spagobi/worksheet/designer/QueryFieldsContainerPanel.js'/>
+		    	<file name='./spagobi/worksheet/designer/QueryFieldsCardPanel.js'/>
 		    	<file name='./spagobi/worksheet/designer/SheetFilterContentPanel.js'/>
 
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/>
