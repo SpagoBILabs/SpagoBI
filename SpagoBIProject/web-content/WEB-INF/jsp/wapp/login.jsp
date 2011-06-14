@@ -199,7 +199,7 @@ else {
 			        					<% } %>
 		        					</table>	
 		        				</td>
-		        				<td>
+		        				<td style="padding-top: 20px">
 		        					&nbsp;&nbsp;
 		        					<input type="image" 
 		        					       src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/next32.png", currTheme)%>" 
