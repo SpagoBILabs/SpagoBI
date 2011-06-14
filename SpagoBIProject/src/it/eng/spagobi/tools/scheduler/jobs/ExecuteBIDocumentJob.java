@@ -56,8 +56,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -70,6 +69,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -97,7 +97,7 @@ import it.eng.spagobi.tools.scheduler.to.SaveInfo;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
-import it.eng.spagobi.utilities.engines.EngineConstants;
+
 
 public class ExecuteBIDocumentJob implements Job {
 
@@ -718,13 +718,9 @@ public class ExecuteBIDocumentJob implements Job {
 	private void sendMail(SaveInfo sInfo, BIObject biobj,Map parMap, byte[] response, String retCT, String fileExt, IDataStore dataStore, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
-			ConfigSingleton config = ConfigSingleton.getInstance();
-			SourceBean mailProfSB = (SourceBean)config.getFilteredSourceBeanAttribute("MAIL.PROFILES.PROFILE", "name", "scheduler");
-			if(mailProfSB==null) {
-				throw new Exception("Mail profile configuration not found");
-			}
-			String smtphost = (String)mailProfSB.getAttribute("smtphost");
-		    String smtpport = (String) mailProfSB.getAttribute("smtpport");
+
+			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
+		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
 		    int smptPort=25;
 		    
 			if( (smtphost==null) || smtphost.trim().equals(""))
@@ -736,13 +732,13 @@ public class ExecuteBIDocumentJob implements Job {
 			}
 				
 		    
-			String from = (String)mailProfSB.getAttribute("from");
+			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
-			String user = (String)mailProfSB.getAttribute("user");
+			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
 			if( (user==null) || user.trim().equals(""))
 				throw new Exception("Smtp user not configured");
-			String pass = (String)mailProfSB.getAttribute("password");
+			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
 			if( (pass==null) || pass.trim().equals(""))
 				throw new Exception("Smtp password not configured");
 			
@@ -1079,21 +1075,17 @@ public class ExecuteBIDocumentJob implements Job {
 	private void sendToDl(SaveInfo sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
-			ConfigSingleton config = ConfigSingleton.getInstance();
-			SourceBean mailProfSB = (SourceBean)config.getFilteredSourceBeanAttribute("MAIL.PROFILES.PROFILE", "name", "scheduler");
-			if(mailProfSB==null) {
-				throw new Exception("Mail profile configuration not found");
-			}
-			String smtphost = (String)mailProfSB.getAttribute("smtphost");
+
+			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
 			if( (smtphost==null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
-			String from = (String)mailProfSB.getAttribute("from");
+			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
-			String user = (String)mailProfSB.getAttribute("user");
+			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
 			if( (user==null) || user.trim().equals(""))
 				throw new Exception("Smtp user not configured");
-			String pass = (String)mailProfSB.getAttribute("password");
+			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
 			if( (pass==null) || pass.trim().equals(""))
 				throw new Exception("Smtp password not configured");
 
