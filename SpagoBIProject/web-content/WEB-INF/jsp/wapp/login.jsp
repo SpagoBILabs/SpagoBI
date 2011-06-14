@@ -114,9 +114,16 @@ if(ThemesManager.resourceExists(currTheme,"/html/banner.html")){
 }
 else {
 	url = "/themes/sbi_default/html/banner.html";	
-}
+} 
+    
+%>
+	
+	<LINK rel='StyleSheet' 
+    href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' 
+    type='text/css' />
 
-%>	<jsp:include page='<%=url%>' />
+
+	<jsp:include page='<%=url%>' />
         <form name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
         	<input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />
         	<%
@@ -164,11 +171,11 @@ else {
 		        			<tr>
 		        				<td width = "100px">
 		        				</td>
-		        				<td>
+		        				<td width = "350px">
 		        				    <br/> <br/><br/>
 		        				    <table border=0>
-		        				    	<tr>
-		        				    		<td width="120px" align=right style="font-family: Arial; font-size: 11pt;">
+		        				    	<tr class='header-row-portlet-section'>
+		        				    		<td class='header-title-column-portlet-section-nogrey' width="90px" align="right" >
 		        								<%=msgBuilder.getMessage("username")%>:
 		        							</td>
 		        							<td width="25px">&nbsp;</td>
@@ -176,8 +183,8 @@ else {
 		        								<input name="userID" type="text" size="25" />
 		        							</td>	
 		        						</tr>
-		        						<tr>
-											<td width="120px" align=right style="font-family: Arial ; font-size: 11pt">
+		        						<tr class='header-row-portlet-section'>
+											<td class='header-title-column-portlet-section-nogrey' width="90px" align="right" >
 		        								<%=msgBuilder.getMessage("password")%>:
 		        							</td>
 		        							<td width="25px">&nbsp;</td>
@@ -190,7 +197,7 @@ else {
 										<tr>
 											<td>&nbsp;</td>
 											<td>&nbsp;</td>
-											<td width="150px" style="font-family: Arial ; font-size: 11pt">
+											<td class='header-title-column-portlet-section-nogrey' width="150px">
 												<a href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
 														<%=msgBuilder.getMessage("changePwd")%>
 												</a>
