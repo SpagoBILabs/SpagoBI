@@ -66,6 +66,7 @@ Sbi.kpi.ManageResources = function(config) {
 	
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
+	config.singleSelection = true;
 	
 	var c = Ext.apply({}, config || {}, {});
 

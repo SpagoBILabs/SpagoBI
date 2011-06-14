@@ -68,6 +68,7 @@ Sbi.profiling.ManageRoles = function(config) {
 	configSecurity.isInternalSecurity = config.isInternalSecurity;
 	this.initConfigObject(configSecurity);
 	config.configurationObject = this.configurationObject;
+	config.singleSelection = true;
 	
 	var c = Ext.apply({}, config || {}, {});
 
