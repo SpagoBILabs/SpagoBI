@@ -54,24 +54,24 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 	    
 		HttpServletResponse response = getHttpResponse();
 		HttpServletRequest req = getHttpRequest();
-		
+		AuditManager auditManager = AuditManager.getInstance();
 		// AUDIT UPDATE
 		Integer auditId = null;
-		String auditIdStr = req.getParameter("SPAGOBI_AUDIT_ID");
+		String auditIdStr = req.getParameter(AuditManager.AUDIT_ID);
 		if (auditIdStr == null) {
 		    logger.warn("Audit record id not specified! No operations will be performed");
 		} else {
 		    logger.debug("Audit id = [" + auditIdStr + "]");
 		    auditId = new Integer(auditIdStr);
 		}
-		AuditManager auditManager = AuditManager.getInstance();
-		if (auditId != null) {
-		    auditManager.updateAudit(auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null,
-			    null);
-		}
 		
 		try {
 		
+			if (auditId != null) {
+			    auditManager.updateAudit(auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null,
+				    null);
+			}
+			
 			SessionContainer sessionContainer = this.getRequestContainer().getSessionContainer();
 			SessionContainer permanentContainer = sessionContainer.getPermanentContainer();
 			IEngUserProfile profile = (IEngUserProfile) permanentContainer.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
