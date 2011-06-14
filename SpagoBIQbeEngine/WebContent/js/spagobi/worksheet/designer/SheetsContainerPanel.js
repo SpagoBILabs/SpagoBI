@@ -265,6 +265,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 					break;
 				}
 			}
+		}else{
+			return false;
 		}
 		return valid;
 	}
