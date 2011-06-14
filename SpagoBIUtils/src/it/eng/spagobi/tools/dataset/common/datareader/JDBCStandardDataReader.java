@@ -65,7 +65,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
         		fieldMeta = new FieldMetadata();
         		fieldName = rs.getMetaData().getColumnLabel(columnIndex);
         		fieldType = rs.getMetaData().getColumnClassName(columnIndex);
-        		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]");
+        		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= "+fieldType);
         		fieldMeta.setName( fieldName );
         		if(fieldType!=null){
 					fieldMeta.setType(Class.forName(fieldType.trim()));
