@@ -158,3 +158,5 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Definizione tabella piatta';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Campi visibili';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.empty']='Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';

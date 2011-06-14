@@ -37,7 +37,7 @@
   * 
   * Public Events
   * 
-  *  [list]
+  *  storeChanged: when the store is changed
   * 
   * Authors
   * 
@@ -49,6 +49,7 @@ Ext.ns("Sbi.worksheet.designer");
 Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
 	
 	var defaultSettings = {
+		title: LN('sbi.worksheet.designer.tabledesignerpanel.fields')
 	};
 	
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.queryFieldsContainerPanel) {
@@ -66,7 +67,6 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
         , width: 250
         , height: 280
         , cls : 'table'
-        , style: 'margin-top: 10px; margin-left: auto; margin-right: auto; width: 150px'
         , cm: this.cm
         , enableDragDrop: true
         , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
@@ -102,11 +102,10 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
         , type: 'attributesContainerPanel'
 	});	
 	
+	this.addEvents('storeChanged');
+	
 	// constructor
 	Sbi.worksheet.designer.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
-    
-    this.on('render', this.initDropTarget, this);
-    
 };
 
 Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel, {
@@ -167,22 +166,6 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	    });
 	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
 	}
-
-	, initDropTarget: function() {
-		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
-			ddGroup: this.ddGroup
-			, onFieldDrop: this.onFieldDrop
-		});
-	}
-
-	, onFieldDrop: function(ddSource) {
-		
-		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
-			// dragging from QueryFieldsPanel
-			this.notifyDropFromQueryFieldsPanel(ddSource);
-		} 	
-	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		var rows = ddSource.dragData.selections;
@@ -210,6 +193,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 				return;
 			}
 			this.store.add([aRow]);
+			this.fireEvent('storeChanged', this.store.getCount());
 		}
 	}
 	
@@ -219,7 +203,6 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 			var record = this.store.getAt(i);
 			attributes.push(record.data);
 		}
-
 		return attributes;
 	}
 	
@@ -231,16 +214,19 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
   			var record = new this.Record(attribute);
   			this.store.add(record); 
   		}
+		this.fireEvent('storeChanged', this.store.getCount());
 	}
 	
 	, removeSelectedValues: function() {
         var sm = this.getSelectionModel();
         var rows = sm.getSelections();
         this.store.remove(rows);
+        this.fireEvent('storeChanged', this.store.getCount());
 	}
 	
 	, removeAllValues: function() {
 		this.store.removeAll(false);
+		this.fireEvent('storeChanged',0);
 	}
 
 });

@@ -134,6 +134,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabDesignerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/crosstab/CrosstabPreviewPanel.js'/></script>
 
+
+
 <script type="text/javascript" src='../js/spagobi/dataset/ParametersGridPanel.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetsContainerPanel.js'/></script>
@@ -153,6 +155,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/LineChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/PieChartDesignerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/TableDesignerPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/QueryFieldsCardPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/QueryFieldsContainerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetFilterContentPanel.js'/></script>
 

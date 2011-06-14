@@ -57,10 +57,7 @@ Sbi.worksheet.designer.TableDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsContainerPanel( {
-		height: 350,
-		ddGroup: this.ddGroup
-	});
+	this.tableDesigner= new Sbi.worksheet.designer.QueryFieldsCardPanel({ddGroup: this.ddGroup});
 	
 	c = {
 		layout: 'fit',
@@ -76,13 +73,13 @@ Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {
 	getFormState: function() {
 		var state = {};
 		state.designer = 'Table';
-		state.visibleselectfields = this.tableDesigner.getContainedValues();
+		state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
 		return state;
 	}
 	
 	, setFormState: function(state) {
 		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
-			this.tableDesigner.setValues(state.visibleselectfields);
+			this.tableDesigner.tableDesigner.setValues(state.visibleselectfields);
 		}
 	}
 	
