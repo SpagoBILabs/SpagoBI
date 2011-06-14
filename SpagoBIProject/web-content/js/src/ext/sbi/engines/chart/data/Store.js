@@ -125,8 +125,12 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Impossible to [getFieldMetaByAlias]. Store has not loaded yet.', 'Wrong function call');
 			}
 			*/
-		
-			var m = this.alias2FieldMetaMap[alias.toUpperCase()];
+			if (Ext.isArray(alias)){
+				alias = alias[0].toUpperCase();
+			}else{
+				alias = alias.toUpperCase();
+			}
+			var m = this.alias2FieldMetaMap[alias];
 			if(m){
 				if(m.length === 0) {
 					m = undefined;
@@ -143,7 +147,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 
 	, getFieldNameByAlias: function(alias) {
 		var fname;
-		var fmeta = this.getFieldMetaByAlias(alias.toUpperCase());
+		var fmeta = this.getFieldMetaByAlias(alias);
 		if(fmeta) {
 			fname = fmeta.name;
 		}

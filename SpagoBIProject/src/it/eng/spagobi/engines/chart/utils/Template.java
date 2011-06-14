@@ -118,7 +118,7 @@ public class Template {
 			ow = getPropertiesDetail(xmlTemplate, ow);
 			ow.write("}\n");
 			ow.flush();			
-			System.out.println("*** template: " + out.toString());
+			//System.out.println("*** template: " + out.toString());
 			logger.debug("ChartConfig: " + out.toString());
 			
 	    }catch (IOException ioe){
