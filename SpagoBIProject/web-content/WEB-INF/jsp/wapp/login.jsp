@@ -215,7 +215,7 @@ else {
 		
 		        		</table>
 		        	</div>
-					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/sfodno_login.png');width:330px;height:310px;margin-top:110px;margin-left:10px;"></div>
+					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/sfodno_login.png');width:330px;height:310px;margin-top:110px;margin-right:20px;"></div>
 	        </div>
         </form>
         <spagobi:error/>
