@@ -10,7 +10,7 @@
             <column name="DOCUMENT_ID" />
         </many-to-one>
         <many-to-one name="sbiThresholdValue" class="it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue" >
-            <column name="id_threshold_value" not-null="true" />
+            <column name="id_threshold_value" not-null="false" />
         </many-to-one>
         <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
             <column name="id_kpi_instance" not-null="true" />
