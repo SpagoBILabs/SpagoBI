@@ -86,3 +86,11 @@ Sbi.settings.formviewer = {
 			valueDelimiter: '--!;;;;;!--'
 		}
 };
+
+Sbi.settings.worksheet = {
+		runtime : {
+			table : {
+				height: 400
+			}
+		}
+};
