@@ -87,7 +87,7 @@ Sbi.execution.ParametersPanel = function(config) {
 	});
 	
 	//var cw = 1/c.columnNo;
-	this.formWidth = (c.columnWidth * c.columnNo) + 40;
+	this.formWidth = (c.columnWidth * c.columnNo) ;
 	var columnsBaseConfig = [];
 	for(var i = 0; i < c.columnNo; i++) {		
 		columnsBaseConfig[i] = {
