@@ -27,25 +27,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <% 
-SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
-ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
-String execContext = instanceO.getExecutionModality();
-
-Integer executionAuditId_office = null;
-
-// identity string for object of the page
-String strUuid = instanceO.getExecutionId();
-//SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
-BIObject biObj = instanceO.getBIObject();
-
-//get the url for document retrieval
-String officeDocUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier);
-officeDocUrl += "&ACTION_NAME=GET_OFFICE_DOC&documentId=" + biObj.getId().toString() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
-// adding parameters for AUDIT updating
-if (executionAuditId_office != null) {
-	officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
-}
-
-response.sendRedirect(officeDocUrl);
+	SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
+	ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
+	String execContext = instanceO.getExecutionModality();
+	
+	Integer executionAuditId_office = null;
+	
+	// identity string for object of the page
+	String strUuid = instanceO.getExecutionId();
+	//SourceBean moduleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
+	BIObject biObj = instanceO.getBIObject();
+	
+	AuditManager auditManager = AuditManager.getInstance();
+	String modality = instanceO.getExecutionModality();
+	String executionRole = instanceO.getExecutionRole();
+	executionAuditId_office = auditManager.insertAudit(biObj, null, userProfile, executionRole, modality);
+	//get the url for document retrieval
+	String officeDocUrl = GeneralUtilities.getSpagoBIProfileBaseUrl(userUniqueIdentifier);
+	officeDocUrl += "&ACTION_NAME=GET_OFFICE_DOC&documentId=" + biObj.getId().toString() + "&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
+	// adding parameters for AUDIT updating
+	if (executionAuditId_office != null) {
+		officeDocUrl += "&" + AuditManager.AUDIT_ID + "=" + executionAuditId_office.toString();
+	}
+	
+	response.sendRedirect(officeDocUrl);
 
 %>
