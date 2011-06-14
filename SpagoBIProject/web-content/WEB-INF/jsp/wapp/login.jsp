@@ -151,50 +151,56 @@ else {
         	} 
         	%>
         	
-	        <div id="content" style="width:100%;">
-		        	<div style="background-color:white;width:500px;height:150px;border:1px solid gray;margin-top:130px;margin-left:50px;" >
-		        		<table>
+	        <div id="content" style="width:100%;overflow:hidden;">
+		        	<div style="float:left;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/login.png');width:530px;height:200px;margin-top:110px;margin-left:50px; " >
+		        	<!--
+		        	DO NOT DELETE THIS COMMENT
+		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
+		        	the problem is that it doesn't work with ie	
+		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
+		        	 -->
+		        	
+		        		<table border=0>
 		        			<tr>
 		        				<td width = "100px">
-		        				   <img src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/loginUser64.png", currTheme)%>"/>
 		        				</td>
 		        				<td>
-		        				    <br/> 
-		        				    <table>
+		        				    <br/> <br/><br/>
+		        				    <table border=0>
 		        				    	<tr>
-		        				    		<td width="150px">
+		        				    		<td width="120px" align=right style="font-family: Arial; font-size: 11pt;">
 		        								<%=msgBuilder.getMessage("username")%>:
 		        							</td>
-		        							<td width="30px">&nbsp;</td>
+		        							<td width="25px">&nbsp;</td>
 		        							<td>
-		        								<input name="userID" type="text" size="30" />
+		        								<input name="userID" type="text" size="25" />
 		        							</td>	
 		        						</tr>
 		        						<tr>
-		        				    	<td width="150px">
+											<td width="120px" align=right style="font-family: Arial ; font-size: 11pt">
 		        								<%=msgBuilder.getMessage("password")%>:
 		        							</td>
-		        							<td width="30px">&nbsp;</td>
+		        							<td width="25px">&nbsp;</td>
 		        							<td>
-		        								<input name="password" type="password" size="30" />
+		        								<input name="password" type="password" size="25" />
 		        							</td>	
 		        						</tr>
 		        						<% if (isInternalSecurity) {%>
-			        						<tr><td>&nbsp;</td></tr>
-			        						<tr>
-			        							<td>&nbsp;</td>
-			        							<td>&nbsp;</td>
-			        							<td width="150px">
-	  		        							  	<a href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
-						             						<%=msgBuilder.getMessage("changePwd")%>
-						             				</a>
-	  		        							</td>
-			        						</tr>
+										<tr><td colspan=3>&nbsp;</td></tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td>&nbsp;</td>
+											<td width="150px" style="font-family: Arial ; font-size: 11pt">
+												<a href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
+														<%=msgBuilder.getMessage("changePwd")%>
+												</a>
+											</td>
+										</tr>
 			        					<% } %>
 		        					</table>	
 		        				</td>
 		        				<td>
-		        					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		        					&nbsp;&nbsp;
 		        					<input type="image" 
 		        					       src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/next32.png", currTheme)%>" 
 		        					       title="<%=msgBuilder.getMessage("login")%>" 
@@ -209,26 +215,20 @@ else {
 		
 		        		</table>
 		        	</div>
+					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/sfodno_login.png');width:330px;height:310px;margin-top:110px;margin-left:10px;"></div>
 	        </div>
         </form>
         <spagobi:error/>
-        <div id="footer" style="width:100%;height:50px;">
-        </div>
-
-      </div>
-    </div>
-    
-    
-    <% 
-String url2="";
-if(ThemesManager.resourceExists(currTheme,"/html/footer.html")){
-	url2 = "/themes/"+currTheme+"/html/footer.html";	
-}
-else {
-	url2 = "/themes/sbi_default/html/footer.html";	
-}
-%>
-	<jsp:include page='<%=url2%>' />
-
+				<% 
+			String url2="";
+			if(ThemesManager.resourceExists(currTheme,"/html/footerLogin.html")){
+				url2 = "/themes/"+currTheme+"/html/footerLogin.html";	
+			}
+			else {
+				url2 = "/themes/sbi_default/html/footerLogin.html";	
+			}
+			%>
+				<jsp:include page='<%=url2%>' />
+   
   </body>
 </html>
