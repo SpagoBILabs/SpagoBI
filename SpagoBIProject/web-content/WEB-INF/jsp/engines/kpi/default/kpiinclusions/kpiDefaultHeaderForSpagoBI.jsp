@@ -108,19 +108,4 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	{
    		docComposition=true;
 	}
-   	
-   AuditManager auditManager = AuditManager.getInstance();
-   // START AUDIT UPDATE
-	try{		
-		if (executionAuditId_chart != null) {
-		    auditManager.updateAudit(executionAuditId_chart, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null,null);
-		}
-	}catch (Exception e) {
-		// Audit Update
-		if(executionAuditId_chart!=null){
-			auditManager.updateAudit(executionAuditId_chart, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getMessage(), null);		
-		}
-		return;    
-	}
-	// END AUDIT UPDATE
 %>
