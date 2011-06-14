@@ -119,7 +119,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       	</table>
 	  </div>
     <div id="content" style="width:100%;">
-      	<div style="width:500px;height:250px;border:0px solid gray;margin-left:50px; margin-top:10px;" >
+      	<div style="width:550px;height:250px;border:0px solid gray;margin-left:50px; margin-top:10px;" >
       
       		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
       			<tr>
@@ -131,7 +131,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   				    <table>		
                   <% if (("").equals(userId)) { %>        				  
         				     <tr class='header-row-portlet-section'>
-        				    		<td class='header-title-column-portlet-section-nogrey' width="150px">
+        				    		<td class='header-title-column-portlet-section-nogrey' width="150px" align="right">
         						      Username : 
         							</td>
         							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
@@ -141,7 +141,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         						</tr> 
       						<% } %>
       						<tr class='header-row-portlet-section'>
-      				    	<td class='header-title-column-portlet-section-nogrey' width="150px">
+      				    	<td class='header-title-column-portlet-section-nogrey' width="150px" align="right">
       								Old Password:
       							</td>
       							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
@@ -150,7 +150,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       							</td>	
       						</tr>
       						<tr class='header-row-portlet-section'>
-      				    	<td class='header-title-column-portlet-section-nogrey' width="150px">
+      				    	<td class='header-title-column-portlet-section-nogrey' width="150px" align="right">
       								New Password:
       							</td>
       							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
@@ -159,7 +159,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
       							</td>	
       						</tr>
       						<tr class='header-row-portlet-section'>
-      				    	<td class='header-title-column-portlet-section-nogrey' width="150px">
+      				    	<td class='header-title-column-portlet-section-nogrey' width="150px" align="right">
       								Retype New Password:
       							</td>
       							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>

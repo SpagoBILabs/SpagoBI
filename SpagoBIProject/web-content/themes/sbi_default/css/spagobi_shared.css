@@ -130,8 +130,8 @@ td.header-title-column-portlet-section {
 
 /* Column with the header title for each section of the SpagoBI portlet without grey background*/
 td.header-title-column-portlet-section-nogrey {
- 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 12px;
+ 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 14px;
 	font-weight: 600;
 	color: #074B88;
 }
