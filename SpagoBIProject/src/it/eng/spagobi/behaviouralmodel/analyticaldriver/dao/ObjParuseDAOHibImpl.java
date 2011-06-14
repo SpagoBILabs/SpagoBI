@@ -446,9 +446,10 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 				"select " +
 				"	distinct(obj.label) " +
 				"from " +
-				"	SbiObjects obj, SbiObjParuse s " +
+				"	SbiObjects obj, SbiObjPar p, SbiObjParuse s " +
 				"where " +
-				"	obj.sbiObjPars.objParId = s.id.sbiObjPar.objParId and " +
+				"	obj.biobjId = p.sbiObject.biobjId and " + 
+				"	p.objParId = s.id.sbiObjPar.objParId and " +
 				"	s.id.sbiParuse.useId = ?" ;
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, useId.intValue());
