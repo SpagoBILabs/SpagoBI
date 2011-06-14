@@ -126,7 +126,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 			}
 			*/
 		
-			var m = this.alias2FieldMetaMap[alias];
+			var m = this.alias2FieldMetaMap[alias.toUpperCase()];
 			if(m){
 				if(m.length === 0) {
 					m = undefined;
@@ -143,7 +143,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 
 	, getFieldNameByAlias: function(alias) {
 		var fname;
-		var fmeta = this.getFieldMetaByAlias(alias);
+		var fmeta = this.getFieldMetaByAlias(alias.toUpperCase());
 		if(fmeta) {
 			fname = fmeta.name;
 		}
@@ -174,6 +174,7 @@ Ext.extend(Sbi.engines.chart.data.Store, Ext.ux.data.PagingJsonStore, {
 				f = {name: f};
 			}
 			f.header = f.header || f.name;
+			f.header = f.header.toUpperCase();
 			if(!this.alias2FieldMetaMap[f.header]) {
 				this.alias2FieldMetaMap[f.header] = new Array();
 			}
