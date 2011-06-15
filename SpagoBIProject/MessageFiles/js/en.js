@@ -279,11 +279,16 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Refresh document
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Rate document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Print docuemnt';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Send document by e-mail';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save document into personal folder';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Save document into personal folder';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Bookmark document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Annotate document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Show document metadata';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Page refresh will cause the lost of actual QBE settings: go on?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
+
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Document has no saved parameters]';
