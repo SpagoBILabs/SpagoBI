@@ -52,12 +52,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	boolean isMaxResultLimitBlocking;
 	boolean isQueryValidationEnabled;
 	boolean isQueryValidationBlocking;
+	String modality;
 	
 	ResponseContainer responseContainer = ResponseContainerAccess.getResponseContainer(request);
+	RequestContainer requestContainer = RequestContainerAccess.getRequestContainer(request);
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
+	SourceBean serviceRequest = requestContainer.getServiceRequest();
 	qbeEngineInstance = (QbeEngineInstance) serviceResponse.getAttribute("ENGINE_INSTANCE");
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale) qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	modality = (String) serviceRequest.getAttribute("MODALITY");
+	if (modality == null || modality.trim().equals("")) {
+		modality = "VIEW";
+	}
 	
 	QbeEngineConfig qbeEngineConfig = QbeEngineConfig.getInstance();
 	
@@ -150,7 +157,13 @@ end DOCTYPE declaration --%>
 
 			formEngineConfig.template = template;
 			formEngineConfig.formValues = formValues;
-			formEngineConfig.config = {region: 'center'};
+			formEngineConfig.config = {
+				region: 'center'
+				, formViewerPageConfig : {
+					showSaveFormButton : <%= modality.equalsIgnoreCase("VIEW") %>
+					, showWorksheetButton : <%= modality.equalsIgnoreCase("VIEW") || modality.equalsIgnoreCase("WORKSHEET_EDIT") %>
+				}
+			};
 			
 			formEnginePanel = new Sbi.formviewer.FormEnginePanel(formEngineConfig);
 	        var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
