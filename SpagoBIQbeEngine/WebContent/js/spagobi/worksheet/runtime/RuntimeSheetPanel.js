@@ -115,7 +115,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){
-			this.addTitle(this.sheetConfig.header,items, true);
+			this.addTitle(this.sheetConfig.header,items, true);		
 		}
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
@@ -130,7 +130,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
 					, layout: 'auto'
 					, autoScroll :true
-					, style:'padding: 15px'					
+					, style:'padding: 5px 15px 10px 15px;'					
 					, tools:  [{
 						id: 'gear'
 				        	, handler: this.applyFilters
@@ -142,7 +142,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			if ( this.sheetConfig.filters.position=='left') {
 				filterConf.width= 257;
 				filterConf.autoWidth = false;
-				filterConf.style = 'float: left; padding: 15px 0px 15px 15px';
+				filterConf.style = 'float: left; padding: 5px 0px 10px 15px';
 			}
 			
 			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, filterConf);
@@ -180,44 +180,47 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	 * @return: the html for the title
 	 */
 	addTitle: function(title, items, header){
-		
-		var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GET_IMAGE_CONTENT_ACTION'
-			, baseParams: {FILE_NAME: title.img}
-		});
-
+		if(title.title!='' && title.img!=null){
 			
-		var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
-		var html = titleHTML;
+			var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName: 'GET_IMAGE_CONTENT_ACTION'
+				, baseParams: {FILE_NAME: title.img}
+			});
+
+				
+			var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
+			var html = titleHTML;
+			
+			if(title.img!=undefined && title.img!=null){
+
+				var imgWidth = '20';//default width 
+				if(title.width!=undefined && title.width!=null && title.width!=''){
+					imgWidth = title.width;
+				}
+
+				var imgHTML = '<img width="'+imgWidth+'px" src="'+loadHeaderImgService+'"></img>';
 		
-		if(title.img!=undefined && title.img!=null){
-
-			var imgWidth = '20';//default width 
-			if(title.width!=undefined && title.width!=null && title.width!=''){
-				imgWidth = title.width;
+				if(title.position=='right') {
+					html = '<table style="border-style: none; width:100%;"><tbody><tr><td>'+titleHTML+'</td><td width="'+ imgWidth+'px">'+imgHTML+'</td></tr></tbody></table>';	
+				} else  if(title.position=='left') {
+					html = '<table style="border-style: none; width:100%;"><tbody><tr><td width="'+imgWidth +'px">'+imgHTML+'</td><td>'+titleHTML+'</td></tr></tbody></table>';
+				} else if(header){ //position is center
+					html = '<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>'+titleHTML;
+				}else {
+					html = titleHTML+'<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>';
+				}
 			}
-
-			var imgHTML = '<img width="'+imgWidth+'px" src="'+loadHeaderImgService+'"></img>';
-	
-			if(title.position=='right') {
-				html = '<table style="border-style: none; width:100%;"><tbody><tr><td>'+titleHTML+'</td><td width="'+ imgWidth+'px">'+imgHTML+'</td></tr></tbody></table>';	
-			} else  if(title.position=='left') {
-				html = '<table style="border-style: none; width:100%;"><tbody><tr><td width="'+imgWidth +'px">'+imgHTML+'</td><td>'+titleHTML+'</td></tr></tbody></table>';
-			} else if(header){ //position is center
-				html = '<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>'+titleHTML;
-			}else {
-				html = titleHTML+'<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>';
-			}
+		
+			var titlePanel = new Ext.Panel({
+				style: "padding: 10px;",
+				border: false,
+				autoHeight: true,
+				html : html
+			});
+			
+		   	items.push(titlePanel);
+			
 		}
-	
-		var titlePanel = new Ext.Panel({
-			style: "padding: 10px;",
-			border: false,
-			autoHeight: true,
-			html : html
-		});
-		
-	   	items.push(titlePanel);
 	}	
 	
 	, getDynamicFilterDefinition: function (aField) {
