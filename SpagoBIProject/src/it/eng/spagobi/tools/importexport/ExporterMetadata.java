@@ -157,6 +157,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiScriptDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiWSDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
@@ -386,12 +387,10 @@ public class ExporterMetadata {
 		logger.debug("IN");
 		Transaction tx = null;
 		Transaction tx2 = null;
-		Integer idToReturn = null;
+		Transaction tx3 = null;
 
 		
 		try {
-			tx = session.beginTransaction();
-			
 			// check if it's not already present a dataset with id  dataSet.getDsId
 			Query hibQuery = session.createQuery(" from SbiDataSetConfig where dsId = " + dataSet.getDsId());
 			List hibList = hibQuery.list();
@@ -419,11 +418,16 @@ public class ExporterMetadata {
 					if(((QueryDataSetDetail)dataSetActiveDetail).getDataSourceLabel()!=null){
 						SbiDataSource hibDataSource = null;
 						String dataSourceLabel = ((QueryDataSetDetail)dataSetActiveDetail).getDataSourceLabel();
-						Criterion labelCriterrion = Expression.eq("label", dataSourceLabel);
-						Criteria criteria = session.createCriteria(SbiDataSource.class);
-						criteria.add(labelCriterrion);	
-						hibDataSource = (SbiDataSource) criteria.uniqueResult();
-						((SbiQueryDataSet)hibDataSetHistory).setDataSource(hibDataSource);	
+						if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
+							IDataSourceDAO dataSourceDao = DAOFactory.getDataSourceDAO();
+							IDataSource ds = dataSourceDao.loadDataSourceByLabel(dataSourceLabel);
+							insertDataSource(ds, session);				
+							Criterion labelCriterrion = Expression.eq("label", dataSourceLabel);
+							Criteria criteria = session.createCriteria(SbiDataSource.class);
+							criteria.add(labelCriterrion);	
+							hibDataSource = (SbiDataSource) criteria.uniqueResult();
+							((SbiQueryDataSet)hibDataSetHistory).setDataSource(hibDataSource);	
+						}
 					}				
 				}else if(dataSetActiveDetail instanceof QbeDataSetDetail){
 					hibDataSetHistory = new SbiQbeDataSet();
@@ -504,6 +508,7 @@ public class ExporterMetadata {
 				hibDataSetConfig.setDescription(dataSet.getDescription());
 				hibDataSetConfig.setName(dataSet.getName());	
 
+				tx = session.beginTransaction();
 				session.save(hibDataSetConfig);
 				tx.commit();
 
