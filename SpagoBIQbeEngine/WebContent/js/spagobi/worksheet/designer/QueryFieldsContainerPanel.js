@@ -88,7 +88,7 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
     		}
         	, keydown: function(e) { 
         		if (e.keyCode === 46) {
-        			this.removeSelectedAttributes();
+        			this.removeSelectedValues();
       	      	}      
       	    }
         	, mouseover: function(e, t) {
@@ -97,9 +97,10 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
         	, mouseout: function(e, t) {
         		this.targetRow = undefined;
         	}
+        	, scope: this
 		}
         , scope: this
-        , type: 'attributesContainerPanel'
+        , type: 'queryFieldsContainerPanel'
 	});	
 	
 	this.addEvents('storeChanged');

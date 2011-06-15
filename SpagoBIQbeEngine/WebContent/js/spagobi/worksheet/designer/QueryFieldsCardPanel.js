@@ -64,15 +64,6 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 		ddGroup: this.ddGroup
 	});
 	this.addEvents();
-	
-	//if the table has no data we show the empty message 
-	this.tableDesigner.on('storeChanged', function(count){
-		if(count>0){
-			this.getLayout().setActiveItem( 1 );
-		}else{
-			this.getLayout().setActiveItem( 0 );
-		}
-	},this);
 		
 	c = {
 			items: [this.emptyMsgPanel, this.tableDesigner]
@@ -87,6 +78,7 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	};
 	
 	this.on('render', this.initDropTarget, this);
+	this.on('afterLayout', this.setActiveItem, this);
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
 };
@@ -116,7 +108,23 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsCardPanel, Ext.Panel, {
 	, onFieldDrop: function(ddSource) {
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			this.tableDesigner.notifyDropFromQueryFieldsPanel(ddSource);
-		} 	
+		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsContainerPanel') {
+			// do nothing (TODO: manage fields order)
+		} else {
+			alert('Unknown drag source');
+		}
+	}
+	
+	, setActiveItem: function() {
+		this.un('afterLayout', this.setActiveItem, this);
+    	if (this.tableDesigner.getContainedValues().length > 0) {
+    		this.getLayout().setActiveItem( 1 );
+    	} else {
+    		this.getLayout().setActiveItem( 0 );
+    	}
+    	
+    	//if the table has no data we show the empty message 
+    	this.tableDesigner.on('storeChanged', this.setActiveItem, this);
 	}
 	
 });
