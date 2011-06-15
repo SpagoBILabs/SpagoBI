@@ -179,24 +179,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				logger.error(e.getMessage(), e);
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
 			}
-		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_EXEC)) {			
-		//	try {
-				Integer dsId = getAttributeAsInteger(DataSetConstants.ID);
-				JSONObject dataSetJSON =getJSONDatasetResult(dsId, profile);
-				if(dataSetJSON!=null){
-					try {
-						writeBackToClient( new JSONSuccess( dataSetJSON ) );
-					} catch (IOException e) {
-						throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-					}
-				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"No data found");
-				}
-			//} catch (Throwable e) {
-			//	logger.error(e.getMessage(), e);
-			//	throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
-			//}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
+		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
 			Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
 			try {
 				dsDao.deleteDataSet(dsID);
