@@ -219,7 +219,7 @@ public class CrosstabQueryCreator {
 					toReturn.append(") ");
 				}				
 				if (i<whereFields.size()-1) {
-					toReturn.append(", ");
+					toReturn.append(" AND ");
 				}
 			}
 		}
