@@ -74,10 +74,10 @@ Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Posizione';
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.title'] = 'Layout';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'] = 'La pagina &grave; composta da un header, dal contenuto e da un footer';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.header'] = 'La pagina &grave; composta da un header e dal contenuto';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer'] = 'La pagina &grave; composta dal contenuto e da un footer';
-Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content'] = 'La pagina &grave; composta solo dal contenuto';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.headerfooter'] = 'La pagina \u00e8 composta da titolo, contenuto e pi\u00e8 di pagina';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.header'] = 'La pagina \u00e8 composta da titolo e contenuto';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.footer'] = 'La pagina \u00e8 composta da contenuto e pi\u00e8 di pagina';
+Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.tooltip.content'] = 'La pagina \u00e8 composta solo dal contenuto';
 
 //===================================================================
 //Sbi.worksheet.designer.SheetContentPanel
