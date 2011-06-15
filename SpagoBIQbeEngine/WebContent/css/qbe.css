@@ -290,6 +290,17 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
 	font: bold 11px tahoma,arial,helvetica,sans-serif;
 	background-color: #D1D1D1;
 }
+
+.crosstab-table-cells-supertotals{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: bold 11px tahoma,arial,helvetica,sans-serif;
+	background-color: #B1B1B1;
+}
 				
 .crosstab-tablebackground{
 	border:1px solid;
