@@ -242,7 +242,9 @@ Sbi.locale.ln['sbi.browser.document.language']  = 'lingua';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'scopo';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'parole chiave';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervallo di aggiornamento';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o pi\u00f9 cartelle e Salva';
 Sbi.locale.ln['sbi.execution.error']  = 'Un errore si \u00ef\u00bf\u0153 verificato durante l\'esecuzione del documento';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento \u00ef\u00bf\u0153 necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';
@@ -634,4 +636,4 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
-Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca etichetta';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
