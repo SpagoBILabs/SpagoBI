@@ -118,10 +118,10 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 						singleChartConfig.plotOptions.pie.dataLabels.formatter = formatter;
 					}
 				}
-				if(singleChartConfig.plotOptions.series){
-					var formatter = this.getFormatterCode(singleChartConfig.plotOptions.series.formatter);
+				if(singleChartConfig.series){
+					var formatter = this.getFormatterCode(singleChartConfig.series.formatter);
 					if (formatter != null){
-						singleChartConfig.plotOptions.series.formatter = formatter;
+						singleChartConfig.series.formatter = formatter;
 					}
 				}
 			}
@@ -243,7 +243,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 				}
 			}
 		}else if (config.plotOptions){ 
-			seriesData = config.plotOptions.series;//other attributes too
+			seriesData = config.series;//other attributes too
 			seriesData.data = this.getSeries();//values from dataset
 			seriesNode.push(seriesData);
 		}
