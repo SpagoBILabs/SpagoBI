@@ -96,7 +96,7 @@ Sbi.engines.chart.data.Store = function(config) {
 			delete config.trasfTypeCd;
 			delete config.numCharts;
 
-			config.url = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'MANAGE_DATASETS_ACTION'
+			config.url = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'EXECUTE_DATASETS_ACTION'
 																 , baseParams:params
 																   });
 			//alert("config.url: " + config.url.toSource());
