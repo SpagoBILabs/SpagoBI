@@ -58,12 +58,8 @@ Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'Move the 
 //DESIGNER TOOLS
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette' ;
-Sbi.locale.ln['sbi.worksheet.designer.title'] = 'Title';
-Sbi.locale.ln['sbi.worksheet.designer.size'] = 'Size';
 Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
 Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
-Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Not valid';
-Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'The values of the fields are not valid or incomplete';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignSheetFiltersPanel

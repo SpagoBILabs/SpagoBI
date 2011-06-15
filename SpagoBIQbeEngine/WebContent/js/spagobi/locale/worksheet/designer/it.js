@@ -67,7 +67,8 @@ Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'Sposta i 
 //DESIGNER TOOLS
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette';
-
+Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Immagine';
+Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Posizione';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
