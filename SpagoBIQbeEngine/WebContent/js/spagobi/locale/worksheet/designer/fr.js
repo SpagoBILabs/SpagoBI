@@ -21,7 +21,9 @@ Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
 Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgTriggerFieldId.tooltip'] = 'S\u00E9lectionnez une immage pour le titre';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgPositionId.tooltip'] = 'S\u00E9lectionnez la position de l\'image dans le bloc du titre';
-
+Sbi.locale.ln['sbi.worksheet.designer.title.position.left'] = 'gauche';
+Sbi.locale.ln['sbi.worksheet.designer.title.position.right'] = 'droite';
+Sbi.locale.ln['sbi.worksheet.designer.title.position.center'] = 'centre';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Non valide';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'Les valeurs des champs sont invalides ou incompl\u00E8tes.';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'] = 'Charg\u00E9 avec succ\u00E8s';
