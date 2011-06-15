@@ -10,7 +10,7 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Vedi tabelle di sintes
 Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Mostra risultati del form usando le tabelle di sintesi e di dettaglio';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Salva il form';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Salva lo stato del form per esecuzioni successive';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Work sheet';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Worksheet';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Apri il designer del documento worksheet';
 
 //===================================================================
