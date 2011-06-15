@@ -640,4 +640,4 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
 //=============================================================
 //Test
 
-Sbi.locale.ln['monia'] = 'Cerca Label';
+Sbi.locale.ln['monia'] = 'Ma Carletto chi è ..........';
