@@ -249,6 +249,7 @@ Sbi.locale.ln['sbi.execution.error']  = 'Un errore si \u00ef\u00bf\u0153 verific
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento \u00ef\u00bf\u0153 necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';
 
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi il form, posiziona il documento su una o pi\u00f9 cartelle e salva';
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Selezione ruolo';
 Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Ruolo';
@@ -277,11 +278,15 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il docu
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Dai un voto al documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Stampa il documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Invia il documento per posta elettronica';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Salva il documento nella mia cartella personale';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Salva il documento nella mia cartella personale';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Aggiungi il documento ai preferiti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Aggiungi note al documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Mostra i metadati associati al documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Il refresh della pagina comporta la perdita della impostazione attuale del QBE: proseguire?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Salva';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Salva come ...';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'Vedi documento';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Modifica';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Parametri Salvati';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Il documento non ha parametri salvati]';

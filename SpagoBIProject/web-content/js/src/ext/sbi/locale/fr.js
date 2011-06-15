@@ -259,7 +259,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata']                   
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print']                                                = 'Imprimer le document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating']                                               = 'Noter le document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh']                                              = 'Actualiser l\'ex\u00E9cution du document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.save']                                                 = 'Enregistrer le document dans un repertoire personnel';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder']                               = 'Enregistrer le document dans un repertoire personnel';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send']                                                 = 'Envoyer le document par e-mail';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] 										  = 'En actualisant la page la strucure actualle de la page serat perdu: voulez vous poursuivre?';
 Sbi.locale.ln['sbi.execution.jrxmlExport']                                                                = 'JRXML';
