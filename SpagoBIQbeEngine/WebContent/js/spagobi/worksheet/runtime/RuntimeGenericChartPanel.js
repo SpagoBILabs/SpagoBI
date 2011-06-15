@@ -109,10 +109,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	        success : function(response, opts) {
 	        	this.fireEvent('contentloaded');
 	        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-	        	if(this.rendered){
-	        		this.createChart();
-	        	}else{
-	        		this.on('afterrender',function(){this.createChart();}, this);
+	        	if (this.isEmpty()) {
+	    			Ext.Msg.show({
+	 				   title: LN('sbi.qbe.messagewin.info.title'),
+	 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+	 				   buttons: Ext.Msg.OK,
+	 				   icon: Ext.MessageBox.INFO
+	    			});
+	        	} else {
+		        	if(this.rendered){
+		        		this.createChart();
+		        	}else{
+		        		this.on('afterrender',function(){this.createChart();}, this);
+		        	}
 	        	}
 	        },
 	        scope: this,
@@ -121,6 +130,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 				Sbi.exception.ExceptionHandler.handleFailure(response, options);
 			}      
 		});
+	}
+
+	, isEmpty : function () {
+		var measures = this.dataContainerObject.columns.node_childs;
+		return measures === undefined;
 	}
 	
 	/**
