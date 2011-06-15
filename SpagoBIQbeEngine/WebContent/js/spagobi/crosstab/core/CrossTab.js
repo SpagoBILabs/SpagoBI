@@ -1241,7 +1241,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	if(this.withColumnsSum){
 	   		this.datapanelColumnSum = this.getColumnsSumPanel(tpl, columnsForView, this.withRowsSum);
 	   		this.table.add(this.datapanelColumnSum);
-    		this.table.add(this.emptypanelBottomRight);
+	   		// add the total of totals
+	   		if(this.withRowsSum && this.withColumnsSum){
+	   			this.table.add(this.superSumPanel);	
+	   		}
     	}
     	
    		this.add(this.table);
@@ -2143,8 +2146,15 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	
 		if(this.misuresOnRow){
 			var sumColumns = this.calculateTotalSum();
+			
+	    	var superSumColumnsArray= new Array();
+	    	var superSumColumns=0;			
+	   		//we use superSumColumnsArray, superSumColumns for the total of totals
+	   		
 	   		for(var j=0; j<sumColumns.length; j++){
+	   			superSumColumns=0;
 	   			for(var i=0; i<sumColumns[j].length; i++){
+	   				superSumColumns = superSumColumns+parseFloat(sumColumns[j][i]);
 					var a = new Array();
 					a.push(sumColumns[j][i]);
 					a.push('[sumC'+j+','+i+']');
@@ -2153,8 +2163,10 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 					a.push('totals');
 					sumColumnsStore.push(a);
 	   			}
+	   			superSumColumnsArray.push(superSumColumns);
 	   		}
 	   		dataViewHeight = (this.rowHeight)*sumColumns.length;
+	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, dataViewHeight, this.columnWidth);
 		}else{
 	   		var sumColumns = this.columnsSum(true);
 	   		for(var j=0; j<sumColumns.length; j++){
@@ -2210,8 +2222,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		
 		if(!this.misuresOnRow){//there is one column for each measure
 			var sumRows = this.calculateTotalSum();
+	    	//we use superSumColumnsArray for the total of totals
+	    	var superSumColumnsArray= new Array();
+   			for(var i=0; i<sumRows.length; i++){
+   				superSumColumnsArray[i] =0;
+   			}
 	   		for(var j=0; j<sumRows[0].length; j++){
 	   			for(var i=0; i<sumRows.length; i++){
+	   				superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
 					var a = new Array();
 					a.push(sumRows[i][j]);
 					a.push('[sumR'+i+','+j+']');
@@ -2222,6 +2240,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   			}
 	   		}
 	   		dataViewWidth=this.columnWidth*sumRows.length;
+	   		this.buildSuperTotalPanel(superSumColumnsArray, tpl, this.rowHeight, dataViewWidth);
 		}else{
 	   		var sumRows = this.rowsSum(true);
 	   		for(var j=0; j<sumRows.length; j++){
@@ -2255,6 +2274,56 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	    })
     	});
     	return datapanelRowSum;
+    }
+    
+    /**
+	* Build the pannel of total of totals
+	*/
+    , buildSuperTotalPanel: function(superSumColumnsArray, tpl, dataViewHeight, dataViewWidth){
+    	
+		if(this.withRowsSum && this.withColumnsSum){
+    	
+	    	
+	    	var storeSumColumns = new Ext.data.ArrayStore({
+	    	    autoDestroy: true,
+	    	    storeId: 'myStore3',
+	    	    fields: [
+	    	             {name: 'name'},
+	    	             'divId',
+	    	             {name: 'datatype'},
+	    	             {name: 'format'},
+	    	             {name: 'celltype'}
+	    	    ]
+	    	});
+	    	alert(superSumColumnsArray.toSource());
+	    	var sumSuperColumnsStore = new Array();
+	   		for(var j=0; j<superSumColumnsArray.length; j++){
+	   			a = new Array();
+	   			a.push(superSumColumnsArray[j]);
+	   			a.push('[sumCT'+j+']');
+				a.push('float');
+				a.push(null);
+				a.push('supertotals');
+				sumSuperColumnsStore.push(a);
+	   		}
+	
+			var cellCls = 'crosstab-row-sum-panel-container  crosstab-none-top-border-panel';
+	   		
+	   		storeSumColumns.loadData(sumSuperColumnsStore);
+	   		
+	   		this.superSumPanel = new Ext.Panel({
+	    		cellCls: cellCls,
+	            width: dataViewWidth,
+	            height: dataViewHeight,
+	            border: false,
+	    	    layout:'fit',
+	    	    items: new Ext.DataView({
+	    	        store: storeSumColumns,
+	    	        tpl: tpl,
+	    	        itemSelector: 'div.crosstab-table-cells'
+	    	    })
+	    	});
+		}    	
     }
     
     , showCFWizard: function(node, modality) {
