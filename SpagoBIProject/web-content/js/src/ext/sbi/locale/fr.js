@@ -202,6 +202,8 @@ Sbi.locale.ln['sbi.browser.document.name']                                      
 Sbi.locale.ln['sbi.browser.document.objectve']                                                            = 'objectif';
 Sbi.locale.ln['sbi.browser.document.profiledVisibility']                                                  = 'conditions de vibilit\u00E9';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']                                                      = 'fr\u00E9quence d\'actualisation';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Avant d\'enregistrer le document, remplir les champs Nom et Libell\u00e9e et s\u00e9lectionner au moins un r\u00e9pertoire o\u00f9 vous d\u00e9sirez le placer';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Remplir la forme et placer le document dans au moins un r\u00e9pertoire. Enfin enregistrer.';
 Sbi.locale.ln['sbi.browser.document.relname']                                                             = 'relname';
 Sbi.locale.ln['sbi.browser.document.stateCode']                                                           = 'code \u00E9tat';
 Sbi.locale.ln['sbi.browser.document.stateId']                                                             = 'ID \u00E9tat';
