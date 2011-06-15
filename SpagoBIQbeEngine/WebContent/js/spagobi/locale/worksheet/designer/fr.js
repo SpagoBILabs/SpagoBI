@@ -160,3 +160,5 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Concepteur table aplatie';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Champs visibles';
+Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Glissez et d\u00E9posez ici attributs et mesures que voulez voir dans le tableau';

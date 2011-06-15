@@ -15,7 +15,6 @@ Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.title'] = 'Workshee
 //===================================================================
 
 Sbi.locale.ln['sbi.worksheet.designer.title'] = 'Titolo';
-Sbi.locale.ln['sbi.worksheet.designer.title.size'] = 'Dimensione';
 Sbi.locale.ln['sbi.worksheet.designer.title.image'] = 'Immagine';
 Sbi.locale.ln['sbi.worksheet.designer.title.position'] = 'Posizione';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgTriggerFieldId.tooltip'] = 'Seleziona un immagine per il titolo';
