@@ -4,6 +4,10 @@
  <ACTION name="MANAGE_DATASETS_ACTION" class="it.eng.spagobi.tools.dataset.service.ManageDatasets" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ 
+ <ACTION name="EXECUTE_DATASETS_ACTION" class="it.eng.spagobi.tools.dataset.service.ExecuteDatasets" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 
 </ACTIONS>
 
