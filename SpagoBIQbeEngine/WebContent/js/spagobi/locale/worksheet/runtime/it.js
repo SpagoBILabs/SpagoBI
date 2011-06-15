@@ -4,7 +4,7 @@ Ext.ns("Sbi.locale");
 //===================================================================
 //Sbi.worksheet.runtime.WorkSheetsRuntimePanel 
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Worksheet preview';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.title']= 'Anteprima Worksheet';
 
 
 //===================================================================
@@ -16,6 +16,6 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'
 //===================================================================
 //Sbi.worksheet.designer.WorkSheetPreviewPage
 //===================================================================
-Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Worksheet Preview';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Anteprima Worksheet';
 
 
