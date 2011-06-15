@@ -610,7 +610,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		if (Sbi.user.functionalities.contains('SaveIntoFolderFunctionality') && !this.executionInstance.SBI_SNAPSHOT_ID) {
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-saveIntoPersonalFolder' 
-				, tooltip: LN('sbi.execution.executionpage.toolbar.save')
+				, tooltip: LN('sbi.execution.executionpage.toolbar.saveintopersonalfolder')
 		     	, scope: this
 		    	, handler : this.saveExecution
 			}));
