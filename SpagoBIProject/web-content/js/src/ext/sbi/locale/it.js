@@ -634,11 +634,4 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
-Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
-
-
-//=============================================================
-//Test
-
-Sbi.locale.ln['monia'] = 'Ma Carletto chi � ..........';
-Sbi.locale.ln['monia'] = 'Perchè mi dici chi è ..........';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca etichetta';
