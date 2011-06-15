@@ -146,8 +146,8 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		}
 		
 		//checks plotOptions.series configuration			
-		if(this.serieAlias .length == 0 && dataConfig.plotOptions && dataConfig.plotOptions.series){
-			var str = dataConfig.plotOptions.series.alias;
+		if(this.serieAlias .length == 0 && dataConfig.plotOptions && dataConfig.series !== undefined){
+			var str = dataConfig.series.alias;
 			if (str) {
 				this.serieAlias = str.split(",");
 			}
