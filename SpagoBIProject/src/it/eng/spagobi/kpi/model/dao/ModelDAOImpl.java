@@ -8,6 +8,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
 import it.eng.spagobi.kpi.model.bo.Model;
 import it.eng.spagobi.kpi.model.metadata.SbiKpiModel;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Example;
@@ -380,24 +382,27 @@ public class ModelDAOImpl extends AbstractHibernateDAO implements IModelDAO {
 			tx = aSession.beginTransaction();
 			toReturn = new ArrayList();
 			
-			SbiDomains sbiDomains = new SbiDomains();
-			sbiDomains.setDomainCd("MODEL_ROOT");
-			SbiKpiModel modelExample = new SbiKpiModel();
-
-			Criteria crit = aSession.createCriteria(SbiKpiModel.class);
-			crit.add(Example.create(modelExample)).createCriteria("modelType")
-					.add(Example.create(sbiDomains));
+//			SbiDomains sbiDomains = new SbiDomains();
+//			sbiDomains.setValueCd("GENERIC_ROOT");
+//			SbiKpiModel modelExample = new SbiKpiModel();
+//
+//			Criteria crit = aSession.createCriteria(SbiKpiModel.class);
+//			crit.add(Example.create(modelExample)).createCriteria("modelType")
+//					.add(Example.create(sbiDomains));
 			
+			String query = " from SbiKpiModel n where n.modelType.domainCd = 'MODEL_ROOT'";
+			
+
 			List toTransform = null;
+			
 			if (fieldOrder != null && typeOrder != null) {
 				if (typeOrder.toUpperCase().trim().equals("ASC"))
-					crit.addOrder(Order.asc(getModelProperty(fieldOrder)));
+					query = " from SbiKpiModel n where n.modelType.domainCd = 'MODEL_ROOT' order by "+fieldOrder+" ASC";
 				if (typeOrder.toUpperCase().trim().equals("DESC"))
-					crit.addOrder(Order.desc(getModelProperty(fieldOrder)));
-				toTransform = crit.list();
-			} else {
-				toTransform = crit.list();
-			}
+					query = " from SbiKpiModel n where n.modelType.domainCd = 'MODEL_ROOT' order by "+fieldOrder+" DESC";
+			} 
+			Query hibQuery = aSession.createQuery(query);
+			toTransform=  hibQuery.list();
 
 			for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
 				SbiKpiModel sbiKpiModel = (SbiKpiModel) iterator.next();
