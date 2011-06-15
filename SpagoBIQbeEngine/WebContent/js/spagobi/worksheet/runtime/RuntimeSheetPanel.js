@@ -143,10 +143,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 				filterConf.width= 257;
 				filterConf.autoWidth = false;
 				filterConf.style = 'float: left; padding: 5px 0px 10px 15px';
-			} else {
+			}
+			/* this was an attempt to make the filters panel collapsible, but it has a side-effect: combo-boxes are narrow
+			 * when displayed on top of a chart
+			 else {  
 				filterConf.collapsible = true;
 				filterConf.collapsed = true;
 			}
+			*/
 			
 			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, filterConf);
 
