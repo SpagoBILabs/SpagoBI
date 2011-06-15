@@ -235,7 +235,9 @@ Sbi.locale.ln['sbi.browser.document.language']  = 'language';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'objectve';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'keywords';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'refresh interval';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document fill in Name and Label and select at least one folder where to place it';
 
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the Form and place your document in at least one folder then Save';
 Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Select a default role';
 Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Role: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'No default role';
