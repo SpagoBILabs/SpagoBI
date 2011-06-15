@@ -146,7 +146,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		}
 		
 		//checks plotOptions.series configuration			
-		if(this.serieAlias .length == 0 && dataConfig.plotOptions && dataConfig.series !== undefined){
+		if(this.serieAlias.length == 0 && dataConfig.plotOptions && dataConfig.series !== undefined){
 			var str = dataConfig.series.alias;
 			if (str) {
 				this.serieAlias = str.split(",");
@@ -363,7 +363,12 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     					//alert(this.name+" "+ev.point.x +" " +ev.point.y);
     		    		for(var i = 0; i< drill.param.length; i++){
     		    			if(drill.param[i].type == 'CATEGORY'){
-    		    				params+= drill.param[i].name +"="+ev.point.category;
+    		    				if(ev.point.category !== undefined){
+    		    					params+= drill.param[i].name +"="+ev.point.category;
+    		    				}else{
+    		    					params+= drill.param[i].name +"="+ev.point.name;
+    		    				}
+    		    				
     		    			
     			    			if(i != drill.param.length -1 ){
     			    				params+="&";
