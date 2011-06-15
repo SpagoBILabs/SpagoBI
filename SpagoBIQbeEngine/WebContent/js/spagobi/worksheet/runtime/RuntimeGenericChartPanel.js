@@ -112,7 +112,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	        	if(this.rendered){
 	        		this.createChart();
 	        	}else{
-	        		this.on('afterrender',function(){alert('2');this.createChart();}, this);
+	        		this.on('afterrender',function(){this.createChart();}, this);
 	        	}
 	        },
 	        scope: this,
