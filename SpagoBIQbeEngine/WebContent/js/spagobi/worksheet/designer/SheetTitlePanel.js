@@ -147,10 +147,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 			fieldLabel:     LN('sbi.worksheet.designer.title.position'),
 			name:           'position',
 			displayField:   'position',
-			valueField:     'position',
+			valueField:     'value',
 			anchor:			'95%',
 			store:          new Ext.data.JsonStore({
-				fields : ['position'],
+				fields : ['position', 'value'],
 				data   : this.getAvailablePositions()
 			})
 		});
@@ -169,10 +169,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 	
 	//returns the array with the available positions for the image 
 	getAvailablePositions:function(){
-		var array = [];
-		array.push({position: 'left'});
-		array.push({position: 'center'});
-		array.push({position: 'right'});
+		var array = [];	
+		array.push({value: 'left', position:  LN('sbi.worksheet.designer.title.position.left')});
+		array.push({value: 'center', position:  LN('sbi.worksheet.designer.title.position.center')});
+		array.push({value: 'right', position:  LN('sbi.worksheet.designer.title.position.right')});
 		return array;
 	},
 	
@@ -246,10 +246,10 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 				this.titlePanel.setValue(values.title);
 			}
 			if(values.img!=undefined && values.img!=null){
-				this.titlePanel.setValue(values.img);
+				this.imgTriggerField.setValue(values.img);
 			}
 			if(values.position!=undefined && values.position!=null){
-				this.titlePanel.setValue(values.position);
+				this.imgPosition.setValue(values.position);
 			}
 		}
 	}
