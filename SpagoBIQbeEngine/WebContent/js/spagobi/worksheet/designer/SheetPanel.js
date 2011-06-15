@@ -173,7 +173,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(sheetState.header!==null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
-		if(sheetState.filters !== undefined && sheetState.filters !== null && sheetState.filters.length>0){
+		if(sheetState.filters !== undefined && sheetState.filters !== null && sheetState.filters.filters !== null  && sheetState.filters.filters.length>0){
 			var filters = sheetState.filters.filters;
 			this.filtersPanel.setFilters(filters);
 			this.filtersPositionPanel = sheetState.filters.position;
