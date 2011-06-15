@@ -56,7 +56,7 @@ Sbi.locale.ln['sbi.generic.result'] = 'Modifiche salvate con successo';
 Sbi.locale.ln['sbi.generic.serviceError'] = 'Service Error';
 Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Server response vuota';
 Sbi.locale.ln['sbi.generic.savingItemError'] = 'Errore nel salvataggio dell\'oggetto';
-Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Errore nell\'eliminazione dell\'oggetto. Controllare gli eventuali oggetti a cui \u00ef\u00bf\u0153 associato e poi riprovare!';
+Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Errore nell\'eliminazione dell\'oggetto. Controllare gli eventuali oggetti a cui \u00e8 associato e poi riprovare!';
 Sbi.locale.ln['sbi.generic.warning'] = 'Attenzione';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confermi l\'eliminazione dell\'oggetto?';
@@ -93,10 +93,10 @@ Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Importa sotto albero';
 Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Prima salvare l\'istanza di modello';
 Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Istanza di Kpi';
 Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Nodo Sorgente';
-Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Lista delle periodicit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Lista delle periodicit\u00e0';
 
-Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicit\u00ef\u00bf\u0153';
-Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Aggiungi Periodicit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicit\u00e0';
+Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Aggiungi Periodicit\u00e0';
 Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Tipo di Chart';
 Sbi.locale.ln['sbi.modelinstances.saveHistory'] = 'Salva Storico';
 Sbi.locale.ln['sbi.modelinstances.restoreDefault'] = 'Ripristina Default';
@@ -107,7 +107,7 @@ Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleziona un nodo da cancellar
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Target';
 Sbi.locale.ln['sbi.modelinstances.code'] = 'Codice Modello';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copia tutto l\'albero';
-Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'L\'indicatore \u00ef\u00bf\u0153 associato ad una periodicit\u00ef\u00bf\u0153. Se si conferma la cancellazione verr\u00ef\u00bf\u0153 cancellata anche la periodicit\u00ef\u00bf\u0153.';
+Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'L\'indicatore \u00e8 associato ad una periodicit\u00e0. Se si conferma la cancellazione verr\u00e0 cancellata anche la periodicit\u00e0.';
 //END List Detail messages
 
 //START kpi interface messages
@@ -137,7 +137,7 @@ Sbi.locale.ln['sbi.thresholds.min'] = 'Min';
 Sbi.locale.ln['sbi.thresholds.max'] = 'Max';
 Sbi.locale.ln['sbi.thresholds.minVal'] = 'Valore Minimo';
 Sbi.locale.ln['sbi.thresholds.maxVal'] = 'Valore Massimo';
-Sbi.locale.ln['sbi.thresholds.severity'] = 'Severit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.thresholds.severity'] = 'Severit\u00e0';
 Sbi.locale.ln['sbi.thresholds.color'] = 'Colore';
 Sbi.locale.ln['sbi.thresholds.value'] = 'Valore';
 Sbi.locale.ln['sbi.thresholds.values'] = 'Valori';
@@ -150,14 +150,14 @@ Sbi.locale.ln['sbi.grants.loadtrees'] = 'Carica alberi';
 Sbi.locale.ln['sbi.grants.panelTitle'] = 'Gestione Abilitazioni';
 Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista Abilitazioni';
 Sbi.locale.ln['sbi.grants.trees.tab'] = 'Alberature';
-Sbi.locale.ln['sbi.grants.hide.leafs'] ='Nascondi unit\u00ef\u00bf\u0153 organizzative foglie';
+Sbi.locale.ln['sbi.grants.hide.leafs'] ='Nascondi unit\u00e0 organizzative foglie';
 Sbi.locale.ln['sbi.grants.hide.nogrants.kpi'] ='Nascondi kpi senza abilitazioni';
-Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Nascondi unit\u00ef\u00bf\u0153 organizzative senza abilitazioni';
-Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizza unit\u00ef\u00bf\u0153 organizzative';
+Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Nascondi unit\u00e0 organizzative senza abilitazioni';
+Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizza unit\u00e0 organizzative';
 Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Attendere prego...';
-Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='Sincronizzazione delle unit\u00ef\u00bf\u0153 organizzative in corso...';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='Sincronizzazione delle unit\u00e0 organizzative in corso...';
 Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='Operazione eseguita';
-Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Unit\u00ef\u00bf\u0153 organizzative sincronizzate!';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Unit\u00e0 organizzative sincronizzate!';
 Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Abilita tutti i discendenti';
 Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disabilita tutti i discendenti';
 //END GRANTS messages
@@ -191,7 +191,7 @@ Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Ordina';
 Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Cerca';
 
 
-Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'La cartella selezionata \u00ef\u00bf\u0153 vuota';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'La cartella selezionata \u00e8 vuota';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'Vista a lista';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Vista a gruppi';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.waitmsg']  = 'Attendere prego ...';
@@ -221,7 +221,7 @@ Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancella';
 Sbi.locale.ln['engine']  = 'motore';
 Sbi.locale.ln['description']  = 'descrizione';
 
-Sbi.locale.ln['sbi.browser.document.label']  = 'label';
+Sbi.locale.ln['sbi.browser.document.label']  = 'etichetta';
 Sbi.locale.ln['sbi.browser.document.name']  = 'nome';
 Sbi.locale.ln['sbi.browser.document.extendedDescription']  = 'descrizione lunga';
 Sbi.locale.ln['sbi.browser.document.description']  = 'descrizione breve';
@@ -230,14 +230,14 @@ Sbi.locale.ln['sbi.browser.document.creationUser']  = 'utente';
 Sbi.locale.ln['sbi.browser.document.creationDate']  = 'data di creazione';
 Sbi.locale.ln['sbi.browser.document.typeCode']  = 'tipo';
 Sbi.locale.ln['sbi.browser.document.encrypt']  = 'encryption flag';
-Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'condizioni di visibilit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'condizioni di visibilit\u00e0';
 Sbi.locale.ln['sbi.browser.document.datasource']  = 'datasource';
 Sbi.locale.ln['sbi.browser.document.dataset']  = 'dataset';
 Sbi.locale.ln['sbi.browser.document.uuid']  = 'uuid';
 Sbi.locale.ln['sbi.browser.document.relname']  = 'relname';
 Sbi.locale.ln['sbi.browser.document.stateCode']  = 'codice di stato';
 Sbi.locale.ln['sbi.browser.document.stateId']  = 'id di stato';
-Sbi.locale.ln['sbi.browser.document.functionalities']  = 'funzionalit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.browser.document.functionalities']  = 'funzionalit\u00e0';
 Sbi.locale.ln['sbi.browser.document.language']  = 'lingua';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'scopo';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'parole chiave';
@@ -245,8 +245,8 @@ Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervallo di aggiornam
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o pi\u00f9 cartelle e Salva';
-Sbi.locale.ln['sbi.execution.error']  = 'Un errore si \u00ef\u00bf\u0153 verificato durante l\'esecuzione del documento';
-Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento \u00ef\u00bf\u0153 necessario specificarne l\'id';
+Sbi.locale.ln['sbi.execution.error']  = 'Un errore si \u00e8 verificato durante l\'esecuzione del documento';
+Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento \u00e8 necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';
 
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi il form, posiziona il documento su una o pi\u00f9 cartelle e salva';
@@ -294,7 +294,7 @@ Sbi.locale.ln['sbi.execution.viewpoints.name'] = 'nome';
 Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'descrizione';
 Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'proprietario';
 Sbi.locale.ln['sbi.execution.viewpoints.creationDate'] = 'data di creazione';
-Sbi.locale.ln['sbi.execution.viewpoints.scope'] = 'visibilit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.execution.viewpoints.scope'] = 'visibilit\u00e0';
 Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Parametri salvati correttamente';
 
 Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Esecuzioni schedulate';
@@ -336,8 +336,8 @@ Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Attendere prego...';
 Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Salvataggio metadati in corso';
 
 //UDP - User Defined Properties
-Sbi.locale.ln['sbi.udp.udpManagement'] = 'Gestione Propriet\u00ef\u00bf\u0153';
-Sbi.locale.ln['sbi.udp.udpList'] = 'Lista Propriet\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.udp.udpManagement'] = 'Gestione Propriet\u00e0';
+Sbi.locale.ln['sbi.udp.udpList'] = 'Lista Propriet\u00e0';
 Sbi.locale.ln['sbi.udp.add'] = 'Aggiungi';
 Sbi.locale.ln['sbi.udp.detail'] = 'Dettaglio';
 Sbi.locale.ln['sbi.udp.save'] = 'Salva';
@@ -434,7 +434,7 @@ Sbi.locale.ln['sbi.alarms.alarmAutoDisabled'] = 'Automatico';
 Sbi.locale.ln['sbi.alarms.alarmName'] = 'Nome';
 Sbi.locale.ln['sbi.alarms.alarmLabel'] = 'Label';
 Sbi.locale.ln['sbi.alarms.alarmDescr'] = 'Descrizione';
-Sbi.locale.ln['sbi.alarms.alarmModality'] = 'Modalit\u00ef\u00bf\u0153';
+Sbi.locale.ln['sbi.alarms.alarmModality'] = 'Modalit\u00e0';
 Sbi.locale.ln['sbi.alarms.SMS'] = 'SMS';
 Sbi.locale.ln['sbi.alarms.MAIL'] = 'MAIL';
 Sbi.locale.ln['sbi.alarms.alarmMailUrl'] = 'Url';
@@ -466,7 +466,7 @@ Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No Threshold and/or Kpi Instance sele
 Sbi.locale.ln['sbi.execution.sendTo'] = 'Invia a';
 //Save into personal folder
 Sbi.locale.ln['sbi.execution.stpf.ok'] = 'Documento salvato correttamente';
-Sbi.locale.ln['sbi.execution.stpf.alreadyPresent'] = 'Documento gi\u00ef\u00bf\u0153 presente nella cartella personale';
+Sbi.locale.ln['sbi.execution.stpf.alreadyPresent'] = 'Documento gi\u00e0 presente nella cartella personale';
 Sbi.locale.ln['sbi.execution.stpf.error'] = 'Documento NON salvato per problemi tecnici';
 //Remember me
 Sbi.locale.ln['sbi.execution.saveRememberMe'] = 'Ricordami!! (salva questa esecuzione tra i miei Hot Links)';
@@ -474,8 +474,8 @@ Sbi.locale.ln['sbi.rememberme.name'] = 'Nome';
 Sbi.locale.ln['sbi.rememberme.descr'] = 'Descrizione';
 Sbi.locale.ln['sbi.rememberme.save'] = 'Salva';
 Sbi.locale.ln['sbi.rememberme.missingName'] = 'Indicare un nome';
-Sbi.locale.ln['sbi.rememberme.saveOk'] = 'L\'esecuzione \u00ef\u00bf\u0153 stata salvata correttamente';
-Sbi.locale.ln['sbi.rememberme.alreadyExisting'] = 'L\'esecuzione \u00ef\u00bf\u0153 gi\u00ef\u00bf\u0153 presente negli Hot Links';
+Sbi.locale.ln['sbi.rememberme.saveOk'] = 'L\'esecuzione \u00e8 stata salvata correttamente';
+Sbi.locale.ln['sbi.rememberme.alreadyExisting'] = 'L\'esecuzione \u00e8 gi\u00e0 presente negli Hot Links';
 Sbi.locale.ln['sbi.rememberme.errorWhileSaving'] = 'Errore durante il salvataggio';
 
 Sbi.locale.ln['sbi.execution.rating'] = 'Rating documento';
@@ -560,7 +560,7 @@ Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Apri il wizard QbE';
 Sbi.locale.ln['sbi.ds.help'] = 'Aiuto';
 Sbi.locale.ln['sbi.ds.pars'] = 'Attributi di Profilo disponibili';
 
-Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI \u00ef\u00bf\u0153 necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
+Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI \u00e8 necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
@@ -641,4 +641,4 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Cancella filtri';
 Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Selecziona Categoria';
 Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Cerca Name';
-Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Label';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Cerca Etichetta';
