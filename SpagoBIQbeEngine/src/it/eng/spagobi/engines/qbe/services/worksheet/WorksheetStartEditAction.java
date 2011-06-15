@@ -57,6 +57,7 @@ public class WorksheetStartEditAction extends AbstractQbeEngineAction {
 			if (qbeEngineInstance.getFormState()!=null) {
 				//publisher for the smart filter edit
 				publisherName = "WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER";
+				serviceRequest.setAttribute("MODALITY", "WORKSHEET_EDIT");
 			}
 			
 			serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME, publisherName);

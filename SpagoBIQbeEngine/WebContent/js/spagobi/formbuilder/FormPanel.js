@@ -60,7 +60,7 @@ Sbi.formbuilder.FormPanel = function(config) {
 	});
 	this.services['getFormPreview'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_FORM_PREVIEW_ACTION'
-		, baseParams: params
+		, baseParams: {'MODALITY' : 'SMARTFILTER_EDIT'}
 	});
 		
 	if(Sbi.settings && Sbi.settings.formbuilder && Sbi.settings.formbuilder.formPanel) {
