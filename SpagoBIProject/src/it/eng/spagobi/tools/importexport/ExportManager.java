@@ -492,6 +492,15 @@ public class ExportManager implements IExportManager {
 				IDataSource ds = dataSourceDao.loadDataSourceByID(objataSourceId);
 				exporter.insertDataSource(ds, session);
 			}
+			
+			// Engine if present, and data source if engine uses data source
+			Engine engine = biobj.getEngine();
+			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
+				Integer engineDataSourceId = engine.getDataSourceId();
+				IDataSource ds = dataSourceDao.loadDataSourceByID(engineDataSourceId);
+				exporter.insertDataSource(ds, session);
+			}
+			
 			// Data set if present
 			Integer objDataSetId = biobj.getDataSetId();
 			if (objDataSetId != null) {
@@ -500,13 +509,6 @@ public class ExportManager implements IExportManager {
 				//IDataSet dataset = dataSetDao.loadActiveIDataSetByID(objDataSetId);
 				exporter.insertDataSet(genericDs, session);
 
-			}
-			// Engine if present, and data source if engine uses data source
-			Engine engine = biobj.getEngine();
-			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
-				Integer engineDataSourceId = engine.getDataSourceId();
-				IDataSource ds = dataSourceDao.loadDataSourceByID(engineDataSourceId);
-				exporter.insertDataSource(ds, session);
 			}
 
 			exporter.insertEngine(engine, session);   
