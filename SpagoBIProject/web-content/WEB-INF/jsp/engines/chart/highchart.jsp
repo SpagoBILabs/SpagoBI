@@ -65,13 +65,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String theme = (String) sbModuleResponse.getAttribute("themeHighchart");
 	Integer numCharts = (Integer) sbModuleResponse.getAttribute("numCharts");
 	String subType = (String) sbModuleResponse.getAttribute("subType");
+	String divHeightDetail = divHeight;
+	String divHeightMaster = divHeightDetail;
+	//only for master/detail chart sets the height of the master chart as 1/3 of the detail height
+	if (subType != null && subType.equalsIgnoreCase("MasterDetail")) {		
+		Integer tmpDetailHeight = 0;
+		String postFix = "";
+		if (divHeightDetail.indexOf("%")>=0){
+			postFix = "%";
+			tmpDetailHeight =Integer.valueOf(divHeightDetail.substring(0,divHeightDetail.indexOf("%")));
+		}else if (divHeightMaster.indexOf("px")>=0){
+			postFix = "px";
+			tmpDetailHeight =Integer.valueOf(divHeightDetail.substring(0,divHeightDetail.indexOf("px")));
+		}
+		divHeightMaster = String.valueOf(Math.round(tmpDetailHeight/3)) + postFix;
+	}
+	
 	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
 	String docLabel = (String)sbModuleResponse.getAttribute("documentLabel");
 	
 	//only for test... delete with production
-	
 	//System.out.println("template in jsp: " + template.toString());
 	//System.out.println("dsPars in jsp: " + dsPars.toString());
 	//System.out.println("theme in jsp: " + theme);
@@ -154,8 +169,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	</script>
 	
 	<%if (subType != null && subType.equalsIgnoreCase("MasterDetail")) {%>
-		<div id="<%=divId%>__detail" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
-		<div id="<%=divId%>__master" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
+		<div id="<%=divId%>__detail" style="height:<%=divHeightDetail%>; width:<%=divWidth%>; float:left;"></div>
+		<div id="<%=divId%>__master" style="height:<%=divHeightMaster%>; width:<%=divWidth%>; float:left;"></div>
 	<% }else{
 		  for (int i=0; i<numCharts; i++ ) { %>
 			<div id="<%=divId%>__<%=i%>" style="height:<%=divHeight%>; width:<%=divWidth%>; float:left;"></div>
