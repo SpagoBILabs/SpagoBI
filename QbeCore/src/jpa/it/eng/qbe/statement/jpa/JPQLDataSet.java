@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
+import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 
 import java.util.ArrayList;
@@ -79,7 +81,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		javax.persistence.Query jpqlQuery;
 		boolean overflow = false;
 		int resultNumber;
-		
+		it.eng.qbe.query.Query query = this.statement.getQuery();
+		Map params = this.getParamsMap();
+		if (params != null && !params.isEmpty()) {
+			this.updateParameters(query, params);
+		}
 		String statementStr = statement.getQueryString();
 		
 		try {
@@ -280,5 +286,51 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		
 	}
 	
-
+	public void updateParameters(it.eng.qbe.query.Query query, Map parameters) {
+		logger.debug("IN");
+		List whereFields = query.getWhereFields();
+		Iterator whereFieldsIt = whereFields.iterator();
+		while (whereFieldsIt.hasNext()) {
+			WhereField whereField = (WhereField) whereFieldsIt.next();
+			if (whereField.isPromptable()) {
+				String key = getParameterKey(whereField.getRightOperand().values[0]);
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+						whereField.getRightOperand().lastValues = promptValues;
+					}
+				}
+			}
+		}
+		List havingFields = query.getHavingFields();
+		Iterator havingFieldsIt = havingFields.iterator();
+		while (havingFieldsIt.hasNext()) {
+			HavingField havingField = (HavingField) havingFieldsIt.next();
+			if (havingField.isPromptable()) {
+				String key = getParameterKey(havingField.getRightOperand().values[0]);
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+						havingField.getRightOperand().lastValues = promptValues; 
+					}
+				}
+			}
+		}
+		logger.debug("OUT");
+	}
+	
+	private String getParameterKey(String fieldValue) {
+		int beginIndex = fieldValue.indexOf("P{");
+		int endIndex = fieldValue.indexOf("}");
+		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
+			return fieldValue.substring(beginIndex + 2, endIndex);
+		} else {
+			return null;
+		}
+		
+	}
 }
