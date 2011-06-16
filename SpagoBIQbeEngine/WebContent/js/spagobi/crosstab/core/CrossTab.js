@@ -2295,7 +2295,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	             {name: 'celltype'}
 	    	    ]
 	    	});
-	    	alert(superSumColumnsArray.toSource());
+
 	    	var sumSuperColumnsStore = new Array();
 	   		for(var j=0; j<superSumColumnsArray.length; j++){
 	   			a = new Array();
