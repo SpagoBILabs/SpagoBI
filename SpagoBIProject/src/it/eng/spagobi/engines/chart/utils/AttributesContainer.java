@@ -48,7 +48,7 @@ public class AttributesContainer {
 			String att=attributesToQuery[i];
 			Object value=request.getParameter(att);
 			if(value!=null){
-				System.out.println(value);
+//				System.out.println(value);
 				parameters.put(att, value);
 			}
 		}
