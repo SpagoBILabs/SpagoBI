@@ -71,7 +71,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
         			// Patch for hsql..  TODO
         			if ("double".equals(fieldType.trim())){
         				fieldMeta.setType(Class.forName("java.lang.Double"));
-        			}if ("int".equals(fieldType.trim())){
+        			}else if ("int".equals(fieldType.trim())){
         				fieldMeta.setType(Class.forName("java.lang.Integer"));
         			}else{
         				fieldMeta.setType(Class.forName(fieldType.trim()));
