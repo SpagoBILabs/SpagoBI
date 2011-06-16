@@ -636,9 +636,9 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 						// if par is a string or a date close with '', else not
 						String value = "";
 						if(type.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER) || type.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)){
-							value = (String)values.get(0);
+							value = "'" + (String)values.get(0) + "'";
 							for(int k = 1; k< values.size() ; k++){
-								value = value + "," + (String)values.get(k);
+								value = value + ",'" + (String)values.get(k) + "'";
 							}
 						}
 						else{
