@@ -55,20 +55,31 @@ public class ClassLoaderManager{
 			
 			logger.debug("jar file to be loaded: " + jarFile.getAbsoluteFile());
 			
-			if(qbeClassLoader != null) {
-				logger.debug("Found a cached loader of type: " + qbeClassLoader.getClass().getName());
-				logger.debug("Set as current loader the one previusly cached");
-				Thread.currentThread().setContextClassLoader(qbeClassLoader);
+			if(qbeClassLoader!=null){
+				if (qbeClassLoader instanceof DynamicClassLoader) {
+					DynamicClassLoader dcl = (DynamicClassLoader) qbeClassLoader;
+					//check if the cached loader has the same jar of the one we need now
+					if ((dcl.getJarFile().equals(jarFile))) {
+						logger.debug("Found a cached loader of type: "+ qbeClassLoader.getClass().getName());
+						logger.debug("Set as current loader the one previusly cached");
+						Thread.currentThread().setContextClassLoader(qbeClassLoader);
+						return qbeClassLoader;//if so we return the cached one
+					} else {//else we set the previous class loader
+						Thread.currentThread().setContextClassLoader(dcl.getParent());
+					}
+				}else{
+					logger.debug("Found a cached loader of type: "+ qbeClassLoader.getClass().getName());
+					logger.debug("Set as current loader the one previusly cached");
+					Thread.currentThread().setContextClassLoader(qbeClassLoader);
+				}
 			}
-			
+			//update the class loader 
 			qbeClassLoader = updateCurrentClassLoader(jarFile);
 			
 		} catch (Exception e) {
 			logger.error("Impossible to update current class loader", e);
 		}
-		
 
-		
 		return qbeClassLoader;
 	}
 	
@@ -144,3 +155,4 @@ public class ClassLoaderManager{
 	}
 	
 }
+

@@ -267,5 +267,12 @@ public class DynamicClassLoader extends URLClassLoader {
 			return super.getResources(descriptorPath);
 		}
 	}
+
+	public File getJarFile() {
+		return jarFile;
+	}
+	
+	
 	
 }
+
