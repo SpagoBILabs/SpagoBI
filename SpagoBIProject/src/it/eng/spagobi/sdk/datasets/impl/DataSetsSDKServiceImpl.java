@@ -257,8 +257,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				dataSet.setParamsMap(parametersFilled);
 			}
 			dataSet.loadData();
+			toReturn = dataSet.getDataStore().toXml();
+			/*
 			JSONDataWriter writer= new JSONDataWriter();
 			toReturn = (writer.write(dataSet.getDataStore())).toString(); 
+			*/
 		} catch(NotAllowedOperationException e) {
 			throw e;
 		} catch(Exception e) {
