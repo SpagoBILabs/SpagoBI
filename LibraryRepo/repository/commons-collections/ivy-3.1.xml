@@ -22,8 +22,12 @@
 		revision="3.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Apache License 2.0" url="http://www.apache.org/licenses/" />
+		<description homepage="http://jakarta.apache.org/commons/collections">
+		Commons Collections
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

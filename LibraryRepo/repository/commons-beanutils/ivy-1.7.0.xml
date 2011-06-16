@@ -22,8 +22,12 @@
 		revision="1.7.0"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Apache License 2.0" url="" />
+		<description homepage="">
+		Commons BeanUtils 1.7.0
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

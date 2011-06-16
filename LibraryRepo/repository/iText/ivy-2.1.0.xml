@@ -22,8 +22,12 @@
 		revision="2.1.0"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Mozilla Public License" url="http://www.mozilla.org/MPL/MPL-1.1.html" />
+		<description homepage="	http://www.lowagie.com/iText/">
+		iText, a Free Java-PDF library
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

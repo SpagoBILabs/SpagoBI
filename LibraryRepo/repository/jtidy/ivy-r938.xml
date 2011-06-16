@@ -22,8 +22,12 @@
 		revision="r938"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Java HTML Tidy License" url="http://jtidy.svn.sourceforge.net/viewvc/jtidy/trunk/jtidy/LICENSE.txt?revision=95" />
+		<description homepage="	http://jtidy.sourceforge.net">
+		jtidy
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

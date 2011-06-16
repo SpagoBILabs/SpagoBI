@@ -22,8 +22,12 @@
 		revision="2.7"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="New BSD License" url="http://olex.openlogic.com/licenses/jamon-bsd-license" />
+		<description homepage="http://jamonapi.sourceforge.net/">
+		JAMon (Java Application Monitor)
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

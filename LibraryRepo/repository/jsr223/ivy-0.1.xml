@@ -22,8 +22,12 @@
 		revision="0.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Lesser General Public License v2.1" url="http://olex.openlogic.com/licenses/lgpl-v2_1-license" />
+		<description homepage="http://www.judoscript.com/articles/jsr223.html">
+		jsr223
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

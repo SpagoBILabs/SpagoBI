@@ -22,8 +22,12 @@
 		revision="1.0"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="The Apache Software License, Version 2.0" url="	/LICENSE.txt" />
+		<description homepage="http://jakarta.apache.org/commons/${pom.artifactId.substring(8)}/">
+		Commons-IO
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

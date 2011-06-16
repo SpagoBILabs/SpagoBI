@@ -22,8 +22,12 @@
 		revision="3.8.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Common Public License Version 1.0" url="http://www.opensource.org/licenses/cpl1.0.txt" />
+		<description homepage="	http://junit.org">
+		junit
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

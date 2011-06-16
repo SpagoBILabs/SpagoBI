@@ -22,8 +22,12 @@
 		revision="1.1.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="New BSD License" url="http://olex.openlogic.com/licenses/jaxen-bsd-1_5-license" />
+		<description homepage="	http://jaxen.codehaus.org/">
+		jaxen
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

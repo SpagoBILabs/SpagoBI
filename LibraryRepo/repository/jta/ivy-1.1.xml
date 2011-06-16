@@ -22,8 +22,12 @@
 		revision="1.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Sun Entitlement Licenses" url="http://olex.openlogic.com/licenses/sun-javamail-binary-license" />
+		<description homepage="	http://java.sun.com/products/jta">
+		jta
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

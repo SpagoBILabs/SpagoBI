@@ -22,8 +22,12 @@
 		revision="1.5.0"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0" />
+		<description homepage="http://ehcache.org/license.html">
+		ehcache
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

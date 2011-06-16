@@ -22,8 +22,12 @@
 		revision="1.4"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Common Development and Distribution License (CDDL) v1.0" url="https://glassfish.dev.java.net/public/CDDLv1.0.html" />
+		<description homepage="https://glassfish.dev.java.net/javaee5/mail/">
+		JavaMail API
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

@@ -4,7 +4,12 @@
 		module="lucene-core"
 		revision="3.0.0"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="The Apache Software License, Version 2.0 and Lesser General Public License v2.1" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+		<description homepage="http://dev.mysql.com/doc/mysql-monitor/2.0/en/license-apache-commons-validator.html">
+		lucene-core
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

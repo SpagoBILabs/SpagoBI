@@ -4,7 +4,12 @@
 		module="activation"
 		revision="1.1"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="Common Development and Distribution License (CDDL) v1.0" url="https://glassfish.dev.java.net/public/CDDLv1.0.html" />
+		<description homepage="http://java.sun.com/products/javabeans/jaf/index.jsp">
+		JavaBeans Activation Framework (JAF)
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

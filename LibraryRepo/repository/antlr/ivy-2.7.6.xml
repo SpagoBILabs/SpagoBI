@@ -4,7 +4,12 @@
 		module="antlr"
 		revision="2.7.6"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="ANTLR 3 BSD License" url="http://www.antlr.org/license.html" />
+		<description homepage="http://www.antlr.org/">
+		AntLR
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>
