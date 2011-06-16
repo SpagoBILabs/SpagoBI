@@ -101,6 +101,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		var user = document.getElementById('userID');
 		password.value = userV;
 		user.value = userV;
+	//	document.forms[0].submit();
 	}
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
@@ -166,7 +167,7 @@ else {
         	%>
         	
 	        <div id="content" style="width:100%;overflow:hidden;">
-		        	<div style="float:left;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/login.png');width:570px;height:310px;margin-top:80px;margin-left:50px; " >
+		        	<div style="float:left;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/login_demo.png');background-repeat:no-repeat !important;width:570px;height:310px;margin-top:80px;margin-left:50px; " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
 		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
