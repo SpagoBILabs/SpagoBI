@@ -226,7 +226,7 @@ else {
 		        			</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td class='header-title-column-portlet-section-nogrey' width="150px">
+								<td class='header-title-column-portlet-section-nogrey'>
 									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
 										SpagoBI Demo users' credentials:<br/>
 										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser')"><b>biuser/biuser</b></a>(business user)<br/>
