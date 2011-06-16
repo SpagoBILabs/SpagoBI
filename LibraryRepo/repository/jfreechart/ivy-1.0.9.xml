@@ -22,8 +22,12 @@
 		revision="1.0.9"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="GNU Lesser General Public Licence" url="http://www.gnu.org/licenses/lgpl.txt" />
+		<description homepage="http://www.jfree.org/jfreechart/">
+		jfreechart
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

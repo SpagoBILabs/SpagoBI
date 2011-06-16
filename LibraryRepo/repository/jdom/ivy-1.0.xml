@@ -4,7 +4,12 @@
 		module="jdom"
 		revision="1.0"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="Apache License 1.1 Modified" url="http://olex.openlogic.com/licenses/jdom-bsd-license" />
+		<description homepage="http://www.jdom.org/">
+		jdom
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

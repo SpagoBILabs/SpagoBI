@@ -22,8 +22,12 @@
 		revision="1.1.4"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/" />
+		<description homepage="http://dev.mysql.com/doc/mysql-monitor/2.0/en/license-apache-commons-validator.html">
+		Validator 1.1.4
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

@@ -4,7 +4,12 @@
 		module="groovy-all"
 		revision="1.5.6"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="The Apache Software License, Version 2.0" url="/LICENSE.txt" />
+		<description homepage="	http://groovy.codehaus.org/">
+		Groovy
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

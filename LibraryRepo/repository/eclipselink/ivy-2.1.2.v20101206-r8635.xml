@@ -22,8 +22,12 @@
 		revision="2.1.2.v20101206-r8635"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="TEclipse Public License and the Eclipse Distribution Licensed (BSD)" url="http://www.eclipse.org/eclipselink/" />
+		<description homepage="">
+		eclipselink
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

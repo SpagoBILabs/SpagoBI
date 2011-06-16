@@ -22,8 +22,12 @@
 		revision="3.0.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Apache License" url="http://www.apache.org/licenses/LICENSE-2.0" />
+		<description homepage="http://jakarta.apache.org/commons/httpclient/">
+		HttpClient
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

@@ -22,8 +22,12 @@
 		revision="3.1"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="Public Domain" url="http://creativecommons.org/licenses/publicdomain" />
+		<description homepage="http://backport-jsr166.sourceforge.net/">
+		Backport of JSR 166
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

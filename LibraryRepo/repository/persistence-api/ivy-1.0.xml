@@ -4,7 +4,12 @@
 		module="persistence-api"
 		revision="1.0"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="Common Development and Distribution License (CDDL) v1.0" url="http://www.sun.com/cddl/cddl.html" />
+		<description homepage="http://www.jcp.org/en/jsr/detail?id=220">
+		Enterprise JavaBeans (EJB) 3.0
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

@@ -4,7 +4,12 @@
 		module="dom4j"
 		revision="1.6.1"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="BSD style license" url="http://dom4j.sourceforge.net/dom4j-1.6.1/license.html" />
+		<description homepage="	http://dom4j.org">
+		dom4j
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

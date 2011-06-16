@@ -4,7 +4,12 @@
 		module="cas-client-core"
 		revision="3.1.6"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="JA-SIG License for Use" url="http://www.ja-sig.org/products/cas/overview/license/" />
+		<description homepage="http://www.ja-sig.org/products/cas/">
+		JA-SIG CAS Client for Java
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

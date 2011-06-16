@@ -22,8 +22,12 @@
 		revision="2.0.8"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="The Apache Software License, Version 2.0" url="/LICENSE.txt" />
+		<description homepage="http://svn.apache.org/repos/asf/jakarta/oro/trunk/LICENSE">
+		jakarta-oro
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>
