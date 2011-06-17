@@ -30,8 +30,8 @@ public class DatasetMetadataParser {
 		HashMap<String , Class> metadataMap=new HashMap<String, Class>();
 		for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
 			IFieldMetaData fieldMetaData=dataStoreMetaData.getFieldMeta(i);
-			String name=fieldMetaData.getName();
-			Class type=fieldMetaData.getType();
+			String name = fieldMetaData.getAlias() != null ? fieldMetaData.getAlias() : fieldMetaData.getName();
+			Class type = fieldMetaData.getType();
 			if(!metadataMap.containsKey(name)){
 				metadataMap.put(name, type);
 			}
@@ -45,7 +45,7 @@ public class DatasetMetadataParser {
 			String type = metadataMap.get(name)!=null ? ((Class)metadataMap.get(name)).toString() : "";
 			metaXML += "<ROW" +
 			" NAME=\"" + name + "\"" +
-			" TYPE=\"" + type + "\"" +
+			" TYPE=\"" + type.toString() + "\"" +
 			"/>";		
 		}
 		metaXML += "</ROWS></METADATALIST>";
