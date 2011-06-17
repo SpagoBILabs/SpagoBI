@@ -4,7 +4,12 @@
 		module="slf4j-log4j12"
 		revision="1.6.1"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="MIT license" url="http://www.slf4j.org/license.html" />
+		<description homepage="	http://www.slf4j.org">
+		SLF4J LOG4J-12 Binding
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

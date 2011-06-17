@@ -22,8 +22,12 @@
 		revision="2.2.0"
 		status="release"
 		publication="20110512131058"
-		default="true"
-	/>
+		default="true">
+		<license name="GNU LESSER GENERAL PUBLIC LICENSE Version 2.1" url="http://www.ow2.org/view/ActivitiesDashboard/Spago" />
+		<description homepage="http://www.spagoworld.org/xwiki/bin/view/Spago">
+		spago-core
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

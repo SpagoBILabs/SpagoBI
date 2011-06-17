@@ -22,8 +22,8 @@
   <resolvers>
     <chain name="chain">
       <filesystem name="libraries">
-        <ivy pattern="C:/progetti/spagobi2.0/workspace/LibraryRepo/repository/[module]/ivy-[revision].xml" />
-        <artifact pattern="C:/progetti/spagobi2.0/workspace/LibraryRepo/repository/[module]/[artifact]-[revision].[ext]" />
+        <ivy pattern="/home/spinelli/EclipsWorkspace/trunk/LibraryRepo/repository/[module]/ivy-[revision].xml" />
+        <artifact pattern="/home/spinelli/EclipsWorkspace/trunk/LibraryRepo/repository/[module]/[artifact]-[revision].[ext]" />
       </filesystem>
  <!--
       <ibiblio name="ibiblio" m2compatible="true" />
