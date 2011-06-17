@@ -717,7 +717,7 @@ public class SDKObjectsConverter {
 		SDKDataStoreFieldMetadata toReturn = new SDKDataStoreFieldMetadata();
 		Map properties = fieldMetadata.getProperties();
 		toReturn.setProperties(new HashMap(properties));
-		toReturn.setName(fieldMetadata.getName());
+		toReturn.setName(fieldMetadata.getAlias() != null ? fieldMetadata.getAlias() : fieldMetadata.getName());
 		toReturn.setClassName(fieldMetadata.getType().getName());
 		logger.debug("OUT");
 		return toReturn;
