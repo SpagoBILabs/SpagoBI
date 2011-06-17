@@ -4,7 +4,12 @@
 		module="wss4j"
 		revision="1.5.7"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="GNU LESSER GENERAL PUBLIC LICENSE Version 2.1" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+		<description homepage="http://ws.apache.org/wss4j/">
+		wss4j
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

@@ -4,7 +4,12 @@
 		module="xmlsec"
 		revision="1.4.2"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+		<description homepage="http://www.openaselect.org/trac/openaselect/browser/utility/trunk/lib/xmlsec-LICENSE.txt?rev=473">
+		xmlsec
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

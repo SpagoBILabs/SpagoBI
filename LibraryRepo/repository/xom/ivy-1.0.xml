@@ -4,7 +4,12 @@
 		module="xom"
 		revision="1.0"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="LGPL" url="http://www.gnu.org/copyleft/lesser.html" />
+		<description homepage="	http://www.xom.nu">
+		Apache POI
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>
