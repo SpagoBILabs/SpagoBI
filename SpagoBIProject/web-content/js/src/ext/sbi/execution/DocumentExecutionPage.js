@@ -106,29 +106,31 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		 win_metadata.show();
 	}, this);
 	
-	this.toolbar.on('beforerefresh', function (formState) {
-		this.fireEvent('beforerefresh', this, this.executionInstance, formState);
-	}, this);
-	
-	this.toolbar.on('beforetoolbarinit', function () {
-		this.fireEvent('beforetoolbarinit', this, this.toolbar);
-	}, this);
-	
-	this.toolbar.on('moveprevrequest', function () {
-		this.fireEvent('moveprevrequest');
-	}, this);
-	
-	this.toolbar.on('backToAdmin', function () {
-		this.fireEvent('backToAdmin');
-	}, this);
-	
-	this.toolbar.on('collapse3', function () {
-		this.fireEvent('collapse3');
-	}, this);
-	
-	this.toolbar.on('refreshexecution', function () {
-		this.refreshExecution();
-	}, this);
+	if(this.toolbar){
+		this.toolbar.on('beforerefresh', function (formState) {
+			this.fireEvent('beforerefresh', this, this.executionInstance, formState);
+		}, this);
+		
+		this.toolbar.on('beforetoolbarinit', function () {
+			this.fireEvent('beforetoolbarinit', this, this.toolbar);
+		}, this);
+		
+		this.toolbar.on('moveprevrequest', function () {
+			this.fireEvent('moveprevrequest');
+		}, this);
+		
+		this.toolbar.on('backToAdmin', function () {
+			this.fireEvent('backToAdmin');
+		}, this);
+		
+		this.toolbar.on('collapse3', function () {
+			this.fireEvent('collapse3');
+		}, this);
+		
+		this.toolbar.on('refreshexecution', function () {
+			this.refreshExecution();
+		}, this);
+	}
     
 	var items = [this.miframe, this.southPanel];
 	if (config.hideParametersPanel === undefined || config.hideParametersPanel === false) {
@@ -168,9 +170,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
-			
-			this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.northPanel,this.parametersPanel,this.shortcutsPanel);
-			
+			if(this.toolbar){
+				this.toolbar.synchronizeToolbar( executionInstance,this.miframe,this.southPanel,this.northPanel,this.parametersPanel,this.shortcutsPanel);
+			}
 			if(synchronizeSliders === undefined || synchronizeSliders === true) {
 
 				this.parametersPanel.synchronize(executionInstance);
@@ -188,7 +190,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		      					this.fireEvent('loadurlfailure', content.errors);
 		      				} else {
 		      					this.miframe.getFrame().setSrc( content.url );
-		      					this.toolbar.updateFrame(this.miframe);
+		      					if(this.toolbar){
+		      						this.toolbar.updateFrame(this.miframe);
+		      					}
 		      				}
 		      			} 
 		      		} else {
