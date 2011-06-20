@@ -74,12 +74,6 @@ Sbi.tools.dataset.QbeDatasetBuilder = function(config) {
 	Sbi.tools.dataset.QbeDatasetBuilder.superclass.constructor.call(this, c);
 	
 	this.addEvents('gotqbequery');
-	
-	this.on('show', function() {
-		if (this.mustRefreshQbeView()) {
-			this.refreshQbeView();
-		}
-	}, this);
 
 };
 
@@ -96,12 +90,9 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 						// input object
 	, qbeParameters : null // query parameters: it must be set in the
 							// constructor's input object
-	, currentDatasourceLabel : null
-	, currentDatamart : null
-	, currentDatasetId : null
-	, nextDatasourceLabel : null
-	, nextDatamart : null
-	, nextDatasetId : null
+	, datasourceLabel : null
+	, datamart : null
+	, datasetId : null
 	
 	, init: function () {
 		
@@ -154,27 +145,32 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 		this.iframe.sendMessage(message); // set the query
 	}
 	
-	, setDatasourceLabel: function(datasourceLabel) {
-		this.nextDatasourceLabel = datasourceLabel;
+	, getDatasourceLabel: function() {
+		return this.datasourceLabel;
 	}
 	
-	, setDatamart: function(datamart) {
-		this.nextDatamart = datamart;
+	, getDatamart: function() {
+		return this.datamart;
+	}
+	
+	, getDatasetId: function() {
+		return this.datasetId;
 	}
 	
 	, setDatasetId: function(datasetId) {
-		this.nextDatasetId = datasetId;
+		this.datasetId = datasetId;
 	}
 	
 	, getQbeViewUrl: function() {
 		var url = Sbi.config.qbeDatasetBuildUrl
 			+ '&DATASOURCE_LABEL='
-			+ this.currentDatasourceLabel
+			+ this.datasourceLabel
 			+ '&DATAMART_NAME=' 
-			+ this.currentDatamart;
+			+ this.datamart;
 		return url;
 	}
 
+	/*
 	, mustRefreshQbeView: function() {
 		var toReturn =
 				this.currentDatasourceLabel != this.nextDatasourceLabel
@@ -190,5 +186,6 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 		var newUrl = this.getQbeViewUrl();
 		this.iframe.getFrame().setSrc( newUrl );
 	}
+	*/
 	
 });

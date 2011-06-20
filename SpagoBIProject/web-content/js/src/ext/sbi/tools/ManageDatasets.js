@@ -96,6 +96,11 @@ Sbi.tools.ManageDatasets = function(config) {
 		this.activateDsVersionsGrid(null, rec, row);
 		this.activateDsTestTab(this.datasetTestTab);
 		this.getForm().loadRecord(rec);
+		// destroy the qbe query builder, if existing
+		if (this.qbeDataSetBuilder != null) {
+			this.qbeDataSetBuilder.destroy();
+			this.this.qbeDataSetBuilder = null;
+		}
 	}, this);
 	
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
@@ -128,7 +133,8 @@ Ext.extend(
 				detailFieldUserIn: null,
 				detailFieldDateIn: null,
 				detailFieldVersNum: null,
-				detailFieldVersId: null
+				detailFieldVersId: null,
+				qbeDataSetBuilder: null
 
 				, modifyToolbar : function(tabpanel, panel){
 					var itemId = panel.getItemId();
@@ -1522,39 +1528,57 @@ Ext.extend(
 						return;
 					}
 					var datamart = this.qbeDatamarts.getValue();
-					if (this.qbeDataSetBuilder === undefined) {
-						this.qbeDataSetBuilder = new Sbi.tools.dataset.QbeDatasetBuilder(
-								{
-									currentDatasourceLabel : datasourceLabel,
-									currentDatamart : datamart,
-									currentDatasetId : datasetId,
-									jsonQuery : this.qbeJSONQuery.getValue(),
-									qbeParameters : this.manageParsGrid.getParsArray(),
-									modal : true,
-									width : this.getWidth() - 50,
-									height : this
-											.getHeight() - 50,
-									listeners : {
-										hide : 
-											{
-												fn : function(
-													theQbeDatasetBuilder) {
-														theQbeDatasetBuilder.getQbeQuery(); // asynchronous
-												}
-												, scope: this
-											},
-										gotqbequery : {
-												fn: this.manageQbeQuery
-												, scope: this
-										}
-									}
-								});
-					}
-					this.qbeDataSetBuilder.setDatasourceLabel( datasourceLabel );
-					this.qbeDataSetBuilder.setDatamart( datamart );
-					this.qbeDataSetBuilder.setDatasetId( datasetId );
+					this.initQbeDataSetBuilder(datasourceLabel, datamart, datasetId);
 					this.qbeDataSetBuilder.show();
 				}
+				
+				, initQbeDataSetBuilder: function(datasourceLabel, datamart, datasetId) {
+					if (this.qbeDataSetBuilder === null) {
+						this.initNewQbeDataSetBuilder(datasourceLabel, datamart, datasetId);
+						return;
+					}
+					if (this.mustRefreshQbeView(datasourceLabel, datamart, datasetId)) {
+						this.qbeDataSetBuilder.destroy();
+						this.initNewQbeDataSetBuilder(datasourceLabel, datamart, datasetId);
+						return;
+					}
+				}
+				
+				, initNewQbeDataSetBuilder: function(datasourceLabel, datamart, datasetId) {
+					this.qbeDataSetBuilder = new Sbi.tools.dataset.QbeDatasetBuilder({
+						datasourceLabel : datasourceLabel,
+						datamart : datamart,
+						datasetId : datasetId,
+						jsonQuery : this.qbeJSONQuery.getValue(),
+						qbeParameters : this.manageParsGrid.getParsArray(),
+						modal : true,
+						width : this.getWidth() - 50,
+						height : this.getHeight() - 50,
+						listeners : {
+							hide : 
+								{
+									fn : function(theQbeDatasetBuilder) {
+											theQbeDatasetBuilder.getQbeQuery(); // asynchronous
+									}
+									, scope: this
+								},
+							gotqbequery : {
+									fn: this.manageQbeQuery
+									, scope: this
+							}
+						}
+					});
+				}
+				
+				, mustRefreshQbeView: function(datasourceLabel, datamart, datasetId) {
+					if (datasourceLabel === this.qbeDataSetBuilder.getDatasourceLabel()
+							&& datamart === this.qbeDataSetBuilder.getDatamart()
+							&& datasetId === this.qbeDataSetBuilder.getDatasetId()) {
+						return false;
+					}
+					return true;
+				}
+				
 				//METHOD TO BE OVERRIDDEN IN EXTENDED ELEMENT!!!!!
 				,info : function() {		
 					var win_info_2;
