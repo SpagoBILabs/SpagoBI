@@ -316,7 +316,7 @@ function saveDocument(goBack) {
 				</div>
 				<div class='div_detail_form'>
 					<input class='portlet-form-input-field' type="text" style='width:230px;' 
-							name="name" id="doc_name" value="<%=StringEscapeUtils.escapeHtml(obj.getName())%>" maxlength="40" />
+							name="name" id="doc_name" value="<%=StringEscapeUtils.escapeHtml(obj.getName())%>" maxlength="200" />
 					&nbsp;*
 				</div>
 				<div class='div_detail_label'>
