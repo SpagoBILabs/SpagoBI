@@ -1187,7 +1187,6 @@ public class JPQLStatement extends AbstractStatement {
 			entity = getDataSource().getModelStructure().getEntity( entityUniqueName );
 			selectedEntities.add(entity);
 		}
-		
 		return selectedEntities;
 	}
 	
@@ -1237,9 +1236,9 @@ public class JPQLStatement extends AbstractStatement {
 			sqlQuery = sqlQuery.append(stk.nextToken());
 			if(i<queryParameters.size()){
 				parameterValue = queryParameters.get(i);
-				if(parameterValue.startsWith("'") && parameterValue.endsWith("'")){
-					parameterValue = parameterValue.substring(1,parameterValue.length()-1);
-				}
+//				if(parameterValue.startsWith("'") && parameterValue.endsWith("'")){
+//					parameterValue = parameterValue.substring(1,parameterValue.length()-1);
+//				}
 				sqlQuery.append(parameterValue);
 				i++;
 			}
@@ -1259,7 +1258,8 @@ public class JPQLStatement extends AbstractStatement {
 			sqlQuery2.append(",");
 			i++;
 		}
-		sqlQuery2.append(sqlQuery2.substring(0,sqlQuery2.length()-2)+sqlQuery.substring(fromPosition-1));
+		sqlQuery2.delete(sqlQuery2.length()-1,sqlQuery2.length());
+		sqlQuery2.append(sqlQuery.substring(fromPosition-1));
 		
 		logger.debug("JPQL QUERY: "+sqlQuery2);
 		
@@ -1294,8 +1294,18 @@ public class JPQLStatement extends AbstractStatement {
 			}
 			return l;
 		}else if(e instanceof ConstantExpression){
+			ConstantExpression expr = ((ConstantExpression)e);
 			List<String> l =  new ArrayList<String>();
-			l.add(""+((ConstantExpression)e).getValue());
+			if(expr.getValue() instanceof String){
+				String s = (String) expr.getValue();
+				if(s.startsWith("'") && s.endsWith("'")){
+					l.add(s);
+				}else{
+					l.add("'"+s+"'");
+				}
+			}else{
+				l.add(""+expr.getValue());
+			}
 			return l;
 		}else if(e instanceof RelationExpression){
 			Expression fchild = ((RelationExpression)e).getFirstChild();
