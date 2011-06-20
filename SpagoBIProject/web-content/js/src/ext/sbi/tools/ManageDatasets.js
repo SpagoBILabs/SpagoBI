@@ -99,7 +99,7 @@ Sbi.tools.ManageDatasets = function(config) {
 		// destroy the qbe query builder, if existing
 		if (this.qbeDataSetBuilder != null) {
 			this.qbeDataSetBuilder.destroy();
-			this.this.qbeDataSetBuilder = null;
+			this.qbeDataSetBuilder = null;
 		}
 	}, this);
 	
