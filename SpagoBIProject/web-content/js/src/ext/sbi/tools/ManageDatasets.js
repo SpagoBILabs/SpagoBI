@@ -1571,9 +1571,9 @@ Ext.extend(
 				}
 				
 				, mustRefreshQbeView: function(datasourceLabel, datamart, datasetId) {
-					if (datasourceLabel === this.qbeDataSetBuilder.getDatasourceLabel()
-							&& datamart === this.qbeDataSetBuilder.getDatamart()
-							&& datasetId === this.qbeDataSetBuilder.getDatasetId()) {
+					if (datasourceLabel == this.qbeDataSetBuilder.getDatasourceLabel()
+							&& datamart == this.qbeDataSetBuilder.getDatamart()
+							&& datasetId == this.qbeDataSetBuilder.getDatasetId()) {
 						return false;
 					}
 					return true;
