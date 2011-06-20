@@ -99,167 +99,204 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logger.debug("Service type "+serviceType);
 		
 		if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_FOR_KPI_LIST)) {			
-			try {	
-				Integer totalItemsNum = dsDao.countDatasets();
-				List<SbiDataSetConfig> items = getListOfGenericDatasetsForKpi(dsDao);
-				logger.debug("Loaded items list");
-				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
-				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
-				writeBackToClient(new JSONSuccess(responseJSON));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving items", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.general.retrieveItemsError", e);
-			}
+			returnDatasetForKpiList(dsDao, locale);
 		} else if(serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {			
-			try {		
-				Integer totalItemsNum = dsDao.countDatasets();
-				List<GuiGenericDataSet> items = getListOfGenericDatasets(dsDao);
-				logger.debug("Loaded items list");
-				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
-				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
-				writeBackToClient(new JSONSuccess(responseJSON));
-
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving items", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.general.retrieveItemsError", e);
-			}
+			returnDatasetList(dsDao, locale);
 		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {			
-			GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
-			if(ds!=null){
-				String id = getAttributeAsString(DataSetConstants.ID);
-				try {
-					if(id != null && !id.equals("") && !id.equals("0")){							
-						ds.setDsId(Integer.valueOf(id));
-						dsDao.modifyDataSet(ds);
-						logger.debug("Resource "+id+" updated");
-						JSONObject attributesResponseSuccessJSON = new JSONObject();
-						attributesResponseSuccessJSON.put("success", true);
-						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-						attributesResponseSuccessJSON.put("id", id);
-						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-					}else{
-						Integer dsID = dsDao.insertDataSet(ds);
-						GuiGenericDataSet dsSaved = dsDao.loadDataSetById(dsID);
-						logger.debug("New Resource inserted");
-						JSONObject attributesResponseSuccessJSON = new JSONObject();
-						attributesResponseSuccessJSON.put("success", true);
-						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-						attributesResponseSuccessJSON.put("id", dsID);
-						if(dsSaved!=null){
-							GuiDataSetDetail dsDetailSaved = dsSaved.getActiveDetail();
-							attributesResponseSuccessJSON.put("dateIn", dsDetailSaved.getTimeIn());
-							attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
-							attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
-							attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
-						}
-						writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-					}
-				} catch (Throwable e) {
-					logger.error(e.getMessage(), e);
-					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.saveDsError", e);
-				}
-			}else{
-				logger.error("DataSet name, label or type are missing");
-				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.fillFieldsError");
-			}
-		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {			
-			try {
-				JSONObject dataSetJSON = datasetTest();
-				if(dataSetJSON!=null){
-					try {
-						writeBackToClient( new JSONSuccess( dataSetJSON ) );
-					} catch (IOException e) {
-						throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
-					}
-				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError");
-				}
-			} catch (Throwable e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
-			}
+			datatsetInsert(dsDao, locale);
+		} else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {	
+			datatsetTest(dsDao, locale);
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
-			Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
-			try {
-				dsDao.deleteDataSet(dsID);
-				logger.debug("Dataset deleted");
-				writeBackToClient( new JSONAcknowledge("Operation succeded") );
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
-			}
+			datatsetDelete(dsDao, locale);
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
-			Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
-			try {
-				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);	
-				if(deleted){
-					logger.debug("Dataset Version deleted");
-					writeBackToClient( new JSONAcknowledge("Operation succeded") );
-				}else{
-					throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion");
-				}
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset version to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
-			}
+			datatsetVersionDelete(dsDao, locale);
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
-			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
-			try {
-				dsDao.deleteAllInactiveDataSetVersions(dsID);
-				logger.debug("All Older Dataset versions deleted");
-				writeBackToClient( new JSONAcknowledge("Operation succeded") );
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset to delete", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
-			}
+			datatsetAllVersionsDelete(dsDao, locale);
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
-			Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
-			Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
-			try {
-				GuiGenericDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
-				logger.debug("Dataset Version correctly Restored");
-				List temp = new ArrayList();
-				temp.add(dsNewDetail);
-				JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);	
-				JSONObject version = itemJSON.getJSONObject(0);
-				JSONObject attributesResponseSuccessJSON = new JSONObject();
-				attributesResponseSuccessJSON.put("success", true);
-				attributesResponseSuccessJSON.put("responseText", "Operation succeded");
-				attributesResponseSuccessJSON.put("result", version);
-				writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
-			} catch (Throwable e) {
-				logger.error("Exception occurred while retrieving dataset to restore", e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.restoreVersionError", e);
-			}
+			datatsetVersionRestore(dsDao, locale);
 		}else if(serviceType == null){
-			try {
-				List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-				getSessionContainer().setAttribute("dsTypesList", dsTypesList);				
-				List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
-				getSessionContainer().setAttribute("catTypesList", catTypesList);
-				List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();			
-				getSessionContainer().setAttribute("dataSourceList", dataSourceList);
-				List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
-				getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);	
-				List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
-				getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);	
-				List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-				getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);	
-				SingletonConfig configSingleton = SingletonConfig.getInstance();
-				String pathh = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				String filePath= SpagoBIUtilities.readJndiResource(pathh);
-				filePath += "/dataset/files";
-				File dir = new File(filePath);
-	   			String[] fileNames = dir.list();
-	   			getSessionContainer().setAttribute("fileNames", fileNames);	
-			} catch (EMFUserError e) {
-				logger.error(e.getMessage(), e);
-				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsTypesRetrieve", e);
-			}
+			setUsefulItemsInSession(dsDao, locale);
 		}
 		logger.debug("OUT");
 	}
+	
+	private void returnDatasetForKpiList(IDataSetDAO dsDao, Locale locale){
+		try {	
+			Integer totalItemsNum = dsDao.countDatasets();
+			List<SbiDataSetConfig> items = getListOfGenericDatasetsForKpi(dsDao);
+			logger.debug("Loaded items list");
+			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
+			JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
+			writeBackToClient(new JSONSuccess(responseJSON));
+
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving items", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.general.retrieveItemsError", e);
+		}
+	}
+	
+	private void returnDatasetList(IDataSetDAO dsDao, Locale locale){
+		try {		
+			Integer totalItemsNum = dsDao.countDatasets();
+			List<GuiGenericDataSet> items = getListOfGenericDatasets(dsDao);
+			logger.debug("Loaded items list");
+			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
+			JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
+			writeBackToClient(new JSONSuccess(responseJSON));
+
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving items", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.general.retrieveItemsError", e);
+		}
+	}
+	
+	private void datatsetInsert(IDataSetDAO dsDao, Locale locale){
+		GuiGenericDataSet ds = getGuiGenericDatasetToInsert();		
+		if(ds!=null){
+			String id = getAttributeAsString(DataSetConstants.ID);
+			try {
+				if(id != null && !id.equals("") && !id.equals("0")){							
+					ds.setDsId(Integer.valueOf(id));
+					dsDao.modifyDataSet(ds);
+					logger.debug("Resource "+id+" updated");
+					JSONObject attributesResponseSuccessJSON = new JSONObject();
+					attributesResponseSuccessJSON.put("success", true);
+					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+					attributesResponseSuccessJSON.put("id", id);
+					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+				}else{
+					Integer dsID = dsDao.insertDataSet(ds);
+					GuiGenericDataSet dsSaved = dsDao.loadDataSetById(dsID);
+					logger.debug("New Resource inserted");
+					JSONObject attributesResponseSuccessJSON = new JSONObject();
+					attributesResponseSuccessJSON.put("success", true);
+					attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+					attributesResponseSuccessJSON.put("id", dsID);
+					if(dsSaved!=null){
+						GuiDataSetDetail dsDetailSaved = dsSaved.getActiveDetail();
+						attributesResponseSuccessJSON.put("dateIn", dsDetailSaved.getTimeIn());
+						attributesResponseSuccessJSON.put("userIn", dsDetailSaved.getUserIn());
+						attributesResponseSuccessJSON.put("versId", dsDetailSaved.getDsHId());
+						attributesResponseSuccessJSON.put("versNum", dsDetailSaved.getVersionNum());
+					}
+					writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+				}
+			} catch (Throwable e) {
+				logger.error(e.getMessage(), e);
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.saveDsError", e);
+			}
+		}else{
+			logger.error("DataSet name, label or type are missing");
+			throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.fillFieldsError");
+		}
+	}
+	
+	private void datatsetTest(IDataSetDAO dsDao, Locale locale){
+		try {
+			JSONObject dataSetJSON = datasetTest();
+			if(dataSetJSON!=null){
+				try {
+					writeBackToClient( new JSONSuccess( dataSetJSON ) );
+				} catch (IOException e) {
+					throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
+				}
+			}else{
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError");
+			}
+		} catch (Throwable e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.testError", e);
+		}
+	}
+	
+	private void datatsetDelete(IDataSetDAO dsDao, Locale locale){
+		Integer dsID = getAttributeAsInteger(DataSetConstants.ID);
+		try {
+			dsDao.deleteDataSet(dsID);
+			logger.debug("Dataset deleted");
+			writeBackToClient( new JSONAcknowledge("Operation succeded") );
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving dataset to delete", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
+		}
+	}
+	
+	private void datatsetVersionDelete(IDataSetDAO dsDao, Locale locale){
+		Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
+		try {
+			boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);	
+			if(deleted){
+				logger.debug("Dataset Version deleted");
+				writeBackToClient( new JSONAcknowledge("Operation succeded") );
+			}else{
+				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion");
+			}
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving dataset version to delete", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
+		}
+	}
+	
+	private void datatsetAllVersionsDelete(IDataSetDAO dsDao, Locale locale){
+		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
+		try {
+			dsDao.deleteAllInactiveDataSetVersions(dsID);
+			logger.debug("All Older Dataset versions deleted");
+			writeBackToClient( new JSONAcknowledge("Operation succeded") );
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving dataset to delete", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteVersion", e);
+		}
+	}
+	
+	private void datatsetVersionRestore(IDataSetDAO dsDao, Locale locale){
+		Integer dsID = getAttributeAsInteger(DataSetConstants.DS_ID);
+		Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
+		try {
+			GuiGenericDataSet dsNewDetail= dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
+			logger.debug("Dataset Version correctly Restored");
+			List temp = new ArrayList();
+			temp.add(dsNewDetail);
+			JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);	
+			JSONObject version = itemJSON.getJSONObject(0);
+			JSONObject attributesResponseSuccessJSON = new JSONObject();
+			attributesResponseSuccessJSON.put("success", true);
+			attributesResponseSuccessJSON.put("responseText", "Operation succeded");
+			attributesResponseSuccessJSON.put("result", version);
+			writeBackToClient( new JSONSuccess(attributesResponseSuccessJSON) );
+		} catch (Throwable e) {
+			logger.error("Exception occurred while retrieving dataset to restore", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.restoreVersionError", e);
+		}
+	}
+	
+	private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale){
+		try {
+			List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
+			getSessionContainer().setAttribute("dsTypesList", dsTypesList);				
+			List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			getSessionContainer().setAttribute("catTypesList", catTypesList);
+			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();			
+			getSessionContainer().setAttribute("dataSourceList", dataSourceList);
+			List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
+			getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);	
+			List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
+			getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);	
+			List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
+			getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);	
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String pathh = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			String filePath= SpagoBIUtilities.readJndiResource(pathh);
+			filePath += "/dataset/files";
+			File dir = new File(filePath);
+   			String[] fileNames = dir.list();
+   			getSessionContainer().setAttribute("fileNames", fileNames);	
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsTypesRetrieve", e);
+		}
+	}
+	
 	
 	private List<SbiDataSetConfig> getListOfGenericDatasetsForKpi(IDataSetDAO dsDao) throws JSONException, EMFUserError{
 		Integer start = getAttributeAsInteger( DataSetConstants.START );
