@@ -27,7 +27,6 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.dispatching.service.DefaultRequestContext;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFUserError;
@@ -46,11 +45,13 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.exporters.KpiExporter;
@@ -730,10 +731,17 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	public void uploadDatamartTemplate(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
+		
 		InputStream is = null;
 		FileOutputStream osDatamartFile = null;
 		DataHandler dh = null;
-		try {
+		
+		try {	
+			/***********************************************************************************************************/
+			/* STEP 1: uploads the datamart document                                                                   */
+			/***********************************************************************************************************/
+			String datamartName = sdkTemplate.getFolderName();
+			
 			// if user cannot develop the specified document, he cannot upload templates on it
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			if (sdkTemplate == null) {
@@ -742,7 +750,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 
 			//creates the folder correct (the name is given by the name of the file).
-			String path = getResourcePath()  + System.getProperty("file.separator") + sdkTemplate.getFolderName();
+			String path = getResourcePath()  + System.getProperty("file.separator") + datamartName;
 			logger.debug("Datamart path: " + path);
 			File datamartFolder = new File (path);
 			if (!datamartFolder.exists()){
@@ -761,6 +769,81 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
 			osDatamartFile.write(templateContent);
 			logger.debug("Template uploaded without errors.");
+			
+			/***********************************************************************************************************/
+			/* STEP 2: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart. */
+			/***********************************************************************************************************/
+			BIObject obj = null;
+			
+				
+			//checks if the template already exists. In this case doesn't create the new one!
+			obj  =	DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName);
+			if (obj != null){
+				logger.info("The datamart with name "  + datamartName + " is already been inserted in SpagoBI. Template not loaded! " );
+				return;
+			}
+			
+			IEngUserProfile profile = getUserProfile();
+			
+			obj = new BIObject();
+			String userId = ((UserProfile) profile).getUserId().toString();
+			logger.debug("Current user id is [" + userId + "]");
+			
+			obj.setCreationUser(((UserProfile) profile).getUserId().toString());
+			obj.setCreationDate(new Date());
+			obj.setVisible(new Integer(1));
+			obj.setLabel(datamartName);
+			obj.setName(datamartName);
+			obj.setDescription("");
+			obj.setEncrypt(0);
+			obj.setStateCode("DEV");
+			Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+			obj.setStateID(state.getValueId());
+			//sets the qbe engine
+			Domain objectType = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BIOBJ_TYPE", "DATAMART");
+			obj.setBiObjectTypeID(objectType.getValueId());
+			obj.setBiObjectTypeCode(objectType.getValueCd());
+			List<Engine> lstQbeEngines =  DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType("DATAMART");
+			if (lstQbeEngines == null || lstQbeEngines.size() == 0){
+				logger.error("Error while retrieving Engine list.");
+				return;
+			}
+			Engine qbeEngine =  lstQbeEngines.get(0);
+			obj.setEngine(qbeEngine);
+			
+			//sets the default functionality (personal folder).  
+			List functionalities = new ArrayList();
+			LowFunctionality funct = null;
+			funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
+			if (funct != null){
+				functionalities.add(funct.getId());
+				obj.setFunctionalities(functionalities);
+			} else {
+				//the personal folder doesn't exist yet. It creates it, and uses it.
+				UserUtilities.createUserFunctionalityRoot(profile);
+				logger.error("Error while retrieving Functionality identifier.");
+				funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId , false);
+				functionalities.add(funct.getId());
+				obj.setFunctionalities(functionalities);
+			}
+			//sets the template's content
+			ObjTemplate objTemplate = new ObjTemplate();
+			objTemplate.setActive(new Boolean(true));
+			objTemplate.setCreationUser(userId);
+			objTemplate.setCreationDate(new Date());
+			objTemplate.setName(sdkTemplate.getFolderName() + ".xml");
+			String template = getTemplate(datamartName);
+			objTemplate.setContent(template.getBytes());
+
+			//inserts the document
+			logger.debug("Saving document ...");
+			DAOFactory.getBIObjectDAO().insertBIObject(obj, objTemplate);
+			Integer newIdObj = obj.getId();
+			if (newIdObj != null) {
+				logger.info("Document saved with id = " + newIdObj);
+			} else {
+				logger.error("Document not saved!!");
+			}
 		} catch(Exception e) {
 			logger.error("Error while uploading template", e);
 		} finally {
@@ -832,16 +915,21 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		String path = null;
 		SourceBean pathSB;
-//		SourceBean sb = (SourceBean)ConfigSingleton.getInstance();
 		SingletonConfig configSingleton = SingletonConfig.getInstance();
 		String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-//		pathSB = (SourceBean)sb.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
-//		String jndiPath = (String) pathSB.getCharacters() ;
 		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
-		//Assert.assertNotNull(jndiSB, "Block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] found in configuration is empty");
-
+		
 		return path;
 	}
 
+	private String getTemplate(String datamartName) throws IOException {
+		String template = "";
+		template += "<QBE>\n";
+		template += "\t<DATAMART name=\"" + datamartName + "\"/>\n";
+		template += "</QBE>";
+		
+		return template;
+	}
+	
 }
