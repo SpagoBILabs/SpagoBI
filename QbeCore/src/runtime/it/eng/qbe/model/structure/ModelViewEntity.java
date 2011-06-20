@@ -59,10 +59,18 @@ public class ModelViewEntity extends ModelEntity {
 			destinationEntity = structure.getRootEntity(modelName, joinDescriptor.getDestinationEntityUniqueName());
 			
 			sourceFields = new ArrayList<IModelField>();
-			for(String fieldName : joinDescriptor.getDestinationColumns()) {
+			for(String fieldName : joinDescriptor.getSourceColumns()) {
 				String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
 				IModelField f = sourceEntity.getField(fieldUniqueName);
-				Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]", f);
+				if(f == null) {
+					List<IModelField> fields = sourceEntity.getAllFields();
+					String str = "";
+					for(IModelField field : fields) {
+						str = field.getUniqueName() + ";  ";
+					}
+					Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+				}
+				
 				sourceFields.add(f);
 			}
 			
