@@ -86,7 +86,7 @@ public class GeoReportEngineStartAction extends AbstractEngineStartServlet {
     			throw new SpagoBIServiceException(ENGINE_NAME, "An error occurred while dispatching request to [" + REQUEST_DISPATCHER_URL + "]", t);
     		} 
         } catch(Throwable t) {
-        	logger.debug("Impossible to execute document", t);
+        	logger.error("Impossible to execute document", t);
         	t.printStackTrace();
         	throw new SpagoBIServiceException(ENGINE_NAME, t);
         } finally {
