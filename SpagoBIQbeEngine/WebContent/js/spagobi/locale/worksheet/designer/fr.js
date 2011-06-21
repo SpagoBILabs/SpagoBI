@@ -17,13 +17,12 @@ Sbi.locale.ln['sbi.worksheet.designer.worksheetdesignerpanel.title'] = 'Concepte
 //===================================================================
 
 Sbi.locale.ln['sbi.worksheet.designer.title'] = 'Titre';
-Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
-Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
+Sbi.locale.ln['sbi.worksheet.designer.title.size'] = 'Taille';
+Sbi.locale.ln['sbi.worksheet.designer.title.image'] = 'Image';
+Sbi.locale.ln['sbi.worksheet.designer.title.position'] = 'Position';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgTriggerFieldId.tooltip'] = 'S\u00E9lectionnez une immage pour le titre';
 Sbi.locale.ln['sbi.worksheet.designer.title.imgPositionId.tooltip'] = 'S\u00E9lectionnez la position de l\'image dans le bloc du titre';
-Sbi.locale.ln['sbi.worksheet.designer.title.position.left'] = 'gauche';
-Sbi.locale.ln['sbi.worksheet.designer.title.position.right'] = 'droite';
-Sbi.locale.ln['sbi.worksheet.designer.title.position.center'] = 'centre';
+
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Non valide';
 Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'Les valeurs des champs sont invalides ou incompl\u00E8tes.';
 Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.uploadfile.confirm.title'] = 'Charg\u00E9 avec succ\u00E8s';
@@ -59,8 +58,12 @@ Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'D\u00E9pl
 //DESIGNER TOOLS
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette' ;
+Sbi.locale.ln['sbi.worksheet.designer.title'] = 'Titre';
+Sbi.locale.ln['sbi.worksheet.designer.size'] = 'Taille';
 Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
 Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
+Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.title'] = 'Non valide';
+Sbi.locale.ln['sbi.worksheet.designer.msg.invalidinput.msg'] = 'Les valeurs des champs sont invalides ou incompl\u00E8tes.';
 
 //===================================================================
 //Sbi.worksheet.designer.DesignSheetFiltersPanel
@@ -160,5 +163,3 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['
 //Sbi.worksheet.designer.TableDesignerPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.title']='Concepteur table aplatie';
-Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields']='Champs visibles';
-Sbi.locale.ln['sbi.worksheet.designer.tabledesignerpanel.fields.emptymsg']='Glissez et d\u00E9posez ici attributs et mesures que voulez voir dans le tableau';
