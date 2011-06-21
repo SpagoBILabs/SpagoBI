@@ -164,11 +164,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		Map<String,Object> cfg = new HashMap<String,Object>();
 		if(getConnection().isJndiConncetion()) {
 			cfg.put("javax.persistence.nonJtaDataSource", getConnection().getJndiName());
+			cfg.put("hibernate.dialect", getConnection().getDialect());
 		} else {
 			cfg.put("javax.persistence.jdbc.url", getConnection().getUrl());
 			cfg.put("javax.persistence.jdbc.password", getConnection().getPassword());
 			cfg.put("javax.persistence.jdbc.user", getConnection().getUsername());
 			cfg.put("javax.persistence.jdbc.driver", getConnection().getDriverClass());
+			cfg.put("hibernate.dialect", getConnection().getDialect());
 		}
 		return cfg;
 	}
