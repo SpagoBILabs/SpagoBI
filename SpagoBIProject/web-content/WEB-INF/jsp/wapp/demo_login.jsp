@@ -96,10 +96,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			{return true;}
 	}
 	
-	function setUser(userV){
+	function setUser(userV, pswV){
 		var password = document.getElementById('password');
 		var user = document.getElementById('userID');
-		password.value = userV;
+		password.value = pswV;
 		user.value = userV;
 	//	document.forms[0].submit();
 	}
@@ -229,9 +229,9 @@ else {
 								<td class='header-title-column-portlet-section-nogrey'>
 									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
 										SpagoBI Demo users' credentials:<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser')"><b>biuser/biuser</b></a>(business user)<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('bidemo')"><b>bidemo/bidemo</b></a> (showcase user)<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biadmin')"><b>biadmin/biadmin</b></a> (administrator)
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser','biuser')"><b>biuser/biuser</b></a>(business user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('bidemo','bidemo')"><b>bidemo/bidemo</b></a> (showcase user)<br/>
+										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biadmin','biadmin')"><b>biadmin/biadmin</b></a> (administrator)
 									</div>
 								</td>
 							</tr>
