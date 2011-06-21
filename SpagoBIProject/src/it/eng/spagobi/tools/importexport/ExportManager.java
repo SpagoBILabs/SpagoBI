@@ -498,8 +498,9 @@ public class ExportManager implements IExportManager {
 			if (objDataSetId != null) {
 
 				GuiGenericDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
-				//IDataSet dataset = dataSetDao.loadActiveIDataSetByID(objDataSetId);
-				exporter.insertDataSet(genericDs, session);
+				if(genericDs!=null){
+					exporter.insertDataSet(genericDs, session);
+				}
 
 			}			
 

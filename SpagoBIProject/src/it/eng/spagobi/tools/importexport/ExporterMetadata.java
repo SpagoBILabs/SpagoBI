@@ -563,11 +563,12 @@ public class ExporterMetadata {
 				if (ds != null) insertDataSource(ds, session);
 			}
 
-			//TODO to be controlled!!!!
+			
 			Transaction tx = session.beginTransaction();
 			GuiGenericDataSet ds = DAOFactory.getDataSetDAO().toDataSet(dataset);
-			insertDataSet(ds,session);
-			//tx.commit();
+			if(ds!=null){
+				insertDataSet(ds,session);
+			}
 		} catch (Exception e) {
 			logger.error("Error while inserting dataSet into export database " , e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", "component_impexp_messages");
@@ -831,7 +832,9 @@ public class ExporterMetadata {
 				// insert dataset if parameter insertDataSet is true (in case of KPI export)
 				if(insertDataSet){
 					GuiGenericDataSet guiGenericDataSet = datasetDao.loadDataSetById(dataSetId);
-					insertDataSet(guiGenericDataSet, session);
+					if(guiGenericDataSet!=null){
+						insertDataSet(guiGenericDataSet, session);
+					}
 				}
 				SbiDataSetConfig dataset = (SbiDataSetConfig) session.load(SbiDataSetConfig.class, dataSetId);
 				hibBIObj.setDataSet(dataset);
@@ -1998,9 +2001,11 @@ public class ExporterMetadata {
 			if (kpi.getKpiDsId() != null) {    
 				Integer dsID = kpi.getKpiDsId();				
 				GuiGenericDataSet guiGenericDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
-				insertDataSet(guiGenericDataSet, session);
-				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
-				hibKpi.setSbiDataSet(sbiDs);
+				if(guiGenericDataSet!=null){
+					insertDataSet(guiGenericDataSet, session);
+					SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
+					hibKpi.setSbiDataSet(sbiDs);
+				}
 			}
 
 			// load threshold
@@ -2141,9 +2146,11 @@ public class ExporterMetadata {
 			if (kpi.getKpiDsId() != null) {    
 				Integer dsID = kpi.getKpiDsId();				
 				GuiGenericDataSet guiGenericDataSet = DAOFactory.getDataSetDAO().loadDataSetById(dsID);
-				insertDataSet(guiGenericDataSet, session);
-				SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
-				hibKpi.setSbiDataSet(sbiDs);
+				if(guiGenericDataSet!=null){
+					insertDataSet(guiGenericDataSet, session);
+					SbiDataSetConfig sbiDs= (SbiDataSetConfig) session.load(SbiDataSetConfig.class, guiGenericDataSet.getDsId());
+					hibKpi.setSbiDataSet(sbiDs);
+				}
 			}
 
 			// load threshold

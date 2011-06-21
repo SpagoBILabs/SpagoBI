@@ -1269,7 +1269,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public GuiGenericDataSet loadDataSetById(Integer dsId)throws EMFUserError {
 		logger.debug("IN");
 		GuiGenericDataSet toReturn = null;
-		GuiDataSetDetail detail = null;
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -1283,17 +1282,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibQueryHistory.setInteger(1, dsId);	
 			SbiDataSetHistory sbiDataSetHistory =(SbiDataSetHistory)hibQueryHistory.uniqueResult();
 			if(sbiDataSetHistory!=null){
-				detail = toDataSetDetail(sbiDataSetHistory);
-			}
-			toReturn = toDataSet(sbiDataSetHistory);
-
-			//			Query hibQueryConfig = aSession.createQuery("from SbiDataSetConfig h where h.dsId = ?" );
-			//			hibQueryConfig.setBoolean(0, true);
-			//			hibQueryConfig.setInteger(1, dsId);	
-			//			SbiDataSetConfig dsActiveDetail =(SbiDataSetConfig)hibQueryConfig.uniqueResult();
-			//			if(dsActiveDetail!=null){
-			//				toReturn = to)(dsActiveDetail);
-			//			}
+				toReturn = toDataSet(sbiDataSetHistory);
+			}	
 			tx.commit();
 
 		} catch (HibernateException he) {

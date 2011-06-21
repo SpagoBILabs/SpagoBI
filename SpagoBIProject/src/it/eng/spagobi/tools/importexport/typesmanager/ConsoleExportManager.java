@@ -91,7 +91,9 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					if(dataset != null){
 						logger.debug("found dataset with label " + string);
 						GuiGenericDataSet ds = dataSetDAO.toDataSet(dataset);
-						exporter.insertDataSet(ds, session);
+						if(ds!=null){
+							exporter.insertDataSet(ds, session);
+						}
 					}
 					else {
 						logger.error("could not find dataset with label "+string+" : ignore it");
