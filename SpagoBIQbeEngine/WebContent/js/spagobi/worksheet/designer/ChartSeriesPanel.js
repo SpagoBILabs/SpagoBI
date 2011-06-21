@@ -203,15 +203,17 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
     		, dataIndex: 'showcomma'
     		, hideable: false
     		, hidden: false	
-    		, width: 50
+    		, width: 30
     		, sortable: false
     	});
 	    
 	    var precisionColumn = new Ext.grid.Column({
 	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
+	    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
 	    	, dataIndex: 'precision'
 	    	, hideable: false
 	    	, sortable: false
+	    	, width: 30
 	        , editor: new Ext.form.NumberField({
 	        	value: 2
 	        	, minValue: 0
@@ -221,9 +223,11 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		
 	    var suffixColumn = new Ext.grid.Column({
 	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
+	    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
 	    	, dataIndex: 'suffix'
 	    	, hideable: false
 	    	, sortable: false
+	    	, width: 30
 	        , editor: new Ext.form.TextField({})
 	    });
 	    

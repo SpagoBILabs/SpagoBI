@@ -122,7 +122,7 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		});
 		
 		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
-            width: 400
+            width: 430
             , height: 120
             , initialData: []
             , crosstabConfig: {}
