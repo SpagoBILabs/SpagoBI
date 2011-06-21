@@ -354,6 +354,7 @@ public class JPQLStatement extends AbstractStatement {
 	}
 	
 	/**
+	 * ONLY FOR ECLIPSE LINK
 	 * Add to the where clause a fake condition..
 	 * Id est, take the primary key (or an attribute of the primary key if it's a composed key) 
 	 * of the entity and (for example keyField) and add to the whereClause the clause  
@@ -362,45 +363,45 @@ public class JPQLStatement extends AbstractStatement {
 	 * @param entityAlias the alias of the table
 	 */
 	public void addTableFakeCondition(String datamartEntityName, String entityAlias){
-		EntityManager entityManager = ((IJpaDataSource)getDataSource()).getEntityManager();
-		Metamodel classMetadata =  entityManager.getMetamodel();
-		//search the EntityType of the datamartEntityName
-		for(Iterator it2 = classMetadata.getEntities().iterator(); it2.hasNext(); ) {
-			EntityType et = (EntityType)it2.next();
-			String entityName = et.getName();
-			
-			if(datamartEntityName.equals(entityName)){
-			
-				Type keyT = et.getIdType();
+		if(getDataSource() instanceof org.eclipse.persistence.jpa.JpaEntityManager){//check if the provider is eclipse link
+			EntityManager entityManager = ((IJpaDataSource)getDataSource()).getEntityManager();
+			Metamodel classMetadata =  entityManager.getMetamodel();
+			//search the EntityType of the datamartEntityName
+			for(Iterator it2 = classMetadata.getEntities().iterator(); it2.hasNext(); ) {
+				EntityType et = (EntityType)it2.next();
+				String entityName = et.getName();
 				
-				if (keyT instanceof BasicType) {
-					//the key has only one field
+				if(datamartEntityName.equals(entityName)){
+				
+					Type keyT = et.getIdType();
 					
-					String name = (et.getId(Object.class)).getName();
-					if(whereClause==null || whereClause.equals("")){
-						whereClause = "WHERE ";
-					}else{
-						whereClause = whereClause+" AND ";
+					if (keyT instanceof BasicType) {
+						//the key has only one field
+						
+						String name = (et.getId(Object.class)).getName();
+						if(whereClause==null || whereClause.equals("")){
+							whereClause = "WHERE ";
+						}else{
+							whereClause = whereClause+" AND ";
+						}
+						whereClause = whereClause + " "+ entityAlias+"."+name+"="+entityAlias+"."+name;
+					}else if (keyT instanceof EmbeddableType) {
+						//the key is a composed key
+						String keyName = (et.getId(Object.class)).getName();
+						SingularAttribute keyAttr = (SingularAttribute)(((EmbeddableType) keyT).getDeclaredSingularAttributes().iterator().next());
+						String name = keyName+"."+keyAttr.getName();
+						if(whereClause==null || whereClause.equals("")){
+							whereClause = "WHERE ";
+						}else{
+							whereClause = whereClause+" AND ";
+						}
+						whereClause = whereClause + " "+ entityAlias+"."+name+"="+entityAlias+"."+name;
 					}
-					whereClause = whereClause + " "+ entityAlias+"."+name+"="+entityAlias+"."+name;
-				}else if (keyT instanceof EmbeddableType) {
-					//the key is a composed key
-					String keyName = (et.getId(Object.class)).getName();
-					SingularAttribute keyAttr = (SingularAttribute)(((EmbeddableType) keyT).getDeclaredSingularAttributes().iterator().next());
-					String name = keyName+"."+keyAttr.getName();
-					if(whereClause==null || whereClause.equals("")){
-						whereClause = "WHERE ";
-					}else{
-						whereClause = whereClause+" AND ";
-					}
-					whereClause = whereClause + " "+ entityAlias+"."+name+"="+entityAlias+"."+name;
+					break;
 				}
-				break;
 			}
-			
 		}
 	}
-	
 
 	
 	
