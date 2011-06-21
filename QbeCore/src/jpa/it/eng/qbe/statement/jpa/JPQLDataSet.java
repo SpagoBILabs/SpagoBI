@@ -26,29 +26,22 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.expressions.Expression;
-import org.eclipse.persistence.internal.expressions.CollectionExpression;
-import org.eclipse.persistence.internal.expressions.ConstantExpression;
-import org.eclipse.persistence.internal.expressions.FunctionExpression;
-import org.eclipse.persistence.internal.expressions.LogicalExpression;
-import org.eclipse.persistence.internal.expressions.RelationExpression;
-import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
-import org.eclipse.persistence.queries.ReportQuery;
+
 
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Andrea Gioia (andrea.gioia@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class JPQLDataSet extends AbstractQbeDataSet {
 
@@ -69,14 +62,14 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		
 		try {
 			entityManager = ((IJpaDataSource)statement.getDataSource()).getEntityManager();
-			loadDataEclipseLink(offset, fetchSize, maxResults, entityManager);
+			loadDataPersistenceProvider(offset, fetchSize, maxResults, entityManager);
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to load data", t);
 		}
 	
 	}
 	
-	private void loadDataEclipseLink(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
+	private void loadDataPersistenceProvider(int offset, int fetchSize, int maxResults, EntityManager entityManager) {
 
 		javax.persistence.Query jpqlQuery;
 		boolean overflow = false;
@@ -94,7 +87,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
 		}
 			
-		resultNumber = getResultNumber(jpqlQuery, entityManager);
+		resultNumber = getResultNumber(statementStr, jpqlQuery, entityManager);
 		logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
 		overflow = (maxResults > 0) && (resultNumber >= maxResults);
 
@@ -119,9 +112,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			} catch (Throwable t) {
 				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
 			}
-			
-			
-			
+
 			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}	
 
@@ -158,10 +149,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 	
 	
-	private int getResultNumber(Query jpqlQuery, EntityManager entityManager) {
+	private int getResultNumber(String statementStr, Query jpqlQuery, EntityManager entityManager) {
 		int resultNumber = 0;
 		try {
-			resultNumber = getResultNumberUsingInlineView(jpqlQuery,entityManager);
+			resultNumber = getResultNumberUsingInlineView(statementStr,entityManager);
 		} catch (Exception e) {
 			logger.warn("Error getting result number using inline view!!", e);
 			resultNumber = (jpqlQuery).getResultList().size();
@@ -170,39 +161,23 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 	
 	/**
-	 * ONLY FOR ECLIPSELINK
 	 * Get the result number with an in line view
 	 * @param jpqlQuery
 	 * @param entityManager
 	 * @return
 	 * @throws Exception
 	 */
-	private int getResultNumberUsingInlineView(Query jpqlQuery, EntityManager entityManager) throws Exception {
+	private int getResultNumberUsingInlineView(String jpqlQuery, EntityManager entityManager) throws Exception {
 		int resultNumber = 0;
-		String parameterValue;
 		logger.debug("IN: counting query result");
 		
-		EJBQueryImpl qi = (EJBQueryImpl)jpqlQuery;
-		String sqlQueryString = qi.getDatabaseQuery().getSQLString();
-		//In qi, all the constants are substituted with ? (a place holder for the parameter)..
-		//so we shold get the parameter values with getParameters
-		ReportQuery rq = (ReportQuery)qi.getDatabaseQuery();
-		List<String> whereParameters = getParameters(rq.getSelectionCriteria());//((JPQLStatement)statement).getQueryParameters();
-		List<String> havingParameters = getParameters(rq.getHavingExpression());//((JPQLStatement)statement).getQueryParameters();
-		List<String> queryParameters = whereParameters;
-		queryParameters.addAll(havingParameters);
-		logger.debug("Preparing count query");
-		EJBQueryImpl countQuery = (EJBQueryImpl)entityManager.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") temp");
-		for(int i=0; i<queryParameters.size(); i++ ){
-			parameterValue = queryParameters.get(i);
-			if(parameterValue.startsWith("'") && parameterValue.endsWith("'")){
-				parameterValue = parameterValue.substring(1,parameterValue.length()-1);
-			}
-			countQuery.setParameter(1+i, parameterValue);
-		}
+		JPQL2SQLStatementRewriter translator = new JPQL2SQLStatementRewriter(entityManager);
+		String sqlQueryString = translator.rewrite(jpqlQuery);
+		javax.persistence.Query countQuery = entityManager.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") temp");
+
 		logger.debug("Count query prepared and parameters setted..");
 		logger.debug("Executing query..");
-		resultNumber = ((Long)countQuery.getResultList().get(0)).intValue();
+		resultNumber = ((BigInteger)countQuery.getResultList().get(0)).intValue();
 		logger.debug("Query " + "SELECT COUNT(*) FROM (" + sqlQueryString + ")" + " executed");
 		logger.debug("Result number is " + resultNumber);
 		resultNumber = resultNumber < 0? 0: resultNumber;
@@ -210,58 +185,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		return resultNumber;
 	}
-	
-	
-	/**
-	 * ONLY FOR ECLIPSELINK
-	 * Get the list of constants from the expression
-	 * @param e Expression to parse
-	 * @return list of Constant values of the expression
-	 */
-	private List<String> getParameters(Expression e){
-		if(e instanceof FunctionExpression){
-			List<String> l =  new ArrayList<String>();
-			Vector<Expression> children = ((FunctionExpression) e).getChildren();
-			Iterator<Expression> it=children.iterator();
-			while(it.hasNext()){
-				Expression o = it.next();
-				l.addAll(getParameters(o));
-			}
-			return l;
-		}else if(e instanceof CollectionExpression){
-			List<String> l =  new ArrayList<String>();
-			Object value = ((CollectionExpression) e).getValue();
-			if(value instanceof Collection){
-				Iterator<Expression> it=((Collection) value).iterator();
-				while(it.hasNext()){
-					Expression o = it.next();
-					l.addAll(getParameters(o));
-				}
-			}
-			return l;
-		}else if(e instanceof ConstantExpression){
-			List<String> l =  new ArrayList<String>();
-			l.add(""+((ConstantExpression)e).getValue());
-			return l;
-		}else if(e instanceof RelationExpression){
-			Expression fchild = ((RelationExpression)e).getFirstChild();
-			List<String> firstList = getParameters(fchild);
-			Expression schild = ((RelationExpression)e).getSecondChild();
-			List<String> secondList = getParameters(schild);
-			firstList.addAll(secondList);
-			return firstList;
-		}else if(e instanceof LogicalExpression){
-			Expression fchild = ((LogicalExpression)e).getFirstChild();
-			List<String> firstList = getParameters(fchild);
-			Expression schild = ((LogicalExpression)e).getSecondChild();
-			List<String> secondList = getParameters(schild);
-			firstList.addAll(secondList);
-			return firstList;
-		}
-		return new ArrayList<String>();
-
-	}
-
 
 	public Map getUserProfileAttributes() {
 		// TODO Auto-generated method stub
