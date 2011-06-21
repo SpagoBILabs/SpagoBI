@@ -162,6 +162,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/></script>

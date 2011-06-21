@@ -309,6 +309,7 @@
 
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js'/>
+		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js'/>
