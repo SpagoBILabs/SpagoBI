@@ -130,19 +130,21 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
 					, layout: 'auto'
 					, autoScroll :true
-					, style:'padding: 5px 15px 10px 15px;'					
-					, tools:  [{
-						id: 'gear'
-				        	, handler: this.applyFilters
-				          	, scope: this
-				          	, qtip: LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip')
-					}]
+					, style:'padding: 5px 15px 10px 15px;'	
+					, position : 'top'
+//					, tools:  [{
+//						id: 'gear'
+//				        	, handler: this.applyFilters
+//				          	, scope: this
+//				          	, qtip: LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip')
+//					}]
 				};
 			
 			if ( this.sheetConfig.filters.position=='left') {
-				filterConf.width= 257;
+				filterConf.width= 250;
 				filterConf.autoWidth = false;
 				filterConf.style = 'float: left; padding: 5px 0px 10px 15px';
+				filterConf.position = 'left';
 			}
 			/* this was an attempt to make the filters panel collapsible, but it has a side-effect: combo-boxes are narrow
 			 * when displayed on top of a chart
@@ -152,7 +154,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			}
 			*/
 			
-			this.filtersPanel = new Sbi.formviewer.StaticOpenFiltersPanel(dynamicFilters, filterConf);
+			this.filtersPanel = new Sbi.worksheet.RuntimeSheetFiltersPanel(dynamicFilters, filterConf);
+			this.filtersPanel.on('apply', this.applyFilters, this);
 
 			if ( this.sheetConfig.filters.position=='left') {
 				var filterContentPanel = new Ext.Panel({
@@ -247,17 +250,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		this.add(this.initPanels());
 	}
 	
-	/**
-	 * Get the values of the filters..
-	 * Return an array of properties
-	 */
-	, applyFilters: function(){
-		var filtersValue = [];
-		if(this.filtersPanel!=null){
-			filtersValue = this.filtersPanel.getFormState();
-		}
-		this.content.applyFilters(filtersValue);
-		return filtersValue;
+	, applyFilters: function(filterPanel, formState){
+		this.content.applyFilters(formState);
 	}
 	
 	/**
