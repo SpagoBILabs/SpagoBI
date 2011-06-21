@@ -9,8 +9,8 @@ Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Montrer tables master-
 Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans les tables master-detail';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Enregistrer la forme';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Enregistrer l\'\u00E9tat de la forme pour les prochaines executions';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab'] = 'Montrer crosstab';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.designcrosstab.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans une cross-table';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Montrer crosstab';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Envoyer la forme et montrer les r\u00E9sultats dans une cross-table';
 
 //===================================================================
 //FILTERS PANEL
