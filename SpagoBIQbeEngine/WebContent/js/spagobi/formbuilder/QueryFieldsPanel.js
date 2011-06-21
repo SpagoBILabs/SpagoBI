@@ -82,7 +82,7 @@ Sbi.formbuilder.QueryFieldsPanel = function(config) {
       	layout: 'fit',   
       	items: [this.grid],
       	tools: [{
-		    id:'gear',
+		    id:'refresh',
 		    qtip: LN('sbi.formbuilder.queryfieldspanel.tools.refresh'),
 		    handler: function(){
       			this.refresh();
