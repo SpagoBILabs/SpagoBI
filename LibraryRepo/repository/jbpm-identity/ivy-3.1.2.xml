@@ -4,7 +4,12 @@
 		module="jbpm-identity"
 		revision="3.1.2"
 		status="release"
-		publication="20051108225808"/>
+		publication="20051108225808">
+		<license name="Apache License 2.0" url="http://www.jboss.org/jbossjbpm/" />
+		<description homepage="http://www.jboss.org/jbossjbpm/">
+		JBoss jBPM
+		</description>
+	</info>
 
 	<configurations>
 		<conf name="default" visibility="public"/>

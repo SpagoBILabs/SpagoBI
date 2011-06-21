@@ -21,9 +21,9 @@
 		module="json"
 		revision="1.3"
 		status="release"
-		publication="20110512131058"
-		default="true"
-	/>
+		publication="20051108225808">
+		<license name="provided without support or warranty" url="http://www.json.org/license.html" />
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>

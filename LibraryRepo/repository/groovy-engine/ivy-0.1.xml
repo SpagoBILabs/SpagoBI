@@ -21,9 +21,12 @@
 		module="groovy-engine"
 		revision="0.1"
 		status="release"
-		publication="20110512131058"
-		default="true"
-	/>
+		publication="20051108225808">
+		<license name="The Apache Software License, Version 2.0" url="/LICENSE.txt" />
+		<description homepage="	http://groovy.codehaus.org/">
+		Groovy
+		</description>
+	</info>
 	<configurations>
 		<conf name="default" visibility="public"/>
 	</configurations>
