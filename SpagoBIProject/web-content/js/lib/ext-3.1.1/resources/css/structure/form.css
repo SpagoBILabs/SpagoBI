@@ -119,9 +119,6 @@ textarea {
     cursor:pointer;
 }
 
-.ext-webkit .x-form-field-wrap .x-form-trigger{
-    right:0;
-}
 
 .x-form-field-wrap .x-form-twin-triggers .x-form-trigger{
     position:static;
