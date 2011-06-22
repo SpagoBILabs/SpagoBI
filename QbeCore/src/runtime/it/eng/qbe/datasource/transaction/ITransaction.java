@@ -18,35 +18,30 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.qbe.datasource;
-
-import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.properties.IModelProperties;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.IStatement;
-
-import java.util.Locale;
+package it.eng.qbe.datasource.transaction;
 
 /**
- * @author Andrea Gioia
+ * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ * 
+ * This class is useful to open a connection with the db
  */
-public interface IDataSource {
+public interface ITransaction {
 	
-	String getName();
-	IDataSourceConfiguration getConfiguration();
 	
-	IModelStructure getModelStructure();
-	IModelAccessModality getModelAccessModality();
-	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality) ;
-	IModelProperties getModelI18NProperties(Locale locale);
-	
+	/**
+	 * Open the transaction.. 
+	 * After this call the user can can a sql connection
+	 */
 	void open();
-	boolean isOpen();
+	
+	/**
+	 * Close the transaction.. 
+	 */
 	void close();
 	
-	IStatement createStatement(Query query);
-	ITransaction getTransaction();
+	/**
+	 * Get a sql connection
+	 */
+	java.sql.Connection getSQLConnection();
+
 }

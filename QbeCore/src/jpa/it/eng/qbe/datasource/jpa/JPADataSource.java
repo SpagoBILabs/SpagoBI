@@ -26,6 +26,9 @@ import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.transaction.ITransaction;
+import it.eng.qbe.datasource.transaction.jpa.JPAEclipseLinkTransaction;
+import it.eng.qbe.datasource.transaction.jpa.JPAHibernateTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
@@ -49,7 +52,7 @@ import org.apache.log4j.Logger;
 public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	private EntityManagerFactory factory;
-	
+	private EntityManager entityManager;
 	private boolean classLoaderExtended = false;	
 	
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
@@ -111,10 +114,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
 	public EntityManager getEntityManager() {
-		if(factory == null) {
-			open();
+		if(entityManager==null){
+			if(factory == null) {
+				open();
+			}
+			entityManager = factory.createEntityManager();
 		}
-		return factory.createEntityManager();
+		return entityManager;
 	}
 	
 
@@ -174,5 +180,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		}
 		return cfg;
 	}
-
+	
+	public ITransaction getTransaction(){
+		if(getEntityManager() instanceof org.eclipse.persistence.jpa.JpaEntityManager){
+			return new JPAEclipseLinkTransaction(this);
+		} else{ 
+			return new JPAHibernateTransaction(this);
+		} 
+	}
+	
 }
