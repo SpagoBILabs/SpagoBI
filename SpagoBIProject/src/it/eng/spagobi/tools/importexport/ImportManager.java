@@ -331,11 +331,11 @@ public class ImportManager implements IImportManager, Serializable {
 /*		metaLog.log("-------UDP -----");
 		importUdp(overwrite);
 		metaLog.log("-------UDP values -----");
-		importUdpValues(overwrite);*/
+		importUdpValues(overwrite);
 		metaLog.log("-------OU grants -----");
 		importOuGrants(overwrite);
 		metaLog.log("-------OU grant nodes -----");
-		importOuGrantNodes(overwrite);
+		importOuGrantNodes(overwrite);*/
 
 		logger.debug("OUT");
 	}
