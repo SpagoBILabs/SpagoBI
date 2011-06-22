@@ -609,7 +609,12 @@ public class ImporterMetadata {
 			Integer referenceId = (Integer) uniqueMap.get("referenceId");
 			hql = "from SbiUdpValue u where u.sbiUdp.udpId = " + udpId + " and u.referenceId ="+referenceId +" and u.family ='"+family+"'";
 			hqlQuery = sessionCurrDB.createQuery(hql);
-			SbiUdpValue hibUdpVal = (SbiUdpValue) hqlQuery.uniqueResult();
+			List<SbiUdpValue> udpValues = (List<SbiUdpValue>)hqlQuery.list();
+			SbiUdpValue hibUdpVal = null;
+			//TODO to control why there is a list of udpValues and not only one
+			if(udpValues!=null && !udpValues.isEmpty()){
+				hibUdpVal = udpValues.get(0);
+			}
 			return hibUdpVal;		
 		}else if (hibObj instanceof SbiUdp) {
 			//logical unique key but table just looks for label
