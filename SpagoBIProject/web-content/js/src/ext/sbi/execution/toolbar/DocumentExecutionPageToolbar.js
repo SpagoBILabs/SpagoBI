@@ -268,7 +268,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		window.open(endUrl,'name','resizable=1,height=750,width=1000');
 	}
 	
-	, exportChartExecution: function (exportType) {		
+	, exportChartExecution: function (exportType) {
+		this.miframe.getFrame().getWindow().exportChart(exportType);
+		/*
 		var urlExporter = "";
 	    
 		if (exportType == "PDF")  {
@@ -276,6 +278,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			urlExporter+= '&SBI_EXECUTION_ID=' + this.executionInstance.SBI_EXECUTION_ID + "&outputType=PDF";
 		}
 		window.open(urlExporter,'name','resizable=1,height=750,width=1000');
+		*/
 	}
 	
 	, exportQbEExecution: function (exportType) {	
