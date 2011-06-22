@@ -25,6 +25,8 @@ import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.transaction.ITransaction;
+import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
@@ -248,16 +250,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		if(compositeHibernateConfiguration == null) open();
 		return (Configuration)configurationMap.get(dmName);
 	}
-	
-	
-	
 
-	
-	
-	
-
-
-	
 
 	protected void addDbLink(String modelName, Configuration srcCfg, Configuration dstCfg) {
 		
@@ -301,4 +294,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		return dataMartModelStructure;
 	}
 
+	public ITransaction getTransaction(){
+		return new HibernateTransaction(this);
+	}
+
+	
 }
