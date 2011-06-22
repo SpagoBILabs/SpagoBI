@@ -69,9 +69,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String crossNavigationUrl = "";
 	//getting sbi_execution_id for new user interface
 	String sbiExecutionID = (String)sbModuleResponse.getAttribute("SBI_EXECUTION_ID");
+	BIObject objO = instanceO.getBIObject();
+	String documentid=(objO.getId()).toString();
+	
    	// if in document composition case do not include header.jsp
-   	   	
-   	
 	   if (execContext == null || !execContext.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITION)){%>
 <%@ include file="/WEB-INF/jsp/analiticalmodel/execution/header.jsp"%>
 <%
@@ -92,6 +93,45 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<input type="hidden" id="targetDocumentParameters<%= uuid %>" name="<%= ObjectsTreeConstants.PARAMETERS %>" value="" />
 		</form>
 		
+		<!-- manage the export functionality (locally since SpagoBI 3: version with highcharts ) -->
+		<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+		<script>
+			   var url = {
+			    	host: '<%= request.getServerName()%>'
+			    	, port: '<%= request.getServerPort()%>'
+			    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+			    	   				  request.getContextPath().substring(1):
+			    	   				  request.getContextPath()%>'
+			    	    
+			    };
+	
+				var params = {
+						  SBI_EXECUTION_ID: '<%= sbiExecutionID %>'
+						, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+						
+					};
+				
+				Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+					  baseUrl: url
+				    , baseParams: params
+				});
+	
+			  function exportChart(exportType) {
+				  var urlExporter = "";
+				     
+				  if (exportType == "PDF")  {
+				  	  params.OBJECT_ID = '<%=documentid%>';
+				  	  params.outputType = exportType;
+				  	  
+				  	  urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_CHART_PDF'
+																			 , baseParams:params
+																			   });
+				  }
+				  window.open(urlExporter,'name','resizable=1,height=750,width=1000');
+				 }
+		</script>
+		<%-- end export scripts --%>
+		
 		<script>
 			function execCrossNavigation(windowName, label, parameters) {
 				var uuid = "<%=uuid%>";
@@ -99,7 +139,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				document.getElementById('targetDocumentParameters' + uuid).value = parameters;
 				document.getElementById('crossNavigationForm' + uuid).submit();
 			}
-		</script>
+		</script>		
 		<%-- end cross navigation scripts --%>
 			
 	<%   }
@@ -110,8 +150,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   				AuditManager auditManager = AuditManager.getInstance();
   				executionAuditId_chart = auditManager.insertAudit(instance.getBIObject(), null, userProfile, instance.getExecutionRole(), instance.getExecutionModality());	   				
 	   }
-   	
-	BIObject objO = instanceO.getBIObject();
+   
 	String uuidO=instanceO.getExecutionId();
 	String executionFlowIdO=instanceO.getFlowId();
 	
@@ -164,7 +203,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		}
 
 		ChartImpl sbi = (ChartImpl)sbModuleResponse.getAttribute("sbi");
-		String documentid=(objO.getId()).toString();
 		DatasetMap datasetMap=(DatasetMap)sbModuleResponse.getAttribute("datasets");
 		DatasetMap copyDatasets=null;
 		
@@ -1134,7 +1172,7 @@ var checkableSeries = new Array();
 </script>
 
 <%}
-} //anto%>
+} %>
 
 <%
 Integer refreshSeconds=objO.getRefreshSeconds();

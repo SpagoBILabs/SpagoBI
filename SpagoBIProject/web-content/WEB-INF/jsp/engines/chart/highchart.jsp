@@ -38,17 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
-
-	String executionId = request.getParameter("SBI_EXECUTION_ID");
 	
-
+	String executionId = request.getParameter("SBI_EXECUTION_ID");
 	if(executionId != null) {
 		executionId = "'" + request.getParameter("SBI_EXECUTION_ID") + "'";
 	} else {
 		executionId = "null";
 	}  
-	
-	
 	
 	SourceBean sbModuleResponse = (SourceBean) aServiceResponse.getAttribute("ExecuteBIObjectModule");
 	
@@ -80,7 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		}
 		divHeightMaster = String.valueOf(Math.round(tmpDetailHeight/3)) + postFix;
 	}
-	
+	 
 	
 	//gets the json template
 	JSONObject template = (JSONObject)sbModuleResponse.getAttribute("template");
@@ -104,13 +100,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/themes/"+theme+".js")%>'></script>
 	<% }%>
 	<script type="text/javascript">
+		var chartPanel = {};
 		var template =  <%= template.toString()  %>;
 		Sbi.config = {};
-
-		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-			baseUrl: url
-		  , baseParams: params
-		});
 
 		var url = {
 	    	host: '<%= request.getServerName()%>'
@@ -131,6 +123,60 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			  baseUrl: url
 		    , baseParams: params
 		});
+		
+		function exportChart(exportType) {
+		  if (chartPanel.detailChart !== undefined && chartPanel.detailChart !== null){
+			  var svgDetail = chartPanel.detailChart.getSVG();
+		  }
+          var svg = chartPanel.chart.getSVG();
+          params.type = exportType;
+         // params.type = "application/pdf";
+	  	  //params.svg = Ext.encode(svg);
+	  	  
+	  	  urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_HIGHCHART_ACTION'
+																 , baseParams:params
+																   });
+          
+          /*
+          if (exportType == "PDF")  {
+        	  params.type = "application/pdf";
+		  	  params.svg = Ext.encode(svg);
+		  	  
+		  	  urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_HIGHCHART_ACTION'
+																	 , baseParams:params
+																	   });
+		  }
+           window.open(urlExporter,'name','resizable=1,height=750,width=1000');
+          */
+          Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
+          // but, if a value contains a " character, then the html produced is not correct!!!
+          // See source of DomHelper.append and DomHelper.overwrite methods
+          // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+          var dh = Ext.DomHelper;
+
+          var form = document.getElementById('export-chart-form');
+          if (form === undefined || form === null) {
+	          var form = dh.append(Ext.getBody(), { // creating the hidden form
+	          id: 'export-chart-form'
+	          , tag: 'form'
+	          , method: 'post'
+	          , cls: 'export-form'
+	          });
+	          
+	          dh.append(form, {					// creating the hidden input in form
+					tag: 'input'
+					, type: 'hidden'
+					, name: 'svg'
+					, value: ''  // do not put value now since DomHelper.overwrite does not work properly!!
+				});
+          }          
+          // putting the chart data into hidden input
+          //form.elements[0].value = Ext.encode(svg);
+          form.elements[0].value = svg;
+          form.action = urlExporter;
+          form.target = '_blank'; // result into a new browser tab
+          form.submit();		  
+		}
 
 		Ext.onReady(function() { 					
 			Ext.QuickTips.init();		
@@ -147,7 +193,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.numCharts = <%=numCharts%>;
 
 			
-			var chartPanel = {};
+			
 			if (config.chart && config.chart.subType && config.chart.subType === 'MasterDetail') {
 				chartPanel = new Sbi.engines.chart.MasterDetailChartPanel({'chartConfig':config});
 			}else{
@@ -166,6 +212,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 			});
 		});
+		
 	</script>
 	
 	<%if (subType != null && subType.equalsIgnoreCase("MasterDetail")) {%>

@@ -14,6 +14,11 @@
   <ACTION name="GET_DATA_CHART_ACTION" class="it.eng.spagobi.engines.chart.service.GetChartDataAction" scope="REQUEST">
  	<CONFIG/>
   </ACTION>
+  
+  <ACTION name="EXPORT_HIGHCHART_ACTION" class="it.eng.spagobi.engines.chart.service.ExportHighChartsAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
 
 </ACTIONS>
 
