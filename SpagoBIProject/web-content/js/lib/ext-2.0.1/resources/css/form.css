@@ -112,9 +112,7 @@ textarea {
     background-image: url(../images/default/form/search-trigger.gif);
     cursor:pointer;
 }
-.ext-safari .x-form-field-wrap .x-form-trigger{
-    right:0;
-}
+
 .x-form-field-wrap .x-form-twin-triggers{
 
 }
