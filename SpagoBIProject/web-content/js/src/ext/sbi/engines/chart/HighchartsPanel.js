@@ -45,7 +45,6 @@
 Ext.ns("Sbi.engines.chart");
 
 Sbi.engines.chart.HighchartsPanel = function(config) {
-	//alert("$$$ config: " + config.toSource());
 	var defaultSettings = {
 	};
 
@@ -62,24 +61,12 @@ Sbi.engines.chart.HighchartsPanel = function(config) {
 Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPanel, {
 
 	 chart : null
+   , detailChart: null
+   , chartsArr : []
    , chartConfig : null // mandatory object to be passed as a property of the constructor input object.						
 
 
 	, init : function () {
-		/*
-		//sets categoryX and categoryY
-		var totalCharts = []; //for reset
-		totalCharts = this.chartConfig.charts || [];
-		if (totalCharts.length === 0 && this.chartConfig !== undefined){
-			//mono chart, retrocompatibility
-			totalCharts.push(this.chartConfig);
-		}
-		for (c in totalCharts){
-			this.setCategoryAliasX(totalCharts[c]);
-			this.setCategoryAliasY(totalCharts[c]);
-			this.setSerieAlias(totalCharts[c]);
-		}
-		*/
 		//gets dataset values (at the moment one dataset for all charts in a document)
 		var dataConfig = this.chartConfig;
 		if (this.chartConfig.charts){			
@@ -143,7 +130,8 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			
 			//alert(singleChartConfig.toSource()	);
 			this.chart = new Highcharts.Chart(singleChartConfig);
-			
+			//saves the chart for eventually multiple export
+			this.chartsArr.push(this.chart);
 		}
 	}
 

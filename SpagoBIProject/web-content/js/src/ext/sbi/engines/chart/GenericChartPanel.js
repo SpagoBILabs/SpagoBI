@@ -412,6 +412,77 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	
     }
     
+    , defineSeriesData: function(config){
+		//gets series values and adds theme to the config
+		var seriesNode = [];
+
+		if (config.series !== undefined ){
+			var serieValue = config.series;
+			if (Ext.isArray(serieValue)){
+				var seriesData =  {};
+				var str = "";
+				for(var i = 0; i < serieValue.length; i++) {
+					seriesData = serieValue[i];					
+					seriesData.data = this.getSeries(serieValue[i].alias);//values from dataset
+					seriesNode.push(seriesData);
+				}
+			}
+		}else if (config.plotOptions){ 
+			seriesData = config.series;//other attributes too
+			seriesData.data = this.getSeries();//values from dataset
+			seriesNode.push(seriesData);
+		}
+
+		config.series = seriesNode;
+	}
+	
+	, definesCategoriesX: function(config){
+		if(config.xAxis != undefined){
+			//if multiple X axis
+			if(config.xAxis.length != undefined){
+				//gets categories values and adds theme to the config	
+				var categoriesX = this.getCategoriesX();
+				if(categoriesX == undefined || categoriesX.length == 0){
+					delete this.chartConfig.xAxis;
+					for(var j =0; j< this.categoryAliasX.length; j++){
+						config.xAxis[j].categories = categoriesX[j];
+					}					
+				}
+				//else keep templates ones
+
+			}else{
+				//single axis
+				var categoriesX = this.getCategoriesX();
+				if(categoriesX != undefined && categoriesX.length != 0){
+					config.xAxis.categories = categoriesX[0];
+				}				
+			}
+		}
+	}
+	
+	, definesCategoriesY: function(config){
+		if(config.yAxis != undefined){
+			//if multiple Y axis
+			if(config.yAxis.length != undefined){
+				//gets categories values and adds theme to the config	
+				var categoriesY = this.getCategoriesY();
+				if(categoriesY == undefined || categoriesY.length == 0){
+					delete this.chartConfig.yAxis;
+					for(var j =0; j< this.categoryAliasY.length; j++){
+						config.yAxis[j].categories = categoriesY[j];
+					}
+					
+				}
+				//else keep templates ones
+			}else{
+				//single axis
+				var categoriesY = this.getCategoriesY();
+				if(categoriesY != undefined && categoriesY.length != 0){
+					config.yAxis.categories = categoriesY[0];
+				}				
+			}
+		}
+	}
     ,onLoad: function(){
     	this.getCategoriesX();
     	this.getCategoriesY();

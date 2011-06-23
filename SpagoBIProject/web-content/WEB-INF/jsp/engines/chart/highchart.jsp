@@ -85,9 +85,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	//only for test... delete with production
 	//System.out.println("template in jsp: " + template.toString());
 	//System.out.println("dsPars in jsp: " + dsPars.toString());
-	//System.out.println("theme in jsp: " + theme);
-	//System.out.println("numCharts in jsp: " + numCharts);
-	
 %>
 
 
@@ -99,6 +96,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	<% if (theme != null && !theme.equals("") ) { %>
 		<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/engines/chart/themes/"+theme+".js")%>'></script>
 	<% }%>
+	<!-- defines the export method only for the highcharts docs -->
 	<script type="text/javascript">
 		var chartPanel = {};
 		var template =  <%= template.toString()  %>;
@@ -125,29 +123,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		});
 		
 		function exportChart(exportType) {
-		  if (chartPanel.detailChart !== undefined && chartPanel.detailChart !== null){
-			  var svgDetail = chartPanel.detailChart.getSVG();
+		  var svgArr = [],
+		   	  top = 0,
+		  	  width = 0,
+		  	  svg = '';
+		  //in case of multiple charts (ie. the master-detail type) redefines the svg object as a global (transforms each single svg in a group tag <g>)
+		  for (var c=0; c < chartPanel.chartsArr.length; c++){
+			var singleChart = chartPanel.chartsArr[c];
+			if (singleChart !== undefined && singleChart !== null){
+	          	var singleSvg = singleChart.getSVG();
+	          	singleSvg = singleSvg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+	          	singleSvg = singleSvg.replace('</svg>', '</g>');
+	
+	            top += singleChart.chartHeight;
+	            width = Math.max(width, singleChart.chartWidth);
+	
+	            svgArr.push(singleSvg);
+	         }
 		  }
-          var svg = chartPanel.chart.getSVG();
+		  //defines the global svg
+          svg = '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">';
+          for (var s=0; s < svgArr.length; s++){
+        	  svg += svgArr[s];
+          }
+          svg += '</svg>';
+
+		  //var svg = chartPanel.chart.getSVG();
           params.type = exportType;
-         // params.type = "application/pdf";
-	  	  //params.svg = Ext.encode(svg);
-	  	  
 	  	  urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_HIGHCHART_ACTION'
 																 , baseParams:params
 																   });
-          
-          /*
-          if (exportType == "PDF")  {
-        	  params.type = "application/pdf";
-		  	  params.svg = Ext.encode(svg);
-		  	  
-		  	  urlExporter = Sbi.config.serviceRegistry.getServiceUrl({serviceName: 'EXPORT_HIGHCHART_ACTION'
-																	 , baseParams:params
-																	   });
-		  }
-           window.open(urlExporter,'name','resizable=1,height=750,width=1000');
-          */
           Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
           // but, if a value contains a " character, then the html produced is not correct!!!
           // See source of DomHelper.append and DomHelper.overwrite methods
@@ -178,7 +183,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
           form.submit();		  
 		}
 
-		Ext.onReady(function() { 					
+		Ext.onReady(function() { 	
 			Ext.QuickTips.init();		
 			
 			var config = <%=template%>;
@@ -192,8 +197,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			config.theme = "<%=theme%>";
 			config.numCharts = <%=numCharts%>;
 
-			
-			
 			if (config.chart && config.chart.subType && config.chart.subType === 'MasterDetail') {
 				chartPanel = new Sbi.engines.chart.MasterDetailChartPanel({'chartConfig':config});
 			}else{

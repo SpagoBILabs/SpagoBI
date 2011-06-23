@@ -58,12 +58,24 @@ Sbi.engines.chart.MasterDetailChartPanel = function(config) {
 
 };
 
-Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.HighchartsPanel, {
-	
-   	  masterChart: null
-    , detailChart: null
-    , detailSerieData:  null
+Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericChartPanel, {
+
+      detailSerieData:  null
 	, detailStart: null
+	, chartsArr : []
+	, chart : null
+	, detailChart: null
+	, chartConfig : null 
+
+	, init : function () {
+		//gets dataset values (at the moment one dataset for all charts in a document)
+		var dataConfig = this.chartConfig;
+		if (this.chartConfig.charts){			
+			dataConfig =  Ext.apply( this.chartConfig.charts[0], dataConfig);
+			delete dataConfig.charts;
+		}
+		this.loadChartData(dataConfig);
+	}
 
 	, createChart: function () {
 		this.chartConfig.chart.renderTo = this.chartConfig.divId + '__master';
@@ -103,41 +115,43 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.Highchart
 		this.definesDetailCategoriesX(this.chartConfig.detailChart);
 		//this.definesDetailCategoriesY(this.chartConfig.detailChart);
 		
+		
 		//getTemplateData for the detail chart
 		this.detailTemplate = this.getDetailChartTemplate();
+		var detailChart = new Highcharts.Chart(this.detailTemplate);
 		//defines master events to manage the detail chart
-		this.createMasterEvents(this.chartConfig, this.detailSerieData , this.detailTemplate);
+		this.createMasterEvents(this.chartConfig, this.detailSerieData , detailChart);
 		
-		//alert("master template: " + this.chartConfig.toSource());
 		this.chart = new Highcharts.Chart(this.chartConfig);
-		
+
+		//saves the chart for eventually multiple export
+		this.chartsArr.push(detailChart);
+		this.chartsArr.push(this.chart);		
 	}
 
-	, createMasterEvents: function(config, detailSerieData, detailTemplate ) {
+	, createMasterEvents: function(config, detailSerieData, detailChart ) {
 		
-		if (config.detailChart.series[0].pointStart !== undefined){
+		if (config.detailChart.series[0].pointStart !== undefined){			
 			this.detailStart = this.getUTCValue(config.detailChart.series[0].pointStart);
 			config.detailChart.series[0].pointStart = this.detailStart;
 		}
+		
 		//gets max value for plot bands default
 		var events = {
 		
-			// on load of the master chart, add the detail chart
+			// on load of the master chart, set the detail chart
 			load: function() {
-				// creates the detail chart referenced by a global variable
-				//alert("detail template: " + detailTemplate.toSource());
-				this.detailChart = new Highcharts.Chart(detailTemplate || {});
+				//this.detailChart = new Highcharts.Chart(detailTemplate);
+				this.detailChart = detailChart;
 			}
 			// listen to the selection event on the master chart to update the 
 			// extremes of the detail chart
-		  , selection: function(event) {
+		   , selection: function(event) {
 				var extremesObject = event.xAxis[0],
 					min = extremesObject.min,
 					max = extremesObject.max,
 					xAxis = this.xAxis[0];
-					
-				
-				
+
 				// move the plot bands to reflect the new detail span
 				xAxis.removePlotBand('mask-before');
 				var pointStart = 0;
