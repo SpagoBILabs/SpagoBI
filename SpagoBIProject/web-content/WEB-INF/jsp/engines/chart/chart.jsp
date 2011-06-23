@@ -69,6 +69,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String crossNavigationUrl = "";
 	//getting sbi_execution_id for new user interface
 	String sbiExecutionID = (String)sbModuleResponse.getAttribute("SBI_EXECUTION_ID");
+	if (sbiExecutionID == null){
+		sbiExecutionID = instanceO.getExecutionId();
+	}
 	BIObject objO = instanceO.getBIObject();
 	String documentid=(objO.getId()).toString();
 	
@@ -106,7 +109,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			    };
 	
 				var params = {
-						  SBI_EXECUTION_ID: '<%= sbiExecutionID %>'
+						  SBI_EXECUTION_ID: '<%=sbiExecutionID%>'
 						, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 						
 					};
@@ -120,6 +123,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 				  var urlExporter = "";
 				     
 				  if (exportType == "PDF")  {
+					  params.uuid ='<%=sbiExecutionID%>';
 				  	  params.OBJECT_ID = '<%=documentid%>';
 				  	  params.outputType = exportType;
 				  	  
