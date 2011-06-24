@@ -43,7 +43,7 @@ import org.hibernate.Transaction;
 public class AbstractHibernateDAO {
 	
     private static transient Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
-    private String userID="";
+    private String userID="server";
     private IEngUserProfile profile=null;
     
     public void setUserID(String user){
