@@ -124,6 +124,10 @@
     <unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
   </target>
 	
+  <target name="checkout.SpagoBIGeoReportEngine" depends="create.sbi.utils.jar">
+	<ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
+	<ant dir="../SpagoBIGeoReportEngine/ant" target="svn.checkout"/>
+  </target>
   <target name="create.SpagoBIGeoReportEngine.war" depends="create.sbi.utils.jar">
     <ant dir="../SpagoBIGeoReportEngine/ant" />
   </target>
