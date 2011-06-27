@@ -107,7 +107,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			allowBlank: false, 
 			inputType: 'text',
 			maxLength: 200,
-			width: 250,
+			anchor: '95%',
 			fieldLabel: LN('sbi.generic.name') 
 		});
 		
@@ -117,7 +117,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	        allowBlank: false, 
 	        inputType: 'text',
 	        maxLength: 20,
-	        width: 250,
+	        anchor: '95%',
 			fieldLabel: LN('sbi.generic.label')  
 	    });
 		
@@ -127,21 +127,21 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	        inputType: 'text',
 	        allowBlank: true, 
 	        maxLength: 400,
-	        width: 250,
+	        anchor:	 '95%',
 	        height: 80,
 			fieldLabel: LN('sbi.generic.descr')  
 	    });
 	    
 	    this.inputForm = new Ext.Panel({
 	         itemId: 'detail'
-	        , width: 380
+	        , columnWidth: 0.6
 	        , items: {
 		   		 id: 'items-detail',   	
 	 		   	 itemId: 'items-detail',   	              
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
 	             labelWidth: 80,
-	             defaults: {width: 250, border:false},    
+	             defaults: {border:false},    
 	             defaultType: 'textfield',
 	             autoHeight: true,
 	             autoScroll  : true,
@@ -155,7 +155,9 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	    	}
 	    });
 	    
+	    
 	    this.treePanel = new Sbi.browser.DocumentsTree({
+	    	  columnWidth: 0.4,
 	          border: true,
 	          collapsible: false,
 	          title: '',
