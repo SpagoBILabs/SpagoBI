@@ -95,7 +95,11 @@ public class HQLDataSet extends AbstractQbeDataSet {
 			}	
 			
 			dataStore = toDataStore(result);
-			dataStore.getMetaData().setProperty("resultNumber", resultNumber);						
+			dataStore.getMetaData().setProperty("resultNumber", resultNumber);			
+			
+			if(hasDataStoreTransformer()) {
+				getDataStoreTransformer().transform(dataStore);
+			}
 		} finally {
 			if (session != null && session.isOpen())
 			session.close();
