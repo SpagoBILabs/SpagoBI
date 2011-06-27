@@ -21,6 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.core;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
+import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.statement.IStatement;
@@ -87,10 +88,10 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String mimeType = null;
 		String fileExtension = null;
 		IStatement statement = null;
-		Session session = null;	
+		ITransaction transaction = null;	
 		Connection connection = null;
 		//HQL2SQLStatementRewriter queryRewriter = null;
-		String hqlQuery = null;
+		String jpaQueryStr = null;
 		String sqlQuery = null;
 		SQLFieldsReader fieldsReader = null;
 		Vector extractedFields = null;
@@ -113,7 +114,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			session = ((IHibernateDataSource)getEngineInstance().getDataSource()).getHibernateSessionFactory().openSession();	
+			transaction = (getEngineInstance().getDataSource()).getTransaction();	
+			transaction.open();
 			
 			fileExtension = MimeUtils.getFileExtension( mimeType );
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
@@ -135,8 +137,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				//logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 				
 				statement.setParameters( getEnv() );
-				hqlQuery = statement.getQueryString();
-				logger.debug("Executable HQL query: [" + hqlQuery + "]");
+				jpaQueryStr = statement.getQueryString();
+				logger.debug("Executable HQL/JPQL query: [" + jpaQueryStr + "]");
 				
 				sqlQuery = statement.getSqlQueryString();
 				Assert.assertNotNull(sqlQuery, "The SQL query is needed while exporting results.");
@@ -150,12 +152,12 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			logger.debug("Executable SQL query: [" + sqlQuery + "]");
 			
 			logger.debug("Exctracting fields ...");
-			fieldsReader = new SQLFieldsReader(sqlQuery, session.connection());
+			fieldsReader = new SQLFieldsReader(sqlQuery, transaction.getSQLConnection());
 			try {
 				extractedFields = fieldsReader.readFields();
 			} catch (Exception e) {
 				logger.debug("Impossible to extract fields from query");
-				throw new SpagoBIEngineException("Impossible to extract fields from query: " + hqlQuery, e);
+				throw new SpagoBIEngineException("Impossible to extract fields from query: " + jpaQueryStr, e);
 			}
 			logger.debug("Fields extracted succesfully");
 			
@@ -255,7 +257,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 					}
 					
 					setJasperClasspath();
-					connection = session.connection();
+					connection = transaction.getSQLConnection();
 					
 					runner = new ReportRunner( );
 					Locale locale = this.getLocale();
@@ -284,7 +286,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			
 			try {
 				// closing session will close also all connection created into this section
-				session.close();
+				transaction.close();
 			} catch (Exception e) {
 				logger.warn("Impossible to close the connection used to execute the report in " + getActionName() + " service", e);
 			}

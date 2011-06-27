@@ -150,9 +150,9 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 			
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-			//String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
-			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+			String jpaQueryStr = statement.getQueryString();
+			//String sqlQuery = statement.getSqlQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			try {

@@ -27,7 +27,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
@@ -159,9 +158,9 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
-			//logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+			String jpaQueryStr = statement.getQueryString();
+			String sqlQuery = statement.getSqlQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			//auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);

@@ -81,9 +81,9 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
+			String jpaQueryStr = statement.getQueryString();
 			String sqlQuery = statement.getSqlQueryString();
-			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			JSONObject toReturn = new JSONObject();

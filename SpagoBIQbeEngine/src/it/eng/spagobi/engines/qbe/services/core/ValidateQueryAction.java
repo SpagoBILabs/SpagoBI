@@ -57,9 +57,9 @@ public class ValidateQueryAction extends AbstractQbeEngineAction {
 			boolean validationResult = false;
 			IStatement statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
-			String hqlQuery = statement.getQueryString();
-		//	String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
-			logger.debug("Validating query (HQL): [" +  hqlQuery+ "]");
+			String jpaQueryStr = statement.getQueryString();
+		//	String sqlQuery = statement.getSqlQueryString();
+			logger.debug("Validating query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 		//	logger.debug("Validating query (SQL): [" + sqlQuery + "]");
 			try {
 				IDataSet dataSet = QbeDatasetFactory.createDataSet(statement);

@@ -220,13 +220,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	public IDataStore executeQuery(IStatement statement, Integer start, Integer limit){
 		IDataStore dataStore = null;
 		IDataSet dataSet = null;
-		String hqlQuery = statement.getQueryString();
+		String jpaQueryStr = statement.getQueryString();
 		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
 		logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
 		boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-		logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+		logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);	
+		auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);	
 		
 		try {
 			logger.debug("Executing query ...");

@@ -52,7 +52,7 @@ public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 		Query query;
 		IStatement statement;
 		boolean validationResult = false;
-		String hqlQueryStr;
+		String jpaQueryStr;
 		String sqlQueryStr;
 		
 		logger.debug("IN");
@@ -71,9 +71,9 @@ public class ValidateCatalogueAction extends AbstractQbeEngineAction {
 				statement = getEngineInstance().getDataSource().createStatement( query );
 				statement.setParameters( getEnv() );
 				
-				hqlQueryStr = statement.getQueryString();
-				//sqlQueryStr = ((HQLStatement)statement).getSqlQueryString();
-				logger.debug("Validating query (HQL): [" +  hqlQueryStr+ "]");
+				jpaQueryStr = statement.getQueryString();
+				//sqlQueryStr = statement.getSqlQueryString();
+				logger.debug("Validating query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 				//logger.debug("Validating query (SQL): [" + sqlQueryStr + "]");
 				
 				try {
