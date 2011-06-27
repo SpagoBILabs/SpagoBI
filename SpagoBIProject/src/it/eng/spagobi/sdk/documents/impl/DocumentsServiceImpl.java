@@ -732,49 +732,18 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public void uploadDatamartTemplate(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
 		
-		InputStream is = null;
-		FileOutputStream osDatamartFile = null;
-		DataHandler dh = null;
-		
 		try {	
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document                                                                   */
 			/***********************************************************************************************************/
-			String datamartName = sdkTemplate.getFolderName();
-			
-			// if user cannot develop the specified document, he cannot upload templates on it
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
-			if (sdkTemplate == null) {
-				logger.warn("SDKTemplate in input is null!");
-				return;
-			}
+			uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
 
-			//creates the folder correct (the name is given by the name of the file).
-			String path = getResourcePath()  + System.getProperty("file.separator") + datamartName;
-			logger.debug("Datamart path: " + path);
-			File datamartFolder = new File (path);
-			if (!datamartFolder.exists()){
-				datamartFolder.mkdir();
-			}
-			path += System.getProperty("file.separator") + (sdkTemplate.getFileName() == null || sdkTemplate.getFileName().equals("")?DATAMART_FILE_NAME:sdkTemplate.getFileName());
-			File datamartFile = new File(path);
-			logger.debug("Datamart file: " + path);
-			if (!datamartFile.exists()){
-				datamartFile.createNewFile();
-			}
-			osDatamartFile = new FileOutputStream(path);
-			dh = sdkTemplate.getContent();
-			is = dh.getInputStream();
-			logger.debug("Upload datamart template....");
-			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
-			osDatamartFile.write(templateContent);
-			logger.debug("Template uploaded without errors.");
 			
 			/***********************************************************************************************************/
 			/* STEP 2: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart. */
 			/***********************************************************************************************************/
 			BIObject obj = null;
-			
+			String datamartName = sdkTemplate.getFolderName();
 				
 			//checks if the template already exists. In this case doesn't create the new one!
 			obj  =	DAOFactory.getBIObjectDAO().loadBIObjectByLabel(datamartName);
@@ -846,6 +815,85 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			}
 		} catch(Exception e) {
 			logger.error("Error while uploading template", e);
+		} 
+		logger.debug("OUT");
+	} 
+
+	public void uploadDatamartModel(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
+		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
+
+		try {	
+			uploadFisicalFile(sdkTemplate, "");
+			
+		} catch(Exception e) {
+			logger.error("Error while uploading model template", e);
+		}
+		logger.debug("OUT");
+	} 
+
+	public SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException{
+		logger.debug("IN");
+		SDKTemplate toReturn = null;
+		try {
+			toReturn = downloadFisicalFile(folderName, fileName);
+		} catch(Exception e) {
+			return null;
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	public SDKTemplate downloadDatamartModel(String folderName, String fileName) throws NotAllowedOperationException{
+		logger.debug("IN");
+		SDKTemplate toReturn = null;
+		try {
+			toReturn = downloadFisicalFile(folderName, fileName);
+		} catch(Exception e) {
+			return null;
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
+	private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{
+		InputStream is = null;
+		FileOutputStream osFile = null;
+		DataHandler dh = null;
+		
+		try {	
+			String fileName = sdkTemplate.getFolderName();
+			
+			// if user cannot develop the specified document, he cannot upload templates on it
+			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			if (sdkTemplate == null) {
+				logger.warn("SDKTemplate in input is null!");
+				return;
+			}
+
+			//creates the folder correct (the name is given by the name of the file).
+			String path = getResourcePath()  + System.getProperty("file.separator") + fileName;
+			logger.debug("File path: " + path);
+			File datamartFolder = new File (path);
+			if (!datamartFolder.exists()){
+				datamartFolder.mkdir();
+			}
+			path += System.getProperty("file.separator") + (sdkTemplate.getFileName() == null || sdkTemplate.getFileName().equals("")?defaultName:sdkTemplate.getFileName());
+			File datamartFile = new File(path);
+			logger.debug("File: " + path);
+			if (!datamartFile.exists()){
+				datamartFile.createNewFile();
+			}
+			osFile = new FileOutputStream(path);
+			dh = sdkTemplate.getContent();
+			is = dh.getInputStream();
+			logger.debug("Upload file template....");
+			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
+			osFile.write(templateContent);
+			logger.debug("Template uploaded without errors.");
+			
+		} catch(Exception e) {
+			logger.error("Error while uploading template", e);
+			throw e;
 		} finally {
 			if (is != null) {
 				try {				
@@ -854,19 +902,17 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					logger.error("Error closing file input stream", e);
 				}
 			}
-			if (osDatamartFile != null) {
+			if (osFile != null) {
 				try {				
-					osDatamartFile.close();
+					osFile.close();
 				} catch (IOException e) {
 					logger.error("Error closing output stream", e);
 				}
 			}
 		}
-		logger.debug("OUT");
-	} 
-
-	public SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException{
-		logger.debug("IN");
+	}
+	
+	private SDKTemplate downloadFisicalFile(String folderName, String fileName) throws Exception{
 		SDKTemplate toReturn = null;
 		FileInputStream isDatamartFile = null;
 		try {
@@ -874,30 +920,31 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			// retrieves template
 			String path = getResourcePath()  + System.getProperty("file.separator") + folderName;
-			logger.debug("Datamart path: " + path);
+			logger.debug("Path: " + path);
 			File datamartFolder = new File (path);
 			if(!datamartFolder.exists()) {
-				throw new RuntimeException("Datamart Folder [" + datamartFolder.getPath() + "] does not exist");
+				throw new RuntimeException("Folder [" + datamartFolder.getPath() + "] does not exist");
 			}
 			if(!datamartFolder.isDirectory()) {
-				throw new RuntimeException("Datamart folder [" + datamartFolder + "] is a file not a folder");
+				throw new RuntimeException("Folder [" + datamartFolder + "] is a file not a folder");
 			}
 			path += System.getProperty("file.separator") + (fileName == null || fileName.equals("")?DATAMART_FILE_NAME:fileName);
 			File datamartFile = new File(path);
-			logger.debug("Datamart file: " + path);
+			logger.debug("File: " + path);
 			if(!datamartFile.exists()) {
 				throw new RuntimeException("File [" + datamartFile.getPath() + "] does not exist");
 			}
 			//check file content
 			isDatamartFile = new FileInputStream(path);
 			if (isDatamartFile == null) {
-				logger.warn("The datamart template for document [" + folderName + "] is NULL");
+				logger.warn("The template for document [" + folderName + "] is NULL");
 				return null;
 			}
 			//creates a SDKTemplate
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
 			toReturn = new SDKTemplate();
-			toReturn.setFileName(DATAMART_FILE_NAME);
+			//toReturn.setFileName(DATAMART_FILE_NAME);
+			toReturn.setFileName(fileName);
 			SDKObjectsConverter objConverter = new SDKObjectsConverter();
 			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
 			DataHandler dhSource = new DataHandler(mods);
@@ -905,12 +952,11 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("Template for document [" + folderName + "] retrieved.");
 		} catch(Exception e) {
 			logger.error(e);
-			return null;
+			throw e;
 		}
-		logger.debug("OUT");
 		return toReturn;
 	}
-
+	
 	private String getResourcePath() {
 
 		String path = null;
