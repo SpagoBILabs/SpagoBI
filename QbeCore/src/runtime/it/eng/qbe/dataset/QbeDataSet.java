@@ -35,6 +35,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -92,7 +93,13 @@ public static String DS_TYPE = "SbiQbeDataSet";
     		ds = QbeDatasetFactory.createDataSet(qbeDataSource.createStatement(query));
     		ds.setUserProfileAttributes(attributes);
     		ds.setParamsMap(params);
-    		
+    		ds.setTransformerId(transformerId);
+    		ds.setTransformerCd(transformerCd);
+    		ds.setPivotColumnName(pivotColumnName);
+    		ds.setPivotColumnValue(pivotColumnValue);
+    		ds.setPivotRowName(pivotRowName);
+    		ds.setNumRows(numRows);
+    		ds.setDataStoreTransformer(dataSetTransformer);
     	}
     }
     

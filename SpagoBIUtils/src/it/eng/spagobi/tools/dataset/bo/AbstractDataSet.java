@@ -49,15 +49,15 @@ public abstract class AbstractDataSet implements IDataSet {
     private Map paramsMap;
     private Map behaviours;
     
-    private Integer transformerId;
-    private String transformerCd;
-    private String pivotColumnName;
-    private String pivotRowName;
-    private String pivotColumnValue;
-    private boolean numRows;
+    protected Integer transformerId;
+    protected String transformerCd;
+    protected String pivotColumnName;
+    protected String pivotRowName;
+    protected String pivotColumnValue;
+    protected boolean numRows;
     private String dsMetadata;
     	
-    IDataStoreTransformer dataSetTransformer;
+    protected IDataStoreTransformer dataSetTransformer;
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
