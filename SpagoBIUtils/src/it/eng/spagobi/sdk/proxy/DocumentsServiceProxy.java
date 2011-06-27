@@ -153,9 +153,21 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	     documentsService.uploadDatamartTemplate(in0);
   }
   
+  public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+	    if (documentsService == null)
+	      _initDocumentsServiceProxy();
+	     documentsService.uploadDatamartModel(in0);
+}
+  
   public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartTemplate(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
 	    return documentsService.downloadDatamartTemplate(in0, in1);
   }  
+  
+  public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModel(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+	    if (documentsService == null)
+	      _initDocumentsServiceProxy();
+	    return documentsService.downloadDatamartTemplate(in0, in1);
+}  
 }
