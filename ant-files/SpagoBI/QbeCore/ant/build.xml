@@ -99,7 +99,23 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	  	  
   <target name="copy.artifacts" depends="compile">
     <copy todir="${build}">
-      <fileset dir="${src}">
+      <fileset dir="${src}/test">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/hibernate">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/jpa">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/runtime">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/serialization">
         <exclude name="**/*.svn"/>
         <exclude name="**/*.java"/>
       </fileset>
