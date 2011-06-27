@@ -94,14 +94,13 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			ddGroup: 'worksheetDesignerDDGroup'	
 		};
 		
-		if(!Ext.isIE){
-			filtersConf.tools=[{
-	        	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
-	        	id: 'left',
-	        	handler:this.showLeftFilters,
-	        	scope: this
-	        }];
-		}
+		filtersConf.tools=[{
+	       	qtip: LN('sbi.worksheet.designer.sheetpanel.tool.left.filter'),
+	       	id: 'left',
+	       	handler:this.showLeftFilters,
+	       	scope: this
+	       }];
+
 		
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel(filtersConf);
 		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);
