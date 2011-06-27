@@ -77,13 +77,13 @@ public class ExecuteQueryServiceSupplier {
 		try {
 			statement.setParameters( engineInstance.getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-		//	String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
-			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
-		//	logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+			String jpaQueryStr = statement.getQueryString();
+			//String sqlQuery = statement.getSqlQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
+			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
-		//	auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
+			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 			
 			
 			logger.debug("Executing query ...");

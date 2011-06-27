@@ -27,7 +27,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
@@ -153,12 +152,13 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 			updatePromptableFiltersValue(query);
 			getEngineInstance().setActiveQuery(query);
 			
+			
 			// STEP 2: prepare statment and obtain the corresponding sql query
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-			String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
+			//String jpaQueryStr = statement.getQueryString();
+			String sqlQuery = statement.getSqlQueryString();
 			
 			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			

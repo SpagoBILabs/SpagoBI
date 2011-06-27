@@ -4,9 +4,9 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -83,9 +83,9 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			
 			statement.setParameters( getEnv() );
 			
-			String hqlQuery = statement.getQueryString();
-		//	String sqlQuery = ((HQLStatement)statement).getSqlQueryString();
-			logger.debug("Executable query (HQL): [" +  hqlQuery+ "]");
+			String jpaQueryStr = statement.getQueryString();
+		//	String sqlQuery = statement.getSqlQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 		//	logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			start = getAttributeAsInteger( START );
@@ -170,10 +170,10 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 			String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
-			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {fieldUniqueName}, "", HQLStatement.OPERAND_TYPE_FIELD, null, null);
+			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {fieldUniqueName}, "", AbstractStatement.OPERAND_TYPE_FIELD, null, null);
 			valuefilter = typeValueFilter.equalsIgnoreCase("NUMBER") ? valuefilter : "" + valuefilter + "";
 			WhereField.Operand rightOperand = new WhereField.Operand(new String[] {valuefilter}, 
-					"", HQLStatement.OPERAND_TYPE_STATIC, null, null);
+					"", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 			query.addWhereField("Filter1", "", false, leftOperand, typeFilter, rightOperand, "AND");
 			
 		}
