@@ -4,9 +4,9 @@
 Built on Apr 22, 2006 (06:55:48 PDT)-->
  <wsdl:types>
   <schema targetNamespace="http://bo.documents.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://xml.apache.org/xml-soap"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
-   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="SDKDocument">
     <sequence>
@@ -119,9 +119,9 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    </complexType>
   </schema>
   <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
    <import namespace="http://xml.apache.org/xml-soap"/>
-   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="NonExecutableDocumentException">
     <sequence/>
@@ -144,9 +144,9 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    </complexType>
   </schema>
   <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
    <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
-   <import namespace="urn:spagobisdkdocuments"/>
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="mapItem">
     <sequence>
@@ -170,6 +170,18 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getDocumentParametersRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadTemplateResponse">
+
+   </wsdl:message>
+
    <wsdl:message name="executeDocumentRequest">
 
       <wsdl:part name="in0" type="tns2:SDKDocument"/>
@@ -179,154 +191,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
       <wsdl:part name="in2" type="soapenc:string"/>
 
       <wsdl:part name="in3" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="uploadDatamartTemplateResponse">
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentByLabelRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="uploadDatamartTemplateRequest">
-
-      <wsdl:part name="in0" type="tns2:SDKTemplate"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="NonExecutableDocumentException">
-
-      <wsdl:part name="fault" type="tns3:NonExecutableDocumentException"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getCorrectRolesForExecutionResponse">
-
-      <wsdl:part name="getCorrectRolesForExecutionReturn" type="impl:ArrayOf_soapenc_string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentsAsListResponse">
-
-      <wsdl:part name="getDocumentsAsListReturn" type="impl:ArrayOf_tns2_SDKDocument"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentsAsListRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-      <wsdl:part name="in1" type="soapenc:string"/>
-
-      <wsdl:part name="in2" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentsAsTreeResponse">
-
-      <wsdl:part name="getDocumentsAsTreeReturn" type="tns2:SDKFunctionality"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentByLabelResponse">
-
-      <wsdl:part name="getDocumentByLabelReturn" type="tns2:SDKDocument"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="MissingParameterValue">
-
-      <wsdl:part name="fault" type="tns3:MissingParameterValue"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadTemplateResponse">
-
-      <wsdl:part name="downloadTemplateReturn" type="tns2:SDKTemplate"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="saveNewDocumentRequest">
-
-      <wsdl:part name="in0" type="tns2:SDKDocument"/>
-
-      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
-
-      <wsdl:part name="in2" type="soapenc:int"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentsAsTreeRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getAdmissibleValuesRequest">
-
-      <wsdl:part name="in0" type="soapenc:int"/>
-
-      <wsdl:part name="in1" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getAdmissibleValuesResponse">
-
-      <wsdl:part name="getAdmissibleValuesReturn" type="apachesoap:Map"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getCorrectRolesForExecutionRequest">
-
-      <wsdl:part name="in0" type="soapenc:int"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadTemplateRequest">
-
-      <wsdl:part name="in0" type="soapenc:int"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="saveNewDocumentResponse">
-
-      <wsdl:part name="saveNewDocumentReturn" type="soapenc:int"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentParametersRequest">
-
-      <wsdl:part name="in0" type="soapenc:int"/>
-
-      <wsdl:part name="in1" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentByIdResponse">
-
-      <wsdl:part name="getDocumentByIdReturn" type="tns2:SDKDocument"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadDatamartTemplateResponse">
-
-      <wsdl:part name="downloadDatamartTemplateReturn" type="tns2:SDKTemplate"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="executeDocumentResponse">
-
-      <wsdl:part name="executeDocumentReturn" type="tns2:SDKExecutedDocumentContent"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDocumentByIdRequest">
-
-      <wsdl:part name="in0" type="soapenc:int"/>
 
    </wsdl:message>
 
@@ -344,19 +208,179 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="NotAllowedOperationException">
+   <wsdl:message name="getAdmissibleValuesResponse">
 
-      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+      <wsdl:part name="getAdmissibleValuesReturn" type="apachesoap:Map"/>
 
    </wsdl:message>
 
-   <wsdl:message name="uploadTemplateResponse">
+   <wsdl:message name="saveNewDocumentResponse">
+
+      <wsdl:part name="saveNewDocumentReturn" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByIdResponse">
+
+      <wsdl:part name="getDocumentByIdReturn" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByLabelResponse">
+
+      <wsdl:part name="getDocumentByLabelReturn" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTemplateResponse">
+
+      <wsdl:part name="downloadTemplateReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCorrectRolesForExecutionRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsTreeResponse">
+
+      <wsdl:part name="getDocumentsAsTreeReturn" type="tns2:SDKFunctionality"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartTemplateResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByLabelRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
 
    </wsdl:message>
 
    <wsdl:message name="InvalidParameterValue">
 
       <wsdl:part name="fault" type="tns3:InvalidParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartTemplateResponse">
+
+      <wsdl:part name="downloadDatamartTemplateReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAdmissibleValuesRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="NotAllowedOperationException">
+
+      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartModelResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="MissingParameterValue">
+
+      <wsdl:part name="fault" type="tns3:MissingParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveNewDocumentRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDocument"/>
+
+      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartTemplateRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsListRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCorrectRolesForExecutionResponse">
+
+      <wsdl:part name="getCorrectRolesForExecutionReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartModelRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="executeDocumentResponse">
+
+      <wsdl:part name="executeDocumentReturn" type="tns2:SDKExecutedDocumentContent"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartModelRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsListResponse">
+
+      <wsdl:part name="getDocumentsAsListReturn" type="impl:ArrayOf_tns2_SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="NonExecutableDocumentException">
+
+      <wsdl:part name="fault" type="tns3:NonExecutableDocumentException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsTreeRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartModelResponse">
+
+      <wsdl:part name="downloadDatamartModelReturn" type="tns2:SDKTemplate"/>
 
    </wsdl:message>
 
@@ -460,11 +484,11 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:output message="impl:executeDocumentResponse" name="executeDocumentResponse"/>
 
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
          <wsdl:fault message="impl:InvalidParameterValue" name="InvalidParameterValue"/>
 
          <wsdl:fault message="impl:MissingParameterValue" name="MissingParameterValue"/>
-
-         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -480,11 +504,31 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="uploadDatamartModel" parameterOrder="in0">
+
+         <wsdl:input message="impl:uploadDatamartModelRequest" name="uploadDatamartModelRequest"/>
+
+         <wsdl:output message="impl:uploadDatamartModelResponse" name="uploadDatamartModelResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
       <wsdl:operation name="downloadDatamartTemplate" parameterOrder="in0 in1">
 
          <wsdl:input message="impl:downloadDatamartTemplateRequest" name="downloadDatamartTemplateRequest"/>
 
          <wsdl:output message="impl:downloadDatamartTemplateResponse" name="downloadDatamartTemplateResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartModel" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:downloadDatamartModelRequest" name="downloadDatamartModelRequest"/>
+
+         <wsdl:output message="impl:downloadDatamartModelResponse" name="downloadDatamartModelResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -728,6 +772,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          </wsdl:output>
 
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
          <wsdl:fault name="InvalidParameterValue">
 
             <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="InvalidParameterValue" namespace="urn:spagobisdkdocuments" use="encoded"/>
@@ -737,12 +787,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:fault name="MissingParameterValue">
 
             <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="MissingParameterValue" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:fault>
-
-         <wsdl:fault name="NonExecutableDocumentException">
-
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
          </wsdl:fault>
 
@@ -778,6 +822,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="uploadDatamartModel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDatamartModelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDatamartModelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
       <wsdl:operation name="downloadDatamartTemplate">
 
          <wsdlsoap:operation soapAction=""/>
@@ -789,6 +857,30 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="downloadDatamartTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartModel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadDatamartModelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadDatamartModelResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
