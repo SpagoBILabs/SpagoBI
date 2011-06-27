@@ -117,7 +117,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		}	
 
 		dataStore = toDataStore(result);
-		dataStore.getMetaData().setProperty("resultNumber", resultNumber);		
+		dataStore.getMetaData().setProperty("resultNumber", resultNumber);	
+				
+		if(hasDataStoreTransformer()) {
+			getDataStoreTransformer().transform(dataStore);
+		}
 	}
 	
 	private void loadDataWithMyPagination(int offset, int fetchSize, int maxResults,EntityManager entityManager){
@@ -146,6 +150,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 		}	
 		dataStore.getMetaData().setProperty("resultNumber", resultNumber);	
+		
+		if(hasDataStoreTransformer()) {
+			getDataStoreTransformer().transform(dataStore);
+		}
 	}
 	
 	
