@@ -59,6 +59,9 @@ public interface DocumentsService {
     
     void uploadDatamartTemplate(SDKTemplate template) throws NotAllowedOperationException;
     
+    void uploadDatamartModel(SDKTemplate template) throws NotAllowedOperationException;
+    
     SDKTemplate downloadDatamartTemplate(String folderName, String fileName) throws NotAllowedOperationException;
 
+    SDKTemplate downloadDatamartModel(String folderName, String fileName) throws NotAllowedOperationException;
 }
