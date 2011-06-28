@@ -190,19 +190,18 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	 * @return: the html for the title
 	 */
 	addTitle: function(title, items, header){
-		if(title.title!='' && title.img!=null){
-			
-			var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName: 'GET_IMAGE_CONTENT_ACTION'
-				, baseParams: {FILE_NAME: title.img}
-			});
+		if(title.title!='' || title.img!=null){
 
-				
 			var titleHTML = '<div style="width: 100%; padding: 4px">'+title.title+'</div>';
 			var html = titleHTML;
 			
 			if(title.img!=undefined && title.img!=null){
 
+				var loadHeaderImgService = Sbi.config.serviceRegistry.getServiceUrl({
+					serviceName: 'GET_IMAGE_CONTENT_ACTION'
+					, baseParams: {FILE_NAME: title.img}
+				});
+				
 				var imgWidth = '20';//default width 
 				if(title.width!=undefined && title.width!=null && title.width!=''){
 					imgWidth = title.width;
@@ -214,10 +213,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 					html = '<table style="border-style: none; width:100%;"><tbody><tr><td>'+titleHTML+'</td><td width="'+ imgWidth+'px">'+imgHTML+'</td></tr></tbody></table>';	
 				} else  if(title.position=='left') {
 					html = '<table style="border-style: none; width:100%;"><tbody><tr><td width="'+imgWidth +'px">'+imgHTML+'</td><td>'+titleHTML+'</td></tr></tbody></table>';
-				} else if(header){ //position is center
-					html = '<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>'+titleHTML;
-				}else {
-					html = titleHTML+'<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>';
+				} else {
+					if(title.title==undefined || title.title==null || title.title==''){
+						titleHTML='';
+					}
+					if(header){ //position is center
+						html = '<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>'+titleHTML;
+					}else {
+						html = titleHTML+'<div style="text-align:center; width: 100%;"><img src="'+loadHeaderImgService+'"></img></div>';
+					}
 				}
 			}
 		
@@ -229,7 +233,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			});
 			
 		   	items.push(titlePanel);
-			
 		}
 	}	
 	
