@@ -65,6 +65,10 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	Sbi.worksheet.designer.BarChartDesignerPanel.superclass.constructor.call(this, c);
 	
+	if(Ext.isIE){
+		this.on('resize', function(a,b,c,d){try{ this.form.setWidth(b-50);}catch(r){}}, this);
+	}
+	
 	this.on('afterLayout', this.addToolTips, this);
 
 };
