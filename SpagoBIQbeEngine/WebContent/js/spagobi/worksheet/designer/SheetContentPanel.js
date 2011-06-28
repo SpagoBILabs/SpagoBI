@@ -69,6 +69,15 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	this.addEvents('addDesigner');
 	
 	this.on('render', this.initDropTarget, this);
+	if(Ext.isIE){
+		this.on('resize', function(a,b,c,d){
+			if(this.designer!=undefined && this.designer!=null ){
+				try{
+					this.designer.setWidth(b);
+				}catch (e){}
+			}
+		}, this);
+	}
 
 };
 

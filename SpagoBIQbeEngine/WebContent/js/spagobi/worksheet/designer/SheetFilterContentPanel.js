@@ -84,14 +84,24 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	
 	if(Ext.isIE){
 		//workaround.. without this patch the content panel becomes invisible if the filters stay on the left
-		this.filtersPanel.on('show',function(){(this.contentPanel.setWidth(this.getWidth()-this.filtersPanel.getWidth()-5));}, this);
-		this.filtersPanel.on('hide',function(){(this.contentPanel.setWidth(this.getWidth()));}, this);
+		this.filtersPanel.on('show',function(){
+			try{
+				this.contentPanel.setWidth(this.getWidth()-this.filtersPanel.getWidth()-5);
+			}catch (e){}
+		}, this);
+		this.filtersPanel.on('hide',function(){
+			try{
+				this.contentPanel.setWidth(this.getWidth());
+			}catch (e){}
+		}, this);
 		this.on('resize',function(a,newWidth,c,d,e){
-			if(this.filtersPanel.hidden){
-				this.contentPanel.setWidth(newWidth);
-			}else{
-				this.contentPanel.setWidth(newWidth-this.filtersPanel.getWidth()-5);
-			}
+			try{
+				if(this.filtersPanel.hidden){
+					this.contentPanel.setWidth(newWidth);
+				}else{
+					this.contentPanel.setWidth(newWidth-this.filtersPanel.getWidth()-5);
+				}
+			}catch (e){}
 		}, this);
 	}
 
