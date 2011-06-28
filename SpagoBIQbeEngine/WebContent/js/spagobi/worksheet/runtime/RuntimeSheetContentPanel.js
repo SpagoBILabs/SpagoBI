@@ -108,7 +108,17 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	
 	
 	initTable: function(c){
-    	var table =  new Sbi.formviewer.DataStorePanel({
+		
+		var ieFixVar = {};
+		
+		if(Ext.isIE){
+			ieFixVar ={
+				padding: '0 5 0 0',	
+				style:'width: 95%'
+			}
+		}
+		
+    	var table =  new Sbi.formviewer.DataStorePanel(Ext.apply({
     		split: true,
     		collapsible: false,
     		padding: '0 20 0 0',
@@ -129,7 +139,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     				, baseParams: new Object()//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
     			})
     		}
-    	});
+    	},ieFixVar));
 		table.execQuery({'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)});
 		
 		return table;
