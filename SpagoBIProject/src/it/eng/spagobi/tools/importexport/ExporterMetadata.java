@@ -514,7 +514,9 @@ public class ExporterMetadata {
 
 				// Fill Data set history values
 				hibDataSetHistory.setSbiDsConfig(hibDataSetConfig);
-				hibDataSetHistory.setDsHId(dataSetActiveDetail.getDsHId());
+				if(dataSetActiveDetail.getDsHId()!=0){
+					hibDataSetHistory.setDsHId(dataSetActiveDetail.getDsHId());
+				}			
 				hibDataSetHistory.setVersionNum(1);
 				hibDataSetHistory.setActive(true);			
 
@@ -527,9 +529,9 @@ public class ExporterMetadata {
 				hibDataSetHistory.setCategory(category);
 				hibDataSetHistory.setParameters(dataSetActiveDetail.getParameters());
 				hibDataSetHistory.setDsMetadata(dataSetActiveDetail.getDsMetadata());
+				
 				tx2 = session.beginTransaction();
 				session.save(hibDataSetHistory);
-
 				tx2.commit();
 			}
 		} catch (HibernateException he) {
