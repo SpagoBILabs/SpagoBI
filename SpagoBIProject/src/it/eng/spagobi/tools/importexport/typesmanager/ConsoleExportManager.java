@@ -87,13 +87,11 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 				for (Iterator iterator = dsLabels.iterator(); iterator.hasNext();) {
 					String string = (String) iterator.next();
 					logger.debug("get dataset with label " + string);
-					IDataSet dataset = dataSetDAO.loadActiveDataSetByLabel(string);
-					if(dataset != null){
+					GuiGenericDataSet ds = dataSetDAO.loadDataSetByLabel(string);
+					// insert dataset if parameter insertDataSet is true (in case of KPI export)
+					if(ds != null){
 						logger.debug("found dataset with label " + string);
-						GuiGenericDataSet ds = dataSetDAO.toDataSet(dataset);
-						if(ds!=null){
-							exporter.insertDataSet(ds, session);
-						}
+						exporter.insertDataSet(ds, session);
 					}
 					else {
 						logger.error("could not find dataset with label "+string+" : ignore it");
@@ -102,11 +100,10 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxErrors dataset
 					String labelErrors = string+"Errors";
 					logger.debug("get dataset with label " + labelErrors+" if present");
-					IDataSet datasetErrors = dataSetDAO.loadActiveDataSetByLabel(labelErrors);
+					GuiGenericDataSet datasetErrors = dataSetDAO.loadDataSetByLabel(labelErrors);
 					if(datasetErrors != null){
 						logger.debug("found dataset with label " + labelErrors+"");
-						GuiGenericDataSet ds = dataSetDAO.toDataSet(datasetErrors);
-						exporter.insertDataSet(ds, session);
+						exporter.insertDataSet(datasetErrors, session);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelErrors);
@@ -115,11 +112,10 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 					// search for xxxAlarms dataset
 					String labelAlarms = string+"Alarms";
 					logger.debug("get dataset with label " + labelAlarms+" if present");
-					IDataSet datasetAlarms = dataSetDAO.loadActiveDataSetByLabel(labelAlarms);
+					GuiGenericDataSet datasetAlarms = dataSetDAO.loadDataSetByLabel(labelAlarms);
 					if(datasetAlarms != null){
 						logger.debug("found dataset with label " + labelAlarms+"");
-						GuiGenericDataSet ds = dataSetDAO.toDataSet(datasetAlarms);
-						exporter.insertDataSet(ds, session);
+						exporter.insertDataSet(datasetAlarms, session);
 					}
 					else {
 						logger.warn("could not find dataset with label "+labelAlarms);
