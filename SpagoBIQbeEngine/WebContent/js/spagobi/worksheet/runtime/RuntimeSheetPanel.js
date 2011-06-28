@@ -143,7 +143,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			if ( this.sheetConfig.filters.position=='left') {
 				filterConf.width= 250;
 				filterConf.autoWidth = false;
-				filterConf.style = 'float: left; padding: 5px 0px 10px 15px';
+				filterConf.style = 'float: left; padding: 15px 0px 10px 15px';
 				filterConf.position = 'left';
 			}
 			/* this was an attempt to make the filters panel collapsible, but it has a side-effect: combo-boxes are narrow
