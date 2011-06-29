@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.sdk.datasets.impl;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.sdk.AbstractSDKService;
@@ -41,7 +40,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 
 import java.util.HashMap;
@@ -51,7 +50,6 @@ import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSetsSDKService {
 
@@ -201,6 +199,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		Integer dataSetId = null;
 		Integer toReturn = null;
 		try {
+			IEngUserProfile profile = getUserProfile();
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
 				logger.warn("SDKDataSet in input is null!");
@@ -213,7 +212,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			logger.debug("Looking for dataset with id = " + dataSetId);
 			if (dataSetId == null){
 				logger.warn("DataSet with identifier [" + dataSetId + "] not found. Create it!");		
-				toReturn = DAOFactory.getDataSetDAO().insertDataSet(sbiDataset);
+				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+				dataSetDao.setUserProfile(profile);
+				toReturn = dataSetDao.insertDataSet(sbiDataset);
 				if (toReturn != null) {
 					logger.info("DataSet saved with id = " + toReturn);
 				} else {
@@ -221,7 +222,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				}
 			}else{
 				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");			
-				DAOFactory.getDataSetDAO().modifyDataSet(sbiDataset);
+				IDataSetDAO datasetDAO = DAOFactory.getDataSetDAO();
+				datasetDAO.setUserProfile(profile);
+				datasetDAO.modifyDataSet(sbiDataset);
 			}		
 			
 		} catch(Exception e) {
