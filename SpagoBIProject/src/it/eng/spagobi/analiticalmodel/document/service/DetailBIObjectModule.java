@@ -97,6 +97,7 @@ public class DetailBIObjectModule extends AbstractModule {
 	private IEngUserProfile profile;
 	private String initialPath = null;
 	private DetBIObjModHelper helper = null;
+	private IBIObjectDAO biobjDAO = null;
 	SessionContainer session = null;
 	
 	
@@ -124,6 +125,8 @@ public class DetailBIObjectModule extends AbstractModule {
 		session = requestContainer.getSessionContainer();
 		SessionContainer permanentSession = session.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		biobjDAO = DAOFactory.getBIObjectDAO();
+		biobjDAO.setUserProfile(profile);
 		errorHandler = getErrorHandler();
 		// IN CASE THE REQUEST IS MULTIPART AND THE APPLICATION RUN ON A PORTAL SERVER THE REQUEST CONTAINER MUST BE FILLED 
 		/*
@@ -369,7 +372,7 @@ public class DetailBIObjectModule extends AbstractModule {
 		try {
 			String idStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer id = new Integer(idStr);
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(id);
+			BIObject obj = biobjDAO.loadBIObjectForDetail(id);
 			if (obj == null) {
 				logger.error("BIObject with id "+id+" cannot be retrieved.");
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 1040);
@@ -595,7 +598,7 @@ public class DetailBIObjectModule extends AbstractModule {
 		try {
 			String idObjStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer idObj = new Integer(idObjStr);
-			IBIObjectDAO objdao = DAOFactory.getBIObjectDAO();
+			IBIObjectDAO objdao = biobjDAO;
 			obj = objdao.loadBIObjectById(idObj);
 			String idFunctStr = (String) request.getAttribute(ObjectsTreeConstants.FUNCT_ID);
 			if (idFunctStr != null) {
@@ -663,7 +666,7 @@ public class DetailBIObjectModule extends AbstractModule {
 		try {
 			String idObjStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer idObj = new Integer(idObjStr);
-			IBIObjectDAO objdao = DAOFactory.getBIObjectDAO();
+			IBIObjectDAO objdao = biobjDAO;
 			obj = objdao.loadBIObjectById(idObj);
 			String idFunctStr = (String) request.getAttribute(ObjectsTreeConstants.FUNCT_ID);
 			if (idFunctStr != null) {
@@ -772,7 +775,7 @@ public class DetailBIObjectModule extends AbstractModule {
 			Integer tempId = new Integer (tempIdStr);
 			DAOFactory.getObjTemplateDAO().deleteBIObjectTemplate(tempId);
             // populate response
-            BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(objId);
+            BIObject obj = biobjDAO.loadBIObjectForDetail(objId);
 	        helper.fillResponse(initialPath);
 	        prepareBIObjectDetailPage(response, obj, null, "", ObjectsTreeConstants.DETAIL_MOD, false, false);
 		} catch (Exception e) {
@@ -874,9 +877,9 @@ public class DetailBIObjectModule extends AbstractModule {
 //				}
 				// inserts into DB the new BIObject
 				if(objTemp==null) {
-					DAOFactory.getBIObjectDAO().insertBIObject(obj, loadParsDCClicked);
+					biobjDAO.insertBIObject(obj, loadParsDCClicked);
 				} else {
-					DAOFactory.getBIObjectDAO().insertBIObject(obj, objTemp, loadParsDCClicked);
+					biobjDAO.insertBIObject(obj, objTemp, loadParsDCClicked);
 				}
 
 			} else if(mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_MOD)) {
@@ -975,13 +978,13 @@ public class DetailBIObjectModule extends AbstractModule {
 					
 					// it is requested to modify the main values of the BIObject
 					if(objTemp==null) {
-						DAOFactory.getBIObjectDAO().modifyBIObject(obj, loadParsDCClicked);
+						biobjDAO.modifyBIObject(obj, loadParsDCClicked);
 					} else {
-						DAOFactory.getBIObjectDAO().modifyBIObject(obj, objTemp, loadParsDCClicked);
+						biobjDAO.modifyBIObject(obj, objTemp, loadParsDCClicked);
 					}
 
 	    			// reloads the BIObject 
-	    			obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(obj.getId());
+	    			obj = biobjDAO.loadBIObjectForDetail(obj.getId());
 	    			// check if there's a parameter to save and in case save it
 	    			if (biParameterToBeSaved) {
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
@@ -1002,7 +1005,7 @@ public class DetailBIObjectModule extends AbstractModule {
 			}
 			
 			// reloads the BIObject with the correct Id 
-			obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(obj.getId());
+			obj = biobjDAO.loadBIObjectForDetail(obj.getId());
 			
 			/*
 			*indexes biobject by modifying document in index
