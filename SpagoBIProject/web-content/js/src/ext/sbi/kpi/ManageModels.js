@@ -338,9 +338,8 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		if (node !== undefined && node !== null) {
 			node.attributes.toSave = true;
 			//get the array of all attributes (would be better to change only current one but recordId is not very useful
-			var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');		
+			var arrayUdps = this.udpValueGrid.saveUdpValues('MODEL');
 			node.attributes.udpValues = arrayUdps;
-			//alert(node.attributes.toSource());
 		}
 	}
 	, filterAttributes: function(node){
@@ -352,7 +351,12 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		        if (c) { 
 		        	result += ','; 
 		        }
-		        result += '"' + key + '":"' + node.attributes[key] + '"';
+		        //alert(node.attributes[key]+" of type "+typeof node.attributes[key]);
+		        if(key == 'udpValues'){
+		        	result += '"' + key + '":' + Ext.encode(node.attributes[key]);
+		        }else{
+		        	result += '"' + key + '":"' + node.attributes[key] + '"';
+		        }
 		        c = true;
 		    }
 
@@ -392,7 +396,7 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		Ext.Ajax.request( {
 			url : this.services['saveTreeService'],
 			success : function(response, options) {
-				if(response.responseText !== undefined) {
+				if(response.responseText !== undefined ) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined && content !== null){
 	      				var hasErrors = false;
