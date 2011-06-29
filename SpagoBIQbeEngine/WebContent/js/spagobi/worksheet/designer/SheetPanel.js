@@ -169,6 +169,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 
 		this.title = sheetState.name;
 		this.sheetLayout = sheetState.sheetLayout;
+		this.updateLayout(this.sheetLayout);
+		this.setTitle(this.title);
 		if(sheetState.header!==null){
 			this.headerPanel.setTitleState(sheetState.header);
 		}
