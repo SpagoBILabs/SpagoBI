@@ -317,6 +317,9 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <LINK rel='StyleSheet' 
 	  href='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.css")%>' 
 	  type='text/css' />
+<LINK rel='StyleSheet' 
+	  href='<%=urlBuilder.getResourceLink(request, "js/lib/overrides-ext-3.1.1/css/overrides.css")%>' 
+	  type='text/css' />
 
 	 
 	 <% // get the current ext theme
