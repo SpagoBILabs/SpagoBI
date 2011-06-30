@@ -25,6 +25,7 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
+import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetXLSExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -33,7 +34,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
@@ -45,11 +46,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfWriter;
 
-
-/**
- * The Class ExecuteQueryAction.
- */
 public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	
 	// INPUT PARAMETERS
@@ -99,21 +100,37 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 			
 			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
-								
-				Workbook wb = exportWorksheet(worksheetJSON);
 
 				exportFile = File.createTempFile("worksheet", ".xls");
 				FileOutputStream stream = new FileOutputStream(exportFile);
-				wb.write(stream);
-				stream.flush();
-				stream.close();
-				try {				
-					writeBackToClient(exportFile, null, writeBackResponseInline, "worksheet.xls", mimeType);
-				} catch (IOException ioe) {
-					throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+				try {
+					exportToXLS(worksheetJSON, stream);
+				} finally {
+					if (stream != null) {
+						stream.close();
+					}
 				}
+
+			} else if ( "application/pdf".equalsIgnoreCase( mimeType ) ) {
+				
+				exportFile = File.createTempFile("worksheet", ".pdf");
+				FileOutputStream stream = new FileOutputStream(exportFile);
+				try {
+					exportToPDF(worksheetJSON, stream);
+				} finally {
+					if (stream != null) {
+						stream.close();
+					}
+				}
+
 			} else {
-				throw new SpagoBIEngineException("Cannot export crosstab in " + mimeType + " format, only application/vnd.ms-excel is supported");
+				throw new SpagoBIEngineException("Cannot export worksheet in " + mimeType + " format, only application/vnd.ms-excel ans application/pdf are supported");
+			}
+			
+			try {				
+				writeBackToClient(exportFile, null, writeBackResponseInline, exportFile.getName(), mimeType);
+			} catch (IOException ioe) {
+				throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
 			}
 			
 		} catch (Throwable t) {
@@ -123,7 +140,25 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}	
 	}
 	
-	public HSSFWorkbook exportWorksheet(JSONObject worksheetJSON) throws JSONException, IOException, SerializationException{
+	public void exportToPDF(JSONObject worksheetJSON, OutputStream outputStream) throws Exception {
+		
+		WorkSheetPDFExporter exporter = new WorkSheetPDFExporter();
+		exporter.open(outputStream);
+		
+		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
+		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
+		for (int i = 0; i < sheetsNumber; i++) {
+			JSONObject sheetJ = exportedSheets.getJSONObject(i);
+			
+			exporter.addSheet(sheetJ);
+		    
+		}
+		
+		exporter.close();
+		outputStream.flush();
+	}
+	
+	public void exportToXLS(JSONObject worksheetJSON, OutputStream stream) throws JSONException, IOException, SerializationException{
 		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
 		HSSFWorkbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
@@ -140,40 +175,43 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				sheet.createRow(j);
 			}
 			
-			if(sheetJ.has(exporter.HEADER)){
-				JSONObject header = sheetJ.getJSONObject(exporter.HEADER);
+			if(sheetJ.has(WorkSheetXLSExporter.HEADER)){
+				JSONObject header = sheetJ.getJSONObject(WorkSheetXLSExporter.HEADER);
 				if(header!=null){
 					exporter.setHeader(sheet, header, createHelper, wb, patriarch);
 				}
 			}	
 			
 			int endRowNum = 37;
-			if(sheetJ.has(exporter.CONTENT)){
-				JSONObject content = sheetJ.getJSONObject(exporter.CONTENT);
+			if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
+				JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 				endRowNum = fillSheetContent(wb, sheet, content, createHelper, exporter, patriarch);
 			}			
 			
-			if(sheetJ.has(exporter.FOOTER)){
-				JSONObject footer = sheetJ.getJSONObject(exporter.FOOTER);
+			if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
+				JSONObject footer = sheetJ.getJSONObject(WorkSheetXLSExporter.FOOTER);
 				if(footer!=null){
 					exporter.setFooter(sheet, footer, createHelper, wb, endRowNum, patriarch);
 				}
 			}		
 		}
-		return wb;
+		
+		wb.write(stream);
+		stream.flush();
+
 	}
 	
 	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject content, 
 			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws IOException, JSONException, SerializationException{
 		
-		String sheetType = content.getString(exporter.SHEET_TYPE);
+		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
 		int endRowNum = 0;
 		
 
 		if (sheetType != null && !sheetType.equals("")) {
 			
-			if (sheetType.equalsIgnoreCase(exporter.CHART)) {
-				File jpgImage = exporter.createJPGImage(content);
+			if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CHART)) {
+				File jpgImage = WorkSheetXLSExporter.createJPGImage(content);
 				int col = 1;
 				int row = 4;
 				int colend = 13;
@@ -181,20 +219,15 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				exporter.setImageIntoWorkSheet(wb, patriarch, jpgImage, col, row, colend, rowend,HSSFWorkbook.PICTURE_TYPE_JPEG);
 				endRowNum = rowend;
 				
-			} else if (sheetType.equalsIgnoreCase(exporter.CROSSTAB)) {
+			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.CROSSTAB)) {
 				
-				String crosstab = content.getString(exporter.CROSSTAB);
+				String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
 				JSONObject crosstabJSON = new JSONObject(crosstab);	
 				CrosstabXLSExporter expCr = new CrosstabXLSExporter();
 				endRowNum = expCr.fillAlreadyCreatedSheet(sheet, crosstabJSON, createHelper);
 				
-			} else if (sheetType.equalsIgnoreCase(exporter.TABLE)) {
+			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
-				String params = content.getString("PARS");
-				JSONObject paramsJSON = new JSONObject(params);	
-				JSONObject optionalUserFiltersJSON = exporter.getOptionalUserFilters(paramsJSON);				
-				List<String> visibleSelectFields = exporter.getJsonVisibleSelectFields(paramsJSON);
-				
 				Query query = getQuery();					
 				if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
 					query = getEngineInstance().getActiveQuery();
