@@ -57,7 +57,7 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 	this.services = this.services || new Array();
 	this.services['exportWorksheet'] = this.services['exportWorksheet'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'EXPORT_WORKSHEETS_ACTION'
-		, baseParams: {'RESPONSE_TYPE' : 'RESPONSE_TYPE_ATTACHMENT', 'MIME_TYPE' : 'application/vnd.ms-excel'}
+		, baseParams: {'RESPONSE_TYPE' : 'RESPONSE_TYPE_ATTACHMENT'}
 	});
 	
 	this.config = config;
@@ -117,74 +117,66 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	,
-	exportContent : function() {
+	exportContent : function(mimeType) {
+		// make sure all the sheets have been displayed (necessary for charts' export)
 		if (this.sheetItems !== undefined && this.sheetItems !== null) {
 			var i = 0;
 			this.sheetNumber = this.sheetItems.length;
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded === false) {
 					// register to the contentloaded event
-//					this.sheetItems[i].on('contentloaded', this.checkContentReady, this);
-//					this.setActiveTab(i);
-					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this); }, this);
+					this.sheetItems[i].on('contentloaded', function () {this.exportContent.defer(500, this, [mimeType]); }, this);
 					this.setActiveTab(i);
 					return;
 				}
 			}
 		}
-		this.checkContentReady();
+		this.doExportContent(mimeType);
 	}
 
 	,
-	checkContentReady : function() {
-//		var allLoaded = false;
-//		if (this.sheetItems !== undefined && this.sheetItems !== null) {
-//			var i = 0;
-//			for (; i < this.sheetItems.length; i++) {
-//				if (this.sheetItems[i].contentLoaded === true) {
-//					allLoaded = true
-//				} else {
-//					allLoaded = false;
-//					break;
-//				}
-//			}
-//		}
+	doExportContent : function(mimeType) {
 
-//		if (allLoaded == true) {
+		var resultExport = this.exportRenderedContent();
 
-			var resultExport = this.exportRenderedContent();
-
-			sendMessage({}, 'contentexported'); 
-			var worksheetDataEncoded = Ext.encode(resultExport);
+		var worksheetDataEncoded = Ext.encode(resultExport);
+		
+	    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
+					 // but, if a value contains a " character, then the html produced is not correct!!! 
+					 // See source of DomHelper.append and DomHelper.overwrite methods
+					 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+		var dh = Ext.DomHelper;
+		
+		var form = document.getElementById('export-worksheet-form');
+		if (!form) {
+			form = dh.append(Ext.getBody(), { // creating the hidden form
+				id: 'export-crosstab-form'
+				, tag: 'form'
+				, method: 'post'
+				, cls: 'export-form'
+			});
+			dh.append(form, {					// creating WORKSHEETS hidden input in form
+				tag: 'input'
+				, type: 'hidden'
+				, name: 'WORKSHEETS'
+				, value: ''  // do not put WORKSHEETS value now since DomHelper.overwrite does not work properly!!
+			});
+			dh.append(form, {					// creating MIME_TYPE hidden input in form
+				tag: 'input'
+				, type: 'hidden'
+				, name: 'MIME_TYPE'
+				, value: mimeType  
+			});
+		}
+		// putting the crosstab data into CROSSTAB hidden input
+		form.elements[0].value = worksheetDataEncoded;
+		form.action = this.services['exportWorksheet'];
+		form.target = '_blank';				// result into a new browser tab
+		form.submit();
+		
+		// notify the exporting service has been invoked (in order to hide the load-mask)
+		sendMessage({}, 'contentexported'); 
 			
-		    Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation, 
-						 // but, if a value contains a " character, then the html produced is not correct!!! 
-						 // See source of DomHelper.append and DomHelper.overwrite methods
-						 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-			var dh = Ext.DomHelper;
-			
-			var form = document.getElementById('export-worksheet-form');
-			if (!form) {
-				form = dh.append(Ext.getBody(), { // creating the hidden form
-					id: 'export-crosstab-form'
-					, tag: 'form'
-					, method: 'post'
-					, cls: 'export-form'
-				});
-				dh.append(form, {					// creating CROSSTAB hidden input in form
-					tag: 'input'
-					, type: 'hidden'
-					, name: 'WORKSHEETS'
-					, value: ''  // do not put CROSSTAB value now since DomHelper.overwrite does not work properly!!
-				});
-			}
-			// putting the crosstab data into CROSSTAB hidden input
-			form.elements[0].value = worksheetDataEncoded;
-			form.action = this.services['exportWorksheet'];
-			form.target = '_blank';				// result into a new browser tab
-			form.submit();
-			
-//		}
 	}
 	
 	,

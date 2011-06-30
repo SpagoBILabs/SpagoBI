@@ -77,9 +77,10 @@ Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 		this.sheetsContainerPanel = new Sbi.worksheet.runtime.RuntimeSheetsContainerPanel({},template);		
 	},
 
-	exportContent: function(){
-		var exportedContent = this.sheetsContainerPanel.exportContent();
-		var encodedExportedContent = Ext.util.JSON.encode(exportedContent);
-		return encodedExportedContent;
+	exportContent: function(mimeType){
+		this.sheetsContainerPanel.exportContent(mimeType);
+//		var exportedContent = this.sheetsContainerPanel.exportContent();
+//		var encodedExportedContent = Ext.util.JSON.encode(exportedContent);
+//		return encodedExportedContent;
 	}
 });
