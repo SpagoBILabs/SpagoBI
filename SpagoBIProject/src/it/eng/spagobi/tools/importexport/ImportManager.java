@@ -26,6 +26,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -57,6 +59,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
@@ -113,6 +116,7 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.CorruptIndexException;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -1173,6 +1177,9 @@ public class ImportManager implements IImportManager, Serializable {
 		try {
 			List exportedBIObjs = importer.getAllExportedSbiObjects(sessionExpDB, "SbiObjects", "label");
 			Iterator iterSbiObjs = exportedBIObjs.iterator();
+			
+		    LuceneIndexer indexer = new LuceneIndexer();
+		    
 			while (iterSbiObjs.hasNext()) {
 				exportedObj = (SbiObjects) iterSbiObjs.next();
 				Integer expId = exportedObj.getBiobjId();
@@ -1216,6 +1223,11 @@ public class ImportManager implements IImportManager, Serializable {
 				importObjParUse(exportedObj.getBiobjId());
 
 				commit();
+
+				//updates lucene index
+		    	BIObjectDAOHibImpl daoObj = (BIObjectDAOHibImpl)DAOFactory.getBIObjectDAO();
+		    	BIObject biObj = daoObj.toBIObject(obj);
+				indexer.addBiobjToIndex(biObj);
 
 				// TODO controllare che fa questo e se serve!!!
 				//updateSubObject(obj, exportedObj.getBiobjId());
