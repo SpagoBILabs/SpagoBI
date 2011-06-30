@@ -384,12 +384,12 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
     	}
 	}
 	
-	, exportWorksheetsExecution: function () {
+	, exportWorksheetsExecution: function (mimeType) {
 		try {
 			var frame = this.miframe.getFrame();
 			var worksheetWindow = frame.getWindow();
 			this.showMask();
-			worksheetWindow.workSheetPanel.exportContent();
+			worksheetWindow.workSheetPanel.exportContent(mimeType);
 		} catch (err) {
 			alert('Sorry, cannot perform operation.');
 			throw err;
