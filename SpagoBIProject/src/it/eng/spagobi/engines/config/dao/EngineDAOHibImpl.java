@@ -40,6 +40,7 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -361,7 +362,19 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			tx = aSession.beginTransaction();
 			SbiEngines hibEngine = (SbiEngines) aSession.load(SbiEngines.class,
 					aEngine.getId());
-
+			Set <SbiExporters> exporters = hibEngine.getSbiExporterses();
+			if(exporters != null && exporters.size() != 0){
+				//query hsql to load exporters
+				String hql = " from SbiExporters s where s.sbiEngines.engineId = ?";
+				Query aQuery = aSession.createQuery(hql);
+				aQuery.setInteger(0, aEngine.getId().intValue());
+				List associatedExportersToDelete = aQuery.list();
+				for(int i=0; i<associatedExportersToDelete.size(); i++){
+					SbiExporters exporter = (SbiExporters)associatedExportersToDelete.get(i);
+					aSession.delete(exporter);
+					aSession.flush();
+				}
+			}
 			aSession.delete(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
