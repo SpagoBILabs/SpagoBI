@@ -40,6 +40,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 
@@ -260,11 +261,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				dataSet.setParamsMap(parametersFilled);
 			}
 			dataSet.loadData();
-			toReturn = dataSet.getDataStore().toXml();
-			/*
+			//toReturn = dataSet.getDataStore().toXml();
+			
 			JSONDataWriter writer= new JSONDataWriter();
 			toReturn = (writer.write(dataSet.getDataStore())).toString(); 
-			*/
+			
 		} catch(NotAllowedOperationException e) {
 			throw e;
 		} catch(Exception e) {
