@@ -48,7 +48,7 @@ public class JDBCDataSetTest  extends TestCase {
 	
 	public void testDataSet() throws Exception {
 		SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
-		dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 2");
+		dataSetConfig.setQuery("SELECT fullname as 'Full Name' FROM CUSTOMER LIMIT 10");
 		
 		SpagoBiDataSource dataSourceConfig = new SpagoBiDataSource();
 		dataSourceConfig.setDriver(TestCaseConstants.CONNECTION_DRIVER);
