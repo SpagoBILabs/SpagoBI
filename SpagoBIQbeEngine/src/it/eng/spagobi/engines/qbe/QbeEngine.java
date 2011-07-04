@@ -67,9 +67,9 @@ public class QbeEngine {
 		String language = locale.getLanguage();
 		String userDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT." + language);
 		if(userDateFormatPattern == null) userDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.en");
-		env.put("userDateFormatPattern", userDateFormatPattern);
+		env.put(EngineConstants.ENV_USER_DATE_FORMAT, userDateFormatPattern);
 		String databaseDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.database");
-		env.put("databaseDateFormatPattern", databaseDateFormatPattern);
+		env.put(EngineConstants.ENV_DB_DATE_FORMAT, databaseDateFormatPattern);
 		
 		qbeEngineInstance = new QbeEngineInstance(template, env);
 		logger.debug("OUT");
