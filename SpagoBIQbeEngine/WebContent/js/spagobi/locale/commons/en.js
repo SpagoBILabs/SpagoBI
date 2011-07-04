@@ -41,12 +41,12 @@ Sbi.locale.formats = {
 		},
 		
 		date: {
-			dateFormat: 'm/Y/d',
+			dateFormat: 'm/d/Y',
     		nullValue: ''
 		},
 		
 		timestamp: {
-			dateFormat: 'm/Y/d H:i:s',
+			dateFormat: 'm/d/Y H:i:s',
     		nullValue: ''
 		},
 		
