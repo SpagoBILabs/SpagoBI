@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.services.worksheet.exporter;
 
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabPDFExporter;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.ByteArrayInputStream;
@@ -31,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.text.DecimalFormat;
 
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -41,11 +44,8 @@ import org.json.JSONObject;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
@@ -56,6 +56,7 @@ public class WorkSheetPDFExporter {
 
 	private Document pdfDocument = null;
 	private PdfWriter docWriter = null;
+	private IDataStore dataStore = null;
 	
 	public static final String HEADER = "HEADER";
 	public static final String FOOTER = "FOOTER";
@@ -76,6 +77,10 @@ public class WorkSheetPDFExporter {
 
 	public static final String SVG = "SVG";
 	
+	private DecimalFormat numberFormat;
+	private String userDateFormat;
+	
+	
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WorkSheetPDFExporter.class);
 
@@ -90,6 +95,11 @@ public class WorkSheetPDFExporter {
 	    docWriter.close();
 	}
 
+	public void addSheet(JSONObject sheetJSON,IDataStore dataStore){
+		this.dataStore = dataStore;
+		addSheet(sheetJSON);
+	}
+	
 	public void addSheet(JSONObject sheetJSON) {
 		try {
 			pdfDocument.newPage();
@@ -105,6 +115,10 @@ public class WorkSheetPDFExporter {
 	
 			if (WorkSheetPDFExporter.CHART.equalsIgnoreCase(sheetType)) {
 				addChart(content);
+			}else if (WorkSheetPDFExporter.TABLE.equalsIgnoreCase(sheetType)) {
+				addTable(content);
+			}else if (WorkSheetPDFExporter.CROSSTAB.equalsIgnoreCase(sheetType)) {
+				addCrosstab(content);
 			} else {
 				logger.error("Sheet type " + sheetType + " not recognized");
 			}
@@ -118,14 +132,13 @@ public class WorkSheetPDFExporter {
 		} catch (Exception e) {
 			throw new RuntimeException("Error while adding sheet", e);
 		}
-		
 	}
 
 	private void setHeader(JSONObject header) {
 		try {
-			String title = header.getString(TITLE);
-			String imgName = header.getString(IMG);
-			String imagePosition = header.getString(POSITION);
+			String title = header.optString(TITLE);
+			String imgName = header.optString(IMG);
+			String imagePosition = header.optString(POSITION);
 			int horizontalAlignment = getAlignment(imagePosition);
 			if ( imgName != null && !imgName.equals("")
 					&& !imgName.equals("null") ) {
@@ -150,7 +163,7 @@ public class WorkSheetPDFExporter {
 				File imageFile = getImage(imgName);
 				Image image = Image.getInstance(imageFile.getPath());
 				image.setAlignment(horizontalAlignment);
-				image.setAbsolutePosition(image.absoluteX(), 0);
+				image.setAbsolutePosition(image.getAbsoluteX(), 0);
 				pdfDocument.add(image);
 			}
 
@@ -201,6 +214,29 @@ public class WorkSheetPDFExporter {
 		}
 	}
 	
+	private void addTable(JSONObject content) {
+		try {
+			DataSourceTablePDFExporter tableExp = new DataSourceTablePDFExporter(dataStore, numberFormat, userDateFormat);
+			tableExp.export(pdfDocument);
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while adding chart", e);
+		}
+	}
+	
+	private void addCrosstab(JSONObject content) {
+		try {
+			
+			CrosstabPDFExporter csExporter = new CrosstabPDFExporter();
+			String crosstab = content.getString(WorkSheetXLSExporter.CROSSTAB);
+			JSONObject crosstabJSON = new JSONObject(crosstab);	
+			csExporter.export(crosstabJSON, pdfDocument,numberFormat);
+		    
+		} catch (Exception e) {
+			throw new RuntimeException("Error while adding chart", e);
+		}
+	}
+	
 	
 	/**
 	 * Set the dimension of the image to fit the A4 page size
@@ -221,7 +257,7 @@ public class WorkSheetPDFExporter {
 //			jpg.scaleAbsolute(imgScaledWidth, imgScaledHeight);
 //		}
 		
-		jpg.scaleAbsolute(jpg.width() / 1.6f, jpg.height() / 1.6f);
+		jpg.scaleAbsolute(jpg.getWidth() / 1.6f, jpg.getHeight() / 1.6f);
 		
 	}
 	
@@ -251,5 +287,16 @@ public class WorkSheetPDFExporter {
 			throw new SpagoBIEngineRuntimeException("Impossible to convert svg to jpeg: " + e.getCause(), e);
 		}
 	}
+
+	public void setNumberFormat(DecimalFormat numberFormat) {
+		this.numberFormat = numberFormat;
+	}
+
+	public void setUserDateFormat(String userDateFormat) {
+		this.userDateFormat = userDateFormat;
+	}	
+	
+	
+	
 	
 }
