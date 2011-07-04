@@ -53,8 +53,7 @@ public class CrosstabXLSExporter {
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(CrosstabXLSExporter.class);
-	
-	public static final String CROSSTAB_JSON_DESCENDANTS_NUMBER = "descendants_no";
+
 
 	/**
 	 * Exports the crosstab data (formatted as a JSON object in input) into a XLS file.
@@ -78,7 +77,7 @@ public class CrosstabXLSExporter {
 	public void fillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
-    	calculateDescendants(json);
+		CrosstabExporterUtility.calculateDescendants(json);
     	// init the sheet
     	initSheet(sheet, json);
     	commonFillSheet(sheet, json, createHelper);
@@ -87,7 +86,7 @@ public class CrosstabXLSExporter {
 	public int fillAlreadyCreatedSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{		
 	    // we enrich the JSON object putting every node the descendants_no property: it is useful when merging cell into rows/columns headers
 	    // and when initializing the sheet
-    	calculateDescendants(json);
+		CrosstabExporterUtility.calculateDescendants(json);
     	int totalRowNum = commonFillSheet(sheet, json, createHelper);
     	return totalRowNum;
 	}
@@ -95,9 +94,9 @@ public class CrosstabXLSExporter {
 	public int commonFillSheet(Sheet sheet,JSONObject json, CreationHelper createHelper) throws JSONException{	
 		JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
     	JSONArray columnsRootChilds = columnsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
-    	int columnsDepth = getDepth(columnsRoot);
+    	int columnsDepth = CrosstabExporterUtility.getDepth(columnsRoot);
 		JSONObject rowsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
-		int rowsDepth = getDepth(rowsRoot);
+		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		JSONArray rowsRootChilds = rowsRoot.getJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
 		JSONArray data = (JSONArray) json.get(CrossTab.CROSSTAB_JSON_DATA);
 		
@@ -110,57 +109,6 @@ public class CrosstabXLSExporter {
 	    return totalRowNum;
 	}
 	
-	
-	/**
-	 * Add descendants_no attribute to each node of rows/columns headers' structure.
-	 * descendants_no is useful for merging cells when drawing rows/columns headers' into XLS file.
-	 */
-	private void calculateDescendants(JSONObject json) throws JSONException {
-		JSONObject columnsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
-		getDescentantNumber(columnsHeaders);
-		
-		JSONObject rowsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
-		getDescentantNumber(rowsHeaders);
-	}
-
-
-
-
-
-
-	/**
-	 * The descendant number of a node is:
-	 * 
-	 *                  --  root[3] --        // the descendant number is the sum of the children
-	 *                 |              |
-	 *          -- node[2] --       node[1]   // the descendant number is the count of the children
-	 *         |             |        |
-	 *      leaf[0]       leaf[0]   leaf[0]   // leaves have no children
-	 *      
-	 * @param node The node of the rows/columns headers' structure
-	 * @return
-	 */
-	private int getDescentantNumber(JSONObject aNode) throws JSONException {
-		int descendants = 0;
-		JSONArray childs = aNode.optJSONArray(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
-		if (childs != null && childs.length() > 0) {
-			for (int i = 0; i < childs.length(); i++) {
-				JSONObject aChild = (JSONObject) childs.get(i);
-				int childDescendants = getDescentantNumber(aChild);
-				if (childDescendants == 0) {
-					descendants ++;
-				} else {
-					descendants += childDescendants;
-				}
-			}
-		}
-		aNode.put(CROSSTAB_JSON_DESCENDANTS_NUMBER, descendants);
-		return descendants;
-	}
-
-
-
-
 
 	/**
 	 * Sheet initialization. We create as many rows as it is required to contain the crosstab.
@@ -171,20 +119,14 @@ public class CrosstabXLSExporter {
 	 */
 	private void initSheet(Sheet sheet, JSONObject json) throws JSONException {
 		JSONObject columnsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
-		int columnsDepth = getDepth(columnsHeaders);
+		int columnsDepth = CrosstabExporterUtility.getDepth(columnsHeaders);
 		JSONObject rowsHeaders = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_ROWS_HEADERS);
-		int rowsNumber = rowsHeaders.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
+		int rowsNumber = rowsHeaders.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		int totalRowsNumber = columnsDepth + rowsNumber + 1; // + 1 because there may be also the bottom row with the totals
 		for (int i = 0; i < totalRowsNumber + 4; i++) {
 			sheet.createRow(i);
 		}
 	}
-
-
-
-
-
-
 
 	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
 		CellStyle cellStyle = buildDataCellStyle(sheet);
@@ -216,10 +158,6 @@ public class CrosstabXLSExporter {
 		}
 		return endRowNum;
 	}
-
-
-
-
 
 
 	/**
@@ -262,7 +200,7 @@ public class CrosstabXLSExporter {
 
 	        cell.setCellStyle(cellStyle);
 	       
-		    int descendants = aNode.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
+		    int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(
 			    		rowsCounter, //first row (0-based)
@@ -356,7 +294,7 @@ public class CrosstabXLSExporter {
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			cell.setCellValue(createHelper.createRichTextString(text));
 		    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
-		    int descendants = aNode.getInt(CROSSTAB_JSON_DESCENDANTS_NUMBER);
+		    int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    if (descendants > 1) {
 			    sheet.addMergedRegion(new CellRangeAddress(
 			    		rowNum, //first row (0-based)
@@ -374,26 +312,10 @@ public class CrosstabXLSExporter {
 		    int increment = descendants > 1 ? descendants : 1;
 		    columnCounter = columnCounter + increment;
 		}
-		
 	}
 
 	
 	
-	/**
-	 * Calculates the path length in the nodes structure in input between the root node and a leaf.
-	 * Note that this method assumes the path length to be the same between the root node and any leaf!!!
-	 * @param node The root node of the tree structure 
-	 * @return the path length between the root node and a leaf
-	 * @throws JSONException
-	 */
-	private int getDepth(JSONObject node) throws JSONException {
-		int toReturn = 0;
-		while (node.opt(CrossTab.CROSSTAB_NODE_JSON_CHILDS) != null) {
-			toReturn++;
-			JSONArray childs = (JSONArray) node.get(CrossTab.CROSSTAB_NODE_JSON_CHILDS);
-			node = (JSONObject) childs.get(0);
-		}
-		return toReturn;
-	}
+
 
 }
