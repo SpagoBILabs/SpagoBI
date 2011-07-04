@@ -137,7 +137,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	,
 	doExportContent : function(mimeType) {
 
-		var resultExport = this.exportRenderedContent();
+		var resultExport = this.exportRenderedContent(mimeType);
 
 		var worksheetDataEncoded = Ext.encode(resultExport);
 		
@@ -180,14 +180,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 	}
 	
 	,
-	exportRenderedContent : function() {
+	exportRenderedContent : function(mimeType) {
 		var items = new Array();
 
 		if (this.sheetItems != undefined && this.sheetItems != null) {
 			var i = 0;
 			for (; i < this.sheetItems.length; i++) {
 				if (this.sheetItems[i].contentLoaded == true) {
-					var exportedSheet = this.sheetItems[i].exportContent();
+					var exportedSheet = this.sheetItems[i].exportContent(mimeType);
 					items.push(exportedSheet);
 				}
 			}

@@ -24,5 +24,6 @@
 <EXPORTER domain="XLS" engine="SmartFilterEngine" defaultValue="false"/>
 <EXPORTER domain="CSV" engine="SmartFilterEngine" defaultValue="false"/>
 <EXPORTER domain="RTF" engine="SmartFilterEngine" defaultValue="false"/>
-<EXPORTER domain="XLS" engine="WorksheetEngine" defaultValue="false"/>
+<EXPORTER domain="XLS" engine="WorksheetEngine" defaultValue="true"/>
+<EXPORTER domain="PDF" engine="WorksheetEngine" defaultValue="false"/>
 </EXPORTERS>
