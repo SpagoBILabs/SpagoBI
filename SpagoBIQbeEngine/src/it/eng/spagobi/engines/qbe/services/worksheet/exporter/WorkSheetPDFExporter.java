@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.engines.qbe.services.worksheet.exporter;
 
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabPDFExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -101,10 +102,6 @@ public class WorkSheetPDFExporter {
 
 	public void open( OutputStream outputStream ) throws DocumentException {
 	    pdfDocument = new Document(PageSize.A4.rotate());
-	    System.out.println("Top: " + MARGIN_TOP);
-	    System.out.println("Right: " + MARGIN_RIGHT);
-	    System.out.println("Bottom: " + MARGIN_BOTTOM);
-	    System.out.println("Left: " + MARGIN_LEFT);
 	    docWriter = PdfWriter.getInstance(pdfDocument, outputStream);
 	    pdfDocument.open();
 	}
@@ -376,8 +373,8 @@ public class WorkSheetPDFExporter {
 	private File getImage(String fileName) {
 		logger.debug("IN");
 		File toReturn = null;
-		//File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
-		File imagesDir = new File("C:/Progetti/SpagoBI/SpagoBI-2.x-Helios-workspace/runtimes/apache-tomcat-6.0.18/resources_mysql/qbe/worksheet/images");
+		File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
+		//File imagesDir = new File("C:/Progetti/SpagoBI/SpagoBI-2.x-Helios-workspace/runtimes/apache-tomcat-6.0.18/resources_mysql/qbe/worksheet/images");
 		toReturn = new File(imagesDir, fileName);
 		logger.debug("OUT");
 		return toReturn;
