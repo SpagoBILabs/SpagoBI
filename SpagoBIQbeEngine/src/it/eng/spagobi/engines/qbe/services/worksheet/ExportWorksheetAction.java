@@ -21,13 +21,17 @@
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetXLSExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
@@ -35,21 +39,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfWriter;
 
 public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	
@@ -59,6 +61,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static final String WORKSHEETS = "WORKSHEETS";
 	public static final String SHEETS_NUM = "SHEETS_NUM";
 	public static final String EXPORTED_SHEETS = "EXPORTED_SHEETS";
+	public static final String CONTENT = "CONTENT";
+	public static final String CONTENT_PARS = "PARS";
+	public static final String FILTERS = "FILTERS";
 	
 	// misc
 	public static final String RESPONSE_TYPE_INLINE = "RESPONSE_TYPE_INLINE";
@@ -71,6 +76,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	public static String OUTPUT_FORMAT_JPEG = "image/jpeg";
 	public static String OUTPUT_FORMAT_PDF = "application/pdf";
 	public static String OUTPUT_FORMAT_SVG = "image/svg+xml";
+	
+	private DecimalFormat numberFormat;
+	private String userDateFormat;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(ExportWorksheetAction.class);
@@ -85,9 +93,18 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		JSONObject worksheetJSON = null;
 		File exportFile = null;
     	
+		
+
+		
     	try {
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
+			
+			Locale locale = (Locale)getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);	
+			numberFormat =  (DecimalFormat) NumberFormat.getInstance(locale);
+			numberFormat.applyPattern("##,##0.00");
+			userDateFormat = (String)getEngineInstance().getEnv().get(EngineConstants.ENV_USER_DATE_FORMAT);	
+			
 			
 			mimeType = getAttributeAsString( MIME_TYPE );
 			logger.debug(MIME_TYPE + ": " + mimeType);		
@@ -144,14 +161,19 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		
 		WorkSheetPDFExporter exporter = new WorkSheetPDFExporter();
 		exporter.open(outputStream);
+		exporter.setNumberFormat(numberFormat);
+		exporter.setUserDateFormat(userDateFormat);
 		
 		int sheetsNumber = worksheetJSON.getInt(SHEETS_NUM);
 		JSONArray exportedSheets = worksheetJSON.getJSONArray(EXPORTED_SHEETS);
 		for (int i = 0; i < sheetsNumber; i++) {
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
-			
-			exporter.addSheet(sheetJ);
-		    
+			if(isTableContent(sheetJ)){
+				IDataStore dataStore = getTableDataStore(sheetJ);
+				exporter.addSheet(sheetJ, dataStore);
+			}else{
+				exporter.addSheet(sheetJ);
+			}
 		}
 		
 		exporter.close();
@@ -184,8 +206,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			
 			int endRowNum = 37;
 			if(sheetJ.has(WorkSheetXLSExporter.CONTENT)){
-				JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
-				endRowNum = fillSheetContent(wb, sheet, content, createHelper, exporter, patriarch);
+				endRowNum = fillSheetContent(wb, sheet, sheetJ, createHelper, exporter, patriarch);
 			}			
 			
 			if(sheetJ.has(WorkSheetXLSExporter.FOOTER)){
@@ -201,9 +222,10 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 
 	}
 	
-	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject content, 
+	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, 
 			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws IOException, JSONException, SerializationException{
 		
+		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
 		int endRowNum = 0;
 		
@@ -228,16 +250,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
-				Query query = getQuery();					
-				if(getEngineInstance().getActiveQuery() != null && getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
-					query = getEngineInstance().getActiveQuery();
-				} else {
-					logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
-					getEngineInstance().setActiveQuery(query);
-					
-				}				
-				IStatement statement = getStatement(query);
-				IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
+				IDataStore dataStore =  getTableDataStore(sheetJ);
 				long recCount = dataStore.getRecordsCount();
 				endRowNum = (new Long(recCount)).intValue() + 5;
 				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
@@ -245,4 +258,75 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		}
 		return endRowNum;
 	}
+	
+
+	
+	/**
+	 * Execute the query active in the engine instance and return
+	 * the data store
+	 * @return the data store after the execution of the active query
+	 */
+	private IDataStore getTableDataStore(JSONObject sheetJ){
+		Query query = getQuery(sheetJ);					
+
+		IStatement statement = getStatement(query);
+		IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
+		return dataStore;
+	}
+	
+	public Query getQuery(JSONObject sheetJ) {
+
+		JSONObject sheetContentPars = null;
+		JSONArray jsonVisibleSelectFields  = null;
+		JSONObject sheetContent = sheetJ.optJSONObject(CONTENT);
+		if(sheetContent!=null){
+			sheetContentPars = sheetContent.optJSONObject(CONTENT_PARS);
+		}
+		//get the visible columns
+		if(sheetContentPars!=null){
+			jsonVisibleSelectFields  = sheetContentPars.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
+		}
+		//get the filters
+		JSONObject optionalUserFilters= sheetJ.optJSONObject(FILTERS);
+		QbeEngineInstance engineInstance = getEngineInstance();
+		Query clonedQuery=null;
+		Query activeQuery = engineInstance.getActiveQuery();
+		if (activeQuery == null) {
+			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
+		}
+		try {
+			if( getEngineInstance().getFormState()==null || getEngineInstance().getFormState().getFormStateValues()==null){
+				//clone the query
+				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(activeQuery, getEngineInstance().getDataSource(), getLocale())).toString();
+				clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
+			}else{
+				//the builder engine is the smart filter, so the query must be transformed 
+				clonedQuery = getFilteredQuery(activeQuery,  getEngineInstance().getFormState().getFormStateValues());
+			}		
+			applyFilters(clonedQuery, jsonVisibleSelectFields, optionalUserFilters);
+			return clonedQuery;
+		} catch (Exception e) {
+			activeQuery = null;
+		}
+		return activeQuery;
+	}
+	
+	/**
+	 * Return true if the content of a sheet is a table
+	 * @param sheetJSON a sheet
+	 * @return true if the content of a sheet is a table
+	 */
+	public boolean isTableContent(JSONObject sheetJSON){
+		try{
+			JSONObject content = sheetJSON.getJSONObject(WorkSheetPDFExporter.CONTENT);
+			String sheetType = content.getString(WorkSheetPDFExporter.SHEET_TYPE);
+			return (WorkSheetPDFExporter.TABLE.equalsIgnoreCase(sheetType));	
+		}catch (JSONException e){
+			return false;
+		}
+	}
+	
+
+	
+	
 }
