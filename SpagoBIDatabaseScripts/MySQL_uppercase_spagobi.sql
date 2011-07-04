@@ -130,6 +130,6 @@ ALTER TABLE `sbi_goal_kpi` RENAME `SBI_GOAL_KPI`;
 ALTER TABLE `sbi_data_set_history` RENAME `SBI_DATA_SET_HISTORY`;
 ALTER TABLE `hibernate_sequences` RENAME `HIBERNATE_SEQUENCES`;
 
-select concat('rename table ', table_name, ' to ' , lower(table_name) , ';') from information_schema.tables where table_schema = 'your_schema_name';
+select concat('rename table ', table_name, ' to ' , upper(table_name) , ';') from information_schema.tables where table_schema = 'your_schema_name';
 
 
