@@ -76,19 +76,27 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	filtersPanel : null,
 	contentLoaded: false,
 	
-	exportContent: function(){
+	exportContent: function(mimeType){
 		var exportedContent = this.content.exportContent();
 		var header = this.sheetConfig.header;	
 		if(header!=null && header!=undefined){
 			var headerTitleHTML = this.sheetConfig.header.title;
-			var headerTitle = Ext.util.Format.stripTags( headerTitleHTML );
-			header.title = headerTitle;
+			if (mimeType == 'application/vnd.ms-excel') {
+				var headerTitle = Ext.util.Format.stripTags( headerTitleHTML );
+				header.title = headerTitle;
+			} else {
+				header.title = headerTitleHTML;
+			}
 		}
 		var footer = this.sheetConfig.footer;
 		if(footer!=null && footer!=undefined){
 			var footerTitleHTML = this.sheetConfig.footer.title;
-			var footerTitle = Ext.util.Format.stripTags( footerTitleHTML );
-			footer.title = footerTitle;
+			if (mimeType == 'application/vnd.ms-excel') {
+				var footerTitle = Ext.util.Format.stripTags( footerTitleHTML );
+				footer.title = footerTitle;
+			} else {
+				footer.title = footerTitleHTML;
+			}
 		}
 		var filters =null;
 		if(this.filtersPanel!=null && this.filtersPanel!=undefined){
