@@ -78,7 +78,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	
 	exportContent: function(){
 		var exportedContent = this.content.exportContent();
-		var header = this.sheetConfig.header;
+		var header = this.sheetConfig.header;	
 		if(header!=null && header!=undefined){
 			var headerTitleHTML = this.sheetConfig.header.title;
 			var headerTitle = Ext.util.Format.stripTags( headerTitleHTML );
@@ -90,10 +90,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			var footerTitle = Ext.util.Format.stripTags( footerTitleHTML );
 			footer.title = footerTitle;
 		}
+		var filters =null;
+		if(this.filtersPanel!=null && this.filtersPanel!=undefined){
+			filters = this.filtersPanel.getFormState();
+		}
 		var completedExportedContent = {
 				HEADER: header,
 				FOOTER: footer,
-				CONTENT: exportedContent
+				CONTENT: exportedContent,
+				FILTERS: filters
 				}
 		return completedExportedContent;
 	},

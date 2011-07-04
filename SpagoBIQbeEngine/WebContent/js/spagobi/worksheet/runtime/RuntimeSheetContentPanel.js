@@ -76,11 +76,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 
 	exportContent: function(filtersValue){
 		if(this.contentConfig.designer == 'Table') {
-			var visibleselectfields = Ext.util.JSON.encode(this.contentConfig.visibleselectfields);
+			var visibleselectfields = (this.contentConfig.visibleselectfields);
     		var params ={'visibleselectfields': visibleselectfields};
-    		if(filtersValue!=undefined && filtersValue!=null){
-    			params.optionalfilters = Ext.encode(filtersValue);
-    		}
+
     		return this.content.exportContent(params);
 		}else{
 			return this.content.exportContent();
