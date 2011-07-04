@@ -117,6 +117,8 @@ public class DataSourceTablePDFExporter {
 		table.setPadding(tablePadding);
 		if(visibleColumns<4){
 			table.setWidth(visibleColumns*25);
+		}else{
+			table.setWidth(100);
 		}
 		
     	for(int j = 0; j < visibleColumns; j++){
