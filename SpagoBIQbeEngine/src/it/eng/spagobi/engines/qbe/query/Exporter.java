@@ -132,8 +132,9 @@ public class Exporter {
 	    cellStyleDoub.setDataFormat(formatIndexDoub);
 	    
 		CellStyle cellStyleDate = wb.createCellStyle(); // cellStyleDate is the default cell style for dates
-		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
 		cellStyleDate.cloneStyleFrom(dCellStyle);
+		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
+		
 		IDataStoreMetaData d = dataStore.getMetaData();	
 		
 		while(it.hasNext()){
