@@ -57,7 +57,7 @@ Sbi.worksheet.runtime.RuntimeSheetsContainerPanel = function(config, sheets) {
 	this.services = this.services || new Array();
 	this.services['exportWorksheet'] = this.services['exportWorksheet'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'EXPORT_WORKSHEETS_ACTION'
-		, baseParams: {'RESPONSE_TYPE' : 'RESPONSE_TYPE_ATTACHMENT'}
+		, baseParams: {'RESPONSE_TYPE' : 'RESPONSE_TYPE_ATTACHMENT', 'SBI_EXECUTION_ID': Sbi.config.serviceRegistry.getExecutionId()}
 	});
 	
 	this.config = config;
