@@ -97,6 +97,7 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	private List<WhereField> applyOptionalFilters(JSONObject optionalUserFilters) throws JSONException{
 		String[] fields = JSONObject.getNames(optionalUserFilters);
 		List<WhereField> whereFields = new ArrayList<WhereField>();
+		
 		for(int i=0; i<fields.length; i++){
 			String fieldName = fields[i];
 			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
