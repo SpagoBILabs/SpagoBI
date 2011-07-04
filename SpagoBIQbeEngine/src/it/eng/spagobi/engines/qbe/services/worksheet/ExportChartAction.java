@@ -187,14 +187,14 @@ public class ExportChartAction extends AbstractQbeEngineAction {
 	 * @param jpg the image to fit
 	 */
 	private void fitImage(Image jpg){
-	    if(jpg.width()>PageSize.A4.height()){
-	    	float imgScaledWidth = PageSize.A4.height()-100;
-	    	float imgScaledHeight = (imgScaledWidth/jpg.width())*jpg.height();
+	    if(jpg.getWidth()>PageSize.A4.getHeight()){
+	    	float imgScaledWidth = PageSize.A4.getHeight()-100;
+	    	float imgScaledHeight = (imgScaledWidth/jpg.getWidth())*jpg.getHeight();
 	    	jpg.scaleAbsolute(imgScaledWidth,imgScaledHeight);	
 	    }	
-	    if(jpg.height()>PageSize.A4.width()){
-	    	float imgScaledHeight = PageSize.A4.width()-100;
-	    	float imgScaledWidth = (imgScaledHeight/jpg.height())*jpg.width();
+	    if(jpg.getHeight()>PageSize.A4.getWidth()){
+	    	float imgScaledHeight = PageSize.A4.getWidth()-100;
+	    	float imgScaledWidth = (imgScaledHeight/jpg.getHeight())*jpg.getWidth();
 	    	jpg.scaleAbsolute(imgScaledWidth,imgScaledHeight);	
 	    }	
 	}
