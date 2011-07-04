@@ -55,6 +55,10 @@ import org.json.JSONObject;
 
 public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7193307157829114510L;
 	// INPUT PARAMETERS
 	public static final String MIME_TYPE = "MIME_TYPE";
 	public static final String RESPONSE_TYPE = "RESPONSE_TYPE";
