@@ -119,7 +119,7 @@ public class CrosstabPDFExporter {
 		for(int i=0; i<cells.size();i++){
 			table.addCell(cells.get(i));
 		}
-		
+		table.setWidth(100);
 		pdfDocument.add(table);
 	}
 	
