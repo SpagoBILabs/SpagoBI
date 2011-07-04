@@ -59,6 +59,8 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 	 */
 	@Override
 	public Query getQuery() {
+		JSONArray jsonVisibleSelectFields  = null;
+		JSONObject optionalUserFilters= null;
 		QbeEngineInstance engineInstance = getEngineInstance();
 		Query clonedQuery=null;
 		Query activeQuery = engineInstance.getActiveQuery();
@@ -80,7 +82,21 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 				getEngineInstance().setActiveQuery(clonedQuery);
 			}
 			
-			applyFilters(clonedQuery);
+			try {
+				jsonVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
+			} catch (Exception e) {
+				logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
+			}
+
+			try {
+				optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
+				logger.debug("Found those optional filters "+optionalUserFilters);
+			} catch (Exception e) {
+				logger.debug("Found no optional filters");
+			}
+			
+			
+			applyFilters(clonedQuery, jsonVisibleSelectFields, optionalUserFilters);
 			return clonedQuery;
 		} catch (Exception e) {
 			activeQuery = null;
@@ -89,30 +105,16 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 	}
 	
 	
-	private void applyFilters(Query query) throws JSONException{
+	public static void applyFilters(Query query, JSONArray jsonVisibleSelectFields, JSONObject optionalUserFilters) throws JSONException{
 		List<String> visibleSelectFields = new ArrayList<String>();
-		JSONArray jsonVisibleSelectFields  = null;
-		try {
-			jsonVisibleSelectFields = getAttributeAsJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
-			if (jsonVisibleSelectFields != null) {
-				for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
-					JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
-					visibleSelectFields.add(jsonVisibleSelectField.getString("alias"));
-				}	
-			}
-		} catch (Exception e) {
-			logger.debug("The optional attribute visibleselectfields is not valued. No visible select field selected.. All fields will be taken..");
+
+		if (jsonVisibleSelectFields != null) {
+			for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
+				JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
+				visibleSelectFields.add(jsonVisibleSelectField.getString("alias"));
+			}	
 		}
-		
-		//Apply optional filters
-		JSONObject optionalUserFilters= null;
-		try {
-			optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
-			logger.debug("Found those optional filters "+optionalUserFilters);
-		} catch (Exception e) {
-			logger.debug("Found no optional filters");
-		}
-			
+
 		if(jsonVisibleSelectFields!=null || optionalUserFilters!=null){
 							
 			//hide the fields not present in the request parameter visibleselectfields
@@ -141,7 +143,7 @@ public class ExecuteWorksheetQueryAction extends ExecuteQueryAction{
 	 * @param optionalUserFilters
 	 * @throws JSONException
 	 */
-	private void applyOptionalFilters(Query query, JSONObject optionalUserFilters) throws JSONException{
+	public static void applyOptionalFilters(Query query, JSONObject optionalUserFilters) throws JSONException{
 		String[] fields = JSONObject.getNames(optionalUserFilters);
 		ExpressionNode leftExpression = query.getWhereClauseStructure();
 		for(int i=0; i<fields.length; i++){
