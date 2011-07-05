@@ -118,11 +118,12 @@ public class WorkSheetPDFExporter {
 	
 	public void addSheet(JSONObject sheetJSON) {
 		try {
-			pdfDocument.newPage();
-			
 			float[] margins = getContentMargins(sheetJSON); 
 			
+			// new margins will be applied on next page
 			pdfDocument.setMargins(MARGIN_LEFT, MARGIN_RIGHT, margins[0], margins[1]);
+			
+			pdfDocument.newPage();
 			
 			if (sheetJSON.has(WorkSheetPDFExporter.HEADER)) {
 				JSONObject header = sheetJSON
@@ -162,7 +163,7 @@ public class WorkSheetPDFExporter {
 			top = getTopMargin(sheetJSON.getJSONObject(WorkSheetPDFExporter.HEADER));
 		}
 		if (sheetJSON.has(WorkSheetPDFExporter.FOOTER)) {
-			bottom = getBottomMargin(sheetJSON.getJSONObject(WorkSheetPDFExporter.HEADER));
+			bottom = getBottomMargin(sheetJSON.getJSONObject(WorkSheetPDFExporter.FOOTER));
 		}
 		float[] toReturn = new float[] {top, bottom};
 		return toReturn;
@@ -178,9 +179,9 @@ public class WorkSheetPDFExporter {
 
 	private float getMargin(JSONObject headerOrFooter) throws Exception {
 		float toReturn = 0;
-		String title = headerOrFooter.getString(TITLE);
-		String imgName = headerOrFooter.getString(IMG);
-		String imagePosition = headerOrFooter.getString(POSITION);
+		String title = headerOrFooter.optString(TITLE);
+		String imgName = headerOrFooter.optString(IMG);
+		String imagePosition = headerOrFooter.optString(POSITION);
 		if (title != null && !title.trim().equals("") ) {
 			toReturn = TITLE_MAX_HEIGHT;
 		}
@@ -197,9 +198,9 @@ public class WorkSheetPDFExporter {
 	
 	private void setHeader(JSONObject header) {
 		try {
-			String title = header.getString(TITLE);
-			String imgName = header.getString(IMG);
-			String imagePosition = header.getString(POSITION);
+			String title = header.optString(TITLE);
+			String imgName = header.optString(IMG);
+			String imagePosition = header.optString(POSITION);
 			Image image = null;
 			if ( imgName != null && !imgName.equals("")
 					&& !imgName.equals("null") ) {
@@ -213,8 +214,9 @@ public class WorkSheetPDFExporter {
 					pdfDocument.add(image);
 				}
 			}
-			if (title != null && !title.trim().equals("") ) {
+			if (title != null && !title.trim().equals("") && !title.trim().equals("<br>") ) {
 				
+				title = new String(title.getBytes("ISO-8859-1")); // workaround for encoding problem
 				float[] titlePosition = getHeaderTitlePosition(image, imagePosition);
 				addHtmlToPdfContentByte(title, titlePosition);
 
@@ -316,9 +318,9 @@ public class WorkSheetPDFExporter {
 	
 	private void setFooter(JSONObject footer) {
 		try {
-			String title = footer.getString(TITLE);
-			String imgName = footer.getString(IMG);
-			String imagePosition = footer.getString(POSITION);
+			String title = footer.optString(TITLE);
+			String imgName = footer.optString(IMG);
+			String imagePosition = footer.optString(POSITION);
 			Image image = null;
 			if ( imgName != null && !imgName.equals("")
 					&& !imgName.equals("null") ) {
@@ -332,8 +334,9 @@ public class WorkSheetPDFExporter {
 					pdfDocument.add(image);
 				}
 			}
-			if (title != null && !title.trim().equals("") ) {
+			if (title != null && !title.trim().equals("") && !title.trim().equals("<br>") ) {
 				
+				title = new String(title.getBytes("ISO-8859-1")); // workaround for encoding problem
 				float[] titlePosition = getFooterTitlePosition(image, imagePosition);
 				addHtmlToPdfContentByte(title, titlePosition);
 				
