@@ -28,6 +28,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelationshipDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
@@ -115,21 +116,38 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			
 			List<IModelViewEntityDescriptor> list = getDataSource().getConfiguration().loadViews();
 			if(list.size() > 0) {
-				IModelViewEntityDescriptor viewDescriptor = list.get(0);
-				ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
-				propertiesInitializer.addProperties(viewEntity);
-				modelStructure.addRootEntity(modelName, viewEntity);
-				
-				String viewEntityUniqueName = viewEntity.getUniqueName();
-				for(IModelEntity e : viewEntity.getInnerEntities()) {
-					e.getProperties().put("parentView", viewEntityUniqueName);
+				for (int i=0; i<list.size(); i++){
+					IModelViewEntityDescriptor viewDescriptor = list.get(i);
+					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+					propertiesInitializer.addProperties(viewEntity);
+					modelStructure.addRootEntity(modelName, viewEntity);
+					
+					String viewEntityUniqueName = viewEntity.getUniqueName();
+					for(IModelEntity e : viewEntity.getInnerEntities()) {
+						e.getProperties().put("parentView", viewEntityUniqueName);
+					}
 				}
 			}
+			
+			//re-scan model structure to add nodes referencing view (inbound relation to business view)
+			/*
+			IModelViewEntityDescriptor viewDescriptor = list.get(0);
+			List<IModelViewRelationshipDescriptor> viewRelationshipsDescriptors = viewDescriptor.getRelationshipDescriptors();
+			for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
+				if (!viewRelationshipDescriptor.isOutbound());
+			}
+			*/
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			
 			return modelStructure;
-		} catch(Throwable t) {
+		} 
+		catch (Exception e){
+			e.printStackTrace();
+			logger.debug("Impossible to build model structure", e);
+			throw new RuntimeException("Impossible to build model structure", e);
+		}
+		catch(Throwable t) {
 			throw new RuntimeException("Impossible to build model structure", t);
 		
 		} finally {
