@@ -110,6 +110,11 @@ public class BarCharts extends ChartImpl {
 
 	String rangeAxisLocation=null;
 
+	Integer firstAxisUB = null;
+	Integer firstAxisLB = null;
+	Integer secondAxisUB = null;
+	Integer secondAxisLB = null;
+
 	// Parameters
 
 	/** Label for category Axis */
@@ -155,6 +160,12 @@ public class BarCharts extends ChartImpl {
 
 	/** name of the tag that specifies color for each serie name */
 	public static final String SERIES_COLORS = "SERIES_COLORS";
+
+	/** name of the tag that specifies color for each serie name */
+	public static final String FIRST_AXIS_UB = "first_axis_ub";
+	public static final String FIRST_AXIS_LB = "first_axis_lb";
+	public static final String SECOND_AXIS_UB = "second_axis_ub";
+	public static final String SECOND_AXIS_LB = "second_axis_lb";
 
 
 
@@ -512,6 +523,31 @@ public class BarCharts extends ChartImpl {
 			else{
 				logger.warn("Range Axis location specified: "+axisLocation+" not a valid value.");
 			}
+		}
+
+
+		if(confParameters.get(FIRST_AXIS_LB)!=null){		
+			String axis=confParameters.get(FIRST_AXIS_LB).toString();
+			Integer axisInte = Integer.valueOf(axis);
+			firstAxisLB = axisInte;
+		}
+		
+		if(confParameters.get(FIRST_AXIS_UB)!=null){		
+			String axis=confParameters.get(FIRST_AXIS_UB).toString();
+			Integer axisInte = Integer.valueOf(axis);
+			firstAxisUB = axisInte;
+		}
+
+		if(confParameters.get(SECOND_AXIS_LB)!=null){		
+			String axis=confParameters.get(SECOND_AXIS_LB).toString();
+			Integer axisInte = Integer.valueOf(axis);
+			secondAxisLB = axisInte;
+		}
+		
+		if(confParameters.get(SECOND_AXIS_UB)!=null){		
+			String axis=confParameters.get(SECOND_AXIS_UB).toString();
+			Integer axisInte = Integer.valueOf(axis);
+			secondAxisUB = axisInte;
 		}
 
 		//reading series colors if present
