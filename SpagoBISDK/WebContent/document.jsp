@@ -54,12 +54,15 @@ if (user != null && password != null) {
 		
 		SDKTemplate template = new SDKTemplate();
 		//test download datamart.jar
-		template = proxy.downloadDatamartTemplate("foodmart", "datamart.jar");
+		//template = proxy.downloadDatamartModelFiles("foodmart", "datamart.jar", "foodmart.sbimodel");
+		template = proxy.downloadDatamartFile("foodmart", "datamart.jar");
 		if (template != null){ 
 			if (doUpload == null || doUpload.equalsIgnoreCase("false")) {
+		
 				DataHandler dh = template.getContent();
 				InputStream is = dh.getInputStream();
 				String fileName = template.getFileName();
+				
 				java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 				java.io.BufferedOutputStream bos = new java.io.BufferedOutputStream(baos);
 	
@@ -74,12 +77,14 @@ if (user != null && password != null) {
 				bos.flush();
 				byte[] content = baos.toByteArray();
 				bos.close();
+				baos.close();
 				
 				response.setHeader("Content-Disposition","attachment; filename=\"" + fileName + "\";");
 				response.setContentLength(content.length);
 				response.setContentType("application/x-zip-compressed");
+				//response.setContentType("application/xml");
 				response.getOutputStream().write(content);
-			    //response.getOutputStream().flush();
+
 				message += "scaricato con successo!";
 			}
 		}else{
@@ -97,7 +102,8 @@ if (user != null && password != null) {
 			template.setFileName("datamart.jar");
 			template.setFolderName(folderUpload);
 			template.setContent(template.getContent());
-			proxy.uploadDatamartTemplate(template);
+			//proxy.uploadDatamartTemplate(template);
+			proxy.uploadDatamartModel(template);
 			message += "aggiornato con successo!";
 			bodyCode += "<body> <h2> " + message + " </h2> " + new java.util.Date() +" </body></html>";
 		}
