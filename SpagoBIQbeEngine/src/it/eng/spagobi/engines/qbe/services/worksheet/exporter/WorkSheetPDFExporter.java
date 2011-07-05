@@ -53,6 +53,7 @@ import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.html.simpleparser.StyleSheet;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
@@ -64,6 +65,7 @@ public class WorkSheetPDFExporter {
 	private Document pdfDocument = null;
 	private PdfWriter docWriter = null;
 	private IDataStore dataStore = null;
+	private JSONObject currentSheetConf = null;
 	
 	private static float IMAGE_MAX_WIDTH = 100;
 	private static float IMAGE_MAX_HEIGHT = 100;
@@ -103,6 +105,7 @@ public class WorkSheetPDFExporter {
 	public void open( OutputStream outputStream ) throws DocumentException {
 	    pdfDocument = new Document(PageSize.A4.rotate());
 	    docWriter = PdfWriter.getInstance(pdfDocument, outputStream);
+	    docWriter.setPageEvent(new MyHeaderFooter());
 	    pdfDocument.open();
 	}
 	
@@ -120,35 +123,27 @@ public class WorkSheetPDFExporter {
 		try {
 			float[] margins = getContentMargins(sheetJSON); 
 			
+			setCurrentSheetConf(sheetJSON);
+			
 			// new margins will be applied on next page
 			pdfDocument.setMargins(MARGIN_LEFT, MARGIN_RIGHT, margins[0], margins[1]);
 			
 			pdfDocument.newPage();
-			
-			if (sheetJSON.has(WorkSheetPDFExporter.HEADER)) {
-				JSONObject header = sheetJSON
-						.getJSONObject(WorkSheetPDFExporter.HEADER);
-				setHeader(header);
-			}
 			
 			JSONObject content = sheetJSON.getJSONObject(WorkSheetPDFExporter.CONTENT);
 			String sheetType = content.getString(WorkSheetPDFExporter.SHEET_TYPE);
 			      
 			if (WorkSheetPDFExporter.CHART.equalsIgnoreCase(sheetType)) {
 				addChart(content, margins);
-			}else if (WorkSheetPDFExporter.TABLE.equalsIgnoreCase(sheetType)) {
+			} else if (WorkSheetPDFExporter.TABLE.equalsIgnoreCase(sheetType)) {
 				addTable(content);
-			}else if (WorkSheetPDFExporter.CROSSTAB.equalsIgnoreCase(sheetType)) {
+			} else if (WorkSheetPDFExporter.CROSSTAB.equalsIgnoreCase(sheetType)) {
 				addCrosstab(content);
 			} else {
 				logger.error("Sheet type " + sheetType + " not recognized");
 			}
 			
-			if (sheetJSON.has(WorkSheetPDFExporter.FOOTER)) {
-				JSONObject footer = sheetJSON
-						.getJSONObject(WorkSheetPDFExporter.FOOTER);
-				setFooter(footer);
-			}
+			pdfDocument.newPage(); // finalize page (necessary for MyHeaderFooter onEndPage trigger)
 			
 		} catch (Exception e) {
 			throw new RuntimeException("Error while adding sheet", e);
@@ -377,7 +372,7 @@ public class WorkSheetPDFExporter {
 		logger.debug("IN");
 		File toReturn = null;
 		File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
-		//File imagesDir = new File("C:/Progetti/SpagoBI/SpagoBI-2.x-Helios-workspace/runtimes/apache-tomcat-6.0.18/resources_mysql/qbe/worksheet/images");
+//		File imagesDir = new File("C:/Progetti/SpagoBI/SpagoBI-2.x-Helios-workspace/runtimes/apache-tomcat-6.0.18/resources_mysql/qbe/worksheet/images");
 		toReturn = new File(imagesDir, fileName);
 		logger.debug("OUT");
 		return toReturn;
@@ -492,8 +487,52 @@ public class WorkSheetPDFExporter {
 
 	public void setUserDateFormat(String userDateFormat) {
 		this.userDateFormat = userDateFormat;
-	}	
+	}
 	
+	public JSONObject getCurrentSheetConf() {
+		return currentSheetConf;
+	}
+
+	public void setCurrentSheetConf(JSONObject currentSheetConf) {
+		this.currentSheetConf = currentSheetConf;
+	}
+	
+	public class MyHeaderFooter extends PdfPageEventHelper {
+
+		public MyHeaderFooter() {}
+		
+		@Override
+		public void onEndPage(PdfWriter writer, Document document) {
+			super.onEndPage(writer, document);
+			addHeaderAndFooter();
+		}
+
+		private void addHeaderAndFooter() {
+			
+			try {
+				
+				JSONObject sheetJSON = getCurrentSheetConf();
+				
+				if (sheetJSON.has(WorkSheetPDFExporter.HEADER)) {
+					JSONObject header = sheetJSON
+							.getJSONObject(WorkSheetPDFExporter.HEADER);
+					setHeader(header);
+				}
+				
+				if (sheetJSON.has(WorkSheetPDFExporter.FOOTER)) {
+					JSONObject footer = sheetJSON
+							.getJSONObject(WorkSheetPDFExporter.FOOTER);
+					setFooter(footer);
+				}
+				
+			} catch (Exception e) {
+				logger.error("Error while adding header or footer", e);
+			}
+			
+		}
+
+		
+	}
 	
 	
 	
