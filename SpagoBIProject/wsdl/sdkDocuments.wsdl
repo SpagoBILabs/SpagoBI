@@ -162,14 +162,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
   </schema>
  </wsdl:types>
 
-   <wsdl:message name="downloadDatamartTemplateRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-      <wsdl:part name="in1" type="soapenc:string"/>
-
-   </wsdl:message>
-
    <wsdl:message name="getDocumentParametersRequest">
 
       <wsdl:part name="in0" type="soapenc:int"/>
@@ -254,6 +246,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="downloadDatamartFileResponse">
+
+      <wsdl:part name="downloadDatamartFileReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDocumentByLabelRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
@@ -263,12 +261,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="InvalidParameterValue">
 
       <wsdl:part name="fault" type="tns3:InvalidParameterValue"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadDatamartTemplateResponse">
-
-      <wsdl:part name="downloadDatamartTemplateReturn" type="tns2:SDKTemplate"/>
 
    </wsdl:message>
 
@@ -283,6 +275,14 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="NotAllowedOperationException">
 
       <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartFileRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
 
    </wsdl:message>
 
@@ -322,6 +322,16 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="downloadDatamartModelFilesRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDocumentByIdRequest">
 
       <wsdl:part name="in0" type="soapenc:int"/>
@@ -331,14 +341,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="getCorrectRolesForExecutionResponse">
 
       <wsdl:part name="getCorrectRolesForExecutionReturn" type="impl:ArrayOf_soapenc_string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadDatamartModelRequest">
-
-      <wsdl:part name="in0" type="soapenc:string"/>
-
-      <wsdl:part name="in1" type="soapenc:string"/>
 
    </wsdl:message>
 
@@ -360,6 +362,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="downloadDatamartModelFilesResponse">
+
+      <wsdl:part name="downloadDatamartModelFilesReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDocumentsAsListResponse">
 
       <wsdl:part name="getDocumentsAsListReturn" type="impl:ArrayOf_tns2_SDKDocument"/>
@@ -375,12 +383,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="getDocumentsAsTreeRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="downloadDatamartModelResponse">
-
-      <wsdl:part name="downloadDatamartModelReturn" type="tns2:SDKTemplate"/>
 
    </wsdl:message>
 
@@ -514,21 +516,21 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="downloadDatamartTemplate" parameterOrder="in0 in1">
+      <wsdl:operation name="downloadDatamartFile" parameterOrder="in0 in1">
 
-         <wsdl:input message="impl:downloadDatamartTemplateRequest" name="downloadDatamartTemplateRequest"/>
+         <wsdl:input message="impl:downloadDatamartFileRequest" name="downloadDatamartFileRequest"/>
 
-         <wsdl:output message="impl:downloadDatamartTemplateResponse" name="downloadDatamartTemplateResponse"/>
+         <wsdl:output message="impl:downloadDatamartFileResponse" name="downloadDatamartFileResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
       </wsdl:operation>
 
-      <wsdl:operation name="downloadDatamartModel" parameterOrder="in0 in1">
+      <wsdl:operation name="downloadDatamartModelFiles" parameterOrder="in0 in1 in2">
 
-         <wsdl:input message="impl:downloadDatamartModelRequest" name="downloadDatamartModelRequest"/>
+         <wsdl:input message="impl:downloadDatamartModelFilesRequest" name="downloadDatamartModelFilesRequest"/>
 
-         <wsdl:output message="impl:downloadDatamartModelResponse" name="downloadDatamartModelResponse"/>
+         <wsdl:output message="impl:downloadDatamartModelFilesResponse" name="downloadDatamartModelFilesResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -846,17 +848,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="downloadDatamartTemplate">
+      <wsdl:operation name="downloadDatamartFile">
 
          <wsdlsoap:operation soapAction=""/>
 
-         <wsdl:input name="downloadDatamartTemplateRequest">
+         <wsdl:input name="downloadDatamartFileRequest">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
          </wsdl:input>
 
-         <wsdl:output name="downloadDatamartTemplateResponse">
+         <wsdl:output name="downloadDatamartFileResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
@@ -870,17 +872,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
-      <wsdl:operation name="downloadDatamartModel">
+      <wsdl:operation name="downloadDatamartModelFiles">
 
          <wsdlsoap:operation soapAction=""/>
 
-         <wsdl:input name="downloadDatamartModelRequest">
+         <wsdl:input name="downloadDatamartModelFilesRequest">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
          </wsdl:input>
 
-         <wsdl:output name="downloadDatamartModelResponse">
+         <wsdl:output name="downloadDatamartModelFilesResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
