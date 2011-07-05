@@ -1,13 +1,16 @@
 package it.eng.spagobi.sdk.proxy;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
 import it.eng.spagobi.sdk.callbacks.ClientCredentialsHolder;
+import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
 import it.eng.spagobi.sdk.documents.stub.DocumentsService;
 import it.eng.spagobi.sdk.documents.stub.DocumentsServiceServiceLocator;
+import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 
 
 public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements DocumentsService {
@@ -157,17 +160,18 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
 	     documentsService.uploadDatamartModel(in0);
-}
+  }
   
-  public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartTemplate(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+  public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
-	    return documentsService.downloadDatamartTemplate(in0, in1);
-  }  
+	    return documentsService.downloadDatamartFile(in0, in1);
+  }
   
-  public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModel(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+  public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
-	    return documentsService.downloadDatamartTemplate(in0, in1);
-}  
+	    return documentsService.downloadDatamartModelFiles(in0, in1, in2);
+  }
+
 }
