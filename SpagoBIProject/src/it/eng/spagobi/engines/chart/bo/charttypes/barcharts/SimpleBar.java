@@ -148,6 +148,12 @@ public class SimpleBar extends BarCharts{
 		rangeAxis.setUpperMargin(0.10);
 		rangeAxis.setNumberFormatOverride(nf);
 
+		if(firstAxisLB != null && firstAxisUB != null){
+			rangeAxis.setLowerBound(firstAxisLB);
+			rangeAxis.setUpperBound(firstAxisUB);
+		}
+
+
 		if(rangeIntegerValues==true){
 			rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		}
@@ -183,17 +189,17 @@ public class SimpleBar extends BarCharts{
 			renderer.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
 			renderer.setBaseItemLabelPaint(styleValueLabels.getColor());
 
-//			if(valueLabelsPosition.equalsIgnoreCase("inside")){
-//			renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-//			ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
-//			renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-//			ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
-//			} else {
-//			renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-//			ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
-//			renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-//			ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
-//			}
+			//			if(valueLabelsPosition.equalsIgnoreCase("inside")){
+			//			renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+			//			ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
+			//			renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+			//			ItemLabelAnchor.CENTER, TextAnchor.BASELINE_LEFT));
+			//			} else {
+			//			renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+			//			ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+			//			renderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+			//			ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+			//			}
 
 		}
 

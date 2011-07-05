@@ -423,6 +423,13 @@ public class OverlaidBarLine extends LinkableBar {
 		rangeAxis.setLabelPaint(styleXaxesLabels.getColor());
 		rangeAxis.setTickLabelFont(new Font(styleXaxesLabels.getFontName(), Font.PLAIN, styleXaxesLabels.getSize()));
 		rangeAxis.setTickLabelPaint(styleXaxesLabels.getColor());
+//		rangeAxis.setLowerBound(600);
+//		rangeAxis.setUpperBound(720);
+		if(firstAxisLB != null && firstAxisUB != null){
+			rangeAxis.setLowerBound(firstAxisLB);
+			rangeAxis.setUpperBound(firstAxisUB);
+		}
+
 		rangeAxis.setUpperMargin(0.10);
 		plot.setRangeAxis(0,rangeAxis);
 		if(rangeIntegerValues==true){
@@ -803,7 +810,13 @@ public class OverlaidBarLine extends LinkableBar {
 			na.setTickLabelFont(new Font(styleXaxesLabels.getFontName(), Font.PLAIN, styleXaxesLabels.getSize()));
 			na.setTickLabelPaint(styleXaxesLabels.getColor());
 			na.setUpperMargin(0.10);
-			na.setNumberFormatOverride(nf);			
+			na.setNumberFormatOverride(nf);
+//			rangeAxis.setLowerBound(270);
+//			rangeAxis.setUpperBound(340);
+			if(secondAxisLB != null && secondAxisUB != null){
+				rangeAxis.setLowerBound(secondAxisLB);
+				rangeAxis.setUpperBound(secondAxisUB);
+			}
 			plot.setRangeAxis(1,na);
 			plot.mapDatasetToRangeAxis(0, 0);
 			plot.mapDatasetToRangeAxis(2, 0);
