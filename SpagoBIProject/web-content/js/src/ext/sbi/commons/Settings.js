@@ -35,4 +35,4 @@ Ext.ns("Sbi.settings.IE");
 // If the Sbi.settings.IE.destroyExecutionWizardWhenClosed is false, stacked execution wizards are not destroyed but only hidden;
 // if the Sbi.settings.IE.destroyExecutionWizardWhenClosed is true, stacked execution wizards are destroyed instead (this may cause the IE 
 // warning message "A script on this page is causing Internet Explorer to run slowly")
-Sbi.settings.IE.destroyExecutionWizardWhenClosed = true;
+Sbi.settings.IE.destroyExecutionWizardWhenClosed = false;
