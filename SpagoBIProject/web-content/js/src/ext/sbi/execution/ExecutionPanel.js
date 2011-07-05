@@ -106,7 +106,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
     
     // Workaround: on IE, it takes a long time to destroy the stacked execution wizards.
     // See Sbi.settings.IE.destroyExecutionWizardWhenClosed on Settings.js for more information
-    if (Ext.isIE && Sbi.settings.IE.destroyExecutionWizardWhenClosed !== undefined && Sbi.settings.IE.destroyExecutionWizardWhenClosed === false) {
+    if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
 	    this.on('beforedestroy', function() {
 	    	this.hide();
 			for (var i = 0; i < this.documentsStack.length; i++) {
@@ -289,7 +289,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		
 		
 		this.add(this.activeDocument);
-		this.doLayout();
+	
 		this.getLayout().setActiveItem(this.documentsStack.length -1);	
 		
 		this.activeDocument.execute();
@@ -330,7 +330,6 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	, addBreadcrumbsMiddleButtons: function(tb) {
 		
 		var truncateLength = this.getTruncateLength(tb);
-		
 		for(var i = 0; i < this.documentsStack.length - 1; i++) {
 			this.documentsStack[i].document = this.documentsStack[i].document || {};
 			var tooltip = this.documentsStack[i].document.title || this.documentsStack[i].document.name;
@@ -386,7 +385,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	
 	, onBreadCrumbClick: function(b, e) {
 		//send hide message to the old actived console
-		if (this.activeDocument.documentExecutionPage){
+		if (this.activeDocument && this.activeDocument.documentExecutionPage){
 			this.activeDocument.documentExecutionPage.miframe.sendMessage('Disable datastore!', 'hide');
 		}
 		var prevActiveDoc =  this.activeDocument;		
@@ -396,17 +395,21 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		this.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore!', 'show');
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
-		this.getLayout().setActiveItem(b.stackIndex);
+		
 		
 		for(var i = this.documentsStack.length-1; i > b.stackIndex; i--) {
 			var el = this.documentsStack.pop();
 			this.remove(el, false);
+
 		    // Workaround: on IE, it takes a long time to destroy the stacked execution wizards.
 		    // See Sbi.settings.IE.destroyExecutionWizardWhenClosed on Settings.js for more information
-		    if (Ext.isIE && (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
+		    if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
 		    	el.destroy();
 		    }
 		}
+		
+		this.getLayout().setActiveItem(b.stackIndex);
+
 		// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
 		// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
 		if (Ext.isIE) {
