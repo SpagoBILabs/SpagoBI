@@ -22,12 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.model.structure;
 
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
+import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelationshipDescriptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import junit.framework.Assert;
 
@@ -39,6 +42,9 @@ public class ModelViewEntity extends ModelEntity {
 	
 	List<IModelEntity> entities;
 	List<Join> joins;
+	List<ViewRelationship> viewRelationships;
+	private static transient Logger logger = Logger.getLogger(ModelViewEntity.class);
+
 	
 	public class Join {
 		IModelEntity sourceEntity;
@@ -47,6 +53,9 @@ public class ModelViewEntity extends ModelEntity {
 		List <IModelField> destinationFields;
 		
 		public String getFieldUniqueName(IModelEntity parentEntity, String fieldName) {
+			if (parentEntity == null){
+				logger.debug("parentEntity is null, field name is "+fieldName);
+			}
 			if(parentEntity.getParent() == null) {
 				return parentEntity.getType() + ":" + fieldName;
 			}
@@ -101,6 +110,110 @@ public class ModelViewEntity extends ModelEntity {
 		}
 	}
 	
+	public class ViewRelationship {
+		IModelEntity sourceEntity;
+		List <IModelField> sourceFields;
+		IModelEntity destinationEntity;
+		List <IModelField> destinationFields;
+		boolean isOutbound;
+		
+		public String getFieldUniqueName(IModelEntity parentEntity, String fieldName) {
+			if (parentEntity == null){
+				logger.debug("parentEntity is null, field name is "+fieldName);
+			}
+			if(parentEntity.getParent() == null) {
+				logger.debug("FieldUniqueName is "+parentEntity.getType() + ":" + fieldName);
+				return parentEntity.getType() + ":" + fieldName;
+			}
+			logger.debug("FieldUniqueName is "+parentEntity.getUniqueName() + ":" + fieldName);
+			return parentEntity.getUniqueName() + ":" + fieldName;
+		}
+		
+		public ViewRelationship(IModelViewRelationshipDescriptor relationshipDescriptor, String modelName, IModelStructure structure) {
+			isOutbound = relationshipDescriptor.isOutbound();
+			
+			if (!isOutbound){
+				sourceEntity = structure.getRootEntity(modelName, relationshipDescriptor.getSourceEntityUniqueName());
+				sourceFields = new ArrayList<IModelField>();
+				for(String fieldName : relationshipDescriptor.getSourceColumns()) {
+					String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
+					IModelField f = sourceEntity.getField(fieldUniqueName);
+					if(f == null) {
+						List<IModelField> fields = sourceEntity.getAllFields();
+						String str = "";
+						for(IModelField field : fields) {
+							str = field.getUniqueName() + ";  ";
+						}
+						Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+					}
+					
+					sourceFields.add(f);
+				}
+				//empty
+				destinationFields = new ArrayList<IModelField>();
+
+			} else {
+				destinationEntity = structure.getRootEntity(modelName, relationshipDescriptor.getDestinationEntityUniqueName());
+				destinationFields = new ArrayList<IModelField>();
+				for(String fieldName : relationshipDescriptor.getDestinationColumns()) {
+					String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
+					IModelField f = destinationEntity.getField(fieldUniqueName);
+					Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
+					destinationFields.add(f);
+				}
+				//empty
+				sourceFields = new ArrayList<IModelField>();
+			}
+				
+			/*
+			sourceFields = new ArrayList<IModelField>();
+			for(String fieldName : relationshipDescriptor.getSourceColumns()) {
+				String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
+				IModelField f = sourceEntity.getField(fieldUniqueName);
+				if(f == null) {
+					List<IModelField> fields = sourceEntity.getAllFields();
+					String str = "";
+					for(IModelField field : fields) {
+						str = field.getUniqueName() + ";  ";
+					}
+					Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+				}
+				
+				sourceFields.add(f);
+			}
+			
+			destinationFields = new ArrayList<IModelField>();
+			for(String fieldName : relationshipDescriptor.getDestinationColumns()) {
+				String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
+				IModelField f = destinationEntity.getField(fieldUniqueName);
+				Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
+				destinationFields.add(f);
+			}
+			*/
+		}
+		
+		public IModelEntity getSourceEntity() {
+			return sourceEntity;
+		}
+		
+		public IModelEntity getDestinationEntity() {
+			return destinationEntity;
+		}
+		
+		public List<IModelField> getSourceFileds() {
+			return sourceFields;
+		}
+		
+		public List<IModelField> getDestinationFileds() {
+			return destinationFields;
+		}
+	
+		public boolean isOutbound() {
+			return isOutbound;
+		}
+	}
+	
+	
 	// =========================================================================
 	// COSTRUCTORS 
 	// =========================================================================
@@ -130,6 +243,21 @@ public class ModelViewEntity extends ModelEntity {
 		for(IModelViewJoinDescriptor joinDescriptor : joinDescriptors) {
 			joins.add( new Join(joinDescriptor, modelName, structure) );
 		}
+		
+		
+		viewRelationships = new ArrayList<ViewRelationship>();
+		List<IModelViewRelationshipDescriptor> relationshipDescriptors = view.getRelationshipDescriptors();
+		for(IModelViewRelationshipDescriptor relationshipDescriptor : relationshipDescriptors) {
+			viewRelationships.add( new ViewRelationship(relationshipDescriptor, modelName, structure) );
+		}
+		
+		//only outbound relationship from view are added as subentities
+		for(ViewRelationship relationship : viewRelationships){
+			if (relationship.isOutbound())
+				subEntities.put(relationship.getDestinationEntity().getUniqueName(),relationship.getDestinationEntity());
+		}
+		
+		
 	}
 	
 	// =========================================================================
@@ -193,5 +321,9 @@ public class ModelViewEntity extends ModelEntity {
 	
 	public List<IModelEntity> getInnerEntities() {
 		 return entities;		
+	}
+	
+	public List<ViewRelationship> getRelationships() {
+		return viewRelationships;
 	}
 }

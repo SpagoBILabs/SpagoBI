@@ -33,11 +33,20 @@ public interface IModelViewEntityDescriptor {
 	String getType();
 	Set<String> getInnerEntityUniqueNames();
 	List<IModelViewJoinDescriptor> getJoinDescriptors();
+	List<IModelViewRelationshipDescriptor> getRelationshipDescriptors();
 	
 	public interface IModelViewJoinDescriptor {
 		public String getSourceEntityUniqueName();
 		public String getDestinationEntityUniqueName();
 		public List<String> getSourceColumns();
 		public List<String> getDestinationColumns();
+	}
+	
+	public interface IModelViewRelationshipDescriptor{
+		public String getSourceEntityUniqueName();
+		public String getDestinationEntityUniqueName();
+		public List<String> getSourceColumns();
+		public List<String> getDestinationColumns();
+		public boolean isOutbound();
 	}
 }

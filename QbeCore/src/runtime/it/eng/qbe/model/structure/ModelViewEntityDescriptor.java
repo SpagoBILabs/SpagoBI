@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
+
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +41,8 @@ import org.json.JSONObject;
  */
 public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 	JSONObject viewJSON;
-	
+	private static transient Logger logger = Logger.getLogger(ModelViewEntityDescriptor.class);
+
 	public ModelViewEntityDescriptor(JSONObject viewJSON) {
 		this.viewJSON = viewJSON;
 	}
@@ -95,6 +99,33 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		}
 		
 		return joinDescriptors;
+	}
+	
+	public List<IModelViewRelationshipDescriptor> getRelationshipDescriptors() {
+		List<IModelViewRelationshipDescriptor> relationshipDescriptors;
+		
+		relationshipDescriptors = new ArrayList<IModelViewRelationshipDescriptor>();
+		try {
+			JSONArray inboundRelationshipsJSON = viewJSON.optJSONArray("inbound");
+			JSONArray outboundRelationshipsJSON = viewJSON.optJSONArray("outbound");
+			
+			
+			for(int i = 0; i < inboundRelationshipsJSON.length(); i++) {
+				JSONObject relationshipJSON = inboundRelationshipsJSON.getJSONObject(i);
+				relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,false) );
+			}			
+			
+			for(int i = 0; i < outboundRelationshipsJSON.length(); i++) {
+				JSONObject relationshipJSON = outboundRelationshipsJSON.getJSONObject(i);
+				relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
+			}
+			
+			
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to read view relationships from conf file", t);
+		}
+		return relationshipDescriptors;
+		
 	}
 	
 	public class ModelViewJoinDescriptor implements IModelViewJoinDescriptor {
@@ -155,6 +186,102 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 			return destinationColumns;
 		}
 		
+		
+	}
+	
+	public class ModelViewRelationshipDescriptor implements IModelViewRelationshipDescriptor {
+		
+		String sourceEntityUniqueName;
+		String destinationEntityUniqueName;
+		List<String> relationshipSourceColumns;
+		List<String> relationshipDestinationColumns;
+		boolean isOutbound;
+		
+
+		public ModelViewRelationshipDescriptor(JSONObject relationshipJSON, boolean isOutbound) {
+			try {
+				logger.debug("Descriptor for "+relationshipJSON);
+				this.isOutbound = isOutbound;
+				String pkg, tableName;
+				
+				if(isOutbound){
+					JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
+					pkg = destinationTable.getString("package");
+					tableName = destinationTable.getString("name");
+					destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					//this is not really a unique name because points to a BusinessView
+					sourceEntityUniqueName = tableName;
+				} else {
+					JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
+					pkg = sourceTable.getString("package");
+					tableName = sourceTable.getString("name");
+					sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					//this is not really a unique name because points to a BusinessView
+					destinationEntityUniqueName = tableName;
+				}
+				
+				JSONArray sourceColumsJSON = relationshipJSON.optJSONArray("sourceColumns");
+				if (sourceColumsJSON == null){
+					System.err.println("sourceColumsJSON is null");
+				}
+				relationshipSourceColumns = deserializeColumnsArray( sourceColumsJSON );
+				
+				JSONArray destinationColumsJSON = relationshipJSON.optJSONArray("destinationColumns");
+				if (destinationColumsJSON == null){
+					System.err.println("destinationColumsJSON is null");
+				}
+				relationshipDestinationColumns = deserializeColumnsArray( destinationColumsJSON );
+			}
+			catch (JSONException e){
+				//logger.debug("JSONException in ModelViewRelationshipDescriptor");
+				e.printStackTrace();
+				//logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,e);
+			}
+//			catch(Throwable t) {
+//				System.err.println("Error in ModelViewRelationshipDescriptor");
+//				logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,t);
+//				t.printStackTrace();
+//				throw new RuntimeException("Impossible to initialize ModelViewRelationshipDescriptor from conf object: " + relationshipJSON, t);
+//			}
+		}
+
+		private List<String> deserializeColumnsArray(JSONArray columnsJSON)  {
+			List<String> columns = null;
+			try {
+				columns = new ArrayList<String>();
+				int i;
+				for(i = 0; i < columnsJSON.length(); i++) {
+					String columnName = columnsJSON.getString(i);
+					columns.add( columnName );
+				}
+			} catch (JSONException e){
+				e.printStackTrace();
+				System.err.println("Error in columnsJSON: "+columnsJSON);
+			}
+
+			return columns;
+		}
+		
+		
+		public String getSourceEntityUniqueName() {
+			return sourceEntityUniqueName;
+		}
+
+		public String getDestinationEntityUniqueName() {
+			return destinationEntityUniqueName;
+		}
+
+		public List<String> getSourceColumns() {
+			return relationshipSourceColumns;
+		}
+
+		public List<String> getDestinationColumns() {
+			return relationshipDestinationColumns;
+		}
+		
+		public boolean isOutbound() {
+			return isOutbound;
+		}
 		
 	}
 }
