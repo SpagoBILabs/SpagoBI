@@ -130,13 +130,34 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			}
 			
 			//re-scan model structure to add nodes referencing view (inbound relation to business view)
-			/*
-			IModelViewEntityDescriptor viewDescriptor = list.get(0);
-			List<IModelViewRelationshipDescriptor> viewRelationshipsDescriptors = viewDescriptor.getRelationshipDescriptors();
-			for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
-				if (!viewRelationshipDescriptor.isOutbound());
+
+			for (int i=0; i<list.size(); i++){
+				IModelViewEntityDescriptor viewDescriptor = list.get(i);
+				List<IModelViewRelationshipDescriptor> viewRelationshipsDescriptors = viewDescriptor.getRelationshipDescriptors();
+				for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
+					if (!viewRelationshipDescriptor.isOutbound()){
+						String sourceEntityUniqueName = viewRelationshipDescriptor.getSourceEntityUniqueName();
+						IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);						
+						
+						//TODO: controllare se questo aggiunge il nodo della view solo a primo livello o è da navigare tutto l'albero
+						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+						String viewEntityUniqueName = viewEntity.getUniqueName();
+						propertiesInitializer.addProperties(viewEntity);
+						entity.addSubEntity(viewEntity);
+						
+					}
+					
+				}
 			}
-			*/
+			List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
+			
+			//print all entities name just for test
+			logger.debug("IN - Print all entities unique names");
+			for(IModelEntity entity : allEntities){
+				logger.debug("Entity Unique Name is "+entity.getUniqueName());
+			}
+			logger.debug("OUT- Print all entities unique names");
+			
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			
@@ -154,6 +175,32 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			logger.debug("OUT");
 		}
 	}
+	
+	private List<IModelEntity> visitModelStructure(ModelStructure modelStructure, String modelName){
+		List<IModelEntity> rootEntities = modelStructure.getRootEntities(modelName);
+		List<IModelEntity> subEntities = new ArrayList<IModelEntity>();
+		List<IModelEntity> allSubEntities = new ArrayList<IModelEntity>();
+		for (IModelEntity entity : rootEntities){
+			subEntities.addAll(entity.getAllSubEntities());
+			visitLevel(entity.getAllSubEntities(),allSubEntities,1);
+		}
+		
+		allSubEntities.addAll(subEntities);
+		allSubEntities.addAll(rootEntities);
+		return allSubEntities;
+	}
+	
+	private void visitLevel(List<IModelEntity> entities, List<IModelEntity>allEntities, int iterationLevel){
+		logger.debug("visitLevel "+iterationLevel);
+		if (iterationLevel < 8){
+			for (IModelEntity entity:entities){
+				allEntities.addAll(entity.getAllSubEntities());
+				visitLevel(entity.getAllSubEntities(),allEntities,iterationLevel+1);
+			}
+		}
+
+	}
+	
 	
 	private void addEntity (IModelStructure modelStructure, String modelName, String entityType){
 
