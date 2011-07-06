@@ -67,7 +67,7 @@ public class WorkSheetPDFExporter {
 	private IDataStore dataStore = null;
 	private JSONObject currentSheetConf = null;
 	
-	private static float IMAGE_MAX_WIDTH = 100;
+	private static float IMAGE_MAX_WIDTH = 250;
 	private static float IMAGE_MAX_HEIGHT = 100;
 	private static float TITLE_MAX_HEIGHT = 50;
 	
