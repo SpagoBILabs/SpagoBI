@@ -137,7 +137,9 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
 					if (!viewRelationshipDescriptor.isOutbound()){
 						String sourceEntityUniqueName = viewRelationshipDescriptor.getSourceEntityUniqueName();
-						IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);						
+						IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);	
+						logger.debug("Source Entity Unique name: "+entity.getUniqueName());
+						logger.debug("Source Entity simple name: "+entity.getName());
 						
 						//TODO: controllare se questo aggiunge il nodo della view solo a primo livello o è da navigare tutto l'albero
 						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
@@ -149,12 +151,15 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					
 				}
 			}
+			
 			List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
 			
 			//print all entities name just for test
 			logger.debug("IN - Print all entities unique names");
 			for(IModelEntity entity : allEntities){
 				logger.debug("Entity Unique Name is "+entity.getUniqueName());
+				logger.debug("Entity Simple Name is "+entity.getName());
+				logger.debug("Entity: "+entity.toString());
 			}
 			logger.debug("OUT- Print all entities unique names");
 			
@@ -182,6 +187,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		List<IModelEntity> allSubEntities = new ArrayList<IModelEntity>();
 		for (IModelEntity entity : rootEntities){
 			subEntities.addAll(entity.getAllSubEntities());
+	
 			visitLevel(entity.getAllSubEntities(),allSubEntities,1);
 		}
 		
