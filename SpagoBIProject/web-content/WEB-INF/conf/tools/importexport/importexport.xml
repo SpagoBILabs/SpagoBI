@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <IMPORTEXPORT>
-    <CURRENTVERSION version="2.7.0"/>
+    <CURRENTVERSION version="3.0.0"/>
 	<EXPORTER class="it.eng.spagobi.tools.importexport.ExportManager"
 	          exportFolder="${java.io.tmpdir}/exports" />
 	<IMPORTER class="it.eng.spagobi.tools.importexport.ImportManager" 
