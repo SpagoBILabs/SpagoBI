@@ -364,22 +364,20 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 
 		for(var p in this.fields) {
-		//patch: event changed from 'change' to 'valid' in order to make work the parameters correlation
-			this.fields[p].on('valid', function(f) {
-				if(f.dependants !== undefined) {
-				
-					for(var i = 0; i < f.dependants.length; i++) {
-
-						var field = this.fields[ f.dependants[i] ];
-
-						if(field.behindParameter.selectionType === 'COMBOBOX'){ 
-							field.store.load();
-						}
-					}
-				}
-			}, this); 
-			
+			/*
+			 * workaround (work-around):
+			 * 'change' event works properly for combo-boxes but not for lookup fields (it is not fired, don't know why...);
+			 * 'valid' event works properly for lookup fields but not for combo-boxes (it is fired more times and the first time the getValue() method returns the description column, not the value column);
+			 * Therefore we mix them...
+			 */
+			var theField = this.fields[p];
+			if (theField.behindParameter.selectionType === 'COMBOBOX') {
+				this.fields[p].on('change', this.reloadDependentComboBoxes , this);
+			} else {
+				this.fields[p].on('valid', this.reloadDependentComboBoxes , this);
+			}
 		}
+		
 		
 		var isReadyForExecution = true;
 		if(parameters.length == 0) {
@@ -397,6 +395,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		this.fireEvent('synchronize', this, isReadyForExecution, this.parametersPreference);
 		
+	}
+	
+	, reloadDependentComboBoxes: function(f) {
+		if (f.dependants !== undefined) {
+			for(var i = 0; i < f.dependants.length; i++) {
+				var field = this.fields[ f.dependants[i] ];
+				if(field.behindParameter.selectionType === 'COMBOBOX'){ 
+					field.store.load();
+				}
+			}
+		}
 	}
 	
 	, createField: function( executionInstance, p, c ) {
