@@ -177,10 +177,12 @@ public class OverlaidBarLine extends LinkableBar {
 						if(seriesLabelsMap!=null){
 							String serieLabel = (String)seriesLabelsMap.get(nameP);
 							if(serieLabel == null){
-								logger.error("serie Label not found for serie with name "+nameP+ ": this may lead to errors, check if serie's name from dataset is equal to the one specified in template");
-								logger.warn("series name in template are wrongly defined, remove series naming, check template");
-								series.put(nameP, value);
-								seriesLabelsMap = null;
+								if(!hiddenSeries.contains(nameP)){
+									logger.error("serie Label not found for serie with name "+nameP+ ": this may lead to errors, check if serie's name from dataset is equal to the one specified in template");
+									logger.warn("series name in template are wrongly defined, remove series naming, check template");
+									series.put(nameP, value);
+									seriesLabelsMap = null;
+								}
 							}
 							else{
 								series.put(serieLabel, value);
@@ -423,8 +425,8 @@ public class OverlaidBarLine extends LinkableBar {
 		rangeAxis.setLabelPaint(styleXaxesLabels.getColor());
 		rangeAxis.setTickLabelFont(new Font(styleXaxesLabels.getFontName(), Font.PLAIN, styleXaxesLabels.getSize()));
 		rangeAxis.setTickLabelPaint(styleXaxesLabels.getColor());
-//		rangeAxis.setLowerBound(600);
-//		rangeAxis.setUpperBound(720);
+		//		rangeAxis.setLowerBound(600);
+		//		rangeAxis.setUpperBound(720);
 		if(firstAxisLB != null && firstAxisUB != null){
 			rangeAxis.setLowerBound(firstAxisLB);
 			rangeAxis.setUpperBound(firstAxisUB);
@@ -811,8 +813,8 @@ public class OverlaidBarLine extends LinkableBar {
 			na.setTickLabelPaint(styleXaxesLabels.getColor());
 			na.setUpperMargin(0.10);
 			na.setNumberFormatOverride(nf);
-//			rangeAxis.setLowerBound(270);
-//			rangeAxis.setUpperBound(340);
+			//			rangeAxis.setLowerBound(270);
+			//			rangeAxis.setUpperBound(340);
 			if(secondAxisLB != null && secondAxisUB != null){
 				rangeAxis.setLowerBound(secondAxisLB);
 				rangeAxis.setUpperBound(secondAxisUB);
