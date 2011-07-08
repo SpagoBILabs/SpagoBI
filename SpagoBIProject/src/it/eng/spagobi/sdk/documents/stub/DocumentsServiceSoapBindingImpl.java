@@ -85,4 +85,9 @@ public class DocumentsServiceSoapBindingImpl implements it.eng.spagobi.sdk.docum
         return impl.downloadDatamartModelFiles(in0, in1, in2);
     }
 
+    public java.util.HashMap<String, String> getAllDatamartModels() throws java.rmi.RemoteException {
+    	DocumentsServiceImpl impl = new DocumentsServiceImpl();
+    	return impl.getAllDatamartModels();
+    }
+
 }

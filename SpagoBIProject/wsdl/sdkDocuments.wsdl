@@ -344,6 +344,10 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getAllDatamartModelsRequest">
+
+   </wsdl:message>
+
    <wsdl:message name="downloadTemplateRequest">
 
       <wsdl:part name="in0" type="soapenc:int"/>
@@ -359,6 +363,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <wsdl:message name="uploadDatamartModelRequest">
 
       <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDatamartModelsResponse">
+
+      <wsdl:part name="getAllDatamartModelsReturn" type="apachesoap:Map"/>
 
    </wsdl:message>
 
@@ -502,8 +512,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:output message="impl:uploadDatamartTemplateResponse" name="uploadDatamartTemplateResponse"/>
 
-         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
-
       </wsdl:operation>
 
       <wsdl:operation name="uploadDatamartModel" parameterOrder="in0">
@@ -511,8 +519,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:uploadDatamartModelRequest" name="uploadDatamartModelRequest"/>
 
          <wsdl:output message="impl:uploadDatamartModelResponse" name="uploadDatamartModelResponse"/>
-
-         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
       </wsdl:operation>
 
@@ -522,8 +528,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:output message="impl:downloadDatamartFileResponse" name="downloadDatamartFileResponse"/>
 
-         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
-
       </wsdl:operation>
 
       <wsdl:operation name="downloadDatamartModelFiles" parameterOrder="in0 in1 in2">
@@ -532,7 +536,13 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:output message="impl:downloadDatamartModelFilesResponse" name="downloadDatamartModelFilesResponse"/>
 
-         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDatamartModels">
+
+         <wsdl:input message="impl:getAllDatamartModelsRequest" name="getAllDatamartModelsRequest"/>
+
+         <wsdl:output message="impl:getAllDatamartModelsResponse" name="getAllDatamartModelsResponse"/>
 
       </wsdl:operation>
 
@@ -816,12 +826,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          </wsdl:output>
 
-         <wsdl:fault name="NotAllowedOperationException">
-
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:fault>
-
       </wsdl:operation>
 
       <wsdl:operation name="uploadDatamartModel">
@@ -839,12 +843,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
 
          </wsdl:output>
-
-         <wsdl:fault name="NotAllowedOperationException">
-
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:fault>
 
       </wsdl:operation>
 
@@ -864,12 +862,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          </wsdl:output>
 
-         <wsdl:fault name="NotAllowedOperationException">
-
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
-
-         </wsdl:fault>
-
       </wsdl:operation>
 
       <wsdl:operation name="downloadDatamartModelFiles">
@@ -888,11 +880,23 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          </wsdl:output>
 
-         <wsdl:fault name="NotAllowedOperationException">
+      </wsdl:operation>
 
-            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+      <wsdl:operation name="getAllDatamartModels">
 
-         </wsdl:fault>
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllDatamartModelsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllDatamartModelsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
 
       </wsdl:operation>
 
