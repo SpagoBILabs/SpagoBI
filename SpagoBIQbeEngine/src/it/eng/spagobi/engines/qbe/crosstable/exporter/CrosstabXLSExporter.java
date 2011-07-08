@@ -130,6 +130,9 @@ public class CrosstabXLSExporter {
 
 	private int buildDataMatrix(Sheet sheet, JSONArray data, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
 		CellStyle cellStyle = buildDataCellStyle(sheet);
+		CellStyle sumCellStyle = buildDataCellStyle(sheet);
+		sumCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		
 		int endRowNum = 0;
 		for (int i = 0; i < data.length(); i++) {
 			JSONArray array = (JSONArray) data.get(i);
@@ -144,6 +147,15 @@ public class CrosstabXLSExporter {
 				endRowNum = rowNum;
 				Cell cell = row.createCell(columnNum);
 				cell.setCellStyle(cellStyle);
+				
+				//Check if a cell is a sum
+				if(text.length()>5 && text.substring(0, 5).equals("[sum]")){
+					text= text.substring(5);
+					cell.setCellStyle(sumCellStyle);
+				} 
+				
+				
+				
 				try {
 					double value = Double.parseDouble(text);
 					cell.setCellValue(value);

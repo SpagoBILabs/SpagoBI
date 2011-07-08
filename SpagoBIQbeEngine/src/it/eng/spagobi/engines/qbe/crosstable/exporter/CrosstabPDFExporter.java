@@ -28,16 +28,19 @@ import java.util.Vector;
 
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.lowagie.text.Cell;
-
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.Table;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -46,18 +49,19 @@ import com.lowagie.text.Table;
 public class CrosstabPDFExporter {
 
 	
-	private Vector<List<Cell>> dataMatrix;
+	private Vector<List<PdfPCell>> dataMatrix;
 	//private static final Color headersFontColor = new Color(55,131,232);
-	private static final Color headersBackgroundColor = new Color(238,238,238);
-	private static final Color contentBackgroundColor = new Color(255,255,255);
-	private static final Color tableBorderColor = new Color(153,187,232);
-	private static final Color cellsBorderColor = new Color(208,208,208);
-	private static final int cellsContentHorizontalAlign = Table.ALIGN_RIGHT;
-	private static final int cellsHeaderHorizontalAlign = Table.ALIGN_CENTER;
-	//private static final int cellsHeaderVerticalAlign = Table.ALIGN_MIDDLE;
-	private static final int cellsContentVerticalAlign = Table.ALIGN_MIDDLE;
+	private static final Color headersBackgroundColor = new Color(200,200,200);
+	private static final Color sumBackgroundColor = new Color(238,238,238);
+	//private static final Color superSumBackgroundColor = new Color(210,210,210);
+	//private static final Color contentBackgroundColor = new Color(255,255,255);
+	//private static final Color tableBorderColor = new Color(153,187,232);
+	private static final Color cellsBorderColor = new Color(170,170,170);
+	private Font cellFont = new Font(Font.HELVETICA, 8);
 	
-	private static final int tablePadding = 2;
+	public static transient Logger logger = Logger.getLogger(CrosstabPDFExporter.class);
+	
+	
 	private DecimalFormat numberFormat;
 	
 	/**
@@ -70,6 +74,7 @@ public class CrosstabPDFExporter {
 	 * @throws DocumentException
 	 */
 	public void export(JSONObject json, Document pdfDocument, DecimalFormat numberFormat) throws JSONException, BadElementException, DocumentException {
+		logger.debug("IN: exporting the crosstab");
 		//prepare the crosstab for the export
 		CrosstabExporterUtility.calculateDescendants(json);
 		JSONObject columnsRoot = (JSONObject) json.get(CrossTab.CROSSTAB_JSON_COLUMNS_HEADERS);
@@ -81,46 +86,38 @@ public class CrosstabPDFExporter {
 		this.numberFormat = numberFormat;
 		
 		//build the matrix for the content
-		dataMatrix = new Vector<List<Cell>>();
+		dataMatrix = new Vector<List<PdfPCell>>();
 		buildDataMatrix(data);
-		
+
 		//number of headers lavels
 		int rowsDepth = CrosstabExporterUtility.getDepth(rowsRoot);
 		int columnsDepth = CrosstabExporterUtility.getDepth(columnsRoot);
 
 		//build the table
-		Table table = new Table(rowsDepth+dataMatrix.get(0).size());
-		table.setPadding(tablePadding);
-		table.setBorderColor(tableBorderColor);
-		Cell d = table.getDefaultCell();
-		d.setBorderColor(cellsBorderColor);
-		d.setHorizontalAlignment(cellsContentHorizontalAlign);
-		d.setBackgroundColor(contentBackgroundColor);
-		d.setVerticalAlignment(cellsContentVerticalAlign);
-		table.setDefaultCell(d);
+		PdfPTable table = new PdfPTable(rowsDepth+dataMatrix.get(0).size());
 		
 		//build the empty cell on the top left 
-		Cell topLeftCell = new Cell("");
+		PdfPCell  topLeftCell = new PdfPCell(new Phrase(""));
 		topLeftCell.setRowspan(columnsDepth);
 		topLeftCell.setColspan(rowsDepth);
-		topLeftCell.setBorderColorLeft(Color.WHITE);
-		topLeftCell.setBorderColorTop(Color.WHITE);
-		topLeftCell.setBorderColorBottom(tableBorderColor);
-		topLeftCell.setBorderColorRight(tableBorderColor);
+		topLeftCell.setBorderColor(Color.WHITE);
 		table.addCell(topLeftCell);
 		
-		List<Cell> cells = new ArrayList<Cell>();
+		List<PdfPCell> cells = new ArrayList<PdfPCell>();
 
 		//builds the headers
 		cells.addAll(buildColumnsHeader(columnsRootChilds));
 		cells.addAll(buildRowsHeaders(rowsRootChilds));
 		
+		logger.debug("Addign the content");
 		//adds the headers
 		for(int i=0; i<cells.size();i++){
 			table.addCell(cells.get(i));
 		}
-		table.setWidth(100);
+
+		table.setWidthPercentage(100);
 		pdfDocument.add(table);
+		logger.debug("IN: exported the crosstab");
 	}
 	
 
@@ -130,16 +127,28 @@ public class CrosstabPDFExporter {
 	 * @throws JSONException
 	 */
 	private void buildDataMatrix(JSONArray data) throws JSONException {
+		logger.debug("IN: building the crosstab content");
+		PdfPCell cell;
 		for (int i = 0; i < data.length(); i++) {
 			JSONArray array = (JSONArray) data.get(i);
-			List<Cell> dataRow = new ArrayList<Cell>();
+			List<PdfPCell> dataRow = new ArrayList<PdfPCell>();
 			for (int j = 0; j < array.length(); j++) {
 				String text = (String) array.get(j);
-				Cell cell = new Cell(getFormattedString(text));
+				//Check if a cell is a sum
+				if(text.length()>5 && text.substring(0, 5).equals("[sum]")){
+					text= text.substring(5);
+					cell = new PdfPCell(new Phrase (getFormattedString(text), cellFont));
+					cell.setBackgroundColor(sumBackgroundColor);
+				} else{
+					cell = new PdfPCell(new Phrase (getFormattedString(text), cellFont));
+				}
+				
+				cell.setBorderColor(cellsBorderColor);
 				dataRow.add(cell);				
 			}
 			dataMatrix.add(dataRow);
 		}
+		logger.debug("OUT: built the crosstab content");
 	}
 
 	/**
@@ -150,9 +159,9 @@ public class CrosstabPDFExporter {
 	 * @throws JSONException
 	 * @throws BadElementException
 	 */
-	private List<Cell> buildRowsHeaders(JSONArray siblings) throws JSONException, BadElementException {
+	private List<PdfPCell> buildRowsHeaders(JSONArray siblings) throws JSONException, BadElementException {
 		JSONArray childs;
-		List<Cell> rowNodes = new ArrayList<Cell>(); 
+		List<PdfPCell> rowNodes = new ArrayList<PdfPCell>(); 
 
 		//For every node of the level..
 		for (int i = 0; i < siblings.length(); i++) {
@@ -160,9 +169,9 @@ public class CrosstabPDFExporter {
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    
-			Cell cell = new Cell(text);
+			PdfPCell cell = new PdfPCell(new Phrase( text, cellFont));
 			cell.setBackgroundColor(headersBackgroundColor);
-			cell.setHorizontalAlignment(cellsHeaderHorizontalAlign);
+			cell.setBorderColor(cellsBorderColor);
 			
 			if(descendants>1){
 				cell.setRowspan(descendants);
@@ -189,9 +198,9 @@ public class CrosstabPDFExporter {
 	 * @throws JSONException
 	 * @throws BadElementException
 	 */
-	private List<Cell> buildColumnsHeader(JSONArray siblings) throws JSONException, BadElementException {
+	private List<PdfPCell> buildColumnsHeader(JSONArray siblings) throws JSONException, BadElementException {
 
-		List<Cell> cells = new ArrayList<Cell>();
+		List<PdfPCell> cells = new ArrayList<PdfPCell>();
 		
 		List<JSONObject> columnNodes = getAllNodes(siblings); 
 			
@@ -200,10 +209,10 @@ public class CrosstabPDFExporter {
 			String text = (String) aNode.get(CrossTab.CROSSTAB_NODE_JSON_KEY);
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    
-			Cell cell = new Cell(text);
+			PdfPCell cell = new PdfPCell(new Phrase(text,cellFont));
 			cell.setBorderColor(cellsBorderColor);
 			cell.setBackgroundColor(headersBackgroundColor);
-			cell.setHorizontalAlignment(cellsHeaderHorizontalAlign);
+
 			
 			if(descendants>1){
 				cell.setColspan(descendants);

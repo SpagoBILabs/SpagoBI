@@ -132,24 +132,77 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
     }
 
 	 //serialize the data (it ads also the sums)
- 	, serializeEntries: function(rowsum, columnsum ){
-
- 		var serializedEntries = this.getEntries();
+ 	, serializeEntries: function(rowsumO, columnsumO, superSumArray, misuresOnRow){
+ 		var rowsum = null;
+ 		var columnsum = null;
+ 		var tempSerializedEntries = this.getEntries();
+ 		var serializedEntries = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(tempSerializedEntries);
+ 		 	 		
+    	if(columnsumO!=null){
+    		columnsum = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(columnsumO);
+    		this.addPrefix(columnsum,'[sum]');
+    		for(var j=0; j<columnsum.length; j++){
+ 				serializedEntries.push(columnsum[j]);
+ 			}
+    	}
+    	
+    	if(rowsumO!=null){
+    		rowsum = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(rowsumO);
+    	}
  		
- 		if(rowsum!=null){
+    	//ADD the sum of sum
+ 		if(rowsumO!=null && columnsumO!=null){
+    		if(!misuresOnRow){
+    			for(var u=0; u<superSumArray.length; u++){
+    				rowsum[u].push(superSumArray[u]);
+    			}
+    			
+         		if(serializedEntries.length>rowsum[0].length){
+         			var rowsumRowNumber = rowsum[0].length;
+         			for(var u=0; u<superSumArray.length; u++){
+            			for(var j=rowsumRowNumber; j<serializedEntries.length; j++){
+            				rowsum[u].push(superSumArray[u]);
+            			}
+        			}  			
+         		}
+    		}else{
+    			for(var u=0; u<superSumArray.length; u++){
+    				rowsum[0].push(superSumArray[u]);
+    			}
+    			
+    			var rowSize = serializedEntries[0].length;
+    			
+         		if(serializedEntries[serializedEntries.length-superSumArray.length].length<rowSize){
+
+         			for(var u=0; u<superSumArray.length; u++){
+         				serializedEntries[serializedEntries.length-superSumArray.length+u].push(superSumArray[u]);
+        			}  	
+         		}
+    		}
+    	}
+
+ 		if(rowsumO!=null){
+ 			this.addPrefix(rowsum,'[sum]');
  			for(var i=0; i<rowsum[0].length; i++){
  	 			for(var j=0; j<rowsum.length; j++){
  	 				serializedEntries[i].push(rowsum[j][i]);
  	 			}
  			}	
  		}
-    	if(columnsum!=null){
-			for(var j=0; j<columnsum.length; j++){
- 				serializedEntries.push(columnsum[j]);
- 			}
-    	}
+
 		return serializedEntries;
 	}
-  
+ 	
+ 	, addPrefix: function(array, prefix){
+ 		for(var i=0; i<array.length; i++){
+ 			if(!(array[i] instanceof Array)){
+ 				array[i] = prefix+array[i];
+ 			}else{
+ 				for(var j=0; j<array[i].length; j++){
+ 					array[i][j] = prefix+array[i][j];
+ 				}
+ 			}
+ 		}
+ 	}
        
 });
