@@ -44,7 +44,13 @@ public class ModelViewEntity extends ModelEntity {
 	List<Join> joins;
 	List<ViewRelationship> viewRelationships;
 	private static transient Logger logger = Logger.getLogger(ModelViewEntity.class);
-
+	
+	IModelViewEntityDescriptor viewDescriptor;
+	String modelName;
+	
+	// =========================================================================
+	// INNER CLASSES
+	// =========================================================================
 	
 	public class Join {
 		IModelEntity sourceEntity;
@@ -134,62 +140,56 @@ public class ModelViewEntity extends ModelEntity {
 			
 			if (!isOutbound){
 				sourceEntity = structure.getRootEntity(modelName, relationshipDescriptor.getSourceEntityUniqueName());
-				sourceFields = new ArrayList<IModelField>();
-				for(String fieldName : relationshipDescriptor.getSourceColumns()) {
-					String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
-					IModelField f = sourceEntity.getField(fieldUniqueName);
-					if(f == null) {
-						List<IModelField> fields = sourceEntity.getAllFields();
-						String str = "";
-						for(IModelField field : fields) {
-							str = field.getUniqueName() + ";  ";
+				if (relationshipDescriptor.isSourceEntityView()){
+					//empty
+					sourceFields = new ArrayList<IModelField>();
+				} else {
+					sourceFields = new ArrayList<IModelField>();
+					for(String fieldName : relationshipDescriptor.getSourceColumns()) {
+						String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
+						IModelField f = sourceEntity.getField(fieldUniqueName);
+						if(f == null) {
+							List<IModelField> fields = sourceEntity.getAllFields();
+							String str = "";
+							for(IModelField field : fields) {
+								str = field.getUniqueName() + ";  ";
+							}
+							Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
 						}
-						Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+						
+						sourceFields.add(f);
 					}
-					
-					sourceFields.add(f);
 				}
+
 				//empty
 				destinationFields = new ArrayList<IModelField>();
 
 			} else {
 				destinationEntity = structure.getRootEntity(modelName, relationshipDescriptor.getDestinationEntityUniqueName());
-				destinationFields = new ArrayList<IModelField>();
-				for(String fieldName : relationshipDescriptor.getDestinationColumns()) {
-					String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
-					IModelField f = destinationEntity.getField(fieldUniqueName);
-					Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
-					destinationFields.add(f);
+				if (relationshipDescriptor.isDestinationEntityView()){
+					//empty
+					destinationFields = new ArrayList<IModelField>();
+				} else {
+					destinationFields = new ArrayList<IModelField>();
+					for(String fieldName : relationshipDescriptor.getDestinationColumns()) {
+						String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
+						IModelField f = destinationEntity.getField(fieldUniqueName);
+						if(f == null) {
+							List<IModelField> fields = destinationEntity.getAllFields();
+							String str = "";
+							for(IModelField field : fields) {
+								str = field.getUniqueName() + ";  ";
+							}
+							Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
+						}
+						destinationFields.add(f);
+					}
 				}
+
 				//empty
 				sourceFields = new ArrayList<IModelField>();
 			}
 				
-			/*
-			sourceFields = new ArrayList<IModelField>();
-			for(String fieldName : relationshipDescriptor.getSourceColumns()) {
-				String fieldUniqueName = getFieldUniqueName(sourceEntity, fieldName);
-				IModelField f = sourceEntity.getField(fieldUniqueName);
-				if(f == null) {
-					List<IModelField> fields = sourceEntity.getAllFields();
-					String str = "";
-					for(IModelField field : fields) {
-						str = field.getUniqueName() + ";  ";
-					}
-					Assert.assertNotNull("Impossible to find source field [" + fieldUniqueName + "]. Valid filed name are [" + str + "]", f);
-				}
-				
-				sourceFields.add(f);
-			}
-			
-			destinationFields = new ArrayList<IModelField>();
-			for(String fieldName : relationshipDescriptor.getDestinationColumns()) {
-				String fieldUniqueName = getFieldUniqueName(destinationEntity, fieldName);
-				IModelField f = destinationEntity.getField(fieldUniqueName);
-				Assert.assertNotNull("Impossible to find destination field [" + fieldUniqueName + "]", f);
-				destinationFields.add(f);
-			}
-			*/
 		}
 		
 		public IModelEntity getSourceEntity() {
@@ -223,6 +223,9 @@ public class ModelViewEntity extends ModelEntity {
 	
 		setName( view.getName() );
 		setType( view.getType() );
+		
+		viewDescriptor = view;
+		this.modelName = modelName;
 		
 		entities = new ArrayList<IModelEntity>();
 		subEntities = new HashMap<String,IModelEntity>();
@@ -326,4 +329,28 @@ public class ModelViewEntity extends ModelEntity {
 	public List<ViewRelationship> getRelationships() {
 		return viewRelationships;
 	}
+	
+	public List<ViewRelationship> getRelationshipsToViews(){
+		List<ViewRelationship> relationshipsToViews = new ArrayList<ViewRelationship>();
+		List<IModelViewRelationshipDescriptor> relationshipDescriptors = viewDescriptor.getRelationshipToViewsDescriptors();
+		for(IModelViewRelationshipDescriptor relationshipDescriptor : relationshipDescriptors) {
+			relationshipsToViews.add( new ViewRelationship(relationshipDescriptor, modelName, structure) );
+		}
+		return relationshipsToViews;
+	}
+	
+	//Only outbound relationship from view to another view are added as subentities
+	public void addOutboundRelationshipsToViewEntities() {
+		List<ViewRelationship> relationshipsToViews  = getRelationshipsToViews();
+		if (!relationshipsToViews.isEmpty()){			
+			for(ViewRelationship relationship : relationshipsToViews){
+				if (relationship.isOutbound()){
+					subEntities.put(relationship.getDestinationEntity().getUniqueName(),relationship.getDestinationEntity());
+					logger.debug("["+relationship.getDestinationEntity()+"] was added as subentity of " +
+							"["+relationship.getDestinationEntity().getUniqueName()+"]");
+				}
+			} 
+		}
+	}
+	
 }

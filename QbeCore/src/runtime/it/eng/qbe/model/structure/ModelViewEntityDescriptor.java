@@ -23,6 +23,8 @@ package it.eng.qbe.model.structure;
 
 
 
+
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +44,9 @@ import org.json.JSONObject;
 public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 	JSONObject viewJSON;
 	private static transient Logger logger = Logger.getLogger(ModelViewEntityDescriptor.class);
+	
+	//this relationships will be added later after creation of all Views
+	private List<IModelViewRelationshipDescriptor> relationshipToViewsDescriptors; 
 
 	public ModelViewEntityDescriptor(JSONObject viewJSON) {
 		this.viewJSON = viewJSON;
@@ -105,6 +110,8 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		List<IModelViewRelationshipDescriptor> relationshipDescriptors;
 		
 		relationshipDescriptors = new ArrayList<IModelViewRelationshipDescriptor>();
+		relationshipToViewsDescriptors = new ArrayList<IModelViewRelationshipDescriptor>();
+		
 		try {
 			JSONArray inboundRelationshipsJSON = viewJSON.optJSONArray("inbound");
 			JSONArray outboundRelationshipsJSON = viewJSON.optJSONArray("outbound");
@@ -112,12 +119,35 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 			
 			for(int i = 0; i < inboundRelationshipsJSON.length(); i++) {
 				JSONObject relationshipJSON = inboundRelationshipsJSON.getJSONObject(i);
-				relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,false) );
+				
+				//Temporary code TO REMOVE
+				JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
+				boolean isSourceEntityView = Boolean.parseBoolean(sourceTable.getString("isBusinessView"));
+				
+				if (isSourceEntityView){
+					relationshipToViewsDescriptors.add(new ModelViewRelationshipDescriptor(relationshipJSON,false));
+					continue;
+				//*****
+				} else {
+					relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,false) );
+				}
+
 			}			
 			
 			for(int i = 0; i < outboundRelationshipsJSON.length(); i++) {
 				JSONObject relationshipJSON = outboundRelationshipsJSON.getJSONObject(i);
-				relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
+				
+				//Temporary code TO REMOVE
+				JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
+				boolean isDestinationEntityView = Boolean.parseBoolean(destinationTable.getString("isBusinessView"));
+				
+				if (isDestinationEntityView){
+					relationshipToViewsDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
+					continue;
+				//*****
+				} else {
+					relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
+				}
 			}
 			
 			
@@ -128,12 +158,28 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		
 	}
 	
+	/**
+	 * @return the relationshipToViewsDescriptors
+	 */
+	public List<IModelViewRelationshipDescriptor> getRelationshipToViewsDescriptors() {
+		return relationshipToViewsDescriptors;
+	}
+
+	/**
+	 * @param relationshipToViewsDescriptors the relationshipToViewsDescriptors to set
+	 */
+	public void setRelationshipToViewsDescriptors(
+			List<IModelViewRelationshipDescriptor> relationshipToViewsDescriptors) {
+		this.relationshipToViewsDescriptors = relationshipToViewsDescriptors;
+	}
+
 	public class ModelViewJoinDescriptor implements IModelViewJoinDescriptor {
 		
 		String sourceEntityUniqueName;
 		String destinationEntityUniqueName;
 		List<String> sourceColumns;
 		List<String> destinationColumns;
+
 		
 		public ModelViewJoinDescriptor(JSONObject joinJSON) {
 			try {
@@ -196,6 +242,8 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		List<String> relationshipSourceColumns;
 		List<String> relationshipDestinationColumns;
 		boolean isOutbound;
+		boolean isSourceEntityView;
+		boolean isDestinationEntityView;
 		
 
 		public ModelViewRelationshipDescriptor(JSONObject relationshipJSON, boolean isOutbound) {
@@ -208,16 +256,29 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 					JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
 					pkg = destinationTable.getString("package");
 					tableName = destinationTable.getString("name");
-					destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					isDestinationEntityView = Boolean.parseBoolean(destinationTable.getString("isBusinessView"));
+					if (isDestinationEntityView){
+						destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					}else {
+						destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					}
+
 					//this is not really a unique name because points to a BusinessView
-					sourceEntityUniqueName = tableName;
+					sourceEntityUniqueName = getName();
+					
 				} else {
 					JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
 					pkg = sourceTable.getString("package");
 					tableName = sourceTable.getString("name");
-					sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					isSourceEntityView = Boolean.parseBoolean(sourceTable.getString("isBusinessView"));
+					if (isSourceEntityView){
+						sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					}else {
+						sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
+					}
+					
 					//this is not really a unique name because points to a BusinessView
-					destinationEntityUniqueName = tableName;
+					destinationEntityUniqueName = getName();
 				}
 				
 				JSONArray sourceColumsJSON = relationshipJSON.optJSONArray("sourceColumns");
@@ -281,6 +342,20 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 		
 		public boolean isOutbound() {
 			return isOutbound;
+		}
+
+		/**
+		 * @return the isSourceEntityView
+		 */
+		public boolean isSourceEntityView() {
+			return isSourceEntityView;
+		}
+
+		/**
+		 * @return the isDestinationEntityView
+		 */
+		public boolean isDestinationEntityView() {
+			return isDestinationEntityView;
 		}
 		
 	}

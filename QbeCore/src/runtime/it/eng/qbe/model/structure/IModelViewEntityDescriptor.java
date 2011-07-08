@@ -34,6 +34,7 @@ public interface IModelViewEntityDescriptor {
 	Set<String> getInnerEntityUniqueNames();
 	List<IModelViewJoinDescriptor> getJoinDescriptors();
 	List<IModelViewRelationshipDescriptor> getRelationshipDescriptors();
+	public List<IModelViewRelationshipDescriptor> getRelationshipToViewsDescriptors();
 	
 	public interface IModelViewJoinDescriptor {
 		public String getSourceEntityUniqueName();
@@ -48,5 +49,7 @@ public interface IModelViewEntityDescriptor {
 		public List<String> getSourceColumns();
 		public List<String> getDestinationColumns();
 		public boolean isOutbound();
+		public boolean isSourceEntityView();
+		public boolean isDestinationEntityView();
 	}
 }
