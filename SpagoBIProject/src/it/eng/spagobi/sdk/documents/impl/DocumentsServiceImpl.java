@@ -73,10 +73,12 @@ import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter.MemoryOnlyDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -736,10 +738,11 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	}
 
 
-	public void uploadDatamartTemplate(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
+	public void uploadDatamartTemplate(SDKTemplate sdkTemplate) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
 		
 		try {	
+			
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document                                                                   */
 			/***********************************************************************************************************/
@@ -828,7 +831,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		logger.debug("OUT");
 	} 
 
-	public void uploadDatamartModel(SDKTemplate sdkTemplate) throws NotAllowedOperationException{
+	public void uploadDatamartModel(SDKTemplate sdkTemplate) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName() + "]");
 
 		try {	
@@ -840,7 +843,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		logger.debug("OUT");
 	} 
 
-	public SDKTemplate downloadDatamartFile(String folderName, String fileName) throws NotAllowedOperationException{
+	public SDKTemplate downloadDatamartFile(String folderName, String fileName) {
 		logger.debug("IN");
 		SDKTemplate toReturn = null;
 		try {
@@ -864,7 +867,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	
 	//download a zip file with datamart.jar and modelfile
-	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) throws NotAllowedOperationException{
+	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) {
 		logger.debug("IN");
 		
 		File file = null;
@@ -951,6 +954,46 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				}
 			}
 		}	
+	}
+	
+	public HashMap<String, String> getAllDatamartModels(){
+		logger.debug("IN");
+		
+		HashMap<String, String> toReturn = new HashMap<String, String>();
+		try {
+			String pathDatatamartsDir = getResourcePath();
+			File datamartsDir = new File(pathDatatamartsDir);
+			File[] dirs = datamartsDir.listFiles(new FileFilter() {
+				public boolean accept(File pathname) {
+					if (pathname.isDirectory()) {
+						return true;
+					}
+					return false;
+				}
+			});
+			if (dirs == null || dirs.length == 0) {
+				throw new SpagoBIRuntimeException("No datamarts found!! Check configuration for datamarts repository");
+			}
+			for (int i = 0; i < dirs.length; i++) {
+				File dir = dirs[i];
+				File[] models = dir.listFiles(new FileFilter() {
+					public boolean accept(File file) {
+						if (file.getName().endsWith(".sbimodel")){
+							return true;
+						}
+						return false;
+					}
+				});
+				for (int j = 0; j < models.length; j++) {
+					toReturn.put(dir.getName(), models[j].getName());
+				}
+			}
+		} catch(Exception e) {
+			logger.error(e);
+		}
+		
+		logger.debug("OUT");
+		return toReturn;
 	}
 	
 	private void uploadFisicalFile (SDKTemplate sdkTemplate, String defaultName) throws Exception{

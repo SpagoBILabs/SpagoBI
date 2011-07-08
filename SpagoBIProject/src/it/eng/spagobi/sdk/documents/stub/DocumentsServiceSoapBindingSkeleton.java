@@ -242,12 +242,6 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
             _myOperations.put("uploadDatamartTemplate", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("uploadDatamartTemplate")).add(_oper);
-        _fault = new org.apache.axis.description.FaultDesc();
-        _fault.setName("NotAllowedOperationException");
-        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
-        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
-        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
-        _oper.addFault(_fault);
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.documents.sdk.spagobi.eng.it", "SDKTemplate"), it.eng.spagobi.sdk.documents.bo.SDKTemplate.class, false, false), 
         };
@@ -259,12 +253,6 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
             _myOperations.put("uploadDatamartModel", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("uploadDatamartModel")).add(_oper);
-        _fault = new org.apache.axis.description.FaultDesc();
-        _fault.setName("NotAllowedOperationException");
-        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
-        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
-        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
-        _oper.addFault(_fault);
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
@@ -278,12 +266,6 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
             _myOperations.put("downloadDatamartFile", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("downloadDatamartFile")).add(_oper);
-        _fault = new org.apache.axis.description.FaultDesc();
-        _fault.setName("NotAllowedOperationException");
-        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
-        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
-        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
-        _oper.addFault(_fault);
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
@@ -298,12 +280,17 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
             _myOperations.put("downloadDatamartModelFiles", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("downloadDatamartModelFiles")).add(_oper);
-        _fault = new org.apache.axis.description.FaultDesc();
-        _fault.setName("NotAllowedOperationException");
-        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"));
-        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
-        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
-        _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+        };
+        _oper = new org.apache.axis.description.OperationDesc("getAllDatamartModels", _params, new javax.xml.namespace.QName("", "getAllDatamartModelsReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "getAllDatamartModels"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("getAllDatamartModels") == null) {
+            _myOperations.put("getAllDatamartModels", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("getAllDatamartModels")).add(_oper);
     }
 
     public DocumentsServiceSoapBindingSkeleton() {
@@ -378,25 +365,31 @@ public class DocumentsServiceSoapBindingSkeleton implements it.eng.spagobi.sdk.d
         return ret;
     }
 
-    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException
     {
         impl.uploadDatamartTemplate(in0);
     }
 
-    public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException
     {
         impl.uploadDatamartModel(in0);
     }
 
-    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException
     {
         it.eng.spagobi.sdk.documents.bo.SDKTemplate ret = impl.downloadDatamartFile(in0, in1);
         return ret;
     }
 
-    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException
     {
         it.eng.spagobi.sdk.documents.bo.SDKTemplate ret = impl.downloadDatamartModelFiles(in0, in1, in2);
+        return ret;
+    }
+
+    public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException
+    {
+        java.util.HashMap ret = impl.getAllDatamartModels();
         return ret;
     }
 
