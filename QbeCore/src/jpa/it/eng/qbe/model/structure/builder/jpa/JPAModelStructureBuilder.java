@@ -114,14 +114,18 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
 			}		
 			
+			List<ModelViewEntity> addedViewsEntities = new ArrayList<ModelViewEntity>();
+			
 			/*
-			 * Load Views definitions and adds to the model structure
+			 * 1) Load Views definitions and adds to the model structure (with outbound relations from Business Views)
 			 */
 			List<IModelViewEntityDescriptor> list = getDataSource().getConfiguration().loadViews();
 			if(list.size() > 0) {
 				for (int i=0; i<list.size(); i++){
 					IModelViewEntityDescriptor viewDescriptor = list.get(i);
+
 					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+					addedViewsEntities.add(viewEntity);
 					propertiesInitializer.addProperties(viewEntity);
 					modelStructure.addRootEntity(modelName, viewEntity);
 					
@@ -133,9 +137,8 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			}
 			
 			/*
-			 * Re-scan model structure to add nodes referencing view (inbound relations to business views)
+			 * 2) Re-scan model structure to add nodes referencing view (inbound relations to Business Views)
 			 */
-			
 			//visit all entities
 			List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
 			
@@ -165,6 +168,16 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 						}	
 					}
 				}
+			}
+			
+			/*
+			 * 3) Now add nodes corresponding to relations between Business Views (BV-to-BV)
+			 * 	  Analyzing only outbound relationships because 
+			 *    we always have an inbound relationships that's specular
+			 */
+			for (ModelViewEntity viewEntity : addedViewsEntities){
+				//Outbound relationships
+				viewEntity.addOutboundRelationshipsToViewEntities();
 			}
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
