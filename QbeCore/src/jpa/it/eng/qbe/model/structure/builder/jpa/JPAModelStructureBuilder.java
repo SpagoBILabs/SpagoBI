@@ -114,11 +114,11 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				logger.info("Entity type [" + entityType + "] succesfully added to model structure");
 			}		
 			
-			List<ModelViewEntity> addedViewsEntities = new ArrayList<ModelViewEntity>();
 			
 			/*
 			 * 1) Load Views definitions and adds to the model structure (with outbound relations from Business Views)
 			 */
+			List<ModelViewEntity> addedViewsEntities = new ArrayList<ModelViewEntity>();
 			List<IModelViewEntityDescriptor> list = getDataSource().getConfiguration().loadViews();
 			if(list.size() > 0) {
 				for (int i=0; i<list.size(); i++){
@@ -139,6 +139,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			/*
 			 * 2) Re-scan model structure to add nodes referencing view (inbound relations to Business Views)
 			 */
+			
 			//visit all entities
 			List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
 			

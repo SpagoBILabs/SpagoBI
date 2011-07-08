@@ -116,18 +116,15 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 			JSONArray inboundRelationshipsJSON = viewJSON.optJSONArray("inbound");
 			JSONArray outboundRelationshipsJSON = viewJSON.optJSONArray("outbound");
 			
-			
 			for(int i = 0; i < inboundRelationshipsJSON.length(); i++) {
 				JSONObject relationshipJSON = inboundRelationshipsJSON.getJSONObject(i);
 				
-				//Temporary code TO REMOVE
 				JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
 				boolean isSourceEntityView = Boolean.parseBoolean(sourceTable.getString("isBusinessView"));
 				
 				if (isSourceEntityView){
 					relationshipToViewsDescriptors.add(new ModelViewRelationshipDescriptor(relationshipJSON,false));
 					continue;
-				//*****
 				} else {
 					relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,false) );
 				}
@@ -137,14 +134,12 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 			for(int i = 0; i < outboundRelationshipsJSON.length(); i++) {
 				JSONObject relationshipJSON = outboundRelationshipsJSON.getJSONObject(i);
 				
-				//Temporary code TO REMOVE
 				JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
 				boolean isDestinationEntityView = Boolean.parseBoolean(destinationTable.getString("isBusinessView"));
 				
 				if (isDestinationEntityView){
 					relationshipToViewsDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
 					continue;
-				//*****
 				} else {
 					relationshipDescriptors.add( new ModelViewRelationshipDescriptor(relationshipJSON,true) );
 				}
@@ -257,11 +252,7 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 					pkg = destinationTable.getString("package");
 					tableName = destinationTable.getString("name");
 					isDestinationEntityView = Boolean.parseBoolean(destinationTable.getString("isBusinessView"));
-					if (isDestinationEntityView){
-						destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
-					}else {
-						destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
-					}
+					destinationEntityUniqueName = pkg + "." + tableName + "::" + tableName;
 
 					//this is not really a unique name because points to a BusinessView
 					sourceEntityUniqueName = getName();
@@ -271,11 +262,7 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 					pkg = sourceTable.getString("package");
 					tableName = sourceTable.getString("name");
 					isSourceEntityView = Boolean.parseBoolean(sourceTable.getString("isBusinessView"));
-					if (isSourceEntityView){
-						sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
-					}else {
-						sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
-					}
+					sourceEntityUniqueName = pkg + "." + tableName + "::" + tableName;
 					
 					//this is not really a unique name because points to a BusinessView
 					destinationEntityUniqueName = getName();
@@ -283,27 +270,21 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 				
 				JSONArray sourceColumsJSON = relationshipJSON.optJSONArray("sourceColumns");
 				if (sourceColumsJSON == null){
-					System.err.println("sourceColumsJSON is null");
+					logger.error("sourceColumsJSON is null");
 				}
 				relationshipSourceColumns = deserializeColumnsArray( sourceColumsJSON );
 				
 				JSONArray destinationColumsJSON = relationshipJSON.optJSONArray("destinationColumns");
 				if (destinationColumsJSON == null){
-					System.err.println("destinationColumsJSON is null");
+					logger.error("destinationColumsJSON is null");
 				}
 				relationshipDestinationColumns = deserializeColumnsArray( destinationColumsJSON );
 			}
-			catch (JSONException e){
-				//logger.debug("JSONException in ModelViewRelationshipDescriptor");
-				e.printStackTrace();
-				//logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,e);
+			catch(Throwable t) {
+				logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,t);
+				t.printStackTrace();
+				throw new RuntimeException("Impossible to initialize ModelViewRelationshipDescriptor from conf object: " + relationshipJSON, t);
 			}
-//			catch(Throwable t) {
-//				System.err.println("Error in ModelViewRelationshipDescriptor");
-//				logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,t);
-//				t.printStackTrace();
-//				throw new RuntimeException("Impossible to initialize ModelViewRelationshipDescriptor from conf object: " + relationshipJSON, t);
-//			}
 		}
 
 		private List<String> deserializeColumnsArray(JSONArray columnsJSON)  {
@@ -317,7 +298,7 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 				}
 			} catch (JSONException e){
 				e.printStackTrace();
-				System.err.println("Error in columnsJSON: "+columnsJSON);
+				logger.error("Error in columnsJSON: "+columnsJSON);
 			}
 
 			return columns;

@@ -126,12 +126,13 @@ public class ModelViewEntity extends ModelEntity {
 		public String getFieldUniqueName(IModelEntity parentEntity, String fieldName) {
 			if (parentEntity == null){
 				logger.debug("parentEntity is null, field name is "+fieldName);
+				return null;
+			} else {
+				if(parentEntity.getParent() == null) {
+					logger.debug("FieldUniqueName is "+parentEntity.getType() + ":" + fieldName);
+					return parentEntity.getType() + ":" + fieldName;
+				}
 			}
-			if(parentEntity.getParent() == null) {
-				logger.debug("FieldUniqueName is "+parentEntity.getType() + ":" + fieldName);
-				return parentEntity.getType() + ":" + fieldName;
-			}
-			logger.debug("FieldUniqueName is "+parentEntity.getUniqueName() + ":" + fieldName);
 			return parentEntity.getUniqueName() + ":" + fieldName;
 		}
 		
