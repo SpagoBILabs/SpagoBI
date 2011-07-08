@@ -57,11 +57,13 @@ public interface DocumentsService {
 
     SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType) throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
     
-    void uploadDatamartTemplate(SDKTemplate template) throws NotAllowedOperationException;
+    void uploadDatamartTemplate(SDKTemplate template);
     
-    void uploadDatamartModel(SDKTemplate template) throws NotAllowedOperationException;
+    void uploadDatamartModel(SDKTemplate template);
 
-    SDKTemplate downloadDatamartFile(String folderName, String fileName) throws NotAllowedOperationException;
+    SDKTemplate downloadDatamartFile(String folderName, String fileName);
     
-    SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) throws NotAllowedOperationException;
+    SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName);
+    
+    HashMap<String, String> getAllDatamartModels();
 }

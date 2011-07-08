@@ -16,7 +16,7 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[15];
+        _operations = new org.apache.axis.description.OperationDesc[16];
         _initOperationDesc1();
         _initOperationDesc2();
     }
@@ -235,12 +235,6 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"),
-                      "it.eng.spagobi.sdk.exceptions.NotAllowedOperationException",
-                      new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"), 
-                      true
-                     ));
         _operations[11] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
@@ -250,12 +244,6 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         oper.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"),
-                      "it.eng.spagobi.sdk.exceptions.NotAllowedOperationException",
-                      new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"), 
-                      true
-                     ));
         _operations[12] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
@@ -269,12 +257,6 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         oper.setReturnQName(new javax.xml.namespace.QName("", "downloadDatamartFileReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"),
-                      "it.eng.spagobi.sdk.exceptions.NotAllowedOperationException",
-                      new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"), 
-                      true
-                     ));
         _operations[13] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
@@ -290,13 +272,16 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         oper.setReturnQName(new javax.xml.namespace.QName("", "downloadDatamartModelFilesReturn"));
         oper.setStyle(org.apache.axis.constants.Style.RPC);
         oper.setUse(org.apache.axis.constants.Use.ENCODED);
-        oper.addFault(new org.apache.axis.description.FaultDesc(
-                      new javax.xml.namespace.QName("urn:spagobisdkdocuments", "fault"),
-                      "it.eng.spagobi.sdk.exceptions.NotAllowedOperationException",
-                      new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"), 
-                      true
-                     ));
         _operations[14] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("getAllDatamartModels");
+        oper.setReturnType(new javax.xml.namespace.QName("http://xml.apache.org/xml-soap", "Map"));
+        oper.setReturnClass(java.util.HashMap.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("", "getAllDatamartModelsReturn"));
+        oper.setStyle(org.apache.axis.constants.Style.RPC);
+        oper.setUse(org.apache.axis.constants.Use.ENCODED);
+        _operations[15] = oper;
 
     }
 
@@ -926,7 +911,7 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
 }
     }
 
-    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -946,19 +931,11 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         }
         extractAttachments(_call);
   } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) {
-              throw (it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) axisFaultException.detail;
-         }
-   }
   throw axisFaultException;
 }
     }
 
-    public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -978,19 +955,11 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
         }
         extractAttachments(_call);
   } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) {
-              throw (it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) axisFaultException.detail;
-         }
-   }
   throw axisFaultException;
 }
     }
 
-    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartFile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -1017,19 +986,11 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) {
-              throw (it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) axisFaultException.detail;
-         }
-   }
   throw axisFaultException;
 }
     }
 
-    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+    public it.eng.spagobi.sdk.documents.bo.SDKTemplate downloadDatamartModelFiles(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -1056,14 +1017,37 @@ public class DocumentsServiceSoapBindingStub extends org.apache.axis.client.Stub
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
-    if (axisFaultException.detail != null) {
-        if (axisFaultException.detail instanceof java.rmi.RemoteException) {
-              throw (java.rmi.RemoteException) axisFaultException.detail;
-         }
-        if (axisFaultException.detail instanceof it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) {
-              throw (it.eng.spagobi.sdk.exceptions.NotAllowedOperationException) axisFaultException.detail;
-         }
-   }
+  throw axisFaultException;
+}
+    }
+
+    public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[15]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("");
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "getAllDatamartModels"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return (java.util.HashMap) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (java.util.HashMap) org.apache.axis.utils.JavaUtils.convert(_resp, java.util.HashMap.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
   throw axisFaultException;
 }
     }

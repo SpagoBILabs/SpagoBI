@@ -174,4 +174,9 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	    return documentsService.downloadDatamartModelFiles(in0, in1, in2);
   }
 
+  public java.util.HashMap getAllDatamartModels() throws java.rmi.RemoteException{
+	    if (documentsService == null)
+	      _initDocumentsServiceProxy();
+	    return documentsService.getAllDatamartModels();
+	  }
 }
