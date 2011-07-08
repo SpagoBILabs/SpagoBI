@@ -162,7 +162,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	,visibleMeasuresMetadataLength: null
 	,measuresNames: null
 	,measuresPosition: null
-	
+	,superSumArray: null //array with the sum of sums (panel in the bottom right if there are the sum either in the rows either in the columns)
 	
 	
 	
@@ -190,12 +190,13 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     	var entries = this.entries.getEntries();
     	var toReturn = new Array();
     	var visiblei=0;//the visible row index. If i=2 and row[0].hidden=true, row[1].hidden=false  then  visiblei=i-1 = 1
-    	
+
     	for(var i=0; i<entries.length; i++){
     		if(!this.rowHeader[this.rowHeader.length-1][i].hidden){
     			var visiblej=0;
     			partialSum =0;
     			for(var j=0; j<entries[i].length; j++){
+
     				if(!this.columnHeader[this.columnHeader.length-1][j].hidden){
     					// get measure metadata (name, type and format)
     					var measureName = null;
@@ -386,9 +387,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
      //serialize the crossTab: 
      //Create a JSONObject with the properties: data, columns, rows
      ,serializeCrossTab: function(){
+
     	 var columnsum = null;
     	 var rowsum = null;
+    	 
     	 if(this.withColumnsSum){
+    		 //save the column headers because buildTotalSubTree change the structure 
+    		 //of the headers
+    		 var columnHeaderBK = this.cloneHeader(this.columnHeader);
     		 this.buildTotalSubTree(this.rowHeader, this.misuresOnRow);
     		 if(this.misuresOnRow){	
     			columnsum = this.calculateTotalSum();
@@ -396,21 +402,28 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     			columnsum = new Array();
     			columnsum.push(this.columnsSum());
     		 }
+    		 this.columnHeader = columnHeaderBK;
     	 }
     	 
     	 if(this.withRowsSum){
-    		 this.buildTotalSubTree(this.columnHeader, !this.misuresOnRow);
+    		 //save the row headers because buildTotalSubTree change the structure 
+    		 //of the headers
+    		var rowHeaderBK = this.cloneHeader(this.rowHeader);
+    	  	this.buildTotalSubTree(this.columnHeader, !this.misuresOnRow);
     		 if(!this.misuresOnRow){
     			 rowsum = this.calculateTotalSum();
     		 }else{
     			 rowsum = new Array();
     			 rowsum.push(this.rowsSum());
     		 }
+    		 this.rowHeader=rowHeaderBK;
     	 }
+   	 
     	 var serializedCrossTab = {}; 
-    	 serializedCrossTab.data= this.entries.serializeEntries(rowsum, columnsum);
+    	 serializedCrossTab.data= this.entries.serializeEntries(rowsum, columnsum, this.superSumArray, this.misuresOnRow);
     	 serializedCrossTab.columns=  this.serializeHeader(this.columnHeader[0][0]);
     	 serializedCrossTab.rows=  this.serializeHeader(this.rowHeader[0][0]);
+    	 
     	 return serializedCrossTab;
      }
      
@@ -1247,6 +1260,8 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		}
     	}
     	
+    	
+    	
    		this.add(this.table);
    		if(!lazy){
 	   		var d22 = new Date();
@@ -1388,6 +1403,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     //      it's usefull if we call this method more than one time: we call it with lazy=true far all the iteration and with lazy=false in the last one +
     //       (take a look at the method calculateCF)
     , addNewEntries: function(level,node,headers,entries, horizontal, lazy){
+    	
     	var father = node.father;
     	var dimensionToAdd= node.thisDimension;
     	//update the father
@@ -2051,7 +2067,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	    	        	}
 		        	}
 		        }
-		       
 		    }
 	    }
 	    
@@ -2121,8 +2136,6 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
         		this.measuresMetadata[j].visible = false;
         	}
         }
-        
-  //      alert('finito getVisibleMeasures');
     }
     
     
@@ -2229,7 +2242,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			}
 	   		for(var j=0; j<sumRows[0].length; j++){
 	   			for(var i=0; i<sumRows.length; i++){
-	   				superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
+	   				superSumColumnsArray[i] = (superSumColumnsArray[i]+parseFloat(sumRows[i][j]));
 					var a = new Array();
 					a.push(sumRows[i][j]);
 					a.push('[sumR'+i+','+j+']');
@@ -2281,49 +2294,55 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	*/
     , buildSuperTotalPanel: function(superSumColumnsArray, tpl, dataViewHeight, dataViewWidth){
     	
-		if(this.withRowsSum && this.withColumnsSum){
-    	
+    	//only at the biginning..
+    	//in this way the partial sums and the calculated fields are not counted
+    	if(this.superSumArray == null){
+    		this.superSumArray = new Array();
+			if(this.withRowsSum && this.withColumnsSum){
 	    	
-	    	var storeSumColumns = new Ext.data.ArrayStore({
-	    	    autoDestroy: true,
-	    	    storeId: 'myStore3',
-	    	    fields: [
-	    	             {name: 'name'},
-	    	             'divId',
-	    	             {name: 'datatype'},
-	    	             {name: 'format'},
-	    	             {name: 'celltype'}
-	    	    ]
-	    	});
-
-	    	var sumSuperColumnsStore = new Array();
-	   		for(var j=0; j<superSumColumnsArray.length; j++){
-	   			a = new Array();
-	   			a.push(superSumColumnsArray[j]);
-	   			a.push('[sumCT'+j+']');
-				a.push('float');
-				a.push(null);
-				a.push('supertotals');
-				sumSuperColumnsStore.push(a);
-	   		}
+		    	
+		    	var storeSumColumns = new Ext.data.ArrayStore({
+		    	    autoDestroy: true,
+		    	    storeId: 'myStore3',
+		    	    fields: [
+		    	             {name: 'name'},
+		    	             'divId',
+		    	             {name: 'datatype'},
+		    	             {name: 'format'},
+		    	             {name: 'celltype'}
+		    	    ]
+		    	});
 	
-			var cellCls = 'crosstab-row-sum-panel-container  crosstab-none-top-border-panel';
-	   		
-	   		storeSumColumns.loadData(sumSuperColumnsStore);
-	   		
-	   		this.superSumPanel = new Ext.Panel({
-	    		cellCls: cellCls,
-	            width: dataViewWidth,
-	            height: dataViewHeight,
-	            border: false,
-	    	    layout:'fit',
-	    	    items: new Ext.DataView({
-	    	        store: storeSumColumns,
-	    	        tpl: tpl,
-	    	        itemSelector: 'div.crosstab-table-cells'
-	    	    })
-	    	});
-		}    	
+		    	var sumSuperColumnsStore = new Array();
+		   		for(var j=0; j<superSumColumnsArray.length; j++){
+		   			a = new Array();
+		   			a.push(superSumColumnsArray[j]);
+		   			a.push('[sumCT'+j+']');
+					a.push('float');
+					a.push(null);
+					a.push('supertotals');
+					sumSuperColumnsStore.push(a);
+					this.superSumArray.push(""+superSumColumnsArray[j]);
+		   		}
+		
+				var cellCls = 'crosstab-row-sum-panel-container  crosstab-none-top-border-panel';
+		   		
+		   		storeSumColumns.loadData(sumSuperColumnsStore);
+		   		
+		   		this.superSumPanel = new Ext.Panel({
+		    		cellCls: cellCls,
+		            width: dataViewWidth,
+		            height: dataViewHeight,
+		            border: false,
+		    	    layout:'fit',
+		    	    items: new Ext.DataView({
+		    	        store: storeSumColumns,
+		    	        tpl: tpl,
+		    	        itemSelector: 'div.crosstab-table-cells'
+		    	    })
+		    	});
+			}    	
+       	}
     }
     
     , showCFWizard: function(node, modality) {
@@ -2379,6 +2398,19 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 		}
 		this.setHeaderListener(clonedNode, noHeaderMenu);
 		return clonedNode;
+	}
+	
+	,cloneHeader: function(header){
+		var clonedHeader = new Array();
+		for(var i=0; i<header.length; i++){
+			var line = new Array();
+			for(var j=0; j<header[i].length; j++){
+				var node = header[i][j];
+				line.push(this.cloneNode(node, node.father, true));
+			}
+			clonedHeader.push(line);
+		}
+		return clonedHeader;
 	}
     
     ,printHeader: function(header){

@@ -181,5 +181,18 @@ Sbi.crosstab.core.CrossTabShowHideUtility = function(){
 	    		crossTab.reloadHeadersAndTable();
 	    	}
 	    }
+	    
+	 	, cloneArray: function(array){
+	 		if(array.length>0 && (array[0] instanceof Array)){
+	 			var newArray = new Array();
+	 			for(var i=0; i<array.length; i++){
+	 				newArray.push(this.cloneArray(array[i]));
+	 	 		}
+	 			return newArray;
+	 		}else{
+	 			return array.slice();
+	 		}
+
+	 	}
 	};
 }();

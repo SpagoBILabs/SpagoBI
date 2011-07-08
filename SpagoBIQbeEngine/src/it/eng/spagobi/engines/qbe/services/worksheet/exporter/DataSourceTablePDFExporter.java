@@ -35,12 +35,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 
 import com.lowagie.text.BadElementException;
-import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.Table;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -52,11 +55,13 @@ public class DataSourceTablePDFExporter {
 	private static final Color evenrowsBackgroundColor = new Color(238,238,238);
 	private static final Color oddrowsBackgroundColor = new Color(255,255,255);
 	private static final Color cellsBorderColor = new Color(208,208,208);
-	private static final int tablePadding = 2;
+	
 	private IDataStore dataStore;
 	private DecimalFormat numberFormat;
 	private String userDateFormat;
 
+	public static transient Logger logger = Logger.getLogger(DataSourceTablePDFExporter.class);
+	
 	public DataSourceTablePDFExporter(IDataStore dataStore, DecimalFormat numberFormat, String userDateFormat){
 		this.dataStore=dataStore;
 		this.numberFormat=numberFormat;
@@ -70,7 +75,7 @@ public class DataSourceTablePDFExporter {
 	 * @throws DocumentException
 	 */
 	public void export(Document pdfDocument) throws BadElementException, DocumentException{
-		Table table = buildTableHeader(dataStore);
+		PdfPTable table = buildTableHeader(dataStore);
 		buildTableContent(dataStore,table); 	
 	    pdfDocument.add(table);
 	} 
@@ -82,7 +87,8 @@ public class DataSourceTablePDFExporter {
 	 * @return the table object
 	 * @throws BadElementException
 	 */
-	public Table buildTableHeader(IDataStore dataStore) throws BadElementException{	
+	public PdfPTable buildTableHeader(IDataStore dataStore) throws BadElementException{	
+		logger.debug("IN: building the headers of the table");
 		IDataStoreMetaData dataStoreMetaData = dataStore.getMetaData();	
     	int colunum = dataStoreMetaData.getFieldCount();
 	    int visibleColumns=0;
@@ -106,28 +112,30 @@ public class DataSourceTablePDFExporter {
             }
     	}
     	
-    	Table table = new Table(visibleColumns);
+    	PdfPTable table = new PdfPTable(visibleColumns);
     	
     	//For each column builds a cell
-		Cell d = table.getDefaultCell();
-		d.setBorderColor(cellsBorderColor);
-		table.setDefaultCell(d);
+		PdfPCell d = table.getDefaultCell();
+
     	
-		table.setBorderColor(cellsBorderColor);
-		table.setPadding(tablePadding);
+
 		if(visibleColumns<4){
-			table.setWidth(visibleColumns*25);
+			table.setWidthPercentage(visibleColumns*25);
 		}else{
-			table.setWidth(100);
+			table.setWidthPercentage(100);
 		}
 		
     	for(int j = 0; j < visibleColumns; j++){
-    		Cell cell = new Cell(columnsName.get(j));
-    		cell.setHeader(true);
+    		PdfPCell cell = new PdfPCell(new Phrase(columnsName.get(j)));
+    		//cell.setHeader(true);
+    		cell.setBorderColor(cellsBorderColor);
     		cell.setBackgroundColor(headerbackgroundColor);
     		table.addCell(cell);
     	}
-    	table.endHeaders();
+    	
+    	table.setHeaderRows(1);
+    	
+    	logger.debug("Out: built the headers of the table");
     	return table;
 	}
 	
@@ -137,10 +145,10 @@ public class DataSourceTablePDFExporter {
 	 * @param table the table with the headers
 	 * @throws BadElementException
 	 */
-	public void buildTableContent(IDataStore dataStore, Table table) throws BadElementException{	
-	
+	public void buildTableContent(IDataStore dataStore, PdfPTable table) throws BadElementException{	
+		logger.debug("IN: building the conetent of the table");
 		boolean oddRows  = true;
-		Cell cell;
+		PdfPCell cell;
 		
 		Iterator it = dataStore.iterator();
     	
@@ -158,22 +166,24 @@ public class DataSourceTablePDFExporter {
 		    	
 		    	if(visible){
 		    		if (f == null || f.getValue()== null) {
-		    			cell = new Cell("");
+		    			cell = new PdfPCell(new Phrase(""));
 		    		}else{
 						Class c = d.getFieldType(fieldIndex);
-						cell = new Cell(formatPDFCell(c, f));
+						cell = new PdfPCell(new Phrase(formatPDFCell(c, f)));
 						if(oddRows){
 							cell.setBackgroundColor(oddrowsBackgroundColor);
 						}else{
 							cell.setBackgroundColor(evenrowsBackgroundColor);
 						}
 		    		}
+		    		cell.setBorderColor(cellsBorderColor);
 		    		table.addCell(cell);
 		    	}
 				
 			}
 			oddRows = !oddRows;
 		}
+		logger.debug("Out: built the conetent of the table");
 	}
 	
 	/**
