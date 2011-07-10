@@ -41,7 +41,9 @@
   * 
   * Authors
   * 
-  * - Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
+  * - Andrea Gioia (andrea.gioia@eng.it), 
+  * - Fabio D'Ovidio (f.dovidio@inovaos.it)
+  * - Marco Battaglia (marco.battaglia@quantyca.it)
   */
 
 Ext.ns("Sbi.georeport");
