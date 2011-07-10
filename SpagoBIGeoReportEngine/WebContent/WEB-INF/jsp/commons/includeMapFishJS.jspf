@@ -1,8 +1,16 @@
 <!-- Include MapFish and app-specific scripts: -->
 
+<!-- 
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/OpenLayers.js'/></script>
+-->
+
 <script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/OpenLayers.js'/></script>
 
 <script type="text/javascript">
+
+
+
+
 (function() {
     /**
      * Before creating the mapfish namespace, check to see if

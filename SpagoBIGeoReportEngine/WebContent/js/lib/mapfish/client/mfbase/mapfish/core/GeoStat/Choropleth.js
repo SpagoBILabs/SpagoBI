@@ -152,7 +152,210 @@ mapfish.GeoStat.Choropleth = OpenLayers.Class(mapfish.GeoStat, {
      * Parameters:
      * options - {Object}
      */
+    /**
+     * APIMethod: applyClassification
+     *      Style the features based on the classification
+     *
+     * Parameters:
+     * options - {Object}
+     */
     applyClassification: function(options) {
+      
+    	alert('applyClassification');
+    	function Geometry(symbol, maxSize, maxValue){
+		    this.symbol = symbol;
+		    this.maxSize = maxSize;
+		    this.maxValue = maxValue;		
+		    this.getSize = function(value){
+		        switch(this.symbol) {
+		            case 'circle': // Returns radius of the circle
+		            case 'square': // Returns length of a side
+		                return Math.sqrt(value/this.maxValue)*this.maxSize;
+		            case 'bar': // Returns height of the bar
+		                return (value/this.maxValue)*this.maxSize;
+		            case 'sphere': // Returns radius of the sphere
+		            case 'cube': // Returns length of a side
+		                return Math.pow(value/this.maxValue, 1/3)*this.maxSize;
+		        }
+		    }
+		}
+        
+         var symbol = new Geometry('circle', 20, 1312978855);
+
+            var context = {
+                getSize: function(feature) {
+                    return 100;
+                },
+                getColor: function(feature){
+					
+						return 'white';
+					
+				},
+				// getChartURL:this.targetLayerConf.myFunc;
+				getWidth:function(feature){
+					if( feature.layer.map.analysisType=='graphic'){
+					  function isIN(array, value){
+						 for(current in array){
+							 if (array[current] == value){
+								 return true;
+							 }
+						 }
+						 return false;
+					 }
+						if(!feature.layer.map.pieDimensions){
+							var mapObj = feature.layer.map;
+							mapObj.pieDimensions = new Object();
+							var data = mapObj.features;
+							for(row in data){
+								if(typeof(data[row])!="function"){
+								var rowTotal=0;
+									if(mapObj.totalField){
+										rowTotal = data[row].data[mapObj.totalField];
+									}
+									else{
+									for(field in data[row].data){
+										  var currentValue = data[row].data[field];
+												if(! isNaN(currentValue) && (isIN(mapObj.fieldsToShow, field))){
+													rowTotal+=currentValue;
+												}
+											}
+									}
+								feature.layer.map.pieDimensions[data[row].fid] = rowTotal;
+							}
+						}
+							var min;
+							var max;
+							for(value in feature.layer.map.pieDimensions){
+								if(value != 'undefined'){
+									var current = feature.layer.map.pieDimensions[value];
+									if(!min){min=current;}
+									if( current<min){
+										min=current;
+									}
+									if(!max){max=current;}
+									if(current>max){
+										max=current;
+									}
+								}
+							}
+							
+							var delta = max-min;
+							for(fid in feature.layer.map.pieDimensions){
+								var factorK = (feature.layer.map.pieDimensions[fid] - min) / delta;
+								size = (30 + Math.round(70 * factorK));
+	                            feature.layer.map.pieDimensions[fid+'_size'] =size;
+	                            console.log("size: " +size );
+							}
+						}
+						//if(feature.layer.map.zoom>6){
+						//return 600;
+				//	}
+					//else{
+						console.log("size:" +  feature.layer.map.pieDimensions[feature.fid+'_size'] );
+						return feature.layer.map.pieDimensions[feature.fid+'_size'] ;
+					//}
+				}
+				},
+				getHeight:function(feature){
+					if( feature.layer.map.analysisType=='graphic'){
+//					if(feature.layer.map.zoom>6){
+//						return 200;
+//					}
+//					else{
+					
+						return feature.layer.map.pieDimensions[feature.fid+'_size'] ;
+					}
+					//}
+				},
+				//getChartURL:this.targetLayerConf.myFunc,
+                getChartURLOriginal: function(feature) {
+                	
+               	 function isIN(array, value){
+					 for(current in array){
+						 if (array[current] == value){
+							 return true;
+						 }
+					 }
+					 return false;
+				 }
+               	if( feature.layer.map.analysisType=='graphic'){
+            	var mapObj = feature.layer.map;
+            	var values="";
+            	var count  = 0;
+            	var length = mapObj.fieldsToShow.length;
+//            	var total = 0;
+//            	for(var p in feature.data){
+//            		length++;
+//            		if(! isNaN(feature.data[p])){
+//            			if(p!="AREA" && p!="descriptionid"){
+//            			total+=feature.data[p];
+//            			}
+//            		}
+//            	}
+            	
+            	var label ='';
+            
+            	for(var p in feature.data){                		
+            		       		
+            		if(! isNaN(feature.data[p]) && (isIN(mapObj.fieldsToShow, p))){
+            			                count=count+1;         
+                						values += feature.data[p];
+				                		label += p;                		
+				                		if(count<length){
+									                	   label +='|';
+									                	   values+=",";
+				                		}
+            		
+            		}
+            	}
+            	 var esize = 50 + (10*feature.layer.map.zoom);
+               if(esize>540){
+            	   esize=540;
+               }
+               var charturl='';
+               var color = "&chco=" + feature.layer.map.colors;
+               var chartType = feature.layer.map.chartType;
+                if(feature.layer.map.zoom>6){
+//                	var valuesArray = values.split(",");
+//                	var labelsArray = label.split("|");
+//                	for(m=0; m<valuesArray.length;m++){
+//                		var perc = (valuesArray[m]/total) * 100;
+//                		labelsArray[m] = labelsArray[m] +" " + perc.toFixed(2) + "%";
+//                	}
+//                	label="";
+//                	for(m=0;m<labelsArray.length;m++){
+//                		label += labelsArray[m];
+//                		if(m<labelsArray.length-1){
+//                			label+="|";
+//                		}
+//                	}
+//                	var chdl = '&chdl='+label;
+//                	charturl = 'http://chart.apis.google.com/chart?cht='+chartType+'&chd=t:' + values + '&chs=' +810 + 'x' +300 + '&chf=bg,s,ffffff00'+chdl+color+'&chdls=000000,20';
+//                
+                	var charturl = 'http://chart.apis.google.com/chart?cht=p&chd=t:' + values + '&chds=a&chs=' + esize + 'x' + esize + '&chf=bg,s,ffffff00'+color;
+                	}
+                else{
+                var charturl = 'http://chart.apis.google.com/chart?cht=p&chd=t:' + values + '&chds=a&chs=' + esize + 'x' + esize + '&chf=bg,s,ffffff00'+color;
+                }
+                return charturl;
+               	}
+            }
+            };
+
+            var template = {
+				fillColor: "${getColor}",
+                fillOpacity: 0.6,
+                graphicOpacity: 1,
+                externalGraphic: "${getChartURLOriginal}",
+                pointRadius: 20,
+                graphicWidth:  "${getWidth}",
+                graphicHeight: "${getHeight}"
+                 };
+            
+            var style = new OpenLayers.Style(template, {context: context});            
+		    var styleMap = new OpenLayers.StyleMap({'default': style, 'select': {fillOpacity: 0.3 }});
+        this.options.layer.styleMap = styleMap;
+        this.options.layer.options.styleMap = styleMap;
         this.updateOptions(options);
         var boundsArray = this.classification.getBoundsArray();
         var rules = new Array(boundsArray.length - 1);
@@ -171,6 +374,36 @@ mapfish.GeoStat.Choropleth = OpenLayers.Class(mapfish.GeoStat, {
         this.extendStyle(rules);
         mapfish.GeoStat.prototype.applyClassification.apply(this, arguments);
     },
+
+    /**
+     * Method: updateLegend
+     *    Update the legendDiv content with new bins label
+     */
+    updateLegend: function() {
+        if (!this.legendDiv) {
+            return;
+        }
+
+        // TODO use css classes instead
+        this.legendDiv.update("");
+        for (var i = 0; i < this.classification.bins.length; i++) {
+            var element = document.createElement("div");
+            element.style.backgroundColor = this.colorInterpolation[i].toHexString();
+            element.style.width = "30px";
+            element.style.height = "15px";
+            element.style.cssFloat = "left";
+            element.style.marginRight = "10px";
+            this.legendDiv.appendChild(element);
+
+            var element = document.createElement("div");
+            element.innerHTML = this.classification.bins[i].label;
+            this.legendDiv.appendChild(element);
+
+            var element = document.createElement("div");
+            element.style.clear = "left";
+            this.legendDiv.appendChild(element);
+        }
+    }, 
 
     /**
      * Method: updateLegend
