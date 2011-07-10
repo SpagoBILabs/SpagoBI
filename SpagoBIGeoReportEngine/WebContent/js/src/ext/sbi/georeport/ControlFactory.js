@@ -64,12 +64,4 @@ Sbi.georeport.ControlFactory = function(){
 		}
 	};
 	
-}();
-
-
-
-
-
-
-
-	
+}();	
