@@ -141,7 +141,7 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 	 * in the context of a grant)
 	 * @param grantNodes
 	 */
-	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes);
+	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes, Integer grantId);
 	
 	/**
 	 * Remove all the grant nodes of a grant(a grant node is an association between a hierarchy node and a KPI model instance node 
@@ -218,4 +218,6 @@ public interface IOrganizationalUnitDAO extends ISpagoBIDao{
 	 * @param grantNode to erase
 	 */
 	public void eraseNodeGrant(OrganizationalUnitGrantNode grantNode);
+	
+	public List<OrganizationalUnitNode> getOrganizationalUnitNodeList(Integer hierarchyId);
 }

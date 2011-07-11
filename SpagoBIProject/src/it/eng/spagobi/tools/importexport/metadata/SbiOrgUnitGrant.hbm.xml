@@ -28,6 +28,9 @@
         <property name="description" type="string">
             <column name="DESCRIPTION" length="1000" />
         </property>
+        <property name="isAvailable" type="boolean">
+            <column name="IS_AVAILABLE" />
+        </property>
         <set name="sbiOrgUnitGrantNodeses" inverse="true">
             <key>
                 <column name="GRANT_ID" not-null="true" />

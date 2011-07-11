@@ -45,8 +45,7 @@ public class OrganizationalUnitGrant {
      private String label;
      private String name;
      private String description;
-
-
+     private Boolean isAvailable;
     // Constructors
 
     /** default constructor */
@@ -54,7 +53,7 @@ public class OrganizationalUnitGrant {
     }
     
     /** full constructor */
-    public OrganizationalUnitGrant(Integer id, ModelInstance modelInstance, OrganizationalUnitHierarchy hierarchy, Date startDate, Date endDate, String label, String name, String description) {
+    public OrganizationalUnitGrant(Integer id,Boolean isAvailable, ModelInstance modelInstance, OrganizationalUnitHierarchy hierarchy, Date startDate, Date endDate, String label, String name, String description) {
         this.id = id;
         this.modelInstance = modelInstance;
         this.hierarchy = hierarchy;
@@ -63,7 +62,16 @@ public class OrganizationalUnitGrant {
         this.label = label;
         this.name = name;
         this.description = description;
+        this.isAvailable = isAvailable;
     }
+
+	public Boolean getIsAvailable() {
+		return isAvailable;
+	}
+
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
 
 	public Integer getId() {
 		return id;

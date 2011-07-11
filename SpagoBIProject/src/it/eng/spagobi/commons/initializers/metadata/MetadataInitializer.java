@@ -34,6 +34,7 @@ import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.config.metadata.SbiExporters;
 import it.eng.spagobi.engines.config.metadata.SbiExportersId;
 import it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity;
+import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -152,7 +153,17 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 				logger.debug("Periodicity table is already populated");
 			}
 
-
+			//resets grants availability to true if grants are present
+			hql = "from SbiOrgUnitGrant g where g.isAvailable != true ";
+			hqlQuery = aSession.createQuery(hql);
+			List grants = hqlQuery.list();
+			if (grants.isEmpty()) {
+				logger.info("Grants table is empty. Nothing to reset...");
+				
+			} else {
+				logger.debug("Grants table is populated. Start resetting availability...");
+				resetGrantsAvailable(aSession, grants);
+			}
 
 			tx.commit();
 
@@ -195,7 +206,17 @@ public class MetadataInitializer extends AbstractHibernateDAO implements Initial
 		}
 		return toReturn;
 	}
-
+	private void resetGrantsAvailable(Session aSession, List grants) throws Exception {
+		logger.debug("IN");
+		for(int i=0; i< grants.size(); i++){
+			SbiOrgUnitGrant grant = (SbiOrgUnitGrant)grants.get(i);
+			grant.setIsAvailable(true);
+			aSession.save(grant);
+			aSession.flush();
+		}
+		
+		logger.debug("OUT");
+	}
 	private void writeDomains(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean domainsSB = getConfiguration("it/eng/spagobi/commons/initializers/metadata/config/domains.xml");

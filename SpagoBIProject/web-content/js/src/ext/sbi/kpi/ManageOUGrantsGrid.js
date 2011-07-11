@@ -107,6 +107,7 @@ Ext.extend(Sbi.kpi.ManageOUGrantsGrid, Sbi.widgets.ListGridPanel, {
 		                                   , 'enddate'
 		                                   , 'hierarchy'
 		                                   , 'modelinstance'
+		                                   , 'isAvailable'
 		                                   ];
 
 		this.configurationObject.gridColItems = [

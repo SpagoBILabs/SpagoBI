@@ -126,6 +126,7 @@ Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='Operation complete
 Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Organizational units synchronized!';
 Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Enable all descendants';
 Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disable all descendants';
+Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Grant unavailable. Operation in progress.';
 //END GRANTS messages
 
 //START GOALS messages
