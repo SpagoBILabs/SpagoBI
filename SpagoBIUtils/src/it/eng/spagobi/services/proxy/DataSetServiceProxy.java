@@ -53,9 +53,20 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     	if (user==null) logger.error("User ID IS NULL....");
     	if (session==null) logger.error("HttpSession IS NULL....");
     }
+    
     private DataSetServiceProxy() {
     	super ();
     }  
+    
+    public DataSetServiceProxy(String user,String secureAttributes,String serviceUrlStr,String spagoBiServerURL,String token, String pass) {
+    	super( user,secureAttributes,serviceUrlStr,spagoBiServerURL,token, pass);
+    	if (user==null) logger.error("User ID IS NULL....");
+    	if (pass==null) logger.error("pass IS NULL....");
+    	if (secureAttributes==null) logger.error("secureAttributes IS NULL....");
+    	if (serviceUrlStr==null) logger.error("serviceUrlStr NULL....");
+    	if (spagoBiServerURL==null) logger.error("spagoBiServerURL IS NULL....");
+    	if (token==null) logger.error("token IS NULL....");
+    }
     
     private it.eng.spagobi.services.dataset.stub.DataSetService lookUp() throws SecurityException {
 	try {

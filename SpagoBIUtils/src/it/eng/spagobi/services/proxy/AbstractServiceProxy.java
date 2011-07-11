@@ -45,7 +45,12 @@ public abstract class AbstractServiceProxy {
     protected URL serviceUrl = null;
     protected String userId = null;
     protected boolean isSecure = true; // if false don't sent a valid ticket
-    private String pass = null;
+    
+    private String pass = null;    
+    protected String secureAttributes = null;
+    protected String serviceUrlStr = null;
+    protected String spagoBiServerURL = null;
+    protected String token = null;
     
     static final String IS_BACKEND = "isBackend"; // request came from spagobi server
 
@@ -59,6 +64,16 @@ public abstract class AbstractServiceProxy {
 		
 		init();
     }
+    
+    public AbstractServiceProxy(String user,String secureAttributes,String serviceUrlStr,String spagoBiServerURL,String token, String pass) {
+		this.userId = user;
+		this.pass = pass;
+		this.secureAttributes = secureAttributes;
+		this.serviceUrlStr = serviceUrlStr;
+		this.spagoBiServerURL = spagoBiServerURL;
+		this.token = token;
+		init();
+    }
 
     protected AbstractServiceProxy() {
     	init();
@@ -68,31 +83,41 @@ public abstract class AbstractServiceProxy {
      * Initilize the configuration
      */
     protected void init() {
-		String secureAttributes = (String)session.getAttribute( IS_BACKEND );
+    	if(secureAttributes==null){
+    		secureAttributes = (String)session.getAttribute( IS_BACKEND );
+    	}
 		if (secureAttributes!=null && secureAttributes.equals("true")){
 		    isSecure = false;
 		}
 		
-		String className = this.getClass().getSimpleName();
-		logger.debug("Read className = " + className);
-		SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		if(serviceUrlStr == null && spagoBiServerURL == null && pass == null){
+			String className = this.getClass().getSimpleName();
+			logger.debug("Read className = " + className);
+			SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		
+			if (engineConfig != null) {
 	
-		if (engineConfig != null) {
-
-		    String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
-		    logger.debug("Read spagoBiServerURL=" + spagoBiServerURL);  
-		    SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute(className + "_URL");
-		    String serviceUrlStr = (String) sourceBeanConf.getCharacters();
-		    logger.debug("Read serviceUrl=" + serviceUrlStr);
-		    try {
-			serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
-		    } catch (MalformedURLException e) {
-			logger.error("MalformedURLException:" + spagoBiServerURL + serviceUrlStr, e);
-		    }
-		    pass=EnginConf.getInstance().getPass();
-		    if (pass==null) logger.warn("PassTicked don't set");
-		} else {
-	              logger.warn("this proxy is used in core project.");
+			    spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
+			    logger.debug("Read spagoBiServerURL=" + spagoBiServerURL);  
+			    SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute(className + "_URL");
+			    serviceUrlStr = (String) sourceBeanConf.getCharacters();
+			    logger.debug("Read serviceUrl=" + serviceUrlStr);
+			    try {
+				serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
+			    } catch (MalformedURLException e) {
+				logger.error("MalformedURLException:" + spagoBiServerURL + serviceUrlStr, e);
+			    }
+			    pass=EnginConf.getInstance().getPass();
+			    if (pass==null) logger.warn("PassTicked don't set");
+			} else {
+		              logger.warn("this proxy is used in core project.");
+			}
+		}else{
+			try {
+					serviceUrl = new URL(spagoBiServerURL + serviceUrlStr);
+			    } catch (MalformedURLException e) {
+			    	logger.error("MalformedURLException:" + spagoBiServerURL + serviceUrlStr, e);
+			    }
 		}
     }
     
@@ -102,14 +127,18 @@ public abstract class AbstractServiceProxy {
      * @throws IOException 
      */
     protected String readTicket() throws IOException {
-		if (!isSecure){
-		    return pass;
-		}
-		if ( ! UserProfile.isSchedulerUser(userId) ) {
-		    SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
-		    return proxyService.readTicket(session);
-		} else
-		    return "";
-
+    	if(token!=null){
+    		return token;
+    	}else{
+			if (!isSecure){
+			    return pass;
+			}
+			if ( ! UserProfile.isSchedulerUser(userId) ) {
+			    SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
+			    return proxyService.readTicket(session);
+			}else{
+			    return "";
+			}
+    	}
     }
 }
