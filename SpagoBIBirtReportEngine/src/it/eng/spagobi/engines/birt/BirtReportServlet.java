@@ -9,6 +9,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.birt.exceptions.ConnectionDefinitionException;
@@ -19,6 +20,7 @@ import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DynamicClassLoader;
@@ -598,7 +600,8 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map context = BirtUtility.getAppContext(request);
+		Map context = getTaskContext(userId, request); 
+		//Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
 		renderOption.setOutputStream((OutputStream) response.getOutputStream());
 		task.setRenderOption(renderOption);
@@ -628,6 +631,45 @@ public class BirtReportServlet extends HttpServlet {
 		
 		logger.debug("OUT");
 
+	}
+	
+	private Map getTaskContext(String userId, HttpServletRequest request) throws IOException {
+		  Map context = BirtUtility.getAppContext(request);
+		  String pass = EnginConf.getInstance().getPass();
+		  String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
+		  HttpSession session = request.getSession();
+		  String secureAttributes = (String)session.getAttribute( "isBackend" );
+		  String serviceUrlStr = null;
+		  SourceBean engineConfig = EnginConf.getInstance().getConfig();
+		  if(engineConfig!=null){
+			  SourceBean sourceBeanConf = (SourceBean) engineConfig.getAttribute("DataSetServiceProxy_URL");
+			  serviceUrlStr = (String) sourceBeanConf.getCharacters();
+		  }
+		  String token = null;
+		  boolean isSecure = true;
+		  if (secureAttributes!=null && secureAttributes.equals("true")){
+			    isSecure = false;
+		  }
+		  
+		  if (!isSecure){
+			  token = pass;
+			}
+			if ( ! UserProfile.isSchedulerUser(userId) ) {
+			    SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
+			    token = proxyService.readTicket(session);
+			}else{
+				token = "";
+			}
+		 // DataSetServiceProxy proxyDataset = new DataSetServiceProxy(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
+
+		  context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
+		  context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
+		  context.put("SBI_BIRT_RUNTIME_SECURE_ATTRS", secureAttributes);
+		  context.put("SBI_BIRT_RUNTIME_SERVICE_URL", serviceUrlStr);
+		  context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
+		  context.put("SBI_BIRT_RUNTIME_TOKEN", token);
+		  context.put("SBI_BIRT_RUNTIME_PASS", pass);
+		  return context;
 	}
 	
 	/**
