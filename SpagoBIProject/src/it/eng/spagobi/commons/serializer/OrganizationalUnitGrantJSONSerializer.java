@@ -38,6 +38,7 @@ public class OrganizationalUnitGrantJSONSerializer implements Serializer {
 	public static final String LABEL = "label";
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
+	public static final String IS_AVAILABLE = "isAvailable";
 	public static final String START_DATE = "startdate";
 	public static final String END_DATE = "enddate";
 	public static final String HIERARCHY = "hierarchy";
@@ -57,6 +58,9 @@ public class OrganizationalUnitGrantJSONSerializer implements Serializer {
 			result.put(LABEL, grant.getLabel() );
 			result.put(NAME, grant.getName() );
 			result.put(DESCRIPTION, grant.getDescription() );
+			if(grant.getIsAvailable() != null){
+				result.put(IS_AVAILABLE, grant.getIsAvailable());
+			}
 			String df = GeneralUtilities.getServerDateFormat();
 			SimpleDateFormat dateFormat = new SimpleDateFormat();
 			dateFormat.applyPattern(df);

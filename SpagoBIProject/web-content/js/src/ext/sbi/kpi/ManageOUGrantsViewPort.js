@@ -93,7 +93,6 @@ Sbi.kpi.ManageOUGrantsViewPort = function(config) {
 				this.manageOUGrantsGrid.getView().focusRow(n - 1);
 				this.manageOUGrantsGrid.rowselModel.selectLastRow();
 			}
-
 			this.manageOUGrantsGrid.fireEvent('rowclick');
 			}, this);
 	},this);
@@ -166,9 +165,23 @@ Ext.extend(Sbi.kpi.ManageOUGrantsViewPort, Ext.Viewport, {
 	}
 
 	,sendSelectedItem: function(grid, rowIndex, e){
-		
+		this.manageOUGrantsGrid.getStore().reload();
+		this.manageOUGrantsGrid.getView().refresh();
 		this.ManageOUGrants.setDisabled(false);
 		var rec = this.manageOUGrantsGrid.rowselModel.getSelected();
+		if(rec.data.isAvailable == false){
+			alert(LN('sbi.grants.unavailable.during.save'));
+			this.ManageOUGrants.setActiveTab(0);
+			var index = this.manageOUGrantsGrid.getStore().indexOf(rec);
+			var row = this.manageOUGrantsGrid.getView().getRow(index);
+			Ext.fly(row).frame("ff0000");
+			var cell = this.manageOUGrantsGrid.getView().getCell(index,0);	
+			var cell1 = this.manageOUGrantsGrid.getView().getCell(index,1);	
+			Ext.fly(cell).highlight('FF0000',{attr:'color', duration:10 }); 
+			Ext.fly(cell1).highlight('00FF00',{attr:'color', duration:10 }); 
+			return;
+	 }
+
 		this.ManageOUGrants.detailFieldLabel.setValue(rec.data.label);
 		this.ManageOUGrants.detailFieldName.setValue(rec.data.name);
 		this.ManageOUGrants.detailFieldDescr.setValue(rec.data.description);

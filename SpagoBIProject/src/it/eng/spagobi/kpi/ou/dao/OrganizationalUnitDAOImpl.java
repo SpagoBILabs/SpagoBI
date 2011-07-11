@@ -84,7 +84,29 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
+	public List<OrganizationalUnitNode> getOrganizationalUnitNodeList(Integer hierarchyId) {
+		logger.debug("IN");
+		List<OrganizationalUnitNode> toReturn = new ArrayList<OrganizationalUnitNode>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
 
+			Query hibQuery = aSession.createQuery(" from SbiOrgUnitNodes n where n.sbiOrgUnitHierarchies.id = ? ");
+			hibQuery.setInteger(0, hierarchyId);
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				toReturn.add(toOrganizationalUnitNode((SbiOrgUnitNodes) it.next()));
+			}
+		} finally {
+			rollbackIfActiveAndClose(tx, aSession);
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
 	public List<OrganizationalUnitHierarchy> getHierarchiesList() {
 		logger.debug("IN");
 		List<OrganizationalUnitHierarchy> toReturn = new ArrayList<OrganizationalUnitHierarchy>();
@@ -553,7 +575,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibGrant.setDescription(grant.getDescription());
 			hibGrant.setStartDate(grant.getStartDate());
 			hibGrant.setEndDate(grant.getEndDate());
-			
+			hibGrant.setIsAvailable(grant.getIsAvailable());
 			// set hierarchy
 			Integer hierachyId = grant.getHierarchy().getId();
 			Query query = aSession.createQuery(" from SbiOrgUnitHierarchies s where s.id = ? ");
@@ -594,7 +616,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			hibGrant.setDescription(grant.getDescription());
 			hibGrant.setStartDate(grant.getStartDate());
 			hibGrant.setEndDate(grant.getEndDate());
-			
+			hibGrant.setIsAvailable(grant.getIsAvailable());
 			// if hierarchy and/or kpi model instance have been changed, erase previous defined node grants
 			Integer previousHierachyId = hibGrant.getSbiOrgUnitHierarchies().getId();
 			Integer newHierachyId = grant.getHierarchy().getId();
@@ -671,18 +693,18 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 		logger.debug("OUT: OrganizationalUnitGrant removed successfully.");
 	}
 	
-	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes) {
+	public void insertNodeGrants(List<OrganizationalUnitGrantNode> grantNodes, Integer grantId) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+			SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grantId);
 			Iterator<OrganizationalUnitGrantNode> it = grantNodes.iterator();
 			while (it.hasNext()) {
 				OrganizationalUnitGrantNode aGrantNode = it.next();
-				Integer grantId = aGrantNode.getGrant().getId();
+
 				Integer hierarchyNodeId = aGrantNode.getOuNode().getNodeId();
 				Integer kpiModelInstNodeId = aGrantNode.getModelInstanceNode().getModelInstanceNodeId();
 				
@@ -697,15 +719,20 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 				SbiKpiModelInst kpiModelInst = (SbiKpiModelInst) aSession.load(SbiKpiModelInst.class, kpiModelInstNodeId);
 				grantNode.setSbiKpiModelInst(kpiModelInst);
 				
-				SbiOrgUnitGrant hibGrant = (SbiOrgUnitGrant) aSession.load(SbiOrgUnitGrant.class, grantId);
+				
 				grantNode.setSbiOrgUnitGrant(hibGrant);
 				logger.debug("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
-				System.out.println("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
+				//System.out.println("Saving grant node with node Id:"+grantNodeId.getNodeId()+" modelInst Id "+grantNodeId.getKpiModelInstNodeId()+" ang grant Id "+grantNodeId.getGrantId());
 				updateSbiCommonInfo4Insert(grantNode);
 				aSession.save(grantNode);
 			}
-			
+			//sets grant available if everithing ok
+			hibGrant.setIsAvailable(true);
+			aSession.save(hibGrant);
 			tx.commit();
+		}catch(Exception e){
+
+			logger.error(e.getMessage());
 		} finally {
 			rollbackIfActiveAndClose(tx, aSession);
 		}
@@ -870,7 +897,7 @@ public class OrganizationalUnitDAOImpl extends AbstractHibernateDAO implements I
 			SbiOrgUnitGrant hibGrant, Session aSession) {
 		OrganizationalUnitHierarchy hierarchy = toOrganizationalUnitHierarchy(hibGrant.getSbiOrgUnitHierarchies());
 		ModelInstance modelInstance = ModelInstanceDAOImpl.toModelInstanceWithoutChildren(hibGrant.getSbiKpiModelInst(), aSession);
-		OrganizationalUnitGrant grant = new OrganizationalUnitGrant(hibGrant.getId(), modelInstance, 
+		OrganizationalUnitGrant grant = new OrganizationalUnitGrant(hibGrant.getId(), hibGrant.getIsAvailable(), modelInstance, 
 				hierarchy, hibGrant.getStartDate(), hibGrant.getEndDate(), hibGrant.getLabel(), 
 				hibGrant.getName(), hibGrant.getDescription());
 		return grant;

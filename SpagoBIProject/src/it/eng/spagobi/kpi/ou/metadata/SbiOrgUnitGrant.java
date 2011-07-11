@@ -26,7 +26,10 @@ public class SbiOrgUnitGrant  extends SbiHibernateModel {
      private String label;
      private String name;
      private String description;
-     private Set sbiOrgUnitGrantNodeses = new HashSet(0);
+     private Boolean isAvailable;
+
+
+	private Set sbiOrgUnitGrantNodeses = new HashSet(0);
 
 
     // Constructors
@@ -43,7 +46,7 @@ public class SbiOrgUnitGrant  extends SbiHibernateModel {
     }
     
     /** full constructor */
-    public SbiOrgUnitGrant(Integer id, SbiKpiModelInst sbiKpiModelInst, SbiOrgUnitHierarchies sbiOrgUnitHierarchies, Date startDate, Date endDate, String label, String name, String description, Set sbiOrgUnitGrantNodeses) {
+    public SbiOrgUnitGrant(Integer id, Boolean isAvailable, SbiKpiModelInst sbiKpiModelInst, SbiOrgUnitHierarchies sbiOrgUnitHierarchies, Date startDate, Date endDate, String label, String name, String description, Set sbiOrgUnitGrantNodeses) {
         this.id = id;
         this.sbiKpiModelInst = sbiKpiModelInst;
         this.sbiOrgUnitHierarchies = sbiOrgUnitHierarchies;
@@ -52,6 +55,7 @@ public class SbiOrgUnitGrant  extends SbiHibernateModel {
         this.label = label;
         this.name = name;
         this.description = description;
+        this.isAvailable = isAvailable;
         this.sbiOrgUnitGrantNodeses = sbiOrgUnitGrantNodeses;
     }
     
@@ -130,7 +134,13 @@ public class SbiOrgUnitGrant  extends SbiHibernateModel {
     public void setSbiOrgUnitGrantNodeses(Set sbiOrgUnitGrantNodeses) {
         this.sbiOrgUnitGrantNodeses = sbiOrgUnitGrantNodeses;
     }
-   
+    public Boolean getIsAvailable() {
+		return isAvailable;
+	}
+
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
 
 
 

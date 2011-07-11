@@ -375,9 +375,11 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 					if(model.getId()  != null){
 						modelDao.modifyModel(model);
 						respObj.put(model.getGuiId(), model.getId());
+						respObj.put(model.getId()+"", model.getLabel());
 					}else{
 						Integer index = modelDao.insertModel(model);
 						respObj.put(model.getGuiId(), index);
+						respObj.put(index+"", model.getLabel());
 					}
 				} catch (Exception e) {
 					//send error!!!		
@@ -408,6 +410,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 						if (newId != null){
 							orderedNode.setId(newId);
 							respObj.put(orderedNode.getGuiId(), newId);
+							respObj.put(newId+"", orderedNode.getLabel());
 						}else{						
 							respObj.put(orderedNode.getGuiId(), "KO");
 						}
@@ -415,6 +418,7 @@ public class ManageModelsAction extends AbstractSpagoBIAction {
 					//else update
 						modelDao.modifyModel(orderedNode);
 						respObj.put(orderedNode.getGuiId(), orderedNode.getId());
+						respObj.put(orderedNode.getId()+"", orderedNode.getLabel());
 					}
 					
 				}

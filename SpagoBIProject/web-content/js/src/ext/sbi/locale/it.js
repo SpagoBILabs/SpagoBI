@@ -160,6 +160,7 @@ Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='Operazione eseguit
 Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Unit\u00e0 organizzative sincronizzate!';
 Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Abilita tutti i discendenti';
 Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Disabilita tutti i discendenti';
+Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Impossibile effettuare operazioni sul grant. Elaborazione in corso.';
 //END GRANTS messages
 
 //START GOALS messages

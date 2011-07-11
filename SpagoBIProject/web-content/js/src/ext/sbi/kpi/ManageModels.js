@@ -402,9 +402,10 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 	      				var hasErrors = false;
 	      				//alert(content.toSource());
 	      				for (var key in content) {
-		      				  var value = content[key];
-		      				  var nodeSel = this.mainTree.getNodeById(key);
-		      				  //response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
+		      				var value = content[key];
+		      				var nodeSel = this.mainTree.getNodeById(key);
+		      				//alert(key+' '+value+' w/ label :'+content['label']);
+		      				//response returns key = guiid, value = 'KO' if operation fails, or modelId if operation succeded
 		      				if(nodeSel !== undefined && nodeSel != null){
 		      				  if(value  == 'KO'){
 		      					  hasErrors= true;
@@ -414,9 +415,9 @@ Ext.extend(Sbi.kpi.ManageModels, Sbi.widgets.TreeDetailForm, {
 		      				  }else{
 		      					  nodeSel.attributes.error = false; 
 		      					  nodeSel.attributes.modelId = value; 
-		      					  nodeSel.attributes.label = content['label'];
-		      					this.detailFieldLabel.setValue(content['label']);
-		      					this.detailFieldLabel.show();
+		      					  nodeSel.attributes.label = content[value];
+		      					  this.detailFieldLabel.setValue(content[value]);
+		      					  this.detailFieldLabel.show();
 		      					  Ext.fly(nodeSel.getUI().getEl()).applyStyles('{ border: 0; font-weight: normal; font-style: normal; text-decoration: none; }');
 		      					  this.fireEvent('parentsave-complete', nodeSel);
 		      				  }
