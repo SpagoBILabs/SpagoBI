@@ -600,7 +600,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map context = getTaskContext(userId, request); 
+		Map context = getTaskContext(userId, reportParams, request); 
 		//Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
 		renderOption.setOutputStream((OutputStream) response.getOutputStream());
@@ -633,7 +633,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	}
 	
-	private Map getTaskContext(String userId, HttpServletRequest request) throws IOException {
+	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request) throws IOException {
 		  Map context = BirtUtility.getAppContext(request);
 		  String pass = EnginConf.getInstance().getPass();
 		  String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
@@ -669,6 +669,7 @@ public class BirtReportServlet extends HttpServlet {
 		  context.put("SBI_BIRT_RUNTIME_SERVER_URL", spagoBiServerURL);
 		  context.put("SBI_BIRT_RUNTIME_TOKEN", token);
 		  context.put("SBI_BIRT_RUNTIME_PASS", pass);
+		  context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
 		  return context;
 	}
 	
