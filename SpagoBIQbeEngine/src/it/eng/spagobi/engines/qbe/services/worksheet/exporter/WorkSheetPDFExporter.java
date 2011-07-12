@@ -372,7 +372,6 @@ public class WorkSheetPDFExporter {
 		logger.debug("IN");
 		File toReturn = null;
 		File imagesDir = QbeEngineConfig.getInstance().getWorksheetImagesDir();
-//		File imagesDir = new File("C:/Progetti/SpagoBI/SpagoBI-2.x-Helios-workspace/runtimes/apache-tomcat-6.0.18/resources_mysql/qbe/worksheet/images");
 		toReturn = new File(imagesDir, fileName);
 		logger.debug("OUT");
 		return toReturn;
@@ -390,7 +389,6 @@ public class WorkSheetPDFExporter {
 			transformSVGIntoJPEG(inputStream, outputStream);
 			
 		    Image jpg = Image.getInstance(imageFile.getPath());
-//		    Image jpg = Image.getInstance("C:/Davide/Varie/11_03_22/thumbbig-28333.jpg");
 		    
 		    float topMargin = margins[0];
 		    float bottomMargin = margins[1];
@@ -401,7 +399,7 @@ public class WorkSheetPDFExporter {
 		    float[] newDimensions = fitImage( jpg, chartMaxWidth, chartMaxHeight );
 
 		    float positionX = (PageSize.A4.getHeight() - newDimensions[0]) / 2;
-		    float positionY = bottomMargin;
+		    float positionY = bottomMargin + (chartMaxHeight - newDimensions[1]) / 2; // center the image into the available height
 		    jpg.setAbsolutePosition(positionX, positionY);
 		    
 		    pdfDocument.add(jpg);
