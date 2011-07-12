@@ -50,8 +50,11 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.FilteringToolbarLight = function(config) {	
 	
 	Sbi.widgets.FilteringToolbarLight.superclass.constructor.call(this, config);
-	this.columnsToSearch = [['name','Name']];
-
+	if(config.columnName){
+		this.columnsToSearch = config.columnName;
+	}else{
+		this.columnsToSearch = [['name','Name']];
+	}
 	this.columnToSearchValue = config.columnValue;
 
 	this.state = this.EDITING;

@@ -259,10 +259,11 @@ Ext.extend(Sbi.widgets.ListGridPanel, Ext.grid.GridPanel, {
            singleSelect: this.singleSelection
        });
  	  
- 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight({store: this.mainElementsStore,
-		 			columnName: LN('sbi.generic.name'),
+ 	  var filteringToolbar = new Sbi.widgets.FilteringToolbarLight(
+ 			  		{store: this.mainElementsStore,
+		 			columnName:[['name',LN('sbi.generic.name')]],
 			   		cls: 'no-pad',
-			   		columnValue: this.gridColItems[0].dataIndex});;
+			   		columnValue: this.gridColItems[0].dataIndex});
 	  if(this.filter === undefined || ! this.filter){
 		 filteringToolbar.setVisible(false);
 	  }
