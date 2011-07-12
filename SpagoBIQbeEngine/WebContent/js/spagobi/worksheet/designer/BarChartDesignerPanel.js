@@ -85,18 +85,21 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 	, seriesContainerPanel: null
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
+	, radioGroupIds: null
 	
 	, init: function () {
 		
 		this.initTemplate();
 		
+		this.radioGroupIds = [Ext.id(), Ext.id(), Ext.id()]; // generate random id
+		
 		this.typeRadioGroup = new Ext.form.RadioGroup({
 			hideLabel: true,
 			columns: 3,
 			items: [
-		        {name: 'type', height: 80, width: 80, id:'side-by-side-barchart', ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
-		        {name: 'type', height: 80, width: 80, id:'stacked-barchart', ctCls:'stacked-barchart-vertical', inputValue: 'stacked-barchart'},
-		        {name: 'type', height: 80, width: 80, id:'percent-stacked-barchart', ctCls:'percent-stacked-barchart-vertical', inputValue: 'percent-stacked-barchart'}
+		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[0], ctCls:'side-by-side-barchart-vertical', inputValue: 'side-by-side-barchart', checked: true},
+		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[1], ctCls:'stacked-barchart-vertical', inputValue: 'stacked-barchart'},
+		        {name: 'type', height: 80, width: 80, id: this.radioGroupIds[2], ctCls:'percent-stacked-barchart-vertical', inputValue: 'percent-stacked-barchart'}
 			]
 		});
 		this.typeRadioGroup.on('change', this.changeBarChartImage, this);
@@ -216,15 +219,15 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
 		};
 	
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-side-by-side-barchart',
+			target: 'x-form-el-' + this.radioGroupIds[0],
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-stacked-barchart',
+			target: 'x-form-el-' + this.radioGroupIds[1],
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked')
 		}, sharedConf));
 		new Ext.ToolTip(Ext.apply({
-			target: 'x-form-el-percent-stacked-barchart',
+			target: 'x-form-el-' + this.radioGroupIds[2],
 			html: LN('sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked')
 		}, sharedConf));
 	}
