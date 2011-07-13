@@ -3,11 +3,15 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +46,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig){
 		super(dataSetConfig);
 	}
-
+    
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
 		dataProxy.setParameters(getParamsMap());
