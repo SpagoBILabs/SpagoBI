@@ -15,13 +15,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
 
-<!--  jQuery (HighCharts dependency) -->
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/jquery-1.5.1/jquery-1.5.1.js")%>'</script>
-
-<!--  HighCharts -->
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/highcharts-2.1.4/highcharts-2.1.4.js")%>'</script>
-
-
 <!-- START-DEBUG -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/locale/LocaleUtils.js")%>'></script>

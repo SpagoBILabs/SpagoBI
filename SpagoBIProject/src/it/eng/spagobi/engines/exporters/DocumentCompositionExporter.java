@@ -76,11 +76,20 @@ public class DocumentCompositionExporter {
 			// set parameters: from url retrieved by iframe, fill BiObjectParameters with value
 			logger.debug("fill parameters from URL");
 			fillBIObjectWithParameterValues(object, currentConfs.get(label));
-
+			
+			//only for highcharts document is necessary to pass the svg parameter to the engine.
+			//At the moment it force the svgContent into description attribute of the object (only for background execution)
+			if (currentConfs.get("SVG_"+label) != null){
+				Map tmpSvg = currentConfs.get("SVG_"+label).getParameters();
+				String tmpContent = tmpSvg.get("SVG_"+label).toString();
+				object.setDescription(tmpContent);
+			}
 			logger.debug("call execution proxy");
 			// Calling execution proxy
 			ExecutionProxy proxy = new ExecutionProxy();
+			
 			proxy.setBiObject(object);
+			
 
 			// if engine is Birt, export in PDF, elsewhere in JPG
 			Engine engine = object.getEngine();
@@ -144,7 +153,8 @@ public class DocumentCompositionExporter {
 
 		logger.debug("IN");
 		// For each parameter the object needs search for a value in currentConf
-
+		if (currentConf == null) return;
+		
 		List parametersBO=object.getBiObjectParameters();
 		Map<String, Object> currentParameters=currentConf.getParameters();
 		if(currentParameters!=null){

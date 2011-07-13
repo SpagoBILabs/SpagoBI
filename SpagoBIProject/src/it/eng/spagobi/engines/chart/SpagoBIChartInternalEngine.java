@@ -48,13 +48,19 @@ import it.eng.spagobi.engines.chart.bo.charttypes.clusterchart.ClusterCharts;
 import it.eng.spagobi.engines.chart.bo.charttypes.utils.DrillParameter;
 import it.eng.spagobi.engines.chart.utils.AttributesContainer;
 import it.eng.spagobi.engines.chart.utils.DatasetMap;
+import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
 import it.eng.spagobi.engines.chart.utils.Template;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -81,6 +87,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 	//public static final String messageBundle = "component_spagobichartKPI_messages";
 	public static final String messageBundle = "MessageFiles.component_spagobidashboardIE_messages";
+	public static final String HIGHCHART_TEMPLATE = "HIGHCHART";
 
 	/** This method is used to execute a chart code way and returning the image chart execution
 	 *  Pay attention that must get the parameters from BiObject in order to filter categories and series
@@ -94,10 +101,11 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	 */
 	public File executeChartCode(RequestContainer requestContainer, BIObject obj, SourceBean response, IEngUserProfile userProfile) throws EMFUserError{
 		logger.debug("IN");
-		File toReturn=null;
-		Locale locale=GeneralUtilities.getDefaultLocale();
-		DatasetMap datasets=null;
-		ChartImpl sbi=null;
+		
+		File toReturn = null;
+		Locale locale = GeneralUtilities.getDefaultLocale();
+		DatasetMap datasets = null;
+		ChartImpl sbi = null;
 
 		String documentId=obj.getId().toString();
 
@@ -134,7 +142,45 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			String type=content.getName();
 			String subtype = (String)content.getAttribute("type");
 
-
+			//if it's an highcharts document get the png file by the svg content presents into the
+			// description of the biobject
+			if (type != null && type.startsWith(HIGHCHART_TEMPLATE)){				
+				//create the png file using the svg
+				InputStream inputStream = null;
+		    	OutputStream outputStream = null;
+			    try{
+					String svg = obj.getDescription();
+					//svg = svg.replaceAll("\\\\", "");				
+					inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+					File dir = new File(System.getProperty("java.io.tmpdir"));
+					Random generator = new Random();
+					int randomInt = generator.nextInt();
+					toReturn = File.createTempFile(Integer.valueOf(randomInt).toString(), ".png", dir);
+					outputStream = new FileOutputStream(toReturn);
+					ExportHighCharts.transformSVGIntoPNG(inputStream, outputStream);	
+			    } catch (Exception e) {
+					logger.error(e);
+					return null;
+				}finally {
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (IOException e) {
+								logger.error(e);
+							}
+						}
+						if (outputStream != null) {
+							try {
+								outputStream.close();
+							} catch (IOException e) {
+								logger.error(e);
+							}
+						} 
+						logger.debug("OUT");
+					}	
+				logger.debug("OUT");
+				return toReturn;
+			}
 
 			String data="";
 			try{
@@ -282,7 +328,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		String chartType = getChartType(obj, errorHandler);
 		Template templateUtil = new Template();
 		try{
-			if (chartType != null && chartType.startsWith(templateUtil.HIGHCHART_TEMPLATE)){
+			if (chartType != null && chartType.startsWith(HIGHCHART_TEMPLATE)){
 				//gets the dataset object informations
 				Integer id = obj.getDataSetId();
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
