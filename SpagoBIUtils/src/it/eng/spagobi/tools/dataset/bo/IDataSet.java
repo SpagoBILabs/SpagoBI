@@ -12,6 +12,8 @@ public interface IDataSet {
 	String getDsMetadata();
 	void setDsMetadata(String dsMetadata);
 	
+	String getResourcePath();
+	void setResourcePath(String resPath);
 	
 	// general properties ....
 	int getId();

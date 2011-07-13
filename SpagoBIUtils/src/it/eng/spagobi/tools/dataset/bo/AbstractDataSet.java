@@ -26,10 +26,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
@@ -58,6 +62,8 @@ public abstract class AbstractDataSet implements IDataSet {
     private String dsMetadata;
     	
     protected IDataStoreTransformer dataSetTransformer;
+    
+    protected String filePath;
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -92,6 +98,28 @@ public abstract class AbstractDataSet implements IDataSet {
 		
 		behaviours = new HashMap();
     }
+    
+    
+    public String getResourcePath() {
+    	if (filePath == null) {
+			try {
+				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				filePath = SpagoBIUtilities.readJndiResource(jndiName);
+			} catch (Throwable t) {
+				logger.debug(t);
+				filePath = EnginConf.getInstance().getResourcePath();
+			}
+    	}
+		if (filePath == null) {
+			throw new SpagoBIRuntimeException("Resource path not found!!!");
+		}
+		return filePath;
+	}
+    
+    
+    public void setResourcePath(String resPath) {
+    	filePath = resPath;
+	}
     
     public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = new SpagoBiDataSet();
