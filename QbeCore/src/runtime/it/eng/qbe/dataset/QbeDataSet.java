@@ -163,21 +163,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
 		return sbd;
 	}
-	
-	private String getResourcePath() {
-		String filePath = null;
-		try {
-			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			filePath = SpagoBIUtilities.readJndiResource(jndiName);
-		} catch (Throwable t) {
-			logger.debug(t);
-			filePath = EnginConf.getInstance().getResourcePath();
-		}
-		if (filePath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found!!!");
-		}
-		return filePath;
-	}
 
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
 
