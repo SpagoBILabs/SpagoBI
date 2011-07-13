@@ -132,6 +132,7 @@ public class JPQLStatement extends AbstractStatement {
 		String orderByClause = null;
 		String fromClause = null;
 		String havingClause = null;
+		String viewRelation = null;
 		
 		Assert.assertNotNull(query, "Input parameter 'query' cannot be null");
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
@@ -139,14 +140,17 @@ public class JPQLStatement extends AbstractStatement {
 		// let's start with the query at hand
 		entityAliasesMaps.put(query.getId(), new HashMap());
 		
+		JPQLBusinessViewUtility viewsUtility = new JPQLBusinessViewUtility(this);
+		
 		selectClause = buildSelectClause(query, entityAliasesMaps);
 		whereClause = buildWhereClause(query, entityAliasesMaps);
 		groupByClause = buildGroupByClause(query, entityAliasesMaps);
 		orderByClause = buildOrderByClause(query, entityAliasesMaps);
-		fromClause = buildFromClause(query, entityAliasesMaps);
 		havingClause = buildHavingClause(query, entityAliasesMaps);
-		 
-		queryStr = selectClause + " " + fromClause + " " + whereClause + " " +  groupByClause + " " + havingClause + " " + orderByClause;
+		viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps, query, whereClause);
+		fromClause = buildFromClause(query, entityAliasesMaps);
+		
+		queryStr = selectClause + " " + fromClause + " " + whereClause + " "+viewRelation+" " +  groupByClause + " " + havingClause + " " + orderByClause;
 		
 		Set subqueryIds;
 		try {
@@ -166,8 +170,9 @@ public class JPQLStatement extends AbstractStatement {
 		
 		return queryStr;
 	}
+
 	
-	private String getNextAlias(Map entityAliasesMaps) {
+	protected String getNextAlias(Map entityAliasesMaps) {
 		int aliasesCount = 0;
 		Iterator it = entityAliasesMaps.keySet().iterator();
 		while(it.hasNext()) {
@@ -193,8 +198,7 @@ public class JPQLStatement extends AbstractStatement {
 		String rootEntityAlias;
 		String selectClauseElement; // rootEntityAlias.queryName
 		Map entityAliases;
-		List<String> aliasEntityMapping;
-		
+			
 		logger.debug("IN");
 		buffer = new StringBuffer();
 		try {
@@ -264,8 +268,6 @@ public class JPQLStatement extends AbstractStatement {
 				} while( true );
 				
 
-				
-				aliasEntityMapping = new ArrayList<String>();
 				for(int k=0; k< selectInLineCalculatedFields.size(); k++){
 					selectInLineField = selectInLineCalculatedFields.get(k);
 					
