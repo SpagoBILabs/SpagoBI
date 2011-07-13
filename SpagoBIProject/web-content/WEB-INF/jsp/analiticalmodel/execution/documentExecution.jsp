@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
-
 <%@ page language="java" 
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
@@ -39,6 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="java.util.List"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.SubObject"%>
 <%@page import="it.eng.spagobi.commons.serializer.SerializerFactory"%>
+
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/highcharts.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/modules/exporting.js")%>"></script>
 
 <%! private static transient Logger logger = Logger.getLogger(ExecuteDocumentAction.class);%>
 

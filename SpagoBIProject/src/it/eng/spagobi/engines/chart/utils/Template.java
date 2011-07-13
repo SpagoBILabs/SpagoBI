@@ -48,7 +48,6 @@ import org.json.JSONObject;
 public class Template {
 	
 	//template constants
-	public static final String HIGHCHART_TEMPLATE = "HIGHCHART";
 	public static final String HIGH_CHART = "CHART";
 	public static final String HIGH_TITLE = "TITLE";
 	public static final String HIGH_SUBTITLE = "SUBTITLE";

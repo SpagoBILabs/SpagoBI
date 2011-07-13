@@ -94,6 +94,17 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 				currentConfigurationsMap.put(label, ccdc);
 
 			}
+			
+			// get its svg (for highcharts document because they're created only by the client-side)
+			logger.debug("Get svg content for the highchart "+label);			
+			String svg =  (sb.getAttribute("SVG_"+label) != null)?sb.getAttribute("SVG_"+label).toString():null;
+			if(svg != null){
+				CurrentConfigurationDocComp ccdc = new CurrentConfigurationDocComp(label);
+				Map<String,Object> svgChartPar = new HashMap<String,Object>();
+				svgChartPar.put("SVG_"+label, svg);
+				ccdc.setParameters(svgChartPar);
+				currentConfigurationsMap.put("SVG_"+label, ccdc);
+			}
 		}
 
 

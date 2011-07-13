@@ -223,27 +223,85 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		mainFrame=this.miframe.getFrame();
 		windowO=mainFrame.getWindow();
 		newPars='';
+		var isHighchart = false;
+		var randUUID = Math.random(); 
 		for (var i=0; i<windowO.frames.length; i++)
-  			{
-				childFrame=windowO.frames[i];
-				fullName=childFrame.name;
-				//alert(fullName);
-				cutName=fullName.substring(7);
-				//alert(cutName);
-				urlNotEncoded=childFrame.location.href;
-				// I have to substitute %25 in %
-				//alert(urlNotEncoded);
-				urlNotEncoded = urlNotEncoded.replace(/%25/g,'%');
-				urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
-				//alert(urlNotEncoded);
-				urlEncoded=encodeURIComponent(urlNotEncoded);
-				//alert(urlEncoded);
-				newPars+='&TRACE_PAR_'+cutName+'='+urlEncoded;
- 			}
- 			//alert(newPars);
+		{
+			var svgArr = [],
+	   	    top = 0,
+	  	    width = 0,
+	  	    svg = '';
+		
+			childFrame=windowO.frames[i];
+			fullName=childFrame.name;
+			cutName=fullName.substring(7);
+			urlNotEncoded=childFrame.location.href;
+			// I have to substitute %25 in %
+			urlNotEncoded = urlNotEncoded.replace(/%25/g,'%');
+			urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
+			urlEncoded=encodeURIComponent(urlNotEncoded);
+			newPars+='&TRACE_PAR_'+cutName+'='+urlEncoded;
+			
+			//for highcharts documents gets the SVG and send it as a hidden form
+			if (childFrame.chartPanel !== undefined && childFrame.chartPanel.chart !== undefined){
+				isHighchart = true;
+				 //in case of multiple charts redefines the svg object as a global (transforms each single svg in a group tag <g>)
+				 for (var c=0; c < childFrame.chartPanel.chartsArr.length; c++){
+					var singleChart = childFrame.chartPanel.chartsArr[c];
+				    if (singleChart !== undefined && singleChart !== null){
+			          	var singleSvg = singleChart.getSVG();
+			          	singleSvg = singleSvg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+			          	singleSvg = singleSvg.replace('</svg>', '</g>');
+			
+			            top += singleChart.chartHeight;
+			            width = Math.max(width, singleChart.chartWidth);
+			
+			            svgArr.push(singleSvg);
+			         }
+				}
+				//defines the global svg (for master/detail chart)
+		        svg = '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">';
+		        for (var s=0; s < svgArr.length; s++){
+		        	svg += svgArr[s];
+		        }
+		        svg += '</svg>';
+		        
+				Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
+				 // but, if a value contains a " character, then the html produced is not correct!!!
+				 // See source of DomHelper.append and DomHelper.overwrite methods
+				 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+				 var dh = Ext.DomHelper;
+				 var form = document.getElementById('export-chart-form__'+ randUUID);
+				 if (form === undefined || form === null) {
+				     var form = dh.append(Ext.getBody(), { // creating the hidden form
+								  id: 'export-chart-form__' + randUUID
+								  , tag: 'form'
+								  , method: 'post'
+							  });
+				 }	  
+				 dh.append(form, {		// creating the hidden input in form
+						tag: 'input'
+						, type: 'hidden'
+						, name: 'SVG_' + cutName
+						, value: ''  // do not put value now since DomHelper.overwrite does not work properly!!
+						});
+				 
+				// putting the chart data into hidden input
+				//form.elements[i].value =  Ext.encode(svg);     
+				form.elements[i].value = svg;  
+			}
+				
+		}//for
 		var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
-		urlExporter+=newPars;
-		window.open(urlExporter,'name','resizable=1,height=750,width=1000');	
+		urlExporter += newPars;
+		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');
+		if (isHighchart){
+		    form.action = urlExporter;
+			//form.target = '_blank'; // result into a new browser tab
+			form.target = 'exportWindow'; // result into a popup
+			form.submit();
+		}
+		Ext.DomHelper.useDom = false; //reset configuration for dom management
 	}		
 	
 	, exportReportExecution: function (exportType) {
