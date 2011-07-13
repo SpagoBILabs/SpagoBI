@@ -27,7 +27,6 @@ import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelations
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -141,6 +140,8 @@ public class ModelViewEntity extends ModelEntity {
 			
 			if (!isOutbound){
 				sourceEntity = structure.getRootEntity(modelName, relationshipDescriptor.getSourceEntityUniqueName());
+				(ModelViewEntity.this).setParent(sourceEntity);
+				
 				if (relationshipDescriptor.isSourceEntityView()){
 					//empty
 					sourceFields = new ArrayList<IModelField>();
@@ -161,12 +162,34 @@ public class ModelViewEntity extends ModelEntity {
 						sourceFields.add(f);
 					}
 				}
-
-				//empty
 				destinationFields = new ArrayList<IModelField>();
-
+				if (!relationshipDescriptor.isSourceEntityView()){
+					List<String> detinationColumns = relationshipDescriptor.getDestinationColumns();
+					if(detinationColumns!=null ){
+						for(String fieldName : detinationColumns) {
+							
+							for(int x=0; x<entities.size(); x++ ){
+								List<IModelField> fields = entities.get(x).getAllFields();
+								if(fields!=null){
+									for(int y=0; y<fields.size(); y++ ){
+										if(fields.get(y).getName().equals("compId."+fieldName)){
+											destinationFields.add(fields.get(y));
+											destinationEntity = entities.get(x);
+											break;			
+										}
+									}
+								}
+								if(destinationEntity!=null){
+									break;
+								}
+							}
+						}
+					}
+				}
 			} else {
 				destinationEntity = structure.getRootEntity(modelName, relationshipDescriptor.getDestinationEntityUniqueName());
+				destinationEntity.setParent((ModelViewEntity.this));
+								
 				if (relationshipDescriptor.isDestinationEntityView()){
 					//empty
 					destinationFields = new ArrayList<IModelField>();
@@ -186,11 +209,31 @@ public class ModelViewEntity extends ModelEntity {
 						destinationFields.add(f);
 					}
 				}
-
-				//empty
 				sourceFields = new ArrayList<IModelField>();
+				if (relationshipDescriptor.isDestinationEntityView()){
+					List<String> sourceColumns = relationshipDescriptor.getSourceColumns();
+					if(sourceColumns!=null ){
+						for(String fieldName : sourceColumns) {
+							
+							for(int x=0; x<entities.size(); x++ ){
+								List<IModelField> fields = entities.get(x).getAllFields();
+								if(fields!=null){
+									for(int y=0; y<fields.size(); y++ ){
+										if(fields.get(y).getName().equals("compId."+fieldName)){
+											sourceFields.add(fields.get(y));
+											sourceEntity = entities.get(x);
+											break;			
+										}
+									}
+								}
+								if(sourceEntity!=null){
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
-				
 		}
 		
 		public IModelEntity getSourceEntity() {
@@ -261,7 +304,6 @@ public class ModelViewEntity extends ModelEntity {
 				subEntities.put(relationship.getDestinationEntity().getUniqueName(),relationship.getDestinationEntity());
 		}
 		
-		
 	}
 	
 	// =========================================================================
@@ -301,6 +343,20 @@ public class ModelViewEntity extends ModelEntity {
 		}
 		return fields;
 	}
+//	
+//	public IModelEntity getEntityByField(IModelField field) {
+//		for(int x=0; x<entities.size(); x++ ){
+//			List<IModelField> fields = entities.get(x).getAllFields();
+//			if(fields!=null){
+//				for(int y=0; y<fields.size(); y++ ){
+//					if(fields.get(y).equals(field)){
+//						return entities.get(x);
+//					}
+//				}
+//			}
+//		}
+//		throw new NoSuchElementException("No field "+field.getName()+ "found in the entity "+this.getName());
+//	}
 	
 	public List<IModelField> getNormalFields() {
 		List<IModelField> fields = new ArrayList<IModelField>();

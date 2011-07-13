@@ -29,9 +29,7 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 	
 	protected IModelStructure structure;
 	protected IModelEntity parent;	
-	
-	
-	
+
 	public IModelStructure getStructure() {
 		return structure;
 	}
@@ -48,6 +46,23 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 		this.parent = parent;
 	}
 	
+	/**
+	 * Gets the parent of the node from the structure.
+	 * The difference with getParent() is that if the parent 
+	 * entity is a ModelView: getPathParent() returns the view. 
+	 * getParent() returns the entity of the view that contains the node
+	 */
+	public IModelEntity getPathParent(){
+		if(parent==null){
+			return null;
+		}
+		String parentViewName = parent.getPropertyAsString("parentView");
+		if(parentViewName != null) {
+			return structure.getEntity(parentViewName);
+		}else{
+			return parent;
+		}
+	}
 	
 	
 	

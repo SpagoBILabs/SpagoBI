@@ -273,5 +273,12 @@ public class FilteredModelEntity implements IModelEntity{
 	public List<IModelField> getFieldsByType(boolean isKey) {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getFieldsByType(isKey));
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#getPathParent()
+	 */
+	public IModelEntity getPathParent() {
+		return wrappedModelEntity.getPathParent();
+	}
 	
 }

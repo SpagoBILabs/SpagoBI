@@ -30,6 +30,13 @@ public interface IModelNode extends IModelObject{
 	
 	IModelStructure getStructure();
 	IModelEntity getParent();
+	/**
+	 * Gets the parent of the node from the structure.
+	 * The difference with getParent() is that if the parent 
+	 * entity is a ModelView: getPathParent() returns the view. 
+	 * getParent() returns the entity of the view that contains the node
+	 */
+	IModelEntity getPathParent();
 	void setParent(IModelEntity parent);
 	String getUniqueName();
 
