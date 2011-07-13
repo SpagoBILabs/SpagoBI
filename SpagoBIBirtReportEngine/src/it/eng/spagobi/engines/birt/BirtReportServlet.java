@@ -402,6 +402,32 @@ public class BirtReportServlet extends HttpServlet {
 		return jrTempDir;		
 	}
 	
+	 /**
+     * @param params
+     * @param parName
+     * @param parValue
+     */
+    private void addParToParMap(Map params, String parName, String parValue) {
+	logger.debug("IN.parName:"+parName+" /parValue:"+parValue);
+	String newParValue;
+
+	ParametersDecoder decoder = new ParametersDecoder();
+	if (decoder.isMultiValues(parValue)) {
+	    List values = decoder.decode(parValue);
+	    newParValue = "";
+	    for (int i = 0; i < values.size(); i++) {
+		newParValue += (i > 0 ? "," : "");
+		newParValue += values.get(i);
+	    }
+
+	} else {
+	    newParValue = parValue;
+	}
+
+	params.put(parName, newParValue);
+	logger.debug("OUT");
+    }
+	
 	/**
 	 * 
 	 * @param documentId
@@ -448,6 +474,18 @@ public class BirtReportServlet extends HttpServlet {
 		// Open the report design
 		design = birtReportEngine.openReportDesign(is);
 		
+		Map params = new HashMap();
+		Enumeration enumer = request.getParameterNames();
+		String parName = null;
+		String parValue = null;
+		logger.debug("Reading request parameters...");
+		while (enumer.hasMoreElements()) {
+		    parName = (String) enumer.nextElement();
+		    parValue = request.getParameter(parName);
+		    addParToParMap(params, parName, parValue);
+		    logger.debug("Read parameter [" + parName + "] with value ["+ parValue + "] from request");
+		}
+		logger.debug("Request parameters read sucesfully" + params);
 		
 		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 		String token = proxyService.readTicket(session);
@@ -525,7 +563,8 @@ public class BirtReportServlet extends HttpServlet {
 		reportParams.put("KpiDSXmlUrl", kpiUrl);
 		
 		//gets static resources with SBI_RESOURCE_PATH system's parameter
-		String resourcePath=EnginConf.getInstance().getResourcePath()+"/img/";
+		String resPathJNDI = EnginConf.getInstance().getResourcePath();
+		String resourcePath = resPathJNDI+"/img/";
 		String entity=(String)reportParams.get(SpagoBIConstants.SBI_ENTITY);
 		// IF exist an ENTITY  parameter concat to resourcePath
 		if (entity!=null && entity.length()>0){
@@ -533,13 +572,9 @@ public class BirtReportServlet extends HttpServlet {
 		}
 		logger.debug("SetUp resourcePath:"+resourcePath);
 		reportParams.put("SBI_RESOURCE_PATH", resourcePath);
-		
-		
-		
+
 		task.setParameterValues(reportParams);
 		task.validateParameters();
-
-
 
 		String templateFileName = request.getParameter("template_file_name");
 		logger.debug("templateFileName -- [" + templateFileName + "]");
@@ -600,7 +635,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map context = getTaskContext(userId, reportParams, request); 
+		Map context = getTaskContext(userId, params, request, resPathJNDI); 
 		//Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
 		renderOption.setOutputStream((OutputStream) response.getOutputStream());
@@ -633,7 +668,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	}
 	
-	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request) throws IOException {
+	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath) throws IOException {
 		  Map context = BirtUtility.getAppContext(request);
 		  String pass = EnginConf.getInstance().getPass();
 		  String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
@@ -662,6 +697,7 @@ public class BirtReportServlet extends HttpServlet {
 			}
 		 // DataSetServiceProxy proxyDataset = new DataSetServiceProxy(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
 
+		  context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
 		  context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
 		  context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
 		  context.put("SBI_BIRT_RUNTIME_SECURE_ATTRS", secureAttributes);
