@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
@@ -64,9 +64,8 @@ public class FileDataProxy extends AbstractDataProxy {
 		
 		try {
 			// recover the file from resources!
-			ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-			SourceBean sb = (SourceBean)configSingleton.getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String pathh = (String) sb.getCharacters();
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String pathh  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String filePath= SpagoBIUtilities.readJndiResource(pathh);
 			filePath += "/dataset/files";
 			filePath+="/"+fileName;
