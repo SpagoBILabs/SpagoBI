@@ -236,6 +236,10 @@ public class ModelViewEntity extends ModelEntity {
 			}
 		}
 		
+		private void addRelationSide(){
+			
+		}
+		
 		public IModelEntity getSourceEntity() {
 			return sourceEntity;
 		}
