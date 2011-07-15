@@ -48,12 +48,23 @@ public class JPQLBusinessViewUtility {
 		this.statement = statement;
 	}
 	
+	/**
+	 * Build the string with the join conditions between the views
+	 * and the entity in relation with the view
+	 * @param entityAliasesMaps 
+	 * @param query the query
+	 * @param queryWhereClause the where clause of the query (used for add the strin WHERE or AND at
+	 * the beginning of the clause)
+	 * @return
+	 */
 	public String buildViewsRelations(Map entityAliasesMaps, Query query, String queryWhereClause) {
 		IModelField datamartField;
 		Set<ViewRalationClause> viewRelations = new HashSet<ViewRalationClause>();
 		StringBuffer whereClause = new StringBuffer("");
 		Set<IModelEntity> concernedEntities = new HashSet<IModelEntity>();
 		String clauseToReturn;
+		
+		//get all the fields
 		
 		//Get the select fields
 		List<DataMartSelectField> selectFields = query.getSelectFields(false);
@@ -148,6 +159,16 @@ public class JPQLBusinessViewUtility {
 		return clauseToReturn;
 	}
 	
+	/**
+	 * Visit backward the branch from the field to the root..
+	 * When it finds a view it add the join condition between the entity in the path
+	 *  in relation with the view  
+	 * @param entity
+	 * @param child
+	 * @param viewRelations the set of the join condition 
+	 * @param entityAliases
+	 * @param query
+	 */
 	private void buildViewsRelationsBackVistitPath(IModelEntity entity, IModelEntity child,  Set<ViewRalationClause> viewRelations,  Map entityAliases, Query query){
 		
 		if(entity==null){
@@ -159,6 +180,16 @@ public class JPQLBusinessViewUtility {
 		
 	}
 	
+	/**
+	 * Takes the relation parent-->view and view-->child and builds
+	 * the join condition
+	 * @param parent the parent of the view
+	 * @param view the view
+	 * @param child the child entity of the view
+	 * @param viewRelations the set of the join condition 
+	 * @param entityAliases
+	 * @param query the query
+	 */
 	private void addRelationForTheView(IModelEntity parent, ModelViewEntity view, IModelEntity child, Set<ViewRalationClause> viewRelations, Map entityAliases, Query query){
 		List<ViewRelationship> relations = view.getRelationships();
 		IModelEntity inEntity,outEntity;
@@ -175,6 +206,15 @@ public class JPQLBusinessViewUtility {
 		}
 	}
 	
+	/**
+	 * Takes the fields of the relation source and destination entity 
+	 * and builds the join condition
+	 * @param sourceFields the list of the source entity in the relation
+	 * @param destFields the list of the destination entity in the relation
+	 * @param entityAliases
+	 * @param query
+	 * @return
+	 */
 	private Set<ViewRalationClause> buildRelationConditionString(List<IModelField> sourceFields, List<IModelField> destFields, Map entityAliases, Query query){
 		Set<ViewRalationClause> clauses = new HashSet<ViewRalationClause>();
 		IModelField sourceField, destField;
@@ -187,6 +227,13 @@ public class JPQLBusinessViewUtility {
 		
 	}
 	
+	/**
+	 * Builds the JPQL string of a field for the join condition..
+	 * @param datamartField the field
+	 * @param entityAliasesMaps
+	 * @param query
+	 * @return
+	 */
 	private String getFieldString(IModelField datamartField, Map entityAliasesMaps, Query query){
 		String queryName = datamartField.getQueryName();
 		IModelEntity rootEntity;
@@ -207,6 +254,15 @@ public class JPQLBusinessViewUtility {
 		return rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
 	
+	/**
+	 * 
+	 * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+	 *
+	 * A simple class that stay for a couple of
+	 * non ordered strings..
+	 * Note: (ViewRalationClause(a,b)).equals(ViewRalationClause(b,a)) = true.. 
+	 *
+	 */
 	private class ViewRalationClause{
 		private String field1;
 		private String field2;
