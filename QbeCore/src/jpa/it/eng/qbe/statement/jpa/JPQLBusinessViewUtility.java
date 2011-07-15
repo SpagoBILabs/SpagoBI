@@ -149,10 +149,12 @@ public class JPQLBusinessViewUtility {
 		}
 		
 		clauseToReturn =whereClause.toString();
-		if(queryWhereClause!=null && queryWhereClause.length()<4 && clauseToReturn.length()>1){
-			clauseToReturn = " WHERE "+clauseToReturn;
-		}else{
-			clauseToReturn = " and "+clauseToReturn;
+		if(clauseToReturn!=null && clauseToReturn.length()>1){
+			if(queryWhereClause!=null && queryWhereClause.length()<4){
+				clauseToReturn = " WHERE "+clauseToReturn;
+			}else{
+				clauseToReturn = " and "+clauseToReturn;
+			}
 		}
 			
 		
