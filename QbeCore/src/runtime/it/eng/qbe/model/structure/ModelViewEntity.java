@@ -131,6 +131,9 @@ public class ModelViewEntity extends ModelEntity {
 					logger.debug("FieldUniqueName is "+parentEntity.getType() + ":" + fieldName);
 					return parentEntity.getType() + ":" + fieldName;
 				}
+			} 
+			if(parentEntity.getParent() instanceof ModelViewEntity){
+				return parentEntity.getType() + ":" + fieldName;
 			}
 			return parentEntity.getUniqueName() + ":" + fieldName;
 		}
@@ -189,7 +192,7 @@ public class ModelViewEntity extends ModelEntity {
 			} else {
 				destinationEntity = structure.getRootEntity(modelName, relationshipDescriptor.getDestinationEntityUniqueName());
 				destinationEntity.setParent((ModelViewEntity.this));
-								
+				
 				if (relationshipDescriptor.isDestinationEntityView()){
 					//empty
 					destinationFields = new ArrayList<IModelField>();
