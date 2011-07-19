@@ -173,7 +173,9 @@ public class DocumentCompositionUtils {
 			String className = obj.getEngine().getClassName();
 			if (className == null || className.trim().equals("")) {
 				// external engine
-				baseUrlReturn = obj.getEngine().getUrl() + "?";
+				//baseUrlReturn = obj.getEngine().getUrl() + "?";
+				baseUrlReturn = obj.getEngine().getUrl();
+				if (baseUrlReturn.indexOf("?") < 0) baseUrlReturn += "?";
 				String driverClassName = obj.getEngine().getDriverName();
 				IEngineDriver aEngineDriver = (IEngineDriver)Class.forName(driverClassName).newInstance();
 				Map mapPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
