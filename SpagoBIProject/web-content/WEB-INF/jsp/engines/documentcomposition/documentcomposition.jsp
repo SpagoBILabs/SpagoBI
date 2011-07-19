@@ -79,7 +79,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Map lstStylePanel = new HashMap();
     Map lstUrlParams  = new HashMap();
     Map lstDocLinked = new HashMap();
-    Map lstFieldLinked = new HashMap(); 
+    Map lstFieldLinked = new HashMap();
+    Map lstCrossLinked = new HashMap(); 
      
     //loop on documents
     for (int i = 0; i < lstDoc.size(); i++){
@@ -105,6 +106,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	        lstDocLinked = docConfig.getLstDocLinked();
 	        lstFieldLinked = docConfig.getLstFieldLinked(); 
 	        lstTitles = docConfig.getLstDocTitles();
+	        lstCrossLinked = docConfig.getLstCrossLinked();
     	}
     } 
 	%>

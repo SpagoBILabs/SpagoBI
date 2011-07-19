@@ -58,6 +58,7 @@ public class DocumentCompositionConfiguration {
 	private Map lstFieldLinked = new LinkedHashMap();
 	private Map lstPanelStyle = new LinkedHashMap();
 	private Map lstDocTitles = new LinkedHashMap();
+	private Map lstCrossLinked = new LinkedHashMap();
 
 	private Integer videoHeight=null;
 	private Integer videoWidth=null;
@@ -91,6 +92,7 @@ public class DocumentCompositionConfiguration {
 		String sbiParName;
 		String type;
 		String defaultValue;
+		String typeCross;
 		Properties params;
 
 		/**
@@ -286,6 +288,20 @@ public class DocumentCompositionConfiguration {
 		public void setVideoHeight(Integer[] videoHeight) {
 			this.videoHeight = videoHeight;
 		}
+
+		/**
+		 * @return the typeCross
+		 */
+		public String getTypeCross() {
+			return typeCross;
+		}
+
+		/**
+		 * @param typeCross the typeCross to set
+		 */
+		public void setTypeCross(String typeCross) {
+			this.typeCross = typeCross;
+		}
 	}
 
 	/**
@@ -303,10 +319,10 @@ public class DocumentCompositionConfiguration {
 	public DocumentCompositionConfiguration (SourceBean DocumentCompositionConfigurationSB){
 		init();
 		SourceBean documentsConfigurationSB;
-		templateFile = (String)DocumentCompositionConfigurationSB.getAttribute("template_value");
+		templateFile = (String)DocumentCompositionConfigurationSB.getAttribute(Constants.TEMPLATE_VALUE);
 
 
-		documentsConfigurationSB = (SourceBean)DocumentCompositionConfigurationSB.getAttribute("DOCUMENTS_CONFIGURATION");
+		documentsConfigurationSB = (SourceBean)DocumentCompositionConfigurationSB.getAttribute(Constants.DOCUMENTS_CONFIGURATION);
 
 		initDocuments(documentsConfigurationSB);
 	}
@@ -362,10 +378,10 @@ public class DocumentCompositionConfiguration {
 		SourceBean refreshDocLinkedSB;
 		try{
 
-			documentList = documentsConfigurationSB.getAttributeAsList("DOCUMENT");
+			documentList = documentsConfigurationSB.getAttributeAsList(Constants.DOCUMENT);
 			//create dimensions Map
-			String videoWidthS=(documentsConfigurationSB.getAttribute("video_width")!=null) ? documentsConfigurationSB.getAttribute("video_width").toString() : null;
-			String videoHeightS=(documentsConfigurationSB.getAttribute("video_height") != null) ? documentsConfigurationSB.getAttribute("video_height").toString() : null;
+			String videoWidthS=(documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH)!=null) ? documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH).toString() : null;
+			String videoHeightS=(documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT) != null) ? documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT).toString() : null;
 			if(videoWidthS!=null & videoHeightS!=null){
 				videoWidth=Integer.valueOf(videoWidthS);
 				videoHeight=Integer.valueOf(videoHeightS);
@@ -383,51 +399,53 @@ public class DocumentCompositionConfiguration {
 				document = new Document();	
 				//set the number that identify the document within of hash table
 				document.setNumOrder(i);	
-				attributeValue = (String)documentSB.getAttribute("sbi_obj_label");
+				attributeValue = (String)documentSB.getAttribute(Constants.SBI_OBJ_LABEL);
 				document.setSbiObjLabel(attributeValue);
-				attributeValue = (documentSB.getAttribute("title")==null)?"":(String)documentSB.getAttribute("title");
+				attributeValue = (documentSB.getAttribute(Constants.TITLE)==null)?"":(String)documentSB.getAttribute(Constants.TITLE);
 				document.setTitle(attributeValue);
 
-				Integer width = (documentsConfigurationSB.getAttribute("video_width")==null)?DEFAULT_WIDTH:Integer.valueOf((String)documentsConfigurationSB.getAttribute("video_width"));
-				Integer height = (documentsConfigurationSB.getAttribute("video_height")==null)?DEFAULT_HEIGHT:Integer.valueOf((String)documentsConfigurationSB.getAttribute("video_height"));
+				Integer width = (documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH)==null)?DEFAULT_WIDTH:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH));
+				Integer height = (documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT)==null)?DEFAULT_HEIGHT:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT));
 
 
 				document.setVideoWidth(getVideoDimensions("width", width));
 				document.setVideoHeight(getVideoDimensions("height", height));
 
-				dimensionSB = (SourceBean)documentSB.getAttribute("STYLE");			
-				attributeValue = (String)dimensionSB.getAttribute("style");
+				dimensionSB = (SourceBean)documentSB.getAttribute(Constants.STYLE);			
+				attributeValue = (String)dimensionSB.getAttribute(Constants.DIMENSION_STYLE);
 				//attributeValue = (String)dimensionSB.getAttribute("class");
 				document.setStyle(attributeValue);			
-				parametersSB = (SourceBean)documentSB.getAttribute("PARAMETERS");	
+				parametersSB = (SourceBean)documentSB.getAttribute(Constants.PARAMETERS);	
 				if(parametersSB!=null){
-					paramList = parametersSB.getAttributeAsList("PARAMETER");
+					paramList = parametersSB.getAttributeAsList(Constants.PARAMETER);
 					Properties param = new Properties();
 					//loop on parameters of single document
 					for(int j = 0; j < paramList.size(); j++) {
 						paramSB = (SourceBean)paramList.get(j);
-						String sbiParLabel = (paramSB.getAttribute("sbi_par_label")==null)?"":(String)paramSB.getAttribute("sbi_par_label");
+						String sbiParLabel = (paramSB.getAttribute(Constants.SBI_PAR_LABEL)==null)?"":(String)paramSB.getAttribute(Constants.SBI_PAR_LABEL);
 						param.setProperty("sbi_par_label_param_"+i+"_"+j, sbiParLabel);
-						String typePar = (paramSB.getAttribute("type")==null)?"":(String)paramSB.getAttribute("type");
+						String typePar = (paramSB.getAttribute(Constants.TYPE)==null)?"":(String)paramSB.getAttribute(Constants.TYPE);
 						param.setProperty("type_par_"+i+"_"+j, typePar);
-						String defaultValuePar = (paramSB.getAttribute("default_value")==null)?"":(String)paramSB.getAttribute("default_value");
+						String defaultValuePar = (paramSB.getAttribute(Constants.DEFAULT_VALUE)==null)?"":(String)paramSB.getAttribute(Constants.DEFAULT_VALUE);
 						param.setProperty("default_value_param_"+i+"_"+j, defaultValuePar);
 
-						refreshSB = (SourceBean)paramSB.getAttribute("REFRESH");				
+						refreshSB = (SourceBean)paramSB.getAttribute(Constants.REFRESH);				
 						if(refreshSB!=null){
-							refreshDocList = refreshSB.getAttributeAsList("REFRESH_DOC_LINKED");
+							refreshDocList = refreshSB.getAttributeAsList(Constants.REFRESH_DOC_LINKED);
 							if(refreshDocList!=null){
 								Properties paramRefreshLinked = new Properties();
 								//loop on document linked to single parameter
 								int k = 0;
 								for(k = 0; k < refreshDocList.size(); k++) {
 									refreshDocLinkedSB = (SourceBean)refreshDocList.get(k);
-									String labelDoc = (refreshDocLinkedSB.getAttribute("labelDoc")==null)?"":(String)refreshDocLinkedSB.getAttribute("labelDoc");
+									String labelDoc = (refreshDocLinkedSB.getAttribute(Constants.LABEL_DOC)==null)?"":(String)refreshDocLinkedSB.getAttribute(Constants.LABEL_DOC);
 									paramRefreshLinked.setProperty("refresh_doc_linked", labelDoc);
-									String labelPar = (refreshDocLinkedSB.getAttribute("labelParam")==null)?"":(String)refreshDocLinkedSB.getAttribute("labelParam");
+									String labelPar = (refreshDocLinkedSB.getAttribute(Constants.LABEL_PARAM)==null)?"":(String)refreshDocLinkedSB.getAttribute(Constants.LABEL_PARAM);
 									paramRefreshLinked.setProperty("refresh_par_linked", labelPar);
-									String defaultValueLinked = (paramSB.getAttribute("default_value")==null)?"":(String)paramSB.getAttribute("default_value");
+									String defaultValueLinked = (paramSB.getAttribute(Constants.DEFAULT_VALUE)==null)?"":(String)paramSB.getAttribute(Constants.DEFAULT_VALUE);
 									paramRefreshLinked.setProperty("default_value_linked", defaultValueLinked);
+									String typeCrossPar = (refreshDocLinkedSB.getAttribute(Constants.TYPE_CROSS)==null)?Constants.CROSS_INTERNAL:(String)refreshDocLinkedSB.getAttribute(Constants.TYPE_CROSS);
+									paramRefreshLinked.setProperty("type_cross_linked", typeCrossPar);
 									param.setProperty("param_linked_"+i+"_"+j+"_"+k, paramRefreshLinked.toString());
 								}
 								param.setProperty("num_doc_linked_param_"+i+"_"+j, new Integer(k).toString());
@@ -714,6 +732,7 @@ public class DocumentCompositionConfiguration {
 							String paramLinked = (paramsDoc.get("param_linked_"+(numDoc)+"_"+i+"_"+j)==null)?"":(String)paramsDoc.get("param_linked_"+(numDoc)+"_"+i+"_"+j);
 							String[] params = paramLinked.split(",");
 							Document linkedDoc = null;
+							String typeCross = null;
 
 							//loop on parameters of document linked
 							for (int k=0; k<params.length; k++) {
@@ -725,6 +744,9 @@ public class DocumentCompositionConfiguration {
 									linkedDoc = getDocument(labelDocLinked.substring(labelDocLinked.indexOf("=")+1));
 									//lstDocLinked.put("DOC_LABEL_LINKED__"+numDoc+"__"+j, linkedDoc.getSbiObjLabel() + "|"+ linkedDoc.getLabel());
 
+								}else if (labelDocLinked.trim().startsWith("type_cross_linked")){
+									//get type cross (External or internal) for document linked 
+									typeCross = labelDocLinked.substring(labelDocLinked.indexOf("=")+1);																		
 								}
 								else if (labelDocLinked.trim().startsWith("refresh_par_linked")){
 									String tmpLabelLinked = labelDocLinked.substring(labelDocLinked.indexOf("=")+1);
@@ -736,6 +758,7 @@ public class DocumentCompositionConfiguration {
 										if (sbiLabelPar != null && !sbiLabelPar.equals("") &&sbiLabelPar.equalsIgnoreCase(tmpLabelLinked)){
 											lstDocLinked.put("DOC_LABEL_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel());
 											lstFieldLinked.put("DOC_FIELD_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel()+"__"+sbiLabelPar );
+											lstCrossLinked.put("DOC_CROSS_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, typeCross );
 											numParAdd ++;
 											break;
 										}
@@ -953,6 +976,20 @@ public class DocumentCompositionConfiguration {
 	 */
 	public void setLstPanelStyle(Map lstPanelStyle) {
 		this.lstPanelStyle = lstPanelStyle;
+	}
+
+	/**
+	 * @return the lstDocCross
+	 */
+	public Map getLstCrossLinked() {
+		return lstCrossLinked;
+	}
+
+	/**
+	 * @param lstDocCross the lstDocCross to set
+	 */
+	public void setLstCrossLinked(Map lstCrossLinked) {
+		this.lstCrossLinked = lstCrossLinked;
 	}
 
 	public Map getDocumentsMap() {
