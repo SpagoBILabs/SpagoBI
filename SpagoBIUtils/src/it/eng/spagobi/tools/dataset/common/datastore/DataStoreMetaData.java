@@ -62,22 +62,7 @@ public class DataStoreMetaData implements IDataStoreMetaData {
 		Integer columnIndex = null;
 		
 		columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
-		/*if(columnIndex==null){
-			Iterator it = fieldsMeta.iterator();
-			int j = 0;
-			while(it.hasNext()) {
-				IFieldMetaData fieldMeta = (IFieldMetaData)it.next();
-				String fieldTempName = fieldMeta.getName();
-				if(fieldTempName!=null){
-					fieldTempName = fieldTempName.toUpperCase();
-					if(fieldTempName.equals(fieldName.toUpperCase())) {
-						columnIndex = new Integer(j);
-						break;
-					}
-				}		
-				j++;
-			}
-		}*/
+		
 		return columnIndex == null? -1: columnIndex.intValue();
 	}
 
@@ -112,7 +97,12 @@ public class DataStoreMetaData implements IDataStoreMetaData {
 		
 		fieldMeta = getFieldMeta(fieldIndex);		
 		if(fieldMeta != null) {
-			fieldName = fieldMeta.getName();
+			String alias = fieldMeta.getAlias();
+			if(alias!=null && !alias.equals("")){
+				fieldName = alias;
+			}else{
+				fieldName = fieldMeta.getName();
+			}
 		}
 		
 		return fieldName;
