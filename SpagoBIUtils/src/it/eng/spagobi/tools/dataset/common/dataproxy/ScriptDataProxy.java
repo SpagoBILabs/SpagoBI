@@ -23,6 +23,7 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
@@ -69,15 +70,22 @@ public class ScriptDataProxy extends AbstractDataProxy {
 		logger.debug("IN");
 		String data = null;
 		IDataStore dataStore = null;
+		ScriptManager sm = new ScriptManager();
+		if(predefinedGroovyScriptFileName!=null && !predefinedGroovyScriptFileName.equals("")){
+			sm.setPredefinedGroovyScriptFileName(predefinedGroovyScriptFileName);
+		}
+		if(predefinedJsScriptFileName!=null && !predefinedJsScriptFileName.equals("")){
+			sm.setPredefinedJsScriptFileName(predefinedJsScriptFileName);
+		}
+		
 		try {
 			if(statement != null){
 				logger.debug("Statement "+statement);
-				data = ScriptManager.runScript(statement, languageScript);
+				data = sm.runScript(statement, languageScript);
 			}
 			else{
 				logger.debug("Use script (no parameters) "+script);
-				data = ScriptManager.runScript(script, languageScript);
-
+				data = sm.runScript(script, languageScript);
 			}
 			// check if the result must be converted into the right xml sintax
 			boolean toconvert = checkSintax(data);
@@ -101,63 +109,70 @@ public class ScriptDataProxy extends AbstractDataProxy {
 		String descriptionColumnName = "";
 
 		boolean toconvert = false;
-		try{
-			SourceBean source = SourceBean.fromXMLString(result);
-			if(!source.getName().equalsIgnoreCase("ROWS")) {
+	
+			SourceBean source = null;
+			try {
+				source = SourceBean.fromXMLString(result);
+			} catch (SourceBeanException e) {
+				logger.error("SourceBean Exception");
 				toconvert = true;
-			} else {
-				List rowsList = source.getAttributeAsList(DataRow.ROW_TAG);
-				if( (rowsList==null) || (rowsList.size()==0) ) {
+			}catch (NullPointerException n) {
+				logger.error("NullPointerException");
+				toconvert = false;
+			}
+			if(source!=null){
+				if(!source.getName().equalsIgnoreCase("ROWS")) {
 					toconvert = true;
 				} else {
-					// TODO this part can be moved to the import transformer
-					// RESOLVES RETROCOMPATIBILITY PROBLEMS
-					// finds the name of the first attribute of the rows if exists 
-					String defaultName = "";
-					SourceBean rowSB = (SourceBean) rowsList.get(0);
-					List attributes = rowSB.getContainedAttributes();
-					if (attributes != null && attributes.size() > 0) {
-						SourceBeanAttribute attribute = (SourceBeanAttribute) attributes.get(0);
-						defaultName = attribute.getKey();
-					}
-					// if a value column is specified, it is considered
-					SourceBean valueColumnSB = (SourceBean) source.getAttribute("VALUE-COLUMN");
-					if (valueColumnSB != null) {
-						String valueColumn = valueColumnSB.getCharacters();
-						if (valueColumn != null) {
-							valueColumnName = valueColumn;
-						}
+					List rowsList = source.getAttributeAsList(DataRow.ROW_TAG);
+					if( (rowsList==null) || (rowsList.size()==0) ) {
+						toconvert = true;
 					} else {
-						valueColumnName = defaultName;
-					}
-					SourceBean visibleColumnsSB = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
-					if (visibleColumnsSB != null) {
-						String allcolumns = visibleColumnsSB.getCharacters();
-						if (allcolumns != null) {
-							String[] columns = allcolumns.split(",");
+						// TODO this part can be moved to the import transformer
+						// RESOLVES RETROCOMPATIBILITY PROBLEMS
+						// finds the name of the first attribute of the rows if exists 
+						String defaultName = "";
+						SourceBean rowSB = (SourceBean) rowsList.get(0);
+						List attributes = rowSB.getContainedAttributes();
+						if (attributes != null && attributes.size() > 0) {
+							SourceBeanAttribute attribute = (SourceBeanAttribute) attributes.get(0);
+							defaultName = attribute.getKey();
+						}
+						// if a value column is specified, it is considered
+						SourceBean valueColumnSB = (SourceBean) source.getAttribute("VALUE-COLUMN");
+						if (valueColumnSB != null) {
+							String valueColumn = valueColumnSB.getCharacters();
+							if (valueColumn != null) {
+								valueColumnName = valueColumn;
+							}
+						} else {
+							valueColumnName = defaultName;
+						}
+						SourceBean visibleColumnsSB = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
+						if (visibleColumnsSB != null) {
+							String allcolumns = visibleColumnsSB.getCharacters();
+							if (allcolumns != null) {
+								String[] columns = allcolumns.split(",");
+								visibleColumnNames = Arrays.asList(columns);
+							}
+						} else {
+							String[] columns = new String[] {defaultName};
 							visibleColumnNames = Arrays.asList(columns);
 						}
-					} else {
-						String[] columns = new String[] {defaultName};
-						visibleColumnNames = Arrays.asList(columns);
-					}
-					SourceBean descriptionColumnSB = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
-					if (descriptionColumnSB != null) {
-						String descriptionColumn = descriptionColumnSB.getCharacters();
-						if (descriptionColumn != null) {
-							descriptionColumnName = descriptionColumn;
+						SourceBean descriptionColumnSB = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
+						if (descriptionColumnSB != null) {
+							String descriptionColumn = descriptionColumnSB.getCharacters();
+							if (descriptionColumn != null) {
+								descriptionColumnName = descriptionColumn;
+							}
+						} else {
+							descriptionColumnName = defaultName;
 						}
-					} else {
-						descriptionColumnName = defaultName;
 					}
 				}
+			}else{
+				logger.error("the result of the dataset is not formatted with the right structure so it will be wrapped inside an xml envelope");
 			}
-
-		} catch (Exception e) {
-			//e.printStackTrace();
-			logger.error("the result of the dataset is not formatted with the right structure so it will be wrapped inside an xml envelope",e);
-			toconvert = true;
-		}
 		logger.debug("OUT");
 		return toconvert;
 	}

@@ -63,7 +63,9 @@ public abstract class AbstractDataSet implements IDataSet {
     	
     protected IDataStoreTransformer dataSetTransformer;
     
-    protected String filePath;
+    protected String resPath;
+	protected String groovyFileName;
+    protected String jsFileName;
     
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -101,24 +103,24 @@ public abstract class AbstractDataSet implements IDataSet {
     
     
     public String getResourcePath() {
-    	if (filePath == null) {
+    	if (resPath == null) {
 			try {
 				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				filePath = SpagoBIUtilities.readJndiResource(jndiName);
+				resPath = SpagoBIUtilities.readJndiResource(jndiName);
 			} catch (Throwable t) {
 				logger.debug(t);
-				filePath = EnginConf.getInstance().getResourcePath();
+				resPath = EnginConf.getInstance().getResourcePath();
 			}
     	}
-		if (filePath == null) {
+		if (resPath == null) {
 			throw new SpagoBIRuntimeException("Resource path not found!!!");
 		}
-		return filePath;
+		return resPath;
 	}
     
     
     public void setResourcePath(String resPath) {
-    	filePath = resPath;
+    	this.resPath = resPath;
 	}
     
     public SpagoBiDataSet toSpagoBiDataSet() {
@@ -139,6 +141,21 @@ public abstract class AbstractDataSet implements IDataSet {
 		return sbd;
 	}
 
+    public String getGroovyFileName() {
+		return groovyFileName;
+	}
+
+	public void setGroovyFileName(String groovyFileName) {
+		this.groovyFileName = groovyFileName;
+	}
+
+	public String getJsFileName() {
+		return jsFileName;
+	}
+
+	public void setJsFileName(String jsFileName) {
+		this.jsFileName = jsFileName;
+	}
 
     public int getId() {
     	return id;

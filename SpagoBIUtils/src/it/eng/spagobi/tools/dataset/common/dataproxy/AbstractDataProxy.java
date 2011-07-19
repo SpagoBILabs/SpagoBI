@@ -11,6 +11,35 @@ public abstract class AbstractDataProxy implements IDataProxy {
 	int maxResults;
 	boolean calculateResultNumberOnLoad;
 	String statement;
+	String resPath;
+	
+	String predefinedGroovyScriptFileName = null;
+	String predefinedJsScriptFileName = null;
+
+	public String getPredefinedGroovyScriptFileName() {
+		return predefinedGroovyScriptFileName;
+	}
+
+	public void setPredefinedGroovyScriptFileName(
+			String predefinedGroovyScriptFileName) {
+		this.predefinedGroovyScriptFileName = predefinedGroovyScriptFileName;
+	}
+
+	public String getPredefinedJsScriptFileName() {
+		return predefinedJsScriptFileName;
+	}
+
+	public void setPredefinedJsScriptFileName(String predefinedJsScriptFileName) {
+		this.predefinedJsScriptFileName = predefinedJsScriptFileName;
+	}
+
+	public String getResPath() {
+		return resPath;
+	}
+
+	public void setResPath(String resPath) {
+		this.resPath = resPath;
+	}
 
 	public Map getParameters() {
 		return parameters;

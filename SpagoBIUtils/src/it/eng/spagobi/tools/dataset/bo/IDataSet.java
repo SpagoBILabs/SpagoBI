@@ -12,9 +12,6 @@ public interface IDataSet {
 	String getDsMetadata();
 	void setDsMetadata(String dsMetadata);
 	
-	String getResourcePath();
-	void setResourcePath(String resPath);
-	
 	// general properties ....
 	int getId();
 	void setId(int id);
@@ -57,8 +54,15 @@ public interface IDataSet {
 	void loadData(int offset, int fetchSize, int maxResults);
 	// --------------------------------------------------------------------------------------------------
     
-	IDataStore getDataStore();
+	String getResourcePath();
+	void setResourcePath(String resPath);
 	
+	String getGroovyFileName();
+	void setGroovyFileName(String groovyFileName);
+	String getJsFileName();
+	void setJsFileName(String jsFileName);
+	
+	IDataStore getDataStore();	
 	
 	// just 4 querable dataSet....
 	Object getQuery();
@@ -67,9 +71,7 @@ public interface IDataSet {
 	// extension points ...
 	boolean hasBehaviour(String behaviourId);
 	Object getBehaviour(String behaviourId);
-	void addBehaviour(IDataSetBehaviour behaviour);
-	
-	
+	void addBehaviour(IDataSetBehaviour behaviour);	
 	
 	// =================================================================================================
 	// TO BE DEPRECATED ( do not cross this line ;-) )
