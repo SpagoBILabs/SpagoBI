@@ -9,6 +9,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -22,6 +23,7 @@ import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DynamicClassLoader;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -106,6 +108,8 @@ public class BirtReportServlet extends HttpServlet {
 	public static final String JS_EXT_ZIP = ".zip";
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String RTF_FORMAT = "RTF";
+	public static final String predefinedGroovyScriptFileName = "predefinedGroovyScript.groovy";
+	public static final String predefinedJsScriptFileName = "predefinedJavascriptScript.js";
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
@@ -635,7 +639,8 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-Type", "text/html");
 		}
 
-		Map context = getTaskContext(userId, params, request, resPathJNDI); 
+		Map userProfileAttrs = UserProfileUtils.getProfileAttributes( profile );
+		Map context = getTaskContext(userId, params, request, resPathJNDI, userProfileAttrs); 
 		//Map context = BirtUtility.getAppContext(request);
 		task.setAppContext(context);
 		renderOption.setOutputStream((OutputStream) response.getOutputStream());
@@ -668,8 +673,9 @@ public class BirtReportServlet extends HttpServlet {
 
 	}
 	
-	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath) throws IOException {
+	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath, Map userProfileAttrs) throws IOException {
 		  Map context = BirtUtility.getAppContext(request);
+		  
 		  String pass = EnginConf.getInstance().getPass();
 		  String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
 		  HttpSession session = request.getSession();
@@ -695,8 +701,7 @@ public class BirtReportServlet extends HttpServlet {
 			}else{
 				token = "";
 			}
-		 // DataSetServiceProxy proxyDataset = new DataSetServiceProxy(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
-
+			
 		  context.put("RESOURCE_PATH_JNDI_NAME", resourcePath);
 		  context.put("SBI_BIRT_RUNTIME_IS_RUNTIME", "true"); 
 		  context.put("SBI_BIRT_RUNTIME_USER_ID", userId); 
@@ -706,6 +711,10 @@ public class BirtReportServlet extends HttpServlet {
 		  context.put("SBI_BIRT_RUNTIME_TOKEN", token);
 		  context.put("SBI_BIRT_RUNTIME_PASS", pass);
 		  context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
+		  context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
+		  context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);
+		  context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", predefinedJsScriptFileName);
+		  
 		  return context;
 	}
 	
