@@ -213,7 +213,7 @@ public class ModelViewEntity extends ModelEntity {
 					}
 				}
 				sourceFields = new ArrayList<IModelField>();
-				if (relationshipDescriptor.isDestinationEntityView()){
+				if (!relationshipDescriptor.isDestinationEntityView()){
 					List<String> sourceColumns = relationshipDescriptor.getSourceColumns();
 					if(sourceColumns!=null ){
 						for(String fieldName : sourceColumns) {
@@ -298,7 +298,6 @@ public class ModelViewEntity extends ModelEntity {
 			joins.add( new Join(joinDescriptor, modelName, structure) );
 		}
 		
-		
 		viewRelationships = new ArrayList<ViewRelationship>();
 		List<IModelViewRelationshipDescriptor> relationshipDescriptors = view.getRelationshipDescriptors();
 		for(IModelViewRelationshipDescriptor relationshipDescriptor : relationshipDescriptors) {
@@ -350,20 +349,20 @@ public class ModelViewEntity extends ModelEntity {
 		}
 		return fields;
 	}
-//	
-//	public IModelEntity getEntityByField(IModelField field) {
-//		for(int x=0; x<entities.size(); x++ ){
-//			List<IModelField> fields = entities.get(x).getAllFields();
-//			if(fields!=null){
-//				for(int y=0; y<fields.size(); y++ ){
-//					if(fields.get(y).equals(field)){
-//						return entities.get(x);
-//					}
-//				}
-//			}
-//		}
-//		throw new NoSuchElementException("No field "+field.getName()+ "found in the entity "+this.getName());
-//	}
+	
+	public IModelEntity getEntityByField(IModelField field) {
+		for(int x=0; x<entities.size(); x++ ){
+			List<IModelField> fields = entities.get(x).getAllFields();
+			if(fields!=null){
+				for(int y=0; y<fields.size(); y++ ){
+					if(fields.get(y).equals(field)){
+						return entities.get(x);
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 	public List<IModelField> getNormalFields() {
 		List<IModelField> fields = new ArrayList<IModelField>();

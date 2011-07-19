@@ -20,6 +20,7 @@
  **/
 package it.eng.qbe.statement.jpa;
 
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelViewEntity;
@@ -237,13 +238,26 @@ public class JPQLBusinessViewUtility {
 	 * @return
 	 */
 	private String getFieldString(IModelField datamartField, Map entityAliasesMaps, Query query){
-		String queryName = datamartField.getQueryName();
+		String queryName;
+		
 		IModelEntity rootEntity;
-		if(datamartField.getPathParent() instanceof ModelViewEntity){
-			rootEntity = (datamartField.getParent()).getRoot(); 
+		
+		Couple queryNameAndRoot = datamartField.getQueryName();
+		
+		queryName = (String) queryNameAndRoot.getFirst();
+		
+		if(queryNameAndRoot.getSecond()!=null){
+			rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
 		}else{
-			rootEntity = datamartField.getParent().getRoot(); 
+			rootEntity = datamartField.getParent().getRoot(); 	
 		}
+		
+		
+//		if(datamartField.getPathParent() instanceof ModelViewEntity){
+//			rootEntity = (datamartField.getParent()).getRoot(); 
+//		}else{
+//			rootEntity = datamartField.getParent().getRoot(); 
+//		}
 	
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		String rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
