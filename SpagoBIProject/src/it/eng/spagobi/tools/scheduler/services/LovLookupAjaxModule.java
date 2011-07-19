@@ -145,9 +145,11 @@ public class LovLookupAjaxModule extends AbstractBasicListModule {
 		String typeLov = LovDetailFactory.getLovTypeCode(looProvider);
 		// get the user profile 
 		IEngUserProfile profile = null;
-		HttpServletRequest httpReq = (HttpServletRequest)requestContainer.getInternalRequest();
-		HttpSession httpSess = httpReq.getSession();
-		profile = (IEngUserProfile)httpSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		SessionContainer permanentSession = session.getPermanentContainer();
+		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+//		HttpServletRequest httpReq = (HttpServletRequest)requestContainer.getInternalRequest();
+//		HttpSession httpSess = httpReq.getSession();
+//		profile = (IEngUserProfile)httpSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// based on lov type fill the spago list / paginator object / valColName
 		SourceBean rowsSourceBean = null;
 		if(typeLov.equalsIgnoreCase("QUERY")) {
