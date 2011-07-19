@@ -62,7 +62,8 @@ public class DataStore implements IDataStore {
 	}
 	
     public IRecord getRecordAt(int i) {    	
-    	return (IRecord)records.get(i);	
+    	IRecord r = (IRecord)records.get(i);	
+    	return r;	
     }
 
     public IRecord getRecordByID(Object value) { 

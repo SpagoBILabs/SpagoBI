@@ -51,7 +51,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 
 		dataProxy.setParameters(getParamsMap());
 		dataProxy.setProfile(getUserProfileAttributes());
-		
+		dataProxy.setResPath(resPath);
+		dataProxy.setPredefinedGroovyScriptFileName(groovyFileName);
+		dataProxy.setPredefinedJsScriptFileName(jsFileName);
 		// check if the proxy is able to manage results pagination
 		if(dataProxy.isOffsetSupported()) {
 			dataProxy.setOffset(offset);

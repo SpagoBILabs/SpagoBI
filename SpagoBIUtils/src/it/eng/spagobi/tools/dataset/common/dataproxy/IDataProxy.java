@@ -38,6 +38,14 @@ public interface IDataProxy {
 	public String getStatement();
 	public void setStatement(String statement);
 	
+	public String getResPath();
+	public void setResPath(String resPath);
+	
+	public String getPredefinedGroovyScriptFileName();
+	public void setPredefinedGroovyScriptFileName(String predefinedGroovyScriptFileName) ;
+	public String getPredefinedJsScriptFileName() ;
+	public void setPredefinedJsScriptFileName(String predefinedJsScriptFileName);
+	
 	// pagination ...
 	boolean isPaginationSupported();
 	boolean isOffsetSupported();

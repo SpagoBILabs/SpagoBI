@@ -22,10 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.services.proxy;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.services.security.stub.SecurityService;
+import it.eng.spagobi.services.security.stub.SecurityServiceServiceLocator;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,6 +47,8 @@ public abstract class AbstractServiceProxy {
 
     private HttpSession session;
 
+    static private final String SERVICE_NAME = "AbstractServiceProxy";
+    
     protected URL serviceUrl = null;
     protected String userId = null;
     protected boolean isSecure = true; // if false don't sent a valid ticket
@@ -77,6 +84,47 @@ public abstract class AbstractServiceProxy {
 
     protected AbstractServiceProxy() {
     	init();
+    }
+    
+    private SecurityService lookUp() throws SecurityException {
+    	SecurityService service;
+    	SecurityServiceServiceLocator locator;
+    	
+    	service = null;
+    	try {
+    		locator = new SecurityServiceServiceLocator();
+		   
+		    if (serviceUrl != null) {
+		    	service = locator.getSecurityService( serviceUrl );
+		    } else {
+		    	service = locator.getSecurityService();
+		    }
+		} catch (Throwable e) {
+			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");
+		    throw new SecurityException("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]", e);
+		}
+		
+		return service;
+    }
+    
+    public IEngUserProfile getUserProfile() throws SecurityException{
+    	UserProfile userProfile;
+    	
+    	logger.debug("IN");
+    	
+    	userProfile = null;
+		try {
+            SpagoBIUserProfile user = lookUp().getUserProfile(readTicket(), userId);
+            if (user!=null) userProfile = new UserProfile(user);
+            else logger.error("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl + "]. user is null!");
+        } catch (Throwable e) {
+            logger.error("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl + "]");
+            throw new SecurityException("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl + "]", e);
+        }finally{
+            logger.debug("OUT");
+        }
+        
+        return userProfile;
     }
 
     /**

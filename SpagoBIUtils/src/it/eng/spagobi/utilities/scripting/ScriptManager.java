@@ -44,8 +44,17 @@ public class ScriptManager {
 
 	static private Logger logger = Logger.getLogger(ScriptManager.class);
 
+	private String predefinedScriptFileName = null;
+	private String predefinedGroovyScriptFileName = null;
+	private String predefinedJsScriptFileName = null;
+
+	private String scriptLanguage = null;
+	private String defaultEngine = null;
 
 
+
+	public ScriptManager() {
+	}
 
 	/**
 	 * Run a script. (Deprecated)
@@ -57,11 +66,30 @@ public class ScriptManager {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static String runScript(String script, Binding bind) throws Exception {
+	public String runScript(String script, Binding bind) throws Exception {
 		String result = run(script, bind);
 		return result;
 	}
 
+	public String getPredefinedGroovyScriptFileName() {
+		return predefinedGroovyScriptFileName;
+	}
+
+	public void setPredefinedGroovyScriptFileName(
+			String predefinedGroovyScriptFileName) {
+		this.predefinedGroovyScriptFileName = predefinedGroovyScriptFileName;
+	}
+
+	public String getPredefinedJsScriptFileName() {
+		return predefinedJsScriptFileName;
+	}
+
+	public void setPredefinedJsScriptFileName(String predefinedJsScriptFileName) {
+		this.predefinedJsScriptFileName = predefinedJsScriptFileName;
+	}
+
+
+	
 	/**
 	 * Run a script. (Deprecated)
 	 * 
@@ -71,7 +99,7 @@ public class ScriptManager {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static String runScript(String script) throws Exception {
+	public String runScript(String script) throws Exception {
 		String result = run(script, null);
 		return result;
 	}
@@ -87,7 +115,7 @@ public class ScriptManager {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static String runScript(String script, String languageScript) throws Exception {
+	public String runScript(String script, String languageScript) throws Exception {
 		String result = run(script, null, languageScript);
 		return result;
 	}
@@ -103,7 +131,7 @@ public class ScriptManager {
 	 * 
 	 * @throws Exception the exception
 	 */
-	public static String runScript(String script, Binding bind, String languageScript) throws Exception {
+	public String runScript(String script, Binding bind, String languageScript) throws Exception {
 		String result = run(script, bind, languageScript);
 		return result;
 	}
@@ -116,21 +144,30 @@ public class ScriptManager {
 	 * @return the result of the script
 	 * @throws Exception
 	 */
-	private static String run(String script, Binding bind) throws Exception {
+	private String run(String script, Binding bind) throws Exception {
 		String result = "";
-		String defaltEngine=SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE_DEFAULT");
+		if(defaultEngine==null || defaultEngine.equals("")){
+			defaultEngine =SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE_DEFAULT");
+		}
+		
 		// get the name of the default script language
-		String name = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaltEngine+".name");
+		if(scriptLanguage==null || scriptLanguage.equals("")){
+			scriptLanguage = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaultEngine+".name");
+		}
+		
 		// the only language supported now is groovy so if the default script isn't groovy
 		// throw an exception and return an empty string
-		if(!name.equalsIgnoreCase("groovy")) {
+		if(!scriptLanguage.equalsIgnoreCase("groovy")) {
 			SpagoBITracer.critical(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
 					"run", "The only script language supported is groovy, " +
 			"the configuration file has no configuration for groovy");
 			return "";
 		}
 		// load predefined script file
-		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaltEngine+".predefinedScriptFile");
+		if(predefinedScriptFileName==null || predefinedScriptFileName.equals("")){
+			predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE."+defaultEngine+".predefinedScriptFile");
+		}
+		
 		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
 					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
@@ -172,6 +209,22 @@ public class ScriptManager {
 		return result;
 	} 
 
+
+	public String getPredefinedScriptFileName() {
+		return predefinedScriptFileName;
+	}
+
+	public void setPredefinedScriptFileName(String predefinedScriptFileName) {
+		this.predefinedScriptFileName = predefinedScriptFileName;
+	}
+
+	public String getScriptLanguage() {
+		return scriptLanguage;
+	}
+
+	public void setScriptLanguage(String scriptLanguage) {
+		this.scriptLanguage = scriptLanguage;
+	}
 
 	/**
 	 * Fill a groovy binding with attributes of an hashmap.
@@ -226,7 +279,7 @@ public class ScriptManager {
 	 * @return the result of the script
 	 * @throws Exception
 	 */
-	private static String run(String script, Binding bind, String languageScript) throws Exception {
+	private String run(String script, Binding bind, String languageScript) throws Exception {
 		logger.debug("IN");
 		String result = "";
 
@@ -262,16 +315,18 @@ public class ScriptManager {
 
 
 
-	static public String addGroovyPredefined(String script) throws IOException{
+	 public String addGroovyPredefined(String script) throws IOException{
 
 		// load predefined script file
-		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.groovy.predefinedScriptFile");
-		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
+		if(predefinedGroovyScriptFileName==null || predefinedGroovyScriptFileName.equals("")){
+			predefinedGroovyScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.groovy.predefinedScriptFile");
+		}
+		if(predefinedGroovyScriptFileName != null && !predefinedGroovyScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
+					"run", "Trying to load predefined script file '" + predefinedGroovyScriptFileName + "'.");
 			InputStream is = null;
 			try {
-				is = Thread.currentThread().getContextClassLoader().getResourceAsStream(predefinedScriptFileName);
+				is = Thread.currentThread().getContextClassLoader().getResourceAsStream(predefinedGroovyScriptFileName);
 				StringBuffer servbuf = new StringBuffer();
 				int arrayLength = 1024;
 				byte[] bufferbyte = new byte[arrayLength];
@@ -287,7 +342,7 @@ public class ScriptManager {
 				script = servbuf.toString() + script;
 			} catch (Exception e) {
 				SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-						"run", "The predefined script file '" + predefinedScriptFileName + "' was not properly loaded.");
+						"run", "The predefined script file '" + predefinedGroovyScriptFileName + "' was not properly loaded.");
 			} finally {
 				if (is != null) is.close();
 			}
@@ -297,16 +352,18 @@ public class ScriptManager {
 
 
 
-	static public String addJavascriptPredefined(String script) throws IOException{
+	public String addJavascriptPredefined(String script) throws IOException{
 
 		// load predefined script file
-		String predefinedScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.javascript.predefinedScriptFile");
-		if(predefinedScriptFileName != null && !predefinedScriptFileName.trim().equals("")) {
+		if(predefinedJsScriptFileName==null || predefinedJsScriptFileName.equals("")){
+			predefinedJsScriptFileName = SingletonConfig.getInstance().getConfigValue("SCRIPT_LANGUAGE.javascript.predefinedScriptFile");
+		}
+		if(predefinedJsScriptFileName != null && !predefinedJsScriptFileName.trim().equals("")) {
 			SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-					"run", "Trying to load predefined script file '" + predefinedScriptFileName + "'.");
+					"run", "Trying to load predefined script file '" + predefinedJsScriptFileName + "'.");
 			InputStream is = null;
 			try {
-				is = Thread.currentThread().getContextClassLoader().getResourceAsStream(predefinedScriptFileName);
+				is = Thread.currentThread().getContextClassLoader().getResourceAsStream(predefinedJsScriptFileName);
 				StringBuffer servbuf = new StringBuffer();
 				int arrayLength = 1024;
 				byte[] bufferbyte = new byte[arrayLength];
@@ -322,7 +379,7 @@ public class ScriptManager {
 				script = servbuf.toString() + script;
 			} catch (Exception e) {
 				SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, ScriptManager.class.getName(), 
-						"run", "The predefined script file '" + predefinedScriptFileName + "' was not properly loaded.");
+						"run", "The predefined script file '" + predefinedJsScriptFileName + "' was not properly loaded.");
 			} finally {
 				if (is != null) is.close();
 			}
