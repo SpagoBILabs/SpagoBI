@@ -20,11 +20,12 @@
  **/
 
 package it.eng.qbe.model.structure;
+import it.eng.spagobi.utilities.objects.Couple;
 
 public interface IModelField extends IModelNode {
 
 		public String getUniqueName();
-		public String getQueryName();	
+		public Couple getQueryName();	
 		public String getType();
 		public void setType(String type);
 		public int getLength();

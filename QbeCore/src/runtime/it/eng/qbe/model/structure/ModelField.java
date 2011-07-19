@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.model.structure;
 
+import it.eng.spagobi.utilities.objects.Couple;
+
 
 /**
  * @author Andrea Gioia
@@ -49,29 +51,40 @@ public class ModelField extends AbstractModelNode implements IModelField {
 	}
 
 	public String getUniqueName() {
-		if(getParent().getParent() == null) {
+		if(getParent().getParent() == null || getParent().getParent() instanceof ModelViewEntity) {
 			return getParent().getType() + ":" + getName();
 		}
 		return getParent().getUniqueName() + ":" + getName();
 	}
 	
-	public String getQueryName() {
+	
+	public Couple getQueryName() {
 		String fieldName = "";
 		
 		IModelEntity entity = getParent();
 		if(entity.getParent() != null) {
+			if(entity.getParent() instanceof ModelViewEntity){
+				fieldName = getName();
+				return new Couple (fieldName, entity);
+			}
 			fieldName = toLowerCase( entity.getName() );
 			entity = entity.getParent();
 		}
 		while(entity.getParent() != null) {
+			if(entity.getParent() instanceof ModelViewEntity){
+				if(!fieldName.equalsIgnoreCase("")) fieldName +=  ".";
+				fieldName = fieldName+getName();
+				return new Couple (fieldName, entity);
+			}
 			fieldName = toLowerCase( entity.getName() ) + "." + fieldName;
 			entity = entity.getParent();
 		}		
 		if(!fieldName.equalsIgnoreCase("")) fieldName +=  ".";
 		fieldName += getName();
 		
-		return fieldName;
+		return new Couple (fieldName, null);
 	}
+	
 	
 	private String toLowerCase(String str) {
 		/*

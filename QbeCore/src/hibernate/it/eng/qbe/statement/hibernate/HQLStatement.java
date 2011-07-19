@@ -297,7 +297,7 @@ public class HQLStatement extends AbstractStatement {
 						logger.debug("select field unique name [" + selectField.getUniqueName() + "]");
 						
 						datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
-						queryName = datamartField.getQueryName();
+						queryName = (String)datamartField.getQueryName().getFirst();
 						logger.debug("select field query name [" + queryName + "]");
 						
 						rootEntity = datamartField.getParent().getRoot(); 		
@@ -455,7 +455,7 @@ public class HQLStatement extends AbstractStatement {
 			
 			datamartField = getDataSource().getModelStructure().getField( operand.values[0] );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
-			queryName = datamartField.getQueryName();
+			queryName =  (String)datamartField.getQueryName().getFirst();
 			logger.debug("where field query name [" + queryName + "]");
 			
 			rootEntity = datamartField.getParent().getRoot(); 
@@ -516,7 +516,7 @@ public class HQLStatement extends AbstractStatement {
 			datamartField = getDataSource().getModelStructure().getField( fieldName );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + fieldName + "]");
 			
-			queryName = datamartField.getQueryName();
+			queryName =  (String)datamartField.getQueryName().getFirst();
 			logger.debug("where right-hand field query name [" + queryName + "]");
 			
 			rootEntity = datamartField.getParent().getRoot();
@@ -842,7 +842,7 @@ public class HQLStatement extends AbstractStatement {
 				if(allSelectFields.get(i).getClass().equals(DataMartSelectField.class) && ((DataMartSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
 					uniqueName=((DataMartSelectField)allSelectFields.get(i)).getUniqueName();
 					datamartField = getDataSource().getModelStructure().getField(uniqueName);	
-					queryName = datamartField.getQueryName();
+					queryName =  (String)datamartField.getQueryName().getFirst();
 					rootEntity = datamartField.getParent().getRoot(); 
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
 					queryName = ((DataMartSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
@@ -1039,7 +1039,7 @@ public class HQLStatement extends AbstractStatement {
 							Iterator subEntityFields = subEntity.getAllFields().iterator();
 							while(subEntityFields.hasNext()) {
 								filed = (IModelField)subEntityFields.next();
-								if(filed.getQueryName().endsWith("." + fieldName)) break;
+								if(( (String)filed.getQueryName().getFirst()).endsWith("." + fieldName)) break;
 							}
 							String entityAlias = (String)entityAliases.get(entityUniqueName);
 							props.put(fieldName, entityAlias + "." + filed.getQueryName());
@@ -1093,7 +1093,7 @@ public class HQLStatement extends AbstractStatement {
 				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
 				IModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
 				IModelEntity entity = datamartField.getParent().getRoot(); 
-				String queryName = datamartField.getQueryName();
+				String queryName = (String)datamartField.getQueryName().getFirst();
 				if(!entityAliases.containsKey(entity.getUniqueName())) {
 					entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
 				}
@@ -1143,7 +1143,7 @@ public class HQLStatement extends AbstractStatement {
 			
 			IModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
 			IModelEntity entity = datamartField.getParent().getRoot(); 
-			String queryName = datamartField.getQueryName();
+			String queryName = (String)datamartField.getQueryName().getFirst();
 			if(!entityAliases.containsKey(entity.getUniqueName())) {
 				entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
 			}

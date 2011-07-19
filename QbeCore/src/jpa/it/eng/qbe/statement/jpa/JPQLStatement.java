@@ -25,6 +25,7 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
+import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -172,7 +173,7 @@ public class JPQLStatement extends AbstractStatement {
 	}
 
 	
-	protected String getNextAlias(Map entityAliasesMaps) {
+	public static String getNextAlias(Map entityAliasesMaps) {
 		int aliasesCount = 0;
 		Iterator it = entityAliasesMaps.keySet().iterator();
 		while(it.hasNext()) {
@@ -228,10 +229,19 @@ public class JPQLStatement extends AbstractStatement {
 						logger.debug("select field unique name [" + selectField.getUniqueName() + "]");
 						
 						datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
-						queryName = datamartField.getQueryName();
+						
+						Couple queryNameAndRoot = datamartField.getQueryName();
+						
+						queryName = (String) queryNameAndRoot.getFirst();
 						logger.debug("select field query name [" + queryName + "]");
 						
-						rootEntity = datamartField.getParent().getRoot(); 		
+						if(queryNameAndRoot.getSecond()!=null){
+							rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
+						}else{
+							rootEntity = datamartField.getParent().getRoot(); 	
+						}
+						
+							
 						logger.debug("select field root entity unique name [" + rootEntity.getUniqueName() + "]");
 						
 						rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
@@ -439,10 +449,18 @@ public class JPQLStatement extends AbstractStatement {
 			
 			datamartField = getDataSource().getModelStructure().getField( operand.values[0] );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
-			queryName = datamartField.getQueryName();
+			Couple queryNameAndRoot = datamartField.getQueryName();
+			
+			queryName = (String) queryNameAndRoot.getFirst();
+			logger.debug("select field query name [" + queryName + "]");
+			
+			if(queryNameAndRoot.getSecond()!=null){
+				rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
+			}else{
+				rootEntity = datamartField.getParent().getRoot(); 	
+			}
 			logger.debug("where field query name [" + queryName + "]");
 			
-			rootEntity = datamartField.getParent().getRoot(); 
 			logger.debug("where field root entity unique name [" + rootEntity.getUniqueName() + "]");
 			
 			if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
@@ -500,10 +518,17 @@ public class JPQLStatement extends AbstractStatement {
 			datamartField = getDataSource().getModelStructure().getField( fieldName );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + fieldName + "]");
 			
-			queryName = datamartField.getQueryName();
-			logger.debug("where right-hand field query name [" + queryName + "]");
+			Couple queryNameAndRoot = datamartField.getQueryName();
 			
-			rootEntity = datamartField.getParent().getRoot();
+			queryName = (String) queryNameAndRoot.getFirst();
+			logger.debug("select field query name [" + queryName + "]");
+			
+			if(queryNameAndRoot.getSecond()!=null){
+				rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
+			}else{
+				rootEntity = datamartField.getParent().getRoot(); 	
+			}
+			logger.debug("where right-hand field query name [" + queryName + "]");
 			logger.debug("where right-hand field root entity unique name [" + rootEntity.getUniqueName() + "]");
 			
 			Map parentEntityAliases = (Map)entityAliasesMaps.get(parentQueryId);
@@ -762,8 +787,15 @@ public class JPQLStatement extends AbstractStatement {
 				if(allSelectFields.get(i).getClass().equals(DataMartSelectField.class) && ((DataMartSelectField)allSelectFields.get(i)).getAlias().equals(alias)){
 					uniqueName=((DataMartSelectField)allSelectFields.get(i)).getUniqueName();
 					datamartField = getDataSource().getModelStructure().getField(uniqueName);	
-					queryName = datamartField.getQueryName();
-					rootEntity = datamartField.getParent().getRoot(); 
+					Couple queryNameAndRoot = datamartField.getQueryName();
+					queryName = (String) queryNameAndRoot.getFirst();
+					logger.debug("select field query name [" + queryName + "]");
+					
+					if(queryNameAndRoot.getSecond()!=null){
+						rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
+					}else{
+						rootEntity = datamartField.getParent().getRoot(); 	
+					}
 					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
 					queryName = ((DataMartSelectField)allSelectFields.get(i)).getFunction().apply(rootEntityAlias+"."+queryName);
 					aliasEntityMapping.add(queryName);
@@ -957,7 +989,7 @@ public class JPQLStatement extends AbstractStatement {
 								Iterator subEntityFields = subEntity.getAllFields().iterator();
 								while(subEntityFields.hasNext()) {
 									filed = (IModelField)subEntityFields.next();
-									if(filed.getQueryName().endsWith("." + fieldName)) break;
+									if(((String)filed.getQueryName().getFirst()).endsWith("." + fieldName)) break;
 								}
 								String entityAlias = (String)entityAliases.get(entityUniqueName);
 								props.put(fieldName, entityAlias + "." + filed.getQueryName());
@@ -1027,8 +1059,8 @@ public class JPQLStatement extends AbstractStatement {
 				for(int i = 0; i < join.getSourceFileds().size(); i++) {
 					IModelField sourceField = join.getSourceFileds().get(i);
 					IModelField destinationField = join.getDestinationFileds().get(i);
-					String sourceFieldName = sourceField.getQueryName();
-					String destinationFieldName = destinationField.getQueryName();
+					String sourceFieldName = (String)sourceField.getQueryName().getFirst();
+					String destinationFieldName = (String)destinationField.getQueryName().getFirst();
 					
 					String leftHandValue = sourceEntityAlias + "." + sourceFieldName;
 					String rightHandValues = destinationEntityAlias + "." + destinationFieldName;
@@ -1075,12 +1107,24 @@ public class JPQLStatement extends AbstractStatement {
 			
 				DataMartSelectField groupByField = (DataMartSelectField)abstractSelectedField;
 				IModelField datamartField = getDataSource().getModelStructure().getField(groupByField.getUniqueName());
-				IModelEntity entity = datamartField.getParent().getRoot(); 
-				String queryName = datamartField.getQueryName();
-				if(!entityAliases.containsKey(entity.getUniqueName())) {
-					entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
+				
+						
+				Couple queryNameAndRoot = datamartField.getQueryName();
+				IModelEntity root;
+				String queryName = (String) queryNameAndRoot.getFirst();
+				logger.debug("select field query name [" + queryName + "]");
+				
+				if(queryNameAndRoot.getSecond()!=null){
+					root = (IModelEntity)queryNameAndRoot.getSecond(); 	
+				}else{
+					root = datamartField.getParent().getRoot(); 	
 				}
-				String entityAlias = (String)entityAliases.get( entity.getUniqueName() );
+				
+				
+				if(!entityAliases.containsKey(root.getUniqueName())) {
+					entityAliases.put(root.getUniqueName(), getNextAlias(entityAliasesMaps));
+				}
+				String entityAlias = (String)entityAliases.get( root.getUniqueName() );
 				fieldName = entityAlias + "." +queryName;
 			}
 			buffer.append(" " + fieldName);
@@ -1125,12 +1169,21 @@ public class JPQLStatement extends AbstractStatement {
 			Assert.assertTrue(selectField.isOrderByField(), "Field [" + selectField.getUniqueName() +"] is not an orderBy filed");
 			
 			IModelField datamartField = getDataSource().getModelStructure().getField(selectField.getUniqueName());
-			IModelEntity entity = datamartField.getParent().getRoot(); 
-			String queryName = datamartField.getQueryName();
-			if(!entityAliases.containsKey(entity.getUniqueName())) {
-				entityAliases.put(entity.getUniqueName(), getNextAlias(entityAliasesMaps));
+			Couple queryNameAndRoot = datamartField.getQueryName();
+			IModelEntity root;
+			String queryName = (String) queryNameAndRoot.getFirst();
+			logger.debug("select field query name [" + queryName + "]");
+			
+			if(queryNameAndRoot.getSecond()!=null){
+				root = (IModelEntity)queryNameAndRoot.getSecond(); 	
+			}else{
+				root = datamartField.getParent().getRoot(); 	
 			}
-			String entityAlias = (String)entityAliases.get( entity.getUniqueName() );
+			
+			if(!entityAliases.containsKey(root.getUniqueName())) {
+				entityAliases.put(root.getUniqueName(), getNextAlias(entityAliasesMaps));
+			}
+			String entityAlias = (String)entityAliases.get( root.getUniqueName() );
 			String fieldName = entityAlias + "." + queryName;
 			buffer.append(" " + selectField.getFunction().apply(fieldName));
 			buffer.append(" " + (selectField.isAscendingOrder()?"ASC": "DESC") );
