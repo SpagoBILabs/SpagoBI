@@ -107,7 +107,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
     // Workaround: on IE, it takes a long time to destroy the stacked execution wizards.
     // See Sbi.settings.IE.destroyExecutionWizardWhenClosed on Settings.js for more information
     if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
-	    this.on('beforedestroy', function() {
+	    this.on('beforedestroy', function() {	    	
 	    	this.hide();
 			for (var i = 0; i < this.documentsStack.length; i++) {
 				var temp = this.documentsStack[i];
@@ -131,10 +131,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	}
 
 	, loadCrossNavigationTargetDocument: function( config ) {
-//	alert(config.target);
-	// alert("1 " + this.origDocumentTarget);
-	  this.origDocumentTarget = (this.origDocumentTarget === null)?config.target:this.origDocumentTarget;
-	 // alert("2 " + this.origDocumentTarget);
+	  //this.origDocumentTarget = (this.origDocumentTarget === null)?config.target:this.origDocumentTarget;
 		Ext.Ajax.request({
 	        url: this.services['getDocumentInfoService'],
 	        params: {'OBJECT_LABEL' : config.document.label, 'SUBOBJECT_NAME' : config.preferences.subobject.name},
@@ -265,7 +262,6 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		//save the original document
 		var oldDoc = this.activeDocument;
 		
-		//alert(config.preferences.parameters);
 		var formState = Ext.urlDecode(config.preferences.parameters);
 		for(p in formState) {
 			//alert(p + ' = ' + formState[p]);			
@@ -288,8 +284,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		}, this);
 		
 		
-		this.add(this.activeDocument);
-	
+		this.add(this.activeDocument);	
 		this.getLayout().setActiveItem(this.documentsStack.length -1);	
 		
 		this.activeDocument.execute();
@@ -396,15 +391,16 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
 		
-		
 		for(var i = this.documentsStack.length-1; i > b.stackIndex; i--) {
 			var el = this.documentsStack.pop();
 			this.remove(el, false);
 
 		    // Workaround: on IE, it takes a long time to destroy the stacked execution wizards.
 		    // See Sbi.settings.IE.destroyExecutionWizardWhenClosed on Settings.js for more information
-		    if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
+			if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
 		    	el.destroy();
+		    }else{
+		    	el.hide(); 
 		    }
 		}
 		
