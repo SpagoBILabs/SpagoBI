@@ -158,6 +158,8 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 						propertiesInitializer.addProperties(viewEntity);
 						entity.addSubEntity(viewEntity);
 						
+						addedViewsEntities.add(viewEntity);
+						
 						//Add node for subentities (using Entity Type matching)
 						for(IModelEntity modelEntity : allEntities){
 							logger.debug("Searched Entity type: "+entity.getType());
@@ -165,7 +167,10 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 							if (modelEntity.getType().equals(entity.getType())){
 								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
 								ModelViewEntity subViewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+								propertiesInitializer.addProperties(subViewEntity);
 								modelEntity.addSubEntity(subViewEntity);
+								
+								addedViewsEntities.add(subViewEntity);
 							}
 						}	
 					}
