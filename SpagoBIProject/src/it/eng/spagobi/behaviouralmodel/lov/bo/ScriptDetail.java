@@ -177,7 +177,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
-		result = ScriptManager.runScript(getScript(), bind, languageScript);   
+		ScriptManager sm = new ScriptManager();
+		result = sm.runScript(getScript(), bind, languageScript);   
 		// check if the result must be converted into the right xml sintax
 		boolean toconvert = checkSintax(result);
 		if(toconvert) { 
