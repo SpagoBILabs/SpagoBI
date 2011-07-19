@@ -460,7 +460,6 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	    );
 		
 		this.targetLayer.events.register("beforefeaturesadded", this, function(o) { 
-			alert('xxx: ' + o.features.length);
 			this.map.xfeatures = o.features;
 		}); 
 		
