@@ -72,8 +72,8 @@ Sbi.georeport.ContextFactory = function(){
 							if(!feature.layer.map.pieDimensions){
 								var mapObj = feature.layer.map;
 								mapObj.pieDimensions = new Object();
-								alert(feature.layer.name + ' = ' + feature.layer.features.length);
-								alert(mapObj.features + ' |-| ' + mapObj.xfeatures.length);
+								//alert(feature.layer.name + ' = ' + feature.layer.features.length);
+								//alert(mapObj.features + ' |-| ' + mapObj.xfeatures.length);
 								
 								var data =  mapObj.xfeatures;//mapObj.features;
 								for(row in data){
