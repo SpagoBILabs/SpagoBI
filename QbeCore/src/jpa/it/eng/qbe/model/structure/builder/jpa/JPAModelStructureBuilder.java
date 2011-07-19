@@ -164,7 +164,8 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 							logger.debug("Current Entity type: "+modelEntity.getType());
 							if (modelEntity.getType().equals(entity.getType())){
 								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
-								modelEntity.addSubEntity(viewEntity);
+								ModelViewEntity subViewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+								modelEntity.addSubEntity(subViewEntity);
 							}
 						}	
 					}
