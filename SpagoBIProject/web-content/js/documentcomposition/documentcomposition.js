@@ -23,6 +23,7 @@ var asUrls = new Object();
 var asTitleDocs = new Object();
 var asLinkedDocs = new Object();
 var asLinkedFields = new Object();
+var asLinkedCross = new Object();
 var asStylePanels = new Object();
 var numDocs = 0;
 
@@ -44,6 +45,9 @@ function setLinkedFields(pLinkedFields){
 	asLinkedFields = pLinkedFields;
 }
 
+function setLinkedCross(pLinkedCross){
+	asLinkedCross = pLinkedCross;
+}
 
 function setStylePanels(pStylePanels){
 	asStylePanels = pStylePanels;
@@ -80,9 +84,17 @@ function execCrossNavigation(windowName, label, parameters) {
 					var newUrl = "";
 					tmpUrl = "";
 					var finalUrl = "";
+					//checks the cross type (internal or external)
+					for (var fieldCross in asLinkedCross){
+						var totalCrossPar =  asLinkedCross[fieldCross];
+						var	typeCross = totalCrossPar[0];
+						var crossTypeDoc = fieldCross.substring(0, fieldCross.indexOf("__"));
+						if (crossTypeDoc == sbiLabelDocLinked){
+							break;
+						}
+					}
 					for (var fieldLabel in asLinkedFields){ 
 						var totalLabelPar =  asLinkedFields[fieldLabel];
-						//var labelPar 	= totalLabelPar[0].substring(totalLabelPar[0].indexOf('|')+1);
 						var	sbiLabelPar = totalLabelPar[0];
 						var sbiSubDoc 	= fieldLabel.substring(0, fieldLabel.indexOf("__"));
 	
@@ -93,13 +105,11 @@ function execCrossNavigation(windowName, label, parameters) {
 							 	finalUrl = newUrl[0];
 								tmpOldSbiSubDoc = sbiSubDoc;
 							}
-							var paramsNewValues = parameters.split("&");;
+							var paramsNewValues = parameters.split("&");
 							var tmpNewValue = "";
 							var tmpOldValue = "";	
 							if (paramsNewValues != null && paramsNewValues.length > 0) {
 								for (j = 0; j < paramsNewValues.length; j++) {
-									//var idPar = fieldLabel.substring(fieldLabel.indexOf("__")+2);
-									//sbiParMaster = asLinkedFields["SBI_LABEL_PAR_MASTER__" + idPar.substring(0,4)];
 									var idParSupp = "";
 									var idPar = fieldLabel.substring(fieldLabel.indexOf("__")+2);
 									idParSupp = idPar.substring(0,idPar.indexOf("__"))+"__";
@@ -139,8 +149,13 @@ function execCrossNavigation(windowName, label, parameters) {
 						asUrls[generalLabelDoc][0]=newUrl[0];
 						RE = new RegExp("&amp;", "ig");
 						var lastUrl = newUrl[0];
-						lastUrl = lastUrl.replace(RE, "&");
-						sendUrl(nameIframe,lastUrl);
+						lastUrl = lastUrl.replace(RE, "&");					
+						var msg = {
+								label: sbiLabelDocLinked
+							  , windowName: this.name//docLabel
+							  , typeCross: typeCross
+						  	  };						
+						sendUrl(nameIframe,lastUrl,msg);
 						reload = false; 
 					}
 				}//if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){
@@ -151,10 +166,18 @@ function execCrossNavigation(windowName, label, parameters) {
 	return;
 }
 
-function sendUrl(nameIframe, url){
-	//alert("SendURL - nameIframe: " + nameIframe +  " - url: "+ url);
-	//document.getElementById(nameIframe).src = url;
-	Ext.get(nameIframe).setSrc(url);
+function sendUrl(nameIframe, url, msg){
+	if (msg !== null && msg !== undefined && msg.typeCross === 'EXTERNAL'){
+		//EXTERNAL cross management
+		var params =  url.substring(url.indexOf("?")+1);
+		if (params.substring(0,1) === '&') params = params.substring(1);
+		msg.parameters = params;
+		msg.target = 'self';
+        sendMessage(msg, 'crossnavigation');
+	}else{
+		//INTERNAL cross management
+		Ext.get(nameIframe).setSrc(url);
+	}
 	return;	
 }
 
@@ -197,63 +220,7 @@ Ext.onReady(function() {
 		                ,border		: false //the border style should be defined into document template within the "style" tag
 						,height		: Number(heightPx)
 						,scrolling  : 'auto'	 //possible values: yes, no, auto  
-						/*
-						, listeners  : {
-				        	'message:crossnavigation' : {
-				        		fn: function(srcFrame, message){
-									alert('message:crossnavigation da doc composto');
-									try {
-										execCrossNavigation(message.data.windowName, message.data.label, message.data.parameters);
-									} catch (e) {alert(e); alert(e.description);} 
-				        		}
-				        		, scope: this
-				            }
-						}
-						*/
 				});
-				
-				/*
-				p.on('documentloaded', function() {
-				//p.on('domready', function() {
-					this.iframe.execScript("parent = document;", true);
-					var scriptFn = 	"parent.execCrossNavigation = function(d,l,p) {" +
-									"	alert('invio il messaggio');" +
-									"	try{" +
-									"		sendMessage({'label': l, parameters: p, windowName: d},'crossnavigation');" +
-									"	} catch (e) {alert(e); alert(e.description);}" +
-									"};";
-					this.iframe.execScript(scriptFn, true);
-					this.iframe.execScript("uiType = 'ext';", true);
-				}, p);
-				*/
-				
-				/*	
-					var p = new Ext.Panel({
-						id:'p'+i,
-				        bodyBorder : false,
-				        border:false,
-				        collapsible:true,
-				        height:Number(heightPx),
-				        bodyCfg: {
-							tag:'div',
-							cls:'x-panel-body',
-							children:[{
-								tag:'iframe',
-			      				src: asUrls[docLabel],
-			      				frameBorder:0,
-			      				width:'100%',
-			      				height:'100%',
-			      				id: 'iframe_' + strDocLabel,
-			      				name: 'iframe_' + strDocLabel,
-			      				style: {overflow:'auto'},
-			      				scrolling:'auto'  //possible values: yes, no, auto  
-			 				}]
-						},
-				        renderTo: 'divIframe_'+ strDocLabel
-					    });
-			    p.show(this);
-  			}
-  			*/
   	}}
 }); 
 

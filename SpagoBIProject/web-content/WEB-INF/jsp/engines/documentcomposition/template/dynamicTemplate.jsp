@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <!-- LIBS AJAX-->
 	<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
     <script type="text/javascript" src="<%=compositeJSDocumentUrl%>"></script>
+    <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionWizard.js")%>'></script>
 <!-- ENDLIBS -->
 
 <!-- ***************************************************************** -->
@@ -59,6 +60,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	var arTitleDocs = new Object();
 	var arLinkedDocs  = new Object();
 	var arLinkedFields  = new Object();
+	var arLinkedCross  = new Object();
 	var arStylePanels  = new Object();
  	<% //loop on documents
  	for (int i = 0; i < lstUrl.size(); i++){
@@ -86,15 +88,18 @@ for (int i=0; i<lstUrl.size(); i++){
 				 				String labelDocLinked = field.substring(0,field.indexOf("__"));
 				 				field = field.substring(field.indexOf("__")+2);
 				 				String label = "";
+				 				String crossType = "";
 				 				for(int x=0; x<lstDocLinked.size(); x++){
 				 					//label = (String)lstDocLinked.get("DOC_LABEL_LINKED__"+(i)+"__"+x);
 				 					label = (String)lstDocLinked.get("DOC_LABEL_LINKED__"+(i)+"__"+(j)+"__"+k);
+				 					crossType = (String)lstCrossLinked.get("DOC_CROSS_LINKED__"+(i)+"__"+(j)+"__"+k);
 				 					if (label != null && label.substring(label.indexOf("|")+1).equalsIgnoreCase(labelDocLinked)) break;
 				 				}
 				 				if (field != null && !field.equals("") ){	
 					%>
 					 					arLinkedDocs['<%=labelDoc +"__"+ i+"__"+ j+"__"+k%>'] = ['<%=label%>'];
 					 					arLinkedFields['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=field%>'];
+					 					arLinkedCross['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=crossType%>'];
 				 		<%     	}
 			 				}
 						}
@@ -106,6 +111,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	setDocs(arUrl, arTitleDocs);
 	setLinkedDocs(arLinkedDocs);
 	setLinkedFields(arLinkedFields);
+	setLinkedCross(arLinkedCross);
 	setStylePanels(arStylePanels);
 </script> 
 

@@ -311,7 +311,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	                		document: {'label': message.data.label}
 	            			, preferences: {
 	                			parameters: message.data.parameters
-	                			, subobject: {'name': message.data.subobject}
+	                		  , subobject: {'name': message.data.subobject}
 	                		}
 	            	    };
 	            	    if(message.data.target !== undefined){
@@ -323,9 +323,14 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	            	    }
 	            	    
 	                	// workaround for document composition with a svg map on IE: when clicking on the map, this message is thrown
-	                	// but we must invoke execCrossNavigation defined for document composition
-	                	if (Ext.isIE && this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE') {
-	                		srcFrame.dom.contentWindow.execCrossNavigation(message.data.windowName, message.data.label, message.data.parameters);
+	                	// but we must invoke execCrossNavigation defined for document composition, only if it's not an external cross navigation
+	                	if (Ext.isIE && this.executionInstance.document.typeCode == 'DOCUMENT_COMPOSITE') {	         
+	                		if (message.data.typeCross !== undefined && message.data.typeCross === "EXTERNAL"){
+	                			this.fireEvent('crossnavigation', config);
+	                		}
+	                		else {
+	                			srcFrame.dom.contentWindow.execCrossNavigation(message.data.windowName, message.data.label, message.data.parameters);
+	                		}
 	                	} else {
 	                		this.fireEvent('crossnavigation', config);
 	                	}
