@@ -83,7 +83,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 
 		if( hasBehaviour(QuerableBehaviour.class.getName()) ) { // Querable Behaviour
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
-			dataProxy.setStatement(querableBehaviour.getStatement());	
+			String stm = querableBehaviour.getStatement();
+			stm = stm.replaceAll("''", "'");
+			dataProxy.setStatement(stm);	
 		} 
 		
 		dataStore = dataProxy.load(dataReader); 
