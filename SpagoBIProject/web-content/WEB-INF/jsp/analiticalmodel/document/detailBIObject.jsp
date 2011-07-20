@@ -466,7 +466,8 @@ function saveDocument(goBack) {
 				</div>
 				
 			<%	
-			String url=GeneralUtilities.getSpagoBiHost()+GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + "?" + "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE";
+			String url=GeneralUtilities.getSpagoBiHost()+GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() + 
+					"?" + "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
 			 
 			String currDataSetLabel="";
 			Integer currDataSetId=null;
