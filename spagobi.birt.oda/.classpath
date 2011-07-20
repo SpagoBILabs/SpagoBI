@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/axis-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/axis-ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/cas-client-core-3.1.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/casclient.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commonj-twm.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-discovery-0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-logging-api-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/dom4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/eclipselink_2.1.2.v20101206-r8635.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ehcache-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/foo-commonj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/groovy-all-1.5.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/groovy.engine.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/hibernate3.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/javascript.engine.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javassist-3.12.0.GA.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javax.persistence_2.0.1.v201006031150.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/js.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/json.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr223.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jta-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mail-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/portlet-api-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spago-web-2.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-collections-3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/javassist-3.12.0.GA.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jta-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/hibernate3.6.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/qbecore.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spago-core-2.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/json.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-logging-api-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.classic_0.9.19.v20100519-1505.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.core_0.9.19.v20100419-1216.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback/ch.qos.logback.slf4j_0.9.19.v20100519-1910.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback/org.slf4j.api_1.5.11.v20100519-1910.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/axis-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/dom4j.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-discovery-0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saaj.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spago-core-2.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spago-web-2.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/wss4j-1.5.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xalan.jar"/>
@@ -47,7 +45,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/xmlsec-1.4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xstream-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spagobi-utils-3.0.jar" sourcepath="/SpagoBIUtils"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
