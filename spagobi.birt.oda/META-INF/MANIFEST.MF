@@ -52,7 +52,8 @@ Bundle-ClassPath: .,
  lib/jsr223.jar,
  lib/mail-1.4.jar,
  lib/portlet-api-1.0.jar,
- lib/spago-web-2.2.0.jar
+ lib/spago-web-2.2.0.jar,
+ lib/eclipselink_2.1.2.v20101206-r8635.jar
 Bundle-Activator: spagobi.birt.oda.Activator
 Bundle-Localization: plugin
 Export-Package: it.eng.spagobi.commons.constants,
