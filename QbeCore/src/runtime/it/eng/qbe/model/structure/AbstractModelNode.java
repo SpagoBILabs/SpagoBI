@@ -79,6 +79,7 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 			String parentViewName = entity.getPropertyAsString("parentView");
 			if(parentViewName != null) {
 				ModelViewEntity viewEntity = (ModelViewEntity)structure.getEntity(parentViewName);
+				parentViews.add(viewEntity);
 				nextEntity = viewEntity.getParent();
 			}else{
 				nextEntity = entity.getParent();
