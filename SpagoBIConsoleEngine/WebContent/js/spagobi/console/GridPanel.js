@@ -175,6 +175,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     
     
 	, resolveParameters: function(parameters, record, context, callback) {
+		
 		var results = {};  
 		var promptables;
 		
@@ -188,8 +189,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	    	var msgErr = ""; 
 	    	for (var i = 0, l = dynamicParams.length; i < l; i++) { 
 	    	 	var param = dynamicParams[i];              
-		              if (param.scope === 'dataset') {
-			               for(p in param) { 
+		              if (param.scope === 'dataset') {		            	  
+			               for(p in param) {
 			            	   if(p === 'scope') continue;
 			                   if(record.get(this.store.getFieldNameByAlias(param[p])) === undefined) {         
 			                    msgErr += 'Parameter "' + p + '" undefined into dataset.<p>';
@@ -249,13 +250,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	
 	//, execCrossNav: function(docConfig, index){
 	, execCrossNav: function(actionName, record, index, options){
-		
-		
 		var msg = {
 			label: options.document.label
-	    	, windowName: this.name				
-	    	, target: (options.target === 'new')? 'self': 'popup'						
-	    };
+	    	, windowName: this.name	||  parent.name // parent.name is used in document composition context			
+	    	, target: (options.target === 'new')? 'self': 'popup'
+	    	, typeCross: 'EXTERNAL' //for manage correctly the IE workaround in document composition context 
+	    }; 
 		
 		var callback = function(params){
 			var separator = '';
@@ -264,9 +264,14 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				msg.parameters += separator + p + '=' + params[p];
 				separator = '&';
 			}
-			sendMessage(msg, 'crossnavigation');
+			if (parent.sendMessage !== undefined) {
+				//document composition context
+				parent.sendMessage(msg, 'crossnavigation');
+			}else{
+				sendMessage(msg, 'crossnavigation');
+			}
 		};
-	    
+		
 		this.resolveParameters(options.document, record, this.executionContext, callback);
 		
 	}
