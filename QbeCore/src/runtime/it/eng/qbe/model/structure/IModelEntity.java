@@ -53,6 +53,7 @@ public interface IModelEntity extends IModelNode {
 		
 		public IModelField addNormalField(String fieldName);
 		public IModelField addKeyField(String fieldName);
+		public void addField(IModelField field);
 
 		public void addCalculatedField(ModelCalculatedField calculatedField);
 		public void deleteCalculatedField(String fieldName);
@@ -63,6 +64,8 @@ public interface IModelEntity extends IModelNode {
 		public void setPath(String path);
 		
 		public void setRole(String role);
-	
+		public void setRoot(IModelEntity root);
 		public void setType(String type);
+		
+		public IModelEntity clone(IModelEntity newParent, String parentEntity);
 }

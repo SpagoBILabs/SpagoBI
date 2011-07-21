@@ -33,5 +33,6 @@ public interface IModelField extends IModelNode {
 		public int getPrecision() ;
 		public void setPrecision(int precision);
 		public boolean isKey() ;
-		public void setKey(boolean key);	
+		public void setKey(boolean key);
+		public IModelField clone(IModelEntity newParent);	
 }

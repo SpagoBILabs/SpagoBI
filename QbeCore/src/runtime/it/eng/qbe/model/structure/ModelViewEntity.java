@@ -23,10 +23,13 @@ package it.eng.qbe.model.structure;
 
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewJoinDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelationshipDescriptor;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -63,6 +66,10 @@ public class ModelViewEntity extends ModelEntity {
 			}
 			if(parentEntity.getParent() == null) {
 				return parentEntity.getType() + ":" + fieldName;
+			}
+			String parentViewName = parentEntity.getPropertyAsString("parentView");
+			if(parentViewName!= null) {
+				return parentViewName+":"+parentEntity.getType() + ":" + getName();
 			}
 			return parentEntity.getUniqueName() + ":" + fieldName;
 		}
@@ -132,8 +139,9 @@ public class ModelViewEntity extends ModelEntity {
 					return parentEntity.getType() + ":" + fieldName;
 				}
 			} 
-			if(parentEntity.getParent() instanceof ModelViewEntity){
-				return parentEntity.getType() + ":" + fieldName;
+			String parentViewName = parentEntity.getPropertyAsString("parentView");
+			if(parentViewName!= null) {
+				return parentViewName+":"+parentEntity.getType() + ":" + getName();
 			}
 			return parentEntity.getUniqueName() + ":" + fieldName;
 		}
@@ -143,8 +151,7 @@ public class ModelViewEntity extends ModelEntity {
 			
 			if (!isOutbound){
 				sourceEntity = structure.getRootEntity(modelName, relationshipDescriptor.getSourceEntityUniqueName());
-				(ModelViewEntity.this).setParent(sourceEntity);
-				
+								
 				if (relationshipDescriptor.isSourceEntityView()){
 					//empty
 					sourceFields = new ArrayList<IModelField>();
@@ -191,7 +198,7 @@ public class ModelViewEntity extends ModelEntity {
 				}
 			} else {
 				destinationEntity = structure.getRootEntity(modelName, relationshipDescriptor.getDestinationEntityUniqueName());
-				destinationEntity.setParent((ModelViewEntity.this));
+				
 				
 				if (relationshipDescriptor.isDestinationEntityView()){
 					//empty
@@ -212,6 +219,7 @@ public class ModelViewEntity extends ModelEntity {
 						destinationFields.add(f);
 					}
 				}
+				//destinationEntity.setParent((ModelViewEntity.this));
 				sourceFields = new ArrayList<IModelField>();
 				if (!relationshipDescriptor.isDestinationEntityView()){
 					List<String> sourceColumns = relationshipDescriptor.getSourceColumns();
@@ -237,10 +245,6 @@ public class ModelViewEntity extends ModelEntity {
 					}
 				}
 			}
-		}
-		
-		private void addRelationSide(){
-			
 		}
 		
 		public IModelEntity getSourceEntity() {
@@ -269,11 +273,10 @@ public class ModelViewEntity extends ModelEntity {
 	// COSTRUCTORS 
 	// =========================================================================
 
-	public ModelViewEntity(IModelViewEntityDescriptor view,  String modelName, IModelStructure structure) throws Exception{
-		super(null, null, null, null, structure);
 	
-		setName( view.getName() );
-		setType( view.getType() );
+	
+	public ModelViewEntity(IModelViewEntityDescriptor view,  String modelName, IModelStructure structure, IModelEntity parent) throws Exception{
+		super(view.getName(), null,  view.getType(), parent , structure);
 		
 		viewDescriptor = view;
 		this.modelName = modelName;
@@ -284,33 +287,38 @@ public class ModelViewEntity extends ModelEntity {
 		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
 		for(String innerEntityUniqueName : innerEntityUniqueNames) {
 			IModelEntity e = structure.getRootEntity(modelName, innerEntityUniqueName);
-			entities.add(e);
 			List<IModelEntity> innerEntitySubEntities = e.getSubEntities();
+			IModelEntity clonedEntity = e.clone(null, getUniqueName());
+			entities.add(clonedEntity);
 			for(IModelEntity innerEntitySubEntity : innerEntitySubEntities) {
-				subEntities.put(innerEntitySubEntity.getUniqueName(), innerEntitySubEntity);
+				IModelEntity subEntity = (innerEntitySubEntity.clone(clonedEntity, null));
+				subEntities.put(subEntity.getUniqueName(), subEntity);
 			}
-			
 		}
-		
+				
 		joins = new ArrayList<Join>();
 		List<IModelViewJoinDescriptor> joinDescriptors = view.getJoinDescriptors();
 		for(IModelViewJoinDescriptor joinDescriptor : joinDescriptors) {
 			joins.add( new Join(joinDescriptor, modelName, structure) );
 		}
-		
+
 		viewRelationships = new ArrayList<ViewRelationship>();
 		List<IModelViewRelationshipDescriptor> relationshipDescriptors = view.getRelationshipDescriptors();
 		for(IModelViewRelationshipDescriptor relationshipDescriptor : relationshipDescriptors) {
 			viewRelationships.add( new ViewRelationship(relationshipDescriptor, modelName, structure) );
 		}
-		
+
 		//only outbound relationship from view are added as subentities
+		//String subEntityPath;
 		for(ViewRelationship relationship : viewRelationships){
-			if (relationship.isOutbound())
-				subEntities.put(relationship.getDestinationEntity().getUniqueName(),relationship.getDestinationEntity());
+			if (relationship.isOutbound()){
+				IModelEntity me = (relationship.getDestinationEntity()).clone(this, null);
+				this.addSubEntity(me);
+			}
 		}
 		
 	}
+
 	
 	// =========================================================================
 	// ACCESORS 
@@ -414,6 +422,33 @@ public class ModelViewEntity extends ModelEntity {
 				}
 			} 
 		}
-	}
+	}	
 	
+	public IModelEntity clone(IModelEntity newParent, String parentView){
+		try {
+			ModelViewEntity newModelEntity = new ModelViewEntity(viewDescriptor,  name, structure,  newParent);
+
+			if(newParent==null || newParent.getRoot()==null){
+				newModelEntity.setRoot(newParent);
+			}else{
+				newModelEntity.setRoot(newParent.getRoot());
+			}
+
+			Map<String,Object> properties2 = new HashMap<String, Object>();
+			for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+				String key= (String)iterator.next();
+				String o = (String)properties.get(key);
+				properties2.put(key.substring(0), o.substring(0));
+			}
+			properties2.put("parentView", parentView);
+			
+			newModelEntity.setProperties(properties2);
+
+			return newModelEntity;
+		} catch (Exception e) {
+			logger.error("Error cloning the view"+name);
+			throw new SpagoBIRuntimeException("Error cloning the view"+name, e);
+		}
+
+	}
 }
