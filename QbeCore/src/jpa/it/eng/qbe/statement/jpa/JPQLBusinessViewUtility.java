@@ -201,8 +201,8 @@ public class JPQLBusinessViewUtility {
 			relation = relations.get(i);
 			outEntity = relation.getSourceEntity();
 			inEntity = relation.getDestinationEntity();
-			if( (view.getInnerEntities().contains(inEntity) && parent!=null && outEntity.equals(parent)) || //income relation
-				(view.getInnerEntities().contains(outEntity) && child!=null && inEntity.equals(child))){    //outcome relation
+			if( (view.getInnerEntities().contains(inEntity) && parent!=null && outEntity.getType().equals(parent.getType())) || //income relation
+				(view.getInnerEntities().contains(outEntity) && child!=null && inEntity.getType().equals(child.getType()))){    //outcome relation
 				//build the relation constraints
 				viewRelations.addAll(buildRelationConditionString(relation.getSourceFileds(), relation.getDestinationFileds(), entityAliases, query));
 			}
