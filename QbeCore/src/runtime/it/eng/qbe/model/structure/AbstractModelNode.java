@@ -21,6 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.model.structure;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -64,8 +68,27 @@ public abstract class AbstractModelNode extends AbstractModelObject implements I
 		}
 	}
 	
-	
-	
+		
+	protected List<ModelViewEntity> getParentViews(IModelEntity entity){
+		List<ModelViewEntity> parentViews = new ArrayList<ModelViewEntity>();
+		IModelEntity nextEntity;
+		if(entity instanceof ModelViewEntity){
+			parentViews.add((ModelViewEntity)entity);
+			nextEntity = entity.getParent();
+		}else{
+			String parentViewName = entity.getPropertyAsString("parentView");
+			if(parentViewName != null) {
+				ModelViewEntity viewEntity = (ModelViewEntity)structure.getEntity(parentViewName);
+				nextEntity = viewEntity.getParent();
+			}else{
+				nextEntity = entity.getParent();
+			}
+		}
+		if(nextEntity!=null){
+			parentViews.addAll(getParentViews(nextEntity));
+		}
+		return parentViews;
+	}
 	
 	
 }

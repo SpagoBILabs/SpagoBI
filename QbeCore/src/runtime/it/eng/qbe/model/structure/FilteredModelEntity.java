@@ -304,5 +304,12 @@ public class FilteredModelEntity implements IModelEntity{
 		IModelEntity clonedWrapp = wrappedModelEntity.clone(newParent, parentView);
 		return new FilteredModelEntity(clonedWrapp, dataSource, qbeTreeFilter);
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#getParentViews()
+	 */
+	public List<ModelViewEntity> getParentViews() {
+		return wrappedModelEntity.getParentViews();
+	}
 	
 }
