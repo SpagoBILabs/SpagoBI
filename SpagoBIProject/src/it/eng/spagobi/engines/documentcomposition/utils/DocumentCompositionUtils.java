@@ -43,6 +43,7 @@ import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -300,7 +301,8 @@ public class DocumentCompositionUtils {
 					if (typeParam != null && typeParam.indexOf("IN")>=0) {
 						String tmpKey = "sbi_par_label_param_"+document.getNumOrder()+"_"+cont;
 						key = lstParams.getProperty(tmpKey);
-						if (key == null) break;
+						if (key == null && !document.getTypeCross().equalsIgnoreCase(Constants.CROSS_EXTERNAL)) break;
+
 						values = (List)requestSB.getAttributeAsList(key);
 						//if value isn't defined, check if there is a value into the instance(there is when a document is called from a refresh o viewpoint mode) 
 						if(values == null || values.size() == 0 || ((String)values.get(0)).equals("")){
@@ -337,9 +339,6 @@ public class DocumentCompositionUtils {
 								}else{
 									paramUrl += ";" + singleValue;
 								}
-								
-								/*if (singleValue != null && !singleValue.equals(""))
-									paramUrl += "&" + key + "=" + singleValue;*/
 							}
 						}
 						

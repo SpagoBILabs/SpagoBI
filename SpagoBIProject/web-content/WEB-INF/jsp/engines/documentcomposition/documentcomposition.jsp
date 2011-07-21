@@ -62,7 +62,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
      
     // put in session 
     if(docConfig!=null){
-    session.setAttribute("DOC_COMP_CONF",docConfig);
+    	session.setAttribute("DOC_COMP_CONF",docConfig);
     }
     
     //get template file

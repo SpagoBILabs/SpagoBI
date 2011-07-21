@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.documentcomposition.configuration;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.commons.dao.DAOFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -730,9 +733,9 @@ public class DocumentCompositionConfiguration {
 						for (int j=0; j<numDocLinked.intValue(); j++){
 
 							String paramLinked = (paramsDoc.get("param_linked_"+(numDoc)+"_"+i+"_"+j)==null)?"":(String)paramsDoc.get("param_linked_"+(numDoc)+"_"+i+"_"+j);
+							String typeCross = getCrossType(paramLinked);
 							String[] params = paramLinked.split(",");
 							Document linkedDoc = null;
-							String typeCross = null;
 
 							//loop on parameters of document linked
 							for (int k=0; k<params.length; k++) {
@@ -742,12 +745,15 @@ public class DocumentCompositionConfiguration {
 								if (labelDocLinked.trim().startsWith("refresh_doc_linked")){
 									//get document linked 
 									linkedDoc = getDocument(labelDocLinked.substring(labelDocLinked.indexOf("=")+1));
-									//lstDocLinked.put("DOC_LABEL_LINKED__"+numDoc+"__"+j, linkedDoc.getSbiObjLabel() + "|"+ linkedDoc.getLabel());
+									if (linkedDoc == null && typeCross.equalsIgnoreCase(Constants.CROSS_EXTERNAL)){
+										//defines a new doclinked only for the external cross
+										linkedDoc = createExternalDocument(paramLinked);										
+									}
 
-								}else if (labelDocLinked.trim().startsWith("type_cross_linked")){
+								}/*else if (labelDocLinked.trim().startsWith("type_cross_linked")){
 									//get type cross (External or internal) for document linked 
-									typeCross = labelDocLinked.substring(labelDocLinked.indexOf("=")+1);																		
-								}
+									typeCross = labelDocLinked.substring(labelDocLinked.indexOf("=")+1);										
+								}*/
 								else if (labelDocLinked.trim().startsWith("refresh_par_linked")){
 									String tmpLabelLinked = labelDocLinked.substring(labelDocLinked.indexOf("=")+1);
 									HashMap paramsDocLinked = getParametersForDocument(linkedDoc.getSbiObjLabel());
@@ -755,7 +761,8 @@ public class DocumentCompositionConfiguration {
 									for (int x=0; x< paramsDocLinked.size(); x++){
 										String sbiLabelPar = (paramsDocLinked.get("sbi_par_label_param_"+numLinked+"_"+x)==null)?"":(String)paramsDocLinked.get("sbi_par_label_param_"+(numLinked)+"_"+x);
 										//String labelPar = (paramsDocLinked.get("label_param_"+numLinked+"_"+x)==null)?"":(String)paramsDocLinked.get("label_param_"+(numLinked)+"_"+x);
-										if (sbiLabelPar != null && !sbiLabelPar.equals("") &&sbiLabelPar.equalsIgnoreCase(tmpLabelLinked)){
+										if ((sbiLabelPar != null && !sbiLabelPar.equals("") && sbiLabelPar.equalsIgnoreCase(tmpLabelLinked)) ||
+												typeCross != null && typeCross.equalsIgnoreCase(Constants.CROSS_EXTERNAL)){
 											lstDocLinked.put("DOC_LABEL_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel());
 											lstFieldLinked.put("DOC_FIELD_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel()+"__"+sbiLabelPar );
 											lstCrossLinked.put("DOC_CROSS_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, typeCross );
@@ -1015,6 +1022,74 @@ public class DocumentCompositionConfiguration {
 	public void setVideoWidth(Integer videoWidth) {
 		this.videoWidth = videoWidth;
 	}
+	
+	private Document createExternalDocument (String params){
+		//the input parameter params contains only the configuration of the refreshed parameters, others params are added post
+		Document toReturn = new Document();	
+		String objLabel = "";
+		int idxPar = 0; 
+		String[] attributes = params.split(",");
+		//set the number that identify the document within of hash table
+		int idxDoc = documentsMap.size();
+		toReturn.setNumOrder(idxDoc);	
+		Properties param = new Properties();
+		//loop on attributes for create a document for external url
+		for (int j=0; j<attributes.length; j++) {
+			String label = attributes[j];
+			label = label.replace("{", "");
+			label = label.replace("}", "");
+			if (label.trim().startsWith("refresh_doc_linked")){
+				objLabel = label.substring(label.indexOf("=")+1);
+				toReturn.setSbiObjLabel(objLabel);				
+			}
+			if (label.trim().startsWith("refresh_par_linked")){
+				param.setProperty("sbi_par_label_param_"+idxDoc+"_"+idxPar, label.substring(label.indexOf("=")+1));
+			}
+			if (label.trim().startsWith("default_value_linked")){
+				param.setProperty("default_value_param_"+idxDoc+"_"+idxPar, label.substring(label.indexOf("=")+1));
+			}
+			param.setProperty("type_par_"+idxDoc+"_"+idxPar, "IN");
+			
+		}
+		idxPar++;
+		//add other input parameter of the crossed doc not refreshed (will get values by the request)
+		try{
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
+			List objParams = obj.getBiObjectParameters();
+			for (int j=0; j<objParams.size(); j++) {
+				BIObjectParameter par = (BIObjectParameter)objParams.get(j);
+				if (!param.containsValue(par.getParameterUrlName())) {
+					param.setProperty("sbi_par_label_param_"+idxDoc+"_"+idxPar, par.getParameterUrlName());
+					param.setProperty("default_value_param_"+idxDoc+"_"+idxPar, "");
+					param.setProperty("type_par_"+idxDoc+"_"+idxPar, "IN");
+					idxPar++;
+				}
+			}
+		}catch(Exception ex){
+			logger.error("Error while create external document: " + ex);
+			return null;
+		}
 
+		toReturn.setTypeCross(Constants.CROSS_EXTERNAL);
+		toReturn.setParams(param);
+		addDocument(toReturn);
+		return toReturn;
+	}
 
+   private String getCrossType(String paramsAttr){
+	   String[] params = paramsAttr.split(",");
+	   String toReturn  = Constants.CROSS_INTERNAL;
+
+		//loop on parameters
+		for (int k=0; k<params.length; k++) {
+			String label = params[k];
+			label = label.replace("{", "");
+			label = label.replace("}", "");
+			if (label.trim().startsWith("type_cross_linked")){
+				toReturn = label.substring(label.indexOf("=")+1);
+				break;
+			}
+		}
+		return toReturn;
+   }
 }
