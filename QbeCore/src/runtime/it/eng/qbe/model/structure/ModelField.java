@@ -20,6 +20,10 @@
  **/
 package it.eng.qbe.model.structure;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import it.eng.spagobi.utilities.objects.Couple;
 
 
@@ -42,7 +46,7 @@ public class ModelField extends AbstractModelNode implements IModelField {
 		initProperties();
 	}
 	
-	public ModelField(String name, ModelEntity parent) {
+	public ModelField(String name, IModelEntity parent) {
 		setStructure(parent.getStructure());
 		setId( getStructure().getNextId() );		
 		setName(name);
@@ -51,7 +55,12 @@ public class ModelField extends AbstractModelNode implements IModelField {
 	}
 
 	public String getUniqueName() {
-		if(getParent().getParent() == null || getParent().getParent() instanceof ModelViewEntity) {
+		
+		String parentViewName = getParent().getPropertyAsString("parentView");
+		if(parentViewName!= null) {
+			return parentViewName+":"+getParent().getType() + ":" + getName();
+		}
+		if(getParent().getParent() == null) {
 			return getParent().getType() + ":" + getName();
 		}
 		return getParent().getUniqueName() + ":" + getName();
@@ -138,22 +147,26 @@ public class ModelField extends AbstractModelNode implements IModelField {
 	}
 
 
-
-
-
-
-
-
-	/*
-	public String getDatamartName() {
-		return datamartName;
+	public IModelField clone(IModelEntity newParent){
+		IModelField field = new ModelField(name, newParent);
+		field.setKey(this.key);
+		field.setType(this.type);
+		field.setLength(this.length);
+		field.setPrecision(this.precision);
+		Map<String,Object> properties2 = new HashMap<String, Object>();
+		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+			String key= (String)iterator.next();
+			String o = (String)properties.get(key);
+			if(o==null){
+				properties2.put(key.substring(0), null);
+			}else{
+				properties2.put(key.substring(0), o.substring(0));
+			}
+			
+		}
+		field.setProperties(properties2);
+		return field;
 	}
-
-
-	public void setDatamartName(String datamartName) {
-		this.datamartName = datamartName;
-	}
-	*/
 
 
 	

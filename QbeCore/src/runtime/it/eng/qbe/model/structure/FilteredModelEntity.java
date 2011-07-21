@@ -280,5 +280,29 @@ public class FilteredModelEntity implements IModelEntity{
 	public IModelEntity getPathParent() {
 		return wrappedModelEntity.getPathParent();
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelEntity#addField(it.eng.qbe.model.structure.IModelField)
+	 */
+	public void addField(IModelField field) {
+		wrappedModelEntity.addField(field);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelEntity#setRoot(it.eng.qbe.model.structure.IModelEntity)
+	 */
+	public void setRoot(IModelEntity root) {
+		wrappedModelEntity.setRoot(root);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelEntity#clone(it.eng.qbe.model.structure.IModelEntity)
+	 */
+	public IModelEntity clone(IModelEntity newParent, String parentView) {
+		IModelEntity clonedWrapp = wrappedModelEntity.clone(newParent, parentView);
+		return new FilteredModelEntity(clonedWrapp, dataSource, qbeTreeFilter);
+	}
 	
 }

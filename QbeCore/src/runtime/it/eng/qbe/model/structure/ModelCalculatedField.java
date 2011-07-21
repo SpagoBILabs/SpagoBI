@@ -43,7 +43,7 @@ public class ModelCalculatedField extends ModelField {
 		this.inLine = inLine;
 	}
 	
-	public ModelCalculatedField(String name, ModelEntity parent, String type, String expression) {
+	public ModelCalculatedField(String name, IModelEntity parent, String type, String expression) {
 		super(name, parent);
 		setType(type);
 		setExpression(expression);
@@ -63,6 +63,16 @@ public class ModelCalculatedField extends ModelField {
 
 	public boolean isInLine() {
 		return inLine;
+	}
+
+	public void setInLine(boolean inLine) {
+		this.inLine = inLine;
+	}
+	
+	public IModelField clone(IModelEntity newParent){
+		IModelField field = new ModelCalculatedField(expression, newParent, getType(), expression);
+		field.setProperties(properties);
+		return field;
 	}
 	
 	

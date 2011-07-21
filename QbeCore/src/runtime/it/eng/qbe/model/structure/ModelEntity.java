@@ -67,6 +67,31 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 		initProperties();
 	}
 	
+	public ModelEntity(String name, String role, String type , IModelEntity parent,	IModelStructure structure) {
+		
+		setStructure( structure );
+		
+		setId ( structure.getNextId() );
+		setName( name );		
+		setRole( role );
+		setType( type );
+		
+		String thisPath = "";
+		if(parent != null) {
+			thisPath = getName();
+			if(!parent.getPath().equalsIgnoreCase("")) {
+				thisPath = parent.getPath() + "." + thisPath;
+			}
+		}
+		this.path = thisPath;
+		this.parent = parent;
+		this.fields = new HashMap<String,IModelField>();
+		this.calculatedFields = new HashMap<String, ModelCalculatedField>();
+		this.subEntities = new HashMap<String,IModelEntity>();
+		
+		initProperties();
+	}
+	
 	// =========================================================================
 	// ACCESORS 
 	// =========================================================================
@@ -100,7 +125,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 	}
 	
 	
-	private void addField(IModelField field) {
+	public void addField(IModelField field) {
 		fields.put(field.getUniqueName(), field);
 		getStructure().addField(field);
 	}
@@ -361,6 +386,43 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 
 	public void setRoot(IModelEntity root) {
 		this.root = root;
+	}
+	
+	public IModelEntity clone(IModelEntity newParent, String parentView){
+		
+		IModelEntity newModelEntity = new ModelEntity(name, role, type, newParent, structure);
+		if(newParent==null || newParent.getRoot()==null){
+			newModelEntity.setRoot(newParent);
+		}else{
+			newModelEntity.setRoot(newParent.getRoot());
+		}
+		
+		
+		//newModelEntity.setProperties(properties);
+		
+		Map<String,Object> properties2 = new HashMap<String, Object>();
+		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+			String key= (String)iterator.next();
+			String o = (String)properties.get(key);
+			properties2.put(key.substring(0), o.substring(0));
+		}
+		properties2.put("parentView", parentView);
+				
+		newModelEntity.setProperties(properties2);
+		
+		List<IModelField> fields = this.getNormalFields();
+		for(int i=0; i<fields.size(); i++){
+			newModelEntity.addField(fields.get(i).clone(newModelEntity));
+		}
+		List<ModelCalculatedField> calculatedFields = this.getCalculatedFields();
+		for(int i=0; i<calculatedFields.size(); i++){
+			newModelEntity.addCalculatedField((ModelCalculatedField)calculatedFields.get(i).clone(newModelEntity));
+		}
+		List<IModelEntity> subEntities = getSubEntities();
+		for(int i=0; i<subEntities.size(); i++){
+			newModelEntity.addSubEntity(subEntities.get(i).clone(newModelEntity, null));
+		}
+		return newModelEntity;
 	}
 
 	

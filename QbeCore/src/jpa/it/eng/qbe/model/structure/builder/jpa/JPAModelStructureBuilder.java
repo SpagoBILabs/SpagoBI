@@ -124,15 +124,10 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				for (int i=0; i<list.size(); i++){
 					IModelViewEntityDescriptor viewDescriptor = list.get(i);
 
-					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
+					ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, null);
 					addedViewsEntities.add(viewEntity);
 					propertiesInitializer.addProperties(viewEntity);
 					modelStructure.addRootEntity(modelName, viewEntity);
-					
-					String viewEntityUniqueName = viewEntity.getUniqueName();
-					for(IModelEntity e : viewEntity.getInnerEntities()) {
-						e.getProperties().put("parentView", viewEntityUniqueName);
-					}
 				}
 			}
 			
@@ -153,24 +148,20 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 						logger.debug("Source Entity Unique name: "+entity.getUniqueName());
 						
 						//Add node for first level entities (using UniqueName)
-						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
-						String viewEntityUniqueName = viewEntity.getUniqueName();
+						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
 						propertiesInitializer.addProperties(viewEntity);
 						entity.addSubEntity(viewEntity);
-						
-						addedViewsEntities.add(viewEntity);
 						
 						//Add node for subentities (using Entity Type matching)
 						for(IModelEntity modelEntity : allEntities){
 							logger.debug("Searched Entity type: "+entity.getType());
 							logger.debug("Current Entity type: "+modelEntity.getType());
 							if (modelEntity.getType().equals(entity.getType())){
+								ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
+								propertiesInitializer.addProperties(viewEntitySub);
 								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
-								ModelViewEntity subViewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure);
-								propertiesInitializer.addProperties(subViewEntity);
-								modelEntity.addSubEntity(subViewEntity);
-								
-								addedViewsEntities.add(subViewEntity);
+								modelEntity.addSubEntity(viewEntitySub);
+								addedViewsEntities.add(viewEntitySub);
 							}
 						}	
 					}
