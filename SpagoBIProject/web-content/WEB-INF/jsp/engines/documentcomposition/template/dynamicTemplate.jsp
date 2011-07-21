@@ -39,12 +39,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <!-- ***************************************************************** -->
 <!-- ***************************************************************** -->
 <%
+List labelDocs = new ArrayList();
 for (int i=0; i<lstUrl.size(); i++){
 	String styleDoc = (String)lstStyle.get("STYLE_DOC__"+i);
 	String totalSbiDocLabel = (String)lstUrlParams.get("SBI_DOC_LABEL__"+(i));
 	String labelDoc = "";
 	if (totalSbiDocLabel != null && !totalSbiDocLabel.equals("")){
 		labelDoc = totalSbiDocLabel.substring(totalSbiDocLabel.indexOf("|")+1);
+		labelDocs.add(labelDoc);
 	}
 %>
  
@@ -100,7 +102,24 @@ for (int i=0; i<lstUrl.size(); i++){
 					 					arLinkedDocs['<%=labelDoc +"__"+ i+"__"+ j+"__"+k%>'] = ['<%=label%>'];
 					 					arLinkedFields['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=field%>'];
 					 					arLinkedCross['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=crossType%>'];
-				 		<%     	}
+					 <%							 					
+				 		     		//adds the url of the linked doc if itsn't already presents into arUrl 
+	 								//(tipical case of EXTERNAL cross on a document that doesn't present into the composite)
+	 								boolean isPresents = false;
+	 								for(int z=0; z<labelDocs.size(); z++){
+	 									if (((String)labelDocs.get(z)).equalsIgnoreCase(label)){
+	 										isPresents = true;
+	 										break;
+	 									}
+	 								}
+	 								if (!isPresents) {	 									
+	 									String extUrl = DocumentCompositionUtils.getExecutionUrl(label, aSessionContainer, aRequestContainer.getServiceRequest());
+	 									extUrl = extUrl.substring(extUrl.indexOf("|")+1);
+	 								%>	 								 
+	 									arUrl['EXT__<%=label%>'] = ['<%=extUrl%>'];
+	 								<%
+	 								}
+				 				}
 			 				}
 						}
 	 				}

@@ -93,6 +93,7 @@ function execCrossNavigation(windowName, label, parameters) {
 							break;
 						}
 					}
+
 					for (var fieldLabel in asLinkedFields){ 
 						var totalLabelPar =  asLinkedFields[fieldLabel];
 						var	sbiLabelPar = totalLabelPar[0];
@@ -101,39 +102,75 @@ function execCrossNavigation(windowName, label, parameters) {
 						if (sbiSubDoc == sbiLabelDocLinked){
 							if (tmpOldSbiSubDoc != sbiSubDoc){
 								newUrl = asUrls[sbiSubDoc]; //final url
+								if (newUrl === undefined ) {
+									//check if the url is an external type
+									newUrl = asUrls["EXT__" + sbiSubDoc]; 
+								}
 							 	tmpUrl = newUrl[0].substring(newUrl[0].indexOf("?")+1);
 							 	finalUrl = newUrl[0];
 								tmpOldSbiSubDoc = sbiSubDoc;
 							}
 							var paramsNewValues = parameters.split("&");
 							var tmpNewValue = "";
+							var tmpNewLabel = "";
 							var tmpOldValue = "";	
+							var tmpOldLabel = "";								
 							if (paramsNewValues != null && paramsNewValues.length > 0) {
 								for (j = 0; j < paramsNewValues.length; j++) {
-									var idParSupp = "";
-									var idPar = fieldLabel.substring(fieldLabel.indexOf("__")+2);
-									idParSupp = idPar.substring(0,idPar.indexOf("__"))+"__";
-									idParSupp = idParSupp+idPar.substring(idParSupp.length,idPar.indexOf("__",idParSupp.length));
-									sbiParMaster = asLinkedFields["SBI_LABEL_PAR_MASTER__" + idParSupp];
 									tmpNewValue = paramsNewValues[j];
-									if (tmpNewValue.substring(0, tmpNewValue.indexOf("=")) == sbiParMaster){
-										reload = true; //reload only if document target has the parameter inline
-										tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
-										var paramsOldValues = null;
-									 	paramsOldValues = tmpUrl.split("&");
+									tmpNewLabel = tmpNewValue.substring(0,tmpNewValue.indexOf("="));
+									var paramsOldValues = null;
+								 	paramsOldValues = tmpUrl.split("&");
+								 	//EXTERNAL navigation
+									if (typeCross === 'EXTERNAL'){
 										if (paramsOldValues != null && paramsOldValues.length > 0) {
 											for (k = 0; k < paramsOldValues.length; k++) {
-												//gets old value of parameter:
-												if (paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("=")) == sbiLabelPar){
+												tmpOldLabel = paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("="));
+												//replace all old values of parameter:											
+												if (tmpOldLabel == tmpNewLabel){
+													reload = true; 
+													tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
 													tmpOldValue = paramsOldValues[k] ;
 													tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
-													if (tmpOldValue != "" && tmpNewValue != ""){
+													if ( tmpNewValue != ""){
 													    if (tmpNewValue == "%") tmpNewValue = "%25";
-														finalUrl = finalUrl.replace(sbiLabelPar+"="+tmpOldValue, sbiLabelPar+"="+tmpNewValue);
+														finalUrl = finalUrl.replace(tmpOldLabel+"="+tmpOldValue, tmpNewLabel+"="+tmpNewValue);
 														newUrl[0] = finalUrl;
 														tmpOldValue = "";
 														tmpNewValue = "";
-														break;
+														break;		
+													}
+												}
+											}
+										}
+									}
+									else{
+										//old management (INTERNAL navigation)
+										var idParSupp = "";
+										var idPar = fieldLabel.substring(fieldLabel.indexOf("__")+2);
+										idParSupp = idPar.substring(0,idPar.indexOf("__"))+"__";
+										idParSupp = idParSupp+idPar.substring(idParSupp.length,idPar.indexOf("__",idParSupp.length));
+										sbiParMaster = asLinkedFields["SBI_LABEL_PAR_MASTER__" + idParSupp];
+	
+										if ((tmpNewValue.substring(0, tmpNewValue.indexOf("=")) == sbiParMaster) ){
+											reload = true; //reload only if document target has the parameter inline
+											tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
+											
+											if (paramsOldValues != null && paramsOldValues.length > 0) {
+												for (k = 0; k < paramsOldValues.length; k++) {
+													tmpOldLabel = paramsOldValues[k].substring(0, paramsOldValues[k].indexOf("="));
+													//gets old value of parameter:											
+													if (tmpOldLabel == sbiLabelPar){
+														tmpOldValue = paramsOldValues[k] ;
+														tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
+														if (tmpOldValue != "" && tmpNewValue != ""){
+														    if (tmpNewValue == "%") tmpNewValue = "%25";
+															finalUrl = finalUrl.replace(sbiLabelPar+"="+tmpOldValue, sbiLabelPar+"="+tmpNewValue);															
+															newUrl[0] = finalUrl;
+															tmpOldValue = "";
+															tmpNewValue = "";
+															break;
+														}
 													}
 												}
 											}
@@ -146,7 +183,11 @@ function execCrossNavigation(windowName, label, parameters) {
 					} //for (var fieldLabel in asLinkedFields){ 	
 					//updated general url  with new values
 					if (reload){
-						asUrls[generalLabelDoc][0]=newUrl[0];
+						if (asUrls[generalLabelDoc] !== undefined){
+							asUrls[generalLabelDoc][0]=newUrl[0];
+						}else{
+							asUrls["EXT__" + generalLabelDoc][0]=newUrl[0];
+						}
 						RE = new RegExp("&amp;", "ig");
 						var lastUrl = newUrl[0];
 						lastUrl = lastUrl.replace(RE, "&");					
@@ -196,31 +237,33 @@ function pause(interval)
 //create panels for each document
 Ext.onReady(function() {  
 	if (numDocs > 0){   
-  			for (var docLabel in asUrls){ 			
-  				var totalDocLabel=docLabel;	
-  				var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
-  				//gets style (width and height)
-  				var style = asStylePanels[strDocLabel];
-  				var titleDoc = asTitleDocs[strDocLabel];
-				var widthPx = "";
-				var heightPx = "";
-				if (style != null){
-					widthPx = style[0].substring(0, style[0].indexOf("|"));
-					heightPx = style[0].substring(style[0].indexOf("|")+1);
-					widthPx = widthPx.substring(widthPx.indexOf("WIDTH_")+6);
-		       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
-				}
-				//create panel with iframe
-				var p = new  Ext.ux.ManagedIframePanel({
-						frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
-						,renderTo   : 'divIframe_'+ strDocLabel
-		                ,title      : (titleDoc==null || titleDoc== "")?null:titleDoc
-		                ,defaultSrc : asUrls[docLabel]+""
-		                ,loadMask   : true//(Ext.isIE)?true:false
-		                ,border		: false //the border style should be defined into document template within the "style" tag
-						,height		: Number(heightPx)
-						,scrolling  : 'auto'	 //possible values: yes, no, auto  
-				});
+  			for (var docLabel in asUrls){ 	
+  				if (docLabel.substring(0,5) !== 'EXT__'){
+	  				var totalDocLabel=docLabel;	
+	  				var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
+	  				//gets style (width and height)
+	  				var style = asStylePanels[strDocLabel];
+	  				var titleDoc = asTitleDocs[strDocLabel];
+					var widthPx = "";
+					var heightPx = "";
+					if (style != null){
+						widthPx = style[0].substring(0, style[0].indexOf("|"));
+						heightPx = style[0].substring(style[0].indexOf("|")+1);
+						widthPx = widthPx.substring(widthPx.indexOf("WIDTH_")+6);
+			       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
+					}
+					//create panel with iframe
+					var p = new  Ext.ux.ManagedIframePanel({
+							frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
+							,renderTo   : 'divIframe_'+ strDocLabel
+			                ,title      : (titleDoc==null || titleDoc== "")?null:titleDoc
+			                ,defaultSrc : asUrls[docLabel]+""
+			                ,loadMask   : true//(Ext.isIE)?true:false
+			                ,border		: false //the border style should be defined into document template within the "style" tag
+							,height		: Number(heightPx)
+							,scrolling  : 'auto'	 //possible values: yes, no, auto  
+					});
+  				}
   	}}
 }); 
 
