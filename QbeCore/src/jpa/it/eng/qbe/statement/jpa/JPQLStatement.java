@@ -1023,17 +1023,16 @@ public class JPQLStatement extends AbstractStatement {
 			if(selectField.isDataMartField()){
 				DataMartSelectField dataMartSelectField = (DataMartSelectField)selectField;
 				IModelField modelField = getDataSource().getModelStructure().getField(dataMartSelectField.getUniqueName());
-				IModelEntity entity = modelField.getParent();
-				String parentViewName = entity.getPropertyAsString("parentView");
-				if(parentViewName != null) {
-					ModelViewEntity viewEntity = (ModelViewEntity)getDataSource().getModelStructure().getEntity(parentViewName);
-					if( !viewToInnerEntitiesMap.containsKey( viewEntity.getUniqueName() ) ) {
-						viewToInnerEntitiesMap.put(viewEntity.getUniqueName(), new HashSet<String>());
+				List<ModelViewEntity> viewEntities = modelField.getParentViews();
+				if(viewEntities!=null){
+					for(ModelViewEntity viewEntity : viewEntities) {
+						if( !viewToInnerEntitiesMap.containsKey( viewEntity.getUniqueName() ) ) {
+							viewToInnerEntitiesMap.put(viewEntity.getUniqueName(), new HashSet<String>());
+						}
+						Set innerEntities = (Set)viewToInnerEntitiesMap.get( viewEntity.getUniqueName());
+						innerEntities.add(modelField.getParent().getUniqueName());
 					}
-					Set innerEntities = (Set)viewToInnerEntitiesMap.get( viewEntity.getUniqueName());
-					innerEntities.add(modelField.getParent().getUniqueName());
-				}
-				
+				}				
 			}
 		}
 		

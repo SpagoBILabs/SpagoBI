@@ -425,5 +425,12 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity{
 		return newModelEntity;
 	}
 
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#getParentViews()
+	 */
+	public List<ModelViewEntity> getParentViews() {
+		return super.getParentViews(this);
+	}
+
 	
 }

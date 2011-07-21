@@ -20,6 +20,8 @@
  **/
 package it.eng.qbe.model.structure;
 
+import java.util.List;
+
 
 /**
  * All nodes of a IModelStructure (i.e. entities & fields) implement this interface 
@@ -30,6 +32,12 @@ public interface IModelNode extends IModelObject{
 	
 	IModelStructure getStructure();
 	IModelEntity getParent();
+	/**
+	 * Get the list of view in the path
+	 * from the root to the node
+	 * @return
+	 */
+	List<ModelViewEntity> getParentViews();
 	/**
 	 * Gets the parent of the node from the structure.
 	 * The difference with getParent() is that if the parent 

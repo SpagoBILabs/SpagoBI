@@ -22,6 +22,7 @@ package it.eng.qbe.model.structure;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import it.eng.spagobi.utilities.objects.Couple;
@@ -168,6 +169,11 @@ public class ModelField extends AbstractModelNode implements IModelField {
 		return field;
 	}
 
-
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelNode#getParentViews()
+	 */
+	public List<ModelViewEntity> getParentViews() {
+		return super.getParentViews(this.getParent());
+	}
 	
 }
