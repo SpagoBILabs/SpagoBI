@@ -42,7 +42,8 @@
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuse.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseCk.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParuse.hbm.xml" />
-        <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mapping/SbiLov.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParview.hbm.xml" />
+                <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mapping/SbiLov.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/check/metadata/mapping/SbiChecks.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjPar.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjects.hbm.xml" /> 

@@ -14,6 +14,7 @@
 		<DAO name="ParameterUseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterUseDAOHibImpl"/>
 		<DAO name="LowFunctionalityDAO" implementation="it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl"/>
 		<DAO name="ObjParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ObjParuseDAOHibImpl"/>
+		<DAO name="ObjParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ObjParviewDAOHibImpl"/>
 		<DAO name="SubreportDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl"/>
  		<DAO name="ViewpointDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ViewpointDAOHimpl"/>	
  		<DAO name="DataSourceDAO" implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl"/>
