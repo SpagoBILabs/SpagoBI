@@ -41,6 +41,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
@@ -253,6 +254,18 @@ public class DAOFactory {
 	public static IObjParuseDAO getObjParuseDAO() throws EMFUserError{
 		return (IObjParuseDAO)createDAOInstance("ObjParuseDAO");
 	}
+	
+	/**
+	 * Gets the obj parview dao.
+	 * 
+	 * @return the obj parview dao
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public static IObjParviewDAO getObjParviewDAO() throws EMFUserError{
+		return (IObjParviewDAO)createDAOInstance("ObjParviewDAO");
+	}
+	
 	
 	/**
 	 * Creates a DAO instance for a viewpoint.
