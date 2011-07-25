@@ -254,8 +254,8 @@ public class ObjParviewDAOHibImpl extends AbstractHibernateDAO implements IObjPa
 	 * 
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO#loadObjParviews(Integer)
 	 */
-	public List loadObjParviews(Integer objParId) throws EMFUserError {
-		List toReturn = new ArrayList();
+	public List<ObjParview> loadObjParviews(Integer objParId) throws EMFUserError {
+		List<ObjParview> toReturn = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
