@@ -62,6 +62,11 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 	public static String DATASET_LABEL = "ds_label";
 	public static String USER_ID = "userId";
 	public static String CALLBACK = "callback";
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static String ROWS_LIMIT = "ds_rowsLimit";
+	public static String LIMIT_SS = "ds_limitSS";
+	public static String MEMORY_PAGINATION = "ds_memoryPagination";
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(GetConsoleDataAction.class);
@@ -71,6 +76,11 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 		String dataSetLabel;
 		String user;
 		String callback;
+		Integer start;
+		Integer limit;
+		Integer limitSS; 	//for pagination server side
+		Integer rowsLimit;	
+		Boolean memoryPagination;
 	
 		IDataSet dataSet;
 		IDataStore dataStore;
@@ -89,6 +99,21 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			callback = getAttributeAsString( CALLBACK );
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
 			
+			memoryPagination =  getAttributeAsBoolean( MEMORY_PAGINATION );
+			logger.debug("Parameter [" + MEMORY_PAGINATION + "] is equals to [" + memoryPagination + "]");
+			
+			limitSS = (getAttributeAsInteger( LIMIT_SS ) == null) ? -1 :  getAttributeAsInteger( LIMIT_SS );
+			logger.debug("Parameter [" + LIMIT_SS + "] is equals to [" + LIMIT_SS + "]");
+			
+			rowsLimit = (getAttributeAsInteger( ROWS_LIMIT ) == null) ? -1 :  getAttributeAsInteger( ROWS_LIMIT );
+			logger.debug("Parameter [" + ROWS_LIMIT + "] is equals to [" + rowsLimit + "]");
+			
+			start = (getAttributeAsInteger( START ) == null) ? 0 : getAttributeAsInteger( START );
+			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
+			
+			limit = (getAttributeAsInteger( LIMIT ) == null) ? -1 :  getAttributeAsInteger( LIMIT );
+			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+
 			dataSet = null;
 			try {
 				dataSet = getDataSet(dataSetLabel);
@@ -99,16 +124,17 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 			Map params = consoleEngineInstance.getAnalyticalDrivers();
 			dataSet.setParamsMap(params);
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
-			//dataSet.setParamsMap(getEnv());
 			//gets the max number of rows for the table
-			String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
-			int rowLimit = (strRowLimit == null)? 0 : Integer.parseInt(strRowLimit);
-			Monitor monitorLD =MonitorFactory.start("SpagoBI_Console.GetConsoleDataAction.service.LoadData");
-			if (rowLimit > 0){
-				dataSet.loadData(-1, -1, rowLimit);
-			}else{
-				dataSet.loadData();
+			//String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
+			//rowsLimit = (strRowLimit == null)? -1 : Integer.parseInt(strRowLimit);
+			Monitor monitorLD = MonitorFactory.start("SpagoBI_Console.GetConsoleDataAction.service.LoadData");
+			if(!memoryPagination){				
+				rowsLimit = -1; //serverSide 
+				limit = limitSS;
 			}
+			
+			dataSet.loadData(start, limit, rowsLimit);
+			
 			monitorLD.stop();
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
@@ -119,22 +145,6 @@ public class GetConsoleDataAction extends AbstractConsoleEngineAction {
 				
 				Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
 				if(resultNumber == null) dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
-				/*
-				//gets the max number of rows for the table
-				String strRowLimit = ConsoleEngineConfig.getInstance().getProperty("CONSOLE-TABLE-ROWS-LIMIT");
-				int rowLimit = (strRowLimit == null)? 0 : Integer.parseInt(strRowLimit);
-				
-	
-				if (rowLimit > 0){
-					IDataStore tmpDS = new DataStore();
-					for(int index = 0; index<dataStore.getRecordsCount() && index<rowLimit; index++){
-						IRecord record = dataStore.getRecordAt(index);
-						tmpDS.appendRecord(record);
-					}
-					//set the original datastore with the new one
-					dataStore = tmpDS;
-				}
-*/
 				JSONObject dataSetJSON = (JSONObject)writer.write(dataStore);				
 				results = dataSetJSON;
 			} catch (Throwable e) {

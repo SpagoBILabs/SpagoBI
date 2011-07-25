@@ -147,13 +147,27 @@ Ext.extend(Sbi.console.StoreManager, Ext.util.Observable, {
         };
 		
 		for(var i = 0, l = c.length, s; i < l; i++) {
-			s = new Sbi.data.Store({
-				storeId: c[i].id
-				, datasetLabel: c[i].label
-				, autoLoad: false
-				, refreshTime: c[i].refreshTime
-			}); 
-		
+			if (c[i].memoryPagination !== undefined &&  c[i].memoryPagination === false){
+				//server pagination	
+				s = new Sbi.data.Store({
+					storeId: c[i].id
+					, datasetLabel: c[i].label
+					, autoLoad: false
+					, refreshTime: c[i].refreshTime
+					, limitSS: this.limitSS
+					, memoryPagination: c[i].memoryPagination || false 
+				});
+			}else{
+				//local pagination (default)		
+				s = new Sbi.data.MemoryStore({
+					storeId: c[i].id
+					, datasetLabel: c[i].label
+					, autoLoad: false
+					, refreshTime: c[i].refreshTime
+					, rowsLimit:  c[i].rowsLimit || this.rowsLimit
+					, memoryPagination: c[i].memoryPagination || true	//default pagination type is client side
+				});
+			}
 			s.ready = c[i].ready || false;
 			s.storeType = 'sbi';
 			

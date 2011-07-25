@@ -33,8 +33,4 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
-	<!-- limit of the console tab rows number -->
-	<CONSOLE-TABLE-ROWS-LIMIT>50</CONSOLE-TABLE-ROWS-LIMIT> 
-	
-	
 </ENGINE-CONFIGURATION>
