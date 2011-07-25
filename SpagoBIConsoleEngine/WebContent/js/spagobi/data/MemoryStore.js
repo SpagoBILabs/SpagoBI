@@ -46,10 +46,9 @@
 
 Ext.ns("Sbi.data");
 
-Sbi.data.Store = function(config) {
+Sbi.data.MemoryStore = function(config) {
 	this.alias2NameMap = {};
 	this.dsLabel = config.datasetLabel;
-	
 	if(!config.url) {
 		var serviceConfig;
 		if(config.serviceName) {
@@ -63,17 +62,15 @@ Sbi.data.Store = function(config) {
 			config.url = Sbi.config.serviceRegistry.getServiceUrl( serviceConfig );
 		} else if(config.datasetLabel)	{
 			serviceConfig = {serviceName: 'GET_CONSOLE_DATA_ACTION'};
-						
+				
 			config.baseParams = config.baseParams || {};
 			config.baseParams.ds_label = config.datasetLabel;
-			config.baseParams.ds_limitSS = config.limitSS || -1;
-			config.baseParams.rowsLimit = config.rowsLimit || -1;
+			config.baseParams.ds_rowsLimit = config.rowsLimit || -1;
 			config.baseParams.ds_memoryPagination = config.memoryPagination;
 			this.dsLabel = config.baseParams.ds_label;
 			serviceConfig.baseParams = config.baseParams;			
 			delete config.datasetLabel;
 			delete config.baseParams;			
-			
 			config.url = Sbi.config.serviceRegistry.getServiceUrl( serviceConfig );
 		}	
 	}
@@ -81,13 +78,11 @@ Sbi.data.Store = function(config) {
 	this.refreshTime = config.refreshTime;	
 	delete config.refreshTime;
 	
-	Sbi.data.Store.superclass.constructor.call(this, config);
+	Sbi.data.MemoryStore.superclass.constructor.call(this, config);
 };
 
-Ext.extend(Sbi.data.Store, Ext.data.JsonStore, {
-//Ext.extend(Sbi.data.Store, Ext.ux.data.PagingJsonStore, {	
-	
-    
+Ext.extend(Sbi.data.MemoryStore, Ext.ux.data.PagingJsonStore, {
+	    
 	alias2FieldMetaMap: null
 	, refreshTime: null
 	, dsLabel: null
@@ -96,7 +91,7 @@ Ext.extend(Sbi.data.Store, Ext.data.JsonStore, {
 	
 	/*
 	, refresh: function() {
-		alert('Super refresh: '  + Sbi.data.Store.superclass.onRender.refresh);
+		alert('Super refresh: '  + Sbi.data.MemoryStore.superclass.onRender.refresh);
 	 	delete this.store.lastParams;
 	 	this.doLoad(this.cursor);   
 	}
@@ -161,7 +156,7 @@ Ext.extend(Sbi.data.Store, Ext.data.JsonStore, {
 			this.alias2FieldMetaMap[f.header].push(f);
 		}
 		
-		Sbi.data.Store.superclass.onMetaChange.call(this, meta);
+		Sbi.data.MemoryStore.superclass.onMetaChange.call(this, meta);
     }
 
    
