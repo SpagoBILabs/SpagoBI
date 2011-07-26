@@ -71,6 +71,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
+import it.eng.spagobi.tools.udp.bo.UdpValue;
 
 import java.awt.Color;
 import java.text.ParseException;
@@ -861,11 +862,22 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 			Integer kpiInstID = kpiI.getKpiInstanceId();
 			logger.info("Got KpiInstance with ID: " + kpiInstID.toString());
 			KpiValue value = null;
-			
-			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
-			
 			Integer kpiId = kpiI.getKpi();
 			Kpi k = DAOFactory.getKpiDAO().loadKpiById(kpiId);
+			
+			logger.debug("checks for udp related to kpi");
+			ArrayList<UdpValue> udps = (ArrayList<UdpValue>)k.getUdpValues();
+			if(udps != null){
+				for(int i=0; i<udps.size(); i++){
+					UdpValue udpVal = udps.get(i);
+					String udpParameterNameForDataset = udpVal.getName();
+					String udpParameterValueForDataset = udpVal.getValue();
+					this.parametersObject.put(udpParameterNameForDataset, udpParameterValueForDataset);
+				}
+				logger.debug("if udp is present passes a upd name = parameter name to dataset, by ading it to HashMap pars");
+			}
+			line = retrieveKpiLine(line, value, kpiI, miId, r, alreadyExistent);
+			
 			logger.debug("Retrieved the kpi with id: " + kpiId.toString());
 						
 			if (k != null) {
@@ -1218,8 +1230,8 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 		dataSet.setParamsMap(pars);
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
-		
 
+		
 		logger.info("Load Data Set. Label="+dataSet.getLabel());
 
 		// Handle in table SbiKpiError dataset Error
