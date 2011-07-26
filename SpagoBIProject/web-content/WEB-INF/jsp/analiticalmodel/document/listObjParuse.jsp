@@ -754,7 +754,7 @@ function generateViewBlockHtml(indexView) {
 	blockHtml += "<tr height='30px'>";
 	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.isActive" /></td>";
 	blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.values" /></td>";
-	blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.order" /></td>";
+	blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.viewLabel" /></td>";
 	blockHtml += "</tr>";
 	
 
