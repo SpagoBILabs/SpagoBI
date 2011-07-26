@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.service;
 
 /**
@@ -43,8 +43,10 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -60,15 +62,15 @@ import java.util.Vector;
 public class ListObjParuseModule extends AbstractModule {
 
 	private EMFErrorHandler errorHandler;
-	
+
 	protected SessionContainer session = null;
-	
+
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
 	public void init(SourceBean config) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
@@ -77,20 +79,22 @@ public class ListObjParuseModule extends AbstractModule {
 		session = requestContainer.getSessionContainer();	
 		String message = (String) request.getAttribute("MESSAGEDET");
 		SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
-				            "service", "begin of ListObjParuseModule modify/visualization " +
-				            "service with message =" +message);
+				"service", "begin of ListObjParuseModule modify/visualization " +
+				"service with message =" +message);
 		errorHandler = getErrorHandler();
 		try {
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
 				SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), 
-						            "service", "The message parameter is null");
+						"service", "The message parameter is null");
 				throw userError;
 			} 
 			if (message.trim().equalsIgnoreCase(AdmintoolsConstants.DETAIL_SELECT)) {
 				getDetailObjParuses(request, response);
 			} 	else if (message.trim().equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 				modObjParuses(request, response);
+				modObjParviews(request, response);
+
 			}	else if (message.trim().equalsIgnoreCase("EXIT_FROM_MODULE")) {
 				exit(request, response);
 			}
@@ -104,9 +108,9 @@ public class ListObjParuseModule extends AbstractModule {
 		}
 	}
 
-	
-	
-	
+
+
+
 	private void getDetailObjParuses(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
 			// get form session the biobject parameter
@@ -128,6 +132,10 @@ public class ListObjParuseModule extends AbstractModule {
 			}
 			// get the correlation associated to the bi parameter 
 			List biParamCorrelations = DAOFactory.getObjParuseDAO().loadObjParuses(biParamId);
+
+			// get the visibility checkings associated to the bi parameter
+			List biParamViews = DAOFactory.getObjParviewDAO().loadObjParviews(biParamId);
+
 			// load all the paruses associated to the general parameter
 			List genParParuses = DAOFactory.getParameterUseDAO().loadParametersUseByParId(genParamId);
 			// exclude form all the paruses the manual input ones	
@@ -143,8 +151,9 @@ public class ListObjParuseModule extends AbstractModule {
 			response.setAttribute("biParameter", objParameter);
 			response.setAttribute("allParuses", paruses);
 			response.setAttribute("biParamCorrelation", biParamCorrelations);
+			response.setAttribute("biParamViews", biParamViews);	
 			response.setAttribute("otherBiParameters", otherBiObjBiParams);
-			
+
 		} catch (Exception ex) {
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "ListObjParuseModule","getDetailObjParuses","Cannot fill response container", ex  );
 			HashMap params = new HashMap();
@@ -152,10 +161,10 @@ public class ListObjParuseModule extends AbstractModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1047, new Vector(), params);
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	private void modObjParuses(SourceBean request, SourceBean response) throws EMFUserError, SourceBeanException {
 		try {
 			// get the id of the biparameter
@@ -215,10 +224,63 @@ public class ListObjParuseModule extends AbstractModule {
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1048, new Vector(), params);
 		}
-		
+
 	}
-	
-	
+
+
+
+	private void modObjParviews(SourceBean request, SourceBean response) throws EMFUserError, SourceBeanException {
+		try {
+			// get the id of the biparameter
+			String biParamIdStr = (String) request.getAttribute("obj_par_id");
+			Integer biParamId = new Integer (biParamIdStr);
+			// get the xml description of new correlations from request and transform to sourceBean
+			String xmlViewStr = (String) request.getAttribute("views_xml");
+			SourceBean xmlViewsSB = SourceBean.fromXMLString(xmlViewStr);
+			// get the list of correlations SB
+			List views = xmlViewsSB.getAttributeAsList("view");
+			// for each correlation create a new correlation object (SbiObjParuse)
+			List newViews = new ArrayList();
+			Iterator viewIter = views.iterator();
+			int prog = 1;
+			while(viewIter.hasNext()) {
+				SourceBean correlationSB = (SourceBean)viewIter.next();
+				String idParFatherStr = (String)correlationSB.getAttribute("idParFather");
+				String operation = (String)correlationSB.getAttribute("valueCond");
+				Integer idParFather = new Integer(idParFatherStr);
+				String compareValues = (String)correlationSB.getAttribute("compareValues");
+				String viewLabel = (String)correlationSB.getAttribute("viewLabel");
+
+				ObjParview view = new ObjParview();
+				view.setProg(new Integer(prog));
+				view.setObjParFatherId(idParFather);
+				view.setObjParId(biParamId);
+				view.setCompareValue(compareValues);			
+				view.setViewLabel(viewLabel);			
+				view.setOperation(operation);			
+				newViews.add(view);
+
+				prog ++;
+			}		
+			// load the previous saved correlations
+			List oldviews = DAOFactory.getObjParviewDAO().loadObjParviews(biParamId);
+			if(oldviews == null) 
+				oldviews = new ArrayList();
+			// update database
+			updateDatabaseViews(oldviews, newViews); 
+			// fill the response 
+			response.setAttribute("loopback", "true");
+			session.setAttribute("RETURN_FROM_MODULE", "ListObjParuseModule");
+		} catch (Exception ex) {
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "ListObjParuseModule","modObjParuses","Cannot fill response container", ex  );
+			HashMap params = new HashMap();
+			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 1048, new Vector(), params);
+		}
+
+	}
+
+
 	private void updateDatabase(List oldCorrelations, List newCorrelations ) throws EMFUserError {
 		//TODO all this operations must be performed inside a transaction
 		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
@@ -236,14 +298,30 @@ public class ListObjParuseModule extends AbstractModule {
 			corrDao.insertObjParuse(newCorr);
 		}
 	}
-	
-	
-	
+
+	private void updateDatabaseViews(List oldViews, List newViews ) throws EMFUserError {
+		//TODO all this operations must be performed inside a transaction
+		SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);		
+		IObjParviewDAO corrDao = DAOFactory.getObjParviewDAO();
+		corrDao.setUserProfile(profile);
+		Iterator iterOldView = oldViews.iterator();
+		while(iterOldView.hasNext()) {
+			ObjParview oldView = (ObjParview)iterOldView.next();
+			corrDao.eraseObjParview(oldView);
+		}
+		Iterator iterNewView = newViews.iterator();
+		while(iterNewView.hasNext()) {
+			ObjParview newView = (ObjParview)iterNewView.next();
+			corrDao.insertObjParview(newView);
+		}
+	}
+
 	private void exit(SourceBean request, SourceBean response) throws EMFUserError, SourceBeanException {
 		session.setAttribute("RETURN_FROM_MODULE", "ListObjParuseModule");
 		response.setAttribute("loopback", "true");
 	}
 
-	
-	
+
+
 }
