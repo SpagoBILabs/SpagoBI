@@ -642,17 +642,38 @@ function rigenerateViewList() {
 	if(viewManager.views.length>0) {
   	for(i=0; i<viewManager.views.length; i++) {
       var viewV = viewManager.views[i];
+
+      if(viewV.compareValues && viewV.compareValues.length>15 )
+          {
+    	  viewvalue = viewV.compareValues.substr(0,15)+'...';
+    	  } 
+      else { 
+          viewvalue = viewV.compareValues;
+          }
+       
       html += "<tr  height='25' style='background:rgb(251,247,227);'>";
 
+      //html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
+      //html += "<span style='font-size:10pt;'>If the parameter <b>"+ viewV.nameParFather+" " + viewV.nameCond + "</b> the values <b>"+ viewV.compareValues +"</b>: visible with label <b>"+viewV.viewLabel+"</b> </span>";     
+      //html += "</td>";
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      html += "<span style='font-size:10pt;'>If the parameter <b>"+ viewV.nameParFather+" " + viewV.nameCond + "</b> the values <b>"+ viewV.compareValues +"</b>: visible with label <b>"+viewV.viewLabel+"</b> </span>";     
+      html += "<span style='font-size:10pt;'>"+viewV.nameParFather+"</span>";     
+      html += "</td>";
+      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
+      html += "<span style='font-size:10pt;'>"+viewV.nameCond +"</span>";     
+      html += "</td>";
+      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
+      html += "<span style='font-size:10pt;'>"+ viewvalue +"</span>";     
+      html += "</td>";
+      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
+      html += "<span style='font-size:10pt;'>"+ viewV.viewLabel +"</span>";     
       html += "</td>";
 
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;' width='30px'>";
       html += "<a href='javascript:viewView("+i+")'>";
       html += "<img src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' ";
-      html += " title='<spagobi:message key = "SBIDev.listObjParuses.viewCondition" />' "; 
-      html += " alt='<spagobi:message key = "SBIDev.listObjParuses.viewCondition" />' "; 
+      html += " title='<spagobi:message key = "SBIDev.listObjParuses.viewParDep" />' "; 
+      html += " alt='<spagobi:message key = "SBIDev.listObjParuses.viewParDep" />' "; 
       html += "/></a>";
       html += "</td>";
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;' width='30px'>";
@@ -684,9 +705,9 @@ function generateViewBlockHtml(indexView) {
 	blockHtml += "<table>";
 	blockHtml += "	<tr>";
 	blockHtml += "		<td width='50%' style='color:#074B88;font-weight:bold;'>";
-	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.dependsFrom" args="<%=biParam.getLabel()%>"/></span>";
+	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.viewParDep" args="<%=biParam.getLabel()%>"/></span>";
 	blockHtml += "		</td>";
-	blockHtml += "		<td>";
+	blockHtml += "		<td align='center'>";
 	blockHtml += "			<select style='width:150px' id='dependViewSelect' name='dependFrom'>";
 	<%
 		for(int z=0; z<otherBiParameters.size(); z++) {
@@ -707,13 +728,13 @@ function generateViewBlockHtml(indexView) {
 	blockHtml += "			</select>";
 	blockHtml += "		</td>";
 	blockHtml += "	</tr>";
-	blockHtml += "	<tr>";
+	blockHtml += "	<tr height='50px'>";
 	blockHtml += "		<td width='50%' >";
 	blockHtml += "		  <br/>";
-	blockHtml += "			<span style='font-size:10pt;color:#074B88;font-weight:bold;'><spagobi:message key="SBIDev.listObjParuses.filterOperator" /></span>";
-	blockHtml += "			<span style='font-size:8pt;color:#074B88;'><spagobi:message key="SBIDev.listObjParuses.filterOperatorExplanation" args="<%=biParam.getLabel()%>" /></span>";
+	blockHtml += "			<span style='font-size:10pt;color:#074B88;font-weight:bold;'><spagobi:message key="SBIDev.listObjParuses.viewOperator" /></span>";
+	blockHtml += "			<span style='font-size:8pt;color:#074B88;'><spagobi:message key="SBIDev.listObjParuses.viewOperatorExplanation" args="<%=biParam.getLabel()%>" /></span>";
 	blockHtml += "		</td>";
-	blockHtml += "		<td>";
+	blockHtml += "		<td align='center'>";
 	//blockHtml += "		  <br/>";
 	blockHtml += "			<select style='width:150px' id='conditionViewSelect' name='condition'>";
 
@@ -742,20 +763,21 @@ function generateViewBlockHtml(indexView) {
 
 	
 	blockHtml += "</select></td></tr>";
+	blockHtml += "<br>";
+	blockHtml += "<tr><td>  </td></td></tr>";
+	blockHtml += "<tr>";
+	blockHtml += "		<td width='50%' style='color:#074B88;font-weight:bold;'>";
+	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.listValues" args="<%=biParam.getLabel()%>"/></span>";
+	blockHtml += "		</td>";
 	
-	
-	
-	
-	blockHtml += "</table>";
-	blockHtml += "<br/>";
-	blockHtml += "<span style='color:#074B88;font-weight:bold;'><spagobi:message key="SBIDev.listObjParuses.listValues" args="<%=biParam.getLabel()%>" /></span>";
-	blockHtml += "<hr/>";
-	blockHtml += "<table style='border-spacing:5px;border-collapse:separate;'>";
-	blockHtml += "<tr height='30px'>";
+	//blockHtml += "<span style='color:#074B88;font-weight:bold;'><spagobi:message key="SBIDev.listObjParuses.listValues" args="<%=biParam.getLabel()%>" /></span>";
+	//blockHtml += "<hr/>";
+	//blockHtml += "<table style='border-spacing:5px;border-collapse:separate;'>";
+	//blockHtml += "<tr height='30px'>";
 	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.isActive" /></td>";
-	blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.values" /></td>";
-	blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.viewLabel" /></td>";
-	blockHtml += "</tr>";
+	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.values" /></td>";
+	//blockHtml += "<td style='font-size:10pt;color:#074B88;' align='center'><spagobi:message key="SBIDev.listObjParuses.viewLabel" /></td>";
+	//blockHtml += "</tr>";
 	
 
     if(view && view.viewLabel) {
@@ -772,12 +794,19 @@ function generateViewBlockHtml(indexView) {
     	compareValues = "";
     }
     
-	blockHtml += "  <tr>";
+	//blockHtml += "  <tr>";
 	blockHtml += "	<td align='center'>";
-	blockHtml += "    <input type='text' id='compareValues' name='compareValues' value='"+compareValues+"' />";
+	blockHtml += "    <input type='text' style='width:150px' id='compareValues' name='compareValues' value='"+compareValues+"' />";
 	blockHtml += "  </td>";
+	blockHtml += "  </tr>";
+
+	blockHtml += "<br>";
+	blockHtml += "  <tr height='50px'>";
+	blockHtml += "		<td width='50%' style='color:#074B88;font-weight:bold;'>";
+	blockHtml += "		 	<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.viewLabel"/></span>";
+	blockHtml += "		</td>";
 	blockHtml += "<td align='center'>";
-	blockHtml += "    <input type='text' id='viewLabel' name='viewLabel' value='"+viewLabel+"' />";
+	blockHtml += "    <input type='text' style='width:150px' id='viewLabel' name='viewLabel' value='"+viewLabel+"' />";
 	blockHtml += "  </td>";
 
 	
