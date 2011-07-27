@@ -653,16 +653,19 @@ function rigenerateViewList() {
        
       html += "<tr  height='25' style='background:rgb(251,247,227);'>";
 
-      //html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      //html += "<span style='font-size:10pt;'>If the parameter <b>"+ viewV.nameParFather+" " + viewV.nameCond + "</b> the values <b>"+ viewV.compareValues +"</b>: visible with label <b>"+viewV.viewLabel+"</b> </span>";     
-      //html += "</td>";
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
       html += "<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.ifAnalyticalDriver"/> <b> "+viewV.nameParFather+" </b></span>";     
       html += "<span style='font-size:10pt;'><b> "+viewV.nameCond +" </b></span>";     
       html += "<span style='font-size:10pt;'><b> "+ viewvalue +" </b></span>";     
       html += "<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.viewAs"/>: <b> "+ viewV.viewLabel +" </b></span>";     
       html += "</td>";
+//      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
+//		if(viewV.prog){
+//      html += "<span style='font-size:10pt;'><b> "+viewV.prog +" </b></span>";
+//		}     
+//      html += "</td>";
 
+      
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;' width='30px'>";
       html += "<a href='javascript:viewView("+i+")'>";
       html += "<img src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/detail.gif", currTheme)%>' ";
@@ -827,13 +830,14 @@ blockHtml += "</div>";
 return blockHtml;
 }
 
-function view(idPF_, namePF_, valueCond_, nameCond_, compareValues_, viewLabel_ ) {
+function view(idPF_, namePF_, valueCond_, nameCond_, compareValues_, viewLabel_, prog_ ) {
 	this.idParFather = idPF_;
 	this.nameParFather = namePF_;
 	this.valueCond = valueCond_;
 	this.nameCond = nameCond_;
 	this.compareValues = compareValues_;
 	this.viewLabel = viewLabel_;
+	this.prog = prog_;
 }
 
 function closeWinView(indexView) {
@@ -1149,7 +1153,7 @@ function viewView(indexView) {
 		try{
 	            view<%=pfid%><%=operation%>compareValueNoPoint==null;
 	         } catch (err) {
-	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getObjParFatherId()%>, getParNameFromParId(<%=view.getObjParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>" );
+	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getObjParFatherId()%>, getParNameFromParId(<%=view.getObjParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>", <%=view.getProg()%> );
             viewManager.addView(view<%=pfid%><%=operation%>compareValueNoPoint);
           }
 	 	<%   
