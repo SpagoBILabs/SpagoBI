@@ -657,16 +657,10 @@ function rigenerateViewList() {
       //html += "<span style='font-size:10pt;'>If the parameter <b>"+ viewV.nameParFather+" " + viewV.nameCond + "</b> the values <b>"+ viewV.compareValues +"</b>: visible with label <b>"+viewV.viewLabel+"</b> </span>";     
       //html += "</td>";
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      html += "<span style='font-size:10pt;'>"+viewV.nameParFather+"</span>";     
-      html += "</td>";
-      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      html += "<span style='font-size:10pt;'>"+viewV.nameCond +"</span>";     
-      html += "</td>";
-      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      html += "<span style='font-size:10pt;'>"+ viewvalue +"</span>";     
-      html += "</td>";
-      html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;'>";
-      html += "<span style='font-size:10pt;'>"+ viewV.viewLabel +"</span>";     
+      html += "<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.ifAnalyticalDriver"/> <b> "+viewV.nameParFather+" </b></span>";     
+      html += "<span style='font-size:10pt;'><b> "+viewV.nameCond +" </b></span>";     
+      html += "<span style='font-size:10pt;'><b> "+ viewvalue +" </b></span>";     
+      html += "<span style='font-size:10pt;'><spagobi:message key = "SBIDev.listObjParuses.viewAs"/>: <b> "+ viewV.viewLabel +" </b></span>";     
       html += "</td>";
 
       html += "<td style='vertical-align:middle;border-bottom:1px solid #bbb;' width='30px'>";
