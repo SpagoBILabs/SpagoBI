@@ -432,7 +432,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 				SbiUdpValue sbiUdpValue  = null;
 				SbiUdpValue sbiUdpValueToClose  = null;
 
-				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idObject, udpValue.getUdpId(), family.toUpperCase());						
+				UdpValue already = DAOFactory.getUdpDAOValue().loadByReferenceIdAndUdpId(idObject, udpValue.getUdpId(), family);						
 				boolean inserting = true;
 				boolean openNewOne = true;
 

@@ -269,7 +269,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 
 		// add also associated UDP
-		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "Kpi");
 		toReturn.setUdpValues(udpValues);
 
 
@@ -966,7 +966,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 
 		// add also associated UDP
-		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
+		List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "Kpi");
 		toReturn.setUdpValues(udpValues);
 
 
@@ -1225,7 +1225,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			aSession.saveOrUpdate(sbiKpi);
 			IUdpValueDAO dao=DAOFactory.getUdpDAOValue();
 			dao.setUserProfile(getUserProfile());
-			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "Kpi");
 
 			tx.commit();
 
@@ -1345,7 +1345,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			//insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession);
 			IUdpValueDAO dao = DAOFactory.getUdpDAOValue();
 			dao.setUserProfile(getUserProfile());
-			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "KPI");
+			dao.insertOrUpdateRelatedUdpValues(kpi, sbiKpi, aSession, "Kpi");
 
 			tx.commit();
 

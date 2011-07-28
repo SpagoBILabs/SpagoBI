@@ -2211,7 +2211,7 @@ public class ExporterMetadata {
 
 			//manage insert of udp values
 
-			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "KPI");
+			List udpValues = DAOFactory.getUdpDAOValue().findByReferenceId(kpiId, "Kpi");
 			if(udpValues != null && !udpValues.isEmpty()){
 				for (Iterator iterator = udpValues.iterator(); iterator.hasNext();) {
 					UdpValue udpValue = (UdpValue) iterator.next();
