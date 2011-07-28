@@ -623,7 +623,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		var newRec;
 	
 		var storeUdps = this.udpValueGrid.getStore();
-		var arrayUdps = this.udpValueGrid.saveUdpValues('KPI');		
+		var arrayUdps = this.udpValueGrid.saveUdpValues('Kpi');		
 		var record;
 		var isAdditive = false;
 		

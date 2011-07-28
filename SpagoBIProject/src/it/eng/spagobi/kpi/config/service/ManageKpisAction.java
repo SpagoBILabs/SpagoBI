@@ -331,7 +331,7 @@ public class ManageKpisAction extends AbstractSpagoBIAction {
 						udpValue.setReferenceId(kpiId);
 
 						// get the UDP to get ID (otherwise could be taken in js page)
-						Udp udp = DAOFactory.getUdpDAO().loadByLabelAndFamily(label, "KPI");
+						Udp udp = DAOFactory.getUdpDAO().loadByLabelAndFamily(label, "Kpi");
 						Domain familyDomain = DAOFactory.getDomainDAO().loadDomainById(udp.getFamilyId());
 
 						Integer idUdp = udp.getUdpId();
