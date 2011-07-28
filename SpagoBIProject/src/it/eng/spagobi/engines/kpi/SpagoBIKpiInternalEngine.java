@@ -496,16 +496,21 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 				if (name != null) {
 					response.setAttribute("title", name);
-					response.setAttribute("styleTitle", styleTitle);
 				}
+				if (styleTitle != null) {
+					response.setAttribute("styleTitle", styleTitle);
+				}				
 				if (subName != null) {
 					response.setAttribute("subName", subName);
-					response.setAttribute("styleSubTitle", styleSubTitle);
 				}
+				if (styleSubTitle != null) {
+					response.setAttribute("styleSubTitle", styleSubTitle);
+				}				
 				response.setAttribute("kpiRBlocks", kpiRBlocks);
-				response.setAttribute(AuditManager.AUDIT_ID, auditId);
+				if (auditId!=null) response.setAttribute(AuditManager.AUDIT_ID, auditId);
 				kpiResultsList = kpiRBlocks;
 			} catch (Exception eex) {
+				logger.error("Exception", eex);
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 10107);
 				userError.setBundle("messages");
 				throw userError;
@@ -1645,7 +1650,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 				int size = Integer.valueOf(sizeS).intValue();
 				styleTitle = new StyleLabel(fontS, size, color);
 			} catch (Exception e) {
-				logger.error("Wrong style Title settings, use default");
+				logger.error("Wrong style Title settings, use default",e);
 			}
 
 		} else {
