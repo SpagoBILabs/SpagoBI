@@ -175,7 +175,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     
     
 	, resolveParameters: function(parameters, record, context, callback) {
-		
 		var results = {};  
 		var promptables;
 		
@@ -248,8 +247,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	    //return results;
 	}
 	
-	//, execCrossNav: function(docConfig, index){
-	, execCrossNav: function(actionName, record, index, options){
+	, execCrossNav: function(actionName, record, index, options){		
 		var msg = {
 			label: options.document.label
 	    	, windowName: this.name	||  parent.name // parent.name is used in document composition context			
@@ -264,9 +262,10 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				msg.parameters += separator + p + '=' + params[p];
 				separator = '&';
 			}
-			if (parent.sendMessage !== undefined) {
+			if (this.executionContext.EXECUTION_CONTEXT !== undefined && 
+					this.executionContext.EXECUTION_CONTEXT === 'DOCUMENT_COMPOSITION'){
 				//document composition context
-				parent.sendMessage(msg, 'crossnavigation');
+				parent.sendMessage(msg, 'crossnavigation'); 
 			}else{
 				sendMessage(msg, 'crossnavigation');
 			}
