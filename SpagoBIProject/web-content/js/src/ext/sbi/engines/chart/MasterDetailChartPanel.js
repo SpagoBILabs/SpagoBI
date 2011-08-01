@@ -180,10 +180,9 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 				
 				// reverse engineer the last part of the data
 				this.detailSerieData = detailSerieData;				
-				
-				for (k in this.detailSerieData) {
+				Ext.each( this.detailSerieData, function(chart, index) {
 					var tmpDetailData = [];
-				    var sers = this.detailSerieData[k].data;
+				    var sers = chart.data;
 				    if (Ext.isArray(sers)){
 				    		for ( v in sers){
 				    			var serValues = sers[v];
@@ -197,8 +196,8 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 							    }
 				    		}
 				    }
-				    this.detailChart.series[k].setData(tmpDetailData);
-				}
+				    this.detailChart.series[index].setData(tmpDetailData);
+				}, this);
 				
 				return false;
 			}
