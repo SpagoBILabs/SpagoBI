@@ -83,11 +83,12 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			//mono chart, retrocompatibility
 			totalCharts.push(this.chartConfig);
 		}
-		for (c in totalCharts){
+		Ext.each(totalCharts, function(singleChart, index) {
 			var singleChartConfig = this.chartConfig;
-			singleChartConfig =  Ext.apply( totalCharts[c], singleChartConfig);
+			//singleChartConfig =  Ext.apply( totalCharts[c], singleChartConfig);
+			singleChartConfig =  Ext.apply( singleChart, singleChartConfig);
 			delete singleChartConfig.charts;
-			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + c + '';
+			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + index + '';
 			//disable exporting buttons
 			var exp = {};
 			exp.enabled = false;
@@ -127,12 +128,10 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			this.definesCategoriesX(singleChartConfig);
 			this.definesCategoriesY(singleChartConfig);
 			
-			
-			//alert(singleChartConfig.toSource()	);
 			this.chart = new Highcharts.Chart(singleChartConfig);
 			//saves the chart for eventually multiple export
 			this.chartsArr.push(this.chart);
-		}
+		}, this);
 	}
 
 	, getColors : function () {
