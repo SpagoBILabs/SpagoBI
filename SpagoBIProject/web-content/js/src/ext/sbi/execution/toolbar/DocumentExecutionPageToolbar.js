@@ -233,6 +233,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	  	    svg = '';
 		
 			childFrame=windowO.frames[i];
+			//if the iframe contains a console document, it's not exported!
+			if (childFrame.Sbi !== undefined && childFrame.Sbi.console !== undefined  ){
+				continue;
+			}
 			fullName=childFrame.name;
 			cutName=fullName.substring(7);
 			urlNotEncoded=childFrame.location.href;
@@ -241,7 +245,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
 			urlEncoded=encodeURIComponent(urlNotEncoded);
 			newPars+='&TRACE_PAR_'+cutName+'='+urlEncoded;
-			
 			//for highcharts documents gets the SVG and send it as a hidden form
 			if (childFrame.chartPanel !== undefined && childFrame.chartPanel.chart !== undefined){
 				isHighchart = true;
@@ -291,7 +294,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				form.elements[i].value = svg;  
 			}
 				
-		}//for
+		}//for 
 		var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
 		urlExporter += newPars;
 		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');

@@ -70,20 +70,24 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 		for (Iterator iterator = docCompConf.getDocumentsArray().iterator(); iterator.hasNext();) {
 			Document doc = (Document) iterator.next();
 			String label=doc.getSbiObjLabel();
-			logger.debug("Document "+label);			
-			// recover style informations
-			String styleLab=(String)iteratorStyles.next();
-			String styleString=(String)styles.get(styleLab);
-			if(styleString==null)styleString="";
-			MetadataStyle metadataStyle=MetadataStyle.getMetadataStyle(label,styleString.toString(), docCompConf);
-			if(defaultStyle==false){
-				defaultStyle=(metadataStyle == null) ? true : false;
+			logger.debug("Document "+label);
+			try{
+				// recover style informations
+				String styleLab=(String)iteratorStyles.next();
+				String styleString=(String)styles.get(styleLab);
+				if(styleString==null)styleString="";
+				MetadataStyle metadataStyle=MetadataStyle.getMetadataStyle(label,styleString.toString(), docCompConf);
+				if(defaultStyle==false){
+					defaultStyle=(metadataStyle == null) ? true : false;
+				}
+				
+				DocumentContainer documentContainer=new DocumentContainer();
+				documentContainer.setStyle(metadataStyle);
+				documents.put(label, documentContainer);
+			}catch (java.util.NoSuchElementException nse){
+				//for frame defined only for the external export 
+				continue;
 			}
-			
-			DocumentContainer documentContainer=new DocumentContainer();
-			documentContainer.setStyle(metadataStyle);
-			documents.put(label, documentContainer);
-
 			// get its parameters configuration
 			logger.debug("Get parametrs configuration for document "+label);			
 			Object urlO=sb.getAttribute("TRACE_PAR_"+label);
