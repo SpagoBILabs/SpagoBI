@@ -51,6 +51,8 @@ public class DocumentCompositionExporter {
 
 			// get document container information
 			DocumentContainer documentContainer=documentsMap.get(label);
+			
+			if (documentContainer == null) continue;
 
 			// Recover BIObject			
 			IBIObjectDAO dao=DAOFactory.getBIObjectDAO();
@@ -90,7 +92,6 @@ public class DocumentCompositionExporter {
 			
 			proxy.setBiObject(object);
 			
-
 			// if engine is Birt, export in PDF, elsewhere in JPG
 			Engine engine = object.getEngine();
 			String driverName = engine.getDriverName();
