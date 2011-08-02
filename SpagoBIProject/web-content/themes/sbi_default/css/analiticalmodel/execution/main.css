@@ -231,3 +231,8 @@
 .x-tool-plusprofile {
 	background-image: url('../../../img/commons/add.gif') !important;
 }
+
+.x-exec-paramlabel-disabled {
+	color: red;
+	background-color: green;
+}

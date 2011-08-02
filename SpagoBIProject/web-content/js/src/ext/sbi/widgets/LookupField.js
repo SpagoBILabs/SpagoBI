@@ -84,7 +84,9 @@ Sbi.widgets.LookupField = function(config) {
 	
 	this.on("render", function(field) {
 		field.trigger.on("click", function(e) {
-			this.onLookUp(); 
+			if(!this.disabled) {
+				this.onLookUp(); 
+			}
 		}, this);
 	}, this);
 	
@@ -93,6 +95,8 @@ Sbi.widgets.LookupField = function(config) {
 			this.xdirty = true;
 		}, this);
 	}, this);
+	
+	this.addEvents('select');	
 	
 	
 };
@@ -134,8 +138,8 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
     // ----------------------------------------------------------------------------------------
     // public methods
 	// ----------------------------------------------------------------------------------------
-    
-    
+  
+	
     , getValue : function(){
 		this.clean();
 		var v = [];
@@ -184,6 +188,8 @@ Ext.extend(Sbi.widgets.LookupField, Ext.form.TriggerField, {
 			this.xvalue[v] = v;
 			Sbi.widgets.LookupField.superclass.setValue.call(this, v);
 		}
+		
+		this.fireEvent('select', this, v);
 	}
 	
 	
