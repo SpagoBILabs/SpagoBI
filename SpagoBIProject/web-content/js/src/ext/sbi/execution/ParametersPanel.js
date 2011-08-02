@@ -338,7 +338,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				
 				field.on('focus', function(f){
 					for(var i = 0; i < f.dependencies.length; i++) {
-						var field = this.fields[ f.dependencies[i] ];
+						var field = this.fields[ f.dependencies[i].urlName ];
 						field.getEl().addClass('x-form-dependent-field');                         
 					}		
 					//alert(f.getName() + ' get focus');
@@ -349,20 +349,21 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				field.on('blur', function(f){
 					//alert(f.getName() + ' lose focus');
 					for(var i = 0; i < f.dependencies.length; i++) {
-						var field = this.fields[ f.dependencies[i] ];
+						var field = this.fields[ f.dependencies[i].urlName ];
 						field.getEl().removeClass('x-form-dependent-field');                         
 					}
 				}, this);
 				
 				for(var i = 0; i < field.dependencies.length; i++) {
-					var f = this.fields[ field.dependencies[i] ];
+					var f = this.fields[ field.dependencies[i].urlName ];
 					f.dependants = f.dependants || [];
-					f.dependants.push( parameters[j].id );                      
+					//f.dependants.push( parameters[j].id ); 
+					field.dependencies[i].parameterId = parameters[j].id;
+					f.dependants.push( field.dependencies[i] );                      
 				}	
 			}			
 		}
 		
-
 		for(var p in this.fields) {
 			/*
 			 * workaround (work-around):
@@ -371,10 +372,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			 * Therefore we mix them...
 			 */
 			var theField = this.fields[p];
-			if (theField.behindParameter.selectionType === 'COMBOBOX') {
-				this.fields[p].on('change', this.reloadDependentComboBoxes , this);
+			if (theField.behindParameter.selectionType === 'COMBOBOX'
+				|| theField.behindParameter.selectionType === 'LIST'
+				|| theField.behindParameter.selectionType === 'CHECK_LIST'	) {
+				this.fields[p].on('select', this.updateDependentFields , this);
+				//this.fields[p].on('change', this.updateDependentFields , this);
+			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
+				//alert("Unable to manage dependencies on input field of type [MANUAL INPUT]");
+				theField.el.on('keydown', 
+						this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
+				//alert(theField.behindParameter.toSource());
 			} else {
-				this.fields[p].on('valid', this.reloadDependentComboBoxes , this);
+				alert("Unable to manage dependencies on input field of type [" + theField.behindParameter.selectionType + "]");
 			}
 		}
 		
@@ -397,16 +406,96 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 	}
 	
-	, reloadDependentComboBoxes: function(f) {
+	, updateDependentFields: function(f) {
+		
+		//alert(f.getValue());
+		
 		if (f.dependants !== undefined) {
 			for(var i = 0; i < f.dependants.length; i++) {
-				var field = this.fields[ f.dependants[i] ];
-				if(field.behindParameter.selectionType === 'COMBOBOX'){ 
-					field.store.load();
+				if(f.dependants[i].hasDataDependency === true) {
+					this.updateDataDependentField(f, f.dependants[i]);
+				}
+				
+				if(f.dependants[i].hasVisualDependency === true) {
+					this.updateVisualDependentField(f, f.dependants[i]);
 				}
 			}
 		}
 	}
+	
+	, updateDataDependentField: function(fatherField, dependantConf) {
+		//alert("Update data dependency ...");
+		var field = this.fields[ dependantConf.parameterId ];
+		if(field.behindParameter.selectionType === 'COMBOBOX'){ 
+			field.store.load();
+		}		
+		field.reset();
+	}
+	
+	, updateVisualDependentField: function(fatherField, dependantConf) {
+		var dependantField = this.fields[ dependantConf.parameterId ];
+		var conditions = dependantConf.visualDependencyConditions;
+		
+		var fatherFieldValues;
+		if(fatherField.behindParameter.selectionType === 'CHECK_LIST') {
+			fatherFieldValues = fatherField.getValue();
+		} else {
+			fatherFieldValues = [fatherField.getValue()];
+		}
+		var fatherFieldValueSet = {};
+		for(var i = 0; i < fatherFieldValues.length; i++) {
+			var v = fatherFieldValues[i].trim();
+			fatherFieldValueSet[ v ] = v;
+		}
+		
+		var disableField = conditions.length > 0;
+		
+		for(var i = 0; i < conditions.length; i++) {
+			// check condition
+			var condition = conditions[i];
+			if( this.isVisualConditionTrue(condition, fatherFieldValueSet) ) {
+				this.setFieldLabel(dependantField, condition.label + ':');
+				disableField = false;
+			}
+		}
+		
+		if(disableField) {
+			this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
+			//dependantField.addClass('x-exec-paramlabel-disabled');
+			dependantField.reset();
+			dependantField.disable()
+		} else {
+			//dependantField.removeClass('x-exec-paramlabel-disabled');
+			dependantField.enable();
+		}
+	}
+	
+	, isVisualConditionTrue: function(condition, fatherFieldValueSet) {
+		var conditionIsTrue = false;
+		var values = condition.value.split(',');
+		for(var i = 0; i < values.length; i++) {
+			var v = values[i].trim();
+			if(fatherFieldValueSet[v]) {
+				conditionIsTrue = true;
+				break;
+			}
+		}
+		//alert(conditionIsTrue + " ->> " + condition.toSource());
+		return (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue;
+	}
+	
+	, setFieldLabel: function(field, label){    
+		var el = field.el.dom.parentNode.parentNode;    
+		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
+			//el.children[0].class = 'x-exec-paramlabel-disabled';
+			el.children[0].innerHTML =label;    
+		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
+			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
+			el.parentNode.children[0].innerHTML =label;  
+			
+		}    
+	}
+	
 	
 	, createField: function( executionInstance, p, c ) {
 		var field;
@@ -414,6 +503,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		//alert(p.id + ' - ' + p.selectionType + ' - ' + !p.mandatory);
 		var baseConfig = {
 	       fieldLabel: p.label
+	       , fieldDefaultLabel: p.label
 		   , name : p.id
 		   , width: this.baseConfig.fieldWidth
 		   , allowBlank: !p.mandatory

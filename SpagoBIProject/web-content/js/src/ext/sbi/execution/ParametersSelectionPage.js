@@ -75,7 +75,14 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 		, baseParams: params
 	});
 	 
-    this.addEvents('beforetoolbarinit', 'beforesynchronize', 'synchronize', 'synchronizeexception', 'movenextrequest', 'moveprevrequest', 'collapse3', 'backToAdmin');	
+    this.addEvents('beforetoolbarinit'
+    			  , 'beforesynchronize'
+    			  , 'synchronize'
+    			  , 'synchronizeexception'
+    			  , 'movenextrequest'
+    			  , 'moveprevrequest'
+    			  , 'collapse3'
+    			  , 'backToAdmin');	
 	
     this.shortcutsHiddenPreference = config.shortcutsHidden !== undefined ? config.shortcutsHidden : false;
     
