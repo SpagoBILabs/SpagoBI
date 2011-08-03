@@ -616,9 +616,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			
 		} else { 
-			if(p.type === 'DATE') {		
+			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
 				baseConfig.format = Sbi.config.localizedDateFormat;
 				field = new Ext.form.DateField(baseConfig);
+				if(p.type ==='DATE_DEFAULT') {
+					field.setValue(new Date());
+					
+				}
 				
 			} else if(p.type === 'NUMBER') {
 				field = new Ext.form.NumberField(baseConfig);
