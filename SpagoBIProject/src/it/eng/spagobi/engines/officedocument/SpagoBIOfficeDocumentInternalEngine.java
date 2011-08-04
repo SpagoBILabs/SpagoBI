@@ -22,11 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.engines.officedocument;
 
+import javax.servlet.http.HttpServletResponse;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -35,8 +38,13 @@ import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.InternalEngineIFace;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 import org.apache.log4j.Logger;
+
+import sun.misc.BASE64Decoder;
 
 public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace {
 
@@ -73,6 +81,24 @@ public class SpagoBIOfficeDocumentInternalEngine implements InternalEngineIFace 
 		}
 		
 		try {
+			//defines the mime type to imposte correctly the response
+			IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
+			Content template = c.readTemplate(profile.getUserUniqueIdentifier().toString(), obj.getId().toString(), null);
+			String templateFileName = template.getFileName();
+	
+			logger.debug("Template Read");
+	
+			if(templateFileName==null){
+				logger.warn("Template has no name");
+				templateFileName="";
+			}
+			
+			String mimeType = MimeUtils.getMimeType(templateFileName);
+			logger.debug("Mime type is = " + mimeType);
+			if (mimeType.startsWith("image")){
+				response.setAttribute("isImage", new Boolean(true));
+			}
 			response.setAttribute(ObjectsTreeConstants.SESSION_OBJ_ATTR, obj);
 			// set information for the publisher
 			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "OFFICE_DOC");
