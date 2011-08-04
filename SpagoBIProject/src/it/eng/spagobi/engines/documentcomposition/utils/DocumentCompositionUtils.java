@@ -43,6 +43,7 @@ import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
@@ -414,5 +415,56 @@ public class DocumentCompositionUtils {
 		
 		return par;
 	}
+	/**Method called by document composition publisher , that returns alla available exporters for a single document contained in the composed one.
+	 * @param objLabel
+	 * @param sessionContainer
+	 * @param requestSB
+	 * @return
+	 */
+	public static List getAvailableExporters(String objLabel, SessionContainer sessionContainer, SourceBean requestSB){
+		logger.debug("IN");
 
+		List<Exporters> exporters = null;
+		List<String> exportersTypes = null;
+		if (objLabel == null || objLabel.equals("")){
+			logger.error("Object Label is null: cannot get engine's url.");
+			return null;
+		}
+
+		try{
+			// get the user profile from session
+			SessionContainer permSession = sessionContainer.getPermanentContainer();
+			IEngUserProfile profile = (IEngUserProfile)permSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// get the execution role
+			CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer), 
+					new LightNavigatorContextRetrieverStrategy(requestSB));
+			ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
+			String executionRole = instance.getExecutionRole();
+			Integer objId = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel).getId();
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(objId, executionRole);
+			if (obj == null){
+				logger.error("Cannot obtain engine url. Document with label " + objLabel +" doesn't exist into database.");		
+				List l = new ArrayList();
+				l.add(objLabel);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
+			}
+			Engine engine = obj.getEngine();
+			exporters = DAOFactory.getEngineDAO().getAssociatedExporters(engine);
+			if(exporters != null){
+				exportersTypes = new ArrayList<String>();
+				for(int i=0; i< exporters.size(); i++){
+					Domain domain = DAOFactory.getDomainDAO().loadDomainById(exporters.get(i).getDomainId());
+					String cd = domain.getValueCd();
+					exportersTypes.add(cd);
+				}
+			}
+		}catch(Exception e){
+			logger.error("Error while getting document's exporters for label :" + objLabel+ ": " + e);
+			return null;
+		}finally{
+			logger.debug("OUT");
+		}
+		
+		return exportersTypes;
+	}
 }

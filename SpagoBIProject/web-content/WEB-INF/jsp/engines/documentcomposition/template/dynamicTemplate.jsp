@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@page import="org.apache.log4j.Logger"%>
 <%@page import="it.eng.spagobi.engines.documentcomposition.SpagoBIDocumentCompositionInternalEngine"%>
-<%@page import="java.util.HashMap"%>
+<%@page import="java.util.HashMap,java.util.List,java.util.ArrayList"%>
 <% 
 	logger.debug("IN");
     String urlIframe = "";
@@ -55,7 +55,13 @@ for (int i=0; i<lstUrl.size(); i++){
 
 <%} %>
 <br> 
- 
+<style>
+	.x-panel-header{	
+		padding: 0px;
+		height: 0px;
+		border: none;
+	}
+</style>
 <script>
 	/* Create associative arrays with information for refresh (dependencies, ...)   ACTHUNG: Every array is indipendent!!!! */
 	var arUrl = new Object();
@@ -66,6 +72,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	var arLinkedFields  = new Object();
 	var arLinkedCross  = new Object();
 	var arStylePanels  = new Object();
+	var arExportTypes = new Array();
  	<% //loop on documents
  	for (int i = 0; i < lstUrl.size(); i++){
  		String mainLabel = (String)lstDocLinked.get("MAIN_DOC_LABEL__"+(i));
@@ -78,6 +85,20 @@ for (int i=0; i<lstUrl.size(); i++){
 	 		arTitleDocs['<%=labelDoc%>'] = ['<%=(String)lstTitles.get("TITLE_DOC__"+labelDoc)%>'];
 	 		arZoomDocs['<%=labelDoc%>'] = ['<%=(String)lstZoom.get("ZOOM_DOC__"+labelDoc)%>'];
 	 		arExportDSDocs['<%=labelDoc%>'] = ['<%=(String)lstExportDS.get("EXPORT_DOC__"+labelDoc)%>'];
+	 		var docExporters = new Array();
+	 		<%
+	 		List exportersForDoc = (List)lstExporterTypes.get(labelDoc);
+	 		for(int j=0; j < exportersForDoc.size(); j++){
+	 			String exp = (String)exportersForDoc.get(j);
+	 		%>
+	 			
+	 			var exportType = '<%=exp%>';
+	 			docExporters.push(exportType);
+	 			
+	 		<%
+		 	}
+	 		%>
+	 		arExportTypes['<%=labelDoc%>'] = docExporters;
 	 	<%	//loop on document linked  
 			for (int j=0; j<lstFieldLinked.size(); j++){
 	 			if (mainLabel != null && mainLabel.equalsIgnoreCase(labelDoc)){ 
@@ -131,7 +152,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	 		}
  		}
  	}%>  
-	setDocs(arUrl, arTitleDocs, arZoomDocs, arExportDSDocs);
+	setDocs(arUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes);
 	setLinkedDocs(arLinkedDocs);
 	setLinkedFields(arLinkedFields);
 	setLinkedCross(arLinkedCross);
