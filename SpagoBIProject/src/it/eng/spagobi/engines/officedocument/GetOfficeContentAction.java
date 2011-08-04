@@ -31,8 +31,8 @@ import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
-import java.io.InputStream;
-import java.util.Properties;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,8 +105,50 @@ public class GetOfficeContentAction extends AbstractHttpAction {
 
 			BASE64Decoder bASE64Decoder = new BASE64Decoder();
 			byte[] templateContent = bASE64Decoder.decodeBuffer(template.getContent());
-			response.setContentLength(templateContent.length);
+			
+			
+			//inizio test anto per integrazione zoomviewer
+			/*<object style="width: 640px; height: 360px;"          
+			 * 	classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"          
+			 * 	width="640"          
+			 *  height="360"          
+			 *  codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0">         
+			 *  <param name="src" value="/path/to/keenerview.swf?image_url=/images/keenerview/anyimage.jpg" />         
+			 *  <embed style="width: 640px; height: 360px;"                  
+			 *  	type="application/x-shockwave-flash"                  
+			 *  	width="640"                  
+			 *  	height="360"                  
+			 *  	src="/path/to/keenerview.swf?image_url=/images/keenerview/anyimage.jpg">         
+			 *  </embed> 
+			 *  </object> 
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			OutputStreamWriter ow = new OutputStreamWriter(out);
+			ow.write(" <div align=\"center\" > \n");
+			ow.write("	<object style=\"width: 640px; height: 360px;\" \n");
+			ow.write("		classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" \n");
+			ow.write("		width=\"640\" \n");
+			ow.write("		height=\"360\" \n");
+			ow.write("		codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0\" \n");
+			ow.write("		<param name=\"src\" value=\"./keenerview.swf?image_url=./ortone3.jpg\" /> ");
+			ow.write("		<embed style=\"width: 640px; height: 360px;\" \n");
+			ow.write("			type=\"application/x-shockwave-flash\" \n");
+			ow.write("			width=\"640\" \n");
+			ow.write("			height=\"360\" \n");
+			ow.write("			src=\"./keenerview.swf?image_url=./ortone3.jpg\" \n");
+			ow.write("		</embed> \n");
+			ow.write("	</object> \n");
+			ow.write("</div> ");
+
+			System.out.println("***out.toByteArray(): " + out.toByteArray());
+			response.getOutputStream().write(out.toByteArray());
+			response.setContentLength(out.toByteArray().length);
+			response.setContentType("text/html");
+			//fine test anto
+			*/
+			
+			
 			response.getOutputStream().write(templateContent);
+			response.setContentLength(templateContent.length);
 			response.getOutputStream().flush();	
 			response.getOutputStream().close();
 			
