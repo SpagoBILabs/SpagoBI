@@ -445,10 +445,10 @@ public class DocumentCompositionConfiguration {
 				document.setActiveZoom(attributeValue);				
 				attributeValue = (documentSB.getAttribute(Constants.EXPORT_DS)==null)?"false":(String)documentSB.getAttribute(Constants.EXPORT_DS);
 				//checks if the object has a SpagoBI dataset (only right case to activate the export of the dataset functionality) 
-				BIObject obj= DAOFactory.getBIObjectDAO().loadBIObjectByLabel(document.getSbiObjLabel());
+/*				BIObject obj= DAOFactory.getBIObjectDAO().loadBIObjectByLabel(document.getSbiObjLabel());
 				if (obj.getDataSetId() == null){
 					attributeValue = "false";
-				}
+				}*/
 				document.setActiveExportDS(attributeValue);
 
 				Integer width = (documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH)==null)?DEFAULT_WIDTH:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH));

@@ -27,10 +27,11 @@ var asLinkedDocs = new Object();
 var asLinkedFields = new Object();
 var asLinkedCross = new Object();
 var asStylePanels = new Object();
+var asExportTypes = new Object();
 var numDocs = 0;
 
 
-function setDocs(pUrls, pTitle, pZoom, pExport){
+function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes){
 	for (i in pUrls)
 	{
 	   numDocs++;
@@ -39,6 +40,7 @@ function setDocs(pUrls, pTitle, pZoom, pExport){
 	asTitleDocs = pTitle;
 	asZoomDocs = pZoom;
 	asExportDSDocs = pExport;
+	asExportTypes = pExportTypes;
 	
 }
 
@@ -238,7 +240,9 @@ function pause(interval)
         if(now.getTime() > exitTime) return;
     }
 }
- 
+function  exportReportExecution(exportType) {
+    alert('excel');
+} 
 //create panels for each document
 Ext.onReady(function() {  
 	if (numDocs > 0){   
@@ -264,30 +268,23 @@ Ext.onReady(function() {
 			       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
 					}
 					//defines the tools (header's buttons):
-					var arTools = [];
-					if (zoomDoc !== undefined && zoomDoc[0] === "true"){
-						//add the maximize (zoom) button
-						var toolZoom = 	{
-									    id: 'maximize', //restore
-									    qtip: 'Zoom da internazionalizzare',
-									    handler: function(){
-									    	alert("ZOOM: mi hai cliccato!");
-							      		//	this.refresh();
-									    }, scope: this
-							      	};
-						arTools.push(toolZoom);
-						//add the minimize (zoom) button hidden
-						toolZoom = 	{
-								    id: 'restore',
-								    qtip: 'Zoom da internazionalizzare',
-								    hidden: true,
-								    handler: function(){
-								    	alert("ZOOM restore: mi hai cliccato!");
-						      		//	this.refresh();
-								    }, scope: this
-						      	};
-					arTools.push(toolZoom);
-					}
+					var menuItems = new Array();
+					var arTools =[];
+
+					var tb = new Ext.Toolbar({
+					    style: {
+				            background: '#ffffff',
+				            margin: 0,
+				            border: '0',
+				            color: '#000000',
+				            align: 'right',
+				            padding: 0,
+				            'padding-left': 10,
+				            'z-index': 100
+				        },
+				        buttonAlign: 'right',
+				        items: []
+					});
 					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
 						//add the export dataset button
 						var toolExport = {
@@ -299,7 +296,57 @@ Ext.onReady(function() {
 									    }, scope: this
 									  };
 						arTools.push(toolExport);
+						
+						var docsExpArrays= asExportTypes[strDocLabel];
+						
+						for(k=0; k< docsExpArrays.length; k++){
+							var type = docsExpArrays[k];
+						
+							var iconname = 'icon-'+type.toLowerCase();
+							menuItems.push(   new Ext.menu.Item({
+		                        id:  Ext.id()
+		                        , text: type
+		                        , group: 'group_2'
+		                        , iconCls: iconname 
+						     	, scope: this
+								, width: 15
+						    	, handler : function() { exportReportExecution(type); }
+								, href: ''   
+		                    })	
+		                    ); 
+						}
+
+						var menu0 = new Ext.menu.Menu({
+							id: 'basicMenu_0',
+							items: menuItems    
+							});	
+						var menuBtn = new Ext.Toolbar.MenuButton({
+							id: Ext.id()
+				            , tooltip: 'Exporters'
+							, path: 'Exporters'	
+							, iconCls: 'icon-export' 	
+				            , menu: menu0
+				            , width: 15
+				            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+				        });
+						tb = new Ext.Toolbar({
+						    style: {
+					            background: '#ffffff',
+					            margin: 0,
+					            border: '0',
+					            color: '#000000',
+					            align: 'right',
+					            padding: 0,
+					            'padding-left': 10,
+					            'z-index': 100
+					        },
+					        buttonAlign: 'right',
+					        items: [menuBtn]
+						});
+
 					}
+					
+					
 					//create panel with iframe
 					var p = new  Ext.ux.ManagedIframePanel({
 							frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
@@ -312,8 +359,10 @@ Ext.onReady(function() {
 							,height		: Number(heightPx)
 							,scrolling  : 'auto'	 //possible values: yes, no, auto  
 							//,collapsible: true
-							,tools		: arTools
+							,tbar		: tb
 							,bodyStyle	:'padding:1px'
+							,scope: this
+
 					});
   				}
   	}}

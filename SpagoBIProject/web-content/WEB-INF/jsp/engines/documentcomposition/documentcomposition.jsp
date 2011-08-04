@@ -37,7 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 <%@ include file="/WEB-INF/jsp/analiticalmodel/execution/header.jsp"%>
-
+<LINK rel='StyleSheet' 
+      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>'  type='text/css' />
 <%! private static transient Logger logger=Logger.getLogger(SpagoBIDocumentCompositionInternalEngine.class);%>
 
 <%  logger.debug("IN");
@@ -83,7 +84,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Map lstDocLinked = new HashMap();
     Map lstFieldLinked = new HashMap();
     Map lstCrossLinked = new HashMap(); 
-     
+    Map lstExporterTypes = new HashMap();  
     //loop on documents
     for (int i = 0; i < lstDoc.size(); i++){
     	//gets url, parameters and other informations
@@ -111,7 +112,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	        lstZoom = docConfig.getLstDocZoom();
 	        lstExportDS = docConfig.getLstDocExportDS();
 	        lstCrossLinked = docConfig.getLstCrossLinked();
+	        
+	      	//retrieve document's exporters
+	      	if(lstExportDS != null && lstExportDS.size()!= 0){
+	      		List<String> exporters = DocumentCompositionUtils.getAvailableExporters(tmpDoc.getSbiObjLabel(), aSessionContainer, aRequestContainer.getServiceRequest());
+	      		lstExporterTypes.put(tmpDoc.getSbiObjLabel(), exporters);
+	      	}
     	}
+    	
+    	
     } 
 	%>
 <%@ include
