@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.documentcomposition.configuration;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -62,6 +64,9 @@ public class DocumentCompositionConfiguration {
 	private Map lstPanelStyle = new LinkedHashMap();
 	private Map lstDocTitles = new LinkedHashMap();
 	private Map lstCrossLinked = new LinkedHashMap();
+	private Map lstDocZoom = new LinkedHashMap();
+	private Map lstDocExportDS = new LinkedHashMap();
+	
 
 	private Integer videoHeight=null;
 	private Integer videoWidth=null;
@@ -96,6 +101,8 @@ public class DocumentCompositionConfiguration {
 		String type;
 		String defaultValue;
 		String typeCross;
+		String activeZoom;
+		String activeExportDS;
 		Properties params;
 
 		/**
@@ -227,6 +234,34 @@ public class DocumentCompositionConfiguration {
 		 */
 		public void setTitle(String title) {
 			this.title = title;
+		}
+
+		/**
+		 * @return the activeZoom
+		 */
+		public String getActiveZoom() {
+			return (activeZoom == null)?"false":activeZoom;
+		}
+
+		/**
+		 * @param activeZoom the activeZoom to set
+		 */
+		public void setActiveZoom(String activeZoom) {
+			this.activeZoom = activeZoom;
+		}
+
+		/**
+		 * @return the activeExportDS
+		 */
+		public String getActiveExportDS() {
+			return (activeExportDS == null)?"false":activeExportDS;
+		}
+
+		/**
+		 * @param activeExportDS the activeExportDS to set
+		 */
+		public void setActiveExportDS(String activeExportDS) {
+			this.activeExportDS = activeExportDS;
 		}
 
 		/**
@@ -406,6 +441,15 @@ public class DocumentCompositionConfiguration {
 				document.setSbiObjLabel(attributeValue);
 				attributeValue = (documentSB.getAttribute(Constants.TITLE)==null)?"":(String)documentSB.getAttribute(Constants.TITLE);
 				document.setTitle(attributeValue);
+				attributeValue = (documentSB.getAttribute(Constants.ZOOM)==null)?"false":(String)documentSB.getAttribute(Constants.ZOOM);
+				document.setActiveZoom(attributeValue);				
+				attributeValue = (documentSB.getAttribute(Constants.EXPORT_DS)==null)?"false":(String)documentSB.getAttribute(Constants.EXPORT_DS);
+				//checks if the object has a SpagoBI dataset (only right case to activate the export of the dataset functionality) 
+				BIObject obj= DAOFactory.getBIObjectDAO().loadBIObjectByLabel(document.getSbiObjLabel());
+				if (obj.getDataSetId() == null){
+					attributeValue = "false";
+				}
+				document.setActiveExportDS(attributeValue);
 
 				Integer width = (documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH)==null)?DEFAULT_WIDTH:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_WIGTH));
 				Integer height = (documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT)==null)?DEFAULT_HEIGHT:Integer.valueOf((String)documentsConfigurationSB.getAttribute(Constants.VIDEO_HEIGHT));
@@ -671,6 +715,8 @@ public class DocumentCompositionConfiguration {
 			lstDivStyle.put("STYLE_DOC__"+numDoc, tmpDoc.getStyle());
 			lstDocLinked.put("MAIN_DOC_LABEL__"+numDoc, tmpDoc.getSbiObjLabel());
 			lstDocTitles.put("TITLE_DOC__"+ docLabel, tmpDoc.getTitle());
+			lstDocZoom.put("ZOOM_DOC__"+ docLabel, tmpDoc.getActiveZoom());
+			lstDocExportDS.put("EXPORT_DOC__"+ docLabel, tmpDoc.getActiveExportDS());
 			//gets layout informations (width and height) for next settings of ext-panels
 			String docStyles = tmpDoc.getStyle();
 			String tmpStyle = "";
@@ -974,6 +1020,34 @@ public class DocumentCompositionConfiguration {
 	 */
 	public void setLstDocTitles(Map lstDocTitles) {
 		this.lstDocTitles = lstDocTitles;
+	}
+
+	/**
+	 * @return the lstDocZoom
+	 */
+	public Map getLstDocZoom() {
+		return lstDocZoom;
+	}
+
+	/**
+	 * @param lstDocZoom the lstDocZoom to set
+	 */
+	public void setLstDocZoom(Map lstDocZoom) {
+		this.lstDocZoom = lstDocZoom;
+	}
+
+	/**
+	 * @return the lstDocExportDS
+	 */
+	public Map getLstDocExportDS() {
+		return lstDocExportDS;
+	}
+
+	/**
+	 * @param lstDocExportDS the lstDocExportDS to set
+	 */
+	public void setLstDocExportDS(Map lstDocExportDS) {
+		this.lstDocExportDS = lstDocExportDS;
 	}
 
 	/**

@@ -71,4 +71,8 @@ public class Constants {
 	
 	public static final String CROSS_EXTERNAL = "EXTERNAL";
 	
+	public static final String ZOOM = "zoom";
+	
+	public static final String EXPORT_DS = "exportDS";
+	
 }
