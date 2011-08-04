@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 var asUrls = new Object();
 var asTitleDocs = new Object();
+var asZoomDocs = new Object();
+var asExportDSDocs = new Object();
 var asLinkedDocs = new Object();
 var asLinkedFields = new Object();
 var asLinkedCross = new Object();
@@ -28,13 +30,16 @@ var asStylePanels = new Object();
 var numDocs = 0;
 
 
-function setDocs(pUrls, pTitle){
+function setDocs(pUrls, pTitle, pZoom, pExport){
 	for (i in pUrls)
 	{
 	   numDocs++;
 	}
 	asUrls = pUrls;
 	asTitleDocs = pTitle;
+	asZoomDocs = pZoom;
+	asExportDSDocs = pExport;
+	
 }
 
 function setLinkedDocs(pLinkedDocs){
@@ -242,8 +247,14 @@ Ext.onReady(function() {
 	  				var totalDocLabel=docLabel;	
 	  				var strDocLabel = totalDocLabel.substring(totalDocLabel.indexOf('|')+1);
 	  				//gets style (width and height)
-	  				var style = asStylePanels[strDocLabel];
-	  				var titleDoc = asTitleDocs[strDocLabel];
+	  				var style = asStylePanels[strDocLabel];	  				
+	  				var zoomDoc = asZoomDocs[strDocLabel] || "false";
+	  				var exportDSDoc = asExportDSDocs[strDocLabel] || "false";
+	  				//the title drives the header's visualization
+	  				var titleDoc = asTitleDocs[strDocLabel] ;
+	  				if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
+	  					titleDoc = null;
+	  				}
 					var widthPx = "";
 					var heightPx = "";
 					if (style != null){
@@ -252,16 +263,57 @@ Ext.onReady(function() {
 						widthPx = widthPx.substring(widthPx.indexOf("WIDTH_")+6);
 			       		heightPx = heightPx.substring(heightPx.indexOf("HEIGHT_")+7);
 					}
+					//defines the tools (header's buttons):
+					var arTools = [];
+					if (zoomDoc !== undefined && zoomDoc[0] === "true"){
+						//add the maximize (zoom) button
+						var toolZoom = 	{
+									    id: 'maximize', //restore
+									    qtip: 'Zoom da internazionalizzare',
+									    handler: function(){
+									    	alert("ZOOM: mi hai cliccato!");
+							      		//	this.refresh();
+									    }, scope: this
+							      	};
+						arTools.push(toolZoom);
+						//add the minimize (zoom) button hidden
+						toolZoom = 	{
+								    id: 'restore',
+								    qtip: 'Zoom da internazionalizzare',
+								    hidden: true,
+								    handler: function(){
+								    	alert("ZOOM restore: mi hai cliccato!");
+						      		//	this.refresh();
+								    }, scope: this
+						      	};
+					arTools.push(toolZoom);
+					}
+					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
+						//add the export dataset button
+						var toolExport = {
+									    id: 'gear',
+									    qtip: 'Export dataset da internazionalizzare',
+									    handler: function(){
+									    	alert("EXPORT: mi hai cliccato!");
+							      		//	this.refresh();
+									    }, scope: this
+									  };
+						arTools.push(toolExport);
+					}
 					//create panel with iframe
 					var p = new  Ext.ux.ManagedIframePanel({
 							frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
 							,renderTo   : 'divIframe_'+ strDocLabel
-			                ,title      : (titleDoc==null || titleDoc== "")?null:titleDoc
+			                //,title      : (titleDoc==null || titleDoc== "")?null:titleDoc
+			                ,title      : titleDoc
 			                ,defaultSrc : asUrls[docLabel]+""
 			                ,loadMask   : true//(Ext.isIE)?true:false
 			                ,border		: false //the border style should be defined into document template within the "style" tag
 							,height		: Number(heightPx)
 							,scrolling  : 'auto'	 //possible values: yes, no, auto  
+							//,collapsible: true
+							,tools		: arTools
+							,bodyStyle	:'padding:1px'
 					});
   				}
   	}}
