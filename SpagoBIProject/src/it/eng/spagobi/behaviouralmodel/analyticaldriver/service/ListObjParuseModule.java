@@ -172,50 +172,53 @@ public class ListObjParuseModule extends AbstractModule {
 			Integer biParamId = new Integer (biParamIdStr);
 			// get the xml description of new correlations from request and transform to sourceBean
 			String xmlCorrsStr = (String) request.getAttribute("correlations_xml");
-			SourceBean xmlCorrsSB = SourceBean.fromXMLString(xmlCorrsStr);
-			// get the list of correlations SB
-			List correlations = xmlCorrsSB.getAttributeAsList("correlation");
-			// for each correlation create a new correlation object (SbiObjParuse)
-			List newCorrelations = new ArrayList();
-			Iterator corrIter = correlations.iterator();
-			int prog = 1;
-			while(corrIter.hasNext()) {
-				SourceBean correlationSB = (SourceBean)corrIter.next();
-				String preCondition = (String)correlationSB.getAttribute("precond");
-				String postCondition = (String)correlationSB.getAttribute("postcond");
-				String logicOperator = (String)correlationSB.getAttribute("logicoperator");
-				String idParFatherStr = (String)correlationSB.getAttribute("idparameterfather");
-				Integer idParFather = new Integer(idParFatherStr);
-				String condition = (String)correlationSB.getAttribute("condition");
-				List paruseSettings = correlationSB.getAttributeAsList("parusesettings.parusesetting");
-				Iterator iterPUS = paruseSettings.iterator();
-				while(iterPUS.hasNext()) {
-					SourceBean paruseSetSB = (SourceBean)iterPUS.next();
-					String active = (String)paruseSetSB.getAttribute("active");
-					String paruseidStr = (String)paruseSetSB.getAttribute("paruseid");
-					String oncolumn = (String)paruseSetSB.getAttribute("oncolumn");
-					Integer paruseid = new Integer(paruseidStr);
-					ObjParuse correlation = new ObjParuse();
-					correlation.setFilterColumn(oncolumn);
-					correlation.setFilterOperation(condition);
-					correlation.setLogicOperator(logicOperator);
-					correlation.setObjParFatherId(idParFather);
-					correlation.setObjParId(biParamId);
-					correlation.setParuseId(paruseid);
-					correlation.setPostCondition(postCondition);
-					correlation.setPreCondition(preCondition);
-					correlation.setProg(new Integer(prog));
-					newCorrelations.add(correlation);
-				}
-				prog ++;
-			}		
-			// load the previous saved correlations
-			List oldcorrelations = DAOFactory.getObjParuseDAO().loadObjParuses(biParamId);
-			if(oldcorrelations == null) 
-				oldcorrelations = new ArrayList();
-			// update database
-			updateDatabase(oldcorrelations, newCorrelations);
-			// fill the response 
+			// could be null if parameter was manual input
+			if(xmlCorrsStr != null){
+				SourceBean xmlCorrsSB = SourceBean.fromXMLString(xmlCorrsStr);
+				// get the list of correlations SB
+				List correlations = xmlCorrsSB.getAttributeAsList("correlation");
+				// for each correlation create a new correlation object (SbiObjParuse)
+				List newCorrelations = new ArrayList();
+				Iterator corrIter = correlations.iterator();
+				int prog = 1;
+				while(corrIter.hasNext()) {
+					SourceBean correlationSB = (SourceBean)corrIter.next();
+					String preCondition = (String)correlationSB.getAttribute("precond");
+					String postCondition = (String)correlationSB.getAttribute("postcond");
+					String logicOperator = (String)correlationSB.getAttribute("logicoperator");
+					String idParFatherStr = (String)correlationSB.getAttribute("idparameterfather");
+					Integer idParFather = new Integer(idParFatherStr);
+					String condition = (String)correlationSB.getAttribute("condition");
+					List paruseSettings = correlationSB.getAttributeAsList("parusesettings.parusesetting");
+					Iterator iterPUS = paruseSettings.iterator();
+					while(iterPUS.hasNext()) {
+						SourceBean paruseSetSB = (SourceBean)iterPUS.next();
+						String active = (String)paruseSetSB.getAttribute("active");
+						String paruseidStr = (String)paruseSetSB.getAttribute("paruseid");
+						String oncolumn = (String)paruseSetSB.getAttribute("oncolumn");
+						Integer paruseid = new Integer(paruseidStr);
+						ObjParuse correlation = new ObjParuse();
+						correlation.setFilterColumn(oncolumn);
+						correlation.setFilterOperation(condition);
+						correlation.setLogicOperator(logicOperator);
+						correlation.setObjParFatherId(idParFather);
+						correlation.setObjParId(biParamId);
+						correlation.setParuseId(paruseid);
+						correlation.setPostCondition(postCondition);
+						correlation.setPreCondition(preCondition);
+						correlation.setProg(new Integer(prog));
+						newCorrelations.add(correlation);
+					}
+					prog ++;
+				}		
+				// load the previous saved correlations
+				List oldcorrelations = DAOFactory.getObjParuseDAO().loadObjParuses(biParamId);
+				if(oldcorrelations == null) 
+					oldcorrelations = new ArrayList();
+				// update database
+				updateDatabase(oldcorrelations, newCorrelations);
+				// fill the response 
+			}
 			response.setAttribute("loopback", "true");
 			session.setAttribute("RETURN_FROM_MODULE", "ListObjParuseModule");
 		} catch (Exception ex) {
