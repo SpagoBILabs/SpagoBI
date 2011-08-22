@@ -927,8 +927,11 @@ function viewView(indexView) {
 
 	function saveCorrelationsAndViews() {
 		   xmlCorrInpHid = document.getElementById('correlations_xml'); 
+
+			   if(xmlCorrInpHid){
 		   xmlCorrGen = generateCorrelationsXml();
 		   xmlCorrInpHid.value = xmlCorrGen;
+		   }
 		   
 		   xmlViewInpHid = document.getElementById('views_xml');
 		   xmlViewGen = generateViewsXml();
@@ -942,54 +945,9 @@ function viewView(indexView) {
 
 </script>
 
+	<!-- SAVE AND BACK FORM -->
 	
-	<!--  PARUSES -->
-	
-	<!--  IF THERE'S NO PARUSES SHOW A MESSAGE AND ONLY THE BACK BUTTON -->
-	<%
-	if (allParuses == null || allParuses.size() == 0) {
-		%>
-		<table class='header-table-portlet-section'>		
-			<tr class='header-row-portlet-section'>
-				<td class='header-title-column-portlet-section' 
-				    style='vertical-align:middle;padding-left:5px;'>
-					<spagobi:message key = "SBIDev.listObjParuses.title" /> <%=" " + biParam.getLabel()%>
-				</td>
-				<td class='header-empty-column-portlet-section'>&nbsp;</td>
-				<td class='header-button-column-portlet-section'>
-					<a href='<%=backUrl%>'> 
-		      			<img class='header-button-image-portlet-section' 
-		      			     title='<spagobi:message key = "SBIDev.listObjParuses.backButt" />' 
-		      			     src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/back.png", currTheme)%>' 
-		      			     alt='<spagobi:message key = "SBIDev.listObjParuses.backButt" />' />
-					</a>
-				</td>
-			</tr>
-		</table>
-		<div class='div_background_no_img' style='padding-top:5px;padding-left:5px;'>
-
-
-
-
-
-
-
-
-
-
-			<div class="div_detail_area_forms" >
-				<spagobi:message key = "SBIDev.listObjParuses.noParuses" />
-			</div>
-		</div>
-	
-	
-	
-	
-	<!--  IF SOME PARUSES EXIST THEN SHOW THE FORM AND THE SAVE BUTTON -->
-	<%
-	} else {
-	%>
-		<table class='header-table-portlet-section'>		
+			<table class='header-table-portlet-section'>		
 			<tr class='header-row-portlet-section'>
 				<td class='header-title-column-portlet-section' 
 				    style='vertical-align:middle;padding-left:5px;'>
@@ -1014,6 +972,20 @@ function viewView(indexView) {
 				</td>
 			</tr>
 		</table>
+	
+	<!--  PARUSES -->
+	
+	<!--  IF THERE'S NO PARUSES SHOW A MESSAGE AND ONLY THE BACK BUTTON -->
+	<%
+	boolean emptyParuses = false;
+	if (allParuses == null || allParuses.size() == 0) {
+		emptyParuses = true;
+	}
+
+ // show the correlation only if some paruses exist
+ if(!emptyParuses){
+	
+	%>
 		
 		<div class='div_background_no_img' style='padding:5px;'>
 			
@@ -1103,6 +1075,12 @@ function viewView(indexView) {
       rigenerateCorrelationList();
     </script>
       
+      <%  
+      // Close not empty paruse case
+	}
+ 
+ // Parameters visibility checks can be set even with a manual input parameter
+      %>
       
       	     <!--   PARAMETERS VIEW -->
     
@@ -1166,22 +1144,12 @@ function viewView(indexView) {
       
       	  <form method='POST' action='<%=formUrl%>' id='objParusesForm'>
 	       <input type="hidden" name="obj_par_id" value="<%=biParam.getId()%>" />
+	       <% if (!emptyParuses){ %>
 	       <input type="hidden" id="correlations_xml" name="correlations_xml" value="" />
+	       <% }%>
 	       <input type="hidden" id="views_xml" name="views_xml" value="" />
     </form>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-	<%
-	 }
-	%>
+
 	    
 	    
 
