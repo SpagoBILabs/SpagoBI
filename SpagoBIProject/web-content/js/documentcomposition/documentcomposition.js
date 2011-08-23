@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 var asUrls = new Object();
+var asDocTypes = new Object();
 var asTitleDocs = new Object();
 var asZoomDocs = new Object();
 var asExportDSDocs = new Object();
@@ -31,7 +32,7 @@ var asExportTypes = new Object();
 var numDocs = 0;
 
 
-function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes){
+function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes, pDocTypes){
 	for (i in pUrls)
 	{
 	   numDocs++;
@@ -41,6 +42,7 @@ function setDocs(pUrls, pTitle, pZoom, pExport, pExportTypes){
 	asZoomDocs = pZoom;
 	asExportDSDocs = pExport;
 	asExportTypes = pExportTypes;
+	asDocTypes = pDocTypes;
 	
 }
 
@@ -240,8 +242,36 @@ function pause(interval)
         if(now.getTime() > exitTime) return;
     }
 }
-function  exportReportExecution(exportType) {
-    alert('excel');
+function changeDocumentExecutionUrlParameter(parameterName, parameterValue, sbiLabelDocLinked) {
+	var nameIframe = "iframe_" + sbiLabelDocLinked;
+
+	var CurrentUrl = document.getElementById(nameIframe).contentWindow.location.href;
+
+    var parurl = Ext.urlDecode(CurrentUrl);
+    parurl[parameterName] = parameterValue;
+    parurl = Ext.urlEncode(parurl);
+    var endUrl = parurl;
+    return CurrentUrl +"&"+parameterName+"="+parameterValue;
+}
+
+function exportChartExecution(exportType, sbiLabelDocLinked) {
+	var nameIframe = "iframe_" + sbiLabelDocLinked;
+	document.getElementById(nameIframe).contentWindow.exportChart(exportType);
+}
+
+function  exportExecution(item) {
+	var  exportType = item.text;
+	var doclabel = item.document;
+    //alert('Export document '+doclabel+' as '+exportType);
+    var endUrl = this.changeDocumentExecutionUrlParameter('outputType', exportType, doclabel);
+    //alert(endUrl);
+    if(item.docType == 'REPORT' || (item.docType == 'MAP')){
+    	window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
+    
+    }else if(item.docType == 'DASH'){
+    	exportChartExecution(exportType, doclabel);
+    }
+	
 } 
 //create panels for each document
 Ext.onReady(function() {  
@@ -286,63 +316,72 @@ Ext.onReady(function() {
 				        items: []
 					});
 					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
-						//add the export dataset button
-						var toolExport = {
-									    id: 'gear',
-									    qtip: 'Export dataset da internazionalizzare',
-									    handler: function(){
-									    	alert("EXPORT: mi hai cliccato!");
-							      		//	this.refresh();
-									    }, scope: this
-									  };
-						arTools.push(toolExport);
-						
 						var docsExpArrays= asExportTypes[strDocLabel];
-						
-						for(k=0; k< docsExpArrays.length; k++){
-							var type = docsExpArrays[k];
-						
-							var iconname = 'icon-'+type.toLowerCase();
-							menuItems.push(   new Ext.menu.Item({
-		                        id:  Ext.id()
-		                        , text: type
-		                        , group: 'group_2'
-		                        , iconCls: iconname 
-						     	, scope: this
-								, width: 15
-						    	, handler : function() { exportReportExecution(type); }
-								, href: ''   
-		                    })	
-		                    ); 
+						if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){
+							//add the export dataset button
+							var toolExport = {
+										    id: 'gear',
+										    qtip: 'Export dataset da internazionalizzare',
+										    handler: function(){
+										    	alert("EXPORT: mi hai cliccato!");
+								      		//	this.refresh();
+										    }, scope: this
+										  };
+							arTools.push(toolExport);
+							
+							
+							var docType = asDocTypes[strDocLabel];
+							for(k=0; k< docsExpArrays.length; k++){
+								var type = docsExpArrays[k];
+							
+								var iconname = 'icon-'+type.toLowerCase();
+								
+								var itemExp = new Ext.menu.Item({
+			                        text: type
+			                        , group: 'group_2'
+			                        , iconCls: iconname 
+							     	, scope: this
+									, width: 15
+							    	//, handler : function() { exportExecution(type, strDocLabel); }
+									, listeners:{
+										click: function() { exportExecution(this); }								
+									}
+									, href: ''
+									, document: strDocLabel
+									, docType : docType
+			                    })	
+								menuItems.push(itemExp); 
+							}
+
+							var menu0 = new Ext.menu.Menu({
+								id: 'basicMenu_0',
+								items: menuItems    
+								});	
+							var menuBtn = new Ext.Toolbar.MenuButton({
+								id: Ext.id()
+					            , tooltip: 'Exporters'
+								, path: 'Exporters'	
+								, iconCls: 'icon-export' 	
+					            , menu: menu0
+					            , width: 15
+					            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+					        });
+							tb = new Ext.Toolbar({
+							    style: {
+						            background: '#ffffff',
+						            margin: 0,
+						            border: '0',
+						            color: '#000000',
+						            align: 'right',
+						            padding: 0,
+						            'padding-left': 10,
+						            'z-index': 100
+						        },
+						        buttonAlign: 'right',
+						        items: [menuBtn]
+							});
 						}
 
-						var menu0 = new Ext.menu.Menu({
-							id: 'basicMenu_0',
-							items: menuItems    
-							});	
-						var menuBtn = new Ext.Toolbar.MenuButton({
-							id: Ext.id()
-				            , tooltip: 'Exporters'
-							, path: 'Exporters'	
-							, iconCls: 'icon-export' 	
-				            , menu: menu0
-				            , width: 15
-				            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-				        });
-						tb = new Ext.Toolbar({
-						    style: {
-					            background: '#ffffff',
-					            margin: 0,
-					            border: '0',
-					            color: '#000000',
-					            align: 'right',
-					            padding: 0,
-					            'padding-left': 10,
-					            'z-index': 100
-					        },
-					        buttonAlign: 'right',
-					        items: [menuBtn]
-						});
 
 					}
 					
@@ -366,5 +405,7 @@ Ext.onReady(function() {
 					});
   				}
   	}}
+	
+	
 }); 
 
