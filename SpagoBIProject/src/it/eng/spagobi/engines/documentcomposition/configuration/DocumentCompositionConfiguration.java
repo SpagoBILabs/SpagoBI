@@ -434,11 +434,18 @@ public class DocumentCompositionConfiguration {
 			for(int i = 0; i < documentList.size(); i++) {
 
 				documentSB = (SourceBean)documentList.get(i);
-				document = new Document();	
+				document = new Document();
+
 				//set the number that identify the document within of hash table
 				document.setNumOrder(i);	
 				attributeValue = (String)documentSB.getAttribute(Constants.SBI_OBJ_LABEL);
 				document.setSbiObjLabel(attributeValue);
+				
+				
+				BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(attributeValue);
+				String typeCD = obj.getBiObjectTypeCode();
+				document.setType(typeCD);
+				
 				attributeValue = (documentSB.getAttribute(Constants.TITLE)==null)?"":(String)documentSB.getAttribute(Constants.TITLE);
 				document.setTitle(attributeValue);
 				attributeValue = (documentSB.getAttribute(Constants.ZOOM)==null)?"false":(String)documentSB.getAttribute(Constants.ZOOM);

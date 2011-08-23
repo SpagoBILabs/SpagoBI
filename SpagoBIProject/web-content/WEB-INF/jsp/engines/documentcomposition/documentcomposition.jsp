@@ -56,7 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    	//acquisizione info come template a cui girare la richiesta
     String nameTemplate = "";
     String codeError = "";
-    
+
     //get object configuration
     DocumentCompositionConfiguration docConfig = null;
     docConfig = (DocumentCompositionConfiguration)contextManager.get("docConfig");
@@ -69,7 +69,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     //get template file
     nameTemplate = docConfig.getTemplateFile();
     logger.debug("name TemplateFile: " + nameTemplate);
-     
+    
     //get list of documents
     List lstDoc = docConfig.getDocumentsArray();
     
@@ -85,10 +85,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     Map lstFieldLinked = new HashMap();
     Map lstCrossLinked = new HashMap(); 
     Map lstExporterTypes = new HashMap();  
+    Map lstDocTypes = new HashMap();  
     //loop on documents
     for (int i = 0; i < lstDoc.size(); i++){
     	//gets url, parameters and other informations
     	Document tmpDoc = (Document)lstDoc.get(i);
+    	String docType =  tmpDoc.getType();
+    	
     	String tmpUrl = DocumentCompositionUtils.getExecutionUrl(tmpDoc.getSbiObjLabel(), aSessionContainer, aRequestContainer.getServiceRequest());
     	codeError = tmpUrl.substring(0,tmpUrl.indexOf("|"));
     	tmpUrl = tmpUrl.substring(tmpUrl.indexOf("|")+1);
@@ -112,7 +115,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	        lstZoom = docConfig.getLstDocZoom();
 	        lstExportDS = docConfig.getLstDocExportDS();
 	        lstCrossLinked = docConfig.getLstCrossLinked();
-	        
+	        lstDocTypes.put("SBI_DOC_TYPE__"+ (i), docType); 
 	      	//retrieve document's exporters
 	      	if(lstExportDS != null && lstExportDS.size()!= 0){
 	      		List<String> exporters = DocumentCompositionUtils.getAvailableExporters(tmpDoc.getSbiObjLabel(), aSessionContainer, aRequestContainer.getServiceRequest());

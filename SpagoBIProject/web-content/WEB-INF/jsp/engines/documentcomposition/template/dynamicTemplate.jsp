@@ -66,6 +66,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	/* Create associative arrays with information for refresh (dependencies, ...)   ACTHUNG: Every array is indipendent!!!! */
 	var arUrl = new Object();
 	var arTitleDocs = new Object();
+	var arTypeDocs = new Object();
 	var arZoomDocs = new Object();
 	var arExportDSDocs = new Object();
 	var arLinkedDocs  = new Object();
@@ -77,10 +78,12 @@ for (int i=0; i<lstUrl.size(); i++){
  	for (int i = 0; i < lstUrl.size(); i++){
  		String mainLabel = (String)lstDocLinked.get("MAIN_DOC_LABEL__"+(i));
  		String totalSbiDocLabel = (String)lstUrlParams.get("SBI_DOC_LABEL__"+(i));
+ 		String totalSbiDocType = (String)lstDocTypes.get("SBI_DOC_TYPE__"+(i));
  		if (totalSbiDocLabel != null && !totalSbiDocLabel.equals("")){
 	 		String labelDoc = totalSbiDocLabel.substring(totalSbiDocLabel.indexOf("|")+1);
 	 	%> 
 	 		arUrl['<%=totalSbiDocLabel%>'] = ['<%=(String)lstUrl.get("URL_DOC__"+(i))%>'];
+	 		arTypeDocs['<%=labelDoc%>'] = ['<%=totalSbiDocType%>'];
 	 		arStylePanels['<%=labelDoc%>'] = ['<%=(String)lstStylePanel.get("STYLE__"+labelDoc)%>'];
 	 		arTitleDocs['<%=labelDoc%>'] = ['<%=(String)lstTitles.get("TITLE_DOC__"+labelDoc)%>'];
 	 		arZoomDocs['<%=labelDoc%>'] = ['<%=(String)lstZoom.get("ZOOM_DOC__"+labelDoc)%>'];
@@ -152,7 +155,7 @@ for (int i=0; i<lstUrl.size(); i++){
 	 		}
  		}
  	}%>  
-	setDocs(arUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes);
+	setDocs(arUrl, arTitleDocs, arZoomDocs, arExportDSDocs, arExportTypes, arTypeDocs);
 	setLinkedDocs(arLinkedDocs);
 	setLinkedFields(arLinkedFields);
 	setLinkedCross(arLinkedCross);
