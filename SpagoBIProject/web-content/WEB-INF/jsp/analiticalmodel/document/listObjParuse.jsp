@@ -1129,13 +1129,11 @@ function viewView(indexView) {
 
 
 	
-		try{
+		{ // if removing this block pay attention not to have more variables with same name, comparevalueNoPoint should be use as value
 	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getObjParFatherId()%>, getParNameFromParId(<%=view.getObjParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>", <%=view.getProg()%> );
       			 viewManager.addView(view<%=pfid%><%=operation%>compareValueNoPoint);
-	         } catch (err) {
-
-            }
-	 	<%   
+	         } 	 
+        <%   
 	 	    }  
 	 	%>
 	      rigenerateViewList();
