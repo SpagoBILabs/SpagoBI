@@ -331,12 +331,60 @@ Ext.onReady(function() {
 							
 							
 							var docType = asDocTypes[strDocLabel];
-							for(k=0; k< docsExpArrays.length; k++){
-								var type = docsExpArrays[k];
-							
-								var iconname = 'icon-'+type.toLowerCase();
+							if(docsExpArrays.length > 1){
+								for(k=0; k< docsExpArrays.length; k++){
+									var type = docsExpArrays[k];
 								
-								var itemExp = new Ext.menu.Item({
+									var iconname = 'icon-'+type.toLowerCase();
+									
+									var itemExp = new Ext.menu.Item({
+				                        text: type
+				                        , group: 'group_2'
+				                        , iconCls: iconname 
+								     	, scope: this
+										, width: 15
+								    	//, handler : function() { exportExecution(type, strDocLabel); }
+										, listeners:{
+											click: function() { exportExecution(this); }								
+										}
+										, href: ''
+										, document: strDocLabel
+										, docType : docType
+				                    })	
+									menuItems.push(itemExp); 
+								}
+	
+								var menu0 = new Ext.menu.Menu({
+									id: 'basicMenu_0',
+									items: menuItems    
+									});	
+								var menuBtn = new Ext.Toolbar.MenuButton({
+									id: Ext.id()
+						            , tooltip: 'Exporters'
+									, path: 'Exporters'	
+									, iconCls: 'icon-export' 	
+						            , menu: menu0
+						            , width: 15
+						            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+						        });
+								tb = new Ext.Toolbar({
+								    style: {
+							            background: '#ffffff',
+							            margin: 0,
+							            border: '0',
+							            color: '#000000',
+							            align: 'right',
+							            padding: 0,
+							            'padding-left': 10,
+							            'z-index': 100
+							        },
+							        buttonAlign: 'right',
+							        items: [menuBtn]
+								});
+							}else if(docsExpArrays.length == 1){
+								var type = docsExpArrays[0];								
+								var iconname = 'icon-'+type.toLowerCase();
+								var btnSingle = new Ext.Toolbar.Button({
 			                        text: type
 			                        , group: 'group_2'
 			                        , iconCls: iconname 
@@ -349,39 +397,23 @@ Ext.onReady(function() {
 									, href: ''
 									, document: strDocLabel
 									, docType : docType
-			                    })	
-								menuItems.push(itemExp); 
+								});
+								tb = new Ext.Toolbar({
+								    style: {
+							            background: '#ffffff',
+							            margin: 0,
+							            border: '0',
+							            color: '#000000',
+							            align: 'right',
+							            padding: 0,
+							            'padding-left': 10,
+							            'z-index': 100
+							        },
+							        buttonAlign: 'right',
+							        items: [btnSingle]
+								});
 							}
-
-							var menu0 = new Ext.menu.Menu({
-								id: 'basicMenu_0',
-								items: menuItems    
-								});	
-							var menuBtn = new Ext.Toolbar.MenuButton({
-								id: Ext.id()
-					            , tooltip: 'Exporters'
-								, path: 'Exporters'	
-								, iconCls: 'icon-export' 	
-					            , menu: menu0
-					            , width: 15
-					            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-					        });
-							tb = new Ext.Toolbar({
-							    style: {
-						            background: '#ffffff',
-						            margin: 0,
-						            border: '0',
-						            color: '#000000',
-						            align: 'right',
-						            padding: 0,
-						            'padding-left': 10,
-						            'z-index': 100
-						        },
-						        buttonAlign: 'right',
-						        items: [menuBtn]
-							});
 						}
-
 
 					}
 					
