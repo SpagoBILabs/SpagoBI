@@ -644,9 +644,9 @@ function rigenerateViewList() {
   	for(i=0; i<viewManager.views.length; i++) {
       var viewV = viewManager.views[i];
 
-      if(viewV.compareValues && viewV.compareValues.length>15 )
+      if(viewV.compareValues && viewV.compareValues.length>100 )
           {
-    	  viewvalue = viewV.compareValues.substr(0,15)+'...';
+    	  viewvalue = viewV.compareValues.substr(0,100)+'...';
     	  } 
       else { 
           viewvalue = viewV.compareValues;
