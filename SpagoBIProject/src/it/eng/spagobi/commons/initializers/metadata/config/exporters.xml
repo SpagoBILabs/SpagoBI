@@ -27,5 +27,4 @@
 <EXPORTER domain="XLS" engine="WorksheetEngine" defaultValue="true"/>
 <EXPORTER domain="PDF" engine="WorksheetEngine" defaultValue="false"/>
 <EXPORTER domain="PDF" engine="DashboardInternalEng" defaultValue="true"/>
-<EXPORTER domain="PDF" engine="ChartInternalEng" defaultValue="true"/>
 </EXPORTERS>
