@@ -640,6 +640,7 @@ function rigenerateViewList() {
 	var html = "";
 	html += "<table style='margin:1px solid gray;'>";
 	if(viewManager.views.length>0) {
+		//alert(viewManager.views.length);
   	for(i=0; i<viewManager.views.length; i++) {
       var viewV = viewManager.views[i];
 
@@ -1129,16 +1130,15 @@ function viewView(indexView) {
 
 	
 		try{
-	            view<%=pfid%><%=operation%>compareValueNoPoint==null;
-	         } catch (err) {
 	            view<%=pfid%><%=operation%>compareValueNoPoint = new view(<%=view.getObjParFatherId()%>, getParNameFromParId(<%=view.getObjParFatherId()%>), "<%=view.getOperation()%>", getFilterOpNameFromCode("<%=view.getOperation()%>"), "<%=view.getCompareValue()%>", "<%=view.getViewLabel()%>", <%=view.getProg()%> );
-            viewManager.addView(view<%=pfid%><%=operation%>compareValueNoPoint);
-          }
+      			 viewManager.addView(view<%=pfid%><%=operation%>compareValueNoPoint);
+	         } catch (err) {
+
+            }
 	 	<%   
 	 	    }  
 	 	%>
-    
-      rigenerateViewList();
+	      rigenerateViewList();
     </script>
       
       
