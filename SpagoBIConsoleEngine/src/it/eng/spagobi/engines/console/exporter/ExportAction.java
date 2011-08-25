@@ -160,7 +160,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			IDataSource ds = getConsoleEngineInstance().getDataSource();				
 			DataSourceUtilities dsu = new DataSourceUtilities(ds);
 			Vector extractedFields = dsu.readFields(dataSet.getQuery().toString());
-			
+			List extractedFieldsMetaData = new ArrayList<IFieldMetaData>();
 			if(jsonArray != null && jsonArray.length() > 0) {
 				int fieldNo = dataStore.getMetaData().getFieldCount();
 				for(int i = 0; i < fieldNo; i++) {
@@ -181,42 +181,16 @@ public class ExportAction extends AbstractConsoleEngineAction {
 						if(fFound.getName().equals(key)){
 							fFound.setProperty("visible", Boolean.TRUE);
 							fFound.setAlias(fieldHeader);
+							fFound.setProperty("index", i);
+							extractedFieldsMetaData.add(fFound);
 						}
 						
 					}
-/*					String fieldName = jsonArray.getJSONObject(i).optString("name", null);
-					String fieldHeader = jsonArray.getJSONObject(i).optString("header", null);
-					Boolean isActionColumn = jsonArray.getJSONObject(i).optBoolean("actionColumn", Boolean.FALSE);
-					
-					if(isActionColumn.booleanValue() == false) {
-						if(StringUtilities.isEmpty(fieldName)) {
-							logger.warn("no name for column: " + jsonArray.getJSONObject(i).toString(4));
-							continue;
-						}
-						int fieldIndex = dataStore.getMetaData().getFieldIndex(fieldName);
-						if(fieldIndex < 0){
-							logger.warn("dataStore does not conatin a column named [" + fieldIndex + "]");
-							continue;
-						}
-						if(jsonArray.getJSONObject(i).optBoolean("hidden", true) == false) {
-							dataStore.getMetaData().getFieldMeta(fieldIndex).setProperty("visible", Boolean.TRUE);
-							dataStore.getMetaData().getFieldMeta(fieldIndex).setAlias(fieldHeader);
-							extractedFields.add(fieldHeader);
-						}
-					} else {
-						String actionConfig = jsonArray.getJSONObject(i).optString("actionConfig");
-						logger.debug("Parameter [actionConfig] is equal to [" + actionConfig + "]");
-						Assert.assertNotNull(actionConfig, "Parameter [actionConfig]connot be undefined if parameter [actionColumn] is true");
-						JSONObject actionConfigJson = new JSONObject(actionConfig);
-						actionColumns.add( actionConfigJson );
-					}*/
+
 				}
 				
 				dataStore.getMetaData().setProperty("actionColumns", actionColumns);
 			}
-			
-			
-			
 			params = new HashMap();
 			params.put("pagination", "false" );
 			
@@ -225,16 +199,17 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				
 				Exporter exp = new Exporter(dataStore);
 				exp.setExtractedFields(extractedFields);
+				exp.setExtractedFieldsMetaData(extractedFieldsMetaData);
 				
 				Workbook wb = exp.exportInExcel();
 				
-				File file = File.createTempFile("workbook", ".xls");
+				File file = File.createTempFile("console", ".xls");
 				FileOutputStream stream = new FileOutputStream(file);
 				wb.write(stream);
 				stream.flush();
 				stream.close();
 				try {				
-					writeBackToClient(file, null, true, "workbook.xls", mimeType);
+					writeBackToClient(file, null, true, "console.xls", mimeType);
 				} catch (IOException ioe) {
 					throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
 				}	finally{
