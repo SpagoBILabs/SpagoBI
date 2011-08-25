@@ -158,9 +158,13 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 	
 		var gridConsole = this.ownerCt;
 		var columnConfigs = gridConsole.columnConfig;
-		
+
+		var output = 'application/vnd.ms-excel';
+		if(format == 'PDF'){
+			output = 'application/pdf';
+		}
 		var params = {
-			mimeType: 'application/pdf'
+			mimeType: output
 			, responseType: 'attachment'
 			, datasetLabel: gridConsole.store.dsLabel
 			, meta: Ext.util.JSON.encode(columnConfigs)
