@@ -273,6 +273,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.columns[field.columnNo].add( field );
 			}
 			this.fields[parameters[i].id] = field;
+			
+
+			
 		}
 		
 		var thereAreParametersToBeFilled = false;
@@ -402,6 +405,23 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 		}
 		
+		
+		// initially hide field if it has visual conditions,
+		for(var z = 0; z < parameters.length; z++) {
+			var field = this.fields[parameters[z].id];
+			var dependencies = field.dependencies;
+			if(dependencies){
+				for(var j = 0; j < dependencies.length; j++) {
+					var dep = dependencies[j];
+					if(dep && dep.hasVisualDependency == true){
+						this.hideFieldLabel(field);
+						field.setVisible(false);
+						}					
+					}
+				}
+			}
+				
+		
 		this.fireEvent('synchronize', this, isReadyForExecution, this.parametersPreference);
 		
 	}
@@ -463,10 +483,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
 			//dependantField.addClass('x-exec-paramlabel-disabled');
 			dependantField.reset();
-			dependantField.disable()
+			dependantField.disable();
+			this.hideFieldLabel(dependantField);
+			dependantField.setVisible(false);
 		} else {
 			//dependantField.removeClass('x-exec-paramlabel-disabled');
 			dependantField.enable();
+			dependantField.setVisible(true);			
 		}
 	}
 	
@@ -496,7 +519,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}    
 	}
 	
-	
+	, hideFieldLabel: function(field){    
+		var el = field.el.dom.parentNode.parentNode;    
+		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
+			//el.children[0].class = 'x-exec-paramlabel-disabled';
+			el.children[0].innerHTML = '';    
+		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
+			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
+			el.parentNode.children[0].innerHTML ='';  
+			
+		}    
+	}
+
 	, createField: function( executionInstance, p, c ) {
 		var field;
 		
