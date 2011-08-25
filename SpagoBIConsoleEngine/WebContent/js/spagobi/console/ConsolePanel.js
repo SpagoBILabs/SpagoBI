@@ -110,6 +110,7 @@ Sbi.console.ConsolePanel = function(config) {
 	items.push({
 		title: 'Export panel'
 		, hidden: true
+		
 		, region: 'south'
 		, tools: [{
 			id:'gear',

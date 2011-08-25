@@ -118,10 +118,16 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				
 			String test = getAttributeAsString(META);
 			logger.debug("Parameter [" + META + "] is equal to [" + test + "]");
-			
-			jsonArray = this.getAttributeAsJSONArray(META);
-			logger.debug("Parameter [" + META + "] is equal to [" + jsonArray.toString(4) + "]");
-		
+			Object m = getAttribute(META);
+			try{
+				jsonArray = getAttributeAsJSONArray(META);
+				logger.debug("Parameter [" + META + "] is equal to [" + jsonArray.toString(4) + "]");
+			}catch(Throwable t){
+				logger.error("Not a json array: "+test);
+				jsonArray = new JSONArray();
+				JSONObject obj = getAttributeAsJSONObject(META);
+				jsonArray.put(obj);
+			}
 			dataSet = null;
 			try {
 				dataSet = getConsoleEngineInstance().getDataSetServiceProxy().getDataSetByLabel( dataSetLabel );

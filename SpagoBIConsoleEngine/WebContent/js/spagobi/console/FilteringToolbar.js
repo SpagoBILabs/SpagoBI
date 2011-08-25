@@ -59,10 +59,16 @@ Sbi.console.FilteringToolbar = function(config) {
 	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.filteringToolbar) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.filteringToolbar);
 	}
+
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	Ext.apply(this, c);
 	
+	this.services = this.services || new Array();	
+	this.services['export'] = this.services['export'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'EXPORT_ACTION'
+		, baseParams: new Object()
+	});
 	// constructor
 	Sbi.console.FilteringToolbar.superclass.constructor.call(this, c);
     	
@@ -103,8 +109,69 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
         	   this.addButton(b);	
         	}	
         }
+		//adds export button
+		var menuItems = new Array();
+		var types = new Array();		
+		types.push('XLS');
+		types.push('PDF');
+		
+		for(k=0; k< types.length; k++){
+			var type = types[k];							
+			var iconname = 'icon-'+type.toLowerCase();
+			
+			var itemExp = new Ext.menu.Item({
+	            text: type
+	            , group: 'group_2'
+	            , iconCls: iconname 
+				, width: 15
+				, scope:this
+				, docType : type
+/*				, listeners:{
+					scope:this,					
+					click: function() { this.exportConsole(type); }								
+				}*/
+				, href: ''
+	        });
+			itemExp.addListener('click', this.exportConsole, this, type);
+			menuItems.push(itemExp); 
+	 
+		}
+		var menu0 = new Ext.menu.Menu({
+			id: 'basicMenu_0',
+			items: menuItems    
+			});	
+		
+		var menuBtn = new Ext.Toolbar.Button({
+			tooltip: 'Exporters'
+			, path: 'Exporters'	
+			, iconCls: 'icon-export' 	
+            , menu: menu0
+            , width: 15
+            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+        });
+
+
+ 	    this.addButton(menuBtn);
 	}
+	, exportConsole: function(item) {
+		var format = item.docType;
 	
+		var gridConsole = this.ownerCt;
+		var columnConfigs = gridConsole.columnConfig;
+		
+		var params = {
+			mimeType: 'application/pdf'
+			, responseType: 'attachment'
+			, datasetLabel: gridConsole.store.dsLabel
+			, meta: Ext.util.JSON.encode(columnConfigs)
+		};
+		
+		Sbi.Sync.request({
+			url: this.services['export']
+			, params: params
+		});
+		
+	}
 	 //defines fields depending from operator type
 	 , createFilterField: function(operator, header, dataIndex){
 		   if (operator === 'EQUALS_TO') {
