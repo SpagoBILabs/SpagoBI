@@ -1,11 +1,12 @@
 package it.eng.spagobi.engines.console.exporter;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -23,9 +25,6 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Exporter {
 	
@@ -35,6 +34,15 @@ public class Exporter {
     
 	IDataStore dataStore = null;
 	Vector extractedFields = null;
+	List<IFieldMetaData> extractedFieldsMetaData = null;
+
+	public List<IFieldMetaData> getExtractedFieldsMetaData() {
+		return extractedFieldsMetaData;
+	}
+
+	public void setExtractedFieldsMetaData(List<IFieldMetaData> extractedFieldsMetaData) {
+		this.extractedFieldsMetaData = extractedFieldsMetaData;
+	}
 
 	public Exporter(IDataStore dataStore) {
 		super();
@@ -78,16 +86,16 @@ public class Exporter {
 	
 	public CellStyle[] fillSheetHeader(Sheet sheet,Workbook wb, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {	
 		CellStyle hCellStyle = buildHeaderCellStyle(sheet);
-		IDataStoreMetaData d = dataStore.getMetaData();	
-    	int colnum = d.getFieldCount();
+
+    	int colnum = extractedFieldsMetaData.size();
     	Row row = sheet.getRow(beginRowHeaderData);
     	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
-    	int columnNumber = 0;
+
     	for(int j = 0; j < colnum; j++){
     		Cell cell = row.createCell(j + beginColumnHeaderData);
     	    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-    	    String fieldName = d.getFieldName(j);
-    	    IFieldMetaData fieldMetaData = d.getFieldMeta(j);
+    	    IFieldMetaData fieldMetaData = extractedFieldsMetaData.get(j);
+    	    String fieldName = fieldMetaData.getName();
     	    String format = (String) fieldMetaData.getProperty("format");
     	    String alias = (String) fieldMetaData.getAlias();
     	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
@@ -119,20 +127,17 @@ public class Exporter {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);  
-        cellStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
         cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
         cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setRightBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.DARK_BLUE.getIndex());
-        cellStyle.setTopBorderColor(IndexedColors.DARK_BLUE.getIndex());
+
         Font font = sheet.getWorkbook().createFont();
-        font.setFontHeightInPoints((short)14);
+        font.setFontHeightInPoints((short)12);
         font.setFontName("Arial");
-        font.setColor(IndexedColors.DARK_BLUE.getIndex());
+        font.setColor(IndexedColors.BLACK.getIndex());
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
         cellStyle.setFont(font);
         return cellStyle;
@@ -147,12 +152,9 @@ public class Exporter {
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
         cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setRightBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setBottomBorderColor(IndexedColors.BLUE.getIndex());
-        cellStyle.setTopBorderColor(IndexedColors.BLUE.getIndex());
+
         Font font = sheet.getWorkbook().createFont();
-        font.setFontHeightInPoints((short)12);
+        font.setFontHeightInPoints((short)10);
         font.setFontName("Arial");
         font.setColor(IndexedColors.BLACK.getIndex());
         cellStyle.setFont(font);
@@ -176,22 +178,22 @@ public class Exporter {
 	    
 		CellStyle cellStyleDate = wb.createCellStyle(); // cellStyleDate is the default cell style for dates
 		cellStyleDate.cloneStyleFrom(dCellStyle);
-		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
-		
-		IDataStoreMetaData d = dataStore.getMetaData();	
+		cellStyleDate.setDataFormat(HSSFDataFormat.getBuiltinFormat("yy-m-d h:mm"));
+
 		
 		while(it.hasNext()){
 			Row rowVal = sheet.getRow(rownum);
 			IRecord record =(IRecord)it.next();
 			List fields = record.getFields();
-			int length = fields.size();
-			for(int fieldIndex =0; fieldIndex<length; fieldIndex++){
-				IField f = (IField)fields.get(fieldIndex);
+			int length = extractedFieldsMetaData.size();
+			for(int fieldIndex =0; fieldIndex< length; fieldIndex++){
+				IFieldMetaData metaField = extractedFieldsMetaData.get(fieldIndex);
+				IField f = (IField)record.getFieldAt((Integer)metaField.getProperty("index"));
 				if (f != null && f.getValue()!= null) {
-		    	    IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-		    	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
+	
+		    	    Boolean visible = (Boolean) metaField.getProperty("visible");
 		    	    if(visible){
-						Class c = d.getFieldType(fieldIndex);
+						Class c = metaField.getType();
 						logger.debug("Column [" + (fieldIndex) + "] class is equal to [" + c.getName() + "]");
 						if(rowVal==null){
 							rowVal = sheet.createRow(rownum);
@@ -223,8 +225,11 @@ public class Exporter {
 						}else if(Date.class.isAssignableFrom(c)){
 							logger.debug("Column [" + (fieldIndex+1) + "] type is equal to [" + "DATE" + "]");	    
 						    Date val = (Date)f.getValue();
-						    cell.setCellValue(val);	
-						    cell.setCellStyle(cellStyleDate);
+						    
+						    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+						    String dtString = df.format(val);
+						    cell.setCellValue(dtString);	
+						    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 						}else{
 							logger.warn("Column [" + (fieldIndex+1) + "] type is equal to [" + "???" + "]");
 						    String val = f.getValue().toString();
