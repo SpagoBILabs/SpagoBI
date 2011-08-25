@@ -113,44 +113,54 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		var menuItems = new Array();
 		var types = new Array();		
 		types.push('XLS');
-		types.push('PDF');
-		
-		for(k=0; k< types.length; k++){
-			var type = types[k];							
-			var iconname = 'icon-'+type.toLowerCase();
+		//types.push('PDF'); //to be implemented
+		var menuBtn = null;
+		if(types.length != 1){
+			for(k=0; k< types.length; k++){
+				var type = types[k];							
+				var iconname = 'icon-'+type.toLowerCase();
+				
+				var itemExp = new Ext.menu.Item({
+		            text: type
+		            , group: 'group_2'
+		            , iconCls: iconname 
+					, width: 15
+					, scope:this
+					, docType : type
+					, href: ''
+		        });
+				itemExp.addListener('click', this.exportConsole, this, type);
+				menuItems.push(itemExp); 
+		 
+			}
+			var menu0 = new Ext.menu.Menu({
+				id: 'basicMenu_0',
+				items: menuItems    
+				});	
 			
-			var itemExp = new Ext.menu.Item({
-	            text: type
-	            , group: 'group_2'
-	            , iconCls: iconname 
-				, width: 15
-				, scope:this
-				, docType : type
-/*				, listeners:{
-					scope:this,					
-					click: function() { this.exportConsole(type); }								
-				}*/
-				, href: ''
+			menuBtn = new Ext.Toolbar.Button({
+				tooltip: 'Exporters'
+				, path: 'Exporters'	
+				, iconCls: 'icon-export' 	
+	            , menu: menu0
+	            , width: 15
+	            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
 	        });
-			itemExp.addListener('click', this.exportConsole, this, type);
-			menuItems.push(itemExp); 
-	 
+
+		}else{
+			var type = types[0];	
+			var iconname = 'icon-'+type.toLowerCase();
+			menuBtn = new Ext.Toolbar.Button({
+                text: type
+                , group: 'group_2'
+                , iconCls: iconname 
+		     	, scope: this
+				, width: 15
+				, href: ''
+				, docType : type
+			});			
+			menuBtn.addListener('click', this.exportConsole, this, type);
 		}
-		var menu0 = new Ext.menu.Menu({
-			id: 'basicMenu_0',
-			items: menuItems    
-			});	
-		
-		var menuBtn = new Ext.Toolbar.Button({
-			tooltip: 'Exporters'
-			, path: 'Exporters'	
-			, iconCls: 'icon-export' 	
-            , menu: menu0
-            , width: 15
-            , cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-        });
-
-
  	    this.addButton(menuBtn);
 	}
 	, exportConsole: function(item) {
