@@ -21,18 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.engines.console.exporter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -40,10 +28,29 @@ import it.eng.spagobi.engines.console.services.AbstractConsoleEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import utilities.DataSourceUtilities;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -81,6 +88,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 		
 		IDataSet dataSet;
 		IDataStore dataStore;
+		IDataSource dataSource;
 		JSONObject dataSetJSON;
 		
 		String fileExtension;
@@ -149,6 +157,9 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			// dataStore decoration ....
 			Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
 			if(resultNumber == null) dataStore.getMetaData().setProperty("resultNumber", new Integer((int)dataStore.getRecordsCount()));
+			IDataSource ds = getConsoleEngineInstance().getDataSource();				
+			DataSourceUtilities dsu = new DataSourceUtilities(ds);
+			Vector extractedFields = dsu.readFields(dataSet.getQuery().toString());
 			
 			if(jsonArray != null && jsonArray.length() > 0) {
 				int fieldNo = dataStore.getMetaData().getFieldCount();
@@ -157,9 +168,23 @@ public class ExportAction extends AbstractConsoleEngineAction {
 				}
 				
 				List actionColumns = new ArrayList();
-				
-				for(int i = 0; i < jsonArray.length(); i++) {
-					String fieldName = jsonArray.getJSONObject(i).optString("name", null);
+				JSONObject resultHeaders = jsonArray.getJSONObject(0);
+				Iterator it = resultHeaders.keys();
+				while(it.hasNext()) {
+					String key = (String)it.next();
+					JSONObject header = resultHeaders.getJSONObject(key);
+					String fieldHeader = header.optString("header", "");
+
+					extractedFields.add(fieldHeader);
+					for(int i = 0; i < fieldNo; i++) {
+						IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
+						if(fFound.getName().equals(key)){
+							fFound.setProperty("visible", Boolean.TRUE);
+							fFound.setAlias(fieldHeader);
+						}
+						
+					}
+/*					String fieldName = jsonArray.getJSONObject(i).optString("name", null);
 					String fieldHeader = jsonArray.getJSONObject(i).optString("header", null);
 					Boolean isActionColumn = jsonArray.getJSONObject(i).optBoolean("actionColumn", Boolean.FALSE);
 					
@@ -176,6 +201,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 						if(jsonArray.getJSONObject(i).optBoolean("hidden", true) == false) {
 							dataStore.getMetaData().getFieldMeta(fieldIndex).setProperty("visible", Boolean.TRUE);
 							dataStore.getMetaData().getFieldMeta(fieldIndex).setAlias(fieldHeader);
+							extractedFields.add(fieldHeader);
 						}
 					} else {
 						String actionConfig = jsonArray.getJSONObject(i).optString("actionConfig");
@@ -183,7 +209,7 @@ public class ExportAction extends AbstractConsoleEngineAction {
 						Assert.assertNotNull(actionConfig, "Parameter [actionConfig]connot be undefined if parameter [actionColumn] is true");
 						JSONObject actionConfigJson = new JSONObject(actionConfig);
 						actionColumns.add( actionConfigJson );
-					}
+					}*/
 				}
 				
 				dataStore.getMetaData().setProperty("actionColumns", actionColumns);
@@ -194,37 +220,35 @@ public class ExportAction extends AbstractConsoleEngineAction {
 			params = new HashMap();
 			params.put("pagination", "false" );
 			
-			TemplateBuilder templateBuilder = new TemplateBuilder(dataStore, params);
-			String templateContent = templateBuilder.buildTemplate();
-			logger.debug(templateContent);
-			try {
-				reportFile = File.createTempFile("report", ".rpt");
-			} catch (IOException ioe) {
-				throw new SpagoBIEngineException("Impossible to create a temporary file to store the template generated on the fly", ioe);
+			
+			if( "application/vnd.ms-excel".equalsIgnoreCase( mimeType ) ) {
+				
+				Exporter exp = new Exporter(dataStore);
+				exp.setExtractedFields(extractedFields);
+				
+				Workbook wb = exp.exportInExcel();
+				
+				File file = File.createTempFile("workbook", ".xls");
+				FileOutputStream stream = new FileOutputStream(file);
+				wb.write(stream);
+				stream.flush();
+				stream.close();
+				try {				
+					writeBackToClient(file, null, true, "workbook.xls", mimeType);
+				} catch (IOException ioe) {
+					throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
+				}	finally{
+					if(file != null && file.exists()) {
+						try {
+							file.delete();
+						} catch (Exception e) {
+							logger.warn("Impossible to delete temporary file " + file, e);
+						}
+					}
+				}
+		
 			}
-			
-			JasperReportRunner runner = new JasperReportRunner();
-			JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource( dataStore );
-			Locale locale = this.getLocale();
-			try {
-				runner.run( templateContent, reportFile, mimeType, dataSource, locale);
-			}  catch (Exception e) {
-				throw new SpagoBIEngineException("Impossible compile or to export the report", e);
-			}
-			
-			
-			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
-			//fileExtension = MimeUtils.getFileExtension( mimeType );
-			//fileExtension = fileExtension != null? fileExtension: DEFAULT_FILE_EXTENSION;
-			fileName = "report"; //, +  "." + fileExtension;
-			
-			
-			try {				
-				writeBackToClient(reportFile, null, writeBackResponseInline, fileName, mimeType);
-			} catch (IOException ioe) {
-				throw new SpagoBIEngineException("Impossible to write back the responce to the client", ioe);
-			}	
-			
+
 			
 		} catch(Throwable t) {
 			logger.error("Impossible to export doc", t);
