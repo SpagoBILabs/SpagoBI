@@ -79,11 +79,19 @@ public class Exporter {
 	    // and when initializing the sheet
 		 if(dataStore!=null  && !dataStore.isEmpty()){
 			    CellStyle[] cellTypes = fillSheetHeader(sheet, wb, createHelper, 4, 4);
-			    fillSheetData(sheet, wb, createHelper, cellTypes, 5, 4); 
-
+			    fillSheetData(sheet, wb, createHelper, cellTypes, 5, 4);
+			    int first = sheet.getRow(0).getFirstCellNum();
+			    int last = sheet.getRow(0).getLastCellNum();
+			    adjustToColumnContent(sheet,first, last );
 		    }
 	}
-	
+	private void adjustToColumnContent(Sheet sheet, int first, int last){
+
+			for(int i = first; i <= last; i++){
+				sheet.autoSizeColumn(i);
+			}
+
+	}
 	public CellStyle[] fillSheetHeader(Sheet sheet,Workbook wb, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {	
 		CellStyle hCellStyle = buildHeaderCellStyle(sheet);
 
@@ -144,7 +152,7 @@ public class Exporter {
 	}
 	public CellStyle buildDataCellStyle(Sheet sheet){
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
         cellStyle.setVerticalAlignment(CellStyle.ALIGN_CENTER);
         cellStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);    
@@ -152,7 +160,7 @@ public class Exporter {
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
         cellStyle.setBorderRight(CellStyle.BORDER_THIN);
         cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-
+        cellStyle.setWrapText(false);
         Font font = sheet.getWorkbook().createFont();
         font.setFontHeightInPoints((short)10);
         font.setFontName("Arial");
@@ -161,7 +169,7 @@ public class Exporter {
         return cellStyle;
 	}
 	public void fillSheetData(Sheet sheet,Workbook wb, CreationHelper createHelper,CellStyle[] cellTypes, int beginRowData, int beginColumnData) {	
-
+		
 		CellStyle dCellStyle = buildDataCellStyle(sheet);
 	
 		Iterator it = dataStore.iterator();
@@ -237,8 +245,10 @@ public class Exporter {
 						    cell.setCellType(HSSFCell.CELL_TYPE_STRING);	    
 						}
 		    	    }
+
 				}
 			}
+			
 		   rownum ++;
 		}
 	}
