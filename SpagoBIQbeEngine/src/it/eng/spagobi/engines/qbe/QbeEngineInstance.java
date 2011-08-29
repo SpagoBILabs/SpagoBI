@@ -29,6 +29,7 @@ import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
@@ -324,7 +325,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		this.workSheetDefinition = workSheetDefinition;
 	}
 
-
+	public RegistryConfiguration getRegistryConfiguration() {
+		QbeTemplate template = this.getTemplate();
+		RegistryConfiguration registryConf = (RegistryConfiguration) template.getProperty("registryConfiguration");
+		return registryConf;
+	}    
 	
 
 	

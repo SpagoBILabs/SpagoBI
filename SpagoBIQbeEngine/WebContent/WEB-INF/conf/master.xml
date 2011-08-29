@@ -61,4 +61,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/worksheet/publishers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/worksheet/presentation.xml" />
 	
+	<!-- start registry configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/registry/actions.xml" />
+
 </MASTER>
