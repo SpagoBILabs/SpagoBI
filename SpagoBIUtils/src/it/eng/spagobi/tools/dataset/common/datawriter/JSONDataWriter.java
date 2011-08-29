@@ -109,8 +109,8 @@ public class JSONDataWriter implements IDataWriter {
 					continue;
 				}
 				
-				String fieldName = "column_" + (i+1);
-				String fieldHeader = fieldMetaData.getAlias() != null? fieldMetaData.getAlias(): fieldMetaData.getName();
+				String fieldName = getFieldName(fieldMetaData, i);
+				String fieldHeader = getFieldHeader(fieldMetaData, i);
 				
 				fieldMetaDataJSON = new JSONObject();
 				fieldMetaDataJSON.put("name", fieldName);						
@@ -218,8 +218,8 @@ public class JSONDataWriter implements IDataWriter {
 						}
 					}
 					
-					
-					recordJSON.put("column_" + (i+1), fieldValue);
+					String fieldName = getFieldName(fieldMetaData, i);
+					recordJSON.put(fieldName, fieldValue);
 				}
 				
 				recordsJSON.put(recordJSON);
@@ -235,5 +235,15 @@ public class JSONDataWriter implements IDataWriter {
 		}
 		
 		return result;
+	}
+
+	protected String getFieldHeader(IFieldMetaData fieldMetaData, int i) {
+		String fieldHeader = fieldMetaData.getAlias() != null? fieldMetaData.getAlias(): fieldMetaData.getName();
+		return fieldHeader;
+	}
+
+	protected String getFieldName(IFieldMetaData fieldMetaData, int i) {
+		String fieldName = "column_" + (i+1);
+		return fieldName;
 	}
 }
