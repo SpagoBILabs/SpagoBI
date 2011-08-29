@@ -435,7 +435,10 @@ public class ExecutionInstance implements Serializable{
 						}
 					}
 				} else {
-					values.add(o.toString());
+					// trim value at beginning and end of the string
+					String valToInsert = o.toString();
+					valToInsert = valToInsert.trim();
+					values.add(valToInsert);
 				}
 			}
 		} catch (JSONException e) {
