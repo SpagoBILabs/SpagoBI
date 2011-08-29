@@ -124,6 +124,6 @@
 <CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@eng.it" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
 <CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-
+<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE" description="Default value to replace null dataset values" isActive="true" valueCheck="%" valueType="STRING" category="MAIL"/>
 </CONFIGS>
 
