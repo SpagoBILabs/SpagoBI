@@ -23,6 +23,8 @@ package it.eng.spagobi.engines.qbe.template;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -59,6 +61,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String PROP_SERVICE_ENDPOINT = "endpoint";
 	public static String PROP_SERVICE_OPERATION = "operation";
 	public static String PROP_SERVICE_REQUIREDCOLUMNS = "requiredcolumns";
+	public static String TAG_REGISTRY = "REGISTRY";
 	
 
 	/** Logger component. */
@@ -273,7 +276,14 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 			}
 			
 			
-		
+			if (template.containsAttribute(TAG_REGISTRY)) {
+				SourceBean registryConf = (SourceBean) template.getAttribute(TAG_REGISTRY);
+				RegistryConfigurationXMLParser parser = new RegistryConfigurationXMLParser();
+				RegistryConfiguration conf = parser.parse(registryConf);
+				qbeTemplate.setProperty("registryConfiguration", conf);
+			} else {
+				logger.debug("Qbe template does not contain tag [" + TAG_REGISTRY +"]");
+			}
 			
 			logger.debug("Templete parsed succesfully");
 		} catch(Throwable t) {

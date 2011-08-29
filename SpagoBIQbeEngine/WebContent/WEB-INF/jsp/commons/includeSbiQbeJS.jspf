@@ -17,6 +17,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/locale/crosstab/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/worksheet/designer/<%=locale.getLanguage()%>.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/worksheet/runtime/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/registry/<%=locale.getLanguage()%>.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
 
@@ -170,6 +171,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/RuntimePieChartPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/registry/RegistryPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/registry/RegistryEditorGridPanel.js'/></script>
 
 
 <!-- END-DEBUG -->

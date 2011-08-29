@@ -134,9 +134,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			}
 			
 			//gridDataFeed = buildGridDataFeed(results, resultNumber.intValue());	
-			
-			dataSetWriter = new JSONDataWriter();
-			gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			gridDataFeed = serializeDataStore(dataStore);
 			//logger.debug("Response object: " + gridDataFeed.toString(3));
 			
 			try {
@@ -156,6 +154,12 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}	
 	}
 	
+	
+	public JSONObject serializeDataStore(IDataStore dataStore) {
+		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+		return gridDataFeed;
+	}
 	
 	/**
 	 * Get the query id from the request

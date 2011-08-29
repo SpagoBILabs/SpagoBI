@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<ACTIONS>
+	
+	<ACTION name="LOAD_REGISTRY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.registry.LoadRegistryAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="UPDATE_RECORDS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.registry.UpdateRecordsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

@@ -37,5 +37,14 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	
+	<!-- REGISTRY_ENGINE start action -->
+	<ACTION name="REGISTRY_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
 </ACTIONS>
 

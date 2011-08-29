@@ -190,6 +190,11 @@ Sbi.qbe.commons.Format = function(){
         }
         
         , 'boolean' : function(v, format) {
+        	
+        	if (typeof v === 'string') {
+        		v = Sbi.qbe.commons.Format.stringToBoolean(v);
+        	}
+        	
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -249,6 +254,23 @@ Sbi.qbe.commons.Format = function(){
         	
         	return toReturn;
         	
+        }
+        
+
+        , stringToBoolean : function(string) {
+			switch (string.toLowerCase()) {
+				case "true":
+				case "yes":
+				case "1":
+					return true;
+				case "false":
+				case "no":
+				case "0":
+				case null:
+					return false;
+				default:
+					return Boolean(string);
+			}
         }
         
 	};
