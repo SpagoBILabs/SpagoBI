@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 
 import java.text.DateFormat;
@@ -666,6 +668,8 @@ public class StringUtilities {
 	private static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parTypeMap,
 			int profileAttributeStartIndex, boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
+		
+		
 		int profileAttributeEndIndex = statement.indexOf("}",profileAttributeStartIndex);
 		if (profileAttributeEndIndex == -1)
 			throw new Exception("Not closed profile attribute: '}' expected.");
@@ -763,7 +767,28 @@ public class StringUtilities {
 				newListOfValues = value;
 			}
 		}
-
+		if(newListOfValues.equals("") || newListOfValues.equals("''")){
+			String nullValueString = SingletonConfig.getInstance().getConfigValue("DATA_SET_NULL_VALUE");
+			if(nullValueString != null){
+				if(newListOfValues.equals("''")){
+					newListOfValues = "'"+nullValueString+"'";
+				}else{
+					newListOfValues = nullValueString;
+				}
+				
+			}else{
+				//try to read engine_config settings
+				nullValueString = (String)EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE");
+				if(nullValueString != null){
+					if(newListOfValues.equals("''")){
+						newListOfValues = "'"+nullValueString+"'";
+					}else{
+						newListOfValues = nullValueString;
+					}
+					
+				}
+			}
+		}
 		replacement = prefix + newListOfValues + suffix;
 
 		// if is specified a particular type for the parameter can add '' in case of String or Date
@@ -809,9 +834,6 @@ public class StringUtilities {
 		catch (Exception e) {
 			logger.error("Error in removing the '' in value "+replacement+" do not substitute them");
 		}
-
-
-
 
 		if (surroundWithQuotes || parType.equalsIgnoreCase("STRING") || parType.equalsIgnoreCase("DATE")) {
 			if(!isNullValue){
