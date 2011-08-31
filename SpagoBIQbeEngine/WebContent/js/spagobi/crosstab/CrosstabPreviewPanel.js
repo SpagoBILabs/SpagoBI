@@ -154,6 +154,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 				, withRowsPartialSum: config.calculatesubtotalsoncolumns=="on"
 				, calculatedFields: this.calculatedFields
 				, misuresOnRow: config.measureson=='rows'
+				, percenton: config.percenton
 				, measuresMetadata: measuresMetadata
 		};
 

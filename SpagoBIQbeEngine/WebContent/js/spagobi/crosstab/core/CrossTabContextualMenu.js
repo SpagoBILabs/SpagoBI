@@ -239,18 +239,19 @@ Ext.extend(Sbi.crosstab.core.CrossTabContextualMenu, Ext.menu.Menu, {
 		        		this.crossTab.calculatePartialSum();
 		        	},
 		        	scope: this
-		        }
-       		 ]);
-    	}
-    
-       	toReturn = toReturn.concat([ 
+		        },
 		        {
 		        	text: LN('sbi.crosstab.menu.hiddenheader'),
 		        	iconCls:'show',
 		        	menu:  new Ext.menu.Menu({
 		        		items: this.getHiddenCheckboxes(node)
 		        	})
-		        },
+		        }
+       		 ]);
+    	}
+    
+       	toReturn = toReturn.concat([ 
+
 		        {
 		        	text: LN('sbi.crosstab.menu.hidemeasure'),
 		        	iconCls:'show',

@@ -26,8 +26,8 @@ Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.tools.tt.removeall'] = ['Tout
 
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.title'] = 'D\u00E9tails Tableau Crois\u00E9';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measureson'] = 'Mesures en';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresonrows'] = 'Ligne';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresoncolumns'] = 'Colonne';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.rows'] = 'Ligne';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.columns'] = 'Colonne';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.onrows'] = 'En lignes';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.oncolumns'] = 'En colonnes';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows'] = 'Pr\u00E9senter totaux';
@@ -36,6 +36,10 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'] = '
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'] = 'Pr\u00E9senter sous-totaux';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Percentage calculated on';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'row';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'column';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'no';
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choisissez la fonction d\'agr\u00E9gation pour la mesure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Appliquer';

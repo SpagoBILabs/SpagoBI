@@ -53,7 +53,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 
 	//execute the calculations
 		
-    calculateCF: function(level, horizontal, op, CFName, crossTab, lazy, type){
+    calculateCF: function(level, horizontal, op, CFName, crossTab, lazy, type, percenton){
 
     	var headers;
     	if (type==null){
@@ -142,7 +142,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 	    	}
 	    	//build the structure of the subtree
 	    	
-	    	var cfNode = new Sbi.crosstab.core.HeaderEntry(CFName, 1, horizontal, level,  headers[level][operationExpsIds[j][0]].width,  headers[level][operationExpsIds[j][0]].height);
+	    	var cfNode = new Sbi.crosstab.core.HeaderEntry({percenton: percenton, name:CFName, thisDimension: 1, horizontal: horizontal, level: level,  width: headers[level][operationExpsIds[j][0]].width,  height: headers[level][operationExpsIds[j][0]].height});
 	    	cfNode.type=type;
 	    	cfNode.cfExpression=op;
 	    	//alert(operationExpsIds[j]);
@@ -155,7 +155,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
 
 	    	var fatherDimension = 0;
 	    	for(var o=0; o<childs.length; o++){
-	    		clonedChild = this.buildHeadersStructure(null, childs[o], crossTab, type );
+	    		clonedChild = this.buildHeadersStructure(null, childs[o], crossTab, type, percenton);
 	    		clonedChild.father = cfNode;
 	    		fatherDimension = fatherDimension + clonedChild.thisDimension;
 	    		cfNode.childs.push(clonedChild);
@@ -459,12 +459,12 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     }
     
     //build the structure of the subtree to add
-    ,buildHeadersStructure: function(name, node, crossTab, type){
+    ,buildHeadersStructure: function(name, node, crossTab, type, percenton){
     	//alert(node.name);
     	if(name!=null){
-    		var clonedNode = new Sbi.crosstab.core.HeaderEntry(name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
+    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: percenton, name:name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height});
     	}else{
-    		var clonedNode = new Sbi.crosstab.core.HeaderEntry(node.name, node.thisDimension, node.horizontal, node.level, node.width, node.height);
+    		var clonedNode = new Sbi.crosstab.core.HeaderEntry({percenton: percenton, name:node.name, thisDimension: node.thisDimension, horizontal: node.horizontal, level: node.level, width: node.width, height: node.height});
     	}
     	clonedNode.type=type;
     	var childs =node.childs;
@@ -486,7 +486,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
         	//So when the node is the father of a leaf it sets as childs the set of all possible leafs
     		clonedNode.childs = new Array();
     		for(var t=0; t<this.leafs.length; t++){
-            	var clonedNodeF = new Sbi.crosstab.core.HeaderEntry(this.leafs[t], 1, clonedNode.horizontal, clonedNode.level+1,node.childs[0].width, node.childs[0].height);
+            	var clonedNodeF = new Sbi.crosstab.core.HeaderEntry({percenton: percenton, name:this.leafs[t], thisDimension: 1, horizontal: clonedNode.horizontal, level: clonedNode.level+1,width: node.childs[0].width, height: node.childs[0].height});
             	clonedNodeF.type=type;
             	clonedNodeF.father = clonedNode;
             	clonedNode.childs.push(clonedNodeF);
