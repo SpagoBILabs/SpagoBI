@@ -235,7 +235,9 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				});
 				return;
 			}
-			this.store.add([aRow]);
+			var newRecord = new this.Record(aRow.data);
+			newRecord.data.values = '[]'; // init the 'values' property as empty
+			this.store.add([newRecord]);
 		}
 	}
 	
@@ -268,7 +270,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
                 	this.store.add(rowData);
                 }
 		         
-		         this.getView().refresh();
+		        this.getView().refresh();
 				
 			}
 		} else {
