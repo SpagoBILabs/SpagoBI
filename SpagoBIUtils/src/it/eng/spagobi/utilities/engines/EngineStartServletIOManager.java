@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import sun.misc.BASE64Decoder;
 
@@ -163,6 +164,21 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		return auditId;
 	}
 
+	public JSONObject getTemplateJSONObject() {
+		JSONObject templateJSON = null;
+		try {
+			templateJSON = new JSONObject(getTemplateAsString());
+		} catch (Throwable t) {
+			logger.error("Impossible to decode template's content\n" + t);
+			throw new SpagoBIRuntimeException(
+					"Impossible to decode template's content ["
+							+ template.getFileName() + "]", t);
+
+		}
+
+		return templateJSON;
+	}
+	
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
