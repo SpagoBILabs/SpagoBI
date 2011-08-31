@@ -210,6 +210,9 @@
 		    	<file name='./spagobi/widgets/FilteringToolbar.js'/>
 		    	<file name='./spagobi/widgets/PagingToolbar.js'/>
 		    	<file name='./spagobi/widgets/TriggerFieldMultiButton.js'/>
+		        <file name='./spagobi/widgets/Colors.js'/>
+		        <file name='./spagobi/widgets/SeriesPalette.js'/>
+		    	<file name='./spagobi/widgets/SimpleValuesChooserWindow.js'/>
 
 		    	<file name='./spagobi/qbe/FilterComboBox.js'/>
 
@@ -317,6 +320,9 @@
 		    	<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/RuntimePieChartPanel.js'/>
 		    	<file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js'/>
+		    	
+		    	<file name='./spagobi/registry/RegistryPanel.js'/>
+          		<file name='./spagobi/registry/RegistryEditorGridPanel.js'/>
 		    	
 		    </filelist>
 
