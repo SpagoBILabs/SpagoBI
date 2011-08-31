@@ -26,8 +26,8 @@ Sbi.locale.ln['sbi.crosstab.measurescontainerpanel.tools.tt.removeall'] = ['Remo
 
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.title'] = 'Crosstab details';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measureson'] = 'Measures on';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresonrows'] = 'rows';
-Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.measuresoncolumns'] = 'columns';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.rows'] = 'rows';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.columns'] = 'columns';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.onrows'] = 'On rows';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.oncolumns'] = 'On columns';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows'] = 'show totals';
@@ -36,6 +36,10 @@ Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'] = '
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'] = 'show sub-totals';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.apply'] = 'Apply';
 Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.buttons.cancel'] = 'Cancel';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.percenton'] = 'Percentage calculated on';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.row'] = 'rows';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.column'] = 'columns';
+Sbi.locale.ln['sbi.crosstab.crosstabdetailswizard.nopercent'] = 'no';
 
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.title'] = 'Choose the aggregation function for measure';
 Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.apply'] = 'Apply';

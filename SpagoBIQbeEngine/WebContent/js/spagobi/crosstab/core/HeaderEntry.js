@@ -55,7 +55,7 @@
 
 Ext.ns("Sbi.crosstab.core");
 
-Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level, width, height, type) {
+Sbi.crosstab.core.HeaderEntry = function(config) {
 	this.backgroundImg = "../img/crosstab/headerbackground.gif";
 	
 	var c ={};
@@ -63,27 +63,36 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 		c = Ext.apply(c, Sbi.settings.qbe.crossTab);
 	}
 	Ext.apply(this, c);
-	this.level = level;
-	this.horizontal = horizontal;
-	this.thisDimension = thisDimension;
-	this.leafsNumber = thisDimension;
+	
+
+	
+	this.level = config.level;
+	this.percenton = config.percenton;
+	this.horizontal = config.horizontal;
+	this.thisDimension = config.thisDimension;
+	this.leafsNumber = config.thisDimension;
+	
+	if(this.percenton!=undefined && this.percenton!=null && this.percenton!='no'){
+		this.columnWidth = this.columnWidthPercent;
+	}
+	
 	var h;
 	var w;
-	if(width!=null){
-		w=width;
+	if(config.width!=null){
+		w=config.width;
 	}else{
 		w=this.columnWidth;
 	}
 	
-	if(height!=null){
-		h=height;
+	if(config.height!=null){
+		h=config.height;
 	}else{
 		h = this.rowHeight;
 	}
 		
-	this.name = name;
+	this.name = config.name;
 	
-	if(horizontal){	
+	if(this.horizontal){	
 		c = {
 				width: this.thisDimension*this.columnWidth,
 				height: h,
@@ -106,7 +115,7 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 	this.addEvents();
 	
 	this.on('afterlayout',	function(f){	
-		if(horizontal){	
+		if(this.horizontal){	
 			this.width = this.thisDimension*this.columnWidth;
 			this.setWidth(this.thisDimension*this.columnWidth);
 		}else{
@@ -118,8 +127,8 @@ Sbi.crosstab.core.HeaderEntry = function(name, thisDimension, horizontal, level,
 	
 	this.childs = new Array();
 	
-	if(type){
-		this.type = type;
+	if(config.type){
+		this.type = config.type;
 	}else{
 		this.type='data';
 	}

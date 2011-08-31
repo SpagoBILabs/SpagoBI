@@ -50,7 +50,7 @@ Sbi.crosstab.CrosstabDetailsWizard = function(config) {
 	
 	var defaultSettings = {
 		title: LN('sbi.crosstab.crosstabdetailswizard.title')
-		, width: 300
+		, width: 400
   	};
 	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.crosstabDetailsWizard) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.crosstabDetailsWizard);
@@ -80,15 +80,19 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 	
 	, init: function(c) {
 	
+		var checkboxTotalRows = new Ext.form.Checkbox({boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows'), name: 'calculatetotalsonrows'});
+		var checkboxTotalColumns = new Ext.form.Checkbox({boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'), name: 'calculatetotalsoncolumns'});
+		
 		this.crosstabDetailsForm = new Ext.form.FormPanel({
 			frame: true
+			, labelWidth : 150
 			, items: [
 	            {
 		            xtype: 'radiogroup'
 		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.measureson')
 		            , items: [
-		                {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.measuresonrows'), name: 'measureson', inputValue: 'rows'}
-		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.measuresoncolumns'), name: 'measureson', inputValue: 'columns', checked: true}
+		                {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.rows'), name: 'measureson', inputValue: 'rows'}
+		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.columns'), name: 'measureson', inputValue: 'columns', checked: true}
 		            ]
 	            }
 	            , {
@@ -97,7 +101,7 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 	                itemCls: 'x-check-group-alt',
 	                columns: 1,
 	                items: [
-	                    {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsonrows'), name: 'calculatetotalsonrows'}
+	                    checkboxTotalRows
 	                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsonrows'), name: 'calculatesubtotalsonrows'}
 	                ]
 	            }
@@ -106,9 +110,20 @@ Ext.extend(Sbi.crosstab.CrosstabDetailsWizard, Ext.Window, {
 	                fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.oncolumns'),
 	                columns: 1,
 	                items: [
-	                    {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatetotalsoncolumns'), name: 'calculatetotalsoncolumns'}
+	                    checkboxTotalColumns
 	                    , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.calculatesubtotalsoncolumns'), name: 'calculatesubtotalsoncolumns'}
 	                ]
+	            }, 
+	            {
+		            xtype: 'radiogroup'
+		            , fieldLabel: LN('sbi.crosstab.crosstabdetailswizard.percenton')
+		            , itemCls: 'x-check-group-alt'
+		            , items: [
+		                  //radioPercentageRows
+		                  {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.row'), name: 'percenton', inputValue: 'row', listeners:{'check':{fn: function(radio, checked){checkboxTotalRows.setValue(checked);}, scope: this}}}
+		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.column'), name: 'percenton', inputValue: 'column', listeners:{'check':{fn:  function(radio, checked){checkboxTotalColumns.setValue(checked);}, scope: this}}}
+		                , {boxLabel: LN('sbi.crosstab.crosstabdetailswizard.nopercent'), name: 'percenton', inputValue: 'no', checked: true}
+		            ]
 	            }
 			]
 			, buttons: [{
