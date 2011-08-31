@@ -96,6 +96,7 @@ public class CrosstabJSONSerializer implements ISerializer {
 			obj.put(CrosstabSerializationConstants.ALIAS, row.getAlias());
 			obj.put(CrosstabSerializationConstants.ICON_CLS, row.getIconCls());
 			obj.put(CrosstabSerializationConstants.NATURE, row.getNature());
+			obj.put(CrosstabSerializationConstants.VALUES, row.getValues());
 			toReturn.put(obj);
 		}
 		return toReturn;
@@ -111,6 +112,7 @@ public class CrosstabJSONSerializer implements ISerializer {
 			obj.put(CrosstabSerializationConstants.ALIAS, column.getAlias());
 			obj.put(CrosstabSerializationConstants.ICON_CLS, column.getIconCls());
 			obj.put(CrosstabSerializationConstants.NATURE, column.getNature());
+			obj.put(CrosstabSerializationConstants.VALUES, column.getValues());
 			toReturn.put(obj);
 		}
 		return toReturn;

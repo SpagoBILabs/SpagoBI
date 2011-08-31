@@ -145,15 +145,29 @@ public class CrosstabDefinition {
 		}
 	}
 	
-	public class Row extends CrosstabElement {
-		public Row(String entityId, String alias, String iconCls, String nature) {
+	public class Attribute extends CrosstabElement {
+		/**
+		 * contains an array of selected values encoded into a string
+		 */
+		String values = null;
+		public String getValues() {
+			return values;
+		}
+		public Attribute(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature);
+			this.values = values;
 		}
 	}
 	
-	public class Column extends CrosstabElement {
-		public Column(String entityId, String alias, String iconCls, String nature) {
-			super(entityId, alias, iconCls, nature);
+	public class Row extends Attribute {
+		public Row(String entityId, String alias, String iconCls, String nature, String values) {
+			super(entityId, alias, iconCls, nature, values);
+		}
+	}
+	
+	public class Column extends Attribute {
+		public Column(String entityId, String alias, String iconCls, String nature, String values) {
+			super(entityId, alias, iconCls, nature, values);
 		}
 	}
 	

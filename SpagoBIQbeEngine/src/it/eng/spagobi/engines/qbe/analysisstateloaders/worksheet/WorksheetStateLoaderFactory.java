@@ -33,6 +33,10 @@ public class WorksheetStateLoaderFactory {
 	
 	static {
 		loaderRegistry = new HashMap();
+		
+		loaderRegistry.put("0", 
+			new Version0WorksheetStateLoader()
+		);
 	}
 	
 	private static WorksheetStateLoaderFactory instance;

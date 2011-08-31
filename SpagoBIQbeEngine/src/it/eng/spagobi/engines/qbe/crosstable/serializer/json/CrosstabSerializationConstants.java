@@ -33,6 +33,7 @@ public class CrosstabSerializationConstants {
 	public static final String ALIAS = "alias";
 	public static final String ICON_CLS = "iconCls";
 	public static final String NATURE = "nature";
+	public static final String VALUES = "values";
 	public static final String FUNCTION = "funct";
 	public static final String CONFIG = "config";
 	public static final String CALCULATED_FIELDS = "calculatedFields";

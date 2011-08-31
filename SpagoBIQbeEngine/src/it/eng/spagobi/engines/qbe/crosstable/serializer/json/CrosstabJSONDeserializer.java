@@ -103,7 +103,8 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 						obj.getString(CrosstabSerializationConstants.ID), 
 						obj.getString(CrosstabSerializationConstants.ALIAS), 
 						obj.getString(CrosstabSerializationConstants.ICON_CLS), 
-						obj.getString(CrosstabSerializationConstants.NATURE)));
+						obj.getString(CrosstabSerializationConstants.NATURE),
+						obj.getString(CrosstabSerializationConstants.VALUES)));
 			}
 		}
 		crosstabDefinition.setRows(rows);
@@ -138,7 +139,8 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 						obj.getString(CrosstabSerializationConstants.ID), 
 						obj.getString(CrosstabSerializationConstants.ALIAS), 
 						obj.getString(CrosstabSerializationConstants.ICON_CLS), 
-						obj.getString(CrosstabSerializationConstants.NATURE)));
+						obj.getString(CrosstabSerializationConstants.NATURE),
+						obj.getString(CrosstabSerializationConstants.VALUES)));
 			}
 		}
 		crosstabDefinition.setColumns(columns);

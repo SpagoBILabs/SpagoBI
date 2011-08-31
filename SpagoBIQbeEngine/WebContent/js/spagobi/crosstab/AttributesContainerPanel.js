@@ -58,6 +58,14 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	this.services = this.services || new Array();
+	
+	this.services['getValues'] = this.services['getValues'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION'
+		, baseParams: params
+	});
+	
 	this.init(c);
 	
 	Ext.apply(c, {
@@ -102,6 +110,8 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
     
     this.on('render', this.initDropTarget, this);
     
+    this.on('rowdblclick', this.rowDblClickHandler, this);
+    
 };
 
 Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
@@ -116,6 +126,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	      , {name: 'funct', type: 'string'}
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
+	      , {name: 'values', type: 'string'}
 	])
 	
 	, init: function(c) {
@@ -125,7 +136,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -294,6 +305,40 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	
 	, removeAllAttributes: function() {
 		this.store.removeAll(false);
+	}
+	
+	, rowDblClickHandler: function(grid, rowIndex, event) {
+		var store = this.createLookupStore(grid, rowIndex);
+		var record = grid.store.getAt(rowIndex);
+     	var chooserWindow = new Sbi.widgets.SimpleValuesChooserWindow({
+     		store : store
+     	});
+ 		chooserWindow.on('beforeclose', this.updateValues.createDelegate(this, [record, chooserWindow], true), this);
+ 		chooserWindow.show();
+ 		store.on('load', this.selectValues.createDelegate(this, [record, chooserWindow], true), this);
+ 		store.load();
+	}
+	
+	, createLookupStore : function (grid, rowIndex) {
+		var record = grid.store.getAt(rowIndex);
+		var alias = record.get('alias');
+		var loadStoreUrl = this.services['getValues']
+		        + '&ALIAS=' + alias;
+		var store = new Ext.data.JsonStore({
+			url: loadStoreUrl
+		});
+		store.on('loadexception', function(store, options, response, e) {
+			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		});
+		return store;	
+	}
+	
+	, updateValues : function ( theWindow, record, chooserWindow ) {
+		record.data.values = Ext.encode(chooserWindow.getSelectedValues());
+	}
+	
+	, selectValues : function ( store, records, options, record, chooserWindow ) {
+		chooserWindow.select(Ext.decode(record.data.values));
 	}
 
 });
