@@ -262,38 +262,58 @@ public class SpagoBIDashboardInternalEngine implements InternalEngineIFace {
 			}
 			confParameters = new LinkedHashMap();
 			SourceBean sbRow=(SourceBean)sourceBeanResult.getAttribute("ROW");
-			confParameters.put("minValue", (String)sbRow.getAttribute("minValue"));
-			confParameters.put("maxValue", (String)sbRow.getAttribute("maxValue"));
-			confParameters.put("lowValue", (String)sbRow.getAttribute("lowValue"));
-			confParameters.put("highValue", (String)sbRow.getAttribute("highValue"));
-			confParameters.put("refreshRate", (String)sbRow.getAttribute("refreshRate"));
-			confParameters.put("multichart", (String)sbRow.getAttribute("multichart"));
-			confParameters.put("numCharts", (String)sbRow.getAttribute("numCharts"));
-			confParameters.put("orientation_multichart", (String)sbRow.getAttribute("orientation_multichart"));
+			String parValue = "";
+			parValue = (sbRow.getAttribute("minValue")!=null)?(String)sbRow.getAttribute("minValue"):(String)sbRow.getAttribute("MINVALUE");
+			confParameters.put("minValue", parValue);
+			parValue = (sbRow.getAttribute("maxValue")!=null)?(String)sbRow.getAttribute("maxValue"):(String)sbRow.getAttribute("MAXVALUE");
+			confParameters.put("maxValue", parValue);
+			parValue = (sbRow.getAttribute("lowValue")!=null)?(String)sbRow.getAttribute("lowValue"):(String)sbRow.getAttribute("LOWVALUE");
+			confParameters.put("lowValue", parValue);
+			parValue = (sbRow.getAttribute("highValue")!=null)?(String)sbRow.getAttribute("highValue"):(String)sbRow.getAttribute("HIGHVALUE");
+			confParameters.put("highValue", parValue);
+			parValue = (sbRow.getAttribute("refreshRate")!=null)?(String)sbRow.getAttribute("refreshRate"):(String)sbRow.getAttribute("REFRESHRATE");
+			confParameters.put("refreshRate", parValue);
+			parValue = (sbRow.getAttribute("multichart")!=null)?(String)sbRow.getAttribute("multichart"):(String)sbRow.getAttribute("MULTICHART");
+			confParameters.put("multichart", parValue);
+			parValue = (sbRow.getAttribute("numCharts")!=null)?(String)sbRow.getAttribute("numCharts"):(String)sbRow.getAttribute("NUMCHARTS");
+			confParameters.put("numCharts", parValue);
+			parValue = (sbRow.getAttribute("orientation_multichart")!=null)?(String)sbRow.getAttribute("orientation_multichart"):(String)sbRow.getAttribute("ORIENTATION_MULTICHART");
+			confParameters.put("orientation_multichart", parValue);
 			//defining title and legend variables			
-			confParameters.put("displayTitleBar", (String)sbRow.getAttribute("displayTitleBar"));
-			confParameters.put("title", replaceParsInString((String)sbRow.getAttribute("title")));
-			confParameters.put("colorTitle", (String)sbRow.getAttribute("colorTitle"));
-			confParameters.put("sizeTitle", (String)sbRow.getAttribute("sizeTitle"));
-			confParameters.put("fontTitle", (String)sbRow.getAttribute("fontTitle"));
-			confParameters.put("colocolorTitleSerierTitle", (String)sbRow.getAttribute("colorTitleSerie"));
-			confParameters.put("sizeTitleSerie", (String)sbRow.getAttribute("sizeTitleSerie"));
-			confParameters.put("fontTitleSerie", (String)sbRow.getAttribute("fontTitleSerie"));
-			confParameters.put("legend", (String)sbRow.getAttribute("legend"));
+			parValue = (sbRow.getAttribute("displayTitleBar")!=null)?(String)sbRow.getAttribute("displayTitleBar"):(String)sbRow.getAttribute("DISPLAYTITLEBAR");
+			confParameters.put("displayTitleBar", parValue);
+			parValue = (sbRow.getAttribute("title")!=null)?(String)sbRow.getAttribute("title"):(String)sbRow.getAttribute("TITLE");
+			confParameters.put("title", parValue);
+			parValue = (sbRow.getAttribute("colorTitle")!=null)?(String)sbRow.getAttribute("colorTitle"):(String)sbRow.getAttribute("COLORTITLE");
+			confParameters.put("colorTitle", parValue);
+			parValue = (sbRow.getAttribute("sizeTitle")!=null)?(String)sbRow.getAttribute("sizeTitle"):(String)sbRow.getAttribute("SIZETITLE");
+			confParameters.put("sizeTitle", parValue);
+			parValue = (sbRow.getAttribute("fontTitle")!=null)?(String)sbRow.getAttribute("fontTitle"):(String)sbRow.getAttribute("FONTTITLE");
+			confParameters.put("fontTitle", parValue);
+			parValue = (sbRow.getAttribute("colorTitleSerie")!=null)?(String)sbRow.getAttribute("colorTitleSerie"):(String)sbRow.getAttribute("COLORTITLESERIE");
+			confParameters.put("colocolorTitleSerierTitle", parValue);
+			parValue = (sbRow.getAttribute("sizeTitleSerie")!=null)?(String)sbRow.getAttribute("sizeTitleSerie"):(String)sbRow.getAttribute("SIZETITLESERIE");
+			confParameters.put("sizeTitleSerie", parValue);
+			parValue = (sbRow.getAttribute("fontTitleSerie")!=null)?(String)sbRow.getAttribute("fontTitleSerie"):(String)sbRow.getAttribute("FONTTITLESERIE");
+			confParameters.put("fontTitleSerie", parValue);
+			parValue = (sbRow.getAttribute("legend")!=null)?(String)sbRow.getAttribute("legend"):(String)sbRow.getAttribute("LEGEND");
+			confParameters.put("legend", parValue);
 			
-			String strNeedles = (String)sbRow.getAttribute("numNeedles");
-			confParameters.put("numNeedles",strNeedles);
+			parValue = (sbRow.getAttribute("numNeedles")!=null)?(String)sbRow.getAttribute("numNeedles"):(String)sbRow.getAttribute("NUMNEEDLES");
+			confParameters.put("numNeedles",parValue);
 			int numNeedles = 0;
 			try{
-				numNeedles = Integer.parseInt(strNeedles);
+				numNeedles = Integer.parseInt(parValue);
 			}catch(Exception e){
 				logger.error("error in reading configuration dataset. Number of needles is invalid." );
 				throw new Exception("error in reading configuration dataset. Number of needles is invalid.");
 			}
 			
-			for (int i=0 ; i < numNeedles; i++){				
-				confParameters.put("colorNeedle"+(i+1), (String)sbRow.getAttribute("colorNeedle"+(i+1)));
-				confParameters.put("value"+(i+1), (String)sbRow.getAttribute("value"+(i+1)));
+			for (int i=0 ; i < numNeedles; i++){	
+				parValue = (sbRow.getAttribute("colorNeedle"+(i+1))!=null)?(String)sbRow.getAttribute("colorNeedle"+(i+1)):(String)sbRow.getAttribute("COLORNEEDLE"+(i+1));
+				confParameters.put("colorNeedle"+(i+1),parValue);
+				parValue = (sbRow.getAttribute("value"+(i+1))!=null)?(String)sbRow.getAttribute("value"+(i+1)):(String)sbRow.getAttribute("VALUE"+(i+1));
+				confParameters.put("value"+(i+1), parValue);
 			}
 		}
 		else
