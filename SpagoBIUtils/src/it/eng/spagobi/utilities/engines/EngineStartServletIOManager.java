@@ -204,7 +204,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (template == null) {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
-			template = contentProxy.readTemplate(documentId, requestParameters);
+			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 			templateName = template.getFileName();
 			logger.debug("Read the template [" + template.getFileName() + "]");
 		}
@@ -224,7 +224,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (templateName == null) {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
-			template = contentProxy.readTemplate(documentId, requestParameters);
+			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 			templateName = template.getFileName();
 			logger.debug("Read the template [" + template.getFileName() + "]");
 		}
