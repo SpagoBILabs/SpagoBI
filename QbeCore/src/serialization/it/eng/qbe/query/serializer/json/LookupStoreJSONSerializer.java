@@ -150,7 +150,7 @@ public class LookupStoreJSONSerializer {
 				}
 				
 				Boolean calculated = (Boolean)fieldMetaData.getProperty("calculated");
-				if(calculated.booleanValue() == true) {
+				if(calculated != null && calculated.booleanValue() == true) {
 					DataSetVariable variable =  (DataSetVariable)fieldMetaData.getProperty("variable");
 					if(variable.getType().equalsIgnoreCase(DataSetVariable.HTML)) {
 						fieldMetaDataJSON.put("type", "auto");

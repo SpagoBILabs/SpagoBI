@@ -43,7 +43,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	
 	private static transient Logger logger = Logger.getLogger(WorkSheetDefinition.class);
 	
-	public static final String CURRENT_VERSION = "0";
+	public static final String CURRENT_VERSION = "1";
 	
 	public static final WorkSheetDefinition EMPTY_WORKSHEET;
 	

@@ -20,12 +20,14 @@
  **/
 package it.eng.spagobi.engines.qbe.services.core;
 
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
@@ -104,5 +106,16 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 		}else{
 			return query;	
 		}
+	}
+	
+	protected DataSource getDataSource(ConnectionDescriptor connection) {
+		DataSource dataSource = new DataSource();
+		dataSource.setJndi(connection.getJndiName());
+		dataSource.setHibDialectName(connection.getDialect());
+		dataSource.setUrlConnection(connection.getUrl());
+		dataSource.setDriver(connection.getDriverClass());
+		dataSource.setUser(connection.getUsername());
+		dataSource.setPwd(connection.getPassword());
+		return dataSource;
 	}
 }

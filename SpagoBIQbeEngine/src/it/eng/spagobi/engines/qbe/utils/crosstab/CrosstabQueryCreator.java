@@ -22,21 +22,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.engines.qbe.utils.crosstab;
 
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
+import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Attribute;
+import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
+import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 
 /**
@@ -52,7 +60,7 @@ public class CrosstabQueryCreator {
 	
     public static final String QBE_SMARTFILTER_COUNT = "qbe_smartfilter_count"; 
     
-	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, List<WhereField> whereField, String sqlQuery, IStatement stmt) {
+	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, List<WhereField> whereFields, String sqlQuery, IStatement stmt) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 		
@@ -62,7 +70,13 @@ public class CrosstabQueryCreator {
 			
 		buffer.append(" FROM TEMPORARY_TABLE ");
 		
-		putWhereClause(buffer, whereField, baseQuery, baseQuerySelectedFields, (AbstractStatement)stmt);
+		if (whereFields == null) {
+			whereFields = new ArrayList<WhereField>();
+		}
+		addColumnsValuesToWhereClause(crosstabDefinition.getColumns(), whereFields);
+		addRowsValuesToWhereClause(crosstabDefinition.getRows(), whereFields);
+		
+		putWhereClause(buffer, whereFields, baseQuery, baseQuerySelectedFields, (AbstractStatement)stmt);
 		
 		putGroupByClause(buffer, crosstabDefinition, baseQuery, baseQuerySelectedFields);
 		
@@ -71,6 +85,57 @@ public class CrosstabQueryCreator {
 		return toReturn;
 	}
 	
+	private static void addColumnsValuesToWhereClause(List<Column> columns,
+			List<WhereField> whereFields) {
+		Iterator<CrosstabDefinition.Column> it = columns.iterator();
+		while (it.hasNext()) {
+			CrosstabDefinition.Column aColumn = it.next();
+			addAttributeToWhereClause(aColumn, whereFields);
+		}
+	}
+	
+	private static void addRowsValuesToWhereClause(List<Row> rows,
+			List<WhereField> whereFields) {
+		Iterator<CrosstabDefinition.Row> it = rows.iterator();
+		while (it.hasNext()) {
+			CrosstabDefinition.Row aRow = it.next();
+			addAttributeToWhereClause(aRow, whereFields);
+		}
+	}
+
+	private static void addAttributeToWhereClause(Attribute attribute,
+			List<WhereField> whereFields) {
+		String valuesStr = attribute.getValues();
+		JSONArray valuesJSON = null;
+		try {
+			valuesJSON = new JSONArray(valuesStr);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		if (valuesJSON.length() > 0) {
+			WhereField whereField = buildWhereField(attribute, valuesJSON);
+			whereFields.add(whereField);
+		}
+		
+	}
+
+	private static WhereField buildWhereField(Attribute attribute,
+			JSONArray valuesJSON) {
+		String operator = valuesJSON.length() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
+		Operand leftOperand = new Operand(new String[] {attribute.getEntityId()}, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+		String[] values = new String[valuesJSON.length()];
+		for (int i = 0; i < valuesJSON.length(); i++) {
+			try {
+				values[i] = valuesJSON.getString(i);
+			} catch (JSONException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		Operand rightOperand = new Operand(values, attribute.getAlias(), AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+		WhereField whereField = new WhereField(attribute.getAlias(), attribute.getAlias(), false, leftOperand, operator, rightOperand, "AND");
+		return whereField;
+	}
+
 	private static void putSelectClause(StringBuffer toReturn,
 			CrosstabDefinition crosstabDefinition, Query baseQuery, List baseQuerySelectedFields) {
 		logger.debug("IN");
@@ -165,7 +230,7 @@ public class CrosstabQueryCreator {
 		
 	}
 	
-	private static String getSQLAlias(String elementElias, Query baseQuery, List baseQuerySelectedFields) {
+	public static String getSQLAlias(String elementElias, Query baseQuery, List baseQuerySelectedFields) {
 		logger.debug("IN");
 		String toReturn = null;
 		
@@ -195,30 +260,34 @@ public class CrosstabQueryCreator {
 		IModelField datamartField;
 		
 		logger.debug("IN");
-		if(whereFields!=null && whereFields.size()>0){
+		if (whereFields != null && whereFields.size() > 0) {
 			toReturn.append(" WHERE ");
-			for(int i=0; i<whereFields.size(); i++){
+			for (int i = 0; i < whereFields.size(); i++) {
 				leftValue = whereFields.get(i).getLeftOperand().values[0];
-				datamartField = stmt.getDataSource().getModelStructure().getField(leftValue);
-				
+				datamartField = stmt.getDataSource().getModelStructure()
+						.getField(leftValue);
+
 				rightValues = whereFields.get(i).getRightOperand().values;
-				
-				alias = getSQLAliasByUniqueName(datamartField.getUniqueName(), baseQuery, baseQuerySelectedFields);
-				if(rightValues.length==1){
-					boundedValue = stmt.getValueBounded(rightValues[0], datamartField.getType());
-					toReturn.append(alias+" = "+boundedValue);
-				}else{
-					toReturn.append(alias+" IN (");
-					for(int j=0; j<rightValues.length; j++){
-						boundedValue = stmt.getValueBounded(rightValues[j], datamartField.getType());
+
+				alias = getSQLAliasByUniqueName(datamartField.getUniqueName(),
+						baseQuery, baseQuerySelectedFields);
+				if (rightValues.length == 1) {
+					boundedValue = stmt.getValueBounded(rightValues[0],
+							datamartField.getType());
+					toReturn.append(alias + " = " + boundedValue);
+				} else {
+					toReturn.append(alias + " IN (");
+					for (int j = 0; j < rightValues.length; j++) {
+						boundedValue = stmt.getValueBounded(rightValues[j],
+								datamartField.getType());
 						toReturn.append(boundedValue);
-						if (j<rightValues.length-1) {
+						if (j < rightValues.length - 1) {
 							toReturn.append(", ");
 						}
 					}
 					toReturn.append(") ");
-				}				
-				if (i<whereFields.size()-1) {
+				}
+				if (i < whereFields.size() - 1) {
 					toReturn.append(" AND ");
 				}
 			}
