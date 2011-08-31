@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.commons.utilities;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.services.common.EnginConf;
@@ -767,27 +768,26 @@ public class StringUtilities {
 				newListOfValues = value;
 			}
 		}
-		if(newListOfValues.equals("") || newListOfValues.equals("''")){
-			String nullValueString = SingletonConfig.getInstance().getConfigValue("DATA_SET_NULL_VALUE");
-			if(nullValueString != null){
-				if(newListOfValues.equals("''")){
-					newListOfValues = "'"+nullValueString+"'";
-				}else{
-					newListOfValues = nullValueString;
-				}
-				
-			}else{
-				//try to read engine_config settings
-				nullValueString = (String)EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE");
+		String nullValueString = null;
+		if(newListOfValues.equals("") || newListOfValues.equals("''") || newListOfValues.equals("null")){
+			try{
+				nullValueString =  SingletonConfig.getInstance().getConfigValue("DATA_SET_NULL_VALUE");
 				if(nullValueString != null){
 					if(newListOfValues.equals("''")){
 						newListOfValues = "'"+nullValueString+"'";
 					}else{
 						newListOfValues = nullValueString;
 					}
+				}	
+			}catch(Throwable e){
+				//try to read engine_config settings
+				nullValueString = (String)((SourceBean)EnginConf.getInstance().getConfig().getAttribute("DATA_SET_NULL_VALUE")).getCharacters();
+				if(nullValueString != null){
+					newListOfValues = "'"+nullValueString+"'";
 					
 				}
 			}
+		
 		}
 		replacement = prefix + newListOfValues + suffix;
 
