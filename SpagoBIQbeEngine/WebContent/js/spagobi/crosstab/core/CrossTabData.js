@@ -132,12 +132,66 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
     }
 
 	 //serialize the data (it ads also the sums)
- 	, serializeEntries: function(rowsumO, columnsumO, superSumArray, misuresOnRow){
+ 	, serializeEntries: function(rowsumO, columnsumO, misuresOnRow, percenton){
+ 				
  		var rowsum = null;
  		var columnsum = null;
  		var tempSerializedEntries = this.getEntries();
  		var serializedEntries = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(tempSerializedEntries);
- 		 	 		
+ 		var superSumArray = new Array();
+ 		var visibleRows;
+ 		var visibleColumns;
+ 		
+ 		//Calculate the sum of sums
+ 		if(rowsumO.length>1){
+ 			for(var x=0; x<rowsumO.length; x++){
+ 				var freshSum=0;
+ 	 			for(var y=0; y<rowsumO[x].length; y++){
+ 	 				freshSum = freshSum+parseFloat(rowsumO[x][y]);
+ 	 			}
+ 	 			superSumArray.push(Sbi.qbe.commons.Format.number(freshSum,'float'));
+ 			}
+ 		}else if(columnsumO.length>1){
+ 			for(var x=0; x<columnsumO.length; x++){
+ 				var freshSum=0;
+ 	 			for(var y=0; y<columnsumO[x].length; y++){
+ 	 				freshSum = freshSum+parseFloat(columnsumO[x][y]);
+ 	 			}
+ 	 			superSumArray.push(Sbi.qbe.commons.Format.number(freshSum,'float'));
+ 			}
+ 		}
+ 		
+		if(percenton=='column'){
+			if(!this.misuresOnRow){
+				for(var i=0; i< serializedEntries.length; i++){
+		        	for(var j=0; j< serializedEntries[0].length; j++){
+		        		serializedEntries[i][j] = Sbi.qbe.commons.Format.number(serializedEntries[i][j],'float') +" ("+ Sbi.qbe.commons.Format.number(100*parseFloat(serializedEntries[i][j])/parseFloat(columnsumO[0][j]), 'float')+"%)";
+		        	}
+		    	}
+			}else{
+				for(var i=0; i< serializedEntries.length; i++){
+		        	for(var j=0; j< serializedEntries[0].length; j++){
+		        		serializedEntries[i][j] = Sbi.qbe.commons.Format.number(serializedEntries[i][j],'float') +" ("+ Sbi.qbe.commons.Format.number(100*parseFloat(serializedEntries[i][j])/parseFloat(columnsumO[i%columnsumO.length][j]), 'float')+"%)";
+		        	}
+		    	}	
+			}
+		} else if(percenton=='row'){
+			
+			if(this.misuresOnRow){
+				for(var i=0; i< serializedEntries.length; i++){
+		        	for(var j=0; j< serializedEntries[0].length; j++){
+		        		serializedEntries[i][j] = Sbi.qbe.commons.Format.number(serializedEntries[i][j],'float') +" ("+Sbi.qbe.commons.Format.number(100*parseFloat(serializedEntries[i][j])/parseFloat(rowsumO[0][i]), 'float')+"%)";
+		        	}
+		    	}	
+			}else{
+				for(var i=0; i< serializedEntries.length; i++){
+		        	for(var j=0; j< serializedEntries[0].length; j++){
+		        		serializedEntries[i][j] = Sbi.qbe.commons.Format.number(serializedEntries[i][j],'float') +" ("+Sbi.qbe.commons.Format.number(100*parseFloat(serializedEntries[i][j])/parseFloat(rowsumO[j%rowsumO.length][i]), 'float')+"%)";
+		        	}
+		    	}	
+			}
+		}
+ 		
     	if(columnsumO!=null){
     		columnsum = Sbi.crosstab.core.CrossTabShowHideUtility.cloneArray(columnsumO);
     		this.addPrefix(columnsum,'[sum]');
@@ -189,7 +243,7 @@ Ext.extend(Sbi.crosstab.core.CrossTabData , Object, {
  	 			}
  			}	
  		}
-
+ 		
 		return serializedEntries;
 	}
  	
