@@ -13,11 +13,27 @@
     var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl : "http://localhost:8080/openlaszlo/OpenLaszloEngineDash"; 
 	var xLabelAttributeName = typeof(global.xLabel)!="undefined" ? global.xLabel : "xLabel";	
 	var valueAttributeName1 = typeof(global.value1)!="undefined" ? global.value1 : "";
+	Debug.write("*** valueAttributeName1: " + valueAttributeName1);
+	if (valueAttributeName1 == undefined || valueAttributeName1 == "undefined")
+	 	valueAttributeName1 = typeof(global.VALUE1)!="undefined" ? global.VALUE1 : "";
+	Debug.write("*** valueAttributeName1_2: " + valueAttributeName1);
 	var valueAttributeName2 = typeof(global.value2)!="undefined" ? global.value2 : "";	
+	if (valueAttributeName2 == undefined || valueAttributeName2 == "undefined")
+	 	valueAttributeName2 = typeof(global.VALUE2)!="undefined" ? global.VALUE2 : "";
 	var valueAttributeName3 = typeof(global.value3)!="undefined" ? global.value3 : "";	
+	if (valueAttributeName3 == undefined || valueAttributeName3 == "undefined")
+	 	valueAttributeName3 = typeof(global.VALUE3)!="undefined" ? global.VALUE3 : "";
 	var valueAttributeName4 = typeof(global.value4)!="undefined" ? global.value4 : "";	
-	var valueAttributeName5 = typeof(global.value5)!="undefined" ? global.value5 : "";		
+	if (valueAttributeName4 == undefined || valueAttributeName4 == "undefined")
+	 	valueAttributeName4 = typeof(global.VALUE4)!="undefined" ? global.VALUE4 : "";
+	var valueAttributeName5 = typeof(global.value5)!="undefined" ? global.value5 : "";	
+	if (valueAttributeName5 == undefined || valueAttributeName5 == "undefined")
+	 	valueAttributeName5 = typeof(global.VALUE5)!="undefined" ? global.VALUE5 : "";	
 	var xSerieAttributeName = typeof(global.serie)!="undefined" ? global.serie : "serie";
+	Debug.write("*** xSerieAttributeName: " + xSerieAttributeName);
+	if (xSerieAttributeName == undefined || xSerieAttributeName == "undefined")
+	 	xSerieAttributeName = typeof(global.SERIE)!="undefined" ? global.SERIE : "SERIE";
+	 	Debug.write("*** xSerieAttributeName_2: " + xSerieAttributeName);
 	var min = typeof(global.minValue)!="undefined" ? parseInt(global.minValue) : 100;	
     var low = typeof(global.lowValue)!="undefined" ? parseInt(global.lowValue) : 295;
     var high = typeof(global.highValue)!="undefined" ? parseInt(global.highValue) : 340;
@@ -600,6 +616,7 @@
 	<datapointer id="rotationresponse" xpath="data:/rows[0]">
 	  	<handler name="ondata">
 	  	<![CDATA[
+	  	Debug.write("*** rotationresponse.getNodeCount(): " + rotationresponse.getNodeCount());
 	  		if (rotationresponse.getNodeCount() >= recNum){
 		  		for (var j = 0; j < rotationresponse.getNodeCount(); j++) {
 			  		rotationresponse.selectChild(0);
@@ -608,7 +625,7 @@
 			  		 		rotationresponse.selectNext(); 
 			  		 	}
 			  		}
-			  		
+			  		Debug.write("*** xSerieAttributeName: -" + xSerieAttributeName + "-");
 			  	 	var serieName = rotationresponse.getNodeAttribute(xSerieAttributeName);			       	
 				    if (serieName == undefined || serieName == "undefined")
 				       	 serieName = rotationresponse.getNodeAttribute(xSerieAttributeName.toUpperCase());
@@ -619,6 +636,13 @@
 			  		 	 for (var i = 0; i < nNeedles; i++) {
 					   		 var valuePar = canvas.display.getValuePar("valueAttributeName"+(i+1)+"");
 					       	 var rotation = rotationresponse.getNodeAttribute(valuePar);
+					       	 Debug.write("***valuePar1: -" + valuePar + "-");
+					       	 Debug.write("***rotation1: -" + rotation + "-");
+					       	 if (rotation == undefined || rotation == "undefined")
+				       	 		rotation = rotationresponse.getNodeAttribute(valuePar.toUpperCase());
+				       	 	 Debug.write("***valuePar2: -" + valuePar + "-");
+					       	 Debug.write("***rotation2: -" + rotation + "-");
+					       	 
 					       	 canvas.display.changeRotation(rotation, i);  	
 						     var newX = centerX - (serieName.length*3);
 						      	 	      	 	
