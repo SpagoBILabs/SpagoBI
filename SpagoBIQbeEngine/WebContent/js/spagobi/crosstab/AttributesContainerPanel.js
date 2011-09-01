@@ -314,6 +314,8 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		var record = grid.store.getAt(rowIndex);
      	var chooserWindow = new Sbi.widgets.SimpleValuesChooserWindow({
      		store : store
+     		, columnHeader : "Values"
+     		, columnName : "Values"
      	});
  		chooserWindow.on('beforeclose', this.updateValues.createDelegate(this, [record, chooserWindow], true), this);
  		chooserWindow.show();

@@ -21,20 +21,25 @@
  
 
 /**
-  * Object name 
+  * Sbi.widgets.SimpleValuesChooserWindow 
   * 
-  * [description]
-  * 
+  * A window with an internal grid with a list of values. The user can choose one or more values.
+  * There are no filters or paging toolbars, just a simple list.
+  * It can be used for lookup fields when a simple selection of values is required with no list pagination.
+  * The constructor input object must have the following properties:
+  * - store: the store with the list of values
+  * - columnName: the name of the column of the store that must be displayed
+  * - columnHeader: the header of the column to be displayed
   * 
   * Public Properties
   * 
   * [list]
   * 
-  * 
   * Public Methods
   * 
-  *  [list]
+  * - getSelectedValues: returns the values selected by the user
   * 
+  * - select: select a list of values in the list
   * 
   * Public Events
   * 
@@ -75,9 +80,12 @@ Sbi.widgets.SimpleValuesChooserWindow = function(config) {
 
 Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 
-	sm 		: null
-	, cm 	: null
-	, store : null // this must be in the constructor input object and it must contain a column named 'Values'
+	sm 				: null
+	, cm 			: null
+	, singleSelect 	: null
+	, store 		: null // this must be in the constructor input object
+	, columnHeader 		: null // this must be in the constructor input object
+	, columnName 	: null // this must be in the constructor input object
 	
 	,
 	init : function () {
@@ -86,8 +94,8 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
      	this.cm = new Ext.grid.ColumnModel([
 		   new Ext.grid.RowNumberer(),
 	       {
-	       	  header: "Values",
-	          dataIndex: 'Values',
+	       	  header: this.columnHeader,
+	          dataIndex: this.columnName,
 	          width: 75
 	       },
 	       this.sm
@@ -115,7 +123,7 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 		var toReturn = [];
 		for (var i = 0; i < selectedRecords.length; i++) {
 			var aRecord = selectedRecords[i];
-			toReturn.push(aRecord.data.Values);
+			toReturn.push(aRecord.data[this.columnName]);
 		}
 		return toReturn;
 	}
@@ -124,7 +132,7 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 	select : function (values) {
 		var records = [];
 		this.store.each(function (aRecord) {
-			if (values.indexOf(aRecord.data.Values) != -1) {
+			if (values.indexOf(aRecord.data[this.columnName]) != -1) {
 				records.push(aRecord);
 			}
 		}, this);
