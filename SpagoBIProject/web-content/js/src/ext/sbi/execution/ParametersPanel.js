@@ -381,10 +381,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.fields[p].on('select', this.updateDependentFields , this);
 				//this.fields[p].on('change', this.updateDependentFields , this);
 			} else if(theField.behindParameter.typeCode == 'MAN_IN') {
-				//alert("Unable to manage dependencies on input field of type [MANUAL INPUT]");
-				theField.el.on('keydown', 
+				// if input field has an element (it means that the field was displayed)
+				if (theField.el !== undefined) {
+					theField.el.on('keydown', 
 						this.updateDependentFields.createDelegate(this, [theField]), this, {buffer: 350});
-				//alert(theField.behindParameter.toSource());
+				}
 			} else {
 				alert("Unable to manage dependencies on input field of type [" + theField.behindParameter.selectionType + "]");
 			}
