@@ -48,6 +48,19 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.att
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.measures'] = 'Non puoi trascinare qui le misure';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'Non puoi trascinare qui i campi calcolati basati su script';
 
+//===================================================================
+//Sbi.worksheet.designer.DesignSheetFiltersEditWizard
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.title'] = 'Edit Filter Wizard';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.selection'] = 'Selezione';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'] = 'Singolo valore';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'] = 'Multivalore';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'Valorizzazione';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = 'Obbligatoria';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'Opzionale';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Applica';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Cancella';
+
 	
 //===================================================================
 // DESIGNER SHEETCONTAINER

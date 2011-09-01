@@ -74,6 +74,20 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.mea
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'You cannot drop script-based calculated fields here';
 
 //===================================================================
+//Sbi.worksheet.designer.DesignSheetFiltersEditWizard
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.title'] = 'Edit Filter Wizard';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.selection'] = 'Selection';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'] = 'Single value';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'] = 'Multi Value';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'Mandatory';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = 'Yes';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'No';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Apply';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Cancel';
+
+
+//===================================================================
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.designtoolslayoutpanel.title'] = 'Layout';
