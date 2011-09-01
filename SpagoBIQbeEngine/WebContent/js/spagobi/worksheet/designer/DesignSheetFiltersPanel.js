@@ -90,6 +90,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
 	])
+	, editItemWindow: null
 	
 	, init: function() {
 		this.initStore();
@@ -230,28 +231,71 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	}
 	
 	, createFilterPanel: function(aRow) {
+		
+		var deleteButton = new Ext.Button({
+   		    template: new Ext.Template(
+     		         '<div><div class="smallBtn" style="float: left">',
+     		             '<div class="delete-icon"></div>',
+     		             '<div class="btnText"></div>',
+     		         '</div>'
+     		             
+     		    )
+				 , hidden: true
+     		     , buttonSelector: '.delete-icon'
+     		  	 , iconCls: 'delete-icon'
+     		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
+     		     , handler: this.closeHandler.createDelegate(this, [aRow], true)
+     		     , scope: this
+     		});
+		
+		var editButton = new Ext.Button({
+   		    template: new Ext.Template(
+      		         '<div><div class="smallBtn" style="float: left">',
+      		             '<div class="edit-icon"></div>',
+      		             '<div class="btnText"></div>',
+      		         '</div>'
+      		             
+      		    )
+				 , hidden: true
+      		     , buttonSelector: '.edit-icon'
+      		  	 , iconCls: 'edit-icon'
+      		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
+      		     , handler: this.openEditItemWindow.createDelegate(this, [aRow], true)
+      		     , scope: this
+      		});
+		
+		var deleteButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
+		var editButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
+		
 		var item = new Ext.Panel({
 			id: 'designsheetfilterspanel_' + aRow.data.alias
             , layout: {
                 type:'column'
             }
-			, width: 120
-			, style:'padding:0px 5px 5px 5px; float: left'
+			, style:'padding:0px 5px 5px 5px; float: left; width: auto;'
        		, items: [{
-       			html: aRow.data.alias
-       		}, new Ext.Button({
-       		    template: new Ext.Template(
-       		         '<div class="smallBtn" class="float: left">',
-       		             '<div class="delete-icon"></div>',
-       		             '<div class="btnText"></div>',
-       		         '</div>')
-       		     , buttonSelector: '.delete-icon'
-       		  	 , iconCls: 'delete-icon'
-       		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
-       		     , handler: this.closeHandler.createDelegate(this, [aRow], true)
-       		     , scope: this
-       		})]
+       			html: '<div style="padding-right: 2px;">'+aRow.data.alias+'</div>'
+       		}, deleteButtonPlaceHolder
+       		, editButtonPlaceHolder
+       		, deleteButton
+       		, editButton]
 		});
+		
+		//Show/hide the tool buttons when the mouse enter/leave
+		item.on('afterrender', function(){
+			item.el.on('mouseenter', function(event) {
+				deleteButtonPlaceHolder.hide();
+				editButtonPlaceHolder.hide();
+				deleteButton.show();
+				editButton.show();
+			}, this);
+			item.el.on('mouseleave', function(event) {
+				deleteButtonPlaceHolder.show();
+				editButtonPlaceHolder.show();
+				deleteButton.hide();
+				editButton.hide();
+			}, this);
+		},this);
 		return item;
 	}
 	
@@ -310,5 +354,23 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		}
 		this.doLayout();
 	}
-    
+	
+	//Edit filter: Wizard
+	, openEditItemWindow: function(button, event, aRow){
+		if(this.editItemWindow==null){
+			this.editItemWindow = new Sbi.worksheet.designer.DesignSheetFiltersEditWizard();
+			this.editItemWindow.on('apply', this.updateRecordProperties, this);
+		};
+		this.selectedRecord = aRow;
+		this.editItemWindow.show();
+	}
+
+	//Update the filter after edit
+	, updateRecordProperties: function(values){
+		if(this.selectedRecord!=null){
+			Ext.apply(this.selectedRecord, values||{});
+			this.store.commitChanges();
+			this.selectedRecord = null;
+		}	
+	}
 });
