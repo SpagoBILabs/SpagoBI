@@ -665,6 +665,43 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	//defines the max, min and tot value on all records (only for columns visualized as chart)
 	, onLoad: function(){
 		var numRec = this.store.getCount();
+		
+		//redefines the columns labels if they are dynamics
+		var tmpMeta = this.getColumnModel();
+		var fields = tmpMeta.config;
+		var metaIsChanged = false;
+		var headerToHide = [];
+		var fieldsMap = {};
+		tmpMeta.fields = new Array(fields.length);
+		
+		for(var i = 0, len = fields.length; i < len; i++) {
+			if(fields[i].headerType !== undefined && fields[i].headerType === 'relative'){
+		    	//subsitutes the header value with the dataset header field
+				var tmpRec = this.store.getAt(0);
+		    	var tmpHeader =  tmpRec.get(this.store.getFieldNameByAlias(fields[i].header));
+		    	if (tmpHeader !== undefined){	
+		    		metaIsChanged = true;
+		    		fieldsMap[fields[i].header] = (fields[i].id+1);
+		    		headerToHide.push(fields[i].header);
+		    		fields[i].header = tmpHeader;
+		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+		    	}
+		    }else{
+	    		tmpMeta.fields[i] = fields[i];
+	    	}
+		}
+		if (metaIsChanged){
+			for(var i = 0, len = headerToHide.length; i < len; i++) {
+				//hides the column with the description of the header
+	   // 		var tmpName = this.store.getFieldNameByAlias(headerToHide[i]);						
+			//	if (tmpName !== undefined) 
+					tmpMeta.fields[fieldsMap[headerToHide[i]]].hidden = true;
+			}
+			//adds numeration column    
+			tmpMeta.fields[0] = new Ext.grid.RowNumberer();
+			//update columnmodel configuration
+			this.getColumnModel().setConfig(tmpMeta.fields);
+		}
 		var minValue = 0;
 		var maxValue = 0;
 		var totValue = 0;
@@ -695,6 +732,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 		
 		this.updateInLineCharts();
+		
 	}
 	
 	, onMetaChange: function( store, meta ) {
@@ -725,13 +763,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 		
 		for(i = 0; i < tmpMeta.fields.length; i++) {	
-		
 			var t = Ext.apply({}, this.columnConfig[tmpMeta.fields[i].header] || {},  this.columnDefaultConfig);
 		    tmpMeta.fields[i] = Ext.apply(tmpMeta.fields[i], t);
+		    
 			if(tmpMeta.fields[i].type) {
-				var t = tmpMeta.fields[i].type;	
-				//alert('t: ' + t);
-				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[t];			   
+				var tmpType = tmpMeta.fields[i].type;					
+				tmpMeta.fields[i].renderer  =  Sbi.locale.formatters[tmpType];			   
 			}
 			   
 			if(tmpMeta.fields[i].subtype && tmpMeta.fields[i].subtype === 'html') {
@@ -763,7 +800,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				} else {
 					Sbi.Msg.showWarning('Impossible to create inlineActionColumn [' + this.inlineActions[i].name + ']');
 				}
-				//hidden the configuration column linked to inlineActions				
+				//hides the configuration column linked to inlineActions				
 				var tmpName; 
 				if(this.inlineActions[i].checkColumn) {
 					tmpName = this.store.getFieldNameByAlias(this.inlineActions[i].checkColumn);						
