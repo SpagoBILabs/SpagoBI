@@ -508,7 +508,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		return (condition.operation == 'contains')? conditionIsTrue: !conditionIsTrue;
 	}
 	
-	, setFieldLabel: function(field, label){    
+	, setFieldLabel: function(field, label){   
+		// if input field has no element it means that the field wasn't displayed so we have 
+		// nothing to do here
+		if (field.el === undefined) return;
+		
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
@@ -521,6 +525,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, hideFieldLabel: function(field){    
+		// if input field has no element it means that the field wasn't displayed so we have 
+		// nothing to do here
+		if (field.el === undefined) return;
+		
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
