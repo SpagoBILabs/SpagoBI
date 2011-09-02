@@ -84,7 +84,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersEditWizard, Ext.Window, {
 		            , fieldLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.selection')
 		            , vertical: true
 		            , items: [
-		                {boxLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'), name: 'selection', inputValue: 'siglevalue'}
+		                {boxLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'), name: 'selection', inputValue: 'singlevalue'}
 		                , {boxLabel: LN('sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'), name: 'selection', inputValue: 'multivalue', checked: true}
 		            ]
 	            }
