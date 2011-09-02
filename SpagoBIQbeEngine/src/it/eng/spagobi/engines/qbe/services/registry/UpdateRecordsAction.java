@@ -20,10 +20,10 @@
  **/
 package it.eng.spagobi.engines.qbe.services.registry;
 
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.HibernateDataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
@@ -36,14 +36,27 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.FetchType;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.BasicType;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -56,11 +69,11 @@ import org.hibernate.property.Setter;
 import org.hibernate.type.ManyToOneType;
 import org.hibernate.type.Type;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
@@ -131,12 +144,145 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		}
 		
 	}
-
 	private void updateRecord(JSONObject aRecord,
 			QbeEngineInstance qbeEngineInstance,
 			RegistryConfiguration registryConf) {
+		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
+		if(genericDatasource instanceof HibernateDataSource){
+			updateHibRecord(aRecord, qbeEngineInstance, registryConf, (HibernateDataSource)genericDatasource);
+		}else if(genericDatasource instanceof JPADataSource){
+			 
+			try {
+				updateJPARecord(aRecord, qbeEngineInstance, registryConf, (JPADataSource)genericDatasource);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	private void updateJPARecord(JSONObject aRecord,
+			QbeEngineInstance qbeEngineInstance,
+			RegistryConfiguration registryConf, JPADataSource ds) throws JSONException, ClassNotFoundException {
+		EntityManager em = ds.getEntityManager();
+		em.setProperty("cascade", CascadeType.PERSIST);
+		em.setProperty("fetch", FetchType.LAZY);
+		Metamodel classMetadata = em.getMetamodel();
+
+		String entityName = registryConf.getEntity();
+		int lastPkgDot = entityName.lastIndexOf(".");
+		String entityNameNoPkg = entityName.substring(lastPkgDot+1);
+		Iterator itEnt = classMetadata.getEntities().iterator();
 		
-		HibernateDataSource ds = (HibernateDataSource) qbeEngineInstance.getDataSource();
+
+		while(itEnt.hasNext()){
+			EntityType entity = (EntityType)itEnt.next();
+			String jpaEntityName = entity.getName();
+
+			if(entity != null && jpaEntityName.equals(entityNameNoPkg)){
+				EntityTransaction tx = null;
+				try{
+
+					 tx = em.getTransaction();
+				javax.persistence.metamodel.Type keyT = entity.getIdType();
+				String keyName = "";
+				if (keyT instanceof BasicType) {
+					keyName = (entity.getId(Object.class)).getName();				
+				}
+
+				Iterator it = aRecord.keys();
+				
+				Object key = aRecord.get(keyName);				
+				Object obj = em.find(entity.getJavaType(), key);
+				
+				while (it.hasNext()) {
+					String aKey = (String) it.next();
+					if (keyName.equals(aKey)) {
+						continue;
+					}
+					Column c = registryConf.getColumnConfiguration(aKey);
+					
+					if (c.getSubEntity() != null) {
+						// case of foreign key
+						Attribute a = entity.getAttribute(c.getSubEntity());
+						
+						Attribute.PersistentAttributeType type = a.getPersistentAttributeType();	
+						if (type.equals(PersistentAttributeType.MANY_TO_ONE)) { 	
+					 		String entityType = a.getJavaType().getName();
+					 		String subKey = a.getName();
+					 		int lastPkgDotSub = entityType.lastIndexOf(".");
+							String entityNameNoPkgSub = entityType.substring(lastPkgDotSub+1);
+							try {
+								
+								Object referenced = getReferencedObjectJPA(em, entityNameNoPkgSub, c.getField(), aRecord.get(aKey));
+								//Object referencedToSet = em.find(a.getJavaType(), "58");
+								Class clas = entity.getJavaType();
+								Field f =clas.getDeclaredField(subKey);
+								f.setAccessible(true);
+								em.refresh(referenced);
+								f.set(obj, referenced);
+								
+							} catch (JSONException e) {
+								logger.error(e);
+								throw new SpagoBIEngineServiceException(getActionName(), "Property " + c.getSubEntity() + " is not a many-to-one relation");
+							} catch (Exception e) {
+								logger.error(e);
+								throw new SpagoBIEngineServiceException(getActionName(), "Error setting Field " + aKey + "");
+							}  
+
+						} else {
+							throw new SpagoBIEngineServiceException(getActionName(), "Property " + c.getSubEntity() + " is not a many-to-one relation");
+						}
+					} else {
+						// case of property
+						Attribute a = entity.getAttribute(aKey);
+						Class clas;
+						try {
+							clas = entity.getJavaType();
+							Field f =clas.getDeclaredField(aKey);
+							f.setAccessible(true);
+							f.set(obj, aRecord.get(aKey));
+							
+							
+						} catch (Exception e) {
+							logger.error(e);
+							throw new SpagoBIEngineServiceException(getActionName(), "Error setting Field " + aKey + "");
+						}  
+
+					}
+				}
+
+			    if(!tx.isActive()){
+			    	tx.begin();
+			    }
+
+
+			    em.persist(obj);
+			    em.flush();
+			    
+			    tx.commit();
+
+				}
+				catch (RuntimeException e) {
+				    if ( tx != null && tx.isActive() ) tx.rollback();
+				    throw new SpagoBIEngineServiceException(getActionName(), "Error saving entity ");
+				}
+				finally {
+				    em.close();
+				    break;
+				}
+
+			}
+		}
+		
+	}
+	private void updateHibRecord(JSONObject aRecord,
+			QbeEngineInstance qbeEngineInstance,
+			RegistryConfiguration registryConf,
+			HibernateDataSource ds) {
+
 		SessionFactory sf = ds.getHibernateSessionFactory();
 		Configuration cfg = ds.getHibernateConfiguration();
 		Session aSession = null;
@@ -194,11 +340,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			}
 		}
 		
-		
-		
-		
 	}
-
 	private Object convertValue(Object valueObj, Property property) {
 		if (valueObj == null) {
 			return null;
@@ -227,11 +369,22 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			toReturn = value;
 		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
 			// TODO manage dates
-			toReturn = value;
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+			try {
+				toReturn = sdf.parse(value);
+			} catch (ParseException e) {
+				logger.error("Unparsable timestamp", e);
+			}
 
 		} else if( Date.class.isAssignableFrom(clazz) ) {
 			// TODO manage dates
-			toReturn = value;
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			
+			try {
+				toReturn = sdf.parse(value);
+			} catch (ParseException e) {
+				logger.error("Unparsable date", e);
+			}
 
 		} else if( Boolean.class.isAssignableFrom(clazz) ) {
 			toReturn = Boolean.parseBoolean(value);
@@ -255,5 +408,19 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		}
 		return result.get(0);
 	}
+	
+	private Object getReferencedObjectJPA(EntityManager em, String entityType,
+			String field, Object value) {
 
+        final List result = em.createQuery("select x from " + entityType + " x where x." + field + " = :val").setParameter("val",value).getResultList();
+
+		if (result == null || result.size() == 0) {
+			throw new SpagoBIEngineServiceException(getActionName(), "Record with " + field + " equals to " + value.toString() + " not found for entity " + entityType);
+		}
+		if (result.size() > 1) {
+			throw new SpagoBIEngineServiceException(getActionName(), "More than 1 record with " + field + " equals to " + value.toString() + " in entity " + entityType);
+		}
+
+		return result.get(0);
+	}
 }
