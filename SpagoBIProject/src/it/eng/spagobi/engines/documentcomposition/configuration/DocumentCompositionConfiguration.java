@@ -814,8 +814,9 @@ public class DocumentCompositionConfiguration {
 									for (int x=0; x< paramsDocLinked.size(); x++){
 										String sbiLabelPar = (paramsDocLinked.get("sbi_par_label_param_"+numLinked+"_"+x)==null)?"":(String)paramsDocLinked.get("sbi_par_label_param_"+(numLinked)+"_"+x);
 										//String labelPar = (paramsDocLinked.get("label_param_"+numLinked+"_"+x)==null)?"":(String)paramsDocLinked.get("label_param_"+(numLinked)+"_"+x);
-										if ((sbiLabelPar != null && !sbiLabelPar.equals("") && sbiLabelPar.equalsIgnoreCase(tmpLabelLinked)) ||
-												typeCross != null && typeCross.equalsIgnoreCase(Constants.CROSS_EXTERNAL)){
+										/*if ((sbiLabelPar != null && !sbiLabelPar.equals("") && sbiLabelPar.equalsIgnoreCase(tmpLabelLinked)) ||
+												typeCross != null && typeCross.equalsIgnoreCase(Constants.CROSS_EXTERNAL)){*/
+										if ((sbiLabelPar != null && !sbiLabelPar.equals("") && sbiLabelPar.equalsIgnoreCase(tmpLabelLinked))){
 											lstDocLinked.put("DOC_LABEL_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel());
 											lstFieldLinked.put("DOC_FIELD_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, linkedDoc.getSbiObjLabel()+"__"+sbiLabelPar );
 											lstCrossLinked.put("DOC_CROSS_LINKED__"+numDoc+"__"+contOutPar+"__"+numParAdd, typeCross );

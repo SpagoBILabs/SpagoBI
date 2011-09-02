@@ -127,14 +127,14 @@ for (int i=0; i<lstUrl.size(); i++){
 				 				}
 				 				if (field != null && !field.equals("") ){	
 					%>
-					 					arLinkedDocs['<%=labelDoc +"__"+ i+"__"+ j+"__"+k%>'] = ['<%=label%>'];
-					 					arLinkedFields['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=field%>'];
-					 					arLinkedCross['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=crossType%>'];
+									arLinkedDocs['<%=labelDoc +"__"+ i+"__"+ j+"__"+k%>'] = ['<%=label%>'];
+				 					arLinkedFields['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=field%>'];
+				 					arLinkedCross['<%=label+"__"+ i + "__"+ j+"__"+k%>'] = ['<%=crossType%>'];
 					 <%							 					
 				 		     		//adds the url of the linked doc if itsn't already presents into arUrl 
 	 								//(tipical case of EXTERNAL cross on a document that doesn't present into the composite)
 	 								boolean isPresents = false;
-	 								for(int z=0; z<labelDocs.size(); z++){
+	 								for(int z=0, len=labelDocs.size(); z<len; z++){
 	 									if (((String)labelDocs.get(z)).equalsIgnoreCase(label)){
 	 										isPresents = true;
 	 										break;
@@ -143,7 +143,8 @@ for (int i=0; i<lstUrl.size(); i++){
 	 								if (!isPresents) {	 									
 	 									String extUrl = DocumentCompositionUtils.getExecutionUrl(label, aSessionContainer, aRequestContainer.getServiceRequest());
 	 									extUrl = extUrl.substring(extUrl.indexOf("|")+1);
-	 								%>	 								 
+	 									labelDocs.add(label);
+	 								%>	 
 	 									arUrl['EXT__<%=label%>'] = ['<%=extUrl%>'];
 	 								<%
 	 								}

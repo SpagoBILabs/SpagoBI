@@ -72,16 +72,41 @@ function execCrossNavigation(windowName, label, parameters) {
 	var baseName = "iframe_";
 	var labelDocClicked = windowName.substring(baseName.length);
 	var tmpUrl = "";
-	var reload = false;
+	var extDocsExecute = [];
 	
 	for(var docMaster in asUrls){
+		var reload = false;
+		var	typeCross = "";
 		var sbiLabelMasterDoc = docMaster;
 		var generalLabelDoc = "";
 		if (sbiLabelMasterDoc == labelDocClicked){
-			for (var docLabel in asLinkedDocs){ 
-				if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){
+						
+			for (var docLabel in asLinkedDocs){
+							
+				if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){					
 					generalLabelDoc = asLinkedDocs[docLabel];
 					var sbiLabelDocLinked = generalLabelDoc[0];
+					
+					//gets the cross type (internal or external) of tge target
+					for (var fieldCross in asLinkedCross){
+						var totalCrossPar =  asLinkedCross[fieldCross];
+						typeCross = totalCrossPar[0];
+						var crossTypeDoc = fieldCross.substring(0, fieldCross.indexOf("__"));
+						if (crossTypeDoc == sbiLabelDocLinked){
+							break;
+						}
+					}	
+					if (typeCross === 'EXTERNAL' && reload) {
+						//checks if the target document is been yet loaded  												
+						reload = false;
+						for (var f=0, flen=extDocsExecute.length; f<flen; f++){
+							if (extDocsExecute[f] == sbiLabelDocLinked) {
+								reload = true;
+								break;
+							}
+						}
+						break; 
+					}
 					//gets iframe element
 					var nameIframe = "iframe_" + sbiLabelDocLinked;
 					var element = document.getElementById(nameIframe);
@@ -93,17 +118,13 @@ function execCrossNavigation(windowName, label, parameters) {
 					var newUrl = "";
 					tmpUrl = "";
 					var finalUrl = "";
-					//checks the cross type (internal or external)
-					for (var fieldCross in asLinkedCross){
-						var totalCrossPar =  asLinkedCross[fieldCross];
-						var	typeCross = totalCrossPar[0];
-						var crossTypeDoc = fieldCross.substring(0, fieldCross.indexOf("__"));
-						if (crossTypeDoc == sbiLabelDocLinked){
-							break;
-						}
-					}
+					
 
 					for (var fieldLabel in asLinkedFields){ 
+						if (typeCross === 'EXTERNAL' && reload) {							
+							//it means that the target document is already loaded (tipical EXTERNAL cross case)							
+							break; 
+						}
 						var totalLabelPar =  asLinkedFields[fieldLabel];
 						var	sbiLabelPar = totalLabelPar[0];
 						var sbiSubDoc 	= fieldLabel.substring(0, fieldLabel.indexOf("__"));
@@ -130,7 +151,7 @@ function execCrossNavigation(windowName, label, parameters) {
 									tmpNewLabel = tmpNewValue.substring(0,tmpNewValue.indexOf("="));
 									var paramsOldValues = null;
 								 	paramsOldValues = tmpUrl.split("&");
-								 	//EXTERNAL navigation
+								 	//EXTERNAL navigation: it change all new parameters in a time (because parameters contains all new values)
 									if (typeCross === 'EXTERNAL'){
 										if (paramsOldValues != null && paramsOldValues.length > 0) {
 											for (k = 0; k < paramsOldValues.length; k++) {
@@ -196,6 +217,7 @@ function execCrossNavigation(windowName, label, parameters) {
 							asUrls[generalLabelDoc][0]=newUrl[0];
 						}else{
 							asUrls["EXT__" + generalLabelDoc][0]=newUrl[0];
+							extDocsExecute.push(generalLabelDoc[0]);
 						}
 						RE = new RegExp("&amp;", "ig");
 						var lastUrl = newUrl[0];
@@ -206,7 +228,7 @@ function execCrossNavigation(windowName, label, parameters) {
 							  , typeCross: typeCross
 						  	  };						
 						sendUrl(nameIframe,lastUrl,msg);
-						reload = false; 
+						//reload = false; 
 					}
 				}//if (docLabel.indexOf(sbiLabelMasterDoc) >= 0){
 			}//for (var docLabel in asLinkedDocs){ 
@@ -286,8 +308,13 @@ Ext.onReady(function() {
 	  				var exportDSDoc = asExportDSDocs[strDocLabel] || "false";
 	  				//the title drives the header's visualization
 	  				var titleDoc = asTitleDocs[strDocLabel] ;
+	  				var itemTitleArr = [];
+	  				var itemTitleDoc = {};
 	  				if (titleDoc[0] === "" && (zoomDoc[0] === "false" || exportDSDoc[0] === "false")){
-	  					titleDoc = null;
+	  					titleDoc = null;	  					
+	  				}else{
+	  					itemTitleDoc.text = titleDoc;
+	  					itemTitleArr.push(itemTitleDoc);
 	  				}
 					var widthPx = "";
 					var heightPx = "";
@@ -299,7 +326,6 @@ Ext.onReady(function() {
 					}
 					//defines the tools (header's buttons):
 					var menuItems = new Array();
-					var arTools =[];
 
 					var tb = new Ext.Toolbar({
 					    style: {
@@ -314,22 +340,11 @@ Ext.onReady(function() {
 				        },
 				        buttonAlign: 'right',
 				        items: []
+				        //items: itemTitleArr
 					});
 					if (exportDSDoc !== undefined && exportDSDoc[0] === "true"){
 						var docsExpArrays= asExportTypes[strDocLabel];
-						if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){
-							//add the export dataset button
-							var toolExport = {
-										    id: 'gear',
-										    qtip: 'Export dataset da internazionalizzare',
-										    handler: function(){
-										    	alert("EXPORT: mi hai cliccato!");
-								      		//	this.refresh();
-										    }, scope: this
-										  };
-							arTools.push(toolExport);
-							
-							
+						if(docsExpArrays !== undefined && docsExpArrays !== null && docsExpArrays.length != 0){		
 							var docType = asDocTypes[strDocLabel];
 							if(docsExpArrays.length > 1){
 								for(k=0; k< docsExpArrays.length; k++){
@@ -370,15 +385,16 @@ Ext.onReady(function() {
 								tb = new Ext.Toolbar({
 								    style: {
 							            background: '#ffffff',
-							            margin: 0,
+							            margin: 0,	
 							            border: '0',
 							            color: '#000000',
 							            align: 'right',
-							            padding: 0,
+							            padding: 0, 
 							            'padding-left': 10,
 							            'z-index': 100
 							        },
 							        buttonAlign: 'right',
+							        //items: [itemTitleDoc, menuBtn]
 							        items: [menuBtn]
 								});
 							}else if(docsExpArrays.length == 1){
@@ -401,15 +417,16 @@ Ext.onReady(function() {
 								tb = new Ext.Toolbar({
 								    style: {
 							            background: '#ffffff',
-							            margin: 0,
+							            margin: 0, 
 							            border: '0',
 							            color: '#000000',
 							            align: 'right',
-							            padding: 0,
+							            padding: 0,	 
 							            'padding-left': 10,
 							            'z-index': 100
 							        },
 							        buttonAlign: 'right',
+							        //items: [itemTitleDoc, btnSingle]
 							        items: [btnSingle]
 								});
 							}
@@ -419,22 +436,23 @@ Ext.onReady(function() {
 					
 					
 					//create panel with iframe
-					var p = new  Ext.ux.ManagedIframePanel({
-							frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
-							,renderTo   : 'divIframe_'+ strDocLabel
-			                //,title      : (titleDoc==null || titleDoc== "")?null:titleDoc
-			                ,title      : titleDoc
-			                ,defaultSrc : asUrls[docLabel]+""
-			                ,loadMask   : true//(Ext.isIE)?true:false
-			                ,border		: false //the border style should be defined into document template within the "style" tag
-							,height		: Number(heightPx)
-							,scrolling  : 'auto'	 //possible values: yes, no, auto  
-							//,collapsible: true
-							,tbar		: tb
-							,bodyStyle	:'padding:1px'
-							,scope: this
+					//alert("titleDoc: -" + titleDoc  + "-");
+					var p = new   Ext.ux.ManagedIframePanel({
+						frameConfig:{autoCreate:{id:'iframe_' + strDocLabel, name:'iframe_' + strDocLabel}}
+						,renderTo   : 'divIframe_'+ strDocLabel
+		                ,title      : titleDoc
+		                ,defaultSrc : asUrls[docLabel]+""
+		                ,loadMask   : true//(Ext.isIE)?true:false
+		                ,border		: false //the border style should be defined into document template within the "style" tag
+						,height		: Number(heightPx)
+						,scrolling  : 'auto'	 //possible values: yes, no, auto  
+						//,collapsible: true
+						,tbar		: tb
+						,bodyStyle	:'padding:10px'
+						//,preventHeader: true
+						,scope: this
 
-					});
+				});
   				}
   	}}
 	
