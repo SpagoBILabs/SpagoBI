@@ -108,11 +108,15 @@ public class Exporter {
     	    String alias = (String) fieldMetaData.getAlias();
     	    Boolean visible = (Boolean) fieldMetaData.getProperty("visible");
             if (extractedFields != null && extractedFields.get(j) != null) {
-    	    	Field field = (Field) extractedFields.get(j);
-    	    	fieldName = field.getName();
-    	    	if (field.getPattern() != null) {
-    	    		format = field.getPattern();
-    	    	}
+            	Object f = extractedFields.get(j);
+            	logger.debug("Extracted field "+fieldName+" is instance of "+f.getClass().getName());
+            	if(f instanceof Field){
+	    	    	Field field = (Field) f;
+	    	    	fieldName = field.getName();
+	    	    	if (field.getPattern() != null) {
+	    	    		format = field.getPattern();
+	    	    	}
+            	}
     	    }
             CellStyle aCellStyle = wb.createCellStyle(); 
             if (format != null) {
