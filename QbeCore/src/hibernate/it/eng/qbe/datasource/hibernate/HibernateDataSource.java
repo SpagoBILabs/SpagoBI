@@ -22,6 +22,7 @@ package it.eng.qbe.datasource.hibernate;
 
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
+import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
@@ -31,18 +32,30 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.hibernate.HibernateModelStructureBuilder;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Table;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.property.Setter;
+import org.hibernate.type.ManyToOneType;
+import org.hibernate.type.Type;
+import org.json.JSONObject;
 
 
 public class HibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
@@ -298,5 +311,10 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		return new HibernateTransaction(this);
 	}
 
-	
+	public IPersistenceManager getPersistenceManager() {
+		// TODO Auto-generated method stub
+		return new HibernatePersistenceManager(this);
+	}
+
+
 }
