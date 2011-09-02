@@ -15,3 +15,10 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'
 //Sbi.worksheet.designer.WorkSheetPreviewPage
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Worksheet Preview';
+
+//===================================================================
+//Sbi.worksheet.RuntimeSheetFiltersPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.title'] = 'Filter Errors';
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.mandatory'] = 'Those filters should have at least one value:';
+Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch'] = 'Those filters have too much values:';

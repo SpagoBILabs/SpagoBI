@@ -147,6 +147,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignToolsFieldsPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignSheetFiltersPanel.js'/></script>
+<script type="text/javascript" src='../js/spagobi/worksheet/designer/DesignSheetFiltersEditWizard.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/SheetTitlePanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/ChooseImageWindow.js'/></script>
 <script type="text/javascript" src='../js/spagobi/worksheet/designer/WorksheetDesignerPanel.js'/></script>

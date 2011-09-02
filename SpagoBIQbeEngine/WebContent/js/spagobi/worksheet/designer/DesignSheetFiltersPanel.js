@@ -89,6 +89,8 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 	      , {name: 'funct', type: 'string'}
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
+	      , {name: 'selection', type: 'string'}
+	      , {name: 'mandatory', type: 'string'}
 	])
 	, editItemWindow: null
 	
@@ -103,7 +105,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		//the store has been injected from the parent
 		if(this.store==null){
 			this.store =  new Ext.data.ArrayStore({
-		        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+		        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'selection', 'mandatory']
 			});
 			// if there are initialData, load them into the store
 			if (this.initialData !== undefined) {
@@ -221,7 +223,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.reset();
 			this.empty = false;	
 		}
-		
+
 		this.store.add([aRow]);
 		var item = this.createFilterPanel(aRow);
 
@@ -360,17 +362,20 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		if(this.editItemWindow==null){
 			this.editItemWindow = new Sbi.worksheet.designer.DesignSheetFiltersEditWizard();
 			this.editItemWindow.on('apply', this.updateRecordProperties, this);
+			this.editItemWindow.on('afterrender', function(){this.editItemWindow.setFormState(aRow.data)}, this);
 		};
 		this.selectedRecord = aRow;
+		this.editItemWindow.setFormState(aRow.data);
 		this.editItemWindow.show();
 	}
 
 	//Update the filter after edit
 	, updateRecordProperties: function(values){
 		if(this.selectedRecord!=null){
-			Ext.apply(this.selectedRecord, values||{});
+			Ext.apply(this.selectedRecord.data, values||{});
 			this.store.commitChanges();
 			this.selectedRecord = null;
 		}	
 	}
+	
 });

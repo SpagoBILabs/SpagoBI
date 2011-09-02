@@ -60,13 +60,18 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	
 	//catch the event of the contentloaded and throws it to the parent
 	this.content.on('contentloaded',function(){this.fireEvent('contentloaded');},this);
-
+		
 	c = {
 		border: false,
 		style:'padding:5px 15px 5px',
 		items: this.content,
 		autoHeight: true
 	};
+	
+	if(this.hiddenContent){
+		c.hidden = true;
+	}
+	
 	Sbi.worksheet.runtime.RuntimeSheetContentPanel.superclass.constructor.call(this, c);	
 
 };
@@ -138,8 +143,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     			})
     		}
     	},ieFixVar));
-		table.execQuery({'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)});
-		
+    	if(!c.hiddenContent){
+    		table.execQuery({'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)});
+    	}else{
+    		this.on('afterrender', function(){this.fireEvent('contentloaded')}, this);
+    	}
 		return table;
 	},
 	
@@ -148,7 +156,12 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 			hideLoadingMask: true,
 			crosstabConfig: {autoHeight: true}, 
 			title: false}));
-		this.on('afterlayout',this.loadCrosstab,this);
+		if(!c.hiddenContent){
+			this.on('afterlayout',this.loadCrosstab,this);
+		}else{
+			this.on('afterrender', function(){this.fireEvent('contentloaded')}, this);
+		}
+		
 		return crossTab;
 	},
 	
@@ -158,6 +171,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	},
 	
 	applyFilters: function(filtersValue){
+		
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
@@ -178,8 +192,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        case 'Pie Chart':
 	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
 	        	break;
-
 		}
+		this.show();
 	}
 
 	
