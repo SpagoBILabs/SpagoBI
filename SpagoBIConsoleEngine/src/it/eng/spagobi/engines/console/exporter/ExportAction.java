@@ -174,8 +174,8 @@ public class ExportAction extends AbstractConsoleEngineAction {
 					String key = (String)it.next();
 					JSONObject header = resultHeaders.getJSONObject(key);
 					String fieldHeader = header.optString("header", "");
-
-					extractedFields.add(fieldHeader);
+					Field headerF = new Field(fieldHeader, "java.lang.String", 100);
+					extractedFields.add(headerF);
 					for(int i = 0; i < fieldNo; i++) {
 						IFieldMetaData fFound = dataStore.getMetaData().getFieldMeta(i);
 						if(fFound.getName().equals(key)){
