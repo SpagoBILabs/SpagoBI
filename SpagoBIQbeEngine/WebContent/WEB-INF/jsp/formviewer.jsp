@@ -143,7 +143,7 @@ end DOCTYPE declaration --%>
 	    
 	    
 	    
-	    var formEnginePanel=null;
+      	Sbi.formviewer.formEnginePanel = null; // global variable, useful in order to recover information about the form everywhere
 	    
         Ext.onReady(function() {
         	Ext.QuickTips.init();
@@ -165,8 +165,8 @@ end DOCTYPE declaration --%>
 				}
 			};
 			
-			formEnginePanel = new Sbi.formviewer.FormEnginePanel(formEngineConfig);
-	        var viewport = new Ext.Viewport({layout: 'border', items: [formEnginePanel]});  
+			Sbi.formviewer.formEnginePanel = new Sbi.formviewer.FormEnginePanel(formEngineConfig);
+	        var viewport = new Ext.Viewport({layout: 'border', items: [Sbi.formviewer.formEnginePanel]});  
            	
       	});
       	
