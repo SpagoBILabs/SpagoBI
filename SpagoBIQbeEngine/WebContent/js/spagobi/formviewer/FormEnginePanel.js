@@ -151,5 +151,9 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 			return null;
 		}
 	}
+    
+    , getFormState : function () {
+    	return this.formViewerPage.getFormState();
+    }
 	
 });

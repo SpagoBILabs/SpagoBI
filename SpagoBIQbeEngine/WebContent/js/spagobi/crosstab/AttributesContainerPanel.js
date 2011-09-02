@@ -312,6 +312,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	, rowDblClickHandler: function(grid, rowIndex, event) {
 		var store = this.createLookupStore(grid, rowIndex);
 		var record = grid.store.getAt(rowIndex);
+		var alias = record.get('alias');
      	var chooserWindow = new Sbi.widgets.SimpleValuesChooserWindow({
      		store : store
      		, columnHeader : "Values"
@@ -320,16 +321,20 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
  		chooserWindow.on('beforeclose', this.updateValues.createDelegate(this, [record, chooserWindow], true), this);
  		chooserWindow.show();
  		store.on('load', this.selectValues.createDelegate(this, [record, chooserWindow], true), this);
- 		store.load();
+ 		var params = {
+ 			ALIAS : alias
+ 		};
+ 		// a global variable Sbi.formviewer.formEnginePanel is defined, it is the form state. Send it to the server
+ 		if (Sbi.formviewer && Sbi.formviewer.formEnginePanel) {
+ 			var formState = Sbi.formviewer.formEnginePanel.getFormState();
+ 			params.formState = Ext.encode(formState);
+ 		}
+ 		store.load({params: params});
 	}
 	
 	, createLookupStore : function (grid, rowIndex) {
-		var record = grid.store.getAt(rowIndex);
-		var alias = record.get('alias');
-		var loadStoreUrl = this.services['getValues']
-		        + '&ALIAS=' + alias;
 		var store = new Ext.data.JsonStore({
-			url: loadStoreUrl
+			url: this.services['getValues']
 		});
 		store.on('loadexception', function(store, options, response, e) {
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
