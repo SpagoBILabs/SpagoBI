@@ -113,9 +113,23 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	
 	initPanels: function(){
 		var items = [];
-
+		var dynamicFilters = [];
+		var hiddenContent = false;
+		
+		
+		//prepare the filters.. we need to do this before build the content 
+		//because we need to know if there is same mandatory filter
+		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
+			var i = 0;
+			for (; i < this.sheetConfig.filters.filters.length; i++ ) {
+				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters.filters[i]);
+				hiddenContent = hiddenContent || !aDynamicFilter.allowBlank;
+				dynamicFilters.push(aDynamicFilter);	
+			}
+		}
+		
 		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%'},{contentConfig: this.sheetConfig.content}));
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%', hiddenContent: hiddenContent},{contentConfig: this.sheetConfig.content}));
 		//catch the event of the contentloaded from the component and hide the loading mask
 		this.content.on('contentloaded',this.hideMask,this);
 		
@@ -132,13 +146,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		}
 
 		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
-			var dynamicFilters = [];
-			var i = 0;
-			for (; i < this.sheetConfig.filters.filters.length; i++ ) {
-				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters.filters[i]);
-				dynamicFilters.push(aDynamicFilter);	
-			}
-			
 			var filterConf = {
 					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
 					, layout: 'auto'
@@ -250,13 +257,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	}	
 	
 	, getDynamicFilterDefinition: function (aField) {
-		return {
-            "text": aField.alias,
-            "field": aField.id,
-            "id": aField.id,
-            "operator": "IN",
-            "singleSelection": false
-		};
+		var dynamicaFilter = {
+	            "text": aField.alias,
+	            "field": aField.id,
+	            "id": aField.id,
+	            "operator": "IN",
+			};
+		if(aField.mandatory=='yes'){
+			dynamicaFilter.allowBlank=false;
+		}
+		if(aField.selection=='singlevalue'){
+			dynamicaFilter.maxSelectedNumber=1;
+		}
+		return dynamicaFilter;
 	}
 	
 	//render the content after the sheet has been activated

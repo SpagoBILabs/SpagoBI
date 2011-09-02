@@ -118,6 +118,11 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 					        field  
 			       ]
 			});
+			
+			if(!openFilters[i].allowBlank){
+				aPanel.style = aPanel.style+" font-weight:bold;"
+			}
+			
 			this.fields.push(aPanel);
 		}
 		var applyPanel = this.createApplyPanel();
@@ -147,11 +152,17 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 
 	, filterButtonHandler : function() {
 		var formState = this.getFormState();
-		this.fireEvent('apply', this, formState);
+		var errors = this.buildErrorString();
+		if(errors.length>0){
+			Sbi.exception.ExceptionHandler.showErrorMessage(errors, LN('sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.title'));
+		}else{
+			this.fireEvent('apply', this, formState);
+		}
+		
 	}
 	
 	, createField: function( openFilter ) {
-		
+
 		var field;
 		
 		var baseConfig = {
@@ -168,6 +179,9 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		if (openFilter.maxSelectedNumber !== undefined && openFilter.maxSelectedNumber !== null) {
 			maxSelectionNumber = openFilter.maxSelectedNumber;
 		}
+		if (openFilter.allowBlank !== undefined && openFilter.allowBlank !== null) {
+			baseConfig.allowBlank = openFilter.allowBlank;
+		}
 		
 		/*
 		 * var tpl = new Ext.XTemplate( '<tpl for=".">' + '<tpl
@@ -180,7 +194,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		
 		field = new Ext.ux.form.SuperBoxSelect(Ext.apply(baseConfig, {
 			// displayFieldTpl: tpl
-			editable: true			    
+			editable: true			
 		    , forceSelection: false
 		    , store: store
 		    , displayField: 'column_1'
@@ -248,17 +262,41 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 		return state;
 	}
 	
-	, getErrors: function() {
-		var errors = new Array();
+	, validate: function() {
+		var errors = {};
+		errors.mandatory = new Array();
+		errors.toomuch = new Array();
 		for (var i = 0; i < this.combos.length; i++) {
 			var aCombo = this.combos[i];
-			if (!aCombo.validate()) {
-				var error = String.format(LN('sbi.formviewer.staticopenfilterspanel.validation.maxselectiontext'), 
-						aCombo.initialConfig.maxSelection, aCombo.initialConfig.fieldLabel);
-				errors.push(error);
+			var comboValuesLength =aCombo.items.length;
+			if(comboValuesLength==0 && !aCombo.allowBlank){
+				errors.mandatory.push(aCombo.fieldLabel);
+			}
+			if(comboValuesLength>aCombo.maxSelection){
+				errors.toomuch.push(aCombo.fieldLabel + '  (max'+aCombo.maxSelection+')');
 			}
 		}
 		return errors;
+	}
+	
+	, buildErrorString: function(){
+		var errors = this.validate();
+		var mandatory = errors.mandatory;
+		var toomuch = errors.toomuch;
+		var errorString= '';
+		if(mandatory.length>0){
+			errorString = errorString +LN('sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.mandatory')+'<br>';
+		}
+		for(var i=0; i<mandatory.length; i++){
+			errorString = errorString+ '&nbsp;&nbsp;&nbsp;'+mandatory[i]+'<br>';
+		}
+		if(toomuch.length>0){
+			errorString = errorString +LN('sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.toomuch')+'<br>';
+		}
+		for(var i=0; i<toomuch.length; i++){
+			errorString = errorString+'&nbsp;&nbsp;&nbsp;'+toomuch[i]+'<br>';
+		}
+		return errorString;
 	}
   	
 	, setFormState: function(staticOpenFilters) {
