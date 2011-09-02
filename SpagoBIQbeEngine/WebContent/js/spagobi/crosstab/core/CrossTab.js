@@ -2278,11 +2278,14 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		for(var j=0; j<sumColumns.length; j++){
 	   			superSumColumns=0;
 	   			for(var i=0; i<sumColumns[j].length; i++){
-	   				//in the total sum we not consider calculated fields and partial sums
-	   				if(!this.rowHeader[this.rowHeader.length-1][i].type!='CF' &&
-	   				   !this.rowHeader[this.rowHeader.length-1][i].type!='partialsum'){
-	   						superSumColumns = superSumColumns+parseFloat(sumColumns[j][i]);
+			
+		   			//in the total sum we not consider calculated fields and partial sums
+	   				if( !this.columnHeader[this.columnHeader.length-1][i].type!='CF' &&
+	   					!this.columnHeader[this.columnHeader.length-1][i].type!='partialsum'){
+	   						superSumColumns = (superSumColumns+parseFloat(sumColumns[j][i]));
 	   				}
+	   				
+	   				
 	   				var a = new Array();
 					a.push(sumColumns[j][i]);
 					a.push('[sumC'+j+','+i+']');
@@ -2358,10 +2361,11 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
 	   		for(var j=0; j<sumRows[0].length; j++){
 	   			for(var i=0; i<sumRows.length; i++){
 		   			//in the total sum we not consider calculated fields and partial sums
-	   				if( !this.columnHeader[this.columnHeader.length-1][j].type!='CF' &&
-	   					!this.columnHeader[this.columnHeader.length-1][j].type!='partialsum'){
-	   						superSumColumnsArray[i] = (superSumColumnsArray[i]+parseFloat(sumRows[i][j]));
-	   				}
+	   				if(!this.rowHeader[this.rowHeader.length-1][j].type!='CF' &&
+	 	   			   !this.rowHeader[this.rowHeader.length-1][j].type!='partialsum'){
+	   					superSumColumnsArray[i] = superSumColumnsArray[i]+parseFloat(sumRows[i][j]);
+	 	   			}
+
 					var a = new Array();
 					a.push(sumRows[i][j]);
 					a.push('[sumR'+i+','+j+']');
