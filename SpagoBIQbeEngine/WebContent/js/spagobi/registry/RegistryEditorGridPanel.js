@@ -197,7 +197,54 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		   }
 		   meta.fields[0] = new Ext.grid.RowNumberer();
 		   this.getColumnModel().setConfig(meta.fields);
-		   
+		   this.on('beforeedit', function(e){			   
+			   
+			   /*
+			    grid - This grid
+			    record - The record being edited
+			    field - The field name being edited
+			    value - The value for the field being edited.
+			    row - The grid row index
+			    column - The grid column index
+			    cancel - Set this to true to cancel the edit or return false from your handler.
+				*/
+			    var val = e.value;
+			    var t = meta.fields[e.column].type;
+			    var st = meta.fields[e.column].subtype;
+			    if(Ext.isDate(val) ){
+			    	if(st != null && st !== undefined && st === 'timestamp'){
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats.timestamp);
+			    	}else{
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats.date);
+			    	}
+			    }else if(Ext.isNumber(val)){
+			    	/*if(t === 'int'){
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats.int);
+			    	}else */
+			    		if(t === 'float'){
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats.float);
+			    	}
+			    }
+			    return true;
+		   }, this);
+		   this.on('afteredit', function(e) {
+			   
+			      /*grid - This grid
+				    record - The record being edited
+				    field - The field name being edited
+				    value - The value being set
+				    originalValue - The original value for the field, before the edit.
+				    row - The grid row index
+				    column - The grid column index*/
+				
+			   var t = meta.fields[e.column].type;
+			   var st = meta.fields[e.column].subtype;
+			   if (t === 'date') {
+				   var dt = new Date(Date.parse(e.value));
+				   e.record.data[e.field] = dt;
+			   }
+
+			 }, this);
 		}, this);
 		
 	}
