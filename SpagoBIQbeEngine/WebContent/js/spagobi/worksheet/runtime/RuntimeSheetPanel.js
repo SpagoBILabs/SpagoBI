@@ -264,7 +264,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	            "text": aField.alias,
 	            "field": aField.id,
 	            "id": aField.id,
-	            "operator": "IN",
+	            "operator": "IN"
 			};
 		if(aField.mandatory=='yes'){
 			dynamicaFilter.allowBlank=false;
