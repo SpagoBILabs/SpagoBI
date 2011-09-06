@@ -142,7 +142,7 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
 	
 		this.store = new Ext.data.JsonStore({
 			root: 'results'
-			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'segment_attribute', 'mandatory_measure']
 			, url: this.services['getQueryFields']
 		}); 
 		
@@ -152,9 +152,9 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
 		
         this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
         		// margin auto in order to have button center alignment
-                '<table id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
+                '<table id="{4}" cellspacing="0" class="x-btn {3} {6}"><tbody class="{1}">',
                 '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{6}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{7}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
                 '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
                 '</tbody></table>');
         this.template.compile();
@@ -170,7 +170,8 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
             	, dataIndex: 'alias'
             	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
 		        	return this.template.apply(
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias]		
+		        			// by now cssborder is defined only for segment_attribute
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_border', record.data.alias]		
 		        	);
 		    	}
 	            , scope: this

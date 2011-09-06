@@ -122,7 +122,16 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
 			
 		this.worksheetPreviewPanel.on('activate', function() {
-			this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+			//validate
+			var errorArray = this.worksheetDesignerPanel.isValid();
+			if(errorArray && errorArray.length>0){
+				this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
+				return;
+			}
+			else {
+				// valid case
+				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+			}
 		}, this);
 			
 		items.push(this.worksheetPreviewPanel);

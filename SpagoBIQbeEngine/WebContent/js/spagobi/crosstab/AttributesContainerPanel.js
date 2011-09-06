@@ -56,6 +56,8 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	}
 	var c = Ext.apply(defaultSettings, config || {});
 	
+	this.hasSegmentAttribute = false;
+	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
@@ -278,6 +280,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 			var rows = ddSource.dragData.selections;
 			ddSource.grid.store.remove(rows);
 			this.store.add(rows);
+			this.hasSegmentAttribute = aRow.data.segment_attribute;
 		}
 	}
 	
