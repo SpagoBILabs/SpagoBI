@@ -96,6 +96,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	 background-image:url(../img/datamartstructure/attribute.gif) !important;
 }
 
+.segment_attribute {
+background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.segment_attribute_border {
+/*border: 2px solid green;*/
+color:green;
+}
+
+.mandatory_measure {
+background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.mandatory_measure_border {
+/*border: 2px solid red;*/
+color:blue;
+
+}
+
 .cube {
 	 background-image:url(../img/datamartstructure/cube.gif) !important;
 }
