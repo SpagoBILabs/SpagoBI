@@ -92,44 +92,57 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 */
 	, loadChartData: function(dataConfig, filters){
 	
-		var requestParameters = {
-				crosstabDefinition: Ext.util.JSON.encode({
-					'rows': [],
-					'columns':dataConfig.rows,
-					'measures': dataConfig.measures,
-					'config': {'measureson':'rows'}
-				})
-		};
-		if(filters!=null){
-			requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
-		}
-		Ext.Ajax.request({
-	        url: this.services['loadData'],//load the crosstab from the server
-	        params: requestParameters,
-	        success : function(response, opts) {
-	        	this.fireEvent('contentloaded');
-	        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-	        	if (this.isEmpty()) {
-	    			Ext.Msg.show({
-	 				   title: LN('sbi.qbe.messagewin.info.title'),
-	 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
-	 				   buttons: Ext.Msg.OK,
-	 				   icon: Ext.MessageBox.INFO
-	    			});
-	        	} else {
-		        	if(this.rendered){
-		        		this.createChart();
-		        	}else{
-		        		this.on('afterrender',function(){this.createChart();}, this);
+		if(!this.chartConfig.hiddenContent){
+			var requestParameters = {
+					crosstabDefinition: Ext.util.JSON.encode({
+						'rows': [],
+						'columns':dataConfig.rows,
+						'measures': dataConfig.measures,
+						'config': {'measureson':'rows'}
+					})
+			};
+			if(filters!=null){
+				requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
+			}
+			Ext.Ajax.request({
+		        url: this.services['loadData'],//load the crosstab from the server
+		        params: requestParameters,
+		        success : function(response, opts) {
+		        	
+		        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
+		        	if (this.isEmpty()) {
+		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
+		    			Ext.Msg.show({
+		 				   title: LN('sbi.qbe.messagewin.info.title'),
+		 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+		 				   buttons: Ext.Msg.OK,
+		 				   icon: Ext.MessageBox.INFO
+		    			});
+		    			this.fireEvent('contentloaded');
+		        	} else {
+			        	if(this.rendered){
+			        		this.createChart();
+			        		this.fireEvent('contentloaded');
+			        	}else{
+			        		this.on('afterrender',function(){this.createChart();this.fireEvent('contentloaded');}, this);
+			        	}
+			        	
 		        	}
-	        	}
-	        },
-	        scope: this,
-			failure: function(response, options) {
-				this.fireEvent('contentloaded');
-				Sbi.exception.ExceptionHandler.handleFailure(response, options);
-			}      
-		});
+		        	
+		        },
+		        scope: this,
+				failure: function(response, options) {
+					this.fireEvent('contentloaded');
+					Sbi.exception.ExceptionHandler.handleFailure(response, options);
+				}      
+			});
+		}else{
+        	if(this.rendered){
+        		this.fireEvent('contentloaded');
+        	}else{
+        		this.on('afterrender',function(){this.fireEvent('contentloaded');}, this);
+        	}
+		}
 	}
 
 	, isEmpty : function () {

@@ -77,8 +77,10 @@ Sbi.worksheet.RuntimeSheetFiltersPanel = function(openFilters, config) {
 	
 	this.baseConfig = c;
 	
-	this.init(openFilters);
 	
+	if(!this.hidden){
+		this.init(openFilters);
+	}
 	Ext.apply(c, {
   		items: this.fields
 	});
@@ -119,7 +121,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 			       ]
 			});
 			
-			if(!openFilters[i].allowBlank){
+			if(openFilters[i].allowBlank!=undefined && openFilters[i].allowBlank!=null && !openFilters[i].allowBlank){
 				aPanel.style = aPanel.style+" font-weight:bold;"
 			}
 			
