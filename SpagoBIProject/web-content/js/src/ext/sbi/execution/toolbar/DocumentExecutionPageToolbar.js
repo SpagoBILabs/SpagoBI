@@ -1273,12 +1273,12 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				thePanel = this.miframe.getFrame().getWindow().qbe;
 				if(thePanel==null){
 					//the worksheet has been constructed starting from a smart filter document
-					thePanel = this.miframe.getFrame().getWindow().formEnginePanel;
+					thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 				}
 			}else if(this.executionInstance.document.typeCode == 'DATAMART'){
 				thePanel = this.miframe.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-				thePanel = this.miframe.getFrame().getWindow().formEnginePanel;
+				thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 			}else{
 				alert('Sorry, cannot perform operation. Invalid engine..');
 				return null;
@@ -1302,7 +1302,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , saveWorksheetAs: function () {
 		var templateJSON = this.getWorksheetTemplateAsJSONObject();
 		if(templateJSON==null){
-			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
+			// if it is null validation error has been already showed in QbePanel
+			//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
 		}else{
 
 			var documentWindowsParams = this.getSaveDocumentWindowsParams(templateJSON);
