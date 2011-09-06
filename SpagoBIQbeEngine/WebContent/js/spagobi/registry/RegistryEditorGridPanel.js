@@ -189,7 +189,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   }
 			   }
 			   
-			   var editor = this.getEditor(meta.fields[i].header);
+			   var editor = this.getEditor(meta.fields[i].header, meta.fields[i].type);
 			   if (editor != null) {
 				   meta.fields[i].editor = editor;
 			   }
@@ -255,12 +255,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	}
 	
 	,
-	getEditor : function (field) {
+	getEditor : function (field, type) {
 		var toReturn = null;
 		var editorConfig = this.getColumnEditorConfig(field);
 		if (editorConfig.editable == true) {
 			if (editorConfig.editor == "COMBO") {
-				toReturn = this.createFieldCombo(field);
+				
+				if(type === 'boolean'){
+					toReturn = this.createFieldBoolean(field);
+				}else{
+					toReturn = this.createFieldCombo(field);
+				}
 			} else {
 				toReturn = new Ext.form.TextField();
 			}
@@ -367,7 +372,24 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		return filterField;
 	}
-	
+	,
+	createFieldBoolean: function(field) {
+
+		var combo = new Ext.form.ComboBox({
+			name: field
+            , editable : false
+            , store: new Ext.data.SimpleStore({
+            	fields: ['column_1'],
+                data: [['true'], ['false']]
+            })
+	        , displayField: 'column_1'
+	        , valueField: 'column_1'
+	        , mode:'local'
+	        , triggerAction: 'all'
+        });
+		
+		return combo;
+	}
 	,
 	createFieldCombo: function(field) {
 		var store = new Ext.data.JsonStore({
@@ -483,30 +505,39 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	}
 	
 	,
-	save: function () {
-		var modifiedRecords = this.store.getModifiedRecords();
+	saveSingleRecord : function (index, modifiedRecords) {
 		var recordsData = [];
-		for (var i = 0; i < modifiedRecords.length; i++) {
-			var aRecordData = Ext.apply({}, modifiedRecords[i].data);
+
+		if(index<modifiedRecords.length){
+			var aRecordData = Ext.apply({}, modifiedRecords[index].data);
 			delete aRecordData.recNo; // record number is not something to be persisted
 			recordsData.push(aRecordData);
+			
+			Ext.Ajax.request({
+				url: this.services['update'],
+				method: 'post',
+				params: {"records" : Sbi.commons.JSON.encode(recordsData)},
+				success : this.saveSingleRecord.createDelegate(this, [index + 1, modifiedRecords], false),
+				failure: function(msg, title){
+					for(var j=0; j<index;j++){
+						modifiedRecords[0].commit();
+					}
+				},
+				scope: this
+			});
+		}else{
+			this.updateSuccessHandler();
 		}
-		var params = {
-				"records" : Sbi.commons.JSON.encode(recordsData)
-		};
-		
-		Ext.Ajax.request({
-			url: this.services['update'],
-			method: 'post',
-			params: params,
-			success: this.updateSuccessHandler,
-			failure: Sbi.exception.ExceptionHandler.handleFailure,
-			scope: this
-		});
 	}
 	
 	,
-	updateSuccessHandler : function (result, request) {
+	save: function () {
+		var modifiedRecords = this.store.getModifiedRecords();
+		this.saveSingleRecord(0,modifiedRecords);
+	}
+	
+	,
+	updateSuccessHandler : function () {
 		Ext.MessageBox.show({
 			title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
 			msg : LN('sbi.registry.registryeditorgridpanel.saveconfirm.message'),
