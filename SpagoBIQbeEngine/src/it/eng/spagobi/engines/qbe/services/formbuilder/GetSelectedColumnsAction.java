@@ -18,9 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.spagobi.engines.qbe.services.formbuilder;
-		
+
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
@@ -45,30 +45,30 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "queryId";
-	
-	
-	
+
+
+
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GetSelectedColumnsAction.class);
-   
+	private static transient Logger logger = Logger.getLogger(GetSelectedColumnsAction.class);
+
 	public void service(SourceBean request, SourceBean response)  {				
-	
+
 		String queryId;
 		Query query;
 		JSONObject queryJSON;
 		JSONArray fieldsJSON;
 		JSONObject resultsJSON;
-		
+
 		logger.debug("IN");
-		
+
 		try {		
 			super.service(request, response);	
-			
+
 			queryId = getAttributeAsString( QUERY_ID );
 			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
-			
+
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			
+
 			// get query
 			if(queryId != null) {
 				logger.debug("Loading query [" + queryId + "] from catalogue");
@@ -83,26 +83,56 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 				Assert.assertNotNull(query, "Query catalogue is empty");
 			}
 			logger.debug("Query [" + query.getId() + "] succesfully loaded");
-			
-			
+
+
 			// serialize query
 			try {
 				queryJSON = (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale());
 			} catch (SerializationException e) {
 				throw new SpagoBIEngineServiceException(getActionName(), "Cannot serialize query [" + query.getId() + "]", e);
 			}
-			
-			
+
+
 			fieldsJSON = queryJSON.getJSONArray(QuerySerializationConstants.FIELDS);			
-			resultsJSON = new JSONObject();
+			resultsJSON = new JSONObject(); 
+
+
+			// check if mandatory_measure or segment_attribute 
+			boolean mandatory_measure = false;
+			boolean segment_attribute = false;
+
+			for (int i = 0; i < fieldsJSON.length() && (!mandatory_measure || !segment_attribute); i++) {
+				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
+				int f = 0;
+				Object natureO = jsonObject.get("iconCls");
+				String nature = natureO != null ? natureO.toString() : null;
+				if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE)){
+					segment_attribute = true;
+				}
+				else if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)){
+					mandatory_measure = true;
+				}
+			}
+			// add the two informations to each field
+			for (int i = 0; i < fieldsJSON.length(); i++) {
+				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
+				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE, segment_attribute);
+				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE, mandatory_measure);
+			}
+
+
 			resultsJSON.put("results", fieldsJSON);
-			
+
+
+
+
+
 			try {
 				writeBackToClient( new JSONSuccess( resultsJSON ) );
 			} catch (IOException e) {
 				throw new SpagoBIEngineServiceException(getActionName(), "Impossible to write back the responce to the client [" + resultsJSON.toString(2)+ "]", e);
 			}
-			
+
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {			

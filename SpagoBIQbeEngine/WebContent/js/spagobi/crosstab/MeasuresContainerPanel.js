@@ -58,6 +58,9 @@ Sbi.crosstab.MeasuresContainerPanel = function(config) {
 	
 	this.initialData = c.initialData;		// initial grid's content
 	this.crosstabConfig = c.crosstabConfig;	// initial crosstab configuration
+	
+	this.hasMandatoryMeasure = false;
+	
 	delete c.initialData;
 	delete c.crosstabConfig; // deleting those properties is necessary, because otherwise default values are lost, most likely 
 							 // when the super constructor is called: may be it invokes Ext.apply(this, c) and a undefined property
@@ -165,9 +168,9 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	, initColumnModel: function(c) {
         this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
         		// margin auto in order to have button center alignment
-                '<table style="margin-left: auto; margin-right: auto;" id="{4}" cellspacing="0" class="x-btn {3}"><tbody class="{1}">',
+                '<table style="margin-left: auto; margin-right: auto;" id="{4}" cellspacing="0" class="x-btn {3} {6}"><tbody class="{1}">',
                 '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{6} ({7})</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{7} ({8})</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
                 '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
                 '</tbody></table>');
         
@@ -181,7 +184,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
 	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.alias, record.data.funct]		
+	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_border', record.data.alias, record.data.funct]		
 	        	);
 	    	}
 	        , scope: this
@@ -221,7 +224,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the field is an attribute show a warning
-			if (aRow.data.nature === 'attribute') {
+			if (aRow.data.nature === 'attribute' || aRow.data.nature === 'segment_attribute') {
 				Ext.Msg.show({
 					   title: LN('sbi.crosstab.measurescontainerpanel.cannotdrophere.title'),
 					   msg: LN('sbi.crosstab.measurescontainerpanel.cannotdrophere.attributes'),
@@ -250,7 +253,8 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 			} else {
 				this.addMeasure(aRow);
 			}
-			
+			// register if there is a mandatory measure among set
+			this.hasMandatoryMeasure = aRow.data.mandatory_measure;
 		}
 	}
 	

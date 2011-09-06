@@ -58,7 +58,9 @@ Sbi.formviewer.DataStorePanel = function(config) {
 	if(Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.dataStorePanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.formviewer.resultsPage);
 	}
-			
+	
+	this.visibleselectfields = config.visibleselectfields;
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -74,7 +76,7 @@ Sbi.formviewer.DataStorePanel = function(config) {
 		, baseParams: new Object()
 	});
 	
-	this.initStore();
+	this.initStore(config);
 	this.initPanel(config);
 	this.addEvents('contentloaded');
 	
@@ -82,6 +84,8 @@ Sbi.formviewer.DataStorePanel = function(config) {
 		layout: 'fit',
 		items: [this.grid]
 	});
+	
+
 	
 	// constructor
 	Sbi.formviewer.DataStorePanel.superclass.constructor.call(this, c);
@@ -132,7 +136,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	// private methods
 	// ---------------------------------------------------------------------------------------------------
 	
-	, initStore: function() {
+	, initStore: function(config) {
 		
 		this.proxy = new Ext.data.HttpProxy({
 	           url: this.services['loadDataStore']
@@ -180,6 +184,10 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		   }
 		   meta.fields[0] = new Ext.grid.RowNumberer();
 		   this.grid.getColumnModel().setConfig(meta.fields);
+
+
+			this.colorSegmentColumn();
+			
 		}, this);
 		
 		this.store.on('load', this.onDataStoreLoaded, this);
@@ -195,6 +203,18 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 				width: 75
 			}
 		]);
+		
+		var counter = cm.getColumnCount(true);
+		var cmd = cm.columns;
+		for(var i = 0; i < counter; i++) {
+			var column = cm.getColumnById(i);
+			if(column){
+			}
+			else{
+				column = cm.getColumnById('numberer');
+
+			}
+		}
 		
 		this.exportTBar = new Ext.Toolbar({
 			items: [
@@ -316,5 +336,29 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		this.fireEvent('contentloaded');
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
-
+	
+	, colorSegmentColumn: function(){
+		   // get sehgment column name
+		  var segment = '';
+		  var stop = false;
+		   for(var j = 0; j < this.visibleselectfields.length && stop == false; j++) {
+			   if(this.visibleselectfields[j].iconCls === 'segment_attribute'){
+				   segment =  this.visibleselectfields[j].alias;
+				   stop = true;
+			   }
+		   }
+		   
+		   stop = false;
+		   
+			var counter = this.grid.getColumnModel().getColumnCount(true);
+			for(var i = 0; i < counter && stop == false; i++) {
+				var column = this.grid.getColumnModel().getColumnById(i);
+				if(column){
+					if(column.header === segment){
+						column.css = 'background-color:#00ff00;';
+						stop = true;
+					}
+				}
+			}
+	}
 });

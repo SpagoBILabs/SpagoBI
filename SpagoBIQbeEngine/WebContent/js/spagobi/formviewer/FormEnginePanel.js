@@ -138,9 +138,12 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
 			var formState = this.formViewerPage.getFormState();
 			
-			if(!this.worksheetPage.isValid()){
+			var errorArray = this.worksheetPage.isValid();	
+			if(errorArray && errorArray.length>0){
+				this.worksheetPage.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
 				return null;
-			}
+			}	
+			
 			var template = Ext.util.JSON.encode({
 				'OBJECT_WK_DEFINITION' : worksheetDefinition,
 				'OBJECT_FORM_VALUES' : formState
