@@ -98,27 +98,27 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 
 
 			// check if mandatory_measure or segment_attribute 
-			boolean mandatory_measure = false;
-			boolean segment_attribute = false;
-
-			for (int i = 0; i < fieldsJSON.length() && (!mandatory_measure || !segment_attribute); i++) {
-				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
-				int f = 0;
-				Object natureO = jsonObject.get("iconCls");
-				String nature = natureO != null ? natureO.toString() : null;
-				if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE)){
-					segment_attribute = true;
-				}
-				else if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)){
-					mandatory_measure = true;
-				}
-			}
-			// add the two informations to each field
-			for (int i = 0; i < fieldsJSON.length(); i++) {
-				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
-				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE, segment_attribute);
-				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE, mandatory_measure);
-			}
+//			boolean mandatory_measure = false;
+//			boolean segment_attribute = false;
+//
+//			for (int i = 0; i < fieldsJSON.length() && (!mandatory_measure || !segment_attribute); i++) {
+//				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
+//				int f = 0;
+//				Object natureO = jsonObject.get("iconCls");
+//				String nature = natureO != null ? natureO.toString() : null;
+//				if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE)){
+//					segment_attribute = true;
+//				}
+//				else if(nature.equalsIgnoreCase(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)){
+//					mandatory_measure = true;
+//				}
+//			}
+//			// add the two informations to each field
+//			for (int i = 0; i < fieldsJSON.length(); i++) {
+//				JSONObject jsonObject = (JSONObject)fieldsJSON.get(i);
+//				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE, segment_attribute);
+//				jsonObject.put(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE, mandatory_measure);
+//			}
 
 
 			resultsJSON.put("results", fieldsJSON);

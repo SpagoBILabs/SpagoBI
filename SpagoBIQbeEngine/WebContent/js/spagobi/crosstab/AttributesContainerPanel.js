@@ -186,6 +186,13 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 
 	, onFieldDrop: function(ddSource) {
 		
+		if (ddSource.grid){
+			var store = ddSource.grid.getStore();
+			var index = store.find("nature","segment_attribute");
+			if(index == -1 )this.hasSegmentAttribute = false;
+			else this.hasSegmentAttribute = true;
+		}
+		
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			// dragging from QueryFieldsPanel
 			this.notifyDropFromQueryFieldsPanel(ddSource);
@@ -280,7 +287,6 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 			var rows = ddSource.dragData.selections;
 			ddSource.grid.store.remove(rows);
 			this.store.add(rows);
-			this.hasSegmentAttribute = aRow.data.segment_attribute;
 		}
 	}
 	

@@ -202,6 +202,12 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 
 	, onFieldDrop: function(ddSource) {
 		
+		if (ddSource.grid){
+			var store = ddSource.grid.getStore();
+			var index = store.find("nature","mandatory_measure");
+			if(index == -1 )this.hasMandatoryMeasure = false;
+			else this.hasMandatoryMeasure = true;
+		}
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			// dragging from QueryFieldsPanel
 			this.notifyDropFromQueryFieldsPanel(ddSource);
@@ -254,7 +260,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 				this.addMeasure(aRow);
 			}
 			// register if there is a mandatory measure among set
-			this.hasMandatoryMeasure = aRow.data.mandatory_measure;
+			//this.hasMandatoryMeasure = aRow.data.mandatory_measure;
 		}
 	}
 	

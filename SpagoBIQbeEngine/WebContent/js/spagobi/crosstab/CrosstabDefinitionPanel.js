@@ -223,6 +223,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 			isThereMandatory = true;
 		}
 	}
+	return isThereMandatory;
 }
 
 });
