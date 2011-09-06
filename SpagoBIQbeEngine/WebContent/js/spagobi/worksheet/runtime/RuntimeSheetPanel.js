@@ -132,6 +132,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%', hiddenContent: hiddenContent},{contentConfig: this.sheetConfig.content}));
 		//catch the event of the contentloaded from the component and hide the loading mask
 		this.content.on('contentloaded',this.hideMask,this);
+		this.content.on('contentloading',this.showMask,this);
 		
 		//show the loading mask
 		if(this.rendered){
@@ -139,6 +140,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		} else{
 			this.on('afterlayout',this.showMask,this);
 		}
+		
+		
 			
 		//Builds the header
 		if (this.sheetConfig.header!=undefined && this.sheetConfig.header!=null){

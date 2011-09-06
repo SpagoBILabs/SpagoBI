@@ -53,13 +53,22 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	
-	Ext.apply(this, c);
+	if(config.hiddenContent){
+		if(config.contentConfig==undefined || config.contentConfig==null){
+			config.contentConfig = {};
+		}
+		config.contentConfig.hiddenContent=true;
+	}
 	
+	Ext.apply(this, c);
+
     this.addEvents('contentloaded');
+    this.addEvents('contentloading');
+    
 	this.content = this.initContent(c);
 	
 	//catch the event of the contentloaded and throws it to the parent
-	this.content.on('contentloaded',function(){this.fireEvent('contentloaded');},this);
+	this.content.on('contentloaded',function(empty){this.fireEvent('contentloaded', empty);},this);
 		
 	c = {
 		border: false,
@@ -67,8 +76,7 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 		items: this.content,
 		autoHeight: true
 	};
-	
-	if(this.hiddenContent){
+	if(config.hiddenContent){
 		c.hidden = true;
 	}
 	
@@ -171,7 +179,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	},
 	
 	applyFilters: function(filtersValue){
-		
+		this.fireEvent('contentloading');
 		switch (this.contentConfig.designer) {
 	        case 'Pivot Table':
 	        	this.content.load(this.contentConfig.crosstabDefinition, filtersValue);
@@ -193,6 +201,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        	this.content.loadChartData({'rows':[this.contentConfig.category],'measures':this.contentConfig.series},filtersValue);
 	        	break;
 		}
+
+		this.contentConfig.hiddenContent=false;
 		this.show();
 	}
 
