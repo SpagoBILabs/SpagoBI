@@ -118,7 +118,7 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 		} else {
 			var aRow = rows[0];
 			// if the field is a measure show a warning
-			if (aRow.data.nature === 'measure') {
+			if (aRow.data.nature === 'measure' || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
 					   title: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'),
 					   msg: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'),

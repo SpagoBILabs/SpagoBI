@@ -195,19 +195,16 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	}
 	
 	, isValid: function(){
-		var valid = true;
-		if(this.headerPanel!==null){
-			valid = valid && this.headerPanel.isValid();
-		}
-//		if(sheetState.filters!==null){
-//			this.filtersPanel.setFilters(sheetState.filters);
-//		}
+		var valid;
+		//if(this.headerPanel!==null){
+		//	valid = valid && this.headerPanel.isValid();
+		//}
 		if(this.content!==null){
-			valid = valid && this.contentPanel.isValid();
+			valid = this.contentPanel.isValid();
 		}
-		if(this.footerPanel!==null){
-			valid = valid && this.footerPanel.isValid();
-		}
+		//if(this.footerPanel!==null){
+		//	valid = valid && this.footerPanel.isValid();
+		//}
 		return valid;
 	}
 	

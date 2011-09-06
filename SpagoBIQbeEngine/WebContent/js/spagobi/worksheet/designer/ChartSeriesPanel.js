@@ -330,7 +330,7 @@ Ext.extend(Sbi.worksheet.designer.ChartSeriesPanel, Ext.Panel, {
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the field is an attribute show a warning
-			if (aRow.data.nature === 'attribute') {
+			if (aRow.data.nature === 'attribute' || aRow.data.nature === 'segment_attribute') {
 				Ext.Msg.show({
 					   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
 					   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'),
