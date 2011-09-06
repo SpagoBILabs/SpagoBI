@@ -71,19 +71,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 	public void updateRecord(JSONObject aRecord,
 			RegistryConfiguration registryConf) {
-		EntityManager em = dataSource.getEntityManager();
-		em.setProperty("cascade", CascadeType.PERSIST);
-		em.setProperty("fetch", FetchType.LAZY);
-		Metamodel classMetadata = em.getMetamodel();
-
-		String entityName = registryConf.getEntity();
-		int lastPkgDot = entityName.lastIndexOf(".");
-		String entityNameNoPkg = entityName.substring(lastPkgDot+1);
-		Iterator itEnt = classMetadata.getEntities().iterator();
-		
 		EntityTransaction tx = null;
 		try{
+			EntityManager em = dataSource.getEntityManager();
+			Metamodel classMetadata = em.getMetamodel();
 
+			String entityName = registryConf.getEntity();
+			int lastPkgDot = entityName.lastIndexOf(".");
+			String entityNameNoPkg = entityName.substring(lastPkgDot+1);
+			Iterator itEnt = classMetadata.getEntities().iterator();
 			 tx = em.getTransaction();
 		while(itEnt.hasNext()){
 			EntityType entity = (EntityType)itEnt.next();
@@ -174,14 +170,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				}
 			}
 		}catch (RuntimeException e) {
-			    if ( tx != null && tx.isActive() ) tx.rollback();
+			    
 			    throw new SpagoBIRuntimeException("Error saving entity ");
 		}catch (Exception e) {
-			    if ( tx != null && tx.isActive() ) tx.rollback();
+
 			    throw new SpagoBIRuntimeException("Error saving entity ");
 		}
 		finally {
-		    em.close();
+			if ( tx != null && tx.isActive() ) 
+				tx.rollback();
 
 		}
 		
@@ -211,7 +208,10 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				toReturn = new Float(value);
 			}
 		} else if( String.class.isAssignableFrom(clazz) ) {
-			toReturn = value;
+			if(value.equals("")){
+				toReturn = null;
+			}else
+				toReturn = value;
 		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
 			// TODO manage dates
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
