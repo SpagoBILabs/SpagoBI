@@ -48,6 +48,12 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = '
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Aper\u00E7u Tableau crois\u00E9';
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Le nombre de cellule est plus grand que celui par d\u00E9faut';
 
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'cross Tab n\'est pas valide';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'Utilise au moin une mesure';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noAttribute'] = 'Utilise au moin un attribut';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noSegmentAttribute'] = 'Il faut utiliser segment attribut';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMandatoryMeasure'] = 'Il faut utiliser le mesure obbligatoire';
+
 //===================================================================
 //CROSSTAB
 //===================================================================

@@ -118,6 +118,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	}
 	
 	, isValid: function () {
+		// return an array of validationError object, if no error returns an empty array
 		return this.sheetsContainerPanel.isValid();
 	}
 	

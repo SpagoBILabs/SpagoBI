@@ -18,36 +18,36 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
- 
+
 /**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
+ * Object name 
+ * 
+ * [description]
+ * 
+ * 
+ * Public Properties
+ * 
+ * [list]
+ * 
+ * 
+ * Public Methods
+ * 
+ *  [list]
+ * 
+ * 
+ * Public Events
+ * 
+ *  [list]
+ * 
+ * Authors
+ * 
+ * - Andrea Gioia (andrea.gioia@eng.it)
+ */
 
 Ext.ns("Sbi.qbe");
 
 Sbi.qbe.QbePanel = function(config) {
-	
+
 	var c = Ext.apply({
 		// set default values here
 		displayQueryBuilderPanel: true
@@ -55,49 +55,49 @@ Sbi.qbe.QbePanel = function(config) {
 		, displayWorksheetDesignerPanel: true
 		, displayWorksheetPreviewPanel: true
 	}, config || {});
-	
+
 	this.services = new Array();
 	var params = {};
 	this.services['getFirstQuery'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_FIRST_QUERY_ACTION'
-		, baseParams: params
+			, baseParams: params
 	});
 	this.services['saveAnalysisState'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SAVE_ANALYSIS_STATE_ACTION'
-		, baseParams: params
+			, baseParams: params
 	});
 	this.services['getWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_WORKSHEET_PREVIEW_ACTION'
-		, baseParams: params
+			, baseParams: params
 	});
 	this.services['setWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
-		, baseParams: params
+			, baseParams: params
 	});
-	
+
 	this.addEvents();
-	
+
 	if (c.initialQueriesCatalogue) {
 		this.setInitialQueriesCatalogue(c.initialQueriesCatalogue);
 	}
-	
+
 	this.queryEditorPanel = null;
 	this.queryResultPanel = new Sbi.widgets.DataStorePanel(Ext.apply(c, {
 		id : 'DataStorePanel'
 	}));
 	this.worksheetDesignerPanel = null;
-	
+
 	var items = [];
-	
+
 	if (c.displayQueryBuilderPanel) {
 		this.queryEditorPanel = new Sbi.qbe.QueryBuilderPanel(Ext.apply(c, {
 			id : 'QueryBuilderPanel'
 		}));
 		items.push(this.queryEditorPanel);
 	}
-	
+
 	items.push(this.queryResultPanel);
-	
+
 	if (c.displayWorksheetDesignerPanel) {
 
 		var worksheetDesignerConfig = c.worksheet || {};
@@ -112,35 +112,38 @@ Sbi.qbe.QbePanel = function(config) {
 			id : 'WorkSheetPreviewPage',
 			closable: false
 		});
-		
+
 		this.worksheetPreviewPanel.on('activate', function() {
-			if(this.worksheetDesignerPanel.isValid()){
+			var errorArray = this.worksheetDesignerPanel.isValid();
+			if(!errorArray || errorArray.length==0){
+				//if(this.worksheetDesignerPanel.isValid()){
 				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);	
 			}else{
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
+				//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
+				this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
 			}
 		}, this);
-		
+
 		items.push(this.worksheetPreviewPanel);
 	}
-	
+
 	if (c.displayFormBuilderPanel && c.formbuilder !== undefined && c.formbuilder.template !== undefined) {
 		this.formBuilderPage = new Sbi.formbuilder.FormPanel({template: c.formbuilder.template});
 		items.push(this.formBuilderPage);
 	}
-	
+
 	if (!c.displayQueryBuilderPanel) {
 		// if user is a read-only user, do not instantiate and show the QueryBuilderPanel
 		// and execute first query on catalog
 		this.loadFirstQuery();
 	}
-	
+
 	this.tabs = new Ext.TabPanel({
 		border: false,
-  		activeTab: config.isFromCross?1:0,
-  		items: items
+		activeTab: config.isFromCross?1:0,
+				items: items
 	});
-	
+
 	if (this.queryEditorPanel != null) {
 		this.queryEditorPanel.on('execute', function(editorPanel, query){
 			this.checkPromptableFilters(query);
@@ -163,20 +166,20 @@ Sbi.qbe.QbePanel = function(config) {
 			if (anActiveTab.eastRegionPanel !== undefined) {
 				anActiveTab.eastRegionPanel.doLayout();
 			}
-			
+
 			if(config.isFromCross) {
 				if(anActiveTab.selectGridPanel != null && anActiveTab.selectGridPanel.dropTarget === null) {
 					anActiveTab.selectGridPanel.dropTarget = new Sbi.qbe.SelectGridDropTarget(anActiveTab.selectGridPanel);
 				}
-				
+
 				if(anActiveTab.filterGridPanel != null && anActiveTab.filterGridPanel.dropTarget === null) {
 					anActiveTab.filterGridPanel.dropTarget = new Sbi.qbe.FilterGridDropTarget(anActiveTab.filterGridPanel);
 				}
-				
+
 				if(anActiveTab.havingGridPanel != null && anActiveTab.havingGridPanel.dropTarget === null) {
 					anActiveTab.havingGridPanel.dropTarget = new Sbi.qbe.HavingGridDropTarget(anActiveTab.havingGridPanel);
 				}
-				
+
 				if(anActiveTab.filtersTemplatePanel != null && anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel != null
 						&& anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel.dropTarget === null) {
 					anActiveTab.filtersTemplatePanel.staticOpenFiltersEditorPanel.dropTarget = 
@@ -185,145 +188,145 @@ Sbi.qbe.QbePanel = function(config) {
 			}
 		}, this);
 	}
-	
+
 	c = Ext.apply(c, {
 		layout: 'fit',
 		autoScroll: true, 
-  		margins:'0 4 4 0',
-  		items: [this.tabs] 
+		margins:'0 4 4 0',
+		items: [this.tabs] 
 	});
-	
+
 	// constructor
-    Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
-    
-    //alert('isFromCross: ' + config.isFromCross);
-    if(config.isFromCross) {
-    	this.loadFirstQuery();
-    }
+	Sbi.qbe.QbePanel.superclass.constructor.call(this, c);
+
+	//alert('isFromCross: ' + config.isFromCross);
+	if(config.isFromCross) {
+		this.loadFirstQuery();
+	}
 };
 
 Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
-    
-    services: null
-    , queryResultPanel: null
-    , queryEditorPanel: null
-    , worksheetDesignerPanel: null
-    , worksheetPreviewPanel: null
-    , initialQueriesCatalogue: null // used as a queries repository variable when the queryEditorPanel is not displayed
-    , tabs: null
-    , query: null
-   
-   
-    // public methods
-    
-    , setQuery: function(q) {
-    	query = q;
-    	this.queryEditorPanel.setQuery(q);
-    }
-    
-	, getSQLQuery: function(callbackFn, scope) {
-		this.queryEditorPanel.getSQLQuery(callbackFn, scope);
-	}
-	
-	, getQueries: function() {
-		return this.queryEditorPanel.getQueries();
-	}
-	
-    // private methods
-	, loadFirstQuery: function() {
-		Ext.Ajax.request({
-	        url: this.services['getFirstQuery'],
-	        params: {},
-	        success : function(response, opts) {
-  	  			try {
-  	  				var firstQuery = Ext.util.JSON.decode( response.responseText );
-  	  				this.checkPromptableFilters(firstQuery);
-  	  			} catch (err) {
-  	  				Sbi.exception.ExceptionHandler.handleFailure();
-  	  			}
-	        },
-	        scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-		});
-	}
-	
-	// check if there are some promptable filters before starting query execution
-	, checkPromptableFilters: function(query) {
-    	var freeFilters = this.getPromptableFilters(query);
-	    if (freeFilters.length > 0) {
-	    	var freeConditionsWindow = new Sbi.qbe.FreeConditionsWindow({
-	    		freeFilters: freeFilters
-	    	});
-	    	freeConditionsWindow.on('apply', function (formState) {
-	    		// make last values persistent on filter grid panel
-	    		if (this.queryEditorPanel != null) {
-	    			this.queryEditorPanel.filterGridPanel.setPromptableFiltersLastValues(formState);
-	    			this.queryEditorPanel.havingGridPanel.setPromptableFiltersLastValues(formState);
-	    		}
-	    		this.executeQuery(query, formState);
-	    	}, this);
-	    	freeConditionsWindow.on('savedefaults', function (formState) {
-	    		// make default values persistent on filter grid panel
-	    		if (this.queryEditorPanel != null) {
-	    			this.queryEditorPanel.filterGridPanel.setPromptableFiltersDefaultValues(formState);
-	    			this.queryEditorPanel.havingGridPanel.setPromptableFiltersDefaultValues(formState);
-	    		}
-	    	}, this);
-	    	freeConditionsWindow.show();
-	    } else {
-	    	this.executeQuery(query);
-	    }
-	}
-	
-	, executeQuery: function(query, promptableFilters) {
-		this.tabs.activate(this.queryResultPanel);
-		this.queryResultPanel.execQuery(query, promptableFilters);
-	}
-	
-  	, getPromptableFilters : function(query) {
-		var filters = [];
-		if (query.filters != null && query.filters.length > 0) {
-			for(i = 0; i < query.filters.length; i++) {
-				var filter =  query.filters[i];
-				if (filter.promptable) {
-					filters.push(filter);
-				}
-			}
-		}
-		if (query.havings != null && query.havings.length > 0) {
-			for(i = 0; i < query.havings.length; i++) {
-				var filter = query.havings[i];
-				if (filter.promptable) {
-					filters.push(filter);
-				}
-			}
-		}
-		return filters;
-	}
-  	
-  	, saveQuery: function(meta) {
-    	this.saveAnalysisState(meta, function(response, options) {
-    		// for old gui
-    		try {
-				var content = Ext.util.JSON.decode( response.responseText );
-				content.text = content.text || "";
-				parent.loadSubObject(window.name, content.text);
-			} catch (ex) {}
-			
-			// for new gui
-			// build a JSON object containing message and ID of the saved  object
+
+	services: null
+	, queryResultPanel: null
+	, queryEditorPanel: null
+	, worksheetDesignerPanel: null
+	, worksheetPreviewPanel: null
+	, initialQueriesCatalogue: null // used as a queries repository variable when the queryEditorPanel is not displayed
+	, tabs: null
+	, query: null
+
+
+	// public methods
+
+	, setQuery: function(q) {
+	query = q;
+	this.queryEditorPanel.setQuery(q);
+}
+
+, getSQLQuery: function(callbackFn, scope) {
+	this.queryEditorPanel.getSQLQuery(callbackFn, scope);
+}
+
+, getQueries: function() {
+	return this.queryEditorPanel.getQueries();
+}
+
+//private methods
+, loadFirstQuery: function() {
+	Ext.Ajax.request({
+		url: this.services['getFirstQuery'],
+		params: {},
+		success : function(response, opts) {
 			try {
-				// get the id of the subobject just inserted, decode string, need to call metadata window
-				var responseJSON = Ext.util.JSON.decode( response.responseText )
-				var id = responseJSON.text;
-				var msgToSend = 'Sub Object Saved!!';
-				
-				//sendMessage({'id': id, 'meta' : meta.metadata, 'msg': msgToSend},'subobjectsaved');
-				//alert('id '+id+' message '+msgToSend);
-				sendMessage({'id': id, 'msg': msgToSend},'subobjectsaved');
-			} catch (ex) {}
-			// show only if not showing metadata windows
-			/*if( meta.metadata == false ){
+				var firstQuery = Ext.util.JSON.decode( response.responseText );
+				this.checkPromptableFilters(firstQuery);
+			} catch (err) {
+				Sbi.exception.ExceptionHandler.handleFailure();
+			}
+		},
+		scope: this,
+		failure: Sbi.exception.ExceptionHandler.handleFailure      
+	});
+}
+
+//check if there are some promptable filters before starting query execution
+, checkPromptableFilters: function(query) {
+	var freeFilters = this.getPromptableFilters(query);
+	if (freeFilters.length > 0) {
+		var freeConditionsWindow = new Sbi.qbe.FreeConditionsWindow({
+			freeFilters: freeFilters
+		});
+		freeConditionsWindow.on('apply', function (formState) {
+			// make last values persistent on filter grid panel
+			if (this.queryEditorPanel != null) {
+				this.queryEditorPanel.filterGridPanel.setPromptableFiltersLastValues(formState);
+				this.queryEditorPanel.havingGridPanel.setPromptableFiltersLastValues(formState);
+			}
+			this.executeQuery(query, formState);
+		}, this);
+		freeConditionsWindow.on('savedefaults', function (formState) {
+			// make default values persistent on filter grid panel
+			if (this.queryEditorPanel != null) {
+				this.queryEditorPanel.filterGridPanel.setPromptableFiltersDefaultValues(formState);
+				this.queryEditorPanel.havingGridPanel.setPromptableFiltersDefaultValues(formState);
+			}
+		}, this);
+		freeConditionsWindow.show();
+	} else {
+		this.executeQuery(query);
+	}
+}
+
+, executeQuery: function(query, promptableFilters) {
+	this.tabs.activate(this.queryResultPanel);
+	this.queryResultPanel.execQuery(query, promptableFilters);
+}
+
+, getPromptableFilters : function(query) {
+	var filters = [];
+	if (query.filters != null && query.filters.length > 0) {
+		for(i = 0; i < query.filters.length; i++) {
+			var filter =  query.filters[i];
+			if (filter.promptable) {
+				filters.push(filter);
+			}
+		}
+	}
+	if (query.havings != null && query.havings.length > 0) {
+		for(i = 0; i < query.havings.length; i++) {
+			var filter = query.havings[i];
+			if (filter.promptable) {
+				filters.push(filter);
+			}
+		}
+	}
+	return filters;
+}
+
+, saveQuery: function(meta) {
+	this.saveAnalysisState(meta, function(response, options) {
+		// for old gui
+		try {
+			var content = Ext.util.JSON.decode( response.responseText );
+			content.text = content.text || "";
+			parent.loadSubObject(window.name, content.text);
+		} catch (ex) {}
+
+		// for new gui
+		// build a JSON object containing message and ID of the saved  object
+		try {
+			// get the id of the subobject just inserted, decode string, need to call metadata window
+			var responseJSON = Ext.util.JSON.decode( response.responseText )
+			var id = responseJSON.text;
+			var msgToSend = 'Sub Object Saved!!';
+
+			//sendMessage({'id': id, 'meta' : meta.metadata, 'msg': msgToSend},'subobjectsaved');
+			//alert('id '+id+' message '+msgToSend);
+			sendMessage({'id': id, 'msg': msgToSend},'subobjectsaved');
+		} catch (ex) {}
+		// show only if not showing metadata windows
+		/*if( meta.metadata == false ){
 			Ext.Msg.show({
 				   title:LN('sbi.qbe.queryeditor.querysaved'),
 				   msg: LN('sbi.qbe.queryeditor.querysavedsucc'),
@@ -331,128 +334,135 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 				   icon: Ext.MessageBox.INFO
 			});
 		}*/
-		}, this);
-  	}
-  	
-	, saveAnalysisState: function(meta, callback, scope) {
-		
-		var params = Ext.apply({}, meta);
-		
-		var doSave = function() {
-			Ext.Ajax.request({
-			    url: this.services['saveAnalysisState'],
-			    success: callback,
-			    failure: Sbi.exception.ExceptionHandler.handleFailure,	
-			    scope: scope,
-			    params: params
-			});  
-		};
-		
-		this.queryEditorPanel.queryCataloguePanel.commit(function() {
-			if(Sbi.config.queryValidation.isEnabled) {
-				this.queryEditorPanel.queryCataloguePanel.validate(doSave, this);
-			} else {
-				doSave();
-			}
-			
-		}, this);		
-	}
-	
-	/*
-	 * This method is invoked by Sbi.execution.DocumentExecutionPage on SpagoBI core!!!
-	 * See SpagoBI/js/src/ext/sbi/execution/DocumentExecutionPage.js, retrieveQbeCrosstabData method
-	 */
-	, getCrosstabDataEncoded: function () {
-		
-		var crosstabData = this.worksheetPreviewPanel.serializeCrossTab(); // TODO manage crosstab export
-		var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
-		return crosstabDataEncoded;
-		
-	}
-  	
-	,
-	getParameters: function () {
-		return this.queryEditorPanel.getParameters();
-	}
-	
-	,
-	setParameters: function (parameters) {
-		this.queryEditorPanel.setParameters(parameters);
-	}
-	
-	,
-	getInitialQueriesCatalogue: function () {
-		return this.initialQueriesCatalogue;
-	}
-	
-	,
-	setInitialQueriesCatalogue: function (initialQueriesCatalogue) {
-		this.initialQueriesCatalogue = initialQueriesCatalogue;
-	}
-	
-	, 
-	getQueriesCatalogue: function () {
-		if (this.queryEditorPanel == null) {
-			// query designer panel not displayed, returns the initial catalogue
-			return this.getInitialQueriesCatalogue();
-		} else {
-			// query designer panel displayed
-			var toReturn = {};
-			toReturn.catalogue = {};
-			toReturn.catalogue.queries = this.getQueries();
-			toReturn.version = Sbi.config.queryVersion;
-			return toReturn;
-		}
-	}
-	
-	,
-	setQueriesCatalogue: function (queriesCatalogue) {
-		if (this.queryEditorPanel != null) {
-			this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
-		} else {
-			alert('Query builder panel not instantiated, you cannot invoke setQueriesCatalogue method');
-		}
-	}
-	
-	,
-	setWorksheetState : function (successFn, failureFn, scope) {
-		var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
-		var params = {
-				'worksheetdefinition':  Ext.encode(state)
-		};
+	}, this);
+}
+
+, saveAnalysisState: function(meta, callback, scope) {
+
+	var params = Ext.apply({}, meta);
+
+	var doSave = function() {
 		Ext.Ajax.request({
-		    url: this.services['setWorkSheetState'],
-		    success: successFn,
-		    failure: failureFn,
-		    scope: scope,
-		    params: params
-		});   
-	}
-	
-	,
-	refreshWorksheetPreview : function () {
-		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
-	}
-	
-	,
-	getWorksheetTemplateAsString : function () {
-		var queriesCatalogue = this.getQueriesCatalogue();
-		var worksheetDefinition = null;
-	    if (this.worksheetDesignerPanel.rendered === true) {
-	    	// get the current worksheet designer state
-			worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
-			if(!this.worksheetDesignerPanel.isValid()){
-				return null;
-			}
+			url: this.services['saveAnalysisState'],
+			success: callback,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			scope: scope,
+			params: params
+		});  
+	};
+
+	this.queryEditorPanel.queryCataloguePanel.commit(function() {
+		if(Sbi.config.queryValidation.isEnabled) {
+			this.queryEditorPanel.queryCataloguePanel.validate(doSave, this);
 		} else {
-			// get the initial worksheet template
-			worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
+			doSave();
 		}
-		var template = Ext.util.JSON.encode({
-			'OBJECT_WK_DEFINITION' : worksheetDefinition,
-			'OBJECT_QUERY' : queriesCatalogue
-		});
-		return template;
+
+	}, this);		
+}
+
+/*
+ * This method is invoked by Sbi.execution.DocumentExecutionPage on SpagoBI core!!!
+ * See SpagoBI/js/src/ext/sbi/execution/DocumentExecutionPage.js, retrieveQbeCrosstabData method
+ */
+, getCrosstabDataEncoded: function () {
+
+	var crosstabData = this.worksheetPreviewPanel.serializeCrossTab(); // TODO manage crosstab export
+	var crosstabDataEncoded = Ext.util.JSON.encode(crosstabData);
+	return crosstabDataEncoded;
+
+}
+
+,
+getParameters: function () {
+	return this.queryEditorPanel.getParameters();
+}
+
+,
+setParameters: function (parameters) {
+	this.queryEditorPanel.setParameters(parameters);
+}
+
+,
+getInitialQueriesCatalogue: function () {
+	return this.initialQueriesCatalogue;
+}
+
+,
+setInitialQueriesCatalogue: function (initialQueriesCatalogue) {
+	this.initialQueriesCatalogue = initialQueriesCatalogue;
+}
+
+, 
+getQueriesCatalogue: function () {
+	if (this.queryEditorPanel == null) {
+		// query designer panel not displayed, returns the initial catalogue
+		return this.getInitialQueriesCatalogue();
+	} else {
+		// query designer panel displayed
+		var toReturn = {};
+		toReturn.catalogue = {};
+		toReturn.catalogue.queries = this.getQueries();
+		toReturn.version = Sbi.config.queryVersion;
+		return toReturn;
 	}
-	
+}
+
+,
+setQueriesCatalogue: function (queriesCatalogue) {
+	if (this.queryEditorPanel != null) {
+		this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);
+	} else {
+		alert('Query builder panel not instantiated, you cannot invoke setQueriesCatalogue method');
+	}
+}
+
+,
+setWorksheetState : function (successFn, failureFn, scope) {
+	var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
+	var params = {
+			'worksheetdefinition':  Ext.encode(state)
+	};
+	Ext.Ajax.request({
+		url: this.services['setWorkSheetState'],
+		success: successFn,
+		failure: failureFn,
+		scope: scope,
+		params: params
+	});   
+}
+
+,
+refreshWorksheetPreview : function () {
+	this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
+}
+
+, getWorksheetTemplateAsString : function () {
+
+	// check validation before retrieving template
+	var errorArray = this.worksheetDesignerPanel.isValid();
+	if(errorArray && errorArray.length>0){
+		this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);		
+		return;
+	}
+
+	var queriesCatalogue = this.getQueriesCatalogue();
+	var worksheetDefinition = null;
+	if (this.worksheetDesignerPanel.rendered === true) {
+		// get the current worksheet designer state
+		worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+		if(!this.worksheetDesignerPanel.isValid()){
+			return null;
+		}
+	} else {
+		// get the initial worksheet template
+		worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
+	}
+	var template = Ext.util.JSON.encode({
+		'OBJECT_WK_DEFINITION' : worksheetDefinition,
+		'OBJECT_QUERY' : queriesCatalogue
+	});
+	return template;
+}
+
 });

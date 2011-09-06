@@ -48,6 +48,13 @@ Sbi.locale.ln['sbi.crosstab.chooseaggregationfunctionwindow.buttons.cancel'] = '
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Crosstab preview';
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'The cells number is highter than the default one';
 
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'failed CrossTab validation';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'At least one measure must be defined';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noAttribute'] = 'At least one attribute must be defined';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noSegmentAttribute'] = 'Segment Attribute must be included';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMandatoryMeasure'] = 'Mandatory Measure must be included';
+
+
 //===================================================================
 //CROSSTAB 
 //===================================================================

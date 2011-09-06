@@ -256,19 +256,33 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	}
 		
 	, isValid: function(){
-		var valid = true;
+		//var valid = true;
+		var toReturn = new Array();
 		if(this.items.items.length>1){
+			var errCounter = 0;
 			var i=0;
 			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
-				valid = valid && this.items.items[i].isValid();
-				if(!valid){
-					break;
+				//valid = valid && this.items.items[i].isValid();
+				//if(!valid){
+				//break;
+				//}
+				var errMessage = this.items.items[i].isValid();
+				if(errMessage){
+					var valError = new Sbi.exception.ValidationError(
+							this.items.items[i].title,
+							errMessage
+					);
+					
+					toReturn[errCounter] = valError;
+					errCounter++;
+					
 				}
+				
 			}
 		}else{
-			return false;
+			return toReturn;
 		}
-		return valid;
+		return toReturn;
 	}
 
 	, showState: function(event, toolEl, panel) {
@@ -282,7 +296,21 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	            },
 	            this
 			);
-  	}
+  	} 
+    
+    , showValidationErrors : function(errorsArray) {
+    	errMessage = '';
+    	
+    	for(var i = 0; i < errorsArray.length; i++) {
+    		var error = errorsArray[i];
+    		var sheet = error.sheet;
+    		var message = error.message;
+    		errMessage += error.sheet + ': ' + error.message + '<br>';
+    	}
+    	
+    	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.crosstab.crossTabValidation.title'));
+   	
+    }
 	
 	
 });

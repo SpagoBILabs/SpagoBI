@@ -52,6 +52,12 @@ Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.title'] = 'Anteprima Crosstab';
 Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Il numero di celle eccede il limite impostato';
 
 
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'Validazione della crossTab fallita';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'Definire almeno una misura';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noAttribute'] = 'Definire almeno un attributo';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noSegmentAttribute'] = 'L\'attributo di segmentazione deve essere utilizzato';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMandatoryMeasure'] = 'La misura obbligatoria deve essere utilizzata';
+
 //===================================================================
 //CROSSTAB 
 //===================================================================
