@@ -93,9 +93,11 @@ Sbi.crosstab.core.CrossTab = function(config) {
 	Ext.apply(this, defaultSettings);
 
 	//add the percent of the value respect to the total of the row or the column
-	if(this.percenton==undefined && this.percenton==null && this.percenton==''){
+	
+	if(this.percenton==undefined || this.percenton==null || this.percenton==''){
 		this.percenton = 'no';
 	}
+	
 	if(this.percenton!='no'){
 		//if the user whant the percentage than the width of the cells should be bigger//add the percent of the value respect to the total of the row or the column
 		this.columnWidth = this.columnWidthPercent;
