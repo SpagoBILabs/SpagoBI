@@ -151,7 +151,7 @@ function execCrossNavigation(windowName, label, parameters) {
 									tmpNewLabel = tmpNewValue.substring(0,tmpNewValue.indexOf("="));
 									var paramsOldValues = null;
 								 	paramsOldValues = tmpUrl.split("&");
-								 	//EXTERNAL navigation: it change all new parameters in a time (because parameters contains all new values)
+								 	//EXTERNAL navigation: it updates all new parameters in a time (because parameters contains all new values)
 									if (typeCross === 'EXTERNAL'){
 										if (paramsOldValues != null && paramsOldValues.length > 0) {
 											for (k = 0; k < paramsOldValues.length; k++) {
@@ -162,14 +162,14 @@ function execCrossNavigation(windowName, label, parameters) {
 													tmpNewValue = tmpNewValue.substring(tmpNewValue.indexOf("=")+1);
 													tmpOldValue = paramsOldValues[k] ;
 													tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
-													if ( tmpNewValue != ""){
+													//if ( tmpNewValue != ""){													
 													    if (tmpNewValue == "%") tmpNewValue = "%25";
 														finalUrl = finalUrl.replace(tmpOldLabel+"="+tmpOldValue, tmpNewLabel+"="+tmpNewValue);
 														newUrl[0] = finalUrl;
 														tmpOldValue = "";
 														tmpNewValue = "";
-														break;		
-													}
+														break;														
+													//}
 												}
 											}
 										}
