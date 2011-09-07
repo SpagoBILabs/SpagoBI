@@ -269,18 +269,31 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		var deleteButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
 		var editButtonPlaceHolder = new Ext.Panel({width: 12,height: 12,html: ' '}) ;
 		
+		var thePanel = new Ext.Panel({
+   			html: '<div style="padding-right: 2px; cursor: pointer;">' + aRow.data.alias + '</div>'
+   		});
+		
+		thePanel.on('render', function(panel) {
+			panel.getEl().on('dblclick', function() {
+		     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+		     		attribute : aRow.data
+		     	});
+			}, this);
+		}, this);
+		
 		var item = new Ext.Panel({
 			id: 'designsheetfilterspanel_' + aRow.data.alias
             , layout: {
                 type:'column'
             }
 			, style:'padding:0px 5px 5px 5px; float: left; width: auto;'
-       		, items: [{
-       			html: '<div style="padding-right: 2px;">'+aRow.data.alias+'</div>'
-       		}, deleteButtonPlaceHolder
-       		, editButtonPlaceHolder
-       		, deleteButton
-       		, editButton]
+       		, items: [
+       		     thePanel
+       		     , deleteButtonPlaceHolder
+       		     , editButtonPlaceHolder
+       		     , deleteButton
+       		     , editButton
+       		]
 		});
 		
 		//Show/hide the tool buttons when the mouse enter/leave

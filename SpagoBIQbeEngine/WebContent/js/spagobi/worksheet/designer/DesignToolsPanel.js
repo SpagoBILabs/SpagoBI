@@ -88,16 +88,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			split: true,
 			height : 120
 		});
-//		this.designToolsFieldsPanel.on('render', function() {
-//			this.designToolsFieldsPanel.refresh();
-//		}, this);
+
+		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
 		
-//		this.designToolsFieldsPanel = new Sbi.worksheet.designer.DesignToolsFieldsPanel({
-//	        gridConfig: {
-//				ddGroup: 'worksheetDesignerDDGroup'
-//	        	, type: 'queryFieldsPanel'
-//	        }
-//		});
 		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'center'});
 		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
 //		this.designToolsFieldsPanel.flex = 1;
@@ -111,6 +104,17 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		}, this);
 	}
 
+	, fieldDblClickHandler : function (grid, rowIndex, event) {
+		var record = grid.store.getAt(rowIndex);
+		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
+	     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+	     		attribute : record.data
+	     	});
+		}
+	}
+
+	
+	
 	//Update the tools info for the active sheet
 	, updateToolsForActiveTab: function(activeSheet){
 		if(activeSheet.sheetLayout!==null){
@@ -121,4 +125,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	, refresh: function(){
 		this.designToolsFieldsPanel.refresh();
 	}
+	
+    , getFields : function () {
+    	return this.designToolsFieldsPanel.getFields();
+    }
+    
 });

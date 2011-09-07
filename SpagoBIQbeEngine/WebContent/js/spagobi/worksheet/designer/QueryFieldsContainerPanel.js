@@ -107,6 +107,8 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
 	
 	// constructor
 	Sbi.worksheet.designer.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
+	
+	this.on('rowdblclick', this.rowDblClickHandler, this);
 };
 
 Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel, {
@@ -195,6 +197,16 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 			}
 			this.store.add([aRow]);
 			this.fireEvent('storeChanged', this.store.getCount());
+		}
+	}
+	
+	
+	, rowDblClickHandler: function(grid, rowIndex, event) {
+		var record = grid.store.getAt(rowIndex);
+		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
+	     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+	     		attribute : record.data
+	     	});
 		}
 	}
 	

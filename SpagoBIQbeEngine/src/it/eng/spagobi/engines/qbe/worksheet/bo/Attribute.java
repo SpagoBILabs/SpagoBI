@@ -18,21 +18,20 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
+package it.eng.spagobi.engines.qbe.worksheet.bo;
 
-/**
- * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
- */
-public class WorkSheetSerializationCostants {
-	
-	public static final String SHEETS = "sheets";
-	public static final String NAME = "name";
-	public static final String HEADER = "header";
-	public static final String FILTERS = "filters";
-	public static final String CONTENT = "content";
-	public static final String FOOTER = "footer";
-	public static final String LAYOUT = "sheetLayout";
-	public static final String GLOBAL_FILTERS = "globalFilters";
-	
+
+
+public class Attribute extends Field {
+	/**
+	 * contains an array of selected values encoded into a string
+	 */
+	String values = null;
+	public String getValues() {
+		return values;
+	}
+	public Attribute(String entityId, String alias, String iconCls, String nature, String values) {
+		super(entityId, alias, iconCls, nature);
+		this.values = values;
+	}
 }

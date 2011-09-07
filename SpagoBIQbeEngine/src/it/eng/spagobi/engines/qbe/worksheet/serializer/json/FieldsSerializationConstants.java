@@ -19,19 +19,18 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.crosstable.serializer.json;
+package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class CrosstabSerializationConstants {
+public class FieldsSerializationConstants {
 	
-	public static final String ROWS = "rows";
-	public static final String COLUMNS = "columns";
-	public static final String MEASURES = "measures";
-
-	public static final String CONFIG = "config";
-	public static final String CALCULATED_FIELDS = "calculatedFields";
-	public static final String MEASURESON = "measureson";
+	public static final String ID = "id";
+	public static final String ALIAS = "alias";
+	public static final String ICON_CLS = "iconCls";
+	public static final String NATURE = "nature";
+	public static final String VALUES = "values";
+	public static final String FUNCTION = "funct";
 	
 }
