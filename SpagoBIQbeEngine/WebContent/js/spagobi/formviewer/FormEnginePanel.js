@@ -132,18 +132,17 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     	this.getLayout().setActiveItem( 0 );
 	}
     
+    , validate : function () {
+    	return this.worksheetPage.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetPage.worksheetDesignerPanel.showValidationErrors, this );	
+    }
+    
     , getWorksheetTemplateAsString : function () {
 	    if (this.worksheetPage !== null) {
 
 			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
 			var formState = this.formViewerPage.getFormState();
 			
-			var errorArray = this.worksheetPage.validate();	
-			if(errorArray && errorArray.length>0){
-				this.worksheetPage.worksheetDesignerPanel.showValidationErrors(errorArray);
-				return null;
-			}	
-			
+
 			var template = Ext.util.JSON.encode({
 				'OBJECT_WK_DEFINITION' : worksheetDefinition,
 				'OBJECT_FORM_VALUES' : formState
