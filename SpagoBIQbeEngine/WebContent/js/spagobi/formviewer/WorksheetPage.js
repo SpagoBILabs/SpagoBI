@@ -123,15 +123,23 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 			
 		this.worksheetPreviewPanel.on('activate', function() {
 			//validate
-			var errorArray = this.worksheetDesignerPanel.validate();
-			if(errorArray && errorArray.length>0){
-				this.worksheetDesignerPanel.showValidationErrors(errorArray);
-				return;
-			}
-			else {
+			
+			this.worksheetDesignerPanel.validate(
+					function(){
+						this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+					}
+					, this.worksheetDesignerPanel.showValidationErrors
+					, this);
+			
+			//			var errorArray = this.worksheetDesignerPanel.validate();
+			//			if(errorArray && errorArray.length>0){
+				//				this.worksheetDesignerPanel.showValidationErrors(errorArray);
+				//			return;
+				//	}
+			//	else {
 				// valid case
-				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
-			}
+				//		this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+		//	}
 		}, this);
 			
 		items.push(this.worksheetPreviewPanel);

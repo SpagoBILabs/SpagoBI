@@ -118,9 +118,16 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		return worksheetDefinition;
 	}
 	
-	, validate: function () {
+	, validate: function (successHandler, failureHandler, scope) {
 		// return an array of validationError object, if no error returns an empty array
-		return this.sheetsContainerPanel.validate();
+		var errorArray = this.sheetsContainerPanel.validate();
+
+		if(errorArray && errorArray.length>0){
+			return failureHandler.call(scope || this, errorArray);
+		}
+		else {
+			return successHandler.call(scope || this);	
+		}
 	}
 	
 	, getGlobalFilters : function () {

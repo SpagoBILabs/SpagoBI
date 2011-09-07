@@ -114,12 +114,14 @@ Sbi.qbe.QbePanel = function(config) {
 		});
 
 		this.worksheetPreviewPanel.on('activate', function() {
-			var errorArray = this.worksheetDesignerPanel.validate();
-			if(!errorArray || errorArray.length==0){
-				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);	
-			}else{
-				this.worksheetDesignerPanel.showValidationErrors(errorArray);
-			}
+			
+			this.worksheetDesignerPanel.validate(
+					function(){
+						this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
+					}
+					, this.worksheetDesignerPanel.showValidationErrors
+					, this);
+			
 		}, this);
 
 		items.push(this.worksheetPreviewPanel);
@@ -435,14 +437,18 @@ refreshWorksheetPreview : function () {
 	this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
 }
 
+, validate : function () {
+	return 	this.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetDesignerPanel.showValidationErrors, this );	
+}
+
 , getWorksheetTemplateAsString : function () {
 
 	// check validation before retrieving template
-	var errorArray = this.worksheetDesignerPanel.validate();
-	if(errorArray && errorArray.length>0){
-		this.worksheetDesignerPanel.showValidationErrors(errorArray);		
-		return;
-	}
+//	var errorArray = this.worksheetDesignerPanel.validate();
+	//	if(errorArray && errorArray.length>0){
+	//		this.worksheetDesignerPanel.showValidationErrors(errorArray);		
+	//		return;
+	//	}
 
 	var queriesCatalogue = this.getQueriesCatalogue();
 	var worksheetDefinition = null;
