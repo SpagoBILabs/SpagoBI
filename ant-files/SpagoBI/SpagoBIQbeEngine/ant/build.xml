@@ -174,6 +174,7 @@
 		    	<file name='./spagobi/qbe/filterwizard/parser.js'/>
 		    	<file name='./spagobi/qbe/filterwizard/buttonColumn.js'/>
 
+		    	<file name='./spagobi/worksheet/exception/ValidationError.js'/>
 		    	<file name='./spagobi/exception/ExceptionHandler.js'/>
 		    	<file name='./spagobi/service/ServiceRegistry.js'/>
 		    	<file name='./spagobi/commons/Format.js'/>
