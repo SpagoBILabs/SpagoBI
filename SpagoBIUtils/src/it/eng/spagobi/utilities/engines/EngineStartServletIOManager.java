@@ -164,7 +164,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		return auditId;
 	}
 
-	public JSONObject getTemplateJSONObject() {
+	public JSONObject getTemplateAsJSONObject() {
 		JSONObject templateJSON = null;
 		try {
 			templateJSON = new JSONObject(getTemplateAsString());
