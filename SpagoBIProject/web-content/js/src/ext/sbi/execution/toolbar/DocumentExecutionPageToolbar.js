@@ -1283,7 +1283,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				alert('Sorry, cannot perform operation. Invalid engine..');
 				return null;
 			}
-			var template = thePanel.getWorksheetTemplateAsString();
+			//var template = thePanel.getWorksheetTemplateAsString();
+			var template = thePanel.validate();	
 			return template;
 		} catch (err) {
 			throw err;
