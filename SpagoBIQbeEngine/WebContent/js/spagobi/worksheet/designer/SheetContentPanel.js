@@ -277,7 +277,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		}
 	}
 	
-	, isValid: function () {
+	, validate: function () {
 		if(this.designer == null) 
 			return 'designer is null';
 		
@@ -289,7 +289,7 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 					var currItem = arrayList[i];
 					// if it is a crosstab starts validation on it
 					if(currItem instanceof Sbi.crosstab.CrosstabDefinitionPanel){
-						return currItem.isValid();
+						return currItem.validate();
 					}
 				}				
 			}

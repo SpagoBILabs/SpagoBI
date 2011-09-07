@@ -208,13 +208,7 @@ Ext.extend(Sbi.worksheet.designer.SheetTitlePanel, Ext.FormPanel, {
 		},sharedConf));
 	},
 	
-	isValid: function(){
-		var valid= true;
-//		var title = this.titlePanel.getValue();
-//		valid = valid && title!=null && title!='' ;
-//		valid = valid && this.imgTriggerField.isValid(false);
-		return valid;
-	},
+
 	
 	getTitleState: function(messageBox){
 		var values={};

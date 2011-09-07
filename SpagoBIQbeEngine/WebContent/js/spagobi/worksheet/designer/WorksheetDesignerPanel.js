@@ -118,9 +118,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		return worksheetDefinition;
 	}
 	
-	, isValid: function () {
+	, validate: function () {
 		// return an array of validationError object, if no error returns an empty array
-		return this.sheetsContainerPanel.isValid();
+		return this.sheetsContainerPanel.validate();
 	}
 	
 	, getGlobalFilters : function () {
@@ -134,6 +134,19 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		}
 		return globalFilters;
 	}
+    , showValidationErrors : function(errorsArray) {
+    	errMessage = '';
+    	
+    	for(var i = 0; i < errorsArray.length; i++) {
+    		var error = errorsArray[i];
+    		var sheet = error.sheet;
+    		var message = error.message;
+    		errMessage += error.sheet + ': ' + error.message + '<br>';
+    	}
+    	
+    	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.crosstab.crossTabValidation.title'));
+   	
+    }
 	
 	
 });

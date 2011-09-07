@@ -184,7 +184,7 @@ Ext.extend(Sbi.crosstab.MeasuresContainerPanel, Ext.grid.GridPanel, {
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
 	        	return this.template.apply(
-	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_border', record.data.alias, record.data.funct]		
+	        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias, record.data.funct]		
 	        	);
 	    	}
 	        , scope: this

@@ -137,7 +137,7 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
             	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
 		        	return this.template.apply(
 		        			// by now cssborder is defined only for segment_attribute
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_border', record.data.alias]		
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
 		        	);
 		    	}
 	            , scope: this

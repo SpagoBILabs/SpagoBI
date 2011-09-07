@@ -114,13 +114,11 @@ Sbi.qbe.QbePanel = function(config) {
 		});
 
 		this.worksheetPreviewPanel.on('activate', function() {
-			var errorArray = this.worksheetDesignerPanel.isValid();
+			var errorArray = this.worksheetDesignerPanel.validate();
 			if(!errorArray || errorArray.length==0){
-				//if(this.worksheetDesignerPanel.isValid()){
 				this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);	
 			}else{
-				//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
-				this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
+				this.worksheetDesignerPanel.showValidationErrors(errorArray);
 			}
 		}, this);
 
@@ -440,9 +438,9 @@ refreshWorksheetPreview : function () {
 , getWorksheetTemplateAsString : function () {
 
 	// check validation before retrieving template
-	var errorArray = this.worksheetDesignerPanel.isValid();
+	var errorArray = this.worksheetDesignerPanel.validate();
 	if(errorArray && errorArray.length>0){
-		this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);		
+		this.worksheetDesignerPanel.showValidationErrors(errorArray);		
 		return;
 	}
 
@@ -451,9 +449,6 @@ refreshWorksheetPreview : function () {
 	if (this.worksheetDesignerPanel.rendered === true) {
 		// get the current worksheet designer state
 		worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
-		if(!this.worksheetDesignerPanel.isValid()){
-			return null;
-		}
 	} else {
 		// get the initial worksheet template
 		worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
