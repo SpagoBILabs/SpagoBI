@@ -36,7 +36,7 @@
  * 
  * updateActiveSheet(change) : update the sheet after tools value changed 
  * 
- * isValid(): return true if the panel is valid
+ * validate(): return null if the panel is valid, else return a validationError for each sheet
  * setSheetsState(state): set the state of the panels
  * getSheetsState(): get the state of the panel
  * 
@@ -255,20 +255,16 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		}
 	}
 		
-	, isValid: function(){
+	, validate: function(){
 		//var valid = true;
 		var toReturn = new Array();
 		if(this.items.items.length>1){
 			var errCounter = 0;
 			var i=0;
 			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
-				//valid = valid && this.items.items[i].isValid();
-				//if(!valid){
-				//break;
-				//}
-				var errMessage = this.items.items[i].isValid();
+				var errMessage = this.items.items[i].validate();
 				if(errMessage){
-					var valError = new Sbi.exception.ValidationError(
+					var valError = new Sbi.worksheet.exception.ValidationError(
 							this.items.items[i].title,
 							errMessage
 					);
@@ -298,19 +294,5 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 			);
   	} 
     
-    , showValidationErrors : function(errorsArray) {
-    	errMessage = '';
-    	
-    	for(var i = 0; i < errorsArray.length; i++) {
-    		var error = errorsArray[i];
-    		var sheet = error.sheet;
-    		var message = error.message;
-    		errMessage += error.sheet + ': ' + error.message + '<br>';
-    	}
-    	
-    	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.crosstab.crossTabValidation.title'));
-   	
-    }
-	
 	
 });

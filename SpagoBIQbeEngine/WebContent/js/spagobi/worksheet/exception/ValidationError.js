@@ -22,7 +22,7 @@
 /**
   * Object name 
   * 
-  * Singleton object that handle all errors generated on the client side
+  * Sbi.worksheet.exception.ValidationError: Error when validating workshheet, association among sheet and error
   * 
   * 
   * Public Properties
@@ -41,13 +41,13 @@
   * 
   * Authors
   * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
+  * - Giulio Gavardi
   */
 
 
-Ext.ns("Sbi.exception.ValidationError");
+Ext.ns("Sbi.worksheet.exception.ValidationError");
 
-Sbi.exception.ValidationError = function(_sheet, _message){
+Sbi.worksheet.exception.ValidationError = function(_sheet, _message){
 	
     this.sheet = _sheet;
     this.message = _message;

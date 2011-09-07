@@ -138,9 +138,9 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 			var worksheetDefinition = this.worksheetPage.getWorksheetDefinition();
 			var formState = this.formViewerPage.getFormState();
 			
-			var errorArray = this.worksheetPage.isValid();	
+			var errorArray = this.worksheetPage.validate();	
 			if(errorArray && errorArray.length>0){
-				this.worksheetPage.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
+				this.worksheetPage.worksheetDesignerPanel.showValidationErrors(errorArray);
 				return null;
 			}	
 			

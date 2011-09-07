@@ -186,7 +186,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		   this.grid.getColumnModel().setConfig(meta.fields);
 
 
-			this.colorSegmentColumn();
+			//this.colorSegmentColumn();
 			
 		}, this);
 		
@@ -204,17 +204,7 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 			}
 		]);
 		
-		var counter = cm.getColumnCount(true);
-		var cmd = cm.columns;
-		for(var i = 0; i < counter; i++) {
-			var column = cm.getColumnById(i);
-			if(column){
-			}
-			else{
-				column = cm.getColumnById('numberer');
 
-			}
-		}
 		
 		this.exportTBar = new Ext.Toolbar({
 			items: [
@@ -337,28 +327,28 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
 	
-	, colorSegmentColumn: function(){
-		   // get sehgment column name
-		  var segment = '';
-		  var stop = false;
-		   for(var j = 0; j < this.visibleselectfields.length && stop == false; j++) {
-			   if(this.visibleselectfields[j].iconCls === 'segment_attribute'){
-				   segment =  this.visibleselectfields[j].alias;
-				   stop = true;
-			   }
-		   }
-		   
-		   stop = false;
-		   
-			var counter = this.grid.getColumnModel().getColumnCount(true);
-			for(var i = 0; i < counter && stop == false; i++) {
-				var column = this.grid.getColumnModel().getColumnById(i);
-				if(column){
-					if(column.header === segment){
-						column.css = 'background-color:#00ff00;';
-						stop = true;
-					}
-				}
-			}
-	}
+	//, colorSegmentColumn: function(){
+	//	   // get sehgment column name
+	//	  var segment = '';
+	//	  var stop = false;
+	//	   for(var j = 0; j < this.visibleselectfields.length && stop == false; j++) {
+	//		   if(this.visibleselectfields[j].iconCls === 'segment_attribute'){
+	//			   segment =  this.visibleselectfields[j].alias;
+	//			   stop = true;
+	//		   }
+	//	   }
+	//	   
+	//	   stop = false;
+	//	   
+	//		var counter = this.grid.getColumnModel().getColumnCount(true);
+	//		for(var i = 0; i < counter && stop == false; i++) {
+	//			var column = this.grid.getColumnModel().getColumnById(i);
+	//			if(column){
+	//				if(column.header === segment){
+	//					column.css = 'background-color:#00ff00;';
+	//					stop = true;
+	//				}
+	//			}
+	//		}
+	//}
 });

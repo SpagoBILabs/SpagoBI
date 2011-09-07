@@ -123,9 +123,9 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 			
 		this.worksheetPreviewPanel.on('activate', function() {
 			//validate
-			var errorArray = this.worksheetDesignerPanel.isValid();
+			var errorArray = this.worksheetDesignerPanel.validate();
 			if(errorArray && errorArray.length>0){
-				this.worksheetDesignerPanel.sheetsContainerPanel.showValidationErrors(errorArray);
+				this.worksheetDesignerPanel.showValidationErrors(errorArray);
 				return;
 			}
 			else {
@@ -165,8 +165,8 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		return this.worksheetDesignerPanel.getWorksheetDefinition();   
 	}
 	
-	, isValid : function () {
-		return this.worksheetDesignerPanel.isValid();
+	, validate : function () {
+		return this.worksheetDesignerPanel.validate();
 	}
 
   	, showCrosstabPreview: function(crosstabDefinition) {

@@ -194,13 +194,13 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		}
 	}
 	
-	, isValid: function(){
+	, validate: function(){
 		var valid;
 		//if(this.headerPanel!==null){
 		//	valid = valid && this.headerPanel.isValid();
 		//}
 		if(this.content!==null){
-			valid = this.contentPanel.isValid();
+			valid = this.contentPanel.validate();
 		}
 		//if(this.footerPanel!==null){
 		//	valid = valid && this.footerPanel.isValid();

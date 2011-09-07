@@ -157,7 +157,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsFieldsPanel, Ext.Panel, {
             	, dataIndex: 'alias'
             	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
 		        	return this.template.apply(
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_border', record.data.alias]		
+		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
 		        	);
 		    	}
 	            , scope: this

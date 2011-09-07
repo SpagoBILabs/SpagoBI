@@ -164,7 +164,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
  * - if ther is mandatory measure it must be used
  */
 
-, isValid: function(){
+, validate: function(){
 
 	var crossTabDef = this.getCrosstabDefinition();
 
@@ -181,7 +181,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 
 	// if there is mandatoryField it must have been inserted
 	if(this.measuresContainerPanel.hasMandatoryMeasure === true){
-		var isMandatory = this.isThereMandatory(crossTabDef);
+		var isMandatory = this.isThereMandatoryMeasure(crossTabDef);
 		if(isMandatory === false){
 			return LN('sbi.crosstab.crossTabValidation.noMandatoryMeasure');
 		}
@@ -190,15 +190,15 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 
 	// if there is segmentAttribute it must have been inserted in columns or rows
 	if(this.rowsContainerPanel.hasSegmentAttribute === true || this.columnsContainerPanel.hasSegmentAttribute === true){
-		var isSegment = this.isThereSegment(crossTabDef);
+		var isSegment = this.isThereSegmentAttribute(crossTabDef);
 		if(isSegment === false){
 			return LN('sbi.crosstab.crossTabValidation.noSegmentAttribute');
 		}
 	}
-	return ;	
+	return null;	
 }
 
-, isThereSegment: function(crossTabDef){
+, isThereSegmentAttribute: function(crossTabDef){
 	var isThereSegment = false;
 	for (var i = 0; i < crossTabDef.rows.length && isThereSegment === false; i++) {
 		var row = crossTabDef.rows[i];
@@ -215,7 +215,7 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	}
 	return isThereSegment;
 }
-, isThereMandatory: function(crossTabDef){
+, isThereMandatoryMeasure: function(crossTabDef){
 	var isThereMandatory = false;
 	for (var i = 0; i < crossTabDef.measures.length && isThereMandatory === false; i++) {
 		var measure = crossTabDef.measures[i];
