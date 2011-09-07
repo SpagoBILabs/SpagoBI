@@ -236,12 +236,41 @@ Sbi.console.commons.Format = function(){
                 return '<div title="'+ tip + '" style="width:' +  v  + '%;height:10px;border:1px solid #000;background:' + format.color + ';"/>'
             };
         }
-       
-        , inlinePointRenderer : function(format){
-            return function(v){
-               if (v > format.threshold) {  
+       /*
+        , inlinePointRenderer : function(format){        	
+            return function(v){          
+               if (v > format.threshold) { 
                   var width = (format.width === undefined) ? "100%" : format.width+"px";                  
                   return '<div align=center title="'+ format.tooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';  
+                } else {  
+                  return '';  
+                }
+            };
+        }
+        */
+        , inlinePointRenderer : function(format){  
+        	/* v: value
+        	 * p: position (?)
+        	 * rec: actual record data
+        	 * */
+            return function(v, p, rec){        
+               var localThreshold = format.threshold;
+               var localTooltip = format.tooltip;
+               //gets threshold from each rows of the dataset and gets relative tooltip
+               if (format.thresholdType == 'dataset' && format.threshold !== undefined ){            	 
+            	 localThreshold = rec.get(format.nameFieldThreshold);            	      
+            	 if (format.nameTooltipField && format.nameTooltipValue){								
+						var tmpTooltipValue = rec.get(format.nameTooltipValue);
+						if (tmpTooltipValue){
+							var newTooltip = format.tooltip.replace("$F{" + format.nameTooltipField + "}", tmpTooltipValue);
+							localTooltip =  newTooltip;
+						}
+					}
+               }
+                               
+               if (v > localThreshold) { 
+                  var width = (format.width === undefined) ? "100%" : format.width+"px";                  
+                  return '<div align=center title="'+ localTooltip + '" style="width:'+ width +'"><img  src="../img/ico_point_'+ format.color +'.gif"></img></div>';  
                 } else {  
                   return '';  
                 }

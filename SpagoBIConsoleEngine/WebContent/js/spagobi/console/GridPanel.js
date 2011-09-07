@@ -653,6 +653,18 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 	}
 	
+	, updateMetaStructure: function(cm, headerToHide, fieldsMap){
+		for(var i = 0, len = headerToHide.length; i < len; i++) {
+			//hides the column with the description of the header
+			cm.fields[fieldsMap[headerToHide[i]]].hidden = true;
+		}
+		//adds numeration column    
+		cm.fields[0] = new Ext.grid.RowNumberer();
+		//update columnmodel configuration
+		this.getColumnModel().setConfig(cm.fields);
+	    this.reconfigure(this.store,cm);
+	}
+	
 	, initPagingBar: function() {
 		this.pagingBar = new Ext.PagingToolbar({
             pageSize: this.limit,
@@ -674,64 +686,125 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		var fieldsMap = {};
 		tmpMeta.fields = new Array(fields.length);
 		
+		//-------------------------------------------------------------------------------//
+		// 	//subsitutes the grid header values with the dataset header fields													 //
+		//-------------------------------------------------------------------------------//
 		for(var i = 0, len = fields.length; i < len; i++) {
-			if(fields[i].headerType !== undefined && fields[i].headerType === 'relative'){
-		    	//subsitutes the header value with the dataset header field
+			if(fields[i].headerType !== undefined && fields[i].headerType === 'dataset'){		    	
 				var tmpRec = this.store.getAt(0);
-		    	var tmpHeader =  tmpRec.get(this.store.getFieldNameByAlias(fields[i].header));
-		    	if (tmpHeader !== undefined){	
-		    		metaIsChanged = true;
-		    		fieldsMap[fields[i].header] = (fields[i].id+1);
-		    		headerToHide.push(fields[i].header);
-		    		fields[i].header = tmpHeader;
-		    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
-		    	}
+				if (tmpRec !== undefined) {
+			    	var tmpHeader =  tmpRec.get(this.store.getFieldNameByAlias(fields[i].header));
+			    	if (tmpHeader !== undefined){	
+			    		metaIsChanged = true;
+			    		fieldsMap[fields[i].header] = (fields[i].id+1);
+			    		headerToHide.push(fields[i].header);
+			    		fields[i].header = tmpHeader;
+			    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
+			    	}
+				}else
+					tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 		    }else{
-	    		tmpMeta.fields[i] = fields[i];
+	    		tmpMeta.fields[i] = Ext.apply({}, fields[i]);
 	    	}
 		}
-		if (metaIsChanged){
-			for(var i = 0, len = headerToHide.length; i < len; i++) {
-				//hides the column with the description of the header
-	   // 		var tmpName = this.store.getFieldNameByAlias(headerToHide[i]);						
-			//	if (tmpName !== undefined) 
-					tmpMeta.fields[fieldsMap[headerToHide[i]]].hidden = true;
-			}
-			//adds numeration column    
-			tmpMeta.fields[0] = new Ext.grid.RowNumberer();
-			//update columnmodel configuration
-			this.getColumnModel().setConfig(tmpMeta.fields);
-		}
-		var minValue = 0;
-		var maxValue = 0;
-		var totValue = 0;
 		
-		if (this.inlineCharts !== undefined || this.inlineCharts === null) return;
+		//-------------------------------------------------------------------------------//
+		// 	inline charts updating														 //
+		//-------------------------------------------------------------------------------//
+		if (this.inlineCharts !== undefined && this.inlineCharts !== null) {
+			var minValue = 0;
+			var maxValue = 0;
+			var totValue = 0;
+			var idxFieldThreshold = 0;
+			var idxFieldColumn = 0;
+			var pointChartConfig = {};		
+			var nameFieldThreshold = "";
+			var nameTooltipField = "";
+			var tooltip = "";
+			metaIsChanged = false;
+			 
+			for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
+				minValue = 0;
+				maxValue = 0;
+				totValue = 0;	
+				if (this.inlineCharts[p] !== undefined){		
+					for (var i=0; i < numRec; i++){
+						var tmpRec = this.store.getAt(i);
+						var tmpValue = tmpRec.get(this.store.getFieldNameByAlias(this.inlineCharts[p].column));						
+						if (this.inlineCharts[p].type == 'point' && this.inlineCharts[p].thresholdType == 'dataset' && this.inlineCharts[p].threshold !== undefined){
+							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
+							metaIsChanged = true;
+							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
+							idxFieldThreshold = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].threshold));
+							fieldsMap[pointChartConfig.threshold] = idxFieldThreshold;						
+							headerToHide.push(this.inlineCharts[p].threshold); //hides the column with the thresholds
+							nameFieldThreshold = this.store.getFieldNameByAlias(this.inlineCharts[p].threshold);
+							pointChartConfig.nameFieldThreshold = nameFieldThreshold;
+							//check the tooltip 
+							if (pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$F{") !== -1 ){
+								var startFieldTooltip = pointChartConfig.tooltip.indexOf("$F{")+3;
+								var lenFieldTooltip = pointChartConfig.tooltip.indexOf("}")-startFieldTooltip;
+								nameTooltipField =  pointChartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);
+								var idxFieldTooltip = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(nameTooltipField));
+								fieldsMap[nameTooltipField] = idxFieldTooltip;					
+								headerToHide.push(nameTooltipField); //hides the column with the tooltip
+								pointChartConfig.nameTooltipField = nameTooltipField;
+								pointChartConfig.nameTooltipValue = this.store.getFieldNameByAlias(nameTooltipField);
+							}
 		
-		for(var p = 0, len = this.inlineCharts.length; p < len; p++) {
-			minValue = 0;
-			maxValue = 0;
-			totValue = 0;		
-			if (this.inlineCharts[p] !== undefined){		
-				for (var i=0; i < numRec; i++){
-					var tmpRec = this.store.getAt(i);
-					var tmpValue = tmpRec.get(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
-					if (tmpValue !== undefined){
-						totValue = totValue + tmpValue;
-						if ( tmpValue < minValue || i === 0) minValue = tmpValue;
-						
-						if ( tmpValue > maxValue ) maxValue = tmpValue;
+							var renderer = this.createInlineChartRenderer(pointChartConfig);
+							if( renderer !== null ) {
+								fields[idxFieldColumn].renderer = renderer;
+					    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+							}
+						}else if (this.inlineCharts[p].type == 'point' && this.inlineCharts[p].thresholdType == 'env' && this.inlineCharts[p].threshold !== undefined ){
+							idxFieldColumn = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
+							pointChartConfig = Ext.apply({}, this.inlineCharts[p] || {});
+							metaIsChanged = true;
+							pointChartConfig.threshold = this.executionContext[this.inlineCharts[p].threshold];
+							//check the tooltip 
+							if (pointChartConfig.tooltip && pointChartConfig.tooltip.indexOf("$P{") !== -1 ){
+								var startFieldTooltip = pointChartConfig.tooltip.indexOf("$P{")+3;
+								var lenFieldTooltip = pointChartConfig.tooltip.indexOf("}")-startFieldTooltip;
+								nameTooltipField =  pointChartConfig.tooltip.substr(startFieldTooltip,lenFieldTooltip);																
+								if (nameTooltipField){
+			  						var tmpTooltipValue = this.executionContext[nameTooltipField];
+			  						if (tmpTooltipValue){
+			  							var newTooltip = pointChartConfig.tooltip.replace("$P{" + nameTooltipField + "}", tmpTooltipValue);
+			  							pointChartConfig.tooltip = newTooltip;
+			  						}
+								}
+							}							
+	  						var renderer = this.createInlineChartRenderer(pointChartConfig);
+							if( renderer !== null ) {
+								fields[idxFieldColumn].renderer = renderer;
+					    		tmpMeta.fields[idxFieldColumn] = Ext.apply({}, fields[idxFieldColumn]);
+							}
+			            }else if (this.inlineCharts[p].type == 'bar'){
+							if (tmpValue !== undefined){
+								totValue = totValue + tmpValue;
+								if ( tmpValue < minValue || i === 0) minValue = tmpValue;
+								
+								if ( tmpValue > maxValue ) maxValue = tmpValue;
+							}
+						}
+					}  
+					if (this.inlineCharts[p].type == 'bar'){
+						//update initial value config with news								
+						this.inlineCharts[p].maxValue = maxValue;
+						this.inlineCharts[p].minValue = minValue;
+						this.inlineCharts[p].totValue = totValue; 	
+											
+						var idx = this.getColumnModel().findColumnIndex(this.store.getFieldNameByAlias(this.inlineCharts[p].column));
+						this.getColumnModel().setRenderer(idx, this.createInlineChartRenderer(this.inlineCharts[p]) );
 					}
-				}  
-
-				//update initial value config with news								
-				this.inlineCharts[p].maxValue = maxValue;
-				this.inlineCharts[p].minValue = minValue;
-				this.inlineCharts[p].totValue = totValue; 	
+				}
 			}
 		}
 		
-		this.updateInLineCharts();
+		if (metaIsChanged) this.updateMetaStructure(tmpMeta, headerToHide, fieldsMap);
+
+		//this.updateInLineCharts();
 		
 	}
 	
@@ -776,7 +849,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 			
 			tmpMeta.fields[i].sortable = true;
-	    
+	   
 			var chartConf = null;
 			if( (chartConf = inlineChartMap[tmpMeta.fields[i].header]) !== undefined ) {
 				var renderer = this.createInlineChartRenderer(chartConf);
@@ -825,7 +898,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		var chartRenderer = null;
 		if(config.type === 'bar') {
 			renderer  =  Sbi.console.commons.Format.inlineBarRenderer(config);
-		} else if(config.type === 'point') {
+		} else if(config.type === 'point') {			
 			renderer  =  Sbi.console.commons.Format.inlinePointRenderer(config);
 		} else{
 			Sbi.Msg.showWarning('InlineChart type [' + chartConf.type + '] is not supported');
