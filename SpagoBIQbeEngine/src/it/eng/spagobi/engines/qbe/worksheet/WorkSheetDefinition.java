@@ -23,6 +23,7 @@ package it.eng.spagobi.engines.qbe.worksheet;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.IWorksheetStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.WorksheetStateLoaderFactory;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -53,6 +54,8 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	
 	private List<WorkSheet> workSheet;
 	
+	private List<Attribute> globalFilters;
+	
 	public WorkSheetDefinition(){
 		workSheet = new ArrayList<WorkSheet>();
 	}
@@ -67,6 +70,14 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 
 	public void setWorkSheet(List<WorkSheet> workSheet) {
 		this.workSheet = workSheet;
+	}
+	
+	public List<Attribute> getGlobalFilters() {
+		return globalFilters;
+	}
+
+	public void setGlobalFilters(List<Attribute> globalFilters) {
+		this.globalFilters = globalFilters;
 	}
 	
 	public JSONObject getConf(){
@@ -114,11 +125,11 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 				logger.debug("Encoding conversion has been executed succesfully");
 			}
 			
-			logger.debug("analysis state loaded succsfully from row data");
-			
-			//set the worksheet into the qbe instance
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) SerializationManager.deserialize(worksheetStateJSON, "application/json", WorkSheetDefinition.class);
 			this.setWorkSheet(workSheetDefinition.getWorkSheet());
+			this.setGlobalFilters(workSheetDefinition.getGlobalFilters());
+			
+			logger.debug("analysis state loaded succsfully from row data");
 			
 		} catch (Exception e) {
 			throw new SpagoBIEngineException("Impossible to load form state from raw data", e);

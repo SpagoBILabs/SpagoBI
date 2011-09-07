@@ -27,7 +27,7 @@
   * There are no filters or paging toolbars, just a simple list.
   * It can be used for lookup fields when a simple selection of values is required with no list pagination.
   * The constructor input object must have the following properties:
-  * - store: the store with the list of values
+  * - url: the url to load the store with the list of values
   * - columnName: the name of the column of the store that must be displayed
   * - columnHeader: the header of the column to be displayed
   * 
@@ -75,6 +75,8 @@ Sbi.widgets.SimpleValuesChooserWindow = function(config) {
 	
 	// constructor
 	Sbi.widgets.SimpleValuesChooserWindow.superclass.constructor.call(this, c);
+	
+	this.addEvents('load');
 
 };
 
@@ -83,9 +85,10 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 	sm 				: null
 	, cm 			: null
 	, singleSelect 	: null
-	, store 		: null // this must be in the constructor input object
-	, columnHeader 		: null // this must be in the constructor input object
+	, url 			: null // this must be in the constructor input object
+	, columnHeader 	: null // this must be in the constructor input object
 	, columnName 	: null // this must be in the constructor input object
+	, store			: null // the store with the values to display
 	
 	,
 	init : function () {
@@ -101,6 +104,16 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 	       this.sm
 	    ]);
  		
+		this.store = new Ext.data.JsonStore({
+			url: this.url
+		});
+		this.store.on('loadexception', function(store, options, response, e) {
+			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		});
+		this.store.on('load', function (store, records, options) {
+			this.fireEvent('load', this, records, options);
+		}, this);
+     	
  		this.grid = new Ext.grid.GridPanel({
  			store 			: this.store
 	     	, cm 			: this.cm
@@ -115,6 +128,7 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 	        	, showPreview : true
 	     	}
  		});
+ 		
 	}
 
 	,
@@ -137,6 +151,11 @@ Ext.extend(Sbi.widgets.SimpleValuesChooserWindow, Ext.Window, {
 			}
 		}, this);
 		this.sm.selectRecords(records, false);
+	}
+	
+	,
+	load : function (obj) {
+		this.store.load(obj);
 	}
 	
 });

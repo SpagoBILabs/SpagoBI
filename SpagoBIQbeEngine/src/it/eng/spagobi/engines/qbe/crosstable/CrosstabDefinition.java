@@ -21,8 +21,8 @@
 package it.eng.spagobi.engines.qbe.crosstable;
 
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class CrosstabDefinition {
 		EMPTY_CROSSTAB = new CrosstabDefinition();
 		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
 		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
-		EMPTY_CROSSTAB.setMeasures(new ArrayList<CrosstabDefinition.Measure>());
+		EMPTY_CROSSTAB.setMeasures(new ArrayList<Measure>());
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
@@ -120,48 +120,13 @@ public class CrosstabDefinition {
 		} else return true;
 	}
 	
-	public class CrosstabElement {
-		String entityId = null;
-		String alias = null;
-		String iconCls = null;
-		String nature = null;
-		public CrosstabElement(String entityId, String alias, String iconCls, String nature) {
-			this.entityId = entityId;
-			this.alias = alias;
-			this.iconCls = iconCls;
-			this.nature = nature;
-		}
-		public String getEntityId() {
-			return entityId;
-		}
-		public String getAlias() {
-			return alias;
-		}
-		public String getIconCls() {
-			return iconCls;
-		}
-		public String getNature() {
-			return nature;
-		}
-	}
-	
-	public class Attribute extends CrosstabElement {
-		/**
-		 * contains an array of selected values encoded into a string
-		 */
-		String values = null;
-		public String getValues() {
-			return values;
-		}
-		public Attribute(String entityId, String alias, String iconCls, String nature, String values) {
-			super(entityId, alias, iconCls, nature);
-			this.values = values;
-		}
-	}
-	
 	public class Row extends Attribute {
+		
 		public Row(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
+		}
+		public Row(Attribute attribute) {
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
 		}
 	}
 	
@@ -169,16 +134,8 @@ public class CrosstabDefinition {
 		public Column(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
 		}
-	}
-	
-	public class Measure extends CrosstabElement {
-		IAggregationFunction function = null;
-		public Measure(String entityId, String alias, String iconCls, String nature, String function) {
-			super(entityId, alias, iconCls, nature);
-			this.function = AggregationFunctions.get(function);
-		}
-		public IAggregationFunction getAggregationFunction() {
-			return function;
+		public Column(Attribute attribute) {
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
 		}
 	}
 

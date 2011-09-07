@@ -26,6 +26,7 @@ import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
@@ -60,6 +61,10 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			
 			JSONArray sheets = serializeSheets(workSheetDefinition.getWorkSheet());
 			toReturn.put(WorkSheetSerializationCostants.SHEETS, sheets);
+			
+			JSONArray globalFilters = serializeGlobalFilters(workSheetDefinition.getGlobalFilters());
+			toReturn.put(WorkSheetSerializationCostants.GLOBAL_FILTERS, globalFilters);
+			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
@@ -69,6 +74,11 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
+	private JSONArray serializeGlobalFilters(List<Attribute> globalFilters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private JSONArray serializeSheets(List<WorkSheet> sheets) throws SerializationException{
 		JSONArray jsonSheets = new JSONArray();
 		for(int i=0; i<sheets.size(); i++){

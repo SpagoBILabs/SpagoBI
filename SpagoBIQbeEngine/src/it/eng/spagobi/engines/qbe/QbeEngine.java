@@ -24,6 +24,10 @@ package it.eng.spagobi.engines.qbe;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabDeserializerFactory;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabSerializerFactory;
+import it.eng.spagobi.engines.qbe.worksheet.serializer.AttributeDeserializerFactory;
+import it.eng.spagobi.engines.qbe.worksheet.serializer.AttributeSerializerFactory;
+import it.eng.spagobi.engines.qbe.worksheet.serializer.MeasureDeserializerFactory;
+import it.eng.spagobi.engines.qbe.worksheet.serializer.MeasureSerializerFactory;
 import it.eng.spagobi.engines.qbe.worksheet.serializer.WorkSheetDeserializerFactory;
 import it.eng.spagobi.engines.qbe.worksheet.serializer.WorkSheetSerializerFactory;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -49,15 +53,27 @@ public class QbeEngine {
     	if(engineConfig == null) {
     		engineConfig = QbeEngineConfig.getInstance();
     	}
-    	WorkSheetDeserializerFactory.getInstance();
-    	WorkSheetSerializerFactory.getInstance();
-    	CrosstabDeserializerFactory.getInstance();
-    	CrosstabSerializerFactory.getInstance();
-    	
-    	
+    	initSerializers();
+    	initDeserializers();
 	}
     
 	
+	private static void initDeserializers() {
+    	WorkSheetDeserializerFactory.getInstance();
+    	CrosstabDeserializerFactory.getInstance();
+    	AttributeDeserializerFactory.getInstance();
+    	MeasureDeserializerFactory.getInstance();
+	}
+
+
+	private static void initSerializers() {
+    	WorkSheetSerializerFactory.getInstance();
+    	CrosstabSerializerFactory.getInstance();
+    	AttributeSerializerFactory.getInstance();
+    	MeasureSerializerFactory.getInstance();
+	}
+
+
 	public static QbeEngineInstance createInstance(Object template, Map env) throws QbeEngineException {
 		QbeEngineInstance qbeEngineInstance = null;
 		logger.debug("IN");

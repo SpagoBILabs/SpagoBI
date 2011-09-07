@@ -31,9 +31,10 @@ import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Attribute;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -141,7 +142,7 @@ public class CrosstabQueryCreator {
 		logger.debug("IN");
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
-		List<CrosstabDefinition.Measure> measures = crosstabDefinition.getMeasures(); 
+		List<Measure> measures = crosstabDefinition.getMeasures(); 
 		
 		toReturn.append("SELECT ");
 		
@@ -163,9 +164,9 @@ public class CrosstabQueryCreator {
 		}
 		
 		// appends measures
-		Iterator<CrosstabDefinition.Measure> measuresIt = measures.iterator();
+		Iterator<Measure> measuresIt = measures.iterator();
 		while (measuresIt.hasNext()) {
-			CrosstabDefinition.Measure aMeasure = measuresIt.next();
+			Measure aMeasure = measuresIt.next();
 			IAggregationFunction function = aMeasure.getAggregationFunction();
 			String alias = getSQLAlias(aMeasure.getAlias(), baseQuery, baseQuerySelectedFields);
 			if (alias == null) {

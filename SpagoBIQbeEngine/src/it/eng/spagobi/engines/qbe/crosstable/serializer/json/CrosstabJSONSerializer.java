@@ -23,17 +23,17 @@ package it.eng.spagobi.engines.qbe.crosstable.serializer.json;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Measure;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -77,6 +77,8 @@ public class CrosstabJSONSerializer implements ISerializer {
 			JSONArray measures = this.serializeMeasures(crosstabDefinition);
 			toReturn.put(CrosstabSerializationConstants.MEASURES, measures);
 
+		} catch (SerializationException se) {
+			throw se;
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
@@ -86,49 +88,34 @@ public class CrosstabJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
-	private JSONArray serializeRows(CrosstabDefinition crosstabDefinition) throws JSONException {
+	private JSONArray serializeRows(CrosstabDefinition crosstabDefinition) throws SerializationException {
 		List<Row> rows = crosstabDefinition.getRows();
 		JSONArray toReturn = new JSONArray();
 		for (int i = 0; i < rows.size(); i++) {
 			Row row = rows.get(i);
-			JSONObject obj = new JSONObject();
-			obj.put(CrosstabSerializationConstants.ID, row.getEntityId());
-			obj.put(CrosstabSerializationConstants.ALIAS, row.getAlias());
-			obj.put(CrosstabSerializationConstants.ICON_CLS, row.getIconCls());
-			obj.put(CrosstabSerializationConstants.NATURE, row.getNature());
-			obj.put(CrosstabSerializationConstants.VALUES, row.getValues());
+			JSONObject obj = (JSONObject) SerializationManager.serialize(row, "application/json");
 			toReturn.put(obj);
 		}
 		return toReturn;
 	}
 	
-	private JSONArray serializeColumns(CrosstabDefinition crosstabDefinition) throws JSONException {
+	private JSONArray serializeColumns(CrosstabDefinition crosstabDefinition) throws SerializationException {
 		List<Column> columns = crosstabDefinition.getColumns();
 		JSONArray toReturn = new JSONArray();
 		for (int i = 0; i < columns.size(); i++) {
 			Column column = columns.get(i);
-			JSONObject obj = new JSONObject();
-			obj.put(CrosstabSerializationConstants.ID, column.getEntityId());
-			obj.put(CrosstabSerializationConstants.ALIAS, column.getAlias());
-			obj.put(CrosstabSerializationConstants.ICON_CLS, column.getIconCls());
-			obj.put(CrosstabSerializationConstants.NATURE, column.getNature());
-			obj.put(CrosstabSerializationConstants.VALUES, column.getValues());
+			JSONObject obj = (JSONObject) SerializationManager.serialize(column, "application/json");
 			toReturn.put(obj);
 		}
 		return toReturn;
 	}
 	
-	private JSONArray serializeMeasures(CrosstabDefinition crosstabDefinition) throws JSONException {
+	private JSONArray serializeMeasures(CrosstabDefinition crosstabDefinition) throws SerializationException {
 		List<Measure> measures = crosstabDefinition.getMeasures();
 		JSONArray toReturn = new JSONArray();
 		for (int i = 0; i < measures.size(); i++) {
 			Measure measure = measures.get(i);
-			JSONObject obj = new JSONObject();
-			obj.put(CrosstabSerializationConstants.ID, measure.getEntityId());
-			obj.put(CrosstabSerializationConstants.ALIAS, measure.getAlias());
-			obj.put(CrosstabSerializationConstants.ICON_CLS, measure.getIconCls());
-			obj.put(CrosstabSerializationConstants.NATURE, measure.getNature());
-			obj.put(CrosstabSerializationConstants.FUNCTION, measure.getAggregationFunction().getName());
+			JSONObject obj = (JSONObject) SerializationManager.serialize(measure, "application/json");
 			toReturn.put(obj);
 		}
 		return toReturn;

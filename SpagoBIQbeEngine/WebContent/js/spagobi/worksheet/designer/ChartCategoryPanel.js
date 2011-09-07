@@ -172,14 +172,27 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 	}
 
 	, createCategoryPanel: function() {
+		
+		var thePanel = new Ext.Panel({
+   			html: '<div style="cursor: pointer;">' + this.category.alias + '</div>'
+   		});
+		
+		thePanel.on('render', function(panel) {
+			panel.getEl().on('dblclick', function() {
+		     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+		     		attribute : this.category
+		     	});
+			}, this);
+		}, this);
+		
 		var item = new Ext.Panel({
             layout: {
                 type:'column'
             }
 			, style:'padding:5px 5px 5px 5px'
-       		, items: [{
-       			html: this.category.alias
-       		}, new Ext.Button({
+       		, items: [
+       		  thePanel
+       		  , new Ext.Button({
        		    template: new Ext.Template(
        		         '<div class="smallBtn">',
        		             '<div class="delete-icon"></div>',

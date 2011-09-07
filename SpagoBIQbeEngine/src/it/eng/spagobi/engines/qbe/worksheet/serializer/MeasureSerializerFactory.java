@@ -19,45 +19,44 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.crosstable.serializer;
+package it.eng.spagobi.engines.qbe.worksheet.serializer;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
-import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabJSONSerializer;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.qbe.worksheet.serializer.json.MeasureJSONSerializer;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class CrosstabSerializerFactory implements ISerializerFactory{
+public class MeasureSerializerFactory implements ISerializerFactory{
 
-	static CrosstabSerializerFactory instance;
+	static MeasureSerializerFactory instance;
 	
-	static CrosstabSerializerFactory getIntsnce() {
+	static MeasureSerializerFactory getIntsnce() {
 		return instance;
 	}
 	
 	static {
-		instance = new CrosstabSerializerFactory();
-		SerializationManager.registerSerializerFactory(CrosstabDefinition.class, instance);
-		
+		instance = new MeasureSerializerFactory();
+		SerializationManager.registerSerializerFactory(Measure.class, instance);
 	}
 	
 	
-	public static CrosstabSerializerFactory getInstance() {
+	public static MeasureSerializerFactory getInstance() {
 		if (instance == null) {
-			instance = new CrosstabSerializerFactory();
+			instance = new MeasureSerializerFactory();
 		}
 		return instance;
 	}
 	
-	private CrosstabSerializerFactory() {}
+	private MeasureSerializerFactory() {}
 
 	
 	public ISerializer getSerializer(String mimeType) {
-		return new CrosstabJSONSerializer();
+		return new MeasureJSONSerializer();
 	}
 
 }

@@ -113,6 +113,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	
 	, getWorksheetDefinition: function () {
 		var	worksheetDefinition = this.sheetsContainerPanel.getSheetsState();
+		worksheetDefinition.globalFilters = this.getGlobalFilters();
 		worksheetDefinition.version = Sbi.config.worksheetVersion;
 		return worksheetDefinition;
 	}
@@ -120,6 +121,18 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	, isValid: function () {
 		// return an array of validationError object, if no error returns an empty array
 		return this.sheetsContainerPanel.isValid();
+	}
+	
+	, getGlobalFilters : function () {
+		var globalFilters = [];
+		var fields = this.designToolsPanel.getFields();
+		for (var i = 0; i < fields.length; i++) {
+			var aField = fields[i];
+			if (aField.values != '[]') {
+				globalFilters.push(aField);
+			}
+		}
+		return globalFilters;
 	}
 	
 	

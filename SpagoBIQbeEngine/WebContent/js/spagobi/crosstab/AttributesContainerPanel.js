@@ -60,14 +60,6 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-	this.services = this.services || new Array();
-	
-	this.services['getValues'] = this.services['getValues'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION'
-		, baseParams: params
-	});
-	
 	this.init(c);
 	
 	Ext.apply(c, {
@@ -102,6 +94,7 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
         	, mouseout: function(e, t) {
         		this.targetRow = undefined;
         	}
+        	, rowdblclick: this.rowDblClickHandler
 		}
         , scope: this
         , type: 'attributesContainerPanel'
@@ -111,8 +104,6 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
     Sbi.crosstab.AttributesContainerPanel.superclass.constructor.call(this, c);
     
     this.on('render', this.initDropTarget, this);
-    
-    this.on('rowdblclick', this.rowDblClickHandler, this);
     
 };
 
@@ -319,44 +310,10 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	}
 	
 	, rowDblClickHandler: function(grid, rowIndex, event) {
-		var store = this.createLookupStore(grid, rowIndex);
 		var record = grid.store.getAt(rowIndex);
-		var alias = record.get('alias');
-     	var chooserWindow = new Sbi.widgets.SimpleValuesChooserWindow({
-     		store : store
-     		, columnHeader : "Values"
-     		, columnName : "Values"
+     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+     		attribute : record.data
      	});
- 		chooserWindow.on('beforeclose', this.updateValues.createDelegate(this, [record, chooserWindow], true), this);
- 		chooserWindow.show();
- 		store.on('load', this.selectValues.createDelegate(this, [record, chooserWindow], true), this);
- 		var params = {
- 			ALIAS : alias
- 		};
- 		// a global variable Sbi.formviewer.formEnginePanel is defined, it is the form state. Send it to the server
- 		if (Sbi.formviewer && Sbi.formviewer.formEnginePanel) {
- 			var formState = Sbi.formviewer.formEnginePanel.getFormState();
- 			params.formState = Ext.encode(formState);
- 		}
- 		store.load({params: params});
-	}
-	
-	, createLookupStore : function (grid, rowIndex) {
-		var store = new Ext.data.JsonStore({
-			url: this.services['getValues']
-		});
-		store.on('loadexception', function(store, options, response, e) {
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		});
-		return store;	
-	}
-	
-	, updateValues : function ( theWindow, record, chooserWindow ) {
-		record.data.values = Ext.encode(chooserWindow.getSelectedValues());
-	}
-	
-	, selectValues : function ( store, records, options, record, chooserWindow ) {
-		chooserWindow.select(Ext.decode(record.data.values));
 	}
 
 });

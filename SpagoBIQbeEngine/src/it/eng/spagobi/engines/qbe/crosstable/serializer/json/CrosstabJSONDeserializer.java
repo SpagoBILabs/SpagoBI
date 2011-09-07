@@ -26,8 +26,9 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Measure;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -99,14 +100,8 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 		if (rowsJSON != null) {
 			for (int i = 0; i < rowsJSON.length(); i++) {
 				JSONObject obj = (JSONObject) rowsJSON.get(i);
-				rows.add(crosstabDefinition.new Row(
-						obj.getString(CrosstabSerializationConstants.ID), 
-						obj.getString(CrosstabSerializationConstants.ALIAS), 
-						obj.getString(CrosstabSerializationConstants.ICON_CLS), 
-						obj.getString(CrosstabSerializationConstants.NATURE),
-						obj.opt(CrosstabSerializationConstants.VALUES) != null ?
-								obj.getString(CrosstabSerializationConstants.VALUES) : 
-									new JSONArray().toString()));
+				Attribute attribute = (Attribute) SerializationManager.deserialize(obj, "application/json", Attribute.class);
+				rows.add(crosstabDefinition.new Row(attribute));
 			}
 		}
 		crosstabDefinition.setRows(rows);
@@ -119,12 +114,8 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 		if (measuresJSON != null) {
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
-				measures.add(crosstabDefinition.new Measure(
-						obj.getString(CrosstabSerializationConstants.ID), 
-						obj.getString(CrosstabSerializationConstants.ALIAS), 
-						obj.getString(CrosstabSerializationConstants.ICON_CLS), 
-						obj.getString(CrosstabSerializationConstants.NATURE),
-						obj.getString(CrosstabSerializationConstants.FUNCTION)));
+				Measure measure = (Measure) SerializationManager.deserialize(obj, "application/json", Measure.class);
+				measures.add(measure);
 			}
 		}
 		crosstabDefinition.setMeasures(measures);
@@ -137,14 +128,8 @@ public class CrosstabJSONDeserializer implements IDeserializer {
 		if (columnsJSON != null) {
 			for (int i = 0; i < columnsJSON.length(); i++) {
 				JSONObject obj = (JSONObject) columnsJSON.get(i);
-				columns.add(crosstabDefinition.new Column(
-						obj.getString(CrosstabSerializationConstants.ID), 
-						obj.getString(CrosstabSerializationConstants.ALIAS), 
-						obj.getString(CrosstabSerializationConstants.ICON_CLS), 
-						obj.getString(CrosstabSerializationConstants.NATURE),
-						obj.opt(CrosstabSerializationConstants.VALUES) != null ?
-								obj.getString(CrosstabSerializationConstants.VALUES) : 
-									new JSONArray().toString()));
+				Attribute attribute = (Attribute) SerializationManager.deserialize(obj, "application/json", Attribute.class);
+				columns.add(crosstabDefinition.new Column(attribute));
 			}
 		}
 		crosstabDefinition.setColumns(columns);

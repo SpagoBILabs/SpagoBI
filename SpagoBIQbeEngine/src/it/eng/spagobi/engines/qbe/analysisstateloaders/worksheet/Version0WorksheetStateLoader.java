@@ -50,21 +50,8 @@ public class Version0WorksheetStateLoader extends AbstractWorksheetStateLoader {
 		try {
 			logger.debug( "Converting from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION + "] ..." );
 			
-			JSONArray sheets = data.optJSONArray("sheets");
-			if (sheets != null && sheets.length() > 0) {
-				for (int i = 0; i < sheets.length(); i++) {
-					JSONObject aSheet = sheets.getJSONObject(i);
-					JSONObject content = aSheet.getJSONObject("content");
-					String designer = content.getString("designer");
-					if (designer.equals("Pivot Table")) {
-						JSONObject crosstabDefinition = content.getJSONObject("crosstabDefinition");
-						JSONArray rows = crosstabDefinition.getJSONArray("rows");
-						convert(rows);
-						JSONArray columns = crosstabDefinition.getJSONArray("columns");
-						convert(columns);
-					}
-				}
-			}
+			convertSheets(data);
+			putGlobalFilters(data);
 
 			logger.debug( "Conversion from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION + "] terminated succesfully" );
 			
@@ -77,19 +64,60 @@ public class Version0WorksheetStateLoader extends AbstractWorksheetStateLoader {
 		return data;
 	}
 
-	/**
-	 * Puts an empty array for rows/columns attributes' values
-	 * @param attributes the attributes on rows/columns
-	 * @throws Exception
-	 */
-	private void convert(JSONArray attributes) throws Exception {
+	private void putGlobalFilters(JSONObject data) throws Exception {
+		JSONArray filters = new JSONArray();
+		data.put("globalFilters", filters);
+	}
+
+	private void convertSheets(JSONObject data) throws Exception {
+		JSONArray sheets = data.optJSONArray("sheets");
+		if (sheets != null && sheets.length() > 0) {
+			for (int i = 0; i < sheets.length(); i++) {
+				JSONObject aSheet = sheets.getJSONObject(i);
+				convertContent(aSheet);
+				convertFilters(aSheet);
+			}
+		}
+	}
+
+	private void convertContent(JSONObject aSheet) throws Exception {
+		JSONObject content = aSheet.getJSONObject("content");
+		String designer = content.getString("designer");
+		if (designer.equals("Pivot Table")) {
+			JSONObject crosstabDefinition = content.getJSONObject("crosstabDefinition");
+			JSONArray rows = crosstabDefinition.getJSONArray("rows");
+			convertAttributes(rows);
+			JSONArray columns = crosstabDefinition.getJSONArray("columns");
+			convertAttributes(columns);
+		}
+		if (designer.equals("Bar Chart") || designer.equals("Line Chart") || designer.equals("Pie Chart")) {
+			JSONObject category = content.getJSONObject("category");
+			convertAttribute(category);
+		}
+		if (designer.equals("Table")) {
+			JSONObject fields = content.getJSONObject("visibleselectfields");
+			convert(fields);
+		}
+	}
+	
+	private void convertFilters(JSONObject aSheet) throws Exception {
+		JSONObject filtersObj = aSheet.getJSONObject("filters");
+		JSONArray filters = filtersObj.getJSONArray("filters");
+		convertAttributes(filters);
+	}
+
+	private void convertAttributes(JSONArray attributes) throws Exception {
 		if (attributes != null && attributes.length() > 0) {
 			for (int i = 0; i < attributes.length(); i++) {
 				JSONObject anAttribute = attributes.getJSONObject(i);
-				JSONArray values = new JSONArray();
-				anAttribute.put("values", values.toString());
+				convertAttribute(anAttribute);
 			}
 		}
+	}
+	
+	private void convertAttribute(JSONObject attribute) throws Exception {
+		JSONArray values = new JSONArray();
+		attribute.put("values", values.toString());
 	}
 
 }
