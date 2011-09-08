@@ -46,6 +46,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -318,6 +319,52 @@ public class CrosstabQueryCreator {
 		
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
+	}
+
+	public static String getTableQuery(List<String> aliases,
+			Query baseQuery, List<WhereField> whereFields, String sqlQuery,
+			IStatement stmt) {
+		logger.debug("IN");
+		StringBuffer buffer = new StringBuffer();
+		
+		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
+		
+		putSelectClause(buffer, aliases, baseQuery, baseQuerySelectedFields);
+			
+		buffer.append(" FROM TEMPORARY_TABLE ");
+		
+		if (whereFields == null) {
+			whereFields = new ArrayList<WhereField>();
+		}
+//		addColumnsValuesToWhereClause(crosstabDefinition.getColumns(), whereFields);
+//		addRowsValuesToWhereClause(crosstabDefinition.getRows(), whereFields);
+		
+		putWhereClause(buffer, whereFields, baseQuery, baseQuerySelectedFields, (AbstractStatement)stmt);
+		
+		String toReturn = buffer.toString();
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
+
+	private static void putSelectClause(StringBuffer buffer,
+			List<String> aliases, Query baseQuery,
+			List baseQuerySelectedFields) {
+		
+		logger.debug("IN");
+		
+		buffer.append("SELECT ");
+
+		for (int i = 0; i < aliases.size(); i++) {
+			String alias = aliases.get(i);
+			String sqlAlias = getSQLAlias(alias, baseQuery, baseQuerySelectedFields);
+			buffer.append(sqlAlias);
+			if (i < aliases.size() - 1) {
+				buffer.append(", ");
+			}
+		}
+
+		logger.debug("OUT");
+		
 	}
 
 }

@@ -20,7 +20,17 @@
  **/
 package it.eng.spagobi.engines.qbe.worksheet;
 
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -92,5 +102,22 @@ public class WorkSheet{
 		this.layout = layout;
 	}
 	
-	
+	public List<Attribute> getFilteringAttributes() {
+		List<Attribute> toReturn = new ArrayList<Attribute>();
+		if (this.filters != null) {
+			JSONArray filters = this.filters.optJSONArray(QuerySerializationConstants.FILTERS);
+			if (filters != null && filters.length() > 0) {
+				for (int i = 0; i < filters.length(); i++) {
+					Attribute attribute = null;
+					try {
+						attribute = (Attribute) SerializationManager.deserialize(filters.get(i), "application/json", Attribute.class);
+					} catch (Exception e) {
+						throw new SpagoBIEngineRuntimeException("Cannot retrieve filtering attributes", e);
+					}
+					toReturn.add(attribute);
+				}
+			}
+		}
+		return toReturn;
+	}
 }

@@ -20,10 +20,12 @@
  **/
 package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
 
+import java.util.Iterator;
 import java.util.List;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
@@ -74,12 +76,17 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
-	private JSONArray serializeGlobalFilters(List<Attribute> globalFilters) {
-		// TODO Auto-generated method stub
-		return null;
+	private JSONArray serializeGlobalFilters(List<Attribute> globalFilters) throws SerializationException {
+		JSONArray globalFiltersJSON = new JSONArray();
+		Iterator<Attribute> it = globalFilters.iterator();
+		while (it.hasNext()) {
+			JSONObject js = (JSONObject) SerializationManager.serialize(it.next(), "application/json");
+			globalFiltersJSON.put(js);
+		}
+		return globalFiltersJSON;
 	}
 
-	private JSONArray serializeSheets(List<WorkSheet> sheets) throws SerializationException{
+	private JSONArray serializeSheets(List<WorkSheet> sheets) throws SerializationException {
 		JSONArray jsonSheets = new JSONArray();
 		for(int i=0; i<sheets.size(); i++){
 			jsonSheets.put(serializeSheet(sheets.get(i)));

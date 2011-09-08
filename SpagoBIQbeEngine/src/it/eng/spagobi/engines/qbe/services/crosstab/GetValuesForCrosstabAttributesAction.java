@@ -123,7 +123,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractQbeEngineActio
 				logger.debug("Using temporary table strategy....");
 				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + sqlQuery + "]");
 				try {
-					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource);
+					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource, null, null);
 				} catch (Exception e) {
 					logger.debug("Query execution aborted because of an internal exception");
 					String message = "An error occurred in " + getActionName() + " service while querying temporary table";				

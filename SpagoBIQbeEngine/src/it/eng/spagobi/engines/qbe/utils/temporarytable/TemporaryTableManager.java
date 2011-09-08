@@ -70,7 +70,7 @@ public class TemporaryTableManager {
 		return toReturn;
     }
     
-	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource)
+	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource, Integer start, Integer limit)
 	 			throws Exception {
 		logger.debug("IN");
     	Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
@@ -104,7 +104,7 @@ public class TemporaryTableManager {
 			logger.debug("Table [" + tableName + "] created successfully");
 		}
 		
-		DataStore dataStore = queryTemporaryTable(sqlStatement, tableName, dataSource);
+		DataStore dataStore = queryTemporaryTable(sqlStatement, tableName, dataSource, start, limit);
 		
 		logger.debug("OUT");
 		return dataStore;
@@ -153,7 +153,7 @@ public class TemporaryTableManager {
 	}
 
 	private static DataStore queryTemporaryTable(String sqlStatement, String tableName,
-			IDataSource dataSource) throws Exception {
+			IDataSource dataSource, Integer start, Integer limit) throws Exception {
 		
 		logger.debug("IN");
 		// injecting temporary table name into SQL statement
@@ -164,7 +164,11 @@ public class TemporaryTableManager {
 		JDBCDataSet dataSet = new JDBCDataSet();
 		dataSet.setDataSource(dataSource);
 		dataSet.setQuery(sqlStatement);
-		dataSet.loadData();
+		if (start == null && limit == null) {
+			dataSet.loadData();
+		} else {
+			dataSet.loadData(start, limit, -1);
+		}
 		DataStore dataStore = (DataStore) dataSet.getDataStore();
 		logger.debug("Data store retrieved successfully");
 		logger.debug("OUT");

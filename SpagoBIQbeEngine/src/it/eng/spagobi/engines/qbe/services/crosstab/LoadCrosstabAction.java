@@ -149,7 +149,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 				auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
 
 				try {
-					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource);
+					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource, null, null);
 				} catch (Exception e) {
 					logger.debug("Query execution aborted because of an internal exception");
 					String message = "An error occurred in " + getActionName() + " service while querying temporary table";				

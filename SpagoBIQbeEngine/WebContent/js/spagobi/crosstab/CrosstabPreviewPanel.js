@@ -91,6 +91,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 	, crosstab: null
 	, calculatedFields: null
 	, loadMask: null
+	, sheetName: null
 	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	
 		, exportContent: function(){
@@ -104,6 +105,7 @@ Ext.extend(Sbi.crosstab.CrosstabPreviewPanel, Ext.Panel, {
 			var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);
 			this.requestParameters = {
 				crosstabDefinition: crosstabDefinitionEncoded
+				, sheetName : this.sheetName
 			}
 			if(filters!=undefined && filters!=null){
 				this.requestParameters.optionalfilters = Ext.util.JSON.encode(filters);

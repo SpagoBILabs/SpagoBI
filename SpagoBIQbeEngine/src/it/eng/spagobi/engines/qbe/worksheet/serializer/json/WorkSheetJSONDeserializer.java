@@ -22,8 +22,10 @@ package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
 
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -68,6 +71,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			
 			try {
 				deserializeSheets(workSheetDefinitionJSON, workSheetDefinition);
+				deserializeGlobalFilters(workSheetDefinitionJSON, workSheetDefinition);
 			} catch (Exception e) {
 				throw new SerializationException("An error occurred while deserializing worksheet: " + workSheetDefinitionJSON.toString(), e);
 			}
@@ -79,6 +83,21 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		return workSheetDefinition;
 	}
 	
+	private void deserializeGlobalFilters(JSONObject workSheetDefinitionJSON,
+			WorkSheetDefinition workSheetDefinition) throws Exception {
+		JSONArray gfJSON = workSheetDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.GLOBAL_FILTERS);
+		List<Attribute> globalFilters = new ArrayList<Attribute>();
+		for (int i = 0; i < gfJSON.length(); i++) {
+			globalFilters.add(deserializeAttribute(gfJSON.getJSONObject(i)));
+		}
+		workSheetDefinition.setGlobalFilters(globalFilters);
+	}
+
+	private Attribute deserializeAttribute(JSONObject jsonObject) throws SerializationException {
+		Attribute attribute = (Attribute) SerializationManager.deserialize(jsonObject, "application/json", Attribute.class);
+		return attribute;
+	}
+
 	/**
 	 * Deserialize the list of sheets
 	 * @param crosstabDefinitionJSON
