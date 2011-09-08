@@ -75,6 +75,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	designToolsFieldsPanel: null,
 	designToolsPallettePanel: null,
 	designToolsLayoutPanel: null,
+	globalFilters: null,
 
 	initPanels: function() {
 		
@@ -88,7 +89,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 			split: true,
 			height : 120
 		});
-
+		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
+		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
 		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
 		
 		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'center'});
@@ -112,12 +114,37 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	     	});
 		}
 	}
-
 	
+	, fieldsLoadedHandler : function (store, records, options) {
+		store.each(this.initAttributeValues, this);
+	}
+
+	, initAttributeValues : function (record) {
+		var globalFilter = this.getGlobalFilterForRecord(record);
+		if (globalFilter != null) {
+			// global filter was found
+			record.data.values = globalFilter.values;
+		} else {
+			// global filter was not found
+			record.data.values = '[]';
+		}
+	}
+	
+	, getGlobalFilterForRecord : function (record) {
+		var toReturn = null;
+		for (var i = 0; i < this.globalFilters.length; i++) {
+			var aGlobalFilter = this.globalFilters[i];
+			if (record.data.alias == aGlobalFilter.alias) {
+				toReturn = aGlobalFilter;
+				break;
+			}
+		}
+		return toReturn;
+	}
 	
 	//Update the tools info for the active sheet
 	, updateToolsForActiveTab: function(activeSheet){
-		if(activeSheet.sheetLayout!==null){
+		if ( activeSheet.sheetLayout !== null ) {
 			this.designToolsLayoutPanel.setLayoutValue(activeSheet.sheetLayout);
 		}
 	}
@@ -130,4 +157,25 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
     	return this.designToolsFieldsPanel.getFields();
     }
     
+	, getGlobalFilters : function () {
+		var fields = this.getFields();
+		if (fields.length == 0) {
+			// fields were not loaded
+			return this.globalFilters;
+		}
+		// fields were already loaded and initialized by the fieldsLoadedHandler function
+		this.globalFilters = [];
+		for (var i = 0; i < fields.length; i++) {
+			var aField = fields[i];
+			if (aField.values != '[]') {
+				this.globalFilters.push(aField);
+			}
+		}
+		return this.globalFilters;
+	}
+    
+	, setGlobalFilters : function (globalFilters) {
+		this.globalFilters = globalFilters;
+	}
+	
 });

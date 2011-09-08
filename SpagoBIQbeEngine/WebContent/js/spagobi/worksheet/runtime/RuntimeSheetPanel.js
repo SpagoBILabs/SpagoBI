@@ -56,7 +56,7 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-	c ={
+	c = {
 			border: false,
 			title: this.sheetConfig.name,
             items: [new Ext.Panel({})]
@@ -129,7 +129,15 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		}
 		
 		//Builds the content
-		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(Ext.apply({style : 'float: left; width: 100%', hiddenContent: hiddenContent},{contentConfig: this.sheetConfig.content}));
+		this.content = new Sbi.worksheet.runtime.RuntimeSheetContentPanel(
+				Ext.apply({
+					style : 'float: left; width: 100%',
+					hiddenContent : hiddenContent
+				}, {
+					contentConfig : this.sheetConfig.content
+					, sheetName : this.sheetConfig.name
+				})
+		);
 		//catch the event of the contentloaded from the component and hide the loading mask
 		this.content.on('contentloaded',this.hideMask,this);
 		this.content.on('contentloading',this.showMask,this);
@@ -264,7 +272,8 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	            "text": aField.alias,
 	            "field": aField.id,
 	            "id": aField.id,
-	            "operator": "IN"
+	            "operator": "IN",
+	            "values": aField.values
 			};
 		if(aField.mandatory=='yes'){
 			dynamicaFilter.allowBlank=false;

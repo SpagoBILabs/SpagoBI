@@ -59,30 +59,32 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	
 	this.initPanels(config);
 	
+	this.setGlobalFilters(this.worksheetTemplate.globalFilters);
+	
 	c = Ext.apply(c, {
 			layout: 'border',
 			autoScroll: true,
 			items: [
-			        {
-			        	id: 'designToolsPanel',
-			        	region: 'west',
-			        	width: 275,
-			        	collapseMode:'mini',
-			        	autoScroll: true,
-			        	split: true,
-			        	layout: 'fit',
-			        	items: [this.designToolsPanel]
-			        },
-			        {
-			        	id: 'sheetsContainerPanel',	  
-			        	region: 'center',
-			        	split: true,
-			        	collapseMode:'mini',
-			        	autoScroll: true,
-			        	layout: 'fit',
-			        	items: [this.sheetsContainerPanel]
-			        }
-			        ]
+		        {
+		        	id: 'designToolsPanel',
+		        	region: 'west',
+		        	width: 275,
+		        	collapseMode:'mini',
+		        	autoScroll: true,
+		        	split: true,
+		        	layout: 'fit',
+		        	items: [this.designToolsPanel]
+		        },
+		        {
+		        	id: 'sheetsContainerPanel',	  
+		        	region: 'center',
+		        	split: true,
+		        	collapseMode:'mini',
+		        	autoScroll: true,
+		        	layout: 'fit',
+		        	items: [this.sheetsContainerPanel]
+		        }
+			]
 	}); 
 	
 
@@ -131,15 +133,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	}
 	
 	, getGlobalFilters : function () {
-		var globalFilters = [];
-		var fields = this.designToolsPanel.getFields();
-		for (var i = 0; i < fields.length; i++) {
-			var aField = fields[i];
-			if (aField.values != '[]') {
-				globalFilters.push(aField);
-			}
-		}
-		return globalFilters;
+		return this.designToolsPanel.getGlobalFilters();
 	}
     , showValidationErrors : function(errorsArray) {
     	errMessage = '';
@@ -154,6 +148,10 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
     	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.crosstab.crossTabValidation.title'));
    	
     }
+	
+	, setGlobalFilters : function (globalFilters) {
+		this.designToolsPanel.setGlobalFilters(globalFilters);
+	}
 	
 	
 });

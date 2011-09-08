@@ -184,7 +184,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		outputStream.flush();
 	}
 	
-	public void exportToXLS(JSONObject worksheetJSON, OutputStream stream) throws JSONException, IOException, SerializationException{
+	public void exportToXLS(JSONObject worksheetJSON, OutputStream stream) throws Exception {
 		WorkSheetXLSExporter exporter = new WorkSheetXLSExporter();
 		HSSFWorkbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
@@ -227,7 +227,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	}
 	
 	public int fillSheetContent(HSSFWorkbook wb, HSSFSheet sheet, JSONObject sheetJ, 
-			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws IOException, JSONException, SerializationException{
+			CreationHelper createHelper, WorkSheetXLSExporter exporter, HSSFPatriarch patriarch) throws Exception {
 		
 		JSONObject content = sheetJ.getJSONObject(WorkSheetXLSExporter.CONTENT);
 		String sheetType = content.getString(WorkSheetXLSExporter.SHEET_TYPE);
@@ -270,50 +270,47 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 	 * the data store
 	 * @return the data store after the execution of the active query
 	 */
-	private IDataStore getTableDataStore(JSONObject sheetJ){
-		Query query = getQuery(sheetJ);					
-
-		IStatement statement = getStatement(query);
-		IDataStore dataStore = executeQuery(statement, new Integer(0),  new Integer(1000));
+	private IDataStore getTableDataStore(JSONObject sheetJ) throws Exception {
+		JSONObject sheetContentPars = null;
+		JSONArray jsonVisibleSelectFields = null;
+		JSONObject sheetContent = sheetJ.optJSONObject(CONTENT);
+		sheetContentPars = sheetContent.optJSONObject(CONTENT_PARS);
+		// get the visible columns
+		if (sheetContentPars != null) {
+			jsonVisibleSelectFields = sheetContentPars
+					.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
+		}
+		IDataStore dataStore = executeQuery(jsonVisibleSelectFields);
 		return dataStore;
 	}
 	
-	public Query getQuery(JSONObject sheetJ) {
-
-		JSONObject sheetContentPars = null;
-		JSONArray jsonVisibleSelectFields  = null;
-		JSONObject sheetContent = sheetJ.optJSONObject(CONTENT);
-		if(sheetContent!=null){
-			sheetContentPars = sheetContent.optJSONObject(CONTENT_PARS);
-		}
-		//get the visible columns
-		if(sheetContentPars!=null){
-			jsonVisibleSelectFields  = sheetContentPars.optJSONArray(QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS);
-		}
-		//get the filters
-		JSONObject optionalUserFilters= sheetJ.optJSONObject(FILTERS);
-		QbeEngineInstance engineInstance = getEngineInstance();
-		Query clonedQuery=null;
-		Query activeQuery = engineInstance.getActiveQuery();
-		if (activeQuery == null) {
-			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
-		}
-		try {
-			if( getEngineInstance().getFormState()==null || getEngineInstance().getFormState().getFormStateValues()==null){
-				//clone the query
-				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(activeQuery, getEngineInstance().getDataSource(), getLocale())).toString();
-				clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
-			}else{
-				//the builder engine is the smart filter, so the query must be transformed 
-				clonedQuery = getFilteredQuery(activeQuery,  getEngineInstance().getFormState().getFormStateValues());
-			}		
-			applyFilters(clonedQuery, jsonVisibleSelectFields, optionalUserFilters);
-			return clonedQuery;
-		} catch (Exception e) {
-			activeQuery = null;
-		}
-		return activeQuery;
-	}
+//	public Query getQuery(JSONObject sheetJ) {
+//
+//
+//		//get the filters
+//		JSONObject optionalUserFilters= sheetJ.optJSONObject(FILTERS);
+//		QbeEngineInstance engineInstance = getEngineInstance();
+//		Query clonedQuery=null;
+//		Query activeQuery = engineInstance.getActiveQuery();
+//		if (activeQuery == null) {
+//			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
+//		}
+//		try {
+//			if( getEngineInstance().getFormState()==null || getEngineInstance().getFormState().getFormStateValues()==null){
+//				//clone the query
+//				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(activeQuery, getEngineInstance().getDataSource(), getLocale())).toString();
+//				clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
+//			}else{
+//				//the builder engine is the smart filter, so the query must be transformed 
+//				clonedQuery = getFilteredQuery(activeQuery,  getEngineInstance().getFormState().getFormStateValues());
+//			}		
+//			applyFilters(clonedQuery, jsonVisibleSelectFields, optionalUserFilters);
+//			return clonedQuery;
+//		} catch (Exception e) {
+//			activeQuery = null;
+//		}
+//		return activeQuery;
+//	}
 	
 	/**
 	 * Return true if the content of a sheet is a table

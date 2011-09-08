@@ -419,7 +419,7 @@ setQueriesCatalogue: function (queriesCatalogue) {
 
 ,
 setWorksheetState : function (successFn, failureFn, scope) {
-	var state = this.worksheetDesignerPanel.sheetsContainerPanel.getSheetsState();
+	var state = this.worksheetDesignerPanel.getWorksheetDefinition();
 	var params = {
 			'worksheetdefinition':  Ext.encode(state)
 	};

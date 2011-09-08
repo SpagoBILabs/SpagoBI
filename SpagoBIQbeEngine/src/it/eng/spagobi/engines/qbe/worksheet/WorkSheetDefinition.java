@@ -29,6 +29,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -87,6 +88,19 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 			 throw new SpagoBIEngineRuntimeException("Error while serializing worksheet definition", e);
 		}
 
+	}
+	
+	public WorkSheet getSheetConfiguration(String name) {
+		WorkSheet toReturn = null;
+		Iterator<WorkSheet> it = this.workSheet.iterator();
+		while (it.hasNext()) {
+			WorkSheet sheet = it.next();
+			if (sheet.getName().equals(name)) {
+				toReturn = sheet;
+				break;
+			}
+		}
+		return toReturn;
 	}
 
 	public void load(byte[] rowData) throws SpagoBIEngineException {

@@ -82,6 +82,7 @@ Sbi.worksheet.runtime.RuntimeGenericChartPanel  = function(config) {
 Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	loadMask: null,
 	services: null,
+	sheetName: null,
 	dataContainerObject: null//the object with the data for the panel
 	
 	/**
@@ -91,18 +92,19 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
 	 */
 	, loadChartData: function(dataConfig, filters){
-	
-		if(!this.chartConfig.hiddenContent){
+		
+		if ( !this.chartConfig.hiddenContent ){
 			var requestParameters = {
-					crosstabDefinition: Ext.util.JSON.encode({
+					'crosstabDefinition': Ext.util.JSON.encode({
 						'rows': [],
-						'columns':dataConfig.rows,
+						'columns': dataConfig.rows,
 						'measures': dataConfig.measures,
-						'config': {'measureson':'rows'}
+						'config': {'measureson':'rows'},
 					})
+					, 'sheetName' : this.sheetName
 			};
-			if(filters!=null){
-				requestParameters.optionalfilters = Ext.util.JSON.encode(filters);
+			if ( filters != null ) {
+				requestParameters.optionalfilters = Ext.encode(filters);
 			}
 			Ext.Ajax.request({
 		        url: this.services['loadData'],//load the crosstab from the server
@@ -324,9 +326,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 		};
 		
 		return toReturn;
-	},
+	}
 	
-	exportContent: function(){
+	, exportContent: function() {
 		var svg = this.chart.getSVG();
 		var exportedChart = {SVG: svg, SHEET_TYPE: 'CHART'};
 		return exportedChart;

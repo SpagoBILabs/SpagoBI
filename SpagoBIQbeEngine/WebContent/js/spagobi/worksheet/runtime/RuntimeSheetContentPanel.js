@@ -85,9 +85,10 @@ Sbi.worksheet.runtime.RuntimeSheetContentPanel = function(config) {
 };
 
 Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
-	content: null,
+	content : null
+	, sheetName : null
 
-	exportContent: function(filtersValue){
+	, exportContent: function(filtersValue){
 		if(this.contentConfig.designer == 'Table') {
 			var visibleselectfields = (this.contentConfig.visibleselectfields);
     		var params ={'visibleselectfields': visibleselectfields};
@@ -105,11 +106,11 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	        case 'Pivot Table':
 	        	return this.initCrossTab(c);
 	        case 'Bar Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel({'chartConfig':this.contentConfig});
+	        	return new Sbi.worksheet.runtime.RuntimeBarChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Line Chart':
-	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel({'chartConfig':this.contentConfig});
+	        	return new Sbi.worksheet.runtime.RuntimeLineChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Pie Chart':
-	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel({'chartConfig':this.contentConfig});
+	        	return new Sbi.worksheet.runtime.RuntimePieChartPanel({'chartConfig':this.contentConfig, sheetName : this.sheetName});
 	        case 'Table':
 	        	return this.initTable(c);
 	        default: 
@@ -147,7 +148,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
     		services: {
     			loadDataStore: Sbi.config.serviceRegistry.getServiceUrl({
     				serviceName: 'EXECUTE_WORKSHEET_QUERY_ACTION'
-    				, baseParams: new Object()//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
+    				, baseParams: {sheetName : this.sheetName}//baseParams: {'visibleselectfields': Ext.encode(this.contentConfig.visibleselectfields)}
     			})
     		}
     	},ieFixVar));
@@ -162,6 +163,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	initCrossTab: function(c){
 		var crossTab = new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c|| {},{
 			hideLoadingMask: true,
+			sheetName : this.sheetName,
 			crosstabConfig: {autoHeight: true}, 
 			title: false}));
 		if(!c.hiddenContent){

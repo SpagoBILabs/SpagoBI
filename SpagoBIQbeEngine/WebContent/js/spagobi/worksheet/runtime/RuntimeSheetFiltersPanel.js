@@ -164,7 +164,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 	}
 	
 	, createField: function( openFilter ) {
-
+		
 		var field;
 		
 		var baseConfig = {
@@ -199,6 +199,7 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 			editable: true			
 		    , forceSelection: false
 		    , store: store
+		    , mode: (openFilter.values != '[]') ? 'local' : 'remote' // in case the filters contains some values, they are loaded locally
 		    , displayField: 'column_1'
 		    , valueField: 'column_1'
 		    , emptyText: ''
@@ -217,29 +218,36 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 
 
 	, createStore: function(openFilter) {
-		
-		var queryType = openFilter.queryType;
-		var lookupQuery = openFilter.lookupQuery;
-		var entityId = openFilter.field;
-		var orderField = openFilter.orderBy;
-		var orderType = openFilter.orderType;
-		var queryRootEntity = openFilter.queryRootEntity;
-		
-		var store = new Ext.data.JsonStore({
-			url: this.services['getFilterValuesService']
-		});
-		var baseParams = {
-				'QUERY_TYPE': queryType, 
-				'LOOKUP_QUERY': lookupQuery, 
-				'ENTITY_ID': entityId, 
-				'ORDER_ENTITY': orderField, 
-				'ORDER_TYPE': orderType, 
-				'QUERY_ROOT_ENTITY': queryRootEntity
-		};
-		store.baseParams = baseParams;
-		store.on('loadexception', function(store, options, response, e) {
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		});
+		var store = null;
+		if (openFilter.values != '[]') {
+			// case of fixed values
+			var data = [];
+			var temp = Ext.decode(openFilter.values);
+			for (var i = 0; i < temp.length; i++) {
+				data[i] = [temp[i]];
+			}
+			store = new Ext.data.ArrayStore({
+			    fields : ['column_1']
+				, data : data
+			});
+		} else {
+			// we must load the values from server
+			store = new Ext.data.JsonStore({
+				url: this.services['getFilterValuesService']
+			});
+			var baseParams = {
+					'QUERY_TYPE': openFilter.queryType, 
+					'LOOKUP_QUERY': openFilter.lookupQuery, 
+					'ENTITY_ID': openFilter.field, 
+					'ORDER_ENTITY': openFilter.orderBy, 
+					'ORDER_TYPE': openFilter.orderType, 
+					'QUERY_ROOT_ENTITY': openFilter.queryRootEntity
+			};
+			store.baseParams = baseParams;
+			store.on('loadexception', function(store, options, response, e) {
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			});
+		}
 		
 		return store;
 		
