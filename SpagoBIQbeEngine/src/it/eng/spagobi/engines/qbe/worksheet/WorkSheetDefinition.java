@@ -59,6 +59,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	
 	public WorkSheetDefinition(){
 		workSheet = new ArrayList<WorkSheet>();
+		globalFilters = new ArrayList<Attribute>();
 	}
 	
 	public WorkSheetDefinition(List<WorkSheet> workSheet){

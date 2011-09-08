@@ -126,6 +126,7 @@ public class LoadCrosstabAction extends AbstractQbeEngineAction {
 			
 			String sqlStatement = buildSqlStatement(crosstabDefinition, query, sqlQuery, statement);
 			logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
+			System.out.println(sqlStatement);
 			
 			if (!TemporaryTableManager.isEnabled()) {
 				logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +

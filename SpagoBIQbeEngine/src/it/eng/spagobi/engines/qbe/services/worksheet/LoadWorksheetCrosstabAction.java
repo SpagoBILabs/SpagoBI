@@ -115,7 +115,7 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	}
 
 
-	private static List<WhereField> transformIntoWhereClauses(
+	public static List<WhereField> transformIntoWhereClauses(
 			List<Attribute> attributes) throws JSONException {
 		Iterator<Attribute> it = attributes.iterator();
 		List<WhereField> whereFields = new ArrayList<WhereField>();
@@ -179,8 +179,8 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 
 				Operand rightOperand = new Operand(values,fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
 
-				String operator = "NOT EQUALS TO";
-				if(valuesArray.length()>0){
+				String operator = "EQUALS TO";
+				if(valuesArray.length()>1){
 					operator="IN";
 				}
 

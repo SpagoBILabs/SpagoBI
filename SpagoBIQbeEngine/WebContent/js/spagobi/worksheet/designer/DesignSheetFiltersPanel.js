@@ -110,8 +110,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			// if there are initialData, load them into the store
 			if (this.initialData !== undefined) {
 				for (i = 0; i < this.initialData.length; i++) {
-					var record = new this.Record(this.initialData[i]);
-		  			this.store.add(record);
+					this.addFilterIntoStore(this.initialData[i]);
 				}
 			}
 		}else{
@@ -224,12 +223,19 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 			this.empty = false;	
 		}
 
-		this.store.add([aRow]);
-		var item = this.createFilterPanel(aRow);
+		var newRow = this.addFilterIntoStore(aRow.data);
+		var item = this.createFilterPanel(newRow);
 
 		this.contents.push(item);
 		this.add(item);
 		this.doLayout();
+	}
+	
+	, addFilterIntoStore : function (filter) {
+		var data = Ext.apply({}, filter); // making a clone
+		var row = new this.Record(data); 
+		this.store.add([row]);
+		return row;
 	}
 	
 	, createFilterPanel: function(aRow) {

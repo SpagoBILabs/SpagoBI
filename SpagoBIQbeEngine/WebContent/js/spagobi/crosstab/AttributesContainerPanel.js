@@ -136,8 +136,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
 			for (i = 0; i < this.initialData.length; i++) {
-				var record = new this.Record(this.initialData[i]);
-	  			this.store.add(record);
+				this.addAttribute(this.initialData[i]);
 			}
 		}
 	}
@@ -231,12 +230,9 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 			}
 			
 			// check attribute is not already present in rows or in columns			
-	    	if(this.fireEvent('beforeAddAttribute', this, aRow) !== false){
-				var newRecord = new this.Record(aRow.data);
-				newRecord.data.values = '[]'; // init the 'values' property as empty
-				this.store.add([newRecord]);	    	
-				}
-
+			if (this.fireEvent('beforeAddAttribute', this, aRow) !== false) {
+				this.addAttribute(aRow.data);
+			}
 		}
 	}
 	
@@ -293,8 +289,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		this.removeAllAttributes();
 		for (var i = 0; i < attributes.length; i++) {
   			var attribute = attributes[i];
-  			var record = new this.Record(attribute);
-  			this.store.add(record); 
+  			this.addAttribute(attribute);
   		}
 	}
 	
@@ -313,6 +308,13 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
      	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
      		attribute : record.data
      	});
+	}
+	
+	, addAttribute : function (attribute) {
+		var data = Ext.apply({}, attribute); // making a clone
+		var row = new this.Record(data); 
+		this.store.add([row]);
+		return row;
 	}
 
 });

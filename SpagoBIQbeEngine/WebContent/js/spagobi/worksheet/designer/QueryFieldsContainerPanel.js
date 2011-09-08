@@ -123,6 +123,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	      , {name: 'funct', type: 'string'}
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
+	      , {name: 'values', type: 'string'}
 	])
 	
 	, init: function(c) {
@@ -132,13 +133,12 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
 			for (i = 0; i < this.initialData.length; i++) {
-				var record = new this.Record(this.initialData[i]);
-	  			this.store.add(record);
+				this.addField(this.initialData[i]);
 			}
 		}
 	}
@@ -195,7 +195,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 				});
 				return;
 			}
-			this.store.add([aRow]);
+			this.addField(aRow.data);
 			this.fireEvent('storeChanged', this.store.getCount());
 		}
 	}
@@ -224,10 +224,15 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 		var i = 0;
 		for (; i < attributes.length; i++) {
   			var attribute = attributes[i];
-  			var record = new this.Record(attribute);
-  			this.store.add(record); 
+  			this.addField(attribute); 
   		}
 		this.fireEvent('storeChanged', this.store.getCount());
+	}
+	
+	, addField : function (field) {
+		var data = Ext.apply({}, field); // making a clone
+		var record = new this.Record(data);
+		this.store.add(record); 
 	}
 	
 	, removeSelectedValues: function() {

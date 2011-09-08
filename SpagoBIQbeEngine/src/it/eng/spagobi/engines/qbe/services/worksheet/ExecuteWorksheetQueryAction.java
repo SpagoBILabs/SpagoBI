@@ -24,6 +24,7 @@ import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
@@ -33,6 +34,7 @@ import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -59,6 +61,7 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ * 			Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
 
@@ -123,15 +126,19 @@ public class ExecuteWorksheetQueryAction extends AbstractQbeEngineAction {
 	}
 	
 	private String buildSqlStatement(JSONArray jsonVisibleSelectFields,
-			Query query, String sqlQuery, IStatement statement) throws JSONException {
+			Query query, String sqlQuery, IStatement statement) throws Exception {
 		JSONObject optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
 		List<String> aliases = new ArrayList<String>();
+		List<Attribute> onTableAttributes = new ArrayList<Attribute>();
 		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
 			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
-			aliases.add(jsonVisibleSelectField.getString("alias"));
+			Attribute attribute = (Attribute) SerializationManager.deserialize(jsonVisibleSelectField, "application/json", Attribute.class);
+			aliases.add(attribute.getAlias());
+			onTableAttributes.add(attribute);
 		}	
 		List<WhereField> whereFields = new ArrayList<WhereField>();
 		String sheetName = this.getAttributeAsString(LoadWorksheetCrosstabAction.SHEET);
+		whereFields.addAll(LoadWorksheetCrosstabAction.transformIntoWhereClauses(onTableAttributes));
 		whereFields.addAll(LoadWorksheetCrosstabAction.getMandatoryFilters(this.getEngineInstance(), sheetName));
 		whereFields.addAll(LoadWorksheetCrosstabAction.getOptionalFilters(optionalUserFilters));
 		return CrosstabQueryCreator.getTableQuery(aliases, query, whereFields, sqlQuery, statement);	
@@ -142,7 +149,7 @@ public class ExecuteWorksheetQueryAction extends AbstractQbeEngineAction {
 		if (formState == null) {
 			return null;
 		} else {
-			return  formState.getFormStateValues();
+			return formState.getFormStateValues();
 		}
 	}
 	
@@ -191,6 +198,7 @@ public class ExecuteWorksheetQueryAction extends AbstractQbeEngineAction {
 		
 		String sqlStatement = buildSqlStatement(jsonVisibleSelectFields, query, sqlQuery, statement);
 		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
+		System.out.println(sqlStatement);
 		
 		if (!TemporaryTableManager.isEnabled()) {
 			logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
@@ -230,11 +238,11 @@ public class ExecuteWorksheetQueryAction extends AbstractQbeEngineAction {
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 		logger.debug("Query executed succesfully");
 		
-		List queryFields = query.getDataMartSelectFields(true);
+		// at this moment, the store has "col_0_..." (or something like that) as column aliases: we must put the right aliases 
 		IDataStoreMetaData dataStoreMetadata = dataStore.getMetaData();
-		for (int i = 0; i < dataStoreMetadata.getFieldCount(); i++) {
-			ISelectField queryField = (ISelectField)queryFields.get(i);
-			dataStoreMetadata.changeFieldAlias(i, queryField.getAlias());
+		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
+			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
+			dataStoreMetadata.changeFieldAlias(i, jsonVisibleSelectField.getString("alias"));
 		}
 		
 		resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
