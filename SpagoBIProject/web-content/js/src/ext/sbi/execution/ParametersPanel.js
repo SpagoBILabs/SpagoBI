@@ -181,6 +181,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var rawValue = state[fieldDescription];
 				if (rawValue !== undefined && rawValue != null && this.fields[fieldName].rendered === true) {
 					this.fields[fieldName].setRawValue( rawValue );
+					this.updateDependentFields( this.fields[fieldName] );
 				}
 			}
 		}
@@ -202,6 +203,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var aField = this.fields[p];
 			if (!aField.isTransient) {
 				aField.reset();
+				this.updateDependentFields( aField );
 			}
 		}
 	}
@@ -273,9 +275,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.columns[field.columnNo].add( field );
 			}
 			this.fields[parameters[i].id] = field;
-			
-
-			
+	
 		}
 		
 		var thereAreParametersToBeFilled = false;
@@ -368,13 +368,16 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		}
 		
 		for(var p in this.fields) {
+			var theField = this.fields[p];
+			this.updateDependentFields( theField );
+			
 			/*
 			 * workaround (work-around):
 			 * 'change' event works properly for combo-boxes but not for lookup fields (it is not fired, don't know why...);
 			 * 'valid' event works properly for lookup fields but not for combo-boxes (it is fired more times and the first time the getValue() method returns the description column, not the value column);
 			 * Therefore we mix them...
 			 */
-			var theField = this.fields[p];
+			
 			if (theField.behindParameter.selectionType === 'COMBOBOX'
 				|| theField.behindParameter.selectionType === 'LIST'
 				|| theField.behindParameter.selectionType === 'CHECK_LIST'	) {
@@ -408,19 +411,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		
 		// initially hide field if it has visual conditions,
-		for(var z = 0; z < parameters.length; z++) {
-			var field = this.fields[parameters[z].id];
-			var dependencies = field.dependencies;
-			if(dependencies){
-				for(var j = 0; j < dependencies.length; j++) {
-					var dep = dependencies[j];
-					if(dep && dep.hasVisualDependency == true){
-						this.hideFieldLabel(field);
-						field.setVisible(false);
-						}					
-					}
-				}
-			}
+//		for(var z = 0; z < parameters.length; z++) {
+//			var field = this.fields[parameters[z].id];
+//			var dependencies = field.dependencies;
+//			if(dependencies){
+//				for(var j = 0; j < dependencies.length; j++) {
+//					var dep = dependencies[j];
+//					if(dep && dep.hasVisualDependency == true){
+//						this.hideFieldLabel(field);
+//						field.setVisible(false);
+//						}					
+//					}
+//				}
+//			}
 				
 		
 		this.fireEvent('synchronize', this, isReadyForExecution, this.parametersPreference);
