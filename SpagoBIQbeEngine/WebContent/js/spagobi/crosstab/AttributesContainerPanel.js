@@ -102,6 +102,8 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	
 	// constructor
     Sbi.crosstab.AttributesContainerPanel.superclass.constructor.call(this, c);
+  
+    this.addEvents("beforeAddAttribute");
     
     this.on('render', this.initDropTarget, this);
     
@@ -205,16 +207,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		var rows = ddSource.dragData.selections;
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
-			// if the attribute is already present show a warning
-			if (this.store.find('id', aRow.data.id) !== -1) {
-				Ext.Msg.show({
-					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
-					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
-					   buttons: Ext.Msg.OK,
-					   icon: Ext.MessageBox.WARNING
-				});
-				return;
-			}
+	
 			// if the field is a measure show a warning
 			if (aRow.data.nature === 'measure' || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
@@ -225,6 +218,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				});
 				return;
 			}
+			
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
@@ -235,9 +229,14 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				});
 				return;
 			}
-			var newRecord = new this.Record(aRow.data);
-			newRecord.data.values = '[]'; // init the 'values' property as empty
-			this.store.add([newRecord]);
+			
+			// check attribute is not already present in rows or in columns			
+	    	if(this.fireEvent('beforeAddAttribute', this, aRow) !== false){
+				var newRecord = new this.Record(aRow.data);
+				newRecord.data.values = '[]'; // init the 'values' property as empty
+				this.store.add([newRecord]);	    	
+				}
+
 		}
 	}
 	
