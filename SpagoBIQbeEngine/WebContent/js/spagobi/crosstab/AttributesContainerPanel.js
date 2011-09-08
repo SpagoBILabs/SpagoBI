@@ -216,7 +216,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				return;
 			}
 			// if the field is a measure show a warning
-			if (aRow.data.nature === 'measure') {
+			if (aRow.data.nature === 'measure' || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
 					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.measures'),
