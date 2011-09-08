@@ -628,6 +628,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				 * The following "mode : 'local'" instruction should not be necessary: the parameter's values are loaded from remote server
 				 */
 			    //, mode : 'local'
+			    // used to hack it the first time the panel is expanded in DocumentExecutionPage
+			    , xtype : 'combo'
 			    , listeners: {
 			    	'select': {
 			       		fn: function(){	

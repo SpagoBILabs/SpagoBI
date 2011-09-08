@@ -253,6 +253,10 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		Ext.apply(config, {pageNumber: 3}); // this let the ParametersPanel know that it is on execution page
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
 		
+		
+		
+		
+		
 		this.northPanel = new Ext.Panel({
 				region:'north'
 				, border: false
@@ -268,6 +272,24 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				, layout: 'fit'
 				, items: [this.parametersPanel]
 		});
+		
+		// fix the bug with the width of option box in combo. Without this fix when the combobox
+		// is rendered on an hided panel the width of the option box is far less than the with of
+		// the input field
+		this.northPanel.on('expand', function() {
+			//alert('expand');
+			for(p in this.parametersPanel.fields) {
+				var aField = this.parametersPanel.fields[p];
+				//alert(p + '  : ' + aField.toSource());
+				if(aField.xtype == 'combo' && !aField.isHacked){
+					var box = aField.getSize();
+					aField.setWidth(box.width-1); // wont apply same width :)
+					aField.setWidth(box.width);
+					aField.isHacked = true;
+					//alert(p + + ' HACKED !');
+				}
+			}
+		}, this);
 	}
 	
 	, initCenterPanel: function( config, doc ) {
