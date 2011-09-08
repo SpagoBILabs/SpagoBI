@@ -59,7 +59,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	
 	this.initPanels(config);
 	
-	this.setGlobalFilters(this.worksheetTemplate.globalFilters);
+	this.setGlobalFilters(this.worksheetTemplate.globalFilters || []);
 	
 	c = Ext.apply(c, {
 			layout: 'border',

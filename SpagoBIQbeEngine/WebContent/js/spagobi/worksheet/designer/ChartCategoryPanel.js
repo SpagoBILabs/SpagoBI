@@ -143,7 +143,7 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 	}
 	
 	, setCategory: function (category) {
-		this.category = category;
+		this.category = Ext.apply({}, category); // making a clone of the input object
 		this.content.destroy();
 		var panel = this.createCategoryPanel();
 		this.add(panel);

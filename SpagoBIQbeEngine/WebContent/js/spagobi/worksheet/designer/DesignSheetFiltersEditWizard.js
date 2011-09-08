@@ -67,7 +67,7 @@ Sbi.worksheet.designer.DesignSheetFiltersEditWizard = function(config) {
 	});
 
 	// constructor	
-	Sbi.worksheet.designer.DesignSheetFiltersPanel.superclass.constructor.call(this, c);
+	Sbi.worksheet.designer.DesignSheetFiltersEditWizard.superclass.constructor.call(this, c);
 
 };
 
