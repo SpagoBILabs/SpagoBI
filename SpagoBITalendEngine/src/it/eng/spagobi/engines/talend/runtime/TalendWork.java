@@ -158,7 +158,7 @@ public class TalendWork implements Work {
 		Map endEventParams = new HashMap();
 		endEventParams.put(EVENT_TYPE, DOCUMENT_EXECUTION_END);
 		// endEventParams.put("biobj-path", params.get(TEMPLATE_PATH));
-		endEventParams.put(BIOBJECT_ID, _parameters.get("document"));
+		endEventParams.put(BIOBJECT_ID, _parameters.get(EngineConstants.ENV_DOCUMENT_ID));
 		if (startEventId != null) {
 		    endEventParams.put(START_EVENT_ID, startEventId.toString());
 		}
