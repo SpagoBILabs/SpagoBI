@@ -82,7 +82,6 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 			sendMessage({}, 'collapse2'); 
 		}, this);
 	}, this);
-	
 	/*
 	this.activeDocument.parametersSelectionPage.parametersPanel.on('beforesynchronize', function(){
 		this.doLayout();
@@ -90,7 +89,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 		this.activeDocument.parametersSelectionPage.southPanel.expand();
 	}, this);
 	*/
-	
+	 
 	var c = Ext.apply({}, config || {}, {
 		title: title
 		, closable: closable
@@ -320,6 +319,24 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
             	} 
     		}
 		});
+
+		//adds the back button
+		if (this.documentsStack.length > 1) {
+			tb.addSpacer();
+			tb.addButton(new Ext.Toolbar.Button({
+				iconCls: 'icon-back'
+				, tooltip: LN('sbi.execution.executionpage.toolbar.breadcrumbback')
+			    , scope: this
+			    , disabled: false
+			    , stackIndex: (this.documentsStack.length-2)
+			    , listeners: {
+	    			'click': {
+	              		fn: this.onBreadCrumbClick,
+	              		scope: this
+	            	} 
+	    		}
+			}));			
+		}
 	}
 	
 	, addBreadcrumbsMiddleButtons: function(tb) {
@@ -387,7 +404,8 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		this.activeDocument = this.documentsStack[b.stackIndex];
 
 		//send show message to the new actived console
-		this.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore!', 'show');
+		if (this.activeDocument.documentExecutionPage)
+			this.activeDocument.documentExecutionPage.miframe.sendMessage('Enable datastore!', 'show');
 				
 		//this.swapPanel(prevActiveDoc, this.activeDocument);
 		
