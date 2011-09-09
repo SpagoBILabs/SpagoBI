@@ -289,6 +289,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Save';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Go back to previous document';
 
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';
