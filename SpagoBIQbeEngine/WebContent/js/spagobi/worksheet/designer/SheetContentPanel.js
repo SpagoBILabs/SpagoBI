@@ -66,7 +66,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	};
 	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);
 	
-	this.addEvents('addDesigner');
+	this.addEvents('addDesigner', 'beforeAddAttribute');
 	
 	this.on('render', this.initDropTarget, this);
 	if(Ext.isIE){
@@ -208,6 +208,16 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.emptyMsgPanel.destroy();
 		this.add(this.designer);
 		this.doLayout();
+		
+		// add listener when attribute is added
+		this.designer.on('beforeAddAttribute', 
+				function(crossTabDef, att){
+			var boolean = this.fireEvent('beforeAddAttribute', this,  att);
+			return boolean;
+		}				
+				, 
+				this);
+		
 	}
 	
 	, removeDesigner: function (event, tool, panel, tc) {
@@ -281,19 +291,22 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		if(this.designer == null) 
 			return 'designer is null';
 		
-		var mixedColl = this.items;
-		if(mixedColl){
-			var arrayList = mixedColl.items; 
-			if(arrayList){
-				for(i = 0; i < arrayList.length; i++) {
-					var currItem = arrayList[i];
-					// if it is a crosstab starts validation on it
-					if(currItem instanceof Sbi.crosstab.CrosstabDefinitionPanel){
-						return currItem.validate();
-					}
-				}				
-			}
-		}
+		else
+			return this.designer.validate();
+		
+//		var mixedColl = this.items;
+//		if(mixedColl){
+//			var arrayList = mixedColl.items; 
+//			if(arrayList){
+//				for(i = 0; i < arrayList.length; i++) {
+//					var currItem = arrayList[i];
+//					// if it is a crosstab starts validation on it
+//					if(currItem instanceof Sbi.crosstab.CrosstabDefinitionPanel){
+//						return currItem.validate();
+//					}
+//				}				
+//			}
+//		}
 	}
 	
 	

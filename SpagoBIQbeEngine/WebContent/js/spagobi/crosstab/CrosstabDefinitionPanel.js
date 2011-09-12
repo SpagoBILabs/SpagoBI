@@ -70,8 +70,25 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 	// constructor
 	Sbi.crosstab.CrosstabDefinitionPanel.superclass.constructor.call(this, c);
 
-	this.columnsContainerPanel.on('beforeAddAttribute', this.checkAttNotPresent, this);
-	this.rowsContainerPanel.on('beforeAddAttribute', this.checkAttNotPresent, this);
+    this.addEvents("beforeAddAttribute");
+
+	
+	this.columnsContainerPanel.on('beforeAddAttribute',
+			//this.checkAttNotPresent
+			function(crossTabDef, att){
+				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
+				return boolean;
+				}
+			, this);
+	this.rowsContainerPanel.on('beforeAddAttribute', 
+			//this.checkAttNotPresent
+			function(crossTabDef, att){
+				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
+				return boolean;
+				}
+			, this);
+	
+
 	
 //	this.addEvents('preview');
 
@@ -236,24 +253,13 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 	var storeRows = rows.store;
 	var storeColumns = columns.store;
 	if (storeRows.find('id', id) !== -1) {
-		Ext.Msg.show({
-			title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
-			msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
-			buttons: Ext.Msg.OK,
-			icon: Ext.MessageBox.WARNING
-		});
-		return false;
+			return false;
 	}
 	else if(storeColumns.find('id', id) !== -1){
-			Ext.Msg.show({
-			title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
-			msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
-			buttons: Ext.Msg.OK,
-			icon: Ext.MessageBox.WARNING	
-			});
+
 			return false;
 	}
 	
-return true;
-}
+	return true;
+	}
 });

@@ -189,5 +189,17 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
 	}
+	, validate: function(){
+		if (this.categoryContainerPanel.category== null){
+			return LN("sbi.designerchart.chartValidation.noCategory");
+		}
+		var store = this.seriesContainerPanel.store;
+		var seriesCount = store.getCount();
+		if(seriesCount == 0 ){
+			return LN("sbi.designerchart.chartValidation.noSeries");
+		}
+		return; 
 
+}
+	
 });

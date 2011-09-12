@@ -106,6 +106,22 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	}
 
 
+	 //add listener when attribute is added
+		this.contentPanel.on('beforeAddAttribute', 
+				function(crossTabDef, att){
+					var boolean = this.fireEvent('beforeAddAttribute', this,  att);
+					return boolean;
+				},
+				this);
+
+	// add listener when attribute is added
+	this.filtersPanel.on('beforeAddAttribute', 
+			function(crossTabDef, att){
+				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
+				return boolean;
+				}
+			, this);
+	
 	Sbi.worksheet.designer.SheetFilterContentPanel.superclass.constructor.call(this, c);
 };
 
@@ -136,5 +152,6 @@ Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {
 	validate: function(){
 		return this.contentPanel.validate();
 	}
+
 	
 });
