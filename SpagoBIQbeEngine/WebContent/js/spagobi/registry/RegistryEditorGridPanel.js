@@ -213,16 +213,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    var st = meta.fields[e.column].subtype;
 			    if(Ext.isDate(val) ){
 			    	if(st != null && st !== undefined && st === 'timestamp'){
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats.timestamp);
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['timestamp']);
 			    	}else{
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats.date);
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
 			    	}
 			    }else if(Ext.isNumber(val)){
 			    	/*if(t === 'int'){
 			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats.int);
 			    	}else */
 			    		if(t === 'float'){
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats.float);
+			    		e.record.data[e.field] = Sbi.qbe.commons.Format.number(val, Sbi.locale.formats['float']);
 			    	}
 			    }
 			    return true;
