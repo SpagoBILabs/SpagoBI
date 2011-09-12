@@ -123,7 +123,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			var i = 0;
 			for (; i < this.sheetConfig.filters.filters.length; i++ ) {
 				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters.filters[i]);
-				hiddenContent = hiddenContent || !aDynamicFilter.allowBlank;
+				if(!hiddenContent && aDynamicFilter.allowBlank!=undefined && aDynamicFilter.allowBlank!=null && !aDynamicFilter.allowBlank){
+					hiddenContent=true;
+				}
 				dynamicFilters.push(aDynamicFilter);	
 			}
 		}
