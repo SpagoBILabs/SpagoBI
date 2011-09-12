@@ -82,5 +82,25 @@ Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {
 			this.tableDesigner.tableDesigner.setValues(state.visibleselectfields);
 		}
 	}
-	
+	/* tab validity: rules are
+	 * - at least one measure or attribute is in
+	 */
+
+	, validate: function(){
+		var vals = this.tableDesigner.tableDesigner.getContainedValues();
+		if(vals && vals.length> 0) {return;} // OK
+		else {return LN("sbi.designertable.tableValidation.noElement");} // ERROR MESSAGE
+	}
+	, checkAttNotPresent: function(crossTabDef, att){
+		var id = att.data.id;	
+		var vals = this.tableDesigner.tableDesigner.getContainedValues();
+		var toReturn = true;
+		for (var i = 0; i < vals.length && toReturn === true; i++) {
+			var el = vals[i];
+			if(el.id === id){
+				toReturn = false;
+			}
+		}
+		return toReturn;
+		}
 });

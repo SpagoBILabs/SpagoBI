@@ -261,5 +261,18 @@ Ext.extend(Sbi.worksheet.designer.LineChartDesignerPanel, Ext.Panel, {
 		 * Suspending the events and deferring the this.changeLineChartImage solve the issue.
 		 */
 	}
+	, validate: function(){
+		if (this.categoryContainerPanel.category== null){
+			return LN("sbi.designerchart.chartValidation.noCategory");
+		}
+		var store = this.seriesContainerPanel.store;
+		var seriesCount = store.getCount();
+		if(seriesCount == 0 ){
+			return LN("sbi.designerchart.chartValidation.noSeries");
+		}
+		return; 
+
+}
+	
 
 });

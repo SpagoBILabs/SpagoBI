@@ -1,6 +1,11 @@
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
+Sbi.locale.ln['sbi.designertable.tableValidation.noElement'] = 'At least one attribute or measure must be inserted';
+Sbi.locale.ln['sbi.designerchart.chartValidation.noSeries'] = 'Use at least one measure as serie';
+Sbi.locale.ln['sbi.designerchart.chartValidation.noCategory'] = 'Use one attribute as category';
+
+
 Sbi.locale.formats = {
 		/*
 		number: {

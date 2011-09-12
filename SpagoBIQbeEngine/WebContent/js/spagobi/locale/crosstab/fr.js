@@ -13,6 +13,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.columns'] = 'Colonnes';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.measures'] = 'Mesures';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.title'] = 'Suppression Impossible';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'] = 'L\'attribut a d\u00E9j\u00E0 \u00E9t\u00E9 choisi';
+Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'] = 'L\'attribut a d\u00E9j\u00E0 \u00E9t\u00E9 choisi';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.measures'] = 'Impossible de glisser la mesure sur les lignes ou les colonnes : vous devez les glisser dans la section centrale du tableau crois\u00E9';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.tools.tt.removeall'] = ['Tout Supprimer'];
 

@@ -74,6 +74,17 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	Ext.apply(this,c);
 	this.addEvents();
 	this.on('resize',this.resizePanels,this);
+
+	 //add listener when attribute is added
+	this.contentPanel.on('beforeAddAttribute', 
+			this.checkAttAndFilter , 
+			this);
+
+	// add listener when attribute is added
+	this.filtersPanel.on('beforeAddAttribute', 
+			this.checkAttAndFilter , 
+			this);
+	
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
 };
 
@@ -231,6 +242,40 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(this.footerPanel != undefined && this.footerPanel != null){
 			this.footerPanel.setWidth(w);
 		}
+	}
+	
+	,
+	checkAttAndFilter :	function(extendedPanel, att){
+		// if is coming from contentPanel
+		var toReturn = true;
+		var designer = this.contentPanel.contentPanel.designer;
+		if(designer && designer.checkAttNotPresent){
+			toReturn = designer.checkAttNotPresent(extendedPanel, att);
+		}		
+		if(toReturn != false){		
+			var storeFilter = this.filtersPanel.store;
+			var indexFilter = storeFilter.find("id",att.id);
+			if(indexFilter != -1) {
+				// already presentin filters
+				toReturn =  false;
+				Ext.Msg.show({
+					title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+					msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'),
+					buttons: Ext.Msg.OK,
+					icon: Ext.MessageBox.WARNING
+				});
+			}
+		}
+		else{
+			// alredy present 
+			Ext.Msg.show({
+				title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+				msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+				buttons: Ext.Msg.OK,
+				icon: Ext.MessageBox.WARNING
+			});	
+		}
+		return toReturn;
 	}
 	
 });
