@@ -86,8 +86,11 @@ Sbi.Sync = function(){
 		, resetForm: function() {
 			var f = Ext.get(FORM_ID);
 			var childs = f.query('input');
+			
 			for(var i = 0, l = childs.length; i < l; i++) {
-				childs[i].remove();
+				 var child = Ext.get(childs[i]);			
+				 child.remove();
+				
 			}
 		}
 		
@@ -151,7 +154,7 @@ Sbi.Sync = function(){
 		}
 		
 		
-		, addHiddenInput: function(name, value) {
+		, addHiddenInput: function(name, value) {			
 			var f = Ext.get(FORM_ID);
 			var dh = Ext.DomHelper;
 			dh.append(f, {
