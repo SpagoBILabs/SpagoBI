@@ -71,7 +71,7 @@ Sbi.crosstab.core.CrossTabCalculatedFields = function(){
     	var freshOp = " "+op;
     	var index;
     	var hiddenPannels = new Array();
-    	
+   
     	//show all the hidden panels
     	for(var y=0; y<headers[headers.length-1].length; y++){
     		if(headers[headers.length-1][y].hidden){

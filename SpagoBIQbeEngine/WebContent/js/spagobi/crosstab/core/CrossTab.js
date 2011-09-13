@@ -137,7 +137,7 @@ Sbi.crosstab.core.CrossTab = function(config) {
     	this.on('afterrender', function(){
     		var i=0; 
     		for(i=0; i<this.calculatedFields.length; i++){
-    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this, true, this.percenton);
+    			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(this.calculatedFields[i].level, this.calculatedFields[i].horizontal, this.calculatedFields[i].operation, this.calculatedFields[i].name, this, true, null, this.percenton);
     		}
    			this.calculatePartialSum(null, true);
    	    	this.reloadHeadersAndTable();
@@ -2479,7 +2479,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    		this.crossTabCFWizard.on('applyCalculatedField', function(theNode, level, horizontal, op, CFName){
    			
     		this.removePartialSum(true);
-    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this.percenton);	
+    		Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this, null, null, this.percenton);	
     		this.addCalculatedField(level, horizontal, op, CFName);
      		this.calculatePartialSum();
     		
@@ -2500,7 +2500,7 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
    			}
    			this.removePartialSum(true);
    			//add the new CF
-   			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this, this.percenton);
+   			Sbi.crosstab.core.CrossTabCalculatedFields.calculateCF(level, horizontal, op, CFName, this, null, null, this.percenton);
     		this.modifyCalculatedField(level, horizontal, op, CFName);
     		this.calculatePartialSum();
    		}, this); 
