@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class WorkSheet{
+public class Sheet {
 	
 	private String name;
 	private String layout;
@@ -55,7 +55,7 @@ public class WorkSheet{
 	 * @param content
 	 * @param footer
 	 */
-	public WorkSheet(String name, String layout, JSONObject header,
+	public Sheet(String name, String layout, JSONObject header,
 			JSONObject filters, JSONObject content, JSONObject footer) {
 		super();
 		this.name = name;

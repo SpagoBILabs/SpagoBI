@@ -185,8 +185,11 @@ public class TemporaryTableManager {
 			// command in SELECT .... INTO table_name FROM ....
 			// since QbE query cannot contains sub-queries into the SELECT clause,
 			// we simply look for the first " FROM " occurrence
-			int index = baseQuery.toUpperCase().indexOf(" FROM "); 
-			sql = baseQuery.substring(0, index) + " INTO " + tableName + " "  + baseQuery.substring(index + 1);
+			
+			sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
+			
+//			int index = baseQuery.toUpperCase().indexOf(" FROM "); 
+//			sql = baseQuery.substring(0, index) + " INTO " + tableName + " "  + baseQuery.substring(index + 1);
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
 			sql = "CREATE TABLE " + tableName + " AS " + baseQuery;

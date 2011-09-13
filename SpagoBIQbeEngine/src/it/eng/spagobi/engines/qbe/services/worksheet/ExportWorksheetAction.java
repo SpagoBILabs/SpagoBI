@@ -20,13 +20,8 @@
  **/
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.SerializerFactory;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
-import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetPDFExporter;
 import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetXLSExporter;
@@ -254,7 +249,7 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 				
 			} else if (sheetType.equalsIgnoreCase(WorkSheetXLSExporter.TABLE)) {
 
-				IDataStore dataStore =  getTableDataStore(sheetJ);
+				IDataStore dataStore = getTableDataStore(sheetJ);
 				long recCount = dataStore.getRecordsCount();
 				endRowNum = (new Long(recCount)).intValue() + 5;
 				exporter.designTableInWorksheet(sheet, wb, createHelper, dataStore);			
@@ -283,34 +278,6 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		IDataStore dataStore = executeQuery(jsonVisibleSelectFields);
 		return dataStore;
 	}
-	
-//	public Query getQuery(JSONObject sheetJ) {
-//
-//
-//		//get the filters
-//		JSONObject optionalUserFilters= sheetJ.optJSONObject(FILTERS);
-//		QbeEngineInstance engineInstance = getEngineInstance();
-//		Query clonedQuery=null;
-//		Query activeQuery = engineInstance.getActiveQuery();
-//		if (activeQuery == null) {
-//			activeQuery = engineInstance.getQueryCatalogue().getFirstQuery();
-//		}
-//		try {
-//			if( getEngineInstance().getFormState()==null || getEngineInstance().getFormState().getFormStateValues()==null){
-//				//clone the query
-//				String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(activeQuery, getEngineInstance().getDataSource(), getLocale())).toString();
-//				clonedQuery = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
-//			}else{
-//				//the builder engine is the smart filter, so the query must be transformed 
-//				clonedQuery = getFilteredQuery(activeQuery,  getEngineInstance().getFormState().getFormStateValues());
-//			}		
-//			applyFilters(clonedQuery, jsonVisibleSelectFields, optionalUserFilters);
-//			return clonedQuery;
-//		} catch (Exception e) {
-//			activeQuery = null;
-//		}
-//		return activeQuery;
-//	}
 	
 	/**
 	 * Return true if the content of a sheet is a table
