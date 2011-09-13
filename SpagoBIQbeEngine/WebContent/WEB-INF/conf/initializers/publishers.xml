@@ -12,17 +12,17 @@
                          <CHECKS>
                          	<CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
                                 <CONDITIONS>
-                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="AF_NOT_DEFINED" />
                                 </CONDITIONS>
                             </CHECK>
                             <CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
                                 <CONDITIONS>
-                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="QBE" />
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="QBE" />
                                 </CONDITIONS>
                             </CHECK>
                             <CHECK target="REGISTRY_ENGINE_START_ACTION_PUBLISHER">
                                 <CONDITIONS>
-                                    <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="REGISTRY" />
+                                    <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="REGISTRY" />
                                 </CONDITIONS>
                             </CHECK>
                         </CHECKS>                      
