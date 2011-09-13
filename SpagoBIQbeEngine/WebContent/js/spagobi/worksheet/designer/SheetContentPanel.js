@@ -212,8 +212,8 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		// add listener when attribute is added
 		this.designer.on('beforeAddAttribute', 
 				function(crossTabDef, att){
-			var boolean = this.fireEvent('beforeAddAttribute', this,  att);
-			return boolean;
+			var bool = this.fireEvent('beforeAddAttribute', this,  att);
+			return bool;
 		}				
 				, 
 				this);

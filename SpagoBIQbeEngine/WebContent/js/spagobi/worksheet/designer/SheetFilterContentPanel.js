@@ -109,16 +109,16 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	 //add listener when attribute is added
 		this.contentPanel.on('beforeAddAttribute', 
 				function(crossTabDef, att){
-					var boolean = this.fireEvent('beforeAddAttribute', this,  att);
-					return boolean;
+					var bool = this.fireEvent('beforeAddAttribute', this,  att);
+					return bool;
 				},
 				this);
 
 	// add listener when attribute is added
 	this.filtersPanel.on('beforeAddAttribute', 
 			function(crossTabDef, att){
-				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
-				return boolean;
+				var bool = this.fireEvent('beforeAddAttribute', this,  att);
+				return bool;
 				}
 			, this);
 	

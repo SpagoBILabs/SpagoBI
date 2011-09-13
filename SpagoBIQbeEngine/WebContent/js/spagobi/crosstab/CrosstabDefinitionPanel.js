@@ -76,15 +76,15 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 	this.columnsContainerPanel.on('beforeAddAttribute',
 			//this.checkAttNotPresent
 			function(crossTabDef, att){
-				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
-				return boolean;
+				var bool = this.fireEvent('beforeAddAttribute', this,  att);
+				return bool;
 				}
 			, this);
 	this.rowsContainerPanel.on('beforeAddAttribute', 
 			//this.checkAttNotPresent
 			function(crossTabDef, att){
-				var boolean = this.fireEvent('beforeAddAttribute', this,  att);
-				return boolean;
+				var bool = this.fireEvent('beforeAddAttribute', this,  att);
+				return bool;
 				}
 			, this);
 	
