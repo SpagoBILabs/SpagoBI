@@ -75,23 +75,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			super.service(serviceRequest, serviceResponse);
 	
 			//if(true) throw new SpagoBIEngineStartupException(getEngineName(), "Test exception");
-			
+			SourceBean templateBean = getTemplateAsSourceBean();
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + getTemplateAsSourceBean());
-			
-			//CHECKS WHETHER IF IT IS A QBE DOCUMENT OR REGISTRY, BY LOOKING AT THE TEMPLATE
-			SourceBean template = getTemplateAsSourceBean();
-			SourceBean registry = (SourceBean)template.getAttribute("REGISTRY");
-			if(registry != null){
-				logger.debug("Registry document");
-				getServiceRequest().setAttribute("DOCTYPE", "REGISTRY");
+			logger.debug("Template: " + templateBean);
 
-			}else{
-				logger.debug("Qbe document");
-				getServiceRequest().setAttribute("DOCTYPE", "QBE");
-			}
 			
 			if(getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
@@ -102,7 +91,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance( getTemplateAsSourceBean(), getEnv() );
+				qbeEngineInstance = QbeEngine.createInstance( templateBean, getEnv() );
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -123,9 +112,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				throw serviceException;
 			}
 			logger.debug("Engine instance succesfully created");
-			if(registry != null){
-
-				RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
+			
+			//CHECKS WHETHER IF IT IS A QBE DOCUMENT OR REGISTRY, BY LOOKING AT THE TEMPLATE
+			RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
+			if(registryConf != null){
+				logger.debug("Registry document");
+				getServiceResponse().setAttribute("DOCTYPE", "REGISTRY");
 				Assert.assertNotNull(
 						registryConf,
 						"Registry configuration not found, check document's template");
@@ -133,7 +125,11 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				JSONObject registryConfJSON = serializer.serialize(registryConf);
 				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
 
+			}else{
+				logger.debug("Qbe document");
+				getServiceResponse().setAttribute("DOCTYPE", "QBE");
 			}
+
 			qbeEngineInstance.setAnalysisMetadata( getAnalysisMetadata() );
 			if( getAnalysisStateRowData() != null ) {
 				logger.debug("Loading subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] ...");
