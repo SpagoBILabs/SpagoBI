@@ -23,7 +23,7 @@ package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -106,7 +106,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	 */
 	private void deserializeSheets(JSONObject crosstabDefinitionJSON, WorkSheetDefinition crosstabDefinition) throws Exception {
 		JSONArray sheetsJSON = crosstabDefinitionJSON.getJSONArray(WorkSheetSerializationCostants.SHEETS);
-		List<WorkSheet> workSheets = new ArrayList<WorkSheet>();
+		List<Sheet> workSheets = new ArrayList<Sheet>();
 		for(int i=0; i<sheetsJSON.length(); i++){
 			workSheets.add(deserializeSheet(sheetsJSON.getJSONObject(i)));
 		}
@@ -119,14 +119,14 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	 * @return
 	 * @throws Exception
 	 */
-	private WorkSheet deserializeSheet(JSONObject sheetJSON) throws Exception {
+	private Sheet deserializeSheet(JSONObject sheetJSON) throws Exception {
 		String name = sheetJSON.getString(WorkSheetSerializationCostants.NAME);
 		JSONObject header = sheetJSON.optJSONObject(WorkSheetSerializationCostants.HEADER);
 		JSONObject filters = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
 		String layout = sheetJSON.optString(WorkSheetSerializationCostants.LAYOUT);
 		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
-		return new WorkSheet(name, layout, header, filters, content, footer);
+		return new Sheet(name, layout, header, filters, content, footer);
 	}
 	
 		

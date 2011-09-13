@@ -20,22 +20,15 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
+import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
-import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -51,8 +44,10 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-public class GetValuesForCrosstabAttributesAction extends AbstractQbeEngineAction {	
+public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngineAction {	
 	
+	private static final long serialVersionUID = 4830778339451786311L;
+
 	// INPUT PARAMETERS
 	public static final String ALIAS = "ALIAS";
 	
@@ -68,7 +63,6 @@ public class GetValuesForCrosstabAttributesAction extends AbstractQbeEngineActio
 		JSONObject jsonFormState = null;
 		LookupStoreJSONSerializer serializer = null;
 		JSONObject gridDataFeed = null;
-		Integer resultNumber = null;
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -98,49 +92,11 @@ public class GetValuesForCrosstabAttributesAction extends AbstractQbeEngineActio
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 
-			String sqlQuery = statement.getSqlQueryString();
-			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			String baseQuery = statement.getSqlQueryString();
 			
-			ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-			DataSource dataSource = getDataSource(connection);
+			String worksheetQuery = buildSqlStatement(query, baseQuery);
 			
-			String sqlStatement = buildSqlStatement(query, sqlQuery);
-			logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + sqlStatement + "]");
-			
-			if (!TemporaryTableManager.isEnabled()) {
-				logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
-						"Using inline view construct, therefore performance will be very low");
-				int beginIndex = sqlStatement.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
-				int endIndex = sqlStatement.indexOf(" ", beginIndex);
-				String inlineSQLQuery = sqlStatement.substring(0, beginIndex) + " ( " + sqlQuery + " ) TEMP " + sqlStatement.substring(endIndex);
-				logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
-				JDBCDataSet dataSet = new JDBCDataSet();
-				dataSet.setDataSource(dataSource);
-				dataSet.setQuery(inlineSQLQuery);
-				dataSet.loadData();
-				dataStore = (DataStore) dataSet.getDataStore();
-			} else {
-				logger.debug("Using temporary table strategy....");
-				logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + sqlQuery + "]");
-				try {
-					dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, sqlStatement, sqlQuery, dataSource, null, null);
-				} catch (Exception e) {
-					logger.debug("Query execution aborted because of an internal exception");
-					String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
-					SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-					exception.addHint("Check if the base query is properly formed: [" + statement.getQueryString() + "]");
-					exception.addHint("Check if the crosstab's query is properly formed: [" + sqlStatement + "]");
-					exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
-					throw exception;
-				}
-			}
-
-			Assert.assertNotNull(dataStore, "The dataStore cannot be null");
-			logger.debug("Query executed succesfully");
-			
-			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
-			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by queryTemporaryTable method of the class [" + TemporaryTableManager.class.getName()+ "] cannot be null");
-			logger.debug("Total records: " + resultNumber);			
+			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
 			
 			serializer = new LookupStoreJSONSerializer();
 			gridDataFeed = (JSONObject)serializer.serialize(dataStore);

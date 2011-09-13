@@ -41,7 +41,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -101,7 +101,7 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	
 	public static List<WhereField> getMandatoryFilters(QbeEngineInstance engineInstance, String sheetName) throws JSONException {
 		WorkSheetDefinition worksheetDefinition = engineInstance.getWorkSheetDefinition();
-		WorkSheet sheet = worksheetDefinition.getSheetConfiguration(sheetName);
+		Sheet sheet = worksheetDefinition.getSheetConfiguration(sheetName);
 		if (sheet == null) {
 			throw new SpagoBIEngineRuntimeException("Sheet with name " + sheetName + " not found!!");
 		}

@@ -26,7 +26,7 @@ import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -64,7 +64,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 
 			//set the worksheet into the qbe instance
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
-			List<WorkSheet> ws = workSheetDefinition.getWorkSheet();
+			List<Sheet> ws = workSheetDefinition.getWorkSheet();
 			for(int i=0; i<ws.size();i++){
 				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getHeader());
 				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getFooter());

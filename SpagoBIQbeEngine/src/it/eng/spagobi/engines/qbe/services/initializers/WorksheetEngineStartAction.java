@@ -25,7 +25,7 @@ import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
@@ -120,7 +120,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(COUNTRY, locale.getCountry());
 			
 			if(qbeEngineInstance!= null && qbeEngineInstance.getWorkSheetDefinition()!=null && qbeEngineInstance.getWorkSheetDefinition().getWorkSheet()!=null){
-				List<WorkSheet> ws = qbeEngineInstance.getWorkSheetDefinition().getWorkSheet();
+				List<Sheet> ws = qbeEngineInstance.getWorkSheetDefinition().getWorkSheet();
 				for(int i=0; i<ws.size();i++){
 					setImageWidth((ws.get(i)).getHeader());
 					setImageWidth((ws.get(i)).getFooter());

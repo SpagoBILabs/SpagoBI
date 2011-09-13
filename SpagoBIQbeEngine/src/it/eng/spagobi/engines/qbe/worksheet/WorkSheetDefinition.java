@@ -53,24 +53,24 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		EMPTY_WORKSHEET = new WorkSheetDefinition();
 	}
 	
-	private List<WorkSheet> workSheet;
+	private List<Sheet> workSheet;
 	
 	private List<Attribute> globalFilters;
 	
 	public WorkSheetDefinition(){
-		workSheet = new ArrayList<WorkSheet>();
+		workSheet = new ArrayList<Sheet>();
 		globalFilters = new ArrayList<Attribute>();
 	}
 	
-	public WorkSheetDefinition(List<WorkSheet> workSheet){
+	public WorkSheetDefinition(List<Sheet> workSheet){
 		this.workSheet = workSheet;
 	}
 
-	public List<WorkSheet> getWorkSheet() {
+	public List<Sheet> getWorkSheet() {
 		return workSheet;
 	}
 
-	public void setWorkSheet(List<WorkSheet> workSheet) {
+	public void setWorkSheet(List<Sheet> workSheet) {
 		this.workSheet = workSheet;
 	}
 	
@@ -91,11 +91,11 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 
 	}
 	
-	public WorkSheet getSheetConfiguration(String name) {
-		WorkSheet toReturn = null;
-		Iterator<WorkSheet> it = this.workSheet.iterator();
+	public Sheet getSheetConfiguration(String name) {
+		Sheet toReturn = null;
+		Iterator<Sheet> it = this.workSheet.iterator();
 		while (it.hasNext()) {
-			WorkSheet sheet = it.next();
+			Sheet sheet = it.next();
 			if (sheet.getName().equals(name)) {
 				toReturn = sheet;
 				break;

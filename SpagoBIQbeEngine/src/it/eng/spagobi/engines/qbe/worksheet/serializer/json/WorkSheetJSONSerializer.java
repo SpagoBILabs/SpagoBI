@@ -26,7 +26,7 @@ import java.util.List;
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheet;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -86,7 +86,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return globalFiltersJSON;
 	}
 
-	private JSONArray serializeSheets(List<WorkSheet> sheets) throws SerializationException {
+	private JSONArray serializeSheets(List<Sheet> sheets) throws SerializationException {
 		JSONArray jsonSheets = new JSONArray();
 		for(int i=0; i<sheets.size(); i++){
 			jsonSheets.put(serializeSheet(sheets.get(i)));
@@ -94,7 +94,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return jsonSheets;
 	}
 	
-	private JSONObject serializeSheet(WorkSheet sheet) throws SerializationException{
+	private JSONObject serializeSheet(Sheet sheet) throws SerializationException{
 		logger.debug("IN");
 		logger.debug("Serializing the sheet "+sheet.getName());
 		JSONObject jsonSheet = new JSONObject();
