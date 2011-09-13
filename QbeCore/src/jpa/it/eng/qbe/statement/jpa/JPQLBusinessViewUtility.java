@@ -25,6 +25,7 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
+import it.eng.qbe.query.AbstractSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Operand;
@@ -64,15 +65,19 @@ public class JPQLBusinessViewUtility {
 		StringBuffer whereClause = new StringBuffer("");
 		Set<IModelEntity> concernedEntities = new HashSet<IModelEntity>();
 		String clauseToReturn;
+		DataMartSelectField freshDataMartSelectField = null;
 		
 		//get all the fields
 		
 		//Get the select fields
-		List<DataMartSelectField> selectFields = query.getSelectFields(false);
+		List<AbstractSelectField> selectFields = query.getSelectFields(false);
 		if(selectFields!=null){
 			for(int i=0; i<selectFields.size(); i++){
-				datamartField = statement.getDataSource().getModelStructure().getField(selectFields.get(i).getUniqueName());
-				concernedEntities.add(datamartField.getPathParent());
+				if(selectFields.get(i) instanceof DataMartSelectField){
+					freshDataMartSelectField = (DataMartSelectField)selectFields.get(i);
+					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
+					concernedEntities.add(datamartField.getPathParent());
+				}
 			}
 		}
 
@@ -116,21 +121,29 @@ public class JPQLBusinessViewUtility {
 
 		
 		//Get the order by fields
-		List<DataMartSelectField> orderFields = query.getOrderByFields();
+		List<AbstractSelectField> orderFields = query.getOrderByFields();
 		if(orderFields!=null){
 			for(int i=0; i<orderFields.size(); i++){
-				datamartField = statement.getDataSource().getModelStructure().getField(orderFields.get(i).getUniqueName());
-				concernedEntities.add(datamartField.getPathParent());
+				if(orderFields.get(i) instanceof DataMartSelectField){
+					freshDataMartSelectField = (DataMartSelectField)orderFields.get(i);
+					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
+					concernedEntities.add(datamartField.getPathParent());
+				}
+
 			}
 		}
 
 		
 		//Get the group by fields
-		List<DataMartSelectField> groupFields = query.getGroupByFields();
+		List<AbstractSelectField> groupFields = query.getGroupByFields();
 		if(groupFields!=null){
 			for(int i=0; i<groupFields.size(); i++){
-				datamartField = statement.getDataSource().getModelStructure().getField(groupFields.get(i).getUniqueName());
-				concernedEntities.add(datamartField.getPathParent());
+				if(groupFields.get(i) instanceof DataMartSelectField){
+					freshDataMartSelectField = (DataMartSelectField)groupFields.get(i);
+					datamartField = statement.getDataSource().getModelStructure().getField(freshDataMartSelectField.getUniqueName());
+					concernedEntities.add(datamartField.getPathParent());
+				}
+
 			}
 		}
 
