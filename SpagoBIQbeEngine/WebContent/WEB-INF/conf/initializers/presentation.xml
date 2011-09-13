@@ -4,7 +4,7 @@
 
 	<MAPPING business_type="ACTION" 
 			 business_name="QBE_ENGINE_START_ACTION" 
-			 publisher_name="QBE_ENGINE_START_ACTION_PUBLISHER"/>
+			 publisher_name="START_QBE_PUBLISHER"/>
 			 
 	<MAPPING business_type="ACTION" 
 			 business_name="FORM_ENGINE_START_ACTION" 

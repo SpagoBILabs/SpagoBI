@@ -24,7 +24,11 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
+import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
@@ -32,6 +36,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 
 /**
@@ -49,6 +54,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
 	
 	
 	/** Logger component. */
@@ -67,15 +73,26 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
     	try {
     		setEngineName(ENGINE_NAME);
 			super.service(serviceRequest, serviceResponse);
-			
-			
+	
 			//if(true) throw new SpagoBIEngineStartupException(getEngineName(), "Test exception");
 			
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
 			logger.debug("Template: " + getTemplateAsSourceBean());
-						
+			
+			//CHECKS WHETHER IF IT IS A QBE DOCUMENT OR REGISTRY, BY LOOKING AT THE TEMPLATE
+			SourceBean template = getTemplateAsSourceBean();
+			SourceBean registry = (SourceBean)template.getAttribute("REGISTRY");
+			if(registry != null){
+				logger.debug("Registry document");
+				getServiceRequest().setAttribute("DOCTYPE", "REGISTRY");
+
+			}else{
+				logger.debug("Qbe document");
+				getServiceRequest().setAttribute("DOCTYPE", "QBE");
+			}
+			
 			if(getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
 				getAuditServiceProxy().notifyServiceStartEvent();
@@ -106,7 +123,17 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				throw serviceException;
 			}
 			logger.debug("Engine instance succesfully created");
-			
+			if(registry != null){
+
+				RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
+				Assert.assertNotNull(
+						registryConf,
+						"Registry configuration not found, check document's template");
+				RegistryConfigurationJSONSerializer serializer = new RegistryConfigurationJSONSerializer();
+				JSONObject registryConfJSON = serializer.serialize(registryConf);
+				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
+
+			}
 			qbeEngineInstance.setAnalysisMetadata( getAnalysisMetadata() );
 			if( getAnalysisStateRowData() != null ) {
 				logger.debug("Loading subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] ...");

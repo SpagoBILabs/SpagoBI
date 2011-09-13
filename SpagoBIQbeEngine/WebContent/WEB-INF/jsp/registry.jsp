@@ -58,6 +58,8 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	qbeEngineConfig = QbeEngineConfig.getInstance();
 	registryConfiguration = (JSONObject) serviceResponse.getAttribute(RegistryEngineStartAction.REGISTRY_CONFIGURATION);
+
+	
 %>
 
 
