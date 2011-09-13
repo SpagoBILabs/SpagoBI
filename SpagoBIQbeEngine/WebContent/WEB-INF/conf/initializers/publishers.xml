@@ -2,13 +2,63 @@
 
 <PUBLISHERS>
      
-     <PUBLISHER name="QBE_ENGINE_START_ACTION_PUBLISHER">		
+     	
+	
+	<PUBLISHER name="START_QBE_PUBLISHER">
+		<RENDERING channel="HTTP" type="JAVA" mode="">
+			<RESOURCES>
+			     <ITEM prog="0" resource="it.eng.spago.presentation.DefaultPublisherDispatcher">
+                    <CONFIG>
+                         <CHECKS>
+                         	<CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="QBE" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="REGISTRY_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                    <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="REGISTRY" />
+                                </CONDITIONS>
+                            </CHECK>
+                        </CHECKS>                      
+                    </CONFIG>
+                </ITEM>
+            </RESOURCES>
+		</RENDERING>
+		<RENDERING channel="PORTLET" type="JAVA" mode="">
+			<RESOURCES>
+			     <ITEM prog="0" resource="it.eng.spago.presentation.DefaultPublisherDispatcher">
+                    <CONFIG>
+                         <CHECKS>
+                            <CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="QBE" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="REGISTRY_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                    <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="REGISTRY" />
+                                </CONDITIONS>
+                            </CHECK>
+                        </CHECKS>                      
+                    </CONFIG>
+                </ITEM>
+            </RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+	<PUBLISHER name="QBE_ENGINE_START_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
 				<ITEM prog="0" resource="/WEB-INF/jsp/qbe.jsp" />
 			</RESOURCES>
 		</RENDERING>    	
-	</PUBLISHER>	
+	</PUBLISHER>
 	
 	<PUBLISHER name="FORM_ENGINE_START_ACTION_PUBLISHER">
    	 	<RENDERING channel="HTTP" type="JAVA" mode="">

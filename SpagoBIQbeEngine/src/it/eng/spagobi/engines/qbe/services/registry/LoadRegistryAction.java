@@ -35,7 +35,6 @@ import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import java.util.Iterator;
@@ -51,6 +50,7 @@ import org.json.JSONObject;
 public class LoadRegistryAction extends ExecuteQueryAction {
 	
 	private static final long serialVersionUID = -642121076148276452L;
+	private String ID_COLUMN = "ID_COLUMN";
 
 	@Override
 	public Query getQuery() {
@@ -89,6 +89,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			query = new Query();
 			query.setDistinctClauseEnabled(false);
 			IModelEntity entity = getSelectedEntity();
+
 			QbeEngineInstance engineInstance = getEngineInstance();
 			QbeTemplate template = engineInstance.getTemplate();
 			RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
