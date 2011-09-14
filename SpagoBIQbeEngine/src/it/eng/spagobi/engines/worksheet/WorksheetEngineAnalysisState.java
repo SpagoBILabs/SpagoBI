@@ -1,25 +1,24 @@
 /**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
 
-SpagoBI - The Business Intelligence Free Platform
-
-Copyright (C) 2005 Engineering Ingegneria Informatica S.p.A.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-**/
-package it.eng.spagobi.engines.qbe;
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
+package it.eng.spagobi.engines.worksheet;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
@@ -27,6 +26,7 @@ import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
@@ -43,10 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it), Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
+ * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class QbeEngineAnalysisState extends EngineAnalysisState {
+public class WorksheetEngineAnalysisState extends EngineAnalysisState {
 	
 
 	
@@ -55,14 +55,13 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 	
 	
 	
-	public QbeEngineAnalysisState( IDataSource dataSource ) {
+	public WorksheetEngineAnalysisState() {
 		super( );
-		setDataSource( dataSource );
 	}
 
 	public void load(byte[] rowData) throws SpagoBIEngineException {
 		String str = null;
-		JSONObject abalysisStateJSON = null;
+		JSONObject analysisStateJSON = null;
 		JSONObject rowDataJSON = null;
 		String encodingFormatVersion;
 		
@@ -82,8 +81,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			logger.debug("Row data encoding version  [" + encodingFormatVersion + "]");
 
 			
-			if(encodingFormatVersion.equalsIgnoreCase(QbeEngineStaticVariables.CURRENT_QUERY_VERSION)) {				
-				abalysisStateJSON = rowDataJSON;
+			if(encodingFormatVersion.equalsIgnoreCase(WorksheetEngineStaticVariables.CURRENT_VERSION)) {				
+				analysisStateJSON = rowDataJSON;
 			} else {
 				logger.warn("Row data encoding version [" + encodingFormatVersion + "] does not match with the current version used by the engine [" + QbeEngineStaticVariables.CURRENT_QUERY_VERSION + "] ");
 				logger.debug("Converting from encoding version [" + encodingFormatVersion + "] to encoding version [" + QbeEngineStaticVariables.CURRENT_QUERY_VERSION + "]....");
@@ -92,12 +91,12 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 				if(analysisStateLoader == null) {
 					throw new SpagoBIEngineException("Unable to load data stored in format [" + encodingFormatVersion + "] ");
 				}
-				abalysisStateJSON = (JSONObject)analysisStateLoader.load(str);
+				analysisStateJSON = (JSONObject)analysisStateLoader.load(str);
 				logger.debug("Encoding conversion has been executed succesfully");
 			}
 			
-			JSONObject catalogueJSON = abalysisStateJSON.getJSONObject("catalogue");
-			JSONObject workSheetDefinitionJSON = abalysisStateJSON.optJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER);
+			JSONObject catalogueJSON = analysisStateJSON.getJSONObject("catalogue");
+			JSONObject workSheetDefinitionJSON = analysisStateJSON.optJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER);
 			setProperty( QbeEngineStaticVariables.CATALOGUE,  catalogueJSON);
 			if(workSheetDefinitionJSON!=null){
 				setProperty( QbeEngineStaticVariables.WORKSHEET_DEFINITION,  workSheetDefinitionJSON);
