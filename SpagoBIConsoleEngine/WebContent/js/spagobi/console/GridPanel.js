@@ -190,8 +190,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	    	 	var param = dynamicParams[i];              
 		              if (param.scope === 'dataset') {		            	  
 			               for(p in param) {
-			            	   if(p === 'scope') continue;
-			                   if(record.get(this.store.getFieldNameByAlias(param[p])) === undefined) {         
+			            	   if(p === 'scope') continue;			            	   
+			                   if(record.get(this.store.getFieldNameByAlias(param[p])) === undefined) {         			                   
 			                    msgErr += 'Parameter "' + p + '" undefined into dataset.<p>';
 					           } else {
 					              results[p] = record.get(this.store.getFieldNameByAlias(param[p])); 
@@ -199,11 +199,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			               }
 		              } else if (param.scope === 'env'){ 		            	  
 			               for(p in param) { 
-			                if(p === 'scope') continue;
-			            	  if (p !== this.USER_ID && context[p] === undefined) {                         
-			            		   msgErr += 'Parameter "' + p + '" undefined into request. <p>';
+			                if(p === 'scope') continue;			              			            	  		                
+			                  var tmpNamePar =  param[p];
+			            	  if (p !== this.USER_ID && context[tmpNamePar] === undefined) {
+			            		   msgErr += 'Parameter "' + tmpNamePar + '" undefined into request. <p>';
 		                      } else {                                   
-		                       results[p] = context[p];
+		                       results[p] = context[tmpNamePar];
 		                      }
 			               }
 	                 } else if (param.scope === 'promptable'){   
