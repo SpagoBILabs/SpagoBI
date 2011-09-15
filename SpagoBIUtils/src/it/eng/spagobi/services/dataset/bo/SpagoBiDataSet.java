@@ -56,6 +56,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String type;
 
+    private java.lang.String customData;
+
+    
     public SpagoBiDataSet() {
     }
 
@@ -83,7 +86,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String query,
            java.lang.String script,
            java.lang.Integer transformerId,
-           java.lang.String type) {
+           java.lang.String type,
+           java.lang.String customData) {
            this.adress = adress;
            this.categoryId = categoryId;
            this.dataSource = dataSource;
@@ -108,6 +112,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.script = script;
            this.transformerId = transformerId;
            this.type = type;
+           this.customData = customData;
     }
 
 
@@ -589,6 +594,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setType(java.lang.String type) {
         this.type = type;
     }
+    
+    /**
+     * Gets the type value for this SpagoBiDataSet.
+     * 
+     * @return type
+     */
+    public java.lang.String getCustomData() {
+        return customData;
+    }
+
+
+    /**
+     * Sets the type value for this SpagoBiDataSet.
+     * 
+     * @param type
+     */
+    public void setCustomData(java.lang.String customData) {
+        this.customData = customData;
+    }
+    
 
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
@@ -669,7 +694,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
               this.transformerId.equals(other.getTransformerId()))) &&
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
-              this.type.equals(other.getType())));
+              this.type.equals(other.getType()))) &&
+            ((this.customData==null && other.getCustomData()==null) || 
+             (this.customData!=null &&
+              this.customData.equals(other.getCustomData())));
         __equalsCalc = null;
         return _equals;
     }
@@ -748,6 +776,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getType() != null) {
             _hashCode += getType().hashCode();
+        }
+        if (getCustomData() != null) {
+            _hashCode += getCustomData().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -900,6 +931,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("type");
         elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("customData");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "customData"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
