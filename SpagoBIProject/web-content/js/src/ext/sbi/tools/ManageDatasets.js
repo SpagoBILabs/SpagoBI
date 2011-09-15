@@ -120,6 +120,7 @@ Ext.extend(
 				profileAttributesStore: null,
 				trasfDetail : null,
 				jClassDetail : null,
+				customDataDetail : null,		
 				scriptDetail : null,
 				queryDetail : null,
 				WSDetail : null,
@@ -186,12 +187,14 @@ Ext.extend(
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
 					} else if (dsTypeSelected != null && dsTypeSelected == 'Query') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(true);
 						this.jClassDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
@@ -199,12 +202,14 @@ Ext.extend(
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(true);
+						this.customDataDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
 					} else if (dsTypeSelected != null && dsTypeSelected == 'Web Service') {
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(true);
@@ -213,6 +218,7 @@ Ext.extend(
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 						this.scriptDetail.setVisible(true);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(false);
@@ -220,16 +226,45 @@ Ext.extend(
 						this.fileDetail.setVisible(false);
 						this.queryDetail.setVisible(false);
 						this.jClassDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 						this.scriptDetail.setVisible(false);
 						this.WSDetail.setVisible(false);
 						this.qbeQueryDetail.setVisible(true);
+					} else if (dsTypeSelected != null && dsTypeSelected == 'Custom') {
+						this.fileDetail.setVisible(false);
+						this.queryDetail.setVisible(false);
+						this.jClassDetail.setVisible(false);
+						this.scriptDetail.setVisible(false);
+						this.WSDetail.setVisible(false);
+						this.qbeQueryDetail.setVisible(false);
+						this.customDataDetail.setVisible(true);
+					} else if (dsTypeSelected != null || dsTypeSelected == '') {
+						this.fileDetail.setVisible(false);
+						this.queryDetail.setVisible(false);
+						this.jClassDetail.setVisible(false);
+						this.scriptDetail.setVisible(false);
+						this.WSDetail.setVisible(false);
+						this.qbeQueryDetail.setVisible(false);
+						this.customDataDetail.setVisible(false);
 					}
+					
 					var dsParsList = record.get('pars');
 					if(dsParsList!=null && dsParsList!= undefined){
 						this.manageParsGrid.loadItems(dsParsList);
 					}else{
 						this.manageParsGrid.loadItems([]);
 					}
+
+					if(record && record.json){
+					var dsCustomList = record.json.customs;
+					if(dsCustomList!=null && dsCustomList!= undefined){
+						this.customDataGrid.loadItems(dsCustomList);
+					}else{
+						this.customDataGrid.loadItems([]);
+					}
+					}
+
+					
 				}
 
 				,test : function(button, event, service) {
@@ -247,6 +282,7 @@ Ext.extend(
 						script : values['script'],
 						scriptLanguage : values['scriptLanguage'],
 						jclassName : values['jclassName'],
+						customData : values['customData'],
 						trasfTypeCd : values['trasfTypeCd'],
 						pivotColName : values['pivotColName'],
 						pivotColValue : values['pivotColValue'],
@@ -283,7 +319,7 @@ Ext.extend(
 							'catTypeVn', 'usedByNDocs', 'fileName',
 							'query', 'dataSource', 'wsAddress',
 							'wsOperation', 'script', 'scriptLanguage',
-							'jclassName', 'pars', 'trasfTypeCd',
+							'jclassName', 'customData', 'pars', 'trasfTypeCd',
 							'pivotColName', 'pivotColValue',
 							'pivotRowName', 'pivotIsNumRows', 'dsVersions',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
@@ -295,7 +331,7 @@ Ext.extend(
 								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
 								fileName : '', query : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
-								scriptLanguage : '', jclassName : '', pars : [],
+								scriptLanguage : '', jclassName : '', customData: '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
@@ -739,6 +775,28 @@ Ext.extend(
 						validationEvent : true,
 						name : 'jclassName'
 					});
+					
+//					this.customData = new Ext.form.TextField({
+//						maxLength : 100,
+//						minLength : 1,
+//						width : 350,
+//						regexText : LN('sbi.roles.alfanumericString'),
+//						fieldLabel : LN('sbi.ds.customData'),
+//						allowBlank : false,
+//						validationEvent : true,
+//						name : 'customData'
+//					});
+
+					
+					function Config () {
+					    this.pars = 'ciao';
+					}
+
+					var c = new Config();
+					
+					
+					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid(c);
+					
 
 					this.dsTypeDetail = new Ext.form.FieldSet(
 							{
@@ -824,6 +882,28 @@ Ext.extend(
 											: "3px"
 								},
 								items : [ this.detailJclassName ]
+							});
+					
+					
+					this.customDataDetail = new Ext.form.FieldSet(
+							{
+								labelWidth : 100,
+								defaults : {
+									//width : 280,
+									border : true
+								},
+								defaultType : 'textfield',
+								autoHeight : true,
+								autoScroll : true,
+								border : true,
+								style : {
+									"margin-left" : "3px",
+									"margin-top" : "0px",
+									"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-3px"
+											: "-5px")
+											: "3px"
+								},
+								items : [ this.detailJclassName, this.customDataGrid ]
 							});
 
 					this.fileDetail = new Ext.form.FieldSet(
@@ -931,6 +1011,7 @@ Ext.extend(
 									},
 									items : [ this.dsTypeDetail,
 											this.jClassDetail,
+											this.customDataDetail,
 											this.scriptDetail,
 											this.queryDetail,
 											this.WSDetail, this.fileDetail,
@@ -1131,7 +1212,7 @@ Ext.extend(
 								dsTypeCd : '', catTypeVn : '', usedByNDocs : 0,
 								fileName : '', query : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
-								scriptLanguage : '', jclassName : '', pars : [],
+								scriptLanguage : '', jclassName : '', customData : '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '', qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
@@ -1204,6 +1285,7 @@ Ext.extend(
 						script : values['script'],
 						scriptLanguage : values['scriptLanguage'],
 						jclassName : values['jclassName'],
+						customData : values['customData'],
 						trasfTypeCd : values['trasfTypeCd'],
 						pivotColName : values['pivotColName'],
 						pivotColValue : values['pivotColValue'],
@@ -1239,6 +1321,7 @@ Ext.extend(
 						wsOperation : values['wsOperation'],
 						script : values['script'],
 						scriptLanguage : values['scriptLanguage'],
+						customData : values['customData'],
 						jclassName : values['jclassName'],
 						trasfTypeCd : values['trasfTypeCd'],
 						pivotColName : values['pivotColName'],
@@ -1273,6 +1356,7 @@ Ext.extend(
 							script : values['script'],
 							scriptLanguage : values['scriptLanguage'],
 							jclassName : values['jclassName'],
+							customData : values['customData'],
 							trasfTypeCd : values['trasfTypeCd'],
 							pivotColName : values['pivotColName'],
 							pivotColValue : values['pivotColValue'],
@@ -1290,7 +1374,7 @@ Ext.extend(
 					return params;
 				}
 				
-				,updateNewRecord: function(record, values, arrayPars){
+				,updateNewRecord: function(record, values, arrayPars, customArray){
 					record.set('label',values['label']);
 					record.set('name',values['name']);
 					record.set('description',values['description']);
@@ -1305,6 +1389,7 @@ Ext.extend(
 					record.set('script',values['script']);
 					record.set('scriptLanguage',values['scriptLanguage']);
 					record.set('jclassName',values['jclassName']);
+					record.set('customData',values['customData']);					
 					record.set('trasfTypeCd',values['trasfTypeCd']);
 					record.set('pivotColName',values['pivotColName']);
 					record.set('pivotColValue',values['pivotColValue']);
@@ -1322,6 +1407,12 @@ Ext.extend(
 					if (arrayPars) {
 						record.set('pars',arrayPars);
 					}
+					
+					if (customArray) {
+						record.set('customData',customArray);
+					}
+
+					
 				}
 				
 				, updateMainStore: function(idRec){
@@ -1366,9 +1457,10 @@ Ext.extend(
 					var isNewRec = false;
 					var params = this.buildParamsToSendToServer(values);
 					var arrayPars = this.manageParsGrid.getParsArray();
+					var customArray = this.customDataGrid.getDataArray();
 					
 					if (idRec == 0 || idRec == null || idRec === '') {
-						this.updateNewRecord(this.newRecord,values,arrayPars);
+						this.updateNewRecord(this.newRecord,values,arrayPars, customArray);
 						isNewRec = true;
 					}else{
 						var record;
@@ -1381,7 +1473,7 @@ Ext.extend(
 				   	        	oldType = record.get('dsTypeCd');
 							}			   
 				   	    }	
-						this.updateNewRecord(record,values,arrayPars);
+						this.updateNewRecord(record,values,arrayPars, customArray);
 						
 						newDsVersion = new Ext.data.Record(
 								{	dsId: values['id'],
@@ -1396,7 +1488,11 @@ Ext.extend(
 					if (arrayPars) {
 						params.pars = Ext.util.JSON.encode(arrayPars);
 					}
+					if (customArray) {
+						params.customData = Ext.util.JSON.encode(customArray);
+					}
 
+					
 					if (idRec) {
 						params.id = idRec;
 					}
