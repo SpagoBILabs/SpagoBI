@@ -561,6 +561,7 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Numerazione automatica delle colonne?'
 Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Apri il wizard QbE';
 Sbi.locale.ln['sbi.ds.help'] = 'Aiuto';
 Sbi.locale.ln['sbi.ds.pars'] = 'Attributi di Profilo disponibili';
+Sbi.locale.ln['sbi.ds.customData'] = 'Attributi';
 
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'Per la configurazione del data source JNDI \u00e8 necessario inserire il nome del connection pool configurato all\'interno dell\'application server. Esempi: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 //===================================================================
