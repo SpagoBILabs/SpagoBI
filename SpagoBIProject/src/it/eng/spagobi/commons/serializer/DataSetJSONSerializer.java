@@ -2,6 +2,7 @@ package it.eng.spagobi.commons.serializer;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
@@ -39,6 +40,8 @@ public class DataSetJSONSerializer implements Serializer {
 		
 	private static final String PARS = "pars";
 	private static final String METADATA = "meta";
+	private static final String CUSTOMS = "customs";
+
 	
 	private static final String DS_TYPE_CD = "dsTypeCd";
 	private static final String FILE_NAME = "fileName";
@@ -209,7 +212,23 @@ public class DataSetJSONSerializer implements Serializer {
 					result.put(JCLASS_NAME, jClass);
 				}
 			}
+			
+			
+			else if(dsDetail instanceof CustomDataSetDetail){
+				String customData = ((CustomDataSetDetail)dsDetail).getCustomData();
+				JSONArray customJSONArray = new JSONArray();
+				if(customData!=null && !customData.equals("")){
+					customJSONArray = new JSONArray(customData);
+				}
+				result.put(CUSTOMS, customJSONArray);	
 				
+				String jClass = ((CustomDataSetDetail)dsDetail).getJavaClassName();
+				if(jClass!=null){
+					result.put(JCLASS_NAME, jClass);
+				}		
+			}
+			
+			
 			result.put(TRASFORMER_TYPE_CD, dsDetail.getTransformerCd());
 			result.put(PIVOT_COL_NAME, dsDetail.getPivotColumnName());	
 			result.put(PIVOT_COL_VALUE, dsDetail.getPivotColumnValue());	

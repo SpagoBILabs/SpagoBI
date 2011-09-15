@@ -68,6 +68,7 @@ public class DataSetConstants {
 	public static final String SCRIPT = "Script";
 	public static final String SCRIPT_LANGUAGE = "scriptLanguage";
 	public static final String JCLASS_NAME = "jclassName";
+	public static final String CUSTOM_DATA = "customData";
 	public static final String FILE = "File";
 	public static final String JAVA_CLASS = "Java Class";
 	public static final String WEB_SERVICE = "Web Service";
@@ -85,6 +86,7 @@ public class DataSetConstants {
 	public static final String DS_QUERY = "SbiQueryDataSet";
 	public static final String DS_SCRIPT = "SbiScriptDataSet";
 	public static final String DS_QBE = "SbiQbeDataSet";
+	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";

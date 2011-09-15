@@ -26,6 +26,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.GuiDataSetDetail;
@@ -42,6 +44,7 @@ import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.metadata.SbiCustomDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory;
 import it.eng.spagobi.tools.dataset.metadata.SbiFileDataSet;
@@ -79,6 +82,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public static final String JCLASS_DS_TYPE = "Java Class";
 	public static final String WS_DS_TYPE = "Web Service";
 	public static final String QBE_DS_TYPE = "Qbe";
+	public static final String CUSTOM_DS_TYPE = "Custom";
 
 	/*****************USED by new GUI******/
 	/**
@@ -290,6 +294,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiScriptDataSet)hibDataSet).setLanguageScript(((ScriptDataSetDetail)dataSetActiveDetail).getLanguageScript());
 					}
 				}
+				
+				else if(dataSetActiveDetail instanceof CustomDataSetDetail){
+					hibDataSet=new SbiCustomDataSet();
+					if(((CustomDataSetDetail)dataSetActiveDetail).getCustomData()!=null){
+						((SbiCustomDataSet)hibDataSet).setCustomData(((CustomDataSetDetail)dataSetActiveDetail).getCustomData());
+					}
+					if(((CustomDataSetDetail)dataSetActiveDetail).getJavaClassName()!=null){
+						((SbiCustomDataSet)hibDataSet).setJavaClassName(((CustomDataSetDetail)dataSetActiveDetail).getJavaClassName());
+					}
+
+				}
+				
 
 				SbiDomains transformer = null;
 				if (dataSetActiveDetail.getTransformerId() != null){ 
@@ -530,7 +546,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						((SbiJClassDataSet)hibDataSet).setJavaClassName(((JClassDataSetDetail)dsActiveDetailToSet).getJavaClassName());
 					}
 				}
-
+				
+				else if(dsActiveDetailToSet instanceof CustomDataSetDetail){
+					hibDataSet=new SbiCustomDataSet();
+					if(((CustomDataSetDetail)dsActiveDetailToSet).getCustomData()!=null){
+						((SbiCustomDataSet)hibDataSet).setCustomData(((CustomDataSetDetail)dsActiveDetailToSet).getCustomData());
+					}
+					if(((CustomDataSetDetail)dsActiveDetailToSet).getJavaClassName()!=null){
+					((SbiCustomDataSet)hibDataSet).setJavaClassName(((CustomDataSetDetail)dsActiveDetailToSet).getJavaClassName());
+					}
+				}
 				else if(dsActiveDetailToSet instanceof ScriptDataSetDetail){
 					hibDataSet=new SbiScriptDataSet();
 					if(((ScriptDataSetDetail)dsActiveDetailToSet).getScript()!=null){
@@ -897,6 +922,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			dsActiveDetail.setDsType(JCLASS_DS_TYPE);
 			logger.debug("JClass dataset");
 		}
+		
+		if(hibDataSet instanceof SbiCustomDataSet){			
+			dsActiveDetail=new CustomDataSetDetail();
+			((CustomDataSetDetail)dsActiveDetail).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData());
+			((CustomDataSetDetail)dsActiveDetail).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName());
+
+			dsActiveDetail.setDsType(CUSTOM_DS_TYPE);
+			logger.debug("Custom dataset");
+		}
 
 		if(hibDataSet.getSbiDsConfig()!=null){
 			ds.setDsId(hibDataSet.getSbiDsConfig().getDsId());
@@ -985,6 +1019,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			((JClassDataSetDetail)dsVersionDetail).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
 			dsVersionDetail.setDsType(JCLASS_DS_TYPE);
 		}
+		
+		if(hibDataSet instanceof SbiCustomDataSet){			
+			dsVersionDetail=new CustomDataSetDetail();
+			((CustomDataSetDetail)dsVersionDetail).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData());
+			((CustomDataSetDetail)dsVersionDetail).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName());
+
+			dsVersionDetail.setDsType(CUSTOM_DS_TYPE);
+		}
 
 		dsVersionDetail.setCategoryId((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueId());
 		dsVersionDetail.setCategoryValueName((hibDataSet.getCategory()== null)? null:hibDataSet.getCategory().getValueNm());
@@ -1045,6 +1087,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		if(hibDataSet instanceof SbiJClassDataSet){			
 			hibNew =new SbiJClassDataSet();
 			((SbiJClassDataSet)	hibNew ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
+		}
+		
+		if(hibDataSet instanceof SbiCustomDataSet){			
+			hibNew =new SbiCustomDataSet();
+			((SbiCustomDataSet)	hibNew ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData());
+			((SbiCustomDataSet)	hibNew ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName());
 		}
 
 		hibNew.setCategory(hibDataSet.getCategory());
@@ -1126,6 +1174,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			dsActiveDetail=new JClassDataSetDetail();
 			((JClassDataSetDetail)dsActiveDetail).setJavaClassName(((JavaClassDataSet)iDataSet).getClassName());
 			dsActiveDetail.setDsType(JCLASS_DS_TYPE);
+		}
+		
+		if(iDataSet instanceof CustomDataSet){			
+			dsActiveDetail=new CustomDataSetDetail();
+			((CustomDataSetDetail)dsActiveDetail).setCustomData(((CustomDataSet)iDataSet).getCustomData());
+			((CustomDataSetDetail)dsActiveDetail).setJavaClassName(((CustomDataSet)iDataSet).getJavaClassName());
+			dsActiveDetail.setDsType(CUSTOM_DS_TYPE);
 		}
 
 		ds.setDsId(iDataSet.getId());
@@ -1529,6 +1584,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			ds=new JavaClassDataSet();
 			((JavaClassDataSet)ds).setClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName());
 			ds.setDsType(DataSetConstants.JAVA_CLASS);
+		}
+		
+		if(hibDataSet instanceof SbiCustomDataSet){			
+			ds=new CustomDataSet();
+			((CustomDataSet)ds).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData());
+			((CustomDataSet)ds).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName());
+			ds.setDsType(DataSetConstants.CUSTOM_DATA);
 		}
 		
 		if (hibDataSet instanceof SbiQbeDataSet) {			

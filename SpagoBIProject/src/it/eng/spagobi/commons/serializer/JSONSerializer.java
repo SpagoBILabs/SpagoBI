@@ -61,6 +61,7 @@ import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.metadata.SbiCustomDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetConfig;
 import it.eng.spagobi.tools.dataset.metadata.SbiJClassDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiQueryDataSet;
@@ -111,9 +112,9 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SbiJClassDataSet.class, new SbiDataSetConfigJSONSerializer());
 		mappings.put( SbiScriptDataSet.class, new SbiDataSetConfigJSONSerializer());
 		mappings.put( SbiWSDataSet.class, new SbiDataSetConfigJSONSerializer());
+		mappings.put( SbiCustomDataSet.class, new SbiDataSetConfigJSONSerializer());
 		
 		mappings.put( GuiGenericDataSet.class, new DataSetJSONSerializer());
-		
 		mappings.put( Resource.class, new ResourceJSONSerializer());
 		mappings.put( Threshold.class, new ThresholdJSONSerializer());
 		mappings.put( Kpi.class, new KpiJSONSerializer());
