@@ -1099,8 +1099,21 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		SingletonConfig configSingleton = SingletonConfig.getInstance();
 		String jndiPath = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		Assert.assertNotNull(jndiPath, "Impossible to find block [<SPAGOBI.RESOURCE_PATH_JNDI_NAME>] into configuration");
-		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
+		//path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe" + System.getProperty("file.separator") + "datamarts" ;
+		path = SpagoBIUtilities.readJndiResource(jndiPath) + System.getProperty("file.separator") + "qbe";
+		//checks if the 'qbe' folder exists. If not, it creates it.
+		File datamartFolder = new File(path);
+		if (!datamartFolder.exists()){
+			datamartFolder.mkdir();
+		}
+		//checks if the 'datamarts' folder exists. If not, it creates it.
+		path += System.getProperty("file.separator") + "datamarts";
+		datamartFolder = new File(path);
+		if (!datamartFolder.exists()){
+			datamartFolder.mkdir();
+		}
 		
+		//returns the complete path
 		return path;
 	}
 
