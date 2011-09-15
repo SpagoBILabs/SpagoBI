@@ -479,15 +479,15 @@
       	</method>
     </datapointer>
 
+    <method name="timer">
+         this.fadeDelegate = new LzDelegate( this, "refresh" );
+   		 lz.Timer.addTimer( this.fadeDelegate, refRate ); 	
+    </method>  
+    
     <method name="refresh" >
        	dataset.doRequest();
        	canvas.display.timer();
     </method>
-
-    <method name="timer">
-        this.fadeDelegate = new LzDelegate( this, "refresh" );
-   	LzTimer.addTimer( this.fadeDelegate, refRate ); 	
-    </method>  
 
 
     <method name="start" event="oninit">
