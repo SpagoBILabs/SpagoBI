@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<canvas debug="false" width="100%" height="100%">
+<canvas debug="fasle" width="100%" height="100%">
 	
   <include href="incubator/ulink.lzx"/>
   <include href="incubator/tooltip/tooltip.lzx"/>
@@ -13,10 +13,8 @@
     var dataurlParam = typeof(global.dataurl)!="undefined" ? global.dataurl : "http://localhost:8080/openlaszlo/OpenLaszloEngineDash"; 
 	var xLabelAttributeName = typeof(global.xLabel)!="undefined" ? global.xLabel : "xLabel";	
 	var valueAttributeName1 = typeof(global.value1)!="undefined" ? global.value1 : "";
-	Debug.write("*** valueAttributeName1: " + valueAttributeName1);
 	if (valueAttributeName1 == undefined || valueAttributeName1 == "undefined")
 	 	valueAttributeName1 = typeof(global.VALUE1)!="undefined" ? global.VALUE1 : "";
-	Debug.write("*** valueAttributeName1_2: " + valueAttributeName1);
 	var valueAttributeName2 = typeof(global.value2)!="undefined" ? global.value2 : "";	
 	if (valueAttributeName2 == undefined || valueAttributeName2 == "undefined")
 	 	valueAttributeName2 = typeof(global.VALUE2)!="undefined" ? global.VALUE2 : "";
@@ -30,10 +28,8 @@
 	if (valueAttributeName5 == undefined || valueAttributeName5 == "undefined")
 	 	valueAttributeName5 = typeof(global.VALUE5)!="undefined" ? global.VALUE5 : "";	
 	var xSerieAttributeName = typeof(global.serie)!="undefined" ? global.serie : "serie";
-	Debug.write("*** xSerieAttributeName: " + xSerieAttributeName);
 	if (xSerieAttributeName == undefined || xSerieAttributeName == "undefined")
 	 	xSerieAttributeName = typeof(global.SERIE)!="undefined" ? global.SERIE : "SERIE";
-	 	Debug.write("*** xSerieAttributeName_2: " + xSerieAttributeName);
 	var min = typeof(global.minValue)!="undefined" ? parseInt(global.minValue) : 100;	
     var low = typeof(global.lowValue)!="undefined" ? parseInt(global.lowValue) : 295;
     var high = typeof(global.highValue)!="undefined" ? parseInt(global.highValue) : 340;
@@ -92,10 +88,8 @@
 	var text2Color = 0x0000ff;
 	var heightRate = 1/4;
 
-	<!--Set dataset -->
-	var dataset = canvas.datasets.data;
-    dataset.setQueryType("POST");
-    dataset.setSrc(dataurlParam); 
+    data.setQueryType("POST");
+    data.setSrc(dataurlParam);
  	var actualang = -1;  
 	var centerX = 0;
 	var centerY = 0;
@@ -261,18 +255,7 @@
 						 ,text:""
 						 ,y:centerY-(radius+(serieTitleSize*2))});
 		}
-		else{		 <!-- ORIG
-			new lz.ulink(this,
-						{name:"titleSerie" 
-						 ,href:linkUrl
-						 ,target:"_self"
-						 ,y:centerY-(radius+(serieTitleSize*2))
-						 ,font:serieTitleFont
-						 ,fontsize:serieTitleSize 
-						 ,color:serieTitleColor
-						 ,text:""
-						 ,fontstyle:"bold"});
-						  -->
+		else{		 
 						  Debug.write("prima di creazione di lz text");
 						  <![CDATA[
 						 new LzText(this,
@@ -612,11 +595,10 @@
 		</drawview> <!--**CANVAS.DISPLAY.rotDisplay.SPHERE******************************************************-->
 	
 	</view> <!-- **CANVAS.DISPLAY.rotDisplay*************************************************************************-->
+	<datapointer id="rotationresponse" xpath="data:/*">
 
-	<datapointer id="rotationresponse" xpath="data:/rows[0]">
-	  	<handler name="ondata">
+	<method event="ondata"> 
 	  	<![CDATA[
-	  	Debug.write("*** rotationresponse.getNodeCount(): " + rotationresponse.getNodeCount());
 	  		if (rotationresponse.getNodeCount() >= recNum){
 		  		for (var j = 0; j < rotationresponse.getNodeCount(); j++) {
 			  		rotationresponse.selectChild(0);
@@ -671,10 +653,8 @@
 						      	 	}
 						      	 	linkUrl = "<a href=\"" + linkUrl + "\" target=\"_self\">";
 									linkUrl +=  "<u>"+serieName+"</u></a>"
-																									
-									// orig: canvas.display.titleSerie.setAttribute("href", linkUrl);										      	 	
+																																	      	 	
 					      	 		canvas.display.titleSerie.setAttribute("text",linkUrl);	 
-					      	 		//canvas.display.titleSerie.setAttribute("onclick", lz.Browser.loadURL(linkUrl,'_self'));	
 					      	 	} 
 					      	 }
 					      	 canvas.display.titleSerie.setAttribute("x", newX); 
@@ -682,9 +662,10 @@
 					}				 
 		  		}
 	  		}            		  
+	  		rotationresponse.setXPath("data:/*"); //reset the xpath for next automatic refresh
 	  		canvas.display.rotDisplay.needlesGroup.doStart(); 
 	  		]]>
-	  	</handler>
+	  	</method>
 	</datapointer>
 
 	<method name="changeRotation" args="rotation, idx">
@@ -716,12 +697,22 @@
 	        canvas.display.rotDisplay.changeang(rotation, idx);
 	     }
 	</method>  
-	    
-	<handler name="oninit">
-	        canvas.display.showDisplay(min,low,high,max);
-	        dataset.doRequest();
-	        <!-- canvas.display.timer();-->
-	</handler>
+	
+	<method name="timer">
+         this.fadeDelegate = new LzDelegate( this, "refresh" );
+   		 lz.Timer.addTimer( this.fadeDelegate, refRate ); 	
+    </method>  
+    
+    <method name="refresh" >
+       	canvas.datasets.data.doRequest();
+       	canvas.display.timer();  
+    </method>
+	
+    <method name="start" event="oninit">
+          canvas.display.showDisplay(min,low,high,max);
+          canvas.datasets.data.doRequest();
+          canvas.display.timer();
+    </method>
 	
  </drawview> <!-- **CANVAS.DISPLAY**************************************************************-->
  
