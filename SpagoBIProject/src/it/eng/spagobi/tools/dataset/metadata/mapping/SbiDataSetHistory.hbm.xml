@@ -91,6 +91,14 @@
 	            <column name="JCLASS_NAME" />
 	        </property>
 		</subclass>
+		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiCustomDataSet" discriminator-value="SbiCustomDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
+	        <property name="customData" type="string">
+	            <column name="CUSTOM_DATA" />
+	     </property>
+	     	        <property name="javaClassName" type="string">
+	            <column name="JCLASS_NAME" />
+	     </property>
+		</subclass>	
 		<subclass name="it.eng.spagobi.tools.dataset.metadata.SbiQbeDataSet" discriminator-value="SbiQbeDataSet" lazy="false" extends="it.eng.spagobi.tools.dataset.metadata.SbiDataSetHistory" >
 	        <property name="sqlQuery" type="text">
 	            <column name="QUERY" />

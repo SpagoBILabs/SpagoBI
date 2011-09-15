@@ -566,6 +566,8 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Automatic Columns numeration?';
 Sbi.locale.ln['sbi.ds.openQbeQizard'] = 'Open QbE wizard';
 Sbi.locale.ln['sbi.ds.help'] = 'Help';
 Sbi.locale.ln['sbi.ds.pars'] = 'Available Profile Attributes';
+Sbi.locale.ln['sbi.ds.customData'] = 'Custom Attributes';
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS

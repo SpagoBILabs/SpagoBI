@@ -35,6 +35,8 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSetDetail;
@@ -506,6 +508,17 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				((WSDataSetDetail)dsActiveDetail).setAddress(wsAddress);
 			}
 		}
+		else if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){
+			dsActiveDetail = new CustomDataSetDetail();
+			String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA);
+			if(customData!=null && !customData.equals("")){
+				((CustomDataSetDetail)dsActiveDetail).setCustomData(customData);
+			}
+			String jClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
+			if(jClassName!=null && !jClassName.equals("")){
+				((CustomDataSetDetail)dsActiveDetail).setJavaClassName(jClassName);
+			}
+		}
 		return dsActiveDetail;
 	}
 	
@@ -636,6 +649,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			ds=new JavaClassDataSet();
 			String jclassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
 			((JavaClassDataSet)ds).setClassName(jclassName);
+		}
+		
+		if(dsType.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){		
+			ds=new CustomDataSet();
+			String customData = getAttributeAsString(DataSetConstants.CUSTOM_DATA);
+			((CustomDataSet)ds).setCustomData(customData);
+			String javaClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
+			((CustomDataSet)ds).setJavaClassName(javaClassName);
 		}
 		
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){

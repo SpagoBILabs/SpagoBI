@@ -557,6 +557,7 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows']='Numeration automatique des Colonnes?';
 Sbi.locale.ln['sbi.ds.openQbeQizard']='Ouvrir l\'assistant QbE';
 Sbi.locale.ln['sbi.ds.help']='Aide';
 Sbi.locale.ln['sbi.ds.pars']='Attributs de profil disponibles';
+Sbi.locale.ln['sbi.ds.customData'] = 'Attributs';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
