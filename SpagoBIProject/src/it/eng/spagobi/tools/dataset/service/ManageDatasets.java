@@ -657,6 +657,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			((CustomDataSet)ds).setCustomData(customData);
 			String javaClassName = getAttributeAsString(DataSetConstants.JCLASS_NAME);
 			((CustomDataSet)ds).setJavaClassName(javaClassName);
+			((CustomDataSet)ds).init();
 		}
 		
 		if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){

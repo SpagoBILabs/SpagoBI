@@ -302,6 +302,13 @@ Ext.extend(
 						requestParameters.pars = Ext.util.JSON
 								.encode(arrayPars);
 					}
+
+					customArray = this.customDataGrid.getDataArray();
+					
+					if (customArray) {
+						requestParameters.customData = Ext.util.JSON.encode(customArray);
+					}
+					
 					if (this.previewWindow === undefined) {
 						this.previewWindow = new Sbi.tools.dataset.PreviewWindow({
 							modal : true

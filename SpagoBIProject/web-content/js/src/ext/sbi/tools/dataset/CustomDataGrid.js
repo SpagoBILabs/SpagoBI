@@ -184,5 +184,6 @@ Ext.extend(Sbi.tools.dataset.CustomDataGrid, Ext.grid.EditorGridPanel, {
 		return arrayPars;
 	}
 
+
 });
 
