@@ -67,6 +67,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected String groovyFileName;
     protected String jsFileName;
     
+	Map<String, Object> properties;
+    
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
     public AbstractDataSet() {
@@ -325,16 +327,15 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.transformerCd = transformerCd;
 	}
 
-	
-// these has to be implemented by the user creating a custom DataSet	
+	// these has to be implemented by the user creating a custom DataSet	
 	public Map getProperties() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.properties;
 	}
 	public void setProperties(Map map) {
-		// TODO Auto-generated method stub
-		
+		this.properties = map;		
 	}
-	
+
+
 	
 }
