@@ -34,6 +34,10 @@ public interface IDataSet {
 	String getDsType();
 	void setDsType(String dsType);
 
+	Map getProperties();
+	void setProperties(Map map);
+	
+	
 	// parametrization ....
 	// --------------------------------------------------------------------------------------------------
 	// INVESTIGATE: why this 2 similar methods ??? FIND OUT & REFACTOR !

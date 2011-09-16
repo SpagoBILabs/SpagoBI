@@ -324,4 +324,17 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setTransformerCd(String transformerCd) {
 		this.transformerCd = transformerCd;
 	}
+
+	
+// these has to be implemented by the user creating a custom DataSet	
+	public Map getProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void setProperties(Map map) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }
