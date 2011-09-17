@@ -73,6 +73,7 @@ Sbi.execution.ParametersPanel = function(config) {
 	if (c.parameters) {
 		this.parametersPreference = c.parameters;
 	}
+	//if(c.isFromCross) alert('parametersPreference: ' + this.parametersPreference.toSource());
 	
 	// always declare exploited services first!
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
@@ -252,7 +253,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var preferenceState = undefined;
 		if (this.parametersPreference) {
 			preferenceState = Ext.urlDecode(this.parametersPreference);
+			//if(this.isFromCross) alert('preferenceState: ' + preferenceState.toSource());
 		}
+	
 		
 		var nonTransientField = 0;
 		for(var i = 0; i < parameters.length; i++) {
@@ -263,6 +266,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				field.setValue(parameters[i].value);
 			} else if (preferenceState !== undefined && preferenceState[parameters[i].id] !== undefined) {
 				field.isTransient = true;
+				//if(this.isFromCross) alert(parameters[i].id + ' set equals to ' + preferenceState[parameters[i].id]);
 				field.setValue(preferenceState[parameters[i].id]);
 			} else if (parameters[i].visible === false) {
 				field.isTransient = true;
@@ -275,7 +279,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				this.columns[field.columnNo].add( field );
 			}
 			this.fields[parameters[i].id] = field;
-	
+		}
+		
+		if(this.isFromCross) {
+			//alert('formState[after set]: ' + this.getFormState().toSource());
 		}
 		
 		var thereAreParametersToBeFilled = false;
@@ -289,6 +296,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}
 		}
+		
+		//if(this.isFromCross) alert('thereAreParametersToBeFilled?' + thereAreParametersToBeFilled);
 		
 		if(thereAreParametersToBeFilled !== true) {
 			if (this.rendered) {
@@ -367,9 +376,17 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}			
 		}
 		
+		if(this.isFromCross) {
+			//alert('formState[before udating dependecies]: ' + this.getFormState().toSource());
+		}
+		
 		for(var p in this.fields) {
 			var theField = this.fields[p];
 			this.updateDependentFields( theField );
+			
+			if(this.isFromCross) {
+				//alert('formState[after updateDependentFields on ' + p + ']: ' + this.getFormState().toSource());
+			}
 			
 			/*
 			 * workaround (work-around):
@@ -407,6 +424,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					break;
 				}
 			}
+		}
+		
+		//if(this.isFromCross) alert('isReadyForExecution? ' + isReadyForExecution);
+		
+		if(this.isFromCross && isReadyForExecution) {
+			//alert('parametersPreference: ' + this.parametersPreference.toSource());
+			//alert('formState: ' + this.getFormState().toSource());
 		}
 		
 		
@@ -453,7 +477,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(field.behindParameter.selectionType === 'COMBOBOX'){ 
 			field.store.load();
 		}		
-		field.reset();
+		//field.reset();
 	}
 	
 	, updateVisualDependentField: function(fatherField, dependantConf) {

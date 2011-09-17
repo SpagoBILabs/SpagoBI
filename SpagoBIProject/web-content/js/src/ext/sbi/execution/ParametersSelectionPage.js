@@ -393,7 +393,15 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	
 	, initParametersPanel: function( config ) {
 		Ext.apply(config, {pageNumber: 2}); // this let the ParametersPanel know that it is on parameters selection page
+		if(this.isFromCross == true) {
+			
+		}
+		
+		config.isFromCross = this.isFromCross;
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config);
+		
+		
+		
 		this.parametersPanel.on('synchronize', function() {
 			if(this.shortcutsPanelSynchronizationPending === false) {
 				this.fireEvent('synchronize', this);
