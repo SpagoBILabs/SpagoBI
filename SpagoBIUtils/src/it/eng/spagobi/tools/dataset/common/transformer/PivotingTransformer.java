@@ -4,7 +4,7 @@
 package it.eng.spagobi.tools.dataset.common.transformer;
 
 import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -45,7 +45,7 @@ public class PivotingTransformer implements IDataTransformer {
 
     	while (it.hasNext()){
 			IRecord record =(IRecord) it.next();	
-			DataStoreMetaData dataStoreMeta = (DataStoreMetaData)record.getDataStore().getMetaData();
+			MetaData dataStoreMeta = (MetaData)record.getDataStore().getMetaData();
 			List fields = record.getFields();
 			for(int j = 0; j < fields.size(); j++) {		
 				IField field = (IField)fields.get(j);

@@ -34,7 +34,7 @@ public class DataStore implements IDataStore {
     public DataStore() {
 		super();
 		this.records = new ArrayList();
-		this.metaData = new DataStoreMetaData();
+		this.metaData = new MetaData();
 	}
     
     public boolean isEmpty(){

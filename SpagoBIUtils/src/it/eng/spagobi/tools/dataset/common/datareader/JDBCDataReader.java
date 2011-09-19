@@ -14,7 +14,7 @@ import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -40,7 +40,7 @@ public class JDBCDataReader extends AbstractDataReader {
     	
     	logger.debug("IN");
     	DataStore dataStore;
-    	DataStoreMetaData dataStoreMeta;
+    	MetaData dataStoreMeta;
     	FieldMetadata fieldMeta;
     	
     	ScrollableDataResult scrollableDataResult;
@@ -53,7 +53,7 @@ public class JDBCDataReader extends AbstractDataReader {
 	    	scrollableDataResult = (ScrollableDataResult)data;
 	    	
 	    	dataStore = new DataStore();
-	    	dataStoreMeta = new DataStoreMetaData();
+	    	dataStoreMeta = new MetaData();
 	    	
 	    	logger.debug("Reading dataStore metadata ...");
 	    	columnsNames = Arrays.asList(scrollableDataResult.getColumnNames());

@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -40,7 +40,7 @@ public class CsvDataReader extends AbstractDataReader {
 
 	public IDataStore read( Object data ) {
 		DataStore dataStore = null;
-		DataStoreMetaData dataStoreMeta;
+		MetaData dataStoreMeta;
 		
 		InputStream inputDataStream;
 		LineNumberReader lineReader;
@@ -51,7 +51,7 @@ public class CsvDataReader extends AbstractDataReader {
 		inputDataStream = (InputStream)data;
 		
 		dataStore = new DataStore();
-		dataStoreMeta = new DataStoreMetaData();
+		dataStoreMeta = new MetaData();
 		dataStore.setMetaData(dataStoreMeta);
 		
 		try {				

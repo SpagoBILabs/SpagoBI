@@ -31,14 +31,14 @@ import java.util.Map;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class DataStoreMetaData implements IMetaData {
+public class MetaData implements IMetaData {
 	
 	int idFieldIndex;
 	List fieldsMeta;
 	Map name2IndexMap;
 	Map properties;
 
-	public DataStoreMetaData() {
+	public MetaData() {
 		idFieldIndex = -1;
 		name2IndexMap = new HashMap();
 		fieldsMeta = new ArrayList();

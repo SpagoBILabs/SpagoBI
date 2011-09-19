@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -37,7 +37,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     
     public IDataStore read(Object data) throws EMFUserError, EMFInternalError {
     	DataStore dataStore;
-    	DataStoreMetaData dataStoreMeta;
+    	MetaData dataStoreMeta;
     	FieldMetadata fieldMeta;
     	String fieldName;
     	String fieldType;
@@ -57,7 +57,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     		rs = (ResultSet)data;
     		    		
     		dataStore = new DataStore();
-        	dataStoreMeta = new DataStoreMetaData();
+        	dataStoreMeta = new MetaData();
         	
         	logger.debug("Reading metadata ...");
         	columnCount = rs.getMetaData().getColumnCount();
