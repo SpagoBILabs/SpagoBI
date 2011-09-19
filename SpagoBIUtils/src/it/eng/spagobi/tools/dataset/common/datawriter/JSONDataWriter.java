@@ -34,9 +34,9 @@ import org.json.JSONObject;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**

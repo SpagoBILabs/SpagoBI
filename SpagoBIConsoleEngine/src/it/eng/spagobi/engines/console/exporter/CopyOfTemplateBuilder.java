@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.dbaccess.sql.DateDecorator;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.decorator.DisplaySizeDecorator;
 import it.eng.spagobi.tools.dataset.common.decorator.IDataStoreDecorator;
 import it.eng.spagobi.utilities.assertion.Assert;

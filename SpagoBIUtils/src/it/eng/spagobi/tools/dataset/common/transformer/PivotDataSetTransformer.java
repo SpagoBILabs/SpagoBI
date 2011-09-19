@@ -29,13 +29,13 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

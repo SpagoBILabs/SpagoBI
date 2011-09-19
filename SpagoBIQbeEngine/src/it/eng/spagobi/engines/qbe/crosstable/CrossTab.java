@@ -23,10 +23,10 @@ package it.eng.spagobi.engines.qbe.crosstable;
 
 import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;

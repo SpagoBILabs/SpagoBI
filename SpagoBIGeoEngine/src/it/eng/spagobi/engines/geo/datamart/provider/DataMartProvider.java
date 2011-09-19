@@ -41,7 +41,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
@@ -110,7 +110,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 			}
     		
 			IDataStore dataStore = dataSet.getDataStore();
-			IDataStoreMetaData dataStoreMeta = dataStore.getMetaData();
+			IMetaData dataStoreMeta = dataStore.getMetaData();
 			dataStoreMeta.setIdField( dataStoreMeta.getFieldIndex( getSelectedLevel().getColumnId() ));
 		
 			dataMart = new DataMart();

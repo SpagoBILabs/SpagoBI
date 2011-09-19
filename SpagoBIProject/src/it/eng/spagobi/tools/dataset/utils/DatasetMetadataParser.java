@@ -2,11 +2,11 @@ package it.eng.spagobi.tools.dataset.utils;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
-import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -46,7 +46,7 @@ import it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
@@ -86,7 +86,7 @@ public class MapOlAction extends AbstractBaseServlet {
 		
 		IDataSet dataSet;
 		IDataStore dataStore;
-		IDataStoreMetaData dataStoreMeta;
+		IMetaData dataStoreMeta;
 		
 		logger.debug("IN");
 		

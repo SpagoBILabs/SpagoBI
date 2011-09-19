@@ -19,7 +19,9 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.common.datastore;
+package it.eng.spagobi.tools.dataset.common.metadata;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,8 +172,7 @@ public class MetaData implements IMetaData {
 
 	public Map<String, List<String>> getDomainDescriptions(
 			Map<String, List<String>> codes) {
-		// TODO Auto-generated method stub
-		return null;
+		return codes;
 	}
 
 }
