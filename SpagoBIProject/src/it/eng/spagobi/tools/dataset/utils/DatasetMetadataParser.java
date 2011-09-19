@@ -2,10 +2,10 @@ package it.eng.spagobi.tools.dataset.utils;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class DatasetMetadataParser {
 			logger.error("Data Store is null, cannot recover metadata because Data Store or Data Store metadata is null");
 			return null;
 		}
-		IDataStoreMetaData dataStoreMetaData=dataStore.getMetaData();
+		IMetaData dataStoreMetaData=dataStore.getMetaData();
 
 		HashMap<String , Class> metadataMap=new HashMap<String, Class>();
 		for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
@@ -54,9 +54,9 @@ public class DatasetMetadataParser {
 	}
 
 
-	public IDataStoreMetaData xmlToMetadata(String xmlMetadata) throws ClassNotFoundException {
+	public IMetaData xmlToMetadata(String xmlMetadata) throws ClassNotFoundException {
 		logger.debug("IN");
-		DataStoreMetaData dsMeta=new DataStoreMetaData();
+		MetaData dsMeta=new MetaData();
 
 		if(xmlMetadata==null){
 			logger.error("String rapresentation of metadata is null");

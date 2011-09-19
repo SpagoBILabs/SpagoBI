@@ -37,9 +37,9 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.GuiGenericDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -109,7 +109,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 
 	public SDKDataStoreMetadata getDataStoreMetadata(SDKDataSet sdkDataSet) throws NotAllowedOperationException, MissingParameterValue, InvalidParameterValue {
 		SDKDataStoreMetadata toReturn = null;
-		IDataStoreMetaData dsMeta=null;
+		IMetaData dsMeta=null;
 		Integer dataSetId = null;
 		logger.debug("IN");
 		try {
@@ -173,11 +173,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				dataSet.setParamsMap(parameters);
 				dataSet.loadData();
 				IDataStore dataStore = dataSet.getDataStore();
-				dsMeta = (DataStoreMetaData) dataStore.getMetaData();
+				dsMeta = (MetaData) dataStore.getMetaData();
 
 			}
 
-			toReturn = new SDKObjectsConverter().fromDataStoreMetadataToSDKDataStoreMetadata((DataStoreMetaData)dsMeta);
+			toReturn = new SDKObjectsConverter().fromDataStoreMetadataToSDKDataStoreMetadata((MetaData)dsMeta);
 
 		} catch(NotAllowedOperationException e) {
 			throw e;
