@@ -4,7 +4,7 @@
 package it.eng.spagobi.tools.dataset.common.datareader;
 
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -50,7 +50,7 @@ public class XmlDataReader extends AbstractDataReader {
 
 	public IDataStore read( Object data ) {
 		DataStore dataStore;
-		DataStoreMetaData dataStoreMeta;
+		MetaData dataStoreMeta;
 
 		InputStream inputDataStream;
 		DocumentBuilder documentBuilder;
@@ -65,7 +65,7 @@ public class XmlDataReader extends AbstractDataReader {
 		}
 
 		dataStore = new DataStore();
-		dataStoreMeta = new DataStoreMetaData();
+		dataStoreMeta = new MetaData();
 		dataStore.setMetaData(dataStoreMeta);
 
 

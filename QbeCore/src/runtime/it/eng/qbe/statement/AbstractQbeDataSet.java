@@ -8,7 +8,7 @@ import it.eng.qbe.query.Query;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -51,12 +51,12 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return dataStore;
 	}
 
-	private DataStoreMetaData getDataStoreMeta(Query query) {
-		DataStoreMetaData dataStoreMeta;
+	private MetaData getDataStoreMeta(Query query) {
+		MetaData dataStoreMeta;
 		ISelectField queryFiled;
 		FieldMetadata dataStoreFieldMeta;
 		
-		dataStoreMeta = new DataStoreMetaData();
+		dataStoreMeta = new MetaData();
 		
 		Iterator fieldsIterator = query.getSelectFields(true).iterator();
 		while(fieldsIterator.hasNext()) {
@@ -107,7 +107,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	
 	protected DataStore toDataStore(List result) {
 		DataStore dataStore;
-		DataStoreMetaData dataStoreMeta;
+		MetaData dataStoreMeta;
 		Object[] row;
 	
 		dataStore = new DataStore();
