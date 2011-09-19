@@ -84,6 +84,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		var datasets = [];
 		datasets.push(requestParameters);	
 		this.initStore(datasets, dataConfig.dsId);
+			
 	}
 	
 
@@ -489,6 +490,77 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	this.getSeries();
     	this.createChart();
     }
+   
+    //checks if there are some $F{<field>} to substitute into template (title, subtitle, x_axis, y_axis)
+    , setFieldValuesIntoTemplate: function(config){    	
+    	//checks title text   
+    	if (config.title && config.title.text)
+    		config.title.text = this.checkTextFields(config.title.text);
+    	//checks subtitle text  
+    	if (config.subtitle && config.subtitle.text)
+    		config.subtitle.text = this.checkTextFields(config.subtitle.text);
+    	//checks xAxis text  
+    	if (config.xAxis && config.xAxis.title && config.xAxis.title.text)
+    		config.xAxis.title.text = this.checkTextFields(config.xAxis.title.text);
+    	//checks yAxis text  
+    	if (config.yAxis && config.yAxis.title && config.yAxis.title.text)
+    		config.yAxis.title.text = this.checkTextFields(config.yAxis.title.text);
+		
+    }
+
+    , checkTextFields: function(text){
+    	var aliasFields = [];
+    	var prefix = "$F{";
+    	var suffix = "}";
+    	
+    	aliasFields = this.getFieldLabels(text);
+		for (var i=0, l=aliasFields.length; i<l; i++){
+			var alias = aliasFields[i];
+			var fieldValue = this.getFieldValue(alias);
+			if (fieldValue !== null){
+				var tmpText = text.replace(prefix + alias + suffix, fieldValue);
+				text = tmpText;
+			}
+		}
+		return text;
+    }
+    
+	,getFieldLabels: function(text){
+    	var prefix = "$F{";
+    	var suffix = "}";
+    	var fieldLabels = [];
+    	var tmpText = text;
+    	var doGetLabels = true;
+    	
+    	while (doGetLabels){
+			if (tmpText.indexOf(prefix) >= 0){			
+				var tmpLabel = tmpText.substring( tmpText.indexOf(prefix)+3, tmpText.indexOf(suffix));
+				var tmpLen = tmpLabel.length + 1;
+				fieldLabels.push(tmpLabel);
+				tmpText = tmpText.substring(tmpText.indexOf(tmpLabel)+tmpLen);
+			}else{
+				doGetLabels = false;
+			}
+    	}
+		return fieldLabels;
+	}
+
+    , getFieldValue: function(alias){
+		var fieldValues = null;	
+		
+		if (alias === undefined || alias === null){
+			return  fieldValues;
+	   	}
+		//gets the field value from the first record 
+		//if(this.store!=null && this.store.getCount() > 0){
+		if(this.store!=null ){
+	    	var fieldColumn = this.store.getFieldNameByAlias(alias);
+	    	    	
+    		var rec = this.store.getAt(0);
+			if(rec) fieldValues = rec.get(fieldColumn);						
+		}
+		return  fieldValues;
+	}
 });
 
 
