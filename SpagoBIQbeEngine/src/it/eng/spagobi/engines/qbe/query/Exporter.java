@@ -3,7 +3,7 @@ package it.eng.spagobi.engines.qbe.query;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -78,7 +78,7 @@ public class Exporter {
 	public CellStyle[] fillSheetHeader(Sheet sheet,Workbook wb, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {	
 		CrosstabXLSExporter xlsExp = new CrosstabXLSExporter();
 		CellStyle hCellStyle = xlsExp.buildHeaderCellStyle(sheet);
-		IDataStoreMetaData d = dataStore.getMetaData();	
+		IMetaData d = dataStore.getMetaData();	
     	int colnum = d.getFieldCount();
     	Row row = sheet.getRow(beginRowHeaderData);
     	CellStyle[] cellTypes = new CellStyle[colnum]; // array for numbers patterns storage
@@ -135,7 +135,7 @@ public class Exporter {
 		cellStyleDate.cloneStyleFrom(dCellStyle);
 		cellStyleDate.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy"));
 		
-		IDataStoreMetaData d = dataStore.getMetaData();	
+		IMetaData d = dataStore.getMetaData();	
 		
 		while(it.hasNext()){
 			Row rowVal = sheet.getRow(rownum);

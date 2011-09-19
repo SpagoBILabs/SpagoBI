@@ -24,7 +24,7 @@ package it.eng.qbe.query.serializer.json;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -73,7 +73,7 @@ public class LookupStoreJSONSerializer {
 		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
 		
 		try {
-			IDataStoreMetaData dataStoreMeta = dataStore.getMetaData();
+			IMetaData dataStoreMeta = dataStore.getMetaData();
 			valueField = "Values";
 			displayField = "Values";
 			descriptionField = "Values";

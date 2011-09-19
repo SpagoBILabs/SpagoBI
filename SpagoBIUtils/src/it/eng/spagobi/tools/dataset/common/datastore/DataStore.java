@@ -22,7 +22,7 @@ import it.eng.spago.base.SourceBeanException;
  */
 public class DataStore implements IDataStore {
 	
-	IDataStoreMetaData metaData;
+	IMetaData metaData;
 	
 	List records = null;
 	
@@ -136,11 +136,11 @@ public class DataStore implements IDataStore {
     }
 
     
-    public IDataStoreMetaData getMetaData() {
+    public IMetaData getMetaData() {
     	return this.metaData;
     }
     
-    public void setMetaData(IDataStoreMetaData metaData) {
+    public void setMetaData(IMetaData metaData) {
 		this.metaData = metaData;
 	}
 

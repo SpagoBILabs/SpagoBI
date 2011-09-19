@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.decorator;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -41,7 +41,7 @@ public class DisplaySizeDecorator extends AbstractDataStoreDecorator {
 	}
 	
 	void doUpdateDecoration(IDataStore dataStore, IRecord record) {
-		IDataStoreMetaData dataStoreMeta = dataStore.getMetaData();
+		IMetaData dataStoreMeta = dataStore.getMetaData();
 		int filedNo = dataStoreMeta.getFieldCount();
 		
 		for(int i = 0; i < filedNo; i++) {

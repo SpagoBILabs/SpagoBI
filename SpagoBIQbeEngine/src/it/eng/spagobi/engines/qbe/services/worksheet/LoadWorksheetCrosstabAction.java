@@ -44,6 +44,7 @@ import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
@@ -65,15 +66,15 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	@Override
-	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-		FormState formState = getEngineInstance().getFormState();
-		if (formState == null) {
-			return null;
-		} else {
-			return  formState.getFormStateValues();
-		}
-	}
+//	@Override
+//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+//		FormState formState = getEngineInstance().getFormState();
+//		if (formState == null) {
+//			return null;
+//		} else {
+//			return  formState.getFormStateValues();
+//		}
+//	}
 	
 	
 	/**
@@ -86,33 +87,33 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	@Override
-	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery, IStatement stmt) throws JSONException {
-		//optional filters specified by the user (now used in the worksheet)
-		JSONObject optionalUserFilters = getAttributeAsJSONObject(QbeEngineStaticVariables.OPTIONAL_FILTERS);
-		logger.debug("Found those optional filters " + optionalUserFilters);
-		List<WhereField> whereFields = new ArrayList<WhereField>();
-		String sheetName = this.getAttributeAsString(SHEET);
-		whereFields.addAll(getMandatoryFilters(this.getEngineInstance(), sheetName));
-		whereFields.addAll(getOptionalFilters(optionalUserFilters));
-		
-		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, baseQuery, whereFields, sqlQuery, stmt);
-	}
+//	@Override
+//	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, Query baseQuery, String sqlQuery, IStatement stmt) throws JSONException {
+//		//optional filters specified by the user (now used in the worksheet)
+//		JSONObject optionalUserFilters = getAttributeAsJSONObject(QbeEngineStaticVariables.OPTIONAL_FILTERS);
+//		logger.debug("Found those optional filters " + optionalUserFilters);
+//		List<WhereField> whereFields = new ArrayList<WhereField>();
+//		String sheetName = this.getAttributeAsString(SHEET);
+//		whereFields.addAll(getMandatoryFilters(this.getEngineInstance(), sheetName));
+//		whereFields.addAll(getOptionalFilters(optionalUserFilters));
+//		
+//		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, baseQuery, whereFields, sqlQuery, stmt);
+//	}
 	
-	public static List<WhereField> getMandatoryFilters(QbeEngineInstance engineInstance, String sheetName) throws JSONException {
-		WorkSheetDefinition worksheetDefinition = engineInstance.getWorkSheetDefinition();
-		Sheet sheet = worksheetDefinition.getSheetConfiguration(sheetName);
-		if (sheet == null) {
-			throw new SpagoBIEngineRuntimeException("Sheet with name " + sheetName + " not found!!");
-		}
-		
-		List<WhereField> toReturn = new ArrayList<WhereField>();
-		List<Attribute> attributes = worksheetDefinition.getGlobalFilters();
-		toReturn.addAll(transformIntoWhereClauses(attributes));
-		attributes = sheet.getFilteringAttributes();
-		toReturn.addAll(transformIntoWhereClauses(attributes));
-		return toReturn;
-	}
+//	public static List<WhereField> getMandatoryFilters(WorksheetEngineInstance engineInstance, String sheetName) throws JSONException {
+//		WorkSheetDefinition worksheetDefinition = engineInstance.getWorkSheetDefinition();
+//		Sheet sheet = worksheetDefinition.getSheetConfiguration(sheetName);
+//		if (sheet == null) {
+//			throw new SpagoBIEngineRuntimeException("Sheet with name " + sheetName + " not found!!");
+//		}
+//		
+//		List<WhereField> toReturn = new ArrayList<WhereField>();
+//		List<Attribute> attributes = worksheetDefinition.getGlobalFilters();
+//		toReturn.addAll(transformIntoWhereClauses(attributes));
+//		attributes = sheet.getFilteringAttributes();
+//		toReturn.addAll(transformIntoWhereClauses(attributes));
+//		return toReturn;
+//	}
 
 
 	public static List<WhereField> transformIntoWhereClauses(

@@ -33,7 +33,7 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.FilterQueryTransformer;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -212,7 +212,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				dataSet.setQuery(sqlQuery);
 				dataSet.loadData(start, limit, -1);
 				dataStore = dataSet.getDataStore();
-				IDataStoreMetaData dataStoreMetadata = dataStore.getMetaData();
+				IMetaData dataStoreMetadata = dataStore.getMetaData();
 				for(int i = 0; i < dataStoreMetadata.getFieldCount(); i++) {
 					ISelectField queryField = (ISelectField)queryFields.get(i);
 					dataStoreMetadata.changeFieldAlias(i, queryField.getAlias());

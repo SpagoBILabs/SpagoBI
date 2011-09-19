@@ -20,16 +20,14 @@
  **/
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
@@ -39,7 +37,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public abstract class AbstractWorksheetEngineAction extends AbstractQbeEngineAction {
+public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction {
 	
 	private static final long serialVersionUID = 6446776217192515816L;
 	
@@ -51,15 +49,18 @@ public abstract class AbstractWorksheetEngineAction extends AbstractQbeEngineAct
     	
     	IDataStore dataStore = null;
     	
-		if (!TemporaryTableManager.isEnabled()) {
-			logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
-				"Using inline view construct, therefore performance will be very low");			
-			dataStore = useInLineViewStrategy(worksheetQuery, baseQuery, start, limit);
-		} else {
-			logger.debug("Using temporary table strategy....");			
-			dataStore = useTemporaryTableStrategy(worksheetQuery, baseQuery,
-					start, limit);
-		}
+//		if (!TemporaryTableManager.isEnabled()) {
+//			logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
+//				"Using inline view construct, therefore performance will be very low");			
+//			dataStore = useInLineViewStrategy(worksheetQuery, baseQuery, start, limit);
+//		} else {
+//			logger.debug("Using temporary table strategy....");			
+//			dataStore = useTemporaryTableStrategy(worksheetQuery, baseQuery,
+//					start, limit);
+//		}
+
+		logger.debug("Using temporary table strategy....");			
+		dataStore = useTemporaryTableStrategy(worksheetQuery, baseQuery, start, limit);
 		
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 		logger.debug("Query executed succesfully");
@@ -85,8 +86,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractQbeEngineAct
 		IDataStore dataStore = null;
 		
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-		DataSource dataSource = getDataSource(connection);
+//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+//		DataSource dataSource = getDataSource(connection);
+		IDataSource dataSource = getDataSource();
 		
 		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
 		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
@@ -108,30 +110,54 @@ public abstract class AbstractWorksheetEngineAction extends AbstractQbeEngineAct
 		return dataStore;
 	}
 
-	private IDataStore useInLineViewStrategy(String worksheetQuery,
-			String baseQuery, Integer start, Integer limit) {
+//	private IDataStore useInLineViewStrategy(String worksheetQuery,
+//			String baseQuery, Integer start, Integer limit) {
+//
+//		IDataStore dataStore = null;
+//		
+//		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+//		DataSource dataSource = getDataSource(connection);
+//		
+//		int beginIndex = worksheetQuery.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
+//		int endIndex = worksheetQuery.indexOf(" ", beginIndex);
+//		String inlineSQLQuery = worksheetQuery.substring(0, beginIndex) + " ( " + baseQuery + " ) TEMP " + worksheetQuery.substring(endIndex);
+//		logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
+//		auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
+//		JDBCDataSet dataSet = new JDBCDataSet();
+//		dataSet.setDataSource(dataSource);
+//		dataSet.setQuery(inlineSQLQuery);
+//		if (start != null && limit != null) {
+//			dataSet.loadData(start, limit, -1);
+//		} else {
+//			dataSet.loadData();
+//		}
+//		dataStore = (DataStore) dataSet.getDataStore();
+//		return dataStore;
+//	}
+	
+    public WorksheetEngineInstance getEngineInstance() {
+    	return (WorksheetEngineInstance) getAttributeFromSession( WorksheetEngineInstance.class.getName() );
+    }
+    
+    public void setEngineInstance(WorksheetEngineInstance engineInstance) {
+    	setAttributeInSession( WorksheetEngineInstance.class.getName() , engineInstance );
+    }
+    
+	public IDataSource getDataSource() {
+		WorksheetEngineInstance engineInstance  = getEngineInstance();
+    	if (engineInstance == null) {
+    		return null;
+    	}
+    	return engineInstance.getDataSource();
+	}
 
-		IDataStore dataStore = null;
-		
-		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-		DataSource dataSource = getDataSource(connection);
-		
-		int beginIndex = worksheetQuery.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
-		int endIndex = worksheetQuery.indexOf(" ", beginIndex);
-		String inlineSQLQuery = worksheetQuery.substring(0, beginIndex) + " ( " + baseQuery + " ) TEMP " + worksheetQuery.substring(endIndex);
-		logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
-		auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
-		JDBCDataSet dataSet = new JDBCDataSet();
-		dataSet.setDataSource(dataSource);
-		dataSet.setQuery(inlineSQLQuery);
-		if (start != null && limit != null) {
-			dataSet.loadData(start, limit, -1);
-		} else {
-			dataSet.loadData();
-		}
-		dataStore = (DataStore) dataSet.getDataStore();
-		return dataStore;
+	public void setDataSource(IDataSource dataSource) {
+		WorksheetEngineInstance engineInstance  = getEngineInstance();
+    	if (engineInstance == null) {
+    		return;
+    	}
+    	engineInstance.setDataSource(dataSource);
 	}
     
 }

@@ -21,7 +21,7 @@
 package it.eng.spagobi.engines.qbe.services.worksheet.exporter;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -89,7 +89,7 @@ public class DataSourceTablePDFExporter {
 	 */
 	public PdfPTable buildTableHeader(IDataStore dataStore) throws BadElementException{	
 		logger.debug("IN: building the headers of the table");
-		IDataStoreMetaData dataStoreMetaData = dataStore.getMetaData();	
+		IMetaData dataStoreMetaData = dataStore.getMetaData();	
     	int colunum = dataStoreMetaData.getFieldCount();
 	    int visibleColumns=0;
 	    List<String> columnsName = new ArrayList<String>();
@@ -152,7 +152,7 @@ public class DataSourceTablePDFExporter {
 		
 		Iterator it = dataStore.iterator();
     	
-    	IDataStoreMetaData d = dataStore.getMetaData();	
+    	IMetaData d = dataStore.getMetaData();	
 		
 		while(it.hasNext()){//for each record
 			IRecord record =(IRecord)it.next();

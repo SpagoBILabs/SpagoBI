@@ -24,6 +24,8 @@ import it.eng.spagobi.engines.qbe.QbeEngineException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 
@@ -78,5 +80,20 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		public void setAnalysisState(IEngineAnalysisState analysisState) {
 			// TODO Auto-generated method stub
 		}
+
+		public IDataSet getDataSet() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		public IDataSource getDataSource() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		public void setDataSource(IDataSource dataSource) {
+			// TODO Auto-generated method stub
+			return;
+		}
 	
-	}
+}

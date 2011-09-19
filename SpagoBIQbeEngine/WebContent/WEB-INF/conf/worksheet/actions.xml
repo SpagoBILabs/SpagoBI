@@ -8,21 +8,26 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	
 	<ACTION name="UPLOAD_WORKSHEET_IMAGE_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.worksheet.UploadWorksheetImageAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="EXECUTE_WORKSHEET_QUERY_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.ExecuteWorksheetQueryAction" 
+	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.GetImageContentAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetImageContentAction" 
+	<ACTION name="GET_WORKSHEET_FIELDS_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorksheetFieldsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXECUTE_WORKSHEET_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.worksheet.ExecuteWorksheetQueryAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

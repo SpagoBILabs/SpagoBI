@@ -12,7 +12,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
@@ -154,7 +154,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 	
 	private void processCalculatedFields(IRecord record, IDataStore dataStore) {
-		IDataStoreMetaData dataStoreMeta;
+		IMetaData dataStoreMeta;
 		List calculatedFieldsMeta;
 		
 		dataStoreMeta = dataStore.getMetaData();

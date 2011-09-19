@@ -20,25 +20,21 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
-import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
-import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
-import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -50,6 +46,8 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 
 	// INPUT PARAMETERS
 	public static final String ALIAS = "ALIAS";
+	public static final String LIMIT = "limit";
+	public static final String START = "start";
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetValuesForCrosstabAttributesAction.class);
@@ -58,10 +56,6 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		IDataStore dataStore = null;
-		Query query = null;
-		IStatement statement = null;
-		JSONObject jsonFormState = null;
-		LookupStoreJSONSerializer serializer = null;
 		JSONObject gridDataFeed = null;
 		
 		Monitor totalTimeMonitor = null;
@@ -75,30 +69,46 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.getValuesForCrosstabAttributesAction.totalTime");
 			
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			String alias = getAttributeAsString( ALIAS );
+			Assert.assertNotNull(alias, "Parameter [" + ALIAS + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			
-			// retrieving first QbE query and setting it as active query
-			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+			Integer start = getAttributeAsInteger( START );	
+			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
+			Integer limit = getAttributeAsInteger( LIMIT );
+			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 			
-			//build the query filtered for the smart filter
-			jsonFormState = loadSmartFilterFormValues();
-			logger.debug("Form state retrieved as a string: " + jsonFormState);
-			if ( jsonFormState != null ) {
-				query = getFilteredQuery(query, jsonFormState);
-			}
+			WorksheetEngineInstance engineInstance = this.getEngineInstance();
+			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 			
-			getEngineInstance().setActiveQuery(query);
+			IDataSet dataset = engineInstance.getDataSet();
+			IMetaData metadata = dataset.getMetadata();
+			dataStore = metadata.getDomainValues(alias, start, limit);
 			
-			statement = getEngineInstance().getStatment();	
-			statement.setParameters( getEnv() );
-
-			String baseQuery = statement.getSqlQueryString();
 			
-			String worksheetQuery = buildSqlStatement(query, baseQuery);
+//			// retrieving first QbE query and setting it as active query
+//			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+//			
+//			//build the query filtered for the smart filter
+//			jsonFormState = loadSmartFilterFormValues();
+//			logger.debug("Form state retrieved as a string: " + jsonFormState);
+//			if ( jsonFormState != null ) {
+//				query = getFilteredQuery(query, jsonFormState);
+//			}
+//			
+//			getEngineInstance().setActiveQuery(query);
+//			
+//			statement = getEngineInstance().getStatment();	
+//			statement.setParameters( getEnv() );
+//
+//			String baseQuery = statement.getSqlQueryString();
+//			
+//			String worksheetQuery = buildSqlStatement(query, baseQuery);
+//			
+//			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
+//			
+//			serializer = new LookupStoreJSONSerializer();
 			
-			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
-			
-			serializer = new LookupStoreJSONSerializer();
+			LookupStoreJSONSerializer serializer = new LookupStoreJSONSerializer();
 			gridDataFeed = (JSONObject)serializer.serialize(dataStore);
 			
 			try {
@@ -118,28 +128,28 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 		}	
 	}
 
-	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-		String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
-		if(jsonEncodedFormState!=null){
-			return new JSONObject(jsonEncodedFormState);
-		}
-		return null;
-	}
+//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+//		String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
+//		if(jsonEncodedFormState!=null){
+//			return new JSONObject(jsonEncodedFormState);
+//		}
+//		return null;
+//	}
 	
 
-	protected String buildSqlStatement(Query baseQuery, String sqlQuery) throws JSONException{
-		logger.debug("IN");
-		StringBuffer buffer = new StringBuffer();
-		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
-		String alias = getAttributeAsString( ALIAS );
-		Assert.assertNotNull(alias, "Parameter [" + ALIAS + "] cannot be null in oder to execute " + this.getActionName() + " service");
-		logger.debug("Qbe statement alias = [" + alias + "]");
-		alias = CrosstabQueryCreator.getSQLAlias(alias, baseQuery, baseQuerySelectedFields);
-		logger.debug("SQL alias = [" + alias + "]");
-		buffer.append("SELECT DISTINCT " + alias + " FROM TEMPORARY_TABLE ");
-		String toReturn = buffer.toString();
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
-	}
+//	protected String buildSqlStatement(Query baseQuery, String sqlQuery) throws JSONException{
+//		logger.debug("IN");
+//		StringBuffer buffer = new StringBuffer();
+//		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
+//		String alias = getAttributeAsString( ALIAS );
+//		Assert.assertNotNull(alias, "Parameter [" + ALIAS + "] cannot be null in oder to execute " + this.getActionName() + " service");
+//		logger.debug("Qbe statement alias = [" + alias + "]");
+//		alias = CrosstabQueryCreator.getSQLAlias(alias, baseQuery, baseQuerySelectedFields);
+//		logger.debug("SQL alias = [" + alias + "]");
+//		buffer.append("SELECT DISTINCT " + alias + " FROM TEMPORARY_TABLE ");
+//		String toReturn = buffer.toString();
+//		logger.debug("OUT: returning " + toReturn);
+//		return toReturn;
+//	}
 	
 }
