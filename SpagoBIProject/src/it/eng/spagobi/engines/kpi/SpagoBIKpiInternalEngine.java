@@ -67,7 +67,7 @@ import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
@@ -1265,7 +1265,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 
 		if (dataStore != null && !dataStore.isEmpty()) {
 			// Transform result into KPIValue (I suppose that the result has a unique value)
-			IDataStoreMetaData d = dataStore.getMetaData();		
+			IMetaData d = dataStore.getMetaData();		
 			int indexRes = d.getFieldIndex(RESOURCE);
 
 			if(indexRes!=-1){
@@ -1340,7 +1340,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		return kVal;
 	}
 
-	private KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IDataStoreMetaData d, 
+	private KpiValue setKpiValuesFromDataset(KpiValue kpiValueToReturn, List fields,IMetaData d, 
 			Date begD, Date endDate, String datasetLabel,
 			Integer modInstId, KpiValue kpiVal) throws EMFUserError, SourceBeanException{
 		int length = fields.size();

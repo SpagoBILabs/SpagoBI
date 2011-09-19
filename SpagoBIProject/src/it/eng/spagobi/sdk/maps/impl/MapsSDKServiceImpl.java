@@ -40,7 +40,7 @@ import it.eng.spagobi.sdk.maps.stub.MapsSDKService;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.rmi.RemoteException;
@@ -299,7 +299,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 			dataSet.setParamsMap(parameters);
 			dataSet.loadData();
 			IDataStore dataStore = dataSet.getDataStore();
-			DataStoreMetaData dataStoreMetadata = (DataStoreMetaData) dataStore.getMetaData();
+			MetaData dataStoreMetadata = (MetaData) dataStore.getMetaData();
 			toReturn = new SDKObjectsConverter().fromDataStoreMetadataToSDKDataStoreMetadata(dataStoreMetadata);
 		} catch(NotAllowedOperationException e) {
 			throw e;

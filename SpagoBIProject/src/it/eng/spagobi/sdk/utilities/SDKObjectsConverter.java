@@ -70,7 +70,7 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -675,7 +675,7 @@ public class SDKObjectsConverter {
 		return ds;
 	}
 	
-	public SDKDataStoreMetadata fromDataStoreMetadataToSDKDataStoreMetadata(DataStoreMetaData aDataStoreMetaData) {
+	public SDKDataStoreMetadata fromDataStoreMetadataToSDKDataStoreMetadata(MetaData aDataStoreMetaData) {
 		logger.debug("IN");
 		if (aDataStoreMetaData == null) {
 			logger.warn("DataStoreMetaData in input is null!!");
