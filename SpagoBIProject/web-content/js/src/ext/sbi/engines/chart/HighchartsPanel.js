@@ -74,6 +74,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			delete dataConfig.charts;
 		}
 		this.loadChartData(dataConfig);
+		
 	}
 
 	, createChart: function () {
@@ -85,7 +86,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}
 		Ext.each(totalCharts, function(singleChart, index) {
 			var singleChartConfig = this.chartConfig;
-			//singleChartConfig =  Ext.apply( totalCharts[c], singleChartConfig);
 			singleChartConfig =  Ext.apply( singleChart, singleChartConfig);
 			delete singleChartConfig.charts;
 			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + index + '';
@@ -97,7 +97,9 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			var credits = {};
 			credits.enabled = false;
 			singleChartConfig.credits = credits;
-			this.enableDrillEvents(singleChartConfig);
+			this.enableDrillEvents(singleChartConfig);			
+			this.setFieldValuesIntoTemplate(singleChartConfig);
+			
 			//looks for js function		
 			if (singleChartConfig.plotOptions){
 				if(singleChartConfig.plotOptions.pie && singleChartConfig.plotOptions.pie.dataLabels){

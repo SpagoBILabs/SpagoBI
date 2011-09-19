@@ -24,15 +24,10 @@ package it.eng.spagobi.engines.chart.utils;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.engines.chart.bo.charttypes.barcharts.BarCharts;
 
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -371,7 +366,6 @@ public class Template {
 		if(value != null){
 			try{
 				//checks if the value is a number
-				//finalValue = Integer.valueOf(value);
 				finalValue =Long.valueOf(value);
 			}catch (Exception e){
 					//checks if the value is a boolean
@@ -381,14 +375,8 @@ public class Template {
 						){
 						//replace parameters
 						if(value.contains("$P{")){
-							finalValue = replaceParametersInValue(value, "$P{");
-							finalValue = "'" + finalValue + "'";
-						}else if(value.contains("$F{")){
-							finalValue = replaceParametersInValue(value, "$F{");
-							finalValue = "'" + finalValue + "'";
-						}else if(value.contains("${")){
-							finalValue = replaceParametersInValue(value, "${");
-							finalValue = "'" + finalValue + "'";
+							finalValue = replaceParametersInValue(value);
+							finalValue = "'" + finalValue + "'";						
 						}else{
 							//the value is a string!
 							finalValue = "'" + value + "'";
@@ -401,15 +389,15 @@ public class Template {
 		}
 		return finalValue;
 	}
-	private String replaceParametersInValue(String valueString, String suffix){
+	
+	private String replaceParametersInValue(String valueString){
 		StringBuffer sb = new StringBuffer();
-		StringTokenizer st = new StringTokenizer(valueString,suffix);
+		StringTokenizer st = new StringTokenizer(valueString);
 		while(st.hasMoreTokens()){
 			String tok = st.nextToken();
-			if(tok.indexOf("}") != -1){
-				String [] str = tok.split("}");				
-				if(str.length >= 1){
-					String parName = str[0];
+			if(tok.indexOf("$P{") != -1){
+				String parName = tok.substring(tok.indexOf("$P{")+3, tok.indexOf("}"));				
+				if(!parName.equals("")){					
 					for(int i=0; i<parametersJSON.length(); i++){
 						try {
 							JSONObject objPar = (JSONObject)parametersJSON.get(i);								
@@ -421,13 +409,10 @@ public class Template {
 							logger.error("Error while replacing parameters in value: " + e1.getMessage());
 						}
 					}
-					if(str.length > 1){
-						sb.append(str[1]);
-					}
-					
 				}
 			}else{
 				sb.append(tok);
+				sb.append(" ");
 			}
 		}
 

@@ -88,6 +88,7 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 		credits.enabled = false;
 		this.chartConfig.credits = credits;
 		this.enableDrillEvents(this.chartConfig);
+		this.setFieldValuesIntoTemplate(this.chartConfig);
 		
 		//defines series data for the master chart
 		this.defineSeriesData(this.chartConfig);
@@ -243,6 +244,7 @@ Ext.extend(Sbi.engines.chart.MasterDetailChartPanel, Sbi.engines.chart.GenericCh
 		}
 		
 		chartTemplate.series = this.detailSerieData;
+		this.setFieldValuesIntoTemplate(chartTemplate);
 		return chartTemplate;
 	}
 	
