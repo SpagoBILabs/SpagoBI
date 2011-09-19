@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class DataStoreMetaData implements IDataStoreMetaData {
+public class DataStoreMetaData implements IMetaData {
 	
 	int idFieldIndex;
 	List fieldsMeta;
@@ -160,6 +160,18 @@ public class DataStoreMetaData implements IDataStoreMetaData {
 		m.setAlias(newAlias);
 		name2IndexMap.remove(previousAlias);
 		name2IndexMap.put(newAlias.toUpperCase(), fieldIndex);
+	}
+
+	public IDataStore getDomainValues(String fieldName, Integer start,
+			Integer limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<String, List<String>> getDomainDescriptions(
+			Map<String, List<String>> codes) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

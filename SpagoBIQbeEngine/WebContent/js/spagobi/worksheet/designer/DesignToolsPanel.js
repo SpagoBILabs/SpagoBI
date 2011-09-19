@@ -57,6 +57,12 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 
 	Ext.apply(this, c);
 	
+	this.services = this.services || new Array();	
+	this.services['getQueryFields'] = this.services['getQueryFields'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_WORKSHEET_FIELDS_ACTION'
+		, baseParams: new Object()
+	});
+	
 	this.initPanels();
 	c = {
         layout: {
@@ -87,7 +93,8 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	        },
 			region : 'north',
 			split: true,
-			height : 120
+			height : 120,
+			services : this.services
 		});
 		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
 		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters

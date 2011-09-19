@@ -79,44 +79,46 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		try {
 		
 			super.service(request, response);	
+//			
+//			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeCrosstabQueryAction.totalTime");
+//			
+//			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.CROSSTAB_DEFINITION );
+//			jsonFormState = loadSmartFilterFormValues();
+//			logger.debug("Form state retrieved as a string: " + jsonFormState);
+//			
+//			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
+//			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
+//			//crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
+//			crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
+//			crosstabDefinition.setCellLimit( new Integer((String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
+//			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
+//			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
+//			
+//			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+//			
+//			// retrieving first QbE query and setting it as active query
+//			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+//			
+//			//build the query filtered for the smart filter
+//			if (jsonFormState != null) {
+//				query = getFilteredQuery(query, jsonFormState);
+//			}
+//			
+//			getEngineInstance().setActiveQuery(query);
+//			
+//			statement = getEngineInstance().getStatment();	
+//			statement.setParameters( getEnv() );
+//			
+//			String baseQuery = statement.getSqlQueryString();
+//			
+//			String worksheetQuery = buildSqlStatement(crosstabDefinition, query, baseQuery, statement);
+//
+//			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
+//			
+//			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
+//			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
 			
-			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeCrosstabQueryAction.totalTime");
-			
-			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( QbeEngineStaticVariables.CROSSTAB_DEFINITION );
-			jsonFormState = loadSmartFilterFormValues();
-			logger.debug("Form state retrieved as a string: " + jsonFormState);
-			
-			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			//crosstabDefinition = SerializerFactory.getDeserializer("application/json").deserializeCrosstabDefinition(crosstabDefinitionJSON);;
-			crosstabDefinition = (CrosstabDefinition)SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-			crosstabDefinition.setCellLimit( new Integer((String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
-			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
-			
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			
-			// retrieving first QbE query and setting it as active query
-			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
-			
-			//build the query filtered for the smart filter
-			if (jsonFormState != null) {
-				query = getFilteredQuery(query, jsonFormState);
-			}
-			
-			getEngineInstance().setActiveQuery(query);
-			
-			statement = getEngineInstance().getStatment();	
-			statement.setParameters( getEnv() );
-			
-			String baseQuery = statement.getSqlQueryString();
-			
-			String worksheetQuery = buildSqlStatement(crosstabDefinition, query, baseQuery, statement);
-
-			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
-			
-			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
-			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
+			JSONObject crossTabDefinition = null;
 			
 			try {
 				writeBackToClient( new JSONSuccess(crossTabDefinition) );

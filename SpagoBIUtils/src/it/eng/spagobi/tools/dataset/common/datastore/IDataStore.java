@@ -17,7 +17,7 @@ import it.eng.spago.base.SourceBeanException;
  */
 public interface IDataStore {
 
-	IDataStoreMetaData getMetaData();
+	IMetaData getMetaData();
 	
 	Iterator iterator();    
 	boolean isEmpty();

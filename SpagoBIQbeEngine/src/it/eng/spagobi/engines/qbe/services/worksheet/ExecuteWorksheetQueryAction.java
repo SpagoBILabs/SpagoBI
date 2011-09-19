@@ -31,7 +31,7 @@ import it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -115,81 +115,81 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return gridDataFeed;
 	}
 	
-	private String buildSqlStatement(JSONArray jsonVisibleSelectFields,
-			Query query, String sqlQuery, IStatement statement) throws Exception {
-		JSONObject optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
-		List<String> aliases = new ArrayList<String>();
-		List<Attribute> onTableAttributes = new ArrayList<Attribute>();
-		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
-			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
-			Attribute attribute = (Attribute) SerializationManager.deserialize(jsonVisibleSelectField, "application/json", Attribute.class);
-			aliases.add(attribute.getAlias());
-			onTableAttributes.add(attribute);
-		}	
-		List<WhereField> whereFields = new ArrayList<WhereField>();
-		String sheetName = this.getAttributeAsString(LoadWorksheetCrosstabAction.SHEET);
-		whereFields.addAll(LoadWorksheetCrosstabAction.transformIntoWhereClauses(onTableAttributes));
-		whereFields.addAll(LoadWorksheetCrosstabAction.getMandatoryFilters(this.getEngineInstance(), sheetName));
-		whereFields.addAll(LoadWorksheetCrosstabAction.getOptionalFilters(optionalUserFilters));
-		return CrosstabQueryCreator.getTableQuery(aliases, query, whereFields, sqlQuery, statement);	
-	}
+//	private String buildSqlStatement(JSONArray jsonVisibleSelectFields,
+//			Query query, String sqlQuery, IStatement statement) throws Exception {
+//		JSONObject optionalUserFilters = getAttributeAsJSONObject( QbeEngineStaticVariables.OPTIONAL_FILTERS );
+//		List<String> aliases = new ArrayList<String>();
+//		List<Attribute> onTableAttributes = new ArrayList<Attribute>();
+//		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
+//			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
+//			Attribute attribute = (Attribute) SerializationManager.deserialize(jsonVisibleSelectField, "application/json", Attribute.class);
+//			aliases.add(attribute.getAlias());
+//			onTableAttributes.add(attribute);
+//		}	
+//		List<WhereField> whereFields = new ArrayList<WhereField>();
+//		String sheetName = this.getAttributeAsString(LoadWorksheetCrosstabAction.SHEET);
+//		whereFields.addAll(LoadWorksheetCrosstabAction.transformIntoWhereClauses(onTableAttributes));
+//		whereFields.addAll(LoadWorksheetCrosstabAction.getMandatoryFilters(this.getEngineInstance(), sheetName));
+//		whereFields.addAll(LoadWorksheetCrosstabAction.getOptionalFilters(optionalUserFilters));
+//		return CrosstabQueryCreator.getTableQuery(aliases, query, whereFields, sqlQuery, statement);	
+//	}
 
-	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-		FormState formState = getEngineInstance().getFormState();
-		if (formState == null) {
-			return null;
-		} else {
-			return formState.getFormStateValues();
-		}
-	}
+//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+//		FormState formState = getEngineInstance().getFormState();
+//		if (formState == null) {
+//			return null;
+//		} else {
+//			return formState.getFormStateValues();
+//		}
+//	}
 	
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields) throws Exception {
 		
 		IDataStore dataStore = null;
-		Query query = null;
-		IStatement statement = null;
-				
-		JSONObject jsonFormState = null;
-		
-		Integer limit;
-		Integer start;
-		
-		start = getAttributeAsInteger( START );	
-		logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
-		
-		limit = getAttributeAsInteger( LIMIT );
-		logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
-		
-		jsonFormState = loadSmartFilterFormValues();
-		logger.debug("Form state retrieved as a string: " + jsonFormState);
-		
-		Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-		
-		// retrieving first QbE query and setting it as active query
-		query = getEngineInstance().getQueryCatalogue().getFirstQuery();
-		
-		//build the query filtered for the smart filter
-		if (jsonFormState != null) {
-			query = getFilteredQuery(query, jsonFormState);
-		}
-		
-		getEngineInstance().setActiveQuery(query);
-		
-		statement = getEngineInstance().getStatment();	
-		statement.setParameters( getEnv() );
-		
-		String sqlQuery = statement.getSqlQueryString();
-		
-		String sqlStatement = buildSqlStatement(jsonVisibleSelectFields, query, sqlQuery, statement);
-		
-		dataStore = this.executeWorksheetQuery(sqlStatement, sqlQuery, start, limit);
-		
-		// at this moment, the store has "col_0_..." (or something like that) as column aliases: we must put the right aliases 
-		IDataStoreMetaData dataStoreMetadata = dataStore.getMetaData();
-		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
-			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
-			dataStoreMetadata.changeFieldAlias(i, jsonVisibleSelectField.getString("alias"));
-		}
+//		Query query = null;
+//		IStatement statement = null;
+//				
+//		JSONObject jsonFormState = null;
+//		
+//		Integer limit;
+//		Integer start;
+//		
+//		start = getAttributeAsInteger( START );	
+//		logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
+//		
+//		limit = getAttributeAsInteger( LIMIT );
+//		logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+//		
+//		jsonFormState = loadSmartFilterFormValues();
+//		logger.debug("Form state retrieved as a string: " + jsonFormState);
+//		
+//		Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+//		
+//		// retrieving first QbE query and setting it as active query
+//		query = getEngineInstance().getQueryCatalogue().getFirstQuery();
+//		
+//		//build the query filtered for the smart filter
+//		if (jsonFormState != null) {
+//			query = getFilteredQuery(query, jsonFormState);
+//		}
+//		
+//		getEngineInstance().setActiveQuery(query);
+//		
+//		statement = getEngineInstance().getStatment();	
+//		statement.setParameters( getEnv() );
+//		
+//		String sqlQuery = statement.getSqlQueryString();
+//		
+//		String sqlStatement = buildSqlStatement(jsonVisibleSelectFields, query, sqlQuery, statement);
+//		
+//		dataStore = this.executeWorksheetQuery(sqlStatement, sqlQuery, start, limit);
+//		
+//		// at this moment, the store has "col_0_..." (or something like that) as column aliases: we must put the right aliases 
+//		IMetaData dataStoreMetadata = dataStore.getMetaData();
+//		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
+//			JSONObject jsonVisibleSelectField = jsonVisibleSelectFields.getJSONObject(i);
+//			dataStoreMetadata.changeFieldAlias(i, jsonVisibleSelectField.getString("alias"));
+//		}
 		
 		return dataStore;
 	}

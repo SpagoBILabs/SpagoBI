@@ -25,8 +25,12 @@ import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -263,5 +267,36 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			return null;
 		}
 		
+	}
+
+
+	public IMetaData getMetadata() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void setMetadata(IMetaData metadata) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public IDataStore test() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public IDataSetTableDescriptor persist(String tableName,
+			Connection connection) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

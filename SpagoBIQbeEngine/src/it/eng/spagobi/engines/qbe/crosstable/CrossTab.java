@@ -23,7 +23,7 @@ package it.eng.spagobi.engines.qbe.crosstable;
 
 import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -165,7 +165,7 @@ public class CrossTab {
 		
 		// put measures' info into measures variable 
 		measures = new ArrayList<CrossTab.MeasureInfo>();
-		IDataStoreMetaData meta = dataStore.getMetaData();
+		IMetaData meta = dataStore.getMetaData();
 		for(int i = meta.getFieldCount() - measuresCount; i < meta.getFieldCount(); i++){
 			// the field number i contains the measure number (i - <number of dimensions>)
 			// but <number of dimension> is <total fields count> - <total measures count>

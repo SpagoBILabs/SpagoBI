@@ -11,8 +11,10 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -164,6 +166,32 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	
 	public void addBinding(String bindingName, Object bindingValue) {
 		bindings.put(bindingName, bindingValue);
+	}
+
+	public IMetaData getMetadata() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setMetadata(IMetaData metadata) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public IDataStore test() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getSignature() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IDataSetTableDescriptor persist(String tableName,
+			Connection connection) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

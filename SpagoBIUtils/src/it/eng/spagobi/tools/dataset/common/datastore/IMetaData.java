@@ -23,12 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.datastore;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it)       
  *          Andrea Gioia (andrea.gioia@eng.it)
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public interface IDataStoreMetaData {
+public interface IMetaData {
 	
 	/**
 	 * @return Returns the index of identfier field if any. -1 otherwaise. 
@@ -82,4 +84,9 @@ public interface IDataStoreMetaData {
 	void deleteFieldMetaDataAt(int pivotFieldIndex); 
 	
 	void changeFieldAlias(int fieldIndex, String newAlias);
+	
+	public IDataStore getDomainValues(String fieldName, 
+            Integer start, Integer limit);
+	
+	public Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
 }
