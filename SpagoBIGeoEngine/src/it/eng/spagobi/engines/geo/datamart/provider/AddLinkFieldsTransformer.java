@@ -31,11 +31,11 @@ import it.eng.spagobi.engines.geo.GeoEngineException;
 import it.eng.spagobi.engines.geo.dataset.provider.Hierarchy;
 import it.eng.spagobi.engines.geo.dataset.provider.Link;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -75,7 +75,7 @@ public class AddLinkFieldsTransformer implements IDataStoreTransformer {
 	
 	public void addLinkField(String fieldName, Link link, IDataStore dataStore) {
 		
-		IDataStoreMetaData dataStoreMeta;
+		IMetaData dataStoreMeta;
 		FieldMetadata fieldMeta;
 		IRecord record;
 		IField field;

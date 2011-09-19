@@ -10,6 +10,7 @@ import java.util.Set;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it)       

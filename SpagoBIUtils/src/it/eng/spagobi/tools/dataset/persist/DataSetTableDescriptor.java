@@ -19,14 +19,29 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.common.transformer;
+package it.eng.spagobi.tools.dataset.persist;
 
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
- */
-public interface IMetaDataTransformer {
-	IMetaData transform(IMetaData dataStoreMeta);
+public class DataSetTableDescriptor implements IDataSetTableDescriptor {
+
+	private Map<String, String> field2ColumnMap = null;
+	
+	public DataSetTableDescriptor() {
+		this.field2ColumnMap = new HashMap<String, String>();
+	}
+	
+	public DataSetTableDescriptor(Map<String, String> field2ColumnMap) {
+		this.field2ColumnMap = field2ColumnMap;
+	}
+	
+	public void addFieldToColumnAssociation(String fieldName, String columnName) {
+		this.field2ColumnMap.put(fieldName, columnName);
+	}
+
+	public String getColumnName(String fieldName) {
+		return this.field2ColumnMap.get(fieldName);
+	}
+
 }

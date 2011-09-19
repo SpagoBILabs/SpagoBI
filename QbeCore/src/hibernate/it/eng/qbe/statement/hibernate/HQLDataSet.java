@@ -26,11 +26,11 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 
 import java.sql.Connection;
 import java.util.ArrayList;

@@ -4,12 +4,12 @@
 package it.eng.spagobi.tools.dataset.common.transformer;
 
 import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.util.ArrayList;
 import java.util.Iterator;

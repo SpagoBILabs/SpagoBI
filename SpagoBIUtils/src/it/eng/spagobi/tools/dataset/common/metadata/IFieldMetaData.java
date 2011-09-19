@@ -1,7 +1,7 @@
 /**
  * 
  */
-package it.eng.spagobi.tools.dataset.common.datastore;
+package it.eng.spagobi.tools.dataset.common.metadata;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

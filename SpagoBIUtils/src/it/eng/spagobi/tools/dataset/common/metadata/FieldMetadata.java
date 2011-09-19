@@ -1,4 +1,5 @@
-package it.eng.spagobi.tools.dataset.common.datastore;
+package it.eng.spagobi.tools.dataset.common.metadata;
+
 
 import java.util.HashMap;
 import java.util.Map;

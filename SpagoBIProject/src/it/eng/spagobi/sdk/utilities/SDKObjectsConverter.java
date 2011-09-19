@@ -70,8 +70,8 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WSDataSetDetail;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
-import it.eng.spagobi.tools.dataset.common.datastore.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 

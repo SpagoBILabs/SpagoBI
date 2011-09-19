@@ -40,8 +40,8 @@ import it.eng.spagobi.sdk.maps.stub.MapsSDKService;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.MetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

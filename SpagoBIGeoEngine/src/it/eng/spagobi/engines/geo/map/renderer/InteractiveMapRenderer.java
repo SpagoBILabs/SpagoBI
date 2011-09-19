@@ -65,9 +65,9 @@ import it.eng.spagobi.engines.geo.map.utils.SVGMapLoader;
 import it.eng.spagobi.engines.geo.map.utils.SVGMapMerger;
 import it.eng.spagobi.engines.geo.map.utils.SVGMapSaver;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -419,7 +419,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	private void decorateMap(SVGDocument masterMap, SVGDocument targetMap, DataMart datamart) {
 
 		IDataStore dataStore = datamart.getDataStore();
-		IDataStoreMetaData dataStoreMeta = dataStore.getMetaData();
+		IMetaData dataStoreMeta = dataStore.getMetaData();
 		List measureFieldsMeta = dataStoreMeta.findFieldMeta("ROLE", "MEASURE");
 		String[] kpiNames = new String[measureFieldsMeta.size()];
 		for(int i = 0; i < kpiNames.length; i++) {
@@ -1010,7 +1010,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	private void addLink(SVGDocument map, DataMart datamart) {	
 
 		IDataStore dataStore;
-		IDataStoreMetaData dataStoreMeta;
+		IMetaData dataStoreMeta;
 		List list;
 		IFieldMetaData filedMeta;
 
@@ -1299,7 +1299,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		JSONArray measures;
 
 		IDataStore dataStore;
-		IDataStoreMetaData dataStoreMeta;
+		IMetaData dataStoreMeta;
 		List measureFieldsMeta;
 		String[] measureNames;
 
