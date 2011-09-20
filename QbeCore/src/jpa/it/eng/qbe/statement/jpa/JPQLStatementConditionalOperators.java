@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.utility.StringUtils;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.HashMap;

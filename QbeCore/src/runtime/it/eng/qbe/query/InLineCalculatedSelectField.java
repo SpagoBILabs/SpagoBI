@@ -31,12 +31,12 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 	
 	private String expression;
 	private String type;
-	private Object initialValue;
+//	private Object initialValue;
 	private boolean groupByField;
 	private IAggregationFunction function;
 	private String orderType;
-	private int resetType;
-	private int incrementType;
+//	private int resetType;
+//	private int incrementType;
 	
 	public InLineCalculatedSelectField(String alias, String expression, String type, boolean included, boolean visible, boolean groupByField, String orderType, String function ) {
 		super(alias, ISelectField.CALCULATED_FIELD, included, visible);

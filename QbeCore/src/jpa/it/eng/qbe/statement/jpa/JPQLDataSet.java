@@ -210,17 +210,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		
 	}
 
-
-	public Object getQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public void setQuery(Object query) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public void updateParameters(it.eng.qbe.query.Query query, Map parameters) {
 		logger.debug("IN");
@@ -300,16 +289,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public IDataStore getDomainValues(String fieldName, Integer start,
-			Integer limit, IDataStoreFilter filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public Map<String, List<String>> getDomainDescriptions(
 			Map<String, List<String>> codes) {
 		return codes;
 	}
-	
 }
