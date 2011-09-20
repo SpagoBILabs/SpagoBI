@@ -282,14 +282,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
-	public IDataSetTableDescriptor persist(String tableName,
-			Connection connection) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	public Map<String, List<String>> getDomainDescriptions(
 			Map<String, List<String>> codes) {
 		return codes;

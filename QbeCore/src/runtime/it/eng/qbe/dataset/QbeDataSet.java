@@ -34,14 +34,12 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,7 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class QbeDataSet extends ConfigurableDataSet {
 	
@@ -268,41 +266,13 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
-		try {
-			String sql = ((AbstractQbeDataSet)ds).getSQLQueryWithFilters();
-			TemporaryTableManager.createTable(sql, tableName, dataSource);
-			return getDataSetTableDescriptor(sql, ((AbstractQbeDataSet)ds).getStatement().getQuery());
-		} catch (Exception e) {
-			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
-			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
-		}	
+		return((AbstractQbeDataSet)ds).persist(tableName, connection);
+	}
+
+	@Override
+	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter ) {
+		return ((AbstractQbeDataSet)ds).getDomainValues(fieldName, start, limit, filter);
 	}
 	
-	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit) {
-		IDataStore toReturn = null;
-		String sql = ((AbstractQbeDataSet)ds).getSQLQuery();
-		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, ((AbstractQbeDataSet)ds).getStatement().getQuery());
-		String filterColumnName = tableDescriptor.getColumnName(fieldName);
-		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM"+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get("SsoServiceInterface.USER_ID")));
-		try {
-			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
-		} catch (Exception e) {
-			logger.error("Error loading the domain values for the field "+fieldName, e);
-			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
-			
-		}
-		return toReturn;
-	}
-	
-	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery){
-		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
-		
-		List<String> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
-		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
-		for(int i=0; i<selectFieldsColumn.size(); i++){
-			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i), Object.class);
-		}
-		return dataSetTableDescriptor;
-	}
 	
 }

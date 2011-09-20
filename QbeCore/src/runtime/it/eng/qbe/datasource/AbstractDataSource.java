@@ -105,4 +105,6 @@ public abstract class AbstractDataSource implements IDataSource {
 		ClassLoaderManager.updateCurrentWebClassLoader(jarFile);
 	}
 	
+	public abstract ConnectionDescriptor getConnection();
+	
 }

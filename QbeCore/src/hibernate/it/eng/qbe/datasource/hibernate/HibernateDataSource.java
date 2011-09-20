@@ -190,7 +190,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
-	private ConnectionDescriptor getConnection() {
+	public ConnectionDescriptor getConnection() {
 		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
 		return connection;
 	}
