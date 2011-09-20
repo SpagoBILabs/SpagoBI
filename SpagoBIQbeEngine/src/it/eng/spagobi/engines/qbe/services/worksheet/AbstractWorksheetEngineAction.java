@@ -24,7 +24,7 @@ import java.sql.Connection;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -167,7 +167,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 	
 	public String getTemporaryTableName() {
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		return TemporaryTableManager.getTableName(userProfile);
+		return TemporaryTableManager.getTableName(userProfile.getUserId().toString());
 	}
 	
 	public IDataSetTableDescriptor persistDataSet(String tableName) {
@@ -191,5 +191,4 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
 		}
 	}
-    
 }

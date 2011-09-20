@@ -31,7 +31,6 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
 import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
@@ -40,6 +39,7 @@ import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
