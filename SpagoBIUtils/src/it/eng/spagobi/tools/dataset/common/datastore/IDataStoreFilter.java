@@ -19,14 +19,16 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.persist;
+package it.eng.spagobi.tools.dataset.common.datastore;
 
-public interface IDataSetTableDescriptor {
-	
-	String getColumnName(String fieldName);
-	
-	Class getColumnType(String fieldName);
-	
-	String getTableName();
+public interface IDataStoreFilter {
 
+	String getFieldName();
+	
+	String getValue();
+	
+	String getOperator();
+
+	String getType();
+	
 }

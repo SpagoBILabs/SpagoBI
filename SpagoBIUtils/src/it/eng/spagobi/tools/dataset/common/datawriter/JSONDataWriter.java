@@ -59,8 +59,6 @@ public class JSONDataWriter implements IDataWriter {
 		JSONObject  result = null;
 		JSONObject metadata;
 		IField field;
-		JSONArray fieldsMetaDataJSON;		
-		JSONObject fieldMetaDataJSON;
 		IRecord record;
 		JSONObject recordJSON;
 		int recNo;
@@ -69,23 +67,18 @@ public class JSONDataWriter implements IDataWriter {
 		JSONArray recordsJSON;
 		int resultNumber;
 		Object propertyRawValue;
-		String detailProperty;
 		
 		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
+		
+		metadata = (JSONObject) write(dataStore.getMetaData());
 		
 		try {
 			result = new JSONObject();
 			
-			metadata = new JSONObject();
-				
-			metadata.put("totalProperty", TOTAL_PROPERTY);
-			metadata.put("root", ROOT);
-			metadata.put("id", "id");
 			result.put("metaData", metadata);
 			
 			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
-			detailProperty = (String)dataStore.getMetaData().getProperty("detailProperty");
-			if(propertyRawValue==null){
+			if ( propertyRawValue == null ) {
 				propertyRawValue = new Integer(1);
 			}
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
@@ -96,95 +89,6 @@ public class JSONDataWriter implements IDataWriter {
 			
 			recordsJSON = new JSONArray();
 			result.put(ROOT, recordsJSON);
-		
-			// field's meta
-			fieldsMetaDataJSON = new JSONArray();
-			fieldsMetaDataJSON.put("recNo"); // counting column
-			for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
-				IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
-				
-				propertyRawValue = fieldMetaData.getProperty("visible");
-				if(propertyRawValue != null 
-						&& (propertyRawValue instanceof Boolean) 
-						&& ((Boolean)propertyRawValue).booleanValue() == false) {
-					continue;
-				}
-				
-				String fieldName = getFieldName(fieldMetaData, i);
-				String fieldHeader = getFieldHeader(fieldMetaData, i);
-				
-				fieldMetaDataJSON = new JSONObject();
-				fieldMetaDataJSON.put("name", fieldName);						
-				fieldMetaDataJSON.put("dataIndex", fieldName);
-				fieldMetaDataJSON.put("header", fieldHeader);
-				
-				
-				Class clazz = fieldMetaData.getType();
-				if (clazz == null) {
-					logger.debug("Metadata class is null; considering String as default");
-					clazz = String.class;
-				} else {
-					logger.debug("Column [" + (i+1) + "] class is equal to [" + clazz.getName() + "]");
-				}
-				if( Number.class.isAssignableFrom(clazz) ) {
-					//BigInteger, Integer, Long, Short, Byte
-					if(Integer.class.isAssignableFrom(clazz) 
-				       || BigInteger.class.isAssignableFrom(clazz) 
-					   || Long.class.isAssignableFrom(clazz) 
-					   || Short.class.isAssignableFrom(clazz)
-					   || Byte.class.isAssignableFrom(clazz)) {
-						logger.debug("Column [" + (i+1) + "] type is equal to [" + "INTEGER" + "]");
-						fieldMetaDataJSON.put("type", "int");
-					} else {
-						logger.debug("Column [" + (i+1) + "] type is equal to [" + "FLOAT" + "]");
-						fieldMetaDataJSON.put("type", "float");
-					}
-					
-					String format = (String) fieldMetaData.getProperty("format");
-					if ( format != null ) {
-						fieldMetaDataJSON.put("format", format);
-					}
-					
-				} else if( String.class.isAssignableFrom(clazz) ) {
-					logger.debug("Column [" + (i+1) + "] type is equal to [" + "STRING" + "]");
-					fieldMetaDataJSON.put("type", "string");
-				} else if( Timestamp.class.isAssignableFrom(clazz) ) {
-					logger.debug("Column [" + (i+1) + "] type is equal to [" + "TIMESTAMP" + "]");
-					fieldMetaDataJSON.put("type", "date");
-					fieldMetaDataJSON.put("subtype", "timestamp");
-					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s");
-				} else if( Date.class.isAssignableFrom(clazz) ) {
-					logger.debug("Column [" + (i+1) + "] type is equal to [" + "DATE" + "]");
-					fieldMetaDataJSON.put("type", "date");
-					fieldMetaDataJSON.put("dateFormat", "d/m/Y");
-				} else if( Boolean.class.isAssignableFrom(clazz) ) {
-					logger.debug("Column [" + (i+1) + "] type is equal to [" + "BOOLEAN" + "]");
-					fieldMetaDataJSON.put("type", "boolean");
-				} else {
-					logger.warn("Column [" + (i+1) + "] type is equal to [" + "???" + "]");
-					fieldMetaDataJSON.put("type", "string");
-				}
-				
-				Boolean calculated = (Boolean)fieldMetaData.getProperty("calculated");
-				calculated = calculated == null? Boolean.FALSE: calculated;
-				if(calculated.booleanValue() == true) {
-					DataSetVariable variable =  (DataSetVariable)fieldMetaData.getProperty("variable");
-					if(variable.getType().equalsIgnoreCase(DataSetVariable.HTML)) {
-						fieldMetaDataJSON.put("type", "auto");
-						fieldMetaDataJSON.remove("type");
-						fieldMetaDataJSON.put("subtype", "html");
-					}
-					
-				}
-				
-				if(detailProperty != null && fieldHeader.equalsIgnoreCase(detailProperty)) {
-					metadata.put("detailProperty", fieldName);
-					fieldMetaDataJSON.put("hidden", true);
-				}
-				
-				fieldsMetaDataJSON.put(fieldMetaDataJSON);
-			}
-			metadata.put("fields", fieldsMetaDataJSON);
 			
 			// records
 			recNo = 0;
@@ -249,7 +153,112 @@ public class JSONDataWriter implements IDataWriter {
 	}
 
 	public Object write(IMetaData metadata) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		try {
+		
+			JSONObject toReturn = new JSONObject();
+			
+			toReturn.put("totalProperty", TOTAL_PROPERTY);
+			toReturn.put("root", ROOT);
+			toReturn.put("id", "id");
+			
+			// field's meta
+			JSONArray fieldsMetaDataJSON = new JSONArray();
+			fieldsMetaDataJSON.put("recNo"); // counting column
+			for (int i = 0; i < metadata.getFieldCount(); i++) {
+				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
+				
+				Object propertyRawValue = fieldMetaData.getProperty("visible");
+				if(propertyRawValue != null 
+						&& (propertyRawValue instanceof Boolean) 
+						&& ((Boolean)propertyRawValue).booleanValue() == false) {
+					continue;
+				}
+				
+				String fieldName = getFieldName(fieldMetaData, i);
+				String fieldHeader = getFieldHeader(fieldMetaData, i);
+				
+				JSONObject fieldMetaDataJSON = new JSONObject();
+				fieldMetaDataJSON.put("name", fieldName);						
+				fieldMetaDataJSON.put("dataIndex", fieldName);
+				fieldMetaDataJSON.put("header", fieldHeader);
+				
+				
+				Class clazz = fieldMetaData.getType();
+				if (clazz == null) {
+					logger.debug("Metadata class is null; considering String as default");
+					clazz = String.class;
+				} else {
+					logger.debug("Column [" + (i+1) + "] class is equal to [" + clazz.getName() + "]");
+				}
+				if( Number.class.isAssignableFrom(clazz) ) {
+					//BigInteger, Integer, Long, Short, Byte
+					if(Integer.class.isAssignableFrom(clazz) 
+				       || BigInteger.class.isAssignableFrom(clazz) 
+					   || Long.class.isAssignableFrom(clazz) 
+					   || Short.class.isAssignableFrom(clazz)
+					   || Byte.class.isAssignableFrom(clazz)) {
+						logger.debug("Column [" + (i+1) + "] type is equal to [" + "INTEGER" + "]");
+						fieldMetaDataJSON.put("type", "int");
+					} else {
+						logger.debug("Column [" + (i+1) + "] type is equal to [" + "FLOAT" + "]");
+						fieldMetaDataJSON.put("type", "float");
+					}
+					
+					String format = (String) fieldMetaData.getProperty("format");
+					if ( format != null ) {
+						fieldMetaDataJSON.put("format", format);
+					}
+					
+				} else if( String.class.isAssignableFrom(clazz) ) {
+					logger.debug("Column [" + (i+1) + "] type is equal to [" + "STRING" + "]");
+					fieldMetaDataJSON.put("type", "string");
+				} else if( Timestamp.class.isAssignableFrom(clazz) ) {
+					logger.debug("Column [" + (i+1) + "] type is equal to [" + "TIMESTAMP" + "]");
+					fieldMetaDataJSON.put("type", "date");
+					fieldMetaDataJSON.put("subtype", "timestamp");
+					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s");
+				} else if( Date.class.isAssignableFrom(clazz) ) {
+					logger.debug("Column [" + (i+1) + "] type is equal to [" + "DATE" + "]");
+					fieldMetaDataJSON.put("type", "date");
+					fieldMetaDataJSON.put("dateFormat", "d/m/Y");
+				} else if( Boolean.class.isAssignableFrom(clazz) ) {
+					logger.debug("Column [" + (i+1) + "] type is equal to [" + "BOOLEAN" + "]");
+					fieldMetaDataJSON.put("type", "boolean");
+				} else {
+					logger.warn("Column [" + (i+1) + "] type is equal to [" + "???" + "]");
+					fieldMetaDataJSON.put("type", "string");
+				}
+				
+				Boolean calculated = (Boolean)fieldMetaData.getProperty("calculated");
+				calculated = calculated == null? Boolean.FALSE: calculated;
+				if(calculated.booleanValue() == true) {
+					DataSetVariable variable =  (DataSetVariable)fieldMetaData.getProperty("variable");
+					if(variable.getType().equalsIgnoreCase(DataSetVariable.HTML)) {
+						fieldMetaDataJSON.put("type", "auto");
+						fieldMetaDataJSON.remove("type");
+						fieldMetaDataJSON.put("subtype", "html");
+					}
+					
+				}
+				
+				String detailProperty = (String) metadata.getProperty("detailProperty");
+				if(detailProperty != null && fieldHeader.equalsIgnoreCase(detailProperty)) {
+					toReturn.put("detailProperty", fieldName);
+					fieldMetaDataJSON.put("hidden", true);
+				}
+				
+				fieldsMetaDataJSON.put(fieldMetaDataJSON);
+			}
+			toReturn.put("fields", fieldsMetaDataJSON);
+			
+			return toReturn;
+		
+		
+		} catch(Throwable t) {
+			throw new RuntimeException("An unpredicted error occurred while serializing dataStore", t);
+		} finally {
+			
+		}
 	}
 }

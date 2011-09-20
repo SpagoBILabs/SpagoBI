@@ -131,7 +131,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanel, Sbi.worksheet.runtime.Ru
 					text : this.chartConfig.category.alias
 				}
 			},
-			series : this.getSeries()
+			series : this.getSeries(),
+			credits : {
+				enabled : false
+			}
 		});
 	}
 	

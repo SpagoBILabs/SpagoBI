@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.metadata;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,7 +166,7 @@ public class MetaData implements IMetaData {
 	}
 
 	public IDataStore getDomainValues(String fieldName, Integer start,
-			Integer limit) {
+			Integer limit, IDataStoreFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

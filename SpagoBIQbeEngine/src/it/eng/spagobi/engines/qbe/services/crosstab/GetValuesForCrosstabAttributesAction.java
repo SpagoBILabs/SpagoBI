@@ -82,7 +82,8 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			
 			IDataSet dataset = engineInstance.getDataSet();
 			IMetaData metadata = dataset.getMetadata();
-			dataStore = metadata.getDomainValues(alias, start, limit);
+			// TODO manage filter
+			dataStore = metadata.getDomainValues(alias, start, limit, null);
 			
 			
 //			// retrieving first QbE query and setting it as active query

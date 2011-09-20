@@ -2,7 +2,7 @@
 
 SpagoBI - The Business Intelligence Free Platform
 
-Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
+Copyright (C) 2005 Engineering Ingegneria Informatica S.p.A.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -18,15 +18,31 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
-package it.eng.spagobi.tools.dataset.persist;
+ **/
+package it.eng.spagobi.tools.dataset.common.behaviour;
 
-public interface IDataSetTableDescriptor {
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+
+import java.util.List;
+
+/**
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ *
+ */
+public class SelectableFieldsBehaviour extends AbstractDataSetBehaviour {
 	
-	String getColumnName(String fieldName);
+	private List<String> fields = null;
+
+	public SelectableFieldsBehaviour(IDataSet targetDataSet) {
+		super(SelectableFieldsBehaviour.class.getName(), targetDataSet);
+	}
 	
-	Class getColumnType(String fieldName);
-	
-	String getTableName();
+	public List<String> getSelectedFields() {
+		return fields;
+	}
+
+	public void setSelectedFields(List<String> fields) {
+		this.fields = fields;
+	}
 
 }

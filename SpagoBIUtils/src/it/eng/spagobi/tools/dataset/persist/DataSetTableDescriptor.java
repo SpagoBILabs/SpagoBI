@@ -26,22 +26,34 @@ import java.util.Map;
 
 public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 
+	private String tableName = null;
 	private Map<String, String> field2ColumnMap = null;
+	private Map<String, Class> field2ClassMap = null;
 	
 	public DataSetTableDescriptor() {
 		this.field2ColumnMap = new HashMap<String, String>();
+		this.field2ClassMap = new HashMap<String, Class>();
 	}
 	
-	public DataSetTableDescriptor(Map<String, String> field2ColumnMap) {
-		this.field2ColumnMap = field2ColumnMap;
-	}
-	
-	public void addFieldToColumnAssociation(String fieldName, String columnName) {
+	public void addField(String fieldName, String columnName, Class type) {
 		this.field2ColumnMap.put(fieldName, columnName);
+		this.field2ClassMap.put(fieldName, type);
 	}
 
 	public String getColumnName(String fieldName) {
 		return this.field2ColumnMap.get(fieldName);
+	}
+	
+	public Class getColumnType(String fieldName) {
+		return this.field2ClassMap.get(fieldName);
+	}
+	
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+	
+	public String getTableName() {
+		return this.tableName;
 	}
 
 }

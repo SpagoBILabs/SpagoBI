@@ -70,45 +70,45 @@ public class TemporaryTableManager {
 		return toReturn;
     }
     
-	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource, Integer start, Integer limit)
-	 			throws Exception {
-		logger.debug("IN");
-    	Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
-    	Assert.assertNotNull(userProfile, "User profile cannot be null");
-    	Assert.assertNotNull(baseQuery, "SQL base statement cannot be null");
-    	Assert.assertNotNull(dataSource, "Data source cannot be null");
-		String tableName = getTableName(userProfile);
-		logger.debug("Table name is [" + tableName + "]");
-		
-		// drop table if not suitable according to tables map variable
-		if (tables.containsKey(tableName) && !baseQuery.equals(tables.get(tableName))) {
-			dropTableIfExists(tableName, dataSource);
-			tables.remove(tableName);
-		}
-		
-		// create table if it does not exist in tables map variable
-		if (!tables.containsKey(tableName)) {
-			dropTableIfExists(tableName, dataSource);
-			logger.debug("Table [" + tableName + "] must be created");
-			createTable(baseQuery, tableName, dataSource);
-			logger.debug("Table [" + tableName + "] created successfully");
-			tables.put(tableName, baseQuery);
-		}
-		
-		// may be the table has been dropped in the meanwhile (while the application is still alive), 
-		// without restarting the application server,
-		// so we check if it exists and in this case we re-create it...
-		if (!checkTableExistence(tableName, dataSource)) {
-			logger.debug("Table [" + tableName + "] must be created");
-			createTable(baseQuery, tableName, dataSource);
-			logger.debug("Table [" + tableName + "] created successfully");
-		}
-		
-		DataStore dataStore = queryTemporaryTable(sqlStatement, tableName, dataSource, start, limit);
-		
-		logger.debug("OUT");
-		return dataStore;
-	}
+//	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource, Integer start, Integer limit)
+//	 			throws Exception {
+//		logger.debug("IN");
+//    	Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
+//    	Assert.assertNotNull(userProfile, "User profile cannot be null");
+//    	Assert.assertNotNull(baseQuery, "SQL base statement cannot be null");
+//    	Assert.assertNotNull(dataSource, "Data source cannot be null");
+//		String tableName = getTableName(userProfile);
+//		logger.debug("Table name is [" + tableName + "]");
+//		
+//		// drop table if not suitable according to tables map variable
+//		if (tables.containsKey(tableName) && !baseQuery.equals(tables.get(tableName))) {
+//			dropTableIfExists(tableName, dataSource);
+//			tables.remove(tableName);
+//		}
+//		
+//		// create table if it does not exist in tables map variable
+//		if (!tables.containsKey(tableName)) {
+//			dropTableIfExists(tableName, dataSource);
+//			logger.debug("Table [" + tableName + "] must be created");
+//			createTable(baseQuery, tableName, dataSource);
+//			logger.debug("Table [" + tableName + "] created successfully");
+//			tables.put(tableName, baseQuery);
+//		}
+//		
+//		// may be the table has been dropped in the meanwhile (while the application is still alive), 
+//		// without restarting the application server,
+//		// so we check if it exists and in this case we re-create it...
+//		if (!checkTableExistence(tableName, dataSource)) {
+//			logger.debug("Table [" + tableName + "] must be created");
+//			createTable(baseQuery, tableName, dataSource);
+//			logger.debug("Table [" + tableName + "] created successfully");
+//		}
+//		
+//		DataStore dataStore = queryTemporaryTable(sqlStatement, tableName, dataSource, start, limit);
+//		
+//		logger.debug("OUT");
+//		return dataStore;
+//	}
 	
 	private static boolean checkTableExistence(String tableName,
 			IDataSource dataSource) throws Exception {
@@ -152,14 +152,10 @@ public class TemporaryTableManager {
 
 	}
 
-	private static DataStore queryTemporaryTable(String sqlStatement, String tableName,
+	public static DataStore queryTemporaryTable(String sqlStatement,
 			IDataSource dataSource, Integer start, Integer limit) throws Exception {
 		
 		logger.debug("IN");
-		// injecting temporary table name into SQL statement
-		int beginIndex = sqlStatement.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
-		int endIndex = sqlStatement.indexOf(" ", beginIndex);
-		sqlStatement = sqlStatement.substring(0, beginIndex) + tableName + sqlStatement.substring(endIndex);
 		logger.debug("SQL statement is [" + sqlStatement + "]");
 		JDBCDataSet dataSet = new JDBCDataSet();
 		dataSet.setDataSource(dataSource);
@@ -267,7 +263,11 @@ public class TemporaryTableManager {
 		return tableNameSuffix;
 	}
 
-	private static String getTableName(UserProfile userProfile) {
+	public static String getLastDataSetSignature(String tableName) {
+		return tables.get(tableName);
+	}
+	
+	public static String getTableName(UserProfile userProfile) {
 		logger.debug("IN");
 
 		String tableNamePrefix = getTableNamePrefix();
