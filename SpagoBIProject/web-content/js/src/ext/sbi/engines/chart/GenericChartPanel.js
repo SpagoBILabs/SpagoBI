@@ -233,7 +233,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
 					    	var posValue = recArray.indexOf(recArray[serieColumn]);
 							if (posValue == -1){
-								recArray.push(rec[serieColumn]);
+								recArray.push(rec[serieColumn]);								
 							}
 						}
 						series.push(recArray);
@@ -560,6 +560,29 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			if(rec) fieldValues = rec.get(fieldColumn);						
 		}
 		return  fieldValues;
+	}
+    
+    , getColors : function (config) {
+		var colors = [];
+		var retColors = [];
+		
+		if (config.colors !== undefined && config.colors[0] !== undefined && config.colors[0].color !== undefined) {
+			var tmpColors =  config.colors[0].color;
+			colors = tmpColors.split(",");
+		}else{
+			colors = Highcharts.getOptions().colors;
+		}
+		//adaptes the colors array to the real number of the serie (necessary for force the same color for each serie in double pie)
+	    var lenColors = 0;
+	    for (var i = 0, l = config.series[0].data.length; i < l ; i++) {				
+			if (i == colors.length){
+				lenColors = 0;
+			}
+			retColors.push(colors[lenColors]);
+			lenColors ++;
+		}
+	    
+		return retColors;
 	}
 });
 
