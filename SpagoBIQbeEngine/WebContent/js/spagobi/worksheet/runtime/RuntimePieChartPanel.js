@@ -117,7 +117,10 @@ Ext.extend(Sbi.worksheet.runtime.RuntimePieChartPanel, Sbi.worksheet.runtime.Run
 				text : ''
 			},
 			series : this.getSeries(),
-			colors : this.getColors()
+			colors : this.getColors(),
+			credits : {
+				enabled : false
+			}
 		});
 	}
 	

@@ -54,10 +54,10 @@ public interface SsoServiceInterface {
     String readTicket(HttpSession session) throws IOException;
     /**
      * 
-     * @param session Http Session
+     * @param request Http request
      * @return
      */
-    String readUserIdentifier(HttpServletRequest session);
+    String readUserIdentifier(HttpServletRequest request);
     
     
     /**

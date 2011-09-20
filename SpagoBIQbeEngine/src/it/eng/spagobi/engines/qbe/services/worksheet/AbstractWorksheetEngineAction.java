@@ -20,15 +20,20 @@
  **/
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
+import java.sql.Connection;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import org.apache.log4j.Logger;
@@ -45,7 +50,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
     private static transient Logger logger = Logger.getLogger(AbstractWorksheetEngineAction.class);
     public static transient Logger auditlogger = Logger.getLogger("audit.query");
     
-    public IDataStore executeWorksheetQuery (String worksheetQuery, String baseQuery, Integer start, Integer limit) {
+    public IDataStore executeWorksheetQuery (String worksheetQuery, Integer start, Integer limit) {
     	
     	IDataStore dataStore = null;
     	
@@ -60,7 +65,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 //		}
 
 		logger.debug("Using temporary table strategy....");			
-		dataStore = useTemporaryTableStrategy(worksheetQuery, baseQuery, start, limit);
+		dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
 		
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 		logger.debug("Query executed succesfully");
@@ -74,14 +79,14 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		boolean overflow = maxSize != null && resultNumber >= maxSize;
 		if (overflow) {
 			logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
-			auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + baseQuery);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + worksheetQuery);
 		}
 		
 		return dataStore;
     }
 
 	private IDataStore useTemporaryTableStrategy(String worksheetQuery,
-			String baseQuery, Integer start, Integer limit) {
+			Integer start, Integer limit) {
 		
 		IDataStore dataStore = null;
 		
@@ -90,19 +95,19 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 //		DataSource dataSource = getDataSource(connection);
 		IDataSource dataSource = getDataSource();
 		
-		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
+//		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
 		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
 		
-		auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + baseQuery);
+//		auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + baseQuery);
 		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
 		
 		try {
-			dataStore = TemporaryTableManager.queryTemporaryTable(userProfile, worksheetQuery, baseQuery, dataSource, start, limit);
+			dataStore = TemporaryTableManager.queryTemporaryTable(worksheetQuery, dataSource, start, limit);
 		} catch (Exception e) {
 			logger.debug("Query execution aborted because of an internal exception");
 			String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
 			SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-			exception.addHint("Check if the base query is properly formed: [" + baseQuery + "]");
+//			exception.addHint("Check if the base query is properly formed: [" + baseQuery + "]");
 			exception.addHint("Check if the crosstab's query is properly formed: [" + worksheetQuery + "]");
 			exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
 			throw exception;
@@ -158,6 +163,33 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
     		return;
     	}
     	engineInstance.setDataSource(dataSource);
+	}
+	
+	public String getTemporaryTableName() {
+		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		return TemporaryTableManager.getTableName(userProfile);
+	}
+	
+	public IDataSetTableDescriptor persistDataSet(String tableName) {
+		WorksheetEngineInstance engineInstance = getEngineInstance();
+		IDataSet dataset = engineInstance.getDataSet();
+		String signature = dataset.getSignature();
+		if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
+			// signature matches: no need to create a TemporaryTable
+			return engineInstance.getLastDataSetTableDescriptor();
+		}
+		Connection connection = getConnection();
+		IDataSetTableDescriptor td = dataset.persist(tableName, connection);
+		engineInstance.setLastDataSetTableDescriptor(td);
+		return td;
+	}
+
+	public Connection getConnection() {
+		try {
+			return this.getDataSource().getConnection();
+		} catch (Exception e) {
+			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
+		}
 	}
     
 }
