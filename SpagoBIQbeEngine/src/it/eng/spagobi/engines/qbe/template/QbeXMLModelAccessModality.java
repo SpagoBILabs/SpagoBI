@@ -25,10 +25,10 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.Filter;
-import it.eng.qbe.utility.StringUtils;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
