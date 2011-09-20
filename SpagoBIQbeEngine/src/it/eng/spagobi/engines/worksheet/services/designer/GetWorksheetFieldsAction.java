@@ -25,8 +25,10 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -34,6 +36,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -59,8 +62,9 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			IDataSet dataset = engineInstance.getDataSet();
 			IMetaData metadata = dataset.getMetadata();
 			
-			JSONDataWriter dataWriter = new JSONDataWriter();
-			resultsJSON = (JSONObject) dataWriter.write(metadata);
+			JSONArray fieldsJSON = writeFields(metadata);
+			resultsJSON = new JSONObject();
+			resultsJSON.put("results", fieldsJSON);
 
 			try {
 				writeBackToClient( new JSONSuccess( resultsJSON ) );
@@ -74,4 +78,61 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			logger.debug("OUT");
 		}	
 	}
+	
+	public JSONArray writeFields(IMetaData metadata) throws Exception {
+		
+		// field's meta
+		JSONArray fieldsMetaDataJSON = new JSONArray();
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
+			
+			Object propertyRawValue = fieldMetaData.getProperty("visible");
+			if (propertyRawValue != null
+					&& (propertyRawValue instanceof Boolean)
+					&& ((Boolean) propertyRawValue).booleanValue() == false) {
+				continue;
+			}
+			
+			String fieldName = getFieldName(fieldMetaData);
+			String fieldHeader = getFieldAlias(fieldMetaData);
+			
+			JSONObject fieldMetaDataJSON = new JSONObject();
+			fieldMetaDataJSON.put("id", fieldName);						
+			fieldMetaDataJSON.put("alias", fieldHeader);
+			
+			FieldType type = fieldMetaData.getFieldType();
+			switch (type) {
+				case ATTRIBUTE:
+					Boolean isSegmentAttribute = (Boolean) fieldMetaData.getProperty("isSegmentAttribute");
+					fieldMetaDataJSON.put("nature", 
+							isSegmentAttribute != null && isSegmentAttribute.booleanValue() ? "segment_attribute" : "attribute");
+					fieldMetaDataJSON.put("funct", AggregationFunctions.NONE);
+					fieldMetaDataJSON.put("iconCls", "attribute");
+					break;
+				case MEASURE:
+					Boolean isMandatoryMeasure = (Boolean) fieldMetaData.getProperty("isMandatoryMeasure");
+					fieldMetaDataJSON.put("nature", 
+							isMandatoryMeasure != null && isMandatoryMeasure.booleanValue() ? "mandatory_measure" : "measure");
+					String aggregationFunction = (String) fieldMetaData.getProperty("aggregationFunction");
+					fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
+					fieldMetaDataJSON.put("iconCls", "measure");
+					break;
+			}
+			fieldsMetaDataJSON.put(fieldMetaDataJSON);
+		}
+		
+		return fieldsMetaDataJSON;
+	
+	}
+	
+	protected String getFieldAlias(IFieldMetaData fieldMetaData) {
+		String fieldAlias = fieldMetaData.getAlias() != null? fieldMetaData.getAlias(): fieldMetaData.getName();
+		return fieldAlias;
+	}
+
+	protected String getFieldName(IFieldMetaData fieldMetaData) {
+		String fieldName = fieldMetaData.getName();
+		return fieldName;
+	}
+	
 }

@@ -141,7 +141,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	 * @return
 	 * @throws JSONException
 	 */
-	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+	protected JSONObject loadSmartFilterFormValues() throws JSONException {
 		String jsonEncodedFormState = getAttributeAsString( FORM_STATE );
 		if ( jsonEncodedFormState != null ) {
 			return new JSONObject(jsonEncodedFormState);

@@ -22,11 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package it.eng.spagobi.tools.dataset.common.metadata;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it)       
@@ -87,9 +83,5 @@ public interface IMetaData {
 	void deleteFieldMetaDataAt(int pivotFieldIndex); 
 	
 	void changeFieldAlias(int fieldIndex, String newAlias);
-	
-	public IDataStore getDomainValues(String fieldName, 
-            Integer start, Integer limit, IDataStoreFilter filter);
-	
-	public Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
+
 }

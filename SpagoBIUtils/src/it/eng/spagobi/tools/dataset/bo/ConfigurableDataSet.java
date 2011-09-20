@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -193,6 +194,17 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 			Connection connection) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public IDataStore getDomainValues(String fieldName, Integer start,
+			Integer limit, IDataStoreFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<String, List<String>> getDomainDescriptions(
+			Map<String, List<String>> codes) {
+		return codes;
 	}
 
 }
