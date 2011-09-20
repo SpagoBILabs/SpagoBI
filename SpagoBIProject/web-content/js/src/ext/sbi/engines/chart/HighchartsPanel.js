@@ -129,6 +129,8 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			//get categories for each axis from dataset
 			this.definesCategoriesX(singleChartConfig);
 			this.definesCategoriesY(singleChartConfig);
+			//sets the highchart colors table: default uses the own definition
+			Highcharts.setOptions({colors:this.getColors(singleChartConfig)});
 			
 			this.chart = new Highcharts.Chart(singleChartConfig);
 			//saves the chart for eventually multiple export
@@ -136,15 +138,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 		}, this);
 	}
 
-	, getColors : function () {
-		var colors = [];
-		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
-			for (var i = 0; i < this.chartConfig.series.length; i++) {
-				colors.push(this.chartConfig.series[i].color);
-			}
-		}
-		return colors;
-	}
+	
 	
 	, getPlotOptions : function () {
 		var plotOptions = null;
