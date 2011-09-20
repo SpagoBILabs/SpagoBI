@@ -274,6 +274,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return statement.getSqlQueryString();
 	}
 	
+	
 	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
 		IDataSource dataSource = getDataSource();
 		try {
@@ -287,17 +288,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 	
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		IDataSource ds = getDataSource();
-		
-		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)((AbstractQbeDataSet)ds).getStatement().getDataSource()).getConnection();
-		ds.setHibDialectClass(connectionDescriptor.getDialect());
-		ds.setDriver(connectionDescriptor.getDriverClass());
-		ds.setJndi(connectionDescriptor.getJndiName());
-		ds.setLabel(connectionDescriptor.getName());
-		ds.setPwd(connectionDescriptor.getPassword());
-		ds.setUrlConnection(connectionDescriptor.getUrl());
-		ds.setUser(connectionDescriptor.getUsername());
-		
+		IDataSource ds = getDataSource();	
 		IDataStore toReturn = null;
 		String sql = getSQLQuery();
 		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, ((AbstractQbeDataSet)ds).getStatement().getQuery());
@@ -313,6 +304,13 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return toReturn;
 	}
 	
+	/**
+	 * Get the relation between the fields in the select clause
+	 * of the Qbe Query and its sql representation
+	 * @param sqlQuery Qbe Query translated in sql
+	 * @param qbeQuery Qbe Query 
+	 * @return
+	 */
 	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery){
 		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
 		
@@ -324,6 +322,11 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return dataSetTableDescriptor;
 	}
 	
+	/**
+	 * Build a datasource.. We need this object
+	 * to build a JDBCDataSet
+	 * @return
+	 */
 	private IDataSource getDataSource(){
 		IDataSource ds = new DataSource();
 		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)((AbstractQbeDataSet)ds).getStatement().getDataSource()).getConnection();
