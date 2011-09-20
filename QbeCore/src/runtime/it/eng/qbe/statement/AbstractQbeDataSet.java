@@ -1,5 +1,6 @@
 package it.eng.qbe.statement;
 
+import it.eng.qbe.dataset.QueryTransformer;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
@@ -250,5 +251,25 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		bindings.put(bindingName, bindingValue);
 	}
 
+	public Object getQuery() {
+		return this.statement.getQuery();
+	}
+
+	public void setQuery(Object query) {
+		this.statement.setQuery((it.eng.qbe.query.Query) query);
+		
+	}
 	
+	public String getSQLQuery(){
+		return statement.getSqlQueryString();
+	}
+	
+	public String getSQLQueryWithFilters() throws Exception{
+		Query originalQuery =  statement.getQuery();
+		Query transformedQuery = QueryTransformer.transform(statement.getQuery(), statement.getDataSource(), null, null);
+		statement.setQuery(transformedQuery);
+		String sqlQuery = statement.getSqlQueryString();
+		statement.setQuery(originalQuery);
+		return sqlQuery;
+	}
 }

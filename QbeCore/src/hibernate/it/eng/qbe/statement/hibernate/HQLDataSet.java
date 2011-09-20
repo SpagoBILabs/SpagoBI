@@ -158,18 +158,9 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		return null;
 	}
 
-	public Object getQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 	public void setFetchSize(int l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setQuery(Object query) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -255,12 +246,6 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	public IDataSetTableDescriptor persist(String tableName,
 			Connection connection) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public IDataStore getDomainValues(String fieldName, Integer start,
-			Integer limit, IDataStoreFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

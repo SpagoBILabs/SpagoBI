@@ -20,7 +20,7 @@
  **/
 package it.eng.qbe.query;
 
-import it.eng.qbe.utility.StringUtils;
+import it.eng.spagobi.utilities.StringUtils;
 
 import java.io.IOException;
 import java.util.Set;

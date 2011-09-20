@@ -39,8 +39,8 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.utility.StringUtils;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 

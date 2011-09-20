@@ -118,7 +118,7 @@ public class Query {
 	}
 
 	
-	public void addWhereField(String name, String description, boolean promptable,
+	public WhereField addWhereField(String name, String description, boolean promptable,
 			it.eng.qbe.query.WhereField.Operand leftOperand, String operator, it.eng.qbe.query.WhereField.Operand rightOperand,
 			String booleanConnector) {
 		
@@ -126,9 +126,10 @@ public class Query {
 		
 		whereClause.add( whereField );
 		whereFieldMap.put("$F{" + name + "}", whereField);
+		return whereField;  
 	}
 	
-	public void addHavingField(String name, String description, boolean promptable, 
+	public HavingField addHavingField(String name, String description, boolean promptable, 
 			it.eng.qbe.query.HavingField.Operand leftOperand, String operator, it.eng.qbe.query.HavingField.Operand rightOperand,
 			String booleanConnector) {
 		
@@ -136,6 +137,7 @@ public class Query {
 		
 		havingClause.add( havingField );
 		havingFieldMap.put("$F{" + name + "}", havingField);
+		return havingField;
 	}
 	
 	public WhereField getWhereFieldByName(String fname) {
