@@ -26,7 +26,6 @@ import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineActi
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -81,9 +80,8 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 			
 			IDataSet dataset = engineInstance.getDataSet();
-			IMetaData metadata = dataset.getMetadata();
 			// TODO manage filter
-			dataStore = metadata.getDomainValues(alias, start, limit, null);
+			dataStore = dataset.getDomainValues(alias, start, limit, null);
 			
 			
 //			// retrieving first QbE query and setting it as active query

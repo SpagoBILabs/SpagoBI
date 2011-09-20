@@ -165,15 +165,4 @@ public class MetaData implements IMetaData {
 		name2IndexMap.put(newAlias.toUpperCase(), fieldIndex);
 	}
 
-	public IDataStore getDomainValues(String fieldName, Integer start,
-			Integer limit, IDataStoreFilter filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Map<String, List<String>> getDomainDescriptions(
-			Map<String, List<String>> codes) {
-		return codes;
-	}
-
 }
