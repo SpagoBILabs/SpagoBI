@@ -1,6 +1,7 @@
 package it.eng.qbe.statement;
 
-import it.eng.qbe.dataset.QueryTransformer;
+import it.eng.qbe.datasource.AbstractDataSource;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
@@ -11,14 +12,23 @@ import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -264,12 +274,67 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return statement.getSqlQueryString();
 	}
 	
-	public String getSQLQueryWithFilters() throws Exception{
-		Query originalQuery =  statement.getQuery();
-		Query transformedQuery = QueryTransformer.transform(statement.getQuery(), statement.getDataSource(), null, null);
-		statement.setQuery(transformedQuery);
-		String sqlQuery = statement.getSqlQueryString();
-		statement.setQuery(originalQuery);
-		return sqlQuery;
+	public IDataSetTableDescriptor persist(String tableName, Connection connection) {
+		IDataSource dataSource = getDataSource();
+		try {
+			String sql = getSQLQuery();
+			TemporaryTableManager.createTable(sql, tableName, dataSource);
+			return getDataSetTableDescriptor(sql, getStatement().getQuery());
+		} catch (Exception e) {
+			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
+			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
+		}	
 	}
+	
+	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+		IDataSource ds = getDataSource();
+		
+		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)((AbstractQbeDataSet)ds).getStatement().getDataSource()).getConnection();
+		ds.setHibDialectClass(connectionDescriptor.getDialect());
+		ds.setDriver(connectionDescriptor.getDriverClass());
+		ds.setJndi(connectionDescriptor.getJndiName());
+		ds.setLabel(connectionDescriptor.getName());
+		ds.setPwd(connectionDescriptor.getPassword());
+		ds.setUrlConnection(connectionDescriptor.getUrl());
+		ds.setUser(connectionDescriptor.getUsername());
+		
+		IDataStore toReturn = null;
+		String sql = getSQLQuery();
+		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, ((AbstractQbeDataSet)ds).getStatement().getQuery());
+		String filterColumnName = tableDescriptor.getColumnName(fieldName);
+		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM"+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get("SsoServiceInterface.USER_ID")));
+		try {
+			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, ds, start, limit);
+		} catch (Exception e) {
+			logger.error("Error loading the domain values for the field "+fieldName, e);
+			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
+			
+		}
+		return toReturn;
+	}
+	
+	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery){
+		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
+		
+		List<String> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
+		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
+		for(int i=0; i<selectFieldsColumn.size(); i++){
+			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i), Object.class);
+		}
+		return dataSetTableDescriptor;
+	}
+	
+	private IDataSource getDataSource(){
+		IDataSource ds = new DataSource();
+		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)((AbstractQbeDataSet)ds).getStatement().getDataSource()).getConnection();
+		ds.setHibDialectClass(connectionDescriptor.getDialect());
+		ds.setDriver(connectionDescriptor.getDriverClass());
+		ds.setJndi(connectionDescriptor.getJndiName());
+		ds.setLabel(connectionDescriptor.getName());
+		ds.setPwd(connectionDescriptor.getPassword());
+		ds.setUrlConnection(connectionDescriptor.getUrl());
+		ds.setUser(connectionDescriptor.getUsername());
+		return ds;
+	}
+	
 }
