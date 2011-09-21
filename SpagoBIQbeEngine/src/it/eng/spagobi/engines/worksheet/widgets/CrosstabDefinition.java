@@ -18,13 +18,16 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.crosstable;
+package it.eng.spagobi.engines.worksheet.widgets;
 
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabSerializationConstants;
+import it.eng.spagobi.engines.qbe.worksheet.SheetContent;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -36,7 +39,7 @@ import org.json.JSONObject;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class CrosstabDefinition {
+public class CrosstabDefinition extends SheetContent {
 	
 	public static CrosstabDefinition EMPTY_CROSSTAB;
 	
@@ -137,6 +140,41 @@ public class CrosstabDefinition {
 		public Column(Attribute attribute) {
 			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
 		}
+	}
+
+	@Override
+	public List<Attribute> getFilters() {
+		List<Attribute> toReturn = new ArrayList<Attribute>();
+		List<Row> rows = getRows();
+		Iterator<Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			Row row = rowsIt.next();
+			String values = row.getValues();
+			if (values != null && !values.equals(new JSONArray().toString())) {
+				toReturn.add(row);
+			}
+		}
+		
+		List<Column> columns = getColumns();
+		Iterator<Column> columnsIt = columns.iterator();
+		while (columnsIt.hasNext()) {
+			Column column = columnsIt.next();
+			String values = column.getValues();
+			if (values != null && !values.equals(new JSONArray().toString())) {
+				toReturn.add(column);
+			}
+		}
+
+		return toReturn;
+	}
+
+	@Override
+	public List<Field> getAllFields() {
+		List<Field> toReturn = new ArrayList<Field>();
+		toReturn.addAll(getColumns());
+		toReturn.addAll(getRows());
+		toReturn.addAll(getMeasures());
+		return toReturn;
 	}
 
 }

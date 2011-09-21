@@ -20,19 +20,27 @@
  **/
 package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
 
-import java.util.Iterator;
-import java.util.List;
-
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.worksheet.Sheet;
+import it.eng.spagobi.engines.qbe.worksheet.SheetContent;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -61,10 +69,10 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			
 			workSheetDefinition = (WorkSheetDefinition)o;
 			
-			JSONArray sheets = serializeSheets(workSheetDefinition.getWorkSheet());
+			JSONArray sheets = serializeSheets(workSheetDefinition.getSheets());
 			toReturn.put(WorkSheetSerializationCostants.SHEETS, sheets);
 			
-			JSONArray globalFilters = serializeGlobalFilters(workSheetDefinition.getGlobalFilters());
+			JSONArray globalFilters = serializeFilters(workSheetDefinition.getGlobalFilters());
 			toReturn.put(WorkSheetSerializationCostants.GLOBAL_FILTERS, globalFilters);
 			
 		} catch (Throwable t) {
@@ -76,7 +84,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
-	private JSONArray serializeGlobalFilters(List<Attribute> globalFilters) throws SerializationException {
+	private JSONArray serializeFilters(List<Attribute> globalFilters) throws SerializationException {
 		JSONArray globalFiltersJSON = new JSONArray();
 		Iterator<Attribute> it = globalFilters.iterator();
 		while (it.hasNext()) {
@@ -94,16 +102,16 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return jsonSheets;
 	}
 	
-	private JSONObject serializeSheet(Sheet sheet) throws SerializationException{
+	private JSONObject serializeSheet(Sheet sheet) throws SerializationException {
 		logger.debug("IN");
-		logger.debug("Serializing the sheet "+sheet.getName());
+		logger.debug("Serializing the sheet " + sheet.getName());
 		JSONObject jsonSheet = new JSONObject();
 		try {
 			jsonSheet.put(WorkSheetSerializationCostants.NAME, sheet.getName());
 			jsonSheet.put(WorkSheetSerializationCostants.LAYOUT, sheet.getLayout());
 			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
-			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, sheet.getFilters());
-			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, sheet.getContent());
+			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, serializeFilters(sheet.getFilters()));
+			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, serializeContent(sheet.getContent()));
 			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
 			
 		} catch (Exception e) {
@@ -115,6 +123,50 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		logger.debug("Serialized the sheet "+sheet.getName());
 		return jsonSheet;
 		
+	}
+
+	private JSONObject serializeContent(SheetContent content) throws SerializationException, JSONException {
+		if (content == null) {
+			return new JSONObject();
+		}
+		if (content instanceof CrosstabDefinition) {
+			return (JSONObject) SerializationManager.serialize(content, "application/json");
+		}
+		if (content instanceof ChartDefinition) {
+			return serializeChart((ChartDefinition) content);
+		}
+		if (content instanceof TableDefinition) {
+			return serializeTable((TableDefinition) content);
+		}
+		else
+			throw new SpagoBIEngineRuntimeException("Unknown sheet content type: " + content.getClass().getName());
+	}
+
+	private JSONObject serializeTable(TableDefinition table) throws SerializationException, JSONException {
+		JSONObject toReturn = new JSONObject();
+		JSONArray fieldsJSON = new JSONArray();
+		List<Field> fields = table.getFields();
+		for (int i = 0; i < fields.size(); i++) {
+			Field field = fields.get(i);
+			fieldsJSON.put(SerializationManager.serialize(field, "application/json"));
+		}
+		toReturn.put(WorkSheetSerializationCostants.VISIBLE_SELECT_FIELDS, fieldsJSON);
+		return toReturn;
+	}
+
+	private JSONObject serializeChart(ChartDefinition chart) throws SerializationException, JSONException {
+		String config = chart.getConfig().toString();
+		JSONObject toReturn = new JSONObject(config);
+		toReturn.put(WorkSheetSerializationCostants.CATEGORY, SerializationManager.serialize(chart.getCategory(), "application/json"));
+
+		JSONArray series = new JSONArray();
+		List<Measure> measures = chart.getSeries();
+		for (int i = 0; i < measures.size(); i++) {
+			series.put(SerializationManager.serialize(measures.get(i), "application/json"));
+		}
+		toReturn.put(WorkSheetSerializationCostants.SERIES, series);
+		
+		return toReturn;
 	}
 
 }

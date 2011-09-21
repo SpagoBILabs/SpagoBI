@@ -24,10 +24,10 @@ package it.eng.spagobi.engines.qbe.crosstable.serializer.json;
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Column;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;

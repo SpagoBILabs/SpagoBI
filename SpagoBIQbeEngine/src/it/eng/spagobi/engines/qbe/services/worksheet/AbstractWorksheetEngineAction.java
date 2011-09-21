@@ -21,12 +21,20 @@
 package it.eng.spagobi.engines.qbe.services.worksheet;
 
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.engines.qbe.worksheet.Sheet;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -191,4 +199,26 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
 		}
 	}
+	
+	public Map<String, List<String>> getAllFilters() {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		Map<String, List<String>> toReturn = workSheetDefinition.getAllFilters();
+		return toReturn;
+	}
+	
+	public Map<String, List<String>> getSheetFilters(String sheetName) {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		Sheet sheet = workSheetDefinition.getSheet(sheetName);
+		List<Attribute> sheetFilters = sheet.getAllFilters();
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+		Iterator<Attribute> it = sheetFilters.iterator();
+		while (it.hasNext()) {
+			Attribute attribute = it.next();
+			toReturn.put(attribute.getEntityId(), attribute.getValuesAsList());
+		}
+		return toReturn;
+	}
+    
 }

@@ -23,8 +23,10 @@ package it.eng.spagobi.engines.qbe.services.crosstab;
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -32,6 +34,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -80,32 +84,23 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 			
 			IDataSet dataset = engineInstance.getDataSet();
-			// TODO manage filter
+			// set all filters, because getDomainValues() method may depend on them
+			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
+				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
+				Map<String, List<String>> filters = getAllFilters();
+				filteringBehaviour.setFilters(filters);
+			}
+			
+			// TODO manage filter on list, if any
 			dataStore = dataset.getDomainValues(alias, start, limit, null);
-			
-			
-//			// retrieving first QbE query and setting it as active query
-//			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
-//			
+
+//			// TODO manage smart filter
 //			//build the query filtered for the smart filter
 //			jsonFormState = loadSmartFilterFormValues();
 //			logger.debug("Form state retrieved as a string: " + jsonFormState);
 //			if ( jsonFormState != null ) {
 //				query = getFilteredQuery(query, jsonFormState);
 //			}
-//			
-//			getEngineInstance().setActiveQuery(query);
-//			
-//			statement = getEngineInstance().getStatment();	
-//			statement.setParameters( getEnv() );
-//
-//			String baseQuery = statement.getSqlQueryString();
-//			
-//			String worksheetQuery = buildSqlStatement(query, baseQuery);
-//			
-//			dataStore = this.executeWorksheetQuery(worksheetQuery, baseQuery, null, null);
-//			
-//			serializer = new LookupStoreJSONSerializer();
 			
 			LookupStoreJSONSerializer serializer = new LookupStoreJSONSerializer();
 			gridDataFeed = (JSONObject)serializer.serialize(dataStore);

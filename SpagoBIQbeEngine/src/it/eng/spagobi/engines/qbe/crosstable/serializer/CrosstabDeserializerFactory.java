@@ -26,8 +26,8 @@ import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.IDeserializerFactory;
 
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.crosstable.serializer.json.CrosstabJSONDeserializer;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)

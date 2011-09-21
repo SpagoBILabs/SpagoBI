@@ -32,6 +32,8 @@ import java.util.Map;
  */
 public class FilteringBehaviour extends AbstractDataSetBehaviour {
 	
+	public static final String ID = FilteringBehaviour.class.getName();
+	
 	private Map<String, List<String>> filters = null;
 	
 	public FilteringBehaviour(IDataSet targetDataSet) {

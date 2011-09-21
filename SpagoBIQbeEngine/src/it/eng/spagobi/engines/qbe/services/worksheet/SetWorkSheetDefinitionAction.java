@@ -64,7 +64,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 
 			//set the worksheet into the qbe instance
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
-			List<Sheet> ws = workSheetDefinition.getWorkSheet();
+			List<Sheet> ws = workSheetDefinition.getSheets();
 			for(int i=0; i<ws.size();i++){
 				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getHeader());
 				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getFooter());
