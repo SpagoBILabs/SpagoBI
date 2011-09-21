@@ -19,11 +19,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
+package it.eng.spagobi.engines.worksheet.serializer.json;
 
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;

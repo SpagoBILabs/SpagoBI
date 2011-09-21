@@ -28,10 +28,10 @@ import java.util.Map;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.worksheet.Sheet;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;

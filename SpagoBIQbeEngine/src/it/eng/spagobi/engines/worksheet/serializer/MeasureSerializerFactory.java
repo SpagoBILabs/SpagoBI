@@ -19,44 +19,44 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer;
+package it.eng.spagobi.engines.worksheet.serializer;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.serializer.json.AttributeJSONSerializer;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.serializer.json.MeasureJSONSerializer;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  */
-public class AttributeSerializerFactory implements ISerializerFactory{
+public class MeasureSerializerFactory implements ISerializerFactory{
 
-	static AttributeSerializerFactory instance;
+	static MeasureSerializerFactory instance;
 	
-	static AttributeSerializerFactory getIntsnce() {
+	static MeasureSerializerFactory getIntsnce() {
 		return instance;
 	}
 	
 	static {
-		instance = new AttributeSerializerFactory();
-		SerializationManager.registerSerializerFactory(Attribute.class, instance);
+		instance = new MeasureSerializerFactory();
+		SerializationManager.registerSerializerFactory(Measure.class, instance);
 	}
 	
 	
-	public static AttributeSerializerFactory getInstance() {
+	public static MeasureSerializerFactory getInstance() {
 		if (instance == null) {
-			instance = new AttributeSerializerFactory();
+			instance = new MeasureSerializerFactory();
 		}
 		return instance;
 	}
 	
-	private AttributeSerializerFactory() {}
+	private MeasureSerializerFactory() {}
 
 	
 	public ISerializer getSerializer(String mimeType) {
-		return new AttributeJSONSerializer();
+		return new MeasureJSONSerializer();
 	}
 
 }

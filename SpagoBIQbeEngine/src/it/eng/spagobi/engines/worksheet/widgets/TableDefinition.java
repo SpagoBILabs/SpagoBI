@@ -20,9 +20,9 @@
  **/
 package it.eng.spagobi.engines.worksheet.widgets;
 
-import it.eng.spagobi.engines.qbe.worksheet.SheetContent;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 
 import java.util.ArrayList;
 import java.util.Iterator;

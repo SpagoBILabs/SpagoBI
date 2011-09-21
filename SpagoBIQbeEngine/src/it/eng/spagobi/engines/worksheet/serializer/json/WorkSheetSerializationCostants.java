@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
+package it.eng.spagobi.engines.worksheet.serializer.json;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)

@@ -18,13 +18,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet;
+package it.eng.spagobi.engines.worksheet.bo;
 
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.IWorksheetStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.WorksheetStateLoaderFactory;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;

@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer;
+package it.eng.spagobi.engines.worksheet.serializer;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
-import it.eng.spagobi.engines.qbe.worksheet.serializer.json.WorkSheetJSONSerializer;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetJSONSerializer;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)

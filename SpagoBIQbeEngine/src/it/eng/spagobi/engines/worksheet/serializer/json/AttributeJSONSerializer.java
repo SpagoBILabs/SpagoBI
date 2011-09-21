@@ -19,12 +19,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
+package it.eng.spagobi.engines.worksheet.serializer.json;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import org.apache.log4j.Logger;
@@ -33,28 +32,28 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class MeasureJSONSerializer implements ISerializer {
+public class AttributeJSONSerializer implements ISerializer {
 
-    public static transient Logger logger = Logger.getLogger(MeasureJSONSerializer.class);
+    public static transient Logger logger = Logger.getLogger(AttributeJSONSerializer.class);
 
 	@Override
 	public Object serialize(Object o) throws SerializationException {
 		JSONObject toReturn = null;
-		Measure measure;
+		Attribute attribute;
 				
 		Assert.assertNotNull(o, "Input parameter cannot be null");
-		Assert.assertTrue(o instanceof Measure, "Unable to serialize objects of type [" + o.getClass().getName() + "]");
+		Assert.assertTrue(o instanceof Attribute, "Unable to serialize objects of type [" + o.getClass().getName() + "]");
 		
 		try {
 			toReturn = new JSONObject();
 			
-			measure = (Measure) o;
+			attribute = (Attribute) o;
 			
-			toReturn.put(FieldsSerializationConstants.ID, measure.getEntityId());
-			toReturn.put(FieldsSerializationConstants.ALIAS, measure.getAlias());
-			toReturn.put(FieldsSerializationConstants.ICON_CLS, measure.getIconCls());
-			toReturn.put(FieldsSerializationConstants.NATURE, measure.getNature());
-			toReturn.put(FieldsSerializationConstants.FUNCTION, measure.getAggregationFunction().getName());
+			toReturn.put(FieldsSerializationConstants.ID, attribute.getEntityId());
+			toReturn.put(FieldsSerializationConstants.ALIAS, attribute.getAlias());
+			toReturn.put(FieldsSerializationConstants.ICON_CLS, attribute.getIconCls());
+			toReturn.put(FieldsSerializationConstants.NATURE, attribute.getNature());
+			toReturn.put(FieldsSerializationConstants.VALUES, attribute.getValues());
 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
@@ -64,6 +63,7 @@ public class MeasureJSONSerializer implements ISerializer {
 		
 		return toReturn;
 	}
+
     
 		
 }

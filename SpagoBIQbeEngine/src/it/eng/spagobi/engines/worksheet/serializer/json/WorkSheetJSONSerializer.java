@@ -18,17 +18,17 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer.json;
+package it.eng.spagobi.engines.worksheet.serializer.json;
 
 import it.eng.qbe.serializer.ISerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.Sheet;
-import it.eng.spagobi.engines.qbe.worksheet.SheetContent;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.SheetContent;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.TableDefinition;
