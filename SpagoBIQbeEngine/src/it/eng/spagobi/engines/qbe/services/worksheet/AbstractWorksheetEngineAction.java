@@ -28,7 +28,6 @@ import java.util.Map;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.utils.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.engines.qbe.worksheet.Sheet;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
@@ -43,6 +42,7 @@ import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import org.apache.log4j.Logger;
 
