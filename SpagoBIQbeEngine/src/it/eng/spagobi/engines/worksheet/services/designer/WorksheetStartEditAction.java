@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.services.worksheet;
+package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.presentation.DynamicPublisher;

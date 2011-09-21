@@ -22,8 +22,8 @@ package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;

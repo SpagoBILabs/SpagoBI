@@ -19,7 +19,7 @@
  * 
  **/
 
-package it.eng.spagobi.engines.qbe.services.worksheet;
+package it.eng.spagobi.engines.worksheet.services.designer;
 
 import java.io.IOException;
 
