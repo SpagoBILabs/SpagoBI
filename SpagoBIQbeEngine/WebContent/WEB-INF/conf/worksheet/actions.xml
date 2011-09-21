@@ -68,5 +68,17 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="LOAD_CROSSTAB_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.LoadCrosstabAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetValuesForCrosstabAttributesAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

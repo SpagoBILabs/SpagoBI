@@ -18,12 +18,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.services.crosstab;
+package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;

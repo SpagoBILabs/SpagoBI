@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.services.crosstab;
+package it.eng.spagobi.engines.worksheet.services.runtime;
 
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
@@ -33,7 +33,6 @@ import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
