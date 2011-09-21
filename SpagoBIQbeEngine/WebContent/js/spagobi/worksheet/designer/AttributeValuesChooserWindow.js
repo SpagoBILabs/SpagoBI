@@ -50,18 +50,22 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	}
 	
 	var defaultSettings = {
+			singleSelect : false
 	};
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	
+	this.addEvents('load');	
+	
 	this.attribute = c.attribute; // the json object representing the attribute: it must be in the constructor input object
 	
-	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	var service_params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	
 	this.services = this.services || new Array();
 	
 	this.services['getValues'] = this.services['getValues'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION'
-		, baseParams: params
+		, baseParams: service_params
 	});
 	
 	c = Ext.apply(c, {
@@ -70,37 +74,75 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 		, columnName : "Values"
 	});
 	
-	// constructor
-	Sbi.worksheet.designer.AttributeValuesChooserWindow.superclass.constructor.call(this, c);
+	this.store = new Ext.data.JsonStore({
+		url: c.url
+	});
+	c.store = this.store;
+
 	
-	this.on('beforeclose', this.updateValues, this);
- 	this.on('load', this.selectValues, this);
+	this.store.on('loadexception', function(store, options, response, e) {
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+	});
+	this.store.on('load', function (store, records, options) {
+		this.fireEvent('load', this, records, options);
+	}, this);
+	
+	this.store.on('loadexception', function(store, options, response, e) {
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+	});
+
+	this.on('selectionmade', this.updateValues, this);
+
+	
+	// PARAMS
+	
 	var params = {
-		ALIAS : this.attribute.alias
-	};
+			ALIAS : this.attribute.alias,
+			ENTITY_ID : this.attribute.id			
+		};
 	// if a global variable Sbi.formviewer.formEnginePanel is defined, it is the form engine panel (SmartFilter).
-	// Send the form state to the server
 	if (Sbi.formviewer && Sbi.formviewer.formEnginePanel) {
 		var formState = Sbi.formviewer.formEnginePanel.getFormState();
 		params.formState = Ext.encode(formState);
 	}
-	this.show();
- 	this.load({params: params});
+	var p = Ext.apply({}, params, {
+		start: this.start
+		, limit: this.limit
+	});
+	
+	c.params = p;	
+	
+	// add selection values
+	if(this.attribute.values){
+		c.startValues = this.attribute.values; 	
+	}
+	
+	// constructor
+	Sbi.worksheet.designer.AttributeValuesChooserWindow.superclass.constructor.call(this, c);
+	// set first selection
+	this.setSelection(Ext.decode(this.attribute.values));
+ 	
+	this.show(this);
 
+	this.store.load({params: p});
 };
 
-Ext.extend(Sbi.worksheet.designer.AttributeValuesChooserWindow, Sbi.widgets.SimpleValuesChooserWindow, {
+Ext.extend(Sbi.worksheet.designer.AttributeValuesChooserWindow, Sbi.widgets.FilterLookupPopupWindow, {
 
-	attribute 	: null // the json object representing the attribute: it must be in the constructor input object
+    start: 0 
+    , limit: 20
+	, attribute 	: null // the json object representing the attribute: it must be in the constructor input object
 	
 	,
 	updateValues : function ( ) {
-		this.attribute.values = Ext.encode(this.getSelectedValues());
+	var aaa = this.getSelection();
+		this.attribute.values = Ext.encode(this.getSelection());
 	}
-	
 	,
 	selectValues : function ( ) {
 		this.select(Ext.decode(this.attribute.values));
-	}
+}
+	
+
 	
 });

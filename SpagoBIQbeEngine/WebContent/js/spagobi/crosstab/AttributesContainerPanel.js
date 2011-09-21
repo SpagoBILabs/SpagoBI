@@ -238,7 +238,9 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				return;
 			}
 			var newRecord = new this.Record(aRow.data);
-			newRecord.data.values = '[]'; // init the 'values' property as empty
+			if(!(newRecord.data.values)){
+				newRecord.data.values = new Array(); // init the 'values' property as empty
+			}
 			this.store.add([newRecord]);
 			
 			

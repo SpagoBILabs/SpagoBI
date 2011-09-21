@@ -52,20 +52,18 @@ Sbi.widgets.FilterLookupField = function(config) {
 	
 	Ext.apply(this, config);
 	
+	this.config = config;
 	this.store = config.store;
-	this.store.on('metachange', function( store, meta ) {
-		this.updateMeta( meta );
-	}, this);
-	this.store.on('load', function( store, records, options  ) {
-		this.applySelection();		
-	}, this);
-	
-	this.addEvents('selectionmade');	
+
+	this.addEvents('selectionmade');
 
 	this.store.baseParams  = config.params;
 	this.params = config.params;
-	this.initWin();
+
+	this.win = null;
 	
+	//this.initWin();
+	this.init();
 	
 	var c = Ext.apply({}, config, {
 		triggerClass: 'x-form-search-trigger'
@@ -88,6 +86,8 @@ Sbi.widgets.FilterLookupField = function(config) {
 		}, this);
 	}, this);
 	
+	this.win.on("selectionmade", this.setValue,this);
+	
 	/*
 	this.grid.on('render', function(g) {
 		alert('DONE');
@@ -108,13 +108,10 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
     
 	// STATE MEMBERS
 	  valueField: null
-    , displayField: null
-    , descriptionField: null
     
     // oggetto (value: description, *)
     , xvalue: null
     // oggetto (value: description, *)
-    , xselection: null
     , xdirty: false
     
     , singleSelect: true
@@ -125,8 +122,6 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
     
 	// SUB-COMPONENTS MEMBERS
 	, store: null
-	, sm: null
-    , grid: null
     , win: null
     
     // default separator for lookup values
@@ -154,12 +149,16 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
 		return v;
 	}
 
-	/**
-	 * v: 
-	 *  - object -> multivalue with values/descriptions
-	 *  - array -> multivalue with only values
-	 *  - string -> single value
-	 */
+	
+    
+    // private methods
+    , init: function() {
+    	this.win = new Sbi.widgets.FilterLookupPopupWindow(this.config);   
+    }
+
+
+    
+    
 	, setValue : function(v){	
 		if(typeof v === 'object') {
 			this.xvalue = {};
@@ -186,163 +185,9 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
 			this.xvalue[v] = v;
 			Sbi.widgets.FilterLookupField.superclass.setValue.call(this, v);
 		}
+		this.fireEvent('selectionmade', v);	
 	}
-	
-	
-    
-    // private methods
-    , initWin: function() {
-     
-     var cm = new Ext.grid.ColumnModel([
-		   new Ext.grid.RowNumberer(),
-	       {
-	       	  header: "Values",
-	          dataIndex: 'Values',
-	          width: 75
-	          //renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
-	       }
-	    ]);
-		
-		
-		var pagingBar = new Sbi.widgets.PagingToolbar({
-	        pageSize: this.limit,
-	        store: this.store,
-	        displayInfo: true,
-	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
-	        emptyMsg: "No topics to display",
-	        
-	        items:[
-	               '->'
-	               , {
-	            	   text: LN('sbi.lookup.Annulla')
-	            	   , listeners: {
-		           			'click': {
-		                  		fn: this.onCancel,
-		                  		scope: this
-		                	} 
-	               		}
-	               } , {
-	            	   text: LN('sbi.lookup.Confirm')
-	            	   , listeners: {
-		           			'click': {
-		                  		fn: this.onOk,
-		                  		scope: this
-		                	} 
-	               		}
-	               }
-	        ]
-	    });
-		
-		var filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
-		
-		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
-		this.sm.on('rowselect', this.onSelect, this);
-		this.sm.on('rowdeselect', this.onDeselect, this);
-		
-		this.grid = new Ext.grid.GridPanel({
-			store: this.store
-   	     	, cm: cm
-   	     	, sm: this.sm
-   	     	, frame: false
-   	     	, border:false  
-   	     	, collapsible:false
-   	     	, loadMask: true
-   	     	, viewConfig: {
-   	        	forceFit:true
-   	        	, enableRowBody:true
-   	        	, showPreview:true
-   	     	}
-			
-			, tbar: filteringToolbar
-	        , bbar: pagingBar
-		});
-		
-		this.win = new Ext.Window({
-			title: LN('sbi.lookup.Select') ,   
-            layout      : 'fit',
-            width       : 580,
-            height      : 300,
-            closeAction :'hide',
-            plain       : true,
-            items       : [this.grid]
-		});
-	}
-    
-    , updateMeta: function(meta) {
-    	if(this.grid){		
-  
-			this.valueField = meta.valueField;
-			this.displayField = meta.displayField;
-			this.descriptionField = meta.descriptionField;
-			
-			meta.fields[0] = new Ext.grid.RowNumberer();
-			meta.fields[ meta.fields.length - 1 ] = this.sm;
 
-			if(meta.fields[1].type == 'date'){
-				meta.fields[1].renderer = Ext.util.Format.dateRenderer('d/m/Y H:i:s');
-			}
-	
-			this.grid.getColumnModel().setConfig(meta.fields);		
-			
-		} else {
-		   alert('ERROR: store meta changed before grid instatiation')
-		}		
-	}
-    
-    , resetSelection: function(valuesToLoad) {
-    	this.xselection = Ext.apply({}, this.xvalue);   
-    	if (valuesToLoad && valuesToLoad !== undefined){
-    		this.xselection['Values'] = valuesToLoad;    
-    	}
-   	}
-    
-    , onSelect: function(sm, rowIndex, record) {
-    	
-    	if(this.singleSelect === true){
-    		this.xselection = {}
-    	}
-    	
-    	// initializing the values' array, if not already initialized
-    	if (this.xselection['Values'] === undefined) {
-    		this.xselection['Values'] = [];
-    	}
-
-    	var valueToAdd = record.data[this.valueField];
-    	if(this.grid.getColumnModel().getColumnById('1').type == 'date'){
-    		valueToAdd = valueToAdd.format('d/m/Y H:i:s');
-    	}
-    	
-    	// it the new value is not contained into the values' array, it is added
-    	if (this.xselection['Values'].indexOf(valueToAdd) === -1) {
-    		this.xselection['Values'].push(valueToAdd);
-    	}
-    }
-    
-    , onDeselect: function(sm, rowIndex, record) {
-    	if (this.xselection['Values'] && this.xselection['Values'].length > 0) {
-    		var valueToRemove = record.data[this.valueField];
-    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
-    			valueToRemove = valueToRemove.format('d/m/Y H:i:s');
-    		}
-    		this.xselection['Values'].remove(valueToRemove);
-    	}    	
-    }
-    
-    , applySelection: function() {
-    	if (this.grid && this.xselection['Values']) {
-			var selectedRecs = [];
-			this.grid.getStore().each(function(rec) {
-				var valueToLookFor = rec.data[this.valueField];
-	    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
-	    			valueToLookFor = valueToLookFor.format('d/m/Y H:i:s');
-	    		}
-				if (this.xselection['Values'].indexOf(valueToLookFor) !== -1){
-		        	selectedRecs.push(rec);	        	
-		        }
-		    }, this);
-			this.sm.selectRecords(selectedRecs);		    
-		 }		
-    }
 	
     , clean: function() {
     	if (this.xdirty) {
@@ -361,7 +206,9 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
 	, onLookUp: function(valuesToload) {
 
 		this.clean();
-		this.resetSelection(valuesToload);
+		//this.resetSelection(valuesToload);
+
+		this.win.resetSelection(valuesToload);
 		
 		this.win.show(this);
 		var p = Ext.apply({}, this.params, {
@@ -371,14 +218,5 @@ Ext.extend(Sbi.widgets.FilterLookupField, Ext.form.TriggerField, {
 		this.store.load({params: p});
 
 	}
-	
-	, onOk: function() {
-		this.setValue(this.xselection);	
-		this.win.hide();	
-		this.fireEvent('selectionmade', this.xselection);	
-	}
-	
-	, onCancel: function() {
-		this.win.hide();
-	}
+
 });

@@ -1,0 +1,310 @@
+
+/**
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ **/
+ 
+
+/**
+  * Object name 
+  * 
+  * [description]
+  * 
+  * 
+  * Public Properties
+  * 
+  * [list]
+  * 
+  * 
+  * Public Methods
+  * 
+  *  [list]
+  * 
+  * 
+  * Public Events
+  * 
+  *  [list]
+  * 
+  * Authors
+  * 
+  * - Giulio gavardi (giulio.gavardi@eng.it)
+  */
+
+Ext.ns("Sbi.widgets");
+
+Sbi.widgets.FilterLookupPopupWindow = function(config) {
+	
+
+	var defaultSettings = {
+			title : LN('sbi.lookup.Select'),
+			layout      : 'fit',
+			width       : 580,
+			height      : 300,
+			closeAction :'hide',
+			plain       : true
+	};
+
+	if (Sbi.settings && Sbi.settings.widgets  && Sbi.settings.widgets.filterLookupPopupWindow) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.widgets.filterLookupPopupWindow);
+	}
+
+	var codef = Ext.apply(defaultSettings, config || {});
+	
+	var c = Ext.apply(this, codef);
+
+	this.addEvents('selectionmade', 'onok');	
+	
+	
+	this.init();
+
+	this.items = this.grid;
+
+	// constructor
+	Sbi.widgets.FilterLookupPopupWindow.superclass.constructor.call(this, c);
+
+	this.store.on('metachange', function( store, meta ) {
+		this.updateMeta( meta );
+	}, this);
+
+	this.store.on('load', function( store, records, options  ) {
+		this.applySelection();		
+	}, this);
+	
+	
+};
+
+Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
+    
+	// ----------------------------------------------------------------------------------------
+	// members
+	// ----------------------------------------------------------------------------------------
+    
+
+	
+	// STATE MEMBERS
+	  valueField: null
+    , displayField: null
+    , descriptionField: null
+    
+    // oggetto (value: description, *)
+    , xvalue: null
+    // oggetto (value: description, *)
+    , xselection: null
+    
+    , singleSelect: true
+   
+	// SUB-COMPONENTS MEMBERS
+	, store: null
+	, sm: null
+    , grid: null
+    , limit: 20
+      
+	
+    
+    // private methods
+    , init: function() {
+     
+     var cm = new Ext.grid.ColumnModel([
+		   new Ext.grid.RowNumberer(),
+	       {
+	       	  header: "Values",
+	          dataIndex: 'Values',
+	          width: 75
+	          //renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
+	       }
+	    ]);
+
+     
+		var pagingBar = new Sbi.widgets.PagingToolbar({
+	        pageSize: this.limit,
+	        store: this.store,
+	        displayInfo: true,
+	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
+	        emptyMsg: "No topics to display",
+
+	        items:[
+	               '->'
+	               , {
+	            	   text: LN('sbi.lookup.Annulla')
+	            	   , listeners: {
+		           			'click': {
+		                  		fn: this.onCancel,
+		                  		scope: this
+		                	} 
+	               		}
+	               } , {
+	            	   text: LN('sbi.lookup.Confirm')
+	            	   , listeners: {
+		           			'click': {
+		                  		fn: this.onOk,
+		                  		scope: this
+		                	} 
+	               		}
+	               }
+	        ]
+	    });
+
+		var filteringToolbar;
+		if(this.params){
+			filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store, params: this.params});
+		}
+		else{
+			filteringToolbar = new Sbi.widgets.FilteringToolbar({store: this.store});
+			
+		}
+		
+		this.sm = new Ext.grid.CheckboxSelectionModel( {singleSelect: this.singleSelect } );
+		this.sm.on('rowselect', this.onSelect, this);
+		this.sm.on('rowdeselect', this.onDeselect, this);
+		
+		this.grid = new Ext.grid.GridPanel({
+			store: this.store
+   	     	, cm: cm
+   	     	, sm: this.sm
+   	     	, frame: false
+   	     	, border:false  
+   	     	, collapsible:false
+   	     	, loadMask: true
+   	     	, viewConfig: {
+   	        	forceFit:true
+   	        	, enableRowBody:true
+   	        	, showPreview:true
+   	     	}
+			
+		, tbar: filteringToolbar
+		, bbar: pagingBar
+		});
+		
+    	if(this.singleSelect === true && 
+    			this.xselection == null){
+    		this.xselection = {}
+    	}
+    	else
+    		if(this.singleSelect === false && 
+        			this.xselection == null){
+        		this.xselection = Ext.apply({}, {});   
+        	}	
+    		
+    	
+    	// initializing the values' array, if not already initialized
+    	if(this.startValues){
+    		this.xselection['Values'] = this.startValues;
+    	}
+    	else if (this.xselection['Values'] === undefined) {
+    		this.xselection['Values'] = new Array();
+    	}
+
+	}
+    
+    , updateMeta: function(meta) {
+    	if(this.grid){		
+  
+			this.valueField = meta.valueField;
+			this.displayField = meta.displayField;
+			this.descriptionField = meta.descriptionField;
+			
+			meta.fields[0] = new Ext.grid.RowNumberer();
+			meta.fields[ meta.fields.length - 1 ] = this.sm;
+
+			if(meta.fields[1].type == 'date'){
+				meta.fields[1].renderer = Ext.util.Format.dateRenderer('d/m/Y H:i:s');
+			}
+	
+			this.grid.getColumnModel().setConfig(meta.fields);		
+			
+		} else {
+		   alert('ERROR: store meta changed before grid instatiation')
+		}		
+	}
+    
+    , resetSelection: function(valuesToLoad) {
+    	this.xselection = Ext.apply({}, this.xvalue);   
+    	if (valuesToLoad && valuesToLoad !== undefined){
+    		this.xselection['Values'] = valuesToLoad;    
+    	}
+   	}
+    
+    , onSelect: function(sm, rowIndex, record) {
+    	
+//    	if(this.singleSelect === true){
+//    		this.xselection = {}
+//    	}
+    	
+    	// initializing the values' array, if not already initialized
+//    	if (this.xselection['Values'] === undefined) {
+//    		this.xselection['Values'] = [];
+//    	}
+
+    	var valueToAdd = record.data[this.valueField];
+    	if(this.grid.getColumnModel().getColumnById('1').type == 'date'){
+    		valueToAdd = valueToAdd.format('d/m/Y H:i:s');
+    	}
+    	
+    	// it the new value is not contained into the values' array, it is added
+    	valueToAdd+='';
+    	if (this.xselection['Values'].indexOf(valueToAdd) === -1) {
+    		this.xselection['Values'].push(valueToAdd);
+    	}
+    }
+    
+    , onDeselect: function(sm, rowIndex, record) {
+    	if (this.xselection['Values'] && this.xselection['Values'].length > 0) {
+    		var valueToRemove = record.data[this.valueField];
+    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
+    			valueToRemove = valueToRemove.format('d/m/Y H:i:s');
+    		}
+    		valueToRemove+='';
+    		this.xselection['Values'].remove(valueToRemove);
+    	}    	
+    }
+    
+    , applySelection: function() {
+    	if (this.grid && this.xselection['Values']) {
+			var selectedRecs = [];
+			var cosa = this.grid.getStore().getCount();
+			this.grid.getStore().each(function(rec) {
+				var valueToLookFor = rec.data[this.valueField];
+				valueToLookFor+='';
+	    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
+	    			valueToLookFor = valueToLookFor.format('d/m/Y H:i:s');
+	    		}
+				if (this.xselection['Values'].indexOf(valueToLookFor) !== -1){
+		        	selectedRecs.push(rec);	        	
+		        }
+		    }, this);
+			this.sm.selectRecords(selectedRecs);		    
+		 }		
+    }
+	
+	, onOk: function() {
+		this.fireEvent('selectionmade', this.xselection);	
+		this.hide();	
+	}
+	
+	, onCancel: function() {
+		this.hide();
+	}
+	, getSelection: function(){
+		return this.xselection['Values'];	
+	}
+	, setSelection: function(arraySel){
+		this.xselection['Values'] = arraySel;  
+	}
+	
+});

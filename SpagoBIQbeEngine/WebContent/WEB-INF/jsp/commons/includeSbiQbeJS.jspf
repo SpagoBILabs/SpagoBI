@@ -64,6 +64,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/widgets/Colors.js'/></script>
 <script type="text/javascript" src='../js/spagobi/widgets/SeriesPalette.js'/></script>
 <script type="text/javascript" src='../js/spagobi/widgets/SimpleValuesChooserWindow.js'/></script>
+<script type="text/javascript" src='../js/spagobi/widgets/FilterLookupPopupWindow.js'/></script>
+
 
 <script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'/></script>
 
