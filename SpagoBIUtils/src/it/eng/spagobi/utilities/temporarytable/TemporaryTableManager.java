@@ -153,8 +153,7 @@ public class TemporaryTableManager {
 
 	}
 
-	public static DataStore queryTemporaryTable(String sqlStatement,
-			IDataSource dataSource, Integer start, Integer limit) throws Exception {
+	public static DataStore queryTemporaryTable(String sqlStatement,IDataSource dataSource, Integer start, Integer limit) throws Exception {
 		
 		logger.debug("IN");
 		logger.debug("SQL statement is [" + sqlStatement + "]");
