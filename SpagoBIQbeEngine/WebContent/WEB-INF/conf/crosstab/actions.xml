@@ -2,20 +2,8 @@
 
 <ACTIONS>
 	
-	<ACTION name="LOAD_CROSSTAB_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.crosstab.LoadCrosstabAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	
 	<ACTION name="EXPORT_CROSSTAB_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.crosstab.ExportCrosstabAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	
-	<ACTION name="GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.crosstab.GetValuesForCrosstabAttributesAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
