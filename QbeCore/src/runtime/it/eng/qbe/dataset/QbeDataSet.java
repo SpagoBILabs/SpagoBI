@@ -274,5 +274,10 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		return ((AbstractQbeDataSet)ds).getDomainValues(fieldName, start, limit, filter);
 	}
 	
+	@Override
+	public String getSignature() {
+		return ((AbstractQbeDataSet)ds).getSQLQuery();
+	}
+	
 	
 }
