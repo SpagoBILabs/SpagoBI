@@ -182,6 +182,10 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		flgCheck = (this.iconCls === 'views')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
     	}
     	
+    	//if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
+        if(flgCheck != null  && flgCheck === this.INACTIVE_VALUE &&
+        		this.actionConf.singleExecution !== undefined && this.actionConf.singleExecution == true) return;            	
+    	
     	this.executionContext[checkCol] = flgCheck;
 		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
 		params = Ext.apply(params, {
@@ -247,9 +251,8 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 
     	var isCheck = this.store.getFieldNameByAlias(this.actionConf.checkColumn);
     	if (isCheck !== undefined ){
-    		//checkValue: -1 if all rows are ACTIVE, greater then -1 when ther's almost one acitve 
+    		//checkValue: -1 if all rows are ACTIVE, greater then -1 when ther's almost one active 
     		var checkValue = this.store.findExact(isCheck,this.INACTIVE_VALUE);
-    	//	alert(checkValue);
     		if (checkValue > -1){  //there's any inactive --> enable active actions
     			this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]); 
     			this.setTooltip(this.actionConf.tooltipInactive);
