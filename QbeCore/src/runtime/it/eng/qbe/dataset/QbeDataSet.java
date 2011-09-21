@@ -278,6 +278,5 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	public String getSignature() {
 		return ((AbstractQbeDataSet)ds).getSQLQuery();
 	}
-	
-	
+
 }
