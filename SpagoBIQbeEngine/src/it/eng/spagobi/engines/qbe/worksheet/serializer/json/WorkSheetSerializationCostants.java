@@ -34,5 +34,9 @@ public class WorkSheetSerializationCostants {
 	public static final String FOOTER = "footer";
 	public static final String LAYOUT = "sheetLayout";
 	public static final String GLOBAL_FILTERS = "globalFilters";
+	public static final String DESIGNER = "designer";
+	public static final String VISIBLE_SELECT_FIELDS = "visibleselectfields";
+	public static final String CATEGORY = "category";
+	public static final String SERIES = "series";
 	
 }

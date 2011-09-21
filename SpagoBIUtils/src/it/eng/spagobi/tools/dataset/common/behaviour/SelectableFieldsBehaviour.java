@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class SelectableFieldsBehaviour extends AbstractDataSetBehaviour {
 	
+	public static final String ID = SelectableFieldsBehaviour.class.getName();
+	
 	private List<String> fields = null;
 
 	public SelectableFieldsBehaviour(IDataSet targetDataSet) {

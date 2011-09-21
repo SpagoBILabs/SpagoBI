@@ -20,16 +20,26 @@
  **/
 package it.eng.spagobi.engines.qbe.services.crosstab;
 
+import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
 import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.qbe.services.worksheet.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.qbe.utils.crosstab.CrosstabQueryCreator;
+import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
+import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -39,11 +49,16 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -52,7 +67,9 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	
 	// INPUT PARAMETERS
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
-	private static final String FORM_STATE = ExecuteMasterQueryAction.FORM_STATE; 
+	private static final String FORM_STATE = ExecuteMasterQueryAction.FORM_STATE;
+	private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
+	public static final String SHEET = "sheetName";
 
 	private static final long serialVersionUID = -5780454016202425492L;
 
@@ -95,12 +112,38 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			// get temporary table name
 			String tableName = this.getTemporaryTableName();
-			// TODO set into dataset the global filters and selected fields
+			// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
+			WorksheetEngineInstance engineInstance = getEngineInstance();
+			IDataSet dataset = engineInstance.getDataSet();
+			Map<String, List<String>> filters = getAllFilters();
+			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
+				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
+				filteringBehaviour.setFilters(filters);
+			}
+			
+			if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
+				List<String> fields = getAllFields();
+				SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
+				selectableFieldsBehaviour.setSelectedFields(fields);
+			}
+			
 			// persist dataset into temporary table	
 			IDataSetTableDescriptor descriptor = this.persistDataSet(tableName);
 			// build SQL query against temporary table
-			// TODO get sheet filters (optional filters)
-			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, new ArrayList<WhereField>());
+			List<WhereField> whereFields = new ArrayList<WhereField>();
+			if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
+				List<WhereField> temp = transformIntoWhereClauses(filters);
+				whereFields.addAll(temp);
+			}
+			String sheetName = this.getAttributeAsString(SHEET);
+			Map<String, List<String>> sheetFilters = getSheetFilters(sheetName);
+			List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
+			whereFields.addAll(temp);
+			
+			temp = getOptionalFilters();
+			whereFields.addAll(temp);
+			
+			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields);
 			// execute SQL query against temporary table
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
 			// serialize crosstab
@@ -122,6 +165,19 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			if (totalTimeMonitor != null) totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}	
+	}
+
+	private List<String> getAllFields() {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		List<Field> fields = workSheetDefinition.getAllFields();
+		Iterator<Field> it = fields.iterator();
+		List<String> toReturn = new ArrayList<String>();
+		while (it.hasNext()) {
+			Field field = it.next();
+			toReturn.add(field.getEntityId());
+		}
+		return toReturn;
 	}
 
 	/**
@@ -147,6 +203,79 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			return new JSONObject(jsonEncodedFormState);
 		}
 		return null;
+	}
+	
+	public static List<WhereField> transformIntoWhereClauses(
+			Map<String, List<String>> filters) throws JSONException {
+		
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		
+		Set<String> keys = filters.keySet();
+		Iterator<String> it = keys.iterator();
+		while (it.hasNext()) {
+			String aFilterName = it.next();
+			List<String> values = filters.get(aFilterName);
+			if (values != null && values.size() > 0) {
+				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
+				Operand leftOperand = new Operand(new String[] {aFilterName}, null, AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+				String[] valuesArray = (String[]) values.toArray();
+				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), 
+						aFilterName, false, leftOperand, operator, rightOperand, "AND");
+
+				whereFields.add(whereField);
+			}
+		}
+		
+		return whereFields;
+	}
+	
+
+	public List<WhereField> getOptionalFilters() throws JSONException {
+		JSONObject optionalUserFilters = getAttributeAsJSONObject(OPTIONAL_FILTERS);
+		if (optionalUserFilters != null) {
+			return transformIntoWhereClauses(optionalUserFilters);
+		} else {
+			return new ArrayList<WhereField>();
+		}
+	}
+	
+	
+	private static List<WhereField> transformIntoWhereClauses(
+			JSONObject optionalUserFilters) throws JSONException {
+		String[] fields = JSONObject.getNames(optionalUserFilters);
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		for (int i = 0; i < fields.length; i++) {
+			String fieldName = fields[i];
+			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
+
+			// if the filter has some value
+			if (valuesArray.length() > 0) {
+				String[] values = new String[1];
+				values[0] = fieldName;
+
+				Operand leftOperand = new Operand(values, fieldName,
+						AbstractStatement.OPERAND_TYPE_FIELD, values, values);
+
+				values = new String[valuesArray.length()];
+				for (int j = 0; j < valuesArray.length(); j++) {
+					values[j] = valuesArray.getString(j);
+				}
+
+				Operand rightOperand = new Operand(values, fieldName,
+						AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+				String operator = "EQUALS TO";
+				if (valuesArray.length() > 1) {
+					operator = "IN";
+				}
+
+				whereFields.add(new WhereField("OptionalFilter" + i,
+						"OptionalFilter" + i, false, leftOperand, operator,
+						rightOperand, "AND"));
+			}
+		}
+		return whereFields;
 	}
 	
 }

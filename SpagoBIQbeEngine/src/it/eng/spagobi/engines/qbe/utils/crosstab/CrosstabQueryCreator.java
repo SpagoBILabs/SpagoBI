@@ -31,11 +31,11 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Column;
-import it.eng.spagobi.engines.qbe.crosstable.CrosstabDefinition.Row;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Column;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
@@ -78,14 +78,8 @@ public class CrosstabQueryCreator {
 		StringBuffer buffer = new StringBuffer();
 		
 		putSelectClause(buffer, crosstabDefinition, descriptor);
-			
-		buffer.append(" FROM " + descriptor.getTableName() + " ");
 		
-		if (whereFields == null) {
-			whereFields = new ArrayList<WhereField>();
-		}
-		addColumnsValuesToWhereClause(crosstabDefinition.getColumns(), whereFields);
-		addRowsValuesToWhereClause(crosstabDefinition.getRows(), whereFields);
+		putFromClause(buffer, descriptor);
 		
 		putWhereClause(buffer, whereFields, descriptor);
 		
@@ -98,6 +92,13 @@ public class CrosstabQueryCreator {
 
     
     
+	private static void putFromClause(StringBuffer buffer,
+				IDataSetTableDescriptor descriptor) {
+		buffer.append(" FROM " + descriptor.getTableName() + " ");
+	}
+
+
+
 //	public static String getCrosstabQuery(CrosstabDefinition crosstabDefinition, Query baseQuery, List<WhereField> whereFields, String sqlQuery, IStatement stmt) {
 //		logger.debug("IN");
 //		StringBuffer buffer = new StringBuffer();
@@ -397,11 +398,7 @@ public class CrosstabQueryCreator {
 		
 		putSelectClause(buffer, fieldsName, descriptor);
 			
-		buffer.append(" FROM TEMPORARY_TABLE ");
-		
-		if (whereFields == null) {
-			whereFields = new ArrayList<WhereField>();
-		}
+		putFromClause(buffer, descriptor);
 		
 		putWhereClause(buffer, whereFields, descriptor);
 		

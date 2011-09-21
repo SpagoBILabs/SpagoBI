@@ -24,14 +24,18 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.IWorksheetStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.worksheet.WorksheetStateLoaderFactory;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,25 +57,25 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		EMPTY_WORKSHEET = new WorkSheetDefinition();
 	}
 	
-	private List<Sheet> workSheet;
+	private List<Sheet> sheets;
 	
 	private List<Attribute> globalFilters;
 	
 	public WorkSheetDefinition(){
-		workSheet = new ArrayList<Sheet>();
+		sheets = new ArrayList<Sheet>();
 		globalFilters = new ArrayList<Attribute>();
 	}
 	
-	public WorkSheetDefinition(List<Sheet> workSheet){
-		this.workSheet = workSheet;
+	public WorkSheetDefinition(List<Sheet> sheets){
+		this.sheets = sheets;
 	}
 
-	public List<Sheet> getWorkSheet() {
-		return workSheet;
+	public List<Sheet> getSheets() {
+		return sheets;
 	}
 
-	public void setWorkSheet(List<Sheet> workSheet) {
-		this.workSheet = workSheet;
+	public void setSheets(List<Sheet> sheets) {
+		this.sheets = sheets;
 	}
 	
 	public List<Attribute> getGlobalFilters() {
@@ -91,9 +95,9 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 
 	}
 	
-	public Sheet getSheetConfiguration(String name) {
+	public Sheet getSheet(String name) {
 		Sheet toReturn = null;
-		Iterator<Sheet> it = this.workSheet.iterator();
+		Iterator<Sheet> it = this.sheets.iterator();
 		while (it.hasNext()) {
 			Sheet sheet = it.next();
 			if (sheet.getName().equals(name)) {
@@ -141,7 +145,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 			}
 			
 			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) SerializationManager.deserialize(worksheetStateJSON, "application/json", WorkSheetDefinition.class);
-			this.setWorkSheet(workSheetDefinition.getWorkSheet());
+			this.setSheets(workSheetDefinition.getSheets());
 			this.setGlobalFilters(workSheetDefinition.getGlobalFilters());
 			
 			logger.debug("analysis state loaded succsfully from row data");
@@ -167,5 +171,98 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		}
 		
 		return rowData.getBytes();
+	}
+
+	public Map<String, List<String>> getAllFilters() {
+		List<Attribute> globalFilters = this.getGlobalFilters(); // the global filters
+		List<Attribute> sheetFilters = this.getFiltersOnSheets(); // the union of the filters defined in all the sheets
+		Map<String, List<String>> toReturn = mergeFilters(globalFilters, sheetFilters);
+		return toReturn;
+	}
+
+	private List<Attribute> getFiltersOnSheets() {
+		List<Attribute> toReturn = new ArrayList<Attribute>();
+		Iterator<Sheet> it = this.sheets.iterator();
+		while (it.hasNext()) {
+			Sheet aSheet = it.next();
+			List<Attribute> sheetFilters = aSheet.getAllFilters();
+			addFilters(toReturn, sheetFilters);
+		}
+		return toReturn;
+	}
+
+	public static void addFilters(List<Attribute> toReturn,
+			List<Attribute> sheetFilters) {
+		Iterator<Attribute> it = sheetFilters.iterator();
+		while (it.hasNext()) {
+			Attribute aFilter = it.next();
+			if (toReturn.contains(aFilter)) {
+				int index = toReturn.indexOf(aFilter);
+				Attribute previousFilter = toReturn.get(index);
+				List<String> previousValues = previousFilter.getValuesAsList();
+				List<String> newValues = aFilter.getValuesAsList();
+				List<String> sum = ListUtils.sum(previousValues, newValues);
+				previousFilter.setValues(sum);
+			} else {
+				Attribute clone = aFilter.clone();
+				toReturn.add(clone);
+			}
+		}
+	}
+	
+
+	private Map<String, List<String>> mergeFilters(
+			List<Attribute> globalFilters, List<Attribute> sheetFilters) {
+		Iterator<Attribute> globalFiltersIt = globalFilters.iterator();
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+		while (globalFiltersIt.hasNext()) {
+			Attribute aGlobalFilter = globalFiltersIt.next();
+			if (sheetFilters.contains(aGlobalFilter)) { // the filter is defined globally and also on sheets
+				// wins the more restrictive filter
+				int index = sheetFilters.indexOf(aGlobalFilter);
+				Attribute sheetsFilter = sheetFilters.get(index);
+				List<String> aGlobalFilterValues = aGlobalFilter.getValuesAsList();
+				List<String> sheetsFilterValues = sheetsFilter.getValuesAsList();
+				if (aGlobalFilterValues.containsAll(sheetsFilterValues)) {
+					// the sheets filters are less or equal to the global filters (this should always happen)
+					toReturn.put(aGlobalFilter.getEntityId(), sheetsFilterValues);
+				} else {
+					logger.error("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by sheets");
+					throw new SpagoBIEngineRuntimeException("The global filter on field " + aGlobalFilter.getAlias() + " is overridden by sheets");
+				}
+			} else {
+				toReturn.put(aGlobalFilter.getEntityId(), aGlobalFilter.getValuesAsList());
+			}
+		}
+		Iterator<Attribute> sheetFiltersIt = sheetFilters.iterator();
+		while (sheetFiltersIt.hasNext()) {
+			Attribute aSheetsFilter = sheetFiltersIt.next();
+			if (toReturn.containsKey(aSheetsFilter.getEntityId())) {
+				// conflict already solved
+				continue;
+			}
+			toReturn.put(aSheetsFilter.getEntityId(), aSheetsFilter.getValuesAsList());
+		}
+		return toReturn;
+	}
+
+	public List<Field> getAllFields() {
+		List<Field> toReturn = new ArrayList<Field>();
+		List<Attribute> globalFilters = this.getGlobalFilters();
+		toReturn.addAll(globalFilters);
+		List<Sheet> sheets = this.getSheets();
+		Iterator<Sheet> it = sheets.iterator();
+		while (it.hasNext()) {
+			Sheet sheet = it.next();
+			List<Field> sheetFields = sheet.getAllFields();
+			Iterator<Field> sheetFieldsIt = sheetFields.iterator();
+			while (sheetFieldsIt.hasNext()) {
+				Field field = sheetFieldsIt.next();
+				if (!toReturn.contains(field)) {
+					toReturn.add(field);
+				}
+			}
+		}
+		return toReturn;
 	}
 }

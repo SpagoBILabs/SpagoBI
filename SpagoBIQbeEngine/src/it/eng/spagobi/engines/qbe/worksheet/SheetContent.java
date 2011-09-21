@@ -18,18 +18,21 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.bo;
+package it.eng.spagobi.engines.qbe.worksheet;
 
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 
-public class Measure extends Field {
-	IAggregationFunction function = null;
-	public Measure(String entityId, String alias, String iconCls, String nature, String function) {
-		super(entityId, alias, iconCls, nature);
-		this.function = AggregationFunctions.get(function);
-	}
-	public IAggregationFunction getAggregationFunction() {
-		return function;
-	}
+import java.util.List;
+
+
+/**
+ * @authors Davide Zerbetto (davide.zerbetto@eng.it)
+ */
+public abstract class SheetContent {
+
+	public abstract List<Attribute> getFilters();
+
+	public abstract List<Field> getAllFields();
+	
 }

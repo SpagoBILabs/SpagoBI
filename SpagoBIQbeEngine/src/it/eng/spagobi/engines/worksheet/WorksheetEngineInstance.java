@@ -71,8 +71,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		 */
 		@Override
 		public IEngineAnalysisState getAnalysisState() {
-			// TODO Auto-generated method stub
-			return null;
+			return this.getTemplate().getWorkSheetDefinition();
 		}
 
 		/* (non-Javadoc)

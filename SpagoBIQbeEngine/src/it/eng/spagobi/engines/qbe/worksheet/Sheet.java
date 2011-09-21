@@ -20,30 +20,26 @@
  **/
 package it.eng.spagobi.engines.qbe.worksheet;
 
-import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.engines.qbe.worksheet.bo.Field;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class Sheet {
 	
 	private String name;
 	private String layout;
 	private JSONObject header;
-	private JSONObject filters;
-	private JSONObject content;
+	private List<Attribute> filters;
+	private SheetContent content;
 	private JSONObject footer;
 	
 
@@ -56,7 +52,7 @@ public class Sheet {
 	 * @param footer
 	 */
 	public Sheet(String name, String layout, JSONObject header,
-			JSONObject filters, JSONObject content, JSONObject footer) {
+			List<Attribute> filters, SheetContent content, JSONObject footer) {
 		super();
 		this.name = name;
 		this.header = header;
@@ -71,16 +67,16 @@ public class Sheet {
 	public void setHeader(JSONObject header) {
 		this.header = header;
 	}
-	public JSONObject getFilters() {
+	public List<Attribute> getFilters() {
 		return filters;
 	}
-	public void setFilters(JSONObject filters) {
+	public void setFilters(List<Attribute> filters) {
 		this.filters = filters;
 	}
-	public JSONObject getContent() {
+	public SheetContent getContent() {
 		return content;
 	}
-	public void setContent(JSONObject content) {
+	public void setContent(SheetContent content) {
 		this.content = content;
 	}
 	public JSONObject getFooter() {
@@ -101,23 +97,19 @@ public class Sheet {
 	public void setLayout(String layout) {
 		this.layout = layout;
 	}
-	
-	public List<Attribute> getFilteringAttributes() {
+	public List<Attribute> getAllFilters() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
-		if (this.filters != null) {
-			JSONArray filters = this.filters.optJSONArray(QuerySerializationConstants.FILTERS);
-			if (filters != null && filters.length() > 0) {
-				for (int i = 0; i < filters.length(); i++) {
-					Attribute attribute = null;
-					try {
-						attribute = (Attribute) SerializationManager.deserialize(filters.get(i), "application/json", Attribute.class);
-					} catch (Exception e) {
-						throw new SpagoBIEngineRuntimeException("Cannot retrieve filtering attributes", e);
-					}
-					toReturn.add(attribute);
-				}
-			}
-		}
+		WorkSheetDefinition.addFilters(toReturn, getFilters());
+		WorkSheetDefinition.addFilters(toReturn, getContent().getFilters());
+		return toReturn;
+	}
+	public List<Field> getAllFields() {
+		List<Field> toReturn = new ArrayList<Field>();
+		List<Attribute> filters = this.getFilters();
+		toReturn.addAll(filters);
+		SheetContent content = this.getContent();
+		List<Field> fields = content.getAllFields();
+		toReturn.addAll(fields);
 		return toReturn;
 	}
 }

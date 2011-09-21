@@ -119,8 +119,8 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 			
-			if(qbeEngineInstance!= null && qbeEngineInstance.getWorkSheetDefinition()!=null && qbeEngineInstance.getWorkSheetDefinition().getWorkSheet()!=null){
-				List<Sheet> ws = qbeEngineInstance.getWorkSheetDefinition().getWorkSheet();
+			if(qbeEngineInstance!= null && qbeEngineInstance.getWorkSheetDefinition()!=null && qbeEngineInstance.getWorkSheetDefinition().getSheets()!=null){
+				List<Sheet> ws = qbeEngineInstance.getWorkSheetDefinition().getSheets();
 				for(int i=0; i<ws.size();i++){
 					setImageWidth((ws.get(i)).getHeader());
 					setImageWidth((ws.get(i)).getFooter());
