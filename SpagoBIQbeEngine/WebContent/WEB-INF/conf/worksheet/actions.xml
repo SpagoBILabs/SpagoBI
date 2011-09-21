@@ -3,19 +3,19 @@
 <ACTIONS>
 	
 	<ACTION name="GET_WORKSHEET_IMAGES_LIST_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorksheetImagesListAction" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorksheetImagesListAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="UPLOAD_WORKSHEET_IMAGE_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.UploadWorksheetImageAction" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.UploadWorksheetImageAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetImageContentAction" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.GetImageContentAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
@@ -27,43 +27,43 @@
 	</ACTION>
 	
 	<ACTION name="EXECUTE_WORKSHEET_QUERY_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.ExecuteWorksheetQueryAction" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="GET_WORKSHEET_PREVIEW_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.GetWorkSheetPreviewAction" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorkSheetPreviewAction"
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="SET_WORKSHEET_DEFINITION_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.SetWorkSheetDefinitionAction" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.SetWorkSheetDefinitionAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="EXPORT_CHART_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.ExportChartAction" 
+			class="it.eng.spagobi.engines.worksheet.services.export.ExportChartAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="WORKSHEET_START_EDIT_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.WorksheetStartEditAction" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.WorksheetStartEditAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="EXPORT_WORKSHEETS_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.ExportWorksheetAction" 
+			class="it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 	
 	<ACTION name="LOAD_WORKSHEET_CROSSTAB_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.worksheet.LoadWorksheetCrosstabAction" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.LoadWorksheetCrosstabAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

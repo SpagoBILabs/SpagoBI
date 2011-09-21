@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.services.worksheet;
+package it.eng.spagobi.engines.worksheet.services;
 
 import java.sql.Connection;
 import java.util.HashMap;

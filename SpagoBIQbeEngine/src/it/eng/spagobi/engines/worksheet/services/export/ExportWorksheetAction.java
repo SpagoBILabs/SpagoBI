@@ -18,13 +18,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.services.worksheet;
+package it.eng.spagobi.engines.worksheet.services.export;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabXLSExporter;
-import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetPDFExporter;
-import it.eng.spagobi.engines.qbe.services.worksheet.exporter.WorkSheetXLSExporter;
+import it.eng.spagobi.engines.worksheet.exporter.WorkSheetPDFExporter;
+import it.eng.spagobi.engines.worksheet.exporter.WorkSheetXLSExporter;
+import it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
