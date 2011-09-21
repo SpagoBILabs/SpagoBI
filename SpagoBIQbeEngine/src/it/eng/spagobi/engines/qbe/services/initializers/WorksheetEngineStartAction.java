@@ -25,7 +25,7 @@ import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
-import it.eng.spagobi.engines.qbe.worksheet.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;

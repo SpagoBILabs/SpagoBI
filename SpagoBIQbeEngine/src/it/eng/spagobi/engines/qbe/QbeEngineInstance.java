@@ -32,7 +32,7 @@ import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;

@@ -20,7 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.template;
 
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 /**

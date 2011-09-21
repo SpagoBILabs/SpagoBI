@@ -21,7 +21,7 @@
 
 package it.eng.spagobi.engines.qbe.crosstable;
 
-import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;

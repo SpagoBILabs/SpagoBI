@@ -18,43 +18,42 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  **/
-package it.eng.spagobi.engines.qbe.worksheet.serializer;
+package it.eng.spagobi.engines.worksheet.serializer;
 
 import it.eng.qbe.serializer.IDeserializer;
 import it.eng.qbe.serializer.IDeserializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition;
-import it.eng.spagobi.engines.qbe.worksheet.serializer.json.WorkSheetJSONDeserializer;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.serializer.json.AttributeJSONDeserializer;
 
 /**
- * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class WorkSheetDeserializerFactory implements IDeserializerFactory {
+public class AttributeDeserializerFactory implements IDeserializerFactory {
 	
-	static WorkSheetDeserializerFactory instance;
+	static AttributeDeserializerFactory instance;
 	
-	static WorkSheetDeserializerFactory getIntsnce() {
+	static AttributeDeserializerFactory getIntsnce() {
 		return instance;
 	}
 	
 	static {
-		instance = new WorkSheetDeserializerFactory();
-		SerializationManager.registerDeserializerFactory(WorkSheetDefinition.class, instance);
-		
+		instance = new AttributeDeserializerFactory();
+		SerializationManager.registerDeserializerFactory(Attribute.class, instance);
 	}
 	
-	public static WorkSheetDeserializerFactory getInstance() {
+	public static AttributeDeserializerFactory getInstance() {
 		if (instance == null) {
-			instance = new WorkSheetDeserializerFactory();
+			instance = new AttributeDeserializerFactory();
 		}
 		return instance;
 	}
 	
-	private WorkSheetDeserializerFactory() {}
+	private AttributeDeserializerFactory() {}
 
 	public IDeserializer getDeserializer(String mimeType) {
-		return new WorkSheetJSONDeserializer();
+		return new AttributeJSONDeserializer();
 	}
 
 }

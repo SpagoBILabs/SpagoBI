@@ -19,7 +19,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.engines.qbe.utils.crosstab;
+package it.eng.spagobi.engines.worksheet.utils.crosstab;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelField;
@@ -31,8 +31,8 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Attribute;
-import it.eng.spagobi.engines.qbe.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Column;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition.Row;
