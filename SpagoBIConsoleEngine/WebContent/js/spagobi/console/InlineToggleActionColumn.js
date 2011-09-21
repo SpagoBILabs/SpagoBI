@@ -52,7 +52,7 @@ Ext.extend(Sbi.console.InlineToggleActionColumn, Sbi.console.InlineActionColumn,
 			v = this.getBoundColumnValue(record);
 			
 	    	active = (v === this.CHECKED_VALUE);
-	    	//alert(v + ' === '+ this.ACTIVE_VALUE + ' : ' + active);
+	    	//alert(v + ' === '+ this.CHECKED_VALUE + ' : ' + active);
 		}
 		
 		return active;		
@@ -81,10 +81,12 @@ Ext.extend(Sbi.console.InlineToggleActionColumn, Sbi.console.InlineActionColumn,
             
             var index = this.grid.getView().findRowIndex(t);
             var record = this.grid.store.getAt(index);   
-                      
-            if(this.toggleOnClick) this.toggle(record);
-  
-            this.handler.call(this.scope, this, record, index, this.options);          
+            //if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
+            if(!this.isChecked(record) || 
+            		this.singleExecution === undefined || this.singleExecution == false) {            	
+            	if(this.toggleOnClick) this.toggle(record);  
+            	this.handler.call(this.scope, this, record, index, this.options);
+            }
         }
     }
 
