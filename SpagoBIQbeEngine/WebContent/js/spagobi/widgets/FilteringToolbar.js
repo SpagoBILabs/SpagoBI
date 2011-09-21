@@ -50,6 +50,11 @@ Ext.ns("Sbi.widgets");
 Sbi.widgets.FilteringToolbar = function(config) {	
 	Sbi.widgets.FilteringToolbar.superclass.constructor.call(this, config);
 	this.state = this.EDITING;
+	// qbe
+	if(config.params){
+	this.params = config.params;
+	}
+	
 };
 
 Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
@@ -239,6 +244,9 @@ Ext.extend(Sbi.widgets.FilteringToolbar, Ext.Toolbar, {
 	
 	, doLoad: function() {
 		var p = Ext.apply({}, this.getFilterBarState(false));
+		if(this.params){
+		p = Ext.apply(p, this.params);
+		}
 		this.store.load({params: p});	
 	}
 	
