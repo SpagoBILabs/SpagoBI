@@ -64,6 +64,8 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	};
 	
 	Sbi.worksheet.designer.PieChartDesignerPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents("attributeDblClick");
 
 };
 
@@ -110,6 +112,14 @@ Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
   	          	, qtip: LN('sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title')
             }]
 		});
+		// propagate event
+		this.categoryContainerPanel.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 		
 		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 430

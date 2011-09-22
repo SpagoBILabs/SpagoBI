@@ -66,7 +66,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	};
 	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);
 	
-	this.addEvents('addDesigner', 'beforeAddAttribute');
+	this.addEvents('addDesigner', 'beforeAddAttribute', 'attributeDblClick');
 	
 	this.on('render', this.initDropTarget, this);
 	if(Ext.isIE){
@@ -285,6 +285,15 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 				this.setDesignerState(state);
 			}, this);
 		}
+		
+		// propagate event
+		this.designer.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 	}
 	
 	, validate: function () {

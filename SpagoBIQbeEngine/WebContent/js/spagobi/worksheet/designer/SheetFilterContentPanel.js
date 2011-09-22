@@ -60,6 +60,14 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	this.addEvents('addDesigner');
 	this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({style:'padding: 5px 15px 0px 15px;'});
 	this.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
+	// propagate event
+	this.contentPanel.on(
+		'attributeDblClick' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
 	
 	this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel({
 		style:'padding:5px 10px 0px 15px; float: left; overflow: auto'
@@ -75,6 +83,14 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
         	scope: this
         }]
 	});
+	// propagate event
+	this.filtersPanel.on(
+		'attributeDblClick' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
 		
 	c = {
 		height: 400,
@@ -123,6 +139,9 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 			, this);
 	
 	Sbi.worksheet.designer.SheetFilterContentPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents("attributeDblClick");
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetFilterContentPanel, Ext.Panel, {

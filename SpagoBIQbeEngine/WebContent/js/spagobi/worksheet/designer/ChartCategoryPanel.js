@@ -69,6 +69,8 @@ Sbi.worksheet.designer.ChartCategoryPanel = function(config) {
 	Sbi.worksheet.designer.ChartCategoryPanel.superclass.constructor.call(this, c);
 	
 	this.on('render', this.initDropTarget, this);
+	
+	this.addEvents("attributeDblClick");
 
 };
 
@@ -179,9 +181,7 @@ Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {
 		
 		thePanel.on('render', function(panel) {
 			panel.getEl().on('dblclick', function() {
-		     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
-		     		attribute : this.category
-		     	});
+		     	this.fireEvent("attributeDblClick", this, this.category);
 			}, this);
 		}, this);
 		

@@ -29,7 +29,7 @@ import java.util.List;
  */
 public abstract class SheetContent {
 
-	public abstract List<Attribute> getFilters();
+	public abstract List<Attribute> getFiltersOnDomainValues();
 
 	public abstract List<Field> getAllFields();
 	

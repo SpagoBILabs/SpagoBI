@@ -72,7 +72,7 @@ Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) {
 	// constructor	
 	Sbi.worksheet.designer.DesignSheetFiltersPanel.superclass.constructor.call(this, c);
 	
-	 this.addEvents('beforeAddAttribute');
+	this.addEvents('beforeAddAttribute', 'attributeDblClick');
 	
 	this.on('render', this.initDropTarget, this);
 
@@ -290,9 +290,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		
 		thePanel.on('render', function(panel) {
 			panel.getEl().on('dblclick', function() {
-		     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
-		     		attribute : aRow.data
-		     	});
+		     	this.fireEvent("attributeDblClick", this, aRow.data);
 			}, this);
 		}, this);
 		

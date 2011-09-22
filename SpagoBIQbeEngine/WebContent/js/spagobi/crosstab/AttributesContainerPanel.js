@@ -103,7 +103,7 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	// constructor
     Sbi.crosstab.AttributesContainerPanel.superclass.constructor.call(this, c);
   
-    this.addEvents("beforeAddAttribute");
+    this.addEvents("beforeAddAttribute", "attributeDblClick");
     
     this.on('render', this.initDropTarget, this);
     
@@ -316,9 +316,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 	
 	, rowDblClickHandler: function(grid, rowIndex, event) {
 		var record = grid.store.getAt(rowIndex);
-     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
-     		attribute : record.data
-     	});
+     	this.fireEvent("attributeDblClick", this, record.data);
 	}
 	
 	, addAttribute : function (attribute) {

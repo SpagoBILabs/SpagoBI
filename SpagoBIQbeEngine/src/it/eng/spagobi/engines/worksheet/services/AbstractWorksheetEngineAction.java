@@ -20,12 +20,6 @@
  **/
 package it.eng.spagobi.engines.worksheet.services;
 
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -33,7 +27,6 @@ import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -43,6 +36,12 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
+
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -200,18 +199,18 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 	}
 	
-	public Map<String, List<String>> getAllFilters() {
+	public Map<String, List<String>> getFiltersOnDomainValues() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
-		Map<String, List<String>> toReturn = workSheetDefinition.getAllFilters();
+		Map<String, List<String>> toReturn = workSheetDefinition.getFiltersOnDomainValues();
 		return toReturn;
 	}
 	
-	public Map<String, List<String>> getSheetFilters(String sheetName) {
+	public Map<String, List<String>> getSheetFiltersOnDomainValues(String sheetName) {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 		Sheet sheet = workSheetDefinition.getSheet(sheetName);
-		List<Attribute> sheetFilters = sheet.getAllFilters();
+		List<Attribute> sheetFilters = sheet.getFiltersOnDomainValues();
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		Iterator<Attribute> it = sheetFilters.iterator();
 		while (it.hasNext()) {

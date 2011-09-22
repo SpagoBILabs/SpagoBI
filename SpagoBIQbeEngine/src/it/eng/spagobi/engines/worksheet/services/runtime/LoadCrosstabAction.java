@@ -114,7 +114,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
 			WorksheetEngineInstance engineInstance = getEngineInstance();
 			IDataSet dataset = engineInstance.getDataSet();
-			Map<String, List<String>> filters = getAllFilters();
+			Map<String, List<String>> filters = getFiltersOnDomainValues();
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
 				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
 				filteringBehaviour.setFilters(filters);
@@ -135,7 +135,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 				whereFields.addAll(temp);
 			}
 			String sheetName = this.getAttributeAsString(SHEET);
-			Map<String, List<String>> sheetFilters = getSheetFilters(sheetName);
+			Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
 			List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 			whereFields.addAll(temp);
 			

@@ -102,8 +102,8 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
         , scope: this
         , type: 'queryFieldsContainerPanel'
 	});	
-	
-	this.addEvents('storeChanged');
+
+	this.addEvents('storeChanged', 'attributeDblClick');
 	
 	// constructor
 	Sbi.worksheet.designer.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
@@ -204,9 +204,7 @@ Ext.extend(Sbi.worksheet.designer.QueryFieldsContainerPanel, Ext.grid.GridPanel,
 	, rowDblClickHandler: function(grid, rowIndex, event) {
 		var record = grid.store.getAt(rowIndex);
 		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
-	     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
-	     		attribute : record.data
-	     	});
+	     	this.fireEvent("attributeDblClick", this, record.data);
 		}
 	}
 	

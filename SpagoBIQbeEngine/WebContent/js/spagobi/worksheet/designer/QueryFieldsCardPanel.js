@@ -63,7 +63,14 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsContainerPanel( {
 		ddGroup: this.ddGroup
 	});
-	this.addEvents();
+	// propagate event
+	this.tableDesigner.on(
+		'attributeDblClick' , 
+		function (thePanel, attribute) { 
+			this.fireEvent("attributeDblClick", this, attribute); 
+		}, 
+		this
+	);
 		
 	c = {
 			items: [this.emptyMsgPanel, this.tableDesigner]
@@ -79,6 +86,8 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	
 	this.on('render', this.initDropTarget, this);
 	this.on('afterLayout', this.setActiveItem, this);
+	
+	this.addEvents("attributeDblClick");
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
 };

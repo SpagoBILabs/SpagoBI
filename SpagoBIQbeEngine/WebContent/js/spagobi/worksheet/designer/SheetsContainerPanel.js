@@ -62,7 +62,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 
 	
 	this.index = 0;
-	this.addEvents();
+	
 	this.addPanel = {
 		id: 'addTab',
         title: '<br>',
@@ -92,6 +92,8 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 		this.on('render',function(){this.addTab();},this);
 	}
 	
+	this.addEvents("attributeDblClick");
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
@@ -117,8 +119,16 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		//The title property is overridden: see setSheetsState
 		var sheet = new Sbi.worksheet.designer.SheetPanel({
 	        title: 'Sheet ' + (++this.index),
-	        closable:true
+	        closable: true
 	    });
+		// propagate event
+		sheet.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 
 		if (sheetConf !== undefined && sheetConf !== null && sheetConf.length > 0) {
 			sheet.setSheetState(sheetConf) ;

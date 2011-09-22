@@ -70,6 +70,8 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	}
 	
 	this.on('afterLayout', this.addToolTips, this);
+	
+	this.addEvents("attributeDblClick");
 
 };
 
@@ -143,6 +145,14 @@ Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {
             , initialData: null
             , ddGroup: this.ddGroup
 		});
+		// propagate event
+		this.categoryContainerPanel.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 		
 		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
             width: 430
