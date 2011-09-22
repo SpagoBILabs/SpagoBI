@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,7 +82,8 @@ public class DataSetAccessFunctions {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		IDataSet ds = dsDAO.loadActiveIDataSetByID(Integer.valueOf(dsId));
-	
+		Assert.assertNotNull(ds, "Impossible to find a dataset whose identifier is [" + dsId + "]");
+		
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);
 		return result;
 	}
@@ -103,6 +105,7 @@ public class DataSetAccessFunctions {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		IDataSet ds = dsDAO.loadActiveDataSetByLabel(label);
+		Assert.assertNotNull(ds, "Impossible to find a dataset whose label is [" + label + "]");
 	
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);
 		return result;
