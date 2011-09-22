@@ -80,6 +80,7 @@ Sbi.console.ActionButton = function(config) {
 Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     
     services: null
+    , isActive: null
     , ACTIVE_VALUE: 1
 	, INACTIVE_VALUE: 0
 	, USER_ID: 'userId'
@@ -175,11 +176,29 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     				
     		return;
     	} else if (this.actionConf.name === 'errors' || this.actionConf.name === 'errors_inactive'){  
-    		flgCheck = (this.iconCls === 'errors')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		    	
-    	} else if (this.actionConf.name === 'alarms' || this.actionConf.name === 'alarms_inactive'){      		
-    		flgCheck = (this.iconCls === 'alarms')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
-    	} else if (this.actionConf.name === 'views' || this.actionConf.name === 'views_inactive'){      		
-    		flgCheck = (this.iconCls === 'views')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'errors')? this.ACTIVE_VALUE: this.INACTIVE_VALUE; 
+    		}    		   		    	
+    	} else if (this.actionConf.name === 'alarms' || this.actionConf.name === 'alarms_inactive'){   
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'alarms')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
+    		}    		
+    	} else if (this.actionConf.name === 'views' || this.actionConf.name === 'views_inactive'){     
+    		if (this.isActive !== undefined && this.isActive == true){
+    			flgCheck = this.ACTIVE_VALUE;
+    		}else if (this.isActive !== undefined && this.isActive == false){
+    			flgCheck = this.INACTIVE_VALUE;
+    		}else{
+    			flgCheck = (this.iconCls === 'views')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;
+    		}
     	}
     	
     	//if in configuration is set that the action is usable only once, it doesn't change the check if it's yet checked
@@ -254,10 +273,29 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		//checkValue: -1 if all rows are ACTIVE, greater then -1 when ther's almost one active 
     		var checkValue = this.store.findExact(isCheck,this.INACTIVE_VALUE);
     		if (checkValue > -1){  //there's any inactive --> enable active actions
-    			this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]); 
+    			if (this.actionConf.imgSrcActive !== undefined){
+    				//creates css dynamically if it's an extra-icon
+    				var tmpImgName = this.actionConf.imgSrcActive.substr(0,this.actionConf.imgSrcActive.indexOf(".") );
+    				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+    					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrcActive+') !important; }');
+    				}
+    				this.setIconClass(tmpImgName);    				
+    			}else{    			
+    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]);
+    			}
+    			this.isActive = true;
     			this.setTooltip(this.actionConf.tooltipInactive);
-    		}else{      		    		
-    			this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images["inactive"]); 
+    		}else{      
+    			if (this.actionConf.imgSrcInactive !== undefined){
+    				var tmpImgName = this.actionConf.imgSrcInactive.substr(0,this.actionConf.imgSrcInactive.indexOf(".") );
+    				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+    					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrcInactive+') !important; }');
+    				}
+    				this.setIconClass(tmpImgName);
+    			}else{  
+    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images["inactive"]); 
+    			} 
+    			this.isActive = false;
 	    		this.setTooltip(this.actionConf.tooltipActive);    			
     	    }
     	}	
@@ -270,9 +308,28 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
             record.set (this.store.getFieldNameByAlias(columnAlias), value );
         } 
     	if (value === this.ACTIVE_VALUE){
-    		this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "inactive"]); 
+    		if (this.actionConf.imgSrcInactive !== undefined){
+				//creates css dynamically if it's an extra-icon
+				var tmpImgName = this.actionConf.imgSrcInactive.substr(0,this.actionConf.imgSrcInactive.indexOf(".") );
+				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrcInactive+') !important; }');
+				}
+				this.setIconClass(tmpImgName);    				
+			}else{    			
+				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "inactive"]);
+			}
+    		//this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "inactive"]); 
     	}else{
-    		this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]); 
+    		if (this.actionConf.imgSrcActive !== undefined){
+				var tmpImgName = this.actionConf.imgSrcActive.substr(0,this.actionConf.imgSrcActive.indexOf(".") );
+				if (Ext.util.CSS.getRule('.' + tmpImgName) == null){
+					Ext.util.CSS.createStyleSheet('.'+tmpImgName+' { background-image: url(../img/'+this.actionConf.imgSrcActive+') !important; }');
+				}
+				this.setIconClass(tmpImgName);
+			}else{  
+				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images["active"]); 
+			} 
+    		//this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]); 
     	}
     }
     
