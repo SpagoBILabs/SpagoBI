@@ -74,6 +74,10 @@ Sbi.qbe.QbePanel = function(config) {
 		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
 			, baseParams: params
 	});
+	this.services['executeWorksheetStartAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION'
+			, baseParams: params
+	});
 
 	this.addEvents();
 
@@ -104,8 +108,23 @@ Sbi.qbe.QbePanel = function(config) {
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(worksheetDesignerConfig, {
 			id : 'WorksheetDesignerPanel'
 		}));
+
+		this.worksheetDesignerPanel.on('activate', function(){
+			if(!this.notFirstTimeDesignPanelOpened){
+				this.notFirstTimeDesignPanelOpened = true;
+				Ext.Ajax.request({
+					url: this.services['executeWorksheetStartAction'],
+					params: {},
+					scope: this,
+					failure: Sbi.exception.ExceptionHandler.handleFailure() 
+				});
+			}
+		}, this);
+		
 		items.push(this.worksheetDesignerPanel);
 	}
+	
+
 
 	if (c.displayWorksheetPreviewPanel) {
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({

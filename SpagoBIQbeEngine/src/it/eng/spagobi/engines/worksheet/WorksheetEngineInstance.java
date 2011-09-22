@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class WorksheetEngineInstance extends AbstractEngineInstance {
 		
+		IDataSet dataSet;
 		WorksheetTemplate template;
 		IDataSetTableDescriptor dataSetTableDescriptor;
 
@@ -51,10 +52,19 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 			this( WorksheetTemplateParser.getInstance().parse(template), env );
 		}
 		
+		
+		
 		protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
 			super( env );
 			logger.debug("IN");
 			this.template = template;
+			logger.debug("OUT");
+		}
+		
+		protected WorksheetEngineInstance(IDataSet ds, Map env, Object y) throws WorksheetEngineException {
+			super( env );
+			logger.debug("IN");
+			this.dataSet = ds;
 			logger.debug("OUT");
 		}
 
@@ -83,7 +93,12 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		}
 
 		public IDataSet getDataSet() {
-			// TODO Auto-generated method stub
+			if(dataSet!=null){
+				return dataSet; 
+			}
+			if(template!=null){
+				return template.getDataSet(); 
+			}
 			return null;
 		}
 		

@@ -21,6 +21,7 @@
 package it.eng.spagobi.engines.worksheet;
 
 import it.eng.spagobi.engines.qbe.QbeEngine;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 import java.util.Map;
 
@@ -36,11 +37,15 @@ public class WorksheetEngine {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeEngine.class);
 
-	public static WorksheetEngineInstance createInstance(Object template, Map env) throws WorksheetEngineException {
+	public static WorksheetEngineInstance createInstance(Object object, Map env) throws WorksheetEngineException {
 		WorksheetEngineInstance worksheetEngineInstance = null;
 		logger.debug("IN");
+		if(object instanceof IDataSet){
+			worksheetEngineInstance = new WorksheetEngineInstance((IDataSet)object, env, true);
+		}else{
+			worksheetEngineInstance = new WorksheetEngineInstance(object, env);
+		}
 		
-		worksheetEngineInstance = new WorksheetEngineInstance(template, env);
 		logger.debug("OUT");
 		return worksheetEngineInstance;
 	}
