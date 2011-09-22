@@ -26,8 +26,8 @@ import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
-import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -64,6 +64,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 		
     public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	QbeEngineInstance qbeEngineInstance = null;
+    	WorksheetEngineInstance worksheetEngineInstance = null;
     	QbeEngineAnalysisState analysisState;
     	Locale locale;
     	

@@ -20,13 +20,16 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.initializers;
 
+import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction;
-import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.WorksheetEngine;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
@@ -54,7 +57,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
+    private static transient Logger logger = Logger.getLogger(WorksheetEngineStartAction.class);
     
     public static final String ENGINE_NAME = "SpagoBIWorksheetEngine";
 		
@@ -83,7 +86,12 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				worksheetEngineInstance = WorksheetEngine.createInstance( getTemplateAsSourceBean(), getEnv() );
+				QbeEngineInstance o = (QbeEngineInstance)getAttributeFromSession(ENGINE_INSTANCE);
+				AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(o.getStatment());
+				ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
+				ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
+				worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
+				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -129,7 +137,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			locale = (Locale)worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 			
-			setAttributeInSession( ENGINE_INSTANCE, worksheetEngineInstance);		
+			setAttributeInSession( WorksheetEngineInstance.class.getName() , worksheetEngineInstance );	
 			setAttribute(ENGINE_INSTANCE, worksheetEngineInstance);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
