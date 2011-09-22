@@ -866,10 +866,20 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	    //adds inline action buttons
 		if (this.inlineActions) {
 			for(var i = 0, l = this.inlineActions.length; i < l; i++){ 
-				var column = this.createInlineActionColumn(this.inlineActions[i]);				
+				var column = this.createInlineActionColumn(this.inlineActions[i]);					
 				if(column !== null) {
-					//column.id = this.inlineActions[i].name + '_header';	
-					column.cls = this.inlineActions[i].name + '_header';
+					
+					if (this.inlineActions[i].imgSrcInactive !== undefined){
+						var tmpImgName = this.inlineActions[i].imgSrcInactive.substr(0,this.inlineActions[i].imgSrcInactive.indexOf(".") );
+						if (Ext.util.CSS.getRule('.x-grid3-hd-' + tmpImgName + '_header') == null){
+							var tmpCSS = '.x-grid3-hd-' + tmpImgName	+ '_header { background: url(../img/'+this.inlineActions[i].imgSrcInactive+') center center no-repeat; height:20px;}';
+		    				Ext.util.CSS.createStyleSheet(tmpCSS);
+						}
+						column.cls = tmpImgName	+ '_header';
+					}
+					else{
+						column.cls = this.inlineActions[i].name + '_header';
+					}
 					tmpMeta.fields.push( column );
 				} else {
 					Sbi.Msg.showWarning('Impossible to create inlineActionColumn [' + this.inlineActions[i].name + ']');
@@ -915,8 +925,20 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		inlineActionColumnConfig = Ext.apply({
 			grid: this
 			, scope: this
-			, headerIconCls: inlineActionColumnConfig.name + '_header' //doesn't work
+		//	, headerIconCls: inlineActionColumnConfig.name + '_header'
 		}, inlineActionColumnConfig);
+		
+		if (inlineActionColumnConfig.imgSrcActive !== undefined){
+			inlineActionColumnConfig.imgSrcActive = '../img/' + inlineActionColumnConfig.imgSrcActive;
+		}
+		else if (this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'] !== undefined){
+			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+		}
+		if (inlineActionColumnConfig.imgSrcInactive !== undefined){
+			inlineActionColumnConfig.imgSrcInactive = '../img/' + inlineActionColumnConfig.imgSrcInactive;
+		}else if (this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['inactive'] !== undefined){
+			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];
+		}
 		
 		if (inlineActionColumnConfig.name === 'crossnav'){
 			// for default
@@ -930,8 +952,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 			
 		}else if (inlineActionColumnConfig.name === 'monitor'){		
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];				
+			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];				
 			inlineActionColumnConfig.handler = this.toggleMonitor;
 				
 			//set the filter for view only active items (default)
@@ -948,8 +970,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 				
 		} else if (inlineActionColumnConfig.name === 'errors'){	
 			
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
 			inlineActionColumnConfig.toggleOnClick = false;
 			inlineActionColumnConfig.handler = this.showErrors;
 			
@@ -957,23 +979,26 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			
 		} else if (inlineActionColumnConfig.name === 'alarms'){	
 			
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];			
+			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];			
 			inlineActionColumnConfig.toggleOnClick = false;
 			inlineActionColumnConfig.handler = this.showAlarms;
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);	
 			
 		} else if (inlineActionColumnConfig.name === 'views'){	
-			
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];			
+			/*if (inlineActionColumnConfig.imgSrcActive === null || inlineActionColumnConfig.imgSrcActive === undefined){
+				inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			}
+			if (inlineActionColumnConfig.imgSrcInactive === null || inlineActionColumnConfig.imgSrcInactive === undefined){
+				inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];
+			}*/
 			inlineActionColumnConfig.toggleOnClick = true;
 			inlineActionColumnConfig.handler = this.execAction;
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);	
 			
 		} else if (inlineActionColumnConfig.name === 'start'){	
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
 			inlineActionColumnConfig.toggleOnClick = false;
 			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.startProcess;
@@ -999,8 +1024,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);
 		
 		} else if (inlineActionColumnConfig.name === 'stop'){			
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
 			inlineActionColumnConfig.toggleOnClick = false;
 			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.stopProcess;
