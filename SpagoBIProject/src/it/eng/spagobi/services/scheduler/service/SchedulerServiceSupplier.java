@@ -268,25 +268,34 @@ public class SchedulerServiceSupplier {
 		StringBuffer servreponse = new StringBuffer();
 		try{
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+			logger.debug("Obtained scheduler from factory");
 			SourceBean request = SourceBean.fromXMLString(xmlRequest);
+			logger.debug("Got source bean from xml request:"+xmlRequest);
 			servreponse.append("<EXECUTION_OUTCOME ");
 			// READ REQUEST
 			String jobName = (String)request.getAttribute("jobName");
+			logger.debug("jobName:"+jobName);
 			String jobgroupName = (String)request.getAttribute("jobGroupName");
+			logger.debug("jobgroupName:"+jobgroupName);
 			if(jobgroupName==null)
 				jobgroupName = Scheduler.DEFAULT_GROUP;
 			String jobDescription = (String)request.getAttribute("jobDescription");
+			logger.debug("jobDescription:"+jobDescription);
 			if(jobDescription==null)
 				jobDescription = "";
 			String jobRequestRecoveryStr = (String)request.getAttribute("jobRequestRecovery");
+			logger.debug("jobRequestRecoveryStr:"+jobRequestRecoveryStr);
 			boolean jobRequestRecovery = false;
 			if((jobRequestRecoveryStr!=null) && (jobRequestRecoveryStr.trim().equalsIgnoreCase("true")))
 				jobRequestRecovery = true;
 			SourceBean jobParameters = (SourceBean)request.getAttribute("PARAMETERS");
+			logger.debug("got job parameters");
 			// transform parameters sourcebean into JobDataMap structure and set it into the jobDetail
 			JobDataMap jdm = getJobDataMap(jobParameters);
+			logger.debug("got JobDataMap");
 			// get the job class
 			String jobClassName = (String)request.getAttribute("jobClass");
+			logger.debug("jobClassName:"+jobClassName);
 			Class jobClass = null;
 			try {
 				jobClass = Class.forName(jobClassName);
@@ -295,6 +304,7 @@ public class SchedulerServiceSupplier {
 						               "defineJob", "Class '" + jobClassName + "' not found for job with name '" + jobName + "' of group '" + jobgroupName + "'!");
 				throw e;
 			}
+			logger.debug("CREATE JOB DETAIL BEGIN");
 			// CREATE JOB DETAIL 
 			JobDetail jobDetail = new JobDetail();
 			jobDetail.setName(jobName);
@@ -305,10 +315,13 @@ public class SchedulerServiceSupplier {
 			jobDetail.setRequestsRecovery(jobRequestRecovery);
 			jobDetail.setJobDataMap(jdm);
 			jobDetail.setJobClass(jobClass);
+			logger.debug("CREATE JOB DETAIL END");
 			// ADD JOB
 			try {
 				scheduler.addJob(jobDetail, true);
+				logger.debug("ADDED JOB TO SCHEDULER");
 			} catch (SchedulerException e) {
+				logger.error("Error while adding job to the scheduler", e);
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE+"(SCHEDULER)", this.getClass().getName(), 
 						               "defineJob", "Error while adding job to the scheduler", e);
 				throw e;
