@@ -192,7 +192,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			               for(p in param) {
 			            	   if(p === 'scope') continue;			            	   
 			                   if(record.get(this.store.getFieldNameByAlias(param[p])) === undefined) {         			                   
-			                    msgErr += 'Parameter "' + p + '" undefined into dataset.<p>';
+			                    msgErr += 'Parameter "' + param[p] + '" undefined into dataset.<p>';
 					           } else {
 					              results[p] = record.get(this.store.getFieldNameByAlias(param[p])); 
 					           }
