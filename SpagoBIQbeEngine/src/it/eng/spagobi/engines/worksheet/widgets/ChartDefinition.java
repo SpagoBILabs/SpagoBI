@@ -67,7 +67,7 @@ public class ChartDefinition extends SheetContent {
 	}
 
 	@Override
-	public List<Attribute> getFilters() {
+	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
 		Attribute category = getCategory();
 		String values = category.getValues();

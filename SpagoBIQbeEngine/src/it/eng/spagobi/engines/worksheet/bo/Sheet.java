@@ -22,7 +22,6 @@ package it.eng.spagobi.engines.worksheet.bo;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -95,10 +94,10 @@ public class Sheet {
 	public void setLayout(String layout) {
 		this.layout = layout;
 	}
-	public List<Attribute> getAllFilters() {
+	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
-		WorkSheetDefinition.addFilters(toReturn, getFilters());
-		WorkSheetDefinition.addFilters(toReturn, getContent().getFilters());
+		WorkSheetDefinition.addDomainValuesFilters(toReturn, getFilters());
+		WorkSheetDefinition.addDomainValuesFilters(toReturn, getContent().getFiltersOnDomainValues());
 		return toReturn;
 	}
 	public List<Field> getAllFields() {

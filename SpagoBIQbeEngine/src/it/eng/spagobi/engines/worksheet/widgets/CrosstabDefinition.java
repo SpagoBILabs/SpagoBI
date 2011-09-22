@@ -143,7 +143,7 @@ public class CrosstabDefinition extends SheetContent {
 	}
 
 	@Override
-	public List<Attribute> getFilters() {
+	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
 		List<Row> rows = getRows();
 		Iterator<Row> rowsIt = rows.iterator();

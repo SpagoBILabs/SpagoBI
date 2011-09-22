@@ -54,7 +54,7 @@ public class TableDefinition extends SheetContent {
 	}
 
 	@Override
-	public List<Attribute> getFilters() {
+	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
 		List<Field> fields = getFields();
 		Iterator<Field> it = fields.iterator();

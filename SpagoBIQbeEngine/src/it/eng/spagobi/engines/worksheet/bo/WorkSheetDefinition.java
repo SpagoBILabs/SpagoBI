@@ -171,25 +171,25 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		return rowData.getBytes();
 	}
 
-	public Map<String, List<String>> getAllFilters() {
+	public Map<String, List<String>> getFiltersOnDomainValues() {
 		List<Attribute> globalFilters = this.getGlobalFilters(); // the global filters
-		List<Attribute> sheetFilters = this.getFiltersOnSheets(); // the union of the filters defined in all the sheets
-		Map<String, List<String>> toReturn = mergeFilters(globalFilters, sheetFilters);
+		List<Attribute> sheetFilters = this.getFiltersOnDomainValuesOnSheets(); // the union of the filters defined in all the sheets
+		Map<String, List<String>> toReturn = mergeDomainValuesFilters(globalFilters, sheetFilters);
 		return toReturn;
 	}
 
-	private List<Attribute> getFiltersOnSheets() {
+	private List<Attribute> getFiltersOnDomainValuesOnSheets() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
 		Iterator<Sheet> it = this.sheets.iterator();
 		while (it.hasNext()) {
 			Sheet aSheet = it.next();
-			List<Attribute> sheetFilters = aSheet.getAllFilters();
-			addFilters(toReturn, sheetFilters);
+			List<Attribute> sheetFilters = aSheet.getFiltersOnDomainValues();
+			addDomainValuesFilters(toReturn, sheetFilters);
 		}
 		return toReturn;
 	}
 
-	public static void addFilters(List<Attribute> toReturn,
+	public static void addDomainValuesFilters(List<Attribute> toReturn,
 			List<Attribute> sheetFilters) {
 		Iterator<Attribute> it = sheetFilters.iterator();
 		while (it.hasNext()) {
@@ -209,7 +209,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	}
 	
 
-	private Map<String, List<String>> mergeFilters(
+	private Map<String, List<String>> mergeDomainValuesFilters(
 			List<Attribute> globalFilters, List<Attribute> sheetFilters) {
 		Iterator<Attribute> globalFiltersIt = globalFilters.iterator();
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();

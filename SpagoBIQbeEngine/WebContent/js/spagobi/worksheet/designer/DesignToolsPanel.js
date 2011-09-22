@@ -64,6 +64,7 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 	});
 	
 	this.initPanels();
+	
 	c = {
         layout: {
         	type:'border'
@@ -72,6 +73,8 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
         },
         items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	};
+	
+	this.addEvents("attributeDblClick");
 	
 	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);
 	
@@ -116,9 +119,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	, fieldDblClickHandler : function (grid, rowIndex, event) {
 		var record = grid.store.getAt(rowIndex);
 		if (record.data.nature == 'attribute' || record.data.nature == 'segment_attribute') {
-	     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
-	     		attribute : record.data
-	     	});
+	     	this.fireEvent("attributeDblClick", this, record.data);
 		}
 	}
 	

@@ -86,7 +86,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
 				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
-				Map<String, List<String>> filters = getAllFilters();
+				Map<String, List<String>> filters = getFiltersOnDomainValues();
 				filteringBehaviour.setFilters(filters);
 			}
 			

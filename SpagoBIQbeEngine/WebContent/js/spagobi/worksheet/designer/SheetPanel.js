@@ -72,7 +72,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	};
 	this.filtersPositionPanel = 'top';
 	Ext.apply(this,c);
-	this.addEvents();
+	
 	this.on('resize',this.resizePanels,this);
 
 	 //add listener when attribute is added
@@ -85,7 +85,9 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 			this.checkAttAndFilter , 
 			this);
 	
-	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);	 	
+	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents("attributeDblClick");
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
@@ -114,7 +116,23 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 
 		
 		this.filtersPanel = new Sbi.worksheet.designer.DesignSheetFiltersPanel(filtersConf);
+		// propagate event
+		this.filtersPanel.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 		this.contentPanel = new Sbi.worksheet.designer.SheetFilterContentPanel({},this.filtersPanel.store);
+		// propagate event
+		this.contentPanel.on(
+			'attributeDblClick' , 
+			function (thePanel, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute); 
+			}, 
+			this
+		);
 		
 		this.contentPanel.on('topFilters', function(){
 			this.filtersPanel.show();

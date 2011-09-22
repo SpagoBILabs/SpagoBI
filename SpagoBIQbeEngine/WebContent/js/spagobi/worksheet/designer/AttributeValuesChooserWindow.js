@@ -50,7 +50,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	}
 	
 	var defaultSettings = {
-			singleSelect : false
+		singleSelect : false
 	};
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -58,6 +58,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	this.addEvents('load');	
 	
 	this.attribute = c.attribute; // the json object representing the attribute: it must be in the constructor input object
+	this.worksheetDefinition = c.worksheetDefinition; // the json object representing the worksheet: it must be in the constructor input object
 	
 	var service_params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 	
@@ -97,9 +98,10 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	// PARAMS
 	
 	var params = {
-			ALIAS : this.attribute.alias,
-			ENTITY_ID : this.attribute.id			
-		};
+		ALIAS : this.attribute.alias,
+		ENTITY_ID : this.attribute.id,
+		worksheetdefinition:  Ext.encode(this.worksheetdefinition)
+	};
 	// if a global variable Sbi.formviewer.formEnginePanel is defined, it is the form engine panel (SmartFilter).
 	if (Sbi.formviewer && Sbi.formviewer.formEnginePanel) {
 		var formState = Sbi.formviewer.formEnginePanel.getFormState();
@@ -113,7 +115,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	c.params = p;	
 	
 	// add selection values
-	if(this.attribute.values){
+	if (this.attribute.values) {
 		c.startValues = this.attribute.values; 	
 	}
 	
@@ -132,17 +134,16 @@ Ext.extend(Sbi.worksheet.designer.AttributeValuesChooserWindow, Sbi.widgets.Filt
     start: 0 
     , limit: 20
 	, attribute 	: null // the json object representing the attribute: it must be in the constructor input object
+	, worksheetDefinition : null // the json object representing the worksheet: it must be in the constructor input object
 	
 	,
 	updateValues : function ( ) {
-	var aaa = this.getSelection();
 		this.attribute.values = Ext.encode(this.getSelection());
 	}
+
 	,
 	selectValues : function ( ) {
 		this.select(Ext.decode(this.attribute.values));
-}
-	
-
+	}
 	
 });

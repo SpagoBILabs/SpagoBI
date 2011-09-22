@@ -102,15 +102,32 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		this.designToolsPanel.on('toolschange',function(change){
 			this.sheetsContainerPanel.updateActiveSheet(change);
 		},this);
+		this.designToolsPanel.on(
+				'attributeDblClick', 
+				this.attributeDblClickHandler, 
+				this
+			);
 
 		this.sheetsContainerPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.sheetsContainerPanelCfg  || {}, {
 			sheets : this.worksheetTemplate.sheets || []  ,
 			smartFilter: config.smartFilter || false
 		}));
+		this.sheetsContainerPanel.on(
+			'attributeDblClick', 
+			this.attributeDblClickHandler,
+			this
+		);
 		
 		this.sheetsContainerPanel.on('sheetchange',function(activeSheet){
 			this.designToolsPanel.updateToolsForActiveTab(activeSheet);
 		},this);
+	}
+	
+	, attributeDblClickHandler : function (thePanel, attribute) {
+     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+     		attribute : attribute
+     		, worksheetDefinition : this.getWorksheetDefinition()
+     	});
 	}
 	
 	, getWorksheetDefinition: function () {
