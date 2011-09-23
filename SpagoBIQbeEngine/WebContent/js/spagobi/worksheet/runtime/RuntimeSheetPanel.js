@@ -119,7 +119,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 		
 		//prepare the filters.. we need to do this before build the content 
 		//because we need to know if there is same mandatory filter
-		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
+		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null &&  this.sheetConfig.filters.filters != undefined &&  this.sheetConfig.filters.filters != null && this.sheetConfig.filters.filters.length > 0) {
 			var i = 0;
 			for (; i < this.sheetConfig.filters.filters.length; i++ ) {
 				var aDynamicFilter = this.getDynamicFilterDefinition(this.sheetConfig.filters.filters[i]);
