@@ -57,6 +57,8 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.addEvents("attributeDblClick");
+	
 	this.init();
 	
 	c = {
@@ -71,8 +73,6 @@ Sbi.worksheet.designer.BarChartDesignerPanel = function(config) {
 	
 	this.on('afterLayout', this.addToolTips, this);
 	
-	this.addEvents("attributeDblClick");
-
 };
 
 Ext.extend(Sbi.worksheet.designer.BarChartDesignerPanel, Ext.Panel, {

@@ -57,6 +57,8 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.addEvents("attributeDblClick");
+	
 	this.init();
 	
 	c = {
@@ -65,8 +67,6 @@ Sbi.worksheet.designer.PieChartDesignerPanel = function(config) {
 	
 	Sbi.worksheet.designer.PieChartDesignerPanel.superclass.constructor.call(this, c);
 	
-	this.addEvents("attributeDblClick");
-
 };
 
 Ext.extend(Sbi.worksheet.designer.PieChartDesignerPanel, Ext.Panel, {
