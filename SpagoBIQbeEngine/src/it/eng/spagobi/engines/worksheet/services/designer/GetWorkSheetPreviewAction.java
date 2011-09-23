@@ -31,12 +31,9 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -54,10 +51,10 @@ public class GetWorkSheetPreviewAction extends AbstractQbeEngineAction {
 		super.service(request, response);	
 		try {
 			
-			QbeEngineInstance engineInstance = getEngineInstance();
+			WorksheetEngineInstance engineInstance = (WorksheetEngineInstance)getAttributeFromSession(WorksheetEngineInstance.class.getName());
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
-			setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+			setAttribute(WorksheetEngineInstance.class.getName(), engineInstance);
 			
 			
 //			//get the worksheet from the engine instance

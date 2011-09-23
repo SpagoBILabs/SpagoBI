@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -70,7 +71,8 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getFooter());
 			}
 			
-			getEngineInstance().setWorkSheetDefinition(workSheetDefinition);
+			WorksheetEngineInstance worksheetEngineInstance  = (WorksheetEngineInstance) getAttributeFromSession(WorksheetEngineInstance.class.getName());
+			worksheetEngineInstance.setAnalysisState(workSheetDefinition);
 			
 			try {
 				JSONObject jsonEncodedFormState = getAttributeAsJSONObject(FORM_STATE);

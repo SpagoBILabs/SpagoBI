@@ -58,7 +58,7 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 		try {		
 			super.service(request, response);	
 
-			WorksheetEngineInstance engineInstance = this.getEngineInstance();
+			WorksheetEngineInstance engineInstance = (WorksheetEngineInstance) getAttributeFromSession(WorksheetEngineInstance.class.getName());
 			IDataSet dataset = engineInstance.getDataSet();
 			IMetaData metadata = dataset.getMetadata();
 			

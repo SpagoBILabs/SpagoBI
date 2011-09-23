@@ -186,6 +186,14 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			return engineInstance.getLastDataSetTableDescriptor();
 		}
 		Connection connection = getConnection();
+		//drop the temporary table if one exists
+		try {
+			TemporaryTableManager.dropTableIfExists(tableName, getEngineInstance().getDataSource());
+		} catch (Exception e) {
+			logger.error("Impossible to drop the temporary table with name "+tableName, e);
+			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name "+tableName, e);
+		}
+		
 		IDataSetTableDescriptor td = dataset.persist(tableName, connection);
 		engineInstance.setLastDataSetTableDescriptor(td);
 		return td;

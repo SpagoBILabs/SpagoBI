@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.initializers;
 
+import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
@@ -91,6 +92,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 				ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
 				ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
 				worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
+				worksheetEngineInstance.setDataSource(((AbstractDataSource)o.getDataSource()).getToolsDataSource());
 				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
