@@ -158,7 +158,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			this.addTitle(this.sheetConfig.header,items, true);		
 		}
 
-		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters.length > 0) {
+		if (this.sheetConfig.filters != undefined && this.sheetConfig.filters != null && this.sheetConfig.filters.filters != undefined && this.sheetConfig.filters.filters != null && this.sheetConfig.filters.filters.length > 0) {
 			var filterConf = {
 					title : LN('sbi.worksheet.runtime.runtimesheetpanel.filterspanel.title')
 					, layout: 'auto'
@@ -202,7 +202,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 			}			
 		}
 			
-		if (this.sheetConfig.filters==undefined || this.sheetConfig.filters==null || this.sheetConfig.filters.filters.length<=0 || this.sheetConfig.filters.position!='left') {
+		if (this.sheetConfig.filters==undefined || this.sheetConfig.filters==null || this.sheetConfig.filters.filters==undefined  || this.sheetConfig.filters.filters==null  || this.sheetConfig.filters.filters.length<=0 || this.sheetConfig.filters.position!='left') {
 			items.push(this.content);
 		}
 		
