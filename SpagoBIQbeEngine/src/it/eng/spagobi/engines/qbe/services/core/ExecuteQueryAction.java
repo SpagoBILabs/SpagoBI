@@ -28,6 +28,7 @@ import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -265,8 +266,25 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			throw exception;
 		}
 		logger.debug("Query executed succesfully");
+		updateWorksheetDataSet(dataSet);
 		return dataStore;
 	}
+	
+	/**
+	 * Updates the dataset of the worksheet instanc, if a 
+	 * worksheet instance exists in the session
+	 * @param dataSet
+	 */
+	private void updateWorksheetDataSet(IDataSet dataSet){
+		logger.debug("Updating the dataset definition in the worksheet");
+		WorksheetEngineInstance worksheetEngineInstance = (WorksheetEngineInstance)getAttributeFromSession( WorksheetEngineInstance.class.getName() );
+		if(worksheetEngineInstance!=null){
+			logger.debug("A worksheet instance has been defined, so we update it");
+			worksheetEngineInstance.setDataSet(dataSet);
+		}
+		logger.debug("Finish to update the dataset definition in the worksheet");
+	}
+	
 
 //	private JSONObject buildGridDataFeed(List results, int resultNumber) throws JSONException {
 //		JSONObject gridDataFeed = new JSONObject();

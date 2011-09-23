@@ -17,6 +17,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>
@@ -34,12 +35,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
+<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
+<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
-	QbeEngineInstance qbeEngineInstance;
+	WorksheetEngineInstance worksheetEngineInstance;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -51,9 +54,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	
 	ResponseContainer responseContainer = ResponseContainerAccess.getResponseContainer(request);
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
-	qbeEngineInstance = (QbeEngineInstance) serviceResponse.getAttribute("ENGINE_INSTANCE");
-	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-	locale = (Locale) qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	worksheetEngineInstance = (WorksheetEngineInstance) serviceResponse.getAttribute(WorksheetEngineInstance.class.getName());
+	profile = (UserProfile)worksheetEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	locale = (Locale) worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
 	QbeEngineConfig qbeEngineConfig = QbeEngineConfig.getInstance();
 	
@@ -121,7 +124,7 @@ end DOCTYPE declaration --%>
         Ext.onReady(function() {
         	Ext.QuickTips.init();
 
-			var worksheet = <%= qbeEngineInstance.getWorkSheetDefinition().getConf().toString() %>;
+			var worksheet = <%= ((WorkSheetDefinition)(worksheetEngineInstance.getAnalysisState())).getConf().toString() %>;
         	workSheetPanel = new Sbi.worksheet.runtime.WorkSheetsRuntimePanel(worksheet, {
         		header: false
         	});

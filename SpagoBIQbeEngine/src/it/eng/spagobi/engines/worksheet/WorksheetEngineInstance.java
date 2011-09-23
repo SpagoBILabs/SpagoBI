@@ -22,6 +22,7 @@ package it.eng.spagobi.engines.worksheet;
 
 import it.eng.spagobi.engines.qbe.QbeEngineException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -40,6 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class WorksheetEngineInstance extends AbstractEngineInstance {
 		
+		IDataSource dataSource;
 		IDataSet dataSet;
 		WorksheetTemplate template;
 		IDataSetTableDescriptor dataSetTableDescriptor;
@@ -52,8 +54,6 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 			this( WorksheetTemplateParser.getInstance().parse(template), env );
 		}
 		
-		
-		
 		protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
 			super( env );
 			logger.debug("IN");
@@ -63,6 +63,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		
 		protected WorksheetEngineInstance(IDataSet ds, Map env, Object y) throws WorksheetEngineException {
 			super( env );
+			template = new WorksheetTemplate();
 			logger.debug("IN");
 			this.dataSet = ds;
 			logger.debug("OUT");
@@ -89,7 +90,7 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		 */
 		@Override
 		public void setAnalysisState(IEngineAnalysisState analysisState) {
-			// TODO Auto-generated method stub
+			this.getTemplate().setWorkSheetDefinition((WorkSheetDefinition)analysisState);
 		}
 
 		public IDataSet getDataSet() {
@@ -101,15 +102,17 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 			}
 			return null;
 		}
+
+		public void setDataSet(IDataSet dataSet) {
+			this.dataSet = dataSet; 
+		}
 		
 		public IDataSource getDataSource() {
-			// TODO Auto-generated method stub
-			return null;
+			return dataSource;
 		}
 		
 		public void setDataSource(IDataSource dataSource) {
-			// TODO Auto-generated method stub
-			return;
+			this.dataSource = dataSource;
 		}
 		
 		public IDataSetTableDescriptor getLastDataSetTableDescriptor() {
