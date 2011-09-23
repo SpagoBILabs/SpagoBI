@@ -60,6 +60,8 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
+	this.addEvents("beforeAddAttribute", "attributeDblClick");
+	
 	this.init(c);
 	
 	Ext.apply(c, {
@@ -103,8 +105,6 @@ Sbi.crosstab.AttributesContainerPanel = function(config) {
 	// constructor
     Sbi.crosstab.AttributesContainerPanel.superclass.constructor.call(this, c);
   
-    this.addEvents("beforeAddAttribute", "attributeDblClick");
-    
     this.on('render', this.initDropTarget, this);
     
 };

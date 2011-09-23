@@ -56,6 +56,8 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 
 	Ext.apply(this, c);
 	
+	this.addEvents("attributeDblClick");
+	
 	this.initPanels();
 	
 	var emptyPanel = new Ext.Panel({
@@ -65,7 +67,7 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 		hidden: true
 	});
 	
-	c ={
+	c = {
 			scrollable: true,
             layout: 'fit',
             items:[emptyPanel, this.headerPanel, this.filtersPanel, this.contentPanel, this.footerPanel]
@@ -87,7 +89,6 @@ Sbi.worksheet.designer.SheetPanel = function(config) {
 	
 	Sbi.worksheet.designer.SheetPanel.superclass.constructor.call(this, c);
 	
-	this.addEvents("attributeDblClick");
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {

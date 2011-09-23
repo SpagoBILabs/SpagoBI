@@ -60,6 +60,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	
 	Ext.apply(this, c);
 
+	this.addEvents("attributeDblClick", "sheetchange");
 	
 	this.index = 0;
 	
@@ -78,6 +79,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	};
 	
 	this.initPanel();
+	
 	Sbi.worksheet.designer.SheetsContainerPanel.superclass.constructor.call(this, c);	 	
 	
 	if (this.sheets !== undefined && this.sheets !== null && this.sheets.length > 0) {
@@ -91,9 +93,7 @@ Sbi.worksheet.designer.SheetsContainerPanel = function(config) {
 	} else {
 		this.on('render',function(){this.addTab();},this);
 	}
-	
-	this.addEvents("attributeDblClick");
-	
+
 };
 
 Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {

@@ -58,6 +58,8 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.addEvents("attributeDblClick");
+	
 	this.initEmptyMsgPanel();
 	
 	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsContainerPanel( {
@@ -86,8 +88,6 @@ Sbi.worksheet.designer.QueryFieldsCardPanel = function(config) {
 	
 	this.on('render', this.initDropTarget, this);
 	this.on('afterLayout', this.setActiveItem, this);
-	
-	this.addEvents("attributeDblClick");
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
 };

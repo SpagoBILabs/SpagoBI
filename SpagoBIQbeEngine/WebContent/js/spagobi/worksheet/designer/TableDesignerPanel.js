@@ -57,6 +57,8 @@ Sbi.worksheet.designer.TableDesignerPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.addEvents("attributeDblClick");
+	
 	this.tableDesigner = new Sbi.worksheet.designer.QueryFieldsCardPanel({ddGroup: this.ddGroup});
 	// propagate event
 	this.tableDesigner.on(
@@ -73,9 +75,8 @@ Sbi.worksheet.designer.TableDesignerPanel = function(config) {
 		items: [new Ext.Panel({items:[this.tableDesigner], border: false, bodyStyle: 'width: 100%; height: 100%'})]
 	};
 	
-	this.addEvents("attributeDblClick");
-	
 	Sbi.worksheet.designer.TableDesignerPanel.superclass.constructor.call(this, c);
+	
 };
 
 Ext.extend(Sbi.worksheet.designer.TableDesignerPanel, Ext.Panel, {

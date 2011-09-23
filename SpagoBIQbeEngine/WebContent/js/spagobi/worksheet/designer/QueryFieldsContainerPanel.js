@@ -60,6 +60,8 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
+	this.addEvents('storeChanged', 'attributeDblClick');
+	
 	this.init(c);
 	
 	Ext.apply(c, {
@@ -103,8 +105,6 @@ Sbi.worksheet.designer.QueryFieldsContainerPanel = function(config) {
         , type: 'queryFieldsContainerPanel'
 	});	
 
-	this.addEvents('storeChanged', 'attributeDblClick');
-	
 	// constructor
 	Sbi.worksheet.designer.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
 	

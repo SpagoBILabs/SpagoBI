@@ -58,6 +58,8 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
+	this.addEvents('addDesigner', 'beforeAddAttribute', 'attributeDblClick');
+	
 	this.initEmptyMsgPanel();
 	
 	c = {
@@ -65,8 +67,6 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 		items: [this.emptyMsgPanel]
 	};
 	Sbi.worksheet.designer.SheetContentPanel.superclass.constructor.call(this, c);
-	
-	this.addEvents('addDesigner', 'beforeAddAttribute', 'attributeDblClick');
 	
 	this.on('render', this.initDropTarget, this);
 	if(Ext.isIE){

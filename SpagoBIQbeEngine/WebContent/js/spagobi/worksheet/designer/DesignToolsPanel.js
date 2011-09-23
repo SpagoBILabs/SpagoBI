@@ -63,6 +63,8 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
 		, baseParams: new Object()
 	});
 	
+	this.addEvents("attributeDblClick");
+	
 	this.initPanels();
 	
 	c = {
@@ -73,8 +75,6 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
         },
         items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
 	};
-	
-	this.addEvents("attributeDblClick");
 	
 	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);
 	

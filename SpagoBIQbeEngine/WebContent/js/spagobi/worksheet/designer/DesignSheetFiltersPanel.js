@@ -59,6 +59,8 @@ Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) {
 		
 	Ext.apply(this, c);
 	
+	this.addEvents('beforeAddAttribute', 'attributeDblClick');
+	
 	this.init();
 	
 	c = Ext.apply(c, {
@@ -71,8 +73,6 @@ Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) {
 
 	// constructor	
 	Sbi.worksheet.designer.DesignSheetFiltersPanel.superclass.constructor.call(this, c);
-	
-	this.addEvents('beforeAddAttribute', 'attributeDblClick');
 	
 	this.on('render', this.initDropTarget, this);
 

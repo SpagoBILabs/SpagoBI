@@ -56,8 +56,10 @@ Sbi.worksheet.designer.ChartCategoryPanel = function(config) {
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
-		
+	
 	Ext.apply(this, c);
+	
+	this.addEvents("attributeDblClick");
 	
 	this.init();
 	
@@ -70,8 +72,6 @@ Sbi.worksheet.designer.ChartCategoryPanel = function(config) {
 	
 	this.on('render', this.initDropTarget, this);
 	
-	this.addEvents("attributeDblClick");
-
 };
 
 Ext.extend(Sbi.worksheet.designer.ChartCategoryPanel, Ext.Panel, {

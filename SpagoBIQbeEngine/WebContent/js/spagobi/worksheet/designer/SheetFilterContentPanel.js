@@ -56,8 +56,9 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
+	
+	this.addEvents("addDesigner", "attributeDblClick");
 
-	this.addEvents('addDesigner');
 	this.contentPanel = new Sbi.worksheet.designer.SheetContentPanel({style:'padding: 5px 15px 0px 15px;'});
 	this.contentPanel.on('addDesigner', function(sheet, state){this.fireEvent('addDesigner',sheet, state);}, this);
 	// propagate event
@@ -139,8 +140,6 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 			, this);
 	
 	Sbi.worksheet.designer.SheetFilterContentPanel.superclass.constructor.call(this, c);
-	
-	this.addEvents("attributeDblClick");
 	
 };
 

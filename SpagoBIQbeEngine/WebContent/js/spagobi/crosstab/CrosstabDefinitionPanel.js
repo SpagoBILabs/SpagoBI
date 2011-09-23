@@ -59,6 +59,8 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 
 	Ext.apply(this, c); // this operation should overwrite this.crosstabTemplate content, that is the definition of the crosstab
 
+	this.addEvents("beforeAddAttribute", "attributeDblClick");
+	
 	this.init(c);
 
 	c = Ext.apply(c, {
@@ -85,8 +87,6 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 			, this
 	);
 	
-	this.addEvents("beforeAddAttribute", "attributeDblClick");
-
 };
 
 Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
