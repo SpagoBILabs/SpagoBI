@@ -188,7 +188,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getEntityId()); // TODO change to aColumn.getName()
+			String columnName = descriptor.getColumnName(aColumn.getAlias()); // TODO change to aColumn.getName()
 			toReturn.append(columnName);
 			toReturn.append(", ");
 		}
@@ -196,7 +196,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getEntityId()); // TODO change to aRow.getName()
+			String columnName = descriptor.getColumnName(aRow.getAlias()); // TODO change to aRow.getName()
 			toReturn.append(columnName);
 			toReturn.append(", ");
 		}
@@ -206,7 +206,7 @@ public class CrosstabQueryCreator {
 		while (measuresIt.hasNext()) {
 			Measure aMeasure = measuresIt.next();
 			IAggregationFunction function = aMeasure.getAggregationFunction();
-			String columnName = descriptor.getColumnName(aMeasure.getEntityId()); // TODO change to aMeasure.getName()
+			String columnName = descriptor.getColumnName(aMeasure.getAlias()); // TODO change to aMeasure.getName()
 			if (columnName == null) {
 				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
 				// is automatically added inside query fields, therefore the alias is not found on base query selected fields
@@ -243,7 +243,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getEntityId());
+			String columnName = descriptor.getColumnName(aColumn.getAlias());
 			toReturn.append(columnName);
 			if (columsIt.hasNext()) {
 				toReturn.append(", ");
@@ -259,7 +259,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getEntityId());
+			String columnName = descriptor.getColumnName(aRow.getAlias());
 			toReturn.append(columnName);
 			if (rowsIt.hasNext()) {
 				toReturn.append(", ");
