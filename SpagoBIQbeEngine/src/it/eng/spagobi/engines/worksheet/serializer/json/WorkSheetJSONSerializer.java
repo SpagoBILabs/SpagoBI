@@ -130,7 +130,10 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			return new JSONObject();
 		}
 		if (content instanceof CrosstabDefinition) {
-			return (JSONObject) SerializationManager.serialize(content, "application/json");
+			JSONObject toReturn = (JSONObject) SerializationManager.serialize(content, "application/json");
+			
+			toReturn.put(WorkSheetSerializationCostants.DESIGNER, WorkSheetSerializationCostants.DESIGNER_PIVOT);
+			return toReturn;
 		}
 		if (content instanceof ChartDefinition) {
 			return serializeChart((ChartDefinition) content);
@@ -151,6 +154,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			fieldsJSON.put(SerializationManager.serialize(field, "application/json"));
 		}
 		toReturn.put(WorkSheetSerializationCostants.VISIBLE_SELECT_FIELDS, fieldsJSON);
+		toReturn.put(WorkSheetSerializationCostants.DESIGNER, WorkSheetSerializationCostants.DESIGNER_TABLE);
 		return toReturn;
 	}
 
