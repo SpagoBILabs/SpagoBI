@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 
 public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
-
+	private IDataSource dataSource;
 	protected IStatement statement;
 	protected IDataStore dataStore;
 	protected boolean abortOnOverflow;	
@@ -301,7 +301,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		try {
 			String sql = getSQLQuery();
 			TemporaryTableManager.createTable(sql, tableName, dataSource);
-			return getDataSetTableDescriptor(sql, statement.getQuery());
+			return getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
 		} catch (Exception e) {
 			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
@@ -312,7 +312,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		IDataSource ds = getDataSource();	
 		IDataStore toReturn = null;
 		String sql = getSQLQuery();
-		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery());
+		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery(),"");
 		String filterColumnName = tableDescriptor.getColumnName(fieldName);
 		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM "+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get(SsoServiceInterface.USER_ID)));
 		try {
@@ -332,7 +332,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * @param qbeQuery Qbe Query 
 	 * @return
 	 */
-	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery){
+	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery, String tableName){
 		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
 		
 		List<String[]> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
@@ -340,6 +340,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		for(int i=0; i<selectFieldsColumn.size(); i++){
 			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i)[1], Object.class);
 		}
+		dataSetTableDescriptor.setTableName(tableName);
 		return dataSetTableDescriptor;
 	}
 	
@@ -349,16 +350,18 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * @return
 	 */
 	private IDataSource getDataSource(){
-		IDataSource ds = new DataSource();
-		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
-		ds.setHibDialectClass(connectionDescriptor.getDialect());
-		ds.setDriver(connectionDescriptor.getDriverClass());
-		ds.setJndi(connectionDescriptor.getJndiName());
-		ds.setLabel(connectionDescriptor.getName());
-		ds.setPwd(connectionDescriptor.getPassword());
-		ds.setUrlConnection(connectionDescriptor.getUrl());
-		ds.setUser(connectionDescriptor.getUsername());
-		return ds;
+		if(dataSource==null){
+			dataSource = new DataSource();
+			ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
+			dataSource.setHibDialectName(connectionDescriptor.getDialect());
+			dataSource.setDriver(connectionDescriptor.getDriverClass());
+			dataSource.setJndi(connectionDescriptor.getJndiName());
+			dataSource.setLabel(connectionDescriptor.getName());
+			dataSource.setPwd(connectionDescriptor.getPassword());
+			dataSource.setUrlConnection(connectionDescriptor.getUrl());
+			dataSource.setUser(connectionDescriptor.getUsername());
+		}
+		return dataSource;
 	}
 	
 	public IMetaData getMetadata() {

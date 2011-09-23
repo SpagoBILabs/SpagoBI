@@ -111,7 +111,6 @@ public class DataMartSelectField extends AbstractSelectField {
 		return new DataMartSelectField( this );
 	}
 	
-	
 	public String getPattern() {
 		return pattern;
 	}
