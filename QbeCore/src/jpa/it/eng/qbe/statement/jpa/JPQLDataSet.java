@@ -198,18 +198,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		return resultNumber;
 	}
-
-	public Map getUserProfileAttributes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public void setUserProfileAttributes(Map parameters) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	
 	public void updateParameters(it.eng.qbe.query.Query query, Map parameters) {
 		logger.debug("IN");
@@ -256,29 +244,14 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		} else {
 			return null;
 		}
-		
 	}
-
-
-	public IMetaData getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	public void setMetadata(IMetaData metadata) {
 		// TODO Auto-generated method stub
 		
 	}
 
-
 	public IDataStore test() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public String getSignature() {
 		// TODO Auto-generated method stub
 		return null;
 	}
