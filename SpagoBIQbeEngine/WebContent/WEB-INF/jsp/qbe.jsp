@@ -30,7 +30,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
-<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
+<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.qbe.model.structure.IModelStructure"%>
