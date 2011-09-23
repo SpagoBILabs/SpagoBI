@@ -2,11 +2,15 @@ package it.eng.qbe.statement;
 
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.DataMartSelectField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -17,6 +21,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
@@ -48,6 +53,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	protected IDataStore dataStore;
 	protected boolean abortOnOverflow;	
 	protected Map bindings;
+	protected Map userProfileAttributes;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(AbstractQbeDataSet.class);
@@ -85,6 +91,20 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				if (format != null && !format.trim().equals("")) {
 					dataStoreFieldMeta.setProperty("format", format);
 				}
+
+				IModelField datamartField = ((AbstractDataSource)statement.getDataSource()).getModelStructure().getField( dataMartSelectField.getUniqueName() );
+				String iconCls = datamartField.getPropertyAsString("type");	
+				String nature = QueryJSONSerializer.getSelectFieldNature(dataMartSelectField, iconCls);
+				dataStoreFieldMeta.setProperty("aggregationFunction", dataMartSelectField.getFunction().getName());
+				if( nature.equals(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)||
+					nature.equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)){
+					
+					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
+				}else{
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+				}
+
+
 			} else if(queryFiled.isCalculatedField()){
 				CalculatedSelectField claculatedQueryField = (CalculatedSelectField)queryFiled;
 				dataStoreFieldMeta.setName(claculatedQueryField.getAlias());
@@ -104,7 +124,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(), claculatedQueryField.getExpression());
 				dataStoreFieldMeta.setProperty("variable", variable);	
 				dataStoreFieldMeta.setType( variable.getTypeClass() );	
-				
+				String nature = QueryJSONSerializer.getSelectFieldNature(queryFiled, null);
+				dataStoreFieldMeta.setProperty("nature", nature);
 			}
 			dataStoreFieldMeta.setProperty("visible", new Boolean(queryFiled.isVisible()));	
 			
@@ -280,7 +301,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		try {
 			String sql = getSQLQuery();
 			TemporaryTableManager.createTable(sql, tableName, dataSource);
-			return getDataSetTableDescriptor(sql, getStatement().getQuery());
+			return getDataSetTableDescriptor(sql, statement.getQuery());
 		} catch (Exception e) {
 			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
@@ -291,9 +312,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		IDataSource ds = getDataSource();	
 		IDataStore toReturn = null;
 		String sql = getSQLQuery();
-		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, ((AbstractQbeDataSet)ds).getStatement().getQuery());
+		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery());
 		String filterColumnName = tableDescriptor.getColumnName(fieldName);
-		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM"+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get("SsoServiceInterface.USER_ID")));
+		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM "+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get(SsoServiceInterface.USER_ID)));
 		try {
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, ds, start, limit);
 		} catch (Exception e) {
@@ -314,10 +335,10 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery){
 		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
 		
-		List<String> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
+		List<String[]> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
 		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
 		for(int i=0; i<selectFieldsColumn.size(); i++){
-			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i), Object.class);
+			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i)[1], Object.class);
 		}
 		return dataSetTableDescriptor;
 	}
@@ -329,7 +350,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 */
 	private IDataSource getDataSource(){
 		IDataSource ds = new DataSource();
-		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)((AbstractQbeDataSet)ds).getStatement().getDataSource()).getConnection();
+		ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
 		ds.setHibDialectClass(connectionDescriptor.getDialect());
 		ds.setDriver(connectionDescriptor.getDriverClass());
 		ds.setJndi(connectionDescriptor.getJndiName());
@@ -338,6 +359,24 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		ds.setUrlConnection(connectionDescriptor.getUrl());
 		ds.setUser(connectionDescriptor.getUsername());
 		return ds;
+	}
+	
+	public IMetaData getMetadata() {
+		return getDataStoreMeta(statement.getQuery());
+	}
+	
+	public String getSignature() {
+		return getSQLQuery();
+	}
+	
+
+	public Map getUserProfileAttributes() {
+		return userProfileAttributes;
+	}
+
+	public void setUserProfileAttributes(Map attributes) {
+		this.userProfileAttributes = attributes;
+		
 	}
 	
 }

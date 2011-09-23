@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -82,6 +83,10 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		IDataSource dataSource = DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) ;
 		this.setDataSource(dataSource);
 		
+	}
+    
+    public QbeDataSet(AbstractQbeDataSet ds) {
+    	this.ds = ds;
 	}
     
     private void init() {
@@ -276,7 +281,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
 	@Override
 	public String getSignature() {
-		return ((AbstractQbeDataSet)ds).getSQLQuery();
+		return ((AbstractQbeDataSet)ds).getSignature();
 	}
-
 }

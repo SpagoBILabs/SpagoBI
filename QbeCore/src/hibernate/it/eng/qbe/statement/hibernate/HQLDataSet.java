@@ -158,19 +158,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		return null;
 	}
 
-
-
 	public void setFetchSize(int l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Map getUserProfileAttributes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setUserProfileAttributes(Map attributes) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -224,22 +212,12 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		
 	}
 
-	public IMetaData getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void setMetadata(IMetaData metadata) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	public IDataStore test() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getSignature() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -213,27 +213,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						// if an aggregation function is defined or if the field is declared as "measure" into property file,
 						// then it is a measure, elsewhere it is an attribute
-						if (
-								(dataMartSelectField.getFunction() != null 
-										&& !dataMartSelectField.getFunction().equals(AggregationFunctions.NONE_FUNCTION))
-										|| iconCls.equals("measure") || iconCls.equals("mandatory_measure")) {
-							
-							if(iconCls.equals("mandatory_measure")){
-								nature = QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE;
-							}
-							else{
-								nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
-							}
-
-						} else {
-
-							if(iconCls.equals("segment_attribute")){
-								nature = QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE;
-							}
-							else{
-								nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
-							}
-						}
+						nature = getSelectFieldNature(dataMartSelectField, iconCls);
 
 					} else if (field.isCalculatedField()){
 						CalculatedSelectField calculatedSelectField = (CalculatedSelectField)field;
@@ -276,19 +256,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, "calculation");
 
-						/*
-						 * We should understand if the calculated field is an attribute (i.e. a composition of attributes)
-						 * or a measure (i.e. a composition of measures).
-						 * The easiest way to understand this it to see if it is a grouping field.
-						 * TODO manage queries without any aggregation and grouping.
-						 * At the time being this information is used only in crosstab definition, and crosstab base query SHOULD 
-						 * make aggregation.
-						 */
-						if ( calculatedSelectField.isGroupByField() ) {
-							nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
-						} else {
-							nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
-						}
+						nature = getSelectFieldNature(calculatedSelectField, null);
 
 					}
 
@@ -309,6 +277,58 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 		return result;
 	}	
+	
+	/**
+	 * Get the nature of a selected field: MEASURE/ATTRIBUTE
+	 * @param field the field
+	 * @param iconCls the icon class (can be null)
+	 * @return the nature of the attribute MEASURE/ATTRIBUTE
+	 */
+	public static String getSelectFieldNature(ISelectField field,String iconCls){
+		String nature = null;
+		
+		if(field instanceof InLineCalculatedSelectField){
+			InLineCalculatedSelectField calculatedSelectField = (InLineCalculatedSelectField)field;
+			/*
+			 * We should understand if the calculated field is an attribute (i.e. a composition of attributes)
+			 * or a measure (i.e. a composition of measures).
+			 * The easiest way to understand this it to see if it is a grouping field.
+			 * TODO manage queries without any aggregation and grouping.
+			 * At the time being this information is used only in crosstab definition, and crosstab base query SHOULD 
+			 * make aggregation.
+			 */
+			if ( calculatedSelectField.isGroupByField() ) {
+				nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
+			} else {
+				nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
+			}
+		}else if(field instanceof DataMartSelectField){
+			DataMartSelectField dataMartSelectField = (DataMartSelectField)field;
+			//if an aggregation function is defined or if the field is declared as "measure" into property file,
+			//  then it is a measure, elsewhere it is an attribute
+			if ((dataMartSelectField.getFunction() != null 
+				&& !dataMartSelectField.getFunction().equals(AggregationFunctions.NONE_FUNCTION))
+				|| iconCls.equals("measure") || iconCls.equals("mandatory_measure")) {
+				
+				if(iconCls.equals("mandatory_measure")){
+					nature = QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE;
+				}
+				else{
+					nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
+				}
+			} else {
+
+				if(iconCls.equals("segment_attribute")){
+					nature = QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE;
+				}
+				else{
+					nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
+				}
+			}
+		}
+
+		return nature;
+	}
 
 	public static String getFieldLongDescription(IModelField field, IModelProperties datamartLabels) {
 		String label = field.getName();
