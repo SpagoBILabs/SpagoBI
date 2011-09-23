@@ -146,7 +146,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
     }
     
 	public void setDataSource(IDataSource dataSource) {
-		
 		this.dataSource = dataSource;
 	}
 	
