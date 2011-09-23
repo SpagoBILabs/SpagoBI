@@ -342,9 +342,9 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("OUT");
 	}
 
+	public Map getUserAttributes() {
+		return userAttributes;
+	}
 
-
-	
-	
 
 }
