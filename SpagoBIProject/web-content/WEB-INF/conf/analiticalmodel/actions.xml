@@ -192,6 +192,11 @@
  	class="it.eng.spagobi.analiticalmodel.execution.service.GetDocumentInfoAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+ 
+  <ACTION name="CREATE_WORKSHEET_OBJECT_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.CreateWorksheetObjectAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
 
 </ACTIONS>
 
