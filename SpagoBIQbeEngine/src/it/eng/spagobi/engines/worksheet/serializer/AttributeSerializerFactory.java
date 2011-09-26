@@ -26,6 +26,7 @@ import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.serializer.json.AttributeJSONSerializer;
+import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -42,6 +43,8 @@ public class AttributeSerializerFactory implements ISerializerFactory{
 	static {
 		instance = new AttributeSerializerFactory();
 		SerializationManager.registerSerializerFactory(Attribute.class, instance);
+		SerializationManager.registerSerializerFactory(CrosstabDefinition.Row.class, instance);
+		SerializationManager.registerSerializerFactory(CrosstabDefinition.Column.class, instance);
 	}
 	
 	
