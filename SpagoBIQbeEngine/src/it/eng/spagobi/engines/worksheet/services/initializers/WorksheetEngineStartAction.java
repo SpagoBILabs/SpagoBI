@@ -30,7 +30,6 @@ import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
