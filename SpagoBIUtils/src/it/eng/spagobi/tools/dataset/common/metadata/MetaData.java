@@ -21,9 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.common.metadata;
 
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +36,7 @@ public class MetaData implements IMetaData {
 	int idFieldIndex;
 	List fieldsMeta;
 	Map name2IndexMap;
-	Map properties;
+	Map<String, Object> properties;
 
 	public MetaData() {
 		idFieldIndex = -1;
@@ -149,7 +146,7 @@ public class MetaData implements IMetaData {
 		fieldsMeta.remove( pivotFieldIndex );	
 	}
 
-	public Map getProperties() {
+	public Map<String, Object> getProperties() {
 		return properties;
 	}
 	

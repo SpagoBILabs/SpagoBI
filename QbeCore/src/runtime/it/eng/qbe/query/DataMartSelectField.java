@@ -118,4 +118,12 @@ public class DataMartSelectField extends AbstractSelectField {
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
+
+	public String getName() {
+		return getUniqueName();
+	}
+
+	public void setName(String name) {
+		setUniqueName(name);
+	}
 }

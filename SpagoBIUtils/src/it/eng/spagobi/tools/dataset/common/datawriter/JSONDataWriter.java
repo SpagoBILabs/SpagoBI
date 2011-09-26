@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -47,10 +48,23 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String TOTAL_PROPERTY = "results";
 	public static final String ROOT = "rows";
 	
+	public static final String PROPERTY_PUT_IDS = "putIDs";
+	
+	private boolean putIDs = true;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
 
+	public JSONDataWriter() {}
+	
+	public JSONDataWriter(Map<String, Object> properties) {
+		if (properties != null) {
+			Object o = properties.get(PROPERTY_PUT_IDS);
+			if (o != null) {
+				this.putIDs = Boolean.parseBoolean(o.toString());
+			}
+		}
+	}
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
@@ -96,7 +110,9 @@ public class JSONDataWriter implements IDataWriter {
 			while(records.hasNext()) {
 				record = (IRecord)records.next();
 				recordJSON = new JSONObject();
-				recordJSON.put("id", ++recNo);
+				if (this.putIDs) {
+					recordJSON.put("id", ++recNo);
+				}
 				
 				for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
@@ -160,7 +176,9 @@ public class JSONDataWriter implements IDataWriter {
 			
 			toReturn.put("totalProperty", TOTAL_PROPERTY);
 			toReturn.put("root", ROOT);
-			toReturn.put("id", "id");
+			if (this.putIDs) {
+				toReturn.put("id", "id");
+			}
 			
 			// field's meta
 			JSONArray fieldsMetaDataJSON = new JSONArray();

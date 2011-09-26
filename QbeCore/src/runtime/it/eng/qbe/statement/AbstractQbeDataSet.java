@@ -30,10 +30,12 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -300,8 +302,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		IDataSource dataSource = getDataSource();
 		try {
 			String sql = getSQLQuery();
-			TemporaryTableManager.createTable(sql, tableName, dataSource);
-			return getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
+			List<String> fields = getDataSetSelectedFields(statement.getQuery());
+			return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
+//			return getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
 		} catch (Exception e) {
 			logger.error("Error loading Persisting the temporary table with name"+tableName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading Persisting the temporary table with name"+tableName, e);
@@ -309,22 +312,59 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 	
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		IDataSource ds = getDataSource();	
 		IDataStore toReturn = null;
-		String sql = getSQLQuery();
-		IDataSetTableDescriptor tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery(),"");
-		String filterColumnName = tableDescriptor.getColumnName(fieldName);
-		String sqlStatement = "Select DISTINCT("+ filterColumnName+") FROM "+ TemporaryTableManager.getTableName((String)(getUserProfileAttributes().get(SsoServiceInterface.USER_ID)));
 		try {
-			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, ds, start, limit);
+			String userId = getUserId();
+			String tableName = TemporaryTableManager.getTableName(userId);
+			IDataSource dataSource = getDataSource();
+			String sql = getSQLQuery();
+			IDataSetTableDescriptor tableDescriptor = null;
+			if (sql.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
+				// signature matches: no need to create a TemporaryTable
+				tableDescriptor = TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
+			} else {
+				List<String> fields = getDataSetSelectedFields(statement.getQuery());
+				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
+//				tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
+				TemporaryTableManager.setLastDataSetTableDescriptor(tableName, tableDescriptor);
+			}
+			String filterColumnName = tableDescriptor.getColumnName(fieldName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + filterColumnName + ") FROM " + tableName);
+			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
+			String sqlStatement = buffer.toString();
+			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
+			toReturn.getMetaData().changeFieldAlias(0, fieldName);
 		} catch (Exception e) {
-			logger.error("Error loading the domain values for the field "+fieldName, e);
+			logger.error("Error loading the domain values for the field " + fieldName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
 			
 		}
 		return toReturn;
 	}
 	
+	private void manageFilterOnDomainValues(StringBuffer buffer,
+			String fieldName, IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
+		if (filter != null) {
+			if (!fieldName.equals(filter.getFieldName())) {
+				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] does not match filter column [" + filter.getFieldName() + "]");
+			}
+//			String columnName = tableDescriptor.getColumnName(fieldName);
+//			String value = filter.getValue();
+//			Class clazz = null;
+//			
+//			buffer.append(" WHERE " + columnName + " ");
+		}
+	}
+
+	private String getUserId() {
+		Map userProfileAttrs = getUserProfileAttributes();
+		String userId = null;
+		if (userProfileAttrs != null) {
+			userId = (String) userProfileAttrs.get(SsoServiceInterface.USER_ID);
+		}
+		return userId;
+	}
+
 	/**
 	 * Get the relation between the fields in the select clause
 	 * of the Qbe Query and its sql representation
@@ -332,16 +372,32 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * @param qbeQuery Qbe Query 
 	 * @return
 	 */
-	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery, String tableName){
-		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
-		
-		List<String[]> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
+//	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery, String tableName){
+//		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
+//		
+//		List<String[]> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
+//		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
+//		for(int i=0; i<selectFieldsColumn.size(); i++){
+//			ISelectField selectField = selectFieldsNames.get(i);
+//			String fieldName = selectField.getAlias();
+//			String columnName = selectFieldsColumn.get(i)[1];
+//			statement.getDataSource().getModelStructure().getField(selectField.);
+//			Class c = null;
+//
+//			dataSetTableDescriptor.addField(fieldName, columnName, c);
+//		}
+//		dataSetTableDescriptor.setTableName(tableName);
+//		return dataSetTableDescriptor;
+//	}
+	
+	private List<String> getDataSetSelectedFields(Query qbeQuery){
+		List<String> toReturn = new ArrayList<String>();
 		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
-		for(int i=0; i<selectFieldsColumn.size(); i++){
-			dataSetTableDescriptor.addField(selectFieldsNames.get(i).getAlias(), selectFieldsColumn.get(i)[1], Object.class);
+		for (int i=0; i<selectFieldsNames.size(); i++){
+			ISelectField selectField = selectFieldsNames.get(i);
+			toReturn.add(selectField.getName());
 		}
-		dataSetTableDescriptor.setTableName(tableName);
-		return dataSetTableDescriptor;
+		return toReturn;
 	}
 	
 	/**

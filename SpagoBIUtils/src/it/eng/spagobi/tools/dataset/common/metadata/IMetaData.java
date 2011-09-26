@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.common.metadata;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it)       
@@ -76,9 +77,11 @@ public interface IMetaData {
 	
 	List findFieldMeta(String propertyName, Object propertyValue);
 	
+	Object getProperty(String propertyName);
+
+	void setProperty(String propertyName, Object propertyValue);
 	
-	Object getProperty(String propertyName);  
-	void setProperty(String propertyName, Object proprtyValue);
+	Map<String, Object> getProperties();
 
 	void deleteFieldMetaDataAt(int pivotFieldIndex); 
 	

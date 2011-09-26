@@ -71,4 +71,12 @@ public class CalculatedSelectField extends AbstractSelectField {
 	public boolean isCalculatedField() {
 		return true;
 	}
+
+	public String getName() {
+		return getAlias();
+	}
+
+	public void setName(String alias) {
+		setAlias(alias);
+	}
 }

@@ -217,7 +217,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			if (values != null && values.size() > 0) {
 				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
 				Operand leftOperand = new Operand(new String[] {aFilterName}, null, AbstractStatement.OPERAND_TYPE_FIELD, null, null);
-				String[] valuesArray = (String[]) values.toArray();
+				String[] valuesArray = values.toArray(new String[0]);
 				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
 				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), 
 						aFilterName, false, leftOperand, operator, rightOperand, "AND");

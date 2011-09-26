@@ -107,5 +107,14 @@ public class InLineCalculatedSelectField extends AbstractSelectField {
 	public void setFunction(IAggregationFunction function) {
 		this.function = function;
 	}
+
+
+	public String getName() {
+		return getAlias();
+	}
+
+	public void setName(String alias) {
+		setAlias(alias);
+	}
 	
 }

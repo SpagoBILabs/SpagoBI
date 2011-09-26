@@ -32,6 +32,9 @@ public interface ISelectField {
 	String getAlias();	
 	void setAlias(String alias);
 	
+	String getName();	
+	void setName(String name);
+	
 	String getType();	
 	void setType(String type);	
 	boolean isDataMartField();

@@ -188,7 +188,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getAlias()); // TODO change to aColumn.getName()
+			String columnName = descriptor.getColumnName(aColumn.getEntityId());
 			toReturn.append(columnName);
 			toReturn.append(", ");
 		}
@@ -196,7 +196,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getAlias()); // TODO change to aRow.getName()
+			String columnName = descriptor.getColumnName(aRow.getEntityId());
 			toReturn.append(columnName);
 			toReturn.append(", ");
 		}
@@ -206,15 +206,15 @@ public class CrosstabQueryCreator {
 		while (measuresIt.hasNext()) {
 			Measure aMeasure = measuresIt.next();
 			IAggregationFunction function = aMeasure.getAggregationFunction();
-			String columnName = descriptor.getColumnName(aMeasure.getAlias()); // TODO change to aMeasure.getName()
+			String columnName = descriptor.getColumnName(aMeasure.getEntityId());
 			if (columnName == null) {
 				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
-				// is automatically added inside query fields, therefore the alias is not found on base query selected fields
+				// is automatically added inside query fields, therefore the entity id is not found on base query selected fields
 				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
 					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
 				} else {
-					logger.error("Alias " + aMeasure.getAlias() + " not found on the base query!!!!");
-					throw new RuntimeException("Alias " + aMeasure.getAlias() + " not found on the base query!!!!");
+					logger.error("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+					throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
 				}
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
@@ -243,7 +243,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
-			String columnName = descriptor.getColumnName(aColumn.getAlias());
+			String columnName = descriptor.getColumnName(aColumn.getEntityId());
 			toReturn.append(columnName);
 			if (columsIt.hasNext()) {
 				toReturn.append(", ");
@@ -259,7 +259,7 @@ public class CrosstabQueryCreator {
 		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
-			String columnName = descriptor.getColumnName(aRow.getAlias());
+			String columnName = descriptor.getColumnName(aRow.getEntityId());
 			toReturn.append(columnName);
 			if (rowsIt.hasNext()) {
 				toReturn.append(", ");

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +56,6 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 		IDataStore dataStore = null;
 		IDataSet dataSet = null;
 		JSONDataWriter serializer;
-		LookupStoreJSONSerializer serializer2;
 		JSONObject filtersJSON = null;
 		Query query = null;
 		IStatement statement = null;
@@ -138,8 +138,24 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			//serializer = new DataStoreJSONSerializer();
 			//gridDataFeed = (JSONObject)serializer.serialize(dataStore);
 			
-			serializer2 = new LookupStoreJSONSerializer();
-			gridDataFeed = (JSONObject)serializer2.serialize(dataStore);
+//			serializer2 = new LookupStoreJSONSerializer();
+//			gridDataFeed = (JSONObject)serializer2.serialize(dataStore);
+			
+			Map<String, Object> props = new HashMap<String, Object>();
+			props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);
+			serializer = new JSONDataWriter(props);
+			gridDataFeed = (JSONObject) serializer.write(dataStore);
+			
+			// the first column contains the actual domain values, we must put this information into the response
+			JSONObject metadataJSON = gridDataFeed.getJSONObject("metaData");
+			JSONArray fieldsMetaDataJSON = metadataJSON.getJSONArray("fields");
+			JSONObject firstColumn = fieldsMetaDataJSON.getJSONObject(1); // remember that JSONDataWriter puts a recNo column as first column
+			// those information are useful to understand the column that contain the actual value
+			String name = firstColumn.getString("name");
+			metadataJSON.put("valueField", name); 
+			metadataJSON.put("displayField", name);
+			metadataJSON.put("descriptionField", name);
+			
 			
 			try {
 				writeBackToClient( new JSONSuccess(gridDataFeed) );
