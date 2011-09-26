@@ -120,7 +120,7 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     // private methods
     , init: function() {
      
-     var cm = new Ext.grid.ColumnModel([
+    	var cm = new Ext.grid.ColumnModel([
 		   new Ext.grid.RowNumberer(),
 	       {
 	       	  header: "Values",
@@ -187,8 +187,8 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
    	        	, showPreview:true
    	     	}
 			
-		, tbar: filteringToolbar
-		, bbar: pagingBar
+			, tbar: filteringToolbar
+			, bbar: pagingBar
 		});
 		
     	if(this.singleSelect === true && 
@@ -220,7 +220,7 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 			this.descriptionField = meta.descriptionField;
 			
 			meta.fields[0] = new Ext.grid.RowNumberer();
-			meta.fields[ meta.fields.length - 1 ] = this.sm;
+			meta.fields[ meta.fields.length ] = this.sm;
 
 			if(meta.fields[1].type == 'date'){
 				meta.fields[1].renderer = Ext.util.Format.dateRenderer('d/m/Y H:i:s');
@@ -277,7 +277,6 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     , applySelection: function() {
     	if (this.grid && this.xselection['Values']) {
 			var selectedRecs = [];
-			var cosa = this.grid.getStore().getCount();
 			this.grid.getStore().each(function(rec) {
 				var valueToLookFor = rec.data[this.valueField];
 				valueToLookFor+='';

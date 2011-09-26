@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @deprecated Use JSONDataWriter instead
  */
 public class LookupStoreJSONSerializer {
 	
@@ -161,7 +162,7 @@ public class LookupStoreJSONSerializer {
 				fieldsMetaDataJSON.put(fieldMetaDataJSON);
 			}
 			
-			fieldsMetaDataJSON.put("recCk");
+//			fieldsMetaDataJSON.put("recCk");
 			metadata.put("fields", fieldsMetaDataJSON);
 			
 			// records

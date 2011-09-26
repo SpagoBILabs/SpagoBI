@@ -69,14 +69,8 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 		, baseParams: service_params
 	});
 	
-	c = Ext.apply(c, {
-		url : this.services['getValues']
-		, columnHeader : "Values"
-		, columnName : "Values"
-	});
-	
 	this.store = new Ext.data.JsonStore({
-		url: c.url
+		url: this.services['getValues']  + '&ALIAS=' + this.attribute.alias + '&ENTITY_ID=' + this.attribute.id
 	});
 	c.store = this.store;
 
@@ -98,8 +92,6 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	// PARAMS
 	
 	var params = {
-		ALIAS : this.attribute.alias,
-		ENTITY_ID : this.attribute.id,
 		worksheetdefinition:  Ext.encode(this.worksheetdefinition)
 	};
 	// if a global variable Sbi.formviewer.formEnginePanel is defined, it is the form engine panel (SmartFilter).
@@ -112,7 +104,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 		, limit: this.limit
 	});
 	
-	c.params = p;	
+	c.params = p;
 	
 	// add selection values
 	if (this.attribute.values) {

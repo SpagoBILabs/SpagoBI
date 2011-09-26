@@ -23,17 +23,25 @@ package it.eng.spagobi.utilities.temporarytable;
 
 
 
-import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spago.dbaccess.Utils;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.JDBCTypeMapper;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -50,26 +58,31 @@ public class TemporaryTableManager {
     private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
     
     /**
-     * Contains the definition of the existing temporary table.
+     * Contains the definition of the existing temporary tables.
      * The key is created by a fixed prefix and a suffix that depends on user profile (1 temporary table for each user).
      * The value relevant to a key is the SQL statement that defines the temporary table.
      */
     private static Map<String, String> tables = new HashMap<String, String>();
+    
+    /**
+     * Contains the descriptors of the existing temporary tables.
+     */
+    private static Map<String, IDataSetTableDescriptor> tableDescriptors = new HashMap<String, IDataSetTableDescriptor>();
 
-    public static boolean isEnabled() {
-		logger.debug("IN");
-		boolean toReturn = true;
-		String enabled = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.enabled");
-		logger.debug("Configured temporary table strategy enabled: " + enabled);
-		if ( enabled == null) {
-			logger.warn("Missing temporary table strategy configuration!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE enabled=\"true\" />");
-			logger.debug("Default value is true");
-			enabled = "true";
-		}
-		toReturn = Boolean.parseBoolean(enabled);
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
-    }
+//    public static boolean isEnabled() {
+//		logger.debug("IN");
+//		boolean toReturn = true;
+//		String enabled = (String) ConfigSingleton.getInstance().getAttribute("QBE.QBE_TEMPORARY_TABLE.enabled");
+//		logger.debug("Configured temporary table strategy enabled: " + enabled);
+//		if ( enabled == null) {
+//			logger.warn("Missing temporary table strategy configuration!!! Configure it into qbe.xml, example: <QBE_TEMPORARY_TABLE enabled=\"true\" />");
+//			logger.debug("Default value is true");
+//			enabled = "true";
+//		}
+//		toReturn = Boolean.parseBoolean(enabled);
+//		logger.debug("OUT: returning " + toReturn);
+//		return toReturn;
+//    }
     
 //	public static DataStore queryTemporaryTable(UserProfile userProfile, String sqlStatement, String baseQuery, IDataSource dataSource, Integer start, Integer limit)
 //	 			throws Exception {
@@ -111,6 +124,115 @@ public class TemporaryTableManager {
 //		return dataStore;
 //	}
 	
+	public static IDataSetTableDescriptor createTable(
+			List<String> fields, String sqlStatement, String tableName, IDataSource dataSource)
+			throws Exception {
+		
+		logger.debug("IN");
+		Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
+		Assert.assertNotNull(tableName, "Table name cannot be null");
+		Assert.assertNotNull(dataSource, "Data source cannot be null");
+		logger.debug("Table name is [" + tableName + "]");
+		logger.debug("SQL statement is [" + sqlStatement + "]");
+
+		// drop table if not suitable according to tables map variable
+		if (tables.containsKey(tableName)
+				&& !sqlStatement.equals(tables.get(tableName))) {
+			dropTableIfExists(tableName, dataSource);
+			tables.remove(tableName);
+		}
+
+		// create table if it does not exist in tables map variable
+		if (!tables.containsKey(tableName)) {
+			dropTableIfExists(tableName, dataSource);
+			logger.debug("Table [" + tableName + "] must be created");
+			createTableInternal(sqlStatement, tableName, dataSource);
+			logger.debug("Table [" + tableName + "] created successfully");
+			tables.put(tableName, sqlStatement);
+		}
+
+		// may be the table has been dropped in the meanwhile (while the
+		// application is still alive),
+		// without restarting the application server,
+		// so we check if it exists and in this case we re-create it...
+		if (!checkTableExistence(tableName, dataSource)) {
+			logger.debug("Table [" + tableName + "] must be created");
+			createTableInternal(sqlStatement, tableName, dataSource);
+			logger.debug("Table [" + tableName + "] created successfully");
+		}
+		
+		IDataSetTableDescriptor tableDescriptor = getTableDescriptor(fields, tableName, dataSource);
+
+		logger.debug("OUT");
+		
+		return tableDescriptor;
+	}
+    
+	private static IDataSetTableDescriptor getTableDescriptor(List<String> fields,
+		String tableName, IDataSource dataSource) throws Exception {
+		DataSetTableDescriptor tableDescriptor = null;
+		Connection connection = null;
+		ResultSet resultSet = null;
+		try {
+			connection = dataSource.getConnection();
+			DatabaseMetaData dbMeta = connection.getMetaData();
+			resultSet = dbMeta.getColumns(null, null, tableName, null);
+			if (resultSet.first()) {
+				tableDescriptor = new DataSetTableDescriptor();
+				tableDescriptor.setTableName(tableName);
+				readColumns(resultSet, fields, tableDescriptor);
+			} else {
+				resultSet = dbMeta.getColumns(null, null, tableName.toUpperCase(), null);
+				if (resultSet.first()) {
+					tableDescriptor = new DataSetTableDescriptor();
+					tableDescriptor.setTableName(tableName.toUpperCase());
+					readColumns(resultSet, fields, tableDescriptor);
+				} else {
+					resultSet = dbMeta.getColumns(null, null, tableName.toLowerCase(), null);
+					if (resultSet.first()) {
+						tableDescriptor = new DataSetTableDescriptor();
+						tableDescriptor.setTableName(tableName.toLowerCase());
+						readColumns(resultSet, fields, tableDescriptor);
+					} else {
+						throw new SpagoBIRuntimeException("Table [" + tableName + "] not found");
+					}
+				}
+			}
+		} finally {
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [resultSet]", e);
+				}
+				logger.debug("[resultSet] released succesfully");
+			}
+			if (connection != null) {
+				try {
+					if (!connection.isClosed()) {
+					    connection.close();
+					}
+				} catch (SQLException e) {
+					throw new SpagoBIRuntimeException("Impossible to release [connection]", e);
+				}
+				logger.debug("[connection] released succesfully");
+			}	
+		}
+		return tableDescriptor;
+	}
+
+	private static void readColumns(ResultSet resultSet, List<String> fields,
+			DataSetTableDescriptor tableDescriptor) throws SQLException {
+		int index = 0;
+		do {
+			String fieldName = fields.get(index);
+			String columnName = resultSet.getString("COLUMN_NAME");
+			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
+			tableDescriptor.addField(fieldName, columnName, type);
+			index++;
+		} while (resultSet.next());
+	}
+
 	private static boolean checkTableExistence(String tableName,
 			IDataSource dataSource) throws Exception {
 		logger.debug("IN: tableName = " + tableName);
@@ -153,7 +275,7 @@ public class TemporaryTableManager {
 
 	}
 
-	public static DataStore queryTemporaryTable(String sqlStatement,IDataSource dataSource, Integer start, Integer limit) throws Exception {
+	public static DataStore queryTemporaryTable(String sqlStatement, IDataSource dataSource, Integer start, Integer limit) throws Exception {
 		
 		logger.debug("IN");
 		logger.debug("SQL statement is [" + sqlStatement + "]");
@@ -172,7 +294,7 @@ public class TemporaryTableManager {
 		
 	}
 
-	public static void createTable(String baseQuery, String tableName,IDataSource dataSource) throws Exception {
+	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		String sql = null;
 		String dialect = dataSource.getHibDialectName();
@@ -296,6 +418,15 @@ public class TemporaryTableManager {
 		}
 		logger.debug("OUT: tableName = " + tableName);
 		return tableName;
+	}
+
+	public static void setLastDataSetTableDescriptor(String tableName,
+			IDataSetTableDescriptor tableDescriptor) {
+		tableDescriptors.put(tableName, tableDescriptor);
+	}
+	
+	public static IDataSetTableDescriptor getLastDataSetTableDescriptor(String tableName) {
+		return tableDescriptors.get(tableName);
 	}
 	
 }

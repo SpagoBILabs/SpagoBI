@@ -26,7 +26,6 @@ import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
@@ -44,7 +43,6 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		IDataSource dataSource;
 		IDataSet dataSet;
 		WorksheetTemplate template;
-		IDataSetTableDescriptor dataSetTableDescriptor;
 
 		/** Logger component. */
 	    public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
@@ -113,14 +111,6 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		
 		public void setDataSource(IDataSource dataSource) {
 			this.dataSource = dataSource;
-		}
-		
-		public IDataSetTableDescriptor getLastDataSetTableDescriptor() {
-			return this.dataSetTableDescriptor;
-		}
-		
-		public void setLastDataSetTableDescriptor(IDataSetTableDescriptor dataSetTableDescriptor) {
-			this.dataSetTableDescriptor = dataSetTableDescriptor;
 		}
 	
 }

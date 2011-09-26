@@ -194,12 +194,10 @@ font-weight:bold;
     /* border:1px solid #ccc !important */;
 }
 
-
 .row-over {
      border:1px solid #dddddd;
-     background: #efefef url(../js/ext/resources/images/default/grid/row-over.gif) repeat-x left top;
+     background: #efefef url(../js/lib/ext-3.2.1/resources/images/default/grid/row-over.gif) repeat-x left top;
 }
-
 
 /*******************************************************************************************************
  * Form viewer

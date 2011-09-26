@@ -183,7 +183,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		String signature = dataset.getSignature();
 		if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
 			// signature matches: no need to create a TemporaryTable
-			return engineInstance.getLastDataSetTableDescriptor();
+			return TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 		}
 		Connection connection = getConnection();
 		//drop the temporary table if one exists
@@ -195,7 +195,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		
 		IDataSetTableDescriptor td = dataset.persist(tableName, connection);
-		engineInstance.setLastDataSetTableDescriptor(td);
+		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
 	}
 
