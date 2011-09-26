@@ -71,17 +71,18 @@ Sbi.console.FilteringToolbar = function(config) {
 	});
 	// constructor
 	Sbi.console.FilteringToolbar.superclass.constructor.call(this, c);
-    	
+	
 	this.addEvents('beforefilterselect');
+
 };
 
 Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
     
 	services: null
 	, store: null
-	, filterStores: null
-	//, filters: null
+	, filterStores: null	
 	, cbFilters: null
+	, buttons: []
 
 
 	
@@ -102,11 +103,12 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 		this.addFill();
 		if (this.filterBar.actions){
       		for(var i=0; i < this.filterBar.actions.length; i++){
+      		   if (this.filterBar.actions[i].type == undefined) this.filterBar.actions[i].type = this.filterBar.actions[i].name;
       		   conf.actionConf = this.filterBar.actions[i];
-      		  // if (conf.actionConf.name === 'errors' || conf.actionConf.name === 'alarms' || conf.actionConf.name === 'errors')
-      		   
     		   b = new Sbi.console.ActionButton(conf);
+    		   b.on('toggleIcons', this.onToggleIcons, this);
         	   this.addButton(b);	
+        	   this.buttons.push(b);        	  
         	}	
         }
 		//adds export button
@@ -367,5 +369,15 @@ Ext.extend(Sbi.console.FilteringToolbar, Ext.Toolbar, {
 			 this.store.filterPlugin.applyFilters();
 		 }
 	 }
-  
+	 
+	 , onToggleIcons: function(action, flgCheck){
+		//toggles all icons of the same family
+		 for (var i=0, l= this.buttons.length; i<l; i++ ){
+				var btn = this.buttons[i];
+				if (btn.actionConf.type == action.actionConf.type && btn.actionConf.name !== action.actionConf.name){
+					btn.setCheckValue(btn.actionConf.checkColumn, flgCheck);   
+				}			
+			}
+    }
+
 });

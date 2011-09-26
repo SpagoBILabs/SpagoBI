@@ -85,8 +85,8 @@ Sbi.console.GridPanel = function(config) {
 		if (this.store !== undefined){
 			this.store.pagingParams = {
 				start: this.start
-				, limit: this.limit
-				, paginator: this.pagingBar
+			  , limit: this.limit
+			  , paginator: this.pagingBar
 			};
 		
 		
@@ -106,6 +106,7 @@ Sbi.console.GridPanel = function(config) {
 			}
 		}
 
+
 		var c = Ext.apply(c, {
 			store: this.store
 			, cm: this.columnModel
@@ -113,6 +114,7 @@ Sbi.console.GridPanel = function(config) {
 			, tbar: this.filterBar
 			, bbar: this.pagingBar
 		});   
+		
 		
 		// constructor
 		Sbi.console.GridPanel.superclass.constructor.call(this, c);
@@ -140,16 +142,12 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	, errorDs: 'Errors'
 	, alarmDs: 'Alarms'
 	
-	// conf bloks
+	// configuration bloks
 	, filterBar: null
 	, inlineCharts: null
 	, inlineActions: null
-	
-	// automatic: all dataset fields are added as filter
-    , AUTOMATIC_FILTERBAR: 'automatic'
-    	//custom: only configurated fields are added as filter  
-    , CUSTOM_FILTERBAR: 'custom'
-    	
+    , AUTOMATIC_FILTERBAR: 'automatic'		// automatic: all dataset fields are added as filter
+    , CUSTOM_FILTERBAR: 'custom'			//custom: only configurated fields are added as filter  
     , ACTIVE_VALUE: 1
 	, INACTIVE_VALUE: 0
 	, USER_ID: 'userId'
@@ -175,13 +173,17 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     
     
 	, resolveParameters: function(parameters, record, context, callback) {
+		
+		if (parameters == undefined) return;
+		
 		var results = {};  
 		var promptables;
 		
-		var staticParams = parameters.staticParams;
 		
-		results = Ext.apply(results, parameters.staticParams);
-		var dynamicParams = parameters.dynamicParams;
+		var staticParams = parameters.staticParams || "";
+		
+		results = Ext.apply(results, staticParams);
+		var dynamicParams = parameters.dynamicParams || "";
 		
 		
 	    if(dynamicParams) { 
@@ -225,7 +227,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
        
       	//if there are some promptable field, it shows a popup for the insertion
       	if (promptables !== undefined){
-      		//if(this.promptWin === null) {
     			this.promptWin = new Sbi.console.PromptablesWindow({
     				promptables: promptables	    					
     			});
@@ -233,9 +234,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
     				Ext.apply(results, pp);
     			    callback.call (this, results);	    								
     			}, this);
-    	//	}
       		this.promptWin.show();
-      		//this.promptWin.on('hide', function() {
       		this.promptWin.on('close', function() {
       			this.fireEvent('unlock', this);
       			}, this);
@@ -243,9 +242,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
       	else {
       		callback.call (this, results);	  
       	}
-	    
-	    
-	    //return results;
 	}
 	
 	, execCrossNav: function(actionName, record, index, options){		
@@ -278,15 +274,23 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 
 	
 	, execAction: function(action, r, index, options) {	
+		
+		//toggles all icons of the same family
+		var fields = this.getFieldsToToggle(action);
+		for(var i = 0, l = fields.length; i < l; i++){ 
+			var field = fields[i];
+			if (field.toggle) field.toggle(r);
+		}
+
 		var callback = function(params){
 
 			params = Ext.apply(params, {
-	  			message: action.name, 
+	  			message: action.type, 
 	        	userId: Sbi.user.userId 
 	  		}); 
 			
 	  		Ext.Ajax.request({
-		       	url: this.services[action.name] 			       
+		       	url: this.services[action.type] 			       
 		       	, params: params 			       
 		    	, success: function(response, options) {
 		    		if(response !== undefined && response.responseText !== undefined) {
@@ -303,8 +307,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		    });
 		};
 		this.resolveParameters(options, r, this.executionContext, callback);
-	
-
     }
 	
 	, toggleMonitor: function(action, r, index, options) {
@@ -347,7 +349,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			}
 			this.errorWin.show();
 		};
-		//var params = {};
 		this.resolveParameters(options, r, this.executionContext, callback);
 		
 	}
@@ -394,7 +395,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	}
 	
 	, startProcess: function(action, r, index, options) {
-		//alert('startProcess');
 		this.fireEvent('lock', this);
 		
 		if(action.isChecked(r)) {
@@ -403,7 +403,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 	
 		var callback = function(params){ 	
-			//alert('params: ' + params.toSource());
 			//split the array values in a single string
 			for(p in params) { 
 				var tmpPar = params[p];
@@ -428,9 +427,8 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			this.waitWin.startingTxt = 'Starting process';
 			this.waitWin.start();
 			this.waitWin.show();
-	  			 //alert('params: ' + params.toSource());
 	  		Ext.Ajax.request({
-		       	url: this.services[action.name] 			       
+		       	url: this.services[action.type] 			       
 		       	, params: params 			       
 		    	, success: function(response, options) {
 	  				
@@ -495,7 +493,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			this.waitWin.show();
 			
 			Ext.Ajax.request({
-		       	url: this.services[action.name] 			       
+		       	url: this.services[action.type] 			       
 		       	, params: params 			       
 		    	, success: function(response, options) {
 	  				
@@ -639,7 +637,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		if (filterBarConf.type === 'default') {
 			Sbi.Msg.showError('Toolbar of type [' + filterBarConf.type + '] is not yet supported');
 		} else if (filterBarConf.type === this.CUSTOM_FILTERBAR || filterBarConf.type === this.AUTOMATIC_FILTERBAR) {
-		    this.filterBar = new Sbi.console.CustomFilteringToolbar({filterBar: filterBarConf, store: this.store});          	  
+		    this.filterBar = new Sbi.console.CustomFilteringToolbar({filterBar: filterBarConf, store: this.store});   
 		}  else {
 			Sbi.Msg.showError('Toolbar of type [' + filterBarConf.type + '] is not supported');
 		}
@@ -804,9 +802,6 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		}
 		
 		if (metaIsChanged) this.updateMetaStructure(tmpMeta, headerToHide, fieldsMap);
-
-		//this.updateInLineCharts();
-		
 	}
 	
 	, onMetaChange: function( store, meta ) {
@@ -866,6 +861,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 	    //adds inline action buttons
 		if (this.inlineActions) {
 			for(var i = 0, l = this.inlineActions.length; i < l; i++){ 
+				if ( this.inlineActions[i].type == undefined)  this.inlineActions[i].type =  this.inlineActions[i].name;
 				var column = this.createInlineActionColumn(this.inlineActions[i]);					
 				if(column !== null) {
 					
@@ -878,11 +874,11 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 						column.cls = tmpImgName	+ '_header';
 					}
 					else{
-						column.cls = this.inlineActions[i].name + '_header';
+						column.cls = this.inlineActions[i].type + '_header';
 					}
 					tmpMeta.fields.push( column );
 				} else {
-					Sbi.Msg.showWarning('Impossible to create inlineActionColumn [' + this.inlineActions[i].name + ']');
+					Sbi.Msg.showWarning('Impossible to create inlineActionColumn [' + this.inlineActions[i].type + ']');
 				}
 				//hides the configuration column linked to inlineActions				
 				var tmpName; 
@@ -925,35 +921,33 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 		inlineActionColumnConfig = Ext.apply({
 			grid: this
 			, scope: this
-		//	, headerIconCls: inlineActionColumnConfig.name + '_header'
+		//	, headerIconCls: inlineActionColumnConfig.type + '_header'
 		}, inlineActionColumnConfig);
 		
 		if (inlineActionColumnConfig.imgSrcActive !== undefined){
 			inlineActionColumnConfig.imgSrcActive = '../img/' + inlineActionColumnConfig.imgSrcActive;
 		}
-		else if (this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'] !== undefined){
-			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
+		else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'] !== undefined){
+			inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['active'];			
 		}
 		if (inlineActionColumnConfig.imgSrcInactive !== undefined){
 			inlineActionColumnConfig.imgSrcInactive = '../img/' + inlineActionColumnConfig.imgSrcInactive;
-		}else if (this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['inactive'] !== undefined){
-			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];
+		}else if (this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['inactive'] !== undefined){
+			inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.type ].images['inactive'];
 		}
 		
-		if (inlineActionColumnConfig.name === 'crossnav'){
+		if (inlineActionColumnConfig.type === 'crossnav'){
 			// for default
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['cross_detail'];
+			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['cross_detail'];
 			if (inlineActionColumnConfig.config){			
 				if (inlineActionColumnConfig.config.target === 'self') {					
-					inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['popup_detail'];	
+					inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images['popup_detail'];	
 				}
 			}
 			inlineActionColumnConfig.handler = this.execCrossNav;
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 			
-		}else if (inlineActionColumnConfig.name === 'monitor'){		
-			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];				
+		}else if (inlineActionColumnConfig.type === 'monitor'){		
 			inlineActionColumnConfig.handler = this.toggleMonitor;
 				
 			//set the filter for view only active items (default)
@@ -968,37 +962,23 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 						
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);			
 				
-		} else if (inlineActionColumnConfig.name === 'errors'){	
-			
-			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+		} else if (inlineActionColumnConfig.type === 'errors'){	
 			inlineActionColumnConfig.toggleOnClick = false;
 			inlineActionColumnConfig.handler = this.showErrors;
 			
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);	
 			
-		} else if (inlineActionColumnConfig.name === 'alarms'){	
-			
-			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];			
+		} else if (inlineActionColumnConfig.type === 'alarms'){	
 			inlineActionColumnConfig.toggleOnClick = false;
 			inlineActionColumnConfig.handler = this.showAlarms;
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);	
 			
-		} else if (inlineActionColumnConfig.name === 'views'){	
-			/*if (inlineActionColumnConfig.imgSrcActive === null || inlineActionColumnConfig.imgSrcActive === undefined){
-				inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			}
-			if (inlineActionColumnConfig.imgSrcInactive === null || inlineActionColumnConfig.imgSrcInactive === undefined){
-				inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];
-			}*/
-			inlineActionColumnConfig.toggleOnClick = true;
+		} else if (inlineActionColumnConfig.type === 'views'){	
+			inlineActionColumnConfig.toggleOnClick = true;			
 			inlineActionColumnConfig.handler = this.execAction;
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);	
 			
-		} else if (inlineActionColumnConfig.name === 'start'){	
-			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+		} else if (inlineActionColumnConfig.type === 'start'){	
 			inlineActionColumnConfig.toggleOnClick = false;
 			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.startProcess;
@@ -1023,9 +1003,7 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			};
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);
 		
-		} else if (inlineActionColumnConfig.name === 'stop'){			
-			//inlineActionColumnConfig.imgSrcActive = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images['active'];			
-			//inlineActionColumnConfig.imgSrcInactive = this.GRID_ACTIONS[inlineActionColumnConfig.name ].images['inactive'];	
+		} else if (inlineActionColumnConfig.type === 'stop'){			
 			inlineActionColumnConfig.toggleOnClick = false;
 			//inlineActionColumnConfig.toggleOnClick = true; //refresh automatico delle icone?
 			inlineActionColumnConfig.handler = this.stopProcess;
@@ -1049,21 +1027,29 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			};
 			inlineActionColumn = new Sbi.console.InlineToggleActionColumn(inlineActionColumnConfig);
 			
-		}else if (inlineActionColumnConfig.name === 'informationlog'){			
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images;
+		}else if (inlineActionColumnConfig.type === 'informationlog'){			
+			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images;
 			inlineActionColumnConfig.handler = this.downloadLogs;			
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 			
 		}else {
 			
-			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.name ].images;
+			inlineActionColumnConfig.imgSrc = this.GRID_ACTIONS[ inlineActionColumnConfig.type ].images;
 			inlineActionColumnConfig.handler = this.execAction;
 			inlineActionColumn = new Sbi.console.InlineActionColumn(inlineActionColumnConfig);
 		}
-		
-		
-		
 		return inlineActionColumn;
+	}
+	
+	, getFieldsToToggle: function(action){
+		var toReturn = [];
+		for (var i=0, l= this.columnModel.fields.length; i<l; i++ ){
+			var cmf = this.columnModel.fields[i];
+			if (cmf.type == action.type && cmf.name !== action.name){
+				toReturn.push(cmf);
+			}			
+		}
+		return toReturn;
 	}
 
 });

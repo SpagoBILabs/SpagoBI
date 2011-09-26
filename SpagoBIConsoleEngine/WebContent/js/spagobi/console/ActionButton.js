@@ -49,8 +49,8 @@ Ext.ns("Sbi.console");
 Sbi.console.ActionButton = function(config) {
 
 		var defaultSettings = {
-			iconCls: config.actionConf.name
-			,tooltip: (config.actionConf.tooltip === undefined)?config.actionConf.name : config.actionConf.tooltip 
+			iconCls: config.actionConf.type
+			,tooltip: (config.actionConf.tooltip === undefined)?config.actionConf.type : config.actionConf.tooltip 
 			,hidden: config.actionConf.hidden
 			,scope:this
 		};
@@ -63,9 +63,7 @@ Sbi.console.ActionButton = function(config) {
 	
 		Ext.apply(this, c);
 
-		//this.addEvents('customEvents');
 	    this.initServices();
-	  //  this.initButton();
 	    
         c = Ext.apply(c, this);
       
@@ -74,7 +72,7 @@ Sbi.console.ActionButton = function(config) {
 	    Sbi.console.ActionButton.superclass.constructor.call(this, c);
 	    this.on('click', this.execAction, this);
 	    this.store.on('load', this.initButton, this);
-       //this.addEvents();
+        this.addEvents('toggleIcons');
 }; 
 
 Ext.extend(Sbi.console.ActionButton, Ext.Button, {
@@ -150,20 +148,19 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 	
 
     , execAction: function(){
-    	
     	var flgCheck = null;
     	var checkCol = null;
     	
     	checkCol = this.actionConf.checkColumn;
     	
-    	if (this.actionConf.name === 'monitor' || this.actionConf.name === 'monitor_inactive'){     		
+    	if (this.actionConf.type === 'monitor' || this.actionConf.type === 'monitor_inactive'){     		
     		this.store.filterPlugin.removeFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn));
     		var newFilter = new Array();
-    		newFilter.push((this.actionConf.name === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
+    		newFilter.push((this.actionConf.type === 'monitor') ? this.ACTIVE_VALUE : this.INACTIVE_VALUE);    	
     		this.store.filterPlugin.addFilter(this.store.getFieldNameByAlias(this.actionConf.checkColumn), newFilter);    		
     		this.store.filterPlugin.applyFilters();	   
     		return;
-    	}else if (this.actionConf.name === 'refresh'){    	
+    	}else if (this.actionConf.type === 'refresh'){    	
     		if(this.store.pagingParams && this.store.pagingParams.paginator) {
     			if(this.store.lastParams) {
     				delete this.store.lastParams;
@@ -175,7 +172,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		}
     				
     		return;
-    	} else if (this.actionConf.name === 'errors' || this.actionConf.name === 'errors_inactive'){  
+    	} else if (this.actionConf.type === 'errors' || this.actionConf.type === 'errors_inactive'){  
     		if (this.isActive !== undefined && this.isActive == true){
     			flgCheck = this.ACTIVE_VALUE;
     		}else if (this.isActive !== undefined && this.isActive == false){
@@ -183,7 +180,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		}else{
     			flgCheck = (this.iconCls === 'errors')? this.ACTIVE_VALUE: this.INACTIVE_VALUE; 
     		}    		   		    	
-    	} else if (this.actionConf.name === 'alarms' || this.actionConf.name === 'alarms_inactive'){   
+    	} else if (this.actionConf.type === 'alarms' || this.actionConf.type === 'alarms_inactive'){   
     		if (this.isActive !== undefined && this.isActive == true){
     			flgCheck = this.ACTIVE_VALUE;
     		}else if (this.isActive !== undefined && this.isActive == false){
@@ -191,7 +188,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     		}else{
     			flgCheck = (this.iconCls === 'alarms')? this.ACTIVE_VALUE: this.INACTIVE_VALUE;    		
     		}    		
-    	} else if (this.actionConf.name === 'views' || this.actionConf.name === 'views_inactive'){     
+    	} else if (this.actionConf.type === 'views' || this.actionConf.type === 'views_inactive'){     
     		if (this.isActive !== undefined && this.isActive == true){
     			flgCheck = this.ACTIVE_VALUE;
     		}else if (this.isActive !== undefined && this.isActive == false){
@@ -208,12 +205,12 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	this.executionContext[checkCol] = flgCheck;
 		var params = this.resolveParameters(this.actionConf.config, this.executionContext);
 		params = Ext.apply(params, {
-				message: this.actionConf.name, 
+				message: this.actionConf.type, 
 				userId: Sbi.user.userId 
 			}); 
 				
 		Ext.Ajax.request({
-		url: this.services[this.actionConf.name]	       
+		url: this.services[this.actionConf.type]	       
        	, params: params 			       
     	, success: function(response, options) {
     		if(response !== undefined && response.responseText !== undefined) {
@@ -228,10 +225,11 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     	, failure: Sbi.exception.ExceptionHandler.onServiceRequestFailure
     	, scope: this     
 	    });  
-			
-		//updates the row's icons
-		this.setCheckValue(this.actionConf.checkColumn, flgCheck);        
 
+		
+		this.setCheckValue(this.actionConf.checkColumn, flgCheck);        
+		//fire events to toggle all icons of the same type
+		this.fireEvent('toggleIcons', this, flgCheck);
 	}
  
 
@@ -251,12 +249,12 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     
     , initButton: function(){    	
     	//icons about monitoring are ever enabled
-    	if (this.actionConf.name === this.MONITOR || this.actionConf.name === this.MONITOR_INACTIVE){
+    	if (this.actionConf.type === this.MONITOR || this.actionConf.type === this.MONITOR_INACTIVE){
     		return;
     	}
     	
     	//checks if the button is visible (when the action is errors or alarms)
-    	if (this.actionConf.name === this.ERROR || this.actionConf.name === this.ALARMS){
+    	if (this.actionConf.type === this.ERROR || this.actionConf.type === this.ALARMS){
     		var flagCol = this.store.getFieldNameByAlias(this.actionConf.flagColumn);    
         	if (flagCol === undefined ){
         		return;
@@ -281,7 +279,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     				}
     				this.setIconClass(tmpImgName);    				
     			}else{    			
-    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]);
+    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.type ].images[ "active"]);
     			}
     			this.isActive = true;
     			this.setTooltip(this.actionConf.tooltipInactive);
@@ -293,7 +291,7 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
     				}
     				this.setIconClass(tmpImgName);
     			}else{  
-    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images["inactive"]); 
+    				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.type ].images["inactive"]); 
     			} 
     			this.isActive = false;
 	    		this.setTooltip(this.actionConf.tooltipActive);    			
@@ -316,9 +314,9 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 				}
 				this.setIconClass(tmpImgName);    				
 			}else{    			
-				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "inactive"]);
+				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.type ].images[ "inactive"]);
 			}
-    		//this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "inactive"]); 
+    		this.isActive = false;
     	}else{
     		if (this.actionConf.imgSrcActive !== undefined){
 				var tmpImgName = this.actionConf.imgSrcActive.substr(0,this.actionConf.imgSrcActive.indexOf(".") );
@@ -327,9 +325,9 @@ Ext.extend(Sbi.console.ActionButton, Ext.Button, {
 				}
 				this.setIconClass(tmpImgName);
 			}else{  
-				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images["active"]); 
+				this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.type ].images["active"]); 
 			} 
-    		//this.setIconClass(this.FILTERBAR_ACTIONS[ this.actionConf.name ].images[ "active"]); 
+    		this.isActive = true;
     	}
     }
     
