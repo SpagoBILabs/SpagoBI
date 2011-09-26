@@ -116,7 +116,7 @@ Sbi.qbe.QbePanel = function(config) {
 					url: this.services['executeWorksheetStartAction'],
 					params: {},
 					scope: this,
-					failure: Sbi.exception.ExceptionHandler.handleFailure() 
+					failure: Sbi.exception.ExceptionHandler.handleFailure
 				});
 			}
 		}, this);
