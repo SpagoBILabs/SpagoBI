@@ -161,7 +161,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	},
 	
 	initCrossTab: function(c){
-		var crossTab = new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c|| {},{
+		var crossTab = new Sbi.crosstab.CrosstabPreviewPanel(Ext.apply(c.contentConfig|| {},{
 			hideLoadingMask: true,
 			sheetName : this.sheetName,
 			crosstabConfig: {autoHeight: true}, 
@@ -176,7 +176,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	},
 	
 	loadCrosstab: function(){
-		this.content.load(this.contentConfig.crosstabDefinition);
+		this.content.load(this.contentConfig);
 		this.un('afterlayout',this.loadCrosstab,this);
 	},
 	

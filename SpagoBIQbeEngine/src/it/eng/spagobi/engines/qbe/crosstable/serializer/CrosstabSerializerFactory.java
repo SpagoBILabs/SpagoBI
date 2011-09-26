@@ -35,14 +35,9 @@ public class CrosstabSerializerFactory implements ISerializerFactory{
 
 	static CrosstabSerializerFactory instance;
 	
-	static CrosstabSerializerFactory getIntsnce() {
-		return instance;
-	}
-	
 	static {
 		instance = new CrosstabSerializerFactory();
-		SerializationManager.registerSerializerFactory(CrosstabDefinition.class, instance);
-		
+		SerializationManager.registerSerializerFactory(CrosstabDefinition.class, instance);	
 	}
 	
 	
