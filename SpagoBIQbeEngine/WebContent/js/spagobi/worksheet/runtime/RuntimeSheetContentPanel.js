@@ -176,7 +176,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetContentPanel, Ext.Panel, {
 	},
 	
 	loadCrosstab: function(){
-		this.content.load(this.contentConfig);
+		this.content.load(this.contentConfig.crosstabDefinition);
 		this.un('afterlayout',this.loadCrosstab,this);
 	},
 	

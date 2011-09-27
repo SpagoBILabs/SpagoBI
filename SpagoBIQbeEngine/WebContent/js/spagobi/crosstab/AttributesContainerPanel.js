@@ -228,17 +228,14 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				});
 				return;
 			}
-			
-			// check attribute is not already present in rows or in columns			
-//			if (this.fireEvent('beforeAddAttribute', this, aRow) !== false) {
-//				this.addAttribute(aRow.data);
-//			}
 
-			if(this.fireEvent('beforeAddAttribute', this, aRow) == false){
+			if (this.fireEvent('beforeAddAttribute', this, aRow) == false) {
 				return;
 			}
-			var newRecord = new this.Record(aRow.data);
-			if(!(newRecord.data.values)){
+			
+			var data = Ext.apply({}, aRow.data);
+			var newRecord = new this.Record(data);
+			if (!newRecord.data.values) {
 				newRecord.data.values = new Array(); // init the 'values' property as empty
 			}
 			this.store.add([newRecord]);

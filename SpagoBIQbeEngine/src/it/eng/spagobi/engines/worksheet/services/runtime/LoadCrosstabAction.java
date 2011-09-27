@@ -131,7 +131,8 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// build SQL query against temporary table
 			List<WhereField> whereFields = new ArrayList<WhereField>();
 			if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
-				List<WhereField> temp = transformIntoWhereClauses(filters);
+				Map<String, List<String>> globalFilters = getGlobalFiltersOnDomainValues();
+				List<WhereField> temp = transformIntoWhereClauses(globalFilters);
 				whereFields.addAll(temp);
 			}
 			String sheetName = this.getAttributeAsString(SHEET);

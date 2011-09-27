@@ -84,6 +84,18 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 		this.globalFilters = globalFilters;
 	}
 	
+	public Map<String, List<String>> getGlobalFiltersAsMap() {
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+		if (globalFilters != null && globalFilters.size() > 0) {
+			Iterator<Attribute> it = globalFilters.iterator();
+			while (it.hasNext()) {
+				Attribute attribute = it.next();
+				toReturn.put(attribute.getEntityId(), attribute.getValuesAsList());
+			}
+		}
+		return toReturn;
+	}
+	
 	public JSONObject getConf(){
 		try {
 			return (JSONObject) SerializationManager.serialize(this, "application/json");

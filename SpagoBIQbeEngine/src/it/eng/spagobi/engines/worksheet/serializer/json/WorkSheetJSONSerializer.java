@@ -27,6 +27,7 @@ import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
@@ -84,7 +85,15 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		return toReturn;
 	}
 	
-	private JSONArray serializeFilters(List<Attribute> globalFilters) throws SerializationException {
+	private JSONObject serializeSheetFilters(List<Attribute> globalFilters, FiltersPosition filtersPosition) throws SerializationException, JSONException {
+		JSONArray globalFiltersJSON = serializeFilters(globalFilters);
+		JSONObject toReturn = new JSONObject();
+		toReturn.put(WorkSheetSerializationCostants.FILTERS, globalFiltersJSON);
+		toReturn.put(WorkSheetSerializationCostants.POSITION, filtersPosition.name().toLowerCase());
+		return toReturn;
+	}
+	
+	private JSONArray serializeFilters(List<Attribute> globalFilters) throws SerializationException, JSONException {
 		JSONArray globalFiltersJSON = new JSONArray();
 		Iterator<Attribute> it = globalFilters.iterator();
 		while (it.hasNext()) {
@@ -110,7 +119,7 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			jsonSheet.put(WorkSheetSerializationCostants.NAME, sheet.getName());
 			jsonSheet.put(WorkSheetSerializationCostants.LAYOUT, sheet.getLayout());
 			jsonSheet.put(WorkSheetSerializationCostants.HEADER, sheet.getHeader());
-			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, serializeFilters(sheet.getFilters()));
+			jsonSheet.put(WorkSheetSerializationCostants.FILTERS, serializeSheetFilters(sheet.getFilters(), sheet.getFiltersPosition()));
 			jsonSheet.put(WorkSheetSerializationCostants.CONTENT, serializeContent(sheet.getContent()));
 			jsonSheet.put(WorkSheetSerializationCostants.FOOTER, sheet.getFooter());
 			
@@ -130,8 +139,9 @@ public class WorkSheetJSONSerializer implements ISerializer {
 			return new JSONObject();
 		}
 		if (content instanceof CrosstabDefinition) {
-			JSONObject toReturn = (JSONObject) SerializationManager.serialize(content, "application/json");
-			
+			JSONObject toReturn = new JSONObject();
+			toReturn.put(WorkSheetSerializationCostants.CROSSTABDEFINITION, 
+					(JSONObject) SerializationManager.serialize(content, "application/json"));
 			toReturn.put(WorkSheetSerializationCostants.DESIGNER, WorkSheetSerializationCostants.DESIGNER_PIVOT);
 			return toReturn;
 		}

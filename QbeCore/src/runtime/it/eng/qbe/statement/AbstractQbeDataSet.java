@@ -325,8 +325,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			} else {
 				List<String> fields = getDataSetSelectedFields(statement.getQuery());
 				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
-//				tableDescriptor = getDataSetTableDescriptor(sql, statement.getQuery(), tableName);
-				TemporaryTableManager.setLastDataSetTableDescriptor(tableName, tableDescriptor);
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
 			StringBuffer buffer = new StringBuffer("Select DISTINCT(" + filterColumnName + ") FROM " + tableName);

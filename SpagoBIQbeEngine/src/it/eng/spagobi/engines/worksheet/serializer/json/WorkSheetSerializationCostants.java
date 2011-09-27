@@ -30,6 +30,7 @@ public class WorkSheetSerializationCostants {
 	public static final String NAME = "name";
 	public static final String HEADER = "header";
 	public static final String FILTERS = "filters";
+	public static final String POSITION = "position";
 	public static final String CONTENT = "content";
 	public static final String FOOTER = "footer";
 	public static final String LAYOUT = "sheetLayout";
@@ -40,5 +41,6 @@ public class WorkSheetSerializationCostants {
 	public static final String VISIBLE_SELECT_FIELDS = "visibleselectfields";
 	public static final String CATEGORY = "category";
 	public static final String SERIES = "series";
+	public static final String CROSSTABDEFINITION = "crosstabDefinition";
 	
 }

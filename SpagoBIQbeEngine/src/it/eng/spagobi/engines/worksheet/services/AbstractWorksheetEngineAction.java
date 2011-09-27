@@ -227,5 +227,12 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		return toReturn;
 	}
+	
+	public Map<String, List<String>> getGlobalFiltersOnDomainValues() {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		Map<String, List<String>> toReturn = workSheetDefinition.getGlobalFiltersAsMap();
+		return toReturn;
+	}
     
 }
