@@ -163,6 +163,8 @@ public class TemporaryTableManager {
 		
 		IDataSetTableDescriptor tableDescriptor = getTableDescriptor(fields, tableName, dataSource);
 
+		setLastDataSetTableDescriptor(tableName, tableDescriptor);
+
 		logger.debug("OUT");
 		
 		return tableDescriptor;
@@ -182,21 +184,7 @@ public class TemporaryTableManager {
 				tableDescriptor.setTableName(tableName);
 				readColumns(resultSet, fields, tableDescriptor);
 			} else {
-				resultSet = dbMeta.getColumns(null, null, tableName.toUpperCase(), null);
-				if (resultSet.first()) {
-					tableDescriptor = new DataSetTableDescriptor();
-					tableDescriptor.setTableName(tableName.toUpperCase());
-					readColumns(resultSet, fields, tableDescriptor);
-				} else {
-					resultSet = dbMeta.getColumns(null, null, tableName.toLowerCase(), null);
-					if (resultSet.first()) {
-						tableDescriptor = new DataSetTableDescriptor();
-						tableDescriptor.setTableName(tableName.toLowerCase());
-						readColumns(resultSet, fields, tableDescriptor);
-					} else {
-						throw new SpagoBIRuntimeException("Table [" + tableName + "] not found");
-					}
-				}
+				throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 			}
 		} finally {
 			if (resultSet != null) {

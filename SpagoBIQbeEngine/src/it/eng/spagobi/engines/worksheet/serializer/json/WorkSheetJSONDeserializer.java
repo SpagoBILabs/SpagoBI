@@ -27,6 +27,7 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.widgets.ChartDefinition;
@@ -132,10 +133,15 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
 		
 		List<Attribute> filters = deserializeSheetFilters(sheetJSON);
-
+		FiltersPosition position = FiltersPosition.TOP;
+		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
+		if (filtersJSON != null) {
+			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationCostants.POSITION).toUpperCase());
+		}
+		
 		SheetContent content = deserializeContent(sheetJSON);
 		
-		return new Sheet(name, layout, header, filters, content, footer);
+		return new Sheet(name, layout, header, filters, position, content, footer);
 	}
 	
 	private SheetContent deserializeContent(JSONObject sheetJSON) throws Exception {
@@ -143,7 +149,7 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
 		String designer = content.getString(WorkSheetSerializationCostants.DESIGNER);
 		if (WorkSheetSerializationCostants.DESIGNER_PIVOT.equals(designer)) {
-			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject("crosstabDefinition"), "application/json", CrosstabDefinition.class);
+			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationCostants.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);
 		} else if (WorkSheetSerializationCostants.DESIGNER_TABLE.equals(designer)) {
 			toReturn = deserializeTable(content);
 		} else {

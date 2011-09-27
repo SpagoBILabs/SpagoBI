@@ -32,10 +32,13 @@ import org.json.JSONObject;
  */
 public class Sheet {
 	
+	public enum FiltersPosition {TOP, LEFT};
+	
 	private String name;
 	private String layout;
 	private JSONObject header;
 	private List<Attribute> filters;
+	private FiltersPosition filtersPosition;
 	private SheetContent content;
 	private JSONObject footer;
 	
@@ -57,6 +60,12 @@ public class Sheet {
 		this.filters = filters;
 		this.content = content;
 		this.footer = footer;
+		this.filtersPosition = FiltersPosition.TOP;
+	}
+	public Sheet(String name, String layout, JSONObject header,
+			List<Attribute> filters, FiltersPosition filtersPosition, SheetContent content, JSONObject footer) {
+		this(name, layout, header, filters, content, footer);
+		this.filtersPosition = filtersPosition;
 	}
 	public JSONObject getHeader() {
 		return header;
@@ -93,6 +102,12 @@ public class Sheet {
 	}
 	public void setLayout(String layout) {
 		this.layout = layout;
+	}
+	public FiltersPosition getFiltersPosition() {
+		return filtersPosition;
+	}
+	public void setFiltersPosition(FiltersPosition filtersPosition) {
+		this.filtersPosition = filtersPosition;
 	}
 	public List<Attribute> getFiltersOnDomainValues() {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
