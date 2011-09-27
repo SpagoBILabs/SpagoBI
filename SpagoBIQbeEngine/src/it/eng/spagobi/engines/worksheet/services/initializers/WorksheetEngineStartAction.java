@@ -52,9 +52,6 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
 	
-	// SESSION PARAMETRES	
-	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(WorksheetEngineStartAction.class);
@@ -86,7 +83,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				QbeEngineInstance o = (QbeEngineInstance)getAttributeFromSession(ENGINE_INSTANCE);
+				QbeEngineInstance o = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 				AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(o.getStatment());
 				ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
 				ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
@@ -139,7 +136,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			locale = (Locale)worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 			
 			setAttributeInSession( WorksheetEngineInstance.class.getName() , worksheetEngineInstance );	
-			setAttribute(ENGINE_INSTANCE, worksheetEngineInstance);
+			setAttribute(EngineConstants.ENGINE_INSTANCE, worksheetEngineInstance);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());

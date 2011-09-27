@@ -20,10 +20,13 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
+import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
+import it.eng.spagobi.engines.qbe.FormState;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
@@ -32,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -42,6 +46,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -115,14 +120,15 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return gridDataFeed;
 	}
 	
-//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-//		FormState formState = getEngineInstance().getFormState();
-//		if (formState == null) {
-//			return null;
-//		} else {
-//			return formState.getFormStateValues();
-//		}
-//	}
+	protected JSONObject loadSmartFilterFormValues() throws JSONException{
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+		FormState formState = qbeEngineInstance.getFormState();
+		if (formState == null) {
+			return null;
+		} else {
+			return formState.getFormStateValues();
+		}
+	}
 	
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields) throws Exception {
 		
@@ -140,12 +146,17 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		
 		Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 		
-//		jsonFormState = loadSmartFilterFormValues();
-//		logger.debug("Form state retrieved as a string: " + jsonFormState);
-//		//build the query filtered for the smart filter
-//		if (jsonFormState != null) {
-//			query = getFilteredQuery(query, jsonFormState);
-//		}
+		jsonFormState = loadSmartFilterFormValues();
+		logger.debug("Form state retrieved as a string: " + jsonFormState);
+		
+		//build the query filtered for the smart filter
+		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+		Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
+		
+		//build the query filtered for the smart filter
+		if (jsonFormState != null) {
+			query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
+		}
 		
 		JSONObject optionalUserFilters = getAttributeAsJSONObject( OPTIONAL_FILTERS );
 		List<String> aliases = new ArrayList<String>();
@@ -169,7 +180,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		IDataSetTableDescriptor descriptor = this.persistDataSet(tableName);
 		// build SQL query against temporary table
 		// TODO get sheet filters (optional filters)
-		String worksheetQuery = this.buildSqlStatement(aliases, descriptor, new ArrayList<WhereField>());
+		String worksheetQuery = this.buildSqlStatement(aliases, descriptor, whereFields);
 		// execute SQL query against temporary table
 		dataStore = this.executeWorksheetQuery(worksheetQuery, start, limit);
 		
@@ -184,7 +195,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	}
 
 	private String buildSqlStatement(List<String> aliases,
-			IDataSetTableDescriptor descriptor, ArrayList<WhereField> filters) {
+			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
 		return CrosstabQueryCreator.getTableQuery(aliases, descriptor, filters);	
 	}
 	

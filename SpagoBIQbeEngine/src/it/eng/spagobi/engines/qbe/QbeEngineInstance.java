@@ -27,19 +27,25 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -331,6 +337,51 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		return registryConf;
 	}    
 	
+	/**
+	 * Builds a IDataSet starting from the active query.
+	 * @return the data set representation of the active query  
+	 */
+	public IDataSet getDataSetFromActiveQuery() {
+		logger.debug("Getting the dataset from the query ");
+		IDataSet dataSet =null;
+		try {
+			
+			dataSet = QbeDatasetFactory.createDataSet(statment);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+			
+			Map userAttributes = new HashMap();
+			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			Iterator it = profile.getUserAttributeNames().iterator();
+			while(it.hasNext()) {
+				String attributeName = (String)it.next();
+				Object attributeValue = profile.getUserAttribute(attributeName);
+				userAttributes.put(attributeName, attributeValue);
+			}
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+		} catch (Exception e) {
+			logger.debug("Error getting the data set from the query");		
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		logger.debug("Dataset correctly taken from the query ");
+		return dataSet;
+	}
+	
+	/**
+	 * Updates the dataset of the worksheet instanc, if a 
+	 * worksheet instance exists in the session
+	 * @param dataSet
+	 */
+	public void updateWorksheetDataSet(IDataSet dataSet,WorksheetEngineInstance worksheetEngineInstance){
+		logger.debug("Updating the dataset definition in the worksheet");
+		
+		if(worksheetEngineInstance!=null){
+			logger.debug("A worksheet instance has been defined, so we update it");
+			worksheetEngineInstance.setDataSet(dataSet);
+		}
+		logger.debug("Finish to update the dataset definition in the worksheet");
+	}
 
 	
 }

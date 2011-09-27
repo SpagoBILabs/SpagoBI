@@ -66,6 +66,10 @@ Sbi.formviewer.WorksheetPage = function(config) {
 		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
 		, baseParams: params
 	});
+	this.services['executeWorksheetStartAction'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION'
+			, baseParams: params
+	});
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -116,7 +120,7 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		var items = [];
 	
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(c||{},{smartFilter: true}));
-	
+		
 		items.push(this.worksheetDesignerPanel);
 		
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({closable: false});
@@ -150,6 +154,18 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	  		activeTab: 0,
 	  		items: items
 		});
+	}
+
+	, startWorksheetEngine : function(){
+		if(!this.notFirstTimeDesignPanelOpened){
+			this.notFirstTimeDesignPanelOpened = true;
+			Ext.Ajax.request({
+				url: this.services['executeWorksheetStartAction'],
+				params: {},
+				scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure
+			});
+		}
 	}
 	
 	, setWorksheetState : function (successFn, failureFn, scope) {

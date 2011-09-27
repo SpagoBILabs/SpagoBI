@@ -78,36 +78,6 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
     	return qbeEngineInstance.getActiveQuery();
 	}	
 	
-	/**
-	 * Clones the query and apply the filters encoded in the jsonEncodedFormState
-	 * @param query the source query
-	 * @param jsonEncodedFormState the filters
-	 * @return a clone of the input query with the filters
-	 * @throws SerializationException
-	 */
-	public Query getFilteredQuery(Query query, JSONObject jsonEncodedFormState) throws SerializationException{
-		if (jsonEncodedFormState != null) {
-			logger.debug("Making a deep copy of the original query...");
-			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale())).toString();
-			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
-			logger.debug("Deep copy of the original query produced");
-			//JSONObject formState = new JSONObject(jsonEncodedFormState);
-			//logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
-			JSONObject template = (JSONObject) getEngineInstance().getFormState().getConf();
-			logger.debug("Form viewer template retrieved.");
-			
-			FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();
-			formViewerQueryTransformer.setFormState(jsonEncodedFormState);
-			formViewerQueryTransformer.setTemplate(template);
-			logger.debug("Applying Form Viewer query transformation...");
-			query = formViewerQueryTransformer.execTransformation(copy);
-			logger.debug("Applying Form Viewer query transformation...");
-			return copy;
-		}else{
-			return query;	
-		}
-	}
-	
 	protected DataSource getDataSource(ConnectionDescriptor connection) {
 		DataSource dataSource = new DataSource();
 		dataSource.setJndi(connection.getJndiName());

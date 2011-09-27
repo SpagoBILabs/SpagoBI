@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.presentation.DynamicPublisher;
 import it.eng.spagobi.engines.qbe.FormState;
@@ -89,6 +90,10 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			try {
 				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), getEnv() );
+				
+				Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
+				qbeEngineInstance.setActiveQuery(query);
+				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";

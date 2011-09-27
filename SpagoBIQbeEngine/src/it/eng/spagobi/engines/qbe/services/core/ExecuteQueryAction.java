@@ -266,24 +266,12 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			throw exception;
 		}
 		logger.debug("Query executed succesfully");
-		updateWorksheetDataSet(dataSet);
+		WorksheetEngineInstance worksheetEngineInstance = (WorksheetEngineInstance)getAttributeFromSession( WorksheetEngineInstance.class.getName() );
+		getEngineInstance().updateWorksheetDataSet(dataSet, worksheetEngineInstance);
 		return dataStore;
 	}
 	
-	/**
-	 * Updates the dataset of the worksheet instanc, if a 
-	 * worksheet instance exists in the session
-	 * @param dataSet
-	 */
-	private void updateWorksheetDataSet(IDataSet dataSet){
-		logger.debug("Updating the dataset definition in the worksheet");
-		WorksheetEngineInstance worksheetEngineInstance = (WorksheetEngineInstance)getAttributeFromSession( WorksheetEngineInstance.class.getName() );
-		if(worksheetEngineInstance!=null){
-			logger.debug("A worksheet instance has been defined, so we update it");
-			worksheetEngineInstance.setDataSet(dataSet);
-		}
-		logger.debug("Finish to update the dataset definition in the worksheet");
-	}
+
 	
 
 //	private JSONObject buildGridDataFeed(List results, int resultNumber) throws JSONException {
