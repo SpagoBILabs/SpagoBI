@@ -20,8 +20,13 @@
  **/
 package it.eng.spagobi.engines.worksheet.services;
 
+import it.eng.qbe.query.Query;
+import it.eng.qbe.query.serializer.SerializerFactory;
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.engines.qbe.services.formviewer.FormViewerQueryTransformer;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
@@ -44,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * 
@@ -232,6 +238,40 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 		Map<String, List<String>> toReturn = workSheetDefinition.getGlobalFiltersAsMap();
+		return toReturn;
+	}
+	
+	
+	/**
+	 * Clones the query and apply the filters encoded in the jsonEncodedFormState
+	 * @param query the source query
+	 * @param jsonEncodedFormState the filters
+	 * @return a clone of the input query with the filters
+	 * @throws SerializationException
+	 */
+	public Query updateQbeWithSmartFilterQuery(Query query, QbeEngineInstance qbeInstance, JSONObject jsonEncodedFormState) throws SerializationException{
+		Query toReturn =null;
+		if (jsonEncodedFormState != null) {
+			logger.debug("Making a deep copy of the original query...");
+			String store = ((JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, qbeInstance.getDataSource(), getLocale())).toString();
+			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, qbeInstance.getDataSource());
+			logger.debug("Deep copy of the original query produced");
+			//JSONObject formState = new JSONObject(jsonEncodedFormState);
+			//logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
+			JSONObject template = (JSONObject) qbeInstance.getFormState().getConf();
+			logger.debug("Form viewer template retrieved.");
+			
+			FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();
+			formViewerQueryTransformer.setFormState(jsonEncodedFormState);
+			formViewerQueryTransformer.setTemplate(template);
+			logger.debug("Applying Form Viewer query transformation...");
+			query = formViewerQueryTransformer.execTransformation(copy);
+			logger.debug("Applying Form Viewer query transformation...");
+			toReturn = copy;
+		}else{
+			toReturn = query;	
+		}
+		qbeInstance.setActiveQuery(toReturn);
 		return toReturn;
 	}
     

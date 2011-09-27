@@ -18,6 +18,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>
@@ -37,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.engines.qbe.worksheet.WorkSheetDefinition"%>
+<%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
