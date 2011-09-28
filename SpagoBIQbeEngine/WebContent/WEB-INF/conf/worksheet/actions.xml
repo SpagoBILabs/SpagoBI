@@ -86,5 +86,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="UPDATE_DATA_SET_WITH_SMART_FILTER_VALUES" 
+			class="it.eng.spagobi.engines.worksheet.services.smartfilter.UpdateDataSetWithSmartFilterValues" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 </ACTIONS>
 

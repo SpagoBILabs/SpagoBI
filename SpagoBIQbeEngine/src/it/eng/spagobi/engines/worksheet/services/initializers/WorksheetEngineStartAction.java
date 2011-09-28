@@ -53,6 +53,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	public static final String COUNTRY = "COUNTRY";
 	
 	
+	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(WorksheetEngineStartAction.class);
     
@@ -83,13 +84,13 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				QbeEngineInstance o = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-				AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(o.getStatment());
+				QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+				AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
 				ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
 				ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
 				worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
-				worksheetEngineInstance.setDataSource(((AbstractDataSource)o.getDataSource()).getToolsDataSource());
-				
+				worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
+								
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";

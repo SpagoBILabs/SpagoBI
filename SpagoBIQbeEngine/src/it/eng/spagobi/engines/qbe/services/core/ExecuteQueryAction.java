@@ -29,6 +29,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -239,17 +240,17 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 			
 			Map userAttributes = new HashMap();
-			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			Iterator it = profile.getUserAttributeNames().iterator();
+			Iterator it = userProfile.getUserAttributeNames().iterator();
 			while(it.hasNext()) {
 				String attributeName = (String)it.next();
-				Object attributeValue = profile.getUserAttribute(attributeName);
+				Object attributeValue = userProfile.getUserAttribute(attributeName);
 				userAttributes.put(attributeName, attributeValue);
 			}
 			dataSet.addBinding("attributes", userAttributes);
 			dataSet.addBinding("parameters", this.getEnv());
 			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
-			
+			dataSet.setUserProfileAttributes(userProfile.getUserAttributes());
+			dataSet.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 		} catch (Exception e) {

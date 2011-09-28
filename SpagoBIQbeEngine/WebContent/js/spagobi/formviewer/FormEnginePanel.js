@@ -118,7 +118,7 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 	}
 
     , moveToWorksheetPage: function(formState) {
-    	this.worksheetPage.startWorksheetEngine();
+    	this.worksheetPage.updateWorksheetEngine();
     	this.getLayout().setActiveItem( 2 );
     	this.worksheetPage.setFormState(formState);
 	}

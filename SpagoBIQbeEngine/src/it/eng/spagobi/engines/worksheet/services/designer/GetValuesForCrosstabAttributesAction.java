@@ -20,7 +20,6 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.designer;
 
-import it.eng.qbe.query.serializer.json.LookupStoreJSONSerializer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.services.core.GetValuesForQbeFilterLookup;
@@ -31,9 +30,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.decorator.AbstractDataStoreDecorator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -42,7 +39,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +94,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			
 			WorksheetEngineInstance engineInstance = this.getEngineInstance();
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
-			
+	
 			IDataSet dataset = engineInstance.getDataSet();
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
