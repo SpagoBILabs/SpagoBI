@@ -70,6 +70,10 @@ Sbi.formviewer.WorksheetPage = function(config) {
 		serviceName: 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION'
 			, baseParams: params
 	});
+	this.services['updateWoksheetDataSet'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'UPDATE_DATA_SET_WITH_SMART_FILTER_VALUES'
+			, baseParams: params
+	});
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
@@ -156,16 +160,41 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 		});
 	}
 
-	, startWorksheetEngine : function(){
+	/**
+	 * Update the worksheet engine instance with
+	 * the form values
+	 * If the worksheet has not been already started
+	 * we start it...
+	 * 
+	 */
+	, updateWorksheetEngine : function(){
 		if(!this.notFirstTimeDesignPanelOpened){
 			this.notFirstTimeDesignPanelOpened = true;
 			Ext.Ajax.request({
 				url: this.services['executeWorksheetStartAction'],
 				params: {},
 				scope: this,
+				success: this.updateWorksheetDataSet,
 				failure: Sbi.exception.ExceptionHandler.handleFailure
 			});
+		}else{
+			this.updateWorksheetDataSet();
 		}
+	}
+	
+	/**
+	 * Update the data set inside the worksheet
+	 */
+	, updateWorksheetDataSet: function(){
+		var params = {
+				'formstate':   Ext.util.JSON.encode(this.getFormState())
+		};
+		Ext.Ajax.request({
+			url: this.services['updateWoksheetDataSet'],
+			params: params,
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
 	}
 	
 	, setWorksheetState : function (successFn, failureFn, scope) {

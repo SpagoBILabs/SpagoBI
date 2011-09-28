@@ -21,7 +21,6 @@
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
 import it.eng.qbe.query.CriteriaConstants;
-import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
@@ -29,10 +28,7 @@ import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
-import it.eng.spagobi.engines.qbe.FormState;
-import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
-import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteMasterQueryAction;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
@@ -45,7 +41,6 @@ import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -70,7 +65,6 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	
 	// INPUT PARAMETERS
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
-	private static final String FORM_STATE = ExecuteMasterQueryAction.FORM_STATE;
 	private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
 	public static final String SHEET = "sheetName";
 
@@ -84,7 +78,6 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		IDataStore dataStore = null;
-		JSONObject jsonFormState = null;
 		CrosstabDefinition crosstabDefinition = null;
 		
 		Monitor totalTimeMonitor = null;
@@ -99,32 +92,14 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
 			
 			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );
-			
-			logger.debug("Form state retrieved as a string: " + jsonFormState);
-			
-//			//build the query filtered for the smart filter
-//			if (jsonFormState != null) {
-//				query = getFilteredQuery(query, jsonFormState);
-//			}
+
 			
 			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
 			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 			
 			crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
-			
-			QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-			Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
-			jsonFormState = loadSmartFilterFormValues(qbeEngineInstance);
-			//build the query filtered for the smart filter
-			if (jsonFormState != null) {
-				//Update the qbe query
-				query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
-				//Update the data set in the Worksheet Instance 
-				IDataSet smartFilterUpdatedDS = qbeEngineInstance.getDataSetFromActiveQuery();
-				qbeEngineInstance.updateWorksheetDataSet(smartFilterUpdatedDS, getEngineInstance());
-			}
-			
+
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			// get temporary table name
 			String tableName = this.getTemporaryTableName();
@@ -185,6 +160,8 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		}	
 	}
 
+
+
 	private List<String> getAllFields() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
@@ -210,22 +187,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters);
 	}
 
-	/**
-	 * Loads the values of the form if the calling engine is smart filter
-	 * @return
-	 * @throws JSONException
-	 */
-	protected JSONObject loadSmartFilterFormValues(QbeEngineInstance qbeEngine) throws JSONException {
-//		String jsonEncodedFormState = getAttributeAsString( FORM_STATE );
-//		if ( jsonEncodedFormState != null ) {
-//			return new JSONObject(jsonEncodedFormState);
-//		}
-		FormState formState = qbeEngine.getFormState();
-		if(formState!=null){
-			return formState.getFormStateValues(); 
-		}
-		return null;
-	}
+
 	
 	public static List<WhereField> transformIntoWhereClauses(
 			Map<String, List<String>> filters) throws JSONException {

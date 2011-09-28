@@ -36,12 +36,12 @@ import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
@@ -360,6 +360,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			}
 			dataSet.addBinding("attributes", userAttributes);
 			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(profile.getUserAttributes());
+			dataSet.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
 		} catch (Exception e) {
 			logger.debug("Error getting the data set from the query");		
 			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);

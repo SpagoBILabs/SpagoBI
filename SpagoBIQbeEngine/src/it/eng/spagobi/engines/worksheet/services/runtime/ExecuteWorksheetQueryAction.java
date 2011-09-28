@@ -152,12 +152,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		//build the query filtered for the smart filter
 		QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 		Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
-		
-		//build the query filtered for the smart filter
-		if (jsonFormState != null) {
-			query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
-		}
-		
+				
 		JSONObject optionalUserFilters = getAttributeAsJSONObject( OPTIONAL_FILTERS );
 		List<String> aliases = new ArrayList<String>();
 		List<Attribute> onTableAttributes = new ArrayList<Attribute>();

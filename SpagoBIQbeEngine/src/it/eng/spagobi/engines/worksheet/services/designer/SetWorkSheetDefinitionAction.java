@@ -47,7 +47,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 
 	private static final long serialVersionUID = -7253525210753136929L;
 	public static transient Logger logger = Logger.getLogger(SetWorkSheetDefinitionAction.class);
-	public static final String FORM_STATE = "formState";
+	
 	
 	/**
 	 * Get the definition of the worksheet from the request, serialize and save it into the qbe engine instance
@@ -73,22 +73,7 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 			
 			WorksheetEngineInstance worksheetEngineInstance  = (WorksheetEngineInstance) getAttributeFromSession(WorksheetEngineInstance.class.getName());
 			worksheetEngineInstance.setAnalysisState(workSheetDefinition);
-			
-			try {
-				JSONObject jsonEncodedFormState = getAttributeAsJSONObject(FORM_STATE);
-				
-				FormState formState = getEngineInstance().getFormState();
-				if(formState==null){
-					formState = new FormState();
-					getEngineInstance().setFormState(formState);
-				}
-				formState.setFormStateValues(jsonEncodedFormState);
-				
-
-			} catch (Exception e) {
-				logger.debug("No Form State defined");
-			}
-
+		
 			
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
