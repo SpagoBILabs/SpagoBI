@@ -20,6 +20,8 @@
  **/
 package it.eng.spagobi.tools.dataset.common.metadata;
 
+import java.util.Map;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *         Davide Zerbetto (davide.zerbetto@eng.it)
@@ -39,4 +41,7 @@ public interface IFieldMetaData {
     void setAlias(String alias);
     void setType(Class type);
     void setProperty(String propertyName, Object propertyValue);
+
+    Map getProperties();
+
 }
