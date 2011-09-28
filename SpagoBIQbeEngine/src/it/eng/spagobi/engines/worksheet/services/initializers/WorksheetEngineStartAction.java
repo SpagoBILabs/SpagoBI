@@ -69,11 +69,11 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     	try {
     		setEngineName(ENGINE_NAME);
 			super.service(serviceRequest, serviceResponse);
-
+			SourceBean templateBean = getTemplateAsSourceBean();
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
 			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + getTemplateAsSourceBean());
+			logger.debug("Template: " + templateBean);
 						
 			if(getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
@@ -85,12 +85,15 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			try {
 				QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-				AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
-				ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
-				ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
-				worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
-				worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
-								
+				if(qbeEngineInstance!=null){
+					AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
+					ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
+					ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
+					worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
+					worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
+				}else{
+					worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
+				}
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";

@@ -168,6 +168,7 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	 * 
 	 */
 	, updateWorksheetEngine : function(){
+		this.tabs.setActiveTab(0);
 		if(!this.notFirstTimeDesignPanelOpened){
 			this.notFirstTimeDesignPanelOpened = true;
 			Ext.Ajax.request({
