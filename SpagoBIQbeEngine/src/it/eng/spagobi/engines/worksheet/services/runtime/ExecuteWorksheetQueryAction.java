@@ -68,7 +68,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	public static final String START = "start";
 	public static final String OPTIONAL_VISIBLE_COLUMNS = QbeEngineStaticVariables.OPTIONAL_VISIBLE_COLUMNS;
 	public static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
-	public static final String SHEET = LoadWorksheetCrosstabAction.SHEET;
+	public static final String SHEET = "sheetName";
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(LoadCrosstabAction.class);

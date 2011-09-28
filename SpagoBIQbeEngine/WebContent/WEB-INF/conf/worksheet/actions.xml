@@ -68,12 +68,6 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
-	<ACTION name="LOAD_WORKSHEET_CROSSTAB_ACTION" 
-			class="it.eng.spagobi.engines.worksheet.services.runtime.LoadWorksheetCrosstabAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	
 	<ACTION name="LOAD_CROSSTAB_ACTION" 
 			class="it.eng.spagobi.engines.worksheet.services.runtime.LoadCrosstabAction" 
 			scope="REQUEST">
