@@ -116,7 +116,7 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 //	}
 
 
-	public static List<WhereField> transformIntoWhereClauses(
+	private static List<WhereField> transformIntoWhereClauses(
 			List<Attribute> attributes) throws JSONException {
 		Iterator<Attribute> it = attributes.iterator();
 		List<WhereField> whereFields = new ArrayList<WhereField>();
@@ -145,16 +145,6 @@ public class LoadWorksheetCrosstabAction extends LoadCrosstabAction {
 			}
 		}
 		return whereFields;
-	}
-
-
-	public static List<WhereField> getOptionalFilters(
-			JSONObject optionalUserFilters) throws JSONException {
-		if (optionalUserFilters != null) {
-			return transformIntoWhereClauses(optionalUserFilters);
-		} else {
-			return new ArrayList<WhereField>();
-		}
 	}
 
 

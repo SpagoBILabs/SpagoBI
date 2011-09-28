@@ -20,13 +20,15 @@
  **/
 package it.eng.spagobi.engines.worksheet.services;
 
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.serializer.SerializerFactory;
-import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.query.CriteriaConstants;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Field;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -41,12 +43,18 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUIDGenerator;
 
 /**
  * 
@@ -236,5 +244,89 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 		Map<String, List<String>> toReturn = workSheetDefinition.getGlobalFiltersAsMap();
 		return toReturn;
-	}    
+	}
+	
+	public List<String> getAllFields() {
+		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+		List<Field> fields = workSheetDefinition.getAllFields();
+		Iterator<Field> it = fields.iterator();
+		List<String> toReturn = new ArrayList<String>();
+		while (it.hasNext()) {
+			Field field = it.next();
+			toReturn.add(field.getEntityId());
+		}
+		return toReturn;
+	}
+	
+	public List<WhereField> transformIntoWhereClauses(
+			Map<String, List<String>> filters) throws JSONException {
+		
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		
+		Set<String> keys = filters.keySet();
+		Iterator<String> it = keys.iterator();
+		while (it.hasNext()) {
+			String aFilterName = it.next();
+			List<String> values = filters.get(aFilterName);
+			if (values != null && values.size() > 0) {
+				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
+				Operand leftOperand = new Operand(new String[] {aFilterName}, null, AbstractStatement.OPERAND_TYPE_FIELD, null, null);
+				String[] valuesArray = values.toArray(new String[0]);
+				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), 
+						aFilterName, false, leftOperand, operator, rightOperand, "AND");
+
+				whereFields.add(whereField);
+			}
+		}
+		
+		return whereFields;
+	}
+	
+	public List<WhereField> getOptionalFilters(JSONObject optionalUserFilters) throws JSONException {
+		if (optionalUserFilters != null) {
+			return transformIntoWhereClauses(optionalUserFilters);
+		} else {
+			return new ArrayList<WhereField>();
+		}
+	}
+	
+	private List<WhereField> transformIntoWhereClauses(
+			JSONObject optionalUserFilters) throws JSONException {
+		String[] fields = JSONObject.getNames(optionalUserFilters);
+		List<WhereField> whereFields = new ArrayList<WhereField>();
+		for (int i = 0; i < fields.length; i++) {
+			String fieldName = fields[i];
+			JSONArray valuesArray = optionalUserFilters.getJSONArray(fieldName);
+
+			// if the filter has some value
+			if (valuesArray.length() > 0) {
+				String[] values = new String[1];
+				values[0] = fieldName;
+
+				Operand leftOperand = new Operand(values, fieldName,
+						AbstractStatement.OPERAND_TYPE_FIELD, values, values);
+
+				values = new String[valuesArray.length()];
+				for (int j = 0; j < valuesArray.length(); j++) {
+					values[j] = valuesArray.getString(j);
+				}
+
+				Operand rightOperand = new Operand(values, fieldName,
+						AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+
+				String operator = "EQUALS TO";
+				if (valuesArray.length() > 1) {
+					operator = "IN";
+				}
+
+				whereFields.add(new WhereField("OptionalFilter" + i,
+						"OptionalFilter" + i, false, leftOperand, operator,
+						rightOperand, "AND"));
+			}
+		}
+		return whereFields;
+	}
+    
 }
