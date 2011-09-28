@@ -418,6 +418,9 @@ public class CrosstabQueryCreator {
 		for (int i = 0; i < fieldsName.size(); i++) {
 			String fieldName = fieldsName.get(i);
 			String columnName = descriptor.getColumnName(fieldName);
+			if (columnName == null) {
+				throw new SpagoBIRuntimeException("Field [" + fieldName + "] not found on table descriptor");
+			}
 			buffer.append(columnName);
 			if (i < fieldsName.size() - 1) {
 				buffer.append(", ");
