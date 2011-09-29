@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <ACTIONS>
-	<!-- QBE_ENGINE Initializations -->
-	<ACTION name="WORKSHEET_WITH_DATASET_ENGINE_START_ACTION" 
-			class="it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
+
 	
 	<ACTION name="GET_WORKSHEET_IMAGES_LIST_ACTION" 
 			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorksheetImagesListAction" 

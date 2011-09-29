@@ -31,12 +31,11 @@
 	</ACTION>
 	
 	<!-- WORKSHEET_ENGINE start action -->
-	<ACTION name="WORKSHEET_ENGINE_START_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction" 
+	<ACTION name="WORKSHEET_WITH_DATASET_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
-	</ACTION>
-	
+	</ACTION>	
 	
 	<!-- REGISTRY_ENGINE start action -->
 	<ACTION name="REGISTRY_ENGINE_START_ACTION" 

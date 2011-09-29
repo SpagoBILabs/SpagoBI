@@ -33,6 +33,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.util.Locale;
 
@@ -63,6 +64,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     	WorksheetEngineInstance worksheetEngineInstance = null;
     	WorksheetEngineAnalysisState analysisState;
     	Locale locale;
+    	boolean goToWorksheetPreentation = true;
     	
     	logger.debug("IN");
        
@@ -86,6 +88,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			try {
 				QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 				if(qbeEngineInstance!=null){
+					goToWorksheetPreentation = false;
 					AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
 					ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
 					ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
@@ -147,6 +150,9 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 			
+			if(!goToWorksheetPreentation){
+				writeBackToClient(new JSONAcknowledge());
+			}
 			
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;
