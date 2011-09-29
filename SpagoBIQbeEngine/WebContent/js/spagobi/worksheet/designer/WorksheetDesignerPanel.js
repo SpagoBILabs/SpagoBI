@@ -123,11 +123,15 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 		},this);
 	}
 	
-	, attributeDblClickHandler : function (thePanel, attribute) {
-     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow({
+	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
+		var c = {
      		attribute : attribute
      		, worksheetDefinition : this.getWorksheetDefinition()
-     	});
+	    };
+		if (theSheet) {
+			c.sheetName = theSheet.getName();
+		}
+     	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow(c);
 	}
 	
 	, getWorksheetDefinition: function () {

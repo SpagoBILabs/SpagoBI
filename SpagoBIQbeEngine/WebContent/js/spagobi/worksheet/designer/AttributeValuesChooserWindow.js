@@ -59,6 +59,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	
 	this.attribute = c.attribute; // the json object representing the attribute: it must be in the constructor input object
 	this.worksheetDefinition = c.worksheetDefinition; // the json object representing the worksheet: it must be in the constructor input object
+	this.sheetName = c.sheetName; // the name of the sheet: it is undefined for global filters, but it is defined for sheets' filters
 	
 	var service_params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 	
@@ -92,13 +93,13 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	// PARAMS
 	
 	var params = {
-		worksheetdefinition:  Ext.encode(this.worksheetdefinition)
+		worksheetdefinition:  Ext.encode(this.worksheetDefinition)
 	};
-	// if a global variable Sbi.formviewer.formEnginePanel is defined, it is the form engine panel (SmartFilter).
-	if (Sbi.formviewer && Sbi.formviewer.formEnginePanel) {
-		var formState = Sbi.formviewer.formEnginePanel.getFormState();
-		params.formState = Ext.encode(formState);
+	
+	if (this.sheetName) {
+		params.sheetName = this.sheetName;
 	}
+	
 	var p = Ext.apply({}, params, {
 		start: this.start
 		, limit: this.limit

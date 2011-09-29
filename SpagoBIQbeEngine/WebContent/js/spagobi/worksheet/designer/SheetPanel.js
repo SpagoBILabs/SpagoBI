@@ -297,4 +297,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		return toReturn;
 	}
 	
+	, getName : function () {
+		return this.title;
+	}
+	
 });

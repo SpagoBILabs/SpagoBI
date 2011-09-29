@@ -20,21 +20,15 @@
  **/
 package it.eng.spagobi.engines.worksheet.services.designer;
 
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
-import it.eng.spagobi.engines.qbe.FormState;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
-import it.eng.spagobi.engines.worksheet.bo.Sheet;
-import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -43,7 +37,7 @@ import org.json.JSONObject;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
+public class SetWorkSheetDefinitionAction extends AbstractWorksheetEngineAction {
 
 	private static final long serialVersionUID = -7253525210753136929L;
 	public static transient Logger logger = Logger.getLogger(SetWorkSheetDefinitionAction.class);
@@ -59,21 +53,11 @@ public class SetWorkSheetDefinitionAction extends AbstractQbeEngineAction {
 		super.service(request, response);	
 		try {
 			//get the worksheet from the request
-			JSONObject workSheetDefinitionJSON = getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
-			Assert.assertNotNull(workSheetDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] cannot be null in oder to execute " + this.getActionName() + " service");
-			logger.debug("Parameter [" + workSheetDefinitionJSON + "] is equals to [" + workSheetDefinitionJSON.toString() + "]");
+			JSONObject worksheetDefinitionJSON = getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
+			Assert.assertNotNull(worksheetDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			logger.debug("Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] is equals to [" + worksheetDefinitionJSON.toString() + "]");
 
-			//set the worksheet into the qbe instance
-			WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)SerializationManager.deserialize(workSheetDefinitionJSON, "application/json", WorkSheetDefinition.class);
-			List<Sheet> ws = workSheetDefinition.getSheets();
-			for(int i=0; i<ws.size();i++){
-				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getHeader());
-				WorksheetEngineStartAction.setImageWidth((ws.get(i)).getFooter());
-			}
-			
-			WorksheetEngineInstance worksheetEngineInstance  = (WorksheetEngineInstance) getAttributeFromSession(WorksheetEngineInstance.class.getName());
-			worksheetEngineInstance.setAnalysisState(workSheetDefinition);
-		
+			updateWorksheetDefinition(worksheetDefinitionJSON);
 			
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);

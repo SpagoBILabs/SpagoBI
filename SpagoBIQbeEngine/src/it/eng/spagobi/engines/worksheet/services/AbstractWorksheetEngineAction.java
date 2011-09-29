@@ -23,9 +23,12 @@ package it.eng.spagobi.engines.worksheet.services;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.services.initializers.WorksheetEngineStartAction;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
@@ -327,6 +330,26 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			}
 		}
 		return whereFields;
+	}
+	
+	/**
+	 * Sets the worksheet definition into the worksheet engine instance
+	 * @param worksheetDefinitionJSON The worksheet definition in JSON format
+	 * @throws Exception
+	 */
+	public void updateWorksheetDefinition(JSONObject worksheetDefinitionJSON) throws Exception {
+
+		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) SerializationManager
+				.deserialize(worksheetDefinitionJSON, "application/json",
+						WorkSheetDefinition.class);
+		List<Sheet> ws = workSheetDefinition.getSheets();
+		for (int i = 0; i < ws.size(); i++) {
+			WorksheetEngineStartAction.setImageWidth((ws.get(i)).getHeader());
+			WorksheetEngineStartAction.setImageWidth((ws.get(i)).getFooter());
+		}
+
+		WorksheetEngineInstance worksheetEngineInstance = getEngineInstance();
+		worksheetEngineInstance.setAnalysisState(workSheetDefinition);
 	}
     
 }
