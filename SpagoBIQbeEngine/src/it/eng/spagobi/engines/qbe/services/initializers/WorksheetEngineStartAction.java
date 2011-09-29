@@ -126,8 +126,6 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 					setImageWidth((ws.get(i)).getFooter());
 				}		
 			}
-
-			
 			
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException serviceException = null;
@@ -150,6 +148,8 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		} finally {
 			logger.debug("OUT");
 		}		
+		
+		
 		
 	}
     
