@@ -26,6 +26,7 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
@@ -173,14 +174,15 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		Attribute category = (Attribute) SerializationManager.deserialize(categoryJSON, "application/json", Attribute.class);
 		chart.setCategory(category);
 		
-		List<Measure> measures = new ArrayList<Measure>();
-		JSONArray series = content.getJSONArray(WorkSheetSerializationCostants.SERIES);
-		for (int i = 0; i < series.length(); i++) {
-			JSONObject aMeasure = series.getJSONObject(i);
-			Measure measure = (Measure) SerializationManager.deserialize(aMeasure, "application/json", Measure.class);
-			measures.add(measure);
+		List<Serie> series = new ArrayList<Serie>();
+		JSONArray seriesJSON = content.getJSONArray(WorkSheetSerializationCostants.SERIES);
+		SerieJSONDeserializer deserialier = new SerieJSONDeserializer();
+		for (int i = 0; i < seriesJSON.length(); i++) {
+			JSONObject aSerie = seriesJSON.getJSONObject(i);
+			Serie serie = deserialier.deserialize(aSerie);
+			series.add(serie);
 		}
-		chart.setSeries(measures);
+		chart.setSeries(series);
 		
 		content.remove(WorkSheetSerializationCostants.CATEGORY);
 		content.remove(WorkSheetSerializationCostants.SERIES);

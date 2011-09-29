@@ -25,6 +25,7 @@ import it.eng.qbe.serializer.IDeserializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.serializer.json.AttributeJSONDeserializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -53,6 +54,9 @@ public class AttributeDeserializerFactory implements IDeserializerFactory {
 	private AttributeDeserializerFactory() {}
 
 	public IDeserializer getDeserializer(String mimeType) {
+		if (mimeType != null && !mimeType.equalsIgnoreCase("application/json")) {
+			throw new SpagoBIRuntimeException("Deserializer for mimeType " + mimeType + " not implemented");
+		}
 		return new AttributeJSONDeserializer();
 	}
 

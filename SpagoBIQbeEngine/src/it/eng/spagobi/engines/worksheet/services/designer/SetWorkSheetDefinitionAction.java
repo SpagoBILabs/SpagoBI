@@ -21,7 +21,6 @@
 package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -35,11 +34,16 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
 public class SetWorkSheetDefinitionAction extends AbstractWorksheetEngineAction {
 
 	private static final long serialVersionUID = -7253525210753136929L;
+	
+	// INPUT PARAMETERS
+	public static final String WORKSHEET_DEFINITION = "worksheetdefinition";
+	
 	public static transient Logger logger = Logger.getLogger(SetWorkSheetDefinitionAction.class);
 	
 	
@@ -52,10 +56,10 @@ public class SetWorkSheetDefinitionAction extends AbstractWorksheetEngineAction 
 		
 		super.service(request, response);	
 		try {
-			//get the worksheet from the request
-			JSONObject worksheetDefinitionJSON = getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
-			Assert.assertNotNull(worksheetDefinitionJSON, "Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] cannot be null in oder to execute " + this.getActionName() + " service");
-			logger.debug("Parameter [" + QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER + "] is equals to [" + worksheetDefinitionJSON.toString() + "]");
+			//get the worksheet definition from the request
+			JSONObject worksheetDefinitionJSON = getAttributeAsJSONObject( WORKSHEET_DEFINITION );
+			Assert.assertNotNull(worksheetDefinitionJSON, "Parameter [" +  WORKSHEET_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			logger.debug("Parameter [" + WORKSHEET_DEFINITION + "] is equals to [" + worksheetDefinitionJSON.toString() + "]");
 
 			updateWorksheetDefinition(worksheetDefinitionJSON);
 			

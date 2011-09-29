@@ -21,58 +21,48 @@
 
 package it.eng.spagobi.engines.worksheet.services.designer;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engines.qbe.FormState;
-import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
+import org.apache.log4j.Logger;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
+ *          Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class GetWorkSheetPreviewAction extends AbstractQbeEngineAction {
+public class GetWorkSheetPreviewAction extends AbstractWorksheetEngineAction {
 
 	private static final long serialVersionUID = 4009276536964480679L;
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetWorkSheetPreviewAction.class);
 
-	public void service(SourceBean request, SourceBean response)  {				
+	public void service(SourceBean request, SourceBean response) {
 		logger.debug("IN");
-		
-		super.service(request, response);	
+
 		try {
-			
-			WorksheetEngineInstance engineInstance = (WorksheetEngineInstance)getAttributeFromSession(WorksheetEngineInstance.class.getName());
-			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			
-			setAttribute(WorksheetEngineInstance.class.getName(), engineInstance);
-			
-			
-//			//get the worksheet from the engine instance
-//			WorkSheetDefinition workSheetDefinition = getEngineInstance().getWorkSheetDefinition();
-//			if(workSheetDefinition==null){
-//				workSheetDefinition = WorkSheetDefinition.EMPTY_WORKSHEET;
-//			}
-//			JSONObject workSheetDefinitionJSON = (JSONObject)SerializationManager.serialize(workSheetDefinition, "application/json");
-//			try {
-//				writeBackToClient( new JSONSuccess( workSheetDefinitionJSON ) );
-//			} catch (IOException e) {
-//				String message = "Impossible to write back the responce to the client";
-//				throw new SpagoBIEngineServiceException(getActionName(), message, e);
-//			}
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+
+			super.service(request, response);
+
+			WorksheetEngineInstance engineInstance = this.getEngineInstance();
+			Assert.assertNotNull(
+					engineInstance,
+					"It's not possible to execute "
+							+ this.getActionName()
+							+ " service before having properly created an instance of WorksheetEngineInstance class");
+
+			setAttribute(WorksheetEngineInstance.class.getName(),
+					engineInstance);
+
+		} catch (Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance()
+					.getWrappedException(getActionName(), getEngineInstance(),
+							t);
 		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
 }

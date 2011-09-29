@@ -25,7 +25,7 @@ import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
-import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.Sheet;
 import it.eng.spagobi.engines.worksheet.bo.Sheet.FiltersPosition;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
@@ -173,12 +173,13 @@ public class WorkSheetJSONSerializer implements ISerializer {
 		JSONObject toReturn = new JSONObject(config);
 		toReturn.put(WorkSheetSerializationCostants.CATEGORY, SerializationManager.serialize(chart.getCategory(), "application/json"));
 
-		JSONArray series = new JSONArray();
-		List<Measure> measures = chart.getSeries();
-		for (int i = 0; i < measures.size(); i++) {
-			series.put(SerializationManager.serialize(measures.get(i), "application/json"));
+		JSONArray seriesJSON = new JSONArray();
+		List<Serie> series = chart.getSeries();
+		SerieJSONSerializer serialier = new SerieJSONSerializer();
+		for (int i = 0; i < series.size(); i++) {
+			seriesJSON.put(serialier.serialize(series.get(i)));
 		}
-		toReturn.put(WorkSheetSerializationCostants.SERIES, series);
+		toReturn.put(WorkSheetSerializationCostants.SERIES, seriesJSON);
 		
 		return toReturn;
 	}
