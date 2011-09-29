@@ -103,6 +103,7 @@ end DOCTYPE declaration --%>
 
     	Sbi.config = {}; 
     	
+    	Sbi.config.worksheetVersion = <%= WorkSheetDefinition.CURRENT_VERSION %>;
 		Sbi.config.queryLimit = {};
 		Sbi.config.queryLimit.maxRecords = <%= resultLimit != null ? "" + resultLimit.intValue() : "undefined" %>;
 		Sbi.config.queryLimit.isBlocking = <%= isMaxResultLimitBlocking %>;
