@@ -255,9 +255,12 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     	if(this.grid.getColumnModel().getColumnById('1').type == 'date'){
     		valueToAdd = valueToAdd.format('d/m/Y H:i:s');
     	}
+    	else{
+        	valueToAdd+='';
+   		
+    	}
     	
     	// it the new value is not contained into the values' array, it is added
-    	valueToAdd+='';
     	if (this.xselection['Values'].indexOf(valueToAdd) === -1) {
     		this.xselection['Values'].push(valueToAdd);
     	}
@@ -269,7 +272,9 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
     			valueToRemove = valueToRemove.format('d/m/Y H:i:s');
     		}
-    		valueToRemove+='';
+    		else{
+    			valueToRemove+='';
+    		}
     		this.xselection['Values'].remove(valueToRemove);
     	}    	
     }
@@ -279,9 +284,12 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
 			var selectedRecs = [];
 			this.grid.getStore().each(function(rec) {
 				var valueToLookFor = rec.data[this.valueField];
-				valueToLookFor+='';
+				
 	    		if (this.grid.getColumnModel().getColumnById('1').type == 'date') {
 	    			valueToLookFor = valueToLookFor.format('d/m/Y H:i:s');
+	    		}
+	    		else{
+	    			valueToLookFor+='';	
 	    		}
 				if (this.xselection['Values'].indexOf(valueToLookFor) !== -1){
 		        	selectedRecs.push(rec);	        	
