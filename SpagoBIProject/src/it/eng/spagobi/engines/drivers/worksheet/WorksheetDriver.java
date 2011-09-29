@@ -57,7 +57,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
     public final static String PARAM_NEW_SESSION = "NEW_SESSION";
     public final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
     public final static String QUERY = "QUERY";
-    public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
+    public final static String PARAM_ACTION_NAME = "WORKSHEET_WITH_DATASET_ENGINE_START_ACTION";
     public final static String FORM_VALUES = "FORM_VALUES";
 		
 	/**
