@@ -21,9 +21,12 @@
 package it.eng.spagobi.engines.worksheet.services.designer;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.qbe.services.core.GetValuesForQbeFilterLookup;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.bo.Attribute;
+import it.eng.spagobi.engines.worksheet.bo.Sheet;
+import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
@@ -38,6 +41,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +63,8 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 	public static final String ENTITY_ID = "ENTITY_ID";
 	public static final String LIMIT = "limit";
 	public static final String START = "start";
-	public static final String FILTERS = GetValuesForQbeFilterLookup.FILTERS;
+	public static final String FILTERS = "FILTERS";
+	public static final String SHEET = "sheetName";
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetValuesForCrosstabAttributesAction.class);
@@ -79,16 +84,26 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 		
 			super.service(request, response);
 			
-			totalTimeMonitor = MonitorFactory.start("QbeEngine.getValuesForCrosstabAttributesAction.totalTime");
+			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.getValuesForCrosstabAttributesAction.totalTime");
 			
 			String fieldName = getAttributeAsString( ENTITY_ID );
 			Assert.assertNotNull(fieldName, "Parameter [" + ENTITY_ID + "] cannot be null in oder to execute " + this.getActionName() + " service");
 			String alias = getAttributeAsString( ALIAS );
-			
+			logger.debug("Parameter [" + ALIAS + "] is equals to [" + alias + "]");
 			Integer start = getAttributeAsInteger( START );	
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			Integer limit = getAttributeAsInteger( LIMIT );
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+			String sheetName = this.getAttributeAsString(SHEET);
+			logger.debug("Parameter [" + SHEET + "] is equals to [" + sheetName + "]");
+			
+			// update worksheet definition 
+			JSONObject worksheetDefinitionJSON = getAttributeAsJSONObject(QbeEngineStaticVariables.WORKSHEET_DEFINITION_LOWER );
+			if (worksheetDefinitionJSON != null) {
+				logger.debug("Updating worksheet definition:");
+				logger.debug(worksheetDefinitionJSON);
+				updateWorksheetDefinition(worksheetDefinitionJSON);
+			}
 			
 			IDataStoreFilter filter = getDataStoreFilterIfAny();
 			
@@ -99,7 +114,15 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
 				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
-				Map<String, List<String>> filters = getFiltersOnDomainValues();
+//				Map<String, List<String>> filters = getFiltersOnDomainValues();
+				WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+				List<Attribute> globalFilters = workSheetDefinition.getGlobalFilters();
+				List<Attribute> sheetFilters = new ArrayList<Attribute>();
+				if (sheetName != null) {
+					Sheet aSheet = workSheetDefinition.getSheet(sheetName);
+					sheetFilters = aSheet.getFiltersOnDomainValues();
+				}
+				Map<String, List<String>> filters = WorkSheetDefinition.mergeDomainValuesFilters(globalFilters, sheetFilters);
 				filteringBehaviour.setFilters(filters);
 			}
 			
@@ -123,16 +146,6 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			metadataJSON.put("displayField", name);
 			metadataJSON.put("descriptionField", name);
 			
-//			// TODO manage smart filter
-//			//build the query filtered for the smart filter
-//			jsonFormState = loadSmartFilterFormValues();
-//			logger.debug("Form state retrieved as a string: " + jsonFormState);
-//			if ( jsonFormState != null ) {
-//				query = getFilteredQuery(query, jsonFormState);
-//			}
-			
-
-			
 			try {
 				writeBackToClient( new JSONSuccess(gridDataFeed) );
 			} catch (IOException e) {
@@ -141,7 +154,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			}
 			
 		} catch(Throwable t) {
-			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
+			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
 			errorHitsMonitor.stop();
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
@@ -159,33 +172,12 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			String value = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String operator = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 			String type = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
+			logger.debug("Filter on data store: field = [" + field + "], value = [" + value + "], operator = [" + operator + "], type = [" + type + "]");
 			filter = new DataStoreFilter(field, value, operator, type);
+		} else {
+			logger.debug("No filter on data store found");
 		}
 		return filter;
 	}
-
-//	protected JSONObject loadSmartFilterFormValues() throws JSONException{
-//		String jsonEncodedFormState = getAttributeAsString( ExecuteMasterQueryAction.FORM_STATE );
-//		if(jsonEncodedFormState!=null){
-//			return new JSONObject(jsonEncodedFormState);
-//		}
-//		return null;
-//	}
-	
-
-//	protected String buildSqlStatement(Query baseQuery, String sqlQuery) throws JSONException{
-//		logger.debug("IN");
-//		StringBuffer buffer = new StringBuffer();
-//		List baseQuerySelectedFields = SqlUtils.getSelectFields(sqlQuery);
-//		String alias = getAttributeAsString( ALIAS );
-//		Assert.assertNotNull(alias, "Parameter [" + ALIAS + "] cannot be null in oder to execute " + this.getActionName() + " service");
-//		logger.debug("Qbe statement alias = [" + alias + "]");
-//		alias = CrosstabQueryCreator.getSQLAlias(alias, baseQuery, baseQuerySelectedFields);
-//		logger.debug("SQL alias = [" + alias + "]");
-//		buffer.append("SELECT DISTINCT " + alias + " FROM TEMPORARY_TABLE ");
-//		String toReturn = buffer.toString();
-//		logger.debug("OUT: returning " + toReturn);
-//		return toReturn;
-//	}
 	
 }

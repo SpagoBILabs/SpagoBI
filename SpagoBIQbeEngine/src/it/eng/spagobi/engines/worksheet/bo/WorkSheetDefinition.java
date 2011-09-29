@@ -221,7 +221,7 @@ public class WorkSheetDefinition extends EngineAnalysisState {
 	}
 	
 
-	private Map<String, List<String>> mergeDomainValuesFilters(
+	public static Map<String, List<String>> mergeDomainValuesFilters(
 			List<Attribute> globalFilters, List<Attribute> sheetFilters) {
 		Iterator<Attribute> globalFiltersIt = globalFilters.iterator();
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();

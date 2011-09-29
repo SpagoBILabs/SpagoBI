@@ -144,7 +144,7 @@ end DOCTYPE declaration --%>
 	    
 	    
 	    
-      	Sbi.formviewer.formEnginePanel = null; // global variable, useful in order to recover information about the form everywhere
+      	Sbi.formviewer.formEnginePanel = null;
 	    
         Ext.onReady(function() {
         	Ext.QuickTips.init();

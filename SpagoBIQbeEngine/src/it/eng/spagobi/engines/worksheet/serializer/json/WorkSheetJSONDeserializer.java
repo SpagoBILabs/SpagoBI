@@ -139,7 +139,9 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationCostants.POSITION).toUpperCase());
 		}
 		
+		logger.debug("Deserializing sheet " + name);
 		SheetContent content = deserializeContent(sheetJSON);
+		logger.debug("Sheet " + name + " deserialized successfully");
 		
 		return new Sheet(name, layout, header, filters, position, content, footer);
 	}
@@ -147,6 +149,10 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 	private SheetContent deserializeContent(JSONObject sheetJSON) throws Exception {
 		SheetContent toReturn = null;
 		JSONObject content = sheetJSON.optJSONObject(WorkSheetSerializationCostants.CONTENT);
+		if (content == null) {
+			logger.warn("Sheet content not found for sheet [" + sheetJSON.getString(WorkSheetSerializationCostants.NAME) + "].");
+			return null;
+		}
 		String designer = content.getString(WorkSheetSerializationCostants.DESIGNER);
 		if (WorkSheetSerializationCostants.DESIGNER_PIVOT.equals(designer)) {
 			toReturn = (CrosstabDefinition) SerializationManager.deserialize(content.getJSONObject(WorkSheetSerializationCostants.CROSSTABDEFINITION), "application/json", CrosstabDefinition.class);

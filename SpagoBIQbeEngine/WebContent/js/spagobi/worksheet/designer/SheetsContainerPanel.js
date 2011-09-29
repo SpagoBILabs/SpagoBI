@@ -124,8 +124,8 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 		// propagate event
 		sheet.on(
 			'attributeDblClick' , 
-			function (thePanel, attribute) { 
-				this.fireEvent("attributeDblClick", this, attribute); 
+			function (theSheet, attribute) { 
+				this.fireEvent("attributeDblClick", this, attribute, theSheet); 
 			}, 
 			this
 		);
