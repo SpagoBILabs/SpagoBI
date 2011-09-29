@@ -57,13 +57,13 @@ public class TemporaryTableManager {
     
     private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
     
-	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
-	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
-	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
-	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
-	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
-	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+	public static final String DIALECT_MYSQL = "MySQL";
+	public static final String DIALECT_POSTGRES = "PostgreSQL";
+	public static final String DIALECT_ORACLE = "OracleDialect";
+	public static final String DIALECT_HSQL = "HSQL";
+	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "SQLServer";
+	public static final String DIALECT_INGRES = "Ingres";
     
     /**
      * Contains the definition of the existing temporary tables.
@@ -427,24 +427,27 @@ public class TemporaryTableManager {
 	
 	public static String getAliasDelimiter(IDataSource dataSource) {
 		String dialect = dataSource.getHibDialectClass();
+		if(dialect ==null){
+			dialect = dataSource.getHibDialectName();
+		}
 		if(dialect != null){
-			if (dialect.equalsIgnoreCase(DIALECT_MYSQL)) {
+			if (dialect.contains(DIALECT_MYSQL)) {
 				return "`";
-			} else if (dialect.equalsIgnoreCase(DIALECT_HSQL)) {
+			} else if (dialect.contains(DIALECT_HSQL)) {
 				return "\"";
-			} else if (dialect.equalsIgnoreCase(DIALECT_INGRES)) {
+			} else if (dialect.contains(DIALECT_INGRES)) {
 				return "\""; // TODO check it!!!!
-			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE)) {
+			} else if (dialect.contains(DIALECT_ORACLE)) {
 				return "\"";
-			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
+			} else if (dialect.contains(DIALECT_ORACLE9i10g)) {
 				return "\"";
-			} else if (dialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
+			} else if (dialect.contains(DIALECT_POSTGRES)) {
 				return "\"";
-			} else if (dialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
+			} else if (dialect.contains(DIALECT_SQLSERVER)) {
 				return ""; // TODO check it!!!!
 			} 
 		}
-		throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
+		return "";
 	}
 	
 }
