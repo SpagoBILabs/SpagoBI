@@ -67,6 +67,16 @@ public class SqlUtils {
 	}
 	
 	public static List getSelectFields(String query) {
+		return getSelectFields(query, false);
+	}
+	
+	/**
+	 * Get the select fields of a query
+	 * @param query
+	 * @param withAliasSeparator if true remove the quotes at the beginning and end of the alias 
+	 * @return a list of String[2] arrays. Where array[0] is the name of the field, array[1] is the alias
+	 */
+	public static List getSelectFields(String query, boolean withAliasSeparator) {
 		List selectFields;
 		String selectClause;
 		
@@ -88,14 +98,22 @@ public class SqlUtils {
 					Matcher m = p.matcher(fields[i]);
 					while(m.find()) {
 						alias = m.group();
-						alias = alias.trim().substring(1, alias.length()-1);
+						if(withAliasSeparator){
+							alias = alias.trim();
+						}else{
+							alias.trim().substring(1, alias.length()-1);
+						}
 					}
 				} else if(fields[i].endsWith("\"")) {
 					Pattern p = Pattern.compile("\"[^\"]*\"");
 					Matcher m = p.matcher(fields[i]);
 					while(m.find()) {
 						alias = m.group();
-						alias = alias.trim().substring(1, alias.length()-1);
+						if(withAliasSeparator){
+							alias = alias.trim();
+						}else{
+							alias.trim().substring(1, alias.length()-1);
+						}
 					}
 				} else {
 					alias = tokens[tokens.length-1];

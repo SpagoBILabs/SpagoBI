@@ -57,6 +57,14 @@ public class TemporaryTableManager {
     
     private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
     
+	public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQLInnoDBDialect";
+	public static final String DIALECT_POSTGRES = "org.hibernate.dialect.PostgreSQLDialect";
+	public static final String DIALECT_ORACLE = "org.hibernate.dialect.OracleDialect";
+	public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
+	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
+	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+    
     /**
      * Contains the definition of the existing temporary tables.
      * The key is created by a fixed prefix and a suffix that depends on user profile (1 temporary table for each user).
@@ -182,7 +190,7 @@ public class TemporaryTableManager {
 			if (resultSet.first()) {
 				tableDescriptor = new DataSetTableDescriptor();
 				tableDescriptor.setTableName(tableName);
-				readColumns(resultSet, fields, tableDescriptor);
+				readColumns(resultSet, fields, tableDescriptor, getAliasDelimiter(dataSource));
 			} else {
 				throw new SpagoBIRuntimeException("Cannot find metadata for table [" + tableName + "]");
 			}
@@ -210,11 +218,11 @@ public class TemporaryTableManager {
 	}
 
 	private static void readColumns(ResultSet resultSet, List<String> fields,
-			DataSetTableDescriptor tableDescriptor) throws SQLException {
+			DataSetTableDescriptor tableDescriptor, String delimiter) throws SQLException {
 		int index = 0;
 		do {
 			String fieldName = fields.get(index);
-			String columnName = resultSet.getString("COLUMN_NAME");
+			String columnName = delimiter+resultSet.getString("COLUMN_NAME")+delimiter;
 			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
 			tableDescriptor.addField(fieldName, columnName, type);
 			index++;
@@ -415,6 +423,28 @@ public class TemporaryTableManager {
 	
 	public static IDataSetTableDescriptor getLastDataSetTableDescriptor(String tableName) {
 		return tableDescriptors.get(tableName);
+	}
+	
+	public static String getAliasDelimiter(IDataSource dataSource) {
+		String dialect = dataSource.getHibDialectClass();
+		if(dialect != null){
+			if (dialect.equalsIgnoreCase(DIALECT_MYSQL)) {
+				return "`";
+			} else if (dialect.equalsIgnoreCase(DIALECT_HSQL)) {
+				return "\"";
+			} else if (dialect.equalsIgnoreCase(DIALECT_INGRES)) {
+				return "\""; // TODO check it!!!!
+			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE)) {
+				return "\"";
+			} else if (dialect.equalsIgnoreCase(DIALECT_ORACLE9i10g)) {
+				return "\"";
+			} else if (dialect.equalsIgnoreCase(DIALECT_POSTGRES)) {
+				return "\"";
+			} else if (dialect.equalsIgnoreCase(DIALECT_SQLSERVER)) {
+				return ""; // TODO check it!!!!
+			} 
+		}
+		throw new SpagoBIRuntimeException("Cannot determine alias delimiter since the database dialect is not set!!");
 	}
 	
 }
