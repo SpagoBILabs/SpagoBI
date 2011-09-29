@@ -26,6 +26,7 @@ import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.Measure;
 import it.eng.spagobi.engines.worksheet.serializer.json.MeasureJSONSerializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -56,6 +57,9 @@ public class MeasureSerializerFactory implements ISerializerFactory{
 
 	
 	public ISerializer getSerializer(String mimeType) {
+		if (mimeType != null && !mimeType.equalsIgnoreCase("application/json")) {
+			throw new SpagoBIRuntimeException("Serializer for mimeType " + mimeType + " not implemented");
+		}
 		return new MeasureJSONSerializer();
 	}
 

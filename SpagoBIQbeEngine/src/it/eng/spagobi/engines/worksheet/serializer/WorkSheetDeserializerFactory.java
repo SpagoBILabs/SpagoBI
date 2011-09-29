@@ -25,6 +25,7 @@ import it.eng.qbe.serializer.IDeserializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetJSONDeserializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -54,6 +55,9 @@ public class WorkSheetDeserializerFactory implements IDeserializerFactory {
 	private WorkSheetDeserializerFactory() {}
 
 	public IDeserializer getDeserializer(String mimeType) {
+		if (mimeType != null && !mimeType.equalsIgnoreCase("application/json")) {
+			throw new SpagoBIRuntimeException("Deserializer for mimeType " + mimeType + " not implemented");
+		}
 		return new WorkSheetJSONDeserializer();
 	}
 

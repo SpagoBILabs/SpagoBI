@@ -22,7 +22,7 @@ package it.eng.spagobi.engines.worksheet.widgets;
 
 import it.eng.spagobi.engines.worksheet.bo.Attribute;
 import it.eng.spagobi.engines.worksheet.bo.Field;
-import it.eng.spagobi.engines.worksheet.bo.Measure;
+import it.eng.spagobi.engines.worksheet.bo.Serie;
 import it.eng.spagobi.engines.worksheet.bo.SheetContent;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import org.json.JSONObject;
 public class ChartDefinition extends SheetContent {
 	
 	private Attribute category = null;
-	private List<Measure> series = null;
+	private List<Serie> series = null;
 	private JSONObject config = null;
 	
 	public ChartDefinition() {}
@@ -50,11 +50,11 @@ public class ChartDefinition extends SheetContent {
 		this.category = category;
 	}
 
-	public List<Measure> getSeries() {
+	public List<Serie> getSeries() {
 		return series;
 	}
 
-	public void setSeries(List<Measure> series) {
+	public void setSeries(List<Serie> series) {
 		this.series = series;
 	}
 

@@ -33,7 +33,9 @@ import org.apache.log4j.Logger;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class WorksheetStartEditAction extends AbstractQbeEngineAction {	
-	
+
+	private static final long serialVersionUID = 6272194014941617286L;
+
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	
 	/** Logger component. */

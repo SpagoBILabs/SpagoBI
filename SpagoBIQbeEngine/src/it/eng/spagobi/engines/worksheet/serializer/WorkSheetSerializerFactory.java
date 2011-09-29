@@ -25,12 +25,13 @@ import it.eng.qbe.serializer.ISerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetJSONSerializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class WorkSheetSerializerFactory implements ISerializerFactory{
+public class WorkSheetSerializerFactory implements ISerializerFactory {
 
 	static WorkSheetSerializerFactory instance;
 	
@@ -55,6 +56,9 @@ public class WorkSheetSerializerFactory implements ISerializerFactory{
 
 	
 	public ISerializer getSerializer(String mimeType) {
+		if (mimeType != null && !mimeType.equalsIgnoreCase("application/json")) {
+			throw new SpagoBIRuntimeException("Serializer for mimeType " + mimeType + " not implemented");
+		}
 		return new WorkSheetJSONSerializer();
 	}
 

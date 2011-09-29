@@ -32,5 +32,10 @@ public class FieldsSerializationConstants {
 	public static final String NATURE = "nature";
 	public static final String VALUES = "values";
 	public static final String FUNCTION = "funct";
+	public static final String SERIENAME = "seriename";
+	public static final String COLOR = "color";
+	public static final String SHOWCOMMA = "showcomma";
+	public static final String PRECISION = "precision";
+	public static final String SUFFIX = "suffix";
 	
 }
