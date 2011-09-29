@@ -8,6 +8,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.functionalities.temporarytable.DatasetTempTable;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.util.List;
@@ -48,12 +49,50 @@ public abstract class AbstractCustomDataSet extends AbstractDataSet implements I
 
 	// *********** Abstract methods **************
 
-	
-	 // no implement
+
+	// no implement
 	public abstract IDataStore test();
 	public abstract String getSignature();
 	public abstract IDataStore getDomainValues(String attributeName, Integer start, Integer limit, IDataStoreFilter filter);
 	public abstract Map<String, List<String>> getDomainDescriptions(Map<String, List<String>> codes); 
 	public abstract IDataSetTableDescriptor persist(String tableName, Connection connection);
+
+
+
+	public Map getUserProfileAttributes() {
+		logger.error("This method is not implemented. It should not be invoked");
+		return null;
+	}
+
+	public void setUserProfileAttributes(Map attributes) {
+		logger.error("This method is not implemented. It should not be invoked");
+
+	}
+
+	public IDataStore getDataStore() {
+		logger.error("This method is not implemented. It should not be invoked");
+		throw new SpagoBIRuntimeException("This method is not implemented. It should not be invoked");
+	}
+
+	public Object getQuery() {
+		logger.error("This method is not implemented. It should not be invoked");
+		return null;
+	}
+
+	public void setQuery(Object query) {
+		logger.error("This method is not implemented. It should not be invoked");
+
+	}
+
+	public void setAbortOnOverflow(boolean abortOnOverflow) {
+		logger.error("This method is not implemented. It should not be invoked");
+
+	}
+
+	public void addBinding(String bindingName, Object bindingValue) {
+		logger.error("This method is not implemented. It should not be invoked");
+
+	}
+
 
 }
