@@ -47,10 +47,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	Locale locale;
 	String isFromCross;
 	boolean isPowerUser;
-	Integer resultLimit;
-	boolean isMaxResultLimitBlocking;
-	boolean isQueryValidationEnabled;
-	boolean isQueryValidationBlocking;
+	Integer resultLimit =10;
+	boolean isMaxResultLimitBlocking = false;
+	boolean isQueryValidationEnabled = false;
+	boolean isQueryValidationBlocking = false;
 	
 	ResponseContainer responseContainer = ResponseContainerAccess.getResponseContainer(request);
 	SourceBean serviceResponse = responseContainer.getServiceResponse();
@@ -59,12 +59,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	locale = (Locale) worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
 	QbeEngineConfig qbeEngineConfig = QbeEngineConfig.getInstance();
+	if(qbeEngineConfig!=null){
+		// settings for max records number limit
+		resultLimit = qbeEngineConfig.getResultLimit();
+		isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
+		isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
+		isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
+	}
 	
-	// settings for max records number limit
-	resultLimit = qbeEngineConfig.getResultLimit();
-	isMaxResultLimitBlocking = qbeEngineConfig.isMaxResultLimitBlocking();
-	isQueryValidationEnabled = qbeEngineConfig.isQueryValidationEnabled();
-	isQueryValidationBlocking = qbeEngineConfig.isQueryValidationBlocking();
+
 %>
 
 <%-- ---------------------------------------------------------------------- --%>

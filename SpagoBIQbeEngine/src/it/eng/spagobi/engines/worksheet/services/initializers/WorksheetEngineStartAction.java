@@ -93,6 +93,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 					worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
 				}else{
 					worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
+					worksheetEngineInstance.setDataSet(getDataSet());
 				}
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
