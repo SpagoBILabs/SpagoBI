@@ -20,10 +20,12 @@
  **/
 package it.eng.spagobi.engines.worksheet.template;
 
+import java.util.Map;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public interface IWorksheetTemplateParser {
-	WorksheetTemplate parse(Object template);
+	WorksheetTemplate parse(Object template,  Map env);
 }

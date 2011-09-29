@@ -50,7 +50,12 @@ public class WorksheetTemplateParser {
 	}
 	
 	
-	public WorksheetTemplate parse(Object template) {
+	public WorksheetTemplate parse(Object template,  Map env) {
+		
+		if(template == null){
+			return new WorksheetTemplate();
+		}
+		
 		WorksheetTemplate worksheetTemplate;
 		IWorksheetTemplateParser parser;
 		
@@ -60,7 +65,7 @@ public class WorksheetTemplateParser {
 			throw new SpagoBIEngineRuntimeException("Impossible to parse template of type [" + template.getClass().getName() + "]");
 		} else {
 			parser = parsers.get(template.getClass().getName());
-			worksheetTemplate = parser.parse(template);
+			worksheetTemplate = parser.parse(template, env);
 		}
 		return worksheetTemplate;
 	}

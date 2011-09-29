@@ -41,7 +41,6 @@ import org.apache.log4j.Logger;
  */
 public class WorksheetEngine {
 	
-	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeEngine.class);
 
@@ -50,14 +49,8 @@ public class WorksheetEngine {
 		initDeserializers();
 		initSerializers();
 		logger.debug("IN");
-		if(object instanceof IDataSet){
-			worksheetEngineInstance = new WorksheetEngineInstance((IDataSet)object, env, true);
-		}else{
-			worksheetEngineInstance = new WorksheetEngineInstance(object, env);
-		}
-		
+		worksheetEngineInstance = new WorksheetEngineInstance(object, env);
 		logger.debug("OUT");
-
 		return worksheetEngineInstance;
 	}
 	

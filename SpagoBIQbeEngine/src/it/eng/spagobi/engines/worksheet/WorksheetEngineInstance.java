@@ -39,78 +39,74 @@ import org.apache.log4j.Logger;
  *
  */
 public class WorksheetEngineInstance extends AbstractEngineInstance {
-		
-		IDataSource dataSource;
-		IDataSet dataSet;
-		WorksheetTemplate template;
 
-		/** Logger component. */
-	    public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
-		
+	IDataSource dataSource;
+	IDataSet dataSet;
+	WorksheetTemplate template;
 
-		protected WorksheetEngineInstance(Object template, Map env) throws WorksheetEngineException {
-			this( WorksheetTemplateParser.getInstance().parse(template), env );
-		}
-		
-		protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
-			super( env );
-			logger.debug("IN");
-			this.template = template;
-			logger.debug("OUT");
-		}
-		
-		protected WorksheetEngineInstance(IDataSet ds, Map env, Object y) throws WorksheetEngineException {
-			super( env );
-			template = new WorksheetTemplate();
-			logger.debug("IN");
-			this.dataSet = ds;
-			logger.debug("OUT");
-		}
+	/** Logger component. */
+	public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
 
-		public void validate() throws QbeEngineException {
-			return;
-		}
 
-		public WorksheetTemplate getTemplate() {
-			return template;
-		}
+	protected WorksheetEngineInstance(Object template, Map env) throws WorksheetEngineException {
+		this( WorksheetTemplateParser.getInstance().parse(template, env), env );
+	}
 
-		/* (non-Javadoc)
-		 * @see it.eng.spagobi.utilities.engines.IEngineInstance#getAnalysisState()
-		 */
-		@Override
-		public IEngineAnalysisState getAnalysisState() {
-			return this.getTemplate().getWorkSheetDefinition();
-		}
+	protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
+		super( env );
+		logger.debug("IN");
+		this.template = template;
+		logger.debug("OUT");
+	}
 
-		/* (non-Javadoc)
-		 * @see it.eng.spagobi.utilities.engines.IEngineInstance#setAnalysisState(it.eng.spagobi.utilities.engines.IEngineAnalysisState)
-		 */
-		@Override
-		public void setAnalysisState(IEngineAnalysisState analysisState) {
-			this.getTemplate().setWorkSheetDefinition((WorkSheetDefinition)analysisState);
-		}
+	public void validate() throws QbeEngineException {
+		return;
+	}
 
-		public IDataSet getDataSet() {
-			if(dataSet!=null){
-				return dataSet; 
-			}
-			if(template!=null){
-				return template.getDataSet(); 
-			}
-			return null;
-		}
+	public WorksheetTemplate getTemplate() {
+		return template;
+	}
 
-		public void setDataSet(IDataSet dataSet) {
-			this.dataSet = dataSet; 
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.engines.IEngineInstance#getAnalysisState()
+	 */
+	@Override
+	public IEngineAnalysisState getAnalysisState() {
+		return this.getTemplate().getWorkSheetDefinition();
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.engines.IEngineInstance#setAnalysisState(it.eng.spagobi.utilities.engines.IEngineAnalysisState)
+	 */
+	@Override
+	public void setAnalysisState(IEngineAnalysisState analysisState) {
+		this.getTemplate().setWorkSheetDefinition((WorkSheetDefinition)analysisState);
+	}
+
+	public IDataSet getDataSet() {
+		if(dataSet!=null){
+			return dataSet; 
 		}
-		
-		public IDataSource getDataSource() {
-			return dataSource;
+		if(template!=null){
+			return template.getDataSet(); 
 		}
-		
-		public void setDataSource(IDataSource dataSource) {
-			this.dataSource = dataSource;
-		}
+		return null;
+	}
+
+	public void setDataSet(IDataSet dataSet) {
+		this.dataSet = dataSet; 
+	}
+
+	public IDataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 	
+	public QbeEngineInstance getQbeEngineInstance(){
+		return template.getQbEngineInstance();
+	}
+
 }
