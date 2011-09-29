@@ -21,6 +21,14 @@
 package it.eng.spagobi.engines.worksheet;
 
 import it.eng.spagobi.engines.qbe.QbeEngine;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabDeserializerFactory;
+import it.eng.spagobi.engines.qbe.crosstable.serializer.CrosstabSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.AttributeDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.AttributeSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.MeasureDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.MeasureSerializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.WorkSheetDeserializerFactory;
+import it.eng.spagobi.engines.worksheet.serializer.WorkSheetSerializerFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 import java.util.Map;
@@ -39,6 +47,8 @@ public class WorksheetEngine {
 
 	public static WorksheetEngineInstance createInstance(Object object, Map env) throws WorksheetEngineException {
 		WorksheetEngineInstance worksheetEngineInstance = null;
+		initDeserializers();
+		initSerializers();
 		logger.debug("IN");
 		if(object instanceof IDataSet){
 			worksheetEngineInstance = new WorksheetEngineInstance((IDataSet)object, env, true);
@@ -47,7 +57,23 @@ public class WorksheetEngine {
 		}
 		
 		logger.debug("OUT");
+
 		return worksheetEngineInstance;
+	}
+	
+	private static void initDeserializers() {
+    	WorkSheetDeserializerFactory.getInstance();
+    	CrosstabDeserializerFactory.getInstance();
+    	AttributeDeserializerFactory.getInstance();
+    	MeasureDeserializerFactory.getInstance();
+	}
+
+
+	private static void initSerializers() {
+    	WorkSheetSerializerFactory.getInstance();
+    	CrosstabSerializerFactory.getInstance();
+    	AttributeSerializerFactory.getInstance();
+    	MeasureSerializerFactory.getInstance();
 	}
 
 }
