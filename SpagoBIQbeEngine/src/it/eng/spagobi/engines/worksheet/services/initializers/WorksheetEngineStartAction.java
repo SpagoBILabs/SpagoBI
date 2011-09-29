@@ -94,6 +94,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 				}else{
 					worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
 					worksheetEngineInstance.setDataSet(getDataSet());
+					worksheetEngineInstance.setDataSource(getDataSource());
 				}
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
@@ -141,7 +142,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			locale = (Locale)worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 			
 			setAttributeInSession( WorksheetEngineInstance.class.getName() , worksheetEngineInstance );	
-			setAttribute(EngineConstants.ENGINE_INSTANCE, worksheetEngineInstance);
+			setAttribute(WorksheetEngineInstance.class.getName(), worksheetEngineInstance);
 			
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
