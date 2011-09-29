@@ -24,13 +24,14 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.presentation.DynamicPublisher;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
 import org.apache.log4j.Logger;
 
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @authors Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class WorksheetStartEditAction extends AbstractQbeEngineAction {	
 
@@ -49,6 +50,9 @@ public class WorksheetStartEditAction extends AbstractQbeEngineAction {
     	try {
 			super.service(serviceRequest, serviceResponse);
 			
+			WorksheetEngineInstance worksheetEngineInstance = (WorksheetEngineInstance) getAttributeFromSession(WorksheetEngineInstance.class.getName());
+			setAttribute(WorksheetEngineInstance.class.getName(), worksheetEngineInstance);
+					
 			qbeEngineInstance = getEngineInstance();
 			
 			setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
@@ -56,7 +60,7 @@ public class WorksheetStartEditAction extends AbstractQbeEngineAction {
 			//publisher for the qbe edit
 			String publisherName = "WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER";
 			
-			if (qbeEngineInstance.getFormState()!=null) {
+			if (qbeEngineInstance!= null && qbeEngineInstance.getFormState()!=null) {
 				//publisher for the smart filter edit
 				publisherName = "WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER";
 				serviceRequest.setAttribute("MODALITY", "WORKSHEET_EDIT");

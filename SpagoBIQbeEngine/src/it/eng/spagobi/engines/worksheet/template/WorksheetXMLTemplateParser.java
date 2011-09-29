@@ -20,13 +20,19 @@
  **/
 package it.eng.spagobi.engines.worksheet.template;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.qbe.QbeEngine;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -40,18 +46,19 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WorksheetXMLTemplateParser.class);
-
+	public static final String QBE_ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.worksheet.template.IWorksheetTemplateParser#parse(java.lang.Object)
 	 */
 	@Override
-	public WorksheetTemplate parse(Object template) {
+	public WorksheetTemplate parse(Object template,  Map env) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
-		return parse((SourceBean)template);
+		return parse((SourceBean)template,  env);
 	}
 
-	private WorksheetTemplate parse(SourceBean template) {
+	private WorksheetTemplate parse(SourceBean template, Map env) {
 
 		WorksheetTemplate worksheetTemplate = null;
 		String templateName;
@@ -63,6 +70,11 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			worksheetTemplate = new WorksheetTemplate();
 
 			templateName = template.getName();
+			
+			if(templateName.equals("QBE")){
+				worksheetTemplate.setQbEngineInstance(startQbeEngine(template, env));
+			}
+
 			logger.debug("Parsing template [" + templateName + "] ...");
 			Assert.assertNotNull(templateName, "Root tag cannot be not be null");
 
@@ -109,5 +121,15 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			throw serviceException;
 		}
 	}
+	
+    
+    public QbeEngineInstance startQbeEngine(SourceBean template,  Map env) throws Exception{
+     	logger.debug("Creating engine instance ...");
+		QbeEngineInstance qbeEngineInstance = QbeEngine.createInstance(template, env);
+		Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
+		qbeEngineInstance.setActiveQuery(query);
+		qbeEngineInstance.getEnv().put("TEMPLATE", template);
+		return qbeEngineInstance;
+    }
 
 }

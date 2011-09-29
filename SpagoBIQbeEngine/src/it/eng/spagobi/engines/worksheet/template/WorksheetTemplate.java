@@ -20,6 +20,7 @@
  **/
 package it.eng.spagobi.engines.worksheet.template;
 
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
@@ -31,6 +32,7 @@ public class WorksheetTemplate {
 
 	IDataSet dataSet;
 	WorkSheetDefinition workSheetDefinition;
+	QbeEngineInstance qbEngineInstance;
 	
 	public IDataSet getDataSet() {
 		return dataSet;
@@ -44,5 +46,12 @@ public class WorksheetTemplate {
 	public void setWorkSheetDefinition(WorkSheetDefinition workSheetDefinition) {
 		this.workSheetDefinition = workSheetDefinition;
 	}
-
+	public QbeEngineInstance getQbEngineInstance() {
+		return qbEngineInstance;
+	}
+	public void setQbEngineInstance(QbeEngineInstance qbEngineInstance) {
+		this.qbEngineInstance = qbEngineInstance;
+	}
+	
+	
 }

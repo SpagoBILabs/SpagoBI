@@ -52,6 +52,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+	public static final String QBE_ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	
 	
 	
@@ -86,16 +87,26 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
+				QbeEngineInstance qbeEngineInstance=worksheetEngineInstance.getQbeEngineInstance();
+				if(qbeEngineInstance==null){
+					qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+					if(qbeEngineInstance!=null){
+						goToWorksheetPreentation = false;
+					}
+				}else{
+					setAttributeInSession(QBE_ENGINE_INSTANCE, qbeEngineInstance);
+				}
 				if(qbeEngineInstance!=null){
-					goToWorksheetPreentation = false;
 					AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
 					ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
-					ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());
-					worksheetEngineInstance = WorksheetEngine.createInstance(ds, getEnv() );
+					if(ds.getUserProfileAttributes()!=null){
+						ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());	
+					}
+					worksheetEngineInstance.setDataSet(ds);
 					worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
+					setAttribute(QBE_ENGINE_INSTANCE, qbeEngineInstance);
 				}else{
-					worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
 					worksheetEngineInstance.setDataSet(getDataSet());
 					worksheetEngineInstance.setDataSource(getDataSource());
 				}
