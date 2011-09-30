@@ -46,10 +46,10 @@ public class WorksheetTemplate {
 	public void setWorkSheetDefinition(WorkSheetDefinition workSheetDefinition) {
 		this.workSheetDefinition = workSheetDefinition;
 	}
-	public QbeEngineInstance getQbEngineInstance() {
+	public QbeEngineInstance getQbeEngineInstance() {
 		return qbEngineInstance;
 	}
-	public void setQbEngineInstance(QbeEngineInstance qbEngineInstance) {
+	public void setQbeEngineInstance(QbeEngineInstance qbEngineInstance) {
 		this.qbEngineInstance = qbEngineInstance;
 	}
 	
