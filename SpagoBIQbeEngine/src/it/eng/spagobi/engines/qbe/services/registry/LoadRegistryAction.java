@@ -25,7 +25,6 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
@@ -50,18 +49,11 @@ import org.json.JSONObject;
 public class LoadRegistryAction extends ExecuteQueryAction {
 	
 	private static final long serialVersionUID = -642121076148276452L;
-	private String ID_COLUMN = "ID_COLUMN";
 
 	@Override
 	public Query getQuery() {
 		Query query = buildQuery();
 		return query;
-	}
-	
-	@Override
-	protected IStatement getStatement(Query query){
-		IStatement statement =  getDataSource().createStatement( query );
-		return statement;
 	}
 	
 	@Override

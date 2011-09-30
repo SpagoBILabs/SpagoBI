@@ -26,6 +26,7 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -38,6 +39,7 @@ import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -62,11 +64,12 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	String activeQueryId;
 	QbeTemplate template;
 	FormState formState;
+	IDataSet dataSet;
 	WorkSheetDefinition workSheetDefinition;
 
 	// executable version of the query. cached here for performance reasons (i.e. avoid query re-compilation 
 	// over result-set paging)
-	IStatement statment;
+	IStatement statement;
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(QbeEngineInstance.class);
@@ -297,7 +300,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 	public void setActiveQuery(Query query) {
 		setActiveQueryId(query.getId());
-		this.statment = getDataSource().createStatement( query );
+		this.statement = getDataSource().createStatement( query );
 	}
 	
 	public void setActiveQuery(String queryId) {
@@ -306,7 +309,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		query = getQueryCatalogue().getQuery( queryId );
 		if(query != null) {
 			setActiveQueryId(query.getId());
-			this.statment = getDataSource().createStatement( query );
+			this.statement = getDataSource().createStatement( query );
 		}
 	}
 	
@@ -316,11 +319,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	}
 	
 	public IStatement getStatment() {
-		return statment;
+		return statement;
 	}
 
 	public void setStatment(IStatement statment) {
-		this.statment = statment;
+		this.statement = statment;
 	}
 
 	public WorkSheetDefinition getWorkSheetDefinition() {
@@ -343,12 +346,19 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	 */
 	public IDataSet getDataSetFromActiveQuery() {
 		logger.debug("Getting the dataset from the query ");
-		IDataSet dataSet =null;
 		try {
 			
-			dataSet = QbeDatasetFactory.createDataSet(statment);
-			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+			if (this.dataSet == null) {
+				
+				dataSet = QbeDatasetFactory.createDataSet(statement);
+				boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+				dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			} else {
+				
+				((AbstractQbeDataSet) dataSet).setStatement(statement);
+				
+			}
 			
 			Map userAttributes = new HashMap();
 			UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -358,10 +368,15 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 				Object attributeValue = profile.getUserAttribute(attributeName);
 				userAttributes.put(attributeName, attributeValue);
 			}
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+			
 			dataSet.addBinding("attributes", userAttributes);
 			dataSet.addBinding("parameters", this.getEnv());
 			dataSet.setUserProfileAttributes(profile.getUserAttributes());
-			dataSet.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+			
+			dataSet.setParamsMap( this.getEnv() );
+			
 		} catch (Exception e) {
 			logger.debug("Error getting the data set from the query");		
 			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);

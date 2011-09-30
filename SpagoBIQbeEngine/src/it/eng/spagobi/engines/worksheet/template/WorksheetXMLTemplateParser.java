@@ -72,7 +72,7 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			templateName = template.getName();
 			
 			if(templateName.equals("QBE")){
-				worksheetTemplate.setQbEngineInstance(startQbeEngine(template, env));
+				worksheetTemplate.setQbeEngineInstance(startQbeEngine(template, env));
 			}
 
 			logger.debug("Parsing template [" + templateName + "] ...");

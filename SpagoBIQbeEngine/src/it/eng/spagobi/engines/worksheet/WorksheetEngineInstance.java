@@ -105,8 +105,12 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		this.dataSource = dataSource;
 	}
 	
-	public QbeEngineInstance getQbeEngineInstance(){
-		return template.getQbEngineInstance();
+	public QbeEngineInstance getQbeEngineInstance() {
+		return template.getQbeEngineInstance();
+	}
+	
+	public void setQbeEngineInstance(QbeEngineInstance qbeEngineInstance){
+		template.setQbeEngineInstance(qbeEngineInstance);
 	}
 
 }

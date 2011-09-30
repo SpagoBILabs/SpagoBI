@@ -23,13 +23,11 @@ package it.eng.spagobi.engines.qbe.services.core;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
-import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -40,10 +38,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -56,6 +52,8 @@ import com.jamonapi.MonitorFactory;
  * The Class ExecuteQueryAction.
  */
 public class ExecuteQueryAction extends AbstractQbeEngineAction {	
+	
+	private static final long serialVersionUID = -8812774864345259197L;
 	
 	// INPUT PARAMETERS
 	public static final String LIMIT = "limit";
@@ -75,12 +73,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Integer limit = null;
 		Integer start = null;
 		Integer maxSize = null;
-		boolean isMaxResultsLimitBlocking = false;
 		IDataStore dataStore = null;
-		JSONDataWriter dataSetWriter;
 		
 		Query query = null;
-		IStatement statement = null;
 		
 		Integer resultNumber = null;
 		JSONObject gridDataFeed = new JSONObject();
@@ -101,43 +96,30 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 			
 			limit = getAttributeAsInteger( LIMIT );
-			
-
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 						
-			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
-			isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.isBlocking" + "] is equals to [" + isMaxResultsLimitBlocking + "]");
-			
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 						
-			
 			// retrieving query specified by id on request
 			query = getQuery();				
 			Assert.assertNotNull(query, "Query object with id [" + query.getId() + "] does not exist in the catalogue");
 
-			statement = getStatement(query);
-			
 			// promptable filters values may come with request (read-only user modality)
 			updatePromptableFiltersValue(query, this);
 
-			dataStore = executeQuery(statement, start, limit);
+			dataStore = executeQuery(start, limit);
 			
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);			
 			
-			
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
-		//		auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
+//				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 			
-			//gridDataFeed = buildGridDataFeed(results, resultNumber.intValue());	
 			gridDataFeed = serializeDataStore(dataStore);
-			//logger.debug("Response object: " + gridDataFeed.toString(3));
 			
 			try {
 				writeBackToClient( new JSONSuccess(gridDataFeed) );
@@ -156,6 +138,10 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}	
 	}
 	
+	protected IStatement getStatement(Query query){
+		IStatement statement =  getDataSource().createStatement( query );
+		return statement;
+	}
 	
 	public JSONObject serializeDataStore(IDataStore dataStore) {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
@@ -176,17 +162,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			getEngineInstance().setActiveQuery(query);
 		}
 		return query;
-	}
-
-	/**
-	 * Build the statement
-	 * @param query
-	 * @return
-	 */
-	protected IStatement getStatement(Query query){
-		IStatement statement = getEngineInstance().getStatment();	
-		statement.setParameters( getEnv() );
-		return statement;
 	}
 	
 	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) {
@@ -223,34 +198,20 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	}
 	
 	
-	public IDataStore executeQuery(IStatement statement, Integer start, Integer limit){
+	public IDataStore executeQuery(Integer start, Integer limit){
 		IDataStore dataStore = null;
-		IDataSet dataSet = null;
-		String jpaQueryStr = statement.getQueryString();
-		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
-		logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
-		boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-		logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
-		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);	
-		
+		IDataSet dataSet = this.getEngineInstance().getDataSetFromActiveQuery();
+		IStatement statement = ((AbstractQbeDataSet) dataSet).getStatement();;
 		try {
 			logger.debug("Executing query ...");
-			dataSet = QbeDatasetFactory.createDataSet(statement);
-			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
+			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
+			String jpaQueryStr = statement.getQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
+			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);	
 			
-			Map userAttributes = new HashMap();
-			Iterator it = userProfile.getUserAttributeNames().iterator();
-			while(it.hasNext()) {
-				String attributeName = (String)it.next();
-				Object attributeValue = userProfile.getUserAttribute(attributeName);
-				userAttributes.put(attributeName, attributeValue);
-			}
-			dataSet.addBinding("attributes", userAttributes);
-			dataSet.addBinding("parameters", this.getEnv());
 			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
-			dataSet.setUserProfileAttributes(userProfile.getUserAttributes());
-			dataSet.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 		} catch (Exception e) {
@@ -267,90 +228,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			throw exception;
 		}
 		logger.debug("Query executed succesfully");
-		WorksheetEngineInstance worksheetEngineInstance = (WorksheetEngineInstance)getAttributeFromSession( WorksheetEngineInstance.class.getName() );
-		getEngineInstance().updateWorksheetDataSet(dataSet, worksheetEngineInstance);
 		return dataStore;
 	}
-	
-
-	
-
-//	private JSONObject buildGridDataFeed(List results, int resultNumber) throws JSONException {
-//		JSONObject gridDataFeed = new JSONObject();
-//		
-//		Iterator it = results.iterator();
-//		Object o = null;
-//		Object[] row;
-//		
-//		JSONObject metadata = new JSONObject();
-//		JSONArray fields = null;
-//		JSONArray rows = new JSONArray();
-//			
-//		metadata.put("totalProperty", "results");
-//		metadata.put("root", "rows");
-//		metadata.put("id", "id");
-//		gridDataFeed.put("metaData", metadata);
-//		gridDataFeed.put("results", resultNumber);
-//		gridDataFeed.put("rows", rows);
-//		
-//		if(results.size() == 0) {
-//			fields = new JSONArray();
-//			fields.put("recNo");
-//			JSONObject f = new JSONObject();
-//			f.put("header", "Data");
-//			f.put("name", "data");						
-//			f.put("dataIndex", "data");
-//			fields.put(f);					
-//			metadata.put("fields", fields);
-//		} 
-//		
-//		int recNo = 0;
-//		while (it.hasNext()){
-//			o = it.next();
-//			
-//		    if (!(o instanceof Object[])){
-//		    	row = new Object[1];
-//		    	row[0] = o == null? "": o.toString();
-//		    }else{
-//		    	row = (Object[])o;
-//		    }
-//		    
-//			if(fields == null) {
-//				fields = new JSONArray();
-//				fields.put("recNo");
-//				// Giro le intestazioni di colonne
-//				Iterator fieldsIterator = getEngineInstance().getActiveQuery().getDataMartSelectFields(true).iterator();
-//				for (int j=0; j < row.length; j++){ 
-//					JSONObject field = new JSONObject();
-//					DataMartSelectField f = (DataMartSelectField)fieldsIterator.next();
-//					if(!f.isVisible()) continue;
-//					String header = f.getAlias();
-//					if( header != null) field.put("header", header);
-//					else field.put("header", "Column-" + (j+1));
-//					
-//					field.put("name", "column-" + (j+1));						
-//					
-//					field.put("dataIndex", "column-" + (j+1));
-//					fields.put(field);
-//				}					
-//				metadata.put("fields", fields);
-//			}
-//		    
-//		    // Giro le colonne
-//			JSONObject record= null;
-//			for (int j=0; j < row.length; j++){ 
-//				if(record == null) {
-//					record = new JSONObject();
-//					record.put("id", ++recNo);
-//				}
-//				record.put("column-" + (j+1), row[j]!=null?row[j].toString():" ");
-//			}
-//			if(record != null) rows.put(record);
-//		}		
-//		
-//		return gridDataFeed;
-//	}
-//	
-
 
 }

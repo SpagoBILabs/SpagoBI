@@ -22,20 +22,27 @@ package it.eng.spagobi.engines.worksheet.services.initializers;
 
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.WorksheetEngine;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -52,8 +59,6 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
-	public static final String QBE_ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	
 	
 	
 	/** Logger component. */
@@ -87,29 +92,24 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv() );
-				QbeEngineInstance qbeEngineInstance=worksheetEngineInstance.getQbeEngineInstance();
-				if(qbeEngineInstance==null){
-					qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-					if(qbeEngineInstance!=null){
+				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv());
+				QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
+				if (qbeEngineInstance == null) {
+					// retrieves qbe engine instance from session (may it is already existing, since the user may be working with qbe)
+					qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+					if (qbeEngineInstance != null) {
 						goToWorksheetPreentation = false;
+						worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
+						setAttribute(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
 					}
-				}else{
-					setAttributeInSession(QBE_ENGINE_INSTANCE, qbeEngineInstance);
+				} else {
+					setAttributeInSession(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
+					setAttribute(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
 				}
-				if(qbeEngineInstance!=null){
-					AbstractQbeDataSet ds = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(qbeEngineInstance.getStatment());
-					ds.setUserProfileAttributes(getUserProfile().getUserAttributes());
-					if(ds.getUserProfileAttributes()!=null){
-						ds.getUserProfileAttributes().put(SsoServiceInterface.USER_ID, getUserProfile().getUserId().toString());	
-					}
-					worksheetEngineInstance.setDataSet(ds);
-					worksheetEngineInstance.setDataSource(((AbstractDataSource)qbeEngineInstance.getDataSource()).getToolsDataSource());
-					setAttribute(QBE_ENGINE_INSTANCE, qbeEngineInstance);
-				}else{
-					worksheetEngineInstance.setDataSet(getDataSet());
-					worksheetEngineInstance.setDataSource(getDataSource());
-				}
+				
+				this.initDataSet(worksheetEngineInstance);
+				this.initDataSource(worksheetEngineInstance);
+				
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -186,5 +186,43 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		} finally {
 			logger.debug("OUT");
 		}		
-	}    
+	}
+    
+    public void initDataSet(WorksheetEngineInstance worksheetEngineInstance) {
+		IDataSet dataset = null;
+		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
+		if (qbeEngineInstance != null) {
+			// retrieves dataset as the Qbe active query
+			dataset = qbeEngineInstance.getDataSetFromActiveQuery();
+		} else {
+			// retrieves dataset from document configuration (i.e. the dataset associated to the document)
+			dataset = getDataSet();
+		}
+		
+		// update parameters into the dataset
+		dataset.setParamsMap( this.getEnv() );
+		
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		dataset.setUserProfileAttributes(userAttributes);
+		
+		worksheetEngineInstance.setDataSet(dataset);
+    }
+    
+    public void initDataSource(WorksheetEngineInstance worksheetEngineInstance) {
+		IDataSource datasource = null;
+		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
+		if (qbeEngineInstance != null) {
+			// retrieves datasource as the Qbe datasource
+			datasource = ((AbstractDataSource) qbeEngineInstance
+							.getDataSource()).getToolsDataSource();
+		} else {
+			// retrieves datasource from document configuration (i.e. the datasource associated to the document)
+			datasource = getDataSource();
+		}
+		worksheetEngineInstance.setDataSource(datasource);
+    }
 }

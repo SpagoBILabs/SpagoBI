@@ -436,4 +436,14 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		
 	}
 	
+	@Override
+	public void setParamsMap(Map paramsMap) {
+		this.getStatement().setParameters(paramsMap);
+	}
+	
+	@Override
+	public Map getParamsMap() {
+		return this.getStatement().getParameters();
+	}
+	
 }
