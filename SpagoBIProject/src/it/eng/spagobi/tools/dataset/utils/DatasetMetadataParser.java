@@ -51,7 +51,11 @@ public class DatasetMetadataParser {
 
 	private static transient Logger logger = Logger.getLogger(DatasetMetadataParser.class);
 
-
+	
+	// XML elements
+public static final String COLUMNLIST = "COLUMNLIST"; 
+public static final String COLUMN = "COLUMN"; 
+public static final String PROPERTY = "PROPERTY"; 
 
 
 
@@ -65,7 +69,7 @@ public class DatasetMetadataParser {
 		SourceBean sb = null;
 		try{
 
-			sb = new SourceBean("METADATALIST");
+			sb = new SourceBean(DatasetMetadataParser.COLUMNLIST);
 
 			IMetaData dataStoreMetaData=dataStore.getMetaData();
 
@@ -77,7 +81,7 @@ public class DatasetMetadataParser {
 				FieldType fieldType = fieldMetaData.getFieldType();
 				Map properties = fieldMetaData.getProperties();
 
-				SourceBean sbMeta = new SourceBean("METADATA");
+				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
 				SourceBeanAttribute attN = new SourceBeanAttribute("name", name);
 				SourceBeanAttribute attT = new SourceBeanAttribute("type", type);
 				SourceBeanAttribute attA = alias != null? new SourceBeanAttribute("alias", alias) : null;
@@ -112,7 +116,7 @@ public class DatasetMetadataParser {
 			String  name = (String) iterator.next();
 			Object value = properties.get(name);
 			if(value != null){
-				SourceBean sbP = new SourceBean("PROPERTY");
+				SourceBean sbP = new SourceBean(DatasetMetadataParser.PROPERTY);
 				SourceBeanAttribute attN = new SourceBeanAttribute("name", name);
 				SourceBeanAttribute attV = new SourceBeanAttribute("value", value.toString());
 				sbP.setAttribute(attN);
@@ -147,7 +151,7 @@ public class DatasetMetadataParser {
 		}
 
 
-		List lst=sb.getAttributeAsList("METADATA");
+		List lst=sb.getAttributeAsList(DatasetMetadataParser.COLUMN);
 		if(lst == null || lst.size()==0){
 			lst=sb.getAttributeAsList("ROWS.ROW");
 		}
@@ -175,9 +179,9 @@ public class DatasetMetadataParser {
 					fieldMeta.setFieldType(FieldType.ATTRIBUTE);
 				else if(fieldType != null && fieldType.equalsIgnoreCase(FieldType.MEASURE.toString())) 
 					fieldMeta.setFieldType(FieldType.MEASURE);
-				else fieldMeta.setFieldType(null);
+				else fieldMeta.setFieldType(FieldType.ATTRIBUTE);
 
-				List properties =sbRow.getAttributeAsList("PROPERTY");
+				List properties =sbRow.getAttributeAsList(DatasetMetadataParser.PROPERTY);
 
 				if(properties != null && properties.size()!=0){
 					try{
