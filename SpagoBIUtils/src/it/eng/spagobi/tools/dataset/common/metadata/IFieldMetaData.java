@@ -28,20 +28,20 @@ import java.util.Map;
  *
  */
 public interface IFieldMetaData {
-	
-	public enum FieldType {ATTRIBUTE, MEASURE};
-	
-    String getName();
-    String getAlias();
-    Class getType();
-    FieldType getFieldType();
-    Object getProperty(String propertyName);
-   
-    void setName(String name);
-    void setAlias(String alias);
-    void setType(Class type);
-    void setProperty(String propertyName, Object propertyValue);
 
-    Map getProperties();
+	public enum FieldType {ATTRIBUTE, MEASURE}
+
+	String getName();
+	String getAlias();
+	Class getType();
+	FieldType getFieldType();
+	Object getProperty(String propertyName);
+
+	void setName(String name);
+	void setAlias(String alias);
+	void setType(Class type);
+	void setProperty(String propertyName, Object propertyValue);
+	void setFieldType(FieldType fieldType);
+	Map getProperties();
 
 }
