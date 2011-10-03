@@ -54,16 +54,18 @@ public class WorksheetStartEditAction extends AbstractQbeEngineAction {
 			setAttribute(WorksheetEngineInstance.class.getName(), worksheetEngineInstance);
 					
 			qbeEngineInstance = getEngineInstance();
-			
-			setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
-			
+					
 			//publisher for the qbe edit
-			String publisherName = "WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER";
+			String publisherName = "WORKSHEET_START_EDIT_ACTION_DATASET_PUBLISHER";
 			
-			if (qbeEngineInstance!= null && qbeEngineInstance.getFormState()!=null) {
-				//publisher for the smart filter edit
-				publisherName = "WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER";
-				serviceRequest.setAttribute("MODALITY", "WORKSHEET_EDIT");
+			if (qbeEngineInstance!= null){
+				publisherName = "WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER";
+				setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
+				if (qbeEngineInstance.getFormState()!=null) {
+					//publisher for the smart filter edit
+					publisherName = "WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER";
+					serviceRequest.setAttribute("MODALITY", "WORKSHEET_EDIT");
+				}	
 			}
 			
 			serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME, publisherName);
