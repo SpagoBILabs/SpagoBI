@@ -89,18 +89,12 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("Creating engine instance ...");
 			try {
 				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv());
-				QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
-				if (qbeEngineInstance == null) {
-					// retrieves qbe engine instance from session (may it is already existing, since the user may be working with qbe)
-					qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-					if (qbeEngineInstance != null) {
-						goToWorksheetPreentation = false;
-						worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
-						setAttribute(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
-					}
-				} else {
-					setAttributeInSession(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
+				QbeEngineInstance qbeEngineInstance = this.getQbeEngineInstance(worksheetEngineInstance);
+				if (qbeEngineInstance != null) {
+					goToWorksheetPreentation = false;
+					worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
 					setAttribute(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
+					setAttributeInSession(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
 				}
 				
 				this.initDataSet(worksheetEngineInstance);
@@ -184,7 +178,12 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		}		
 	}
     
-    public void initDataSet(WorksheetEngineInstance worksheetEngineInstance) {
+    protected QbeEngineInstance getQbeEngineInstance(WorksheetEngineInstance worksheetEngineInstance) {
+    	QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
+		return qbeEngineInstance;
+	}
+
+	public void initDataSet(WorksheetEngineInstance worksheetEngineInstance) {
 		IDataSet dataset = null;
 		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
 		if (qbeEngineInstance != null) {
