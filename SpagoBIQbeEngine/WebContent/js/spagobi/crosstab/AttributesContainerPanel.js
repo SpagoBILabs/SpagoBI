@@ -206,7 +206,6 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 		var rows = ddSource.dragData.selections;
 		for (var i = 0; i < rows.length; i++) {
 			var aRow = rows[i];
-	
 			// if the field is a measure show a warning
 			if (aRow.data.nature === 'measure' || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
@@ -229,7 +228,7 @@ Ext.extend(Sbi.crosstab.AttributesContainerPanel, Ext.grid.GridPanel, {
 				return;
 			}
 
-			if (this.fireEvent('beforeAddAttribute', this, aRow) == false) {
+			if (this.fireEvent('beforeAddAttribute', this, aRow.data) == false) {
 				return;
 			}
 			

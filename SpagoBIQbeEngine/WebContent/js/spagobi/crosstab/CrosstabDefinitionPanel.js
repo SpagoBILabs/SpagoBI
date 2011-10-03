@@ -59,7 +59,7 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 
 	Ext.apply(this, c); // this operation should overwrite this.crosstabTemplate content, that is the definition of the crosstab
 
-	this.addEvents("beforeAddAttribute", "attributeDblClick");
+	this.addEvents("attributeDblClick");
 	
 	this.init(c);
 
@@ -72,20 +72,8 @@ Sbi.crosstab.CrosstabDefinitionPanel = function(config) {
 	// constructor
 	Sbi.crosstab.CrosstabDefinitionPanel.superclass.constructor.call(this, c);
 
-	this.columnsContainerPanel.on('beforeAddAttribute',
-			function (crossTabDef, att) {
-				var bool = this.fireEvent('beforeAddAttribute', this,  att);
-				return bool;
-			}
-			, this
-	);
-	this.rowsContainerPanel.on('beforeAddAttribute', 
-			function (crossTabDef, att) {
-				var bool = this.fireEvent('beforeAddAttribute', this,  att);
-				return bool;
-			}
-			, this
-	);
+	this.columnsContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
+	this.rowsContainerPanel.on(		'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
 	
 };
 
@@ -259,20 +247,28 @@ Ext.extend(Sbi.crosstab.CrosstabDefinitionPanel, Ext.Panel, {
 		return isThereMandatory;
 	}
 
-	, checkAttNotPresent: function(crossTabDef, att){
-		var id = att.data.id;	
-		var rows = this.rowsContainerPanel;
-		var columns = this.columnsContainerPanel;
-		var storeRows = rows.store;
-		var storeColumns = columns.store;
+	, checkIfAttributeIsAlreadyPresent: function(aPanel, attribute) {
+		var id = attribute.id;	
+		var storeRows = this.rowsContainerPanel.store;
+		var storeColumns = this.columnsContainerPanel.store;
 		if (storeRows.find('id', id) !== -1) {
-				return false;
+			Ext.Msg.show({
+				   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+				   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return false;
 		}
-		else if(storeColumns.find('id', id) !== -1){
-	
-				return false;
+		else if (storeColumns.find('id', id) !== -1){
+			Ext.Msg.show({
+				   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+				   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return false;
 		}
-		
 		return true;
 	}
 	

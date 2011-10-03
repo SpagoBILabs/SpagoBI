@@ -13,7 +13,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.columns'] = 'Colonne';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.measures'] = 'Misure';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.title'] = 'Drop non consentito';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'] = 'Il campo è già presente';
-Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'] = 'Il campo è già presente nei filtri';
+//Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'] = 'Il campo è già presente nei filtri';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.measures'] = 'Non puoi inserire delle misure su righe o colonne: devi inserirle nella parte centrale della crosstab';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.tools.tt.removeall'] = ['Rimuovi tutti'];
 

@@ -58,7 +58,7 @@ Sbi.worksheet.designer.SheetContentPanel = function(config) {
 	
 	Ext.apply(this, c);
 	
-	this.addEvents('addDesigner', 'beforeAddAttribute', 'attributeDblClick');
+	this.addEvents('addDesigner', 'attributeDblClick');
 	
 	this.initEmptyMsgPanel();
 	
@@ -208,16 +208,6 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 		this.emptyMsgPanel.destroy();
 		this.add(this.designer);
 		this.doLayout();
-		
-		// add listener when attribute is added
-		this.designer.on('beforeAddAttribute', 
-				function(crossTabDef, att){
-			var bool = this.fireEvent('beforeAddAttribute', this,  att);
-			return bool;
-		}				
-				, 
-				this);
-		
 	}
 	
 	, removeDesigner: function (event, tool, panel, tc) {

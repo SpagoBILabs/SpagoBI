@@ -13,7 +13,7 @@ Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.columns'] = 'Columns';
 Sbi.locale.ln['sbi.crosstab.crosstabdefinitionpanel.measures'] = 'Measures';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.title'] = 'Drop not allowed';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'] = 'The attribute is already present';
-Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'] = 'The attribute is already present in filters';
+//Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresentfilters'] = 'The attribute is already present in filters';
 
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.cannotdrophere.measures'] = 'You cannot drag measures on rows or columns: you have to drag them into the central section of the crosstab';
 Sbi.locale.ln['sbi.crosstab.attributescontainerpanel.tools.tt.removeall'] = ['Remove all'];
