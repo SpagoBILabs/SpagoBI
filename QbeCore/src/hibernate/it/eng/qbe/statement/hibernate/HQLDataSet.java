@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-**/
+ **/
 package it.eng.qbe.statement.hibernate;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
@@ -49,40 +49,40 @@ import org.hibernate.Session;
  */
 public class HQLDataSet extends AbstractQbeDataSet {
 
-	
+
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
-    
-	
+	public static transient Logger logger = Logger.getLogger(HQLDataSet.class);
+
+
 	public HQLDataSet(HQLStatement statement) {
 		super(statement);
-		
+
 	}
-	
+
 	public void loadData(int offset, int fetchSize, int maxResults)  {
 		Session session = null;
 		org.hibernate.Query hibernateQuery;
 		int resultNumber;
 		boolean overflow;
-		
+
 		try{		
 			session = ((IHibernateDataSource)statement.getDataSource()).getHibernateSessionFactory().openSession();
-			
+
 			Query query = this.statement.getQuery();
 			Map params = this.getParamsMap();
 			if (params != null && !params.isEmpty()) {
 				this.updateParameters(query, params);
 			}
-			
+
 			// execute query
 			hibernateQuery = session.createQuery( statement.getQueryString() );
-			
+
 			resultNumber = getResultNumber(hibernateQuery, session);
 			logger.info("Number of fetched records: " + resultNumber + " for query " + statement.getQueryString());
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
-			
+
 			List result = null;
-			
+
 			if (overflow && abortOnOverflow) {
 				// does not execute query
 				result = new ArrayList();
@@ -97,19 +97,19 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				result = hibernateQuery.list();
 				logger.debug("Query " + statement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 			}	
-			
+
 			dataStore = toDataStore(result);
 			dataStore.getMetaData().setProperty("resultNumber", resultNumber);			
-			
+
 			if(hasDataStoreTransformer()) {
 				getDataStoreTransformer().transform(dataStore);
 			}
 		} finally {
 			if (session != null && session.isOpen())
-			session.close();
+				session.close();
 		}		
 	}
-	
+
 	private int getResultNumber(org.hibernate.Query hibernateQuery, Session session) {
 		int resultNumber = 0;
 		try {
@@ -120,7 +120,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		}
 		return resultNumber;
 	}
-	
+
 	private int getResultNumberUsingInlineView(org.hibernate.Query hibernateQuery, Session session) throws Exception {
 		int resultNumber = 0;
 		logger.debug("IN");
@@ -140,7 +140,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		logger.debug("OUT: returning " + resultNumber);
 		return resultNumber;
 	}
-	
+
 	private int getResultNumberUsingScrollableResults(org.hibernate.Query hibernateQuery, Session session) {
 		int resultNumber = 0;
 		logger.debug("Scrolling query " + statement.getQueryString() + " ...");
@@ -152,7 +152,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		resultNumber = resultNumber < 0? 0: resultNumber;
 		return resultNumber;
 	}
-		
+
 	public IDataStore fetchNext() {
 		// TODO Auto-generated method stub
 		return null;
@@ -160,7 +160,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	public void setFetchSize(int l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void updateParameters(Query query, Map parameters) {
@@ -200,7 +200,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		logger.debug("OUT");
 	}
 
-	
+
 	private String getParameterKey(String fieldValue) {
 		int beginIndex = fieldValue.indexOf("P{");
 		int endIndex = fieldValue.indexOf("}");
@@ -209,12 +209,12 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		} else {
 			return null;
 		}
-		
+
 	}
 
 	public void setMetadata(IMetaData metadata) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public IDataStore test() {
@@ -228,8 +228,13 @@ public class HQLDataSet extends AbstractQbeDataSet {
 		return codes;
 	}
 
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
+		loadData(offset, fetchSize, maxResults);
+		return getDataStore();
+	}
 
 
 
-	
+
+
 }
