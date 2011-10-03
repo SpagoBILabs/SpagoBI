@@ -59,7 +59,7 @@ Sbi.worksheet.designer.DesignSheetFiltersPanel = function(config) {
 		
 	Ext.apply(this, c);
 	
-	this.addEvents('beforeAddAttribute', 'attributeDblClick');
+	this.addEvents('attributeDblClick');
 	
 	this.init();
 	
@@ -179,13 +179,6 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 				});
 				return;
 			}
-			
-
-			// check attribute is not already present in rows or in columns			
-
-	    	if(this.fireEvent('beforeAddAttribute', this, aRow) == false){
-	    		return;
-				}
 			
 			this.addFilter(aRow);
 

@@ -121,23 +121,6 @@ Sbi.worksheet.designer.SheetFilterContentPanel = function(config, filterStore) {
 			}catch (e){}
 		}, this);
 	}
-
-
-	 //add listener when attribute is added
-		this.contentPanel.on('beforeAddAttribute', 
-				function(crossTabDef, att){
-					var bool = this.fireEvent('beforeAddAttribute', this,  att);
-					return bool;
-				},
-				this);
-
-	// add listener when attribute is added
-	this.filtersPanel.on('beforeAddAttribute', 
-			function(crossTabDef, att){
-				var bool = this.fireEvent('beforeAddAttribute', this,  att);
-				return bool;
-				}
-			, this);
 	
 	Sbi.worksheet.designer.SheetFilterContentPanel.superclass.constructor.call(this, c);
 	
