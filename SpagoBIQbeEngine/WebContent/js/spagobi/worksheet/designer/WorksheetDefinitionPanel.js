@@ -59,11 +59,22 @@ Sbi.worksheet.designer.WorksheetDefinitionPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.worksheet.designer.worksheetDefinitionPanel);
 	}
  
+	this.services = new Array();
+	var params = {};
+	this.services['setWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
+			, baseParams: params
+	});
+	this.services['getWorkSheetState'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_WORKSHEET_PREVIEW_ACTION'
+			, baseParams: params
+	});
+	
 	var c = Ext.apply(defaultSettings, config || {});
- 
+	
 	Ext.apply(this, c);
 
-	this.init();
+	this.init(config);
 	
 	c = Ext.apply(c, {
 	    items: [this.tabs]
@@ -82,9 +93,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 	, tabs : null
 	
 	,
-	init : function () {
+	init : function (config) {
 		
-		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({}); // was (Ext.apply(c||{},{smartFilter: true}));
+		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel({worksheetTemplate : config	});
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({}); // was ({closable: false});
 			
 		this.worksheetPreviewPanel.on('activate', function() {
@@ -139,11 +150,24 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 		return this.worksheetDesignerPanel.getWorksheetDefinition();   
 	}
 	
-	,
-	validate : function () {
-		return this.worksheetDesignerPanel.validate();
+	, validate : function () {
+		return 	this.worksheetDesignerPanel.validate(this.getWorksheetTemplateAsString, this.worksheetDesignerPanel.showValidationErrors, this );	
 	}
-  	
+
+	, getWorksheetTemplateAsString : function () {
+		var worksheetDefinition = null;
+		if (this.worksheetDesignerPanel.rendered === true) {
+			// get the current worksheet designer state
+			worksheetDefinition = this.worksheetDesignerPanel.getWorksheetDefinition();
+		} else {
+			// get the initial worksheet template
+			worksheetDefinition = this.worksheetDesignerPanel.worksheetTemplate;
+		}
+		var template = Ext.util.JSON.encode({
+			'OBJECT_WK_DEFINITION' : worksheetDefinition
+		});
+		return template;
+	}
 	,
 	refreshWorksheetPreview : function () {
 		this.worksheetPreviewPanel.getFrame().setSrc(this.services['getWorkSheetState']);
