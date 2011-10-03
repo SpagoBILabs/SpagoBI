@@ -50,7 +50,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig){
 		super(dataSetConfig);
 	}
-    
+
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
 		dataProxy.setParameters(getParamsMap());
@@ -64,24 +64,24 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		} else if(dataReader.isOffsetSupported()){
 			dataReader.setOffset(offset);
 		} else {
-			
+
 		}
-		
+
 		if(dataProxy.isFetchSizeSupported()) {
 			dataProxy.setFetchSize(fetchSize);
 		} else if(dataReader.isOffsetSupported()){
 			dataReader.setFetchSize(fetchSize);
 		} else {
-			
+
 		}
-		
+
 		// check if the proxy is able to manage results limit
 		if(dataProxy.isMaxResultsSupported()) {
 			dataProxy.setMaxResults(maxResults);
 		} else if(dataReader.isOffsetSupported()){
 			dataReader.setMaxResults(maxResults);
 		} else {
-			
+
 		}
 
 
@@ -91,9 +91,9 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 			stm = stm.replaceAll("''", "'");
 			dataProxy.setStatement(stm);	
 		} 
-		
+
 		dataStore = dataProxy.load(dataReader); 
-		
+
 
 		if(hasDataStoreTransformer()) {
 			getDataStoreTransformer().transform(dataStore);
@@ -161,11 +161,11 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 	public void setUserProfileAttributes(Map parameters) {
 		this.userProfileParameters = parameters;
 	}
-	
+
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		this.abortOnOverflow = abortOnOverflow;
 	}
-	
+
 	public void addBinding(String bindingName, Object bindingValue) {
 		bindings.put(bindingName, bindingValue);
 	}
@@ -177,12 +177,24 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 
 	public void setMetadata(IMetaData metadata) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public IDataStore test() {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("IN");
+		loadData();
+		logger.debug("OUT");
+		return getDataStore();
+	}
+
+
+
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
+		logger.debug("IN");
+		loadData(offset, fetchSize, maxResults);
+		logger.debug("OUT");
+		return getDataStore();
+
 	}
 
 	public String getSignature() {
@@ -195,7 +207,7 @@ public class ConfigurableDataSet extends  AbstractDataSet {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
 		// TODO Auto-generated method stub
