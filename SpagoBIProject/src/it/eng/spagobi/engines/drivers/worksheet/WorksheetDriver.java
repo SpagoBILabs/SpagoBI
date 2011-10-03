@@ -55,10 +55,15 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	
 	public final static String PARAM_SERVICE_NAME = "ACTION_NAME";
     public final static String PARAM_NEW_SESSION = "NEW_SESSION";
-    public final static String WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
     public final static String QUERY = "QUERY";
-    public final static String PARAM_ACTION_NAME = "WORKSHEET_WITH_DATASET_ENGINE_START_ACTION";
+    public final static String PARAM_ACTION_NAME = "WORKSHEET_ENGINE_START_ACTION";
     public final static String FORM_VALUES = "FORM_VALUES";
+    
+	public final static String CURRENT_VERSION = "1";
+	public final static String ATTRIBUTE_VERSION = "version";
+	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
+	public final static String TAG_WORKSHEET = "WORKSHEET";
+	public final static String TAG_QBE = "QBE";
 		
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -255,26 +260,116 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 
     
     
+    public String updateWorksheetTemplate(String workSheetDef, String workSheetQuery, String smartFilterValues, String originalWorksheetTempl) throws SourceBeanException{
+    	SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
+    	templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
+    	SourceBean previous = SourceBean.fromXMLString( originalWorksheetTempl );
+    	
+    	// from version 0 to version 1 worksheet change compensation: on version 0 the 
+    	// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
+    	// WORKSHEET tag
+    	if (previous.getName().equalsIgnoreCase(TAG_QBE)) {
+    		
+	    	if (previous.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
+	    		previous.delAttribute(TAG_WORKSHEET_DEFINITION);
+	    	}
+	    	templateSB.setAttribute(previous);
+			SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION);
+			wk_def_sb.setCharacters(workSheetDef);
+			templateSB.setAttribute(wk_def_sb);
+			
+			if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+				SourceBean query_sb = new SourceBean(QUERY);
+				query_sb.setCharacters(workSheetQuery);
+				previous.updAttribute(query_sb);
+			}
+			
+			if(smartFilterValues!=null && !smartFilterValues.equals("")){
+				SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+				smartFilterValuesSB.setCharacters(smartFilterValues);
+				previous.updAttribute(smartFilterValuesSB);
+			}
+    		
+    	} else {
+    		
+        	SourceBean qbeSB = (SourceBean) previous.getAttribute(TAG_QBE);
+        	templateSB.setAttribute(qbeSB);
+    		SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION);
+    		wk_def_sb.setCharacters(workSheetDef);
+    		templateSB.setAttribute(wk_def_sb);
+    		
+    		if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+    			SourceBean query_sb = new SourceBean(QUERY);
+    			query_sb.setCharacters(workSheetQuery);
+    			qbeSB.updAttribute(query_sb);
+    		}
+    		
+    		if(smartFilterValues!=null && !smartFilterValues.equals("")){
+    			SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+    			smartFilterValuesSB.setCharacters(smartFilterValues);
+    			qbeSB.updAttribute(smartFilterValuesSB);
+    		}
+    		
+    	}
+    	
+
+
+		String template = templateSB.toXML(false);	
+		return template;
+    }
 
     public String composeWorksheetTemplate(String workSheetDef, String workSheetQuery, String smartFilterValues, String originalQbeTempl) throws SourceBeanException{
+    	SourceBean templateSB = new SourceBean(TAG_WORKSHEET);
+    	templateSB.setAttribute(ATTRIBUTE_VERSION, CURRENT_VERSION);
     	SourceBean confSB = SourceBean.fromXMLString( originalQbeTempl );
-		SourceBean wk_def_sb = new SourceBean(WORKSHEET_DEFINITION);
-		wk_def_sb.setCharacters(workSheetDef);
-		confSB.updAttribute(wk_def_sb);
+    	// from version 0 to version 1 worksheet change compensation: on version 0 the 
+    	// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
+    	// WORKSHEET tag
+    	if (confSB.getName().equalsIgnoreCase(TAG_QBE)) {
+    		
+	    	if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
+	    		confSB.delAttribute(TAG_WORKSHEET_DEFINITION);
+	    	}
+	    	templateSB.setAttribute(confSB);
+			SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION);
+			wk_def_sb.setCharacters(workSheetDef);
+			templateSB.setAttribute(wk_def_sb);
+			
+			if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+				SourceBean query_sb = new SourceBean(QUERY);
+				query_sb.setCharacters(workSheetQuery);
+				confSB.updAttribute(query_sb);
+			}
+			
+			if(smartFilterValues!=null && !smartFilterValues.equals("")){
+				SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+				smartFilterValuesSB.setCharacters(smartFilterValues);
+				confSB.updAttribute(smartFilterValuesSB);
+			}
 		
-		if(workSheetQuery!=null && !workSheetQuery.equals("") ){
-			SourceBean query_sb = new SourceBean(QUERY);
-			query_sb.setCharacters(workSheetQuery);
-			confSB.updAttribute(query_sb);
-		}
-		
-		if(smartFilterValues!=null && !smartFilterValues.equals("")){
-			SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
-			smartFilterValuesSB.setCharacters(smartFilterValues);
-			confSB.updAttribute(smartFilterValuesSB);
-		}
+    	} else {
 
-		String template = confSB.toXML(false);	
+    		SourceBean qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
+	    	templateSB.setAttribute(qbeSB);
+			SourceBean wk_def_sb = new SourceBean(TAG_WORKSHEET_DEFINITION);
+			wk_def_sb.setCharacters(workSheetDef);
+			templateSB.setAttribute(wk_def_sb);
+			
+			if(workSheetQuery!=null && !workSheetQuery.equals("") ){
+				SourceBean query_sb = new SourceBean(QUERY);
+				query_sb.setCharacters(workSheetQuery);
+				qbeSB.updAttribute(query_sb);
+			}
+			
+			if(smartFilterValues!=null && !smartFilterValues.equals("")){
+				SourceBean smartFilterValuesSB = new SourceBean(FORM_VALUES);
+				smartFilterValuesSB.setCharacters(smartFilterValues);
+				qbeSB.updAttribute(smartFilterValuesSB);
+			}
+    		
+    	}
+
+		String template = templateSB.toXML(false);	
 		return template;
     }
     

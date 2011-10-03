@@ -276,7 +276,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		ObjTemplate qbETemplate = biobj.getActiveTemplate();
 		String templCont = new String(qbETemplate.getContent());
 		WorksheetDriver q = new WorksheetDriver();
-		String temp = q.composeWorksheetTemplate(wkDefinition, query, smartFilterValuesString, templCont);
+		String temp = q.updateWorksheetTemplate(wkDefinition, query, smartFilterValuesString, templCont);
 		byte[] content = temp.getBytes();
 		logger.debug("OUT");
 		return content;
