@@ -21,6 +21,7 @@
 package it.eng.spagobi.tools.dataset.common.metadata;
 
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.Map;
 
