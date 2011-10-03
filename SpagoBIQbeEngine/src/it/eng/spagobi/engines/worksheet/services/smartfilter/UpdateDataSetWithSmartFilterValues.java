@@ -59,11 +59,11 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
     	
 		//Add the smart filter values
 		try {
-			QbeEngineInstance qbeEngineInstance = (QbeEngineInstance)getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+			QbeEngineInstance qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
 			JSONObject jsonEncodedFormState = getAttributeAsJSONObject(FORM_STATE);
 			
 			FormState formState = qbeEngineInstance.getFormState();
-			if(formState==null){
+			if (formState == null) {
 				formState = new FormState();
 				qbeEngineInstance.setFormState(formState);
 			}
@@ -94,7 +94,7 @@ public class UpdateDataSetWithSmartFilterValues extends AbstractWorksheetEngineA
 				//Update the qbe query
 				query = updateQbeWithSmartFilterQuery(query, qbeEngineInstance, jsonFormState);
 				//Update the data set in the Worksheet Instance 
-				IDataSet smartFilterUpdatedDS = qbeEngineInstance.getDataSetFromActiveQuery();
+				IDataSet smartFilterUpdatedDS = qbeEngineInstance.getActiveQueryAsDataSet();
 				qbeEngineInstance.updateWorksheetDataSet(smartFilterUpdatedDS, getEngineInstance());
 			}
 		}

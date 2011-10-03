@@ -26,7 +26,7 @@
 
 	<!-- WORKSHEET_ENGINE view presentation -->
 	<MAPPING business_type="ACTION" 
-			 business_name="WORKSHEET_WITH_DATASET_ENGINE_START_ACTION" 
+			 business_name="WORKSHEET_ENGINE_START_ACTION" 
 			 publisher_name="WORKSHEET_ENGINE_START_ACTION_PUBLISHER"/>
 			 
 	<!-- REGISTRY_ENGINE view presentation -->

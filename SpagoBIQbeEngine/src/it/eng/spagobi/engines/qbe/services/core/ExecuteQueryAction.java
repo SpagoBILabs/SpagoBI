@@ -101,8 +101,13 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 						
 			// retrieving query specified by id on request
-			query = getQuery();				
+			query = getQuery();
 			Assert.assertNotNull(query, "Query object with id [" + query.getId() + "] does not exist in the catalogue");
+			if (getEngineInstance().getActiveQuery() == null 
+					|| !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
+				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
+				getEngineInstance().setActiveQuery(query);
+			}
 
 			// promptable filters values may come with request (read-only user modality)
 			updatePromptableFiltersValue(query, this);
@@ -157,10 +162,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		String queryId = getAttributeAsString( QUERY_ID );
 		logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
 		Query query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
-		if(getEngineInstance().getActiveQuery() == null || !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
-			logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
-			getEngineInstance().setActiveQuery(query);
-		}
 		return query;
 	}
 	
@@ -200,8 +201,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	
 	public IDataStore executeQuery(Integer start, Integer limit){
 		IDataStore dataStore = null;
-		IDataSet dataSet = this.getEngineInstance().getDataSetFromActiveQuery();
-		IStatement statement = ((AbstractQbeDataSet) dataSet).getStatement();;
+		IDataSet dataSet = this.getEngineInstance().getActiveQueryAsDataSet();
+		IStatement statement = ((AbstractQbeDataSet) dataSet).getStatement();
 		try {
 			logger.debug("Executing query ...");
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
