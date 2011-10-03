@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<TABLE_WIDGET>
+	<TITLE value="Foodmart Products" style="font-weight:bold; font-family: Verdana; font-size: 16px;"/>
+	<COLUMNS>
+		<COLUMN header="Brand" value="BRAND_NAME" style="color: red;">
+		</COLUMN>		
+		<COLUMN header="Product" value="PRODUCT_NAME" style="background-color: silver; border: 1px solid grey;"/>
+		<COLUMN header="SRP" value="SRP" alarm="ALARM1">
+			<CONDITIONS>
+				<CONDITION style="color: blue;">
+					<![CDATA[=0]]>
+				</CONDITION>
+				<CONDITION style="color: pink;">
+					<![CDATA[=1]]>
+				</CONDITION>
+			</CONDITIONS>
+		</COLUMN>
+		<COLUMN header="Low fat" value="LOW_FAT" alarm="ALARM2">
+			<CONDITIONS>
+				<CONDITION style="color: green;">
+					<![CDATA[<2]]>
+				</CONDITION>
+				<CONDITION style="color: orange;">
+					<![CDATA[=2]]>
+				</CONDITION>
+				<CONDITION style="color: red;">
+					<![CDATA[>2]]>
+				</CONDITION>
+			</CONDITIONS>
+		</COLUMN>
+	</COLUMNS>
+</TABLE_WIDGET> 
