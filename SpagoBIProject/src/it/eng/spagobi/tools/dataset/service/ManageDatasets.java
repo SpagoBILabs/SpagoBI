@@ -834,9 +834,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		dataSet.setParamsMap(parametersFilled);		
 		try {
 			if(dataSet.getTransformerId()!=null){
-				dataSet.loadData();
+				dataSet.test();
 			}else{
-				dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+				dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
 			}		
 			IDataStore dataStore = dataSet.getDataStore();
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
