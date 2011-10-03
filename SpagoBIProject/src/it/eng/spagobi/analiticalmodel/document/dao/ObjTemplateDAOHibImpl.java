@@ -301,6 +301,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objTemplate.getBiobjId().intValue());
 			try{
+				logger.debug ("Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
 				query.executeUpdate();
 			} catch (Exception e) {
 				logger.error("Exception",e);
@@ -316,21 +317,25 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			List result = query.list();
 			Iterator it = result.iterator();
 			while (it.hasNext()){
-				maxProg = (Integer)it.next();
+				maxProg = (Integer)it.next();				
 			}
+			logger.debug("maxProg readed from SbiObjTemplates with biobjId " + objTemplate.getBiobjId() + " is : " + maxProg);
 			if (maxProg == null) {
 				nextProg = new Integer(1);
 			} else {
 				nextProg = new Integer(maxProg.intValue() + 1);
 			}
+			logger.debug("nextProg used is: " + nextProg);
 			
 			// store the object template
 			SbiObjTemplates hibObjTemplate = new SbiObjTemplates();
 			//check if id is already defined. In positive case update template else insert a new one
 			if (objTemplate.getId() != null && objTemplate.getId().compareTo(new Integer("-1")) != 0){
+				logger.debug("Template yet exists with id: " + objTemplate.getId() + ". Updates it.");
 				hibObjTemplate = (SbiObjTemplates)aSession.load(SbiObjTemplates.class, objTemplate.getId());
 				hibObjTemplate.setActive(new Boolean(true));
 			} else {
+				logger.debug("Template doesn't exists. It inserts one.");
 				hibObjTemplate.setActive(new Boolean(true));
 				hibObjTemplate.setCreationDate(new Date());
 				hibObjTemplate.setName(objTemplate.getName());
