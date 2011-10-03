@@ -80,6 +80,12 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
-	
+
+	<ACTION name="START_WORKSHEET_FROM_QBE_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.qbe.StartWorksheetFromQbeAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
 </ACTIONS>
 
