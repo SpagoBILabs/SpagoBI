@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" 
+			 business_name="MOBILE_ENGINE_START_ACTION" 
+			 publisher_name="MOBILE_ENGINE_START_ACTION_PUBLISHER"/>
+			 
+</PRESENTATION>
+
