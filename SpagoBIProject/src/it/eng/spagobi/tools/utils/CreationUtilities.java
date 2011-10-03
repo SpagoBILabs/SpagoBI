@@ -152,7 +152,7 @@ public class CreationUtilities {
 			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
 			//biObjDAO.setUserProfile(profile);
 
-			biObjDAO.insertBIObject(biObject, biObject.getActiveTemplate(), true);
+			biObjDAO.insertBIObject(biObject, biObject.getActiveTemplate(), false);
 
 			logger.debug("object inserted with id "+biObject.getId());
 
