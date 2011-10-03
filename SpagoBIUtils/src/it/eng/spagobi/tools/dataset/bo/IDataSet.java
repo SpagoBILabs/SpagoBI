@@ -150,6 +150,7 @@ public interface IDataSet {
 	void setMetadata(IMetaData metadata);
 	
 	IDataStore test();
+	IDataStore test(int offset, int fetchSize, int maxResults);
 	
 	String getSignature();
 	
