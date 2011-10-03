@@ -260,4 +260,10 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			Map<String, List<String>> codes) {
 		return codes;
 	}
+
+
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
+		loadData(offset, fetchSize, maxResults);
+		return getDataStore();
+	}
 }
