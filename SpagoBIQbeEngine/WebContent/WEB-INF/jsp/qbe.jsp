@@ -29,6 +29,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spagobi.engines.worksheet.WorksheetEngineInstance"%>
 <%@page import="it.eng.spagobi.commons.QbeEngineStaticVariables"%>
 <%@page import="it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition"%>
 <%@page import="it.eng.qbe.serializer.SerializationManager"%>
@@ -57,7 +58,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%
 	QbeEngineInstance qbeEngineInstance;
+	WorksheetEngineInstance worksheetEngineInstance;
 	QbeEngineConfig qbeEngineConfig;
+	WorkSheetDefinition workSheetDefinition;
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
@@ -71,6 +74,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiSpagoController;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
+	worksheetEngineInstance = (WorksheetEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute(WorksheetEngineInstance.class.getName());
+  	workSheetDefinition = worksheetEngineInstance != null ? 
+  			((WorkSheetDefinition) worksheetEngineInstance.getAnalysisState()) 
+  			: null;
 	profile = (UserProfile)qbeEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
@@ -201,7 +208,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	      	qbeConfig.worksheet = {};
 	      	<%
-	      	WorkSheetDefinition workSheetDefinition = qbeEngineInstance.getWorkSheetDefinition();
 	      	JSONObject workSheetDefinitionJSON = workSheetDefinition != null ? 
 	      			(JSONObject) SerializationManager.serialize(workSheetDefinition, "application/json") : 
 	      				new JSONObject();

@@ -139,36 +139,36 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		if( template.getProperty("formValuesJSONTemplate") != null ) {
 			loadFormValuesDefinition((JSONObject) template.getProperty("formValuesJSONTemplate"));
 		}
-		
-		if( template.getProperty("worksheetJSONTemplate") != null ) {
-			loadWorksheetDefinition((JSONObject) template.getProperty("worksheetJSONTemplate"));
-		}
+//		
+//		if( template.getProperty("worksheetJSONTemplate") != null ) {
+//			loadWorksheetDefinition((JSONObject) template.getProperty("worksheetJSONTemplate"));
+//		}
 		
 		validate();
 		
 		logger.debug("OUT");
 	}
 	
-	private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
-		try {
-			WorkSheetDefinition workSheetDefinition = new WorkSheetDefinition();
-			// TODO set the encoding
-			workSheetDefinition.load( worksheetDefinition.toString().getBytes() );
-			setWorkSheetDefinition(workSheetDefinition);
-		} catch(Throwable t) {
-			SpagoBIRuntimeException serviceException;
-			String msg = "Impossible load worksheet definition [" + worksheetDefinition + "].";
-			Throwable rootException = t;
-			while(rootException.getCause() != null) {
-				rootException = rootException.getCause();
-			}
-			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-			msg += "\nThe root cause of the error is: " + str;
-			serviceException = new SpagoBIRuntimeException(msg, t);
-			
-			throw serviceException;
-		}
-	}
+//	private void loadWorksheetDefinition(JSONObject worksheetDefinition) {
+//		try {
+//			WorkSheetDefinition workSheetDefinition = new WorkSheetDefinition();
+//			// TODO set the encoding
+//			workSheetDefinition.load( worksheetDefinition.toString().getBytes() );
+//			setWorkSheetDefinition(workSheetDefinition);
+//		} catch(Throwable t) {
+//			SpagoBIRuntimeException serviceException;
+//			String msg = "Impossible load worksheet definition [" + worksheetDefinition + "].";
+//			Throwable rootException = t;
+//			while(rootException.getCause() != null) {
+//				rootException = rootException.getCause();
+//			}
+//			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+//			msg += "\nThe root cause of the error is: " + str;
+//			serviceException = new SpagoBIRuntimeException(msg, t);
+//			
+//			throw serviceException;
+//		}
+//	}
 
 	private void loadFormDefinition(JSONObject formDefinition) {
 		try {
@@ -248,11 +248,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		QbeEngineAnalysisState analysisState = null;
 		analysisState= new QbeEngineAnalysisState( dataSource );
 		analysisState.setCatalogue( this.getQueryCatalogue() );
-		if (this.getWorkSheetDefinition() != null) {
-			analysisState.setWorkSheetDefinition( this.getWorkSheetDefinition() );
-		} else {
-			analysisState.setWorkSheetDefinition( WorkSheetDefinition.EMPTY_WORKSHEET );
-		}
+//		if (this.getWorkSheetDefinition() != null) {
+//			analysisState.setWorkSheetDefinition( this.getWorkSheetDefinition() );
+//		} else {
+//			analysisState.setWorkSheetDefinition( WorkSheetDefinition.EMPTY_WORKSHEET );
+//		}
 		return analysisState;
 	}
 	
@@ -326,13 +326,13 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		this.statement = statment;
 	}
 
-	public WorkSheetDefinition getWorkSheetDefinition() {
-		return workSheetDefinition;
-	}
-
-	public void setWorkSheetDefinition(WorkSheetDefinition workSheetDefinition) {
-		this.workSheetDefinition = workSheetDefinition;
-	}
+//	public WorkSheetDefinition getWorkSheetDefinition() {
+//		return workSheetDefinition;
+//	}
+//
+//	public void setWorkSheetDefinition(WorkSheetDefinition workSheetDefinition) {
+//		this.workSheetDefinition = workSheetDefinition;
+//	}
 
 	public RegistryConfiguration getRegistryConfiguration() {
 		QbeTemplate template = this.getTemplate();
@@ -344,7 +344,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	 * Builds a IDataSet starting from the active query.
 	 * @return the data set representation of the active query  
 	 */
-	public IDataSet getDataSetFromActiveQuery() {
+	public IDataSet getActiveQueryAsDataSet() {
 		logger.debug("Getting the dataset from the query ");
 		try {
 			

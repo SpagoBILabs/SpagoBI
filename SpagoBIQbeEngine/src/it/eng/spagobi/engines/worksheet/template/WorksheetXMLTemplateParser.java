@@ -20,20 +20,23 @@
  **/
 package it.eng.spagobi.engines.worksheet.template;
 
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 import it.eng.qbe.query.Query;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
+import it.eng.spagobi.engines.worksheet.template.loaders.IWorksheetXMLTemplateLoader;
+import it.eng.spagobi.engines.worksheet.template.loaders.WorksheetXMLTemplateLoaderFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -41,8 +44,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 
-	public static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
-	public static String TAG_DATASET = "DATASET";
+	public final static String CURRENT_VERSION = "1";
+	
+	public final static String ATTRIBUTE_VERSION = "version";
+	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
+	public final static String TAG_QBE = "QBE";
+	public final static String TAG_DATASET = "DATASET";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WorksheetXMLTemplateParser.class);
@@ -58,25 +65,50 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 		return parse((SourceBean)template,  env);
 	}
 
-	private WorksheetTemplate parse(SourceBean template, Map env) {
+	private WorksheetTemplate parse(SourceBean xml, Map env) {
 
-		WorksheetTemplate worksheetTemplate = null;
-		String templateName;
+		WorksheetTemplate worksheetTemplate;
 		SourceBean worksheetSB;
 		JSONObject worksheetJSONTemplate;
+		String encodingFormatVersion;
+		SourceBean template;
 
 		try {
-
+			
+			Assert.assertNotNull(xml, "SourceBean in input cannot be not be null");
+			logger.debug("Parsing template [" + xml.getName() + "] ...");
+			
 			worksheetTemplate = new WorksheetTemplate();
 
-			templateName = template.getName();
+			encodingFormatVersion = (String) xml.getAttribute(ATTRIBUTE_VERSION);
 			
-			if(templateName.equals("QBE")){
-				worksheetTemplate.setQbeEngineInstance(startQbeEngine(template, env));
+			if (encodingFormatVersion == null) {
+				logger.debug("no version found, default is 0");
+				encodingFormatVersion = "0";
 			}
-
-			logger.debug("Parsing template [" + templateName + "] ...");
-			Assert.assertNotNull(templateName, "Root tag cannot be not be null");
+			
+			logger.debug("Row data encoding version  [" + encodingFormatVersion + "]");
+			
+			if (encodingFormatVersion.equalsIgnoreCase(CURRENT_VERSION)) {				
+				template = xml;
+			} else {
+				logger.warn("Row data encoding version [" + encodingFormatVersion + "] does not match with the current version used by the engine [" + CURRENT_VERSION + "] ");
+				logger.debug("Converting from encoding version [" + encodingFormatVersion + "] to encoding version [" + CURRENT_VERSION + "]....");
+				IWorksheetXMLTemplateLoader worksheetViewerXMLTemplateLoader;
+				worksheetViewerXMLTemplateLoader = WorksheetXMLTemplateLoaderFactory.getInstance().getLoader(encodingFormatVersion);
+				if (worksheetViewerXMLTemplateLoader == null) {
+					throw new SpagoBIEngineException("Unable to load data stored in format [" + encodingFormatVersion + "] ");
+				}
+				template = (SourceBean) worksheetViewerXMLTemplateLoader.load(xml);
+				logger.debug("Encoding conversion has been executed succesfully");
+			}
+			
+			// QBE block
+			if (template.containsAttribute(TAG_QBE)) {
+				SourceBean qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE);
+				QbeEngineInstance qbeEngineInstance = startQbeEngine(qbeTemplate, env);
+				worksheetTemplate.setQbeEngineInstance(qbeEngineInstance);
+			}
 
 			// DATASET block
 			if(template.containsAttribute(TAG_DATASET)) {}
@@ -93,7 +125,7 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			logger.debug("Templete parsed succesfully");
 
 		} catch(Throwable t) {
-			throw new QbeTemplateParseException("Impossible to parse template [" + template.toString()+ "]", t);
+			throw new QbeTemplateParseException("Impossible to parse template [" + xml.toString()+ "]", t);
 		} finally {
 			logger.debug("OUT");
 		}	

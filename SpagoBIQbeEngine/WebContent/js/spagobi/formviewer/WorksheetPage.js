@@ -67,7 +67,7 @@ Sbi.formviewer.WorksheetPage = function(config) {
 		, baseParams: params
 	});
 	this.services['executeWorksheetStartAction'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION'
+		serviceName: 'WORKSHEET_ENGINE_START_ACTION'
 			, baseParams: params
 	});
 	this.services['updateWoksheetDataSet'] = Sbi.config.serviceRegistry.getServiceUrl({

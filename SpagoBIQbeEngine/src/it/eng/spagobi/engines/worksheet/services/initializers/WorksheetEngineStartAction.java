@@ -21,9 +21,6 @@
 package it.eng.spagobi.engines.worksheet.services.initializers;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
@@ -40,7 +37,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -193,7 +189,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
 		if (qbeEngineInstance != null) {
 			// retrieves dataset as the Qbe active query
-			dataset = qbeEngineInstance.getDataSetFromActiveQuery();
+			dataset = qbeEngineInstance.getActiveQueryAsDataSet();
 		} else {
 			// retrieves dataset from document configuration (i.e. the dataset associated to the document)
 			dataset = getDataSet();

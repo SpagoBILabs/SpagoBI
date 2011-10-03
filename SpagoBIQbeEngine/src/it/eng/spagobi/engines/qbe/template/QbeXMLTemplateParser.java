@@ -54,7 +54,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	public static String TAG_QUERY = "QUERY";
 	public static String TAG_FORM = "FORM";
 	public static String TAG_FORM_VALUES = "FORM_VALUES";
-	public static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
+//	public static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public static String TAG_EXTERNAL_SERVICES = "EXTERNAL_SERVICES";
 	public static String TAG_EXTERNAL_SERVICE = "EXTERNAL_SERVICE";
 	public static String PROP_SERVICE_DESCRIPTION = "description";
@@ -196,14 +196,14 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					logger.debug("Qbe template does not contain tag [" + TAG_FORM_VALUES +"]");
 				}
 				
-				// worksheet block
-				if(template.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
-					worksheetSB = (SourceBean) template.getAttribute(TAG_WORKSHEET_DEFINITION);
-					worksheetJSONTemplate = new JSONObject(worksheetSB.getCharacters());
-					qbeTemplate.setProperty("worksheetJSONTemplate", worksheetJSONTemplate);
-				} else {
-					logger.debug("Qbe template does not contain tag [" + TAG_WORKSHEET_DEFINITION +"]");
-				}
+//				// worksheet block
+//				if(template.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
+//					worksheetSB = (SourceBean) template.getAttribute(TAG_WORKSHEET_DEFINITION);
+//					worksheetJSONTemplate = new JSONObject(worksheetSB.getCharacters());
+//					qbeTemplate.setProperty("worksheetJSONTemplate", worksheetJSONTemplate);
+//				} else {
+//					logger.debug("Qbe template does not contain tag [" + TAG_WORKSHEET_DEFINITION +"]");
+//				}
 			}
 			
 			compositeModalitySB = new SourceBean(TAG_MODALITY);
