@@ -1275,6 +1275,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					//the worksheet has been constructed starting from a smart filter document
 					thePanel = this.miframe.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
 				}
+				if(thePanel==null){
+					//the worksheet is alone with out the qbe
+					thePanel = this.miframe.getFrame().getWindow().workSheetPanel;
+				}
 			}else if(this.executionInstance.document.typeCode == 'DATAMART'){
 				thePanel = this.miframe.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
@@ -1333,7 +1337,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    , stopWorksheetEditing: function() {
 	   this.documentMode = 'VIEW';
 	   this.synchronizeToolbar(this.executionInstance, this.miframe, this.southPanel, this.northPanel, this.parametersPanel, this.shortcutsPanel);
-	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_ENGINE_START_ACTION');
+	   var newUrl = this.changeDocumentExecutionUrlParameter('ACTION_NAME', 'WORKSHEET_WITH_DATASET_ENGINE_START_ACTION');
 	   this.miframe.getFrame().setSrc(newUrl);
    }
    
