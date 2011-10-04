@@ -193,8 +193,8 @@
  	<CONFIG/>
  </ACTION>
  
-  <ACTION name="CREATE_WORKSHEET_OBJECT_ACTION" 
- 	class="it.eng.spagobi.analiticalmodel.execution.service.CreateWorksheetObjectAction" scope="REQUEST">
+  <ACTION name="CREATE_DATASET_FOR WORKSHEET_ACTION" 
+ 	class="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
 
