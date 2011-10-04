@@ -57,16 +57,16 @@ Sbi.worksheet.runtime.RuntimeSheetPanel = function(config) {
 	Ext.apply(this, c);
 	
 	c = {
-			border: false,
-			title: this.sheetConfig.name,
-            items: [new Ext.Panel({})]
+		border: false,
+		title: this.sheetConfig.name,
+        items: [new Ext.Panel({})]
 	};
 	
-	c = Ext.apply(config,c);
-	this.addEvents('contentloaded');
-	Ext.apply(this,c);	
+	c = Ext.apply(config, c);
 	
-	this.on('activate',this.renderContent, this);
+	this.addEvents('contentloaded');
+	
+	this.on('activate', this.renderContent, this);
 	
 	Sbi.worksheet.runtime.RuntimeSheetPanel.superclass.constructor.call(this, c);	 	
 };
@@ -270,7 +270,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	}	
 	
 	, getDynamicFilterDefinition: function (aField) {
-		var dynamicaFilter = {
+		var dynamicFilter = {
 	            "text": aField.alias,
 	            "field": aField.id,
 	            "id": aField.id,
@@ -278,12 +278,29 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetPanel, Ext.Panel, {
 	            "values": aField.values
 			};
 		if(aField.mandatory=='yes'){
-			dynamicaFilter.allowBlank=false;
+			dynamicFilter.allowBlank=false;
 		}
 		if(aField.selection=='singlevalue'){
-			dynamicaFilter.maxSelectedNumber=1;
+			dynamicFilter.maxSelectedNumber=1;
 		}
-		return dynamicaFilter;
+		// if a sheet filter on domain values is defined, put the filter admissible values
+		var sheetFilter = this.getSheetFilterOnDomainValues(aField);
+		if (sheetFilter != null) {
+			dynamicFilter.values = sheetFilter.values;
+		}
+		return dynamicFilter;
+	}
+	
+	, getSheetFilterOnDomainValues : function(aField) {
+		var toReturn = null;
+		for (var i = 0; i < this.sheetConfig.filtersOnDomainValues.length; i++) {
+			var aFilter = this.sheetConfig.filtersOnDomainValues[i];
+			if (aField.alias == aFilter.alias) {
+				toReturn = aFilter;
+				break;
+			}
+		}
+		return toReturn;
 	}
 	
 	//render the content after the sheet has been activated
