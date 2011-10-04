@@ -40,9 +40,12 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -140,6 +143,9 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		Iterator it;
 		IModelProperties datamartLabels;
 		String label, longDescription;
+		
+		Map<String, String> aliasSelectedFields = getFieldsNature(query, dataSource);
+		
 
 		logger.debug("IN");
 
@@ -172,7 +178,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 					if (field.isDataMartField()) {
 						DataMartSelectField dataMartSelectField = (DataMartSelectField)field;
-
+						
 						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.DATAMART_FIELD);
 
 						fieldUniqueName = dataMartSelectField.getUniqueName();
@@ -213,8 +219,9 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						// if an aggregation function is defined or if the field is declared as "measure" into property file,
 						// then it is a measure, elsewhere it is an attribute
-						nature = getSelectFieldNature(dataMartSelectField, iconCls);
+						nature = dataMartSelectField.getNature();
 
+						
 					} else if (field.isCalculatedField()){
 						CalculatedSelectField calculatedSelectField = (CalculatedSelectField)field;
 
@@ -256,7 +263,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						fieldJSON.put(QuerySerializationConstants.FIELD_ICON_CLS, "calculation");
 
-						nature = getSelectFieldNature(calculatedSelectField, null);
+						nature = getInLinecalculatedFieldNature(calculatedSelectField.getExpression(), aliasSelectedFields);
 
 					}
 
@@ -279,56 +286,58 @@ public class QueryJSONSerializer implements IQuerySerializer {
 	}	
 	
 	/**
-	 * Get the nature of a selected field: MEASURE/ATTRIBUTE
-	 * @param field the field
-	 * @param iconCls the icon class (can be null)
-	 * @return the nature of the attribute MEASURE/ATTRIBUTE
+	 * Get the nature of calculated field: MEASURE/ATTRIBUTE
+	 * @param expr the expression of the calculated fields
+	 * @param datamartFields the map <DatamartFieldAlias, DatamartFieldNature>
+	 * @return the nature of the calculated field
 	 */
-	public static String getSelectFieldNature(ISelectField field,String iconCls){
-		String nature = null;
+	public static String getInLinecalculatedFieldNature(String expr, Map<String, String> datamartFields){
 		
-		if(field instanceof InLineCalculatedSelectField){
-			InLineCalculatedSelectField calculatedSelectField = (InLineCalculatedSelectField)field;
-			/*
-			 * We should understand if the calculated field is an attribute (i.e. a composition of attributes)
-			 * or a measure (i.e. a composition of measures).
-			 * The easiest way to understand this it to see if it is a grouping field.
-			 * TODO manage queries without any aggregation and grouping.
-			 * At the time being this information is used only in crosstab definition, and crosstab base query SHOULD 
-			 * make aggregation.
-			 */
-			if ( calculatedSelectField.isGroupByField() ) {
-				nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
-			} else {
-				nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
+		StringTokenizer stk = new StringTokenizer(expr, "+-|*/()");
+		while(stk.hasMoreTokens()){
+			String alias = stk.nextToken().trim();
+			// alias can contain "DISTINCT" HQL/SQL key: we have to remove it
+			if (alias.toUpperCase().startsWith("DISTINCT ")) {
+				alias = alias.substring("DISTINCT ".length());
 			}
-		}else if(field instanceof DataMartSelectField){
-			DataMartSelectField dataMartSelectField = (DataMartSelectField)field;
-			//if an aggregation function is defined or if the field is declared as "measure" into property file,
-			//  then it is a measure, elsewhere it is an attribute
-			if ((dataMartSelectField.getFunction() != null 
-				&& !dataMartSelectField.getFunction().equals(AggregationFunctions.NONE_FUNCTION))
-				|| iconCls.equals("measure") || iconCls.equals("mandatory_measure")) {
-				
-				if(iconCls.equals("mandatory_measure")){
-					nature = QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE;
-				}
-				else{
-					nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
-				}
-			} else {
 
-				if(iconCls.equals("segment_attribute")){
-					nature = QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE;
-				}
-				else{
-					nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
-				}
+			if( (!(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MEASURE) && !(datamartFields.get(alias)).equals( QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE))){
+				return QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
 			}
 		}
-
-		return nature;
+		return QuerySerializationConstants.FIELD_NATURE_MEASURE;
 	}
+	
+	/**
+	 * Get the map  <DatamartFieldAlias, DatamartFieldNature> from the selected fields list
+	 * @param query 
+	 * @param dataSource
+	 * @return <DatamartFieldAlias, DatamartFieldNature>
+	 */
+	public static Map<String, String> getFieldsNature(Query query,  IDataSource dataSource){
+		Map<String, String> feldsNatureMap = new HashMap<String, String>();
+		String nature;
+		IModelField datamartField;
+		DataMartSelectField dataMartSelectField;
+		List<ISelectField> fields = query.getSelectFields(false);
+		
+		for(int i=0; i<fields.size(); i++){
+			if ((fields.get(i)).isDataMartField()) {
+				dataMartSelectField = (DataMartSelectField)fields.get(i);
+				datamartField = dataSource.getModelStructure().getField( dataMartSelectField.getUniqueName() );
+				String iconCls = datamartField.getPropertyAsString("type");	
+				nature = dataMartSelectField.getNature();
+				if(nature==null){
+					nature = dataMartSelectField.updateNature(iconCls);
+				}
+				feldsNatureMap.put(dataMartSelectField.getAlias(), nature);;
+			}
+		}
+		
+		return feldsNatureMap;
+	}
+
+	
 
 	public static String getFieldLongDescription(IModelField field, IModelProperties datamartLabels) {
 		String label = field.getName();

@@ -28,9 +28,6 @@ public class CalculatedSelectField extends AbstractSelectField {
 	
 	private String expression;
 	private String type;
-//	private Object initialValue;
-//	private int resetType;
-//	private int incrementType;
 
 	
 	public CalculatedSelectField(String alias, String expression, String type, boolean included, boolean visible) {
@@ -79,4 +76,5 @@ public class CalculatedSelectField extends AbstractSelectField {
 	public void setName(String alias) {
 		setAlias(alias);
 	}
+
 }

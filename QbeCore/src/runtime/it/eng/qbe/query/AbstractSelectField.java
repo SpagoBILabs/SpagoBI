@@ -29,6 +29,7 @@ public abstract class AbstractSelectField implements ISelectField {
 	private String type;
 	private boolean visible;
 	private boolean included;
+	protected String nature;
 	
 	public AbstractSelectField(String alias, String type, boolean included, boolean visible) {
 		setAlias(alias);
@@ -79,6 +80,14 @@ public abstract class AbstractSelectField implements ISelectField {
 
 	public void setIncluded(boolean included) {
 		this.included = included;
+	}
+
+	public String getNature() {
+		return this.nature; 
+	}
+
+	public void setNature(String nature) {
+		this.nature = nature;
 	}
 
 }
