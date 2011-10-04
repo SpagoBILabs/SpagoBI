@@ -190,7 +190,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		var toReturn = null;
 		var globalFilters = this.getGlobalFilters();
 		for (var i = 0; i < globalFilters.length; i++) {
-			var aGlobalFilter = this.globalFilters[i];
+			var aGlobalFilter = globalFilters[i];
 			if (attribute.alias == aGlobalFilter.alias) {
 				toReturn = aGlobalFilter;
 				break;
