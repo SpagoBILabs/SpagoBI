@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.qbe.query;
 
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 
@@ -126,4 +127,31 @@ public class DataMartSelectField extends AbstractSelectField {
 	public void setName(String name) {
 		setUniqueName(name);
 	}
+	
+	public String updateNature(String iconCls){
+		//if an aggregation function is defined or if the field is declared as "measure" into property file,
+		//  then it is a measure, elsewhere it is an attribute
+		if ((getFunction() != null 
+			&& !getFunction().equals(AggregationFunctions.NONE_FUNCTION))
+			|| iconCls.equals("measure") || iconCls.equals("mandatory_measure")) {
+			
+			if(iconCls.equals("mandatory_measure")){
+				nature = QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE;
+			}
+			else{
+				nature = QuerySerializationConstants.FIELD_NATURE_MEASURE;
+			}
+		} else {
+
+			if(iconCls.equals("segment_attribute")){
+				nature = QuerySerializationConstants.FIELD_NATURE_SEGMENT_ATTRIBUTE;
+			}
+			else{
+				nature = QuerySerializationConstants.FIELD_NATURE_ATTRIBUTE;
+			}
+		}
+		return nature;
+	}
+
+
 }

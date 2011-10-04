@@ -47,5 +47,8 @@ public interface ISelectField {
 	boolean isIncluded();
 	void setIncluded(boolean include) ;
 	
+	String getNature();
+	void setNature(String nature);
+	
 	ISelectField copy();
 }

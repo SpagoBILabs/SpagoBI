@@ -75,6 +75,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		ISelectField queryFiled;
 		FieldMetadata dataStoreFieldMeta;
 		
+		Map<String, String> aliasSelectedFields = QueryJSONSerializer.getFieldsNature(query, (AbstractDataSource)statement.getDataSource());
+		
 		dataStoreMeta = new MetaData();
 		
 		Iterator fieldsIterator = query.getSelectFields(true).iterator();
@@ -96,11 +98,10 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 				IModelField datamartField = ((AbstractDataSource)statement.getDataSource()).getModelStructure().getField( dataMartSelectField.getUniqueName() );
 				String iconCls = datamartField.getPropertyAsString("type");	
-				String nature = QueryJSONSerializer.getSelectFieldNature(dataMartSelectField, iconCls);
+				String nature = dataMartSelectField.getNature();
 				dataStoreFieldMeta.setProperty("aggregationFunction", dataMartSelectField.getFunction().getName());
 				if( nature.equals(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)||
 					nature.equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)){
-					
 					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
 				}else{
 					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
@@ -126,8 +127,14 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(), claculatedQueryField.getExpression());
 				dataStoreFieldMeta.setProperty("variable", variable);	
 				dataStoreFieldMeta.setType( variable.getTypeClass() );	
-				String nature = QueryJSONSerializer.getSelectFieldNature(queryFiled, null);
+				String nature = QueryJSONSerializer.getInLinecalculatedFieldNature(claculatedQueryField.getExpression(), aliasSelectedFields);
 				dataStoreFieldMeta.setProperty("nature", nature);
+				if( nature.equals(QuerySerializationConstants.FIELD_NATURE_MANDATORY_MEASURE)||
+					nature.equals(QuerySerializationConstants.FIELD_NATURE_MEASURE)){
+					dataStoreFieldMeta.setFieldType(FieldType.MEASURE);
+				}else{
+					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
+				}
 			}
 			dataStoreFieldMeta.setProperty("visible", new Boolean(queryFiled.isVisible()));	
 			
