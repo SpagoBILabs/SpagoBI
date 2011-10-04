@@ -54,8 +54,8 @@ Sbi.locale.ln['sbi.crosstab.crosstabpreviewpanel.overflow.warning'] = 'Il numero
 
 
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.title'] = 'Validazione della crossTab fallita';
-Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'Definire almeno una misura';
-Sbi.locale.ln['sbi.crosstab.crossTabValidation.noAttribute'] = 'Definire almeno un attributo';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMeasure'] = 'Non è stata inclusa alcuna misura nella tabella pivot';
+Sbi.locale.ln['sbi.crosstab.crossTabValidation.noAttribute'] = 'Non è stata incluso alcun attributo nella tabella pivot';
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.noSegmentAttribute'] = 'L\'attributo di segmentazione deve essere utilizzato';
 Sbi.locale.ln['sbi.crosstab.crossTabValidation.noMandatoryMeasure'] = 'La misura obbligatoria deve essere utilizzata';
 
