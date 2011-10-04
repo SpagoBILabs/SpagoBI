@@ -225,7 +225,6 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			}
 		}
 		
-		
 	}
 	
 	, validate: function(){

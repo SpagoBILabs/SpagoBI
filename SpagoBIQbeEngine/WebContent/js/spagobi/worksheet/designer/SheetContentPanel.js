@@ -289,23 +289,8 @@ Ext.extend(Sbi.worksheet.designer.SheetContentPanel, Ext.Panel, {
 	, validate: function () {
 		if(this.designer == null) 
 			return 'designer is null';
-		
 		else
 			return this.designer.validate();
-		
-//		var mixedColl = this.items;
-//		if(mixedColl){
-//			var arrayList = mixedColl.items; 
-//			if(arrayList){
-//				for(i = 0; i < arrayList.length; i++) {
-//					var currItem = arrayList[i];
-//					// if it is a crosstab starts validation on it
-//					if(currItem instanceof Sbi.crosstab.CrosstabDefinitionPanel){
-//						return currItem.validate();
-//					}
-//				}				
-//			}
-//		}
 	}
 	
 	

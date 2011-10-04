@@ -268,25 +268,25 @@ Ext.extend(Sbi.worksheet.designer.SheetsContainerPanel, Ext.TabPanel, {
 	, validate: function(){
 		//var valid = true;
 		var toReturn = new Array();
-		if(this.items.items.length>1){
+		if ( this.items.items.length > 1 ) {
 			var errCounter = 0;
 			var i=0;
 			for(; i<this.items.items.length-1; i++){//-1 because of the add panel teb
-				var errMessage = this.items.items[i].validate();
-				if(errMessage){
-					var valError = new Sbi.worksheet.exception.ValidationError(
-							this.items.items[i].title,
-							errMessage
-					);
-					
-					toReturn[errCounter] = valError;
-					errCounter++;
-					
+				var aSheet = this.items.items[i];
+				if (aSheet.rendered) { /* workaround (work-around): the sheet is validated only if it is rendered, 
+					because a non-rendered sheet hasn't the state set. TODO improve this behaviour */
+					var errMessage = aSheet.validate();
+					if (errMessage) {
+						var valError = new Sbi.worksheet.exception.ValidationError(
+								aSheet.getName(),
+								errMessage
+						);
+						toReturn[errCounter] = valError;
+						errCounter++;
+					}
 				}
 				
 			}
-		}else{
-			return toReturn;
 		}
 		return toReturn;
 	}
