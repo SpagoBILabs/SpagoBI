@@ -86,7 +86,9 @@ Sbi.widgets.FilterLookupField = function(config) {
 		}, this);
 	}, this);
 	
-	this.win.on("selectionmade", this.setValue,this);
+	this.win.on("selectionmade", function (theWindow, selection) {
+		this.setValue(selection);
+	}, this);
 	
 	/*
 	this.grid.on('render', function(g) {

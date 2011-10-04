@@ -133,18 +133,21 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		String layout = sheetJSON.optString(WorkSheetSerializationCostants.LAYOUT);
 		JSONObject footer = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FOOTER);
 		
-		List<Attribute> filters = deserializeSheetFilters(sheetJSON);
-		FiltersPosition position = FiltersPosition.TOP;
 		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
+		List<Attribute> filters = deserializeSheetFilters(filtersJSON);
+		FiltersPosition position = FiltersPosition.TOP;
 		if (filtersJSON != null) {
 			position = FiltersPosition.valueOf(filtersJSON.getString(WorkSheetSerializationCostants.POSITION).toUpperCase());
 		}
+		
+		JSONArray filtersOnDomainValuesJSON = sheetJSON.optJSONArray(WorkSheetSerializationCostants.FILTERS_ON_DOMAIN_VALUES);
+		List<Attribute> filtersOnDomainValues = deserializeSheetFiltersOnDomainValues(filtersOnDomainValuesJSON);
 		
 		logger.debug("Deserializing sheet " + name);
 		SheetContent content = deserializeContent(sheetJSON);
 		logger.debug("Sheet " + name + " deserialized successfully");
 		
-		return new Sheet(name, layout, header, filters, position, content, footer);
+		return new Sheet(name, layout, header, filters, position, content, filtersOnDomainValues, footer);
 	}
 	
 	private SheetContent deserializeContent(JSONObject sheetJSON) throws Exception {
@@ -212,9 +215,8 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 		return toReturn;
 	}
 
-	private List<Attribute> deserializeSheetFilters(JSONObject sheetJSON) throws Exception {
+	private List<Attribute> deserializeSheetFilters(JSONObject filtersJSON) throws Exception {
 		List<Attribute> toReturn = new ArrayList<Attribute>();
-		JSONObject filtersJSON = sheetJSON.optJSONObject(WorkSheetSerializationCostants.FILTERS);
 		if (filtersJSON != null) {
 			JSONArray filters = filtersJSON.optJSONArray(QuerySerializationConstants.FILTERS);
 			if (filters != null && filters.length() > 0) {
@@ -222,6 +224,17 @@ public class WorkSheetJSONDeserializer implements IDeserializer {
 					Attribute attribute = deserializeAttribute(filters.getJSONObject(i));
 					toReturn.add(attribute);
 				}
+			}
+		}
+		return toReturn;
+	}
+	
+	private List<Attribute> deserializeSheetFiltersOnDomainValues(JSONArray filtersJSON) throws Exception {
+		List<Attribute> toReturn = new ArrayList<Attribute>();
+		if (filtersJSON != null && filtersJSON.length() > 0) {
+			for (int i = 0; i < filtersJSON.length(); i++) {
+				Attribute attribute = deserializeAttribute(filtersJSON.getJSONObject(i));
+				toReturn.add(attribute);
 			}
 		}
 		return toReturn;

@@ -300,7 +300,7 @@ Ext.extend(Sbi.widgets.FilterLookupPopupWindow, Ext.Window, {
     }
 	
 	, onOk: function() {
-		this.fireEvent('selectionmade', this.xselection);	
+		this.fireEvent('selectionmade', this, this.xselection);	
 		this.hide();	
 	}
 	

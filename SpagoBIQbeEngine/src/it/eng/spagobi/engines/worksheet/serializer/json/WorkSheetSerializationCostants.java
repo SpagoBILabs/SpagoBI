@@ -42,5 +42,6 @@ public class WorkSheetSerializationCostants {
 	public static final String CATEGORY = "category";
 	public static final String SERIES = "series";
 	public static final String CROSSTABDEFINITION = "crosstabDefinition";
+	public static final String FILTERS_ON_DOMAIN_VALUES = "filtersOnDomainValues";
 	
 }

@@ -66,7 +66,6 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     	WorksheetEngineInstance worksheetEngineInstance = null;
     	WorksheetEngineAnalysisState analysisState;
     	Locale locale;
-    	boolean goToWorksheetPreentation = true;
     	
     	logger.debug("IN");
        
@@ -91,7 +90,6 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv());
 				QbeEngineInstance qbeEngineInstance = this.getQbeEngineInstance(worksheetEngineInstance);
 				if (qbeEngineInstance != null) {
-					goToWorksheetPreentation = false;
 					worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
 					setAttribute(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
 					setAttributeInSession(EngineConstants.ENGINE_INSTANCE, qbeEngineInstance);
@@ -151,7 +149,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 			
-			if(!goToWorksheetPreentation){
+			if(!this.goToWorksheetPreentation()){
 				writeBackToClient(new JSONAcknowledge());
 			}
 			
@@ -178,7 +176,11 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		}		
 	}
     
-    protected QbeEngineInstance getQbeEngineInstance(WorksheetEngineInstance worksheetEngineInstance) {
+    protected boolean goToWorksheetPreentation() {
+		return true;
+	}
+
+	protected QbeEngineInstance getQbeEngineInstance(WorksheetEngineInstance worksheetEngineInstance) {
     	QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
 		return qbeEngineInstance;
 	}

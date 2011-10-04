@@ -124,14 +124,29 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	}
 	
 	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
+		var params = {
+			worksheetDefinition : this.getWorksheetDefinition()
+		};
+		if (theSheet) {
+			// double-click event on a sheet
+			params.sheetName = theSheet.getName();
+			attribute = theSheet.getFilterOnDomainValues(attribute);
+			if (attribute.values == '[]') {
+				// if there are no filters on sheet, consider the global filters
+				var globalFilter = this.getGlobalFilterForAttribute(attribute);
+				if (globalFilter !== null) {
+					attribute.values = globalFilter.values;
+				}
+			}
+		}
 		var c = {
      		attribute : attribute
-     		, worksheetDefinition : this.getWorksheetDefinition()
+     		, params : params
 	    };
-		if (theSheet) {
-			c.sheetName = theSheet.getName();
-		}
      	var chooserWindow = new Sbi.worksheet.designer.AttributeValuesChooserWindow(c);
+     	chooserWindow.on('selectionmade', function(theWindow, sSelection) {
+     		attribute.values = Ext.encode(theWindow.getSelection());
+     	}, this);
 	}
 	
 	, getWorksheetDefinition: function () {
@@ -156,6 +171,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 	, getGlobalFilters : function () {
 		return this.designToolsPanel.getGlobalFilters();
 	}
+	
     , showValidationErrors : function(errorsArray) {
     	errMessage = '';
     	
@@ -170,9 +186,12 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
    	
     }
 	
+    , getGlobalFilterForAttribute : function (attribute) {
+    	return this.designToolsPanel.getGlobalFilterForAttribute(attribute);
+    }
+    
 	, setGlobalFilters : function (globalFilters) {
 		this.designToolsPanel.setGlobalFilters(globalFilters);
 	}
-	
 	
 });

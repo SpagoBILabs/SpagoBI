@@ -55,11 +55,10 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {});
 	
-	this.addEvents('load');	
-	
-	this.attribute = c.attribute; // the json object representing the attribute: it must be in the constructor input object
-	this.worksheetDefinition = c.worksheetDefinition; // the json object representing the worksheet: it must be in the constructor input object
-	this.sheetName = c.sheetName; // the name of the sheet: it is undefined for global filters, but it is defined for sheets' filters
+	// The following instruction creates mainly:
+	//this.attribute = c.attribute : the json object representing the attribute: it must be in the constructor input object
+	//this.params = c.params : the json object with the parameters for store loading: it must be in the constructor input object
+	Ext.apply(this, c);
 	
 	var service_params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 	
@@ -75,30 +74,12 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	});
 	c.store = this.store;
 
-	
-	this.store.on('loadexception', function(store, options, response, e) {
-		Sbi.exception.ExceptionHandler.handleFailure(response, options);
-	});
-	this.store.on('load', function (store, records, options) {
-		this.fireEvent('load', this, records, options);
-	}, this);
-	
 	this.store.on('loadexception', function(store, options, response, e) {
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	});
 
-	this.on('selectionmade', this.updateValues, this);
-
-	
-	// PARAMS
-	
-	var params = {
-		worksheetdefinition:  Ext.encode(this.worksheetDefinition)
-	};
-	
-	if (this.sheetName) {
-		params.sheetName = this.sheetName;
-	}
+	// parameters for store loading
+	var params = this.params
 	
 	var p = Ext.apply({}, params, {
 		start: this.start
@@ -115,7 +96,7 @@ Sbi.worksheet.designer.AttributeValuesChooserWindow = function(config) {
 	// constructor
 	Sbi.worksheet.designer.AttributeValuesChooserWindow.superclass.constructor.call(this, c);
 	// set first selection
-	this.setSelection(Ext.decode(this.attribute.values));
+	this.setSelection(Ext.decode(this.attribute.values)); // TODO è necessario?
  	
 	this.show(this);
 
@@ -127,16 +108,6 @@ Ext.extend(Sbi.worksheet.designer.AttributeValuesChooserWindow, Sbi.widgets.Filt
     start: 0 
     , limit: 20
 	, attribute 	: null // the json object representing the attribute: it must be in the constructor input object
-	, worksheetDefinition : null // the json object representing the worksheet: it must be in the constructor input object
-	
-	,
-	updateValues : function ( ) {
-		this.attribute.values = Ext.encode(this.getSelection());
-	}
-
-	,
-	selectValues : function ( ) {
-		this.select(Ext.decode(this.attribute.values));
-	}
+	, params : null // the json object with the parameters for store loading: it must be in the constructor input object
 	
 });

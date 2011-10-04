@@ -88,6 +88,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	footerPanel: null,
 	sheetLayout: null,
 	filtersPositionPanel: null,
+	filtersOnDomainValues: null, 
 	
 	initPanels: function(){
 		this.sheetLayout = 'layout_headerfooter';
@@ -125,7 +126,7 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 			this
 		);
 		
-		this.contentPanel.on('topFilters', function(){
+		this.contentPanel.on('topFilters', function() {
 			this.filtersPanel.show();
 			this.filtersPanel.updateFilters();
 			this.filtersPositionPanel = 'top';
@@ -181,6 +182,8 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		if(!this.footerPanel.hidden){
 			state.footer = this.footerPanel.getTitleState();
 		}
+		
+		state.filtersOnDomainValues = this.getFiltersOnDomainValues();
 
 		return state;
 	}
@@ -191,10 +194,10 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 		this.sheetLayout = sheetState.sheetLayout;
 		this.updateLayout(this.sheetLayout);
 		this.setTitle(this.title);
-		if(sheetState.header!==null){
+		if (sheetState.header!==null) {
 			this.headerPanel.setTitleState(sheetState.header);
 		}
-		if(sheetState.filters !== undefined && sheetState.filters !== null && sheetState.filters.filters !== null  && sheetState.filters.filters.length>0){
+		if (sheetState.filters !== undefined && sheetState.filters !== null && sheetState.filters.filters !== null  && sheetState.filters.filters.length>0) {
 			var filters = sheetState.filters.filters;
 			this.filtersPanel.setFilters(filters);
 			this.filtersPositionPanel = sheetState.filters.position;
@@ -206,12 +209,23 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 				}
 			}
 		}
-		if(sheetState.content!==null){
+		if (sheetState.content !== null) {
 			this.contentPanel.addDesigner(sheetState.content);
 		}
-		if(sheetState.footer!==null){
+		if (sheetState.footer !== null) {
 			this.footerPanel.setTitleState(sheetState.footer);
 		}
+		
+		this.filtersOnDomainValues = {};
+		if (sheetState.filtersOnDomainValues !== undefined && sheetState.filtersOnDomainValues !== null 
+				&& sheetState.filtersOnDomainValues.length > 0) {
+			for (var i = 0; i < sheetState.filtersOnDomainValues.length; i++) {
+				var key = sheetState.filtersOnDomainValues[i].id;
+				this.filtersOnDomainValues[key] = sheetState.filtersOnDomainValues[i];
+			}
+		}
+		
+		
 	}
 	
 	, validate: function(){
@@ -255,6 +269,29 @@ Ext.extend(Sbi.worksheet.designer.SheetPanel, Ext.Panel, {
 	
 	, getName : function () {
 		return this.title;
+	}
+	
+	, getFilterOnDomainValues : function(attribute) {
+		if (this.filtersOnDomainValues == null) {
+			this.filtersOnDomainValues = {};
+		}
+		if (this.filtersOnDomainValues[attribute.id] !== undefined) {
+			return this.filtersOnDomainValues[attribute.id];
+		} else {
+			var clone = Ext.apply({}, attribute);
+			this.filtersOnDomainValues[clone.id] = clone;
+			return clone;
+		}
+	}
+	
+	, getFiltersOnDomainValues : function() {
+		var toReturn = [];
+		for (var x in this.filtersOnDomainValues) {
+			if (this.filtersOnDomainValues[x].values !== '[]') {
+				toReturn.push(this.filtersOnDomainValues[x]);
+			}
+		}
+		return toReturn;
 	}
 	
 });

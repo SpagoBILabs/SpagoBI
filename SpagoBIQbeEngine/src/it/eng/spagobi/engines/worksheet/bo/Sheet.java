@@ -40,6 +40,7 @@ public class Sheet {
 	private List<Attribute> filters;
 	private FiltersPosition filtersPosition;
 	private SheetContent content;
+	private List<Attribute> filtersOnDomainValues;
 	private JSONObject footer;
 	
 
@@ -52,19 +53,21 @@ public class Sheet {
 	 * @param footer
 	 */
 	public Sheet(String name, String layout, JSONObject header,
-			List<Attribute> filters, SheetContent content, JSONObject footer) {
+			List<Attribute> filters, SheetContent content, List<Attribute> filtersOnDomainValues, JSONObject footer) {
 		super();
 		this.name = name;
 		this.header = header;
 		this.layout = layout;
 		this.filters = filters;
 		this.content = content;
+		this.filtersOnDomainValues = filtersOnDomainValues;
 		this.footer = footer;
 		this.filtersPosition = FiltersPosition.TOP;
 	}
 	public Sheet(String name, String layout, JSONObject header,
-			List<Attribute> filters, FiltersPosition filtersPosition, SheetContent content, JSONObject footer) {
-		this(name, layout, header, filters, content, footer);
+			List<Attribute> filters, FiltersPosition filtersPosition, SheetContent content, 
+			List<Attribute> filtersOnDomainValues, JSONObject footer) {
+		this(name, layout, header, filters, content, filtersOnDomainValues, footer);
 		this.filtersPosition = filtersPosition;
 	}
 	public JSONObject getHeader() {
@@ -110,10 +113,14 @@ public class Sheet {
 		this.filtersPosition = filtersPosition;
 	}
 	public List<Attribute> getFiltersOnDomainValues() {
-		List<Attribute> toReturn = new ArrayList<Attribute>();
-		WorkSheetDefinition.addDomainValuesFilters(toReturn, getFilters());
-		WorkSheetDefinition.addDomainValuesFilters(toReturn, getContent().getFiltersOnDomainValues());
-		return toReturn;
+//		List<Attribute> toReturn = new ArrayList<Attribute>();
+//		WorkSheetDefinition.addDomainValuesFilters(toReturn, getFilters());
+//		WorkSheetDefinition.addDomainValuesFilters(toReturn, getContent().getFiltersOnDomainValues());
+//		return toReturn;
+		return this.filtersOnDomainValues;
+	}
+	public void setFiltersOnDomainValues(List<Attribute> filtersOnDomainValues) {
+		this.filtersOnDomainValues = filtersOnDomainValues;
 	}
 	public List<Field> getAllFields() {
 		List<Field> toReturn = new ArrayList<Field>();
