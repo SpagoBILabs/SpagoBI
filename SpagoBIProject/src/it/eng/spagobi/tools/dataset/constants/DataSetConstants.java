@@ -67,7 +67,7 @@ public class DataSetConstants {
 	public static final String WS_OPERATION = "wsOperation";
 	public static final String SCRIPT = "Script";
 	public static final String SCRIPT_LANGUAGE = "scriptLanguage";
-	public static final String JCLASS_NAME = "jclassName";
+	public static final String JCLASS_NAME = "jClassName";
 	public static final String CUSTOM_DATA = "customData";
 	public static final String FILE = "File";
 	public static final String JAVA_CLASS = "Java Class";
