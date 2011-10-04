@@ -74,6 +74,7 @@ public class Version0WorksheetStateLoader extends AbstractWorksheetStateLoader {
 		if (sheets != null && sheets.length() > 0) {
 			for (int i = 0; i < sheets.length(); i++) {
 				JSONObject aSheet = sheets.getJSONObject(i);
+				aSheet.put("filtersOnDomainValues", new JSONArray());
 				convertContent(aSheet);
 				convertFilters(aSheet);
 			}

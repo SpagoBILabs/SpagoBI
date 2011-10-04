@@ -62,4 +62,9 @@ public class StartWorksheetFromQbeAction extends WorksheetEngineStartAction {
     	}
 		return qbeEngineInstance;
 	}
+    
+    @Override
+    protected boolean goToWorksheetPreentation() {
+		return false;
+	}
 }

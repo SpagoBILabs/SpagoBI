@@ -150,15 +150,15 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
 			// if the attribute is already present show a warning
-//			if (this.store.find('id', aRow.data.id) !== -1) {
-//				Ext.Msg.show({
-//					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
-//					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.attributealreadypresent'),
-//					   buttons: Ext.Msg.OK,
-//					   icon: Ext.MessageBox.WARNING
-//				});
-//				return;
-//			}
+			if (this.store.find('id', aRow.data.id) !== -1) {
+				Ext.Msg.show({
+					   title: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.title'),
+					   msg: LN('sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.attributealreadypresent'),
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.WARNING
+				});
+				return;
+			}
 			// if the field is a measure show a warning
 			if (aRow.data.nature === 'measure'  || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
