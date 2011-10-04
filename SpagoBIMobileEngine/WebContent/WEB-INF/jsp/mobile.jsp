@@ -132,72 +132,86 @@ author: Monica Franceschini
 
 		
 		<script>
-			Sbi.config = {};
-			
-			var url = {
-		    	host: '<%= request.getServerName()%>'
-		    	, port: '<%= request.getServerPort()%>'
-		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-		    	   				  request.getContextPath().substring(1):
-		    	   				  request.getContextPath()%>'
-		    	    
-		    };
-	
-		    var params = {
-		    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-		    };
-	
-
-	        var executionContext = {};
-
-			var paramsList = {MESSAGE_DET: "GET_DATA", document: <%= documentId%>};
 
 
-		    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-		    	baseUrl: url
-		        , baseParams: params
-        
-		    });
-			var getColumns = Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName: 'TABLE_ACTION'
-				, baseParams: paramsList
-			});	
-	      var store = new Ext.data.Store({
-	     		root: 'columns'
-	     		, fields: <%=colFields%>
-	     		, proxy: {
-	              type: 'ajax',
-	              url: getColumns,
-	              reader: {
-	                  type: 'json',
-	                  root: 'columns',
-	                  totalCount: 'total'
-	              }
-	          }
-	      });
-      
+	      Ext.setup({
+	    	    icon: 'icon.png',
+	    	    tabletStartupScreen: 'tablet_startup.png',
+	    	    phoneStartupScreen: 'phone_startup.png',
+	    	    glossOnIcon: true,
+	    	    fullscreen: true,
+	    	    
+	    	    onReady: function() {			
+
+	    	    Sbi.config = {};
+				
+				var url = {
+			    	host: '<%= request.getServerName()%>'
+			    	, port: '<%= request.getServerPort()%>'
+			    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+			    	   				  request.getContextPath().substring(1):
+			    	   				  request.getContextPath()%>'
+			    	    
+			    };
+		
+			    var params = {
+			    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+			    };
+		
+
+		        var executionContext = {};
+
+				var paramsList = {MESSAGE_DET: "GET_DATA", document: <%= documentId%>};
+
+
+			    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+			    	baseUrl: url
+			        , baseParams: params
+	        
+			    });
+				var getColumns = Sbi.config.serviceRegistry.getServiceUrl({
+					serviceName: 'TABLE_ACTION'
+					, baseParams: paramsList
+				});	
+		      var store = new Ext.data.Store({
+		     		root: 'columns'
+		     		, fields: <%=colFields%>
+		      		, pageSize: 10
+					//, autoLoad: true
+		     		, proxy: {
+			              type: 'ajax',
+			              url: getColumns,		              
+			              reader: {
+			                  type: 'json',
+			                  root: 'columns',	 
+			                  totalProperty: "total",                 
+			                  totalCount: 'total'
+			              }
+		          }
+		      });
 	      
-	      store.load();
+		      
+		      store.load();
+	    	  		Ext.ux.TouchGridPanel = new Ext.ux.TouchGridPanel({
+						fullscreen  : true,
+						store       : store,
+			            plugins    : new Ext.ux.touch.PagingToolbar({
+			                store : store
+			            }),
+						multiSelect : false,
+						dockedItems : [{
+							xtype : "toolbar",
+							dock  : "top",
+							title : '<%=titleValue %>',
+							style:  '<%=titleStyle %>'
+						}],
+						conditions  : <%= conditions%>,
+						colModel    : <%= colMod%>
+					});
+	    	  
+	    	    }
+	    	});
 
-			Ext.onReady(function() { 
-				var grid = new Ext.ux.TouchGridPanel({
-					fullscreen  : true,
-					store       : store,
-		            plugins    : new Ext.ux.touch.PagingToolbar({
-		                store : store
-		            }),
-					multiSelect : false,
-					dockedItems : [{
-						xtype : "toolbar",
-						dock  : "top",
-						title : '<%=titleValue %>',
-						style:  '<%=titleStyle %>'
-					}],
-					conditions  : <%= conditions%>,
-					colModel    : <%= colMod%>
-				});
-
-			});
 		</script>
 		
 		
