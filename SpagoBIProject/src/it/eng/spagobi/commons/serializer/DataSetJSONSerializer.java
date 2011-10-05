@@ -216,11 +216,13 @@ public class DataSetJSONSerializer implements Serializer {
 			
 			else if(dsDetail instanceof CustomDataSetDetail){
 				String customData = ((CustomDataSetDetail)dsDetail).getCustomData();
-				JSONArray customJSONArray = new JSONArray();
+				//JSONArray customJSONArray = new JSONArray();
+				JSONObject customJSONObject = new JSONObject();
 				if(customData!=null && !customData.equals("")){
-					customJSONArray = new JSONArray(customData);
+					//customJSONArray = new JSONArray(customData);
+					customJSONObject =new JSONObject(customData);
 				}
-				result.put(CUSTOMS, customJSONArray);	
+				result.put(CUSTOMS, customJSONObject);	
 				
 				String jClass = ((CustomDataSetDetail)dsDetail).getJavaClassName();
 				if(jClass!=null){

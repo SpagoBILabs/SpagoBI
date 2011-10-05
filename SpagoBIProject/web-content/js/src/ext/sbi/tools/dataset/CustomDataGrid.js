@@ -156,7 +156,13 @@ Ext.extend(Sbi.tools.dataset.CustomDataGrid, Ext.grid.EditorGridPanel, {
   	,userColumns:null
 
   	,loadItems: function(pars){
-		this.store.loadData(pars);
+		var tempArray = [];
+		for ( var x in pars ){
+			var key = x;
+			var value = pars[key];
+			tempArray.push({ "name" : key , "value" : value })
+		}
+		this.store.loadData(tempArray);
 	}
 
     ,onAdd: function (btn, ev) {
@@ -171,17 +177,29 @@ Ext.extend(Sbi.tools.dataset.CustomDataGrid, Ext.grid.EditorGridPanel, {
         this.store.remove(rec);
         this.store.commitChanges();
      }
-    
-    ,getDataArray: function(){
-	    var arrayPars = new Array();
-			var storePars = this.getStore();
-			var length = storePars.getCount();
-			for(var i = 0;i< length;i++){
+    // no more used
+//    ,getDataArray: function(){
+//	    var arrayPars = new Array();
+//			var storePars = this.getStore();
+//			var length = storePars.getCount();
+//			for(var i = 0;i< length;i++){
+//				var item = storePars.getAt(i);
+//				var data = item.data;
+//				arrayPars.push(data);
+//			}
+//		return arrayPars;
+//	}
+    ,getDataString: function(){
+    	var objToReturn = {};
+		var storePars = this.getStore();
+		var length = storePars.getCount();
+		for(var i = 0;i< length;i++){
 				var item = storePars.getAt(i);
 				var data = item.data;
-				arrayPars.push(data);
-			}
-		return arrayPars;
+				objToReturn[data.name] = data.value;
+				//arrayPars.push(data);
+		}
+		return objToReturn;
 	}
 
 
