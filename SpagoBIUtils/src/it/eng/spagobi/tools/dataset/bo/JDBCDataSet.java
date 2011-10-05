@@ -40,6 +40,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -162,7 +163,15 @@ public static String DS_TYPE = "SbiQueryDataSet";
 	
 	@Override
 	public IMetaData getMetadata() {
-		return test().getMetaData();
+		IMetaData metadata = null;
+		try {
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			metadata =  dsp.xmlToMetadata(dsMetadata);
+		} catch (Exception e) {
+			logger.error("Error loading the metadata",e);
+			throw new SpagoBIEngineRuntimeException("Error loading the metadata",e);
+		}
+		return metadata;
 	}
 
 	public void setMetadata(IMetaData metadata) {

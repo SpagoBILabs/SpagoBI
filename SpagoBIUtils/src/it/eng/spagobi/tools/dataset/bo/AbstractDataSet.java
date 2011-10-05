@@ -59,7 +59,7 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String pivotRowName;
     protected String pivotColumnValue;
     protected boolean numRows;
-    private String dsMetadata;
+    protected String dsMetadata;
     	
     protected IDataStoreTransformer dataSetTransformer;
     
