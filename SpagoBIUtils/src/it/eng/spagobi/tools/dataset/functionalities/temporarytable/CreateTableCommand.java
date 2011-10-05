@@ -38,12 +38,14 @@ public class CreateTableCommand {
 		sqlTypeMapping.put("java.util.Date", "DATE");
 	}
 
+
+
 	Map<String, String> oracleTypeMapping = null;
 	{
 		oracleTypeMapping = new HashMap<String, String>();
 		oracleTypeMapping.put("java.lang.Integer", "NUMBER");
 		oracleTypeMapping.put("java.lang.String", "VARCHAR2");
-		oracleTypeMapping.put("java.lang.String0", "CLOB");
+		oracleTypeMapping.put("java.lang.String4001", "CLOB");
 		oracleTypeMapping.put("java.lang.Boolean", "VARCHAR2(1)");
 		oracleTypeMapping.put("java.lang.Float", "NUMBER");
 		oracleTypeMapping.put("java.lang.Double", "NUMBER");
@@ -52,9 +54,10 @@ public class CreateTableCommand {
 		oracleTypeMapping.put("java.sql.Timestamp", "TIMESTAMP");
 		oracleTypeMapping.put("oracle.sql.TIMESTAMP", "TIMESTAMP");
 		oracleTypeMapping.put("java.math.BigDecimal", "NUMBER");
-		
-		
 	}
+
+	static final Integer MAX_VARCHAR2_SIZE = 4000;
+
 
 	// properties
 	public static final String SIZE ="size";
@@ -141,23 +144,23 @@ public class CreateTableCommand {
 
 		//query+=");";
 		query+=")";
-		
+
 		logger.debug("Query is "+query);
 		System.out.println(query);
 		logger.debug("OUT");
 		return query;
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 	private String writeType(String typeJavaName, Map properties){
 		// convert java type in SQL type
 		String queryType ="";
@@ -179,9 +182,14 @@ public class CreateTableCommand {
 		// particular case of VARCHAR and CLOB
 
 		if(typeJavaName.equalsIgnoreCase(String.class.getName())){
-			// varchar with no size is text
+			// varchar with no size is varchar(4000)
 			if((size == null || size == 0) ){
-				typeSQL = oracleTypeMapping.get(typeJavaName+"0");
+				typeSQL = oracleTypeMapping.get(typeJavaName);
+				size = MAX_VARCHAR2_SIZE;
+			}
+			// varchar with size > 4001 is CLOB
+			else if(size > MAX_VARCHAR2_SIZE){
+				typeSQL = oracleTypeMapping.get(typeJavaName+"4001");
 			}
 			else {
 				typeSQL = oracleTypeMapping.get(typeJavaName);				
@@ -210,18 +218,18 @@ public class CreateTableCommand {
 				}
 
 			}
-				queryType+=" ";
-				return queryType;
-			}
-
-
-		public DataSetTableDescriptor getDsTableDescriptor() {
-			return dsTableDescriptor;
-		}
-
-
-
-
-
-
+		queryType+=" ";
+		return queryType;
 	}
+
+
+	public DataSetTableDescriptor getDsTableDescriptor() {
+		return dsTableDescriptor;
+	}
+
+
+
+
+
+
+}
