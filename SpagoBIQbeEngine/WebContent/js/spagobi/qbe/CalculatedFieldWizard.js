@@ -83,7 +83,6 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 	}
 
 	, setTargetNode: function(node) {
-		alert('set1: ' + node);
 		this.mainPanel.setTargetNode(node);
 	}
     
@@ -92,6 +91,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 			expItemGroups: c.expItemGroups
 			, fields: c.fields
 			, functions: c.functions
+			, aggregationFunctions: c.aggregationFunctions
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
