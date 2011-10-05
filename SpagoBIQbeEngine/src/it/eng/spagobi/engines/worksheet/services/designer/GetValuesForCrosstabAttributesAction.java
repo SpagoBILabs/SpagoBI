@@ -112,10 +112,11 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 	
 			IDataSet dataset = engineInstance.getDataSet();
+			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
+				logger.debug("Dataset has FilteringBehaviour.");
 				FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
-//				Map<String, List<String>> filters = getFiltersOnDomainValues();
 				WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 				List<Attribute> globalFilters = workSheetDefinition.getGlobalFilters();
 				List<Attribute> sheetFilters = new ArrayList<Attribute>();
@@ -124,6 +125,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 					sheetFilters = aSheet.getFiltersOnDomainValues();
 				}
 				Map<String, List<String>> filters = WorkSheetDefinition.mergeDomainValuesFilters(globalFilters, sheetFilters);
+				logger.debug("Setting filters on domain values : " + filters);
 				filteringBehaviour.setFilters(filters);
 			}
 			
@@ -134,8 +136,17 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			}
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(JSONDataWriter.PROPERTY_PUT_IDS, Boolean.FALSE);
+			/* 
+			 * The JSONDataWriter uses "column_" + index as field name and therefore the actual field name is lost.
+			 * The DomainValuesJSONDataWriter uses the field name as column name instead.
+			 * In this case we use the field name because it is easier to filter the domain values, 
+			 * since we don't save the domain values' store anywhere.
+			 * That's way don't use JSONDataWriter here.
+			 * TODO change JSONDataWriter to use the field name as column name and change any class (java and javascript) 
+			 * based on "column_" + index convention
+			 */
 //			JSONDataWriter writer = new JSONDataWriter(props);
-			JSONDataWriter writer = new DomainValuesJSONDataWriter();
+			JSONDataWriter writer = new DomainValuesJSONDataWriter();  
 			gridDataFeed = (JSONObject) writer.write(dataStore);
 			
 			// the first column contains the actual domain values, we must put this information into the response
@@ -164,7 +175,6 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			logger.debug("OUT");
 		}	
 	}
-
 
 	private IDataStoreFilter getDataStoreFilterIfAny() throws JSONException {
 		IDataStoreFilter filter = null;

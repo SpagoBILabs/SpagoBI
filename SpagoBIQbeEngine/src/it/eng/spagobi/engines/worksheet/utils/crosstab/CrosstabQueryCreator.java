@@ -378,12 +378,12 @@ public class CrosstabQueryCreator {
 //		return toReturn;
 //	}
 	
-	public static String getTableQuery(List<String> fieldsName,
+	public static String getTableQuery(List<String> fieldsName, boolean distinct, 
 			IDataSetTableDescriptor descriptor, List<WhereField> whereFields) {
 		logger.debug("IN");
 		StringBuffer buffer = new StringBuffer();
 		
-		putSelectClause(buffer, fieldsName, descriptor);
+		putSelectClause(buffer, fieldsName, distinct, descriptor);
 			
 		putFromClause(buffer, descriptor);
 		
@@ -396,11 +396,14 @@ public class CrosstabQueryCreator {
 
 	private static void putSelectClause(StringBuffer buffer, 
 			List<String> fieldsName,
-			IDataSetTableDescriptor descriptor) {
+			boolean distinct, IDataSetTableDescriptor descriptor) {
 		
 		logger.debug("IN");
 		
 		buffer.append("SELECT ");
+		if (distinct) {
+			buffer.append("DISTINCT ");
+		}
 
 		for (int i = 0; i < fieldsName.size(); i++) {
 			String fieldName = fieldsName.get(i);

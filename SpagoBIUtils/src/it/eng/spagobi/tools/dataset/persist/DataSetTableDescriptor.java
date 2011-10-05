@@ -55,5 +55,12 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 	public String getTableName() {
 		return this.tableName;
 	}
+	
+	@Override
+	public String toString() {
+		return "DataSetTableDescriptor [tableName=" + tableName
+				+ ", field2ColumnMap=" + field2ColumnMap + ", field2ClassMap="
+				+ field2ClassMap + "]";
+	}
 
 }

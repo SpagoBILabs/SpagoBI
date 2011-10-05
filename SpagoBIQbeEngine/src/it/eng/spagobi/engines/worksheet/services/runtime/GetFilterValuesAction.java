@@ -21,19 +21,15 @@
 package it.eng.spagobi.engines.worksheet.services.runtime;
 
 import it.eng.qbe.query.WhereField;
-import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.QbeEngineStaticVariables;
-import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
-import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -51,24 +47,23 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-public class LoadCrosstabAction extends AbstractWorksheetEngineAction {	
+public class GetFilterValuesAction extends AbstractWorksheetEngineAction {	
+	
+	private static final long serialVersionUID = 118095916184707515L;
 	
 	// INPUT PARAMETERS
-	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
-	private static final String OPTIONAL_FILTERS = QbeEngineStaticVariables.OPTIONAL_FILTERS;
+	public static final String FIELD_NAME = "fieldName";
 	public static final String SHEET = "sheetName";
 
-	private static final long serialVersionUID = -5780454016202425492L;
-
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(LoadCrosstabAction.class);
+    public static transient Logger logger = Logger.getLogger(GetFilterValuesAction.class);
     public static transient Logger auditlogger = Logger.getLogger("audit.query");
     
 	
 	public void service(SourceBean request, SourceBean response)  {				
 				
 		IDataStore dataStore = null;
-		CrosstabDefinition crosstabDefinition = null;
+		JSONObject gridDataFeed = null;
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -79,14 +74,8 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		
 			super.service(request, response);	
 			
-			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
-			
-			JSONObject crosstabDefinitionJSON = getAttributeAsJSONObject( CROSSTAB_DEFINITION );			
-			Assert.assertNotNull(crosstabDefinitionJSON, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute " + this.getActionName() + " service");
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
-			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
-			crosstabDefinition.setCellLimit( new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) );
-			
+			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.getFilterValuesAction.totalTime");
+
 			WorksheetEngineInstance engineInstance = getEngineInstance();
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 			
@@ -127,18 +116,17 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 			whereFields.addAll(temp);
 			
-			temp = getOptionalFilters(getAttributeAsJSONObject(OPTIONAL_FILTERS));
-			whereFields.addAll(temp);
+			String fieldName = getAttributeAsString(FIELD_NAME);
+			logger.debug("Parameter [" + FIELD_NAME + "] is equals to [" + fieldName + "]");
 			
-			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields);
+			String worksheetQuery = this.buildSqlStatement(fieldName, descriptor, whereFields);
 			// execute SQL query against temporary table
 			dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
-			// serialize crosstab
-			CrossTab crossTab = new CrossTab(dataStore, crosstabDefinition);
-			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
+			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 			
 			try {
-				writeBackToClient( new JSONSuccess(crossTabDefinition) );
+				writeBackToClient( new JSONSuccess(gridDataFeed) );
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
@@ -154,16 +142,10 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 		}	
 	}
 
-	/**
-	 * Build the sql statement to query the temporary table 
-	 * @param crosstabDefinition definition of the crosstab
-	 * @param descriptor the temporary table descriptor
-	 * @param tableName the temporary table name
-	 * @return the sql statement to query the temporary table 
-	 */
-	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition,
-			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
-		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters);
+	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters) {
+		List<String> fieldNames = new ArrayList<String>();
+		fieldNames.add(fieldName);
+		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters);
 	}
 	
 }

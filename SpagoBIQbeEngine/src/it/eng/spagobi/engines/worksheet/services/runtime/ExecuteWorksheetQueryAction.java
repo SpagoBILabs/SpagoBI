@@ -129,7 +129,6 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 	protected IDataStore executeQuery(JSONArray jsonVisibleSelectFields, String sheetName) throws Exception {
 		
 		IDataStore dataStore = null;
-		JSONObject jsonFormState = null;
 		
 		Integer limit;
 		Integer start;
@@ -140,10 +139,9 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		limit = getAttributeAsInteger( LIMIT );
 		logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 		
-		Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
+		WorksheetEngineInstance engineInstance = getEngineInstance();
+		Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 		
-		
-		JSONObject optionalUserFilters = getAttributeAsJSONObject( OPTIONAL_FILTERS );
 		List<String> fieldNames = new ArrayList<String>();
 		List<Attribute> onTableAttributes = new ArrayList<Attribute>();
 		for (int i = 0; i < jsonVisibleSelectFields.length(); i++) {
@@ -161,23 +159,29 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		
 		// get temporary table name
 		String tableName = this.getTemporaryTableName();
+		logger.debug("Temporary table name is [" + tableName + "]");
+		
 		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
-		WorksheetEngineInstance engineInstance = getEngineInstance();
 		IDataSet dataset = engineInstance.getDataSet();
+		Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 		Map<String, List<String>> filters = getFiltersOnDomainValues();
 		if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
+			logger.debug("Dataset has FilteringBehaviour.");
 			FilteringBehaviour filteringBehaviour = (FilteringBehaviour) dataset.getBehaviour(FilteringBehaviour.ID);
+			logger.debug("Setting filters on domain values : " + filters);
 			filteringBehaviour.setFilters(filters);
 		}
 		
 		if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
+			logger.debug("Dataset has SelectableFieldsBehaviour.");
 			List<String> fields = getAllFields();
 			SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
+			logger.debug("Setting list of fields : " + fields);
 			selectableFieldsBehaviour.setSelectedFields(fields);
 		}
 		
 		// persist dataset into temporary table	
-		IDataSetTableDescriptor descriptor = this.persistDataSet(tableName);
+		IDataSetTableDescriptor descriptor = this.persistDataSet(dataset, tableName);
 		// build SQL query against temporary table
 		List<WhereField> whereFields = new ArrayList<WhereField>();
 		if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -207,9 +211,9 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 		return dataStore;
 	}
 
-	private String buildSqlStatement(List<String> aliases,
+	private String buildSqlStatement(List<String> fieldNames,
 			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
-		return CrosstabQueryCreator.getTableQuery(aliases, descriptor, filters);	
+		return CrosstabQueryCreator.getTableQuery(fieldNames, false, descriptor, filters);	
 	}
 	
 }
