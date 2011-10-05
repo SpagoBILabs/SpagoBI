@@ -127,6 +127,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	, pressedNode: null
 	, calculatedFieldWizard : null
 	, inLineCalculatedFieldWizard : null
+	, slotWizard : null
 	, menu: null
 	, CALCULATED_FIELD: 'calculatedField'
 	, IN_LINE_CALCULATED_FIELD: 'inLineCalculatedField'
@@ -369,7 +370,53 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}	
 		
 	}
-	
+	, addSlot: function(entityNode) {
+		if(entityNode==null || entityNode==undefined){
+			entityNode = this.pressedNode;
+		}
+		this.pressedNode=entityNode
+		
+		var selectNode;
+		
+		if(!entityNode) return;
+		var type = entityNode.attributes.type || entityNode.attributes.attributes.type;
+		var text = entityNode.text || entityNode.attributes.text;
+		
+		if(type === 'entity') {
+			
+			//creates a window
+			this.slotWizard = new Sbi.qbe.SlotWizard();
+
+			var fields = new Array();
+			for(var i = 0; i < entityNode.attributes.children.length; i++) {
+				var child = entityNode.attributes.children[i];
+				var childType = child.attributes.type || child.attributes.attributes.type;
+				if(childType === 'field') {
+					var field = {
+						uniqueName: child.id,
+						alias: child.text,
+						text: child.attributes.field, 
+						qtip: child.attributes.entity + ' : ' + child.attributes.field, 
+						type: 'field', 
+						value: 'dmFields[\'' + child.attributes.field + '\']'
+					};	
+					fields.push(field);
+				}
+			}
+			this.slotWizard.mainPanel.doLayout();
+			this.slotWizard.show();
+
+		
+		} else {
+			Ext.Msg.show({
+				   title:'Invalid operation',
+				   msg: 'Impossible to add slot to a node of type [' + type + ']',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});		
+		}	
+		
+	}
 	// --------------------------------------------------------------------------------
 	// private methods
 	// --------------------------------------------------------------------------------
@@ -833,7 +880,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
             	 text:'Insert Slot',
                  iconCls:'slot',
                  handler:function(){
-	         	 	alert("slot");
+            		this.addSlot(this.ctxNode);	
 	             },
                  scope: this
              }]
