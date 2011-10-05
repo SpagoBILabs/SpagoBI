@@ -471,7 +471,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	    		    {name:'fields', text: 'Fields'}, 
 	    		    {name:'dateFunctions', text: 'Date Functions'}
 	    		],
-	    		fields: fields,
+	    		fields: new Array(),
 	    		dateFunctions: dateFunctions,
 	    		expertMode: false,
 	        	scopeComboBoxData :[
