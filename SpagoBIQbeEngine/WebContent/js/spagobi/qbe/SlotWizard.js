@@ -49,6 +49,8 @@ Sbi.qbe.SlotWizard = function(config) {
 	}
 	Sbi.qbe.SlotWizard.superclass.constructor.call(this, c);  
 	this.add(this.mainPanel);
+	
+	this.addEvents('apply');  
 };
 
 Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
@@ -59,11 +61,26 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
     , mainPanel: null
     , firstCalculatedFiledPanel : null
     , secondSlotDefinitionPanel: null
-    , getMainPanel : function(){
-		
-		return this.mainPanel;
+    , buttonsConfig: null
+
+    
+    , setExpItems: function(itemGroupName, items) {
+    	this.firstCalculatedFiledPanel.setExpItems(itemGroupName, items);
+    }
+
+	, setTargetRecord: function(record) {
+		this.firstCalculatedFiledPanel.setTargetRecord(record);
+	}
+
+	, setTargetNode: function(node) {
+		this.firstCalculatedFiledPanel.setTargetNode(node);
+	}
+    
+    , getCalculatedFiledPanel : function(){		
+		return this.firstCalculatedFiledPanel;
 	}
 	, initMainPanel: function(c) {
+		
 		var navHandler = function(direction){
 			if(this.mainPanel !== null){
 				var curr = this.mainPanel.layout.activeItem;
@@ -82,12 +99,17 @@ Ext.extend(Sbi.qbe.SlotWizard, Ext.Window, {
 			this.save();
 		};
 		
-		this.firstCalculatedFiledPanel = new Ext.Panel({
-		        id: 'card-0',
-		        layout: 'fit',
-		        height: 100,
-		        html: '<h1>Welcome to the Demo Wizard!</h1><p>Step 1 of 3</p><p>Please click the "Next" button to continue...</p>'  
+		this.firstCalculatedFiledPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
+			expItemGroups: c.expItemGroups
+			, fields: c.fields
+			, functions: c.functions
+			, aggregationFunctions: c.aggregationFunctions
+			, dateFunctions: c.dateFunctions
+			, expertMode: c.expertMode
+			, scopeComboBoxData: c.scopeComboBoxData   		
+			, validationService: c.validationService
 		});
+		
 		this.secondSlotDefinitionPanel = new Ext.Panel({
 			id: 'card-1',  
 	        layout: 'fit',
