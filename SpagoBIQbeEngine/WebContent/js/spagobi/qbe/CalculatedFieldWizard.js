@@ -92,6 +92,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 			, fields: c.fields
 			, functions: c.functions
 			, aggregationFunctions: c.aggregationFunctions
+			, dateFunctions: c.dateFunctions
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
 			, validationService: c.validationService
