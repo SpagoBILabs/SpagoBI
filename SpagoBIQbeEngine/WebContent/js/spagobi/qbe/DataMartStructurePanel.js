@@ -383,10 +383,71 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		var text = entityNode.text || entityNode.attributes.text;
 		
 		if(type === 'entity') {
+			var fields = new Array();
 			
-			//creates a window
-			this.slotWizard = new Sbi.qbe.SlotWizard();
-
+			var parametersLoader = new Ext.tree.TreeLoader({
+		        baseParams: {},
+		        dataUrl: this.services['getParameters']
+		    });
+			
+			var attributesLoader = new Ext.tree.TreeLoader({
+		        baseParams: {},
+		        dataUrl: this.services['getAttributes']
+		    });
+			
+			var crossFn = Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
+				Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
+				Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
+				Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
+				Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
+				Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
+				Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
+				Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
+				Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
+				Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
+				Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
+				Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+				Ext.util.Format.htmlEncode("return result;");
+			
+			var dateFunctions = [
+ 			    {
+ 		            text: 'GG_between_dates'
+ 		            , qtip: LN('da implementare')
+ 		            , type: 'function'
+ 		            , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 		            , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 		         }, {
+ 			         text: 'MM_between_dates'
+ 			         , qtip: LN('da implementare')
+ 				     , type: 'function'
+ 				     , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 				     , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 				 },{
+ 					 text: 'AA_between_dates'
+ 				      , qtip: LN('da implementare')
+ 				      , type: 'function'
+ 				      , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 				      , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+ 				 }, {
+ 				     text: 'gg_between_dates'
+ 				     , qtip: LN('da implementare')
+ 					 , type: 'function'
+ 					 , value: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
+ 					 , alias: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
+ 				 }, {
+ 				     text: 'mm_between_dates'
+ 					 , qtip: LN('da implementare')
+ 					 , type: 'function'
+ 					 , value: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
+ 					 , alias: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
+ 				  }, {
+ 					 text: 'yy_between_dates'
+ 					 , qtip: LN('da implementare')
+ 					 , type: 'function'
+ 					 , value: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
+ 					 , alias: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
+ 				   }
+ 		    ];
 			var fields = new Array();
 			for(var i = 0; i < entityNode.attributes.children.length; i++) {
 				var child = entityNode.attributes.children[i];
@@ -403,6 +464,35 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 					fields.push(field);
 				}
 			}
+			//creates a window
+			this.slotWizard = new Sbi.qbe.SlotWizard( { 
+				title: 'Slot definition Wizard',
+		    	expItemGroups: [
+	    		    {name:'fields', text: 'Fields'}, 
+	    		    {name:'dateFunctions', text: 'Date Functions'}
+	    		],
+	    		fields: fields,
+	    		dateFunctions: dateFunctions,
+	    		expertMode: false,
+	        	scopeComboBoxData :[
+	        	    ['STRING','String', 'If the expression script returns a plain text string'],
+	        	    ['NUMBER', 'Number', 'If the expression script returns a number']
+	        	],
+	        	validationService: {
+					serviceName: 'VALIDATE_EXPRESSION_ACTION'
+					, baseParams: {contextType: 'datamart'}
+					, params: null
+				}
+			});
+
+			
+
+			var slotCalculatedFieldsPanel = this.slotWizard.getCalculatedFiledPanel();
+			slotCalculatedFieldsPanel.validationService.params = {fields: Ext.util.JSON.encode(fields)};
+			slotCalculatedFieldsPanel.setExpItems('fields', fields);
+			slotCalculatedFieldsPanel.setTargetNode(entityNode);
+		
+			
 			this.slotWizard.mainPanel.doLayout();
 			this.slotWizard.show();
 
@@ -777,7 +867,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				});
     		}
     	}, this);
-	
+    	
 		
     	this.calculatedFieldWizard.on('apply', function(win, formState, targetNode){
     		
