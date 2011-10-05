@@ -303,10 +303,10 @@ Ext.extend(
 								.encode(arrayPars);
 					}
 
-					customArray = this.customDataGrid.getDataArray();
+					customString = this.customDataGrid.getDataString();
 					
-					if (customArray) {
-						requestParameters.customData = Ext.util.JSON.encode(customArray);
+					if (customString) {
+						requestParameters.customData = Ext.util.JSON.encode(customString);
 					}
 					
 					if (this.previewWindow === undefined) {
@@ -1381,7 +1381,7 @@ Ext.extend(
 					return params;
 				}
 				
-				,updateNewRecord: function(record, values, arrayPars, customArray){
+				,updateNewRecord: function(record, values, arrayPars, customString){
 					record.set('label',values['label']);
 					record.set('name',values['name']);
 					record.set('description',values['description']);
@@ -1415,8 +1415,8 @@ Ext.extend(
 						record.set('pars',arrayPars);
 					}
 					
-					if (customArray) {
-						record.set('customData',customArray);
+					if (customString) {
+						record.set('customData',customString);
 					}
 
 					
@@ -1464,10 +1464,10 @@ Ext.extend(
 					var isNewRec = false;
 					var params = this.buildParamsToSendToServer(values);
 					var arrayPars = this.manageParsGrid.getParsArray();
-					var customArray = this.customDataGrid.getDataArray();
+					var customString = this.customDataGrid.getDataString();
 					
 					if (idRec == 0 || idRec == null || idRec === '') {
-						this.updateNewRecord(this.newRecord,values,arrayPars, customArray);
+						this.updateNewRecord(this.newRecord,values,arrayPars, customString);
 						isNewRec = true;
 					}else{
 						var record;
@@ -1480,7 +1480,7 @@ Ext.extend(
 				   	        	oldType = record.get('dsTypeCd');
 							}			   
 				   	    }	
-						this.updateNewRecord(record,values,arrayPars, customArray);
+						this.updateNewRecord(record,values,arrayPars, customString);
 						
 						newDsVersion = new Ext.data.Record(
 								{	dsId: values['id'],
@@ -1495,8 +1495,8 @@ Ext.extend(
 					if (arrayPars) {
 						params.pars = Ext.util.JSON.encode(arrayPars);
 					}
-					if (customArray) {
-						params.customData = Ext.util.JSON.encode(customArray);
+					if (customString) {
+						params.customData = Ext.util.JSON.encode(customString);
 					}
 
 					
