@@ -41,6 +41,7 @@ Sbi.qbe.CalculatedFieldWizard = function(config) {
 	Ext.apply(this, c);
 	
 	this.initMainPanel(c);	
+	this.initButtonsConfig(c);
 	
 	// constructor
 	Sbi.widgets.SaveWindow.superclass.constructor.call(this, {
@@ -51,29 +52,7 @@ Sbi.qbe.CalculatedFieldWizard = function(config) {
 		plain: true,
 		title: this.title,
 		buttonAlign : 'center',
-	    buttons: [{
-			text: LN('sbi.qbe.calculatedFields.buttons.text.ok'),
-		    handler: function(){
-	    	    var emptyAlias = (this.inputFields.alias.getValue()==null) || (this.inputFields.alias.getValue()=="");
-	    	    var emptyType = (this.inputFields.type.getValue()==null) || (this.inputFields.type.getValue()=="");
-
-	    	    if(emptyAlias){
-	    	    	this.inputFields.alias.focus();
-	    	    }else if(emptyType){
-	    	    	this.inputFields.type.focus();
-	    	    }else{
-		    		this.fireEvent('apply', this, this.getFormState(), this.target);
-	            	this.hide();
-	    	    }
-        	}
-        	, scope: this
-	    },{
-		    text: LN('sbi.qbe.calculatedFields.buttons.text.cancel'),
-		    handler: function(){
-            	this.hide();
-        	}
-        	, scope: this
-		}],
+	    buttons: this.buttonsConfig,
 		items: [this.mainPanel]
     });
 	
@@ -92,18 +71,63 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
     , buddy: null
    
     , mainPanel: null 
-    , inputFields: null
+    , buttonsConfig: null
 
-	, initMainPanel: function(c) {
-		
-		this.mainPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
-			layout: 'border',
-		    frame: false, 
-		    border: false,
-		    bodyStyle:'background:#E8E8E8;',
-		    style:'padding:3px;'
-		 });
+    
+    , setExpItems: function(itemGroupName, items) {
+    	this.mainPanel.setExpItems(itemGroupName, items);
     }
+
+	, setTargetRecord: function(record) {
+		this.mainPanel.setTargetRecord(record);
+	}
+
+	, setTargetNode: function(node) {
+		alert('set1: ' + node);
+		this.mainPanel.setTargetNode(node);
+	}
+    
+	, initMainPanel: function(c) {
+		this.mainPanel = new Sbi.qbe.CalculatedFieldEditorPanel({
+			expItemGroups: c.expItemGroups
+			, fields: c.fields
+			, functions: c.functions
+			, expertMode: c.expertMode
+			, scopeComboBoxData: c.scopeComboBoxData   		
+			, validationService: c.validationService
+		});
+    }
+
+	, initButtonsConfig: function(c) {
+		var okButtonConfig = {
+			text: LN('sbi.qbe.calculatedFields.buttons.text.ok'),
+		    handler: function(){
+		   	    var emptyAlias = (this.mainPanel.inputFields.alias.getValue()==null) || (this.mainPanel.inputFields.alias.getValue()=="");
+		   	    var emptyType = (this.mainPanel.inputFields.type.getValue()==null) || (this.mainPanel.inputFields.type.getValue()=="");
+
+		   	    if(emptyAlias){
+		    	   	this.mainPanel.inputFields.alias.focus();
+		    	} else if(emptyType){
+		    	  	this.mainPanel.inputFields.type.focus();
+		    	} else {
+		    		alert('fire ' + this.mainPanel.target);
+			    	this.fireEvent('apply', this, this.mainPanel.getFormState(), this.mainPanel.target);
+		           	this.hide();
+		    	}
+		    }
+	       	, scope: this
+		};
+		
+		var koButtonConfig = {
+		    text: LN('sbi.qbe.calculatedFields.buttons.text.cancel'),
+		    handler: function(){
+	           	this.hide();
+	      	}
+	       	, scope: this
+		}
+		
+		this.buttonsConfig = [okButtonConfig, koButtonConfig];
+	}
 
 });
 
