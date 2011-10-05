@@ -149,7 +149,6 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	
 	, setTargetNode: function(node) {
 		this.target = node;
-		alert('set ' + this.target);
 		if(this.target) {
 			var alias;
 			var nodeType;
