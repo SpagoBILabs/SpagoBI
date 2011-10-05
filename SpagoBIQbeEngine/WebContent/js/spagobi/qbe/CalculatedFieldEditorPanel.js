@@ -32,7 +32,11 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.CalculatedFieldEditorPanel = function(config) {	
 	
 	var c = Ext.apply({}, config || {}, {
-		hasBuddy: false		
+		layout: 'border',
+	    frame: false, 
+	    border: false,
+	    bodyStyle:'background:#E8E8E8;',
+	    style:'padding:3px;'
 	});
 
 	Ext.apply(this, c);
@@ -85,7 +89,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	
 	
 	, getExpression: function() {
-		//alert('getExpression');
+		
 		var expression;
 		if(this.expressionEditor) {
 	  		expression = this.expressionEditor.getValue();
@@ -145,6 +149,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	
 	, setTargetNode: function(node) {
 		this.target = node;
+		alert('set ' + this.target);
 		if(this.target) {
 			var alias;
 			var nodeType;
@@ -233,7 +238,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	}
 	
 	, initWestRegionPanel: function(c) {		
-	    
+	  
 	    this.initExpItemsPanel(Ext.apply({}, {
 	    	region:'west',
 	    	title: 'Items',
@@ -354,6 +359,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 
 	
 	, setExpItems: function(itemGroupName, items) {
+		
 		var groupRootNode = this.groupRootNodes[itemGroupName];
 		var oldChildren = new Array();
 		groupRootNode.eachChild(function(n){
@@ -373,6 +379,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	}
 
 	, initExpItemsPanel: function(c) {
+		
 		this.expItemsTreeRootNode = new Ext.tree.TreeNode({text:'Exp. Items', iconCls:'database',expanded:true});
 		
 		if(this.expItemGroups) {
