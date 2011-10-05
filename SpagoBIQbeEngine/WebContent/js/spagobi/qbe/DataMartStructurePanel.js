@@ -479,8 +479,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		    }
 		];
 		
-		var aggregationFunctions = [
-		                            
+		var aggregationFunctions = [		                            
      		    {
      			    text: 'SUM'
      			    , qtip: LN('sbi.qbe.selectgridpanel.aggfunc.desc.sum')
@@ -520,7 +519,47 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     				}
      		];
 		
-		var functionsForInline = [
+			var dateFunctions = [
+			    {
+		            text: 'GG_between_dates'
+		            , qtip: LN('da implementare')
+		            , type: 'function'
+		            , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+		            , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+		         }, {
+			         text: 'MM_between_dates'
+			         , qtip: LN('da implementare')
+				     , type: 'function'
+				     , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+				     , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+				 },{
+					 text: 'AA_between_dates'
+				      , qtip: LN('da implementare')
+				      , type: 'function'
+				      , value: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+				      , alias: Ext.util.Format.htmlEncode('AA_between_dates(date1,date2)')
+				 }, {
+				     text: 'gg_between_dates'
+				     , qtip: LN('da implementare')
+					 , type: 'function'
+					 , value: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
+					 , alias: Ext.util.Format.htmlEncode('gg_between_dates(date1)')
+				 }, {
+				     text: 'mm_between_dates'
+					 , qtip: LN('da implementare')
+					 , type: 'function'
+					 , value: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
+					 , alias: Ext.util.Format.htmlEncode('mm_between_dates(date1)')
+				  }, {
+					 text: 'yy_between_dates'
+					 , qtip: LN('da implementare')
+					 , type: 'function'
+					 , value: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
+					 , alias: Ext.util.Format.htmlEncode('yy_between_dates(date1)')
+				   }
+		    ]
+		
+		    var functionsForInline = [
       		    {
       			    text: '+'
       			    , qtip: 'binary sum function'
@@ -586,11 +625,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
     		expItemGroups: [
     		    {name:'fields', text: 'Fields'}, 
     		    {name:'functions', text: 'Functions'},
-    		    {name:'aggregationFunctions', text: 'Aggregation Functions'}
+    		    {name:'aggregationFunctions', text: 'Aggregation Functions'},
+    		    {name:'dateFunctions', text: 'Date Functions'}
     		],
     		fields: fields,
     		functions: functionsForInline,
     		aggregationFunctions: aggregationFunctions,
+    		dateFunctions: dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
         	    ['STRING','String', 'If the expression script returns a plain text string'],
