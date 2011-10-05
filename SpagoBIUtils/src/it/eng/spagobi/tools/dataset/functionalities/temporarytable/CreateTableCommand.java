@@ -58,7 +58,6 @@ public class CreateTableCommand {
 
 	// properties
 	public static final String SIZE ="size";
-	public static final String FORMAT ="format";
 	public static final String decimal ="decimal";
 
 	/**

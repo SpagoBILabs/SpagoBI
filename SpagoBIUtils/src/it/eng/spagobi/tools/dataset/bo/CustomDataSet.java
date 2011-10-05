@@ -6,6 +6,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -100,13 +101,23 @@ public class CustomDataSet extends ConfigurableDataSet {
 		Map toInsert = new HashMap<String, Object>();
 		try{
 			if(_customData != null && !_customData.equals("")){
-				JSONArray jsonArray = new JSONArray(_customData);
-				for(int i = 0;i<jsonArray.length();i++){
-					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
-					String name = obj.getString("name");
-					String value = obj.getString("value");
-					toInsert.put(name, value);
+				JSONObject jsonObject = new JSONObject(_customData);
+				
+				String[] names = JSONObject.getNames(jsonObject);
+				
+				for (int i = 0; i < names.length; i++) {
+					String nm = names[i];
+					String value = jsonObject.getString(nm);
+					toInsert.put(nm, value);
 				}
+				
+//				JSONArray jsonArray = new JSONArray(_customData);
+//				for(int i = 0;i<jsonArray.length();i++){
+//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
+//					String name = obj.getString("name");
+//					String value = obj.getString("value");
+//					toInsert.put(name, value);
+//				}
 			}
 		}
 		catch (Exception e) {
@@ -116,6 +127,28 @@ public class CustomDataSet extends ConfigurableDataSet {
 		return toInsert;
 
 	}
+	
+//	private Map convertStringToMap(String _customData){
+//		logger.debug("IN");
+//		Map toInsert = new HashMap<String, Object>();
+//		try{
+//			if(_customData != null && !_customData.equals("")){
+//				JSONArray jsonArray = new JSONArray(_customData);
+//				for(int i = 0;i<jsonArray.length();i++){
+//					JSONObject obj = (JSONObject)jsonArray.getJSONObject(0);
+//					String name = obj.getString("name");
+//					String value = obj.getString("value");
+//					toInsert.put(name, value);
+//				}
+//			}
+//		}
+//		catch (Exception e) {
+//			logger.error("cannot parse to Map the Json string "+customData);
+//		}
+//		logger.debug("IN");
+//		return toInsert;
+//
+//	}
 
 	/**
 	 *  Methos used to instantiate user class and set theere properties.
