@@ -788,6 +788,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	         	 	this.editField(this.ctxNode);
 	             },
                  scope: this
+             },{
+            	 text:'Insert Slot',
+                 iconCls:'slot',
+                 handler:function(){
+	         	 	alert("slot");
+	             },
+                 scope: this
              }]
          });
 		 
