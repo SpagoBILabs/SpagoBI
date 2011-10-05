@@ -71,7 +71,7 @@ Sbi.worksheet.RuntimeSheetFiltersPanel = function(openFilters, config) {
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 	this.services = new Array();
 	this.services['getFilterValuesService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_FILTER_VALUES_ACTION'
+		serviceName: 'GET_FILTER_VALUES_FOR_WORKSHEET_ACTION'
 		, baseParams: params
 	});
 	
@@ -236,12 +236,8 @@ Ext.extend(Sbi.worksheet.RuntimeSheetFiltersPanel, Ext.form.FormPanel, {
 				url: this.services['getFilterValuesService']
 			});
 			var baseParams = {
-					'QUERY_TYPE': openFilter.queryType, 
-					'LOOKUP_QUERY': openFilter.lookupQuery, 
-					'ENTITY_ID': openFilter.field, 
-					'ORDER_ENTITY': openFilter.orderBy, 
-					'ORDER_TYPE': openFilter.orderType, 
-					'QUERY_ROOT_ENTITY': openFilter.queryRootEntity
+					'fieldName': openFilter.field
+					, 'sheetName' : this.baseConfig.sheetName
 			};
 			store.baseParams = baseParams;
 			store.on('loadexception', function(store, options, response, e) {

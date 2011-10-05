@@ -190,13 +190,17 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
 		if (qbeEngineInstance != null) {
 			// retrieves dataset as the Qbe active query
+			logger.debug("Qbe engine instance found. Retrieving Qbe query as dataset...");
 			dataset = qbeEngineInstance.getActiveQueryAsDataSet();
 		} else {
 			// retrieves dataset from document configuration (i.e. the dataset associated to the document)
+			logger.debug("Qbe engine instance not found. Retrieving dataset from document configuration...");
 			dataset = getDataSet();
 		}
 		
 		// update parameters into the dataset
+		logger.debug("Setting parameters into dataset...");
+		logger.debug( this.getEnv() );
 		dataset.setParamsMap( this.getEnv() );
 		
 		// update profile attributes into dataset
@@ -204,6 +208,8 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 		userAttributes.putAll(profile.getUserAttributes());
 		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		logger.debug("Setting user profile attributes into dataset...");
+		logger.debug( userAttributes );
 		dataset.setUserProfileAttributes(userAttributes);
 		
 		worksheetEngineInstance.setDataSet(dataset);
@@ -214,10 +220,12 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		QbeEngineInstance qbeEngineInstance = worksheetEngineInstance.getQbeEngineInstance();
 		if (qbeEngineInstance != null) {
 			// retrieves datasource as the Qbe datasource
+			logger.debug("Qbe engine instance found. Retrieving Qbe datasource...");
 			datasource = ((AbstractDataSource) qbeEngineInstance
 							.getDataSource()).getToolsDataSource();
 		} else {
 			// retrieves datasource from document configuration (i.e. the datasource associated to the document)
+			logger.debug("Qbe engine instance not found. Retrieving datasource from document configuration...");
 			datasource = getDataSource();
 		}
 		worksheetEngineInstance.setDataSource(datasource);

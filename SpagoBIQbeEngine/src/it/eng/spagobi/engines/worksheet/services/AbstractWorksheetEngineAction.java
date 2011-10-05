@@ -193,24 +193,26 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		return TemporaryTableManager.getTableName(userProfile.getUserId().toString());
 	}
 	
-	public IDataSetTableDescriptor persistDataSet(String tableName) {
-		WorksheetEngineInstance engineInstance = getEngineInstance();
-		IDataSet dataset = engineInstance.getDataSet();
+	public IDataSetTableDescriptor persistDataSet(IDataSet dataset, String tableName) {
 		String signature = dataset.getSignature();
+		logger.debug("Dataset signature : " + signature);
 		if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
 			// signature matches: no need to create a TemporaryTable
+			logger.debug("Signature matches: no need to create a TemporaryTable");
 			return TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 		}
 		Connection connection = getConnection();
 		//drop the temporary table if one exists
 		try {
+			logger.debug("Signature does not match: dropping TemporaryTable " + tableName + " if it exists...");
 			TemporaryTableManager.dropTableIfExists(tableName, getEngineInstance().getDataSource());
 		} catch (Exception e) {
-			logger.error("Impossible to drop the temporary table with name "+tableName, e);
-			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name "+tableName, e);
+			logger.error("Impossible to drop the temporary table with name " + tableName, e);
+			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name " + tableName, e);
 		}
-		
+		logger.debug("Persisting dataset ...");
 		IDataSetTableDescriptor td = dataset.persist(tableName, connection);
+		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
 	}
